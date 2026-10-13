@@ -3,6 +3,7 @@
 mod accessibility;
 mod animation;
 mod animation_timeline;
+mod authored_source;
 mod client_geometry;
 mod compositor_scene;
 mod control_geometry;
@@ -42,6 +43,7 @@ pub use interaction::{
     RouteStep, SelectionDirection, TextDirection, TextUnit,
 };
 
+use authored_source::NativeStyleSource;
 use hit_geometry::WorldTransform;
 use openui_compositor::{SceneGeneration, SceneRect, SceneSnapshot};
 use openui_dom::{
@@ -55,9 +57,9 @@ pub use openui_geometry::{
 use openui_layout::Fragment;
 use openui_paint::record_fragment;
 use openui_style::{
-    apply_to_computed, Color, ComputedStyle, Display, ImageResourceId, InvalidationClass,
-    PseudoStyleTarget, RendererInternalStyleValue, RendererStyleValue, Style, StyleProperty,
-    StyleValue,
+    apply_to_computed, AuthoredStyleContribution, AuthoredStyleDeclarations, CanonicalStyleField,
+    Color, ComputedStyle, Display, ImageResourceId, InvalidationClass, PseudoStyleTarget,
+    RendererInternalStyleValue, RendererStyleValue, Style, StyleProperty, StyleValue,
 };
 pub use openui_text::{
     FontAxisRange, FontCollection, FontCollectionError, FontCollectionStats, FontContainerFormat,
@@ -262,10 +264,9 @@ pub struct DirtyGenerations {
 struct Slot {
     generation: u32,
     node: Option<NodeId>,
-    authored: BTreeMap<u16, StyleValue>,
-    authored_order: Vec<u16>,
+    native_source: NativeStyleSource,
+    authored: AuthoredStyleDeclarations,
     authored_pseudo: [Option<Style>; 4],
-    resolved_style_snapshot: bool,
     // The current unanimated computed source is distinct from presentation.
     // It survives inactive/forwards-filled effects until the final owner leaves.
     animation_base_style: Option<ComputedStyle>,
@@ -400,10 +401,9 @@ impl Engine {
         let root_slot = Slot {
             generation: 1,
             node: Some(root_node),
-            authored: BTreeMap::new(),
-            authored_order: Vec::new(),
+            native_source: NativeStyleSource::Defaults(document.node(root_node).style.clone()),
+            authored: AuthoredStyleDeclarations::default(),
             authored_pseudo: Default::default(),
-            resolved_style_snapshot: false,
             animation_base_style: None,
             animation_properties: BTreeSet::new(),
         };
@@ -729,8 +729,18 @@ impl Engine {
             | ElementTag::RubyText
             | ElementTag::Style => Display::Inline,
         };
+        self.create_native_element_with_display_default(tag, display)
+    }
+
+    /// Create a native alias with its constructor-owned display default.
+    #[doc(hidden)]
+    pub fn create_native_element_with_display_default(
+        &mut self,
+        tag: ElementTag,
+        display: Display,
+    ) -> Result<NodeHandle, EngineError> {
         let handle = self.create_element(tag)?;
-        self.set_property(handle, StyleProperty::Display, display.into())?;
+        self.set_native_display_default(handle, display)?;
         Ok(handle)
     }
 
@@ -749,6 +759,8 @@ impl Engine {
             style.overflow_x = openui_style::Overflow::Hidden;
             style.overflow_y = openui_style::Overflow::Hidden;
         });
+        self.slots[handle.index as usize].native_source =
+            NativeStyleSource::Defaults(data.style.clone());
         Ok(handle)
     }
 
@@ -756,10 +768,10 @@ impl Engine {
         let index = if let Some(index) = self.free_slots.pop() {
             let slot = &mut self.slots[index as usize];
             slot.node = Some(node);
-            slot.authored.clear();
-            slot.authored_order.clear();
+            slot.native_source =
+                NativeStyleSource::Defaults(self.document.node(node).style.clone());
+            slot.authored = AuthoredStyleDeclarations::default();
             slot.authored_pseudo = Default::default();
-            slot.resolved_style_snapshot = false;
             slot.animation_base_style = None;
             slot.animation_properties.clear();
             index
@@ -768,10 +780,9 @@ impl Engine {
             self.slots.push(Slot {
                 generation: 1,
                 node: Some(node),
-                authored: BTreeMap::new(),
-                authored_order: Vec::new(),
+                native_source: NativeStyleSource::Defaults(self.document.node(node).style.clone()),
+                authored: AuthoredStyleDeclarations::default(),
                 authored_pseudo: Default::default(),
-                resolved_style_snapshot: false,
                 animation_base_style: None,
                 animation_properties: BTreeSet::new(),
             });
@@ -970,13 +981,11 @@ impl Engine {
             data.attributes.remove("data-oui-composition-start");
             data.attributes.remove("data-oui-composition-end");
             *self.document.node_mut(duplicate_node) = data;
+            self.slots[duplicate.index as usize].native_source =
+                self.slots[original.index as usize].native_source.clone();
             self.slots[duplicate.index as usize].authored = authored;
-            self.slots[duplicate.index as usize].authored_order =
-                self.slots[original.index as usize].authored_order.clone();
             self.slots[duplicate.index as usize].authored_pseudo =
                 self.slots[original.index as usize].authored_pseudo.clone();
-            self.slots[duplicate.index as usize].resolved_style_snapshot =
-                self.slots[original.index as usize].resolved_style_snapshot;
             if let Some(mut control) = control {
                 control.clear_composition();
                 self.controls.insert(duplicate.index, control);
@@ -1117,10 +1126,9 @@ impl Engine {
                 self.semantics.remove(&index);
                 let slot = &mut self.slots[index as usize];
                 slot.node = None;
-                slot.authored.clear();
-                slot.authored_order.clear();
+                slot.native_source = NativeStyleSource::Defaults(ComputedStyle::initial());
+                slot.authored = AuthoredStyleDeclarations::default();
                 slot.authored_pseudo = Default::default();
-                slot.resolved_style_snapshot = false;
                 slot.animation_base_style = None;
                 slot.animation_properties.clear();
                 slot.generation = slot.generation.wrapping_add(1).max(1);
@@ -1305,106 +1313,56 @@ impl Engine {
         value: StyleValue,
     ) -> Result<(), EngineError> {
         let node = self.resolve(handle)?;
-        let old_transform = (property == StyleProperty::Transform).then(|| {
-            (
-                self.document
-                    .node(node)
-                    .style
-                    .has_transform_containing_block(),
-                openui_style::value_from_computed(&self.document.node(node).style, property),
-            )
-        });
-        let slot = &self.slots[handle.index as usize];
-        if slot.authored.get(&(property as u16)) == Some(&value)
-            && slot
-                .authored_order
-                .iter()
-                .rev()
-                .take_while(|id| **id != property as u16)
-                .all(|id| {
-                    !StyleProperty::from_u16(*id)
-                        .expect("authored property")
-                        .affects_same_fields_as(property)
-                })
-        {
+        let old_transform = (property == StyleProperty::Transform)
+            .then(|| openui_style::value_from_computed(&self.document.node(node).style, property));
+        let Some(candidate) = self.staged_authored_property(handle, property, value)? else {
             return Ok(());
-        }
-        let viewport = (
-            self.viewport.logical_width() as f32,
-            self.viewport.logical_height() as f32,
-        );
-        let parent = self.document.node(node).parent;
-        let font = if property == StyleProperty::FontSize {
-            if parent.is_none() {
-                ComputedStyle::initial().font_size
-            } else {
-                self.document.node(parent).style.font_size
-            }
-        } else {
-            self.document.node(node).style.font_size
         };
-        let root_font = if node == self.document.root() && property == StyleProperty::FontSize {
-            ComputedStyle::initial().font_size
-        } else {
-            self.document.node(self.document.root()).style.font_size
-        };
-        let metrics = value.depends_on_font_metrics().then(|| {
-            let style = if property == StyleProperty::FontSize {
-                if parent.is_none() {
-                    ComputedStyle::initial()
-                } else {
-                    self.document.node(parent).style.clone()
-                }
-            } else {
-                self.document.node(node).style.clone()
-            };
-            let mut metrics = self.native_font_length_metrics(&style);
-            if property == StyleProperty::LineHeight {
-                let parent_style = if parent.is_none() {
-                    ComputedStyle::initial()
-                } else {
-                    self.document.node(parent).style.clone()
-                };
-                metrics.lh = self.native_font_length_metrics(&parent_style).lh;
-            }
-            metrics
-        });
-        let resolved =
-            Self::resolve_native_lengths(property, &value, font, root_font, viewport, metrics);
-        if let Some(base) = &mut self.slots[handle.index as usize].animation_base_style {
-            apply_to_computed(base, property, &resolved, viewport)
-                .map_err(|_| EngineError::PropertyType { property })?;
-            // Publish the recomposed result once. A masked authored mutation
-            // must not temporarily remove the effective containing block.
-        } else {
-            self.document
-                .apply_style_property(node, property, &resolved, viewport)
-                .map_err(|_| EngineError::PropertyType { property })?;
+        let previous =
+            std::mem::replace(&mut self.slots[handle.index as usize].authored, candidate);
+        if let Err(error) = self.refresh_inherited_styles(node) {
+            self.slots[handle.index as usize].authored = previous;
+            return Err(error);
         }
-        self.slots[handle.index as usize]
-            .authored
-            .insert(property as u16, value.clone());
-        let order = &mut self.slots[handle.index as usize].authored_order;
-        order.retain(|id| *id != property as u16);
-        order.push(property as u16);
-        if self.slots[handle.index as usize]
-            .animation_base_style
-            .is_some()
-            || property.metadata().inherited
-            || value.depends_on_font_metrics()
-        {
-            self.refresh_inherited_styles(node)?;
-        }
-        if let Some((old_policy, old_value)) = old_transform {
-            let style = self.document.node(node).style.clone();
-            self.invalidate_transform_containing_block_change(node, old_policy, &style);
-            if openui_style::value_from_computed(&style, property) == old_value {
-                return Ok(());
-            }
+        if old_transform.as_ref().is_some_and(|old| {
+            openui_style::value_from_computed(&self.document.node(node).style, property) == *old
+        }) {
+            return Ok(());
         }
         self.dirty.hit_test = true;
         self.mark_dirty(property.metadata().invalidation);
         Ok(())
+    }
+
+    /// Remove the authored canonical longhands represented by `property`.
+    /// Constructor defaults and explicit snapshot source inputs remain. A
+    /// removed part of an older shorthand does not revive on recomposition.
+    /// Returns false without work if no live declaration owns these fields.
+    pub fn remove_property(
+        &mut self,
+        handle: NodeHandle,
+        property: StyleProperty,
+    ) -> Result<bool, EngineError> {
+        let node = self.resolve(handle)?;
+        let mut candidate = self.slots[handle.index as usize].authored.clone();
+        if !candidate.remove(property) {
+            return Ok(false);
+        }
+        let old_transform = (property == StyleProperty::Transform)
+            .then(|| openui_style::value_from_computed(&self.document.node(node).style, property));
+        let previous =
+            std::mem::replace(&mut self.slots[handle.index as usize].authored, candidate);
+        if let Err(error) = self.refresh_inherited_styles(node) {
+            self.slots[handle.index as usize].authored = previous;
+            return Err(error);
+        }
+        if !old_transform.as_ref().is_some_and(|old| {
+            openui_style::value_from_computed(&self.document.node(node).style, property) == *old
+        }) {
+            self.dirty.hit_test = true;
+            self.mark_dirty(property.metadata().invalidation);
+        }
+        Ok(true)
     }
 
     /// Apply a schema-generated computed longhand to a resolved snapshot.
@@ -1445,8 +1403,8 @@ impl Engine {
             )
         });
         let slot = &self.slots[handle.index as usize];
-        if slot.resolved_style_snapshot
-            && slot.authored.is_empty()
+        if slot.native_source.is_snapshot()
+            && slot.authored.contributions().is_empty()
             && slot.authored_pseudo.iter().all(Option::is_none)
             && !self
                 .animations
@@ -1460,24 +1418,19 @@ impl Engine {
             self.viewport.logical_width() as f32,
             self.viewport.logical_height() as f32,
         );
-        let mut source = self.slots[handle.index as usize]
-            .animation_base_style
-            .clone()
-            .unwrap_or_else(|| self.document.node(node).style.clone());
+        let mut source = self.unanimated_style(node, handle.index)?;
         apply_to_computed(&mut source, property, &value, viewport)
             .map_err(|_| EngineError::PropertyType { property })?;
         let slot = &mut self.slots[handle.index as usize];
-        let owns_animation_source = slot.animation_base_style.is_some();
-        if owns_animation_source {
-            slot.animation_base_style = Some(source.clone());
+        let previous_source =
+            std::mem::replace(&mut slot.native_source, NativeStyleSource::Snapshot(source));
+        let previous_authored = std::mem::take(&mut slot.authored);
+        if let Err(error) = self.refresh_inherited_styles(node) {
+            let slot = &mut self.slots[handle.index as usize];
+            slot.native_source = previous_source;
+            slot.authored = previous_authored;
+            return Err(error);
         }
-        slot.authored.clear();
-        slot.authored_order.clear();
-        slot.resolved_style_snapshot = true;
-        if !owns_animation_source {
-            self.document.install_resolved_style(node, source);
-        }
-        self.refresh_inherited_styles(node)?;
         if let Some((old_policy, old_value)) = old_transform {
             let style = self.document.node(node).style.clone();
             self.invalidate_transform_containing_block_change(node, old_policy, &style);
@@ -1499,6 +1452,9 @@ impl Engine {
         value: RendererInternalStyleValue,
     ) -> Result<(), EngineError> {
         let node = self.resolve(handle)?;
+        value
+            .clone()
+            .apply_to(self.slots[handle.index as usize].native_source.style_mut());
         if let Some(base) = &mut self.slots[handle.index as usize].animation_base_style {
             value.clone().apply_to(base);
         }
@@ -1516,22 +1472,17 @@ impl Engine {
         style: ComputedStyle,
     ) -> Result<(), EngineError> {
         let node = self.resolve(handle)?;
-        let owns_animation_source = self.slots[handle.index as usize]
-            .animation_base_style
-            .is_some();
-        if owns_animation_source {
-            self.slots[handle.index as usize].animation_base_style = Some(style.clone());
-        }
-        self.document.install_resolved_style(node, style);
         let slot = &mut self.slots[handle.index as usize];
-        slot.authored.clear();
-        slot.authored_order.clear();
-        slot.authored_pseudo = std::array::from_fn(|_| None);
-        slot.resolved_style_snapshot = true;
-        if owns_animation_source {
-            self.refresh_inherited_styles(node)?;
-        } else {
-            self.refresh_inherited_descendants(node)?;
+        let previous_source =
+            std::mem::replace(&mut slot.native_source, NativeStyleSource::Snapshot(style));
+        let previous_authored = std::mem::take(&mut slot.authored);
+        let previous_pseudo = std::mem::take(&mut slot.authored_pseudo);
+        if let Err(error) = self.refresh_inherited_styles(node) {
+            let slot = &mut self.slots[handle.index as usize];
+            slot.native_source = previous_source;
+            slot.authored = previous_authored;
+            slot.authored_pseudo = previous_pseudo;
+            return Err(error);
         }
         self.dirty.hit_test = true;
         self.mark_dirty(InvalidationClass::Subtree);
@@ -1541,127 +1492,7 @@ impl Engine {
     /// Resolve inheritance before owned queries, layout and paint. Anonymous
     /// and pseudo snapshots are already resolved and retain their values.
     fn refresh_inherited_styles(&mut self, root: NodeId) -> Result<(), EngineError> {
-        let initial = ComputedStyle::initial();
-        let viewport = (
-            self.viewport.logical_width() as f32,
-            self.viewport.logical_height() as f32,
-        );
-        let mut pending = vec![root];
-        while let Some(node) = pending.pop() {
-            if let Some(index) = self.node_slots.get(&node).copied() {
-                let slot = &self.slots[index as usize];
-                if !slot.resolved_style_snapshot
-                    || !slot.authored.is_empty()
-                    || slot.animation_base_style.is_some()
-                {
-                    let declarations: Vec<_> = slot
-                        .authored_order
-                        .iter()
-                        .map(|id| {
-                            (
-                                StyleProperty::from_u16(*id).expect("authored property"),
-                                slot.authored[id].clone(),
-                            )
-                        })
-                        .collect();
-                    let parent_node = self
-                        .scroll_buttons
-                        .bindings
-                        .get(&self.handle_for_slot(index))
-                        .and_then(|binding| self.resolve(binding.origin).ok())
-                        .unwrap_or(self.document.node(node).parent);
-                    let parent = if parent_node.is_none() {
-                        initial.clone()
-                    } else {
-                        self.document.node(parent_node).style.clone()
-                    };
-                    let root_font = if node == self.document.root() {
-                        initial.font_size
-                    } else {
-                        self.document.node(self.document.root()).style.font_size
-                    };
-                    let old_style = self.document.node(node).style.clone();
-                    let mut style = slot
-                        .animation_base_style
-                        .clone()
-                        .unwrap_or_else(|| old_style.clone());
-                    style.set_raster_context(
-                        self.raster_configuration,
-                        self.viewport.device_scale_factor(),
-                    );
-                    if !slot.resolved_style_snapshot {
-                        style.inherit_properties_from(&parent);
-                    }
-                    let base = self.resolve_native_declarations(
-                        style,
-                        &declarations,
-                        &parent,
-                        root_font,
-                        viewport,
-                        node == self.document.root(),
-                    )?;
-                    let owns_source = slot.animation_base_style.is_some();
-                    let changed_properties = slot.animation_properties.clone();
-                    let font_effects = self.animation_values_for_node(
-                        index, &base, &parent, root_font, viewport, true,
-                    );
-                    let mut style = if font_effects.is_empty() {
-                        base.clone()
-                    } else {
-                        // Font effects cascade before author metric-dependent
-                        // lengths and before other effect endpoints are computed.
-                        let mut final_declarations = declarations;
-                        final_declarations.extend(font_effects);
-                        self.resolve_native_declarations(
-                            base.clone(),
-                            &final_declarations,
-                            &parent,
-                            root_font,
-                            viewport,
-                            node == self.document.root(),
-                        )?
-                    };
-                    for (property, value) in self.animation_values_for_node(
-                        index, &style, &parent, root_font, viewport, false,
-                    ) {
-                        apply_to_computed(&mut style, property, &value, viewport)
-                            .map_err(|_| EngineError::PropertyType { property })?;
-                    }
-                    style.resolve_current_color_dependencies();
-                    self.adjust_native_control_style(index, node, &mut style);
-                    self.invalidate_transform_containing_block_change(
-                        node,
-                        old_style.has_transform_containing_block(),
-                        &style,
-                    );
-                    for id in changed_properties {
-                        let property = StyleProperty::from_u16(id).expect("animated property");
-                        if openui_style::value_from_computed(&old_style, property)
-                            != openui_style::value_from_computed(&style, property)
-                        {
-                            self.dirty.hit_test = true;
-                            self.mark_dirty(property.metadata().invalidation);
-                        }
-                    }
-                    let has_effect_owner = self
-                        .animations
-                        .values()
-                        .any(|effect| effect.target == self.handle_for_slot(index));
-                    let slot = &mut self.slots[index as usize];
-                    if owns_source {
-                        slot.animation_base_style = has_effect_owner.then_some(base);
-                        if !has_effect_owner {
-                            slot.animation_properties.clear();
-                        }
-                    }
-                    self.document.install_resolved_style(node, style);
-                }
-                self.refresh_authored_pseudo_styles(node, index)?;
-            }
-            let children: Vec<_> = self.document.children(node).collect();
-            pending.extend(children.into_iter().rev());
-        }
-        Ok(())
+        self.publish_native_cascade(root)
     }
 
     /// A specified identity transform owns positioned descendants just like
@@ -1740,7 +1571,7 @@ impl Engine {
     fn resolve_native_declarations(
         &self,
         mut style: ComputedStyle,
-        declarations: &[(StyleProperty, StyleValue)],
+        declarations: &[AuthoredStyleContribution],
         parent: &ComputedStyle,
         root_font: f32,
         viewport: (f32, f32),
@@ -1749,18 +1580,26 @@ impl Engine {
         let parent_font = parent.font_size;
         let parent_metrics = declarations
             .iter()
-            .any(|(property, value)| {
-                matches!(
-                    property,
-                    StyleProperty::FontSize | StyleProperty::LineHeight
-                ) && value.depends_on_font_metrics()
+            .any(|contribution| {
+                (contribution
+                    .fields()
+                    .contains(CanonicalStyleField::FontSize)
+                    || contribution
+                        .fields()
+                        .contains(CanonicalStyleField::LineHeight))
+                    && contribution.value().depends_on_font_metrics()
             })
             .then(|| self.native_font_length_metrics(parent));
         // Font size is computed against the parent, and all other
         // em lengths use the final cascaded size of this element.
         let mut font_style = style.clone();
-        for (property, value) in declarations {
-            if matches!(property, StyleProperty::Font | StyleProperty::FontSize) {
+        for contribution in declarations {
+            let property = &contribution.property();
+            let value = contribution.value();
+            if contribution
+                .fields()
+                .contains(CanonicalStyleField::FontSize)
+            {
                 let value = Self::resolve_native_lengths(
                     *property,
                     value,
@@ -1769,11 +1608,11 @@ impl Engine {
                     viewport,
                     parent_metrics,
                 );
-                apply_to_computed(&mut font_style, *property, &value, viewport).map_err(|_| {
-                    EngineError::PropertyType {
+                contribution
+                    .project_resolved(&mut font_style, &value, viewport)
+                    .map_err(|_| EngineError::PropertyType {
                         property: *property,
-                    }
-                })?;
+                    })?;
             }
         }
         let font_size = font_style.font_size;
@@ -1783,11 +1622,13 @@ impl Engine {
         // Ordinary declarations retain their existing font-free path.
         let metrics = if declarations
             .iter()
-            .any(|(_, value)| value.depends_on_font_metrics())
+            .any(|contribution| contribution.value().depends_on_font_metrics())
         {
-            let mut metric_style = style.clone();
+            let mut metric_style = font_style.clone();
             let mut authored_line_height = false;
-            for (property, value) in declarations {
+            for contribution in declarations {
+                let property = &contribution.property();
+                let value = contribution.value();
                 if value.depends_on_font_metrics() {
                     continue;
                 }
@@ -1808,14 +1649,15 @@ impl Engine {
                     viewport,
                     None,
                 );
-                apply_to_computed(&mut metric_style, *property, &value, viewport).map_err(
-                    |_| EngineError::PropertyType {
+                contribution
+                    .project_resolved(&mut metric_style, &value, viewport)
+                    .map_err(|_| EngineError::PropertyType {
                         property: *property,
-                    },
-                )?;
+                    })?;
                 metric_style.update_derived(|fields| fields.font_size = font_size);
-                authored_line_height |=
-                    matches!(property, StyleProperty::Font | StyleProperty::LineHeight);
+                authored_line_height |= contribution
+                    .fields()
+                    .contains(CanonicalStyleField::LineHeight);
             }
             if authored_line_height {
                 metric_style.update_derived(|fields| {
@@ -1829,12 +1671,15 @@ impl Engine {
             // A font shorthand can override a preceding line-height. Resolve
             // only the winning metric-dependent line-height after all font
             // longhands, then capture the lh basis for other declarations.
-            if let Some((StyleProperty::LineHeight, value)) =
-                declarations.iter().rev().find(|(property, _)| {
-                    matches!(property, StyleProperty::Font | StyleProperty::LineHeight)
-                })
-            {
-                if value.depends_on_font_metrics() {
+            if let Some(contribution) = declarations.iter().rev().find(|contribution| {
+                contribution
+                    .fields()
+                    .contains(CanonicalStyleField::LineHeight)
+            }) {
+                let value = contribution.value();
+                if contribution.property() == StyleProperty::LineHeight
+                    && value.depends_on_font_metrics()
+                {
                     let mut line_metrics = self.native_font_length_metrics(&metric_style);
                     line_metrics.lh = parent_metrics.expect("line-height parent metrics").lh;
                     let resolved = Self::resolve_native_lengths(
@@ -1845,15 +1690,11 @@ impl Engine {
                         viewport,
                         Some(line_metrics),
                     );
-                    apply_to_computed(
-                        &mut metric_style,
-                        StyleProperty::LineHeight,
-                        &resolved,
-                        viewport,
-                    )
-                    .map_err(|_| EngineError::PropertyType {
-                        property: StyleProperty::LineHeight,
-                    })?;
+                    contribution
+                        .project_resolved(&mut metric_style, &resolved, viewport)
+                        .map_err(|_| EngineError::PropertyType {
+                            property: StyleProperty::LineHeight,
+                        })?;
                 }
             }
             Some(self.native_font_length_metrics(&metric_style))
@@ -1861,7 +1702,9 @@ impl Engine {
             None
         };
         let mut authored_line_height = false;
-        for (property, value) in declarations {
+        for contribution in declarations {
+            let property = &contribution.property();
+            let value = contribution.value();
             let value = value.capture_own_current_color(*property, parent.color);
             let value = Self::resolve_native_lengths(
                 *property,
@@ -1890,13 +1733,16 @@ impl Engine {
                     metrics
                 },
             );
-            apply_to_computed(&mut style, *property, &value, viewport).map_err(|_| {
-                EngineError::PropertyType {
+            contribution
+                .project_resolved(&mut style, &value, viewport)
+                .map_err(|_| EngineError::PropertyType {
                     property: *property,
-                }
-            })?;
+                })?;
             style.update_derived(|fields| fields.font_size = font_size);
-            if matches!(property, StyleProperty::Font | StyleProperty::LineHeight) {
+            if contribution
+                .fields()
+                .contains(CanonicalStyleField::LineHeight)
+            {
                 authored_line_height = true;
             }
         }
@@ -1913,33 +1759,25 @@ impl Engine {
         Ok(style)
     }
 
-    fn refresh_authored_pseudo_styles(
-        &mut self,
-        node: NodeId,
+    fn resolve_authored_pseudo_styles(
+        &self,
         index: u32,
-    ) -> Result<(), EngineError> {
-        let authored = self.slots[index as usize].authored_pseudo.clone();
-        if authored.iter().all(Option::is_none) {
-            return Ok(());
-        }
-        let mut origin = self.document.node(node).style.clone();
-        let viewport = (
-            self.viewport.logical_width() as f32,
-            self.viewport.logical_height() as f32,
-        );
-        let root_font = self.document.node(self.document.root()).style.font_size;
-        for (target, declarations) in authored.iter().enumerate() {
+        mut origin: ComputedStyle,
+        root_font: f32,
+        viewport: (f32, f32),
+    ) -> Result<ComputedStyle, EngineError> {
+        for (target, declarations) in self.slots[index as usize]
+            .authored_pseudo
+            .iter()
+            .enumerate()
+        {
             if let Some(declarations) = declarations {
+                let canonical = Self::canonical_declarations(declarations)?;
                 let mut pseudo = ComputedStyle::for_pseudo(&origin);
                 pseudo.inherit_properties_from(&origin);
-                let declarations: Vec<_> = declarations
-                    .declarations()
-                    .iter()
-                    .map(|declaration| (declaration.property, declaration.value.clone()))
-                    .collect();
                 let pseudo = self.resolve_native_declarations(
                     pseudo,
-                    &declarations,
+                    canonical.contributions(),
                     &origin,
                     root_font,
                     viewport,
@@ -1957,8 +1795,7 @@ impl Engine {
                 });
             }
         }
-        self.document.install_resolved_style(node, origin);
-        Ok(())
+        Ok(origin)
     }
 
     fn refresh_inherited_descendants(&mut self, parent: NodeId) -> Result<(), EngineError> {
@@ -2191,14 +2028,10 @@ impl Engine {
             self.viewport.logical_width() as f32,
             self.viewport.logical_height() as f32,
         );
-        let declarations_to_resolve: Vec<_> = declarations
-            .declarations()
-            .iter()
-            .map(|declaration| (declaration.property, declaration.value.clone()))
-            .collect();
+        let declarations_to_resolve = Self::canonical_declarations(declarations)?;
         let pseudo = self.resolve_native_declarations(
             pseudo,
-            &declarations_to_resolve,
+            declarations_to_resolve.contributions(),
             &origin,
             self.document.node(self.document.root()).style.font_size,
             viewport,

@@ -392,18 +392,27 @@ impl Engine {
         let keyframes =
             PropertyKeyframes::typed(property, Keyframes::from_values(from, to.clone()))
                 .map_err(EngineError::from)?;
-        self.slots[target.index as usize]
-            .authored
-            .insert(property as u16, to.clone());
-        let order = &mut self.slots[target.index as usize].authored_order;
-        order.retain(|id| *id != property as u16);
-        order.push(property as u16);
-        self.start_animation(
+        // The transition's target is an ordinary source declaration. It
+        // shares shorthand ownership/removal with setters, while its first
+        // keyframe captures the current presentation before the source changes.
+        let candidate = self.staged_authored_property(target, property, to)?;
+        let previous = candidate.map(|candidate| {
+            std::mem::replace(&mut self.slots[target.index as usize].authored, candidate)
+        });
+        match self.start_animation(
             target,
             keyframes,
             options,
             RetainedAnimationTimeline::Legacy(AnimationTimeline::Document),
-        )
+        ) {
+            Ok(id) => Ok(id),
+            Err(error) => {
+                if let Some(previous) = previous {
+                    self.slots[target.index as usize].authored = previous;
+                }
+                Err(error)
+            }
+        }
     }
 
     fn start_animation(
@@ -454,12 +463,15 @@ impl Engine {
         } else {
             (timeline_now - start_time_seconds) * options.playback_rate
         };
-        if self.slots[target.index as usize]
+        let previous_base = self.slots[target.index as usize]
             .animation_base_style
-            .is_none()
-        {
-            self.slots[target.index as usize].animation_base_style =
-                Some(self.document.node(node).style.clone());
+            .clone();
+        let previous_properties = self.slots[target.index as usize]
+            .animation_properties
+            .clone();
+        if previous_base.is_none() {
+            let base = self.unanimated_style(node, target.index)?;
+            self.slots[target.index as usize].animation_base_style = Some(base);
         }
         self.slots[target.index as usize]
             .animation_properties
@@ -493,8 +505,19 @@ impl Engine {
                 ended: false,
             },
         );
-        self.sample_animations()?;
-        self.refresh_inherited_styles(node)?;
+        if let Err(error) = self
+            .sample_animations()
+            .and_then(|()| self.refresh_inherited_styles(node))
+        {
+            // No callback runs while the Engine is borrowed. Failed source
+            // resolution must not leave a returned-error effect or its events.
+            self.animations.remove(&id);
+            self.animation_events.retain(|event| event.animation != id);
+            let slot = &mut self.slots[target.index as usize];
+            slot.animation_base_style = previous_base;
+            slot.animation_properties = previous_properties;
+            return Err(error);
+        }
         Ok(id)
     }
 

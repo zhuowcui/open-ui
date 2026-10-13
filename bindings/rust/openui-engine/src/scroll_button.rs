@@ -834,7 +834,7 @@ impl Engine {
             .directions
             .insert((origin, direction), button);
         self.document.node_mut(pseudo).form_control_disabled = true;
-        self.set_property(button, StyleProperty::Display, Display::InlineBlock.into())?;
+        self.set_native_display_default(button, Display::InlineBlock)?;
         self.refresh_inherited_styles(pseudo)?;
         self.relocate_owned_scroll_buttons()?;
         self.mark_dirty(InvalidationClass::Subtree);

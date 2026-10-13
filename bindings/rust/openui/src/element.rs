@@ -58,12 +58,13 @@ impl Element {
             return Self::create_svg_foreign_object(document);
         }
         let (tag_kind, display) = tag_definition(tag)?;
-        let handle = document.with_engine_mut(|engine| engine.create_native_element(tag_kind))?;
-        if let Some(display) = display {
-            document.with_engine_mut(|engine| {
-                engine.set_property(handle, StyleProperty::Display, display.into())
-            })?;
-        }
+        let handle = document.with_engine_mut(|engine| {
+            if let Some(display) = display {
+                engine.create_native_element_with_display_default(tag_kind, display)
+            } else {
+                engine.create_native_element(tag_kind)
+            }
+        })?;
         Ok(Self::from_handle(document.clone(), handle))
     }
 
@@ -278,6 +279,15 @@ impl Element {
     pub fn set_property(&self, property: StyleProperty, value: StyleValue) -> Result<(), Error> {
         self.document
             .with_engine_mut(|engine| engine.set_property(self.handle, property, value))
+    }
+
+    /// Remove the authored fields represented by this property. Native
+    /// constructor defaults and explicit snapshot inputs remain; removing a
+    /// longhand does not revive a field overwritten from an older shorthand.
+    /// Returns false without work when no live declaration owns those fields.
+    pub fn remove_property(&self, property: StyleProperty) -> Result<bool, Error> {
+        self.document
+            .with_engine_mut(|engine| engine.remove_property(self.handle, property))
     }
 
     /// Set a numeric color or retain own-color currentcolor inheritance.
