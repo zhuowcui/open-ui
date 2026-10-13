@@ -249,3 +249,11 @@ id,rust_name,css_name,rust_type,value_kind,initial,inherited,invalidation,interp
 248,ScrollSnapAlignBlock,scroll-snap-align-block,Option<ScrollSnapAlign>,compound,renderer-initial,false,layout,discrete,scroll_snap_align_block
 249,ScrollSnapAlignInline,scroll-snap-align-inline,Option<ScrollSnapAlign>,compound,renderer-initial,false,layout,discrete,scroll_snap_align_inline
 250,WebkitTextFillColor,-webkit-text-fill-color,StyleColor,compound,currentColor,true,paint,color,text_fill_color
+251,BorderTopLeftRadiusX,border-top-left-radius-x,LengthValue,length,0px,false,paint,length,-
+252,BorderTopLeftRadiusY,border-top-left-radius-y,LengthValue,length,0px,false,paint,length,-
+253,BorderTopRightRadiusX,border-top-right-radius-x,LengthValue,length,0px,false,paint,length,-
+254,BorderTopRightRadiusY,border-top-right-radius-y,LengthValue,length,0px,false,paint,length,-
+255,BorderBottomRightRadiusX,border-bottom-right-radius-x,LengthValue,length,0px,false,paint,length,-
+256,BorderBottomRightRadiusY,border-bottom-right-radius-y,LengthValue,length,0px,false,paint,length,-
+257,BorderBottomLeftRadiusX,border-bottom-left-radius-x,LengthValue,length,0px,false,paint,length,-
+258,BorderBottomLeftRadiusY,border-bottom-left-radius-y,LengthValue,length,0px,false,paint,length,-

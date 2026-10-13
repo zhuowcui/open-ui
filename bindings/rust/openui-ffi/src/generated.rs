@@ -254,6 +254,14 @@ pub(crate) fn property_from_raw(value: i32) -> Option<StyleProperty> {
         248 => Some(StyleProperty::ScrollSnapAlignBlock),
         249 => Some(StyleProperty::ScrollSnapAlignInline),
         250 => Some(StyleProperty::WebkitTextFillColor),
+        251 => Some(StyleProperty::BorderTopLeftRadiusX),
+        252 => Some(StyleProperty::BorderTopLeftRadiusY),
+        253 => Some(StyleProperty::BorderTopRightRadiusX),
+        254 => Some(StyleProperty::BorderTopRightRadiusY),
+        255 => Some(StyleProperty::BorderBottomRightRadiusX),
+        256 => Some(StyleProperty::BorderBottomRightRadiusY),
+        257 => Some(StyleProperty::BorderBottomLeftRadiusX),
+        258 => Some(StyleProperty::BorderBottomLeftRadiusY),
         _ => None,
     }
 }
@@ -510,6 +518,14 @@ pub(crate) fn expected_value_tag(property: StyleProperty) -> u32 {
         StyleProperty::ScrollSnapAlignBlock => 6,
         StyleProperty::ScrollSnapAlignInline => 6,
         StyleProperty::WebkitTextFillColor => 6,
+        StyleProperty::BorderTopLeftRadiusX => 1,
+        StyleProperty::BorderTopLeftRadiusY => 1,
+        StyleProperty::BorderTopRightRadiusX => 1,
+        StyleProperty::BorderTopRightRadiusY => 1,
+        StyleProperty::BorderBottomRightRadiusX => 1,
+        StyleProperty::BorderBottomRightRadiusY => 1,
+        StyleProperty::BorderBottomLeftRadiusX => 1,
+        StyleProperty::BorderBottomLeftRadiusY => 1,
     }
 }
 

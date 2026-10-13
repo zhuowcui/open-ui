@@ -756,4 +756,28 @@ impl Element {
     pub fn set_webkit_text_fill_color(&self, value: StyleColor) -> Result<(), Error> {
         self.set_property(StyleProperty::WebkitTextFillColor, StyleValue::Renderer(RendererStyleValue::WebkitTextFillColor(value)))
     }
+    pub fn set_border_top_left_radius_x(&self, value: LengthValue) -> Result<(), Error> {
+        self.set_property(StyleProperty::BorderTopLeftRadiusX, value.into())
+    }
+    pub fn set_border_top_left_radius_y(&self, value: LengthValue) -> Result<(), Error> {
+        self.set_property(StyleProperty::BorderTopLeftRadiusY, value.into())
+    }
+    pub fn set_border_top_right_radius_x(&self, value: LengthValue) -> Result<(), Error> {
+        self.set_property(StyleProperty::BorderTopRightRadiusX, value.into())
+    }
+    pub fn set_border_top_right_radius_y(&self, value: LengthValue) -> Result<(), Error> {
+        self.set_property(StyleProperty::BorderTopRightRadiusY, value.into())
+    }
+    pub fn set_border_bottom_right_radius_x(&self, value: LengthValue) -> Result<(), Error> {
+        self.set_property(StyleProperty::BorderBottomRightRadiusX, value.into())
+    }
+    pub fn set_border_bottom_right_radius_y(&self, value: LengthValue) -> Result<(), Error> {
+        self.set_property(StyleProperty::BorderBottomRightRadiusY, value.into())
+    }
+    pub fn set_border_bottom_left_radius_x(&self, value: LengthValue) -> Result<(), Error> {
+        self.set_property(StyleProperty::BorderBottomLeftRadiusX, value.into())
+    }
+    pub fn set_border_bottom_left_radius_y(&self, value: LengthValue) -> Result<(), Error> {
+        self.set_property(StyleProperty::BorderBottomLeftRadiusY, value.into())
+    }
 }

@@ -2168,6 +2168,23 @@ impl Engine {
         Ok(())
     }
 
+    /// Reflect one independent native radius axis from the current computed
+    /// source. This does not reduce overlaps or substitute a layout-box size.
+    pub fn radius_axis_length(
+        &self,
+        handle: NodeHandle,
+        property: StyleProperty,
+    ) -> Result<openui_style::LengthValue, EngineError> {
+        let node = self.resolve(handle)?;
+        self.document
+            .node(node)
+            .style
+            .border_radius_axis_length(property)
+            .ok_or(EngineError::InvalidInput(
+                "property is not a native radius axis",
+            ))
+    }
+
     pub fn computed_style(
         &self,
         handle: NodeHandle,

@@ -50,14 +50,14 @@ class CanonicalOwnershipGeneratorTests(unittest.TestCase):
     def test_invalid_corner_selector_cannot_escape_the_generator(self):
         schema = GENERATOR.rows()
         groups = GENERATOR.canonical_group_fields(schema)
-        groups["BorderTopLeftRadius"] = ["border_radius_lengths[4]"]
+        groups["BorderTopLeftRadiusX"] = ["border_radius_lengths[4].0"]
         text = self.mutated_schema(lambda rows: [
             row.__setitem__("mutation_fields", ";".join(dict.fromkeys(
                 field for name in row["canonical_groups"].split(";") for field in groups[name]
             ))) for row in rows
         ])
         with patch.object(GENERATOR, "canonical_group_fields", return_value=groups):
-            self.rejected(text, "invalid canonical array projection")
+            self.rejected(text, "invalid canonical component projection")
 
     def test_summaries_do_not_own_longhands_and_native_flag_overrides_are_explicit(self):
         schema = GENERATOR.rows()
@@ -70,9 +70,23 @@ class CanonicalOwnershipGeneratorTests(unittest.TestCase):
         self.assertNotIn("TextEmphasisPosition", rows["TextEmphasis"]["canonical_groups"])
         self.assertIn("BorderImage", rows["Border"]["canonical_groups"].split(";"))
 
+    def test_explicit_canonical_id_ledger_rejects_missing_or_duplicate_owners(self):
+        original = list(csv.DictReader(GENERATOR.CANONICAL_IDS_SCHEMA.read_text().splitlines()))
+        for changed in (original[:-1], [original[0], *original[:-1]]):
+            with tempfile.TemporaryDirectory() as directory:
+                path = Path(directory) / "canonical-style-field-ids.csv"
+                stream = io.StringIO()
+                writer = csv.DictWriter(stream, fieldnames=["id", "canonical_group"])
+                writer.writeheader()
+                writer.writerows(changed)
+                path.write_text(stream.getvalue())
+                with patch.object(GENERATOR, "CANONICAL_IDS_SCHEMA", path):
+                    with self.assertRaises(SystemExit):
+                        GENERATOR.outputs()
+
     def test_real_cli_check_rejects_drift_without_writing_outputs(self):
         generated = GENERATOR.outputs()
-        inputs = [GENERATOR.SCHEMA, GENERATOR.INTERNAL_SCHEMA, GENERATOR.CANONICAL_SCHEMA, GENERATOR.COMPUTED,
+        inputs = [GENERATOR.SCHEMA, GENERATOR.INTERNAL_SCHEMA, GENERATOR.CANONICAL_SCHEMA, GENERATOR.CANONICAL_IDS_SCHEMA, GENERATOR.COMPUTED,
                   GENERATOR.ROOT / "bindings/rust/openui-style/src/property.rs",
                   GENERATOR.ROOT / "bindings/rust/openui-style/src/enums.rs",
                   GENERATOR.ROOT / "bindings/rust/openui-style/src/layout_systems.rs"]

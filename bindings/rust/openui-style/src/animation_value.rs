@@ -232,6 +232,26 @@ impl AnimationLength {
             },
         }
     }
+    fn radius_legacy_percentage_flag(self, percent: bool) -> Self {
+        // The existing computed override clears raw sources and reinterprets
+        // the legacy numeric projection. Calc's projection is its percentage
+        // coefficient, matching ordinary property publication.
+        let numeric = if self.kind == LengthType::Fixed {
+            self.pixels
+        } else {
+            self.percent
+        };
+        Self {
+            pixels: if percent { 0.0 } else { numeric },
+            percent: if percent { numeric } else { 0.0 },
+            kind: if percent {
+                LengthType::Percent
+            } else {
+                LengthType::Fixed
+            },
+        }
+    }
+
     fn resolve(self) -> LengthValue {
         LengthValue::Computed(match self.kind {
             LengthType::Fixed => Length::px(self.pixels as f32),
@@ -381,6 +401,40 @@ impl CompositedStyleValue {
         }
     }
 
+    /// Numeric operand for the existing discrete renderer corner transport.
+    /// Preserve its accepted source value; new native axes clamp separately.
+    #[doc(hidden)]
+    pub fn radius_legacy_numeric(&self) -> Option<f32> {
+        match self {
+            Self::Length(value) => Some(if value.kind == LengthType::Fixed {
+                value.pixels as f32
+            } else {
+                value.percent as f32
+            }),
+            _ => None,
+        }
+    }
+
+    /// Legacy corner pair setters keep their existing percentage flags when
+    /// replacing raw sources. Calc projects a non-percent legacy flag.
+    #[doc(hidden)]
+    pub fn radius_percentage_flag(&self) -> Option<bool> {
+        match self {
+            Self::Length(value) => Some(value.kind == LengthType::Percent),
+            _ => None,
+        }
+    }
+
+    /// Apply only the legacy native percentage overlay to an axis working
+    /// value. Its f64 numeric projection survives lower-effect composition.
+    #[doc(hidden)]
+    pub fn with_radius_percentage_flag(&self, percent: bool) -> Option<Self> {
+        match self {
+            Self::Length(value) => Some(Self::Length(value.radius_legacy_percentage_flag(percent))),
+            _ => None,
+        }
+    }
+
     pub fn into_style_value(self, property: StyleProperty) -> StyleValue {
         let edges = |values: [AnimationLength; 4]| Edges {
             top: values[0].resolve(),
@@ -424,7 +478,24 @@ impl CompositedStyleValue {
                 value.resolve(),
             ))),
             Self::ColorExpression { value, .. } => StyleValue::ColorExpression(value),
-            Self::Length(value) => StyleValue::Length(value.resolve()),
+            Self::Length(value) => {
+                let mut length = value.resolve();
+                if property.radius_axis_coordinates().is_some() {
+                    if let LengthValue::Computed(value) = length {
+                        // Nonnegative radius range clamps at final publication,
+                        // never between Add/Accumulate effects. Calc retains its
+                        // coefficients and clamps against the actual box later.
+                        length = if value.is_fixed() {
+                            LengthValue::px(value.value().max(0.0))
+                        } else if value.is_percent() {
+                            LengthValue::percent(value.value().max(0.0))
+                        } else {
+                            length
+                        };
+                    }
+                }
+                StyleValue::Length(length)
+            }
             Self::Edges(value) => StyleValue::Edges(edges(value)),
             Self::CornerRadii(value) => StyleValue::CornerRadii(crate::CornerRadii(edges(value))),
             Self::Gap(value) => StyleValue::Gap(Gap {

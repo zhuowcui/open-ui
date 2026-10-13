@@ -37,6 +37,9 @@ mod native_app;
 mod native_app_tests;
 #[cfg(test)]
 mod property_removal_tests;
+mod radius_axis;
+#[cfg(test)]
+mod radius_axis_tests;
 #[cfg(test)]
 mod raw_event_tests;
 mod registry;
@@ -72,6 +75,7 @@ pub use named_timeline::{
     oui_document_set_animation_attachment_range_v1, oui_element_animate_with_attachment_range_v1,
 };
 pub use native_app::{oui_app_request_exit, oui_app_run};
+pub use radius_axis::{oui_element_radius_axis_length_v1, oui_style_value_radius_axis_length_v1};
 pub use scroll_button::{
     oui_element_create_scroll_button_v1, oui_element_get_scroll_button_v1,
     oui_element_set_native_appearance_v1, oui_element_set_scroll_snap_strictness_v1,

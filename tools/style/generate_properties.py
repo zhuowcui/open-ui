@@ -16,6 +16,7 @@ ROOT = Path(__file__).resolve().parents[2]
 SCHEMA = ROOT / "bindings/rust/openui-style/property-schema.csv"
 INTERNAL_SCHEMA = ROOT / "bindings/rust/openui-style/internal-style-fields.csv"
 CANONICAL_SCHEMA = ROOT / "bindings/rust/openui-style/canonical-style-fields.csv"
+CANONICAL_IDS_SCHEMA = ROOT / "bindings/rust/openui-style/canonical-style-field-ids.csv"
 COMPUTED = ROOT / "bindings/rust/openui-style/src/computed.rs"
 RUST_OUT = ROOT / "bindings/rust/openui-style/src/generated_properties.rs"
 ACCESSORS_OUT = ROOT / "bindings/rust/openui-style/src/generated_computed_accessors.rs"
@@ -80,11 +81,17 @@ def canonical_group_fields(schema: list[dict[str, str]]) -> dict[str, list[str]]
     corners = ["BorderTopLeftRadius", "BorderTopRightRadius", "BorderBottomRightRadius", "BorderBottomLeftRadius"]
     for index, name in enumerate(corners):
         groups[name] += [f"border_radius_percent[{index}]", f"border_radius_lengths[{index}]"]
+        numeric = field_names(next(row for row in schema if row["rust_name"] == name))[0]
+        for axis, suffix in enumerate(("X", "Y")):
+            groups[name + suffix] = [
+                f"{numeric}.{axis}", f"border_radius_percent[{index}].{axis}",
+                f"border_radius_lengths[{index}].{axis}",
+            ]
     # This is an explicit native computed override, not a CSS longhand. Its
     # identity is separate; its write set still intersects all corner sources.
     groups["BorderRadiusPercent"] = [
-        field for index in range(4)
-        for field in (f"border_radius_percent[{index}]", f"border_radius_lengths[{index}]")
+        field for index in range(4) for axis in range(2)
+        for field in (f"border_radius_percent[{index}].{axis}", f"border_radius_lengths[{index}].{axis}")
     ]
     return groups
 
@@ -108,11 +115,15 @@ def canonical_rows(schema: list[dict[str, str]]) -> list[dict[str, str]]:
         if set(writes) != set(expected) or len(writes) != len(set(writes)):
             raise SystemExit("canonical mutation fields disagree for " + row["property"])
         for field in writes:
-            base = field.split("[")[0]
+            base = field.split("[")[0].split(".")[0]
             if base not in fields:
                 raise SystemExit("unknown canonical projection field: " + field)
-            if "[" in field and (base not in {"border_radius_percent", "border_radius_lengths"} or field not in {f"{base}[{i}]" for i in range(4)}):
-                raise SystemExit("invalid canonical array projection: " + field)
+            radius_numeric = {"border_top_left_radius", "border_top_right_radius", "border_bottom_right_radius", "border_bottom_left_radius"}
+            radius_arrays = {"border_radius_percent", "border_radius_lengths"}
+            allowed = {f"{name}[{i}]{suffix}" for name in radius_arrays for i in range(4) for suffix in ("", ".0", ".1")}
+            allowed |= {f"{name}.{axis}" for name in radius_numeric for axis in range(2)}
+            if ("[" in field or "." in field) and field not in allowed:
+                raise SystemExit("invalid canonical component projection: " + field)
     return parsed
 
 
@@ -720,9 +731,21 @@ def authored_output(schema: list[dict[str, str]]) -> bytes:
     ownership = canonical_rows(schema)
     group_fields = canonical_group_fields(schema)
     used = {name for row in ownership for name in row["canonical_groups"].split(";")}
-    names = [row["rust_name"] for row in schema if row["rust_name"] in used]
-    if len(names) != len(used):
-        raise SystemExit("canonical owner must have one existing property identity")
+    # Stable IDs are an owned ledger: old paired compatibility owners remain
+    # available even when new axis declarations use more precise live masks.
+    ledger = list(csv.DictReader(CANONICAL_IDS_SCHEMA.read_text().splitlines()))
+    if not ledger or set(ledger[0]) != {"id", "canonical_group"}:
+        raise SystemExit("canonical ID ledger columns do not match")
+    if [int(row["id"]) for row in ledger] != list(range(len(ledger))):
+        raise SystemExit("canonical ID ledger must be contiguous and ordered")
+    names = [row["canonical_group"] for row in ledger]
+    if len(names) != len(set(names)) or not used.issubset(names) or any(name not in group_fields for name in names):
+        raise SystemExit("canonical ID ledger must cover all owners with existing property identities")
+    def expanded_fields(fields):
+        radius_names = {"border_top_left_radius", "border_top_right_radius", "border_bottom_right_radius", "border_bottom_left_radius"}
+        radius_pairs = {f"{name}[{i}]" for name in ("border_radius_percent", "border_radius_lengths") for i in range(4)}
+        return {component for field in fields for component in
+                ((field + ".0", field + ".1") if field in radius_names | radius_pairs else (field,))}
     variants = "\n".join(f"    {name} = {index}," for index, name in enumerate(names))
     values = "\n".join(f"    CanonicalStyleField::{name}," for name in names)
     copy_cases = []
@@ -730,11 +753,18 @@ def authored_output(schema: list[dict[str, str]]) -> bytes:
     words = (len(names) + 63) // 64
     for name in names:
         fields = group_fields[name]
-        assignments = " ".join(f"target.fields.{field} = source.fields.{field}.clone();" for field in fields)
+        radius_axes = [corner + axis for corner in ("BorderTopLeftRadius", "BorderTopRightRadius", "BorderBottomRightRadius", "BorderBottomLeftRadius") for axis in ("X", "Y")]
+        if name in radius_axes:
+            index = radius_axes.index(name)
+            assignments = f"target.copy_border_radius_axis_from(source, {index // 2}, {index % 2});"
+        elif name == "BorderRadiusPercent":
+            assignments = "target.fields.border_radius_percent = source.fields.border_radius_percent; target.fields.border_radius_lengths = source.fields.border_radius_lengths;"
+        else:
+            assignments = " ".join(f"target.fields.{field} = source.fields.{field}.clone();" for field in fields)
         copy_cases.append(f"            Self::{name} => {{ {assignments} }},")
         dependent = [0] * words
         for index, other in enumerate(names):
-            if set(fields).intersection(group_fields[other]):
+            if expanded_fields(fields).intersection(expanded_fields(group_fields[other])):
                 dependent[index // 64] |= 1 << (index % 64)
         write_cases.append(f"            Self::{name} => CanonicalStyleFields([{', '.join(str(word) for word in dependent)}]),")
     property_cases = []

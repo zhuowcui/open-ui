@@ -731,3 +731,16 @@ pub struct OuiAnimationAttachmentSnapshotV1 {
     pub entry_crossing_distance: f64,
     pub exit_crossing_distance: f64,
 }
+
+/// Independent native radius-axis source length. Unit13 is calculated percent
+/// plus pixels; all other units retain the existing OuiLength unit numbers.
+#[repr(C)]
+#[derive(Debug, Clone, Copy)]
+pub struct OuiRadiusAxisLengthV1 {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub value: f32,
+    pub calc_offset: f32,
+    pub unit: u32,
+    pub reserved: u32,
+}

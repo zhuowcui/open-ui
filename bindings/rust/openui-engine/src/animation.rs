@@ -1360,6 +1360,19 @@ impl Engine {
         font_properties: bool,
     ) -> Vec<(StyleProperty, StyleValue)> {
         let mut values = std::collections::BTreeMap::new();
+        // Radius shorthands and independent axes share scalar working stacks.
+        // The separate legacy percentage override changes the lower numeric
+        // interpretation, while ordered final publication retains its actual
+        // flag/raw-clear behavior rather than inventing another declaration.
+        let mut radius_underlying: [Option<CompositedStyleValue>; 8] =
+            std::array::from_fn(|_| None);
+        let legacy_corners = [
+            StyleProperty::BorderTopLeftRadius,
+            StyleProperty::BorderTopRightRadius,
+            StyleProperty::BorderBottomRightRadius,
+            StyleProperty::BorderBottomLeftRadius,
+        ];
+        let mut legacy_pairs: [Option<(AnimationId, (f32, f32))>; 4] = [None; 4];
         for (id, instance) in &self.animations {
             if instance.target != self.handle_for_slot(index) {
                 continue;
@@ -1373,9 +1386,14 @@ impl Engine {
                 if font_property != font_properties {
                     continue;
                 }
-                let underlying = values
-                    .get(&(property as u16))
-                    .map(|(_, value): &(AnimationId, CompositedStyleValue)| value.clone())
+                let underlying = property
+                    .radius_axis_coordinates()
+                    .and_then(|(corner, axis)| radius_underlying[corner * 2 + axis].clone())
+                    .or_else(|| {
+                        values
+                            .get(&(property as u16))
+                            .map(|(_, value): &(AnimationId, CompositedStyleValue)| value.clone())
+                    })
                     .unwrap_or_else(|| {
                         CompositedStyleValue::from_style_value_for_property(
                             property,
@@ -1429,8 +1447,90 @@ impl Engine {
                         },
                     )
                     .expect("owned typed animation component");
+                if let Some((corner, axis)) = property.radius_axis_coordinates() {
+                    radius_underlying[corner * 2 + axis] = Some(value.clone());
+                } else if property == StyleProperty::BorderRadiusPercent {
+                    if let StyleValue::Renderer(
+                        openui_style::RendererStyleValue::BorderRadiusPercent(flags),
+                    ) = value.clone().into_style_value(property)
+                    {
+                        for (index, axis_property) in
+                            openui_style::RADIUS_AXIS_PROPERTIES.into_iter().enumerate()
+                        {
+                            let base = radius_underlying[index].clone().unwrap_or_else(|| {
+                                CompositedStyleValue::from_style_value_for_property(
+                                    axis_property,
+                                    value_from_computed(style, axis_property),
+                                )
+                            });
+                            let flag = if index % 2 == 0 {
+                                flags[index / 2].0
+                            } else {
+                                flags[index / 2].1
+                            };
+                            radius_underlying[index] = base.with_radius_percentage_flag(flag);
+                        }
+                    }
+                }
                 values.insert(property as u16, (*id, value));
             }
+            if !font_properties {
+                if let Some(corner) = legacy_corners
+                    .iter()
+                    .position(|property| *property == instance.keyframes.property())
+                {
+                    let x = radius_underlying[corner * 2]
+                        .as_ref()
+                        .and_then(CompositedStyleValue::radius_legacy_numeric);
+                    let y = radius_underlying[corner * 2 + 1]
+                        .as_ref()
+                        .and_then(CompositedStyleValue::radius_legacy_numeric);
+                    if let (Some(x), Some(y)) = (x, y) {
+                        legacy_pairs[corner] = Some((*id, (x, y)));
+                    }
+                }
+            }
+        }
+        // A surviving old discrete corner effect publishes through its old
+        // renderer transport. Its accepted raw numbers/source presence must not
+        // acquire the new axis range clamp. Newer axis effects still publish
+        // their separately composed component after this original pair.
+        for (corner, entry) in legacy_pairs.into_iter().enumerate() {
+            let Some((id, pair)) = entry else {
+                continue;
+            };
+            let axes = [
+                openui_style::RADIUS_AXIS_PROPERTIES[corner * 2],
+                openui_style::RADIUS_AXIS_PROPERTIES[corner * 2 + 1],
+            ];
+            let owned = axes.map(|axis| {
+                values
+                    .get(&(axis as u16))
+                    .is_some_and(|(winner, _)| *winner == id)
+            });
+            if !owned.into_iter().any(|owns| owns) {
+                continue;
+            }
+            for (axis, owns) in axes.into_iter().zip(owned) {
+                if owns {
+                    values.remove(&(axis as u16));
+                }
+            }
+            use openui_style::RendererStyleValue as R;
+            let renderer = match corner {
+                0 => R::BorderTopLeftRadius(pair),
+                1 => R::BorderTopRightRadius(pair),
+                2 => R::BorderBottomRightRadius(pair),
+                3 => R::BorderBottomLeftRadius(pair),
+                _ => unreachable!("physical corner"),
+            };
+            values.insert(
+                legacy_corners[corner] as u16,
+                (
+                    id,
+                    CompositedStyleValue::Style(StyleValue::Renderer(renderer)),
+                ),
+            );
         }
         let mut ordered = values
             .into_iter()

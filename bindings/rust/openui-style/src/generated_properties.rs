@@ -254,6 +254,14 @@ pub enum StyleProperty {
     ScrollSnapAlignBlock = 248,
     ScrollSnapAlignInline = 249,
     WebkitTextFillColor = 250,
+    BorderTopLeftRadiusX = 251,
+    BorderTopLeftRadiusY = 252,
+    BorderTopRightRadiusX = 253,
+    BorderTopRightRadiusY = 254,
+    BorderBottomRightRadiusX = 255,
+    BorderBottomRightRadiusY = 256,
+    BorderBottomLeftRadiusX = 257,
+    BorderBottomLeftRadiusY = 258,
 }
 
 /// Schema-generated values for renderer longhands appended after the stable
@@ -1856,7 +1864,7 @@ impl StyleProperty {
             Self::BorderRight => &["border_right_color", "border_right_style", "border_right_width"],
             Self::BorderBottom => &["border_bottom_color", "border_bottom_style", "border_bottom_width"],
             Self::BorderLeft => &["border_left_color", "border_left_style", "border_left_width"],
-            Self::BorderRadius => &["border_top_left_radius", "border_radius_percent[0]", "border_radius_lengths[0]", "border_top_right_radius", "border_radius_percent[1]", "border_radius_lengths[1]", "border_bottom_right_radius", "border_radius_percent[2]", "border_radius_lengths[2]", "border_bottom_left_radius", "border_radius_percent[3]", "border_radius_lengths[3]"],
+            Self::BorderRadius => &["border_top_left_radius.0", "border_radius_percent[0].0", "border_radius_lengths[0].0", "border_top_left_radius.1", "border_radius_percent[0].1", "border_radius_lengths[0].1", "border_top_right_radius.0", "border_radius_percent[1].0", "border_radius_lengths[1].0", "border_top_right_radius.1", "border_radius_percent[1].1", "border_radius_lengths[1].1", "border_bottom_right_radius.0", "border_radius_percent[2].0", "border_radius_lengths[2].0", "border_bottom_right_radius.1", "border_radius_percent[2].1", "border_radius_lengths[2].1", "border_bottom_left_radius.0", "border_radius_percent[3].0", "border_radius_lengths[3].0", "border_bottom_left_radius.1", "border_radius_percent[3].1", "border_radius_lengths[3].1"],
             Self::Cursor => &[],
             Self::ListStyleType => &["list_style_type"],
             Self::Transform => &["transform", "native_transform", "transform_matrix"],
@@ -1948,8 +1956,8 @@ impl StyleProperty {
             Self::BackgroundLayers => &["background_layers"],
             Self::BackgroundLinearGradient => &["background_linear_gradient"],
             Self::BorderBottomColor => &["border_bottom_color"],
-            Self::BorderBottomLeftRadius => &["border_bottom_left_radius", "border_radius_percent[3]", "border_radius_lengths[3]"],
-            Self::BorderBottomRightRadius => &["border_bottom_right_radius", "border_radius_percent[2]", "border_radius_lengths[2]"],
+            Self::BorderBottomLeftRadius => &["border_bottom_left_radius.0", "border_radius_percent[3].0", "border_radius_lengths[3].0", "border_bottom_left_radius.1", "border_radius_percent[3].1", "border_radius_lengths[3].1"],
+            Self::BorderBottomRightRadius => &["border_bottom_right_radius.0", "border_radius_percent[2].0", "border_radius_lengths[2].0", "border_bottom_right_radius.1", "border_radius_percent[2].1", "border_radius_lengths[2].1"],
             Self::BorderBottomStyle => &["border_bottom_style"],
             Self::BorderBottomWidth => &["border_bottom_width"],
             Self::BorderCollapse => &["border_collapse"],
@@ -1957,14 +1965,14 @@ impl StyleProperty {
             Self::BorderLeftColor => &["border_left_color"],
             Self::BorderLeftStyle => &["border_left_style"],
             Self::BorderLeftWidth => &["border_left_width"],
-            Self::BorderRadiusPercent => &["border_radius_percent[0]", "border_radius_percent[1]", "border_radius_percent[2]", "border_radius_percent[3]", "border_radius_lengths[0]", "border_radius_lengths[1]", "border_radius_lengths[2]", "border_radius_lengths[3]"],
+            Self::BorderRadiusPercent => &["border_radius_percent[0].0", "border_radius_lengths[0].0", "border_radius_percent[0].1", "border_radius_lengths[0].1", "border_radius_percent[1].0", "border_radius_lengths[1].0", "border_radius_percent[1].1", "border_radius_lengths[1].1", "border_radius_percent[2].0", "border_radius_lengths[2].0", "border_radius_percent[2].1", "border_radius_lengths[2].1", "border_radius_percent[3].0", "border_radius_lengths[3].0", "border_radius_percent[3].1", "border_radius_lengths[3].1"],
             Self::BorderRightColor => &["border_right_color"],
             Self::BorderRightStyle => &["border_right_style"],
             Self::BorderRightWidth => &["border_right_width"],
             Self::BorderSpacing => &["border_spacing"],
             Self::BorderTopColor => &["border_top_color"],
-            Self::BorderTopLeftRadius => &["border_top_left_radius", "border_radius_percent[0]", "border_radius_lengths[0]"],
-            Self::BorderTopRightRadius => &["border_top_right_radius", "border_radius_percent[1]", "border_radius_lengths[1]"],
+            Self::BorderTopLeftRadius => &["border_top_left_radius.0", "border_radius_percent[0].0", "border_radius_lengths[0].0", "border_top_left_radius.1", "border_radius_percent[0].1", "border_radius_lengths[0].1"],
+            Self::BorderTopRightRadius => &["border_top_right_radius.0", "border_radius_percent[1].0", "border_radius_lengths[1].0", "border_top_right_radius.1", "border_radius_percent[1].1", "border_radius_lengths[1].1"],
             Self::BorderTopStyle => &["border_top_style"],
             Self::BorderTopWidth => &["border_top_width"],
             Self::Bottom => &["bottom"],
@@ -2065,6 +2073,14 @@ impl StyleProperty {
             Self::ScrollSnapAlignBlock => &["scroll_snap_align_block"],
             Self::ScrollSnapAlignInline => &["scroll_snap_align_inline"],
             Self::WebkitTextFillColor => &["text_fill_color"],
+            Self::BorderTopLeftRadiusX => &["border_top_left_radius.0", "border_radius_percent[0].0", "border_radius_lengths[0].0"],
+            Self::BorderTopLeftRadiusY => &["border_top_left_radius.1", "border_radius_percent[0].1", "border_radius_lengths[0].1"],
+            Self::BorderTopRightRadiusX => &["border_top_right_radius.0", "border_radius_percent[1].0", "border_radius_lengths[1].0"],
+            Self::BorderTopRightRadiusY => &["border_top_right_radius.1", "border_radius_percent[1].1", "border_radius_lengths[1].1"],
+            Self::BorderBottomRightRadiusX => &["border_bottom_right_radius.0", "border_radius_percent[2].0", "border_radius_lengths[2].0"],
+            Self::BorderBottomRightRadiusY => &["border_bottom_right_radius.1", "border_radius_percent[2].1", "border_radius_lengths[2].1"],
+            Self::BorderBottomLeftRadiusX => &["border_bottom_left_radius.0", "border_radius_percent[3].0", "border_radius_lengths[3].0"],
+            Self::BorderBottomLeftRadiusY => &["border_bottom_left_radius.1", "border_radius_percent[3].1", "border_radius_lengths[3].1"],
         }
     }
 
@@ -2328,6 +2344,14 @@ impl StyleProperty {
             "scroll-snap-align-block" => Some(Self::ScrollSnapAlignBlock),
             "scroll-snap-align-inline" => Some(Self::ScrollSnapAlignInline),
             "-webkit-text-fill-color" => Some(Self::WebkitTextFillColor),
+            "border-top-left-radius-x" => Some(Self::BorderTopLeftRadiusX),
+            "border-top-left-radius-y" => Some(Self::BorderTopLeftRadiusY),
+            "border-top-right-radius-x" => Some(Self::BorderTopRightRadiusX),
+            "border-top-right-radius-y" => Some(Self::BorderTopRightRadiusY),
+            "border-bottom-right-radius-x" => Some(Self::BorderBottomRightRadiusX),
+            "border-bottom-right-radius-y" => Some(Self::BorderBottomRightRadiusY),
+            "border-bottom-left-radius-x" => Some(Self::BorderBottomLeftRadiusX),
+            "border-bottom-left-radius-y" => Some(Self::BorderBottomLeftRadiusY),
             _ => None,
         }
     }
@@ -4838,6 +4862,86 @@ pub const PROPERTY_METADATA: &[PropertyMetadata] = &[
         invalidation: InvalidationClass::Paint,
         interpolation: InterpolationKind::Color,
     },
+    PropertyMetadata {
+        property: StyleProperty::BorderTopLeftRadiusX,
+        css_name: "border-top-left-radius-x",
+        rust_type: "LengthValue",
+        value_kind: ValueKind::Length,
+        initial: "0px",
+        inherited: false,
+        invalidation: InvalidationClass::Paint,
+        interpolation: InterpolationKind::Length,
+    },
+    PropertyMetadata {
+        property: StyleProperty::BorderTopLeftRadiusY,
+        css_name: "border-top-left-radius-y",
+        rust_type: "LengthValue",
+        value_kind: ValueKind::Length,
+        initial: "0px",
+        inherited: false,
+        invalidation: InvalidationClass::Paint,
+        interpolation: InterpolationKind::Length,
+    },
+    PropertyMetadata {
+        property: StyleProperty::BorderTopRightRadiusX,
+        css_name: "border-top-right-radius-x",
+        rust_type: "LengthValue",
+        value_kind: ValueKind::Length,
+        initial: "0px",
+        inherited: false,
+        invalidation: InvalidationClass::Paint,
+        interpolation: InterpolationKind::Length,
+    },
+    PropertyMetadata {
+        property: StyleProperty::BorderTopRightRadiusY,
+        css_name: "border-top-right-radius-y",
+        rust_type: "LengthValue",
+        value_kind: ValueKind::Length,
+        initial: "0px",
+        inherited: false,
+        invalidation: InvalidationClass::Paint,
+        interpolation: InterpolationKind::Length,
+    },
+    PropertyMetadata {
+        property: StyleProperty::BorderBottomRightRadiusX,
+        css_name: "border-bottom-right-radius-x",
+        rust_type: "LengthValue",
+        value_kind: ValueKind::Length,
+        initial: "0px",
+        inherited: false,
+        invalidation: InvalidationClass::Paint,
+        interpolation: InterpolationKind::Length,
+    },
+    PropertyMetadata {
+        property: StyleProperty::BorderBottomRightRadiusY,
+        css_name: "border-bottom-right-radius-y",
+        rust_type: "LengthValue",
+        value_kind: ValueKind::Length,
+        initial: "0px",
+        inherited: false,
+        invalidation: InvalidationClass::Paint,
+        interpolation: InterpolationKind::Length,
+    },
+    PropertyMetadata {
+        property: StyleProperty::BorderBottomLeftRadiusX,
+        css_name: "border-bottom-left-radius-x",
+        rust_type: "LengthValue",
+        value_kind: ValueKind::Length,
+        initial: "0px",
+        inherited: false,
+        invalidation: InvalidationClass::Paint,
+        interpolation: InterpolationKind::Length,
+    },
+    PropertyMetadata {
+        property: StyleProperty::BorderBottomLeftRadiusY,
+        css_name: "border-bottom-left-radius-y",
+        rust_type: "LengthValue",
+        value_kind: ValueKind::Length,
+        initial: "0px",
+        inherited: false,
+        invalidation: InvalidationClass::Paint,
+        interpolation: InterpolationKind::Length,
+    },
 ];
 
 /// Compile contract for every schema-generated Rust property builder.
@@ -5095,6 +5199,14 @@ pub const PROPERTY_METADATA: &[PropertyMetadata] = &[
 ///     let _ = Style::default().scroll_snap_align_block(());
 ///     let _ = Style::default().scroll_snap_align_inline(());
 ///     let _ = Style::default().webkit_text_fill_color(());
+///     let _ = Style::default().border_top_left_radius_x(());
+///     let _ = Style::default().border_top_left_radius_y(());
+///     let _ = Style::default().border_top_right_radius_x(());
+///     let _ = Style::default().border_top_right_radius_y(());
+///     let _ = Style::default().border_bottom_right_radius_x(());
+///     let _ = Style::default().border_bottom_right_radius_y(());
+///     let _ = Style::default().border_bottom_left_radius_x(());
+///     let _ = Style::default().border_bottom_left_radius_y(());
 /// }
 /// ```
 #[doc(hidden)]
@@ -5356,6 +5468,14 @@ mod generated_property_compile_pass {
         let _ = Style::default().scroll_snap_align_block(unimplemented!());
         let _ = Style::default().scroll_snap_align_inline(unimplemented!());
         let _ = Style::default().webkit_text_fill_color(unimplemented!());
+        let _ = Style::default().border_top_left_radius_x(unimplemented!());
+        let _ = Style::default().border_top_left_radius_y(unimplemented!());
+        let _ = Style::default().border_top_right_radius_x(unimplemented!());
+        let _ = Style::default().border_top_right_radius_y(unimplemented!());
+        let _ = Style::default().border_bottom_right_radius_x(unimplemented!());
+        let _ = Style::default().border_bottom_right_radius_y(unimplemented!());
+        let _ = Style::default().border_bottom_left_radius_x(unimplemented!());
+        let _ = Style::default().border_bottom_left_radius_y(unimplemented!());
     }
 }
 
@@ -6110,5 +6230,29 @@ impl Style {
     }
     pub fn webkit_text_fill_color(self, value: StyleColor) -> Self {
         self.with_renderer(StyleProperty::WebkitTextFillColor, RendererStyleValue::WebkitTextFillColor(value))
+    }
+    pub fn border_top_left_radius_x(self, value: LengthValue) -> Self {
+        self.with(StyleProperty::BorderTopLeftRadiusX, value)
+    }
+    pub fn border_top_left_radius_y(self, value: LengthValue) -> Self {
+        self.with(StyleProperty::BorderTopLeftRadiusY, value)
+    }
+    pub fn border_top_right_radius_x(self, value: LengthValue) -> Self {
+        self.with(StyleProperty::BorderTopRightRadiusX, value)
+    }
+    pub fn border_top_right_radius_y(self, value: LengthValue) -> Self {
+        self.with(StyleProperty::BorderTopRightRadiusY, value)
+    }
+    pub fn border_bottom_right_radius_x(self, value: LengthValue) -> Self {
+        self.with(StyleProperty::BorderBottomRightRadiusX, value)
+    }
+    pub fn border_bottom_right_radius_y(self, value: LengthValue) -> Self {
+        self.with(StyleProperty::BorderBottomRightRadiusY, value)
+    }
+    pub fn border_bottom_left_radius_x(self, value: LengthValue) -> Self {
+        self.with(StyleProperty::BorderBottomLeftRadiusX, value)
+    }
+    pub fn border_bottom_left_radius_y(self, value: LengthValue) -> Self {
+        self.with(StyleProperty::BorderBottomLeftRadiusY, value)
     }
 }

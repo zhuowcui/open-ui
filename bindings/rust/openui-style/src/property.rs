@@ -2063,6 +2063,16 @@ pub fn parse_literal(property: StyleProperty, input: &str) -> Result<StyleValue,
         P::Border | P::BorderTop | P::BorderRight | P::BorderBottom | P::BorderLeft => {
             border(input).map(StyleValue::Border)
         }
+        P::BorderTopLeftRadiusX
+        | P::BorderTopLeftRadiusY
+        | P::BorderTopRightRadiusX
+        | P::BorderTopRightRadiusY
+        | P::BorderBottomRightRadiusX
+        | P::BorderBottomRightRadiusY
+        | P::BorderBottomLeftRadiusX
+        | P::BorderBottomLeftRadiusY => length(input)
+            .filter(|value| value.is_valid_for_radius_axis())
+            .map(StyleValue::Length),
         P::BorderRadius => edges(input).map(|v| StyleValue::CornerRadii(CornerRadii(v))),
         P::Cursor => match input {
             "auto" => Some(Cursor::Auto),
@@ -2428,6 +2438,20 @@ pub fn apply_to_computed(
         property,
         expected: property.metadata().value_kind,
     };
+    if let Some((corner, axis)) = property.radius_axis_coordinates() {
+        let StyleValue::Length(value) = value else {
+            return Err(mismatch());
+        };
+        if !value.is_valid_for_radius_axis() {
+            return Err(mismatch());
+        }
+        let length = resolve(*value);
+        if !LengthValue::Computed(length).is_valid_for_radius_axis() {
+            return Err(mismatch());
+        }
+        style.set_border_radius_axis_resolved(corner, axis, length);
+        return Ok(property.metadata().invalidation);
+    }
     let scroll_padding = matches!(
         property,
         P::ScrollPaddingTop | P::ScrollPaddingRight | P::ScrollPaddingBottom | P::ScrollPaddingLeft
@@ -2737,6 +2761,9 @@ pub fn apply_to_computed(
 /// underlying value without maintaining a second handwritten style model.
 pub fn value_from_computed(style: &ComputedStyle, property: StyleProperty) -> StyleValue {
     use StyleProperty as P;
+    if let Some(value) = style.border_radius_axis_length(property) {
+        return StyleValue::Length(value);
+    }
     if property == P::BackgroundColor && style.fields.background_current_color {
         return StyleColor::CurrentColor.into();
     }
@@ -3380,10 +3407,10 @@ mod tests {
         assert_eq!(StyleProperty::ScrollPaddingTop as u16, 238);
         assert_eq!(StyleProperty::ScrollSnapAlignInline as u16, 249);
         assert_eq!(StyleProperty::WebkitTextFillColor as u16, 250);
-        assert_eq!(PROPERTY_METADATA.len(), 250);
+        assert_eq!(PROPERTY_METADATA.len(), 258);
         assert_eq!(
             PROPERTY_METADATA.last().unwrap().property,
-            StyleProperty::WebkitTextFillColor
+            StyleProperty::BorderBottomLeftRadiusY
         );
         for (index, metadata) in PROPERTY_METADATA.iter().enumerate() {
             let id = u16::try_from(index + 1).unwrap();
@@ -3395,7 +3422,7 @@ mod tests {
             assert_eq!(metadata.property.metadata(), metadata);
         }
         assert_eq!(StyleProperty::from_u16(0), None);
-        assert_eq!(StyleProperty::from_u16(251), None);
+        assert_eq!(StyleProperty::from_u16(259), None);
         assert_eq!(
             StyleProperty::Opacity.metadata().invalidation,
             InvalidationClass::Composite

@@ -146,6 +146,10 @@
       "align": 8,
       "size": 152
     },
+    "OuiRadiusAxisLengthV1": {
+      "align": 4,
+      "size": 24
+    },
     "OuiRect": {
       "align": 4,
       "size": 16

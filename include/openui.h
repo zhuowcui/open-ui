@@ -1593,6 +1593,44 @@ OuiStatus oui_document_get_animation_attachment_snapshot_v1(
     OuiDocument *document, uint64_t animation_id,
     OuiAnimationAttachmentSnapshotV1 *output);
 
+/* Native independent radius axes (IDs 251..258). These are typed framework
+ * component APIs, not additional browser CSS longhand syntax. Old OuiLength,
+ * property IDs, structs and exports retain their layouts and meanings.
+ *
+ * Descriptor uses sizeof(OuiRadiusAxisLengthV1), OUI_ABI_VERSION and native
+ * float precision. Units use OuiLengthUnit numbering; descriptor-local 13 is
+ * calc(value% + calc_offset px). auto/none, nonfinite coefficients, negative
+ * simple lengths, nonzero reserved and noncalc offset are rejected. Finite
+ * calc retains its coefficients; actual-box radius clamps to zero later.
+ *
+ * Factory copies the known input prefix and owns the returned property-bound
+ * compound. Release its data.compound via oui_style_compound_destroy; the
+ * Engine owns its copied value after oui_element_set_property succeeds. Reusing
+ * the carrier for another property is an error. No caller pointer is retained.
+ *
+ * Getter reflects current computed fixed/percent/calc source, not overlapped
+ * pixels; font/viewport units resolve through shared native declarations.
+ * Output reads only size then ABI header before full-prefix validation;
+ * success writes 24 bytes, preserves a future tail, and errors change no output.
+ * Getter requires live owning-thread element. Legacy unsupported/nonfinite
+ * computed sources return InvalidState. No callbacks run in this read operation.
+ */
+#define OUI_RADIUS_AXIS_LENGTH_CALCULATED 13u
+typedef struct OuiRadiusAxisLengthV1 {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  float value;
+  float calc_offset;
+  uint32_t unit;
+  uint32_t reserved;
+} OuiRadiusAxisLengthV1;
+
+OuiStatus oui_style_value_radius_axis_length_v1(
+    int32_t property, const OuiRadiusAxisLengthV1 *input,
+    OuiStyleValue *out_value);
+OuiStatus oui_element_radius_axis_length_v1(
+    OuiElement *element, int32_t property, OuiRadiusAxisLengthV1 *output);
+
 #ifdef __cplusplus
 }  /* extern "C" */
 #endif

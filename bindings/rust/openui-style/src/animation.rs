@@ -915,6 +915,13 @@ impl PropertyKeyframes {
                 P::PaddingBottom,
                 P::PaddingLeft,
             ],
+            P::BorderRadius => &crate::RADIUS_AXIS_PROPERTIES,
+            P::BorderTopLeftRadius => &[P::BorderTopLeftRadiusX, P::BorderTopLeftRadiusY],
+            P::BorderTopRightRadius => &[P::BorderTopRightRadiusX, P::BorderTopRightRadiusY],
+            P::BorderBottomRightRadius => {
+                &[P::BorderBottomRightRadiusX, P::BorderBottomRightRadiusY]
+            }
+            P::BorderBottomLeftRadius => &[P::BorderBottomLeftRadiusX, P::BorderBottomLeftRadiusY],
             P::Gap => &[P::RowGap, P::ColumnGap],
             _ => std::slice::from_ref(&self.property),
         }
@@ -925,6 +932,26 @@ impl PropertyKeyframes {
             return Some(value.clone());
         }
         use StyleProperty as P;
+        if let Some((corner, axis)) = property.radius_axis_coordinates() {
+            if let StyleValue::CornerRadii(value) = value {
+                let length = [value.0.top, value.0.right, value.0.bottom, value.0.left][corner];
+                return Some(length.into());
+            }
+            if let StyleValue::Renderer(value) = value {
+                let pair = match value {
+                    crate::RendererStyleValue::BorderTopLeftRadius(value) if corner == 0 => *value,
+                    crate::RendererStyleValue::BorderTopRightRadius(value) if corner == 1 => *value,
+                    crate::RendererStyleValue::BorderBottomRightRadius(value) if corner == 2 => {
+                        *value
+                    }
+                    crate::RendererStyleValue::BorderBottomLeftRadius(value) if corner == 3 => {
+                        *value
+                    }
+                    _ => return None,
+                };
+                return Some(LengthValue::px(if axis == 0 { pair.0 } else { pair.1 }).into());
+            }
+        }
         match (self.property, property, value) {
             (P::Margin | P::Padding, P::MarginTop | P::PaddingTop, StyleValue::Edges(v)) => {
                 Some(v.top.into())
@@ -965,13 +992,31 @@ impl PropertyKeyframes {
                 default_easing,
                 before,
                 underlying,
-                composite,
+                // Existing renderer corner pairs are discrete compatibility
+                // inputs. Splitting their publication preserves that contract;
+                // the new axis/shorthand length routes compose numerically.
+                if self.property.metadata().interpolation == InterpolationKind::Discrete {
+                    CompositeOperation::Replace
+                } else {
+                    composite
+                },
                 |value| {
-                    resolve(
-                        &self
-                            .component_value(property, value)
-                            .expect("validated native effect component"),
-                    )
+                    let mut component = self
+                        .component_value(property, value)
+                        .expect("validated native effect component");
+                    if matches!(
+                        self.property,
+                        StyleProperty::BorderTopLeftRadius
+                            | StyleProperty::BorderTopRightRadius
+                            | StyleProperty::BorderBottomRightRadius
+                            | StyleProperty::BorderBottomLeftRadius
+                    ) && underlying.radius_percentage_flag() == Some(true)
+                    {
+                        if let StyleValue::Length(LengthValue::Computed(value)) = component {
+                            component = LengthValue::percent(value.value()).into();
+                        }
+                    }
+                    resolve(&component)
                 },
             ),
         )
@@ -1088,7 +1133,9 @@ impl PropertyKeyframes {
                 .sample_with_before(interval, before);
             let from = endpoint(&from.value);
             let to = endpoint(&to.value);
-            if property.metadata().interpolation != InterpolationKind::Discrete {
+            if property.metadata().interpolation != InterpolationKind::Discrete
+                && self.property.metadata().interpolation != InterpolationKind::Discrete
+            {
                 from.interpolate(&to, eased).unwrap_or_else(|| {
                     let from = from.into_style_value(property);
                     let to = to.into_style_value(property);

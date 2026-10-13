@@ -445,3 +445,109 @@ fn projection_preserves_currentcolor_source_and_type_errors_are_atomic() {
     );
     assert_eq!(candidate.color, next.color);
 }
+
+#[test]
+fn independent_radius_axes_preserve_masked_sources_and_old_pair_presence() {
+    let mut declarations = AuthoredStyleDeclarations::default();
+    let radius: StyleValue = CornerRadii(Edges::all(LengthValue::Em(2.0))).into();
+    declarations
+        .try_set_validated(StyleProperty::BorderRadius, radius.clone())
+        .unwrap();
+    declarations
+        .try_set_validated(
+            StyleProperty::BorderTopLeftRadiusX,
+            LengthValue::calc_percent_px(25.0, -3.0).into(),
+        )
+        .unwrap();
+    assert!(declarations.remove(StyleProperty::BorderTopLeftRadiusX));
+    let mut baseline = ComputedStyle::initial();
+    baseline.update_derived(|fields| fields.font_size = 10.0);
+    let a = compose(&declarations, baseline.clone());
+    assert_eq!(a.border_radii_for_box((100.0, 80.0))[0], (0.0, 20.0));
+    baseline.update_derived(|fields| fields.font_size = 20.0);
+    let b = compose(&declarations, baseline);
+    assert_eq!(b.border_radii_for_box((100.0, 80.0))[0], (0.0, 40.0));
+    assert_eq!(declarations.contributions()[0].value(), &radius);
+    assert!(!declarations.contributions()[0]
+        .fields()
+        .contains(CanonicalStyleField::BorderTopLeftRadiusX));
+    assert!(declarations.contributions()[0]
+        .fields()
+        .contains(CanonicalStyleField::BorderTopLeftRadiusY));
+
+    declarations
+        .try_set_validated(
+            StyleProperty::BorderTopLeftRadius,
+            StyleValue::Renderer(RendererStyleValue::BorderTopLeftRadius((7.0, 8.0))),
+        )
+        .unwrap();
+    let old_pair = compose(&declarations, ComputedStyle::initial());
+    assert_eq!(old_pair.border_radius_lengths[0], None);
+    assert_eq!(old_pair.border_top_left_radius, (7.0, 8.0));
+    declarations
+        .try_set_validated(
+            StyleProperty::BorderTopLeftRadiusX,
+            LengthValue::calc_percent_px(25.0, -3.0).into(),
+        )
+        .unwrap();
+    let mixed = compose(&declarations, ComputedStyle::initial());
+    assert_eq!(
+        mixed.border_radius_lengths[0],
+        Some((Length::calc_percent_px(25.0, -3.0), Length::px(8.0)))
+    );
+    assert_eq!(mixed.border_radii_for_box((100.0, 80.0))[0], (22.0, 8.0));
+    declarations.remove(StyleProperty::BorderTopLeftRadiusX);
+    assert_eq!(
+        compose(&declarations, ComputedStyle::initial()).border_radii_for_box((100.0, 80.0))[0],
+        (0.0, 8.0)
+    );
+    assert!(declarations
+        .try_set_validated(StyleProperty::BorderRadius, radius)
+        .unwrap());
+}
+
+#[test]
+fn ordered_radius_percentage_override_remains_separate_from_axis_ownership() {
+    let mut declarations = AuthoredStyleDeclarations::default();
+    let x: StyleValue = LengthValue::calc_percent_px(25.0, 5.0).into();
+    declarations
+        .try_set_validated(StyleProperty::BorderTopLeftRadiusX, x.clone())
+        .unwrap();
+    declarations
+        .try_set_validated(
+            StyleProperty::BorderTopLeftRadiusY,
+            LengthValue::px(8.0).into(),
+        )
+        .unwrap();
+    declarations
+        .try_set_validated(
+            StyleProperty::BorderRadiusPercent,
+            StyleValue::Renderer(RendererStyleValue::BorderRadiusPercent([(true, false); 4])),
+        )
+        .unwrap();
+    let legacy = compose(&declarations, ComputedStyle::initial());
+    assert_eq!(legacy.border_radius_lengths, [None; 4]);
+    assert_eq!(legacy.border_radii_for_box((100.0, 80.0))[0], (25.0, 8.0));
+    assert!(declarations
+        .try_set_validated(StyleProperty::BorderTopLeftRadiusX, x.clone())
+        .unwrap());
+    let later = compose(&declarations, ComputedStyle::initial());
+    assert_eq!(later.border_radii_for_box((100.0, 80.0))[0], (30.0, 8.0));
+    assert!(!declarations
+        .try_set_validated(StyleProperty::BorderTopLeftRadiusX, x)
+        .unwrap());
+    assert!(declarations.remove(StyleProperty::BorderRadiusPercent));
+    assert_eq!(
+        compose(&declarations, ComputedStyle::initial()).border_radii_for_box((100.0, 80.0))[0],
+        (30.0, 8.0)
+    );
+    assert_eq!(CanonicalStyleField::BorderTopLeftRadius as u16, 128);
+    assert_eq!(CanonicalStyleField::WebkitTextFillColor as u16, 229);
+    assert_eq!(CanonicalStyleField::BorderTopLeftRadiusX as u16, 230);
+    assert_eq!(CanonicalStyleField::BorderBottomLeftRadiusY as u16, 237);
+    assert!(StyleProperty::BorderRadius.affects_same_fields_as(StyleProperty::BorderRadiusPercent));
+    assert!(StyleProperty::BorderTopLeftRadius
+        .affects_same_fields_as(StyleProperty::BorderTopLeftRadiusX));
+    assert!(!StyleProperty::BorderTopLeftRadiusX
+        .affects_same_fields_as(StyleProperty::BorderTopLeftRadiusY));
+}

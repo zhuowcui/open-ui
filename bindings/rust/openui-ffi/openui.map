@@ -98,6 +98,7 @@ OPENUI_0.2 {
     oui_element_is_same_node_v1;
     oui_element_parent_v1;
     oui_element_perform_accessibility_action;
+    oui_element_radius_axis_length_v1;
     oui_element_release_pointer_capture;
     oui_element_remove;
     oui_element_remove_all_children;
@@ -156,6 +157,7 @@ OPENUI_0.2 {
     oui_style_compound_destroy;
     oui_style_value_color_f32_v1;
     oui_style_value_parse;
+    oui_style_value_radius_axis_length_v1;
     oui_text_create;
     oui_transform_create;
   local: *;

@@ -136,6 +136,7 @@ def outputs() -> dict[Path, bytes]:
         "types": {
             "OuiUtf8": {"size": 16, "align": 8},
             "OuiLength": {"size": 8, "align": 4},
+            "OuiRadiusAxisLengthV1": {"size": 24, "align": 4},
             "OuiColor": {"size": 4, "align": 1},
             "OuiStylePayload": {"size": 8, "align": 8},
             "OuiStyleValue": {"size": 16, "align": 8},

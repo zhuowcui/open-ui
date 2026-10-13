@@ -290,6 +290,18 @@ impl Element {
             .with_engine_mut(|engine| engine.remove_property(self.handle, property))
     }
 
+    /// Reflect the computed source length of one native radius axis. Percent
+    /// and calc retain their coefficients; selected font/viewport units resolve
+    /// through the same Engine declarations used by the typed setters.
+    pub fn radius_axis_length(
+        &self,
+        property: StyleProperty,
+    ) -> Result<openui_style::LengthValue, Error> {
+        Ok(self
+            .document
+            .with_engine(|engine| engine.radius_axis_length(self.handle, property))??)
+    }
+
     /// Set a numeric color or retain own-color currentcolor inheritance.
     pub fn set_color_value(&self, value: openui_style::StyleColor) -> Result<(), Error> {
         self.set_property(StyleProperty::Color, value.into())

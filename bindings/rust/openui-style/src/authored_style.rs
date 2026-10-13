@@ -92,8 +92,39 @@ impl AuthoredStyleContribution {
     ) -> Result<(), PropertyTypeError> {
         let mut candidate = style.clone();
         apply_to_computed(&mut candidate, self.property, resolved, viewport)?;
+        // A surviving paired declaration retains its exact old source presence.
+        // Only partial masks materialize one axis around the other live source.
+        let corners = [
+            [
+                CanonicalStyleField::BorderTopLeftRadiusX,
+                CanonicalStyleField::BorderTopLeftRadiusY,
+            ],
+            [
+                CanonicalStyleField::BorderTopRightRadiusX,
+                CanonicalStyleField::BorderTopRightRadiusY,
+            ],
+            [
+                CanonicalStyleField::BorderBottomRightRadiusX,
+                CanonicalStyleField::BorderBottomRightRadiusY,
+            ],
+            [
+                CanonicalStyleField::BorderBottomLeftRadiusX,
+                CanonicalStyleField::BorderBottomLeftRadiusY,
+            ],
+        ];
+        let paired = corners.map(|axes| axes.into_iter().all(|axis| self.fields.contains(axis)));
+        for (corner, whole) in paired.into_iter().enumerate() {
+            if whole {
+                style.copy_border_radius_corner_from(&candidate, corner);
+            }
+        }
         for field in CANONICAL_STYLE_FIELDS {
-            if self.fields.contains(*field) {
+            if self.fields.contains(*field)
+                && !corners
+                    .iter()
+                    .zip(paired)
+                    .any(|(axes, whole)| whole && axes.contains(field))
+            {
                 field.copy_from(style, &candidate);
             }
         }
