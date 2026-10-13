@@ -6885,38 +6885,73 @@ fn prepaint_collapsed_table_backgrounds(
     // space. The part's own decoration and collapsed graph are outside its
     // content clip, just as in ordinary box painting.
     let clips = needs_overflow_clip(fragment, style, doc);
-    if clips {
-        canvas.save();
-        let (x, y, width, height) = compute_overflow_clip_reference_rect(fragment, offset, style);
-        let big = 100_000.0;
-        let (clip_x_axis, clip_y_axis) = paint_overflow_clip_axes(fragment, style, doc);
-        let clip = Rect::from_ltrb(
-            if !clip_x_axis { -big } else { x },
-            if !clip_y_axis { -big } else { y },
-            if !clip_x_axis { big } else { x + width },
-            if !clip_y_axis { big } else { y + height },
-        );
-        canvas.clip_rect(
-            outward_snap_rect_to_physical(clip, doc.device_scale_factor()),
-            ClipOp::Intersect,
-            false,
-        );
-        if fragment.owns_scroll_box() {
-            let node = doc.node(fragment.node_id);
-            canvas.translate(element_scroll_paint_translation(
+    let rounded = clips && paint_rounded_overflow_clip_eligible(fragment, style, doc);
+    let content_clip_scope = clips.then(|| {
+        if rounded {
+            let (clip, _, (margin_x, margin_y)) =
+                overflow_clip_base_geometry(fragment, doc, offset, style);
+            let rrect = build_clip_rrect(
+                &clip,
                 fragment,
-                doc,
-                node.scroll_left,
-                node.scroll_top,
-            ));
+                style,
+                overflow_clip_reference_box(style),
+                margin_x,
+                margin_y,
+            );
+            let packed_mask =
+                rounded_overflow_content_mask(fragment, style, &rrect, margin_x, margin_y, false);
+            let scope = OverflowContentClipScope::new(canvas, clip, packed_mask);
+            scope.clip_rounded(rrect);
+            scope
+        } else {
+            // Structural-only/nonrounded table prepainting retains its
+            // existing outward hard clip. Rounded authored overflow uses
+            // the shared source contour above, including margins and slices.
+            let (x, y, width, height) =
+                compute_overflow_clip_reference_rect(fragment, offset, style);
+            let big = 100_000.0;
+            let (clip_x_axis, clip_y_axis) = paint_overflow_clip_axes(fragment, style, doc);
+            let clip = Rect::from_ltrb(
+                if !clip_x_axis { -big } else { x },
+                if !clip_y_axis { -big } else { y },
+                if !clip_x_axis { big } else { x + width },
+                if !clip_y_axis { big } else { y + height },
+            );
+            let clip = outward_snap_rect_to_physical(clip, doc.device_scale_factor());
+            let scope = OverflowContentClipScope::new(canvas, clip, None);
+            canvas.clip_rect(clip, ClipOp::Intersect, false);
+            scope
+        }
+    });
+    let translation = if clips && fragment.owns_scroll_box() {
+        let node = doc.node(fragment.node_id);
+        Some(element_scroll_paint_translation(
+            fragment,
+            doc,
+            node.scroll_left,
+            node.scroll_top,
+        ))
+    } else {
+        None
+    };
+    // Return to the fixed clip coordinate space before applying its mask.
+    // Preserve the prior nonrounded phase's transform/scope sequence.
+    let restore_scroll = rounded && translation.is_some_and(|value| value != (0.0, 0.0));
+    if restore_scroll {
+        canvas.save();
+    }
+    if let Some(translation) = translation {
+        if !rounded || translation != (0.0, 0.0) {
+            canvas.translate(translation);
         }
     }
     for child in &fragment.children {
         prepaint_collapsed_table_backgrounds(canvas, child, doc, offset, phase);
     }
-    if clips {
+    if restore_scroll {
         canvas.restore();
     }
+    drop(content_clip_scope);
     if fragment.collapsed_table_border_data.is_some()
         && style.visibility == Visibility::Visible
         && !PREPAINTED_COLLAPSED_TABLE_BORDERS.with(|set| set.borrow().contains(&pointer))
@@ -10329,6 +10364,76 @@ fn structural_hard_clip_covers_device(canvas: &Canvas, rect: Rect) -> bool {
             .is_some_and(|device| mapped.contains(Rect::from_irect(device)))
 }
 
+// Both foreground painting and the table descendant-background phase own
+// the same rounded clip/mask lifetime. A packed mask must be applied after
+// scrolled contents return to the clip's coordinate space, before restoring
+// its isolated layer; the box's own decoration stays outside this scope.
+struct OverflowContentClipScope<'a> {
+    canvas: &'a Canvas,
+    packed_mask: Option<(Image, Rect)>,
+}
+
+impl<'a> OverflowContentClipScope<'a> {
+    fn new(canvas: &'a Canvas, clip_rect: Rect, packed_mask: Option<(Image, Rect)>) -> Self {
+        if packed_mask.is_some() {
+            canvas.save_layer_owned(Some(clip_rect), None, SaveLayerFlags::empty());
+        } else {
+            canvas.save();
+        }
+        Self {
+            canvas,
+            packed_mask,
+        }
+    }
+
+    fn clip_rounded(&self, rrect: RRect) {
+        if self.packed_mask.is_none() {
+            self.canvas.clip_rrect(rrect, ClipOp::Intersect, true);
+        }
+    }
+}
+
+impl Drop for OverflowContentClipScope<'_> {
+    fn drop(&mut self) {
+        if let Some((mask, destination)) = &self.packed_mask {
+            let mut mask_paint = Paint::default();
+            mask_paint.set_anti_alias(false);
+            mask_paint.set_blend_mode(BlendMode::DstIn);
+            self.canvas.draw_image_rect_with_sampling_options(
+                mask.clone(),
+                Some((
+                    &Rect::from_xywh(0.0, 0.0, mask.width() as f32, mask.height() as f32),
+                    SrcRectConstraint::Strict,
+                )),
+                *destination,
+                SamplingOptions::from(FilterMode::Nearest),
+                &mask_paint,
+            );
+        }
+        self.canvas.restore();
+    }
+}
+
+fn rounded_overflow_content_mask(
+    fragment: &Fragment,
+    style: &ComputedStyle,
+    rrect: &RRect,
+    margin_x: f32,
+    margin_y: f32,
+    has_fragmented_outline_clip: bool,
+) -> Option<(Image, Rect)> {
+    (style.raster_configuration.backend != RasterBackend::GaneshGl
+        && style.overflow_x == Overflow::Hidden
+        && style.overflow_y == Overflow::Hidden
+        && !fragment_subtree_has_text(fragment)
+        && margin_x.abs() <= f32::EPSILON
+        && margin_y.abs() <= f32::EPSILON
+        && fragment.decoration_slice.is_none()
+        && !has_fragmented_outline_clip)
+        .then(|| packed_rounded_clip_mask(rrect, style.device_scale_factor as f32))
+        .flatten()
+}
+
 fn paint_with_overflow_clip(
     canvas: &Canvas,
     fragment: &Fragment,
@@ -10542,16 +10647,14 @@ fn paint_with_overflow_clip(
             )
         });
     let packed_rounded_mask = rounded_clip_rrect.as_ref().and_then(|rrect| {
-        (style.raster_configuration.backend != RasterBackend::GaneshGl
-            && style.overflow_x == Overflow::Hidden
-            && style.overflow_y == Overflow::Hidden
-            && !fragment_subtree_has_text(fragment)
-            && margin_x.abs() <= f32::EPSILON
-            && margin_y.abs() <= f32::EPSILON
-            && fragment.decoration_slice.is_none()
-            && fragmented_outline_clip.is_none())
-        .then(|| packed_rounded_clip_mask(rrect, style.device_scale_factor as f32))
-        .flatten()
+        rounded_overflow_content_mask(
+            fragment,
+            style,
+            rrect,
+            margin_x,
+            margin_y,
+            fragmented_outline_clip.is_some(),
+        )
     });
     let mut fragmented_top_left_tangent = None;
     let composited_scroll_layer = has_composited_scroll_contents(fragment, style)
@@ -10605,13 +10708,8 @@ fn paint_with_overflow_clip(
     // Only this proven no-op intersection may disappear. An actual clip,
     // rounded/analytic edge, effect, scroll or outline retains its full scope.
     // The unchanged one-draw opacity rule can then fold the original operands.
-    if !omit_structural_scope {
-        if packed_rounded_mask.is_some() {
-            canvas.save_layer_owned(Some(clip_rect), None, SaveLayerFlags::empty());
-        } else {
-            canvas.save();
-        }
-    }
+    let content_clip_scope = (!omit_structural_scope)
+        .then(|| OverflowContentClipScope::new(canvas, clip_rect, packed_rounded_mask));
 
     // When border-radius is set, clip to a rounded rect so children are
     // clipped along the curves. Otherwise use a simple rect clip.
@@ -10622,9 +10720,10 @@ fn paint_with_overflow_clip(
         if fragment.decoration_slice.is_some() && top_left.x > 0.0 && top_left.y > 0.0 {
             fragmented_top_left_tangent = Some((rrect.rect().left, rrect.rect().top + top_left.y));
         }
-        if packed_rounded_mask.is_none() {
-            canvas.clip_rrect(rrect, ClipOp::Intersect, true);
-        }
+        content_clip_scope
+            .as_ref()
+            .expect("installed rounded content clip")
+            .clip_rounded(rrect);
     } else {
         // Axis-aligned rectangular overflow clips are pixel-snapped in CSS
         // space above. They remain hard only when that edge also lands on the
@@ -10762,25 +10861,7 @@ fn paint_with_overflow_clip(
     }
     paint_resize_handle_if_needed(canvas, style, &clip_rect);
 
-    if let Some((mask, destination)) = packed_rounded_mask {
-        let mut mask_paint = Paint::default();
-        mask_paint.set_anti_alias(false);
-        mask_paint.set_blend_mode(BlendMode::DstIn);
-        canvas.draw_image_rect_with_sampling_options(
-            mask.clone(),
-            Some((
-                &Rect::from_xywh(0.0, 0.0, mask.width() as f32, mask.height() as f32),
-                SrcRectConstraint::Strict,
-            )),
-            destination,
-            SamplingOptions::from(FilterMode::Nearest),
-            &mask_paint,
-        );
-    }
-
-    if !omit_structural_scope {
-        canvas.restore();
-    }
+    drop(content_clip_scope);
     paint_element_scrollbars(canvas, fragment, doc, offset);
 }
 
