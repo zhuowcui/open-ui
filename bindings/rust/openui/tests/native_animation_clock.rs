@@ -101,7 +101,15 @@ fn native_reverse_lifecycle_callbacks_can_read_the_same_document_after_controls(
     document.advance_time(1000.0).unwrap();
     assert_eq!(events.borrow().len(), 1);
     document.play_animation(id).unwrap();
-    assert_eq!(document.animation_state(id).unwrap().current_time_ms, 100.0);
+    // Native play resolves ready immediately at timeline 1s. Pinned .50
+    // start=ready-hold/rate then (timeline-start)*rate reflects this exact
+    // double result; pending play's held 100ms is a different state.
+    let ready = document.animation_state(id).unwrap();
+    assert_eq!(ready.current_time_ms.to_bits(), 0x4059_0000_0000_0006);
+    assert_eq!(ready.play_state, PlayState::Running);
+    assert!(!ready.finished);
+    assert!(document.is_animating().unwrap());
+    assert_eq!(&*events.borrow(), &[(0.0, true)]);
     document.finish_animation(id).unwrap();
     assert_eq!(&*events.borrow(), &[(0.0, true), (0.0, true)]);
     // The callback intentionally owns a Document; removing it releases that
