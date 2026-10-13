@@ -52,7 +52,10 @@ typedef struct Callback {
   OuiElement* button;
   unsigned clicks;
   unsigned changes;
+  unsigned key_down;
+  unsigned key_up;
   int cancel;
+  int cancel_key;
 } Callback;
 
 static void clicked(OuiEvent* event, void* data) {
@@ -66,7 +69,17 @@ static void clicked(OuiEvent* event, void* data) {
     assert(value.current_y >= 0);
     if (callback->cancel)
       event->flags |= OUI_EVENT_DEFAULT_PREVENTED;
+  } else if (event->event_type == OUI_EVENT_KEY_DOWN) {
+    ++callback->key_down;
+    /* The same retained Engine is readable before the key's default action. */
+    OuiScrollButtonStateV1 value = snapshot(callback->button);
+    assert(value.current_y >= 0);
+    if (callback->cancel_key)
+      event->flags |= OUI_EVENT_DEFAULT_PREVENTED;
+  } else if (event->event_type == OUI_EVENT_KEY_UP) {
+    ++callback->key_up;
   } else {
+    assert(event->event_type == OUI_EVENT_INPUT || event->event_type == OUI_EVENT_CHANGE);
     ++callback->changes;
   }
 }
@@ -141,37 +154,62 @@ static void run(double scale) {
                                               &related) == OUI_ERROR_INVALID_ARGUMENT);
   assert(related == (OuiElement*)(uintptr_t)1);
 
-  Callback callback = {origin, button, 0, 0, 1};
-  OuiListener* listeners[3] = {NULL, NULL, NULL};
-  const OuiEventType kinds[3] = {OUI_EVENT_CLICK, OUI_EVENT_INPUT, OUI_EVENT_CHANGE};
-  for (unsigned i = 0; i < 3; ++i)
+  Callback callback = {origin, button, 0, 0, 0, 0, 1, 0};
+  OuiListener* listeners[5] = {NULL, NULL, NULL, NULL, NULL};
+  const OuiEventType kinds[5] = {OUI_EVENT_CLICK, OUI_EVENT_INPUT, OUI_EVENT_CHANGE,
+                                 OUI_EVENT_KEY_DOWN, OUI_EVENT_KEY_UP};
+  for (unsigned i = 0; i < 5; ++i)
     assert(oui_element_add_event_listener(origin, kinds[i], 0, clicked, &callback, &listeners[i]) ==
            OUI_OK);
   assert(oui_scroll_button_activate_v1(button) == OUI_OK);
   assert(snapshot(button).current_y == 0);
+  assert(callback.clicks == 1 && callback.changes == 0);
+  assert(callback.key_down == 0 && callback.key_up == 0);
   callback.cancel = 0;
   assert(oui_scroll_button_activate_v1(button) == OUI_OK);
   assert(snapshot(button).current_y == 70);
+  assert(callback.clicks == 2 && callback.changes == 0);
   OuiElement* focused = NULL;
   assert(oui_document_focused_element_v1(document, &focused) == OUI_OK);
   assert(focused != NULL);
   same_node(origin, focused);
   assert(oui_element_destroy(focused) == OUI_OK);
+  /* Pinned Chromium scroll-button defaults activate on keydown directly;
+   * they do not synthesize a click or arm ordinary Button's Space-keyup path. */
   key(document, OUI_EVENT_KEY_DOWN, 32, " ");
   assert(snapshot(button).current_y == 140);
+  assert(callback.clicks == 2 && callback.changes == 0);
+  assert(callback.key_down == 1 && callback.key_up == 0);
   key(document, OUI_EVENT_KEY_UP, 32, " ");
   assert(snapshot(button).current_y == 140);
+  assert(callback.clicks == 2 && callback.changes == 0);
+  assert(callback.key_down == 1 && callback.key_up == 1);
   key(document, OUI_EVENT_KEY_DOWN, 13, "Enter");
   assert(snapshot(button).current_y == 210);
-  assert(callback.clicks == 4 && callback.changes == 0);
+  assert(callback.clicks == 2 && callback.changes == 0);
+  assert(callback.key_down == 2 && callback.key_up == 1);
+  key(document, OUI_EVENT_KEY_UP, 13, "Enter");
+  assert(snapshot(button).current_y == 210);
+  assert(callback.clicks == 2 && callback.changes == 0);
+  assert(callback.key_down == 2 && callback.key_up == 2);
+  callback.cancel_key = 1;
+  key(document, OUI_EVENT_KEY_DOWN, 32, " ");
+  assert(snapshot(button).current_y == 210);
+  assert(callback.clicks == 2 && callback.changes == 0);
+  assert(callback.key_down == 3 && callback.key_up == 2);
+  key(document, OUI_EVENT_KEY_UP, 32, " ");
+  assert(snapshot(button).current_y == 210);
+  assert(callback.clicks == 2 && callback.changes == 0);
+  assert(callback.key_down == 3 && callback.key_up == 3);
+  callback.cancel_key = 0;
   assert(oui_element_set_attribute(button, text("disabled"), text("")) == OUI_OK);
   OuiScrollButtonStateV1 disabled = snapshot(button);
   assert(disabled.enabled == 0 && disabled.availability == OUI_SCROLL_BUTTON_AUTHORED_DISABLED);
   assert(oui_scroll_button_activate_v1(button) == OUI_OK);
   assert(snapshot(button).current_y == 210);
-  assert(callback.clicks == 4 && callback.changes == 0);
+  assert(callback.clicks == 2 && callback.changes == 0);
 
-  for (unsigned i = 0; i < 3; ++i)
+  for (unsigned i = 0; i < 5; ++i)
     assert(oui_listener_destroy(listeners[i]) == OUI_OK);
   assert(oui_element_remove(origin) == OUI_OK);
   OuiScrollButtonStateV1 stale = initial;
