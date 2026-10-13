@@ -64,7 +64,16 @@ fn rate_changes_and_non_unit_seeks_preserve_animation_local_time() {
     assert_eq!(value(&engine, node), 0.8);
     engine.set_animation_time(110.0).unwrap();
     assert_eq!(value(&engine, node), 0.6);
-    assert_eq!(engine.animation_state(id).unwrap().current_time_ms, 60.0);
+    // .50: start = .1 - .08 / -2; current = (.11 - start) * -2.
+    // The old additive-offset route differs by two ULPs here.
+    assert_eq!(
+        engine
+            .animation_state(id)
+            .unwrap()
+            .current_time_ms
+            .to_bits(),
+        0x404e_0000_0000_0004
+    );
 }
 
 #[test]
@@ -200,7 +209,9 @@ fn lifecycle_uses_effect_intervals_and_one_event_for_skipped_iterations_in_both_
     let events = engine.drain_animation_events();
     assert_eq!(events.len(), 1);
     assert_eq!(events[0].kind, AnimationEventKind::Iteration);
-    assert_eq!(events[0].elapsed_time_ms, 300.0);
+    // .50 normalized iteration duration is .1 seconds, multiplied by
+    // boundary 3 before the native millisecond reflection.
+    assert_eq!(events[0].elapsed_time_ms.to_bits(), 0x4072_c000_0000_0001);
     engine.set_animation_playback_rate(id, -1.0).unwrap();
     engine.seek_animation(id, 130.0).unwrap();
     let events = engine.drain_animation_events();
@@ -292,4 +303,57 @@ fn no_fill_sampling_retains_unresolved_current_direction_context() {
             assert_eq!(timing.sample_local_time(local_time), sample);
         }
     }
+}
+
+// Exact .50 CommitPendingPlay and CalculateStartTime establish the anchor
+// before CalculateCurrentTime multiplies the timeline difference by rate.
+#[test]
+fn fractional_seek_reverse_start_and_running_rate_use_authoritative_start_time() {
+    let (mut engine, _node, id) = fixture(AnimationOptions {
+        play_state: PlayState::Paused,
+        playback_rate: 1.5,
+        ..options()
+    });
+    engine.set_animation_time(37.5).unwrap();
+    engine.seek_animation(id, 23.75).unwrap();
+    assert_eq!(engine.animation_state(id).unwrap().current_time_ms, 23.75);
+    engine.play_animation(id).unwrap();
+    engine.set_animation_time(52.5).unwrap();
+    assert_eq!(engine.animation_state(id).unwrap().current_time_ms, 46.25);
+    engine.pause_animation(id).unwrap();
+    engine.set_animation_time(500.0).unwrap();
+    assert_eq!(engine.animation_state(id).unwrap().current_time_ms, 46.25);
+
+    let (mut reverse, _node, id) = fixture(AnimationOptions {
+        duration_ms: 97.5,
+        playback_rate: -1.5,
+        ..options()
+    });
+    assert_eq!(reverse.animation_state(id).unwrap().current_time_ms, 97.5);
+    reverse.set_animation_time(7.5).unwrap();
+    // start = 0 - .0975 / -1.5; current = (.0075 - start) * -1.5.
+    assert_eq!(
+        reverse
+            .animation_state(id)
+            .unwrap()
+            .current_time_ms
+            .to_bits(),
+        0x4055_9000_0000_0001
+    );
+
+    let (mut running, _node, id) = fixture(options());
+    running.set_animation_time(47.5).unwrap();
+    running.set_animation_playback_rate(id, 1.75).unwrap();
+    assert_eq!(running.animation_state(id).unwrap().current_time_ms, 47.5);
+    running.set_animation_time(52.5).unwrap();
+    // .50 preserves currentTime's millisecond reflection before setting the
+    // new start = .0475 - (.0475 * 1000 / 1000) / 1.75.
+    assert_eq!(
+        running
+            .animation_state(id)
+            .unwrap()
+            .current_time_ms
+            .to_bits(),
+        0x404c_1fff_ffff_ffff
+    );
 }

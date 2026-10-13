@@ -176,13 +176,18 @@ impl AnimationInstance {
             )
     }
 
-    // offset_seconds is a LOCAL time at the timeline anchor start_time_seconds.
-    // Applying rate here, rather than in the effect sampler, preserves seeks
-    // and continuity when a native application changes playback rate.
+    // Document running time uses the authoritative start-time expression.
+    // Progress timelines retain their separate local-offset adapter; held
+    // time is already local and remains independent of the playback rate.
     fn current_time(&self, timeline_time_seconds: f64) -> f64 {
         self.hold_time_seconds.unwrap_or_else(|| {
-            self.offset_seconds
-                + (timeline_time_seconds - self.start_time_seconds) * self.options.playback_rate
+            let running_time =
+                (timeline_time_seconds - self.start_time_seconds) * self.options.playback_rate;
+            if self.timeline.is_document() {
+                running_time
+            } else {
+                self.offset_seconds + running_time
+            }
         })
     }
 
@@ -209,12 +214,19 @@ impl AnimationInstance {
     }
 
     fn reanchor(&mut self, timeline_time_seconds: f64, local_time_seconds: f64) {
-        self.start_time_seconds = timeline_time_seconds;
-        self.offset_seconds = local_time_seconds;
+        // Pinned .50 CalculateStartTime and CommitPendingPlay keep the
+        // authoritative start time. An additive local offset is algebraically
+        // equivalent, but changes the required IEEE operation order.
+        self.offset_seconds = 0.0;
         self.hold_time_seconds = (self.options.play_state == PlayState::Paused
             || self.options.playback_rate == 0.0
             || (self.timeline.is_document() && self.reached_endpoint(local_time_seconds)))
         .then_some(local_time_seconds);
+        self.start_time_seconds = if self.hold_time_seconds.is_some() {
+            timeline_time_seconds
+        } else {
+            timeline_time_seconds - local_time_seconds / self.options.playback_rate
+        };
     }
 }
 
@@ -425,7 +437,11 @@ impl Engine {
         let property = keyframes.property();
         let timeline_now = self.timeline_time(timeline, &options)?;
         let start_time_seconds = if timeline.is_document() {
-            timeline_now
+            if options.play_state == PlayState::Paused || options.playback_rate == 0.0 {
+                timeline_now
+            } else {
+                timeline_now - initial_time / options.playback_rate
+            }
         } else {
             timeline_snapshot.map_or(0.0, |snapshot| {
                 snapshot.automatic_start_time_seconds(options.playback_rate)
@@ -468,7 +484,7 @@ impl Engine {
                 auto_align_start_time: true,
                 pending_progress_seek: None,
                 start_time_seconds,
-                offset_seconds: initial_time,
+                offset_seconds: 0.0,
                 hold_time_seconds: held.then_some(initial_hold),
                 last_sample: None,
                 last_phase: None,
@@ -598,6 +614,13 @@ impl Engine {
         let snapshot = self.animation_instance(id)?.clone();
         let now = self.timeline_time(snapshot.timeline, &snapshot.options)?;
         let current = snapshot.current_time(now);
+        let current = if snapshot.timeline.is_document() {
+            // Pinned .50 setPlaybackRate preserves through currentTime's
+            // millisecond reflection and setCurrentTime's seconds conversion.
+            (current * 1000.0) / 1000.0
+        } else {
+            current
+        };
         let instance = self.animations.get_mut(&id).expect("live animation");
         instance.options.playback_rate = playback_rate;
         instance.timing_options.playback_rate = playback_rate;
@@ -1450,7 +1473,16 @@ mod tests {
         engine.play_animation(id).unwrap();
         engine.set_animation_time(85.0).unwrap();
         assert_eq!(engine.computed_style(node).unwrap().opacity, 0.7);
-        assert_eq!(engine.animation_state(id).unwrap().current_time_ms, 70.0);
+        // Pinned double-seconds start/current arithmetic reflects one ULP below
+        // 70ms; wallclock TimeDelta inputs do not quantize animation local time.
+        assert_eq!(
+            engine
+                .animation_state(id)
+                .unwrap()
+                .current_time_ms
+                .to_bits(),
+            0x4051_7fff_ffff_ffff
+        );
         engine.cancel_animation(id).unwrap();
         assert_eq!(engine.computed_style(node).unwrap().opacity, 0.75);
         assert_eq!(
