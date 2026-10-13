@@ -1055,6 +1055,19 @@ impl<'a> InlineItemsBuilder<'a> {
             return;
         }
 
+        // Inline replaced boxes are atomic even when their specified display
+        // is `inline`. Blink tests IsAtomicInline before LayoutInline traversal:
+        // the retained resource box occupies the line, not its fallback DOM.
+        // Use the shared layout class so ordinary inline wrappers and failed
+        // image fallback remain on their existing child-traversal path.
+        if node.style.display == Display::Inline
+            && crate::scroll_area::is_replaced_layout_box(self.doc, child_id)
+        {
+            let style = node.style.clone();
+            self.append_atomic_inline(child_id, &style);
+            return;
+        }
+
         match node.tag {
             ElementTag::Text => {
                 if let Some(ref text) = node.text {
