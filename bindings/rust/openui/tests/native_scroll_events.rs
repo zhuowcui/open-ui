@@ -1,5 +1,5 @@
 use openui::prelude::*;
-use openui_engine::{AccessibilityAction, Engine};
+use openui_engine::AccessibilityAction;
 use openui_style::{Easing, Overflow, RendererStyleValue, ScrollbarWidth};
 use std::{
     cell::{Cell, RefCell},
@@ -26,25 +26,22 @@ fn scroller(document: &Document) -> (Element, Element) {
     (port, content)
 }
 
-fn fixture(scale: f64) -> (Document, Element, Element, Rc<RefCell<Engine>>) {
-    let engine = Rc::new(RefCell::new(
-        Engine::new_with_font_collection(
-            ViewportMetrics::from_logical_size(320.0, 240.0, scale).unwrap(),
-            FontCollection::deterministic_test(),
-        )
-        .unwrap(),
-    ));
-    let document = Document::from_shared_engine(engine.clone());
+fn fixture(scale: f64) -> (Document, Element, Element) {
+    let document = Document::with_font_collection(
+        ViewportMetrics::from_logical_size(320.0, 240.0, scale).unwrap(),
+        FontCollection::deterministic_test(),
+    )
+    .unwrap();
     let (port, content) = scroller(&document);
     document.update_all().unwrap();
     assert!(!document.has_pending_events().unwrap());
-    (document, port, content, engine)
+    (document, port, content)
 }
 
 #[test]
 fn scroll_notifications_coalesce_reenter_and_keep_native_propagation_and_idle_pixels() {
     for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
-        let (document, port, _content, engine) = fixture(scale);
+        let (document, port, _content) = fixture(scale);
         let changes = Rc::new(RefCell::new(Vec::new()));
         let observed = changes.clone();
         let weak = port.downgrade();
@@ -77,24 +74,22 @@ fn scroll_notifications_coalesce_reenter_and_keep_native_propagation_and_idle_pi
         assert!(changes.borrow().is_empty());
         assert!(document.has_pending_events().unwrap());
         let pixels = document.render_to_png_buffer().unwrap();
-        let stats = engine.borrow().stats();
         document.dispatch_pending_events().unwrap();
         assert_eq!(&*changes.borrow(), &[(40.0, 60.0)]);
         assert_eq!(captures.get(), 1);
         assert_eq!(bubbles.get(), 0);
         assert!(!document.has_pending_events().unwrap());
         document.dispatch_pending_events().unwrap();
-        assert_eq!(engine.borrow().stats(), stats);
         assert_eq!(document.render_to_png_buffer().unwrap(), pixels);
-        assert!(!Event::native("scroll").bubbles());
-        assert!(!Event::native("scroll").cancelable());
+        assert!(!Event::native("scroll", 0).bubbles());
+        assert!(!Event::native("scroll", 0).cancelable());
         port.remove().unwrap();
     }
 }
 
 #[test]
 fn callback_scrolling_waits_for_a_later_bounded_native_turn() {
-    let (document, port, _content, _engine) = fixture(1.0);
+    let (document, port, _content) = fixture(1.0);
     let calls = Rc::new(Cell::new(0));
     let observed = calls.clone();
     let weak = port.downgrade();
@@ -124,7 +119,7 @@ fn callback_scrolling_waits_for_a_later_bounded_native_turn() {
 
 #[test]
 fn clamping_noops_invalid_requests_and_removed_generations_preserve_scroll_notifications() {
-    let (document, port, content, _engine) = fixture(1.0);
+    let (document, port, content) = fixture(1.0);
     let offsets = Rc::new(RefCell::new(Vec::new()));
     let observed = offsets.clone();
     let weak = port.downgrade();
@@ -164,7 +159,7 @@ fn clamping_noops_invalid_requests_and_removed_generations_preserve_scroll_notif
 
 #[test]
 fn accessibility_wheel_and_timed_scroll_share_native_task_delivery() {
-    let (document, port, _content, _engine) = fixture(1.0);
+    let (document, port, _content) = fixture(1.0);
     let offsets = Rc::new(RefCell::new(Vec::new()));
     let observed = offsets.clone();
     let weak = port.downgrade();
@@ -200,8 +195,8 @@ fn accessibility_wheel_and_timed_scroll_share_native_task_delivery() {
 }
 
 #[test]
-fn outstanding_engine_borrow_and_callback_unwind_do_not_lose_or_repeat_scroll_tasks() {
-    let (document, first, _content, engine) = fixture(1.0);
+fn callback_unwind_does_not_lose_or_repeat_scroll_tasks() {
+    let (document, first, _content) = fixture(1.0);
     let (second, _content) = scroller(&document);
     let calls = Rc::new(Cell::new(0));
     let observed = calls.clone();
@@ -218,11 +213,6 @@ fn outstanding_engine_borrow_and_callback_unwind_do_not_lose_or_repeat_scroll_ta
         .unwrap();
     first.scroll_to(0.0, 40.0).unwrap();
     second.scroll_to(0.0, 40.0).unwrap();
-    let borrowed = engine.borrow_mut();
-    assert!(document.dispatch_pending_events().is_err());
-    assert_eq!(calls.get(), 0);
-    assert!(borrowed.has_pending_scroll_events());
-    drop(borrowed);
     assert!(catch_unwind(AssertUnwindSafe(|| document
         .dispatch_pending_events()
         .unwrap()))
@@ -241,7 +231,7 @@ fn outstanding_engine_borrow_and_callback_unwind_do_not_lose_or_repeat_scroll_ta
 #[test]
 fn callback_changes_to_an_undelivered_target_keep_a_separate_later_scroll_batch() {
     for unwind in [false, true] {
-        let (document, first, _content, _engine) = fixture(1.0);
+        let (document, first, _content) = fixture(1.0);
         let (second, _content) = scroller(&document);
         let second_weak = second.downgrade();
         let first_calls = Rc::new(Cell::new(0));

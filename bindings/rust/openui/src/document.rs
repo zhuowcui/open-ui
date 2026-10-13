@@ -30,6 +30,9 @@ mod listener_tests;
 #[cfg(test)]
 #[path = "raw_event_tests.rs"]
 mod raw_event_tests;
+#[cfg(test)]
+#[path = "scroll_notification_tests.rs"]
+mod scroll_notification_tests;
 #[path = "selection_tasks.rs"]
 mod selection_tasks;
 
