@@ -5,8 +5,8 @@
     "bindings/rust/openui-engine/src"
   ],
   "counts": {
-    "consumed": 234,
-    "internal": 17,
+    "consumed": 235,
+    "internal": 18,
     "public_typed": 217,
     "unclassified": 0
   },
@@ -181,8 +181,7 @@
       "consumers": [
         "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-paint/src/painter.rs",
-        "bindings/rust/openui-engine/src/compositor_scene.rs",
-        "bindings/rust/openui-engine/src/lib.rs"
+        "bindings/rust/openui-engine/src/compositor_scene.rs"
       ],
       "css_name": "border-bottom-left-radius",
       "field": "border_bottom_left_radius",
@@ -196,8 +195,7 @@
       "consumers": [
         "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-paint/src/painter.rs",
-        "bindings/rust/openui-engine/src/compositor_scene.rs",
-        "bindings/rust/openui-engine/src/lib.rs"
+        "bindings/rust/openui-engine/src/compositor_scene.rs"
       ],
       "css_name": "border-bottom-right-radius",
       "field": "border_bottom_right_radius",
@@ -330,11 +328,23 @@
       "rust_type": "i32"
     },
     {
+      "canonical_schema_entry": false,
+      "classification": "internal",
+      "consumers": [
+        "bindings/rust/openui-layout/src/fieldset.rs",
+        "bindings/rust/openui-engine/src/compositor_scene.rs"
+      ],
+      "css_name": null,
+      "field": "border_radius_lengths",
+      "internal_rationale": "Retains resolved native length pairs and source kinds per corner while the existing numeric and percentage transports remain explicit computed overrides.",
+      "property_id": null,
+      "rust_type": "[Option<(Length, Length)>; 4]"
+    },
+    {
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/fieldset.rs",
-        "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-engine/src/compositor_scene.rs"
       ],
       "css_name": "border-radius-percent",
@@ -447,8 +457,7 @@
       "consumers": [
         "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-paint/src/painter.rs",
-        "bindings/rust/openui-engine/src/compositor_scene.rs",
-        "bindings/rust/openui-engine/src/lib.rs"
+        "bindings/rust/openui-engine/src/compositor_scene.rs"
       ],
       "css_name": "border-top-right-radius",
       "field": "border_top_right_radius",
@@ -521,6 +530,7 @@
         "bindings/rust/openui-layout/src/viewport.rs",
         "bindings/rust/openui-paint/src/content_layer.rs",
         "bindings/rust/openui-paint/src/image_resource.rs",
+        "bindings/rust/openui-paint/src/paint_program.rs",
         "bindings/rust/openui-paint/src/paint_record.rs",
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-paint/src/text_painter.rs",
@@ -651,10 +661,12 @@
         "bindings/rust/openui-layout/src/multicol/mod.rs",
         "bindings/rust/openui-layout/src/resolved_table_borders.rs",
         "bindings/rust/openui-paint/src/image_resource.rs",
+        "bindings/rust/openui-paint/src/paint_program.rs",
         "bindings/rust/openui-paint/src/paint_record.rs",
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-paint/src/render.rs",
         "bindings/rust/openui-engine/src/accessibility.rs",
+        "bindings/rust/openui-engine/src/authored_source.rs",
         "bindings/rust/openui-engine/src/interaction.rs",
         "bindings/rust/openui-engine/src/lib.rs",
         "bindings/rust/openui-engine/src/scroll_notifications.rs"
@@ -693,7 +705,8 @@
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-paint/src/text_painter.rs",
         "bindings/rust/openui-engine/src/animation.rs",
-        "bindings/rust/openui-engine/src/lib.rs"
+        "bindings/rust/openui-engine/src/lib.rs",
+        "bindings/rust/openui-engine/src/semantic_insertion_tests.rs"
       ],
       "css_name": "color",
       "field": "color",
@@ -938,6 +951,7 @@
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-paint/src/render.rs",
         "bindings/rust/openui-paint/src/text_painter.rs",
+        "bindings/rust/openui-engine/src/authored_source.rs",
         "bindings/rust/openui-engine/src/lib.rs"
       ],
       "css_name": null,
@@ -975,7 +989,8 @@
         "bindings/rust/openui-engine/src/element_dimensions.rs",
         "bindings/rust/openui-engine/src/lib.rs",
         "bindings/rust/openui-engine/src/scroll_button.rs",
-        "bindings/rust/openui-engine/src/scroll_into_view.rs"
+        "bindings/rust/openui-engine/src/scroll_into_view.rs",
+        "bindings/rust/openui-engine/src/semantic_insertion_tests.rs"
       ],
       "css_name": "direction",
       "field": "direction",
@@ -1007,12 +1022,14 @@
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-paint/src/render.rs",
         "bindings/rust/openui-engine/src/accessibility.rs",
+        "bindings/rust/openui-engine/src/authored_source.rs",
         "bindings/rust/openui-engine/src/control_geometry.rs",
         "bindings/rust/openui-engine/src/element_dimensions.rs",
         "bindings/rust/openui-engine/src/interaction.rs",
         "bindings/rust/openui-engine/src/lib.rs",
         "bindings/rust/openui-engine/src/scroll_button.rs",
-        "bindings/rust/openui-engine/src/scroll_into_view.rs"
+        "bindings/rust/openui-engine/src/scroll_into_view.rs",
+        "bindings/rust/openui-engine/src/semantic_insertion_tests.rs"
       ],
       "css_name": "display",
       "field": "display",
@@ -1303,6 +1320,7 @@
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-engine/src/animation.rs",
         "bindings/rust/openui-engine/src/animation_timeline.rs",
+        "bindings/rust/openui-engine/src/authored_source.rs",
         "bindings/rust/openui-engine/src/control_geometry.rs",
         "bindings/rust/openui-engine/src/lib.rs"
       ],
@@ -1796,11 +1814,13 @@
         "bindings/rust/openui-paint/src/collapsed_table_painter.rs",
         "bindings/rust/openui-paint/src/content_layer.rs",
         "bindings/rust/openui-paint/src/image_resource.rs",
+        "bindings/rust/openui-paint/src/paint_program.rs",
         "bindings/rust/openui-paint/src/paint_record.rs",
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-paint/src/text_painter.rs",
         "bindings/rust/openui-engine/src/animation_timeline.rs",
         "bindings/rust/openui-engine/src/client_geometry.rs",
+        "bindings/rust/openui-engine/src/compositor_scene.rs",
         "bindings/rust/openui-engine/src/element_dimensions.rs",
         "bindings/rust/openui-engine/src/lib.rs",
         "bindings/rust/openui-engine/src/scroll_button.rs",
@@ -2255,7 +2275,8 @@
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/grid.rs",
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
-        "bindings/rust/openui-engine/src/scroll_button.rs"
+        "bindings/rust/openui-engine/src/scroll_button.rs",
+        "bindings/rust/openui-engine/src/semantic_insertion_tests.rs"
       ],
       "css_name": "order",
       "field": "order",
@@ -2603,6 +2624,7 @@
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-paint/src/render.rs",
         "bindings/rust/openui-paint/src/text_painter.rs",
+        "bindings/rust/openui-engine/src/authored_source.rs",
         "bindings/rust/openui-engine/src/lib.rs"
       ],
       "css_name": null,
@@ -2649,6 +2671,7 @@
         "bindings/rust/openui-paint/src/content_layer.rs",
         "bindings/rust/openui-paint/src/emphasis_painter.rs",
         "bindings/rust/openui-paint/src/image_resource.rs",
+        "bindings/rust/openui-paint/src/paint_program.rs",
         "bindings/rust/openui-paint/src/paint_record.rs",
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-paint/src/text_painter.rs",
@@ -3394,11 +3417,13 @@
         "bindings/rust/openui-paint/src/collapsed_table_painter.rs",
         "bindings/rust/openui-paint/src/content_layer.rs",
         "bindings/rust/openui-paint/src/image_resource.rs",
+        "bindings/rust/openui-paint/src/paint_program.rs",
         "bindings/rust/openui-paint/src/paint_record.rs",
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-paint/src/text_painter.rs",
         "bindings/rust/openui-engine/src/animation_timeline.rs",
         "bindings/rust/openui-engine/src/client_geometry.rs",
+        "bindings/rust/openui-engine/src/compositor_scene.rs",
         "bindings/rust/openui-engine/src/element_dimensions.rs",
         "bindings/rust/openui-engine/src/lib.rs",
         "bindings/rust/openui-engine/src/scroll_button.rs",
@@ -3601,6 +3626,7 @@
         "bindings/rust/openui-engine/src/lib.rs",
         "bindings/rust/openui-engine/src/scroll_button.rs",
         "bindings/rust/openui-engine/src/scroll_into_view.rs",
+        "bindings/rust/openui-engine/src/semantic_insertion_tests.rs",
         "bindings/rust/openui-engine/src/snapshot_scroll_snap_tests.rs"
       ],
       "css_name": "width",

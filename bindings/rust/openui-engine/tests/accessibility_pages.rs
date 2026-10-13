@@ -390,7 +390,7 @@ fn partial_two_axis_proximity_result_retains_the_live_other_target() {
             e.scroll_button_state(button).unwrap().current_snap_targets,
             [Some(inline), Some(both)]
         );
-        e.remove_node(both).unwrap();
+        e.remove(both).unwrap();
         assert_eq!(
             e.scroll_button_state(button).unwrap().current_snap_targets[1],
             None
