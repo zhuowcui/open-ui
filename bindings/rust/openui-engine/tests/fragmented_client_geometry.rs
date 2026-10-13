@@ -53,7 +53,10 @@ fn columns(e: &mut Engine, height: f32) -> NodeHandle {
     for (property, value) in [
         (StyleProperty::ColumnCount, StyleValue::Integer(2)),
         (StyleProperty::ColumnGap, LengthValue::px(0.0).into()),
-        (StyleProperty::ColumnFill, ColumnFill::Auto.into()),
+        (
+            StyleProperty::ColumnFill,
+            StyleValue::Renderer(RendererStyleValue::ColumnFill(ColumnFill::Auto)),
+        ),
     ] {
         e.set_property(node, property, value).unwrap();
     }
