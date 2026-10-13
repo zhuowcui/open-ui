@@ -2,6 +2,9 @@
 use super::*;
 use std::mem::MaybeUninit;
 
+// Existing OuiEventType header value and shared dispatch_event_to click route.
+const CLICK: u32 = 4;
+
 fn text(value: &str) -> OuiUtf8 {
     OuiUtf8 {
         data: value.as_ptr(),
@@ -280,7 +283,7 @@ fn c_callback_removal_uses_same_live_route_and_releases_all_engine_borrows() {
     assert_eq!(
         oui_element_add_event_listener(
             node,
-            OUI_EVENT_CLICK as i32,
+            CLICK as i32,
             0,
             Some(remove_from_callback),
             (&mut state as *mut CallbackState).cast(),
@@ -288,7 +291,7 @@ fn c_callback_removal_uses_same_live_route_and_releases_all_engine_borrows() {
         ),
         OuiStatus::Ok
     );
-    let mut event = synthesized_event(OUI_EVENT_CLICK, text(""));
+    let mut event = synthesized_event(CLICK, text(""));
     assert_eq!(
         oui_document_dispatch_event(doc, node, &mut event),
         OuiStatus::Ok
