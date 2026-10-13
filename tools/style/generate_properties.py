@@ -15,12 +15,14 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 SCHEMA = ROOT / "bindings/rust/openui-style/property-schema.csv"
 INTERNAL_SCHEMA = ROOT / "bindings/rust/openui-style/internal-style-fields.csv"
+CANONICAL_SCHEMA = ROOT / "bindings/rust/openui-style/canonical-style-fields.csv"
 COMPUTED = ROOT / "bindings/rust/openui-style/src/computed.rs"
 RUST_OUT = ROOT / "bindings/rust/openui-style/src/generated_properties.rs"
 ACCESSORS_OUT = ROOT / "bindings/rust/openui-style/src/generated_computed_accessors.rs"
 C_OUT = ROOT / "include/openui_style_properties.h"
 DOC_OUT = ROOT / "docs/v02/generated/style-properties.md"
 FRAMEWORK_OUT = ROOT / "bindings/rust/openui/src/generated_style_setters.rs"
+AUTHORED_OUT = ROOT / "bindings/rust/openui-style/src/generated_authored_fields.rs"
 
 # Frozen from Chromium 147.0.7727.24's css_properties.json5 after excluding
 # descriptors, SVG-only properties, and non-stable runtime flags. Keeping the
@@ -69,6 +71,49 @@ def computed_fields() -> dict[str, str]:
 def field_names(row: dict[str, str]) -> list[str]:
     value = row["computed_fields"].strip()
     return [] if value == "-" else value.split(";")
+
+
+def canonical_group_fields(schema: list[dict[str, str]]) -> dict[str, list[str]]:
+    groups = {row["rust_name"]: field_names(row) for row in schema}
+    groups["BackgroundColor"] += ["background_current_color"]
+    groups["Transform"] += ["native_transform", "transform_matrix"]
+    corners = ["BorderTopLeftRadius", "BorderTopRightRadius", "BorderBottomRightRadius", "BorderBottomLeftRadius"]
+    for index, name in enumerate(corners):
+        groups[name] += [f"border_radius_percent[{index}]", f"border_radius_lengths[{index}]"]
+    # This is an explicit native computed override, not a CSS longhand. Its
+    # identity is separate; its write set still intersects all corner sources.
+    groups["BorderRadiusPercent"] = [
+        field for index in range(4)
+        for field in (f"border_radius_percent[{index}]", f"border_radius_lengths[{index}]")
+    ]
+    return groups
+
+
+def canonical_rows(schema: list[dict[str, str]]) -> list[dict[str, str]]:
+    parsed = list(csv.DictReader(CANONICAL_SCHEMA.read_text().splitlines()))
+    if not parsed or set(parsed[0]) != {"property", "canonical_groups", "mutation_fields"}:
+        raise SystemExit("canonical style schema columns do not match the generator contract")
+    if [row["property"] for row in parsed] != [row["rust_name"] for row in schema]:
+        raise SystemExit("canonical ownership must cover every property exactly once in ID order")
+    groups = canonical_group_fields(schema)
+    fields = computed_fields()
+    for row in parsed:
+        names = row["canonical_groups"].split(";")
+        if len(names) != len(set(names)) or any(name not in groups for name in names):
+            raise SystemExit("invalid canonical groups for " + row["property"])
+        if any(not groups[name] and name != "Cursor" for name in names):
+            raise SystemExit("canonical owner has no projection: " + row["property"])
+        expected = list(dict.fromkeys(field for name in names for field in groups[name]))
+        writes = [] if row["mutation_fields"] == "-" else row["mutation_fields"].split(";")
+        if set(writes) != set(expected) or len(writes) != len(set(writes)):
+            raise SystemExit("canonical mutation fields disagree for " + row["property"])
+        for field in writes:
+            base = field.split("[")[0]
+            if base not in fields:
+                raise SystemExit("unknown canonical projection field: " + field)
+            if "[" in field and (base not in {"border_radius_percent", "border_radius_lengths"} or field not in {f"{base}[{i}]" for i in range(4)}):
+                raise SystemExit("invalid canonical array projection: " + field)
+    return parsed
 
 
 def internal_rows() -> list[dict[str, str]]:
@@ -166,6 +211,8 @@ def rust_output(schema: list[dict[str, str]]) -> bytes:
     renderer_apply = "            (StyleProperty::ScrollSnapAlign, Self::ScrollSnapAlignPair(value)) => { style.fields.scroll_snap_align = ScrollSnapAlign::None; style.fields.scroll_snap_align_block = Some(value[0]); style.fields.scroll_snap_align_inline = Some(value[1]); true },\n" + "\n".join(
         f"            (StyleProperty::{row['rust_name']}, Self::{row['rust_name']}(value)) => {{ style.fields.{field_names(row)[0]} = value.clone();"
         + (" style.fields.scroll_snap_align_block = None; style.fields.scroll_snap_align_inline = None;" if row['rust_name'] == 'ScrollSnapAlign' else "")
+        + (f" style.fields.border_radius_lengths[{['BorderTopLeftRadius', 'BorderTopRightRadius', 'BorderBottomRightRadius', 'BorderBottomLeftRadius'].index(row['rust_name'])}] = None;" if row['rust_name'] in {'BorderTopLeftRadius', 'BorderTopRightRadius', 'BorderBottomRightRadius', 'BorderBottomLeftRadius'} else "")
+        + (" style.fields.border_radius_lengths = [None; 4];" if row['rust_name'] == 'BorderRadiusPercent' else "")
         + " true },"
         for row in renderer_rows
     )
@@ -226,30 +273,11 @@ def rust_output(schema: list[dict[str, str]]) -> bytes:
     # Shorthands and normalization write more than their canonical inventory
     # field. Use those write sets when deciding whether a repeated declaration
     # is still effective after later declarations.
-    mutation_overrides = {
-        "BackgroundColor": "background_color background_current_color",
-        "Font": "font_style font_variant_caps font_weight font_stretch font_size line_height font_family font_variant_ligatures font_variant_numeric font_variant_east_asian font_variant_alternates font_variant_position font_variant_emoji font_optical_sizing font_size_adjust font_kerning font_feature_settings font_variation_settings font_language_override",
-        "FontVariant": "font_variant_ligatures font_variant_caps font_variant_alternates font_variant_numeric font_variant_east_asian font_variant_position font_variant_emoji",
-        "FontSynthesis": "font_synthesis_weight font_synthesis_style font_synthesis_small_caps font_synthesis_position",
-        "WordWrap": "overflow_wrap",
-        "TextEmphasisStyle": "text_emphasis_mark text_emphasis_fill",
-        "TextEmphasis": "text_emphasis_mark text_emphasis_fill text_emphasis_color",
-        "TextDecoration": "text_decoration_line text_decoration_style text_decoration_color text_decoration_thickness",
-        "TextBox": "text_box_trim text_box_edge",
-        "WhiteSpace": "white_space_collapse text_wrap_mode white_space text_wrap",
-        "TextWrap": "text_wrap_mode text_wrap_style text_wrap white_space",
-        "WhiteSpaceCollapse": "white_space_collapse white_space",
-        "TextWrapMode": "text_wrap_mode white_space text_wrap",
-        "TextWrapStyle": "text_wrap_style text_wrap",
-        "ScrollSnapAlign": "scroll_snap_align scroll_snap_align_block scroll_snap_align_inline",
-    }
-    assert set(mutation_overrides) <= {row["rust_name"] for row in schema}
     mutation_cases = []
-    for row in schema:
-        names = mutation_overrides.get(row["rust_name"], " ".join(field_names(row))).split()
-        assert set(names) <= set(fields), row["rust_name"]
+    for row in canonical_rows(schema):
+        names = [] if row["mutation_fields"] == "-" else row["mutation_fields"].split(";")
         values = ", ".join(f'"{name}"' for name in names)
-        mutation_cases.append(f"            Self::{row['rust_name']} => &[{values}],")
+        mutation_cases.append(f"            Self::{row['property']} => &[{values}],")
     mutation_match = "\n".join(mutation_cases)
 
     # Author values keep relative lengths until the engine resolves them. This
@@ -447,6 +475,11 @@ impl RendererStyleValue {{
     }}
 
     pub(crate) fn apply(&self, style: &mut ComputedStyle, property: StyleProperty) -> bool {{
+        if matches!((property, self),
+            (StyleProperty::WhiteSpace, Self::WhiteSpace(_)) |
+            (StyleProperty::TextWrap, Self::TextWrap(_))) {{
+            return apply_to_computed(style, property, &StyleValue::Renderer(self.clone()), (0.0, 0.0)).is_ok();
+        }}
         match (property, self) {{
 {renderer_apply}
             _ => false,
@@ -683,10 +716,54 @@ def accessors_output(schema: list[dict[str, str]]) -> bytes:
     ).encode()
 
 
+def authored_output(schema: list[dict[str, str]]) -> bytes:
+    ownership = canonical_rows(schema)
+    group_fields = canonical_group_fields(schema)
+    used = {name for row in ownership for name in row["canonical_groups"].split(";")}
+    names = [row["rust_name"] for row in schema if row["rust_name"] in used]
+    if len(names) != len(used):
+        raise SystemExit("canonical owner must have one existing property identity")
+    variants = "\n".join(f"    {name} = {index}," for index, name in enumerate(names))
+    values = "\n".join(f"    CanonicalStyleField::{name}," for name in names)
+    copy_cases = []
+    write_cases = []
+    words = (len(names) + 63) // 64
+    for name in names:
+        fields = group_fields[name]
+        assignments = " ".join(f"target.fields.{field} = source.fields.{field}.clone();" for field in fields)
+        copy_cases.append(f"            Self::{name} => {{ {assignments} }},")
+        dependent = [0] * words
+        for index, other in enumerate(names):
+            if set(fields).intersection(group_fields[other]):
+                dependent[index // 64] |= 1 << (index % 64)
+        write_cases.append(f"            Self::{name} => CanonicalStyleFields([{', '.join(str(word) for word in dependent)}]),")
+    property_cases = []
+    for row in ownership:
+        groups = ", ".join(f"CanonicalStyleField::{name}" for name in row["canonical_groups"].split(";"))
+        property_cases.append(f"            Self::{row['property']} => &[{groups}],")
+    return ("// @generated by tools/style/generate_properties.py; do not edit.\n"
+            "// Canonical ownership is separate from derived/write dependencies.\n"
+            f"\nconst CANONICAL_STYLE_FIELD_WORDS: usize = {words};\n\n"
+            "#[doc(hidden)]\n#[derive(Debug, Clone, Copy, PartialEq, Eq)]\n#[repr(u16)]\n"
+            "pub enum CanonicalStyleField {\n" + variants + "\n}\n\n"
+            "const CANONICAL_STYLE_FIELDS: &[CanonicalStyleField] = &[\n" + values + "\n];\n\n"
+            "#[rustfmt::skip]\nimpl CanonicalStyleField {\n"
+            "    #[allow(clippy::clone_on_copy)]\n"
+            "    fn copy_from(self, target: &mut ComputedStyle, source: &ComputedStyle) {\n"
+            "        match self {\n" + "\n".join(copy_cases) + "\n        }\n    }\n"
+            "    fn dependent_mutation_groups(self) -> CanonicalStyleFields {\n"
+            "        match self {\n" + "\n".join(write_cases) + "\n        }\n    }\n}\n"
+            "\n#[rustfmt::skip]\nimpl StyleProperty {\n"
+            "    #[doc(hidden)]\n"
+            "    pub fn canonical_field_groups(self) -> &'static [CanonicalStyleField] {\n"
+            "        match self {\n" + "\n".join(property_cases) + "\n        }\n    }\n}\n").encode()
+
+
 def outputs() -> dict[Path, bytes]:
     schema = rows()
     return {
         RUST_OUT: rust_output(schema),
+        AUTHORED_OUT: authored_output(schema),
         ACCESSORS_OUT: accessors_output(schema),
         FRAMEWORK_OUT: framework_output(schema),
         C_OUT: c_output(schema),

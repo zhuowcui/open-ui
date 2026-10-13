@@ -1139,7 +1139,10 @@ fn text_shadows(input: &str) -> Option<TextShadowList> {
     Some(result)
 }
 
-fn normalized_white_space(collapse: WhiteSpaceCollapse, wrap: TextWrapMode) -> crate::WhiteSpace {
+pub(crate) fn normalized_white_space(
+    collapse: WhiteSpaceCollapse,
+    wrap: TextWrapMode,
+) -> crate::WhiteSpace {
     use crate::WhiteSpace as W;
     match (collapse, wrap) {
         (WhiteSpaceCollapse::Collapse, TextWrapMode::Wrap) => W::Normal,
@@ -1151,7 +1154,7 @@ fn normalized_white_space(collapse: WhiteSpaceCollapse, wrap: TextWrapMode) -> c
     }
 }
 
-fn normalized_text_wrap(mode: TextWrapMode, style: TextWrapStyle) -> crate::TextWrap {
+pub(crate) fn normalized_text_wrap(mode: TextWrapMode, style: TextWrapStyle) -> crate::TextWrap {
     match mode {
         TextWrapMode::Nowrap => crate::TextWrap::Nowrap,
         TextWrapMode::Wrap => match style {
@@ -2379,7 +2382,7 @@ fn apply_typography_to_computed(
             style.fields.font_synthesis_weight = value.weight;
             style.fields.font_synthesis_style = value.style;
             style.fields.font_synthesis_small_caps = value.small_caps;
-            style.fields.font_synthesis_position = value.position;
+            // Chromium .50 leaves the independent position longhand intact.
         }
         (P::WhiteSpace, TypographyValue::WhiteSpace(value)) => {
             style.fields.white_space_collapse = value.collapse;
@@ -2404,7 +2407,7 @@ fn apply_typography_to_computed(
             style.fields.text_emphasis_mark = value.style.mark;
             style.fields.text_emphasis_fill = value.style.fill;
             style.fields.text_emphasis_color = value.color;
-            style.fields.text_emphasis_position = value.position;
+            // Chromium .50 text-emphasis does not reset position.
         }
         _ => return false,
     }
@@ -2520,6 +2523,37 @@ pub fn apply_to_computed(
         };
         return apply_to_computed(style, property, &StyleValue::Transform(list), viewport);
     }
+    // Legacy renderer summaries enter the same canonical longhand route.
+    let wrapping = match (property, value) {
+        (P::WhiteSpace, StyleValue::Renderer(RendererStyleValue::WhiteSpace(value))) => {
+            let (collapse, wrap) = match value {
+                WhiteSpace::Normal => (WhiteSpaceCollapse::Collapse, TextWrapMode::Wrap),
+                WhiteSpace::Nowrap => (WhiteSpaceCollapse::Collapse, TextWrapMode::Nowrap),
+                WhiteSpace::Pre => (WhiteSpaceCollapse::Preserve, TextWrapMode::Nowrap),
+                WhiteSpace::PreWrap => (WhiteSpaceCollapse::Preserve, TextWrapMode::Wrap),
+                WhiteSpace::PreLine => (WhiteSpaceCollapse::PreserveBreaks, TextWrapMode::Wrap),
+                WhiteSpace::BreakSpaces => (WhiteSpaceCollapse::BreakSpaces, TextWrapMode::Wrap),
+            };
+            Some(TypographyValue::WhiteSpace(WhiteSpaceShorthand {
+                collapse,
+                wrap,
+            }))
+        }
+        (P::TextWrap, StyleValue::Renderer(RendererStyleValue::TextWrap(value))) => {
+            let (mode, style) = match value {
+                TextWrap::Wrap => (TextWrapMode::Wrap, TextWrapStyle::Auto),
+                TextWrap::Nowrap => (TextWrapMode::Nowrap, TextWrapStyle::Auto),
+                TextWrap::Balance => (TextWrapMode::Wrap, TextWrapStyle::Balance),
+                TextWrap::Pretty => (TextWrapMode::Wrap, TextWrapStyle::Pretty),
+                TextWrap::Stable => (TextWrapMode::Wrap, TextWrapStyle::Stable),
+            };
+            Some(TypographyValue::TextWrap(TextWrapShorthand { mode, style }))
+        }
+        _ => None,
+    };
+    if let Some(wrapping) = wrapping {
+        return apply_to_computed(style, property, &StyleValue::Typography(wrapping), viewport);
+    }
     if let StyleValue::Renderer(value) = value {
         return value
             .apply(style, property)
@@ -2631,6 +2665,10 @@ pub fn apply_to_computed(
             P::Border | P::BorderTop | P::BorderRight | P::BorderBottom | P::BorderLeft,
             StyleValue::Border(v),
         ) => {
+            if property == P::Border {
+                // .50 includes border-image reset-only longhands in border.
+                style.fields.border_image = None;
+            }
             let targets = match property {
                 P::Border => [true, true, true, true],
                 P::BorderTop => [true, false, false, false],
@@ -2660,11 +2698,15 @@ pub fn apply_to_computed(
             }
         }
         (P::BorderRadius, StyleValue::CornerRadii(v)) => {
-            let px = |value: LengthValue| resolve(value).value();
-            style.fields.border_top_left_radius = (px(v.0.top), px(v.0.top));
-            style.fields.border_top_right_radius = (px(v.0.right), px(v.0.right));
-            style.fields.border_bottom_right_radius = (px(v.0.bottom), px(v.0.bottom));
-            style.fields.border_bottom_left_radius = (px(v.0.left), px(v.0.left));
+            let values = [v.0.top, v.0.right, v.0.bottom, v.0.left].map(resolve);
+            let radii = values.map(|length| (length.value(), length.value()));
+            style.fields.border_top_left_radius = radii[0];
+            style.fields.border_top_right_radius = radii[1];
+            style.fields.border_bottom_right_radius = radii[2];
+            style.fields.border_bottom_left_radius = radii[3];
+            style.fields.border_radius_percent =
+                values.map(|length| (length.is_percent(), length.is_percent()));
+            style.fields.border_radius_lengths = values.map(|length| Some((length, length)));
         }
         (P::ListStyleType, StyleValue::ListStyle(v)) => style.fields.list_style_type = *v,
         (P::Transform, StyleValue::Transform(v)) => {
@@ -2690,8 +2732,8 @@ pub fn apply_to_computed(
 
 /// Read a schema value back from a computed style.fields.
 ///
-/// Relative lengths have already been resolved by this point and are returned
-/// as pixel values. This is primarily used to capture an animation's
+/// Font and viewport units have already been resolved. Percentage and calculated
+/// length kinds remain available for actual-box evaluation. This captures an animation's
 /// underlying value without maintaining a second handwritten style model.
 pub fn value_from_computed(style: &ComputedStyle, property: StyleProperty) -> StyleValue {
     use StyleProperty as P;
@@ -2709,6 +2751,10 @@ pub fn value_from_computed(style: &ComputedStyle, property: StyleProperty) -> St
                 TransformList(vec![TransformOperation::Matrix(style.fields.transform)])
             }
         }));
+    }
+    if matches!(property, P::WhiteSpace | P::TextWrap) {
+        // Compatibility summaries cannot represent every modern combination.
+        return typography_from_computed(style, property);
     }
     if let Some(value) = RendererStyleValue::from_computed(style, property) {
         return StyleValue::Renderer(value);
@@ -2800,12 +2846,35 @@ pub fn value_from_computed(style: &ComputedStyle, property: StyleProperty) -> St
             style.fields.border_left_style,
             style.fields.border_left_color,
         ),
-        P::BorderRadius => StyleValue::CornerRadii(CornerRadii(Edges {
-            top: LengthValue::px(style.fields.border_top_left_radius.0),
-            right: LengthValue::px(style.fields.border_top_right_radius.0),
-            bottom: LengthValue::px(style.fields.border_bottom_right_radius.0),
-            left: LengthValue::px(style.fields.border_bottom_left_radius.0),
-        })),
+        P::BorderRadius => {
+            // The existing circular shorthand carries each horizontal radius.
+            // Keep its length kind; an elliptical pair needs the owned internal
+            // source array rather than this compatibility shorthand.
+            let numeric = [
+                style.fields.border_top_left_radius.0,
+                style.fields.border_top_right_radius.0,
+                style.fields.border_bottom_right_radius.0,
+                style.fields.border_bottom_left_radius.0,
+            ];
+            let values: [LengthValue; 4] = std::array::from_fn(|index| {
+                style.fields.border_radius_lengths[index]
+                    .map(|(x, _)| x)
+                    .unwrap_or_else(|| {
+                        if style.fields.border_radius_percent[index].0 {
+                            Length::percent(numeric[index])
+                        } else {
+                            Length::px(numeric[index])
+                        }
+                    })
+                    .into()
+            });
+            StyleValue::CornerRadii(CornerRadii(Edges {
+                top: values[0],
+                right: values[1],
+                bottom: values[2],
+                left: values[3],
+            }))
+        }
         P::Cursor => StyleValue::Cursor(Cursor::Auto),
         P::ListStyleType => StyleValue::ListStyle(style.fields.list_style_type),
         P::PointerEvents => StyleValue::PointerEvents(style.fields.pointer_events),

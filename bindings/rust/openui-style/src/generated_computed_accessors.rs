@@ -94,6 +94,10 @@ impl ComputedStyle {
         &self.fields.border_left_width
     }
     #[inline]
+    pub fn border_radius_lengths(&self) -> &[Option<(Length, Length)>; 4] {
+        &self.fields.border_radius_lengths
+    }
+    #[inline]
     pub fn border_radius_percent(&self) -> &[(bool, bool); 4] {
         &self.fields.border_radius_percent
     }

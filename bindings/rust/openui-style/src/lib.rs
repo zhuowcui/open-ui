@@ -7,6 +7,7 @@
 
 mod animation;
 mod animation_value;
+mod authored_style;
 mod color;
 mod computed;
 mod enums;
@@ -19,6 +20,7 @@ mod typography;
 
 pub use animation::*;
 pub use animation_value::*;
+pub use authored_style::*;
 pub use color::{Color, StyleColor};
 pub use computed::{
     AspectRatio, BackgroundLayer, BackgroundPosition, BackgroundRepeat, BackgroundSize,

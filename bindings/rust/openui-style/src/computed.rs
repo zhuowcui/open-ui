@@ -566,6 +566,8 @@ pub struct ComputedStyleFields {
     /// Whether each stored radius component is a percentage rather than px.
     /// Corner order: top-left, top-right, bottom-right, bottom-left.
     pub border_radius_percent: [(bool, bool); 4],
+    /// Resolved native length pairs retain Fixed/Percent/Calculated source kind.
+    pub border_radius_lengths: [Option<(Length, Length)>; 4],
 
     // ── Colors ───────────────────────────────────────────────────────
     /// CSS `background-color`. Initial: `transparent`.
@@ -1284,6 +1286,7 @@ impl ComputedStyle {
                 border_bottom_right_radius: (0.0, 0.0),
                 border_bottom_left_radius: (0.0, 0.0),
                 border_radius_percent: [(false, false); 4],
+                border_radius_lengths: [None; 4],
 
                 background_color: Color::TRANSPARENT,
                 background_current_color: false,
@@ -1642,6 +1645,49 @@ impl ComputedStyle {
         if self.fields.background_current_color {
             self.fields.background_color = self.fields.color;
         }
+    }
+
+    /// Resolve retained corner source lengths against the actual physical box.
+    /// This does not apply the shared CSS overlap reduction or raster scale.
+    /// Explicit numeric/flag transports retain their established meaning.
+    #[doc(hidden)]
+    pub fn border_radii_for_box(&self, size: (f32, f32)) -> [(f32, f32); 4] {
+        let numeric = [
+            self.fields.border_top_left_radius,
+            self.fields.border_top_right_radius,
+            self.fields.border_bottom_right_radius,
+            self.fields.border_bottom_left_radius,
+        ];
+        let resolve = |length: Length, basis: f32| {
+            // Pinned .50 FloatValueForLength distinguishes Percent from Calc.
+            if length.is_calculated() {
+                length.calc_offset() + (length.value() / 100.0) * basis
+            } else if length.is_percent() {
+                basis * length.value() / 100.0
+            } else {
+                length.value()
+            }
+        };
+        std::array::from_fn(|index| {
+            let (x, y) = if let Some((x, y)) = self.fields.border_radius_lengths[index] {
+                (resolve(x, size.0), resolve(y, size.1))
+            } else {
+                let flags = self.fields.border_radius_percent[index];
+                (
+                    if flags.0 {
+                        size.0 * numeric[index].0 / 100.0
+                    } else {
+                        numeric[index].0
+                    },
+                    if flags.1 {
+                        size.1 * numeric[index].1 / 100.0
+                    } else {
+                        numeric[index].1
+                    },
+                )
+            };
+            (x.max(0.0), y.max(0.0))
+        })
     }
 
     // ── Convenience: effective border width (0 if style is none/hidden) ──

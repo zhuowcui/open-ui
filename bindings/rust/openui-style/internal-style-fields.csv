@@ -18,3 +18,4 @@ device_scale_factor,Retains physical-pixel scale for font strike selection witho
 will_change_transform,Caches compositing intent derived from authored will-change declarations.
 native_transform,Retains the owned typed native transform source for effect composition and actual post-layout reference-box resolution.
 transform_matrix,Retains a complete constant native transform matrix while the existing affine field remains a compatibility view.
+border_radius_lengths,Retains resolved native length pairs and source kinds per corner while the existing numeric and percentage transports remain explicit computed overrides.
