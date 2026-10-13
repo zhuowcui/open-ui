@@ -673,6 +673,26 @@ fn edges(input: &str) -> Option<Edges<LengthValue>> {
     }
 }
 
+fn fixed_border_spacing(input: &str) -> Option<(Length, Length)> {
+    fn spacing(input: &str) -> Option<Length> {
+        match length(input)? {
+            LengthValue::Computed(value)
+                if value.length_type() == LengthType::Fixed && value.value() >= 0.0 =>
+            {
+                Some(value)
+            }
+            _ => None,
+        }
+    }
+    let mut tokens = input.split_whitespace();
+    let horizontal = spacing(tokens.next()?)?;
+    let vertical = match tokens.next() {
+        Some(token) => spacing(token)?,
+        None => horizontal,
+    };
+    tokens.next().is_none().then_some((horizontal, vertical))
+}
+
 fn overflow_literal(input: &str) -> Option<Overflow> {
     match input {
         "visible" => Some(Overflow::Visible),
@@ -2076,6 +2096,8 @@ pub fn parse_literal(property: StyleProperty, input: &str) -> Result<StyleValue,
             _ => None,
         }
         .map(|value| StyleValue::Renderer(RendererStyleValue::BoxSizing(value))),
+        P::BorderSpacing => fixed_border_spacing(input)
+            .map(|value| StyleValue::Renderer(RendererStyleValue::BorderSpacing(value))),
         P::GridTemplateColumns => grid_literal::list(input)
             .map(|value| StyleValue::Renderer(RendererStyleValue::GridTemplateColumns(value))),
         P::GridTemplateRows => grid_literal::list(input)
@@ -2984,6 +3006,54 @@ fn typography_from_computed(style: &ComputedStyle, property: StyleProperty) -> S
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn native_border_spacing_preserves_owned_axis_values_and_nonnegative_lengths() {
+        for (literal, horizontal, vertical) in [
+            ("0", 0.0, 0.0),
+            ("0px", 0.0, 0.0),
+            ("2.5px", 2.5, 2.5),
+            (" 2.5px\t7.25px ", 2.5, 7.25),
+        ] {
+            let value = parse_literal(StyleProperty::BorderSpacing, literal).unwrap();
+            let expected = (Length::px(horizontal), Length::px(vertical));
+            assert_eq!(
+                value,
+                StyleValue::Renderer(RendererStyleValue::BorderSpacing(expected))
+            );
+            let mut style = ComputedStyle::initial();
+            apply_to_computed(
+                &mut style,
+                StyleProperty::BorderSpacing,
+                &value,
+                (320.0, 240.0),
+            )
+            .unwrap();
+            assert_eq!(style.border_spacing, expected);
+            assert_eq!(
+                value_from_computed(&style, StyleProperty::BorderSpacing),
+                value
+            );
+        }
+        for literal in [
+            "",
+            "-1px",
+            "2px -1px",
+            "2px 3px 4px",
+            "10%",
+            "auto",
+            "none",
+            "NaNpx",
+            "infpx",
+            "2em",
+            "calc(2px)",
+        ] {
+            assert!(
+                parse_literal(StyleProperty::BorderSpacing, literal).is_err(),
+                "{literal}"
+            );
+        }
+    }
 
     #[test]
     fn column_count_native_integers_preserve_optional_auto_and_reject_nonpositive_values() {
