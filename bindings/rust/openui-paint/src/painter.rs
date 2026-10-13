@@ -1751,6 +1751,12 @@ fn paint_fragment_contents(
         );
         let mut recorder = PictureRecorder::new();
         let layer_canvas: &Canvas = recorder.begin_recording(bounds, false);
+        // Observe the actual nested canvas. The outer stream retains its original
+        // Picture operand and never substitutes these child operations into it.
+        let program_scope =
+            crate::paint_program::is_capturing(canvas.raw_tracking_target()).then(|| {
+                crate::paint_program::PaintProgramScope::new(layer_canvas.raw_tracking_target())
+            });
         let paint_recording =
             crate::paint_record::RecordingScope::new(layer_canvas.raw_tracking_target());
         let background_recording = BackgroundRecordingScope::new();
@@ -1766,6 +1772,13 @@ fn paint_fragment_contents(
         );
         let annotations = background_recording.annotations();
         let paint_record = paint_recording.snapshot();
+        let paint_program = program_scope.as_ref().map(|scope| {
+            let mut program = scope.snapshot();
+            program.retained_font_bytes = doc.font_collection().retained_face_bytes();
+            program.font_cache_lifetime = Some(doc.font_collection().retain_cache_lifetime());
+            program
+        });
+        drop(program_scope);
         drop(paint_recording);
         drop(background_recording);
         let picture = recorder
@@ -1778,6 +1791,7 @@ fn paint_fragment_contents(
             background_color: layer_background_color(&annotations, bounds),
             rect_known_to_be_opaque,
             paint_record,
+            paint_program,
             contents_opaque: rect_known_to_be_opaque.left <= bounds.left
                 && rect_known_to_be_opaque.top <= bounds.top
                 && rect_known_to_be_opaque.right >= bounds.right

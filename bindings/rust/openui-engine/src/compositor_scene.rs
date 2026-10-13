@@ -139,12 +139,26 @@ impl Engine {
             PaintLayerSourceRole::DocumentContent,
         )
         .ok_or_else(|| EngineError::Render("missing document content source identity".into()))?;
+        let viewport_content = recording_binding(
+            SceneRecordingRole::ViewportScrollingContent,
+            PaintLayerSourceRole::ViewportScrollingContent,
+        );
+        if capture
+            .canonical
+            .viewport_content_layer()
+            .is_some_and(|layer| layer.paint_program().is_some())
+            && viewport_content.is_none()
+        {
+            return Err(EngineError::Render(
+                "missing viewport content source identity".into(),
+            ));
+        }
         let overlay = recording_binding(
             SceneRecordingRole::ViewportOverlay,
             PaintLayerSourceRole::ViewportOverlay,
         );
         capture
-            .partition_layers(content, overlay, |node| {
+            .partition_layers_with_viewport_content(content, viewport_content, overlay, |node| {
                 let index = *self.node_slots.get(&node)?;
                 let handle = self.handle_for_slot(index);
                 if self.resolve(handle).ok()? != node {

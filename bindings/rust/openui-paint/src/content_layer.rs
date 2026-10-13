@@ -16,11 +16,20 @@ pub struct RecordedContentLayer {
     pub scroll_translation: (f32, f32),
     pub picture: Picture,
     pub(crate) paint_record: crate::paint_record::LayerPaintRecord,
+    // Captured on this picture's actual recorder canvas when diagnostics are enabled.
+    // The parent still draws the original Picture; this does not flatten replay.
+    pub(crate) paint_program: Option<crate::RecordedPaintProgram>,
     // A caller may clone a content layer independently of its parent scene.
     pub(crate) _font_cache_lifetime: openui_text::font::FontCacheLifetime,
 }
 
 impl RecordedContentLayer {
+    /// The owned static program of this actual scrolling-content recording.
+    /// None means the recording was produced with program capture disabled.
+    pub fn paint_program(&self) -> Option<&crate::RecordedPaintProgram> {
+        self.paint_program.as_ref()
+    }
+
     pub(crate) fn replay(&self, canvas: &Canvas, scale: f64) {
         canvas.legacy_helper_boundary();
         // cc::RasterSource clears the boundary of opaque recordings before

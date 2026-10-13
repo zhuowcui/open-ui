@@ -58,3 +58,9 @@ animation/performance/hardware gates remain required work. No independent layer
 or animation qualification follows from source IDs, tags, or passing static
 comparisons. App-facing policy conveniences can be added after the shared source
 and replay route is verified; current native consumers can use the public Engine.
+
+## Nested viewport provenance
+
+When capture is enabled, the viewport scrolling picture also retains a typed program observed on its actual recorder canvas. `viewport_scrolling_content()` exposes that child and `recording_programs()` enumerates the recording hierarchy. Engine binds the child to the existing retained viewport recording identity. Authored element IDs are shared consistently across recording streams; borrowed fieldset and table scopes keep their actual roles.
+
+The parent still replays its original opaque picture, with the same clear, tiling, clip, scroll and effect order. Child metadata is never spliced into that parent. The hierarchy retains owned font resources and reports queries, images and opaque picture dependencies conservatively. It does not qualify independent transparent surfaces or dynamic tracks. The additive viewport source role requires downstream exhaustive Rust matches to handle it.

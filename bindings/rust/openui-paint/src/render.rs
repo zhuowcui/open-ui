@@ -176,6 +176,7 @@ impl RecordedPaintCapture {
 pub struct LayeredPaintCapture {
     canonical: RecordedPicture,
     content: crate::LayeredPaintProgram,
+    viewport_content: Option<crate::LayeredPaintProgram>,
     overlay: Option<crate::LayeredPaintProgram>,
 }
 
@@ -184,9 +185,28 @@ impl RecordedPaintCapture {
         self,
         content_role: crate::PaintLayerBinding,
         overlay_role: Option<crate::PaintLayerBinding>,
+        resolve: impl FnMut(openui_dom::NodeId) -> Option<crate::PaintLayerBinding>,
+    ) -> Result<LayeredPaintCapture, crate::LayeredPaintError> {
+        // Preserve the existing low-level signature: nested draws inherit its
+        // document fallback. Engine publication supplies the distinct existing
+        // viewport recording identity through the explicit method below.
+        self.partition_layers_with_viewport_content(content_role, None, overlay_role, resolve)
+    }
+
+    /// Bind the actual nested viewport recording without flattening it into the
+    /// parent stream. The explicit recording identity is separate from authored
+    /// element identities, which may legitimately occur in multiple recordings.
+    pub fn partition_layers_with_viewport_content(
+        self,
+        content_role: crate::PaintLayerBinding,
+        viewport_content_role: Option<crate::PaintLayerBinding>,
+        overlay_role: Option<crate::PaintLayerBinding>,
         mut resolve: impl FnMut(openui_dom::NodeId) -> Option<crate::PaintLayerBinding>,
     ) -> Result<LayeredPaintCapture, crate::LayeredPaintError> {
         if content_role.role != crate::PaintLayerSourceRole::DocumentContent
+            || viewport_content_role.is_some_and(|role| {
+                role.role != crate::PaintLayerSourceRole::ViewportScrollingContent
+            })
             || overlay_role
                 .is_some_and(|role| role.role != crate::PaintLayerSourceRole::ViewportOverlay)
         {
@@ -195,6 +215,15 @@ impl RecordedPaintCapture {
         let content = self
             .content_program
             .partition_layers(content_role, &mut resolve)?;
+        let viewport_content = self
+            .canonical
+            .viewport_content_layer()
+            .and_then(|layer| layer.paint_program())
+            .map(|program| {
+                program
+                    .partition_layers(viewport_content_role.unwrap_or(content_role), &mut resolve)
+            })
+            .transpose()?;
         let overlay = self
             .viewport_overlay_program
             .as_ref()
@@ -212,6 +241,11 @@ impl RecordedPaintCapture {
         for source in content
             .sources()
             .iter()
+            .chain(
+                viewport_content
+                    .iter()
+                    .flat_map(|program| program.sources()),
+            )
             .chain(overlay.iter().flat_map(|program| program.sources()))
         {
             let binding = source.binding();
@@ -225,6 +259,7 @@ impl RecordedPaintCapture {
         Ok(LayeredPaintCapture {
             canonical: self.canonical,
             content,
+            viewport_content,
             overlay,
         })
     }
@@ -236,6 +271,32 @@ impl LayeredPaintCapture {
     }
     pub fn content(&self) -> &crate::LayeredPaintProgram {
         &self.content
+    }
+    /// Program captured on the actual viewport content recorder canvas. The
+    /// parent continues to contain its original opaque Picture draw.
+    pub fn viewport_scrolling_content(&self) -> Option<&crate::LayeredPaintProgram> {
+        self.viewport_content.as_ref()
+    }
+    /// All actual recording streams, including the nested viewport source.
+    /// This hierarchy is diagnostic; iterating it does not flatten replay.
+    pub fn recording_programs(&self) -> impl Iterator<Item = &crate::LayeredPaintProgram> {
+        std::iter::once(&self.content)
+            .chain(self.viewport_content.iter())
+            .chain(self.overlay.iter())
+    }
+    /// Conservative counts across actual recordings. A parent Picture draw
+    /// and its recorded children both remain visible as separate dependencies.
+    pub fn recording_coverage(&self) -> crate::PaintLayerCoverage {
+        self.recording_programs().fold(
+            crate::PaintLayerCoverage::default(),
+            |mut total, program| {
+                let coverage = program.coverage();
+                total.opaque_picture_draws += coverage.opaque_picture_draws;
+                total.unclassified_image_draws += coverage.unclassified_image_draws;
+                total.fixed_canvas_queries += coverage.fixed_canvas_queries;
+                total
+            },
+        )
     }
     pub fn viewport_overlay(&self) -> Option<&crate::LayeredPaintProgram> {
         self.overlay.as_ref()
@@ -803,6 +864,141 @@ mod tests {
             ));
             assert_eq!(calls, content_owner_calls * 2);
         }
+    }
+
+    #[test]
+    fn actual_nested_viewport_program_replays_and_validates_cross_stream_bindings() {
+        use crate::{
+            LayeredPaintError, PaintLayerBinding, PaintLayerNodeIdentity, PaintLayerSourceId,
+            PaintLayerSourceRole,
+        };
+        let mut doc = Document::new();
+        let root = doc.root();
+        doc.update_resolved_style(root, |style| {
+            style.overflow_x = Overflow::Scroll;
+            style.overflow_y = Overflow::Scroll;
+        });
+        let child = doc.create_node(ElementTag::Div);
+        doc.append_child(root, child);
+        doc.update_resolved_style(child, |style| {
+            style.display = Display::Block;
+            style.width = Length::px(80.0);
+            style.height = Length::px(80.0);
+            style.background_color = Color::RED;
+        });
+        let viewport = ViewportMetrics::from_logical_size(40.0, 40.0, 1.0).unwrap();
+        let (fragment, _) = record_document(&doc, viewport).unwrap();
+        let capture = record_fragment_with_program(&doc, &fragment, viewport).unwrap();
+        let content = PaintLayerBinding {
+            id: PaintLayerSourceId(1),
+            owner: None,
+            role: PaintLayerSourceRole::DocumentContent,
+        };
+        let nested = PaintLayerBinding {
+            id: PaintLayerSourceId(2),
+            owner: None,
+            role: PaintLayerSourceRole::ViewportScrollingContent,
+        };
+        let overlay = PaintLayerBinding {
+            id: PaintLayerSourceId(3),
+            owner: None,
+            role: PaintLayerSourceRole::ViewportOverlay,
+        };
+        let root_binding = PaintLayerBinding {
+            id: PaintLayerSourceId(4),
+            owner: Some(PaintLayerNodeIdentity {
+                document: 1,
+                index: 1,
+                generation: 1,
+            }),
+            role: PaintLayerSourceRole::AuthoredBox,
+        };
+        let child_binding = PaintLayerBinding {
+            id: PaintLayerSourceId(5),
+            owner: Some(PaintLayerNodeIdentity {
+                document: 1,
+                index: 2,
+                generation: 1,
+            }),
+            role: PaintLayerSourceRole::AuthoredBox,
+        };
+        let resolve = |node| {
+            if node == root {
+                Some(root_binding)
+            } else if node == child {
+                Some(child_binding)
+            } else {
+                None
+            }
+        };
+        let layered = capture
+            .clone()
+            .partition_layers_with_viewport_content(content, Some(nested), Some(overlay), resolve)
+            .unwrap();
+        let original = capture
+            .canonical
+            .viewport_content_layer()
+            .expect("actual viewport recorder");
+        let recorded_program = original.paint_program().expect("actual child capture");
+        let nested_program = layered
+            .viewport_scrolling_content()
+            .expect("published child capture");
+        assert!(nested_program
+            .sources()
+            .iter()
+            .any(|source| source.binding() == child_binding));
+        for scale in [1.0_f32, 1.25, 1.5, 1.75, 2.0] {
+            let size = ((80.0 * scale) as i32, (80.0 * scale) as i32);
+            let pixels = |draw: &dyn Fn(&Canvas)| {
+                let mut surface = surfaces::raster_n32_premul(size).unwrap();
+                surface.canvas().clear(skia_safe::Color::TRANSPARENT);
+                surface.canvas().scale((scale, scale));
+                draw(surface.canvas());
+                surface
+                    .image_snapshot()
+                    .encode(None, EncodedImageFormat::PNG, None)
+                    .unwrap()
+                    .as_bytes()
+                    .to_vec()
+            };
+            let canonical = pixels(&|canvas| {
+                canvas.draw_picture(&original.picture, None, None);
+            });
+            assert_eq!(
+                pixels(&|canvas| recorded_program.replay(canvas).unwrap()),
+                canonical
+            );
+            assert_eq!(
+                pixels(&|canvas| nested_program.replay(canvas).unwrap()),
+                canonical
+            );
+        }
+        assert!(matches!(
+            capture.clone().partition_layers_with_viewport_content(
+                content,
+                Some(PaintLayerBinding {
+                    id: content.id,
+                    ..nested
+                }),
+                Some(overlay),
+                resolve
+            ),
+            Err(LayeredPaintError::ConflictingIdentity(PaintLayerSourceId(
+                1
+            )))
+        ));
+        assert!(matches!(
+            capture.partition_layers_with_viewport_content(
+                content,
+                Some(PaintLayerBinding {
+                    owner: child_binding.owner,
+                    ..nested
+                }),
+                Some(overlay),
+                resolve
+            ),
+            Err(LayeredPaintError::InvalidBinding)
+        ));
     }
 
     #[test]

@@ -1,9 +1,11 @@
 //! Native owned source/order/cache guards; all layered/dynamic qualification
 //! remains explicit until these run and the full pixel/hardware gates pass.
-use openui_compositor::{SceneSnapshot, SoftwareCompositor};
+use openui_compositor::{SceneRecordingRole, SceneSnapshot, SoftwareCompositor};
 use openui_dom::ElementTag;
 use openui_engine::{Engine, NodeHandle, ViewportMetrics};
-use openui_paint::{LayeredPaintQualification, PaintLayerNodeIdentity, PaintLayoutScopeRole};
+use openui_paint::{
+    LayeredPaintQualification, PaintLayerNodeIdentity, PaintLayerSourceRole, PaintLayoutScopeRole,
+};
 use openui_style::{
     Color, CornerRadii, Display, Edges, LengthValue, Overflow, Position, StyleProperty, StyleValue,
     TransformList, TransformOperation,
@@ -31,15 +33,14 @@ fn identity(n: NodeHandle) -> PaintLayerNodeIdentity {
         generation: n.generation(),
     }
 }
-fn source_id(scene: &SceneSnapshot, n: NodeHandle) -> u64 {
+fn source_id(scene: &SceneSnapshot, n: NodeHandle, stage: &str) -> u64 {
     scene
         .layered_paint_capture()
         .unwrap()
-        .content()
-        .sources()
-        .iter()
+        .recording_programs()
+        .flat_map(|program| program.sources())
         .find(|s| s.binding().owner == Some(identity(n)))
-        .unwrap()
+        .unwrap_or_else(|| panic!("missing actual recorded source at {stage} for {n:?}"))
         .binding()
         .id
         .0
@@ -168,17 +169,18 @@ fn canonical_and_layered_replay_share_effect_clip_scroll_tiles_and_helper_roles(
             e.scroll_to(fieldset, 12.0, 8.0).unwrap();
             let scene = e.scene().unwrap();
             equal_replay(&scene);
-            let program = scene.layered_paint_capture().unwrap().content();
-            assert!(program
-                .scopes()
-                .iter()
+            let capture = scene.layered_paint_capture().unwrap();
+            assert!(capture.viewport_scrolling_content().is_some());
+            assert!(capture
+                .recording_programs()
+                .flat_map(|program| program.scopes())
                 .any(|scope| scope.layout_role == PaintLayoutScopeRole::FieldsetContent));
-            assert!(program
-                .scopes()
-                .iter()
+            assert!(capture
+                .recording_programs()
+                .flat_map(|program| program.scopes())
                 .any(|scope| scope.layout_role == PaintLayoutScopeRole::TableHelper));
             assert_eq!(
-                source_id(&scene, fieldset),
+                source_id(&scene, fieldset, "fieldset nested viewport recording"),
                 scene
                     .retained_scene()
                     .unwrap()
@@ -191,7 +193,9 @@ fn canonical_and_layered_replay_share_effect_clip_scroll_tiles_and_helper_roles(
                     .id
                     .0
             );
-            assert!(!program.dynamic_tracks_are_admitted());
+            assert!(capture
+                .recording_programs()
+                .all(|program| !program.dynamic_tracks_are_admitted()));
         }
     }
 }
@@ -204,25 +208,27 @@ fn live_ids_survive_mutation_hidden_reattach_and_retire_generations() {
     let n = box_(&mut e, root, ElementTag::Div, 60.0, 40.0);
     set(&mut e, n, StyleProperty::BackgroundColor, Color::GREEN);
     let saved = e.scene().unwrap();
-    let id = source_id(&saved, n);
+    let id = source_id(&saved, n, "initial scene");
     set(&mut e, n, StyleProperty::Width, LengthValue::px(70.0));
-    assert_eq!(source_id(&e.scene().unwrap(), n), id);
+    assert_eq!(source_id(&e.scene().unwrap(), n, "width mutation"), id);
     set(&mut e, n, StyleProperty::Display, Display::None);
     let hidden = e.scene().unwrap();
     equal_replay(&hidden);
     assert!(!hidden
         .layered_paint_capture()
         .unwrap()
-        .content()
-        .sources()
-        .iter()
+        .recording_programs()
+        .flat_map(|program| program.sources())
         .any(|s| s.binding().owner == Some(identity(n))));
     set(&mut e, n, StyleProperty::Display, Display::Block);
-    assert_eq!(source_id(&e.scene().unwrap(), n), id);
+    assert_eq!(
+        source_id(&e.scene().unwrap(), n, "show after display:none"),
+        id
+    );
     e.detach(n).unwrap();
     e.scene().unwrap();
     e.append_child(root, n).unwrap();
-    assert_eq!(source_id(&e.scene().unwrap(), n), id);
+    assert_eq!(source_id(&e.scene().unwrap(), n, "reattach"), id);
     e.remove(n).unwrap();
     let replacement = box_(&mut e, root, ElementTag::Div, 60.0, 40.0);
     set(
@@ -231,14 +237,17 @@ fn live_ids_survive_mutation_hidden_reattach_and_retire_generations() {
         StyleProperty::BackgroundColor,
         Color::GREEN,
     );
-    assert_ne!(source_id(&e.scene().unwrap(), replacement), id);
+    assert_ne!(
+        source_id(&e.scene().unwrap(), replacement, "replacement generation"),
+        id
+    );
     let mut other =
         Engine::new(ViewportMetrics::from_logical_size(160.0, 96.0, 1.0).unwrap()).unwrap();
     other.set_layered_paint_capture_enabled(true);
     let root = other.root();
     let n = box_(&mut other, root, ElementTag::Div, 60.0, 40.0);
     set(&mut other, n, StyleProperty::BackgroundColor, Color::GREEN);
-    assert_ne!(source_id(&other.scene().unwrap(), n), id);
+    assert_ne!(source_id(&other.scene().unwrap(), n, "new document"), id);
     equal_replay(&saved);
 }
 
@@ -278,13 +287,23 @@ fn immutable_sources_survive_font_image_engine_drop_and_cross_thread_replay() {
             .pixels
             .chunks_exact(4)
             .any(|pixel| pixel == [0, 128, 128, 255]));
-        assert!(scene
-            .layered_paint_capture()
-            .unwrap()
-            .content()
+        let capture = scene.layered_paint_capture().unwrap();
+        let nested = capture
+            .viewport_scrolling_content()
+            .expect("resource draws must be captured on their real viewport canvas");
+        assert!(nested
             .sources()
             .iter()
             .any(|source| source.retained_font_face_count() > 0));
+        assert!(nested.coverage().unclassified_image_draws > 0);
+        assert!(nested
+            .sources()
+            .iter()
+            .any(|source| source.binding().owner == Some(identity(image))));
+        assert!(
+            capture.recording_coverage().unclassified_image_draws
+                >= nested.coverage().unclassified_image_draws
+        );
         drop(e);
         let actual = std::thread::spawn(move || equal_replay(&scene))
             .join()
@@ -308,6 +327,41 @@ fn opaque_viewport_sources_and_query_operands_do_not_claim_layer_admission() {
     assert!(capture.has_opaque_viewport_content_source());
     assert!(capture.viewport_overlay().is_some());
     assert!(capture.content().coverage().opaque_picture_draws > 0);
+    let nested = capture
+        .viewport_scrolling_content()
+        .expect("scrolling viewport content has a real child recording");
+    let recording_id = scene
+        .retained_scene()
+        .unwrap()
+        .recordings()
+        .iter()
+        .find(|recording| recording.role() == SceneRecordingRole::ViewportScrollingContent)
+        .expect("retained viewport recording identity")
+        .id()
+        .0;
+    assert!(nested.sources().iter().any(|source| {
+        let binding = source.binding();
+        binding.id.0 == recording_id
+            && binding.owner.is_none()
+            && binding.role == PaintLayerSourceRole::ViewportScrollingContent
+    }));
+    assert!(nested
+        .sources()
+        .iter()
+        .any(|source| source.binding().owner == Some(identity(child))));
+    assert_eq!(capture.recording_programs().count(), 3);
+    let summed = capture.recording_programs().fold(
+        openui_paint::PaintLayerCoverage::default(),
+        |mut total, program| {
+            let c = program.coverage();
+            total.opaque_picture_draws += c.opaque_picture_draws;
+            total.unclassified_image_draws += c.unclassified_image_draws;
+            total.fixed_canvas_queries += c.fixed_canvas_queries;
+            total
+        },
+    );
+    assert_eq!(capture.recording_coverage(), summed);
+    assert!(!nested.dynamic_tracks_are_admitted());
     assert_eq!(
         capture.qualification(),
         LayeredPaintQualification::UnqualifiedStaticReplay

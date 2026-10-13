@@ -28,6 +28,8 @@ pub enum PaintLayerSourceRole {
     AuthoredBox,
     GeneratedBox,
     DocumentContent,
+    /// An actual nested viewport scrolling-content recording.
+    ViewportScrollingContent,
     ViewportOverlay,
 }
 
@@ -46,9 +48,9 @@ impl PaintLayerBinding {
                 PaintLayerSourceRole::AuthoredBox | PaintLayerSourceRole::GeneratedBox => self
                     .owner
                     .is_some_and(|owner| owner.document != 0 && owner.generation != 0),
-                PaintLayerSourceRole::DocumentContent | PaintLayerSourceRole::ViewportOverlay => {
-                    self.owner.is_none()
-                }
+                PaintLayerSourceRole::DocumentContent
+                | PaintLayerSourceRole::ViewportScrollingContent
+                | PaintLayerSourceRole::ViewportOverlay => self.owner.is_none(),
             }
     }
 }
