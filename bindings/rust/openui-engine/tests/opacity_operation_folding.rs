@@ -219,3 +219,102 @@ fn clip_before_group_can_fold_but_clip_inside_group_retains_coverage() {
         assert_eq!(pixel(&frame, 130.0, 130.0), [255, 255, 255, 255]);
     }
 }
+
+/// Native two-column reduction of the measured structural-clip ordering seam.
+/// The inherited column clip is already the full visible fragment boundary.
+#[test]
+fn redundant_continuation_clip_preserves_single_draw_opacity_at_five_scales() {
+    for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
+        let mut engine = engine(160.0, 140.0, scale);
+        let root = engine.root();
+        let columns = box_node(&mut engine, root, 20.0, 20.0, 40.0, 40.0, GREEN);
+        for (property, value) in [
+            (
+                StyleProperty::ColumnCount,
+                RendererStyleValue::ColumnCount(Some(2)),
+            ),
+            (
+                StyleProperty::ColumnFill,
+                RendererStyleValue::ColumnFill(openui_style::ColumnFill::Auto),
+            ),
+            (
+                StyleProperty::ColumnGap,
+                RendererStyleValue::ColumnGap(Some(openui_geometry::Length::px(0.0))),
+            ),
+        ] {
+            engine
+                .set_property(columns, property, StyleValue::Renderer(value))
+                .unwrap();
+        }
+        let group = engine.create_native_element(ElementTag::Div).unwrap();
+        engine.append_child(columns, group).unwrap();
+        engine
+            .set_property(group, StyleProperty::Display, Display::Block.into())
+            .unwrap();
+        engine
+            .set_property(group, StyleProperty::Position, Position::Relative.into())
+            .unwrap();
+        opacity(&mut engine, group, 0.1);
+        let positioned = engine.create_native_element(ElementTag::Div).unwrap();
+        engine.append_child(group, positioned).unwrap();
+        engine
+            .set_property(positioned, StyleProperty::Display, Display::Block.into())
+            .unwrap();
+        engine
+            .set_property(
+                positioned,
+                StyleProperty::Position,
+                Position::Absolute.into(),
+            )
+            .unwrap();
+        engine
+            .set_property(
+                positioned,
+                StyleProperty::Width,
+                LengthValue::percent(100.0).into(),
+            )
+            .unwrap();
+        let fill = engine.create_native_element(ElementTag::Div).unwrap();
+        engine.append_child(positioned, fill).unwrap();
+        engine
+            .set_property(fill, StyleProperty::Display, Display::Block.into())
+            .unwrap();
+        engine
+            .set_property(fill, StyleProperty::Height, LengthValue::px(80.0).into())
+            .unwrap();
+        engine
+            .set_property(fill, StyleProperty::BackgroundColor, Color::RED.into())
+            .unwrap();
+        let scene = engine.scene().unwrap();
+        let stats = engine.stats();
+        assert_eq!(engine.scene().unwrap().generation(), scene.generation());
+        assert_eq!(
+            engine.stats(),
+            stats,
+            "unchanged scene performed engine work"
+        );
+        drop(engine);
+        let mut compositor = SoftwareCompositor::default();
+        let frame = compositor.render(&scene).unwrap();
+        for y in 0..frame.height {
+            for x in 0..frame.width {
+                let inside = x >= (20.0 * scale) as u32
+                    && x < (60.0 * scale) as u32
+                    && y >= (20.0 * scale) as u32
+                    && y < (60.0 * scale) as u32;
+                let expected = if inside {
+                    [26, 115, 0, 255]
+                } else {
+                    [255, 255, 255, 255]
+                };
+                let offset = y as usize * frame.stride + x as usize * 4;
+                assert_eq!(
+                    &frame.pixels[offset..offset + 4],
+                    expected,
+                    "scale={scale} x={x} y={y}"
+                );
+            }
+        }
+        assert_eq!(compositor.render(&scene).unwrap(), frame);
+    }
+}

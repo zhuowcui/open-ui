@@ -10301,6 +10301,29 @@ mod radius_contour_rounding_guards {
     }
 }
 
+/// A hard intersection that covers every current device cell cannot change
+/// coverage. Query the actual tracked canvas before installing a redundant
+/// structural clip; local_clip_bounds conservatively outsets and is unsuitable.
+/// Query-dependent recordings still retain their fixed-context replay contract.
+fn structural_hard_clip_covers_device(canvas: &Canvas, rect: Rect) -> bool {
+    if !rect.is_finite() {
+        return false;
+    }
+    let matrix = canvas.local_to_device_as_3x3();
+    if (0..9).any(|i| !matrix[i].is_finite())
+        || matrix.has_perspective()
+        || !matrix.rect_stays_rect()
+    {
+        return false;
+    }
+    let (mapped, stays_rect) = matrix.map_rect(rect);
+    stays_rect
+        && mapped.is_finite()
+        && canvas
+            .device_clip_bounds()
+            .is_some_and(|device| mapped.contains(Rect::from_irect(device)))
+}
+
 fn paint_with_overflow_clip(
     canvas: &Canvas,
     fragment: &Fragment,
@@ -10525,11 +10548,6 @@ fn paint_with_overflow_clip(
         .then(|| packed_rounded_clip_mask(rrect, style.device_scale_factor as f32))
         .flatten()
     });
-    if packed_rounded_mask.is_some() {
-        canvas.save_layer_owned(Some(clip_rect), None, SaveLayerFlags::empty());
-    } else {
-        canvas.save();
-    }
     let mut fragmented_top_left_tangent = None;
     let composited_scroll_layer = has_composited_scroll_contents(fragment, style)
         || needs_fractional_cpu_scroll_backing(fragment, style, clip_rect);
@@ -10555,9 +10573,46 @@ fn paint_with_overflow_clip(
                 || style.overflow_y == Overflow::Auto
                 || implicit_scroll_backing_clip));
 
+    let (scroll_x, scroll_y) = if !fragment.owns_scroll_box() {
+        (0.0, 0.0)
+    } else {
+        let node = doc.node(fragment.node_id);
+        (node.scroll_left, node.scroll_top)
+    };
+    let translation = element_scroll_paint_translation(fragment, doc, scroll_x, scroll_y);
+    let omit_structural_scope = fragment.has_overflow_clip
+        && (fragment.block_axis_clip_only != fragment.inline_axis_clip_only)
+        && paint_overflow_pair(fragment, style, doc) == (Overflow::Visible, Overflow::Visible)
+        && !style.has_paint_containment()
+        && !style.has_border_radius()
+        && style.resize == openui_style::Resize::None
+        && fragment.element_scrollbars.is_none()
+        && unclipped_fieldset_legend_content.is_empty()
+        && newly_skipped_legends.is_empty()
+        && newly_deferred_fragmented_outlines.is_empty()
+        && descendant_outline_outset(fragment, doc) == 0.0
+        && rounded_clip_rrect.is_none()
+        && packed_rounded_mask.is_none()
+        && !composited_scroll_layer
+        && !antialias_transformed_clip
+        && translation == (0.0, 0.0)
+        && structural_hard_clip_covers_device(canvas, clip_rect);
+    // Only this proven no-op intersection may disappear. An actual clip,
+    // rounded/analytic edge, effect, scroll or outline retains its full scope.
+    // The unchanged one-draw opacity rule can then fold the original operands.
+    if !omit_structural_scope {
+        if packed_rounded_mask.is_some() {
+            canvas.save_layer_owned(Some(clip_rect), None, SaveLayerFlags::empty());
+        } else {
+            canvas.save();
+        }
+    }
+
     // When border-radius is set, clip to a rounded rect so children are
     // clipped along the curves. Otherwise use a simple rect clip.
-    if let Some(rrect) = rounded_clip_rrect {
+    if omit_structural_scope {
+        // Its mapped hard rectangle already contains the current device clip.
+    } else if let Some(rrect) = rounded_clip_rrect {
         let top_left = rrect.radii(RRectCorner::UpperLeft);
         if fragment.decoration_slice.is_some() && top_left.x > 0.0 && top_left.y > 0.0 {
             fragmented_top_left_tangent = Some((rrect.rect().left, rrect.rect().top + top_left.y));
@@ -10622,14 +10677,9 @@ fn paint_with_overflow_clip(
         // Scrollable descendants paint in scrolled content coordinates.
         // Sticky offsets were resolved against the same document-owned scroll
         // state by layout, while scrollbars remain fixed in the scrollport.
-        canvas.save();
-        let (scroll_x, scroll_y) = if !fragment.owns_scroll_box() {
-            (0.0, 0.0)
-        } else {
-            let node = doc.node(fragment.node_id);
-            (node.scroll_left, node.scroll_top)
-        };
-        let translation = element_scroll_paint_translation(fragment, doc, scroll_x, scroll_y);
+        if !omit_structural_scope {
+            canvas.save();
+        }
         if translation != (0.0, 0.0) {
             canvas.translate(translation);
         }
@@ -10642,7 +10692,9 @@ fn paint_with_overflow_clip(
             style.display.is_flex() && fragmented_flex_has_internal_four_way_junction(fragment),
             Some(fragment),
         );
-        canvas.restore();
+        if !omit_structural_scope {
+            canvas.restore();
+        }
     }
     if let Some(slice) = fragmented_outline_clip {
         paint_fragmented_descendant_outlines(
@@ -10721,7 +10773,9 @@ fn paint_with_overflow_clip(
         );
     }
 
-    canvas.restore();
+    if !omit_structural_scope {
+        canvas.restore();
+    }
     paint_element_scrollbars(canvas, fragment, doc, offset);
 }
 
