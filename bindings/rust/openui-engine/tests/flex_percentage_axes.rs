@@ -110,10 +110,10 @@ fn native_flex_percentage_cross_sizes_follow_logical_axes_and_real_gutters() {
                             (expected[0] as f32, expected[1] as f32)
                         );
                         assert_eq!(size(&mut engine, container), (120.0, 100.0));
-                        let stats = engine.lifecycle_stats();
+                        let stats = engine.stats();
                         gutter(&mut engine, container, value);
                         assert_eq!(dimensions(&mut engine, container), expected);
-                        assert_eq!(engine.lifecycle_stats(), stats);
+                        assert_eq!(engine.stats(), stats);
                     }
                 }
             }
@@ -259,7 +259,11 @@ fn native_flex_aspect_ratio_max_cross_transfer_uses_physical_ratio_and_logical_b
                             .set_property(child, main_property, LengthValue::auto().into())
                             .unwrap();
                         engine
-                            .set_property(child, StyleProperty::BoxSizing, box_sizing.into())
+                            .set_property(
+                                child,
+                                StyleProperty::BoxSizing,
+                                StyleValue::Renderer(RendererStyleValue::BoxSizing(box_sizing)),
+                            )
                             .unwrap();
                         engine
                             .set_property(
@@ -296,7 +300,7 @@ fn native_flex_aspect_ratio_max_cross_transfer_uses_physical_ratio_and_logical_b
                                 "{mode:?} {direction:?} {flex:?} {box_sizing:?} max {percent}%"
                             );
                             assert_eq!(size(&mut engine, container), (120.0, 100.0));
-                            let stats = engine.lifecycle_stats();
+                            let stats = engine.stats();
                             engine
                                 .set_property(
                                     child,
@@ -305,7 +309,7 @@ fn native_flex_aspect_ratio_max_cross_transfer_uses_physical_ratio_and_logical_b
                                 )
                                 .unwrap();
                             assert_eq!(size(&mut engine, child), expected);
-                            assert_eq!(engine.lifecycle_stats(), stats);
+                            assert_eq!(engine.stats(), stats);
                         }
                     }
                 }
