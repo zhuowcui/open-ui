@@ -14421,7 +14421,10 @@ fn fragment_visual_translation(
     containing_inline_size: LayoutUnit,
     containing_block_size: LayoutUnit,
 ) -> PhysicalOffset {
-    let authored = if fragment.node_id.is_none() {
+    // Borrowed formatting helpers retain the source node for styles, but do
+    // not apply that authored element's relative positioning a second time.
+    // Resolved structural translations below still belong to their helper.
+    let authored = if !fragment.owns_element_box() {
         PhysicalOffset::zero()
     } else {
         let style = &doc.node(fragment.node_id).style;
@@ -14774,13 +14777,25 @@ fn slice_translated_fragment_descendants(
 /// changes edge coverage and overdraw at the rotated fragment boundary.
 fn materialize_nontranslated_transform_slice(
     fragment: &mut Fragment,
+    doc: &dyn LayoutDocument,
     source_block_size: LayoutUnit,
+    containing_inline_size: LayoutUnit,
+    containing_block_size: LayoutUnit,
+    writing_direction: WritingDirectionMode,
 ) {
     fragment.children.retain_mut(|child| {
         if child.positioned_fragmentation.is_some() {
             return true;
         }
-        let start = child.offset.top;
+        // The child may already have been source-sliced and then visually
+        // positioned. Intersect its normal-flow box, never the placed offset:
+        // AddChild in pinned Blink retains child_offset and relative_offset
+        // separately and adds the latter only when placing the physical child.
+        let visual = physical_vector_to_logical(
+            fragment_visual_translation(child, doc, containing_inline_size, containing_block_size),
+            writing_direction,
+        );
+        let start = child.offset.top - visual.top;
         let original_fragment_size = child.size.height;
         let end = start + original_fragment_size;
         let visible_start = start.max_of(LayoutUnit::zero());
@@ -14801,9 +14816,17 @@ fn materialize_nontranslated_transform_slice(
         for descendant in &mut child.children {
             descendant.offset.top = descendant.offset.top - consumed;
         }
-        child.offset.top = visible_start;
+        child.offset.top = visible_start + visual.top;
         child.size.height = visible_end - visible_start;
-        materialize_nontranslated_transform_slice(child, child.size.height);
+        let child_source_block_size = child.size.height;
+        materialize_nontranslated_transform_slice(
+            child,
+            doc,
+            child_source_block_size,
+            containing_inline_size,
+            containing_block_size,
+            writing_direction,
+        );
         if source_offset > LayoutUnit::zero() || child.size.height < original_source_size {
             child.decoration_slice = Some(crate::fragment::DecorationSlice {
                 source_block_offset: source_offset,
@@ -31527,7 +31550,11 @@ fn layout_multicol(
                             {
                                 materialize_nontranslated_transform_slice(
                                     &mut part,
+                                    doc,
                                     visual_part_height,
+                                    column_width,
+                                    column_height,
+                                    space.writing_direction,
                                 );
                                 if let Some(decoration_size) = part.decoration_paint_block_size {
                                     part.size.height = decoration_size;
@@ -34345,6 +34372,226 @@ mod tests {
     use openui_dom::ElementTag;
     use openui_geometry::Length;
     use openui_style::*;
+
+    #[test]
+    fn transformed_materialization_keeps_the_owned_normal_flow_part_after_visual_placement() {
+        let lu = LayoutUnit::from_i32;
+        for mode in [
+            WritingMode::HorizontalTb,
+            WritingMode::VerticalRl,
+            WritingMode::VerticalLr,
+        ] {
+            let direction = Direction::Ltr.writing_direction(mode);
+            let physical_vector = |block: i32| {
+                let converter = WritingModeConverter::new(direction, PhysicalSize::zero());
+                let origin =
+                    converter.to_physical_offset(LogicalOffset::zero(), PhysicalSize::zero());
+                let target = converter
+                    .to_physical_offset(LogicalOffset::new(lu(0), lu(block)), PhysicalSize::zero());
+                PhysicalOffset::new(target.left - origin.left, target.top - origin.top)
+            };
+            // Explicit zero and cancelling independent contributions must not
+            // fall back to the deliberately different authored inset below.
+            for (relative, inline) in [(11, 0), (-11, 0), (0, 0), (11, -11)] {
+                let mut doc = Document::new();
+                let parent = doc.create_node(ElementTag::Div);
+                let node = doc.create_node(ElementTag::Div);
+                doc.append_child(doc.root(), parent);
+                doc.append_child(parent, node);
+                doc.update_resolved_style(node, |style| {
+                    style.position = Position::Relative;
+                    style.top = Length::px(99.0);
+                });
+                let mut child = Fragment::new_box(node, PhysicalSize::new(lu(80), lu(50)));
+                child.offset.top = lu(12 + relative + inline);
+                child.record_relative_fragmentation_offset(physical_vector(relative));
+                child.record_reconstructed_inline_offset(physical_vector(inline));
+                crate::fragment_geometry::capture_source(&mut child, direction);
+                let source = child.box_geometry.unwrap();
+                let mut fragment = Fragment::new_box(parent, PhysicalSize::new(lu(100), lu(50)));
+                fragment.children.push(child);
+                slice_translated_fragment_descendants(
+                    &mut fragment,
+                    &doc,
+                    lu(0),
+                    lu(50),
+                    lu(100),
+                    lu(50),
+                    lu(100),
+                    false,
+                    direction,
+                );
+                // The translated pass supplies 38. For zero total movement,
+                // the common materializer supplies the same actual source part.
+                if relative + inline != 0 {
+                    assert_eq!(fragment.children[0].size.height, lu(38));
+                }
+                materialize_nontranslated_transform_slice(
+                    &mut fragment,
+                    &doc,
+                    lu(50),
+                    lu(100),
+                    lu(50),
+                    direction,
+                );
+                assert_eq!(fragment.children.len(), 1, "{mode:?}/{relative}/{inline}");
+                let child = &fragment.children[0];
+                assert_eq!(child.offset.top, lu(12 + relative + inline));
+                assert_eq!(child.size.height, lu(38));
+                assert_eq!(
+                    child.fragmentation_visual_offsets.relative,
+                    Some(physical_vector(relative))
+                );
+                assert_eq!(
+                    child.fragmentation_visual_offsets.reconstructed_inline,
+                    Some(physical_vector(inline))
+                );
+                let geometry = child.box_geometry.unwrap();
+                assert_eq!(geometry.source_fragment_size, source.source_fragment_size);
+                assert_eq!(
+                    geometry.source_border_box_rect,
+                    source.source_border_box_rect
+                );
+                assert_eq!(geometry.block_size, lu(38));
+                assert_eq!(geometry.consumed_block_size, lu(0));
+                assert!(geometry.has_next);
+                assert!(geometry.continuation_record);
+            }
+        }
+    }
+
+    #[test]
+    fn transformed_materialization_crops_source_progress_before_negative_and_static_placement() {
+        let lu = LayoutUnit::from_i32;
+        for mode in [
+            WritingMode::HorizontalTb,
+            WritingMode::VerticalRl,
+            WritingMode::VerticalLr,
+        ] {
+            let direction = Direction::Ltr.writing_direction(mode);
+            let converter = WritingModeConverter::new(direction, PhysicalSize::zero());
+            let origin = converter.to_physical_offset(LogicalOffset::zero(), PhysicalSize::zero());
+            let moved = converter
+                .to_physical_offset(LogicalOffset::new(lu(0), lu(11)), PhysicalSize::zero());
+            let visual = PhysicalOffset::new(moved.left - origin.left, moved.top - origin.top);
+            for translated in [false, true] {
+                let mut doc = Document::new();
+                let parent = doc.create_node(ElementTag::Div);
+                let node = doc.create_node(ElementTag::Div);
+                let grandchild = doc.create_node(ElementTag::Div);
+                doc.append_child(doc.root(), parent);
+                doc.append_child(parent, node);
+                doc.append_child(node, grandchild);
+                let mut child = Fragment::new_box(node, PhysicalSize::new(lu(80), lu(50)));
+                child.offset.top = lu(-10 + if translated { 11 } else { 0 });
+                if translated {
+                    child.record_relative_fragmentation_offset(visual);
+                }
+                let mut descendant = Fragment::new_box(grandchild, PhysicalSize::new(lu(4), lu(4)));
+                descendant.offset.top = lu(15);
+                child.children.push(descendant);
+                crate::fragment_geometry::capture_source(&mut child, direction);
+                let mut fragment = Fragment::new_box(parent, PhysicalSize::new(lu(100), lu(50)));
+                fragment.children.push(child);
+                materialize_nontranslated_transform_slice(
+                    &mut fragment,
+                    &doc,
+                    lu(50),
+                    lu(100),
+                    lu(50),
+                    direction,
+                );
+                let child = &fragment.children[0];
+                assert_eq!(child.offset.top, lu(if translated { 11 } else { 0 }));
+                assert_eq!(child.size.height, lu(40));
+                assert_eq!(child.children.len(), 1);
+                assert_eq!(child.children[0].offset.top, lu(5));
+                let geometry = child.box_geometry.unwrap();
+                assert_eq!(geometry.consumed_block_size, lu(10));
+                assert_eq!(geometry.block_size, lu(40));
+                assert!(!geometry.has_next);
+                assert!(child.is_last_for_node);
+            }
+        }
+    }
+
+    #[test]
+    fn transformed_materialization_applies_authored_fallback_only_to_owned_boxes() {
+        let lu = LayoutUnit::from_i32;
+        for mode in [
+            WritingMode::HorizontalTb,
+            WritingMode::VerticalRl,
+            WritingMode::VerticalLr,
+        ] {
+            let direction = Direction::Ltr.writing_direction(mode);
+            let physical_vector = |block: i32| {
+                let converter = WritingModeConverter::new(direction, PhysicalSize::zero());
+                let origin =
+                    converter.to_physical_offset(LogicalOffset::zero(), PhysicalSize::zero());
+                let target = converter
+                    .to_physical_offset(LogicalOffset::new(lu(0), lu(block)), PhysicalSize::zero());
+                PhysicalOffset::new(target.left - origin.left, target.top - origin.top)
+            };
+            // Real authored boxes without a retained record still use their
+            // relative inset. Same-node grid helpers use only their separately
+            // recorded structural movement, including an explicit zero.
+            for (helper, recorded) in [
+                (false, None),
+                (true, None),
+                (true, Some(11)),
+                (true, Some(0)),
+            ] {
+                let mut doc = Document::new();
+                let parent = doc.create_node(ElementTag::Div);
+                let node = doc.create_node(ElementTag::Table);
+                doc.append_child(doc.root(), parent);
+                doc.append_child(parent, node);
+                let authored = physical_vector(11);
+                doc.update_resolved_style(node, |style| {
+                    style.position = Position::Relative;
+                    style.left = Length::px(authored.left.to_f32());
+                    style.top = Length::px(authored.top.to_f32());
+                });
+                let movement = recorded.unwrap_or(if helper { 0 } else { 11 });
+                let mut child = Fragment::new_box(node, PhysicalSize::new(lu(80), lu(50)));
+                if helper {
+                    child.box_ownership = crate::fragment::FragmentBoxOwnership::LayoutHelper;
+                    child.table_part = Some(crate::fragment::FragmentTablePart::GridDecoration);
+                }
+                if let Some(block) = recorded {
+                    child.record_relative_fragmentation_offset(physical_vector(block));
+                }
+                child.offset.top = lu(12 + movement);
+                crate::fragment_geometry::capture_source(&mut child, direction);
+                assert_eq!(child.box_geometry.is_some(), !helper);
+                assert_eq!(
+                    fragment_visual_translation(&child, &doc, lu(100), lu(50)),
+                    physical_vector(movement),
+                    "{mode:?}/{helper}/{recorded:?}",
+                );
+                let mut fragment = Fragment::new_box(parent, PhysicalSize::new(lu(100), lu(50)));
+                fragment.children.push(child);
+                materialize_nontranslated_transform_slice(
+                    &mut fragment,
+                    &doc,
+                    lu(50),
+                    lu(100),
+                    lu(50),
+                    direction,
+                );
+                assert_eq!(fragment.children.len(), 1);
+                let child = &fragment.children[0];
+                assert_eq!(child.offset.top, lu(12 + movement));
+                assert_eq!(child.size.height, lu(38));
+                assert_eq!(child.owns_element_box(), !helper);
+                assert_eq!(
+                    child.fragmentation_visual_offsets.relative,
+                    recorded.map(physical_vector),
+                );
+                assert_eq!(child.box_geometry.is_some(), !helper);
+            }
+        }
+    }
 
     #[test]
     fn table_row_preferences_need_a_real_remaining_partition_and_column_row() {
