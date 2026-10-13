@@ -352,6 +352,7 @@ fn intrinsic_close_rounding_excess(data: &InlineItemsData, close_item_index: usi
 /// IFC needs line-break state across DOM boundaries. This compact scanner is
 /// deliberately fed by `InlineItemsBuilder`, which has already performed CSS
 /// white-space processing and emitted explicit open/close decoration items.
+#[cfg(test)]
 fn compute_inline_sequence_intrinsic_sizes(
     doc: &dyn LayoutDocument,
     node_id: NodeId,
@@ -1190,18 +1191,16 @@ fn compute_intrinsic_block_sizes_impl(
         // when it lives just inside an inline boundary. Use the same flattened
         // item stream as line layout so decoration edges, forced breaks, and
         // cross-node whitespace collapsing all participate in the result.
-        let has_decorated_inline_sequence = doc.children(node_id).any(|child_id| {
-            let child_style = &doc.node(child_id).style;
-            child_style.display == openui_style::Display::Inline
-                && (child_style.effective_border_left() != 0
-                    || child_style.effective_border_right() != 0
-                    || child_style.padding_left.value() != 0.0
-                    || child_style.padding_left.calc_offset() != 0.0
-                    || child_style.padding_right.value() != 0.0
-                    || child_style.padding_right.calc_offset() != 0.0)
-        });
-        if has_decorated_inline_sequence {
-            let inline_sizes = compute_inline_sequence_intrinsic_sizes(doc, node_id);
+        let (mut inline_data, inline_floats) =
+            InlineItemsBuilder::collect_with_floats(doc, node_id);
+        if inline_floats.is_empty() {
+            // Whitespace and breaks belong to the complete IFC even when
+            // there are no decoration edges. An atomic box ends Leading,
+            // including a real zero-width box; separately measuring its next
+            // text child would trim an interior space. Keep the source-order
+            // float-row accumulator above when floats require that route.
+            inline_data.shape_for_base_style(style);
+            let inline_sizes = compute_inline_items_intrinsic_sizes(&inline_data, style, false);
             min_inline = inline_sizes.min;
             max_inline = inline_sizes.max;
         }

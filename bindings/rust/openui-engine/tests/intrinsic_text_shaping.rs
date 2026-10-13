@@ -655,37 +655,73 @@ fn inline_edges_and_empty_tags_keep_leading_state_but_atomic_content_ends_it() {
     assert_eq!(engine.bounds(host).unwrap().unwrap().width, expected);
 
     // Even a real zero-advance atomic ends the Leading whitespace state.
-    // Its following space remains interior; numerical width is not the state.
-    for width in [0.0, 4.0] {
-        let atomic_host = engine.create_native_element(ElementTag::Span).unwrap();
-        engine
-            .set_property(
-                atomic_host,
-                StyleProperty::Display,
-                Display::InlineBlock.into(),
-            )
-            .unwrap();
-        engine
-            .set_property(
-                atomic_host,
-                StyleProperty::Width,
-                LengthValue::Computed(Length::max_content()).into(),
-            )
-            .unwrap();
-        engine.append_child(engine.root(), atomic_host).unwrap();
-        let atomic = engine.create_native_element(ElementTag::Span).unwrap();
-        engine
-            .set_property(atomic, StyleProperty::Display, Display::InlineBlock.into())
-            .unwrap();
-        engine
-            .set_property(atomic, StyleProperty::Width, LengthValue::px(width).into())
-            .unwrap();
-        engine.append_child(atomic_host, atomic).unwrap();
-        let text = engine.create_text(" X").unwrap();
-        engine.append_child(atomic_host, text).unwrap();
-        assert_eq!(
-            engine.bounds(atomic_host).unwrap().unwrap().width,
-            width + shaped_snapped_width(&engine, " X")
-        );
+    // Its following space is interior in max-content and belongs to the
+    // flattened sequence through undecorated inline wrappers as well.
+    for width in [0.0_f32, 4.0] {
+        for nested_text in [false, true] {
+            let atomic_host = engine.create_native_element(ElementTag::Span).unwrap();
+            engine
+                .set_property(
+                    atomic_host,
+                    StyleProperty::Display,
+                    Display::InlineBlock.into(),
+                )
+                .unwrap();
+            engine
+                .set_property(
+                    atomic_host,
+                    StyleProperty::Width,
+                    LengthValue::Computed(Length::max_content()).into(),
+                )
+                .unwrap();
+            engine.append_child(engine.root(), atomic_host).unwrap();
+            let atomic = engine.create_native_element(ElementTag::Span).unwrap();
+            engine
+                .set_property(atomic, StyleProperty::Display, Display::InlineBlock.into())
+                .unwrap();
+            engine
+                .set_property(atomic, StyleProperty::Width, LengthValue::px(width).into())
+                .unwrap();
+            engine.append_child(atomic_host, atomic).unwrap();
+            let text_parent = if nested_text {
+                let inline = engine.create_native_element(ElementTag::Span).unwrap();
+                engine
+                    .set_property(inline, StyleProperty::Display, Display::Inline.into())
+                    .unwrap();
+                engine.append_child(atomic_host, inline).unwrap();
+                inline
+            } else {
+                atomic_host
+            };
+            let text = engine.create_text(" X").unwrap();
+            engine.append_child(text_parent, text).unwrap();
+            assert_eq!(
+                engine.bounds(atomic_host).unwrap().unwrap().width,
+                width + shaped_snapped_width(&engine, " X")
+            );
+            engine
+                .set_property(
+                    atomic_host,
+                    StyleProperty::Width,
+                    LengthValue::Computed(Length::min_content()).into(),
+                )
+                .unwrap();
+            assert_eq!(
+                engine.bounds(atomic_host).unwrap().unwrap().width,
+                width.max(shaped_snapped_width(&engine, "X"))
+            );
+            assert_eq!(engine.text_data(text).unwrap(), " X");
+            engine
+                .set_property(
+                    atomic_host,
+                    StyleProperty::Width,
+                    LengthValue::Computed(Length::max_content()).into(),
+                )
+                .unwrap();
+            assert_eq!(
+                engine.bounds(atomic_host).unwrap().unwrap().width,
+                width + shaped_snapped_width(&engine, " X")
+            );
+        }
     }
 }
