@@ -214,16 +214,21 @@ static void viewport(double scale) {
 
 typedef OuiStatus (*DimensionQuery)(OuiElement*, int32_t*);
 
-static void integer_dimensions(OuiElement* element, int32_t width, int32_t height,
-                               int32_t scroll_width, int32_t scroll_height) {
-  const DimensionQuery queries[] = {oui_element_get_client_width_v1,
-                                   oui_element_get_client_height_v1,
-                                   oui_element_get_scroll_width_v1,
-                                   oui_element_get_scroll_height_v1};
+static void integer_dimensions(OuiElement* element,
+                               int32_t width,
+                               int32_t height,
+                               int32_t scroll_width,
+                               int32_t scroll_height) {
+  const DimensionQuery queries[] = {
+      oui_element_get_client_width_v1, oui_element_get_client_height_v1,
+      oui_element_get_scroll_width_v1, oui_element_get_scroll_height_v1};
   const int32_t expected[] = {width, height, scroll_width, scroll_height};
   for (size_t i = 0; i < sizeof(queries) / sizeof(queries[0]); ++i) {
     /* A scalar output has no version prefix. Only these four bytes may change. */
-    struct Output { int32_t value; uint8_t tail[12]; } output;
+    struct Output {
+      int32_t value;
+      uint8_t tail[12];
+    } output;
     output.value = INT32_MIN;
     memset(output.tail, 0x6d, sizeof(output.tail));
     assert(queries[i](element, NULL) == OUI_ERROR_INVALID_ARGUMENT);
@@ -235,9 +240,10 @@ static void integer_dimensions(OuiElement* element, int32_t width, int32_t heigh
 }
 
 static void integer_api(double scale) {
-  OuiDocumentConfig config = {sizeof(config), OUI_ABI_VERSION,
-                              {320.0, 240.0, (uint32_t)(320.0 * scale),
-                               (uint32_t)(240.0 * scale), scale, OUI_VIEWPORT_LOGICAL, 0}};
+  OuiDocumentConfig config = {sizeof(config),
+                              OUI_ABI_VERSION,
+                              {320.0, 240.0, (uint32_t)(320.0 * scale), (uint32_t)(240.0 * scale),
+                               scale, OUI_VIEWPORT_LOGICAL, 0}};
   OuiDocument* document = NULL;
   OuiDocument* other_document = NULL;
   OuiElement* root = NULL;
@@ -308,10 +314,9 @@ static void integer_api(double scale) {
   property(inline_element, OUI_STYLE_PROPERTY_DISPLAY, "none");
   integer_dimensions(inline_element, 0, 0, 0, 0);
   assert(oui_element_remove(inline_element) == OUI_OK);
-  const DimensionQuery queries[] = {oui_element_get_client_width_v1,
-                                   oui_element_get_client_height_v1,
-                                   oui_element_get_scroll_width_v1,
-                                   oui_element_get_scroll_height_v1};
+  const DimensionQuery queries[] = {
+      oui_element_get_client_width_v1, oui_element_get_client_height_v1,
+      oui_element_get_scroll_width_v1, oui_element_get_scroll_height_v1};
   for (size_t i = 0; i < sizeof(queries) / sizeof(queries[0]); ++i) {
     int32_t unchanged = -113;
     assert(queries[i](inline_element, &unchanged) == OUI_ERROR_STALE_HANDLE);
@@ -328,8 +333,8 @@ static void integer_api(double scale) {
 }
 
 static void integer_table_api(void) {
-  OuiDocumentConfig config = {sizeof(config), OUI_ABI_VERSION,
-                              {320.0, 240.0, 320, 240, 1.0, OUI_VIEWPORT_LOGICAL, 0}};
+  OuiDocumentConfig config = {
+      sizeof(config), OUI_ABI_VERSION, {320.0, 240.0, 320, 240, 1.0, OUI_VIEWPORT_LOGICAL, 0}};
   OuiDocument* document = NULL;
   OuiElement* root = NULL;
   OuiElement* table = NULL;
