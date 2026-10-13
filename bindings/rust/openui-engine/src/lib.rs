@@ -805,22 +805,16 @@ impl Engine {
         child: NodeHandle,
     ) -> Result<(), EngineError> {
         self.validate_owned_scroll_button_move(child)?;
-        let parent = self.resolve(parent)?;
-        let child = self.resolve(child)?;
-        if !self.document.node(child).parent.is_none() {
+        let parent_node = self.resolve(parent)?;
+        let child_node = self.resolve(child)?;
+        if !self.document.node(child_node).parent.is_none() {
             return Err(EngineError::AlreadyAttached);
         }
-        let mut ancestor = parent;
-        while !ancestor.is_none() {
-            if ancestor == child {
-                return Err(EngineError::Cycle);
-            }
-            ancestor = self.document.node(ancestor).parent;
-        }
-        self.document.append_child(parent, child);
+        self.validate_child_placement(parent, child)?;
+        self.document.append_child(parent_node, child_node);
         self.relocate_owned_scroll_buttons()?;
-        self.refresh_inherited_styles(child)?;
-        self.reconcile_radio_subtree(child)?;
+        self.refresh_inherited_styles(child_node)?;
+        self.reconcile_radio_subtree(child_node)?;
         self.mark_dirty(InvalidationClass::Subtree);
         Ok(())
     }
@@ -832,13 +826,91 @@ impl Engine {
         child: NodeHandle,
     ) -> Result<(), EngineError> {
         self.validate_owned_scroll_button_move(child)?;
-        let mut ancestor = self.resolve(parent)?;
-        let child = self.resolve(child)?;
-        while !ancestor.is_none() {
+        self.validate_child_placement(parent, child)
+    }
+
+    /// Validate both presentation and origin-owned ancestry before any mutation.
+    /// A scroll button can be a sibling box, or be detached while its origin is
+    /// hidden; it remains an owned semantic descendant of that origin. Moving
+    /// the origin beneath that button would make subsequent relocation cyclic.
+    fn validate_child_placement(
+        &self,
+        parent: NodeHandle,
+        child: NodeHandle,
+    ) -> Result<(), EngineError> {
+        self.resolve(child)?;
+        let mut pending = Vec::new();
+        pending
+            .try_reserve(1)
+            .map_err(|_| EngineError::AllocationFailure)?;
+        pending.push((parent, false));
+        // True means the node is on the current DFS path; false means its two
+        // ancestor routes have completed. Shared ancestry is a valid diamond.
+        let mut visited: HashMap<NodeHandle, bool> = HashMap::new();
+        while let Some((ancestor, leaving)) = pending.pop() {
+            if leaving {
+                *visited.get_mut(&ancestor).expect("entered ancestor") = false;
+                continue;
+            }
+            let node = self.resolve(ancestor)?;
             if ancestor == child {
                 return Err(EngineError::Cycle);
             }
-            ancestor = self.document.node(ancestor).parent;
+            match visited.get(&ancestor) {
+                Some(true) => return Err(EngineError::Cycle),
+                Some(false) => continue,
+                None => {}
+            }
+            visited
+                .try_reserve(1)
+                .map_err(|_| EngineError::AllocationFailure)?;
+            pending
+                .try_reserve(3)
+                .map_err(|_| EngineError::AllocationFailure)?;
+            visited.insert(ancestor, true);
+            pending.push((ancestor, true));
+
+            let physical_parent = self.document.node(node).parent;
+            if !physical_parent.is_none() {
+                let index = *self
+                    .node_slots
+                    .get(&physical_parent)
+                    .ok_or(EngineError::InvalidInput("ancestor node is not registered"))?;
+                let slot = self
+                    .slots
+                    .get(index as usize)
+                    .ok_or(EngineError::StaleHandle)?;
+                let parent_handle = NodeHandle {
+                    document: self.id,
+                    index,
+                    generation: slot.generation,
+                };
+                if self.resolve(parent_handle)? != physical_parent {
+                    return Err(EngineError::InvalidInput(
+                        "ancestor registration is inconsistent",
+                    ));
+                }
+                pending.push((parent_handle, false));
+            }
+            if let Some(binding) = self.scroll_buttons.bindings.get(&ancestor) {
+                if binding.button != ancestor {
+                    return Err(EngineError::InvalidInput(
+                        "scroll-button ownership is inconsistent",
+                    ));
+                }
+                self.resolve(binding.origin)?;
+                if self
+                    .scroll_buttons
+                    .directions
+                    .get(&(binding.origin, binding.direction))
+                    != Some(&ancestor)
+                {
+                    return Err(EngineError::InvalidInput(
+                        "scroll-button direction owner is inconsistent",
+                    ));
+                }
+                pending.push((binding.origin, false));
+            }
         }
         Ok(())
     }
@@ -3032,6 +3104,9 @@ fn rounded_rect_contains(x: f32, y: f32, width: f32, height: f32, radii: [(f32, 
     }
     true
 }
+
+#[cfg(test)]
+mod semantic_insertion_tests;
 
 #[cfg(test)]
 mod tests {
