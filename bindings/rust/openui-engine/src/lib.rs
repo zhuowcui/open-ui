@@ -12,6 +12,7 @@ mod hit_geometry;
 mod interaction;
 mod scroll_button;
 mod scroll_into_view;
+mod scroll_notifications;
 mod table_spans;
 
 pub use scroll_button::{
@@ -352,6 +353,7 @@ pub struct Engine {
     animation_time_ms: f64,
     animations: BTreeMap<AnimationId, animation::AnimationInstance>,
     animation_events: Vec<AnimationEvent>,
+    scroll_notifications: scroll_notifications::ScrollNotifications,
     next_animation_id: u64,
     scroll_animations: BTreeMap<ScrollAnimationId, animation::ScrollAnimationInstance>,
     next_scroll_animation_id: u64,
@@ -444,6 +446,7 @@ impl Engine {
             animation_time_ms: 0.0,
             animations: BTreeMap::new(),
             animation_events: Vec::new(),
+            scroll_notifications: Default::default(),
             next_animation_id: 1,
             scroll_animations: BTreeMap::new(),
             next_scroll_animation_id: 1,
@@ -1131,6 +1134,7 @@ impl Engine {
             debug_assert!(self.document.release_detached_node(node));
         }
         self.scene_registry.retire(&removed_handles);
+        self.scroll_notifications.retire(&removed_handles);
         self.mark_dirty(InvalidationClass::Subtree);
         Ok(())
     }
@@ -2108,6 +2112,7 @@ impl Engine {
                 }
                 if self.document.node(node).scroll_left != value {
                     self.queue_snap_end_axis(handle, 0);
+                    self.enqueue_scroll_notification(node);
                 }
                 self.document.node_mut(node).scroll_left = value;
             }
@@ -2117,6 +2122,7 @@ impl Engine {
                 }
                 if self.document.node(node).scroll_top != value {
                     self.queue_snap_end_axis(handle, 1);
+                    self.enqueue_scroll_notification(node);
                 }
                 self.document.node_mut(node).scroll_top = value;
             }
@@ -2355,6 +2361,7 @@ impl Engine {
     }
 
     fn invalidate_scroll(&mut self, node: NodeId) {
+        self.enqueue_scroll_notification(node);
         // Sticky fragment positions currently resolve during layout. Invalidate
         // that dependency only when this scrollport owns a sticky descendant;
         // ordinary scrolling retains its existing compositor-only path.
@@ -2653,9 +2660,10 @@ impl Engine {
             );
             if !changes.is_empty() {
                 for (node, x, y) in changes {
-                    let node = self.document.node_mut(node);
-                    node.scroll_left = x;
-                    node.scroll_top = y;
+                    let data = self.document.node_mut(node);
+                    data.scroll_left = x;
+                    data.scroll_top = y;
+                    self.enqueue_scroll_notification(node);
                 }
                 // Sticky descendants also consume the retained offsets.
                 fragment =

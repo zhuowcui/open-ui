@@ -93,7 +93,13 @@ impl EventState {
         Rc::new(Self {
             bubbles: !matches!(
                 event_type,
-                "focus" | "blur" | "mouseenter" | "mouseleave" | "pointerenter" | "pointerleave"
+                "focus"
+                    | "blur"
+                    | "mouseenter"
+                    | "mouseleave"
+                    | "pointerenter"
+                    | "pointerleave"
+                    | "scroll"
             ),
             // Native input/change notifications report a completed mutation.
             // Chromium creates them as noncancelable; beforeinput remains
@@ -108,6 +114,7 @@ impl EventState {
                     | "change"
                     | "select"
                     | "selectionchange"
+                    | "scroll"
                     // Chromium 147.0.7727.50 PointerEventFactory::
                     // SetEventSpecificFields and MouseEventManager's native
                     // boundary event initializer. Explicit Event::new options

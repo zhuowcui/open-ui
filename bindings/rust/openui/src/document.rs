@@ -318,14 +318,15 @@ impl Document {
         self.focus_from(target, FocusOrigin::Pointer)
     }
 
-    /// Deliver one bounded native selection task turn on the document's owning thread.
+    /// Deliver one bounded native selection/scroll task turn on the owning thread.
     /// Callbacks run after all engine/listener/task borrows are released. Callback
     /// mutations may leave tasks for a later turn; recursive pumping does no work.
     pub fn dispatch_pending_events(&self) -> Result<(), Error> {
         self.inner.selection_tasks.dispatch(self)
     }
     pub fn has_pending_events(&self) -> Result<bool, Error> {
-        self.inner.selection_tasks.is_pending()
+        Ok(self.inner.selection_tasks.is_pending()?
+            || self.with_engine(Engine::has_pending_scroll_events)?)
     }
     fn control_selection_snapshot(
         engine: &Engine,

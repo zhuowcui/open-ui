@@ -1513,6 +1513,7 @@ impl Engine {
                 let data = self.document.node_mut(node);
                 data.scroll_left = next.0;
                 data.scroll_top = next.1;
+                self.enqueue_scroll_notification(node);
                 changed = true;
             }
         }
