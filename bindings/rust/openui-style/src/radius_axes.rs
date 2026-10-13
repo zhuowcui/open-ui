@@ -207,7 +207,35 @@ mod tests {
                 (200.0, 100.0)
             )
             .is_err());
-            assert_eq!(style, before);
+            assert_eq!(
+                style.fields.border_radius_lengths,
+                before.fields.border_radius_lengths
+            );
+            assert_eq!(
+                style.fields.border_radius_percent,
+                before.fields.border_radius_percent
+            );
+            assert_eq!(
+                [
+                    style.fields.border_top_left_radius,
+                    style.fields.border_top_right_radius,
+                    style.fields.border_bottom_right_radius,
+                    style.fields.border_bottom_left_radius,
+                ],
+                [
+                    before.fields.border_top_left_radius,
+                    before.fields.border_top_right_radius,
+                    before.fields.border_bottom_right_radius,
+                    before.fields.border_bottom_left_radius,
+                ]
+            );
+            for property in RADIUS_AXIS_PROPERTIES {
+                assert_eq!(
+                    value_from_computed(&style, property),
+                    value_from_computed(&before, property),
+                    "invalid {invalid:?} changed {property:?}"
+                );
+            }
         }
         assert!(parse_literal(StyleProperty::BorderTopLeftRadiusX, "auto").is_err());
         assert!(style
