@@ -59,9 +59,12 @@ fn same_phase_capture_preserves_cpu_tiles_viewport_controls_and_document_drop() 
             let text = doc.create_node(ElementTag::Text);
             doc.node_mut(text).text = Some("native retained text".into());
             doc.append_child(box_, text);
-            let viewport = ViewportMetrics::from_logical_size(width, 72.0, scale).unwrap();
-            let space =
-                ConstraintSpace::for_root(LayoutUnit::from_f64(width), LayoutUnit::from_f64(72.0));
+            let viewport =
+                ViewportMetrics::from_logical_size(f64::from(width), 72.0, scale).unwrap();
+            let space = ConstraintSpace::for_root(
+                LayoutUnit::from_f64(f64::from(width)),
+                LayoutUnit::from_f64(72.0),
+            );
             let fragment = block_layout(&doc, root, &space);
             let before = record_fragment(&doc, &fragment, viewport).unwrap();
             let captured = record_fragment_with_program(&doc, &fragment, viewport).unwrap();
