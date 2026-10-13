@@ -842,3 +842,31 @@ fn transform_reset_under_live_effect_defers_containing_block_policy_until_cancel
     assert_eq!(e.bounds(child).unwrap().unwrap().x, 0.0);
     assert_eq!(e.stats().layouts, before + 1);
 }
+
+#[test]
+fn cursor_query_uses_surviving_source_and_inherits_after_removal() {
+    let mut e = engine();
+    let root = e.root();
+    let parent = node(&mut e, root, ElementTag::Div);
+    let child = node(&mut e, parent, ElementTag::Div);
+    assert_eq!(e.cursor(child).unwrap(), openui_style::Cursor::Auto);
+    e.set_property(
+        parent,
+        StyleProperty::Cursor,
+        openui_style::Cursor::Pointer.into(),
+    )
+    .unwrap();
+    assert_eq!(e.cursor(child).unwrap(), openui_style::Cursor::Pointer);
+    e.set_property(
+        child,
+        StyleProperty::Cursor,
+        openui_style::Cursor::Auto.into(),
+    )
+    .unwrap();
+    assert_eq!(e.cursor(child).unwrap(), openui_style::Cursor::Auto);
+    assert!(e.remove_property(child, StyleProperty::Cursor).unwrap());
+    assert_eq!(e.cursor(child).unwrap(), openui_style::Cursor::Pointer);
+    assert!(!e.remove_property(child, StyleProperty::Cursor).unwrap());
+    assert!(e.remove_property(parent, StyleProperty::Cursor).unwrap());
+    assert_eq!(e.cursor(child).unwrap(), openui_style::Cursor::Auto);
+}

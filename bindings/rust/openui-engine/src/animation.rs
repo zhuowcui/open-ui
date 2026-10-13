@@ -1,9 +1,8 @@
 use crate::{Engine, EngineError, NodeHandle};
 use openui_style::{
     apply_to_computed, value_from_computed, AnimationAttachmentRange, AnimationOptions,
-    AnimationPhase, AnimationTimingSeconds, CompositedStyleValue, Keyframes, LengthValue,
-    PlayState, PropertyKeyframes, StyleProperty, StyleValue, TimelineAxis, TimelineRange,
-    ViewTimelineInset,
+    AnimationPhase, AnimationTimingSeconds, CompositedStyleValue, Keyframes, PlayState,
+    PropertyKeyframes, StyleProperty, StyleValue, TimelineAxis, TimelineRange, ViewTimelineInset,
 };
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Ord, PartialOrd)]
@@ -443,7 +442,6 @@ impl Engine {
         } else {
             0.0
         };
-        let property = keyframes.property();
         let timeline_now = self.timeline_time(timeline, &options)?;
         let start_time_seconds = if timeline.is_document() {
             if options.play_state == PlayState::Paused || options.playback_rate == 0.0 {
@@ -1419,7 +1417,7 @@ mod tests {
     use super::*;
     use crate::ViewportMetrics;
     use openui_dom::ElementTag;
-    use openui_style::{Display, FillMode, Keyframe, Overflow};
+    use openui_style::{Display, FillMode, Keyframe, LengthValue, Overflow};
 
     fn opacity_frames() -> PropertyKeyframes {
         PropertyKeyframes::typed(

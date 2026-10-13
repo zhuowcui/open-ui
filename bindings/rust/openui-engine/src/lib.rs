@@ -2104,11 +2104,23 @@ impl Engine {
         let mut current = Some(handle);
         while let Some(node) = current {
             self.resolve(node)?;
-            if let Some(StyleValue::Cursor(cursor)) = self.slots[node.index as usize]
+            if let Some(cursor) = self.slots[node.index as usize]
                 .authored
-                .get(&(StyleProperty::Cursor as u16))
+                .contributions()
+                .iter()
+                .find_map(|contribution| {
+                    if contribution
+                        .fields()
+                        .contains(openui_style::CanonicalStyleField::Cursor)
+                    {
+                        if let StyleValue::Cursor(cursor) = contribution.value() {
+                            return Some(*cursor);
+                        }
+                    }
+                    None
+                })
             {
-                return Ok(*cursor);
+                return Ok(cursor);
             }
             current = self.parent(node)?;
         }
