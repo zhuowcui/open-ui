@@ -8,6 +8,13 @@ foreach(example IN ITEMS hello counter todo dashboard accessibility geometry scr
   target_link_libraries(openui_${example} PRIVATE OpenUI::OpenUI)
 endforeach()
 
+add_executable(openui_property_removal property_removal.c)
+target_link_libraries(openui_property_removal PRIVATE OpenUI::OpenUI)
+set_target_properties(openui_property_removal PROPERTIES C_STANDARD 11 C_STANDARD_REQUIRED YES)
+add_executable(openui_property_removal_cpp property_removal.cc)
+target_link_libraries(openui_property_removal_cpp PRIVATE OpenUI::OpenUI)
+set_target_properties(openui_property_removal_cpp PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES)
+
 add_executable(openui_header_smoke header_smoke.cc)
 target_link_libraries(openui_header_smoke PRIVATE OpenUI::OpenUI)
 

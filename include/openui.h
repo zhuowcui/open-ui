@@ -1117,6 +1117,17 @@ OuiStatus oui_element_get_attribute_v1(OuiElement* element, OuiUtf8 name,
  * font metrics and refreshes after native mutations. lh in line-height uses
  * the parent line height; auto, none, negative and non-finite values fail. */
 OuiStatus oui_element_set_property(OuiElement* element, OuiStyleProperty property, const OuiStyleValue* value);
+/* Remove the property's surviving authored canonical fields through the shared
+ * native Engine. Removed longhands do not revive older shorthand contributions.
+ * Constructor defaults, inheritance and remaining declarations are recomputed;
+ * active animations may still mask the source until cancellation or an unfilled
+ * phase. out_removed is mandatory writable one-byte storage, written only on
+ * success: 1 for removed ownership, 0 for an unchanged missing owner. Invalid
+ * properties, handles, threads and reentrant borrows leave it unchanged. The
+ * owning-thread call retains no pointers and contains Rust panics. */
+OuiStatus oui_element_remove_property(OuiElement* element,
+                                      OuiStyleProperty property,
+                                      uint8_t* out_removed);
 OuiStatus oui_element_animate(OuiElement* element, OuiStyleProperty property, const OuiKeyframe* keyframes, size_t keyframe_count, const OuiAnimationOptions* options, const OuiAnimationTimeline* timeline, uint64_t* out_animation_id);
 OuiStatus oui_element_transition(OuiElement* element, OuiStyleProperty property, const OuiStyleValue* target, const OuiAnimationOptions* options, uint64_t* out_animation_id);
 /* Additive native curve APIs. Same timing, property/timeline ownership,

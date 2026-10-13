@@ -102,6 +102,7 @@ OPENUI_0.2 {
     oui_element_remove;
     oui_element_remove_all_children;
     oui_element_remove_attribute;
+    oui_element_remove_property;
     oui_element_replace_control_range_v1;
     oui_element_scroll_into_view_v1;
     oui_element_scroll_to;

@@ -26,8 +26,13 @@ snapshot inputs. They retain their existing inheritance policy, and removing a
 later authored override restores that explicit snapshot input. Snapshot creation
 uses the unanimated cascade rather than the currently displayed animation.
 
-This checkpoint adds Engine and native Rust removal. The append-only C removal
-transport is a required successor. Retained raw border-radius source is preserved;
+`oui_element_remove_property(element, property, &removed)` exposes the same
+operation to C and C++. Its mandatory byte output is written only on success:
+`1` means ownership was removed, and `0` means the property had no remaining
+authored owner. Errors preserve the output. Handles and calls use the creating
+thread; removal is allowed from event callbacks after internal borrows end.
+
+Retained raw border-radius source is preserved;
 actual-box paint/hit/scene consumers and full authored elliptical radius transport
 have separate qualification gates. Source and typed guard review do not qualify
 runtime behavior or Chromium pixels.

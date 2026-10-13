@@ -36,6 +36,8 @@ mod native_app;
 #[cfg(test)]
 mod native_app_tests;
 #[cfg(test)]
+mod property_removal_tests;
+#[cfg(test)]
 mod raw_event_tests;
 mod registry;
 mod scroll_button;
@@ -309,15 +311,14 @@ fn same_document(first: &ElementRef, second: &ElementRef) -> Result<Rc<DocumentS
     Ok(first_document)
 }
 
-fn with_element_mut(
+fn with_element_mut<T>(
     address: usize,
-    operation: impl FnOnce(&mut Engine, NodeHandle) -> Result<(), openui_engine::EngineError>,
-) -> Result<(), ApiError> {
+    operation: impl FnOnce(&mut Engine, NodeHandle) -> Result<T, openui_engine::EngineError>,
+) -> Result<T, ApiError> {
     let element = element(address)?;
     let document = element_document(&element)?;
     let mut engine = borrow_engine_mut(&document)?;
-    operation(&mut engine, element.node)?;
-    Ok(())
+    Ok(operation(&mut engine, element.node)?)
 }
 
 fn copy_array<T: Copy>(
@@ -1579,6 +1580,29 @@ pub extern "C" fn oui_element_set_property(
         with_element_mut(element_handle as usize, |engine, node| {
             engine.set_property(node, property, value)
         })
+    })
+}
+
+// SAFETY CONTRACT: `element` is live and `out_removed` is writable for one byte.
+#[no_mangle]
+pub extern "C" fn oui_element_remove_property(
+    element_handle: *mut OuiElement,
+    property: i32,
+    out_removed: *mut u8,
+) -> OuiStatus {
+    ffi(|| {
+        if out_removed.is_null() {
+            return Err(invalid("out_removed is null"));
+        }
+        let property = property_from_raw(property)
+            .ok_or_else(|| invalid("unknown style property identifier"))?;
+        let removed = with_element_mut(element_handle as usize, |engine, node| {
+            engine.remove_property(node, property)
+        })?;
+        // The shared helper releases its Engine borrow before output publication.
+        // SAFETY: the caller guarantees writable storage for one output byte.
+        unsafe { ptr::write(out_removed, u8::from(removed)) };
+        Ok(())
     })
 }
 
