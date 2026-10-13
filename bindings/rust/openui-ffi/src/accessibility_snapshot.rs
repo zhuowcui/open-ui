@@ -650,3 +650,149 @@ mod output_tests {
         }
     }
 }
+
+#[cfg(test)]
+mod scroll_ownership_tests {
+    use super::*;
+    use std::mem::MaybeUninit;
+
+    fn text(s: &str) -> OuiUtf8 {
+        OuiUtf8 {
+            data: s.as_ptr(),
+            length: s.len(),
+        }
+    }
+    fn property(element: *mut OuiElement, property: StyleProperty, literal: &str) {
+        let mut value = MaybeUninit::<OuiStyleValue>::uninit();
+        assert_eq!(
+            oui_style_value_parse(property as i32, text(literal), value.as_mut_ptr()),
+            OuiStatus::Ok
+        );
+        let value = unsafe { value.assume_init() };
+        assert_eq!(
+            oui_element_set_property(element, property as i32, &value),
+            OuiStatus::Ok
+        );
+        if value.tag == 6 {
+            assert_eq!(
+                oui_style_compound_destroy(unsafe { value.data.compound }.cast_mut()),
+                OuiStatus::Ok
+            );
+        }
+    }
+    fn node(handle: *const OuiAccessibilitySnapshot, id: u64) -> OuiAccessibilityNodeInfo {
+        let mut info: OuiAccessibilitySnapshotInfo = unsafe { std::mem::zeroed() };
+        info.struct_size = size_of::<OuiAccessibilitySnapshotInfo>() as u32;
+        info.abi_version = OUI_ABI_VERSION;
+        assert_eq!(
+            oui_accessibility_snapshot_get_info(handle, &mut info),
+            OuiStatus::Ok
+        );
+        for index in 0..info.node_count {
+            let mut out: OuiAccessibilityNodeInfo = unsafe { std::mem::zeroed() };
+            out.struct_size = size_of::<OuiAccessibilityNodeInfo>() as u32;
+            out.abi_version = OUI_ABI_VERSION;
+            assert_eq!(
+                oui_accessibility_snapshot_get_node(handle, index, &mut out),
+                OuiStatus::Ok
+            );
+            if out.id == id {
+                return out;
+            }
+        }
+        panic!("retained accessibility ID absent");
+    }
+    fn state(handle: *const OuiAccessibilitySnapshot, id: u64) -> OuiAccessibilityNodeState {
+        let mut out: OuiAccessibilityNodeState = unsafe { std::mem::zeroed() };
+        out.struct_size = size_of::<OuiAccessibilityNodeState>() as u32;
+        out.abi_version = OUI_ABI_VERSION;
+        assert_eq!(
+            oui_accessibility_snapshot_get_node_state(handle, id, &mut out),
+            OuiStatus::Ok
+        );
+        out
+    }
+    fn capture(
+        document: *mut OuiDocument,
+        previous: *const OuiAccessibilitySnapshot,
+    ) -> *mut OuiAccessibilitySnapshot {
+        let mut snapshot = ptr::null_mut();
+        assert_eq!(
+            oui_document_accessibility_snapshot(document, previous, &mut snapshot),
+            OuiStatus::Ok
+        );
+        snapshot
+    }
+
+    #[test]
+    fn owned_c_snapshots_distinguish_user_actions_hidden_offsets_and_no_scroll_boxes() {
+        const DIRECTIONS: u32 = (1 << 11) | (1 << 12) | (1 << 13) | (1 << 14);
+        for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
+            let config = OuiDocumentConfig {
+                struct_size: size_of::<OuiDocumentConfig>() as u32,
+                abi_version: OUI_ABI_VERSION,
+                viewport: OuiViewportMetrics {
+                    logical_width: 320.0,
+                    logical_height: 240.0,
+                    physical_width: (320.0 * scale) as u32,
+                    physical_height: (240.0 * scale) as u32,
+                    device_scale_factor: scale,
+                    authority: 1,
+                    reserved: 0,
+                },
+            };
+            let mut document = ptr::null_mut();
+            let mut root = ptr::null_mut();
+            let mut scroll = ptr::null_mut();
+            let mut content = ptr::null_mut();
+            assert_eq!(oui_document_create(&config, &mut document), OuiStatus::Ok);
+            assert_eq!(oui_document_root(document, &mut root), OuiStatus::Ok);
+            assert_eq!(oui_element_create(document, 0, &mut scroll), OuiStatus::Ok);
+            assert_eq!(oui_element_create(document, 0, &mut content), OuiStatus::Ok);
+            assert_eq!(oui_element_append_child(root, scroll), OuiStatus::Ok);
+            assert_eq!(oui_element_append_child(scroll, content), OuiStatus::Ok);
+            for (element, prop, literal) in [
+                (scroll, StyleProperty::Width, "100px"),
+                (scroll, StyleProperty::Height, "80px"),
+                (scroll, StyleProperty::Overflow, "auto"),
+                (scroll, StyleProperty::ScrollbarWidth, "none"),
+                (content, StyleProperty::Width, "60px"),
+                (content, StyleProperty::Height, "240px"),
+            ] {
+                property(element, prop, literal);
+            }
+            let mut id = 0;
+            assert_eq!(
+                oui_element_get_accessibility_id(scroll, &mut id),
+                OuiStatus::Ok
+            );
+            let initial = capture(document, ptr::null());
+            assert_eq!(node(initial, id).actions & DIRECTIONS, DIRECTIONS);
+            property(scroll, StyleProperty::Overflow, "hidden");
+            assert_eq!(oui_element_scroll_to(scroll, 0.0, 40.0), OuiStatus::Ok);
+            let hidden = capture(document, initial);
+            assert_eq!(node(hidden, id).actions & DIRECTIONS, 0);
+            let hidden_state = state(hidden, id);
+            assert_ne!(hidden_state.flags & (1 << 13), 0);
+            assert_eq!(hidden_state.scroll_y, 40.0);
+            property(scroll, StyleProperty::Overflow, "clip");
+            let clipped = capture(document, hidden);
+            assert_eq!(node(clipped, id).actions & DIRECTIONS, 0);
+            let clipped_state = state(clipped, id);
+            assert_eq!(clipped_state.flags & ((1 << 12) | (1 << 13)), 0);
+            assert_eq!((clipped_state.scroll_x, clipped_state.scroll_y), (0.0, 0.0));
+            for element in [content, scroll, root] {
+                assert_eq!(oui_element_destroy(element), OuiStatus::Ok);
+            }
+            assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
+            assert_eq!(node(initial, id).actions & DIRECTIONS, DIRECTIONS);
+            assert_eq!(state(initial, id).scroll_y, 0.0);
+            assert_eq!(node(hidden, id).actions & DIRECTIONS, 0);
+            assert_eq!(state(hidden, id).scroll_y, 40.0);
+            assert_eq!(state(clipped, id).flags & ((1 << 12) | (1 << 13)), 0);
+            for snapshot in [initial, hidden, clipped] {
+                assert_eq!(oui_accessibility_snapshot_destroy(snapshot), OuiStatus::Ok);
+            }
+        }
+    }
+}

@@ -255,6 +255,14 @@ impl Engine {
             return Ok([0; 4]);
         }
         self.update()?;
+        Ok(self.retained_element_dimensions(node))
+    }
+
+    /// CSSOM integer dimensions from the final retained source boxes. Callers
+    /// must resolve pending layout before using this read-only projection.
+    /// Accessibility uses the same untransformed sizing and continuation policy
+    /// as the public client/scroll dimension getters.
+    pub(crate) fn retained_element_dimensions(&self, node: NodeId) -> [i32; 4] {
         // Native documents expose a viewport root. Browser-shaped snapshots
         // expose their standards document element through the same viewport.
         let viewport_element =
@@ -265,23 +273,23 @@ impl Engine {
             node
         };
         let Some(root) = self.latest_fragment.as_ref() else {
-            return Ok([0; 4]);
+            return [0; 4];
         };
         let mut boxes = Vec::new();
         collect_boxes(root, metric_node, &mut boxes);
         let Some(&first) = boxes.first() else {
-            return Ok([0; 4]);
+            return [0; 4];
         };
         if viewport_element {
             let Some(area) = first.scroll_area else {
-                return Ok([0; 4]);
+                return [0; 4];
             };
-            return Ok([
+            return [
                 area.client_rect.width().round_i32(),
                 area.client_rect.height().round_i32(),
                 area.content_rect.width().round_i32(),
                 area.content_rect.height().round_i32(),
-            ]);
+            ];
         }
         let style = &self.document.node(node).style;
         let mut dimensions = dimensions_for_boxes(&boxes, style);
@@ -310,7 +318,7 @@ impl Engine {
                 dimensions[3] = inner[3];
             }
         }
-        Ok(dimensions)
+        dimensions
     }
 }
 

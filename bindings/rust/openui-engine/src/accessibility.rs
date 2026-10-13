@@ -621,15 +621,33 @@ impl Engine {
         } else if data.tag == ElementTag::Details {
             node.set_expanded(!closed_details);
         }
-        if data.style.overflow_x != openui_style::Overflow::Visible
-            || data.style.overflow_y != openui_style::Overflow::Visible
+        if let Some(area) = self
+            .layout_scroll_area(dom_id)
+            .filter(|area| area.is_scroll_container())
         {
-            node.add_action(Action::ScrollDown);
-            node.add_action(Action::ScrollUp);
-            node.add_action(Action::ScrollLeft);
-            node.add_action(Action::ScrollRight);
+            // Scrolling belongs to the retained scroll box: normalized table,
+            // replaced and viewport-propagated boxes can differ from authored
+            // overflow, and a fieldset delegates to its anonymous content box.
+            let dimensions = self.retained_element_dimensions(dom_id);
+            let user_scrollable = (area.overflow_x.is_scrollable()
+                && dimensions[2] != dimensions[0])
+                || (area.overflow_y.is_scrollable() && dimensions[3] != dimensions[1]);
+            // Blink147 advertises every directional action once either axis
+            // is user-scrollable. Hidden remains programmatic-only. Actions
+            // still use the existing shared native AccessKit scroll step.
+            if user_scrollable {
+                node.add_action(Action::ScrollDown);
+                node.add_action(Action::ScrollUp);
+                node.add_action(Action::ScrollLeft);
+                node.add_action(Action::ScrollRight);
+            }
+            let (x_range, y_range) = area.limits();
             node.set_scroll_x(data.scroll_left as f64);
+            node.set_scroll_x_min(x_range.0);
+            node.set_scroll_x_max(x_range.1);
             node.set_scroll_y(data.scroll_top as f64);
+            node.set_scroll_y_min(y_range.0);
+            node.set_scroll_y_max(y_range.1);
         }
         nodes.insert(node_id(handle), node);
 
