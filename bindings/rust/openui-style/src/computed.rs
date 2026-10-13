@@ -1549,6 +1549,7 @@ impl ComputedStyle {
         style.fields.device_scale_factor = origin.device_scale_factor;
         style.fields.color = origin.color;
         style.fields.visibility = origin.visibility;
+        style.fields.border_collapse = origin.border_collapse;
         style.fields.pointer_events = origin.pointer_events;
         style.fields.direction = origin.direction;
         style.fields.font_family = origin.font_family.clone();

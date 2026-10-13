@@ -140,7 +140,7 @@
 | 135 | `border-bottom-right-radius` | `border_bottom_right_radius` | `(f32, f32)` | `renderer-initial` | false | paint | discrete |
 | 136 | `border-bottom-style` | `border_bottom_style` | `BorderStyle` | `renderer-initial` | false | layout | discrete |
 | 137 | `border-bottom-width` | `border_bottom_width` | `i32` | `renderer-initial` | false | layout | integer |
-| 138 | `border-collapse` | `border_collapse` | `BorderCollapse` | `renderer-initial` | false | layout | discrete |
+| 138 | `border-collapse` | `border_collapse` | `BorderCollapse` | `renderer-initial` | true | layout | discrete |
 | 139 | `border-image` | `border_image` | `Option<BorderImage>` | `renderer-initial` | false | paint | discrete |
 | 140 | `border-left-color` | `border_left_color` | `StyleColor` | `renderer-initial` | false | paint | color |
 | 141 | `border-left-style` | `border_left_style` | `BorderStyle` | `renderer-initial` | false | layout | discrete |

@@ -275,6 +275,7 @@ def rust_output(schema: list[dict[str, str]]) -> bytes:
     # values. Keep every variant of each supported enum available through the
     # same path that C uses, rather than interpreting an untyped enum number.
     enum_keywords = {
+        "BorderCollapse": {"separate": "Separate", "collapse": "Collapse"},
         "BorderStyle": {
             "none": "None", "hidden": "Hidden", "dotted": "Dotted",
             "dashed": "Dashed", "solid": "Solid", "double": "Double",

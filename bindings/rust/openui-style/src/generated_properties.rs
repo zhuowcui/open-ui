@@ -1452,6 +1452,11 @@ fn parse_renderer_author_literal(property: StyleProperty, input: &str) -> Option
             _ => None,
         }).map(|value| StyleValue::Renderer(RendererStyleValue::BorderBottomStyle(value))),
         StyleProperty::BorderBottomWidth => input.parse::<i32>().ok().map(StyleValue::Integer),
+        StyleProperty::BorderCollapse => (match input.trim() {
+            "separate" => Some(BorderCollapse::Separate),
+            "collapse" => Some(BorderCollapse::Collapse),
+            _ => None,
+        }).map(|value| StyleValue::Renderer(RendererStyleValue::BorderCollapse(value))),
         StyleProperty::BorderLeftColor => if input.eq_ignore_ascii_case("currentcolor") { Some(StyleValue::Renderer(RendererStyleValue::BorderLeftColor(StyleColor::CurrentColor))) } else { color(input).map(StyleValue::Color) },
         StyleProperty::BorderLeftStyle => (match input.trim() {
             "none" => Some(BorderStyle::None),
@@ -1717,6 +1722,7 @@ impl ComputedStyle {
     /// Authored values are reapplied by the retained engine afterwards.
     #[doc(hidden)]
     pub fn inherit_properties_from(&mut self, parent: &Self) {
+        self.fields.border_collapse = parent.fields.border_collapse.clone();
         self.fields.color = parent.fields.color.clone();
         self.fields.direction = parent.fields.direction.clone();
         self.fields.empty_cells = parent.fields.empty_cells.clone();
@@ -3701,7 +3707,7 @@ pub const PROPERTY_METADATA: &[PropertyMetadata] = &[
         rust_type: "BorderCollapse",
         value_kind: ValueKind::Compound,
         initial: "renderer-initial",
-        inherited: false,
+        inherited: true,
         invalidation: InvalidationClass::Layout,
         interpolation: InterpolationKind::Discrete,
     },

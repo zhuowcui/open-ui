@@ -3002,6 +3002,58 @@ mod tests {
     use super::*;
 
     #[test]
+    fn native_border_collapse_keywords_roundtrip_and_inherit_without_accepting_extra_input() {
+        assert!(StyleProperty::BorderCollapse.metadata().inherited);
+        let mut parent = ComputedStyle::initial();
+        assert_eq!(parent.border_collapse, BorderCollapse::Separate);
+        for (literal, expected) in [
+            ("collapse", BorderCollapse::Collapse),
+            (" separate ", BorderCollapse::Separate),
+            ("\tcollapse\n", BorderCollapse::Collapse),
+        ] {
+            let value = parse_literal(StyleProperty::BorderCollapse, literal).unwrap();
+            assert_eq!(
+                value,
+                StyleValue::Renderer(RendererStyleValue::BorderCollapse(expected))
+            );
+            apply_to_computed(
+                &mut parent,
+                StyleProperty::BorderCollapse,
+                &value,
+                (320.0, 240.0),
+            )
+            .unwrap();
+            assert_eq!(parent.border_collapse, expected);
+            assert_eq!(
+                value_from_computed(&parent, StyleProperty::BorderCollapse),
+                value
+            );
+            let mut child = ComputedStyle::initial();
+            child.inherit_properties_from(&parent);
+            assert_eq!(child.border_collapse, expected);
+            assert_eq!(ComputedStyle::for_pseudo(&parent).border_collapse, expected);
+            assert_eq!(
+                ComputedStyle::for_anonymous_box(&parent).border_collapse,
+                expected
+            );
+        }
+        for literal in [
+            "",
+            "auto",
+            "none",
+            "collapsed",
+            "collapse separate",
+            "collapse; display:none",
+            "collapse trailing",
+        ] {
+            assert!(
+                parse_literal(StyleProperty::BorderCollapse, literal).is_err(),
+                "{literal}"
+            );
+        }
+    }
+
+    #[test]
     fn native_border_spacing_preserves_owned_axis_values_and_nonnegative_lengths() {
         for (literal, horizontal, vertical) in [
             ("0", 0.0, 0.0),

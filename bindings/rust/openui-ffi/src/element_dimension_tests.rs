@@ -109,6 +109,98 @@ fn metrics(element: *mut OuiElement) -> [f64; 4] {
 }
 
 #[test]
+fn border_collapse_compounds_preserve_table_dimensions_lifetime_and_failed_outputs() {
+    for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
+        let (document, root) = fixture(320, 240, scale);
+        let table = child(document, root, 6);
+        let caption = child(document, table, 7);
+        let group = child(document, table, 11);
+        let row = child(document, group, 13);
+        let cell = child(document, row, 14);
+        for (node, id, literal) in [
+            (table, StyleProperty::Width, "120px"),
+            (table, StyleProperty::BoxSizing, "border-box"),
+            (table, StyleProperty::BorderSpacing, "0px"),
+            (table, StyleProperty::Border, "2px solid black"),
+            (caption, StyleProperty::Height, "12px"),
+            (cell, StyleProperty::Height, "20px"),
+        ] {
+            property(node, id, literal);
+        }
+        assert_eq!(dimensions(table), [120, 36, 118, 32]);
+        assert_eq!(dimensions(caption), [120, 12, 120, 12]);
+        for part in [group, row, cell] {
+            assert_eq!(dimensions(part), [116, 20, 116, 20]);
+        }
+        property(table, StyleProperty::Transform, "translate(20px,7px)");
+        assert_eq!(dimensions(table), [120, 36, 118, 32]);
+        assert_eq!(oui_element_remove(caption), OuiStatus::Ok);
+        assert_eq!(dimensions(table), [120, 24, 116, 20]);
+        let state = document_state(document);
+        for literal in ["collapse", "separate", "collapse"] {
+            let input = literal.to_owned();
+            let mut storage = MaybeUninit::<OuiStyleValue>::uninit();
+            assert_eq!(
+                oui_style_value_parse(
+                    StyleProperty::BorderCollapse as i32,
+                    text(&input),
+                    storage.as_mut_ptr()
+                ),
+                OuiStatus::Ok
+            );
+            let value = unsafe { storage.assume_init() };
+            assert_eq!(value.tag, 6);
+            assert_eq!(
+                oui_element_set_property(table, StyleProperty::BorderCollapse as i32, &value),
+                OuiStatus::Ok
+            );
+            assert_eq!(
+                oui_style_compound_destroy(unsafe { value.data.compound }.cast_mut()),
+                OuiStatus::Ok
+            );
+            drop(input);
+            let before_dimensions = dimensions(table);
+            assert_eq!(before_dimensions[0], 120);
+            assert_eq!(dimensions(cell)[1], 20);
+            let before = borrow_engine_mut(&state).unwrap().stats();
+            assert_eq!(
+                oui_element_set_property(table, StyleProperty::BorderCollapse as i32, &value),
+                OuiStatus::InvalidHandle
+            );
+            assert_eq!(dimensions(table), before_dimensions);
+            property(table, StyleProperty::BorderCollapse, literal);
+            assert_eq!(dimensions(table), before_dimensions);
+            let after = borrow_engine_mut(&state).unwrap().stats();
+            assert_eq!(after.layouts, before.layouts);
+            assert_eq!(after.paints, before.paints);
+            for invalid in ["auto", "collapse separate", "collapse; display:none"] {
+                let mut output = OuiStyleValue {
+                    tag: 3,
+                    reserved: 0x1234,
+                    data: OuiStylePayload { integer: 42 },
+                };
+                assert_eq!(
+                    oui_style_value_parse(
+                        StyleProperty::BorderCollapse as i32,
+                        text(invalid),
+                        &mut output
+                    ),
+                    OuiStatus::InvalidArgument
+                );
+                assert_eq!((output.tag, output.reserved), (3, 0x1234));
+                assert_eq!(unsafe { output.data.integer }, 42);
+                assert_eq!(dimensions(table), before_dimensions);
+            }
+        }
+        drop(state);
+        for element in [cell, row, group, caption, table, root] {
+            assert_eq!(oui_element_destroy(element), OuiStatus::Ok);
+        }
+        assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
+    }
+}
+
+#[test]
 fn scalar_dimensions_validate_ownership_borrows_and_preserve_output_storage() {
     let (document, root) = fixture(320, 240, 1.0);
     let node = child(document, root, 0);

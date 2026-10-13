@@ -359,6 +359,206 @@ mod tests {
     }
 
     #[test]
+    fn native_border_collapse_literals_preserve_captioned_table_dimensions_and_owned_layout() {
+        use openui_compositor::SoftwareCompositor;
+        use openui_style::{parse_literal, BorderCollapse};
+        fn fixture(scale: f64) -> (Engine, [NodeHandle; 5]) {
+            let mut engine = engine(scale);
+            let table = engine.create_native_element(ElementTag::Table).unwrap();
+            let caption = engine
+                .create_native_element(ElementTag::TableCaption)
+                .unwrap();
+            let group = engine.create_native_element(ElementTag::TableBody).unwrap();
+            let row = engine.create_native_element(ElementTag::TableRow).unwrap();
+            let cell = engine.create_native_element(ElementTag::TableCell).unwrap();
+            engine.append_child(engine.root(), table).unwrap();
+            engine.append_child(table, caption).unwrap();
+            engine.append_child(table, group).unwrap();
+            engine.append_child(group, row).unwrap();
+            engine.append_child(row, cell).unwrap();
+            for (node, property, input) in [
+                (table, StyleProperty::Width, "120px"),
+                (table, StyleProperty::BoxSizing, "border-box"),
+                (table, StyleProperty::BorderSpacing, "0px"),
+                (table, StyleProperty::Border, "2px solid black"),
+                (caption, StyleProperty::Height, "12px"),
+                (cell, StyleProperty::Height, "20px"),
+            ] {
+                engine
+                    .set_property(node, property, parse_literal(property, input).unwrap())
+                    .unwrap();
+            }
+            (engine, [table, caption, group, row, cell])
+        }
+        for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
+            let (mut engine, [table, caption, group, row, cell]) = fixture(scale);
+            let (mut typed, [typed_table, typed_caption, _, _, typed_cell]) = fixture(scale);
+            assert_eq!(dimensions(&mut engine, table), [120, 36, 118, 32]);
+            assert_eq!(dimensions(&mut engine, caption), [120, 12, 120, 12]);
+            for part in [group, row, cell] {
+                assert_eq!(dimensions(&mut engine, part), [116, 20, 116, 20]);
+            }
+            for (engine, node) in [(&mut engine, table), (&mut typed, typed_table)] {
+                engine
+                    .set_property(
+                        node,
+                        StyleProperty::Transform,
+                        parse_literal(StyleProperty::Transform, "translate(20px,7px)").unwrap(),
+                    )
+                    .unwrap();
+            }
+            assert_eq!(dimensions(&mut engine, table), [120, 36, 118, 32]);
+            engine.remove(caption).unwrap();
+            typed.remove(typed_caption).unwrap();
+            assert_eq!(dimensions(&mut engine, table), [120, 24, 116, 20]);
+            let mut raster = SoftwareCompositor::default();
+            let mut typed_raster = SoftwareCompositor::default();
+            for (literal, expected) in [
+                ("collapse", BorderCollapse::Collapse),
+                ("separate", BorderCollapse::Separate),
+                ("collapse", BorderCollapse::Collapse),
+            ] {
+                let input = literal.to_owned();
+                engine
+                    .set_property(
+                        table,
+                        StyleProperty::BorderCollapse,
+                        parse_literal(StyleProperty::BorderCollapse, &input).unwrap(),
+                    )
+                    .unwrap();
+                drop(input);
+                typed
+                    .set_property(
+                        typed_table,
+                        StyleProperty::BorderCollapse,
+                        StyleValue::Renderer(RendererStyleValue::BorderCollapse(expected)),
+                    )
+                    .unwrap();
+                assert_eq!(
+                    engine.computed_style(table).unwrap().border_collapse,
+                    expected
+                );
+                assert_eq!(
+                    dimensions(&mut engine, table),
+                    dimensions(&mut typed, typed_table)
+                );
+                assert_eq!(
+                    dimensions(&mut engine, cell),
+                    dimensions(&mut typed, typed_cell)
+                );
+                assert_eq!(engine.client_width(table).unwrap(), 120);
+                assert_eq!(engine.client_height(cell).unwrap(), 20);
+                let frame = raster.render(&engine.scene().unwrap()).unwrap();
+                let typed_frame = typed_raster.render(&typed.scene().unwrap()).unwrap();
+                assert_eq!(frame.pixels, typed_frame.pixels, "{literal}@{scale}");
+                let before = engine.stats();
+                let generation = engine.scene().unwrap().generation();
+                engine
+                    .set_property(
+                        table,
+                        StyleProperty::BorderCollapse,
+                        parse_literal(StyleProperty::BorderCollapse, literal).unwrap(),
+                    )
+                    .unwrap();
+                assert_eq!(engine.scene().unwrap().generation(), generation);
+                assert_eq!(engine.stats().layouts, before.layouts);
+                assert_eq!(engine.stats().paints, before.paints);
+                assert_eq!(
+                    raster.render(&engine.scene().unwrap()).unwrap().pixels,
+                    frame.pixels
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn native_border_collapse_inheritance_follows_parent_override_detach_and_move() {
+        use openui_style::{parse_literal, BorderCollapse};
+        for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
+            let mut engine = engine(scale);
+            let parent = engine.create_native_element(ElementTag::Div).unwrap();
+            let other = engine.create_native_element(ElementTag::Div).unwrap();
+            let table = engine.create_native_element(ElementTag::Table).unwrap();
+            let row = engine.create_native_element(ElementTag::TableRow).unwrap();
+            let cell = engine.create_native_element(ElementTag::TableCell).unwrap();
+            engine.append_child(engine.root(), parent).unwrap();
+            engine.append_child(engine.root(), other).unwrap();
+            engine.append_child(parent, table).unwrap();
+            engine.append_child(table, row).unwrap();
+            engine.append_child(row, cell).unwrap();
+            let set = |engine: &mut Engine, node, literal| {
+                engine
+                    .set_property(
+                        node,
+                        StyleProperty::BorderCollapse,
+                        parse_literal(StyleProperty::BorderCollapse, literal).unwrap(),
+                    )
+                    .unwrap()
+            };
+            for (literal, expected) in [
+                ("collapse", BorderCollapse::Collapse),
+                ("separate", BorderCollapse::Separate),
+                ("collapse", BorderCollapse::Collapse),
+            ] {
+                set(&mut engine, parent, literal);
+                for node in [table, row, cell] {
+                    assert_eq!(
+                        engine.computed_style(node).unwrap().border_collapse,
+                        expected
+                    );
+                }
+            }
+            // An authored child value wins over its changing inheritance chain.
+            set(&mut engine, cell, "separate");
+            set(&mut engine, parent, "separate");
+            set(&mut engine, parent, "collapse");
+            assert_eq!(
+                engine.computed_style(table).unwrap().border_collapse,
+                BorderCollapse::Collapse
+            );
+            assert_eq!(
+                engine.computed_style(cell).unwrap().border_collapse,
+                BorderCollapse::Separate
+            );
+            engine.detach(table).unwrap();
+            assert_eq!(
+                engine.computed_style(table).unwrap().border_collapse,
+                BorderCollapse::Separate
+            );
+            assert_eq!(
+                engine.computed_style(cell).unwrap().border_collapse,
+                BorderCollapse::Separate
+            );
+            engine.append_child(parent, table).unwrap();
+            assert_eq!(
+                engine.computed_style(table).unwrap().border_collapse,
+                BorderCollapse::Collapse
+            );
+            engine.append_or_move_child(other, table).unwrap();
+            assert_eq!(
+                engine.computed_style(table).unwrap().border_collapse,
+                BorderCollapse::Separate
+            );
+            set(&mut engine, other, "collapse");
+            assert_eq!(
+                engine.computed_style(row).unwrap().border_collapse,
+                BorderCollapse::Collapse
+            );
+            assert_eq!(
+                engine.computed_style(cell).unwrap().border_collapse,
+                BorderCollapse::Separate
+            );
+            engine.scene().unwrap();
+            let before = engine.stats();
+            let generation = engine.scene().unwrap().generation();
+            set(&mut engine, other, "collapse");
+            assert_eq!(engine.scene().unwrap().generation(), generation);
+            assert_eq!(engine.stats().layouts, before.layouts);
+            assert_eq!(engine.stats().paints, before.paints);
+        }
+    }
+
+    #[test]
     fn native_table_dimensions_follow_used_overflow_without_shrinking_cell_tracks() {
         for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
             let mut engine = engine(scale);

@@ -136,7 +136,7 @@ id,rust_name,css_name,rust_type,value_kind,initial,inherited,invalidation,interp
 135,BorderBottomRightRadius,border-bottom-right-radius,"(f32, f32)",compound,renderer-initial,false,paint,discrete,border_bottom_right_radius
 136,BorderBottomStyle,border-bottom-style,BorderStyle,compound,renderer-initial,false,layout,discrete,border_bottom_style
 137,BorderBottomWidth,border-bottom-width,i32,integer,renderer-initial,false,layout,integer,border_bottom_width
-138,BorderCollapse,border-collapse,BorderCollapse,compound,renderer-initial,false,layout,discrete,border_collapse
+138,BorderCollapse,border-collapse,BorderCollapse,compound,renderer-initial,true,layout,discrete,border_collapse
 139,BorderImage,border-image,Option<BorderImage>,compound,renderer-initial,false,paint,discrete,border_image
 140,BorderLeftColor,border-left-color,StyleColor,color,renderer-initial,false,paint,color,border_left_color
 141,BorderLeftStyle,border-left-style,BorderStyle,compound,renderer-initial,false,layout,discrete,border_left_style
