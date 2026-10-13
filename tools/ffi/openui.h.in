@@ -352,7 +352,11 @@ typedef enum OuiAccessibilityAction {
   OUI_ACCESSIBILITY_SET_VALUE = 7,
   OUI_ACCESSIBILITY_REPLACE_SELECTED_TEXT = 8,
   OUI_ACCESSIBILITY_SET_TEXT_SELECTION = 9,
-  OUI_ACCESSIBILITY_SCROLL_INTO_VIEW = 10
+  OUI_ACCESSIBILITY_SCROLL_INTO_VIEW = 10,
+  OUI_ACCESSIBILITY_SCROLL_DOWN = 11,
+  OUI_ACCESSIBILITY_SCROLL_UP = 12,
+  OUI_ACCESSIBILITY_SCROLL_LEFT = 13,
+  OUI_ACCESSIBILITY_SCROLL_RIGHT = 14
 } OuiAccessibilityAction;
 
 typedef enum OuiTransformOperationKind {
@@ -1189,6 +1193,11 @@ OuiStatus oui_element_set_accessibility_value(OuiElement* element, OuiUtf8 value
 OuiStatus oui_element_set_accessibility_live(OuiElement* element, OuiAccessibilityLive live);
 OuiStatus oui_element_set_accessibility_hidden(OuiElement* element, uint8_t hidden);
 OuiStatus oui_element_set_accessibility_relation(OuiElement* element, OuiAccessibilityRelation relation, OuiElement* const* targets, size_t target_count);
+/* Directional scroll actions use the shared Rust/AccessKit logical scroll step
+ * and ordinary bounds clamping. Scroll notifications are queued on the same
+ * retained document. Drain them with oui_document_dispatch_pending_events_v1;
+ * listeners run after engine borrows are released. All actions require a live
+ * element on its owning thread. Value and anchor/focus are unused for scroll. */
 OuiStatus oui_element_perform_accessibility_action(OuiElement* element, OuiAccessibilityAction action, OuiUtf8 value, size_t anchor, size_t focus);
 /* callback/user_data must remain valid through every active callback, including
  * when that callback destroys its own registration. Callbacks run on the owning

@@ -42,6 +42,14 @@ each snapshot still contains the full current tree. A snapshot remains readable
 after its document is destroyed and must be destroyed on its owning thread.
 This API does not consume the Rust/AccessKit incremental update stream.
 
+C callers can invoke every advertised directional scroll action with
+`OUI_ACCESSIBILITY_SCROLL_DOWN`, `SCROLL_UP`, `SCROLL_LEFT`, and `SCROLL_RIGHT`.
+These use the same logical scroll step and bounds clamping as Rust and the
+Linux AccessKit adapter. Scroll notifications use the document's pending event
+queue; call `oui_document_dispatch_pending_events_v1` to deliver them. Existing
+action numbers, exports and struct layouts retain their ABI. Physical AT-SPI
+inspection and operation still require measured Linux qualification.
+
 The v0.2 accessibility scope covers the core interactive controls and their
 text editing behavior. Rich hypertext navigation beyond those controls remains
 deferred.

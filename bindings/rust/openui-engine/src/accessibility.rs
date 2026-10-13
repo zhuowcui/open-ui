@@ -40,6 +40,21 @@ pub enum AccessibilityAction {
     SetScrollOffset { x: f64, y: f64 },
 }
 
+impl AccessibilityAction {
+    /// Lower a directional platform scroll to the shared native scroll step.
+    /// Other actions need their own value/selection data and return `None`.
+    pub fn directional_scroll(action: AccessibilityPlatformAction) -> Option<Self> {
+        let (delta_x, delta_y) = match action {
+            Action::ScrollDown => (0.0, 40.0),
+            Action::ScrollUp => (0.0, -40.0),
+            Action::ScrollLeft => (-40.0, 0.0),
+            Action::ScrollRight => (40.0, 0.0),
+            _ => return None,
+        };
+        Some(Self::ScrollBy { delta_x, delta_y })
+    }
+}
+
 #[derive(Debug, Clone, Default, PartialEq)]
 pub(crate) struct SemanticProperties {
     role: Option<Role>,
@@ -390,22 +405,11 @@ impl Engine {
                 _ => return Err(EngineError::InvalidInput("accessibility action needs text")),
             },
             Action::ScrollIntoView => AccessibilityAction::ScrollIntoView,
-            Action::ScrollDown => AccessibilityAction::ScrollBy {
-                delta_x: 0.0,
-                delta_y: 40.0,
-            },
-            Action::ScrollUp => AccessibilityAction::ScrollBy {
-                delta_x: 0.0,
-                delta_y: -40.0,
-            },
-            Action::ScrollLeft => AccessibilityAction::ScrollBy {
-                delta_x: -40.0,
-                delta_y: 0.0,
-            },
-            Action::ScrollRight => AccessibilityAction::ScrollBy {
-                delta_x: 40.0,
-                delta_y: 0.0,
-            },
+            Action::ScrollDown | Action::ScrollUp | Action::ScrollLeft | Action::ScrollRight => {
+                AccessibilityAction::directional_scroll(request.action).ok_or(
+                    EngineError::InvalidInput("unknown directional accessibility action"),
+                )?
+            }
             Action::SetScrollOffset => match request.data.as_ref() {
                 Some(ActionData::SetScrollOffset(point)) => AccessibilityAction::SetScrollOffset {
                     x: point.x,

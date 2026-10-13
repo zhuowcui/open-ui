@@ -3173,6 +3173,17 @@ pub extern "C" fn oui_element_perform_accessibility_action(
             8 => AccessibilityAction::ReplaceSelectedText(action_value),
             9 => AccessibilityAction::SetTextSelection { anchor, focus },
             10 => AccessibilityAction::ScrollIntoView,
+            11..=14 => {
+                use openui_engine::AccessibilityPlatformAction as PlatformAction;
+                let direction = [
+                    PlatformAction::ScrollDown,
+                    PlatformAction::ScrollUp,
+                    PlatformAction::ScrollLeft,
+                    PlatformAction::ScrollRight,
+                ][(action - 11) as usize];
+                AccessibilityAction::directional_scroll(direction)
+                    .ok_or_else(|| invalid("unknown directional accessibility action"))?
+            }
             _ => return Err(invalid("unknown accessibility action")),
         };
         let element = element(element_handle as usize)?;
