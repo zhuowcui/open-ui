@@ -18714,9 +18714,13 @@ fn table_spacing_fragment_advance(
         return None;
     }
     let break_at = consumed + available;
-    if rows.iter().any(|(top, _)| *top == break_at) {
-        // The fragmentainer already ends at a row boundary. Do not mistake a
-        // later short row for discardable spacing and skip over it.
+    if rows
+        .iter()
+        .any(|(top, bottom)| *top <= break_at && break_at < *bottom)
+    {
+        // A break at a row start or inside its content is not border spacing.
+        // Continue that row from the real source coordinate rather than
+        // skipping its remaining content to a later row's start.
         return None;
     }
     let previous_row_ends_before_break = rows
