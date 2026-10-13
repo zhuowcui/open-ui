@@ -132,7 +132,15 @@ fn natural_and_explicit_finish_hold_directional_endpoints_and_play_rewinds() {
     assert_eq!(engine.animation_state(id).unwrap().current_time_ms, 0.0);
     assert!(engine.drain_animation_events().is_empty());
     engine.play_animation(id).unwrap();
-    assert_eq!(engine.animation_state(id).unwrap().current_time_ms, 100.0);
+    // The synchronous native play has resolved its ready task. Pinned .50
+    // CommitPendingPlay clears the reverse end hold, and CalculateCurrentTime
+    // evaluates (0.2 - (0.2 - 0.1 / -2.0)) * -2.0 before reflecting ms.
+    // Pending browser play holds 100 exactly; resolved play remains raw.
+    let rewound = engine.animation_state(id).unwrap();
+    assert_eq!(rewound.current_time_ms.to_bits(), 0x4058_ffff_ffff_fffe);
+    assert_eq!(rewound.play_state, PlayState::Running);
+    assert!(!rewound.finished);
+    assert!(engine.is_animating());
     engine.set_animation_time(210.0).unwrap();
     assert_eq!(value(&engine, node), 0.8);
     engine.pause_animation(id).unwrap();
