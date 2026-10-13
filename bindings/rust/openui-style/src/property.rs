@@ -2077,13 +2077,7 @@ pub fn parse_literal(property: StyleProperty, input: &str) -> Result<StyleValue,
             _ => None,
         }
         .map(StyleValue::ListStyle),
-        P::Transform => {
-            if input == "none" {
-                Some(StyleValue::Transform(TransformList::default()))
-            } else {
-                None
-            }
-        }
+        P::Transform => crate::transform_literal::parse(input).map(StyleValue::Transform),
         P::PointerEvents => match input {
             "auto" => Some(PointerEvents::Auto),
             "none" => Some(PointerEvents::None),

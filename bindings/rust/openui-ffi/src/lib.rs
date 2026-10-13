@@ -39,6 +39,8 @@ mod registry;
 mod scroll_button;
 #[cfg(test)]
 mod scroll_button_tests;
+#[cfg(test)]
+mod transform_literal_tests;
 mod types;
 mod value;
 #[cfg(test)]

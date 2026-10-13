@@ -1,6 +1,7 @@
 //! Typed CSS style properties — extracted from Blink's `ComputedStyle`.
 //!
-//! No CSS parsing. Properties are set programmatically via typed Rust API.
+//! Properties are set programmatically through typed Rust APIs. Native literal
+//! helpers admit documented value subsets; they do not parse stylesheets.
 //! Every enum, every initial value, every type is extracted character-by-character
 //! from Blink's generated `computed_style_base.h` and `computed_style_constants.h`.
 
@@ -13,6 +14,7 @@ mod font_types;
 mod layout_systems;
 mod property;
 mod transform_composition;
+mod transform_literal;
 mod typography;
 
 pub use animation::*;
