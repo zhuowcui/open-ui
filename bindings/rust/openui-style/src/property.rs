@@ -3132,9 +3132,14 @@ mod tests {
                     (320.0, 240.0),
                 )
                 .unwrap();
+                let reflected = match property {
+                    StyleProperty::Color => RendererStyleValue::Color(expected),
+                    StyleProperty::BackgroundColor => RendererStyleValue::BackgroundColor(expected),
+                    _ => unreachable!(),
+                };
                 assert_eq!(
                     value_from_computed(&style, property),
-                    expected.into(),
+                    StyleValue::Renderer(reflected),
                     "{literal}"
                 );
             }

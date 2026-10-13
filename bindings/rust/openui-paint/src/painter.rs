@@ -1512,8 +1512,8 @@ fn paint_fragment_contents(
     }
     let has_clip_path = fragment.owns_element_box() && style.clip_path_inset.is_some();
     if let Some(inset) = style.clip_path_inset.as_ref().filter(|_| has_clip_path) {
-        // ClipPathClipper::LocalReferenceBox uses the owned border box, not a
-        // physical wrapper carrying captions or visible descendant overflow.
+        // ClipPathClipper::LocalReferenceBox uses the owned border box. A
+        // captioned table's authored wrapper includes its caption and grid.
         // BasicShapeInset then resolves each length with FloatValueForLength.
         let reference = fragment.border_box_rect();
         let width = reference.width().to_f32();
