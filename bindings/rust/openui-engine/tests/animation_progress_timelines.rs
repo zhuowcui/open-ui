@@ -3,7 +3,7 @@ use openui_engine::{AnimationId, AnimationTimeline, AnimationTimelineSource, Eng
 use openui_geometry::ViewportMetrics;
 use openui_style::{
     AnimationAttachmentRange, AnimationOptions, AnimationPhase, Color, Direction, Display,
-    FillMode, FlexDirection, IterationCount, Keyframes, LengthValue, Overflow, Position,
+    FillMode, FlexDirection, IterationCount, Keyframes, LengthValue, Overflow, PlayState, Position,
     PropertyKeyframes, StyleProperty, StyleValue, TimelineAxis, TimelineRange, TransformList,
     TransformOperation, ViewTimelineInset, WritingMode,
 };
@@ -685,7 +685,19 @@ fn paused_timeline_resize_uses_resolved_percentage_before_new_duration() {
                 AnimationAttachmentRange::default(),
             )
             .unwrap();
+        let initial = engine.animation_timeline_snapshot(id).unwrap().unwrap();
+        assert_eq!(initial.current_time_ms, Some(0.00025));
+        assert_eq!(initial.current_time_percentage, Some(100.0));
+        assert!(engine.animation_state(id).unwrap().finished);
         engine.seek_animation(id, 0.001).unwrap();
+        assert_eq!(
+            engine
+                .animation_timeline_snapshot(id)
+                .unwrap()
+                .unwrap()
+                .current_time_percentage,
+            Some(400.0)
+        );
         engine.pause_animation(id).unwrap();
         assert_eq!(
             engine
@@ -707,6 +719,420 @@ fn paused_timeline_resize_uses_resolved_percentage_before_new_duration() {
         // Browser400% remains400% after this resize; preserve the exact native
         // milliseconds arithmetic assertion independently of phase snapping.
         assert_eq!(state.current_time_percentage, Some(400.0));
+    }
+}
+
+#[test]
+fn pending_pause_preserves_a_discontinuous_seek_inside_a_tiny_finished_range() {
+    for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
+        let (mut engine, source, subject, target) = fixture(scale);
+        set(
+            &mut engine,
+            subject,
+            StyleProperty::Height,
+            LengthValue::px(1.0 / 64.0),
+        );
+        box_(&mut engine, source, 100.0, 200.0);
+        let id = engine
+            .animate_with_attachment_range(
+                target,
+                PropertyKeyframes::typed(
+                    StyleProperty::Opacity,
+                    Keyframes::from_values(0.0_f32, 1.0_f32),
+                )
+                .unwrap(),
+                options(),
+                AnimationTimelineSource::ViewWithInset {
+                    subject,
+                    axis: TimelineAxis::Y,
+                    inset: ViewTimelineInset::new(
+                        Some(LengthValue::px(80.0)),
+                        Some(LengthValue::px(0.0)),
+                    )
+                    .unwrap(),
+                },
+                AnimationAttachmentRange::default(),
+            )
+            .unwrap();
+        assert!(engine.animation_state(id).unwrap().finished);
+        engine.seek_animation_progress(id, 50.0).unwrap();
+        // The finished-state comparison can cover this entire tiny effect;
+        // the explicit request still retains its exact interior hold.
+        assert_eq!(
+            engine.animation_state(id).unwrap().current_time_ms,
+            0.000125
+        );
+        assert!(engine.animation_state(id).unwrap().finished);
+        engine.pause_animation(id).unwrap();
+        let held = engine.animation_timeline_snapshot(id).unwrap().unwrap();
+        assert_eq!(held.current_time_ms, Some(0.000125));
+        assert_eq!(held.current_time_percentage, Some(50.0));
+        assert!(!engine.animation_state(id).unwrap().finished);
+        set(
+            &mut engine,
+            subject,
+            StyleProperty::Height,
+            LengthValue::px(9.0 / 64.0),
+        );
+        let resized = engine.animation_timeline_snapshot(id).unwrap().unwrap();
+        assert_eq!(resized.current_time_ms, Some(0.001125));
+        assert_eq!(resized.current_time_percentage, Some(50.0));
+        engine.play_animation(id).unwrap();
+        engine.seek_animation_progress(id, 400.0).unwrap();
+        // Resize is still pending when pause starts. OnValidateSnapshot must
+        // rescale the existing hold before its UnlimitedCurrentTime read;
+        // CommitPendingPause retains that hold and discards the start.
+        set(
+            &mut engine,
+            subject,
+            StyleProperty::Height,
+            LengthValue::px(1.0 / 64.0),
+        );
+        engine.pause_animation(id).unwrap();
+        let pending_resize = engine.animation_timeline_snapshot(id).unwrap().unwrap();
+        assert_eq!(pending_resize.current_time_ms, Some(0.001));
+        assert_eq!(pending_resize.current_time_percentage, Some(400.0));
+        assert_eq!(
+            engine.animation_state(id).unwrap().play_state,
+            PlayState::Paused
+        );
+    }
+}
+
+#[test]
+fn finished_progress_holds_explicit_outside_seeks_and_reenters_in_both_directions() {
+    for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
+        for rate in [1.0, -1.0] {
+            let (mut engine, source, _, target) = fixture(scale);
+            let id = animate(
+                &mut engine,
+                target,
+                scroll(source, TimelineAxis::Y, 0.0, 100.0),
+                AnimationOptions {
+                    playback_rate: rate,
+                    ..options()
+                },
+            );
+            engine.scroll_to(source, 0.0, 100.0).unwrap();
+            let endpoint = if rate > 0.0 { 100.0 } else { 0.0 };
+            assert_eq!(
+                engine
+                    .animation_timeline_snapshot(id)
+                    .unwrap()
+                    .unwrap()
+                    .current_time_percentage,
+                Some(endpoint)
+            );
+            assert!(engine.animation_state(id).unwrap().finished);
+            let outside = if rate > 0.0 { 400.0 } else { -400.0 };
+            engine.seek_animation_progress(id, outside).unwrap();
+            for _ in 0..3 {
+                assert_eq!(
+                    engine
+                        .animation_timeline_snapshot(id)
+                        .unwrap()
+                        .unwrap()
+                        .current_time_percentage,
+                    Some(outside)
+                );
+                assert!(engine.animation_state(id).unwrap().finished);
+            }
+            // A held finished state does not freeze a nonmonotonic timeline.
+            // The unchanged start still produces its interior time on reentry.
+            engine.scroll_to(source, 0.0, 50.0).unwrap();
+            assert_eq!(
+                engine
+                    .animation_timeline_snapshot(id)
+                    .unwrap()
+                    .unwrap()
+                    .current_time_percentage,
+                Some(50.0)
+            );
+            assert!(!engine.animation_state(id).unwrap().finished);
+            assert_eq!(opacity(&engine, target), 0.5);
+            engine.pause_animation(id).unwrap();
+            engine.seek_animation_progress(id, outside).unwrap();
+            engine.scroll_to(source, 0.0, 25.0).unwrap();
+            assert_eq!(
+                engine
+                    .animation_timeline_snapshot(id)
+                    .unwrap()
+                    .unwrap()
+                    .current_time_percentage,
+                Some(outside)
+            );
+            assert!(!engine.animation_state(id).unwrap().finished);
+            engine.scroll_to(source, 0.0, 50.0).unwrap();
+            engine.play_animation(id).unwrap();
+            assert_eq!(
+                engine
+                    .animation_timeline_snapshot(id)
+                    .unwrap()
+                    .unwrap()
+                    .current_time_percentage,
+                Some(50.0)
+            );
+        }
+    }
+}
+
+#[test]
+fn running_interior_seek_reanchors_but_paused_seek_keeps_the_requested_hold() {
+    for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
+        for rate in [1.0, -1.0] {
+            let (mut engine, source, _, target) = fixture(scale);
+            let id = animate(
+                &mut engine,
+                target,
+                scroll(source, TimelineAxis::Y, 0.0, 100.0),
+                AnimationOptions {
+                    playback_rate: rate,
+                    ..options()
+                },
+            );
+            engine.scroll_to(source, 0.0, 100.0).unwrap();
+            engine.seek_animation_progress(id, 50.0).unwrap();
+            // Pinned SetCurrentTimeInternal updates the old finished hold;
+            // UpdateFinishedState reanchors an interior running seek and
+            // clears that hold. Preserve this exact source operation order.
+            let clock = 0.0016_f64;
+            let requested = (50.0 / 100.0) * clock;
+            let start = clock - requested / rate;
+            let current = (clock - start) * rate;
+            let state = engine.animation_timeline_snapshot(id).unwrap().unwrap();
+            assert_eq!(state.current_time_ms, Some(current * 1000.0));
+            assert_eq!(
+                state.current_time_percentage,
+                Some((current / clock) * 100.0)
+            );
+            assert!(!engine.animation_state(id).unwrap().finished);
+            engine.pause_animation(id).unwrap();
+            engine.seek_animation_progress(id, 50.0).unwrap();
+            engine.scroll_to(source, 0.0, 0.0).unwrap();
+            let state = engine.animation_timeline_snapshot(id).unwrap().unwrap();
+            assert_eq!(state.current_time_ms, Some(0.8));
+            assert_eq!(state.current_time_percentage, Some(50.0));
+            assert_eq!(
+                engine.animation_state(id).unwrap().play_state,
+                PlayState::Paused
+            );
+            assert!(!engine.animation_state(id).unwrap().finished);
+        }
+    }
+}
+
+#[test]
+fn inactive_percentage_seek_resolves_before_paused_finished_sampling() {
+    for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
+        let (mut engine, source, content, target) = fixture(scale);
+        let id = animate(
+            &mut engine,
+            target,
+            scroll(source, TimelineAxis::Y, 0.0, 100.0),
+            options(),
+        );
+        engine.scroll_to(source, 0.0, 100.0).unwrap();
+        assert!(engine.animation_state(id).unwrap().finished);
+        set(&mut engine, source, StyleProperty::Display, Display::None);
+        engine.seek_animation_progress(id, 400.0).unwrap();
+        engine.pause_animation(id).unwrap();
+        assert!(
+            !engine
+                .animation_timeline_snapshot(id)
+                .unwrap()
+                .unwrap()
+                .active
+        );
+        set(&mut engine, source, StyleProperty::Display, Display::Block);
+        let state = engine.animation_timeline_snapshot(id).unwrap().unwrap();
+        assert_eq!(state.current_time_percentage, Some(400.0));
+        assert_eq!(
+            engine.animation_state(id).unwrap().play_state,
+            PlayState::Paused
+        );
+        assert!(!engine.animation_state(id).unwrap().finished);
+        // Change the cover duration, preserving the native attachment span.
+        set(
+            &mut engine,
+            content,
+            StyleProperty::Height,
+            LengthValue::px(380.0),
+        );
+        let state = engine.animation_timeline_snapshot(id).unwrap().unwrap();
+        assert_eq!(state.duration_ms, Some(4.8));
+        assert_eq!(state.current_time_percentage, Some(400.0));
+    }
+}
+
+#[test]
+fn inactive_finish_retains_its_unresolved_start_and_endpoint_until_explicit_play() {
+    for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
+        for paused in [false, true] {
+            for rate in [1.0, -1.0] {
+                let (mut engine, source, _, target) = fixture(scale);
+                let id = animate(
+                    &mut engine,
+                    target,
+                    scroll(source, TimelineAxis::Y, 0.0, 100.0),
+                    AnimationOptions {
+                        playback_rate: rate,
+                        ..options()
+                    },
+                );
+                engine.scroll_to(source, 0.0, 50.0).unwrap();
+                if paused {
+                    engine.pause_animation(id).unwrap();
+                }
+                set(&mut engine, source, StyleProperty::Display, Display::None);
+                engine.finish_animation(id).unwrap();
+                assert!(
+                    !engine
+                        .animation_timeline_snapshot(id)
+                        .unwrap()
+                        .unwrap()
+                        .active
+                );
+                assert_eq!(
+                    engine.animation_state(id).unwrap().play_state,
+                    PlayState::Paused
+                );
+                assert!(!engine.animation_state(id).unwrap().finished);
+                set(&mut engine, source, StyleProperty::Display, Display::Block);
+                assert!(
+                    engine
+                        .animation_timeline_snapshot(id)
+                        .unwrap()
+                        .unwrap()
+                        .active
+                );
+                let endpoint = if rate > 0.0 { 1.6 } else { 0.0 };
+                assert_eq!(
+                    engine.animation_state(id).unwrap().current_time_ms,
+                    endpoint
+                );
+                assert!(!engine.animation_state(id).unwrap().finished);
+                engine.scroll_to(source, 0.0, 0.0).unwrap();
+                assert_eq!(
+                    engine.animation_state(id).unwrap().current_time_ms,
+                    endpoint
+                );
+                engine.scroll_to(source, 0.0, 50.0).unwrap();
+                engine.play_animation(id).unwrap();
+                assert_eq!(engine.animation_state(id).unwrap().current_time_ms, 0.8);
+                assert!(!engine.animation_state(id).unwrap().finished);
+            }
+        }
+    }
+}
+
+#[test]
+fn finish_naturally_finished_progress_keeps_its_resolved_start_beyond_the_effect_end() {
+    for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
+        for content_height in [280.0, 380.0] {
+            for rate in [1.0, -1.0] {
+                let (mut engine, source, content, target) = fixture(scale);
+                set(
+                    &mut engine,
+                    content,
+                    StyleProperty::Height,
+                    LengthValue::px(content_height),
+                );
+                let id = animate(
+                    &mut engine,
+                    target,
+                    scroll(source, TimelineAxis::Y, 0.0, 100.0),
+                    AnimationOptions {
+                        playback_rate: rate,
+                        ..options()
+                    },
+                );
+                let timeline = engine.animation_timeline_snapshot(id).unwrap().unwrap();
+                let cover_start = timeline.cover_start.unwrap();
+                let cover = timeline.cover_end.unwrap() - cover_start;
+                assert_eq!(cover_start, 0.0);
+                assert_eq!(cover, f64::from(content_height - 80.0));
+                assert_eq!((timeline.range_start, timeline.range_end), (0.0, 100.0));
+                // Pinned duration and effect normalization have different
+                // operation order from the reverse automatic start. Keep both
+                // binary and thirds attachment fractions, without rounding.
+                let seconds = ((cover * 16.0) / 1000.0) / 1000.0;
+                assert_eq!(timeline.duration_ms, Some(seconds * 1000.0));
+                let start_fraction = (timeline.range_start - cover_start) / cover;
+                let end_fraction = (timeline.range_end - cover_start) / cover;
+                let mut interval = 1.0;
+                interval -= start_fraction;
+                interval -= 1.0 - end_fraction;
+                let effect_end = seconds * interval;
+                let automatic_start = if rate > 0.0 {
+                    start_fraction
+                } else {
+                    end_fraction
+                } * seconds;
+                engine.scroll_to(source, 0.0, 200.0).unwrap();
+                assert!(engine.animation_state(id).unwrap().finished);
+                engine.finish_animation(id).unwrap();
+                let endpoint = if rate > 0.0 { effect_end * 1000.0 } else { 0.0 };
+                assert_eq!(
+                    engine.animation_state(id).unwrap().current_time_ms,
+                    endpoint
+                );
+                engine.scroll_to(source, 0.0, 50.0).unwrap();
+                let microseconds = ((50.0 - cover_start) * 16.0) as i64;
+                let clock = microseconds as f64 / 1_000_000.0;
+                let reentry = (clock - automatic_start) * rate;
+                assert_eq!(
+                    engine.animation_state(id).unwrap().current_time_ms,
+                    reentry * 1000.0
+                );
+                if content_height == 280.0 {
+                    assert_eq!(endpoint, if rate > 0.0 { 1.6 } else { 0.0 });
+                    assert_eq!(reentry * 1000.0, 0.8);
+                }
+                assert!(!engine.animation_state(id).unwrap().finished);
+                assert_eq!(opacity(&engine, target), 0.5);
+            }
+        }
+    }
+}
+
+#[test]
+fn finish_paused_progress_resolves_an_endpoint_and_retains_running_reentry() {
+    for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
+        for rate in [1.0, -1.0] {
+            let (mut engine, source, _, target) = fixture(scale);
+            let id = animate(
+                &mut engine,
+                target,
+                scroll(source, TimelineAxis::Y, 0.0, 100.0),
+                AnimationOptions {
+                    playback_rate: rate,
+                    ..options()
+                },
+            );
+            engine.scroll_to(source, 0.0, 50.0).unwrap();
+            engine.pause_animation(id).unwrap();
+            engine.finish_animation(id).unwrap();
+            let endpoint = if rate > 0.0 { 100.0 } else { 0.0 };
+            assert_eq!(
+                engine
+                    .animation_timeline_snapshot(id)
+                    .unwrap()
+                    .unwrap()
+                    .current_time_percentage,
+                Some(endpoint)
+            );
+            assert!(engine.animation_state(id).unwrap().finished);
+            engine.scroll_to(source, 0.0, 0.0).unwrap();
+            assert_eq!(
+                engine
+                    .animation_timeline_snapshot(id)
+                    .unwrap()
+                    .unwrap()
+                    .current_time_percentage,
+                Some(50.0)
+            );
+            assert!(!engine.animation_state(id).unwrap().finished);
+        }
     }
 }
 

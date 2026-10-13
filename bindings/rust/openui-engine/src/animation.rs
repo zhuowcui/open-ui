@@ -138,6 +138,8 @@ pub(crate) struct AnimationInstance {
     pub timeline_snapshot: Option<crate::animation_timeline::ProgressTimelineSnapshot>,
     pub auto_align_start_time: bool,
     pub pending_progress_seek: Option<f64>,
+    pub progress_pause_pending: bool,
+    pub progress_start_resolved: bool,
     pub start_time_seconds: f64,
     pub offset_seconds: f64,
     pub hold_time_seconds: Option<f64>,
@@ -179,22 +181,129 @@ impl AnimationInstance {
     // Progress timelines retain their separate local-offset adapter; held
     // time is already local and remains independent of the playback rate.
     fn current_time(&self, timeline_time_seconds: f64) -> f64 {
-        self.hold_time_seconds.unwrap_or_else(|| {
-            let running_time =
-                (timeline_time_seconds - self.start_time_seconds) * self.options.playback_rate;
-            if self.timeline.is_document() {
-                running_time
-            } else {
-                self.offset_seconds + running_time
-            }
-        })
+        self.hold_time_seconds
+            .unwrap_or_else(|| self.running_time(timeline_time_seconds))
+    }
+
+    fn running_time(&self, timeline_time_seconds: f64) -> f64 {
+        let running_time =
+            (timeline_time_seconds - self.start_time_seconds) * self.options.playback_rate;
+        if self.timeline.is_document() {
+            running_time
+        } else {
+            self.offset_seconds + running_time
+        }
+    }
+
+    fn unlimited_progress_time(&self, timeline_time_seconds: f64) -> f64 {
+        // UnlimitedCurrentTime checks the logical play state. A pending pause
+        // already reports paused before its ready task clears the stored start.
+        if self.options.play_state == PlayState::Paused
+            || self.progress_pause_pending
+            || !self.progress_start_resolved
+        {
+            self.current_time(timeline_time_seconds)
+        } else {
+            self.running_time(timeline_time_seconds)
+        }
+    }
+
+    fn progress_positive_endpoint(&self, local_time_seconds: f64) -> bool {
+        // Pinned .50 GreaterThanOrEqualWithinTimeTolerance compares reflected
+        // milliseconds with Animation::kTimeToleranceMs, not phase tolerance.
+        let current_ms = local_time_seconds * 1000.0;
+        let end_ms = self.timing_seconds.effect_end(self.options.iterations) * 1000.0;
+        (current_ms - end_ms).abs() < 0.001 || current_ms > end_ms
     }
 
     fn reached_endpoint(&self, local_time_seconds: f64) -> bool {
         self.options.play_state == PlayState::Running
+            && !self.progress_pause_pending
             && ((self.options.playback_rate > 0.0
-                && local_time_seconds >= self.timing_seconds.effect_end(self.options.iterations))
+                && if self.timeline.is_document() {
+                    local_time_seconds >= self.timing_seconds.effect_end(self.options.iterations)
+                } else {
+                    self.progress_positive_endpoint(local_time_seconds)
+                })
                 || (self.options.playback_rate < 0.0 && local_time_seconds <= 0.0))
+    }
+
+    fn update_progress_finished_hold(&mut self, timeline_time_seconds: f64, did_seek: bool) {
+        if self.timeline.is_document()
+            || self.timeline_snapshot.is_none()
+            || self.options.play_state == PlayState::Paused
+            || self.progress_pause_pending
+            || !self.progress_start_resolved
+            || self.options.playback_rate == 0.0
+        {
+            return;
+        }
+        // UpdateFinishedState uses held current time for a discontinuous seek,
+        // but CalculateCurrentTime for ticks. Nonmonotonic timelines can then
+        // leave a finished boundary even while CurrentTimeInternal is held.
+        let unconstrained = if did_seek {
+            self.current_time(timeline_time_seconds)
+        } else {
+            self.running_time(timeline_time_seconds)
+        };
+        if self.options.playback_rate > 0.0 && self.progress_positive_endpoint(unconstrained) {
+            let end = self.timing_seconds.effect_end(self.options.iterations);
+            self.hold_time_seconds = Some(if did_seek {
+                unconstrained
+            } else if self.last_current_time_seconds > end {
+                self.last_current_time_seconds
+            } else {
+                end
+            });
+        } else if self.options.playback_rate < 0.0 && unconstrained <= 0.0 {
+            let held = if did_seek {
+                unconstrained
+            } else if self.last_current_time_seconds <= 0.0 {
+                self.last_current_time_seconds
+            } else {
+                0.0
+            };
+            // This is TimingCalculations::IsWithinAnimationTimeEpsilon, a
+            // distinct two-bit double arithmetic rule, not the 1us phase rule.
+            self.hold_time_seconds = Some(if held.abs() <= 2.0 * f64::EPSILON {
+                0.0
+            } else {
+                held
+            });
+        } else {
+            if did_seek {
+                if let Some(held) = self.hold_time_seconds {
+                    self.start_time_seconds =
+                        timeline_time_seconds - held / self.options.playback_rate;
+                    self.offset_seconds = 0.0;
+                }
+            }
+            self.hold_time_seconds = None;
+        }
+    }
+
+    fn seek_progress_time(&mut self, timeline_time_seconds: f64, local_time_seconds: f64) {
+        // SetCurrentTimeInternal preserves an existing finished or paused
+        // hold. Reanchoring it first would subtract a large cover clock and
+        // lose the exact requested outside time before pause/resize.
+        if self.hold_time_seconds.is_some()
+            || !self.progress_start_resolved
+            || self.options.play_state == PlayState::Paused
+            || self.options.playback_rate == 0.0
+            || self.timeline_snapshot.is_none()
+        {
+            self.hold_time_seconds = Some(local_time_seconds);
+        } else {
+            self.reanchor_progress(timeline_time_seconds, local_time_seconds);
+        }
+        if self.timeline_snapshot.is_none() {
+            // SetCurrentTimeInternal clears start_time on an inactive timeline.
+            self.progress_start_resolved = false;
+        }
+        self.update_progress_finished_hold(timeline_time_seconds, true);
+        // A later continuous sample retains an explicitly outside time rather
+        // than the boundary that was current before this discontinuous seek.
+        self.last_current_time_seconds = self.current_time(timeline_time_seconds);
     }
 
     fn reanchor_progress(&mut self, timeline_time_seconds: f64, local_time_seconds: f64) {
@@ -205,7 +314,9 @@ impl AnimationInstance {
         {
             self.hold_time_seconds = Some(local_time_seconds);
             self.start_time_seconds = timeline_time_seconds;
+            self.progress_start_resolved = false;
         } else {
+            self.progress_start_resolved = true;
             self.hold_time_seconds = None;
             self.start_time_seconds =
                 timeline_time_seconds - local_time_seconds / self.options.playback_rate;
@@ -461,6 +572,8 @@ impl Engine {
         } else {
             (timeline_now - start_time_seconds) * options.playback_rate
         };
+        let progress_start_resolved = timeline.is_document()
+            || (timeline_snapshot.is_some() && options.play_state == PlayState::Running);
         let previous_base = self.slots[target.index as usize]
             .animation_base_style
             .clone();
@@ -493,6 +606,8 @@ impl Engine {
                 timeline_snapshot,
                 auto_align_start_time: true,
                 pending_progress_seek: None,
+                progress_pause_pending: false,
+                progress_start_resolved,
                 start_time_seconds,
                 offset_seconds: 0.0,
                 hold_time_seconds: held.then_some(initial_hold),
@@ -520,7 +635,26 @@ impl Engine {
     }
 
     pub fn pause_animation(&mut self, id: AnimationId) -> Result<(), EngineError> {
-        self.update()?;
+        let pending = {
+            let instance = self.animation_instance(id)?;
+            !instance.timeline.is_document() && instance.options.play_state != PlayState::Paused
+        };
+        if pending {
+            // PauseInternal sets pending_pause before updating finished state.
+            // A layout barrier must not replace an explicit tiny-range hold
+            // with EffectEnd before the pause commits its requested time.
+            self.animations
+                .get_mut(&id)
+                .expect("live animation")
+                .progress_pause_pending = true;
+        }
+        let update = self.update().map(|_| ());
+        if pending {
+            if let Some(instance) = self.animations.get_mut(&id) {
+                instance.progress_pause_pending = false;
+            }
+        }
+        update?;
         let snapshot = self.animation_instance(id)?.clone();
         if snapshot.options.play_state == PlayState::Paused {
             return Ok(());
@@ -557,6 +691,7 @@ impl Engine {
             });
             instance.offset_seconds = 0.0;
             instance.hold_time_seconds = None;
+            instance.progress_start_resolved = instance.timeline_snapshot.is_some();
             return self.sample_animations();
         }
         if snapshot.timeline.is_document() {
@@ -616,9 +751,9 @@ impl Engine {
             instance.reanchor(now, current_time_seconds);
         } else {
             instance.auto_align_start_time = false;
-            instance.reanchor_progress(now, current_time_seconds);
+            instance.seek_progress_time(now, current_time_seconds);
         }
-        self.sample_animations()
+        self.sample_animations_for_update(Some(id))
     }
 
     pub fn set_animation_playback_rate(
@@ -694,9 +829,32 @@ impl Engine {
             instance.reanchor(now, endpoint);
         } else {
             instance.auto_align_start_time = false;
-            instance.reanchor_progress(now, endpoint);
+            if !snapshot.progress_start_resolved {
+                // An unresolved/paused start is distinct from the retained
+                // numeric adapter. Finish can resolve it only while active.
+                instance.hold_time_seconds = Some(endpoint);
+                if instance.timeline_snapshot.is_some() {
+                    instance.start_time_seconds = now - endpoint / rate;
+                    instance.offset_seconds = 0.0;
+                    instance.progress_start_resolved = true;
+                }
+                instance.update_progress_finished_hold(now, true);
+                instance.last_current_time_seconds = instance.current_time(now);
+            } else {
+                // SetCurrentTimeInternal updates a natural finished hold
+                // without replacing its already resolved start. That anchor
+                // must survive a later nonmonotonic timeline reentry.
+                instance.seek_progress_time(now, endpoint);
+            }
+            if instance.timeline_snapshot.is_none() {
+                // Finish clears the inactive start. With no pending play task,
+                // CalculateAnimationPlayState then reports this held effect as
+                // paused, whether it was running or paused before finish.
+                instance.options.play_state = PlayState::Paused;
+                instance.timing_options.play_state = PlayState::Paused;
+            }
         }
-        self.sample_animations()
+        self.sample_animations_for_update(Some(id))
     }
 
     pub fn cancel_animation(&mut self, id: AnimationId) -> Result<(), EngineError> {
@@ -909,6 +1067,13 @@ impl Engine {
     }
 
     pub(crate) fn sample_animations(&mut self) -> Result<(), EngineError> {
+        self.sample_animations_for_update(None)
+    }
+
+    fn sample_animations_for_update(
+        &mut self,
+        discontinuous: Option<AnimationId>,
+    ) -> Result<(), EngineError> {
         if self
             .animations
             .values()
@@ -916,14 +1081,18 @@ impl Engine {
         {
             self.update_once()?;
         }
-        self.sample_animations_at_snapshot(false)
+        self.sample_animations_at_snapshot(false, discontinuous)
     }
 
     pub(crate) fn sample_progress_animations_after_layout(&mut self) -> Result<(), EngineError> {
-        self.sample_animations_at_snapshot(true)
+        self.sample_animations_at_snapshot(true, None)
     }
 
-    fn sample_animations_at_snapshot(&mut self, progress_only: bool) -> Result<(), EngineError> {
+    fn sample_animations_at_snapshot(
+        &mut self,
+        progress_only: bool,
+        discontinuous: Option<AnimationId>,
+    ) -> Result<(), EngineError> {
         let ids = self
             .animations
             .iter()
@@ -933,7 +1102,7 @@ impl Engine {
             .collect::<Vec<_>>();
         let mut changed = false;
         for id in ids {
-            self.refresh_progress_timeline_snapshot(id);
+            let resolved_seek = self.refresh_progress_timeline_snapshot(id);
             let Some(snapshot) = self.animations.get(&id).cloned() else {
                 continue;
             };
@@ -964,11 +1133,29 @@ impl Engine {
                 if let Some(instance) = self.animations.get_mut(&id) {
                     instance.last_phase = None;
                     instance.last_iteration = 0;
-                    instance.ended = true;
+                    // An inactive timeline has no calculated current time.
+                    // Only a held, resolved running endpoint can stay finished;
+                    // an inactive finish cleared its start and remains paused.
+                    instance.ended = snapshot.progress_start_resolved
+                        && snapshot
+                            .hold_time_seconds
+                            .is_some_and(|held| snapshot.reached_endpoint(held));
                 }
                 continue;
             }
             let timeline_now = self.timeline_time(snapshot.timeline, &snapshot.options)?;
+            let snapshot = if !snapshot.timeline.is_document() {
+                self.animations
+                    .get_mut(&id)
+                    .expect("live animation")
+                    .update_progress_finished_hold(
+                        timeline_now,
+                        resolved_seek || discontinuous == Some(id),
+                    );
+                self.animations.get(&id).expect("live animation").clone()
+            } else {
+                snapshot
+            };
             let raw_time = snapshot.current_time(timeline_now);
             let current_time = if snapshot.hold_time_seconds.is_none()
                 && snapshot.timeline.is_document()
@@ -1292,13 +1479,14 @@ impl Engine {
             .collect()
     }
 
-    fn refresh_progress_timeline_snapshot(&mut self, id: AnimationId) {
+    fn refresh_progress_timeline_snapshot(&mut self, id: AnimationId) -> bool {
         let Some(previous) = self.animations.get(&id).cloned() else {
-            return;
+            return false;
         };
         if previous.timeline.is_document() {
-            return;
+            return false;
         }
+        let mut resolved_seek = false;
         let next = self.progress_timeline_snapshot(previous.timeline);
         let instance = self.animations.get_mut(&id).expect("live animation");
         if let Some(next) = next {
@@ -1310,14 +1498,18 @@ impl Engine {
                     if let Some(held) = instance.hold_time_seconds {
                         let progress = (held * 1000.0) / (old.duration_seconds * 1000.0);
                         instance.hold_time_seconds = Some(progress * next.duration_seconds);
-                    } else if !instance.auto_align_start_time
+                    }
+                    if instance.progress_start_resolved
+                        && !instance.auto_align_start_time
                         && instance.options.playback_rate != 0.0
                     {
-                        // Blink replaces the timeline snapshot before this
-                        // callback: UnlimitedCurrentTime uses its NEW clock with
-                        // the PREVIOUS animation anchor and old duration.
-                        let progress = (previous.current_time(next.clock_time_seconds()) * 1000.0)
-                            / (old.duration_seconds * 1000.0);
+                        // Blink replaces the timeline snapshot and rescales
+                        // hold before UnlimitedCurrentTime reads the NEW clock
+                        // with the previous start and old duration. Pending
+                        // pause uses that already rescaled held current time.
+                        let progress =
+                            (instance.unlimited_progress_time(next.clock_time_seconds()) * 1000.0)
+                                / (old.duration_seconds * 1000.0);
                         let current = progress * next.duration_seconds;
                         instance.start_time_seconds =
                             next.clock_time_seconds() - current / instance.options.playback_rate;
@@ -1328,17 +1520,35 @@ impl Engine {
                 instance.start_time_seconds =
                     next.automatic_start_time_seconds(instance.options.playback_rate);
                 instance.offset_seconds = 0.0;
+                instance.progress_start_resolved =
+                    instance.options.play_state == PlayState::Running;
             }
             (instance.timing_options, instance.timing_seconds) = next.normalize(&instance.options);
             instance.timeline_snapshot = Some(next);
             if let Some(percentage) = instance.pending_progress_seek.take() {
-                instance.reanchor_progress(
+                resolved_seek = true;
+                instance.seek_progress_time(
                     next.clock_time_seconds(),
                     next.time_from_percentage(percentage),
                 );
             }
+            if !instance.progress_start_resolved
+                && instance.options.play_state == PlayState::Running
+                && instance.options.playback_rate != 0.0
+            {
+                if let Some(held) = instance.hold_time_seconds {
+                    // Resolve the pending running start at an active snapshot,
+                    // after converting any retained percentage request.
+                    instance.start_time_seconds =
+                        next.clock_time_seconds() - held / instance.options.playback_rate;
+                    instance.offset_seconds = 0.0;
+                    instance.progress_start_resolved = true;
+                    resolved_seek = true;
+                }
+            }
         }
         instance.timeline_snapshot = next;
+        resolved_seek
     }
 
     fn animation_instance(&self, id: AnimationId) -> Result<&AnimationInstance, EngineError> {
