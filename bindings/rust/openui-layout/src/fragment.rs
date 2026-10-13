@@ -716,6 +716,16 @@ pub struct Fragment {
 }
 
 impl Fragment {
+    /// Whether a producer retained a visual contribution, including an
+    /// applied zero or independent contributions whose sum cancels.
+    pub(crate) fn has_recorded_fragmentation_visual_offset(&self) -> bool {
+        self.fragmentation_visual_offsets.relative.is_some()
+            || self
+                .fragmentation_visual_offsets
+                .reconstructed_inline
+                .is_some()
+    }
+
     pub(crate) fn record_relative_fragmentation_offset(&mut self, offset: PhysicalOffset) {
         self.fragmentation_visual_offsets.relative = Some(offset);
         self.fragmentation_visual_offset = self.fragmentation_visual_offsets.total();

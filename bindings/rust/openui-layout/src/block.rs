@@ -875,7 +875,9 @@ fn normalize_multicol_owned_subtree(
     // translation before converting the normal-flow box to the multicol
     // algorithm's logical axes; projection restores the same physical vector
     // after fragmentation has sliced the untranslated source geometry.
-    if !fragment.node_id.is_none() && fragment.fragmentation_visual_offset == PhysicalOffset::zero()
+    if !fragment.node_id.is_none()
+        && !fragment.has_recorded_fragmentation_visual_offset()
+        && fragment.fragmentation_visual_offset == PhysicalOffset::zero()
     {
         let fragment_style = &doc.node(fragment.node_id).style;
         if fragment_style.position == Position::Relative {
@@ -1180,7 +1182,9 @@ fn project_multicol_child_to_physical(
         physical_size,
     );
     fragment.size = physical_size;
-    if !fragment.node_id.is_none() && fragment.fragmentation_visual_offset == PhysicalOffset::zero()
+    if !fragment.node_id.is_none()
+        && !fragment.has_recorded_fragmentation_visual_offset()
+        && fragment.fragmentation_visual_offset == PhysicalOffset::zero()
     {
         let fragment_style = &doc.node(fragment.node_id).style;
         if fragment_style.position == Position::Relative {
@@ -14431,7 +14435,9 @@ fn fragment_visual_translation(
             PhysicalOffset::zero()
         }
     };
-    if fragment.fragmentation_visual_offset != PhysicalOffset::zero() {
+    if fragment.has_recorded_fragmentation_visual_offset()
+        || fragment.fragmentation_visual_offset != PhysicalOffset::zero()
+    {
         fragment.fragmentation_visual_offset
     } else {
         authored
@@ -34379,6 +34385,185 @@ mod tests {
         assert_eq!(remaining_columns_in_row(2, 2, true), 2);
         assert_eq!(remaining_columns_in_row(3, 2, true), 1);
         assert_eq!(remaining_columns_in_row(4, 2, true), 2);
+    }
+
+    #[test]
+    fn retained_visual_components_preserve_zero_cancellation_and_legacy_fallback() {
+        let mut doc = Document::new();
+        let node = doc.create_node(ElementTag::Div);
+        doc.append_child(doc.root(), node);
+        doc.update_resolved_style(node, |style| {
+            style.position = Position::Relative;
+            style.left = Length::px(7.0);
+        });
+        let size = PhysicalSize::new(LayoutUnit::from_i32(20), LayoutUnit::from_i32(10));
+        let relative = PhysicalOffset::new(LayoutUnit::from_i32(7), LayoutUnit::zero());
+        for inline_first in [false, true] {
+            for inline_left in [-7, 7] {
+                let inline =
+                    PhysicalOffset::new(LayoutUnit::from_i32(inline_left), LayoutUnit::zero());
+                let mut fragment = Fragment::new_box(node, size);
+                if inline_first {
+                    fragment.record_reconstructed_inline_offset(inline);
+                    fragment.record_relative_fragmentation_offset(relative);
+                } else {
+                    fragment.record_relative_fragmentation_offset(relative);
+                    fragment.record_reconstructed_inline_offset(inline);
+                }
+                let expected =
+                    PhysicalOffset::new(LayoutUnit::from_i32(7 + inline_left), LayoutUnit::zero());
+                assert_eq!(
+                    fragment.fragmentation_visual_offsets.relative,
+                    Some(relative)
+                );
+                assert_eq!(
+                    fragment.fragmentation_visual_offsets.reconstructed_inline,
+                    Some(inline)
+                );
+                assert_eq!(fragment.fragmentation_visual_offset, expected);
+                assert_eq!(
+                    fragment_visual_translation(
+                        &fragment,
+                        &doc,
+                        LayoutUnit::from_i32(100),
+                        LayoutUnit::from_i32(80)
+                    ),
+                    expected,
+                );
+            }
+        }
+        let mut legacy = Fragment::new_box(node, size);
+        assert_eq!(
+            fragment_visual_translation(
+                &legacy,
+                &doc,
+                LayoutUnit::from_i32(100),
+                LayoutUnit::from_i32(80)
+            ),
+            relative,
+        );
+        legacy.fragmentation_visual_offset =
+            PhysicalOffset::new(LayoutUnit::from_i32(-3), LayoutUnit::zero());
+        assert_eq!(
+            fragment_visual_translation(
+                &legacy,
+                &doc,
+                LayoutUnit::from_i32(100),
+                LayoutUnit::from_i32(80)
+            ),
+            legacy.fragmentation_visual_offset,
+        );
+    }
+
+    #[test]
+    fn applied_zero_relative_percentage_keeps_its_original_containing_size() {
+        let mut doc = Document::new();
+        let node = doc.create_node(ElementTag::Div);
+        doc.append_child(doc.root(), node);
+        doc.update_resolved_style(node, |style| {
+            style.position = Position::Relative;
+            style.left = Length::percent(50.0);
+        });
+        let mut fragment = Fragment::new_box(
+            node,
+            PhysicalSize::new(LayoutUnit::from_i32(20), LayoutUnit::from_i32(10)),
+        );
+        apply_relative_offset_in_algorithm_axes(
+            &mut fragment,
+            &doc.node(node).style,
+            LayoutUnit::zero(),
+            LayoutUnit::from_i32(80),
+            WritingDirectionMode::horizontal_ltr(),
+        );
+        assert_eq!(
+            fragment.fragmentation_visual_offsets.relative,
+            Some(PhysicalOffset::zero())
+        );
+        assert_eq!(
+            fragment_visual_translation(
+                &fragment,
+                &doc,
+                LayoutUnit::from_i32(100),
+                LayoutUnit::from_i32(80)
+            ),
+            PhysicalOffset::zero(),
+        );
+        let unrecorded = Fragment::new_box(node, fragment.size);
+        assert_eq!(
+            fragment_visual_translation(
+                &unrecorded,
+                &doc,
+                LayoutUnit::from_i32(100),
+                LayoutUnit::from_i32(80)
+            ),
+            PhysicalOffset::new(LayoutUnit::from_i32(50), LayoutUnit::zero()),
+        );
+    }
+
+    #[test]
+    fn vertical_multicol_keeps_recorded_zero_before_and_after_projection() {
+        let mut doc = Document::new();
+        let node = doc.create_node(ElementTag::Div);
+        doc.append_child(doc.root(), node);
+        doc.update_resolved_style(node, |style| {
+            style.position = Position::Relative;
+            style.left = Length::px(7.0);
+        });
+        let parent = PhysicalSize::new(LayoutUnit::from_i32(100), LayoutUnit::from_i32(80));
+        let size = PhysicalSize::new(LayoutUnit::from_i32(20), LayoutUnit::from_i32(10));
+        let offset = PhysicalOffset::new(LayoutUnit::from_i32(10), LayoutUnit::from_i32(12));
+        for flipped_blocks in [false, true] {
+            for rtl in [false, true] {
+                let direction = WritingDirectionMode::new(false, flipped_blocks, false, rtl);
+                let logical_offset = PhysicalOffset::new(
+                    LayoutUnit::from_i32(if rtl { 58 } else { 12 }),
+                    LayoutUnit::from_i32(if flipped_blocks { 70 } else { 10 }),
+                );
+                for explicit_zero in [false, true] {
+                    let mut fragment = Fragment::new_box(node, size);
+                    fragment.offset = offset;
+                    if explicit_zero {
+                        fragment.record_relative_fragmentation_offset(PhysicalOffset::zero());
+                    } else {
+                        fragment.record_relative_fragmentation_offset(PhysicalOffset::new(
+                            LayoutUnit::from_i32(7),
+                            LayoutUnit::zero(),
+                        ));
+                        fragment.record_reconstructed_inline_offset(PhysicalOffset::new(
+                            LayoutUnit::from_i32(-7),
+                            LayoutUnit::zero(),
+                        ));
+                    }
+                    normalize_multicol_owned_subtree(&doc, &mut fragment, direction, parent);
+                    // The intermediate normal-flow coordinate must already be
+                    // correct; a second erroneous inset cannot hide it on return.
+                    assert_eq!(fragment.offset, logical_offset);
+                    assert_eq!(
+                        fragment.size,
+                        PhysicalSize::new(LayoutUnit::from_i32(10), LayoutUnit::from_i32(20))
+                    );
+                    project_multicol_child_to_physical(
+                        &doc,
+                        &mut fragment,
+                        direction,
+                        parent,
+                        false,
+                    );
+                    assert_eq!(fragment.offset, offset);
+                    assert_eq!(fragment.size, size);
+                }
+                let mut legacy = Fragment::new_box(node, size);
+                legacy.offset =
+                    PhysicalOffset::new(LayoutUnit::from_i32(17), LayoutUnit::from_i32(12));
+                normalize_multicol_owned_subtree(&doc, &mut legacy, direction, parent);
+                assert_eq!(legacy.offset, logical_offset);
+                project_multicol_child_to_physical(&doc, &mut legacy, direction, parent, false);
+                assert_eq!(
+                    legacy.offset,
+                    PhysicalOffset::new(LayoutUnit::from_i32(17), LayoutUnit::from_i32(12))
+                );
+            }
+        }
     }
 
     #[test]
