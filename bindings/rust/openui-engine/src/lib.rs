@@ -55,7 +55,7 @@ pub use openui_geometry::{
     TextRasterConfiguration, ViewportAuthority, ViewportMetrics, ViewportMetricsError,
 };
 use openui_layout::Fragment;
-use openui_paint::record_fragment;
+use openui_paint::{record_fragment, record_fragment_with_program};
 use openui_style::{
     apply_to_computed, AuthoredStyleContribution, AuthoredStyleDeclarations, CanonicalStyleField,
     Color, ComputedStyle, Display, ImageResourceId, InvalidationClass, PseudoStyleTarget,
@@ -335,6 +335,7 @@ pub struct Engine {
     latest_fragment: Option<Arc<Fragment>>,
     latest_scene: Option<SceneSnapshot>,
     scene_registry: compositor_scene::SceneIdentityRegistry,
+    layered_paint_capture_enabled: bool,
     hit_test: Vec<HitEntry>,
     fragment_rects: HashMap<NodeId, Vec<SceneRect>>,
     fragment_box_worlds: HashMap<NodeId, WorldTransform>,
@@ -427,6 +428,7 @@ impl Engine {
             latest_fragment: None,
             latest_scene: None,
             scene_registry: compositor_scene::SceneIdentityRegistry::default(),
+            layered_paint_capture_enabled: false,
             hit_test: Vec::new(),
             fragment_rects: HashMap::new(),
             fragment_box_worlds: HashMap::new(),
@@ -2606,9 +2608,15 @@ impl Engine {
             .as_ref()
             .expect("visual dirtiness always establishes a fragment")
             .clone();
-        let recording = record_fragment(&self.document, &fragment, self.viewport);
+        let recording = if self.layered_paint_capture_enabled {
+            record_fragment_with_program(&self.document, &fragment, self.viewport)
+                .map(|capture| (capture.canonical.clone(), Some(capture)))
+        } else {
+            record_fragment(&self.document, &fragment, self.viewport)
+                .map(|recording| (recording, None))
+        };
         self.restore_closed_details_content(hidden_details_content);
-        let recording = recording.map_err(EngineError::Render)?;
+        let (recording, capture) = recording.map_err(EngineError::Render)?;
         self.stats.paints += 1;
         let generation = SceneGeneration(self.stats.scenes + 1);
         let damage = vec![SceneRect {
@@ -2618,14 +2626,19 @@ impl Engine {
             height: height as f32,
         }];
         let retained = self.retained_scene_plan(&fragment, &recording)?;
-        let scene = SceneSnapshot::new(generation, recording, fragment, damage)
-            .with_retained_scene(retained)
-            .map_err(|error| match error {
-                openui_compositor::RetainedSceneError::AllocationFailure => {
-                    EngineError::AllocationFailure
-                }
-                other => EngineError::Render(other.to_string()),
-            })?;
+        let scene = if let Some(capture) = capture {
+            let capture = self.bind_layered_paint_capture(capture, &retained)?;
+            SceneSnapshot::new_with_layered_capture(generation, capture, fragment, damage)
+        } else {
+            SceneSnapshot::new(generation, recording, fragment, damage)
+        }
+        .with_retained_scene(retained)
+        .map_err(|error| match error {
+            openui_compositor::RetainedSceneError::AllocationFailure => {
+                EngineError::AllocationFailure
+            }
+            other => EngineError::Render(other.to_string()),
+        })?;
         self.latest_scene = Some(scene);
         self.stats.scenes += 1;
         let accessibility = self.dirty.accessibility;
@@ -2634,6 +2647,21 @@ impl Engine {
             ..DirtyState::default()
         };
         Ok(self.latest_scene.as_ref().expect("scene assigned"))
+    }
+
+    /// Opt in to owned diagnostic paint partitions on the next visual update.
+    /// This leaves ordinary canonical presentation selected. Layered replay and
+    /// independent animation admission still require their exact runtime gates.
+    pub fn set_layered_paint_capture_enabled(&mut self, enabled: bool) {
+        if self.layered_paint_capture_enabled == enabled {
+            return;
+        }
+        self.layered_paint_capture_enabled = enabled;
+        self.mark_dirty(InvalidationClass::Paint);
+    }
+
+    pub fn layered_paint_capture_enabled(&self) -> bool {
+        self.layered_paint_capture_enabled
     }
 
     pub fn scene(&mut self) -> Result<SceneSnapshot, EngineError> {

@@ -896,7 +896,7 @@ fn paint_fragment_contents(
     offset: PhysicalOffset,
 ) {
     let _program_owner =
-        crate::paint_program::PaintOwnerScope::new(canvas.raw_tracking_target(), fragment);
+        crate::paint_program::PaintOwnerScope::contents(canvas.raw_tracking_target(), fragment);
     // Keep accumulated offset fractional (sub-pixel precision).
     // Pixel snapping happens only at the point of drawing (paint_box_decoration_background,
     // paint_text_fragment, etc.) using Blink's PixelSnappedIntRect approach:

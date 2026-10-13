@@ -2,7 +2,7 @@
 
 use openui_geometry::{RasterConfiguration, RasterSnapping, ViewportMetrics};
 use openui_layout::Fragment;
-use openui_paint::{rasterize_picture, RecordedPicture};
+use openui_paint::{rasterize_picture, LayeredPaintCapture, RecordedPicture};
 use skia_safe::image::CachingHint;
 use skia_safe::{Canvas, EncodedImageFormat};
 use std::sync::{Arc, Condvar, Mutex};
@@ -71,6 +71,7 @@ pub struct SceneSnapshot {
     logical_damage: Arc<[SceneRect]>,
     physical_damage: Arc<[PhysicalSceneRect]>,
     retained_scene: Option<Arc<RetainedSceneSnapshot>>,
+    layered_paint: Option<Arc<LayeredPaintCapture>>,
 }
 
 impl SceneSnapshot {
@@ -94,7 +95,26 @@ impl SceneSnapshot {
             logical_damage: damage.into(),
             physical_damage: physical_damage.into(),
             retained_scene: None,
+            layered_paint: None,
         }
+    }
+
+    /// Publish explicitly requested diagnostic draw partitions from the same
+    /// canonical walk. Static replay and dynamic layer admission remain separate
+    /// unqualified gates; the ordinary presenter still uses the canonical picture.
+    pub fn new_with_layered_capture(
+        generation: SceneGeneration,
+        capture: LayeredPaintCapture,
+        fragments: Arc<Fragment>,
+        damage: Vec<SceneRect>,
+    ) -> Self {
+        let mut scene = Self::new(generation, capture.canonical().clone(), fragments, damage);
+        scene.layered_paint = Some(Arc::new(capture));
+        scene
+    }
+
+    pub fn layered_paint_capture(&self) -> Option<&Arc<LayeredPaintCapture>> {
+        self.layered_paint.as_ref()
     }
 
     /// Attach owned layer metadata to this exact recording. Canonical replay
@@ -241,10 +261,16 @@ impl CachedFrame {
     }
 }
 
+struct CachedLayeredFrame {
+    capture: Arc<LayeredPaintCapture>,
+    frame: Frame,
+}
+
 #[derive(Default)]
 pub struct SoftwareCompositor {
     last_presented: Option<SceneGeneration>,
     last_frame: Option<CachedFrame>,
+    last_layered_frame: Option<CachedLayeredFrame>,
     stats: CompositorStats,
 }
 
@@ -265,37 +291,48 @@ impl SoftwareCompositor {
             return Ok(frame);
         }
         let mut surface = rasterize_picture(&scene.picture).map_err(CompositorError::Raster)?;
-        let image = surface.image_snapshot();
-        // Raster surfaces use platform-native N32 (BGRA on our Linux hosts).
-        // Native apps and both Linux presenters consume explicit RGBA bytes.
-        let info = image
-            .image_info()
-            .with_color_type(skia_safe::ColorType::RGBA8888);
-        let width = scene.viewport.physical_width();
-        let height = scene.viewport.physical_height();
-        let stride = (width as usize)
-            .checked_mul(4)
-            .ok_or_else(|| CompositorError::Raster("frame stride overflow".into()))?;
-        let pixel_len = stride
-            .checked_mul(height as usize)
-            .ok_or_else(|| CompositorError::Raster("frame allocation overflow".into()))?;
-        let mut pixels = vec![0; pixel_len];
-        if !image.read_pixels(&info, &mut pixels, stride, (0, 0), CachingHint::Allow) {
-            return Err(CompositorError::ReadPixels);
-        }
-        let frame = Frame {
-            width,
-            height,
-            viewport: scene.viewport,
-            raster_configuration: scene.raster_configuration,
-            raster_backend_identity: RasterBackendIdentity::cpu_skia(),
-            stride,
-            pixels,
-            scene_generation: scene.generation,
-        };
+        let frame = frame_from_surface(scene, &mut surface)?;
         self.stats.rasterized += 1;
         self.last_presented = Some(scene.generation);
         self.last_frame = Some(CachedFrame::new(scene, frame.clone()));
+        Ok(frame)
+    }
+
+    /// Explicit static layer diagnostic using the existing CPU tile, clear,
+    /// scale and viewport-overlay policy. It neither changes canonical render
+    /// selection nor admits independently bounded layers or animated tracks.
+    pub fn render_layered_diagnostic(
+        &mut self,
+        scene: &SceneSnapshot,
+    ) -> Result<Frame, CompositorError> {
+        if scene.raster_configuration.backend == openui_geometry::RasterBackend::GaneshGl {
+            return Err(CompositorError::Raster(
+                "layered diagnostic requires CPU Skia".into(),
+            ));
+        }
+        let capture = scene.layered_paint_capture().ok_or_else(|| {
+            CompositorError::Raster("scene has no explicit layered paint capture".into())
+        })?;
+        self.stats.submitted += 1;
+        if let Some(cached) = &self.last_layered_frame {
+            if cached.frame.scene_generation == scene.generation
+                && Arc::ptr_eq(&cached.capture, capture)
+            {
+                self.stats.reused += 1;
+                return Ok(cached.frame.clone());
+            }
+        }
+        let recording = capture
+            .recording_from_layers()
+            .map_err(CompositorError::Raster)?;
+        let mut surface = rasterize_picture(&recording).map_err(CompositorError::Raster)?;
+        let frame = frame_from_surface(scene, &mut surface)?;
+        self.stats.rasterized += 1;
+        self.last_presented = Some(scene.generation);
+        self.last_layered_frame = Some(CachedLayeredFrame {
+            capture: Arc::clone(capture),
+            frame: frame.clone(),
+        });
         Ok(frame)
     }
 
@@ -324,6 +361,41 @@ impl SoftwareCompositor {
         self.stats.rasterized += 1;
         Ok(data.as_bytes().to_vec())
     }
+}
+
+// Canonical and diagnostic readback share the same explicit RGBA/stride path.
+fn frame_from_surface(
+    scene: &SceneSnapshot,
+    surface: &mut skia_safe::Surface,
+) -> Result<Frame, CompositorError> {
+    let image = surface.image_snapshot();
+    // Raster surfaces use platform-native N32 (BGRA on our Linux hosts).
+    // Native apps and both Linux presenters consume explicit RGBA bytes.
+    let info = image
+        .image_info()
+        .with_color_type(skia_safe::ColorType::RGBA8888);
+    let width = scene.viewport.physical_width();
+    let height = scene.viewport.physical_height();
+    let stride = (width as usize)
+        .checked_mul(4)
+        .ok_or_else(|| CompositorError::Raster("frame stride overflow".into()))?;
+    let pixel_len = stride
+        .checked_mul(height as usize)
+        .ok_or_else(|| CompositorError::Raster("frame allocation overflow".into()))?;
+    let mut pixels = vec![0; pixel_len];
+    if !image.read_pixels(&info, &mut pixels, stride, (0, 0), CachingHint::Allow) {
+        return Err(CompositorError::ReadPixels);
+    }
+    Ok(Frame {
+        width,
+        height,
+        viewport: scene.viewport,
+        raster_configuration: scene.raster_configuration,
+        raster_backend_identity: RasterBackendIdentity::cpu_skia(),
+        stride,
+        pixels,
+        scene_generation: scene.generation,
+    })
 }
 
 /// A one-slot scene mailbox for a render thread.

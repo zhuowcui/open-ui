@@ -47,6 +47,25 @@ pub struct PaintProgramOwner {
     pub owns_element_box: bool,
 }
 
+/// Entry role in the actual painter walk, not a reconstructed DOM/effect tree.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum PaintOwnerPhase {
+    Fragment,
+    Contents,
+}
+
+/// Layout identity copied at the actual painter boundary. Anonymous helpers
+/// contribute structural state, without acquiring authored element effects.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum PaintLayoutScopeRole {
+    AuthoredBox,
+    FieldsetContent,
+    TableHelper,
+    TextRun,
+    Column,
+    LayoutHelper,
+}
+
 /// Skia's safe Path is Send but not Sync because it lazily updates caches.
 /// Share only an owned clone and serialize its use; never retain the caller's
 /// path or publish an unsafe Sync implementation for it.
@@ -204,7 +223,7 @@ pub(crate) enum ProgramOperation {
     ClipRRect(RRect, ClipOp, bool),
     ClipPath(OwnedPath, ClipOp, bool),
     Draw(usize),
-    EnterOwner(PaintProgramOwner),
+    EnterOwner(PaintProgramOwner, PaintOwnerPhase, PaintLayoutScopeRole),
     ExitOwner,
 }
 
@@ -221,7 +240,7 @@ pub enum IntrinsicPictureStatus {
 /// State/effect scopes live in the ordered program, never in this chunk.
 #[derive(Clone)]
 pub struct PaintProgramChunk {
-    draw: OwnedDraw,
+    pub(crate) draw: OwnedDraw,
     picture: Option<Picture>,
     owner: Option<PaintProgramOwner>,
 }
@@ -248,13 +267,13 @@ impl PaintProgramChunk {
 /// Immutable static paint stream. Complete capture is not release qualification.
 #[derive(Clone)]
 pub struct RecordedPaintProgram {
-    operations: Vec<ProgramOperation>,
-    chunks: Vec<PaintProgramChunk>,
-    reasons: Vec<PaintCaptureIncompleteReason>,
-    canvas_queries: usize,
-    retained_font_bytes: Arc<[Arc<[u8]>]>,
+    pub(crate) operations: Vec<ProgramOperation>,
+    pub(crate) chunks: Vec<PaintProgramChunk>,
+    pub(crate) reasons: Vec<PaintCaptureIncompleteReason>,
+    pub(crate) canvas_queries: usize,
+    pub(crate) retained_font_bytes: Arc<[Arc<[u8]>]>,
     // Drop the font-cache lease after all retained draws/pictures/font bytes.
-    font_cache_lifetime: Option<openui_text::font::FontCacheLifetime>,
+    pub(crate) font_cache_lifetime: Option<openui_text::font::FontCacheLifetime>,
 }
 
 impl RecordedPaintProgram {
@@ -295,86 +314,96 @@ impl RecordedPaintProgram {
         if status != PaintCaptureStatus::Complete {
             return Err(status);
         }
-        let tracked: &dyn PaintCanvas = canvas;
-        tracked.legacy_helper_boundary();
-        let host_count = canvas.save_count();
-        struct RestoreHost<'a> {
-            canvas: &'a Canvas,
-            count: usize,
-        }
-        impl Drop for RestoreHost<'_> {
-            fn drop(&mut self) {
-                self.canvas.restore_to_count(self.count);
-            }
-        }
-        let _restore_host = RestoreHost {
-            canvas,
-            count: host_count,
-        };
-        canvas.save();
-        let base = canvas.save_count();
-        let base_matrix = canvas.local_to_device();
-        let _opacity_scope = tracked.opacity_scope();
-        for operation in &self.operations {
-            match operation {
-                ProgramOperation::Save => {
-                    tracked.save();
-                }
-                ProgramOperation::OpacityBarrier => {
-                    tracked.legacy_helper_boundary();
-                }
-                ProgramOperation::SaveLayerAlpha(bounds, alpha) => {
-                    tracked.save_layer_alpha_f(*bounds, *alpha);
-                }
-                ProgramOperation::SaveLayer {
-                    bounds,
-                    paint,
-                    flags,
-                } => {
-                    tracked.save_layer_owned(*bounds, paint.as_ref(), *flags);
-                }
-                ProgramOperation::Restore => {
-                    tracked.restore();
-                }
-                ProgramOperation::RestoreTo(count) => {
-                    tracked.restore_to_count(base + count);
-                }
-                ProgramOperation::Translate(offset) => {
-                    tracked.translate(*offset);
-                }
-                ProgramOperation::Scale(scale) => {
-                    tracked.scale(*scale);
-                }
-                ProgramOperation::Rotate(angle, point) => {
-                    tracked.rotate(*angle, *point);
-                }
-                ProgramOperation::Concat(matrix) => {
-                    tracked.concat(matrix);
-                }
-                ProgramOperation::Concat44(matrix) => {
-                    tracked.concat_44(matrix);
-                }
-                ProgramOperation::SetMatrix(matrix) => {
-                    tracked.set_matrix(&M44::concat(&base_matrix, matrix));
-                }
-                ProgramOperation::ClipRect(rect, op, aa) => {
-                    tracked.clip_rect(rect, *op, *aa);
-                }
-                ProgramOperation::ClipRRect(rect, op, aa) => {
-                    tracked.clip_rrect(rect, *op, *aa);
-                }
-                ProgramOperation::ClipPath(path, op, aa) => {
-                    path.with_path(|path| tracked.clip_path(path, *op, *aa));
-                }
-                ProgramOperation::Draw(index) => {
-                    self.chunks[*index].draw.replay(tracked);
-                }
-                ProgramOperation::EnterOwner(_) | ProgramOperation::ExitOwner => {}
-            }
-        }
-        tracked.restore_to_count(host_count);
+        replay_operations(&self.operations, canvas, |index| &self.chunks[index].draw);
         Ok(())
     }
+}
+
+// One state interpreter for original and partitioned static replay. The source
+// lookup changes; save-depth, opacity barriers and host matrix handling do not.
+pub(crate) fn replay_operations<'a>(
+    operations: &[ProgramOperation],
+    canvas: &Canvas,
+    draw: impl Fn(usize) -> &'a OwnedDraw,
+) {
+    let tracked: &dyn PaintCanvas = canvas;
+    tracked.legacy_helper_boundary();
+    let host_count = canvas.save_count();
+    struct RestoreHost<'a> {
+        canvas: &'a Canvas,
+        count: usize,
+    }
+    impl Drop for RestoreHost<'_> {
+        fn drop(&mut self) {
+            self.canvas.restore_to_count(self.count);
+        }
+    }
+    let _restore_host = RestoreHost {
+        canvas,
+        count: host_count,
+    };
+    canvas.save();
+    let base = canvas.save_count();
+    let base_matrix = canvas.local_to_device();
+    let _opacity_scope = tracked.opacity_scope();
+    for operation in operations {
+        match operation {
+            ProgramOperation::Save => {
+                tracked.save();
+            }
+            ProgramOperation::OpacityBarrier => {
+                tracked.legacy_helper_boundary();
+            }
+            ProgramOperation::SaveLayerAlpha(bounds, alpha) => {
+                tracked.save_layer_alpha_f(*bounds, *alpha);
+            }
+            ProgramOperation::SaveLayer {
+                bounds,
+                paint,
+                flags,
+            } => {
+                tracked.save_layer_owned(*bounds, paint.as_ref(), *flags);
+            }
+            ProgramOperation::Restore => {
+                tracked.restore();
+            }
+            ProgramOperation::RestoreTo(count) => {
+                tracked.restore_to_count(base + count);
+            }
+            ProgramOperation::Translate(offset) => {
+                tracked.translate(*offset);
+            }
+            ProgramOperation::Scale(scale) => {
+                tracked.scale(*scale);
+            }
+            ProgramOperation::Rotate(angle, point) => {
+                tracked.rotate(*angle, *point);
+            }
+            ProgramOperation::Concat(matrix) => {
+                tracked.concat(matrix);
+            }
+            ProgramOperation::Concat44(matrix) => {
+                tracked.concat_44(matrix);
+            }
+            ProgramOperation::SetMatrix(matrix) => {
+                tracked.set_matrix(&M44::concat(&base_matrix, matrix));
+            }
+            ProgramOperation::ClipRect(rect, op, aa) => {
+                tracked.clip_rect(rect, *op, *aa);
+            }
+            ProgramOperation::ClipRRect(rect, op, aa) => {
+                tracked.clip_rrect(rect, *op, *aa);
+            }
+            ProgramOperation::ClipPath(path, op, aa) => {
+                path.with_path(|path| tracked.clip_path(path, *op, *aa));
+            }
+            ProgramOperation::Draw(index) => {
+                draw(*index).replay(tracked);
+            }
+            ProgramOperation::EnterOwner(..) | ProgramOperation::ExitOwner => {}
+        }
+    }
+    tracked.restore_to_count(host_count);
 }
 
 struct Capture {
@@ -549,16 +578,39 @@ pub(crate) struct PaintOwnerScope<'a> {
 }
 impl<'a> PaintOwnerScope<'a> {
     pub(crate) fn new(canvas: &'a Canvas, fragment: &Fragment) -> Self {
+        Self::with_phase(canvas, fragment, PaintOwnerPhase::Fragment)
+    }
+    pub(crate) fn contents(canvas: &'a Canvas, fragment: &Fragment) -> Self {
+        Self::with_phase(canvas, fragment, PaintOwnerPhase::Contents)
+    }
+    fn with_phase(canvas: &'a Canvas, fragment: &Fragment, phase: PaintOwnerPhase) -> Self {
         let owner = PaintProgramOwner {
             node_id: fragment.node_id,
             owns_element_box: fragment.owns_element_box(),
+        };
+        let role = if matches!(
+            fragment.anonymous_layout_box,
+            Some(openui_layout::AnonymousLayoutBox::FieldsetContent { .. })
+        ) {
+            PaintLayoutScopeRole::FieldsetContent
+        } else if owner.owns_element_box {
+            PaintLayoutScopeRole::AuthoredBox
+        } else if fragment.table_part.is_some() {
+            PaintLayoutScopeRole::TableHelper
+        } else {
+            match fragment.kind {
+                openui_layout::FragmentKind::Text => PaintLayoutScopeRole::TextRun,
+                openui_layout::FragmentKind::ColumnBox
+                | openui_layout::FragmentKind::ColumnRule => PaintLayoutScopeRole::Column,
+                _ => PaintLayoutScopeRole::LayoutHelper,
+            }
         };
         matching(canvas, |capture| {
             capture.owners.push(owner);
             capture
                 .program
                 .operations
-                .push(ProgramOperation::EnterOwner(owner));
+                .push(ProgramOperation::EnterOwner(owner, phase, role));
         });
         Self { canvas }
     }

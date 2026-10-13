@@ -116,6 +116,58 @@ struct LayerBuilder {
 }
 
 impl Engine {
+    pub(crate) fn bind_layered_paint_capture(
+        &self,
+        capture: openui_paint::RecordedPaintCapture,
+        plan: &RetainedScenePlan,
+    ) -> Result<openui_paint::LayeredPaintCapture, EngineError> {
+        use openui_paint::{
+            PaintLayerBinding, PaintLayerNodeIdentity, PaintLayerSourceId, PaintLayerSourceRole,
+        };
+        let recording_binding = |role, source_role| {
+            plan.recordings
+                .iter()
+                .find(|recording| recording.role == role)
+                .map(|recording| PaintLayerBinding {
+                    id: PaintLayerSourceId(recording.id.0),
+                    owner: None,
+                    role: source_role,
+                })
+        };
+        let content = recording_binding(
+            SceneRecordingRole::DocumentContent,
+            PaintLayerSourceRole::DocumentContent,
+        )
+        .ok_or_else(|| EngineError::Render("missing document content source identity".into()))?;
+        let overlay = recording_binding(
+            SceneRecordingRole::ViewportOverlay,
+            PaintLayerSourceRole::ViewportOverlay,
+        );
+        capture
+            .partition_layers(content, overlay, |node| {
+                let index = *self.node_slots.get(&node)?;
+                let handle = self.handle_for_slot(index);
+                if self.resolve(handle).ok()? != node {
+                    return None;
+                }
+                let identity = owner(handle);
+                let layer = plan.layers.iter().find(|layer| layer.owner == identity)?;
+                Some(PaintLayerBinding {
+                    id: PaintLayerSourceId(layer.id.0),
+                    owner: Some(PaintLayerNodeIdentity {
+                        document: identity.document,
+                        index: identity.index,
+                        generation: identity.generation,
+                    }),
+                    role: match layer.role {
+                        SceneLayerRole::AuthoredBox => PaintLayerSourceRole::AuthoredBox,
+                        SceneLayerRole::GeneratedBox => PaintLayerSourceRole::GeneratedBox,
+                    },
+                })
+            })
+            .map_err(|error| EngineError::Render(error.to_string()))
+    }
+
     pub(crate) fn retained_scene_plan(
         &mut self,
         fragment: &Fragment,

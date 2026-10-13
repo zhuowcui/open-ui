@@ -10,8 +10,8 @@ use openui_geometry::{
 use openui_layout::{block_layout, ConstraintSpace, Fragment};
 use skia_safe::canvas::SrcRectConstraint;
 use skia_safe::{
-    surfaces, Color as SkColor, ColorSpace, EncodedImageFormat, FilterMode, ImageInfo, Paint,
-    Picture, PictureRecorder, PixelGeometry, Rect, SamplingOptions, Surface, SurfaceProps,
+    surfaces, Canvas, Color as SkColor, ColorSpace, EncodedImageFormat, FilterMode, ImageInfo,
+    Paint, Picture, PictureRecorder, PixelGeometry, Rect, SamplingOptions, Surface, SurfaceProps,
     SurfacePropsFlags,
 };
 use std::sync::Arc;
@@ -151,49 +151,164 @@ impl RecordedPaintCapture {
     /// Re-record the owned operands, retaining canonical tile/clear/scale flags.
     /// This does not admit a compositor layer partition or animation worker.
     pub fn recording_from_program(&self) -> Result<RecordedPicture, String> {
-        let bounds = Rect::from_xywh(
-            0.0,
-            0.0,
-            self.canonical.viewport.logical_width() as f32,
-            self.canonical.viewport.logical_height() as f32,
-        );
-        let mut recorder = PictureRecorder::new();
+        rebuild_owned_recording(
+            &self.canonical,
+            |canvas| {
+                self.content_program
+                    .replay(canvas)
+                    .map_err(|status| format!("incomplete content capture: {status:?}"))
+            },
+            self.viewport_overlay_program.as_ref().map(|program| {
+                move |canvas: &Canvas| {
+                    program
+                        .replay(canvas)
+                        .map_err(|status| format!("incomplete viewport capture: {status:?}"))
+                }
+            }),
+        )
+    }
+}
+
+/// Diagnostic layer sources from one canonical paint walk. The original
+/// recording retains opaque viewport/content dependencies. No independent
+/// transparent surfaces or presentation-side tracks are admitted here.
+#[derive(Clone)]
+pub struct LayeredPaintCapture {
+    canonical: RecordedPicture,
+    content: crate::LayeredPaintProgram,
+    overlay: Option<crate::LayeredPaintProgram>,
+}
+
+impl RecordedPaintCapture {
+    pub fn partition_layers(
+        self,
+        content_role: crate::PaintLayerBinding,
+        overlay_role: Option<crate::PaintLayerBinding>,
+        mut resolve: impl FnMut(openui_dom::NodeId) -> Option<crate::PaintLayerBinding>,
+    ) -> Result<LayeredPaintCapture, crate::LayeredPaintError> {
+        if content_role.role != crate::PaintLayerSourceRole::DocumentContent
+            || overlay_role
+                .is_some_and(|role| role.role != crate::PaintLayerSourceRole::ViewportOverlay)
+        {
+            return Err(crate::LayeredPaintError::InvalidBinding);
+        }
+        let content = self
+            .content_program
+            .partition_layers(content_role, &mut resolve)?;
+        let overlay = self
+            .viewport_overlay_program
+            .as_ref()
+            .map(|program| {
+                program.partition_layers(
+                    overlay_role.ok_or(crate::LayeredPaintError::InvalidBinding)?,
+                    &mut resolve,
+                )
+            })
+            .transpose()?;
+        // Content and viewport controls are separate operation streams within
+        // one scene. A shared authored binding is valid in both; a reused key
+        // for another owner or recording role would make the scene ambiguous.
+        let mut bindings = std::collections::HashMap::new();
+        for source in content
+            .sources()
+            .iter()
+            .chain(overlay.iter().flat_map(|program| program.sources()))
+        {
+            let binding = source.binding();
+            if bindings
+                .insert(binding.id, binding)
+                .is_some_and(|previous| previous != binding)
+            {
+                return Err(crate::LayeredPaintError::ConflictingIdentity(binding.id));
+            }
+        }
+        Ok(LayeredPaintCapture {
+            canonical: self.canonical,
+            content,
+            overlay,
+        })
+    }
+}
+
+impl LayeredPaintCapture {
+    pub fn canonical(&self) -> &RecordedPicture {
+        &self.canonical
+    }
+    pub fn content(&self) -> &crate::LayeredPaintProgram {
+        &self.content
+    }
+    pub fn viewport_overlay(&self) -> Option<&crate::LayeredPaintProgram> {
+        self.overlay.as_ref()
+    }
+    pub fn has_opaque_viewport_content_source(&self) -> bool {
+        self.canonical.viewport_content_layer.is_some()
+    }
+    pub fn qualification(&self) -> crate::LayeredPaintQualification {
+        crate::LayeredPaintQualification::UnqualifiedStaticReplay
+    }
+    /// Rebuilds the same existing content/overlay recording roles. Intrinsic
+    /// draw references resolve through immutable per-layer sources, while the
+    /// single ordered state spine preserves clips/effects/scroll exactly once.
+    /// The caller must retain the existing raster policy; this does not produce
+    /// independently composited per-element pictures or admit dynamic tracks.
+    pub fn recording_from_layers(&self) -> Result<RecordedPicture, String> {
+        rebuild_owned_recording(
+            &self.canonical,
+            |canvas| {
+                self.content
+                    .replay(canvas)
+                    .map_err(|error| error.to_string())
+            },
+            self.overlay.as_ref().map(|program| {
+                move |canvas: &Canvas| program.replay(canvas).map_err(|error| error.to_string())
+            }),
+        )
+    }
+}
+
+fn rebuild_owned_recording(
+    canonical: &RecordedPicture,
+    replay_content: impl FnOnce(&Canvas) -> Result<(), String>,
+    replay_overlay: Option<impl FnOnce(&Canvas) -> Result<(), String>>,
+) -> Result<RecordedPicture, String> {
+    let bounds = Rect::from_xywh(
+        0.0,
+        0.0,
+        canonical.viewport.logical_width() as f32,
+        canonical.viewport.logical_height() as f32,
+    );
+    let mut recorder = PictureRecorder::new();
+    let canvas = recorder.begin_recording(bounds, false);
+    replay_content(canvas)?;
+    let content = recorder
+        .finish_recording_as_picture(None)
+        .ok_or_else(|| "failed to replay content program".to_owned())?;
+    let overlay = if let Some(replay) = replay_overlay {
         let canvas = recorder.begin_recording(bounds, false);
-        self.content_program
-            .replay(canvas)
-            .map_err(|status| format!("incomplete content capture: {status:?}"))?;
-        let content = recorder
-            .finish_recording_as_picture(None)
-            .ok_or_else(|| "failed to replay content program".to_owned())?;
-        let overlay = if let Some(program) = &self.viewport_overlay_program {
-            let canvas = recorder.begin_recording(bounds, false);
-            program
-                .replay(canvas)
-                .map_err(|status| format!("incomplete viewport capture: {status:?}"))?;
-            Some(
-                recorder
-                    .finish_recording_as_picture(None)
-                    .ok_or_else(|| "failed to replay viewport program".to_owned())?,
-            )
-        } else {
-            None
-        };
-        let picture = if let Some(overlay) = &overlay {
-            let canvas = recorder.begin_recording(bounds, false);
-            canvas.draw_picture(&content, None, None);
-            canvas.draw_picture(overlay, None, None);
+        replay(canvas)?;
+        Some(
             recorder
                 .finish_recording_as_picture(None)
-                .ok_or_else(|| "failed to compose replayed programs".to_owned())?
-        } else {
-            content.clone()
-        };
-        let mut result = self.canonical.clone();
-        result.content_picture = content;
-        result.viewport_overlay = overlay;
-        result.picture = picture;
-        Ok(result)
-    }
+                .ok_or_else(|| "failed to replay viewport program".to_owned())?,
+        )
+    } else {
+        None
+    };
+    let picture = if let Some(overlay) = &overlay {
+        let canvas = recorder.begin_recording(bounds, false);
+        canvas.draw_picture(&content, None, None);
+        canvas.draw_picture(overlay, None, None);
+        recorder
+            .finish_recording_as_picture(None)
+            .ok_or_else(|| "failed to compose replayed programs".to_owned())?
+    } else {
+        content.clone()
+    };
+    let mut result = canonical.clone();
+    result.content_picture = content;
+    result.viewport_overlay = overlay;
+    result.picture = picture;
+    Ok(result)
 }
 
 /// Observe the same phase walk while preserving the canonical output path.
@@ -574,6 +689,120 @@ mod tests {
         assert_ne!(before, png(&second));
         drop(document);
         assert_eq!(before, png(&first));
+    }
+
+    #[test]
+    fn layered_capture_checks_identity_across_content_and_overlay_programs() {
+        use crate::{
+            LayeredPaintError, PaintLayerBinding, PaintLayerNodeIdentity, PaintLayerSourceId,
+            PaintLayerSourceRole,
+        };
+
+        let mut document = Document::new();
+        let node = document.create_node(ElementTag::Div);
+        document.update_resolved_style(node, |style| {
+            style.display = Display::Block;
+            style.background_color = Color::RED;
+        });
+        let fragment = Fragment::new_box(
+            node,
+            openui_geometry::PhysicalSize::new(LayoutUnit::from_i32(20), LayoutUnit::from_i32(20)),
+        );
+        let viewport = ViewportMetrics::from_logical_size(40.0, 40.0, 1.0).unwrap();
+        let mut capture = record_fragment_with_program(&document, &fragment, viewport).unwrap();
+        // A public capture can retain one authored source in both recording
+        // roles. Copying this actual operation stream exercises that boundary.
+        capture.viewport_overlay_program = Some(capture.content_program.clone());
+        let content_role = PaintLayerBinding {
+            id: PaintLayerSourceId(1),
+            owner: None,
+            role: PaintLayerSourceRole::DocumentContent,
+        };
+        let overlay_role = PaintLayerBinding {
+            id: PaintLayerSourceId(2),
+            owner: None,
+            role: PaintLayerSourceRole::ViewportOverlay,
+        };
+        let authored = PaintLayerBinding {
+            id: PaintLayerSourceId(3),
+            owner: Some(PaintLayerNodeIdentity {
+                document: 1,
+                index: 1,
+                generation: 1,
+            }),
+            role: PaintLayerSourceRole::AuthoredBox,
+        };
+        let resolve = |owner| {
+            assert_eq!(owner, node);
+            Some(authored)
+        };
+
+        let shared = capture
+            .clone()
+            .partition_layers(content_role, Some(overlay_role), resolve)
+            .unwrap();
+        for program in [shared.content(), shared.viewport_overlay().unwrap()] {
+            assert!(program
+                .sources()
+                .iter()
+                .any(|source| source.binding() == authored));
+        }
+        assert!(matches!(
+            capture.clone().partition_layers(
+                content_role,
+                Some(PaintLayerBinding {
+                    id: content_role.id,
+                    ..overlay_role
+                }),
+                resolve,
+            ),
+            Err(LayeredPaintError::ConflictingIdentity(PaintLayerSourceId(
+                1
+            )))
+        ));
+
+        let mut content_owner_calls = 0;
+        capture
+            .content_program
+            .partition_layers(content_role, |owner| {
+                assert_eq!(owner, node);
+                content_owner_calls += 1;
+                Some(authored)
+            })
+            .unwrap();
+        assert!(content_owner_calls > 0);
+        for conflicting_owner in [
+            PaintLayerNodeIdentity {
+                document: 2,
+                ..authored.owner.unwrap()
+            },
+            PaintLayerNodeIdentity {
+                generation: 2,
+                ..authored.owner.unwrap()
+            },
+        ] {
+            let mut calls = 0;
+            assert!(matches!(
+                capture
+                    .clone()
+                    .partition_layers(content_role, Some(overlay_role), |owner| {
+                        assert_eq!(owner, node);
+                        calls += 1;
+                        Some(if calls <= content_owner_calls {
+                            authored
+                        } else {
+                            PaintLayerBinding {
+                                owner: Some(conflicting_owner),
+                                ..authored
+                            }
+                        })
+                    },),
+                Err(LayeredPaintError::ConflictingIdentity(PaintLayerSourceId(
+                    3
+                )))
+            ));
+            assert_eq!(calls, content_owner_calls * 2);
+        }
     }
 
     #[test]
