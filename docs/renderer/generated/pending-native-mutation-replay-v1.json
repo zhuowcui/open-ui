@@ -3,7 +3,7 @@
   "frontend_sha256": "0231fed2f80edb935715d8b0b234c468b8a260920cc24f2824fa69ec0c577285",
   "generator_sha256": "c3a74ff02873a3eb2bcabee6ae6e6b55d9ac9d961cafb27865d8377843a11929",
   "acorn_sha256": "402f6759c744ea2ca501c1dc4ded8b1c54c9066cc7a741837057dcb68bc64c93",
-  "schema_sha256": "4d1f344969639be99ec4d5925ffad231905773b6899aaf92f9680f841cda1792",
+  "schema_sha256": "c0cbfe36c664ad7da78fc26e05d8919e942623437ad3565c480e2a4ad02bf7d5",
   "entries": [
     {
       "schema_version": 1,

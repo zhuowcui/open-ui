@@ -2218,6 +2218,7 @@
       "canonical_schema_entry": false,
       "classification": "internal",
       "consumers": [
+        "bindings/rust/openui-layout/src/scroll_area.rs",
         "bindings/rust/openui-layout/src/transform.rs",
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-engine/src/scroll_button.rs",
@@ -2581,6 +2582,7 @@
         "bindings/rust/openui-paint/src/paint_order.rs",
         "bindings/rust/openui-paint/src/paint_record.rs",
         "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-engine/src/animation.rs",
         "bindings/rust/openui-engine/src/interaction.rs",
         "bindings/rust/openui-engine/src/lib.rs",
         "bindings/rust/openui-engine/src/scroll_into_view.rs"
