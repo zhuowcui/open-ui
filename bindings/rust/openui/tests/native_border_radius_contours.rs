@@ -58,7 +58,7 @@ fn calculated_native_radius_matches_fixed_source_and_retains_owned_pixels_after_
         }
         assert_eq!(
             before.border_radius_lengths[0].unwrap().0,
-            openui_geometry::Length::calc_percent_px(29.0, 1.0)
+            openui::typed_style::Length::calc_percent_px(29.0, 1.0)
         );
         assert_eq!(document.render_to_bitmap().unwrap(), fixed);
         port.set_border_radius(CornerRadii(Edges::all(LengthValue::px(0.0))))
