@@ -4,9 +4,12 @@
 //! inspected to choose a color. Eligible single-draw alpha groups are folded
 //! before picture recording using Chromium's float-alpha operation rule.
 
+use crate::paint_program::{self, OwnedDraw, PaintCaptureIncompleteReason, ProgramOperation};
+use skia_safe::canvas::{SaveLayerFlags, SrcRectConstraint};
 use skia_safe::{
-    surfaces, BlendMode, Canvas as SkiaCanvas, ClipOp, Color4f, Contains, Matrix, Paint,
-    PaintStyle, Rect, Vector,
+    surfaces, BlendMode, Canvas as SkiaCanvas, ClipOp, Color4f, Contains, FilterMode, Font, IRect,
+    Image, Matrix, Paint, PaintStyle, Path, Picture, Point, RRect, Rect, SamplingOptions, TextBlob,
+    Vector, M44,
 };
 use std::{cell::RefCell, ops::Deref};
 
@@ -235,6 +238,7 @@ impl PaintCanvas for SkiaCanvas {
         self
     }
     fn raw_untracked(&self) -> &SkiaCanvas {
+        paint_program::mark_incomplete(self, PaintCaptureIncompleteReason::RawCanvasAccess);
         materialize_opacity(self);
         self
     }
@@ -252,6 +256,7 @@ impl Deref for dyn PaintCanvas + '_ {
 impl dyn PaintCanvas + '_ {
     fn query_target(&self) -> &SkiaCanvas {
         let canvas = self.raw_tracking_target();
+        paint_program::record_query(canvas);
         let bounded_layer = OPACITY_SCOPES.with(|scopes| {
             scopes.borrow().iter().any(|scope| {
                 scope.canvas == canvas_id(canvas)
@@ -264,6 +269,7 @@ impl dyn PaintCanvas + '_ {
         // A bounded Skia layer may narrow its device bounds. Preserve its
         // original answers if a draw algorithm asks for those bounds.
         if bounded_layer {
+            paint_program::record_operation(canvas, ProgramOperation::OpacityBarrier);
             materialize_opacity(canvas);
         }
         canvas
@@ -275,6 +281,7 @@ impl dyn PaintCanvas + '_ {
         let c = self.raw_tracking_target();
         materialize_opacity(c);
         let bounds = bounds.into();
+        paint_program::record_operation(c, ProgramOperation::SaveLayerAlpha(bounds, alpha));
         // The original record still contains a layer: CompositeIterator's
         // solid-color analyzer rejects it even if raster playback can fold it.
         unsupported(c);
@@ -302,12 +309,15 @@ impl dyn PaintCanvas + '_ {
         deferred.unwrap_or_else(|| c.save_layer_alpha_f(bounds, alpha))
     }
     pub(crate) fn save(&self) -> usize {
-        let c = self.raw_untracked();
+        let c = self.raw_tracking_target();
+        materialize_opacity(c);
+        paint_program::record_operation(c, ProgramOperation::Save);
         capture(c, || Operation::Save);
         c.save()
     }
     pub(crate) fn restore(&self) -> &Self {
         let c = self.raw_tracking_target();
+        paint_program::record_restore(c);
         if restore_pending_opacity(c) {
             return self;
         }
@@ -317,6 +327,7 @@ impl dyn PaintCanvas + '_ {
     }
     pub(crate) fn restore_to_count(&self, count: usize) -> &Self {
         let c = self.raw_tracking_target();
+        paint_program::record_restore_to(c, count);
         if count < c.save_count() {
             restore_pending_opacity(c);
         }
@@ -329,19 +340,25 @@ impl dyn PaintCanvas + '_ {
     }
     pub(crate) fn translate(&self, offset: impl Into<Vector>) -> &Self {
         let offset = offset.into();
-        let c = self.raw_untracked();
+        let c = self.raw_tracking_target();
+        materialize_opacity(c);
+        paint_program::record_operation(c, ProgramOperation::Translate(offset));
         capture(c, || Operation::Translate(offset));
         c.translate(offset);
         self
     }
     pub(crate) fn scale(&self, scale: (f32, f32)) -> &Self {
-        let c = self.raw_untracked();
+        let c = self.raw_tracking_target();
+        materialize_opacity(c);
+        paint_program::record_operation(c, ProgramOperation::Scale(scale));
         capture(c, || Operation::Scale(scale));
         c.scale(scale);
         self
     }
     pub(crate) fn concat(&self, matrix: &Matrix) -> &Self {
-        let c = self.raw_untracked();
+        let c = self.raw_tracking_target();
+        materialize_opacity(c);
+        paint_program::record_operation(c, ProgramOperation::Concat(*matrix));
         capture(c, || Operation::Concat(*matrix));
         c.concat(matrix);
         self
@@ -355,7 +372,9 @@ impl dyn PaintCanvas + '_ {
         let rect = *rect.as_ref();
         let op = op.into().unwrap_or(ClipOp::Intersect);
         let aa = aa.into().unwrap_or(false);
-        let c = self.raw_untracked();
+        let c = self.raw_tracking_target();
+        materialize_opacity(c);
+        paint_program::record_operation(c, ProgramOperation::ClipRect(rect, op, aa));
         capture(c, || Operation::Clip(rect, op, aa));
         c.clip_rect(rect, op, aa);
         self
@@ -363,6 +382,7 @@ impl dyn PaintCanvas + '_ {
     pub(crate) fn draw_rect(&self, rect: impl AsRef<Rect>, paint: &Paint) -> &Self {
         let rect = *rect.as_ref();
         let c = self.raw_tracking_target();
+        paint_program::record_draw(c, || OwnedDraw::Rect(rect, paint.clone()));
         if defer_opacity_rect(c, rect, paint) {
             return self;
         }
@@ -370,6 +390,273 @@ impl dyn PaintCanvas + '_ {
         capture(c, || Operation::Rect(rect, paint.clone()));
         c.draw_rect(rect, paint);
         self
+    }
+    fn ordinary_draw_target(&self) -> &SkiaCanvas {
+        let c = self.raw_tracking_target();
+        materialize_opacity(c);
+        unsupported(c);
+        c
+    }
+    // Preserve the previous raw Canvas coercion's opacity/analysis barrier,
+    // while the shared helper body now emits audited capture operations.
+    pub(crate) fn legacy_helper_boundary(&self) {
+        paint_program::record_operation(
+            self.raw_tracking_target(),
+            ProgramOperation::OpacityBarrier,
+        );
+        self.ordinary_draw_target();
+    }
+    pub(crate) fn save_layer_owned(
+        &self,
+        bounds: Option<Rect>,
+        paint: Option<&Paint>,
+        flags: SaveLayerFlags,
+    ) -> usize {
+        let c = self.ordinary_draw_target();
+        paint_program::record_operation(
+            c,
+            ProgramOperation::SaveLayer {
+                bounds,
+                paint: paint.cloned(),
+                flags,
+            },
+        );
+        paint_program::save_layer(c, bounds, paint, flags)
+    }
+    pub(crate) fn concat_44(&self, matrix: &M44) -> &Self {
+        let c = self.ordinary_draw_target();
+        paint_program::record_operation(c, ProgramOperation::Concat44(*matrix));
+        c.concat_44(matrix);
+        self
+    }
+    pub(crate) fn set_matrix(&self, matrix: &M44) -> &Self {
+        let c = self.ordinary_draw_target();
+        paint_program::record_operation(c, ProgramOperation::SetMatrix(*matrix));
+        c.set_matrix(matrix);
+        self
+    }
+    pub(crate) fn rotate(&self, angle: f32, point: Option<Point>) -> &Self {
+        let c = self.ordinary_draw_target();
+        paint_program::record_operation(c, ProgramOperation::Rotate(angle, point));
+        c.rotate(angle, point);
+        self
+    }
+    pub(crate) fn clip_rrect(
+        &self,
+        rect: impl AsRef<RRect>,
+        op: impl Into<Option<ClipOp>>,
+        aa: impl Into<Option<bool>>,
+    ) -> &Self {
+        let rect = *rect.as_ref();
+        let op = op.into().unwrap_or(ClipOp::Intersect);
+        let aa = aa.into().unwrap_or(false);
+        let c = self.ordinary_draw_target();
+        paint_program::record_operation(c, ProgramOperation::ClipRRect(rect, op, aa));
+        c.clip_rrect(rect, op, aa);
+        self
+    }
+    pub(crate) fn clip_path(
+        &self,
+        path: &Path,
+        op: impl Into<Option<ClipOp>>,
+        aa: impl Into<Option<bool>>,
+    ) -> &Self {
+        let op = op.into().unwrap_or(ClipOp::Intersect);
+        let aa = aa.into().unwrap_or(false);
+        let c = self.ordinary_draw_target();
+        if paint_program::is_capturing(c) {
+            paint_program::record_operation(
+                c,
+                ProgramOperation::ClipPath(paint_program::OwnedPath::new(path), op, aa),
+            );
+        }
+        c.clip_path(path, op, aa);
+        self
+    }
+    pub(crate) fn clear(&self, color: impl Into<Color4f>) -> &Self {
+        let color = color.into();
+        let c = self.ordinary_draw_target();
+        paint_program::record_draw(c, || OwnedDraw::Clear(color));
+        c.clear(color);
+        self
+    }
+    pub(crate) fn draw_color(
+        &self,
+        color: impl Into<Color4f>,
+        mode: impl Into<Option<BlendMode>>,
+    ) -> &Self {
+        let color = color.into();
+        let mode = mode.into().unwrap_or(BlendMode::SrcOver);
+        let c = self.ordinary_draw_target();
+        paint_program::record_draw(c, || OwnedDraw::Color(color, mode));
+        c.draw_color(color, mode);
+        self
+    }
+    pub(crate) fn draw_line(
+        &self,
+        a: impl Into<Point>,
+        b: impl Into<Point>,
+        paint: &Paint,
+    ) -> &Self {
+        let a = a.into();
+        let b = b.into();
+        let c = self.ordinary_draw_target();
+        paint_program::record_draw(c, || OwnedDraw::Line(a, b, paint.clone()));
+        c.draw_line(a, b, paint);
+        self
+    }
+    pub(crate) fn draw_oval(&self, rect: impl AsRef<Rect>, paint: &Paint) -> &Self {
+        let rect = *rect.as_ref();
+        let c = self.ordinary_draw_target();
+        paint_program::record_draw(c, || OwnedDraw::Oval(rect, paint.clone()));
+        c.draw_oval(rect, paint);
+        self
+    }
+    pub(crate) fn draw_circle(
+        &self,
+        center: impl Into<Point>,
+        radius: f32,
+        paint: &Paint,
+    ) -> &Self {
+        let center = center.into();
+        let c = self.ordinary_draw_target();
+        paint_program::record_draw(c, || OwnedDraw::Circle(center, radius, paint.clone()));
+        c.draw_circle(center, radius, paint);
+        self
+    }
+    pub(crate) fn draw_rrect(&self, rect: impl AsRef<RRect>, paint: &Paint) -> &Self {
+        let rect = *rect.as_ref();
+        let c = self.ordinary_draw_target();
+        paint_program::record_draw(c, || OwnedDraw::RRect(rect, paint.clone()));
+        c.draw_rrect(rect, paint);
+        self
+    }
+    pub(crate) fn draw_drrect(
+        &self,
+        outer: impl AsRef<RRect>,
+        inner: impl AsRef<RRect>,
+        paint: &Paint,
+    ) -> &Self {
+        let outer = *outer.as_ref();
+        let inner = *inner.as_ref();
+        let c = self.ordinary_draw_target();
+        paint_program::record_draw(c, || OwnedDraw::DRRect(outer, inner, paint.clone()));
+        c.draw_drrect(outer, inner, paint);
+        self
+    }
+    pub(crate) fn draw_round_rect(
+        &self,
+        rect: impl AsRef<Rect>,
+        rx: f32,
+        ry: f32,
+        paint: &Paint,
+    ) -> &Self {
+        let rect = *rect.as_ref();
+        let c = self.ordinary_draw_target();
+        paint_program::record_draw(c, || OwnedDraw::RoundRect(rect, rx, ry, paint.clone()));
+        c.draw_round_rect(rect, rx, ry, paint);
+        self
+    }
+    pub(crate) fn draw_path(&self, path: &Path, paint: &Paint) -> &Self {
+        let c = self.ordinary_draw_target();
+        paint_program::record_draw(c, || {
+            OwnedDraw::Path(paint_program::OwnedPath::new(path), paint.clone())
+        });
+        c.draw_path(path, paint);
+        self
+    }
+    pub(crate) fn draw_text_blob(
+        &self,
+        blob: impl AsRef<TextBlob>,
+        origin: impl Into<Point>,
+        paint: &Paint,
+    ) -> &Self {
+        let blob = blob.as_ref();
+        let origin = origin.into();
+        let c = self.ordinary_draw_target();
+        paint_program::record_draw(c, || {
+            OwnedDraw::TextBlob(blob.clone(), origin, paint.clone())
+        });
+        c.draw_text_blob(blob, origin, paint);
+        self
+    }
+    pub(crate) fn draw_str(
+        &self,
+        text: impl AsRef<str>,
+        origin: impl Into<Point>,
+        font: &Font,
+        paint: &Paint,
+    ) -> &Self {
+        let text = text.as_ref();
+        let origin = origin.into();
+        let c = self.ordinary_draw_target();
+        paint_program::record_draw(c, || {
+            OwnedDraw::String(text.to_owned(), origin, font.clone(), paint.clone())
+        });
+        c.draw_str(text, origin, font, paint);
+        self
+    }
+    pub(crate) fn draw_picture(
+        &self,
+        picture: impl AsRef<Picture>,
+        matrix: Option<&Matrix>,
+        paint: Option<&Paint>,
+    ) -> &Self {
+        let picture = picture.as_ref();
+        let c = self.ordinary_draw_target();
+        paint_program::record_draw(c, || {
+            OwnedDraw::Picture(picture.clone(), matrix.copied(), paint.cloned())
+        });
+        c.draw_picture(picture, matrix, paint);
+        self
+    }
+    pub(crate) fn draw_image_rect_with_sampling_options(
+        &self,
+        image: impl AsRef<Image>,
+        src: Option<(&Rect, SrcRectConstraint)>,
+        dst: impl AsRef<Rect>,
+        sampling: impl Into<SamplingOptions>,
+        paint: &Paint,
+    ) -> &Self {
+        let image = image.as_ref();
+        let dst = *dst.as_ref();
+        let sampling = sampling.into();
+        let c = self.ordinary_draw_target();
+        paint_program::record_draw(c, || {
+            OwnedDraw::Image(
+                image.clone(),
+                src.map(|(rect, mode)| (*rect, mode)),
+                dst,
+                sampling,
+                paint.clone(),
+            )
+        });
+        c.draw_image_rect_with_sampling_options(image, src, dst, sampling, paint);
+        self
+    }
+    pub(crate) fn draw_image_nine(
+        &self,
+        image: impl AsRef<Image>,
+        center: impl AsRef<IRect>,
+        dst: impl AsRef<Rect>,
+        filter: FilterMode,
+        paint: Option<&Paint>,
+    ) -> &Self {
+        let image = image.as_ref();
+        let center = *center.as_ref();
+        let dst = *dst.as_ref();
+        let c = self.ordinary_draw_target();
+        paint_program::record_draw(c, || {
+            OwnedDraw::ImageNine(image.clone(), center, dst, filter, paint.cloned())
+        });
+        c.draw_image_nine(image, center, dst, filter, paint);
+        self
+    }
+    pub(crate) fn local_to_device(&self) -> M44 {
+        self.legacy_helper_boundary();
+        let c = self.raw_tracking_target();
+        paint_program::record_query(c);
+        c.local_to_device()
     }
     pub(crate) fn local_clip_bounds(&self) -> Option<Rect> {
         self.query_target().local_clip_bounds()

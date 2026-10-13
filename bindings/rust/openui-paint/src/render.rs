@@ -138,6 +138,78 @@ impl RecordedPicture {
     }
 }
 
+/// Canonical output and the static operation streams captured by the same walk.
+/// Content and viewport controls keep their separate existing raster roles.
+#[derive(Clone)]
+pub struct RecordedPaintCapture {
+    pub canonical: RecordedPicture,
+    pub content_program: crate::RecordedPaintProgram,
+    pub viewport_overlay_program: Option<crate::RecordedPaintProgram>,
+}
+
+impl RecordedPaintCapture {
+    /// Re-record the owned operands, retaining canonical tile/clear/scale flags.
+    /// This does not admit a compositor layer partition or animation worker.
+    pub fn recording_from_program(&self) -> Result<RecordedPicture, String> {
+        let bounds = Rect::from_xywh(
+            0.0,
+            0.0,
+            self.canonical.viewport.logical_width() as f32,
+            self.canonical.viewport.logical_height() as f32,
+        );
+        let mut recorder = PictureRecorder::new();
+        let canvas = recorder.begin_recording(bounds, false);
+        self.content_program
+            .replay(canvas)
+            .map_err(|status| format!("incomplete content capture: {status:?}"))?;
+        let content = recorder
+            .finish_recording_as_picture(None)
+            .ok_or_else(|| "failed to replay content program".to_owned())?;
+        let overlay = if let Some(program) = &self.viewport_overlay_program {
+            let canvas = recorder.begin_recording(bounds, false);
+            program
+                .replay(canvas)
+                .map_err(|status| format!("incomplete viewport capture: {status:?}"))?;
+            Some(
+                recorder
+                    .finish_recording_as_picture(None)
+                    .ok_or_else(|| "failed to replay viewport program".to_owned())?,
+            )
+        } else {
+            None
+        };
+        let picture = if let Some(overlay) = &overlay {
+            let canvas = recorder.begin_recording(bounds, false);
+            canvas.draw_picture(&content, None, None);
+            canvas.draw_picture(overlay, None, None);
+            recorder
+                .finish_recording_as_picture(None)
+                .ok_or_else(|| "failed to compose replayed programs".to_owned())?
+        } else {
+            content.clone()
+        };
+        let mut result = self.canonical.clone();
+        result.content_picture = content;
+        result.viewport_overlay = overlay;
+        result.picture = picture;
+        Ok(result)
+    }
+}
+
+/// Observe the same phase walk while preserving the canonical output path.
+pub fn record_fragment_with_program(
+    doc: &Document,
+    fragment: &Fragment,
+    viewport: ViewportMetrics,
+) -> Result<RecordedPaintCapture, String> {
+    let (canonical, content, overlay) = record_fragment_impl(doc, fragment, viewport, true)?;
+    Ok(RecordedPaintCapture {
+        canonical,
+        content_program: content.expect("requested content capture"),
+        viewport_overlay_program: overlay,
+    })
+}
+
 /// Lay out and record a document without rasterizing it.
 pub fn record_document(
     doc: &Document,
@@ -157,6 +229,22 @@ pub fn record_fragment(
     fragment: &Fragment,
     viewport: ViewportMetrics,
 ) -> Result<RecordedPicture, String> {
+    record_fragment_impl(doc, fragment, viewport, false).map(|(picture, _, _)| picture)
+}
+
+fn record_fragment_impl(
+    doc: &Document,
+    fragment: &Fragment,
+    viewport: ViewportMetrics,
+    capture_program: bool,
+) -> Result<
+    (
+        RecordedPicture,
+        Option<crate::RecordedPaintProgram>,
+        Option<crate::RecordedPaintProgram>,
+    ),
+    String,
+> {
     crate::painter::reset_picture_paint_state();
     let width = logical_dimension(viewport.logical_width())?;
     let height = logical_dimension(viewport.logical_height())?;
@@ -179,7 +267,11 @@ pub fn record_fragment(
         content_requires_tiling,
     ));
     let mut recorder = PictureRecorder::new();
-    let recording_canvas = recorder.begin_recording(bounds, false);
+    let recording_canvas: &dyn crate::paint_record::PaintCanvas =
+        recorder.begin_recording(bounds, false);
+    let program_scope = capture_program.then(|| {
+        crate::paint_program::PaintProgramScope::new(recording_canvas.raw_tracking_target())
+    });
     recording_canvas.clear(SkColor::WHITE);
     if fragment.viewport_scrollport.is_none() {
         crate::painter::paint_canvas_background(
@@ -199,20 +291,27 @@ pub fn record_fragment(
         openui_geometry::PhysicalOffset::zero(),
     );
     let viewport_content_layer = crate::painter::take_viewport_content_layer();
+    let mut content_program = program_scope.as_ref().map(|scope| scope.snapshot());
+    drop(program_scope);
     let content_picture = recorder
         .finish_recording_as_picture(None)
         .ok_or_else(|| "Failed to record paint commands".to_string())?;
+    let mut overlay_program = None;
     let viewport_overlay = if fragment
         .viewport_scrollport
         .is_some_and(|scrollport| scrollport.horizontal_scrollbar || scrollport.vertical_scrollbar)
     {
-        let canvas = recorder.begin_recording(bounds, false);
+        let canvas: &dyn crate::paint_record::PaintCanvas = recorder.begin_recording(bounds, false);
+        let program_scope = capture_program
+            .then(|| crate::paint_program::PaintProgramScope::new(canvas.raw_tracking_target()));
         crate::painter::paint_viewport_scrollbars(
             canvas,
             fragment,
             doc,
             openui_geometry::PhysicalOffset::zero(),
         );
+        overlay_program = program_scope.as_ref().map(|scope| scope.snapshot());
+        drop(program_scope);
         Some(
             recorder
                 .finish_recording_as_picture(None)
@@ -231,7 +330,7 @@ pub fn record_fragment(
     } else {
         content_picture.clone()
     };
-    Ok(RecordedPicture {
+    let recording = RecordedPicture {
         picture,
         content_picture,
         viewport_overlay,
@@ -243,7 +342,11 @@ pub fn record_fragment(
         content_requires_tiling,
         retained_font_bytes: doc.font_collection().retained_face_bytes(),
         _font_cache_lifetime: doc.font_collection().retain_cache_lifetime(),
-    })
+    };
+    for program in content_program.iter_mut().chain(overlay_program.iter_mut()) {
+        program.retain_resources(&recording);
+    }
+    Ok((recording, content_program, overlay_program))
 }
 
 /// Rasterize an immutable recording using the exact headless tiling policy.

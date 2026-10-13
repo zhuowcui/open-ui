@@ -2,7 +2,8 @@
 
 use openui_dom::NodeId;
 use openui_style::Color;
-use skia_safe::{BlendMode, Canvas, ClipOp, Contains, Picture, Rect};
+use skia_safe::{BlendMode, ClipOp, Contains, Picture, Rect};
+type Canvas = dyn crate::paint_record::PaintCanvas;
 
 /// A retained scrolling content recording, independent of viewport controls.
 #[derive(Clone)]
@@ -21,6 +22,7 @@ pub struct RecordedContentLayer {
 
 impl RecordedContentLayer {
     pub(crate) fn replay(&self, canvas: &Canvas, scale: f64) {
+        canvas.legacy_helper_boundary();
         // cc::RasterSource clears the boundary of opaque recordings before
         // display-list playback. At non-unit raster scales a boundary texel
         // can receive partial coverage despite the layer's opaque interior.

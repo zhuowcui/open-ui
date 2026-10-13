@@ -52,6 +52,16 @@ pub fn paint_text(
     origin: (f32, f32),
     style: &ComputedStyle,
 ) {
+    paint_text_tracked(canvas, shape_result, origin, style);
+}
+
+pub(crate) fn paint_text_tracked(
+    canvas: &dyn crate::paint_record::PaintCanvas,
+    shape_result: &ShapeResult,
+    origin: (f32, f32),
+    style: &ComputedStyle,
+) {
+    canvas.legacy_helper_boundary();
     let author_lcd = uses_chromium_author_lcd(style, shape_result);
     let raster_policy = if style.native_control_text {
         TextRasterPolicy::ChromiumNativeControl
@@ -68,7 +78,7 @@ pub fn paint_text(
     } else {
         TextRasterPolicy::Skia
     };
-    paint_text_with_raster_policy(canvas, shape_result, origin, style, raster_policy);
+    paint_text_with_raster_policy_tracked(canvas, shape_result, origin, style, raster_policy);
 }
 
 /// Paint shaped glyphs with an explicit platform outline raster policy.
@@ -79,6 +89,17 @@ pub fn paint_text_with_raster_policy(
     style: &ComputedStyle,
     raster_policy: TextRasterPolicy,
 ) {
+    paint_text_with_raster_policy_tracked(canvas, shape_result, origin, style, raster_policy);
+}
+
+pub(crate) fn paint_text_with_raster_policy_tracked(
+    canvas: &dyn crate::paint_record::PaintCanvas,
+    shape_result: &ShapeResult,
+    origin: (f32, f32),
+    style: &ComputedStyle,
+    raster_policy: TextRasterPolicy,
+) {
+    canvas.legacy_helper_boundary();
     let text_raster = if style.native_control_text {
         style.raster_configuration.native_text
     } else if style.embedded_document_text {
@@ -201,6 +222,17 @@ pub fn paint_vertical_text(
     top_y: f32,
     style: &ComputedStyle,
 ) {
+    paint_vertical_text_tracked(canvas, shape_result, vertical_baseline_x, top_y, style);
+}
+
+pub(crate) fn paint_vertical_text_tracked(
+    canvas: &dyn crate::paint_record::PaintCanvas,
+    shape_result: &ShapeResult,
+    vertical_baseline_x: f32,
+    top_y: f32,
+    style: &ComputedStyle,
+) {
+    canvas.legacy_helper_boundary();
     if shape_result.runs.is_empty() || shape_result.num_glyphs() == 0 {
         return;
     }
@@ -284,7 +316,10 @@ pub fn paint_vertical_text(
 /// Ahem has square glyphs with no negative inline bearing. If the run origin
 /// is on or beyond a hard overflow edge, its LCD filter fringe is not logical
 /// ink and must not leak one subpixel back into the clipped box.
-fn text_origin_is_past_device_clip_end(canvas: &Canvas, origin: (f32, f32)) -> bool {
+fn text_origin_is_past_device_clip_end(
+    canvas: &dyn crate::paint_record::PaintCanvas,
+    origin: (f32, f32),
+) -> bool {
     let device_origin = canvas
         .local_to_device_as_3x3()
         .map_point(Point::new(origin.0, origin.1));
@@ -297,7 +332,7 @@ fn text_origin_is_past_device_clip_end(canvas: &Canvas, origin: (f32, f32)) -> b
 /// clip.  `Canvas::local_clip_bounds` is deliberately outset for antialiasing,
 /// so use the non-outset device clip after mapping the blob bounds instead.
 fn text_blob_is_outside_device_clip(
-    canvas: &Canvas,
+    canvas: &dyn crate::paint_record::PaintCanvas,
     text_blob: &TextBlob,
     origin: (f32, f32),
 ) -> bool {
@@ -333,6 +368,16 @@ pub fn paint_text_shadows(
     origin: (f32, f32),
     style: &ComputedStyle,
 ) {
+    paint_text_shadows_tracked(canvas, shape_result, origin, style);
+}
+
+pub(crate) fn paint_text_shadows_tracked(
+    canvas: &dyn crate::paint_record::PaintCanvas,
+    shape_result: &ShapeResult,
+    origin: (f32, f32),
+    style: &ComputedStyle,
+) {
+    canvas.legacy_helper_boundary();
     if style.text_shadow.is_empty() {
         return;
     }
@@ -420,6 +465,17 @@ pub fn paint_text_combine(
     style: &ComputedStyle,
     layout: &TextCombineLayout,
 ) {
+    paint_text_combine_tracked(canvas, shape_result, origin, style, layout);
+}
+
+pub(crate) fn paint_text_combine_tracked(
+    canvas: &dyn crate::paint_record::PaintCanvas,
+    shape_result: &ShapeResult,
+    origin: (f32, f32),
+    style: &ComputedStyle,
+    layout: &TextCombineLayout,
+) {
+    canvas.legacy_helper_boundary();
     let text_blob = match shape_result.to_text_blob() {
         Some(blob) => blob,
         None => return,

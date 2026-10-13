@@ -33,7 +33,7 @@ use openui_style::{
     RadialGradientSize, StyleColor, Visibility,
 };
 use openui_text::{FontMetrics, TextDirection, TextShaper};
-use skia_safe::canvas::{SaveLayerFlags, SaveLayerRec, SrcRectConstraint};
+use skia_safe::canvas::{SaveLayerFlags, SrcRectConstraint};
 use skia_safe::image::RequiredProperties;
 use skia_safe::rrect::Corner as RRectCorner;
 use skia_safe::{
@@ -808,6 +808,8 @@ fn paint_fragment_tracked(
     doc: &Document,
     offset: PhysicalOffset,
 ) {
+    let _program_owner =
+        crate::paint_program::PaintOwnerScope::new(canvas.raw_tracking_target(), fragment);
     let _opacity_scope = canvas.opacity_scope();
     if fragment.is_hidden_for_paint
         || fragment
@@ -893,6 +895,8 @@ fn paint_fragment_contents(
     doc: &Document,
     offset: PhysicalOffset,
 ) {
+    let _program_owner =
+        crate::paint_program::PaintOwnerScope::new(canvas.raw_tracking_target(), fragment);
     // Keep accumulated offset fractional (sub-pixel precision).
     // Pixel snapping happens only at the point of drawing (paint_box_decoration_background,
     // paint_text_fragment, etc.) using Blink's PixelSnappedIntRect approach:
@@ -1577,7 +1581,7 @@ fn paint_fragment_contents(
         paint
     });
     if let Some(paint) = filter_paint.as_ref() {
-        canvas.save_layer(&SaveLayerRec::default().paint(paint));
+        canvas.save_layer_owned(None, Some(paint), SaveLayerFlags::empty());
     }
     let needs_mask_layer = fragment.owns_element_box() && !style.mask_layers.is_empty();
     if needs_mask_layer {
@@ -1748,7 +1752,7 @@ fn paint_fragment_contents(
         let mut recorder = PictureRecorder::new();
         let layer_canvas: &Canvas = recorder.begin_recording(bounds, false);
         let paint_recording =
-            crate::paint_record::RecordingScope::new(layer_canvas.raw_untracked());
+            crate::paint_record::RecordingScope::new(layer_canvas.raw_tracking_target());
         let background_recording = BackgroundRecordingScope::new();
         paint_scrolling_canvas_background(layer_canvas, doc, fragment, bounds);
         paint_children_with_stacking_order(
@@ -1877,8 +1881,7 @@ fn paint_fragment_contents(
         // then restore the masked element layer into its parent.
         let mut mask_blend = Paint::default();
         mask_blend.set_blend_mode(BlendMode::DstIn);
-        let mask_record = SaveLayerRec::default().paint(&mask_blend);
-        canvas.save_layer(&mask_record);
+        canvas.save_layer_owned(None, Some(&mask_blend), SaveLayerFlags::empty());
         let mask_style = style.derive(|mask_style| {
             mask_style.background_layers = style.mask_layers.clone();
             mask_style.background_linear_gradient = None;
@@ -2643,7 +2646,7 @@ fn paint_control_text_lines(
     };
     for (index, line) in text.lines().enumerate() {
         let shaped = TextShaper::new().shape(line, &font, direction);
-        crate::text_painter::paint_text(
+        crate::text_painter::paint_text_tracked(
             canvas,
             &shaped,
             (
@@ -3002,7 +3005,7 @@ fn paint_text_input_control(
             &selection_paint,
         );
     }
-    crate::text_painter::paint_text(
+    crate::text_painter::paint_text_tracked(
         canvas,
         &shaped,
         (content_left, line_top + line_metrics.ascent),
@@ -3078,7 +3081,7 @@ fn paint_single_line_control_text(
     });
     canvas.save();
     canvas.clip_rect(rect, ClipOp::Intersect, false);
-    crate::text_painter::paint_text(
+    crate::text_painter::paint_text_tracked(
         canvas,
         &shaped,
         (x, line_top + line_metrics.ascent),
@@ -4863,7 +4866,7 @@ fn paint_missing_image(
                 color.a *= opacity_multiplier;
             }
         });
-        crate::text_painter::paint_text(
+        crate::text_painter::paint_text_tracked(
             canvas,
             &shaped,
             (icon_x + 16.0, abs_offset.top.to_f32() + line_metrics.ascent),
@@ -10255,7 +10258,7 @@ fn paint_with_overflow_clip(
         .flatten()
     });
     if packed_rounded_mask.is_some() {
-        canvas.save_layer(&SaveLayerRec::default().bounds(&clip_rect));
+        canvas.save_layer_owned(Some(clip_rect), None, SaveLayerFlags::empty());
     } else {
         canvas.save();
     }
@@ -12609,10 +12612,10 @@ fn paint_text_fragment(
         origin.1 += 1.0;
     }
     // 1. Text shadows
-    crate::text_painter::paint_text_shadows(canvas, shape_result, origin, style);
+    crate::text_painter::paint_text_shadows_tracked(canvas, shape_result, origin, style);
 
     // 2. Text decorations (underline + overline, painted behind text)
-    crate::decoration_painter::paint_text_decorations(
+    crate::decoration_painter::paint_text_decorations_tracked(
         canvas,
         shape_result,
         origin,
@@ -12671,14 +12674,20 @@ fn paint_text_fragment(
         canvas.clip_rect(clip, ClipOp::Intersect, false);
     }
     if let Some(ref tc_layout) = fragment.text_combine {
-        crate::text_painter::paint_text_combine(canvas, shape_result, origin, style, tc_layout);
+        crate::text_painter::paint_text_combine_tracked(
+            canvas,
+            shape_result,
+            origin,
+            style,
+            tc_layout,
+        );
     } else if upright {
         let vertical_baseline_x = if style.writing_mode == openui_style::WritingMode::VerticalRl {
             abs_offset.left.to_f32() + fragment.size.width.to_f32() - fragment.baseline_offset
         } else {
             abs_offset.left.to_f32() + fragment.baseline_offset
         };
-        crate::text_painter::paint_vertical_text(
+        crate::text_painter::paint_vertical_text_tracked(
             canvas,
             shape_result,
             vertical_baseline_x,
@@ -12690,7 +12699,7 @@ fn paint_text_fragment(
             && style.raster_configuration.author_text.edging == TextEdging::Alias
             && (inside_ruby || (rotated && all_ahem_runs));
         if chromium_aliased_outline {
-            crate::text_painter::paint_text_with_raster_policy(
+            crate::text_painter::paint_text_with_raster_policy_tracked(
                 canvas,
                 shape_result,
                 origin,
@@ -12707,7 +12716,7 @@ fn paint_text_fragment(
                 );
             }
         } else {
-            crate::text_painter::paint_text(canvas, shape_result, origin, style);
+            crate::text_painter::paint_text_tracked(canvas, shape_result, origin, style);
         }
         let replays_native_small_ahem_start = inside_native_button
             && style.font_size < 16.0
@@ -12761,7 +12770,7 @@ fn paint_text_fragment(
                 ClipOp::Intersect,
                 false,
             );
-            crate::text_painter::paint_text(
+            crate::text_painter::paint_text_tracked(
                 canvas,
                 shape_result,
                 (origin.0, origin.1 - 1.0 / style.device_scale_factor as f32),
@@ -12775,7 +12784,7 @@ fn paint_text_fragment(
     }
 
     // 4. Emphasis marks (painted after text glyphs, before line-through)
-    crate::emphasis_painter::paint_emphasis_marks(
+    crate::emphasis_painter::paint_emphasis_marks_tracked(
         canvas,
         shape_result,
         origin,
@@ -12784,7 +12793,7 @@ fn paint_text_fragment(
     );
 
     // 5. Line-through decoration (painted in front of text per CSS spec)
-    crate::decoration_painter::paint_text_decorations(
+    crate::decoration_painter::paint_text_decorations_tracked(
         canvas,
         shape_result,
         origin,
@@ -12905,7 +12914,7 @@ fn paint_rotated_aliased_terminal_edges(
             ClipOp::Intersect,
             false,
         );
-        crate::text_painter::paint_text_with_raster_policy(
+        crate::text_painter::paint_text_with_raster_policy_tracked(
             canvas,
             shape_result,
             (origin.0 + 1.0 / scale, origin.1),
@@ -18358,10 +18367,10 @@ fn paint_box_decoration_background(
                         // destination. Keeping this primitive-level policy
                         // independent of element role and dimensions avoids
                         // correcting individual circumference samples.
-                        canvas.save_layer(
-                            &SaveLayerRec::default()
-                                .bounds(&bg_rect)
-                                .flags(SaveLayerFlags::F16_COLOR_TYPE),
+                        canvas.save_layer_owned(
+                            Some(bg_rect),
+                            None,
+                            SaveLayerFlags::F16_COLOR_TYPE,
                         );
                         canvas.draw_rrect(RRect::new_rect_radii(bg_rect, &clip_radii), &paint);
                         canvas.restore();
