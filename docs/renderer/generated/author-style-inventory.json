@@ -252,7 +252,8 @@
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/scroll_area.rs",
         "bindings/rust/openui-layout/src/table.rs",
-        "bindings/rust/openui-paint/src/painter.rs"
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-engine/src/element_dimensions.rs"
       ],
       "css_name": "border-collapse",
       "field": "border_collapse",
