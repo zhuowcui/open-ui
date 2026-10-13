@@ -903,8 +903,8 @@ fn collapsed_cell_decoration_does_not_disable_its_owned_overflow_radius() {
                 f64::from(bounds.x) + f64::from(bounds.width) * 0.5,
                 f64::from(bounds.y) + f64::from(bounds.height) * 0.5,
             );
-            assert_ne!(e.hit_test(corner.0, corner.1).unwrap(), Some(child));
-            assert_eq!(e.hit_test(center.0, center.1).unwrap(), Some(child));
+            assert_ne!(e.hit_test(corner.0 as f32, corner.1 as f32).unwrap(), Some(child));
+            assert_eq!(e.hit_test(center.0 as f32, center.1 as f32).unwrap(), Some(child));
             let frame = SoftwareCompositor::default().render(&hidden).unwrap();
             let sample = |frame: &openui_compositor::Frame, point: (f64, f64)| {
                 let x = (point.0 * scale).round() as usize;
@@ -923,7 +923,7 @@ fn collapsed_cell_decoration_does_not_disable_its_owned_overflow_radius() {
             assert!(projection.direct_hit_clip_geometry.rounded.is_none());
             let frame = SoftwareCompositor::default().render(&visible).unwrap();
             assert_eq!(sample(&frame, corner), [0, 128, 0, 255]);
-            assert_eq!(e.hit_test(corner.0, corner.1).unwrap(), Some(child));
+            assert_eq!(e.hit_test(corner.0 as f32, corner.1 as f32).unwrap(), Some(child));
             let stats = e.stats();
             assert_eq!(e.scene().unwrap().generation(), visible.generation());
             assert_eq!(e.stats(), stats);
