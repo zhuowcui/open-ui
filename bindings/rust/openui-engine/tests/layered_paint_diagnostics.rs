@@ -281,6 +281,22 @@ fn immutable_sources_survive_font_image_engine_drop_and_cross_thread_replay() {
             br##"<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"><rect width="1" height="1" fill="#008080"/></svg>"##.to_vec());
         e.set_image_resource(image, resource, Some((1.0, 1.0)))
             .unwrap();
+        // Static SVG shapes are recorded as owned vector operands. Exercise
+        // the independent raster operand path with an actual packaged PNG.
+        let raster = box_(&mut e, root, ElementTag::Image, 20.0, 20.0);
+        set(&mut e, raster, StyleProperty::Display, Display::Block);
+        let raster_resource = e.register_image_resource(
+            "memory:layered-source-raster",
+            "image/png",
+            "a236213916dd30bd771a233aa1d66381eabf335bf8885304b75a4e2e370d68ce",
+            include_bytes!(concat!(
+                env!("CARGO_MANIFEST_DIR"),
+                "/../../../tools/accountability/data/wpt_assets/sp13p/1x1-green.png"
+            ))
+            .to_vec(),
+        );
+        e.set_image_resource(raster, raster_resource, Some((1.0, 1.0)))
+            .unwrap();
         let scene = e.scene().unwrap();
         let expected = equal_replay(&scene);
         assert!(expected
@@ -295,11 +311,23 @@ fn immutable_sources_survive_font_image_engine_drop_and_cross_thread_replay() {
             .sources()
             .iter()
             .any(|source| source.retained_font_face_count() > 0));
-        assert!(nested.coverage().unclassified_image_draws > 0);
-        assert!(nested
+        let svg_source = nested
             .sources()
             .iter()
-            .any(|source| source.binding().owner == Some(identity(image))));
+            .find(|source| source.binding().owner == Some(identity(image)))
+            .expect("actual vector SVG source ownership");
+        assert!(!svg_source.chunks().is_empty());
+        let raster_source = nested
+            .sources()
+            .iter()
+            .find(|source| source.binding().owner == Some(identity(raster)))
+            .expect("actual PNG source ownership");
+        assert!(!raster_source.chunks().is_empty());
+        assert!(nested.coverage().unclassified_image_draws > 0);
+        assert!(expected
+            .pixels
+            .chunks_exact(4)
+            .any(|pixel| pixel == [0, 128, 0, 255]));
         assert!(
             capture.recording_coverage().unclassified_image_draws
                 >= nested.coverage().unclassified_image_draws
