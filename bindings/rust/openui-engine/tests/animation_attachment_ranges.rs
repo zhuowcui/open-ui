@@ -784,7 +784,7 @@ fn scroll_control_fixture(
 }
 
 #[test]
-fn newest_time_play_finish_or_range_control_supersedes_inactive_percentage_seek() {
+fn changed_controls_replace_inactive_seek_but_equal_attachment_endpoints_preserve_it() {
     for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
         for legacy in [false, true] {
             for operation in ["seek", "play", "finish", "range-change", "same-range"] {
@@ -823,7 +823,13 @@ fn newest_time_play_finish_or_range_control_supersedes_inactive_percentage_seek(
                 assert!(active.active);
                 let (percentage, opacity) = match operation {
                     "seek" => (25.0, 0.25),
-                    "play" | "same-range" => (0.0, 0.0),
+                    "play" => (0.0, 0.0),
+                    // Equal browser attachment endpoints do not call
+                    // OnRangeUpdate, so the deferred held percentage survives.
+                    // The legacy numeric timeline has no attachment descriptor:
+                    // converting it to AttachmentDefault is a real change.
+                    "same-range" if !legacy => (50.0, 0.5),
+                    "same-range" => (0.0, 0.0),
                     "finish" => (100.0, 1.0),
                     "range-change" => (-25.0, 0.0),
                     _ => unreachable!(),
