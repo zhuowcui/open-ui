@@ -4,24 +4,38 @@ The v0.2 source contract and artifact pipeline are checked in. This document
 distinguishes verified repository evidence from release-lab work that cannot be
 claimed by source code alone.
 
-## Current qualification status (12 October 2026)
+## Current qualification status (13 October 2026)
 
-The latest complete original gate is failed: clean `fe51eab9` measures
+The latest complete original pixel gate still fails: clean `fe51eab9` measures
 **21,317/22,924 exact**, **1,607 differences**, **zero errors** against pinned
-Chromium. A fresh four-suite CPU run is in progress on clean `c48ff96c`;
-later source changes are not qualified by that run. The C and C++ consumers
-compile and link, but their execution still fails on vertical gutter sizing.
-The production dependency audit reports three advisories across two locked
-packages. The fuzz-lock audit passes; dependency remediation and Rust 1.85
-verification remain required.
+Chromium. The later `c48ff96c` run completed focused **640/640 exact** before
+the environment restarted. Primitive comparisons were interrupted; original
+and expanded comparisons did not start. No exit status is inferred for the
+interrupted work, and those results do not qualify the current source.
+
+The fresh dependency audit passes: both lockfiles have zero reported advisories,
+and **364/364** registry-version checks completed without yanks or errors.
+Integrated lockfiles and the checker are byte-identical to the audited inputs.
+Native/MSRV builds, installed packages and registry consumers still need their
+own qualification; a workspace root patch does not propagate to consumers.
+
+The last complete native workspace run measured **9,085 passed / 10 failed**
+at `4f1b931d`. Later targeted runs pass **78/78** style/caption guards and
+**6/6** fragmented-animation guards. Table balancing, promoted source offsets
+and one hit-testing guard remain open. C/C++ consumers compile and link against
+the 156-export ABI, but their full runtime gate remains open. Live pinned
+Chromium confirms the corrected scroll-button keyboard expectation. The next
+C consumer requires an owned transform value that the literal parser lacks.
+The generated renderer contract now checks cleanly after actual regeneration
+of the native style inventory.
 
 Native APIs, retained compositor/3D, real Linux window and accessibility
 operation, hardware performance, reproducible packages, signing and
-publication remain open. Old Open UI image replay preserves history and does
-not define rendering correctness. Open UI executes no JavaScript; applications
-use native Rust operations and callbacks. Earlier sections preserve their
-stated checkpoint evidence.
-[Closure evidence](../renderer/generated/native-final-closure-status-v1.json).
+publication remain open. Old Open UI images preserve history. Chromium defines
+rendering correctness. Open UI executes no JavaScript; applications use native
+Rust operations and callbacks. Earlier sections preserve their stated source
+and evidence.
+[Closure evidence](../renderer/generated/native-final-closure-status-v2.json).
 
 ## Installed and loaded font measurements (reproduced; repair open)
 

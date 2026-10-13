@@ -27,26 +27,33 @@ right picture or the Chromium test uses a script. See the
 
 ## Verified status
 
-### Current closure work (12 October 2026)
+### Current closure work (13 October 2026)
 
-The last completed original Chromium census is **21,317/22,924 exact (93.0%)**
-at clean `fe51eab9`: **1,607 differences, zero render errors**. This measures
-pixel compatibility; it is not a whole-project completion percentage.
-Fresh focused, primitive, original and expanded comparisons are running against
-the clean `c48ff96c` snapshot with freshly built libraries and new Chromium
-captures. Results from that snapshot do not qualify later source changes.
+The last complete original Chromium census is **21,317/22,924 exact (93.0%)**
+at clean `fe51eab9`: **1,607 differences, zero render errors**. This is the
+pixel score, not a whole-project completion percentage. The later `c48ff96c`
+run completed focused **640/640 exact** before the environment restarted.
+Its primitive run was interrupted; the original and expanded runs did not
+start. These results do not qualify the current source.
 
-The checked native grid values, 39 flex guards, borrowed-helper scroll guard
-and two C reveal guards pass. The 156-export C ABI and the C11/C++17 examples
-compile and link; example execution still fails on vertical scroll-gutter
-geometry. The dependency audit fails on the locked crossbeam-epoch and
-quick-xml versions. Font, scroll-button and retained-helper repairs have
-reviewed source checkpoints; their new runtime and pixel gates remain open.
+The dependency audit now passes: both lockfiles have zero reported advisories,
+and **364/364** registry-version checks completed with no yanks or errors.
+The integrated lockfiles match the audited bytes. Rust 1.85, packaged consumers
+and the registry consumer's dependency graph still need qualification.
+
+The last complete native workspace run passed **9,085 tests and failed 10**.
+Later targeted repairs pass 78 style/caption guards and six fragmented-animation
+guards. Table balancing, promoted source offsets and one hit-testing guard
+still fail. C11/C++17 consumers compile and link against the 156-export ABI;
+their full runtime gate remains open. Live pinned Chromium confirms that
+scroll-button keys move the scroll position without generating extra clicks.
+The next C gap is an owned transform value required by the consumer.
 
 Native API, compositor/3D, accessibility, hardware, packaging and publication
-gates remain required. No final v0.2 qualification is claimed. The sections
-below preserve measurements from their stated earlier checkpoints.
-[Current closure evidence](docs/renderer/generated/native-final-closure-status-v1.json).
+gates remain required. Open UI executes no JavaScript; applications use native
+Rust APIs and callbacks. Chromium defines expected pixels. Earlier measurements
+retain their stated checkpoint and do not qualify later source changes.
+[Current closure evidence](docs/renderer/generated/native-final-closure-status-v2.json).
 
 ### Table ownership and opacity repair (full renderer gate open)
 
