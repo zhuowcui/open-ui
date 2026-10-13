@@ -633,6 +633,27 @@ fn inline_edges_and_empty_tags_keep_leading_state_but_atomic_content_ends_it() {
     assert_eq!(engine.bounds(host).unwrap().unwrap().width, expected);
     assert_eq!(engine.text_data(text).unwrap(), " X ");
 
+    // Only the omitted prefix opportunity disappears. A real interior space
+    // still breaks the minimum, while maximum width retains both words.
+    engine.set_text(text, " X X ").unwrap();
+    assert_eq!(
+        engine.bounds(host).unwrap().unwrap().width,
+        shaped_snapped_width(&engine, "X") + 3.0
+    );
+    engine
+        .set_property(
+            host,
+            StyleProperty::Width,
+            LengthValue::Computed(Length::max_content()).into(),
+        )
+        .unwrap();
+    assert_eq!(
+        engine.bounds(host).unwrap().unwrap().width,
+        shaped_snapped_width(&engine, "X X") + 5.0
+    );
+    engine.set_text(text, " X ").unwrap();
+    assert_eq!(engine.bounds(host).unwrap().unwrap().width, expected);
+
     // Even a real zero-advance atomic ends the Leading whitespace state.
     // Its following space remains interior; numerical width is not the state.
     for width in [0.0, 4.0] {

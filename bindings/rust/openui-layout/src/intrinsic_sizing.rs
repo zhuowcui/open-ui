@@ -602,13 +602,18 @@ fn compute_inline_items_intrinsic_sizes(
                         max_line_start_char = char_end;
                         continue;
                     }
-                    if !is_forced {
-                        leading_collapsible_whitespace = false;
-                    }
+                    // The break iterator still contains the omitted Leading
+                    // space. Its following boundary cannot separate inline
+                    // start decorations from the first visible character.
+                    // Read the state before that character ends Leading.
                     let is_soft_break_before = wraps
+                        && !leading_collapsible_whitespace
                         && item_breaks
                             .binary_search(&(item.text_range.start + byte_index))
                             .is_ok();
+                    if !is_forced {
+                        leading_collapsible_whitespace = false;
+                    }
                     if !is_space && !is_forced && !is_soft_break_before {
                         continue;
                     }
