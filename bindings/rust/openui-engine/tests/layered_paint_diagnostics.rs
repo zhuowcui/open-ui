@@ -5,6 +5,7 @@ use openui_dom::ElementTag;
 use openui_engine::{Engine, NodeHandle, ViewportMetrics};
 use openui_paint::{
     LayeredPaintQualification, PaintLayerNodeIdentity, PaintLayerSourceRole, PaintLayoutScopeRole,
+    PaintShaderDependency,
 };
 use openui_style::{
     Color, CornerRadii, Display, Edges, LengthValue, Overflow, Position, StyleProperty, StyleValue,
@@ -323,7 +324,24 @@ fn immutable_sources_survive_font_image_engine_drop_and_cross_thread_replay() {
             .find(|source| source.binding().owner == Some(identity(raster)))
             .expect("actual PNG source ownership");
         assert!(!raster_source.chunks().is_empty());
-        assert!(nested.coverage().unclassified_image_draws > 0);
+        if scale == 1.0 {
+            assert!(
+                nested.coverage().unclassified_image_draws > 0,
+                "PNG explicit Image operand at scale {scale}"
+            );
+        } else {
+            assert!(
+                nested.coverage().unclassified_image_shader_draws > 0,
+                "PNG Image shader dependency at scale {scale}"
+            );
+            assert!(
+                raster_source
+                    .chunks()
+                    .iter()
+                    .any(|chunk| chunk.shader_dependency() == PaintShaderDependency::Image),
+                "PNG owner must retain its actual Image shader at scale {scale}"
+            );
+        }
         assert!(expected
             .pixels
             .chunks_exact(4)
@@ -384,6 +402,8 @@ fn opaque_viewport_sources_and_query_operands_do_not_claim_layer_admission() {
             let c = program.coverage();
             total.opaque_picture_draws += c.opaque_picture_draws;
             total.unclassified_image_draws += c.unclassified_image_draws;
+            total.unclassified_image_shader_draws += c.unclassified_image_shader_draws;
+            total.unclassified_other_shader_draws += c.unclassified_other_shader_draws;
             total.fixed_canvas_queries += c.fixed_canvas_queries;
             total
         },

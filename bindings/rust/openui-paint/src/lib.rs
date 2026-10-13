@@ -23,7 +23,8 @@ pub use content_layer::RecordedContentLayer;
 pub use layered_program::*;
 pub use paint_program::{
     IntrinsicPictureStatus, PaintCaptureIncompleteReason, PaintCaptureStatus, PaintLayoutScopeRole,
-    PaintOwnerPhase, PaintProgramChunk, PaintProgramOwner, RecordedPaintProgram,
+    PaintOwnerPhase, PaintProgramChunk, PaintProgramOwner, PaintShaderDependency,
+    RecordedPaintProgram,
 };
 pub use painter::paint_fragment;
 pub use painter::{

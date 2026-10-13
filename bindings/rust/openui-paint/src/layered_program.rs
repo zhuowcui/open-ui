@@ -135,6 +135,10 @@ pub struct PaintLayerStateReference {
 pub struct PaintLayerCoverage {
     pub opaque_picture_draws: usize,
     pub unclassified_image_draws: usize,
+    /// A retained Paint may carry an Image shader on a vector draw.
+    pub unclassified_image_shader_draws: usize,
+    /// Other shader graphs remain conservative dependencies, including gradients.
+    pub unclassified_other_shader_draws: usize,
     pub fixed_canvas_queries: usize,
 }
 
@@ -328,6 +332,15 @@ impl RecordedPaintProgram {
                             coverage.unclassified_image_draws += 1
                         }
                         _ => {}
+                    }
+                    match chunk.shader_dependency() {
+                        crate::PaintShaderDependency::None => {}
+                        crate::PaintShaderDependency::Image => {
+                            coverage.unclassified_image_shader_draws += 1
+                        }
+                        crate::PaintShaderDependency::Unclassified => {
+                            coverage.unclassified_other_shader_draws += 1
+                        }
                     }
                 }
                 other => states.push(PaintLayerStateReference {

@@ -114,6 +114,34 @@ pub(crate) enum OwnedDraw {
 }
 
 impl OwnedDraw {
+    fn shader_dependency(&self) -> PaintShaderDependency {
+        let paint = match self {
+            Self::Rect(_, paint)
+            | Self::Line(_, _, paint)
+            | Self::Oval(_, paint)
+            | Self::Circle(_, _, paint)
+            | Self::RRect(_, paint)
+            | Self::RoundRect(_, _, _, paint)
+            | Self::DRRect(_, _, paint)
+            | Self::Path(_, paint)
+            | Self::Image(_, _, _, _, paint)
+            | Self::TextBlob(_, _, paint)
+            | Self::String(_, _, _, paint) => Some(paint),
+            Self::ImageNine(_, _, _, _, paint) | Self::Picture(_, _, paint) => paint.as_ref(),
+            Self::Clear(_) | Self::Color(_, _) => None,
+        };
+        let Some(shader) = paint.and_then(Paint::shader) else {
+            return PaintShaderDependency::None;
+        };
+        if shader.is_a_image() {
+            PaintShaderDependency::Image
+        } else {
+            // A non-image result is not proof that a composite/runtime shader
+            // has no image children. Retain that dependency as unclassified.
+            PaintShaderDependency::Unclassified
+        }
+    }
+
     pub(crate) fn replay(&self, canvas: &dyn PaintCanvas) {
         match self {
             Self::Clear(color) => {
@@ -236,6 +264,17 @@ pub enum IntrinsicPictureStatus {
     UnqualifiedCullBounds,
 }
 
+/// Dependencies of the actual owned Paint, independently of draw primitive.
+/// A shader on a rectangle can retain raster content without an Image draw.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum PaintShaderDependency {
+    None,
+    /// Skia proves the shader has one Image backing.
+    Image,
+    /// Other shaders are retained, but their child/resource graph is unclassified.
+    Unclassified,
+}
+
 /// One intrinsic draw with owned resources and an optional experimental picture.
 /// State/effect scopes live in the ordered program, never in this chunk.
 #[derive(Clone)]
@@ -258,6 +297,11 @@ impl PaintProgramChunk {
         } else {
             IntrinsicPictureStatus::NotRecorded
         }
+    }
+    /// Inspect the retained shader operand without changing canvas state.
+    /// This is dependency metadata, not independent replay admission.
+    pub fn shader_dependency(&self) -> PaintShaderDependency {
+        self.draw.shader_dependency()
     }
     pub fn owner(&self) -> Option<PaintProgramOwner> {
         self.owner
@@ -991,5 +1035,76 @@ mod tests {
         assert_eq!(outer.status(), PaintCaptureStatus::Complete);
         assert_eq!(outer.canvas_query_count(), 1);
         assert_eq!(outer.chunks.len(), 2); // clear plus the outer rectangle
+    }
+    #[test]
+    fn image_shader_operands_and_other_shaders_keep_owned_resource_replay() {
+        use crate::{PaintLayerBinding, PaintLayerSourceId, PaintLayerSourceRole};
+        let mut pixels_surface = surfaces::raster_n32_premul((2, 1)).unwrap();
+        pixels_surface.canvas().clear(Color::GREEN);
+        let mut red = Paint::default();
+        red.set_color(Color::RED);
+        pixels_surface
+            .canvas()
+            .draw_rect(Rect::from_xywh(1.0, 0.0, 1.0, 1.0), &red);
+        let image = pixels_surface.image_snapshot();
+        let mut image_paint = Paint::default();
+        image_paint.set_shader(image.to_shader(
+            (skia_safe::TileMode::Clamp, skia_safe::TileMode::Clamp),
+            skia_safe::SamplingOptions::default(),
+            None,
+        ));
+        let mut other_paint = Paint::default();
+        other_paint.set_shader(skia_safe::shaders::color(Color::BLUE));
+        let (picture, program) = capture(|canvas| {
+            canvas.draw_rect(Rect::from_xywh(0.0, 0.0, 24.0, 12.0), &image_paint);
+            canvas.draw_line((0.0, 20.0), (24.0, 20.0), &image_paint);
+            canvas.draw_rect(Rect::from_xywh(30.0, 0.0, 12.0, 12.0), &other_paint);
+            canvas.draw_rect(Rect::from_xywh(48.0, 0.0, 12.0, 12.0), &red);
+        });
+        assert_eq!(
+            program
+                .chunks()
+                .iter()
+                .filter(|chunk| chunk.shader_dependency() == PaintShaderDependency::Image)
+                .count(),
+            2
+        );
+        assert_eq!(
+            program
+                .chunks()
+                .iter()
+                .filter(|chunk| chunk.shader_dependency() == PaintShaderDependency::Unclassified)
+                .count(),
+            1
+        );
+        let layered = program
+            .partition_layers(
+                PaintLayerBinding {
+                    id: PaintLayerSourceId(1),
+                    owner: None,
+                    role: PaintLayerSourceRole::DocumentContent,
+                },
+                |_| None,
+            )
+            .unwrap();
+        assert_eq!(layered.coverage().unclassified_image_draws, 0);
+        assert_eq!(layered.coverage().unclassified_image_shader_draws, 2);
+        assert_eq!(layered.coverage().unclassified_other_shader_draws, 1);
+        drop(image_paint);
+        drop(other_paint);
+        drop(image);
+        drop(pixels_surface);
+        assert_static_replay(&picture, &program);
+        for scale in [1.0_f32, 1.25, 1.5, 1.75, 2.0] {
+            let mut recorder = PictureRecorder::new();
+            let canvas = recorder.begin_recording(BOUNDS, false);
+            layered.replay(canvas).unwrap();
+            let replay = recorder.finish_recording_as_picture(None).unwrap();
+            assert_eq!(
+                pixels(&replay, scale),
+                pixels(&picture, scale),
+                "shader replay scale {scale}"
+            );
+        }
     }
 }

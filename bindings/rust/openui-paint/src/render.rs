@@ -293,6 +293,8 @@ impl LayeredPaintCapture {
                 let coverage = program.coverage();
                 total.opaque_picture_draws += coverage.opaque_picture_draws;
                 total.unclassified_image_draws += coverage.unclassified_image_draws;
+                total.unclassified_image_shader_draws += coverage.unclassified_image_shader_draws;
+                total.unclassified_other_shader_draws += coverage.unclassified_other_shader_draws;
                 total.fixed_canvas_queries += coverage.fixed_canvas_queries;
                 total
             },

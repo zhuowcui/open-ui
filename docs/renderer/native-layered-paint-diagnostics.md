@@ -64,3 +64,26 @@ and replay route is verified; current native consumers can use the public Engine
 When capture is enabled, the viewport scrolling picture also retains a typed program observed on its actual recorder canvas. `viewport_scrolling_content()` exposes that child and `recording_programs()` enumerates the recording hierarchy. Engine binds the child to the existing retained viewport recording identity. Authored element IDs are shared consistently across recording streams; borrowed fieldset and table scopes keep their actual roles.
 
 The parent still replays its original opaque picture, with the same clear, tiling, clip, scroll and effect order. Child metadata is never spliced into that parent. The hierarchy retains owned font resources and reports queries, images and opaque picture dependencies conservatively. It does not qualify independent transparent surfaces or dynamic tracks. The additive viewport source role requires downstream exhaustive Rust matches to handle it.
+
+## Shader dependencies
+
+Coverage retains three distinct raster dependency counts: explicit Image/ImageNine
+operands, Paint shaders that Skia identifies as backed by one Image, and all
+other shader graphs. A rectangle with an image shader retains its raster resource
+through the owned Paint. Other shaders, including gradients or composite graphs,
+remain conservative dependencies; a non-image result does not prove the absence
+of image children. These counts do not admit independent replay or dynamic tracks.
+
+The native resource guard requires the actual explicit PNG Image path at 1x and
+the actual PNG-owner image shader path at fractional scales. SVG keeps its exact
+teal pixels and recorded owner provenance. Raw SVG helper calls remain an incomplete
+source dependency; the opaque parent Picture preserves their canonical pixels.
+Owner/chunk presence does not establish complete, independent SVG operand capture.
+Actual SVG facade capture or fail-closed source extraction remains required for
+transparent source replay. The owned canonical and shader/raster operands must
+survive Engine destruction and replay from another thread. All new shader
+classification guards are source-only until Root runs the current-source gates.
+
+PaintLayerCoverage has two additive Rust fields and PaintShaderDependency is an
+additive typed inspection API. Downstream struct literals must include these
+fields; no C layouts or exported ABI symbols change.
