@@ -733,13 +733,63 @@ fn columns_needed_for_height_with_margins(
     avoid_break_inside: &[bool],
     height: LayoutUnit,
     forced_break_before: &[bool],
-    _column_count: u32,
+    column_count: u32,
     avoid_break_after: &[bool],
 ) -> u32 {
+    column_partition_with_margins(
+        raw_sizes,
+        margins_top,
+        margins_bottom,
+        avoid_break_inside,
+        height,
+        forced_break_before,
+        column_count,
+        avoid_break_after,
+    )
+    .0
+}
+
+/// A whole-unit preference needs a partition witness at the final height.
+/// Counting alone permits real oversized avoid units to overflow a column;
+/// that behavior remains valid for normal fragmentation, but does not prove fit.
+pub(crate) fn columns_fit_height_with_margins(
+    raw_sizes: &[LayoutUnit],
+    margins_top: &[LayoutUnit],
+    margins_bottom: &[LayoutUnit],
+    avoid_break_inside: &[bool],
+    height: LayoutUnit,
+    forced_break_before: &[bool],
+    column_count: u32,
+    avoid_break_after: &[bool],
+) -> bool {
+    let (needed, units_fit) = column_partition_with_margins(
+        raw_sizes,
+        margins_top,
+        margins_bottom,
+        avoid_break_inside,
+        height,
+        forced_break_before,
+        column_count,
+        avoid_break_after,
+    );
+    units_fit && needed <= column_count
+}
+
+fn column_partition_with_margins(
+    raw_sizes: &[LayoutUnit],
+    margins_top: &[LayoutUnit],
+    margins_bottom: &[LayoutUnit],
+    avoid_break_inside: &[bool],
+    height: LayoutUnit,
+    forced_break_before: &[bool],
+    _column_count: u32,
+    avoid_break_after: &[bool],
+) -> (u32, bool) {
     if height.raw() <= 0 {
-        return u32::MAX;
+        return (u32::MAX, false);
     }
     let mut columns = 1u32;
+    let mut units_fit = true;
     let mut remaining = height;
     let mut prev_mb = LayoutUnit::zero();
     let mut at_column_start = true;
@@ -821,6 +871,7 @@ fn columns_needed_for_height_with_margins(
                 remaining = remaining - child_size;
             }
             if remaining.raw() < 0 {
+                units_fit = false;
                 remaining = LayoutUnit::zero();
             }
             at_column_start = false;
@@ -829,6 +880,7 @@ fn columns_needed_for_height_with_margins(
             if prev_avoid_after {
                 remaining = remaining - child_size;
                 if remaining.raw() < 0 {
+                    units_fit = false;
                     remaining = LayoutUnit::zero();
                 }
             } else {
@@ -857,7 +909,7 @@ fn columns_needed_for_height_with_margins(
         remaining = height;
     }
 
-    columns
+    (columns, units_fit)
 }
 
 // ── Convenience: construct from ComputedStyle ───────────────────────────
@@ -1094,5 +1146,146 @@ mod tests {
             true,
         );
         assert_eq!(h, margin);
+    }
+    #[test]
+    fn scalar_balancing_floor_does_not_prove_whole_units_fit_the_cap() {
+        let rows = [LayoutUnit::from_i32(20); 3];
+        let zero = [LayoutUnit::zero(); 3];
+        let avoid = [true; 3];
+        let no_break = [false; 3];
+        let cap = LayoutUnit::from_i32(30);
+        // The average and cap are both 30px, but three 20px whole units
+        // need three columns at that height. Two whole-unit columns need 40px.
+        let scalar = balance_columns_with_margins(
+            &rows, &zero, &zero, &avoid, 2, cap, &no_break, &no_break, false,
+        );
+        assert_eq!(scalar, cap);
+        assert_eq!(
+            columns_needed_for_height_with_margins(
+                &rows, &zero, &zero, &avoid, scalar, &no_break, 2, &no_break,
+            ),
+            3
+        );
+        assert!(!columns_fit_height_with_margins(
+            &rows, &zero, &zero, &avoid, scalar, &no_break, 2, &no_break,
+        ));
+        assert!(columns_fit_height_with_margins(
+            &rows,
+            &zero,
+            &zero,
+            &avoid,
+            LayoutUnit::from_i32(40),
+            &no_break,
+            2,
+            &no_break,
+        ));
+    }
+
+    #[test]
+    fn whole_unit_witness_preserves_margin_and_forced_break_partitioning() {
+        let sizes = [LayoutUnit::from_i32(10); 3];
+        let zero = [LayoutUnit::zero(); 3];
+        let avoid = [true; 3];
+        let no_break = [false; 3];
+        let margin = LayoutUnit::from_i32(5);
+        let top = [margin, margin, LayoutUnit::zero()];
+        let bottom = [margin, LayoutUnit::zero(), margin];
+        assert!(!columns_fit_height_with_margins(
+            &sizes,
+            &top,
+            &bottom,
+            &avoid,
+            LayoutUnit::from_i32(20),
+            &no_break,
+            2,
+            &no_break,
+        ));
+        assert!(columns_fit_height_with_margins(
+            &sizes,
+            &top,
+            &bottom,
+            &avoid,
+            LayoutUnit::from_i32(25),
+            &no_break,
+            2,
+            &no_break,
+        ));
+        let forced = [false, false, true];
+        assert!(!columns_fit_height_with_margins(
+            &sizes,
+            &zero,
+            &zero,
+            &avoid,
+            LayoutUnit::from_i32(30),
+            &forced,
+            1,
+            &no_break,
+        ));
+        assert!(columns_fit_height_with_margins(
+            &sizes,
+            &zero,
+            &zero,
+            &avoid,
+            LayoutUnit::from_i32(30),
+            &forced,
+            2,
+            &no_break,
+        ));
+    }
+
+    #[test]
+    fn normal_avoid_overflow_count_is_distinct_from_a_whole_unit_fit_witness() {
+        let zero = LayoutUnit::zero();
+        let no_break = [false; 1];
+        let oversized = [LayoutUnit::from_i32(40)];
+        // Actual monolithic overflow keeps its ordinary one-column count.
+        // It supplies no proof that a row preference fits a 30px column.
+        assert_eq!(
+            columns_needed_for_height_with_margins(
+                &oversized,
+                &[zero],
+                &[zero],
+                &[true],
+                LayoutUnit::from_i32(30),
+                &no_break,
+                1,
+                &no_break,
+            ),
+            1
+        );
+        assert!(!columns_fit_height_with_margins(
+            &oversized,
+            &[zero],
+            &[zero],
+            &[true],
+            LayoutUnit::from_i32(30),
+            &no_break,
+            1,
+            &no_break,
+        ));
+        let linked = [LayoutUnit::from_i32(10); 3];
+        let zero = [zero; 3];
+        let no_break = [false; 3];
+        let links = [true, true, false];
+        assert!(!columns_fit_height_with_margins(
+            &linked,
+            &zero,
+            &zero,
+            &[true; 3],
+            LayoutUnit::from_i32(25),
+            &no_break,
+            2,
+            &links,
+        ));
+        assert!(columns_fit_height_with_margins(
+            &linked,
+            &zero,
+            &zero,
+            &[true; 3],
+            LayoutUnit::from_i32(30),
+            &no_break,
+            2,
+            &links,
+        ));
     }
 }

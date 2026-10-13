@@ -18599,6 +18599,127 @@ fn descendant_table_row_sizes(fragment: &Fragment, doc: &dyn LayoutDocument) -> 
     units
 }
 
+/// The complete balancing input for a table-row preference, including the
+/// surrounding flow's margins and break constraints. A balanced scalar may
+/// exceed the final fragmentainer cap or fail to describe a whole-row partition.
+struct TableRowBalanceInputs {
+    sizes: Vec<LayoutUnit>,
+    margins_top: Vec<LayoutUnit>,
+    margins_bottom: Vec<LayoutUnit>,
+    avoid_inside: Vec<bool>,
+    forced_before: Vec<bool>,
+    avoid_after: Vec<bool>,
+}
+
+impl TableRowBalanceInputs {
+    fn from_fragments(
+        doc: &dyn LayoutDocument,
+        fragments: &[Fragment],
+        flow_sizes: &[LayoutUnit],
+        parallel_flow_sizes: &[Option<LayoutUnit>],
+        block_sizes: &[LayoutUnit],
+        margins_top: &[LayoutUnit],
+        margins_bottom: &[LayoutUnit],
+        avoid_inside: &[bool],
+        forced_before: &[bool],
+        avoid_after: &[bool],
+    ) -> Option<Self> {
+        let mut input = Self {
+            sizes: Vec::new(),
+            margins_top: Vec::new(),
+            margins_bottom: Vec::new(),
+            avoid_inside: Vec::new(),
+            forced_before: Vec::new(),
+            avoid_after: Vec::new(),
+        };
+        let mut has_rows = false;
+        for (index, fragment) in fragments.iter().enumerate() {
+            let rows = descendant_table_row_sizes(fragment, doc);
+            let total = rows
+                .iter()
+                .copied()
+                .fold(LayoutUnit::zero(), |sum, size| sum + size);
+            let complete_rows = !rows.is_empty()
+                && (total == flow_sizes[index]
+                    || parallel_flow_sizes.get(index).copied().flatten() == Some(total));
+            if !complete_rows {
+                input.sizes.push(block_sizes[index]);
+                input.margins_top.push(margins_top[index]);
+                input.margins_bottom.push(margins_bottom[index]);
+                input.avoid_inside.push(avoid_inside[index]);
+                input.forced_before.push(forced_before[index]);
+                input.avoid_after.push(avoid_after[index]);
+                continue;
+            }
+            has_rows = true;
+            let row_count = rows.len();
+            for (row_index, size) in rows.into_iter().enumerate() {
+                input.sizes.push(size);
+                input.margins_top.push(if row_index == 0 {
+                    margins_top[index]
+                } else {
+                    LayoutUnit::zero()
+                });
+                input.margins_bottom.push(if row_index + 1 == row_count {
+                    margins_bottom[index]
+                } else {
+                    LayoutUnit::zero()
+                });
+                input.avoid_inside.push(true);
+                input
+                    .forced_before
+                    .push(row_index == 0 && forced_before[index]);
+                input
+                    .avoid_after
+                    .push(row_index + 1 == row_count && avoid_after[index]);
+            }
+        }
+        has_rows.then_some(input)
+    }
+
+    fn balanced_height(&self, column_count: u32, max_height: LayoutUnit) -> LayoutUnit {
+        crate::multicol::balance_columns_with_margins(
+            &self.sizes,
+            &self.margins_top,
+            &self.margins_bottom,
+            &self.avoid_inside,
+            column_count,
+            max_height,
+            &self.forced_before,
+            &self.avoid_after,
+            false,
+        )
+    }
+
+    fn fits(&self, height: LayoutUnit, column_count: u32) -> bool {
+        // A genuinely oversized monolithic unit is still handled by normal
+        // fragmentation. It cannot prove that this whole-row preference fits.
+        crate::multicol::columns_fit_height_with_margins(
+            &self.sizes,
+            &self.margins_top,
+            &self.margins_bottom,
+            &self.avoid_inside,
+            height,
+            &self.forced_before,
+            column_count,
+            &self.avoid_after,
+        )
+    }
+}
+
+/// Inline overflow stays in its originating column row. Only the layout's
+/// actual row-wrapping path starts a new declared-column budget; a new spanner
+/// group already starts with column index zero.
+fn remaining_columns_in_row(index: usize, declared: usize, wraps_rows: bool) -> usize {
+    let declared = declared.max(1);
+    let row_start = if wraps_rows {
+        index / declared * declared
+    } else {
+        0
+    };
+    declared.saturating_sub(index - row_start).max(1)
+}
+
 /// Complete Grid-row break units reachable through an in-flow wrapper.
 ///
 /// Grid items in the same row overlap in block coordinates, so summing item
@@ -18765,6 +18886,55 @@ fn table_spacing_fragment_advance(
     None
 }
 
+fn remaining_table_rows(row_sizes: &[LayoutUnit], consumed: LayoutUnit) -> Option<Vec<LayoutUnit>> {
+    let mut source_offset = LayoutUnit::zero();
+    let mut remaining = Vec::new();
+    for size in row_sizes {
+        let end = source_offset + *size;
+        if end > consumed {
+            // A last-resort split is an actual row continuation. It cannot
+            // restart a whole-row packing preference partway through the row.
+            if source_offset < consumed {
+                return None;
+            }
+            remaining.push(*size);
+        }
+        source_offset = end;
+    }
+    Some(remaining)
+}
+
+fn whole_table_rows_fit(
+    row_sizes: &[LayoutUnit],
+    consumed: LayoutUnit,
+    height: LayoutUnit,
+    columns_remaining: usize,
+) -> bool {
+    let Some(remaining) = remaining_table_rows(row_sizes, consumed) else {
+        return false;
+    };
+    if remaining.is_empty() {
+        return true;
+    }
+    if height <= LayoutUnit::zero() || remaining.iter().any(|size| *size > height) {
+        return false;
+    }
+    let zero = vec![LayoutUnit::zero(); remaining.len()];
+    let avoid = vec![true; remaining.len()];
+    let no_break = vec![false; remaining.len()];
+    let column_count = u32::try_from(columns_remaining).unwrap_or(u32::MAX);
+    crate::multicol::columns_fit_height_with_margins(
+        &remaining,
+        &zero,
+        &zero,
+        &avoid,
+        height,
+        &no_break,
+        column_count,
+        &no_break,
+    )
+}
+
 /// Select the earliest row boundary for the next balanced table fragment that
 /// still lets the remaining rows fit in the remaining declared columns.
 ///
@@ -18782,44 +18952,10 @@ fn balanced_table_fragment_size(
         return None;
     }
 
-    let mut source_offset = LayoutUnit::zero();
-    let mut remaining = Vec::new();
-    for row_size in row_sizes {
-        let row_end = source_offset + *row_size;
-        if row_end <= consumed {
-            source_offset = row_end;
-            continue;
-        }
-        // Only row boundaries are legal resumption points. A partially
-        // consumed row means an earlier last-resort split has already won.
-        if source_offset < consumed {
-            return None;
-        }
-        remaining.push(*row_size);
-        source_offset = row_end;
-    }
+    let remaining = remaining_table_rows(row_sizes, consumed)?;
     if remaining.len() <= 1 {
         return None;
     }
-
-    let columns_needed = |units: &[LayoutUnit]| -> usize {
-        if units.is_empty() {
-            return 0;
-        }
-        let mut columns = 1usize;
-        let mut used = LayoutUnit::zero();
-        for unit in units {
-            if *unit > column_height {
-                return usize::MAX;
-            }
-            if used > LayoutUnit::zero() && used + *unit > column_height {
-                columns += 1;
-                used = LayoutUnit::zero();
-            }
-            used = used + *unit;
-        }
-        columns
-    };
 
     let mut prefix = LayoutUnit::zero();
     for index in 0..remaining.len() - 1 {
@@ -18827,7 +18963,12 @@ fn balanced_table_fragment_size(
         if prefix > column_height {
             break;
         }
-        if columns_needed(&remaining[index + 1..]) <= columns_remaining - 1 {
+        if whole_table_rows_fit(
+            &remaining[index + 1..],
+            LayoutUnit::zero(),
+            column_height,
+            columns_remaining - 1,
+        ) {
             return Some(prefix);
         }
     }
@@ -22119,84 +22260,28 @@ fn layout_multicol(
             // the measured fragment tree remains the source of truth, while
             // the direct child's margins and edge break constraints stay on
             // the first and last derived units.
-            let table_row_aware_balance_height =
-                if matches!(
-                    algo.column_fill,
-                    ColumnFill::Balance | ColumnFill::BalanceAll
-                ) && col_fragments.iter().enumerate().any(|(index, fragment)| {
-                    let row_sizes = descendant_table_row_sizes(fragment, doc);
-                    let total = row_sizes
-                        .iter()
-                        .copied()
-                        .fold(LayoutUnit::zero(), |sum, height| sum + height);
-                    !row_sizes.is_empty()
-                        && (total == col_fragmentation_sizes[index]
-                            || col_parallel_fragmentation_sizes[index]
-                                .is_some_and(|overflow| total == overflow))
-                }) {
-                    let mut unit_sizes = Vec::new();
-                    let mut unit_margins_top = Vec::new();
-                    let mut unit_margins_bottom = Vec::new();
-                    let mut unit_avoid = Vec::new();
-                    let mut unit_forced = Vec::new();
-                    let mut unit_avoid_after = Vec::new();
-                    for (index, fragment) in col_fragments.iter().enumerate() {
-                        let candidate_row_sizes = descendant_table_row_sizes(fragment, doc);
-                        let candidate_row_total = candidate_row_sizes
-                            .iter()
-                            .copied()
-                            .fold(LayoutUnit::zero(), |sum, height| sum + height);
-                        let row_sizes = if !candidate_row_sizes.is_empty()
-                            && (candidate_row_total == col_fragmentation_sizes[index]
-                                || col_parallel_fragmentation_sizes[index]
-                                    .is_some_and(|overflow| candidate_row_total == overflow))
-                        {
-                            candidate_row_sizes
-                        } else {
-                            Vec::new()
-                        };
-                        if row_sizes.is_empty() {
-                            unit_sizes.push(col_block_sizes[index]);
-                            unit_margins_top.push(col_margins_top[index]);
-                            unit_margins_bottom.push(col_margins_bottom[index]);
-                            unit_avoid.push(col_avoid_break[index]);
-                            unit_forced.push(col_forced_break_before[index]);
-                            unit_avoid_after.push(col_avoid_break_after[index]);
-                            continue;
-                        }
-                        let row_count = row_sizes.len();
-                        for (row_index, row_size) in row_sizes.into_iter().enumerate() {
-                            unit_sizes.push(row_size);
-                            unit_margins_top.push(if row_index == 0 {
-                                col_margins_top[index]
-                            } else {
-                                LayoutUnit::zero()
-                            });
-                            unit_margins_bottom.push(if row_index + 1 == row_count {
-                                col_margins_bottom[index]
-                            } else {
-                                LayoutUnit::zero()
-                            });
-                            unit_avoid.push(true);
-                            unit_forced.push(row_index == 0 && col_forced_break_before[index]);
-                            unit_avoid_after
-                                .push(row_index + 1 == row_count && col_avoid_break_after[index]);
-                        }
-                    }
-                    Some(balance_columns_with_margins(
-                        &unit_sizes,
-                        &unit_margins_top,
-                        &unit_margins_bottom,
-                        &unit_avoid,
-                        resolved.count,
-                        group_max,
-                        &unit_forced,
-                        &unit_avoid_after,
-                        false,
-                    ))
-                } else {
-                    None
-                };
+            let table_row_balance_inputs = matches!(
+                algo.column_fill,
+                ColumnFill::Balance | ColumnFill::BalanceAll
+            )
+            .then(|| {
+                TableRowBalanceInputs::from_fragments(
+                    doc,
+                    &col_fragments,
+                    &col_fragmentation_sizes,
+                    &col_parallel_fragmentation_sizes,
+                    &col_block_sizes,
+                    &col_margins_top,
+                    &col_margins_bottom,
+                    &col_avoid_break,
+                    &col_forced_break_before,
+                    &col_avoid_break_after,
+                )
+            })
+            .flatten();
+            let table_row_aware_balance_height = table_row_balance_inputs
+                .as_ref()
+                .map(|input| input.balanced_height(resolved.count, group_max));
             let grid_row_aware_balance_height =
                 if matches!(
                     algo.column_fill,
@@ -23598,6 +23683,24 @@ fn layout_multicol(
                 _effective_sizes =
                     compute_effective(&col_block_sizes, &col_margins_top, &col_margins_bottom);
             }
+
+            // The final constrained height and any percentage relayout own
+            // this witness. Never infer feasibility from the earlier scalar
+            // balancing result or from a stale pre-relayout table height.
+            let table_row_balancing_is_feasible = table_row_aware_balance_height.is_some()
+                && TableRowBalanceInputs::from_fragments(
+                    doc,
+                    &col_fragments,
+                    &col_block_sizes,
+                    &[],
+                    &col_block_sizes,
+                    &col_margins_top,
+                    &col_margins_bottom,
+                    &col_avoid_break,
+                    &col_forced_break_before,
+                    &col_avoid_break_after,
+                )
+                .is_some_and(|input| input.fits(column_height, resolved.count));
 
             // Distribute children across columns (with fragmentation support).
             // CSS Multicol §3.4: overflow content creates additional columns
@@ -28577,10 +28680,23 @@ fn layout_multicol(
                                 && child_style.border_collapse
                                     == openui_style::BorderCollapse::Collapse
                                 && table_has_variable_collapsed_inline_cell_edges(&child_frag, doc);
-                            let use_table_row_boundaries = table_row_aware_balance_height.is_some()
-                                || use_per_cell_collapsed_edges
-                                || !table_with_captions
-                                    && child_style.effective_border_bottom() > 0;
+                            let columns_remaining = remaining_columns_in_row(
+                                col_idx,
+                                resolved.count.max(1) as usize,
+                                wraps_rows,
+                            );
+                            let row_sizes = descendant_table_row_sizes(&child_frag, doc);
+                            let remaining_rows_fit = whole_table_rows_fit(
+                                &row_sizes,
+                                content_consumed,
+                                column_capacity_for(col_idx),
+                                columns_remaining,
+                            );
+                            let use_table_row_boundaries = remaining_rows_fit
+                                && (table_row_balancing_is_feasible
+                                    || use_per_cell_collapsed_edges
+                                    || !table_with_captions
+                                        && child_style.effective_border_bottom() > 0);
                             if !is_clone
                                 && child_style.display.is_table_wrapper()
                                 && repeating_table_sections.is_empty()
@@ -28600,15 +28716,11 @@ fn layout_multicol(
                             }
                             let mut table_balanced_short_leading_fragment = false;
                             if !is_clone
-                                && table_row_aware_balance_height.is_some()
+                                && table_row_balancing_is_feasible
+                                && remaining_rows_fit
                                 && repeating_table_sections.is_empty()
                                 && col_block_offset == LayoutUnit::zero()
                             {
-                                let row_sizes = descendant_table_row_sizes(&child_frag, doc);
-                                let declared_columns = resolved.count.max(1) as usize;
-                                let columns_remaining = declared_columns
-                                    .saturating_sub(col_idx % declared_columns)
-                                    .max(1);
                                 if let Some(table_part) = balanced_table_fragment_size(
                                     &row_sizes,
                                     content_consumed,
@@ -34227,6 +34339,47 @@ mod tests {
     use openui_dom::ElementTag;
     use openui_geometry::Length;
     use openui_style::*;
+
+    #[test]
+    fn table_row_preferences_need_a_real_remaining_partition_and_column_row() {
+        let rows = [LayoutUnit::from_i32(10); 6];
+        assert!(!whole_table_rows_fit(
+            &rows,
+            LayoutUnit::zero(),
+            LayoutUnit::from_i32(25),
+            2
+        ));
+        assert!(whole_table_rows_fit(
+            &rows,
+            LayoutUnit::zero(),
+            LayoutUnit::from_i32(30),
+            2
+        ));
+        assert!(!whole_table_rows_fit(
+            &rows,
+            LayoutUnit::from_i32(25),
+            LayoutUnit::from_i32(25),
+            2
+        ));
+        assert_eq!(
+            balanced_table_fragment_size(
+                &rows,
+                LayoutUnit::from_i32(25),
+                LayoutUnit::from_i32(25),
+                2
+            ),
+            None
+        );
+        assert_eq!(remaining_columns_in_row(0, 2, false), 2);
+        assert_eq!(remaining_columns_in_row(1, 2, false), 1);
+        assert_eq!(remaining_columns_in_row(2, 2, false), 1);
+        assert_eq!(remaining_columns_in_row(4, 2, false), 1);
+        // An actual wrapped row, unlike an inline overflow column, owns a
+        // fresh budget. Every new spanner group starts again at index zero.
+        assert_eq!(remaining_columns_in_row(2, 2, true), 2);
+        assert_eq!(remaining_columns_in_row(3, 2, true), 1);
+        assert_eq!(remaining_columns_in_row(4, 2, true), 2);
+    }
 
     #[test]
     fn collapsed_section_projection_rebases_rows_without_mutating_shared_source_graph() {
