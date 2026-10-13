@@ -36,6 +36,7 @@ pub(crate) fn content_style(style: &ComputedStyle) -> ComputedStyle {
         content.border_bottom_left_radius = style.border_bottom_left_radius;
         content.border_bottom_right_radius = style.border_bottom_right_radius;
         content.border_radius_percent = style.border_radius_percent;
+        content.border_radius_lengths = style.border_radius_lengths;
         content.box_decoration_break = style.box_decoration_break;
         content.column_count = style.column_count;
         content.column_width = style.column_width.clone();

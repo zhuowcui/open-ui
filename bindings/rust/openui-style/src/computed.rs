@@ -1808,6 +1808,19 @@ impl ComputedStyle {
     /// True if any border-radius corner is non-zero.
     #[inline]
     pub fn has_border_radius(&self) -> bool {
+        // A calculated source may project to zero legacy numbers while still
+        // producing a nonzero radius on the actual reference box.
+        let source_nonzero = |length: Length| {
+            length.value() != 0.0 || (length.is_calculated() && length.calc_offset() != 0.0)
+        };
+        if self
+            .border_radius_lengths
+            .iter()
+            .flatten()
+            .any(|&(x, y)| source_nonzero(x) || source_nonzero(y))
+        {
+            return true;
+        }
         self.border_top_left_radius != (0.0, 0.0)
             || self.border_top_right_radius != (0.0, 0.0)
             || self.border_bottom_right_radius != (0.0, 0.0)

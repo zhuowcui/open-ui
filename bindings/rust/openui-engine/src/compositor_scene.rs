@@ -157,6 +157,7 @@ impl Engine {
         let mut path = Vec::new();
         self.collect_scene_layers(
             fragment,
+            openui_geometry::PhysicalOffset::zero(),
             None,
             &mut path,
             &mut builders,
@@ -233,12 +234,17 @@ impl Engine {
     fn collect_scene_layers(
         &mut self,
         fragment: &Fragment,
+        parent_paint_offset: openui_geometry::PhysicalOffset,
         layout_parent: Option<SceneLayerId>,
         path: &mut Vec<usize>,
         builders: &mut Vec<LayerBuilder>,
         indices: &mut HashMap<NodeHandle, usize>,
         unidentified: &mut Vec<Arc<[usize]>>,
     ) -> Result<(), EngineError> {
+        let paint_offset = openui_geometry::PhysicalOffset::new(
+            parent_paint_offset.left + fragment.offset.left,
+            parent_paint_offset.top + fragment.offset.top,
+        );
         let mut child_parent = layout_parent;
         // Ordinary borrowed helpers do not create authored effects or scroll
         // owners. Explicit delegated content boxes are handled separately.
@@ -329,6 +335,8 @@ impl Engine {
                 });
                 builder.clips.push(clip_projection(
                     fragment,
+                    &self.document,
+                    paint_offset,
                     Arc::clone(&owned_path),
                     style,
                     overflow,
@@ -395,6 +403,8 @@ impl Engine {
                         .map_err(|_| EngineError::AllocationFailure)?;
                     builder.content_clips.push(clip_projection(
                         fragment,
+                        &self.document,
+                        paint_offset,
                         Arc::clone(&owned_path),
                         effective,
                         (area.overflow_x, area.overflow_y),
@@ -438,7 +448,15 @@ impl Engine {
         }
         for (index, child) in fragment.children.iter().enumerate() {
             path.push(index);
-            self.collect_scene_layers(child, child_parent, path, builders, indices, unidentified)?;
+            self.collect_scene_layers(
+                child,
+                paint_offset,
+                child_parent,
+                path,
+                builders,
+                indices,
+                unidentified,
+            )?;
             path.pop();
         }
         Ok(())
@@ -447,6 +465,8 @@ impl Engine {
 
 fn clip_projection(
     fragment: &Fragment,
+    document: &openui_dom::Document,
+    paint_offset: openui_geometry::PhysicalOffset,
     path: Arc<[usize]>,
     effective: &ComputedStyle,
     overflow: (Overflow, Overflow),
@@ -482,6 +502,35 @@ fn clip_projection(
         } else {
             effective.border_radius_percent
         },
+        border_radius_lengths: if fragment.ignore_border_radius {
+            [None; 4]
+        } else {
+            effective.border_radius_lengths
+        },
+        paint_border_radius_reference_box: openui_paint::overflow_border_radius_reference_box(
+            fragment,
+            paint_offset,
+            openui_paint::OverflowClipContourPurpose::PaintSource,
+        ),
+        hit_border_radius_reference_box: openui_paint::overflow_border_radius_reference_box(
+            fragment,
+            paint_offset,
+            openui_paint::OverflowClipContourPurpose::DirectFragmentHit,
+        ),
+        paint_clip_geometry: openui_paint::compute_overflow_clip_geometry(
+            fragment,
+            effective,
+            document,
+            paint_offset,
+            openui_paint::OverflowClipContourPurpose::PaintSource,
+        ),
+        direct_hit_clip_geometry: openui_paint::compute_overflow_clip_geometry(
+            fragment,
+            effective,
+            document,
+            paint_offset,
+            openui_paint::OverflowClipContourPurpose::DirectFragmentHit,
+        ),
         clip_path_insets: if owns_effects {
             effective.clip_path_inset
         } else {

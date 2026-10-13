@@ -23,8 +23,11 @@ pub use paint_program::{
     IntrinsicPictureStatus, PaintCaptureIncompleteReason, PaintCaptureStatus, PaintProgramChunk,
     PaintProgramOwner, RecordedPaintProgram,
 };
-pub use painter::compute_clip_rect;
 pub use painter::paint_fragment;
+pub use painter::{
+    compute_clip_rect, compute_overflow_clip_geometry, overflow_border_radius_reference_box,
+    OverflowClipContour, OverflowClipContourPurpose, OverflowClipGeometry,
+};
 pub use render::{
     raster_surface_properties, rasterize_picture, record_document, record_fragment,
     record_fragment_with_program, render_to_png, render_to_surface, RecordedPaintCapture,

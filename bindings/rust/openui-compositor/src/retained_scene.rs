@@ -154,6 +154,14 @@ pub struct SceneClipProjection {
     pub fragmentation_writing_direction: Option<WritingDirectionMode>,
     pub border_radii: [(f32, f32); 4],
     pub border_radius_percent: [(bool, bool); 4],
+    /// Specified length kinds survive independently of compatibility fields.
+    pub border_radius_lengths: [Option<(Length, Length)>; 4],
+    /// Unsnapped CSS paint-coordinate source bases. Paint stitched/source and
+    /// direct physical-fragment hit contours intentionally have distinct inputs.
+    pub paint_border_radius_reference_box: (f32, f32, f32, f32),
+    pub hit_border_radius_reference_box: (f32, f32, f32, f32),
+    pub paint_clip_geometry: openui_paint::OverflowClipGeometry,
+    pub direct_hit_clip_geometry: openui_paint::OverflowClipGeometry,
     pub clip_path_insets: Option<[Length; 4]>,
     pub overflow_clip_box: SceneOverflowClipBox,
     pub overflow_clip_margin: f32,

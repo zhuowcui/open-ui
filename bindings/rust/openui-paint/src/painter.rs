@@ -9958,54 +9958,75 @@ fn paint_composited_scroll_contents(
 ///   3. Translate for scroll offset (overflow: scroll/auto — currently 0,0)
 ///   4. Paint children
 ///   5. `canvas.restore()`
-fn paint_with_overflow_clip(
-    canvas: &Canvas,
+/// The source operands used by a rounded overflow contour.
+///
+/// Blink's paint property node uses stitched decoration geometry, while its
+/// direct fragment child-hit check uses fragment size and all computed borders.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum OverflowClipContourPurpose {
+    PaintSource,
+    DirectFragmentHit,
+}
+
+/// Owned contour coordinates in untransformed CSS paint space.
+#[derive(Debug, Clone, PartialEq)]
+pub struct OverflowClipContour {
+    pub purpose: OverflowClipContourPurpose,
+    pub rect: (f32, f32, f32, f32),
+    pub radii: [(f32, f32); 4],
+    /// Unsnapped border rectangle used to resolve percent/calculated radii.
+    pub border_radius_reference_box: (f32, f32, f32, f32),
+}
+
+/// Rectangular overflow and rounded border clipping are separate operations.
+/// Descendant outline/ink outsets and raster backing decisions are not here.
+#[derive(Debug, Clone, PartialEq)]
+pub struct OverflowClipGeometry {
+    pub rect: (f32, f32, f32, f32),
+    pub clips_x: bool,
+    pub clips_y: bool,
+    pub rounded: Option<OverflowClipContour>,
+}
+
+fn rect_components(rect: Rect) -> (f32, f32, f32, f32) {
+    (rect.left(), rect.top(), rect.width(), rect.height())
+}
+
+/// Radius resolution basis, before independent edge snapping or contraction.
+pub fn overflow_border_radius_reference_box(
+    fragment: &Fragment,
+    offset: PhysicalOffset,
+    purpose: OverflowClipContourPurpose,
+) -> (f32, f32, f32, f32) {
+    let rect = match purpose {
+        OverflowClipContourPurpose::PaintSource => {
+            let border = fragment.border_box_rect();
+            decoration_source_rect(
+                fragment,
+                Rect::from_xywh(
+                    offset.left.to_f32() + border.x().to_f32(),
+                    offset.top.to_f32() + border.y().to_f32(),
+                    border.width().to_f32(),
+                    border.height().to_f32(),
+                ),
+            )
+        }
+        OverflowClipContourPurpose::DirectFragmentHit => Rect::from_xywh(
+            offset.left.to_f32(),
+            offset.top.to_f32(),
+            fragment.size.width.to_f32(),
+            fragment.size.height.to_f32(),
+        ),
+    };
+    rect_components(rect)
+}
+
+fn overflow_clip_base_geometry(
     fragment: &Fragment,
     doc: &Document,
     offset: PhysicalOffset,
     style: &ComputedStyle,
-) {
-    let used_style = paint_style_with_used_overflow(fragment, style, doc);
-    let style = used_style.as_ref().unwrap_or(style);
-    // The fieldset's rendered legend is part of the fieldset decoration.  It
-    // remains visible over the block-start border even when authored overflow
-    // clips the fieldset contents (HTML rendering §14.3).  Paint that direct
-    // legend before installing the content clip, then suppress its ordinary
-    // child traversal below so it is not painted twice.
-    let unclipped_fieldset_legend_content: Vec<&Fragment> = if !fragment.node_id.is_none()
-        && doc.node(fragment.node_id).tag == ElementTag::Fieldset
-    {
-        let rendered_legend = doc.fieldset_rendered_legend(fragment.node_id);
-        let belongs_to_rendered_legend = |node_id: NodeId| {
-            let mut ancestor = node_id;
-            while !ancestor.is_none() && ancestor != fragment.node_id {
-                if Some(ancestor) == rendered_legend {
-                    return true;
-                }
-                ancestor = doc.node(ancestor).parent;
-            }
-            false
-        };
-        fragment
-            .children
-            .iter()
-            .filter(|child| !child.node_id.is_none() && belongs_to_rendered_legend(child.node_id))
-            .collect()
-    } else {
-        Vec::new()
-    };
-    for legend_content in &unclipped_fieldset_legend_content {
-        paint_fragment_tracked(canvas, legend_content, doc, offset);
-    }
-    let newly_skipped_legends: Vec<usize> = HOIST_SKIP.with(|skipped| {
-        let mut skipped = skipped.borrow_mut();
-        unclipped_fieldset_legend_content
-            .iter()
-            .map(|legend_content| *legend_content as *const Fragment as usize)
-            .filter(|pointer| skipped.insert(*pointer))
-            .collect()
-    });
-
+) -> (Rect, (bool, bool), (f32, f32)) {
     // CSS Overflow 3 §3: overflow-clip-margin <visual-box>? <length>
     // The visual-box determines which box edge the clip starts from:
     //   padding-box (default): same as compute_clip_rect
@@ -10082,6 +10103,255 @@ fn paint_with_overflow_clip(
     //   border a second time.
     let (clip_x, clip_y, clip_w, clip_h) =
         correct_fragmented_overflow_clip_rect(fragment, offset, (clip_x, clip_y, clip_w, clip_h));
+
+    (
+        Rect::from_xywh(clip_x, clip_y, clip_w, clip_h),
+        (clip_x_axis, clip_y_axis),
+        (margin_x, margin_y),
+    )
+}
+
+/// CSS mixed Clip/Visible axes retain a rectangular paint-property clip.
+/// A separate layout-owned continuation clip keeps its existing rounded
+/// source contour; it is not evidence of an authored both-axis overflow node.
+fn paint_rounded_overflow_clip_eligible(
+    fragment: &Fragment,
+    style: &ComputedStyle,
+    doc: &Document,
+) -> bool {
+    let pair = paint_overflow_pair(fragment, style, doc);
+    let axes = paint_overflow_clip_axes(fragment, style, doc);
+    fragment.owns_layout_box()
+        && style.has_border_radius()
+        && !fragment.ignore_border_radius
+        && !table_internal_ignores_border_radius(style.display)
+        && !matches!(
+            pair,
+            (Overflow::Clip, Overflow::Visible) | (Overflow::Visible, Overflow::Clip)
+        )
+        && ((axes.0 && axes.1)
+            || (fragment.has_overflow_clip && pair == (Overflow::Visible, Overflow::Visible)))
+}
+
+/// Resolve owned clipping operands using the same evaluator as canonical paint.
+/// `offset` is accumulated paint placement before authored Canvas transforms
+/// or scroll translation. Consumers must keep it separate from their world map.
+pub fn compute_overflow_clip_geometry(
+    fragment: &Fragment,
+    style: &ComputedStyle,
+    doc: &Document,
+    offset: PhysicalOffset,
+    purpose: OverflowClipContourPurpose,
+) -> OverflowClipGeometry {
+    let adjusted = paint_style_with_used_overflow(fragment, style, doc);
+    let style = adjusted.as_ref().unwrap_or(style);
+    let (rect, axes, margins) = overflow_clip_base_geometry(fragment, doc, offset, style);
+    let direct_clips = paint_overflow_pair(fragment, style, doc);
+    let eligible = fragment.owns_layout_box()
+        && style.has_border_radius()
+        && !fragment.ignore_border_radius
+        && !table_internal_ignores_border_radius(style.display);
+    let rounded = (eligible
+        && match purpose {
+            OverflowClipContourPurpose::PaintSource => {
+                paint_rounded_overflow_clip_eligible(fragment, style, doc)
+            }
+            OverflowClipContourPurpose::DirectFragmentHit => {
+                direct_clips.0 != Overflow::Visible
+                    || direct_clips.1 != Overflow::Visible
+                    || (fragment.owns_element_box() && style.has_paint_containment())
+            }
+        })
+    .then(|| {
+        let contour = match purpose {
+            OverflowClipContourPurpose::PaintSource => build_clip_rrect(
+                &rect,
+                fragment,
+                style,
+                overflow_clip_reference_box(style),
+                margins.0,
+                margins.1,
+            ),
+            OverflowClipContourPurpose::DirectFragmentHit => {
+                direct_fragment_inner_border_rrect(fragment, style, offset)
+            }
+        };
+        OverflowClipContour {
+            purpose,
+            rect: rect_components(*contour.rect()),
+            radii: [
+                RRectCorner::UpperLeft,
+                RRectCorner::UpperRight,
+                RRectCorner::LowerRight,
+                RRectCorner::LowerLeft,
+            ]
+            .map(|corner| {
+                let r = contour.radii(corner);
+                (r.x, r.y)
+            }),
+            border_radius_reference_box: overflow_border_radius_reference_box(
+                fragment, offset, purpose,
+            ),
+        }
+    });
+    OverflowClipGeometry {
+        rect: rect_components(rect),
+        clips_x: axes.0,
+        clips_y: axes.1,
+        rounded,
+    }
+}
+
+/// Pinned LayoutUnit snapping for border contours. The outer border uses
+/// SnapSizeToPixel's nonempty minimum; contracted inner borders explicitly
+/// use SnapSizeToPixelAllowingZero. Do not replace negative-half ties with
+/// floating-point round(), whose tie direction differs from LayoutUnit.
+fn snapped_border_contour_rect(
+    offset: PhysicalOffset,
+    size: PhysicalSize,
+    allow_zero: bool,
+) -> Rect {
+    let snap_size = |value: LayoutUnit, origin: LayoutUnit| {
+        let fraction = origin.fraction();
+        let mut snapped = (fraction + value).round_i32() - fraction.round_i32();
+        if !allow_zero && snapped == 0 && (value.raw() > 4 || value.raw() < -4) {
+            snapped = if value > LayoutUnit::zero() { 1 } else { -1 };
+        }
+        snapped as f32
+    };
+    Rect::from_xywh(
+        offset.left.round().to_f32(),
+        offset.top.round().to_f32(),
+        snap_size(size.width, offset.left),
+        snap_size(size.height, offset.top),
+    )
+}
+
+/// Exact direct BoxFragmentPainter child-hit operand route: physical fragment
+/// size, all four computed borders, no stitched-side suppression/clip margin.
+fn direct_fragment_inner_border_rrect(
+    fragment: &Fragment,
+    style: &ComputedStyle,
+    offset: PhysicalOffset,
+) -> RRect {
+    let (x, y, width, height) = overflow_border_radius_reference_box(
+        fragment,
+        offset,
+        OverflowClipContourPurpose::DirectFragmentHit,
+    );
+    let outer = Rect::from_xywh(x, y, width, height);
+    let snapped_outer = snapped_border_contour_rect(offset, fragment.size, false);
+    let radii = normalize_radii_to_rect(specified_border_radii(style, &outer), &snapped_outer);
+    let bt = LayoutUnit::from_i32(style.effective_border_top());
+    let br = LayoutUnit::from_i32(style.effective_border_right());
+    let bb = LayoutUnit::from_i32(style.effective_border_bottom());
+    let bl = LayoutUnit::from_i32(style.effective_border_left());
+    let inner_offset = PhysicalOffset::new(offset.left + bl, offset.top + bt);
+    let inner_size = PhysicalSize::new(
+        (fragment.size.width - bl - br).clamp_negative_to_zero(),
+        (fragment.size.height - bt - bb).clamp_negative_to_zero(),
+    );
+    let rect = snapped_border_contour_rect(inner_offset, inner_size, true);
+    let (bt, br, bb, bl) = (bt.to_f32(), br.to_f32(), bb.to_f32(), bl.to_f32());
+    let inset = [
+        Point::new((radii[0].x - bl).max(0.0), (radii[0].y - bt).max(0.0)),
+        Point::new((radii[1].x - br).max(0.0), (radii[1].y - bt).max(0.0)),
+        Point::new((radii[2].x - br).max(0.0), (radii[2].y - bb).max(0.0)),
+        Point::new((radii[3].x - bl).max(0.0), (radii[3].y - bb).max(0.0)),
+    ];
+    RRect::new_rect_radii(rect, &inset)
+}
+
+#[cfg(test)]
+mod radius_contour_rounding_guards {
+    use super::*;
+
+    #[test]
+    fn primary_negative_half_and_nonempty_outer_allow_zero_inner_rules() {
+        let offset = PhysicalOffset::new(LayoutUnit::from_f32(-0.5), LayoutUnit::from_f32(-0.5));
+        let ordinary = PhysicalSize::new(LayoutUnit::from_i32(60), LayoutUnit::from_i32(60));
+        assert_eq!(
+            rect_components(snapped_border_contour_rect(offset, ordinary, true)),
+            (0.0, 0.0, 60.0, 60.0)
+        );
+        let thin = PhysicalSize::new(LayoutUnit::from_f32(0.125), LayoutUnit::from_f32(0.125));
+        assert_eq!(
+            rect_components(snapped_border_contour_rect(offset, thin, false)),
+            (0.0, 0.0, 1.0, 1.0)
+        );
+        assert_eq!(
+            rect_components(snapped_border_contour_rect(offset, thin, true)),
+            (0.0, 0.0, 0.0, 0.0)
+        );
+        // Exactly four LayoutUnit quanta do not force a minimum pixel.
+        let quantum = PhysicalSize::new(LayoutUnit::from_raw(4), LayoutUnit::from_raw(4));
+        assert_eq!(
+            rect_components(snapped_border_contour_rect(
+                PhysicalOffset::zero(),
+                quantum,
+                false
+            )),
+            (0.0, 0.0, 0.0, 0.0)
+        );
+        let positive = PhysicalOffset::new(LayoutUnit::from_f32(0.5), LayoutUnit::from_f32(0.5));
+        assert_eq!(
+            rect_components(snapped_border_contour_rect(positive, ordinary, true)),
+            (1.0, 1.0, 60.0, 60.0)
+        );
+    }
+}
+
+fn paint_with_overflow_clip(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    doc: &Document,
+    offset: PhysicalOffset,
+    style: &ComputedStyle,
+) {
+    let used_style = paint_style_with_used_overflow(fragment, style, doc);
+    let style = used_style.as_ref().unwrap_or(style);
+    // The fieldset's rendered legend is part of the fieldset decoration.  It
+    // remains visible over the block-start border even when authored overflow
+    // clips the fieldset contents (HTML rendering §14.3).  Paint that direct
+    // legend before installing the content clip, then suppress its ordinary
+    // child traversal below so it is not painted twice.
+    let unclipped_fieldset_legend_content: Vec<&Fragment> = if !fragment.node_id.is_none()
+        && doc.node(fragment.node_id).tag == ElementTag::Fieldset
+    {
+        let rendered_legend = doc.fieldset_rendered_legend(fragment.node_id);
+        let belongs_to_rendered_legend = |node_id: NodeId| {
+            let mut ancestor = node_id;
+            while !ancestor.is_none() && ancestor != fragment.node_id {
+                if Some(ancestor) == rendered_legend {
+                    return true;
+                }
+                ancestor = doc.node(ancestor).parent;
+            }
+            false
+        };
+        fragment
+            .children
+            .iter()
+            .filter(|child| !child.node_id.is_none() && belongs_to_rendered_legend(child.node_id))
+            .collect()
+    } else {
+        Vec::new()
+    };
+    for legend_content in &unclipped_fieldset_legend_content {
+        paint_fragment_tracked(canvas, legend_content, doc, offset);
+    }
+    let newly_skipped_legends: Vec<usize> = HOIST_SKIP.with(|skipped| {
+        let mut skipped = skipped.borrow_mut();
+        unclipped_fieldset_legend_content
+            .iter()
+            .map(|legend_content| *legend_content as *const Fragment as usize)
+            .filter(|pointer| skipped.insert(*pointer))
+            .collect()
+    });
+
+    let (base_clip_rect, (clip_x_axis, clip_y_axis), (margin_x, margin_y)) =
+        overflow_clip_base_geometry(fragment, doc, offset, style);
+    let (clip_x, clip_y, clip_w, clip_h) = rect_components(base_clip_rect);
 
     // A layout-owned fragmentation clip is not authored overflow clipping.
     // Descendant outlines remain ink overflow at every fragmentainer edge,
@@ -10232,10 +10502,8 @@ fn paint_with_overflow_clip(
         clip_rect
     };
 
-    let rounded_clip_rrect = (fragment.owns_element_box()
-        && style.has_border_radius()
-        && !fragment.ignore_border_radius)
-        .then(|| {
+    let rounded_clip_rrect =
+        paint_rounded_overflow_clip_eligible(fragment, style, doc).then(|| {
             build_clip_rrect(
                 &clip_rect,
                 fragment,
@@ -10551,32 +10819,36 @@ fn build_clip_rrect(
     margin_x: f32,
     margin_y: f32,
 ) -> RRect {
-    let bt = style.effective_border_top() as f32;
-    let br = style.effective_border_right() as f32;
-    let bb = style.effective_border_bottom() as f32;
-    let bl = style.effective_border_left() as f32;
-    let pt = fragment.padding.top.to_f32();
-    let pr = fragment.padding.right.to_f32();
-    let pb = fragment.padding.bottom.to_f32();
-    let pl = fragment.padding.left.to_f32();
+    let border = openui_layout::ScrollArea::used_border(fragment);
+    let padding = openui_layout::ScrollArea::used_padding(fragment);
+    let bt = border.top.to_f32();
+    let br = border.right.to_f32();
+    let bb = border.bottom.to_f32();
+    let bl = border.left.to_f32();
+    let pt = padding.top.to_f32();
+    let pr = padding.right.to_f32();
+    let pb = padding.bottom.to_f32();
+    let pl = padding.left.to_f32();
+    let border = fragment.border_box_rect();
     let border_rect = Rect::from_xywh(
-        0.0,
-        0.0,
-        fragment.size.width.to_f32(),
-        fragment.size.height.to_f32(),
+        border.x().to_f32(),
+        border.y().to_f32(),
+        border.width().to_f32(),
+        border.height().to_f32(),
     );
     // A fragmented overflow clip owns the same physical corner set as its
     // painted border. Intermediate slices have square block-start/end edges;
     // reapplying all authored radii to every slice exposes the element's
     // background between clipped descendants at each column boundary.
-    let outer = if fragment.decoration_slice.is_some() {
+    let outer = if fragment.decoration_slice.is_some() || fragment.is_inline_box_fragment {
         fragment_border_radii(style, fragment, &border_rect, bt)
     } else {
         normalized_border_radii(style, &border_rect)
     };
 
-    let padding_width = (fragment.size.width.to_f32() - bl - br).max(0.0);
-    let padding_height = (fragment.size.height.to_f32() - bt - bb).max(0.0);
+    let source_rect = decoration_source_rect(fragment, border_rect);
+    let padding_width = (source_rect.width() - bl - br).max(0.0);
+    let padding_height = (source_rect.height() - bt - bb).max(0.0);
 
     // Overflow clips are based on the padding-box rounded rect, then outset
     // to the requested visual box plus overflow-clip-margin.
@@ -10972,28 +11244,9 @@ fn specified_border_radii(style: &ComputedStyle, rect: &Rect) -> [Point; 4] {
     if table_internal_ignores_border_radius(style.display) {
         return [Point::new(0.0, 0.0); 4];
     }
-    let specified = [
-        style.border_top_left_radius,
-        style.border_top_right_radius,
-        style.border_bottom_right_radius,
-        style.border_bottom_left_radius,
-    ];
-    std::array::from_fn(|index| {
-        let (x, y) = specified[index];
-        let (x_percent, y_percent) = style.border_radius_percent[index];
-        Point::new(
-            if x_percent {
-                x * rect.width() / 100.0
-            } else {
-                x
-            },
-            if y_percent {
-                y * rect.height() / 100.0
-            } else {
-                y
-            },
-        )
-    })
+    style
+        .border_radii_for_box((rect.width(), rect.height()))
+        .map(|(x, y)| Point::new(x, y))
 }
 
 fn all_effective_borders_transparent(style: &ComputedStyle) -> bool {

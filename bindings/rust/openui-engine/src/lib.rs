@@ -2753,12 +2753,19 @@ impl Engine {
             document: &NativeDocument,
             fragment: &Fragment,
             parent_world: WorldTransform,
+            parent_paint_offset: openui_geometry::PhysicalOffset,
             inherited_hittable: bool,
             inherited_clips: &[HitClip],
             out: &mut Vec<HitEntry>,
             rects: &mut HashMap<NodeId, Vec<SceneRect>>,
             box_worlds: &mut HashMap<NodeId, WorldTransform>,
         ) {
+            // CSS paint placement is snapped before authored matrix/scroll
+            // application. It must not be derived from transformed world bounds.
+            let paint_offset = openui_geometry::PhysicalOffset::new(
+                parent_paint_offset.left + fragment.offset.left,
+                parent_paint_offset.top + fragment.offset.top,
+            );
             let width = fragment.size.width.to_f32();
             let height = fragment.size.height.to_f32();
             let border_box = fragment.border_box_rect();
@@ -2862,86 +2869,45 @@ impl Engine {
                 // CSS overflow uses the final layout policy, including table,
                 // replaced and viewport-propagated boxes. A visible axis must
                 // continue accepting the descendant ink painted on that axis.
-                let owns_scroll = fragment.owns_scroll_box();
-                let (overflow_x, overflow_y) = if !owns_scroll {
-                    (
-                        openui_style::Overflow::Visible,
-                        openui_style::Overflow::Visible,
-                    )
-                } else if let Some(area) = fragment.scroll_area {
-                    (area.overflow_x, area.overflow_y)
-                } else {
-                    openui_layout::used_overflow_pair(document, fragment.node_id)
+                let effective = fragment.layout_style(style);
+                let geometry = openui_paint::compute_overflow_clip_geometry(
+                    fragment,
+                    effective,
+                    document,
+                    paint_offset,
+                    openui_paint::OverflowClipContourPurpose::DirectFragmentHit,
+                );
+                let push_contour = |rect: (f32, f32, f32, f32),
+                                    axes: (bool, bool),
+                                    radii: [(f32, f32); 4],
+                                    clips: &mut Vec<HitClip>| {
+                    let clip_world = world.then(WorldTransform::translate(
+                        rect.0 as f64 - paint_offset.left.to_f64(),
+                        rect.1 as f64 - paint_offset.top.to_f64(),
+                    ));
+                    if let Some(world_to_local) = clip_world.inverse().filter(|_| axes.0 || axes.1)
+                    {
+                        clips.push(HitClip {
+                            world_to_local,
+                            width: rect.2,
+                            height: rect.3,
+                            clip_x: axes.0,
+                            clip_y: axes.1,
+                            radii,
+                        });
+                    }
                 };
-                let clips_used_box = owns_scroll
-                    && (overflow_x != openui_style::Overflow::Visible
-                        || overflow_y != openui_style::Overflow::Visible);
-                // Containment and continuation clips retain their own axes.
-                // CSS clipping must not suppress a structural fragment edge.
-                let structural = fragment.has_overflow_clip
-                    && (!clips_used_box
-                        || fragment.block_axis_clip_only
-                        || fragment.inline_axis_clip_only);
-                let block_axis_is_x = fragment
-                    .fragmentation_writing_direction
-                    .is_some_and(|direction| !direction.is_horizontal());
-                let (structural_x, structural_y) = if !structural {
-                    (false, false)
-                } else if fragment.block_axis_clip_only && !fragment.inline_axis_clip_only {
-                    (block_axis_is_x, !block_axis_is_x)
-                } else if fragment.inline_axis_clip_only && !fragment.block_axis_clip_only {
-                    (!block_axis_is_x, block_axis_is_x)
-                } else {
-                    (true, true)
-                };
-                let clip_x = structural_x
-                    || (owns_box && style.has_paint_containment())
-                    || (clips_used_box && overflow_x != openui_style::Overflow::Visible);
-                let clip_y = structural_y
-                    || (owns_box && style.has_paint_containment())
-                    || (clips_used_box && overflow_y != openui_style::Overflow::Visible);
-                let (clip_world, clip_width, clip_height) =
-                    if let Some(scrollport) = fragment.viewport_scrollport.filter(|_| owns_box) {
-                        (
-                            world,
-                            scrollport.client_rect.width().to_f32(),
-                            scrollport.client_rect.height().to_f32(),
-                        )
-                    } else if let Some(area) = fragment.scroll_area.filter(|_| owns_scroll) {
-                        (
-                            // client_rect is local to the physical fragment;
-                            // it already includes the principal border-box
-                            // origin (including a table caption's placement).
-                            world.then(WorldTransform::translate(
-                                area.client_rect.x().to_f64(),
-                                area.client_rect.y().to_f64(),
-                            )),
-                            area.client_rect.width().to_f32(),
-                            area.client_rect.height().to_f32(),
-                        )
-                    } else if clips_used_box {
-                        (box_world, box_width, box_height)
-                    } else {
-                        (world, width, height)
-                    };
-                if let Some(world_to_local) = clip_world.inverse().filter(|_| clip_x || clip_y) {
-                    own_clips.push(HitClip {
-                        world_to_local,
-                        width: clip_width,
-                        height: clip_height,
-                        clip_x,
-                        clip_y,
-                        radii: if fragment.ignore_border_radius || !fragment.owns_layout_box() {
-                            [(0.0, 0.0); 4]
-                        } else {
-                            [
-                                style.border_top_left_radius,
-                                style.border_top_right_radius,
-                                style.border_bottom_right_radius,
-                                style.border_bottom_left_radius,
-                            ]
-                        },
-                    });
+                // The rectangular overflow bound includes its real axes/margin.
+                // The pinned direct rounded inner check is a separate operation
+                // with physical fragment size and all computed border sides.
+                push_contour(
+                    geometry.rect,
+                    (geometry.clips_x, geometry.clips_y),
+                    [(0.0, 0.0); 4],
+                    &mut own_clips,
+                );
+                if let Some(rounded) = geometry.rounded {
+                    push_contour(rounded.rect, (true, true), rounded.radii, &mut own_clips);
                 }
             }
             // Authored effects keep their ordinary flattening boundary even
@@ -2985,6 +2951,7 @@ impl Engine {
                     document,
                     child,
                     child_world,
+                    paint_offset,
                     subtree_hittable,
                     &own_clips,
                     out,
@@ -3020,6 +2987,7 @@ impl Engine {
             &self.document,
             fragment,
             WorldTransform::IDENTITY,
+            openui_geometry::PhysicalOffset::zero(),
             true,
             &[],
             &mut entries,
