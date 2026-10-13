@@ -425,13 +425,13 @@ impl dyn PaintCanvas + '_ {
     }
     pub(crate) fn concat_44(&self, matrix: &M44) -> &Self {
         let c = self.ordinary_draw_target();
-        paint_program::record_operation(c, ProgramOperation::Concat44(*matrix));
+        paint_program::record_operation(c, ProgramOperation::Concat44(matrix.clone()));
         c.concat_44(matrix);
         self
     }
     pub(crate) fn set_matrix(&self, matrix: &M44) -> &Self {
         let c = self.ordinary_draw_target();
-        paint_program::record_operation(c, ProgramOperation::SetMatrix(*matrix));
+        paint_program::record_operation(c, ProgramOperation::SetMatrix(matrix.clone()));
         c.set_matrix(matrix);
         self
     }
