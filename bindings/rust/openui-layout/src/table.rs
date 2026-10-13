@@ -3309,65 +3309,85 @@ mod tests {
 
     #[test]
     fn real_multicol_tables_receive_full_column_positioning_after_root_layout() {
-        let mut doc = Document::new();
-        let columns = doc.create_node(ElementTag::Div);
-        let table = doc.create_node(ElementTag::Table);
-        let column = doc.create_node(ElementTag::TableColumn);
-        doc.append_child(doc.root(), columns);
-        doc.append_child(columns, table);
-        doc.append_child(table, column);
-        doc.update_resolved_style(columns, |style| {
-            style.display = Display::Block;
-            style.width = Length::px(80.0);
-            style.height = Length::px(25.0);
-            style.column_count = Some(2);
-            style.column_gap = Some(Length::zero());
-        });
-        doc.update_resolved_style(table, |style| {
-            style.display = Display::Table;
-            style.border_collapse = BorderCollapse::Collapse;
-        });
-        doc.update_resolved_style(column, |style| style.display = Display::TableColumn);
-        for _ in 0..6 {
-            let row = doc.create_node(ElementTag::TableRow);
-            let cell = doc.create_node(ElementTag::TableCell);
-            doc.append_child(table, row);
-            doc.append_child(row, cell);
-            doc.update_resolved_style(row, |style| style.display = Display::TableRow);
-            doc.update_resolved_style(cell, |style| {
-                style.display = Display::TableCell;
-                style.width = Length::px(20.0);
-                style.height = Length::px(10.0);
+        for collapse in [BorderCollapse::Collapse, BorderCollapse::Separate] {
+            let mut doc = Document::new();
+            let columns = doc.create_node(ElementTag::Div);
+            let table = doc.create_node(ElementTag::Table);
+            let column = doc.create_node(ElementTag::TableColumn);
+            doc.append_child(doc.root(), columns);
+            doc.append_child(columns, table);
+            doc.append_child(table, column);
+            doc.update_resolved_style(columns, |style| {
+                style.display = Display::Block;
+                style.width = Length::px(80.0);
+                style.height = Length::px(25.0);
+                style.column_count = Some(2);
+                style.column_gap = Some(Length::zero());
             });
-        }
-        let root = block_layout_with_layout(
-            &doc,
-            doc.root(),
-            &ConstraintSpace::for_root(LayoutUnit::from_i32(200), LayoutUnit::from_i32(100)),
-        );
-        fn collect<'a>(fragment: &'a Fragment, node: NodeId, results: &mut Vec<&'a Fragment>) {
-            if fragment.node_id == node && fragment.table_part == Some(FragmentTablePart::Table) {
-                results.push(fragment);
+            doc.update_resolved_style(table, |style| {
+                style.display = Display::Table;
+                style.border_collapse = collapse;
+            });
+            doc.update_resolved_style(column, |style| style.display = Display::TableColumn);
+            for _ in 0..6 {
+                let row = doc.create_node(ElementTag::TableRow);
+                let cell = doc.create_node(ElementTag::TableCell);
+                doc.append_child(table, row);
+                doc.append_child(row, cell);
+                doc.update_resolved_style(row, |style| style.display = Display::TableRow);
+                doc.update_resolved_style(cell, |style| {
+                    style.display = Display::TableCell;
+                    style.width = Length::px(20.0);
+                    style.height = Length::px(10.0);
+                });
             }
-            for child in &fragment.children {
-                collect(child, node, results);
+            let root = block_layout_with_layout(
+                &doc,
+                doc.root(),
+                &ConstraintSpace::for_root(LayoutUnit::from_i32(200), LayoutUnit::from_i32(100)),
+            );
+            fn collect<'a>(fragment: &'a Fragment, node: NodeId, results: &mut Vec<&'a Fragment>) {
+                if fragment.node_id == node && fragment.table_part == Some(FragmentTablePart::Table)
+                {
+                    results.push(fragment);
+                }
+                for child in &fragment.children {
+                    collect(child, node, results);
+                }
             }
-        }
-        let mut continuations = Vec::new();
-        collect(&root, table, &mut continuations);
-        assert!(
-            continuations.len() > 1,
-            "the guard must exercise real table continuations"
-        );
-        let full_size = continuations[0]
-            .table_column_background_positioning
-            .unwrap()
-            .rect
-            .size;
-        for continuation in continuations {
-            let positioning = continuation.table_column_background_positioning.unwrap();
-            assert_eq!(positioning.rect.size, full_size);
-            assert!(positioning.rect.size.height > continuation.size.height);
+            let mut continuations = Vec::new();
+            collect(&root, table, &mut continuations);
+            // Pinned Chromium .50 fragments both table border models into
+            // 25/25/10px pieces, including an anonymous collapsed row group.
+            assert_eq!(
+                continuations
+                    .iter()
+                    .map(|piece| piece.size.height)
+                    .collect::<Vec<_>>(),
+                [
+                    LayoutUnit::from_i32(25),
+                    LayoutUnit::from_i32(25),
+                    LayoutUnit::from_i32(10)
+                ]
+            );
+            let full_size = continuations[0]
+                .table_column_background_positioning
+                .unwrap()
+                .rect
+                .size;
+            assert_eq!(
+                full_size,
+                PhysicalSize::new(LayoutUnit::from_i32(20), LayoutUnit::from_i32(60))
+            );
+            for (index, continuation) in continuations.into_iter().enumerate() {
+                let positioning = continuation.table_column_background_positioning.unwrap();
+                assert_eq!(positioning.rect.size, full_size);
+                assert_eq!(
+                    positioning.rect.y(),
+                    LayoutUnit::from_i32(-25 * index as i32)
+                );
+                assert!(positioning.rect.size.height > continuation.size.height);
+            }
         }
     }
 

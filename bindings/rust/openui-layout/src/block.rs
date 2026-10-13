@@ -18978,10 +18978,9 @@ fn inline_fragmentation_flow_bottom(
     }
 
     let is_inline_formatting_context = !fragment.children.is_empty()
-        && fragment
-            .children
-            .iter()
-            .all(|line| line.node_id.is_none() && line.kind == FragmentKind::Box);
+        && fragment.children.iter().all(|line| {
+            line.node_id.is_none() && line.kind == FragmentKind::Box && line.table_part.is_none()
+        });
     if is_inline_formatting_context {
         let mut skipped = LayoutUnit::zero();
         let mut bottom = fragment.size.height;
@@ -25819,6 +25818,9 @@ fn layout_multicol(
                 // inline-block line must move whole to the next column, and a
                 // following line resumes after that oversized line rather
                 // than at its original unfragmented coordinate.
+                // Anonymous table sections retain table-part identity even
+                // without a DOM node. They expose row/cell fragmentation and
+                // must not become an indivisible anonymous inline line.
                 let fragment_is_inline_formatting_context = (child_is_inline_run
                     || (child_style.display.is_block_level() && child_style.height.is_auto()))
                     && !child_relaid_with_inherited_exclusions
@@ -25832,6 +25834,7 @@ fn layout_multicol(
                     child_frag.children.iter().any(|line| {
                         line.node_id.is_none()
                             && line.kind == FragmentKind::Box
+                            && line.table_part.is_none()
                             && line.size.height > column_height
                     });
                 if fragment_is_inline_formatting_context
