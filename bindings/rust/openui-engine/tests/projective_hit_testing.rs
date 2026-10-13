@@ -190,6 +190,16 @@ fn promoted_multicol_ancestor_transform_reaches_native_rectangles_and_input() {
                 .unwrap();
         }
         let ancestor = box_(&mut e, columns, 100.0, 20.0);
+        // Match the pinned Chromium source's centered transform origin.
+        e.set_property(
+            ancestor,
+            StyleProperty::TransformOrigin,
+            StyleValue::Renderer(RendererStyleValue::TransformOrigin((
+                openui_geometry::Length::percent(50.0),
+                openui_geometry::Length::percent(50.0),
+            ))),
+        )
+        .unwrap();
         e.set_property(
             ancestor,
             StyleProperty::Transform,
