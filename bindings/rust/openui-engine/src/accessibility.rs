@@ -23,6 +23,15 @@ pub enum AccessibilityRelation {
     Details,
 }
 
+/// Physical accessibility paging direction. Writing modes do not remap it.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum AccessibilityScrollDirection {
+    Up,
+    Down,
+    Left,
+    Right,
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum AccessibilityAction {
     Click,
@@ -34,24 +43,37 @@ pub enum AccessibilityAction {
     Collapse,
     SetValue(String),
     ReplaceSelectedText(String),
-    SetTextSelection { anchor: usize, focus: usize },
+    SetTextSelection {
+        anchor: usize,
+        focus: usize,
+    },
     ScrollIntoView,
-    ScrollBy { delta_x: f64, delta_y: f64 },
-    SetScrollOffset { x: f64, y: f64 },
+    ScrollBy {
+        delta_x: f64,
+        delta_y: f64,
+    },
+    SetScrollOffset {
+        x: f64,
+        y: f64,
+    },
+    /// Target-aware paging through the retained authored AX scroll box.
+    ScrollPage {
+        direction: AccessibilityScrollDirection,
+    },
 }
 
 impl AccessibilityAction {
-    /// Lower a directional platform scroll to the shared native scroll step.
-    /// Other actions need their own value/selection data and return `None`.
+    /// Lower a physical platform scroll to a target-aware page request.
+    /// Geometry is resolved when the shared Engine executes the action.
     pub fn directional_scroll(action: AccessibilityPlatformAction) -> Option<Self> {
-        let (delta_x, delta_y) = match action {
-            Action::ScrollDown => (0.0, 40.0),
-            Action::ScrollUp => (0.0, -40.0),
-            Action::ScrollLeft => (-40.0, 0.0),
-            Action::ScrollRight => (40.0, 0.0),
+        let direction = match action {
+            Action::ScrollDown => AccessibilityScrollDirection::Down,
+            Action::ScrollUp => AccessibilityScrollDirection::Up,
+            Action::ScrollLeft => AccessibilityScrollDirection::Left,
+            Action::ScrollRight => AccessibilityScrollDirection::Right,
             _ => return None,
         };
-        Some(Self::ScrollBy { delta_x, delta_y })
+        Some(Self::ScrollPage { direction })
     }
 }
 
@@ -365,6 +387,10 @@ impl Engine {
                 )?;
                 Ok(ActivationResult { changed: vec![] })
             }
+            AccessibilityAction::ScrollPage { direction } => {
+                self.scroll_accessibility_page(handle, direction)?;
+                Ok(ActivationResult { changed: vec![] })
+            }
             AccessibilityAction::ScrollBy { delta_x, delta_y } => {
                 let (x, y) = self.scroll_offset(handle)?;
                 self.scroll_to(handle, x + delta_x, y + delta_y)?;
@@ -375,6 +401,72 @@ impl Engine {
                 Ok(ActivationResult { changed: vec![] })
             }
         }
+    }
+
+    fn scroll_accessibility_page(
+        &mut self,
+        handle: NodeHandle,
+        direction: AccessibilityScrollDirection,
+    ) -> Result<(), EngineError> {
+        let node = self.resolve(handle)?;
+        if !self.node_is_connected(node) {
+            return Ok(());
+        }
+        self.update()?;
+        let Some(size) = self.retained_authored_box_size(node) else {
+            return Ok(());
+        };
+        if size.width <= openui_geometry::LayoutUnit::zero()
+            || size.height <= openui_geometry::LayoutUnit::zero()
+        {
+            return Ok(());
+        }
+        let Some(area) = self.retained_authored_scroll_area(node) else {
+            return Ok(());
+        };
+        // AXObject::Scroll uses float bounds * 4 / 5 before ClampRound<int>.
+        let page_x = (size.width.to_f32() * 4.0 / 5.0).round().max(1.0) as i32;
+        let page_y = (size.height.to_f32() * 4.0 / 5.0).round().max(1.0) as i32;
+        let (range_x, range_y) = area.limits();
+        let initial = self.scroll_offset(handle)?;
+        // ScrollOffsetInt rounds both physical components, ties away from zero.
+        let mut x = initial.0.round() as i32;
+        let mut y = initial.1.round() as i32;
+        let min_x = range_x.0 as i32;
+        let max_x = range_x.1 as i32;
+        let min_y = range_y.0 as i32;
+        let max_y = range_y.1 as i32;
+        match direction {
+            AccessibilityScrollDirection::Up => {
+                if y == min_y {
+                    return Ok(());
+                }
+                y = y.saturating_sub(page_y).max(min_y);
+            }
+            AccessibilityScrollDirection::Down => {
+                if y == max_y {
+                    return Ok(());
+                }
+                y = y.saturating_add(page_y).min(max_y);
+            }
+            AccessibilityScrollDirection::Left => {
+                if x == min_x {
+                    return Ok(());
+                }
+                x = x.saturating_sub(page_x).max(min_x);
+            }
+            AccessibilityScrollDirection::Right => {
+                if x == max_x {
+                    return Ok(());
+                }
+                x = x.saturating_add(page_x).min(max_x);
+            }
+        }
+        // The instant AX programmatic route clamps/cancels through the same
+        // retained state but does not select a new mandatory snap endpoint.
+        // The early endpoint return above must not cancel an active animation.
+        let (x, y) = area.clamp_offset(x as f64, y as f64);
+        self.scroll_to_resolved(handle, x, y)
     }
 
     /// Validate and lower a platform AccessKit request to the engine's typed
@@ -622,19 +714,18 @@ impl Engine {
             node.set_expanded(!closed_details);
         }
         if let Some(area) = self
-            .layout_scroll_area(dom_id)
+            .retained_authored_scroll_area(dom_id)
             .filter(|area| area.is_scroll_container())
         {
-            // Scrolling belongs to the retained scroll box: normalized table,
-            // replaced and viewport-propagated boxes can differ from authored
-            // overflow, and a fieldset delegates to its anonymous content box.
+            // AX lookup uses the authored layout box. Programmatic fieldset
+            // scrolling delegates to its content, but the AX wrapper does not.
             let dimensions = self.retained_element_dimensions(dom_id);
             let user_scrollable = (area.overflow_x.is_scrollable()
                 && dimensions[2] != dimensions[0])
                 || (area.overflow_y.is_scrollable() && dimensions[3] != dimensions[1]);
             // Blink147 advertises every directional action once either axis
             // is user-scrollable. Hidden remains programmatic-only. Actions
-            // still use the existing shared native AccessKit scroll step.
+            // execute target-aware physical pages through the shared Engine.
             if user_scrollable {
                 node.add_action(Action::ScrollDown);
                 node.add_action(Action::ScrollUp);

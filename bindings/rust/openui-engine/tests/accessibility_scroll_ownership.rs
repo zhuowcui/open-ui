@@ -140,7 +140,7 @@ fn hidden_offsets_and_ranges_are_distinct_from_user_actions_and_mutate_increment
             AccessibilityAction::directional_scroll(Action::ScrollDown).unwrap(),
         )
         .unwrap();
-        assert_eq!(snapshot(&mut e, scroll).scroll_y(), Some(40.0));
+        assert_eq!(snapshot(&mut e, scroll).scroll_y(), Some(64.0));
         let owned = snapshot(&mut e, scroll);
         e.detach(scroll).unwrap();
         assert!(!e
@@ -149,7 +149,7 @@ fn hidden_offsets_and_ranges_are_distinct_from_user_actions_and_mutate_increment
             .iter()
             .any(|(candidate, _)| *candidate == id));
         drop(e);
-        assert_eq!(owned.scroll_y(), Some(40.0));
+        assert_eq!(owned.scroll_y(), Some(64.0));
         directions(&initial, true);
         assert_eq!(initial.scroll_y(), Some(0.0));
     }
@@ -228,8 +228,8 @@ fn normalized_table_and_replaced_boxes_do_not_advertise_authored_overflow() {
             AccessibilityAction::directional_scroll(Action::ScrollRight).unwrap(),
         )
         .unwrap();
-        assert_eq!(e.scroll_offset(cell).unwrap(), (40.0, 0.0));
-        assert_eq!(snapshot(&mut e, cell).scroll_x(), Some(40.0));
+        assert_eq!(e.scroll_offset(cell).unwrap(), (80.0, 0.0));
+        assert_eq!(snapshot(&mut e, cell).scroll_x(), Some(80.0));
         e.detach(oversized).unwrap();
         directions(&snapshot(&mut e, cell), false);
         assert_eq!(e.scroll_offset(cell).unwrap(), (0.0, 0.0));
@@ -323,15 +323,26 @@ fn fieldset_anonymous_content_keeps_one_semantic_owner_and_a_fixed_legend() {
         let fixed_wrapper = e.bounds(fieldset).unwrap().unwrap();
         let content_before = e.bounds(content).unwrap().unwrap();
         let initial = snapshot(&mut e, fieldset);
-        directions(&initial, true);
-        // The anonymous content box has initial scrollbar-width, as pinned
-        // LayoutFieldset::UpdateAnonymousChildStyle does not copy that field.
-        // Classic Y and then X gutters reduce its 72px client height to57.
-        assert_eq!(initial.scroll_y_max(), Some(143.0));
+        // Blink's AX node queries the authored LayoutFieldset, which does not
+        // respect CSS overflow. Its anonymous content remains programmatically
+        // scrollable through the public element, without an AX alias.
+        directions(&initial, false);
+        assert_eq!((initial.scroll_x(), initial.scroll_y()), (None, None));
         assert_eq!(snapshot(&mut e, legend).scroll_y(), None);
         e.perform_accessibility_action(
             fieldset,
             AccessibilityAction::directional_scroll(Action::ScrollDown).unwrap(),
+        )
+        .unwrap();
+        assert_eq!(e.scroll_offset(fieldset).unwrap(), (0.0, 0.0));
+        assert_eq!(e.bounds(content).unwrap().unwrap(), content_before);
+        // This explicit native delta keeps its existing programmatic meaning.
+        e.perform_accessibility_action(
+            fieldset,
+            AccessibilityAction::ScrollBy {
+                delta_x: 0.0,
+                delta_y: 40.0,
+            },
         )
         .unwrap();
         assert_eq!(e.scroll_offset(fieldset).unwrap(), (0.0, 40.0));
@@ -354,7 +365,8 @@ fn fieldset_anonymous_content_keeps_one_semantic_owner_and_a_fixed_legend() {
         e.scroll_to(fieldset, 0.0, 80.0).unwrap();
         let hidden = snapshot(&mut e, fieldset);
         directions(&hidden, false);
-        assert_eq!(hidden.scroll_y(), Some(80.0));
+        assert_eq!(hidden.scroll_y(), None);
+        assert_eq!(e.scroll_offset(fieldset).unwrap(), (0.0, 80.0));
         assert_eq!(e.bounds(legend).unwrap().unwrap(), fixed_legend);
     }
 }

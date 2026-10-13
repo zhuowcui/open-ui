@@ -122,7 +122,7 @@ static void exercise(double scale) {
   const OuiAccessibilityAction actions[] = {
       OUI_ACCESSIBILITY_SCROLL_DOWN, OUI_ACCESSIBILITY_SCROLL_RIGHT, OUI_ACCESSIBILITY_SCROLL_UP,
       OUI_ACCESSIBILITY_SCROLL_LEFT};
-  const double positions[][2] = {{0.0, 40.0}, {40.0, 40.0}, {40.0, 0.0}, {0.0, 0.0}};
+  const double positions[][2] = {{0.0, 80.0}, {80.0, 80.0}, {80.0, 0.0}, {0.0, 0.0}};
   for (unsigned index = 0; index < 4; ++index) {
     assert(oui_element_perform_accessibility_action(viewport, actions[index], text(""), 0, 0) ==
            OUI_OK);

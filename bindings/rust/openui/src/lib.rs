@@ -145,14 +145,15 @@ pub use app::{
 };
 pub use openui_engine::{
     AccessibilityAction, AccessibilityLive, AccessibilityNode, AccessibilityNodeId,
-    AccessibilityPlatformAction, AccessibilityRelation, AccessibilityRole, AccessibilityTreeUpdate,
-    AnimationAttachmentSnapshot, AnimationEvent, AnimationEventKind, AnimationId,
-    AnimationResolvedTimelineRanges, AnimationState, AnimationTimelineSnapshot,
-    AnimationTimelineSource, ControlAdjustment, EditCommand, EngineOptions, FocusOrigin,
-    PointerEventKind, RangeSelectionMode, RasterBackend, RasterConfiguration, RasterPixelGeometry,
-    ScrollAlignment, ScrollAnimationId, ScrollIntoViewContainer, ScrollIntoViewOptions,
-    ScrollMetrics, SelectionDirection, TextDirection, TextEdging, TextHinting,
-    TextRasterConfiguration, TextUnit, ViewportAuthority, ViewportMetrics, ViewportMetricsError,
+    AccessibilityPlatformAction, AccessibilityRelation, AccessibilityRole,
+    AccessibilityScrollDirection, AccessibilityTreeUpdate, AnimationAttachmentSnapshot,
+    AnimationEvent, AnimationEventKind, AnimationId, AnimationResolvedTimelineRanges,
+    AnimationState, AnimationTimelineSnapshot, AnimationTimelineSource, ControlAdjustment,
+    EditCommand, EngineOptions, FocusOrigin, PointerEventKind, RangeSelectionMode, RasterBackend,
+    RasterConfiguration, RasterPixelGeometry, ScrollAlignment, ScrollAnimationId,
+    ScrollIntoViewContainer, ScrollIntoViewOptions, ScrollMetrics, SelectionDirection,
+    TextDirection, TextEdging, TextHinting, TextRasterConfiguration, TextUnit, ViewportAuthority,
+    ViewportMetrics, ViewportMetricsError,
 };
 #[cfg(all(feature = "linux", target_os = "linux"))]
 pub use openui_platform::{KeyboardInput, PlatformEvent};

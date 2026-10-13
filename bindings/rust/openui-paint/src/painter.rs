@@ -23363,6 +23363,7 @@ mod tests {
             overflow_y: Overflow::Hidden,
             negative_x: false,
             negative_y: false,
+            contents_snap_origin: openui_geometry::PhysicalOffset::zero(),
             integer_offsets: false,
         });
         assert_eq!(
@@ -23418,6 +23419,7 @@ mod tests {
             overflow_y: Overflow::Hidden,
             negative_x: false,
             negative_y: false,
+            contents_snap_origin: openui_geometry::PhysicalOffset::zero(),
             integer_offsets: true,
         });
         let offset = PhysicalOffset::new(LayoutUnit::from_f32(10.25), LayoutUnit::from_f32(20.25));

@@ -541,6 +541,7 @@ mod tests {
             overflow_y: Overflow::Hidden,
             negative_x: false,
             negative_y: false,
+            contents_snap_origin: openui_geometry::PhysicalOffset::zero(),
             integer_offsets: true,
         });
         fragment

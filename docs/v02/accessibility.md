@@ -44,9 +44,14 @@ This API does not consume the Rust/AccessKit incremental update stream.
 
 C callers can invoke every advertised directional scroll action with
 `OUI_ACCESSIBILITY_SCROLL_DOWN`, `SCROLL_UP`, `SCROLL_LEFT`, and `SCROLL_RIGHT`.
-These use the same logical scroll step and bounds clamping as Rust and the
-Linux AccessKit adapter. Scroll notifications use the document's pending event
-queue; call `oui_document_dispatch_pending_events_v1` to deliver them. Existing
+These use the same target-aware physical page request and legal offset bounds
+as Rust and the Linux AccessKit adapter. A page is four fifths of the authored,
+untransformed stitched border-box dimension, rounded to the nearest integer
+with a minimum of one pixel. A document uses the full frame size. Client
+gutters do not reduce the page, and writing modes do not remap the four physical
+directions. The instant action bypasses selection of a new mandatory snap
+endpoint; explicit `ScrollBy` retains its native delta behavior. Scroll
+notifications use the document's pending event queue; call `oui_document_dispatch_pending_events_v1` to deliver them. Existing
 action numbers, exports and struct layouts retain their ABI. Physical AT-SPI
 inspection and operation still require measured Linux qualification.
 
@@ -69,13 +74,36 @@ future output keeps its trailing bytes.
 Scroll metadata uses retained used overflow and ownership. Programmatically
 scrollable hidden boxes retain offsets and limits without user scroll actions;
 actual auto/scroll overflow advertises all four directional actions. Table
-normalization, replaced boxes, the viewport and delegated fieldset content use
-the same native geometry as the public dimension and scrolling APIs. The
-existing native AccessKit directional step is 40 logical pixels; matching
-Chromium's accessibility paging step remains a separate measured requirement.
+normalization, replaced boxes and the viewport consume retained geometry.
+An authored fieldset AX wrapper has no scroll-area alias or directional action;
+its anonymous content still supports public element scrolling, metrics, wheel
+input, sticky layout and timelines. Legal offsets use the floored scroll origin
+and independently snapped content and rounded client sizes. Fractional RTL
+geometry can have a positive maximum as well as a negative minimum. Raw
+client/content rectangles and `ScrollMetrics` keep their fractional dimensions.
 
 The additive getter preserves all prior C exports and layouts. Source guards
 and C/C++ consumers cover offsets/ranges, hidden/clip mutations, negative RTL
 origins, output prefixes/tails/errors, owning-thread access and snapshot lifetime.
-Their current source checkpoint has not been compiled or executed; native and
-physical accessibility qualification are still required.
+The original getter checkpoint was source-only. This new paging checkpoint
+requires fresh native checks, and physical accessibility qualification remains
+open.
+
+## Directional page source checkpoint
+
+`AccessibilityAction::ScrollPage` and `AccessibilityScrollDirection` are additive
+native Rust interfaces. Existing action variants and C action IDs/layouts stay
+available. Downstream exhaustive Rust matches must handle the new variant.
+The retained `ScrollArea` source struct adds its content-snapping origin; callers
+constructing it directly must initialize that layout-owned metadata.
+
+The shared page and legal-bound calculations follow Chromium 147.0.7727.50
+`AXObject::Scroll`, `PaintLayerScrollableArea::MaximumScrollOffsetInt` and
+`UpdateScrollOrigin`. A separate stock Chromium DOM diagnostic observed exact
+fractional LTR/RTL endpoints at five raster scales, repeated twice. It measured
+DOM dimensions and offset clamps, not accessibility action delivery. This new
+source checkpoint's native guards and C consumers have not run. Live Chromium
+AX delivery, physical AT-SPI operation and optional keyboard synthesis remain
+unqualified. Forward/backward transport is separate from these four physical
+actions. No JavaScript runs in Open UI; browser diagnostic queries are oracle
+observations only.

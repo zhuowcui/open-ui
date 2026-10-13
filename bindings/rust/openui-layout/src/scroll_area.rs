@@ -17,6 +17,9 @@ use openui_style::{
 pub struct ScrollArea {
     pub client_rect: PhysicalRect,
     pub content_rect: PhysicalRect,
+    /// Layout-box ClientLeft/ClientTop, excluding the principal box origin.
+    /// Chromium snaps content size at this phase before deriving legal offsets.
+    pub contents_snap_origin: PhysicalOffset,
     pub overflow_x: Overflow,
     pub overflow_y: Overflow,
     pub negative_x: bool,
@@ -81,38 +84,58 @@ impl ScrollArea {
         }
     }
 
-    /// Native scroll offsets are relative to the client origin, including
-    /// negative offsets in reversed physical directions.
+    /// Legal logical offsets derived from the retained scroll origin and the
+    /// independently snapped content/client sizes. These are physical axes,
+    /// including negative minima and occasionally positive RTL maxima.
+    /// Raw physical rectangles and ScrollMetrics retain their fractional sizes.
     pub fn limits(self) -> ((f64, f64), (f64, f64)) {
-        let axis = |start: LayoutUnit,
-                    end: LayoutUnit,
+        fn snap_size(size: LayoutUnit, location: LayoutUnit) -> i32 {
+            // Blink147 SnapSizeToPixel: preserve the location's signed phase.
+            let fraction = location.fraction();
+            let result = (fraction + size).round_i32() - fraction.round_i32();
+            if result == 0 && (size.raw() > 4 || size.raw() < -4) {
+                if size > LayoutUnit::zero() {
+                    1
+                } else {
+                    -1
+                }
+            } else {
+                result
+            }
+        }
+        let axis = |content_start: LayoutUnit,
+                    content_size: LayoutUnit,
                     client_start: LayoutUnit,
-                    client_end: LayoutUnit,
-                    negative: bool,
+                    client_size: LayoutUnit,
+                    snap_origin: LayoutUnit,
                     overflow: Overflow| {
             if matches!(overflow, Overflow::Visible | Overflow::Clip) {
-                (0.0, 0.0)
-            } else if negative {
-                ((start - client_start).to_f64().min(0.0), 0.0)
-            } else {
-                (0.0, (end - client_end).to_f64().max(0.0))
+                return (0.0, 0.0);
             }
+            // UpdateScrollOrigin floors the distance before integer scrollbar
+            // origin adjustment. client_start already includes that adjustment.
+            let origin = (client_start - content_start).floor_i32();
+            let minimum = origin.saturating_neg();
+            let visible = client_size.round_i32().max(0);
+            let content = snap_size(content_size, snap_origin).max(visible);
+            let maximum = minimum.saturating_add(content.saturating_sub(visible));
+            (minimum as f64, maximum as f64)
         };
         (
             axis(
                 self.content_rect.x(),
-                self.content_rect.right(),
+                self.content_rect.width(),
                 self.client_rect.x(),
-                self.client_rect.right(),
-                self.negative_x,
+                self.client_rect.width(),
+                self.contents_snap_origin.left,
                 self.overflow_x,
             ),
             axis(
                 self.content_rect.y(),
-                self.content_rect.bottom(),
+                self.content_rect.height(),
                 self.client_rect.y(),
-                self.client_rect.bottom(),
-                self.negative_y,
+                self.client_rect.height(),
+                self.contents_snap_origin.top,
                 self.overflow_y,
             ),
         )
@@ -427,6 +450,7 @@ pub(crate) fn populate(doc: &dyn LayoutDocument, fragment: &mut Fragment) {
         fragment.scroll_area = Some(ScrollArea {
             client_rect: viewport.client_rect,
             content_rect: viewport.content_rect,
+            contents_snap_origin: viewport.client_rect.offset,
             overflow_x: viewport.overflow_x,
             overflow_y: viewport.overflow_y,
             negative_x: viewport.negative_x,
@@ -510,6 +534,10 @@ pub(crate) fn populate(doc: &dyn LayoutDocument, fragment: &mut Fragment) {
     fragment.scroll_area = Some(ScrollArea {
         client_rect: client,
         content_rect: content,
+        contents_snap_origin: PhysicalOffset::new(
+            client.x() - border_box.x(),
+            client.y() - border_box.y(),
+        ),
         overflow_x,
         overflow_y,
         negative_x,
@@ -522,6 +550,59 @@ pub(crate) fn populate(doc: &dyn LayoutDocument, fragment: &mut Fragment) {
 mod tests {
     use super::*;
     use crate::FragmentBoxOwnership;
+
+    #[test]
+    fn legal_bounds_snap_each_size_and_retain_the_fractional_rtl_origin() {
+        let lu = LayoutUnit::from_f32;
+        let rect = |x, width| PhysicalRect::from_xywh(lu(x), lu(0.0), lu(width), lu(80.75));
+        for (client, content, expected_ltr, expected_rtl) in [
+            (100.75, 180.25, (0.0, 79.0), (-79.0, 0.0)),
+            (100.25, 180.75, (0.0, 81.0), (-80.0, 1.0)),
+        ] {
+            let mut area = ScrollArea {
+                client_rect: rect(0.0, client),
+                content_rect: PhysicalRect::from_xywh(lu(0.0), lu(0.0), lu(content), lu(160.25)),
+                contents_snap_origin: PhysicalOffset::zero(),
+                overflow_x: Overflow::Auto,
+                overflow_y: Overflow::Auto,
+                negative_x: false,
+                negative_y: false,
+                integer_offsets: true,
+            };
+            assert_eq!(area.limits(), (expected_ltr, (0.0, 79.0)));
+            assert_eq!(area.clamp_offset(1e6, 1e6), (expected_ltr.1 as f32, 79.0));
+            area.negative_x = true;
+            area.content_rect.offset.left = lu(client - content);
+            assert_eq!(area.limits(), (expected_rtl, (0.0, 79.0)));
+            assert_eq!(area.clamp_offset(-1e6, -1e6), (expected_rtl.0 as f32, 0.0));
+            assert_eq!(area.clamp_offset(1e6, 1e6), (expected_rtl.1 as f32, 79.0));
+            area.overflow_x = Overflow::Clip;
+            assert_eq!(area.limits().0, (0.0, 0.0));
+        }
+    }
+
+    #[test]
+    fn content_snapping_phase_excludes_the_principal_box_origin() {
+        let lu = LayoutUnit::from_f32;
+        let mut area = ScrollArea {
+            client_rect: PhysicalRect::from_xywh(lu(23.5), lu(11.0), lu(100.25), lu(80.0)),
+            content_rect: PhysicalRect::from_xywh(lu(23.5), lu(11.0), lu(180.75), lu(160.0)),
+            contents_snap_origin: PhysicalOffset::new(lu(0.5), lu(0.0)),
+            overflow_x: Overflow::Auto,
+            overflow_y: Overflow::Auto,
+            negative_x: false,
+            negative_y: false,
+            integer_offsets: true,
+        };
+        // Actual ClientLeft=.5 snaps180.75 to180; the caption/box position23
+        // is not an additional content-size phase.
+        assert_eq!(area.limits(), ((0.0, 80.0), (0.0, 80.0)));
+        area.client_rect.offset.left = lu(49.5);
+        area.content_rect.offset.left = lu(49.5);
+        assert_eq!(area.limits(), ((0.0, 80.0), (0.0, 80.0)));
+        area.contents_snap_origin.left = lu(0.0);
+        assert_eq!(area.limits().0, (0.0, 81.0));
+    }
 
     #[test]
     fn borrowed_style_helper_does_not_hide_native_ancestor_scroll_extent() {

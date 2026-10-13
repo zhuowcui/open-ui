@@ -24,7 +24,7 @@ pub use scroll_into_view::{ScrollAlignment, ScrollIntoViewContainer, ScrollIntoV
 pub use accessibility::{
     AccessibilityAction, AccessibilityActionData, AccessibilityActionRequest, AccessibilityLive,
     AccessibilityNode, AccessibilityNodeId, AccessibilityPlatformAction, AccessibilityRelation,
-    AccessibilityRole, AccessibilityToggled, AccessibilityTreeUpdate,
+    AccessibilityRole, AccessibilityScrollDirection, AccessibilityToggled, AccessibilityTreeUpdate,
 };
 
 pub use animation_timeline::{

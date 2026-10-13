@@ -276,3 +276,60 @@ fn callback_changes_to_an_undelivered_target_keep_a_separate_later_scroll_batch(
         second.remove().unwrap();
     }
 }
+
+#[test]
+fn target_aware_accessibility_pages_use_the_native_queue_and_release_callback_borrows() {
+    use openui::AccessibilityScrollDirection;
+    for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
+        let (document, port, _content) = fixture(scale);
+        let offsets = Rc::new(RefCell::new(Vec::new()));
+        let observed = offsets.clone();
+        let weak = port.downgrade();
+        port.on("scroll", move |event| {
+            assert!(!event.bubbles());
+            let port = weak.upgrade().unwrap();
+            let offset = (port.scroll_left().unwrap(), port.scroll_top().unwrap());
+            observed.borrow_mut().push(offset);
+            // Geometry reads and a second AX action borrow the same retained
+            // Engine after callback dispatch has released its original borrows.
+            assert_eq!(port.client_width().unwrap(), 100);
+            if offset == (0.0, 80.0) {
+                port.perform_accessibility_action(AccessibilityAction::ScrollPage {
+                    direction: AccessibilityScrollDirection::Right,
+                })
+                .unwrap();
+            }
+        })
+        .unwrap();
+        port.perform_accessibility_action(AccessibilityAction::ScrollPage {
+            direction: AccessibilityScrollDirection::Down,
+        })
+        .unwrap();
+        assert_eq!(
+            (port.scroll_left().unwrap(), port.scroll_top().unwrap()),
+            (0.0, 80.0)
+        );
+        assert!(offsets.borrow().is_empty());
+        document.dispatch_pending_events().unwrap();
+        assert_eq!(&*offsets.borrow(), &[(0.0, 80.0)]);
+        assert!(document.has_pending_events().unwrap());
+        document.dispatch_pending_events().unwrap();
+        assert_eq!(&*offsets.borrow(), &[(0.0, 80.0), (80.0, 80.0)]);
+        port.scroll_to(200.0, 200.0).unwrap();
+        document.dispatch_pending_events().unwrap();
+        let before = document.render_to_png_buffer().unwrap();
+        let calls = offsets.borrow().len();
+        for direction in [
+            AccessibilityScrollDirection::Down,
+            AccessibilityScrollDirection::Right,
+        ] {
+            port.perform_accessibility_action(AccessibilityAction::ScrollPage { direction })
+                .unwrap();
+        }
+        assert!(!document.has_pending_events().unwrap());
+        document.dispatch_pending_events().unwrap();
+        assert_eq!(offsets.borrow().len(), calls);
+        assert_eq!(document.render_to_png_buffer().unwrap(), before);
+        port.remove().unwrap();
+    }
+}

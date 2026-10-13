@@ -258,6 +258,46 @@ impl Engine {
         Ok(self.retained_element_dimensions(node))
     }
 
+    /// Actual authored source-box size for AX paging, before transforms and
+    /// independent of CSSOM client dimensions, gutters and visual column unions.
+    pub(crate) fn retained_authored_box_size(&self, node: NodeId) -> Option<PhysicalSize> {
+        if node == self.document.root() {
+            return self.latest_fragment.as_ref().map(|_| {
+                PhysicalSize::new(
+                    LayoutUnit::from_f64(self.viewport.logical_width()),
+                    LayoutUnit::from_f64(self.viewport.logical_height()),
+                )
+            });
+        }
+        let root = self.latest_fragment.as_ref()?;
+        let mut boxes = Vec::new();
+        collect_boxes(root, node, &mut boxes);
+        if boxes.is_empty() {
+            return None;
+        }
+        let mode = self.document.node(node).style.writing_mode;
+        Some(stitched_size(
+            &source_parts(&boxes, mode == WritingMode::HorizontalTb),
+            mode,
+        ))
+    }
+
+    /// AX scrolling belongs to the authored layout box, not an anonymous box
+    /// delegated by element programmatic scrolling (such as fieldset content).
+    pub(crate) fn retained_authored_scroll_area(&self, node: NodeId) -> Option<ScrollArea> {
+        let root = self.latest_fragment.as_ref()?;
+        let mut boxes = Vec::new();
+        collect_boxes(root, node, &mut boxes);
+        let first = *boxes.first()?;
+        if !first.owns_scroll_box() {
+            return None;
+        }
+        // Interactive scroll containers are monolithic in Blink147
+        // (LayoutBox::HasUnsplittableScrollingOverflow). Continued visible boxes
+        // have a stitched AX size but do not gain a scrolling area from a helper.
+        first.scroll_area.filter(|area| area.is_scroll_container())
+    }
+
     /// CSSOM integer dimensions from the final retained source boxes. Callers
     /// must resolve pending layout before using this read-only projection.
     /// Accessibility uses the same untransformed sizing and continuation policy
