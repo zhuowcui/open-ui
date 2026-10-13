@@ -4,6 +4,7 @@ use openui_dom::ElementTag;
 use openui_engine::{
     AccessibilityAction, AccessibilityPlatformAction as Action,
     AccessibilityScrollDirection as Direction, Engine, FontCollection, NodeHandle,
+    ScrollButtonDirection,
 };
 use openui_geometry::ViewportMetrics;
 use openui_style::{
@@ -246,10 +247,157 @@ fn ax_instant_page_does_not_choose_a_new_mandatory_snap_target() {
         page(&mut e, p, Direction::Down);
         e.update().unwrap();
         assert_eq!(e.scroll_offset(p).unwrap(), (0.0, 64.0));
+        e.drain_scroll_events();
+        let generation = e.scene().unwrap().generation();
+        // scrollBy has no requested direction when both deltas are zero.
+        e.scroll_by(p, 0.0, 0.0).unwrap();
+        assert_eq!(e.scroll_offset(p).unwrap(), (0.0, 64.0));
+        assert!(e.drain_scroll_events().is_empty());
+        assert_eq!(e.scene().unwrap().generation(), generation);
+        // Both supplied scrollTo axes still select an end-position snap.
         e.scroll_to(p, 0.0, 64.0).unwrap();
         assert_eq!(e.scroll_offset(p).unwrap(), (0.0, 80.0));
     }
 }
+#[test]
+fn programmatic_displacement_retains_direction_and_snap_stop_at_five_scales() {
+    for scale in SCALES {
+        let mut e = engine(scale);
+        let root = e.root();
+        let p = box_(&mut e, root, 100.0, 80.0);
+        set(&mut e, p, StyleProperty::Overflow, Overflow::Hidden);
+        set(
+            &mut e,
+            p,
+            StyleProperty::ScrollSnapAxis,
+            StyleValue::Renderer(RendererStyleValue::ScrollSnapAxis(ScrollSnapAxis::Y)),
+        );
+        set(
+            &mut e,
+            p,
+            StyleProperty::ScrollSnapStrictness,
+            StyleValue::Renderer(RendererStyleValue::ScrollSnapStrictness(
+                ScrollSnapStrictness::Mandatory,
+            )),
+        );
+        let mut areas = Vec::new();
+        for _ in 0..3 {
+            let area = box_(&mut e, p, 100.0, 80.0);
+            set(
+                &mut e,
+                area,
+                StyleProperty::ScrollSnapAlign,
+                StyleValue::Renderer(RendererStyleValue::ScrollSnapAlign(ScrollSnapAlign::Start)),
+            );
+            areas.push(area);
+        }
+        e.update().unwrap();
+        e.scroll_by(p, 0.0, 1.0).unwrap();
+        assert_eq!(e.scroll_offset(p).unwrap(), (0.0, 80.0));
+        e.scroll_by(p, 0.0, -1.0).unwrap();
+        assert_eq!(e.scroll_offset(p).unwrap(), (0.0, 0.0));
+        set(
+            &mut e,
+            areas[1],
+            StyleProperty::ScrollSnapStop,
+            StyleValue::Renderer(RendererStyleValue::ScrollSnapStop(
+                openui_style::ScrollSnapStop::Always,
+            )),
+        );
+        e.scroll_by(p, 0.0, 150.0).unwrap();
+        assert_eq!(e.scroll_offset(p).unwrap(), (0.0, 80.0));
+        // Absolute end-position selection does not apply the directional stop.
+        e.scroll_to(p, 0.0, 150.0).unwrap();
+        assert_eq!(e.scroll_offset(p).unwrap(), (0.0, 160.0));
+        let before = e.scroll_offset(p).unwrap();
+        assert!(e.scroll_by(p, f64::NAN, 0.0).is_err());
+        assert_eq!(e.scroll_offset(p).unwrap(), before);
+    }
+}
+
+#[test]
+fn partial_two_axis_proximity_result_retains_the_live_other_target() {
+    for scale in SCALES {
+        let mut e = engine(scale);
+        let root = e.root();
+        let p = box_(&mut e, root, 100.0, 80.0);
+        set(&mut e, p, StyleProperty::Overflow, Overflow::Hidden);
+        set(
+            &mut e,
+            p,
+            StyleProperty::ScrollSnapAxis,
+            StyleValue::Renderer(RendererStyleValue::ScrollSnapAxis(ScrollSnapAxis::Both)),
+        );
+        set(
+            &mut e,
+            p,
+            StyleProperty::ScrollSnapStrictness,
+            StyleValue::Renderer(RendererStyleValue::ScrollSnapStrictness(
+                ScrollSnapStrictness::Proximity,
+            )),
+        );
+        let content = box_(&mut e, p, 300.0, 300.0);
+        set(
+            &mut e,
+            content,
+            StyleProperty::Position,
+            openui_style::Position::Relative,
+        );
+        let both = box_(&mut e, content, 20.0, 20.0);
+        set(
+            &mut e,
+            both,
+            StyleProperty::Position,
+            openui_style::Position::Absolute,
+        );
+        set(&mut e, both, StyleProperty::Top, LengthValue::px(0.0));
+        set(&mut e, both, StyleProperty::Left, LengthValue::px(0.0));
+        set(
+            &mut e,
+            both,
+            StyleProperty::ScrollSnapAlign,
+            StyleValue::Renderer(RendererStyleValue::ScrollSnapAlign(ScrollSnapAlign::Start)),
+        );
+        let inline = box_(&mut e, content, 20.0, 100.0);
+        set(
+            &mut e,
+            inline,
+            StyleProperty::Position,
+            openui_style::Position::Absolute,
+        );
+        set(&mut e, inline, StyleProperty::Top, LengthValue::px(0.0));
+        set(&mut e, inline, StyleProperty::Left, LengthValue::px(80.0));
+        set(
+            &mut e,
+            inline,
+            StyleProperty::ScrollSnapAlignInline,
+            StyleValue::Renderer(RendererStyleValue::ScrollSnapAlignInline(Some(
+                ScrollSnapAlign::Start,
+            ))),
+        );
+        let button = e
+            .create_scroll_button(p, ScrollButtonDirection::Down)
+            .unwrap();
+        e.update().unwrap();
+        assert_eq!(
+            e.scroll_button_state(button).unwrap().current_snap_targets,
+            [Some(both), Some(both)]
+        );
+        // X80 selects the inline-only box; Y50 has no proximity candidate.
+        e.scroll_to(p, 80.0, 50.0).unwrap();
+        assert_eq!(e.scroll_offset(p).unwrap(), (80.0, 50.0));
+        assert_eq!(
+            e.scroll_button_state(button).unwrap().current_snap_targets,
+            [Some(inline), Some(both)]
+        );
+        e.remove_node(both).unwrap();
+        assert_eq!(
+            e.scroll_button_state(button).unwrap().current_snap_targets[1],
+            None
+        );
+    }
+}
+
 #[test]
 fn document_pages_use_the_frame_and_endpoint_return_preserves_fractional_offsets() {
     for scale in SCALES {

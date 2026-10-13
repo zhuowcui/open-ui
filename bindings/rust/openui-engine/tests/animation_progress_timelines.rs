@@ -1,10 +1,11 @@
 use openui_dom::ElementTag;
-use openui_engine::{AnimationId, AnimationTimeline, Engine, NodeHandle};
+use openui_engine::{AnimationId, AnimationTimeline, AnimationTimelineSource, Engine, NodeHandle};
 use openui_geometry::ViewportMetrics;
 use openui_style::{
-    AnimationOptions, AnimationPhase, Color, Direction, Display, FillMode, FlexDirection,
-    IterationCount, Keyframes, LengthValue, Overflow, Position, PropertyKeyframes, StyleProperty,
-    StyleValue, TimelineAxis, TimelineRange, TransformList, TransformOperation, WritingMode,
+    AnimationAttachmentRange, AnimationOptions, AnimationPhase, Color, Direction, Display,
+    FillMode, FlexDirection, IterationCount, Keyframes, LengthValue, Overflow, Position,
+    PropertyKeyframes, StyleProperty, StyleValue, TimelineAxis, TimelineRange, TransformList,
+    TransformOperation, ViewTimelineInset, WritingMode,
 };
 
 fn set(
@@ -612,39 +613,101 @@ fn auto_aligned_physical_endpoints_are_active_but_interior_and_explicit_boundari
 }
 
 #[test]
+fn tiny_ordinary_overflow_has_no_active_scroll_timeline_at_five_scales() {
+    // Stock pinned Chromium: these retained sizes both reflect scrollHeight80,
+    // legal offsets0..0 and an unresolved ScrollTimeline.currentTime.
+    for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
+        for excess in [1.0 / 64.0, 9.0 / 64.0] {
+            let (mut engine, source, content, target) = fixture(scale);
+            set(
+                &mut engine,
+                content,
+                StyleProperty::Height,
+                LengthValue::px(80.0 + excess),
+            );
+            let id = animate(
+                &mut engine,
+                target,
+                scroll(source, TimelineAxis::Y, 0.0, excess as f64),
+                options(),
+            );
+            engine.scroll_to(source, 0.0, 100.0).unwrap();
+            assert_eq!(engine.scroll_offset(source).unwrap(), (0.0, 0.0));
+            let state = engine.animation_timeline_snapshot(id).unwrap().unwrap();
+            assert_eq!(state.duration_ms, None);
+            assert_eq!(state.current_time_ms, None);
+            assert_eq!(engine.scroll_height(source).unwrap(), 80);
+            set(
+                &mut engine,
+                content,
+                StyleProperty::Height,
+                LengthValue::px(81.0),
+            );
+            let state = engine.animation_timeline_snapshot(id).unwrap().unwrap();
+            assert_eq!(state.duration_ms, Some(0.016));
+            assert!(state.current_time_ms.is_some());
+            assert_eq!(engine.scroll_height(source).unwrap(), 81);
+        }
+    }
+}
+
+#[test]
 fn paused_timeline_resize_uses_resolved_percentage_before_new_duration() {
-    let (mut engine, source, content, target) = fixture(1.0);
-    set(
-        &mut engine,
-        content,
-        StyleProperty::Height,
-        LengthValue::px(80.0 + 1.0 / 64.0),
-    );
-    let id = animate(
-        &mut engine,
-        target,
-        scroll(source, TimelineAxis::Y, 0.0, 1.0 / 64.0),
-        options(),
-    );
-    engine.seek_animation(id, 0.001).unwrap();
-    engine.pause_animation(id).unwrap();
-    assert_eq!(
-        engine
-            .animation_timeline_snapshot(id)
-            .unwrap()
-            .unwrap()
-            .duration_ms,
-        Some(0.00025)
-    );
-    set(
-        &mut engine,
-        content,
-        StyleProperty::Height,
-        LengthValue::px(80.0 + 9.0 / 64.0),
-    );
-    let state = engine.animation_timeline_snapshot(id).unwrap().unwrap();
-    assert_eq!(state.duration_ms, Some(0.00225));
-    assert_eq!(state.current_time_ms, Some(0.009));
+    for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
+        let (mut engine, source, subject, target) = fixture(scale);
+        set(
+            &mut engine,
+            subject,
+            StyleProperty::Height,
+            LengthValue::px(1.0 / 64.0),
+        );
+        // The source has a real legal scroll range. An 80px start inset makes
+        // the ViewTimeline cover range exactly the tiny subject size.
+        box_(&mut engine, source, 100.0, 200.0);
+        let id = engine
+            .animate_with_attachment_range(
+                target,
+                PropertyKeyframes::typed(
+                    StyleProperty::Opacity,
+                    Keyframes::from_values(0.0_f32, 1.0_f32),
+                )
+                .unwrap(),
+                options(),
+                AnimationTimelineSource::ViewWithInset {
+                    subject,
+                    axis: TimelineAxis::Y,
+                    inset: ViewTimelineInset::new(
+                        Some(LengthValue::px(80.0)),
+                        Some(LengthValue::px(0.0)),
+                    )
+                    .unwrap(),
+                },
+                AnimationAttachmentRange::default(),
+            )
+            .unwrap();
+        engine.seek_animation(id, 0.001).unwrap();
+        engine.pause_animation(id).unwrap();
+        assert_eq!(
+            engine
+                .animation_timeline_snapshot(id)
+                .unwrap()
+                .unwrap()
+                .duration_ms,
+            Some(0.00025)
+        );
+        set(
+            &mut engine,
+            subject,
+            StyleProperty::Height,
+            LengthValue::px(9.0 / 64.0),
+        );
+        let state = engine.animation_timeline_snapshot(id).unwrap().unwrap();
+        assert_eq!(state.duration_ms, Some(0.00225));
+        assert_eq!(state.current_time_ms, Some(0.009));
+        // Browser400% remains400% after this resize; preserve the exact native
+        // milliseconds arithmetic assertion independently of phase snapping.
+        assert_eq!(state.current_time_percentage, Some(400.0));
+    }
 }
 
 #[test]

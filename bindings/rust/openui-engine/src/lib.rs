@@ -2249,8 +2249,8 @@ impl Engine {
         }
         self.resolve(handle)?;
         self.update()?;
-        let (x, y) = self.scroll_offset(handle)?;
-        self.scroll_to(handle, x + dx, y + dy)
+        let (x, y) = self.resolve_native_scroll_displacement(handle, dx, dy)?;
+        self.scroll_to_resolved(handle, x, y)
     }
 
     fn clamp_scroll_offset(

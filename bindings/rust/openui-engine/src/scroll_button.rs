@@ -428,7 +428,18 @@ fn covering_candidate(
     }
 }
 
-/// Shared axis search for page activation and end-position/layout settling.
+/// A direction strategy keeps the starting position separate from its intended
+/// endpoint. Page buttons also prefer a bounded step; scrollBy has no such bound.
+#[derive(Clone, Copy)]
+struct DirectionalSnapStep {
+    delta: f32,
+    preferred_minimum: f32,
+    preferred_maximum: f32,
+    fractional: bool,
+    cross_base: f32,
+}
+
+/// Shared axis search for page activation, displacement and end-position settling.
 /// The selected identity is retained separately from the preview landing point.
 fn search_axis(
     areas: &[SnapArea],
@@ -437,14 +448,13 @@ fn search_axis(
     port: [f32; 4],
     maximum: [f32; 2],
     cross_offset: f32,
-    page: Option<(Direction, i32, bool)>,
+    step: Option<DirectionalSnapStep>,
     strictness: ScrollSnapStrictness,
     targeted: Option<NodeHandle>,
     active_range: Option<[f32; 2]>,
 ) -> Option<Candidate> {
-    let base = page.map_or(current[axis], |(direction, size, _)| {
-        current[axis] + direction.sign() * page_step(size)
-    });
+    let base = step.map_or(current[axis], |step| current[axis] + step.delta);
+    let cross_base = step.map_or(current[1 - axis], |step| step.cross_base);
     let proximity = if strictness == ScrollSnapStrictness::Proximity {
         LayoutUnit::from_f32(port[axis + 2] * (1.0_f32 / 3.0_f32)).to_f32()
     } else {
@@ -496,8 +506,13 @@ fn search_axis(
                 continue;
             }
             let delta = candidate.offset - current[axis];
-            if page.is_some_and(|(direction, _, fractional)| {
-                (if fractional { delta } else { delta.trunc() }) * direction.sign() <= 0.0
+            if step.is_some_and(|step| {
+                (if step.fractional {
+                    delta
+                } else {
+                    delta.trunc()
+                }) * step.delta.signum()
+                    <= 0.0
             }) {
                 continue;
             }
@@ -505,9 +520,8 @@ fn search_axis(
             if d > proximity {
                 continue;
             }
-            let preferred = page.is_none_or(|(_, size, _)| {
-                delta.abs() >= ((size as f32 * 0.4) as i32).max(1) as f32
-                    && delta.abs() <= size.max(1) as f32
+            let preferred = step.is_none_or(|step| {
+                delta.abs() >= step.preferred_minimum && delta.abs() <= step.preferred_maximum
             });
             if (best_preferred && !preferred) || (d > distance && (best_preferred || !preferred)) {
                 continue;
@@ -532,12 +546,12 @@ fn search_axis(
                 {
                     let next_distance =
                         (aligned_offset(candidate.area, 1 - axis, port, maximum[1 - axis])
-                            - current[1 - axis])
+                            - cross_base)
                             .abs();
                     let replace = old.alternative.is_none_or(|previous| {
                         let old_distance =
                             (aligned_offset(previous, 1 - axis, port, maximum[1 - axis])
-                                - current[1 - axis])
+                                - cross_base)
                                 .abs();
                         next_distance < old_distance
                             || (next_distance == old_distance
@@ -553,7 +567,7 @@ fn search_axis(
     }
     // EndPosition and page-distance strategies prefer the intended covering result.
     let mut result = covering.or(closest);
-    if let (Some(selected), Some((direction, _, fractional))) = (result, page) {
+    if let (Some(selected), Some(step)) = (result, step) {
         // DirectionStrategy always respects snap-stop. Its second search has
         // direction preference and includes only stop-always areas.
         let first_stop = areas
@@ -568,7 +582,8 @@ fn search_axis(
                     alternative: None,
                 };
                 let d = candidate.offset - current[axis];
-                let valid = (if fractional { d } else { d.trunc() }) * direction.sign() > 0.0;
+                let valid =
+                    (if step.fractional { d } else { d.trunc() }) * step.delta.signum() > 0.0;
                 (valid
                     && visible(candidate, axis, cross_offset, port, maximum)
                     && d.abs() <= proximity)
@@ -585,7 +600,7 @@ fn search_axis(
             }
         }
     }
-    if result.is_none() && page.is_some() && strictness == ScrollSnapStrictness::Mandatory {
+    if result.is_none() && step.is_some() && strictness == ScrollSnapStrictness::Mandatory {
         return search_axis(
             areas,
             axis,
@@ -614,6 +629,46 @@ fn select_end_position(
     targeted: Option<NodeHandle>,
     horizontal: bool,
 ) -> ([f32; 2], [Option<NodeHandle>; 2]) {
+    select_snap_position(
+        areas,
+        current,
+        port,
+        maximum,
+        axes,
+        strictness,
+        old_targets,
+        prioritize,
+        targeted,
+        horizontal,
+        None,
+    )
+}
+
+fn select_snap_position(
+    areas: &[SnapArea],
+    current: [f32; 2],
+    port: [f32; 4],
+    maximum: [f32; 2],
+    axes: [bool; 2],
+    strictness: ScrollSnapStrictness,
+    old_targets: [Option<NodeHandle>; 2],
+    prioritize: bool,
+    targeted: Option<NodeHandle>,
+    horizontal: bool,
+    displacement: Option<([f32; 2], bool)>,
+) -> ([f32; 2], [Option<NodeHandle>; 2]) {
+    let base = displacement.map_or(current, |(delta, _)| {
+        [current[0] + delta[0], current[1] + delta[1]]
+    });
+    let steps = [0, 1].map(|axis| {
+        displacement.map(|(delta, fractional)| DirectionalSnapStep {
+            delta: delta[axis],
+            preferred_minimum: 0.0,
+            preferred_maximum: f32::MAX,
+            fractional,
+            cross_base: base[1 - axis],
+        })
+    });
     let mut selected: [Option<Candidate>; 2] = [None, None];
     let mut targets = old_targets
         .map(|target| target.filter(|target| areas.iter().any(|area| area.handle == *target)));
@@ -638,8 +693,8 @@ fn select_end_position(
                         current,
                         port,
                         maximum,
-                        current[1 - axis].clamp(0.0, maximum[1 - axis]),
-                        None,
+                        base[1 - axis].clamp(0.0, maximum[1 - axis]),
+                        steps[axis],
                         strictness,
                         targeted,
                         Some([area.rect[axis], area.rect[axis] + area.rect[axis + 2]]),
@@ -657,8 +712,8 @@ fn select_end_position(
                 current,
                 port,
                 maximum,
-                current[1 - axis].clamp(0.0, maximum[1 - axis]),
-                None,
+                base[1 - axis].clamp(0.0, maximum[1 - axis]),
+                steps[axis],
                 strictness,
                 targeted,
                 None,
@@ -682,7 +737,7 @@ fn select_end_position(
                     !horizontal
                 }
             } else {
-                (x.offset - current[0]).abs() <= (y.offset - current[1]).abs()
+                (x.offset - base[0]).abs() <= (y.offset - base[1]).abs()
             };
             let axis = if follow_x { 1 } else { 0 };
             selected[axis] = search_axis(
@@ -692,14 +747,14 @@ fn select_end_position(
                 port,
                 maximum,
                 selected[1 - axis].unwrap().offset,
-                None,
+                steps[axis],
                 strictness,
                 targeted,
                 None,
             );
         }
     }
-    if axes == [true, true] && selected.iter().all(Option::is_none) {
+    if displacement.is_none() && axes == [true, true] && selected.iter().all(Option::is_none) {
         // Both corridors can miss a diagonal area. Prefer minimum block
         // distance from the snapport corridor, then inline distance.
         let distance = |delta: f32, size: f32| {
@@ -743,7 +798,14 @@ fn select_end_position(
             return (offset, [None, None]);
         }
     }
-    let mut position = current;
+    // A missing complete result leaves the intended displacement to the caller.
+    // A partial result starts from the original position, as in SnapContainerData.
+    let has_selection = selected.iter().any(Option::is_some);
+    let mut position = if displacement.is_some() && !has_selection {
+        base
+    } else {
+        current
+    };
     for axis in 0..2 {
         if let Some(mut result) = selected[axis] {
             if let Some(alternative) = result.alternative {
@@ -759,9 +821,9 @@ fn select_end_position(
             }
             position[axis] = result.offset;
             targets[axis] = Some(result.area.handle);
-        } else if axes[axis] {
-            // A completed proximity endpoint without a candidate has no
-            // committed snap target on that axis.
+        } else if axes[axis] && displacement.is_none() && !has_selection {
+            // A partial result retains every still-live prior target on an
+            // unselected axis. Only a complete missing endpoint clears it.
             targets[axis] = None;
         }
     }
@@ -1200,7 +1262,13 @@ impl Engine {
                 port,
                 maximum,
                 current[1 - axis].clamp(0.0, maximum[1 - axis]),
-                Some((direction, page, !area.integer_offsets)),
+                Some(DirectionalSnapStep {
+                    delta: direction.sign() * page_step(page),
+                    preferred_minimum: ((page as f32 * 0.4) as i32).max(1) as f32,
+                    preferred_maximum: page.max(1) as f32,
+                    fractional: !area.integer_offsets,
+                    cross_base: current[1 - axis],
+                }),
                 style.scroll_snap_strictness,
                 self.scroll_buttons
                     .targeted_areas
@@ -1521,14 +1589,15 @@ impl Engine {
     }
 
     /// Resolve an authored endpoint through the same retained snap data used
-    /// by buttons and layout resnapping. Axes that did not move keep their IDs.
+    /// by buttons and layout resnapping. Both coordinates are supplied by scrollTo,
+    /// so configured axes participate even when a requested coordinate is unchanged.
     pub(crate) fn resolve_native_scroll_endpoint(
         &mut self,
         origin: NodeHandle,
         x: f32,
         y: f32,
     ) -> Result<(f32, f32), EngineError> {
-        self.resolve_native_endpoint(origin, x, y, false)
+        self.resolve_native_endpoint(origin, x, y, None)
     }
 
     /// Blink reveal selects an end position on both configured snap axes,
@@ -1539,7 +1608,30 @@ impl Engine {
         x: f32,
         y: f32,
     ) -> Result<(f32, f32), EngineError> {
-        self.resolve_native_endpoint(origin, x, y, true)
+        self.resolve_native_endpoint(origin, x, y, None)
+    }
+
+    /// Relative scrolling uses a displacement strategy, with direction and
+    /// snap-stop filtering, rather than turning the request into scrollTo.
+    pub(crate) fn resolve_native_scroll_displacement(
+        &mut self,
+        origin: NodeHandle,
+        dx: f64,
+        dy: f64,
+    ) -> Result<(f32, f32), EngineError> {
+        let old = self.scroll_offset(origin)?;
+        let requested = (old.0 + dx, old.1 + dy);
+        if !requested.0.is_finite() || !requested.1.is_finite() {
+            return Err(EngineError::InvalidInput("scroll endpoint must be finite"));
+        }
+        let end = self.clamp_scroll_offset(origin, requested.0, requested.1)?;
+        // Retain direction independently from a clamped endpoint at a boundary.
+        let limit = f32::MAX as f64;
+        let delta = [
+            dx.clamp(-limit, limit) as f32,
+            dy.clamp(-limit, limit) as f32,
+        ];
+        self.resolve_native_endpoint(origin, end.0, end.1, Some(delta))
     }
 
     fn resolve_native_endpoint(
@@ -1547,7 +1639,7 @@ impl Engine {
         origin: NodeHandle,
         x: f32,
         y: f32,
-        snap_unchanged_axes: bool,
+        displacement: Option<[f32; 2]>,
     ) -> Result<(f32, f32), EngineError> {
         let node = self.resolve(origin)?;
         if self.retained_scroll_style(node).scroll_snap_axis == ScrollSnapAxis::None {
@@ -1563,18 +1655,23 @@ impl Engine {
             return Ok((x, y));
         };
         let old_offset = self.scroll_offset(origin)?;
-        let axes = [
-            geometry.axes[0] && (snap_unchanged_axes || x as f64 != old_offset.0),
-            geometry.axes[1] && (snap_unchanged_axes || y as f64 != old_offset.1),
-        ];
-        let current = [x - geometry.minimum[0], y - geometry.minimum[1]];
+        let axes = [0, 1]
+            .map(|axis| geometry.axes[axis] && displacement.is_none_or(|delta| delta[axis] != 0.0));
+        let current = if displacement.is_some() {
+            [
+                old_offset.0 as f32 - geometry.minimum[0],
+                old_offset.1 as f32 - geometry.minimum[1],
+            ]
+        } else {
+            [x - geometry.minimum[0], y - geometry.minimum[1]]
+        };
         let old = self
             .scroll_buttons
             .snap_targets
             .get(&origin)
             .copied()
             .unwrap_or([None, None]);
-        let (position, targets) = select_end_position(
+        let (position, targets) = select_snap_position(
             &geometry.areas,
             current,
             geometry.port,
@@ -1585,6 +1682,7 @@ impl Engine {
             false,
             self.scroll_buttons.targeted_areas.get(&origin).copied(),
             geometry.horizontal,
+            displacement.map(|delta| (delta, !geometry.area.integer_offsets)),
         );
         self.scroll_buttons.snap_targets.insert(origin, targets);
         Ok(geometry.area.clamp_offset(
