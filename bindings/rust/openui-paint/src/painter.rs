@@ -38,8 +38,8 @@ use skia_safe::image::RequiredProperties;
 use skia_safe::rrect::Corner as RRectCorner;
 use skia_safe::{
     color_filters, gradient_shader, image_filters, surfaces, AlphaType, BlendMode, ClipOp, Color4f,
-    ColorSpace, ColorType, Data, FilterMode, IRect, Image, ImageInfo, Matrix, MipmapMode, Paint,
-    PaintStyle, PathBuilder, PathFillType, PathMeasure, PictureRecorder, Point, RRect, Rect,
+    ColorSpace, ColorType, Contains, Data, FilterMode, IRect, Image, ImageInfo, Matrix, MipmapMode,
+    Paint, PaintStyle, PathBuilder, PathFillType, PathMeasure, PictureRecorder, Point, RRect, Rect,
     RoundOut, SamplingOptions, TileMode,
 };
 

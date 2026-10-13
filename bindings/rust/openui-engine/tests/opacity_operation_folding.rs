@@ -225,7 +225,7 @@ fn clip_before_group_can_fold_but_clip_inside_group_retains_coverage() {
 #[test]
 fn redundant_continuation_clip_preserves_single_draw_opacity_at_five_scales() {
     for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
-        let mut engine = engine(160.0, 140.0, scale);
+        let mut engine = engine(320.0, 240.0, scale);
         let root = engine.root();
         let columns = box_node(&mut engine, root, 20.0, 20.0, 40.0, 40.0, GREEN);
         for (property, value) in [
