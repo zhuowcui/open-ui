@@ -168,56 +168,85 @@ fn projected_overflow_clip_uses_container_plane_and_visible_axis_policy() {
 
 #[test]
 fn promoted_multicol_ancestor_transform_reaches_native_rectangles_and_input() {
-    let mut e = engine(1.25);
-    let root = e.root();
-    let columns = box_(&mut e, root, 200.0, 40.0);
-    for (property, value) in [
-        (
-            StyleProperty::ColumnCount,
-            RendererStyleValue::ColumnCount(Some(2)),
-        ),
-        (
-            StyleProperty::ColumnFill,
-            RendererStyleValue::ColumnFill(ColumnFill::Auto),
-        ),
-        (
-            StyleProperty::ColumnGap,
-            RendererStyleValue::ColumnGap(Some(openui_geometry::Length::px(0.0))),
-        ),
-    ] {
-        e.set_property(columns, property, StyleValue::Renderer(value))
-            .unwrap();
-    }
-    let ancestor = box_(&mut e, columns, 100.0, 100.0);
-    e.set_property(
-        ancestor,
-        StyleProperty::Transform,
-        TransformList(vec![TransformOperation::Scale(0.5, 0.5)]).into(),
-    )
-    .unwrap();
-    let child = box_(&mut e, ancestor, 8.0, 8.0);
-    e.set_property(child, StyleProperty::Position, Position::Fixed.into())
+    for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
+        let mut e = engine(scale);
+        let root = e.root();
+        let columns = box_(&mut e, root, 200.0, 40.0);
+        for (property, value) in [
+            (
+                StyleProperty::ColumnCount,
+                RendererStyleValue::ColumnCount(Some(2)),
+            ),
+            (
+                StyleProperty::ColumnFill,
+                RendererStyleValue::ColumnFill(ColumnFill::Auto),
+            ),
+            (
+                StyleProperty::ColumnGap,
+                RendererStyleValue::ColumnGap(Some(openui_geometry::Length::px(0.0))),
+            ),
+        ] {
+            e.set_property(columns, property, StyleValue::Renderer(value))
+                .unwrap();
+        }
+        let ancestor = box_(&mut e, columns, 100.0, 100.0);
+        e.set_property(
+            ancestor,
+            StyleProperty::Transform,
+            TransformList(vec![TransformOperation::Scale(0.5, 0.5)]).into(),
+        )
         .unwrap();
-    for property in [StyleProperty::Left, StyleProperty::Top] {
-        e.set_property(child, property, LengthValue::px(0.0).into())
+        let child = box_(&mut e, ancestor, 8.0, 8.0);
+        e.set_property(child, StyleProperty::Position, Position::Fixed.into())
             .unwrap();
+        for property in [StyleProperty::Left, StyleProperty::Top] {
+            e.set_property(child, property, LengthValue::px(0.0).into())
+                .unwrap();
+        }
+        fn has_promoted(fragment: &openui_layout::Fragment) -> bool {
+            !fragment.promoted_transform_ancestors.is_empty()
+                || fragment.children.iter().any(has_promoted)
+        }
+        // A small fixed child of the real transformed continuation stays under
+        // its owning ancestor. Crossing a fragmentainer with a late relative
+        // displacement genuinely requires the promoted ancestor projection.
+        for promoted in [false, true, false] {
+            e.set_property(
+                ancestor,
+                StyleProperty::Position,
+                if promoted {
+                    Position::Relative
+                } else {
+                    Position::Static
+                }
+                .into(),
+            )
+            .unwrap();
+            e.set_property(
+                ancestor,
+                StyleProperty::Top,
+                if promoted {
+                    LengthValue::px(50.0)
+                } else {
+                    LengthValue::auto()
+                }
+                .into(),
+            )
+            .unwrap();
+            assert_eq!(has_promoted(e.scene().unwrap().fragments()), promoted);
+            let rectangles = e.client_rects(child).unwrap();
+            assert!(!rectangles.is_empty());
+            for rect in &rectangles {
+                assert_eq!(rect.width, 4.0);
+                assert_eq!(rect.height, 4.0);
+            }
+            let rect = rectangles[0];
+            assert_eq!(e.hit_test(rect.x + 2.0, rect.y + 2.0).unwrap(), Some(child));
+            let stats = e.stats();
+            assert_eq!(e.client_rects(child).unwrap(), rectangles);
+            assert_eq!(e.stats(), stats);
+        }
     }
-    fn has_promoted(fragment: &openui_layout::Fragment) -> bool {
-        !fragment.promoted_transform_ancestors.is_empty()
-            || fragment.children.iter().any(has_promoted)
-    }
-    assert!(has_promoted(e.scene().unwrap().fragments()));
-    let rectangles = e.client_rects(child).unwrap();
-    assert!(!rectangles.is_empty());
-    for rect in &rectangles {
-        assert_eq!(rect.width, 4.0);
-        assert_eq!(rect.height, 4.0);
-    }
-    let rect = rectangles[0];
-    assert_eq!(e.hit_test(rect.x + 2.0, rect.y + 2.0).unwrap(), Some(child));
-    let stats = e.stats();
-    assert_eq!(e.client_rects(child).unwrap(), rectangles);
-    assert_eq!(e.stats(), stats);
 }
 
 #[test]

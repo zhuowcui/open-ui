@@ -8,8 +8,8 @@
 use crate::{Fragment, FragmentBoxGeometry};
 use openui_dom::NodeId;
 use openui_geometry::{
-    BoxStrut, LayoutUnit, LogicalBoxStrut, LogicalSize, PhysicalSize, WritingDirectionMode,
-    WritingModeConverter,
+    BoxStrut, LayoutUnit, LogicalBoxStrut, LogicalOffset, LogicalRect, LogicalSize, PhysicalSize,
+    WritingDirectionMode, WritingModeConverter,
 };
 use std::collections::HashMap;
 
@@ -24,6 +24,13 @@ pub(crate) fn capture_source(fragment: &mut Fragment, direction: WritingDirectio
         let rect = fragment.border_box_rect();
         let source_size = WritingModeConverter::new(direction, PhysicalSize::zero())
             .to_physical_size(LogicalSize::new(rect.width(), rect.height()));
+        let source_fragment_size = WritingModeConverter::new(direction, PhysicalSize::zero())
+            .to_physical_size(LogicalSize::new(fragment.size.width, fragment.size.height));
+        let source_border_box_rect = WritingModeConverter::new(direction, source_fragment_size)
+            .to_physical_rect(LogicalRect::new(
+                LogicalOffset::new(rect.x(), rect.y()),
+                LogicalSize::new(rect.width(), rect.height()),
+            ));
         let physical_edges = |edges: BoxStrut| {
             LogicalBoxStrut::new(edges.left, edges.right, edges.top, edges.bottom)
                 .to_physical(direction)
@@ -38,6 +45,8 @@ pub(crate) fn capture_source(fragment: &mut Fragment, direction: WritingDirectio
         let source_padding = physical_edges(crate::ScrollArea::used_padding(fragment));
         fragment.box_geometry = Some(FragmentBoxGeometry {
             source_size,
+            source_fragment_size,
+            source_border_box_rect,
             source_border,
             source_padding,
             stitched_size: source_size,
@@ -163,6 +172,34 @@ pub(crate) fn populate(root: &mut Fragment) {
 mod tests {
     use super::*;
     use openui_dom::{Document, ElementTag};
+    #[test]
+    fn source_principal_origin_and_wrapper_survive_a_real_subslice() {
+        let mut doc = Document::new();
+        let node = doc.create_node(ElementTag::Div);
+        let lu = LayoutUnit::from_i32;
+        let mut fragment = Fragment::new_box(node, PhysicalSize::new(lu(120), lu(90)));
+        fragment.principal_box_rect = Some(openui_geometry::PhysicalRect::new(
+            openui_geometry::PhysicalOffset::new(lu(10), lu(12)),
+            PhysicalSize::new(lu(100), lu(68)),
+        ));
+        let direction = WritingDirectionMode::new(true, false, false, false);
+        capture_source(&mut fragment, direction);
+        let source = fragment.box_geometry.unwrap();
+        fragment.size.height = lu(50);
+        fragment.principal_box_rect.as_mut().unwrap().size.height = lu(38);
+        record_subslice(&mut fragment, lu(0), true);
+        let piece = fragment.box_geometry.unwrap();
+        assert_eq!(
+            piece.source_fragment_size,
+            PhysicalSize::new(lu(120), lu(90))
+        );
+        assert_eq!(piece.source_border_box_rect, source.source_border_box_rect);
+        assert_eq!(piece.source_border_box_rect.y(), lu(12));
+        assert_eq!(piece.source_border_box_rect.height(), lu(68));
+        assert_eq!(piece.block_size, lu(38));
+        assert!(piece.has_next);
+    }
+
     #[test]
     fn unsliced_edges_keep_their_source_writing_direction_after_decoration_removal() {
         let mut doc = Document::new();

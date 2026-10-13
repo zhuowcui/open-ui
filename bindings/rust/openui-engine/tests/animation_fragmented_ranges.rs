@@ -438,3 +438,147 @@ fn inline_formatting_principal_consumption_includes_fragmentainer_space_after_li
         }
     }
 }
+
+#[test]
+fn vertical_clone_border_consumption_is_block_relative() {
+    for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
+        for mode in [WritingMode::VerticalLr, WritingMode::VerticalRl] {
+            let mut e =
+                Engine::new(ViewportMetrics::from_logical_size(800.0, 600.0, scale).unwrap())
+                    .unwrap();
+            let root = e.root();
+            let source = box_(&mut e, root, 80.0, 500.0);
+            set(&mut e, source, StyleProperty::WritingMode, mode);
+            set(&mut e, source, StyleProperty::Overflow, Overflow::Hidden);
+            let columns = box_(&mut e, source, 100.0, 200.0);
+            set(
+                &mut e,
+                columns,
+                StyleProperty::ColumnCount,
+                StyleValue::Renderer(RendererStyleValue::ColumnCount(Some(2))),
+            );
+            set(
+                &mut e,
+                columns,
+                StyleProperty::ColumnFill,
+                StyleValue::Renderer(RendererStyleValue::ColumnFill(ColumnFill::Auto)),
+            );
+            set(
+                &mut e,
+                columns,
+                StyleProperty::ColumnGap,
+                StyleValue::Renderer(RendererStyleValue::ColumnGap(Some(Length::px(0.0)))),
+            );
+            let subject = box_(&mut e, columns, 180.0, 100.0);
+            set(&mut e, subject, StyleProperty::Height, LengthValue::auto());
+            set(
+                &mut e,
+                subject,
+                StyleProperty::BorderLeftStyle,
+                StyleValue::Renderer(RendererStyleValue::BorderLeftStyle(BorderStyle::Solid)),
+            );
+            set(
+                &mut e,
+                subject,
+                StyleProperty::BorderRightStyle,
+                StyleValue::Renderer(RendererStyleValue::BorderRightStyle(BorderStyle::Solid)),
+            );
+            set(&mut e, subject, StyleProperty::BorderLeftWidth, 2_i32);
+            set(&mut e, subject, StyleProperty::BorderRightWidth, 2_i32);
+            let target = box_(&mut e, root, 10.0, 10.0);
+            let id = e
+                .animate_with_attachment_range(
+                    target,
+                    PropertyKeyframes::typed(
+                        StyleProperty::Opacity,
+                        Keyframes::from_values(1.0_f32, 1.0_f32),
+                    )
+                    .unwrap(),
+                    AnimationOptions {
+                        duration_ms: 100.0,
+                        fill: FillMode::Both,
+                        ..AnimationOptions::default()
+                    },
+                    AnimationTimelineSource::View {
+                        subject,
+                        axis: TimelineAxis::Block,
+                    },
+                    AnimationAttachmentRange::default(),
+                )
+                .unwrap();
+            for (decoration, extent) in [
+                (BoxDecorationBreak::Slice, 184.0),
+                (BoxDecorationBreak::Clone, 188.0),
+                (BoxDecorationBreak::Slice, 184.0),
+            ] {
+                set(
+                    &mut e,
+                    subject,
+                    StyleProperty::BoxDecorationBreak,
+                    StyleValue::Renderer(RendererStyleValue::BoxDecorationBreak(decoration)),
+                );
+                let resolved = e
+                    .animation_attachment_snapshot(id)
+                    .unwrap()
+                    .unwrap()
+                    .resolved
+                    .unwrap();
+                // Cover span removes source-direction/origin variation and exposes
+                // only the real stitched block extent plus the client block extent.
+                assert_eq!(
+                    resolved.named.cover.end - resolved.named.cover.start,
+                    extent + 80.0
+                );
+                assert!(e.client_rects(subject).unwrap().len() >= 2);
+                let scene = e.scene().unwrap();
+                let stats = e.stats();
+                assert_eq!(e.scene().unwrap().generation(), scene.generation());
+                assert_eq!(e.stats(), stats);
+            }
+            // Physical top/bottom edges are inline decoration here. They
+            // must not become cloned block decoration merely because the
+            // source style uses physical edge names.
+            set(
+                &mut e,
+                subject,
+                StyleProperty::BorderLeftStyle,
+                StyleValue::Renderer(RendererStyleValue::BorderLeftStyle(BorderStyle::None)),
+            );
+            set(
+                &mut e,
+                subject,
+                StyleProperty::BorderRightStyle,
+                StyleValue::Renderer(RendererStyleValue::BorderRightStyle(BorderStyle::None)),
+            );
+            set(
+                &mut e,
+                subject,
+                StyleProperty::BorderTopStyle,
+                StyleValue::Renderer(RendererStyleValue::BorderTopStyle(BorderStyle::Solid)),
+            );
+            set(
+                &mut e,
+                subject,
+                StyleProperty::BorderBottomStyle,
+                StyleValue::Renderer(RendererStyleValue::BorderBottomStyle(BorderStyle::Solid)),
+            );
+            set(&mut e, subject, StyleProperty::BorderTopWidth, 2_i32);
+            set(&mut e, subject, StyleProperty::BorderBottomWidth, 2_i32);
+            for decoration in [BoxDecorationBreak::Slice, BoxDecorationBreak::Clone] {
+                set(
+                    &mut e,
+                    subject,
+                    StyleProperty::BoxDecorationBreak,
+                    StyleValue::Renderer(RendererStyleValue::BoxDecorationBreak(decoration)),
+                );
+                let resolved = e
+                    .animation_attachment_snapshot(id)
+                    .unwrap()
+                    .unwrap()
+                    .resolved
+                    .unwrap();
+                assert_eq!(resolved.named.cover.end - resolved.named.cover.start, 260.0);
+            }
+        }
+    }
+}

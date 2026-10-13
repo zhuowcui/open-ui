@@ -16418,17 +16418,42 @@ fn fragment_direct_positioned_children_in_multicol(
                     || own_full_transform != openui_style::TransformMatrix::IDENTITY)
                 && !own_is_pure_translation
             {
+                // Extraction runs after real continuation sizes have been
+                // materialized. Those piece dimensions cannot stand in for
+                // this owner's original source interval. Retain the principal
+                // origin independently of the wrapper extent.
+                let (source_size, source_reference_box) = fragment.box_geometry.map_or(
+                    (fragment.size, fragment.border_box_rect()),
+                    |geometry| {
+                        let converter = WritingModeConverter::new(
+                            writing_direction,
+                            geometry.source_fragment_size,
+                        );
+                        let size = converter.to_logical_size(geometry.source_fragment_size);
+                        let rect = converter.to_logical_rect(geometry.source_border_box_rect);
+                        (
+                            PhysicalSize::new(size.inline_size, size.block_size),
+                            PhysicalRect::new(
+                                PhysicalOffset::new(
+                                    rect.offset.inline_offset,
+                                    rect.offset.block_offset,
+                                ),
+                                PhysicalSize::new(rect.size.inline_size, rect.size.block_size),
+                            ),
+                        )
+                    },
+                );
                 promoted_transforms.push(PromotedTransformAncestor {
                     node_id: fragment.node_id,
                     source_offset: PhysicalOffset::new(
                         absolute_offset.left - source_space_visual_offset.left,
                         absolute_offset.top - source_space_visual_offset.top,
                     ),
-                    source_size: fragment.size,
+                    source_size,
                     visual_offset: physical_visual_offset,
                     fragment_offset: absolute_offset,
                     fragment_size: fragment.size,
-                    source_reference_box: fragment.border_box_rect(),
+                    source_reference_box,
                     fragment_reference_box: fragment.border_box_rect(),
                     reference_block_size: fragment.decoration_paint_block_size,
                     reference_block_axis_is_x: !fragment
@@ -27477,20 +27502,35 @@ fn layout_multicol(
                         // account for in each fragment's content area.
                         let is_clone =
                             child_style.box_decoration_break == BoxDecorationBreak::Clone;
-                        let clone_bp_block = if is_clone {
-                            resolve_margin_or_padding(&child_style.padding_top, column_width)
-                                + resolve_margin_or_padding(
-                                    &child_style.padding_bottom,
-                                    column_width,
+                        // The child has already been normalized into this
+                        // fragmenting context's (inline, block) working axes.
+                        // Authored top/bottom edges are physical and therefore
+                        // are not its block edges in a vertical context. Retain
+                        // used unsliced edges even if a nested continuation has
+                        // already removed its painting decoration.
+                        let (source_border, source_padding) = child_frag.box_geometry.map_or(
+                            (child_frag.border, child_frag.padding),
+                            |geometry| {
+                                (
+                                    algorithm_box_from_logical_strut(
+                                        geometry.source_border.to_logical(space.writing_direction),
+                                    ),
+                                    algorithm_box_from_logical_strut(
+                                        geometry.source_padding.to_logical(space.writing_direction),
+                                    ),
                                 )
-                                + LayoutUnit::from_i32(child_style.effective_border_top())
-                                + LayoutUnit::from_i32(child_style.effective_border_bottom())
+                            },
+                        );
+                        let clone_bp_block = if is_clone {
+                            source_border.top
+                                + source_border.bottom
+                                + source_padding.top
+                                + source_padding.bottom
                         } else {
                             LayoutUnit::zero()
                         };
                         let clone_block_start_decoration = if is_clone {
-                            LayoutUnit::from_i32(child_style.effective_border_top())
-                                + resolve_margin_or_padding(&child_style.padding_top, column_width)
+                            source_border.top + source_padding.top
                         } else {
                             LayoutUnit::zero()
                         };

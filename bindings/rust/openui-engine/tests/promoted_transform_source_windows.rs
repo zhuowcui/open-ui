@@ -108,6 +108,15 @@ fn nested_normal_sources_do_not_reuse_the_nearest_owners_relative_window() {
             .expect("second actual promoted continuation")
             .1;
         assert_eq!(first[0].source_reference_box.height().to_f32(), 80.0);
+        assert_eq!(first[0].source_size.height.to_f32(), 80.0);
+        assert_eq!(
+            second[0].source_reference_box,
+            first[0].source_reference_box
+        );
+        assert_eq!(
+            second[1].source_reference_box,
+            first[1].source_reference_box
+        );
         assert_eq!(first[1].source_reference_box.height().to_f32(), 50.0);
         assert_eq!(first[0].source_offset.top.to_f32(), 0.0);
         assert_eq!(first[1].source_offset.top.to_f32(), 12.0);

@@ -303,6 +303,11 @@ pub struct MulticolFragmentationData {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct FragmentBoxGeometry {
     pub source_size: PhysicalSize,
+    /// Original physical wrapper extent before an ancestor slices this box.
+    pub source_fragment_size: PhysicalSize,
+    /// Original physical principal border box, relative to that wrapper.
+    /// Preserve any authored principal origin independently of wrapper extent.
+    pub source_border_box_rect: PhysicalRect,
     /// Unsliced used edges captured before continuation decoration removal.
     pub source_border: BoxStrut,
     pub source_padding: BoxStrut,
