@@ -229,7 +229,18 @@ fn surviving_metric_units_use_final_family_size_and_line_height_after_mask_remov
         (a.font_size, a.width, a.height),
         (b.font_size, b.width, b.height)
     );
-    assert_eq!(a.width.value(), 40.0);
+    // Chromium keeps the selected font's actual ZeroInlineSize float here;
+    // a computed ch length is not an ideal em width or a layout pixel size.
+    let units = openui_text::FontRelativeLengthResolver::from_style_in_collection(
+        a,
+        e.font_collection().clone(),
+    );
+    assert_eq!(a.font_size, 20.0);
+    assert_eq!(a.height.value(), 60.0);
+    assert_eq!(
+        a.width.value(),
+        units.resolve(2.0, openui_text::FontRelativeUnit::Ch)
+    );
     e.set_property(root, StyleProperty::FontSize, LengthValue::px(24.0).into())
         .unwrap();
     let a = e.computed_style(n).unwrap();
@@ -238,7 +249,18 @@ fn surviving_metric_units_use_final_family_size_and_line_height_after_mask_remov
         (a.font_size, a.width, a.height),
         (b.font_size, b.width, b.height)
     );
-    assert_eq!(a.width.value(), 48.0);
+    // Chromium keeps the selected font's actual ZeroInlineSize float here;
+    // a computed ch length is not an ideal em width or a layout pixel size.
+    let units = openui_text::FontRelativeLengthResolver::from_style_in_collection(
+        a,
+        e.font_collection().clone(),
+    );
+    assert_eq!(a.font_size, 24.0);
+    assert_eq!(a.height.value(), 72.0);
+    assert_eq!(
+        a.width.value(),
+        units.resolve(2.0, openui_text::FontRelativeUnit::Ch)
+    );
 }
 
 #[test]
