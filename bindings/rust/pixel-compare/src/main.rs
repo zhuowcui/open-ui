@@ -3,6 +3,8 @@
 //! Usage:
 //!   pixel_compare list                              # List all test IDs
 //!   pixel_compare build-source-identity             # Source recorded by Cargo
+//!   pixel_compare export-picture <test_id> <output.skp> [profile options]
+//!       # Diagnostic canonical recording; does not render or qualify pixels
 //!   pixel_compare render <test_id> <output.png> [--viewport WxH] [--scale N]
 //!       [--raster-config PROFILE] [--backend cpu-skia|ganesh-gl]
 //!   pixel_compare render-all <output_dir> [--viewport WxH] [--scale N]
@@ -347,6 +349,32 @@ fn main() {
             }
         }
         Some("raster-identity") => print_raster_identity(&args[2..]),
+        Some("export-picture") => {
+            let test_id = args.get(2).expect(
+                "Usage: pixel_compare export-picture <test_id> <output.skp> [profile options]",
+            );
+            let output = args.get(3).expect("missing output.skp");
+            let viewport = install_viewport(&args[4..]);
+            let tests = registry();
+            let (_, builder) = tests
+                .iter()
+                .find(|(id, _)| *id == test_id)
+                .expect("unknown fixture ID");
+            let mut engine = builder(viewport).expect("fixture build");
+            let scene = engine.scene().expect("fixture scene");
+            let canonical = scene
+                .retained_scene()
+                .expect("owned scene recordings")
+                .recordings()
+                .iter()
+                .find(|recording| {
+                    recording.role() == openui_compositor::SceneRecordingRole::Canonical
+                })
+                .expect("canonical scene recording");
+            let data = canonical.picture().serialize();
+            std::fs::write(output, data.as_bytes()).expect("write canonical picture");
+            println!("Exported canonical Engine picture to {output}");
+        }
         Some("debug") => {
             let test_id = args.get(2).expect("Usage: pixel_compare debug <test_id>");
             let viewport = install_viewport(&args[3..]);
