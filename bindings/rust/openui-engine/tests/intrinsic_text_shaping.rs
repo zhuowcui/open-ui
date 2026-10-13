@@ -535,3 +535,136 @@ fn native_break_spaces_retains_space_units_and_bidi_fallback_boundaries_do_not_h
         assert_eq!(set_intrinsic_width(&mut engine, &nodes, false), max);
     }
 }
+
+#[test]
+fn leading_collapsed_spaces_and_forced_lines_share_native_intrinsic_paths() {
+    for (collapse, wrap, text, measured) in [
+        (WhiteSpaceCollapse::Collapse, TextWrapMode::Wrap, " X ", "X"),
+        (
+            WhiteSpaceCollapse::Collapse,
+            TextWrapMode::Nowrap,
+            " X ",
+            "X",
+        ),
+        (
+            WhiteSpaceCollapse::PreserveBreaks,
+            TextWrapMode::Wrap,
+            " X \n XX ",
+            "XX",
+        ),
+        (
+            WhiteSpaceCollapse::Collapse,
+            TextWrapMode::Wrap,
+            "\u{00a0}X",
+            "\u{00a0}X",
+        ),
+    ] {
+        let mut engine = engine_with_families(&["Ahem"]);
+        engine
+            .set_property(
+                engine.root(),
+                StyleProperty::WhiteSpace,
+                WhiteSpaceShorthand { collapse, wrap }.into(),
+            )
+            .unwrap();
+        let nodes = text_containers(&mut engine, text);
+        let expected = shaped_snapped_width(&engine, measured);
+        assert_eq!(shared_width(&mut engine, &nodes), expected);
+        assert_eq!(set_intrinsic_width(&mut engine, &nodes, true), expected);
+        assert_eq!(set_intrinsic_width(&mut engine, &nodes, false), expected);
+        for text_node in nodes.texts {
+            assert_eq!(engine.text_data(text_node).unwrap(), text);
+        }
+        let generation = engine.scene().unwrap().generation();
+        assert_eq!(shared_width(&mut engine, &nodes), expected);
+        assert_eq!(engine.scene().unwrap().generation(), generation);
+    }
+}
+
+#[test]
+fn inline_edges_and_empty_tags_keep_leading_state_but_atomic_content_ends_it() {
+    let mut engine = engine_with_families(&["Ahem"]);
+    permit_native_wrap(&mut engine);
+    let host = engine.create_native_element(ElementTag::Span).unwrap();
+    engine
+        .set_property(host, StyleProperty::Display, Display::InlineBlock.into())
+        .unwrap();
+    engine
+        .set_property(
+            host,
+            StyleProperty::Width,
+            LengthValue::Computed(Length::max_content()).into(),
+        )
+        .unwrap();
+    engine.append_child(engine.root(), host).unwrap();
+    let leading = engine.create_text(" ").unwrap();
+    engine.append_child(host, leading).unwrap();
+    let edge = engine.create_native_element(ElementTag::Span).unwrap();
+    engine
+        .set_property(
+            edge,
+            StyleProperty::PaddingLeft,
+            LengthValue::px(3.0).into(),
+        )
+        .unwrap();
+    engine
+        .set_property(
+            edge,
+            StyleProperty::PaddingRight,
+            LengthValue::px(2.0).into(),
+        )
+        .unwrap();
+    engine.append_child(host, edge).unwrap();
+    let empty = engine.create_native_element(ElementTag::Span).unwrap();
+    engine.append_child(edge, empty).unwrap();
+    let text = engine.create_text(" X ").unwrap();
+    engine.append_child(edge, text).unwrap();
+    let trailing = engine.create_text(" ").unwrap();
+    engine.append_child(host, trailing).unwrap();
+    let expected = shaped_snapped_width(&engine, "X") + 5.0;
+    assert_eq!(engine.bounds(host).unwrap().unwrap().width, expected);
+    engine
+        .set_property(
+            host,
+            StyleProperty::Width,
+            LengthValue::Computed(Length::min_content()).into(),
+        )
+        .unwrap();
+    assert_eq!(engine.bounds(host).unwrap().unwrap().width, expected);
+    assert_eq!(engine.text_data(text).unwrap(), " X ");
+
+    // Even a real zero-advance atomic ends the Leading whitespace state.
+    // Its following space remains interior; numerical width is not the state.
+    for width in [0.0, 4.0] {
+        let atomic_host = engine.create_native_element(ElementTag::Span).unwrap();
+        engine
+            .set_property(
+                atomic_host,
+                StyleProperty::Display,
+                Display::InlineBlock.into(),
+            )
+            .unwrap();
+        engine
+            .set_property(
+                atomic_host,
+                StyleProperty::Width,
+                LengthValue::Computed(Length::max_content()).into(),
+            )
+            .unwrap();
+        engine.append_child(engine.root(), atomic_host).unwrap();
+        let atomic = engine.create_native_element(ElementTag::Span).unwrap();
+        engine
+            .set_property(atomic, StyleProperty::Display, Display::InlineBlock.into())
+            .unwrap();
+        engine
+            .set_property(atomic, StyleProperty::Width, LengthValue::px(width).into())
+            .unwrap();
+        engine.append_child(atomic_host, atomic).unwrap();
+        let text = engine.create_text(" X").unwrap();
+        engine.append_child(atomic_host, text).unwrap();
+        assert_eq!(
+            engine.bounds(atomic_host).unwrap().unwrap().width,
+            width + shaped_snapped_width(&engine, " X")
+        );
+    }
+}

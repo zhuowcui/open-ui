@@ -410,6 +410,11 @@ fn compute_inline_items_intrinsic_sizes(
     let mut max_content = LayoutUnit::zero();
     let mut pending_collapsible_space = LayoutUnit::zero();
     let mut pending_min_collapsible_space = LayoutUnit::zero();
+    // Pinned .50 LineBreaker::HandleText skips collapsed spaces while its
+    // whitespace state is Leading. Inline decoration items do not change that
+    // state; zero advance also cannot distinguish empty text from content.
+    // A recursive whitespace-only contribution can explicitly own neighbors.
+    let mut leading_collapsible_whitespace = !preserve_boundary_whitespace;
 
     let commit_soft_segment = |min_segment: &mut LayoutUnit,
                                min_content: &mut LayoutUnit,
@@ -489,6 +494,7 @@ fn compute_inline_items_intrinsic_sizes(
                 last_content_was_text = false;
             }
             InlineItemType::Control => {
+                leading_collapsible_whitespace = true;
                 soft_break_after_pending_edges = false;
                 last_content_was_text = false;
                 pending_min_collapsible_space = LayoutUnit::zero();
@@ -503,6 +509,7 @@ fn compute_inline_items_intrinsic_sizes(
                 );
             }
             InlineItemType::AtomicInline => {
+                leading_collapsible_whitespace = false;
                 min_segment = min_segment + pending_min_collapsible_space;
                 pending_min_collapsible_space = LayoutUnit::zero();
                 if soft_break_pending {
@@ -585,6 +592,19 @@ fn compute_inline_items_intrinsic_sizes(
                     let byte_end = byte_index + ch.len_utf8();
                     let is_forced = forces_newlines && ch == '\n';
                     let is_space = is_css_collapsible_whitespace(ch) && !is_forced;
+                    if is_space && collapses && leading_collapsible_whitespace {
+                        // Start both shaped ranges after the omitted character,
+                        // so its fractional snapped prefix cannot affect the
+                        // first visible run. Preserve the state across items.
+                        run_start = byte_end;
+                        run_start_char = char_end;
+                        min_range_start_char = char_end;
+                        max_line_start_char = char_end;
+                        continue;
+                    }
+                    if !is_forced {
+                        leading_collapsible_whitespace = false;
+                    }
                     let is_soft_break_before = wraps
                         && item_breaks
                             .binary_search(&(item.text_range.start + byte_index))
@@ -640,6 +660,7 @@ fn compute_inline_items_intrinsic_sizes(
                     }
 
                     if is_forced {
+                        leading_collapsible_whitespace = true;
                         soft_break_pending = false;
                         soft_break_after_pending_edges = false;
                         last_content_was_text = false;
@@ -778,7 +799,9 @@ fn compute_inline_items_intrinsic_sizes(
                     pending_collapsible_space = LayoutUnit::zero();
                 }
             }
-            InlineItemType::BlockInInline => {}
+            InlineItemType::BlockInInline => {
+                leading_collapsible_whitespace = false;
+            }
         }
     }
 
