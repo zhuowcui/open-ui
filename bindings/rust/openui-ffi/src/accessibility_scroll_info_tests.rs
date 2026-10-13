@@ -44,7 +44,7 @@ fn property(element: *mut OuiElement, prop: StyleProperty, text: &str) {
     );
     if value.tag == 6 {
         assert_eq!(
-            oui_style_compound_destroy(unsafe { value.data.compound }),
+            oui_style_compound_destroy(unsafe { value.data.compound }.cast_mut()),
             OuiStatus::Ok
         );
     }
