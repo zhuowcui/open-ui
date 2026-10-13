@@ -2504,7 +2504,15 @@ def _apply_ast_mutation_ir(parser: 'WptHtmlParser') -> None:
             if styles is None or not isinstance(name, str) or not isinstance(value, str):
                 unsupported.append((kind, operation.get('order'), 'invalid cascade delta'))
             else:
-                styles[name] = value
+                if value == '':
+                    # CSSOM empty assignment removes the authored declaration,
+                    # allowing stylesheet/default sources to win the cascade.
+                    styles.pop(name, None)
+                    if isinstance(styles, CssDeclarations):
+                        styles.cascade_priority.pop(name, None)
+                        styles.important.pop(name, None)
+                else:
+                    styles[name] = value
         elif kind == 'set-style-text':
             styles = style_target(target)
             if styles is None or not isinstance(operation.get('value'), str):
@@ -2568,6 +2576,21 @@ def _apply_ast_mutation_ir(parser: 'WptHtmlParser') -> None:
             children = [resolve(child) for child in operation.get('children', [])]
             if not children or any(not append(target, child) for child in children):
                 unsupported.append((kind, operation.get('order'), 'invalid append target'))
+        elif kind == 'prepend':
+            children = [resolve(child) for child in operation.get('children', [])]
+            if (not isinstance(target, DomNode) or not children
+                    or any(not isinstance(child, DomNode) for child in children)):
+                unsupported.append((kind, operation.get('order'), 'invalid prepend target'))
+            else:
+                inserted = []
+                for child in children:
+                    detach(child)
+                    if child.tag == '#document-fragment':
+                        inserted.extend(child.children)
+                        child.children.clear()
+                    else:
+                        inserted.append(child)
+                target.children[0:0] = inserted
         elif kind == 'insert-before':
             child = resolve(operation.get('child'))
             before = resolve(operation.get('before'))

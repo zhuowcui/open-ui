@@ -24,6 +24,8 @@ use std::sync::OnceLock;
 #[rustfmt::skip]
 mod wpt;
 
+mod pending_native_mutation_v1;
+
 const LEGACY_WIDTH: f64 = 800.0;
 const LEGACY_HEIGHT: f64 = 600.0;
 const LEGACY_SCALE: f64 = 1.0;
@@ -934,7 +936,34 @@ fn registry() -> Vec<(&'static str, TestBuilder)> {
     ];
     // Extend with auto-generated WPT tests
     tests.extend(wpt::all_wpt_registry());
+    // Distinct pending IDs preserve historical builders and qualification.
+    tests.extend([
+        ("pending/native-mutation-v1/wpt/css_break/out-of-flow-in-multicolumn-120", pending_mutation_prepend as TestBuilder),
+        ("pending/native-mutation-v1/wpt/css_position/position-fixed-dynamic-transformed-sibling", pending_mutation_display_remove as TestBuilder),
+        ("pending/native-mutation-v1/wpt/css_overflow/scrollbars-chrome-bug-001", pending_mutation_transform_barriers as TestBuilder),
+    ]);
     tests
+}
+
+fn pending_mutation_prepend(viewport: ViewportMetrics) -> Result<Engine, EngineError> {
+    let mut engine = FixtureEngine::new(viewport)?.into_engine();
+    let replay = pending_native_mutation_v1::replay_0(&mut engine)?;
+    let _ = (replay.handles.len(), replay.barriers.len());
+    Ok(engine)
+}
+
+fn pending_mutation_display_remove(viewport: ViewportMetrics) -> Result<Engine, EngineError> {
+    let mut engine = FixtureEngine::new(viewport)?.into_engine();
+    let replay = pending_native_mutation_v1::replay_1(&mut engine)?;
+    let _ = (replay.handles.len(), replay.barriers.len());
+    Ok(engine)
+}
+
+fn pending_mutation_transform_barriers(viewport: ViewportMetrics) -> Result<Engine, EngineError> {
+    let mut engine = FixtureEngine::new(viewport)?.into_engine();
+    let replay = pending_native_mutation_v1::replay_2(&mut engine)?;
+    let _ = (replay.handles.len(), replay.barriers.len());
+    Ok(engine)
 }
 
 // ═══════════════════════════════════════════════════════════════════════

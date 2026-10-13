@@ -1,0 +1,238 @@
+{
+  "schema_version": 1,
+  "frontend_sha256": "0231fed2f80edb935715d8b0b234c468b8a260920cc24f2824fa69ec0c577285",
+  "generator_sha256": "c3a74ff02873a3eb2bcabee6ae6e6b55d9ac9d961cafb27865d8377843a11929",
+  "acorn_sha256": "402f6759c744ea2ca501c1dc4ded8b1c54c9066cc7a741837057dcb68bc64c93",
+  "schema_sha256": "4d1f344969639be99ec4d5925ffad231905773b6899aaf92f9680f841cda1792",
+  "entries": [
+    {
+      "schema_version": 1,
+      "test_id": "wpt/css_break/out-of-flow-in-multicolumn-120",
+      "native_id": "pending/native-mutation-v1/wpt/css_break/out-of-flow-in-multicolumn-120",
+      "function": "replay_0",
+      "ir": {
+        "schema_version": 1,
+        "test_id": "wpt/css_break/out-of-flow-in-multicolumn-120",
+        "operations": [
+          {
+            "order": 0,
+            "kind": "layout-barrier",
+            "script_index": 0,
+            "origin": "inline:0",
+            "source_offset": 51,
+            "target": {
+              "kind": "body"
+            },
+            "property": "offsetHeight",
+            "engine_api": "Engine::update"
+          },
+          {
+            "order": 1,
+            "kind": "create-element",
+            "script_index": 0,
+            "origin": "inline:0",
+            "source_offset": 95,
+            "binding": "newDiv",
+            "tag_name": "div",
+            "engine_api": "Engine::create_native_element"
+          },
+          {
+            "order": 2,
+            "kind": "set-style",
+            "script_index": 0,
+            "origin": "inline:0",
+            "source_offset": 126,
+            "target": {
+              "kind": "binding",
+              "name": "newDiv"
+            },
+            "property": "height",
+            "value": "60px",
+            "engine_api": "Engine::set_property",
+            "canonical_property": {
+              "css_name": "height",
+              "rust_name": "Height"
+            }
+          },
+          {
+            "order": 3,
+            "kind": "prepend",
+            "script_index": 0,
+            "origin": "inline:0",
+            "source_offset": 156,
+            "target": {
+              "kind": "query",
+              "method": "getElementById",
+              "argument": "abscb"
+            },
+            "children": [
+              {
+                "kind": "binding",
+                "name": "newDiv"
+              }
+            ],
+            "engine_api": [
+              "Engine::children",
+              "Engine::insert_before",
+              "Engine::append_or_move_child"
+            ]
+          }
+        ],
+        "rejections": [],
+        "lowerable": true
+      },
+      "qualification": false,
+      "source_path": "/home/nero/chromium/src/third_party/blink/web_tests/external/wpt/css/css-break/out-of-flow-in-multicolumn-120.html",
+      "source_sha256": "99cd34afa3920dc83f78fc23680e088afc30196d997053730059d7759c06f7d6",
+      "reference_path": "/home/nero/chromium/src/third_party/blink/web_tests/external/wpt/css/reference/ref-filled-green-100px-square.xht",
+      "reference_sha256": "b7d98bb3f8b7b70e8f76f0b7e99566bc09ca5e5cbae1cef571d7843be87da4f0"
+    },
+    {
+      "schema_version": 1,
+      "test_id": "wpt/css_position/position-fixed-dynamic-transformed-sibling",
+      "native_id": "pending/native-mutation-v1/wpt/css_position/position-fixed-dynamic-transformed-sibling",
+      "function": "replay_1",
+      "ir": {
+        "schema_version": 1,
+        "test_id": "wpt/css_position/position-fixed-dynamic-transformed-sibling",
+        "operations": [
+          {
+            "order": 0,
+            "kind": "bind-target",
+            "script_index": 0,
+            "origin": "inline:0",
+            "source_offset": 16,
+            "binding": "target",
+            "target": {
+              "kind": "query",
+              "method": "getElementById",
+              "argument": "target"
+            }
+          },
+          {
+            "order": 1,
+            "kind": "layout-barrier",
+            "script_index": 0,
+            "origin": "inline:0",
+            "source_offset": 53,
+            "target": {
+              "kind": "body"
+            },
+            "method": "getBoundingClientRect",
+            "engine_api": "Engine::update"
+          },
+          {
+            "order": 2,
+            "kind": "remove-style",
+            "script_index": 0,
+            "origin": "inline:0",
+            "source_offset": 94,
+            "target": {
+              "kind": "binding",
+              "name": "target"
+            },
+            "property": "display",
+            "value": "",
+            "engine_api": "Engine::remove_property",
+            "canonical_property": {
+              "css_name": "display",
+              "rust_name": "Display"
+            }
+          }
+        ],
+        "rejections": [],
+        "lowerable": true
+      },
+      "qualification": false,
+      "source_path": "/home/nero/chromium/src/third_party/blink/web_tests/external/wpt/css/css-position/position-fixed-dynamic-transformed-sibling.html",
+      "source_sha256": "e0b2b1f903e06f730e4579878b5367385664b781b04767fdec55da5205f42618",
+      "reference_path": "/home/nero/chromium/src/third_party/blink/web_tests/external/wpt/css/css-position/position-fixed-dynamic-transformed-sibling-ref.html",
+      "reference_sha256": "f758c7b5826bf35ad9acc4a043acb9a0d6411245368225b5800ec048e2048839"
+    },
+    {
+      "schema_version": 1,
+      "test_id": "wpt/css_overflow/scrollbars-chrome-bug-001",
+      "native_id": "pending/native-mutation-v1/wpt/css_overflow/scrollbars-chrome-bug-001",
+      "function": "replay_2",
+      "ir": {
+        "schema_version": 1,
+        "test_id": "wpt/css_overflow/scrollbars-chrome-bug-001",
+        "operations": [
+          {
+            "order": 0,
+            "kind": "layout-barrier",
+            "script_index": 0,
+            "origin": "inline:0",
+            "source_offset": 168,
+            "target": {
+              "kind": "body"
+            },
+            "property": "offsetTop",
+            "engine_api": "Engine::update"
+          },
+          {
+            "order": 1,
+            "kind": "set-style",
+            "script_index": 0,
+            "origin": "inline:0",
+            "source_offset": 195,
+            "target": {
+              "kind": "query",
+              "method": "querySelector",
+              "argument": "#target"
+            },
+            "property": "transform",
+            "value": "scale(1.5)",
+            "engine_api": "Engine::set_property",
+            "canonical_property": {
+              "css_name": "transform",
+              "rust_name": "Transform"
+            }
+          },
+          {
+            "order": 2,
+            "kind": "layout-barrier",
+            "script_index": 0,
+            "origin": "inline:0",
+            "source_offset": 263,
+            "target": {
+              "kind": "body"
+            },
+            "property": "offsetTop",
+            "engine_api": "Engine::update"
+          },
+          {
+            "order": 3,
+            "kind": "set-style",
+            "script_index": 0,
+            "origin": "inline:0",
+            "source_offset": 290,
+            "target": {
+              "kind": "query",
+              "method": "querySelector",
+              "argument": "#target"
+            },
+            "property": "transform",
+            "value": "scale(4.0)",
+            "engine_api": "Engine::set_property",
+            "canonical_property": {
+              "css_name": "transform",
+              "rust_name": "Transform"
+            }
+          }
+        ],
+        "rejections": [],
+        "lowerable": true
+      },
+      "qualification": false,
+      "source_path": "/home/nero/chromium/src/third_party/blink/web_tests/external/wpt/css/css-overflow/scrollbars-chrome-bug-001.html",
+      "source_sha256": "2b99c3e0351ac702f9018316c8a45f991c42ef5b55dec84ac1fb4a89730cac01",
+      "reference_path": "/home/nero/chromium/src/third_party/blink/web_tests/external/wpt/css/css-overflow/scrollbars-chrome-bug-001-ref.html",
+      "reference_sha256": "ab953a30e2a91ab2e68d028afd3f4cce74bca5e378c12e8736d66a6edd30cb87"
+    }
+  ],
+  "qualification": false,
+  "generated_rust_sha256": "08e23d77a566bc2f0b8dbbee164889ba9b36ec4c87411da19f3d8c3d6a26c7e2",
+  "capture_policy": "existing legacy-box-only harness; raw authored CSS and ordered native calls",
+  "required_gate": "Root clean source; all four current-Chromium profiles exact"
+}
