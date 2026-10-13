@@ -1,0 +1,109 @@
+{
+  "owner_pid": 3303331,
+  "source": {
+    "commit": "a963558e4ee79ded11f850356b942d685967c0f0",
+    "clean": true,
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "source_tree_sha256": "5b32c303397283803784e461a4743aae2fdeaaf6fb553833755042c9695651a1",
+    "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6"
+  },
+  "checks": [
+    {
+      "name": "paint-image-shader-resource-guards",
+      "argv": [
+        "cargo",
+        "+stable",
+        "--config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "openui-paint",
+        "--lib",
+        "image_shader_operands_and_other_shaders_keep_owned_resource_replay"
+      ],
+      "pid": 3304223,
+      "actual_exit_code": 0,
+      "terminal_reaped": true,
+      "log_sha256": "b82577a471974c4e963345e11fa3f4e8a7ae188efb1f4f0feaaf154b369239d8",
+      "reported_passed": 1,
+      "reported_failed": 0,
+      "reported_ignored": 0
+    },
+    {
+      "name": "ordered-native-mutation-guards",
+      "argv": [
+        "cargo",
+        "+stable",
+        "--config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "openui-engine",
+        "--test",
+        "ordered_native_mutations"
+      ],
+      "pid": 3307303,
+      "actual_exit_code": 101,
+      "terminal_reaped": true,
+      "log_sha256": "8a0295a6350b1d4524481ec890e98ab23195ff1e9d5acf5bfe50afcc0267db4c",
+      "reported_passed": 2,
+      "reported_failed": 1,
+      "reported_ignored": 0
+    },
+    {
+      "name": "layered-resource-lifetime-guards",
+      "argv": [
+        "cargo",
+        "+stable",
+        "--config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "openui-engine",
+        "--test",
+        "layered_paint_diagnostics"
+      ],
+      "pid": 3307542,
+      "actual_exit_code": 0,
+      "terminal_reaped": true,
+      "log_sha256": "ae9f26077bb07ea37bd0333c53cc07f28ec281e56c1f35b5502f377c24ed44ea",
+      "reported_passed": 5,
+      "reported_failed": 0,
+      "reported_ignored": 0
+    }
+  ],
+  "complete": true,
+  "renderer_qualified": false,
+  "release_qualified": false,
+  "runtime_scope": "actual Paint image shader versus other shader ownership and canonical replay at five scales, Engine layered PNG/SVG/font owner/lifetime/drop/thread guards; not complete workspace or Chromium qualification",
+  "independent_live_pixel_epoch": {
+    "source_before": {
+      "commit": "fb1b68fa8cdf8ac505f677ab31c2a00f43d105fa",
+      "clean": true,
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_tree_sha256": "4d82b3190b089e9184d5198fd5c8919a724f6b4ed496f26f7af61ceb263e9e53",
+      "harness_sha256": "abff37553c0abe146718cec361f956bfcc75bfcfeaf7feb82682f6122e920ccd"
+    },
+    "runner_sha256": "2a3b8a857fad0ec5a961bc1d0485d2de0e4bf1e8d7cb2cc1da7bff72029947e7",
+    "performance_qualification": false,
+    "shared_cargo_target_used_by_pixel_runner": false,
+    "source_unchanged": true,
+    "runner_unchanged": true
+  },
+  "boot_id": "362ae37b-d85f-4812-9f25-ef02cf732134",
+  "source_after": {
+    "commit": "a963558e4ee79ded11f850356b942d685967c0f0",
+    "clean": true,
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "source_tree_sha256": "5b32c303397283803784e461a4743aae2fdeaaf6fb553833755042c9695651a1",
+    "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6"
+  },
+  "source_unchanged": true,
+  "intended_exit_code": 1
+}

@@ -1,7 +1,7 @@
 # Open UI
 
 Open UI is a typed, reactive desktop and headless UI framework built around one
-pure-Rust renderer. Version 0.2 targets Linux on x86-64 and AArch64, with X11,
+shared Rust engine and Skia renderer. Version 0.2 targets Linux on x86-64 and AArch64, with X11,
 Wayland, OpenGL presentation, automatic software fallback, and a co-equal C ABI.
 
 ```text
@@ -29,49 +29,36 @@ right picture or the Chromium test uses a script. See the
 
 ### Current closure work (13 October 2026)
 
-The last complete original Chromium census is **21,317/22,924 exact (93.0%)**
-at clean `fe51eab9`: **1,607 differences, zero render errors**. This is the
-pixel score, not a whole-project completion percentage.
+The latest completed expanded Chromium run at clean `fb1b68fa` is
+**21,724/23,728 exact**, with **2,004 differences and zero render errors**.
+Its original-case subset is **20,996/22,924 exact (91.6%)**, with 1,928
+differences. The 201 admitted additions are **728/804 exact**; 182 cases match
+in all four profiles and 19 need repair. These are pixel results at that
+checkpoint, not a whole-project completion percentage.
 
-At clean `fb1b68fa`, focused **640/640** and primitive **960/960** comparisons
-are exact. The full census stopped on a PNG-cache publication error and has
-no valid total. Its failed evidence is preserved; a retry with one worker is
-queued. The expanded census is still running. None of these results qualifies
-later source changes.
+Against the earlier complete original run at `fe51eab9` (21,317/22,924 exact),
+340 comparisons lose equality with unchanged Chromium pixels and 19 gain it.
+Five Chromium captures also change. Two fresh repeats of those five fixtures
+across all four profiles reproduce the newer Chromium pixels and match the
+native images in **40/40** comparisons. Both versions remain preserved; the
+cause of the older capture differences remains open.
 
-The shared opacity repair matches two original fragmented cases in **8/8**
-whole-image comparisons across the four required profiles. Its reduced native
-guard passes at five scales. These are diagnostic results at `96bfa002`,
-without fresh full-library provenance. The contained case still differs in
-all four profiles and needs separate transparent layer/effect publication.
+At `fb1b68fa`, focused **640/640** and primitive **960/960** comparisons are
+exact. The standalone original run stopped on a PNG-cache publication error
+and has no valid total. Its queued retry was retired before rendering began.
+The shared publisher now preserves a verified complete PNG throughout
+concurrent publication. A fresh renderer build and complete matrix remain
+required for the later source changes.
 
-The complete native workspace at `1d98a22e` reports **9,223 passed / 3 failed /
-0 ignored**. The failures concern progress-timeline held time, continuation
-border metadata and collapsed-table clipping. Repairs are in progress.
-Doctests report **2 passed / 0 failed / 13 ignored**.
+The complete native workspace at `a963558e` reports **9,252 passed / 2 failed / 0 ignored**. Doctests report **2 passed / 0 failed / 13 ignored**. The transform overflow failure remains strict: pinned Chromium reports 250px; native reports 200px. The second failing public guard reports an active animation phase where its end-state contract requires the after phase; its cause is being investigated. The earlier timing, continuation border and collapsed-cell clipping repairs have separate scoped evidence at `896325c0`; those pixels still require Chromium qualification.
 
-Native authored-property removal now has a shared Rust/C operation. All
-**68 C/C++ consumers** pass against the fresh `539ab92d` library, with **158
-exports** and the prior exports and measured layouts preserved. The enclosing
-workspace run failed to compile a test and is not a complete workspace pass.
+All **330 Python tests in 21 modules** and all **21 generated/format checks** pass at that checkpoint, including the pending native mutation generator and clang-format 18.1.3. Retained image shader ownership and layered resource lifetime guards pass. Three ordered native builders remain diagnostic and require exact four-profile Chromium measurements. Open UI runs no JavaScript; applications call native Rust APIs and callbacks.
 
-All **313 Python tests in 20 modules** pass at `1d98a22e`. All **18 generated
-checks** and the **clang-format 18.1.3** check pass at that checkpoint.
-Hosted format, CI and manual hardening jobs pass at `fb1b68fa`, including the
-locked Rust 1.85 check, sanitizers, fuzz smoke and one Miri handle probe.
-Hosted X11/Wayland software and Mesa checks pass; physical GPU and real
-AT-SPI operation still need qualification.
+The current source C/C++ consumer run exits **0** against its freshly built library. The existing append-only removal interface has **158 exports**, with 68 headless C/C++ consumers; this does not qualify packaged or physical-window applications.
 
-Both lockfiles have zero reported advisories; **364/364** registry-version
-checks completed with no yanks or errors. Packaged applications and the
-registry consumer's dependency graph still need qualification.
+Hosted format, CI and hardening gates pass at `fb1b68fa`; later changes need new hosted runs. Native API completion, transparent layer publication/compositor tracks, 3D, remaining Chromium pixels, physical GPU/AT-SPI/performance, reproducible packaging, signing and publication remain open. Earlier source identities and evidence remain explicit.
 
-Native APIs, retained compositor/3D, remaining Chromium pixels, hardware
-performance, packaging, signing and publication remain open. Open UI executes
-no JavaScript; applications use native Rust APIs and callbacks. Chromium
-defines rendering correctness. Earlier evidence keeps its measured source
-identity and does not qualify later changes.
-[Current closure evidence](docs/renderer/generated/native-final-closure-status-v5.json).
+[Current closure evidence](docs/renderer/generated/native-final-closure-status-v6.json).
 
 ### Table ownership and opacity repair (full renderer gate open)
 

@@ -1,0 +1,256 @@
+{
+  "schema_version": 1,
+  "owner_pid": 3296137,
+  "source": {
+    "commit": "fb1b68fa8cdf8ac505f677ab31c2a00f43d105fa",
+    "clean": true,
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "source_tree_sha256": "4d82b3190b089e9184d5198fd5c8919a724f6b4ed496f26f7af61ceb263e9e53",
+    "harness_sha256": "abff37553c0abe146718cec361f956bfcc75bfcfeaf7feb82682f6122e920ccd"
+  },
+  "runner_sha256": "2a3b8a857fad0ec5a961bc1d0485d2de0e4bf1e8d7cb2cc1da7bff72029947e7",
+  "build_receipt_sha256": "6809099d012e12325d2eb96ada3b97ab5d0f654bcc4837ff4f511f82b5cbf503",
+  "chromium_sha256": "0ba87684df0afc11faaea40ac57bd2f1d68b67191443b38215a36b90e6f08848",
+  "diagnostic_only": true,
+  "pixel_qualification": false,
+  "audit_sha256": "85959b4ddf0d64d06b02a106fcc4a951d9f38b9cf6e33d045a485598132f7699",
+  "reason": "repeat the five original fixtures with changed browser RGBA in entirely separate empty cache namespaces; preserve every prior oracle byte",
+  "steps": [
+    {
+      "repeat": 1,
+      "argv": [
+        "python3",
+        "-B",
+        "/dev/shm/openui-native-renderer-v4446/tools/qualification/run_renderer_matrix.py",
+        "--suite",
+        "full",
+        "--results-dir",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-chromium-capture-repeat-v4533/repeat-1",
+        "--cache-dir",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-chromium-capture-repeat-v4533/cache-1",
+        "--oracle-cache-dir",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-chromium-capture-repeat-v4533/cache-1/chromium-oracle",
+        "--pixel-compare",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-fresh-renderer-build-v4446/guarded-build/pixel_compare",
+        "--build-receipt",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-fresh-renderer-build-v4446/guarded-build/receipt.json",
+        "--chrome",
+        "/home/nero/code/open-ui/chrome/linux-147.0.7727.50/chrome-linux64/chrome",
+        "--raster-backend",
+        "cpu-skia",
+        "--jobs",
+        "2",
+        "--test-id",
+        "wpt/css2_floats/float-nowrap-3",
+        "--test-id",
+        "wpt/css2_floats/float-nowrap-4",
+        "--test-id",
+        "wpt/css2_floats/float-nowrap-4-ref2",
+        "--test-id",
+        "wpt/css2_floats/float-nowrap-8",
+        "--test-id",
+        "wpt/css2_floats/float-nowrap-hyphen-rewind-1-ref"
+      ],
+      "pid": 3296174,
+      "actual_exit_code": 0,
+      "reaped": true,
+      "log_sha256": "8020e0b5b8400cacd42dd05ead56323357ddb33acafe3b8d6111f1fbfea61288",
+      "counts": {
+        "different": 0,
+        "errors": 0,
+        "exact": 20,
+        "profile_result_sha256": "f14fe3170fca2b1ca6527b6828be5aa864023cc8aede3c0acc92557f1b68672a",
+        "total": 20
+      },
+      "summary_sha256": "0b43732b90153dd2743fcf99661adb109f38b65acbd5511f0583f2082220c7ef"
+    },
+    {
+      "repeat": 2,
+      "argv": [
+        "python3",
+        "-B",
+        "/dev/shm/openui-native-renderer-v4446/tools/qualification/run_renderer_matrix.py",
+        "--suite",
+        "full",
+        "--results-dir",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-chromium-capture-repeat-v4533/repeat-2",
+        "--cache-dir",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-chromium-capture-repeat-v4533/cache-2",
+        "--oracle-cache-dir",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-chromium-capture-repeat-v4533/cache-2/chromium-oracle",
+        "--pixel-compare",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-fresh-renderer-build-v4446/guarded-build/pixel_compare",
+        "--build-receipt",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-fresh-renderer-build-v4446/guarded-build/receipt.json",
+        "--chrome",
+        "/home/nero/code/open-ui/chrome/linux-147.0.7727.50/chrome-linux64/chrome",
+        "--raster-backend",
+        "cpu-skia",
+        "--jobs",
+        "2",
+        "--test-id",
+        "wpt/css2_floats/float-nowrap-3",
+        "--test-id",
+        "wpt/css2_floats/float-nowrap-4",
+        "--test-id",
+        "wpt/css2_floats/float-nowrap-4-ref2",
+        "--test-id",
+        "wpt/css2_floats/float-nowrap-8",
+        "--test-id",
+        "wpt/css2_floats/float-nowrap-hyphen-rewind-1-ref"
+      ],
+      "pid": 3298755,
+      "actual_exit_code": 0,
+      "reaped": true,
+      "log_sha256": "736224e1794a49921f4844477fbb0cd589c344e26aedd4a355f394ee5d837f50",
+      "counts": {
+        "different": 0,
+        "errors": 0,
+        "exact": 20,
+        "profile_result_sha256": "f14fe3170fca2b1ca6527b6828be5aa864023cc8aede3c0acc92557f1b68672a",
+        "total": 20
+      },
+      "summary_sha256": "6c7aed28027de9b271d80f308aa6a4a156f6f927bf4da2ef91d1bed757d6be1a"
+    }
+  ],
+  "complete": true,
+  "changed_rows_repeated": [
+    {
+      "profile": "mobile-375x667@2",
+      "id": "wpt/css2_floats/float-nowrap-3",
+      "old_status": "different",
+      "new_status": "exact",
+      "old_native_rgba_sha256": "515379dedbe2d2fdcbecb157b2adb8faaeb8f2a4b8c755d8b7786521c328ad9f",
+      "new_native_rgba_sha256": "515379dedbe2d2fdcbecb157b2adb8faaeb8f2a4b8c755d8b7786521c328ad9f",
+      "old_chromium_rgba_sha256": "fde6922d84ecce0003f85d1531cf6b4c94a038424a414ca38d8b6456b6c1ad09",
+      "new_chromium_rgba_sha256": "515379dedbe2d2fdcbecb157b2adb8faaeb8f2a4b8c755d8b7786521c328ad9f",
+      "old_oracle_identity": "f81e142e8029011afbb406ce525d25fe17841c6f96b800d1a0aa124a6fbbfaa4",
+      "new_oracle_identity": "9984fe1129481c396779b1860aedfcc5a0c0049cdc48cd1b19e2f998ccab5c54",
+      "repeat_chromium_rgba_sha256": [
+        "515379dedbe2d2fdcbecb157b2adb8faaeb8f2a4b8c755d8b7786521c328ad9f",
+        "515379dedbe2d2fdcbecb157b2adb8faaeb8f2a4b8c755d8b7786521c328ad9f"
+      ],
+      "repeats_stable": true,
+      "matches_prior_old": [
+        false,
+        false
+      ],
+      "matches_prior_new": [
+        true,
+        true
+      ]
+    },
+    {
+      "profile": "mobile-375x667@2",
+      "id": "wpt/css2_floats/float-nowrap-4",
+      "old_status": "different",
+      "new_status": "exact",
+      "old_native_rgba_sha256": "f6c5ab1695d185e4b1d3814f7552b9bff48ccc23163bda60f103b659df0bc019",
+      "new_native_rgba_sha256": "f6c5ab1695d185e4b1d3814f7552b9bff48ccc23163bda60f103b659df0bc019",
+      "old_chromium_rgba_sha256": "b47eea0b0cd8c51edad6205a4c10115d1c1b8f79382ae782c91547bd90530d2d",
+      "new_chromium_rgba_sha256": "f6c5ab1695d185e4b1d3814f7552b9bff48ccc23163bda60f103b659df0bc019",
+      "old_oracle_identity": "51ad2142338e2ab67674e1eb9bb0e4c961a069ce73510cff1e4d73ddaf8c9232",
+      "new_oracle_identity": "3374565d8c2600c3794fbb8f5f934420a894b0c914a15031a6ff329b527a9579",
+      "repeat_chromium_rgba_sha256": [
+        "f6c5ab1695d185e4b1d3814f7552b9bff48ccc23163bda60f103b659df0bc019",
+        "f6c5ab1695d185e4b1d3814f7552b9bff48ccc23163bda60f103b659df0bc019"
+      ],
+      "repeats_stable": true,
+      "matches_prior_old": [
+        false,
+        false
+      ],
+      "matches_prior_new": [
+        true,
+        true
+      ]
+    },
+    {
+      "profile": "desktop-1280x720@1.25",
+      "id": "wpt/css2_floats/float-nowrap-4-ref2",
+      "old_status": "different",
+      "new_status": "exact",
+      "old_native_rgba_sha256": "4a3921be412713d2ac3702c1f1d5913dab226f01869cfeb8252b0a8bcb53b153",
+      "new_native_rgba_sha256": "4a3921be412713d2ac3702c1f1d5913dab226f01869cfeb8252b0a8bcb53b153",
+      "old_chromium_rgba_sha256": "742580754c51127a42bf0a1a24b556afbcbbb4c7909451556b637216142c8502",
+      "new_chromium_rgba_sha256": "4a3921be412713d2ac3702c1f1d5913dab226f01869cfeb8252b0a8bcb53b153",
+      "old_oracle_identity": "4895b3edc0133fdf61b3ceab0432e34ee18d4b1547bf5829b44c5a79781cb36d",
+      "new_oracle_identity": "6ef1a95f03393d06c4a5ead2523d45fd751162e9dddb8a22b6e966e53444e2c0",
+      "repeat_chromium_rgba_sha256": [
+        "4a3921be412713d2ac3702c1f1d5913dab226f01869cfeb8252b0a8bcb53b153",
+        "4a3921be412713d2ac3702c1f1d5913dab226f01869cfeb8252b0a8bcb53b153"
+      ],
+      "repeats_stable": true,
+      "matches_prior_old": [
+        false,
+        false
+      ],
+      "matches_prior_new": [
+        true,
+        true
+      ]
+    },
+    {
+      "profile": "desktop-1280x720@1.25",
+      "id": "wpt/css2_floats/float-nowrap-8",
+      "old_status": "different",
+      "new_status": "exact",
+      "old_native_rgba_sha256": "fc18fe699359a7ac0d5aaa2b2cba3197d285dc48b36e351cf48a5bf1396c9510",
+      "new_native_rgba_sha256": "fc18fe699359a7ac0d5aaa2b2cba3197d285dc48b36e351cf48a5bf1396c9510",
+      "old_chromium_rgba_sha256": "465159d432590fc0296e2a86ed8afaf37f7a25dd08195682f121beb26845a4a1",
+      "new_chromium_rgba_sha256": "fc18fe699359a7ac0d5aaa2b2cba3197d285dc48b36e351cf48a5bf1396c9510",
+      "old_oracle_identity": "eaec869d869955d2fde21ee961a3350861d093f454f64548fd53f75515569d4f",
+      "new_oracle_identity": "4b6aba0074918fca9bf31b1905c4799b0911fa3fe2ebae70e5cd6efb90d8e92f",
+      "repeat_chromium_rgba_sha256": [
+        "fc18fe699359a7ac0d5aaa2b2cba3197d285dc48b36e351cf48a5bf1396c9510",
+        "fc18fe699359a7ac0d5aaa2b2cba3197d285dc48b36e351cf48a5bf1396c9510"
+      ],
+      "repeats_stable": true,
+      "matches_prior_old": [
+        false,
+        false
+      ],
+      "matches_prior_new": [
+        true,
+        true
+      ]
+    },
+    {
+      "profile": "desktop-1280x720@1.25",
+      "id": "wpt/css2_floats/float-nowrap-hyphen-rewind-1-ref",
+      "old_status": "different",
+      "new_status": "exact",
+      "old_native_rgba_sha256": "87418df4a88f2a5ec86cd6ad371c22ba3bcac149079730c99ea43901ba03a3ce",
+      "new_native_rgba_sha256": "87418df4a88f2a5ec86cd6ad371c22ba3bcac149079730c99ea43901ba03a3ce",
+      "old_chromium_rgba_sha256": "069ad7561ed81361e62fb4bc15276971c385319183339ea8a968d2033e88d148",
+      "new_chromium_rgba_sha256": "87418df4a88f2a5ec86cd6ad371c22ba3bcac149079730c99ea43901ba03a3ce",
+      "old_oracle_identity": "c9e99c3cd0c795c6ce718a5bf96b7bbab0f8f786ea6d228c9f45c11fddfc9938",
+      "new_oracle_identity": "05ac3c53930d4452381d241fb3a6124b8d49fd5d7b701f3cb122a61bcdf6e34a",
+      "repeat_chromium_rgba_sha256": [
+        "87418df4a88f2a5ec86cd6ad371c22ba3bcac149079730c99ea43901ba03a3ce",
+        "87418df4a88f2a5ec86cd6ad371c22ba3bcac149079730c99ea43901ba03a3ce"
+      ],
+      "repeats_stable": true,
+      "matches_prior_old": [
+        false,
+        false
+      ],
+      "matches_prior_new": [
+        true,
+        true
+      ]
+    }
+  ],
+  "all_twenty_rows_repeat_stable": true,
+  "source_after": {
+    "commit": "fb1b68fa8cdf8ac505f677ab31c2a00f43d105fa",
+    "clean": true,
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "source_tree_sha256": "4d82b3190b089e9184d5198fd5c8919a724f6b4ed496f26f7af61ceb263e9e53",
+    "harness_sha256": "abff37553c0abe146718cec361f956bfcc75bfcfeaf7feb82682f6122e920ccd"
+  },
+  "source_unchanged": true,
+  "runner_unchanged": true,
+  "chromium_unchanged": true,
+  "all_commands_terminal_reaped": true
+}

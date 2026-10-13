@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "agent": "opacity_census_audit",
+  "driver_session": 29411,
+  "actual_driver_exit": 0,
+  "actual_terminal_chunk": "6f5740",
+  "receipt_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-ordered-transform-oracle-opacity-census-audit-v4535/browser-receipt-v1.json",
+  "receipt_sha256": "b931f563d4370e6b49703d5df454c282dc09b2a698e3a42c7e77991caec8cfcf",
+  "owner_pid": 3309639,
+  "owner_pid_absent": true,
+  "browser_owners": [
+    {
+      "pid": 3309651,
+      "profile": "/tmp/oui-transform-overflow-opacity-census-audit-v4535/profile-hfnwx907",
+      "flags": [
+        "/home/nero/code/open-ui/chrome/linux-147.0.7727.50/chrome-linux64/chrome",
+        "--headless",
+        "--disable-gpu",
+        "--no-sandbox",
+        "--no-first-run",
+        "--no-default-browser-check",
+        "--remote-debugging-port=0",
+        "--user-data-dir=/tmp/oui-transform-overflow-opacity-census-audit-v4535/profile-hfnwx907",
+        "--window-size=1600,1287",
+        "about:blank"
+      ],
+      "actual_exit": 0,
+      "group_has_live_processes": false,
+      "pid_absent": true,
+      "profile_absent": true
+    }
+  ],
+  "owned_tmp_absent": true,
+  "all_commands_terminal_and_reaped": true,
+  "qualifying": false,
+  "native_execution": false
+}

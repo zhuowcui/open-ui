@@ -1,0 +1,1433 @@
+{
+  "schema_version": 1,
+  "agent": "opacity_census_audit",
+  "owner_pid": 3309639,
+  "qualifying": false,
+  "native_execution": false,
+  "scope": "Stock147.0.7727.50 original script and final template geometry only; no native or pixel qualification",
+  "input_manifest_sha256": "f823598f05ba68a3a8a4a12b7bc9e7f13f1b6de901d5186682de90f3ebe5a784",
+  "driver_sha256": "8f33fa0d7897f2072aab3f6cb7a848055d589b1c63909ec216f6be4e7a72d7c4",
+  "chrome_path": "/home/nero/code/open-ui/chrome/linux-147.0.7727.50/chrome-linux64/chrome",
+  "chrome_sha256": "0ba87684df0afc11faaea40ac57bd2f1d68b67191443b38215a36b90e6f08848",
+  "version": "Google Chrome for Testing 147.0.7727.50",
+  "version_actual_exit": 0,
+  "rows": [
+    {
+      "case": "original-script",
+      "scale": 1,
+      "repeats": [
+        {
+          "repeat": 0,
+          "loaderId": "FC8718C016ACCF9AFA685441299C72BE",
+          "metric": {
+            "viewport": {
+              "width": 800,
+              "height": 600,
+              "dpr": 1
+            },
+            "container": {
+              "clientWidth": 200,
+              "clientHeight": 150,
+              "scrollWidth": 250,
+              "scrollHeight": 150,
+              "offsetWidth": 202,
+              "offsetHeight": 152,
+              "scrollLeft": 0,
+              "scrollTop": 0,
+              "rect": {
+                "x": 20,
+                "y": 20,
+                "left": 20,
+                "top": 20,
+                "right": 222,
+                "bottom": 172,
+                "width": 202,
+                "height": 152
+              },
+              "computed": {
+                "overflowX": "scroll",
+                "overflowY": "scroll",
+                "scrollbarWidth": "auto",
+                "borderLeft": "1px",
+                "borderRight": "1px"
+              }
+            },
+            "target": {
+              "rect": {
+                "x": -129,
+                "y": -54,
+                "left": -129,
+                "top": -54,
+                "right": 271,
+                "bottom": 146,
+                "width": 400,
+                "height": 200
+              },
+              "offsetWidth": 100,
+              "offsetHeight": 50,
+              "computed": {
+                "width": "100px",
+                "height": "50px",
+                "transform": "matrix(4, 0, 0, 4, 0, 0)",
+                "transformOrigin": "50px 25px"
+              }
+            },
+            "scripts": {
+              "count": 1,
+              "contents": [
+                "\n  // 1st transform triggers layer creation, and full layout.\n  // 2nd transform just updates overflow, which does not update scrollbars.\n  // This triggers the bug.\n  document.body.offsetTop;\n  document.querySelector(\"#target\").style.transform = \"scale(1.5)\";\n  document.body.offsetTop;\n  document.querySelector(\"#target\").style.transform = \"scale(4.0)\";\n"
+              ]
+            }
+          },
+          "png_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-ordered-transform-oracle-opacity-census-audit-v4535/original-script-scale-1-repeat-0.png",
+          "png_sha256": "1f37bbc1d45686cb8cf260f8470460224deec69b4899f5962257fce52b739513",
+          "two_captures_exact": true
+        },
+        {
+          "repeat": 1,
+          "loaderId": "1E9B25C5A47F3F01FDB31345803C8368",
+          "metric": {
+            "viewport": {
+              "width": 800,
+              "height": 600,
+              "dpr": 1
+            },
+            "container": {
+              "clientWidth": 200,
+              "clientHeight": 150,
+              "scrollWidth": 250,
+              "scrollHeight": 150,
+              "offsetWidth": 202,
+              "offsetHeight": 152,
+              "scrollLeft": 0,
+              "scrollTop": 0,
+              "rect": {
+                "x": 20,
+                "y": 20,
+                "left": 20,
+                "top": 20,
+                "right": 222,
+                "bottom": 172,
+                "width": 202,
+                "height": 152
+              },
+              "computed": {
+                "overflowX": "scroll",
+                "overflowY": "scroll",
+                "scrollbarWidth": "auto",
+                "borderLeft": "1px",
+                "borderRight": "1px"
+              }
+            },
+            "target": {
+              "rect": {
+                "x": -129,
+                "y": -54,
+                "left": -129,
+                "top": -54,
+                "right": 271,
+                "bottom": 146,
+                "width": 400,
+                "height": 200
+              },
+              "offsetWidth": 100,
+              "offsetHeight": 50,
+              "computed": {
+                "width": "100px",
+                "height": "50px",
+                "transform": "matrix(4, 0, 0, 4, 0, 0)",
+                "transformOrigin": "50px 25px"
+              }
+            },
+            "scripts": {
+              "count": 1,
+              "contents": [
+                "\n  // 1st transform triggers layer creation, and full layout.\n  // 2nd transform just updates overflow, which does not update scrollbars.\n  // This triggers the bug.\n  document.body.offsetTop;\n  document.querySelector(\"#target\").style.transform = \"scale(1.5)\";\n  document.body.offsetTop;\n  document.querySelector(\"#target\").style.transform = \"scale(4.0)\";\n"
+              ]
+            }
+          },
+          "png_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-ordered-transform-oracle-opacity-census-audit-v4535/original-script-scale-1-repeat-1.png",
+          "png_sha256": "1f37bbc1d45686cb8cf260f8470460224deec69b4899f5962257fce52b739513",
+          "two_captures_exact": true
+        }
+      ],
+      "repeat_exact": true
+    },
+    {
+      "case": "final-template",
+      "scale": 1,
+      "repeats": [
+        {
+          "repeat": 0,
+          "loaderId": "67C337C719F3ADE13D0CA30928DA9D01",
+          "metric": {
+            "viewport": {
+              "width": 800,
+              "height": 600,
+              "dpr": 1
+            },
+            "container": {
+              "clientWidth": 200,
+              "clientHeight": 150,
+              "scrollWidth": 250,
+              "scrollHeight": 150,
+              "offsetWidth": 202,
+              "offsetHeight": 152,
+              "scrollLeft": 0,
+              "scrollTop": 0,
+              "rect": {
+                "x": 20,
+                "y": 20,
+                "left": 20,
+                "top": 20,
+                "right": 222,
+                "bottom": 172,
+                "width": 202,
+                "height": 152
+              },
+              "computed": {
+                "overflowX": "scroll",
+                "overflowY": "scroll",
+                "scrollbarWidth": "auto",
+                "borderLeft": "1px",
+                "borderRight": "1px"
+              }
+            },
+            "target": {
+              "rect": {
+                "x": -129,
+                "y": -54,
+                "left": -129,
+                "top": -54,
+                "right": 271,
+                "bottom": 146,
+                "width": 400,
+                "height": 200
+              },
+              "offsetWidth": 100,
+              "offsetHeight": 50,
+              "computed": {
+                "width": "100px",
+                "height": "50px",
+                "transform": "matrix(4, 0, 0, 4, 0, 0)",
+                "transformOrigin": "50px 25px"
+              }
+            },
+            "scripts": {
+              "count": 0,
+              "contents": []
+            }
+          },
+          "png_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-ordered-transform-oracle-opacity-census-audit-v4535/final-template-scale-1-repeat-0.png",
+          "png_sha256": "1f37bbc1d45686cb8cf260f8470460224deec69b4899f5962257fce52b739513",
+          "two_captures_exact": true
+        },
+        {
+          "repeat": 1,
+          "loaderId": "FF7F52C414CB2115868E9EE6C49AC327",
+          "metric": {
+            "viewport": {
+              "width": 800,
+              "height": 600,
+              "dpr": 1
+            },
+            "container": {
+              "clientWidth": 200,
+              "clientHeight": 150,
+              "scrollWidth": 250,
+              "scrollHeight": 150,
+              "offsetWidth": 202,
+              "offsetHeight": 152,
+              "scrollLeft": 0,
+              "scrollTop": 0,
+              "rect": {
+                "x": 20,
+                "y": 20,
+                "left": 20,
+                "top": 20,
+                "right": 222,
+                "bottom": 172,
+                "width": 202,
+                "height": 152
+              },
+              "computed": {
+                "overflowX": "scroll",
+                "overflowY": "scroll",
+                "scrollbarWidth": "auto",
+                "borderLeft": "1px",
+                "borderRight": "1px"
+              }
+            },
+            "target": {
+              "rect": {
+                "x": -129,
+                "y": -54,
+                "left": -129,
+                "top": -54,
+                "right": 271,
+                "bottom": 146,
+                "width": 400,
+                "height": 200
+              },
+              "offsetWidth": 100,
+              "offsetHeight": 50,
+              "computed": {
+                "width": "100px",
+                "height": "50px",
+                "transform": "matrix(4, 0, 0, 4, 0, 0)",
+                "transformOrigin": "50px 25px"
+              }
+            },
+            "scripts": {
+              "count": 0,
+              "contents": []
+            }
+          },
+          "png_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-ordered-transform-oracle-opacity-census-audit-v4535/final-template-scale-1-repeat-1.png",
+          "png_sha256": "1f37bbc1d45686cb8cf260f8470460224deec69b4899f5962257fce52b739513",
+          "two_captures_exact": true
+        }
+      ],
+      "repeat_exact": true
+    },
+    {
+      "case": "original-script",
+      "scale": 1.25,
+      "repeats": [
+        {
+          "repeat": 0,
+          "loaderId": "14495F6D8938DD079550757AC763AF47",
+          "metric": {
+            "viewport": {
+              "width": 800,
+              "height": 600,
+              "dpr": 1.25
+            },
+            "container": {
+              "clientWidth": 200,
+              "clientHeight": 150,
+              "scrollWidth": 250,
+              "scrollHeight": 150,
+              "offsetWidth": 202,
+              "offsetHeight": 152,
+              "scrollLeft": 0,
+              "scrollTop": 0,
+              "rect": {
+                "x": 20,
+                "y": 20,
+                "left": 20,
+                "top": 20,
+                "right": 222,
+                "bottom": 172,
+                "width": 202,
+                "height": 152
+              },
+              "computed": {
+                "overflowX": "scroll",
+                "overflowY": "scroll",
+                "scrollbarWidth": "auto",
+                "borderLeft": "1px",
+                "borderRight": "1px"
+              }
+            },
+            "target": {
+              "rect": {
+                "x": -129,
+                "y": -54,
+                "left": -129,
+                "top": -54,
+                "right": 271,
+                "bottom": 146,
+                "width": 400,
+                "height": 200
+              },
+              "offsetWidth": 100,
+              "offsetHeight": 50,
+              "computed": {
+                "width": "100px",
+                "height": "50px",
+                "transform": "matrix(4, 0, 0, 4, 0, 0)",
+                "transformOrigin": "50px 25px"
+              }
+            },
+            "scripts": {
+              "count": 1,
+              "contents": [
+                "\n  // 1st transform triggers layer creation, and full layout.\n  // 2nd transform just updates overflow, which does not update scrollbars.\n  // This triggers the bug.\n  document.body.offsetTop;\n  document.querySelector(\"#target\").style.transform = \"scale(1.5)\";\n  document.body.offsetTop;\n  document.querySelector(\"#target\").style.transform = \"scale(4.0)\";\n"
+              ]
+            }
+          },
+          "png_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-ordered-transform-oracle-opacity-census-audit-v4535/original-script-scale-1.25-repeat-0.png",
+          "png_sha256": "030045b6833b58de62bd0eb83a3eac1192a90eca9028a5c34b61ac402f320684",
+          "two_captures_exact": true
+        },
+        {
+          "repeat": 1,
+          "loaderId": "E844EB86B72F85DDBF0DFFE4BDCA133A",
+          "metric": {
+            "viewport": {
+              "width": 800,
+              "height": 600,
+              "dpr": 1.25
+            },
+            "container": {
+              "clientWidth": 200,
+              "clientHeight": 150,
+              "scrollWidth": 250,
+              "scrollHeight": 150,
+              "offsetWidth": 202,
+              "offsetHeight": 152,
+              "scrollLeft": 0,
+              "scrollTop": 0,
+              "rect": {
+                "x": 20,
+                "y": 20,
+                "left": 20,
+                "top": 20,
+                "right": 222,
+                "bottom": 172,
+                "width": 202,
+                "height": 152
+              },
+              "computed": {
+                "overflowX": "scroll",
+                "overflowY": "scroll",
+                "scrollbarWidth": "auto",
+                "borderLeft": "1px",
+                "borderRight": "1px"
+              }
+            },
+            "target": {
+              "rect": {
+                "x": -129,
+                "y": -54,
+                "left": -129,
+                "top": -54,
+                "right": 271,
+                "bottom": 146,
+                "width": 400,
+                "height": 200
+              },
+              "offsetWidth": 100,
+              "offsetHeight": 50,
+              "computed": {
+                "width": "100px",
+                "height": "50px",
+                "transform": "matrix(4, 0, 0, 4, 0, 0)",
+                "transformOrigin": "50px 25px"
+              }
+            },
+            "scripts": {
+              "count": 1,
+              "contents": [
+                "\n  // 1st transform triggers layer creation, and full layout.\n  // 2nd transform just updates overflow, which does not update scrollbars.\n  // This triggers the bug.\n  document.body.offsetTop;\n  document.querySelector(\"#target\").style.transform = \"scale(1.5)\";\n  document.body.offsetTop;\n  document.querySelector(\"#target\").style.transform = \"scale(4.0)\";\n"
+              ]
+            }
+          },
+          "png_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-ordered-transform-oracle-opacity-census-audit-v4535/original-script-scale-1.25-repeat-1.png",
+          "png_sha256": "030045b6833b58de62bd0eb83a3eac1192a90eca9028a5c34b61ac402f320684",
+          "two_captures_exact": true
+        }
+      ],
+      "repeat_exact": true
+    },
+    {
+      "case": "final-template",
+      "scale": 1.25,
+      "repeats": [
+        {
+          "repeat": 0,
+          "loaderId": "25B682D11294BC2DBE516CEF0F3F1380",
+          "metric": {
+            "viewport": {
+              "width": 800,
+              "height": 600,
+              "dpr": 1.25
+            },
+            "container": {
+              "clientWidth": 200,
+              "clientHeight": 150,
+              "scrollWidth": 250,
+              "scrollHeight": 150,
+              "offsetWidth": 202,
+              "offsetHeight": 152,
+              "scrollLeft": 0,
+              "scrollTop": 0,
+              "rect": {
+                "x": 20,
+                "y": 20,
+                "left": 20,
+                "top": 20,
+                "right": 222,
+                "bottom": 172,
+                "width": 202,
+                "height": 152
+              },
+              "computed": {
+                "overflowX": "scroll",
+                "overflowY": "scroll",
+                "scrollbarWidth": "auto",
+                "borderLeft": "1px",
+                "borderRight": "1px"
+              }
+            },
+            "target": {
+              "rect": {
+                "x": -129,
+                "y": -54,
+                "left": -129,
+                "top": -54,
+                "right": 271,
+                "bottom": 146,
+                "width": 400,
+                "height": 200
+              },
+              "offsetWidth": 100,
+              "offsetHeight": 50,
+              "computed": {
+                "width": "100px",
+                "height": "50px",
+                "transform": "matrix(4, 0, 0, 4, 0, 0)",
+                "transformOrigin": "50px 25px"
+              }
+            },
+            "scripts": {
+              "count": 0,
+              "contents": []
+            }
+          },
+          "png_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-ordered-transform-oracle-opacity-census-audit-v4535/final-template-scale-1.25-repeat-0.png",
+          "png_sha256": "030045b6833b58de62bd0eb83a3eac1192a90eca9028a5c34b61ac402f320684",
+          "two_captures_exact": true
+        },
+        {
+          "repeat": 1,
+          "loaderId": "7B0B8FF108D3BA5F30B68E918703CEBF",
+          "metric": {
+            "viewport": {
+              "width": 800,
+              "height": 600,
+              "dpr": 1.25
+            },
+            "container": {
+              "clientWidth": 200,
+              "clientHeight": 150,
+              "scrollWidth": 250,
+              "scrollHeight": 150,
+              "offsetWidth": 202,
+              "offsetHeight": 152,
+              "scrollLeft": 0,
+              "scrollTop": 0,
+              "rect": {
+                "x": 20,
+                "y": 20,
+                "left": 20,
+                "top": 20,
+                "right": 222,
+                "bottom": 172,
+                "width": 202,
+                "height": 152
+              },
+              "computed": {
+                "overflowX": "scroll",
+                "overflowY": "scroll",
+                "scrollbarWidth": "auto",
+                "borderLeft": "1px",
+                "borderRight": "1px"
+              }
+            },
+            "target": {
+              "rect": {
+                "x": -129,
+                "y": -54,
+                "left": -129,
+                "top": -54,
+                "right": 271,
+                "bottom": 146,
+                "width": 400,
+                "height": 200
+              },
+              "offsetWidth": 100,
+              "offsetHeight": 50,
+              "computed": {
+                "width": "100px",
+                "height": "50px",
+                "transform": "matrix(4, 0, 0, 4, 0, 0)",
+                "transformOrigin": "50px 25px"
+              }
+            },
+            "scripts": {
+              "count": 0,
+              "contents": []
+            }
+          },
+          "png_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-ordered-transform-oracle-opacity-census-audit-v4535/final-template-scale-1.25-repeat-1.png",
+          "png_sha256": "030045b6833b58de62bd0eb83a3eac1192a90eca9028a5c34b61ac402f320684",
+          "two_captures_exact": true
+        }
+      ],
+      "repeat_exact": true
+    },
+    {
+      "case": "original-script",
+      "scale": 1.5,
+      "repeats": [
+        {
+          "repeat": 0,
+          "loaderId": "AC65651067A4EDC22EC769B13541686A",
+          "metric": {
+            "viewport": {
+              "width": 800,
+              "height": 600,
+              "dpr": 1.5
+            },
+            "container": {
+              "clientWidth": 200,
+              "clientHeight": 150,
+              "scrollWidth": 250,
+              "scrollHeight": 150,
+              "offsetWidth": 202,
+              "offsetHeight": 152,
+              "scrollLeft": 0,
+              "scrollTop": 0,
+              "rect": {
+                "x": 20,
+                "y": 20,
+                "left": 20,
+                "top": 20,
+                "right": 222,
+                "bottom": 172,
+                "width": 202,
+                "height": 152
+              },
+              "computed": {
+                "overflowX": "scroll",
+                "overflowY": "scroll",
+                "scrollbarWidth": "auto",
+                "borderLeft": "1px",
+                "borderRight": "1px"
+              }
+            },
+            "target": {
+              "rect": {
+                "x": -129,
+                "y": -54,
+                "left": -129,
+                "top": -54,
+                "right": 271,
+                "bottom": 146,
+                "width": 400,
+                "height": 200
+              },
+              "offsetWidth": 100,
+              "offsetHeight": 50,
+              "computed": {
+                "width": "100px",
+                "height": "50px",
+                "transform": "matrix(4, 0, 0, 4, 0, 0)",
+                "transformOrigin": "50px 25px"
+              }
+            },
+            "scripts": {
+              "count": 1,
+              "contents": [
+                "\n  // 1st transform triggers layer creation, and full layout.\n  // 2nd transform just updates overflow, which does not update scrollbars.\n  // This triggers the bug.\n  document.body.offsetTop;\n  document.querySelector(\"#target\").style.transform = \"scale(1.5)\";\n  document.body.offsetTop;\n  document.querySelector(\"#target\").style.transform = \"scale(4.0)\";\n"
+              ]
+            }
+          },
+          "png_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-ordered-transform-oracle-opacity-census-audit-v4535/original-script-scale-1.5-repeat-0.png",
+          "png_sha256": "71ba547670b1adac8be404e7f1abcfb42af53f2865d1f6b4b64b7e4dd9425066",
+          "two_captures_exact": true
+        },
+        {
+          "repeat": 1,
+          "loaderId": "96795066415077BB9A3818355B0DDDCC",
+          "metric": {
+            "viewport": {
+              "width": 800,
+              "height": 600,
+              "dpr": 1.5
+            },
+            "container": {
+              "clientWidth": 200,
+              "clientHeight": 150,
+              "scrollWidth": 250,
+              "scrollHeight": 150,
+              "offsetWidth": 202,
+              "offsetHeight": 152,
+              "scrollLeft": 0,
+              "scrollTop": 0,
+              "rect": {
+                "x": 20,
+                "y": 20,
+                "left": 20,
+                "top": 20,
+                "right": 222,
+                "bottom": 172,
+                "width": 202,
+                "height": 152
+              },
+              "computed": {
+                "overflowX": "scroll",
+                "overflowY": "scroll",
+                "scrollbarWidth": "auto",
+                "borderLeft": "1px",
+                "borderRight": "1px"
+              }
+            },
+            "target": {
+              "rect": {
+                "x": -129,
+                "y": -54,
+                "left": -129,
+                "top": -54,
+                "right": 271,
+                "bottom": 146,
+                "width": 400,
+                "height": 200
+              },
+              "offsetWidth": 100,
+              "offsetHeight": 50,
+              "computed": {
+                "width": "100px",
+                "height": "50px",
+                "transform": "matrix(4, 0, 0, 4, 0, 0)",
+                "transformOrigin": "50px 25px"
+              }
+            },
+            "scripts": {
+              "count": 1,
+              "contents": [
+                "\n  // 1st transform triggers layer creation, and full layout.\n  // 2nd transform just updates overflow, which does not update scrollbars.\n  // This triggers the bug.\n  document.body.offsetTop;\n  document.querySelector(\"#target\").style.transform = \"scale(1.5)\";\n  document.body.offsetTop;\n  document.querySelector(\"#target\").style.transform = \"scale(4.0)\";\n"
+              ]
+            }
+          },
+          "png_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-ordered-transform-oracle-opacity-census-audit-v4535/original-script-scale-1.5-repeat-1.png",
+          "png_sha256": "71ba547670b1adac8be404e7f1abcfb42af53f2865d1f6b4b64b7e4dd9425066",
+          "two_captures_exact": true
+        }
+      ],
+      "repeat_exact": true
+    },
+    {
+      "case": "final-template",
+      "scale": 1.5,
+      "repeats": [
+        {
+          "repeat": 0,
+          "loaderId": "F94E344082EACEECAAEECAD119107B53",
+          "metric": {
+            "viewport": {
+              "width": 800,
+              "height": 600,
+              "dpr": 1.5
+            },
+            "container": {
+              "clientWidth": 200,
+              "clientHeight": 150,
+              "scrollWidth": 250,
+              "scrollHeight": 150,
+              "offsetWidth": 202,
+              "offsetHeight": 152,
+              "scrollLeft": 0,
+              "scrollTop": 0,
+              "rect": {
+                "x": 20,
+                "y": 20,
+                "left": 20,
+                "top": 20,
+                "right": 222,
+                "bottom": 172,
+                "width": 202,
+                "height": 152
+              },
+              "computed": {
+                "overflowX": "scroll",
+                "overflowY": "scroll",
+                "scrollbarWidth": "auto",
+                "borderLeft": "1px",
+                "borderRight": "1px"
+              }
+            },
+            "target": {
+              "rect": {
+                "x": -129,
+                "y": -54,
+                "left": -129,
+                "top": -54,
+                "right": 271,
+                "bottom": 146,
+                "width": 400,
+                "height": 200
+              },
+              "offsetWidth": 100,
+              "offsetHeight": 50,
+              "computed": {
+                "width": "100px",
+                "height": "50px",
+                "transform": "matrix(4, 0, 0, 4, 0, 0)",
+                "transformOrigin": "50px 25px"
+              }
+            },
+            "scripts": {
+              "count": 0,
+              "contents": []
+            }
+          },
+          "png_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-ordered-transform-oracle-opacity-census-audit-v4535/final-template-scale-1.5-repeat-0.png",
+          "png_sha256": "71ba547670b1adac8be404e7f1abcfb42af53f2865d1f6b4b64b7e4dd9425066",
+          "two_captures_exact": true
+        },
+        {
+          "repeat": 1,
+          "loaderId": "DA16D1ECF514B081B76CB4C478834358",
+          "metric": {
+            "viewport": {
+              "width": 800,
+              "height": 600,
+              "dpr": 1.5
+            },
+            "container": {
+              "clientWidth": 200,
+              "clientHeight": 150,
+              "scrollWidth": 250,
+              "scrollHeight": 150,
+              "offsetWidth": 202,
+              "offsetHeight": 152,
+              "scrollLeft": 0,
+              "scrollTop": 0,
+              "rect": {
+                "x": 20,
+                "y": 20,
+                "left": 20,
+                "top": 20,
+                "right": 222,
+                "bottom": 172,
+                "width": 202,
+                "height": 152
+              },
+              "computed": {
+                "overflowX": "scroll",
+                "overflowY": "scroll",
+                "scrollbarWidth": "auto",
+                "borderLeft": "1px",
+                "borderRight": "1px"
+              }
+            },
+            "target": {
+              "rect": {
+                "x": -129,
+                "y": -54,
+                "left": -129,
+                "top": -54,
+                "right": 271,
+                "bottom": 146,
+                "width": 400,
+                "height": 200
+              },
+              "offsetWidth": 100,
+              "offsetHeight": 50,
+              "computed": {
+                "width": "100px",
+                "height": "50px",
+                "transform": "matrix(4, 0, 0, 4, 0, 0)",
+                "transformOrigin": "50px 25px"
+              }
+            },
+            "scripts": {
+              "count": 0,
+              "contents": []
+            }
+          },
+          "png_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-ordered-transform-oracle-opacity-census-audit-v4535/final-template-scale-1.5-repeat-1.png",
+          "png_sha256": "71ba547670b1adac8be404e7f1abcfb42af53f2865d1f6b4b64b7e4dd9425066",
+          "two_captures_exact": true
+        }
+      ],
+      "repeat_exact": true
+    },
+    {
+      "case": "original-script",
+      "scale": 1.75,
+      "repeats": [
+        {
+          "repeat": 0,
+          "loaderId": "9D1F53FEAD683A547FE51FE1E1D78F5E",
+          "metric": {
+            "viewport": {
+              "width": 800,
+              "height": 600,
+              "dpr": 1.75
+            },
+            "container": {
+              "clientWidth": 200,
+              "clientHeight": 150,
+              "scrollWidth": 250,
+              "scrollHeight": 150,
+              "offsetWidth": 202,
+              "offsetHeight": 152,
+              "scrollLeft": 0,
+              "scrollTop": 0,
+              "rect": {
+                "x": 20,
+                "y": 20,
+                "left": 20,
+                "top": 20,
+                "right": 222,
+                "bottom": 172,
+                "width": 202,
+                "height": 152
+              },
+              "computed": {
+                "overflowX": "scroll",
+                "overflowY": "scroll",
+                "scrollbarWidth": "auto",
+                "borderLeft": "1px",
+                "borderRight": "1px"
+              }
+            },
+            "target": {
+              "rect": {
+                "x": -129,
+                "y": -54,
+                "left": -129,
+                "top": -54,
+                "right": 271,
+                "bottom": 146,
+                "width": 400,
+                "height": 200
+              },
+              "offsetWidth": 100,
+              "offsetHeight": 50,
+              "computed": {
+                "width": "100px",
+                "height": "50px",
+                "transform": "matrix(4, 0, 0, 4, 0, 0)",
+                "transformOrigin": "50px 25px"
+              }
+            },
+            "scripts": {
+              "count": 1,
+              "contents": [
+                "\n  // 1st transform triggers layer creation, and full layout.\n  // 2nd transform just updates overflow, which does not update scrollbars.\n  // This triggers the bug.\n  document.body.offsetTop;\n  document.querySelector(\"#target\").style.transform = \"scale(1.5)\";\n  document.body.offsetTop;\n  document.querySelector(\"#target\").style.transform = \"scale(4.0)\";\n"
+              ]
+            }
+          },
+          "png_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-ordered-transform-oracle-opacity-census-audit-v4535/original-script-scale-1.75-repeat-0.png",
+          "png_sha256": "8308d8223cde84955c81fd995d57c0ea852985dc5eb81feab3e1d81a48710422",
+          "two_captures_exact": true
+        },
+        {
+          "repeat": 1,
+          "loaderId": "1346AA7DA29A8B2E0F9F6E5403E033E1",
+          "metric": {
+            "viewport": {
+              "width": 800,
+              "height": 600,
+              "dpr": 1.75
+            },
+            "container": {
+              "clientWidth": 200,
+              "clientHeight": 150,
+              "scrollWidth": 250,
+              "scrollHeight": 150,
+              "offsetWidth": 202,
+              "offsetHeight": 152,
+              "scrollLeft": 0,
+              "scrollTop": 0,
+              "rect": {
+                "x": 20,
+                "y": 20,
+                "left": 20,
+                "top": 20,
+                "right": 222,
+                "bottom": 172,
+                "width": 202,
+                "height": 152
+              },
+              "computed": {
+                "overflowX": "scroll",
+                "overflowY": "scroll",
+                "scrollbarWidth": "auto",
+                "borderLeft": "1px",
+                "borderRight": "1px"
+              }
+            },
+            "target": {
+              "rect": {
+                "x": -129,
+                "y": -54,
+                "left": -129,
+                "top": -54,
+                "right": 271,
+                "bottom": 146,
+                "width": 400,
+                "height": 200
+              },
+              "offsetWidth": 100,
+              "offsetHeight": 50,
+              "computed": {
+                "width": "100px",
+                "height": "50px",
+                "transform": "matrix(4, 0, 0, 4, 0, 0)",
+                "transformOrigin": "50px 25px"
+              }
+            },
+            "scripts": {
+              "count": 1,
+              "contents": [
+                "\n  // 1st transform triggers layer creation, and full layout.\n  // 2nd transform just updates overflow, which does not update scrollbars.\n  // This triggers the bug.\n  document.body.offsetTop;\n  document.querySelector(\"#target\").style.transform = \"scale(1.5)\";\n  document.body.offsetTop;\n  document.querySelector(\"#target\").style.transform = \"scale(4.0)\";\n"
+              ]
+            }
+          },
+          "png_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-ordered-transform-oracle-opacity-census-audit-v4535/original-script-scale-1.75-repeat-1.png",
+          "png_sha256": "8308d8223cde84955c81fd995d57c0ea852985dc5eb81feab3e1d81a48710422",
+          "two_captures_exact": true
+        }
+      ],
+      "repeat_exact": true
+    },
+    {
+      "case": "final-template",
+      "scale": 1.75,
+      "repeats": [
+        {
+          "repeat": 0,
+          "loaderId": "60A64D383802090A340C6F0FA0F05B4D",
+          "metric": {
+            "viewport": {
+              "width": 800,
+              "height": 600,
+              "dpr": 1.75
+            },
+            "container": {
+              "clientWidth": 200,
+              "clientHeight": 150,
+              "scrollWidth": 250,
+              "scrollHeight": 150,
+              "offsetWidth": 202,
+              "offsetHeight": 152,
+              "scrollLeft": 0,
+              "scrollTop": 0,
+              "rect": {
+                "x": 20,
+                "y": 20,
+                "left": 20,
+                "top": 20,
+                "right": 222,
+                "bottom": 172,
+                "width": 202,
+                "height": 152
+              },
+              "computed": {
+                "overflowX": "scroll",
+                "overflowY": "scroll",
+                "scrollbarWidth": "auto",
+                "borderLeft": "1px",
+                "borderRight": "1px"
+              }
+            },
+            "target": {
+              "rect": {
+                "x": -129,
+                "y": -54,
+                "left": -129,
+                "top": -54,
+                "right": 271,
+                "bottom": 146,
+                "width": 400,
+                "height": 200
+              },
+              "offsetWidth": 100,
+              "offsetHeight": 50,
+              "computed": {
+                "width": "100px",
+                "height": "50px",
+                "transform": "matrix(4, 0, 0, 4, 0, 0)",
+                "transformOrigin": "50px 25px"
+              }
+            },
+            "scripts": {
+              "count": 0,
+              "contents": []
+            }
+          },
+          "png_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-ordered-transform-oracle-opacity-census-audit-v4535/final-template-scale-1.75-repeat-0.png",
+          "png_sha256": "8308d8223cde84955c81fd995d57c0ea852985dc5eb81feab3e1d81a48710422",
+          "two_captures_exact": true
+        },
+        {
+          "repeat": 1,
+          "loaderId": "BE6C8F3DE76E4E75A01470DD06346708",
+          "metric": {
+            "viewport": {
+              "width": 800,
+              "height": 600,
+              "dpr": 1.75
+            },
+            "container": {
+              "clientWidth": 200,
+              "clientHeight": 150,
+              "scrollWidth": 250,
+              "scrollHeight": 150,
+              "offsetWidth": 202,
+              "offsetHeight": 152,
+              "scrollLeft": 0,
+              "scrollTop": 0,
+              "rect": {
+                "x": 20,
+                "y": 20,
+                "left": 20,
+                "top": 20,
+                "right": 222,
+                "bottom": 172,
+                "width": 202,
+                "height": 152
+              },
+              "computed": {
+                "overflowX": "scroll",
+                "overflowY": "scroll",
+                "scrollbarWidth": "auto",
+                "borderLeft": "1px",
+                "borderRight": "1px"
+              }
+            },
+            "target": {
+              "rect": {
+                "x": -129,
+                "y": -54,
+                "left": -129,
+                "top": -54,
+                "right": 271,
+                "bottom": 146,
+                "width": 400,
+                "height": 200
+              },
+              "offsetWidth": 100,
+              "offsetHeight": 50,
+              "computed": {
+                "width": "100px",
+                "height": "50px",
+                "transform": "matrix(4, 0, 0, 4, 0, 0)",
+                "transformOrigin": "50px 25px"
+              }
+            },
+            "scripts": {
+              "count": 0,
+              "contents": []
+            }
+          },
+          "png_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-ordered-transform-oracle-opacity-census-audit-v4535/final-template-scale-1.75-repeat-1.png",
+          "png_sha256": "8308d8223cde84955c81fd995d57c0ea852985dc5eb81feab3e1d81a48710422",
+          "two_captures_exact": true
+        }
+      ],
+      "repeat_exact": true
+    },
+    {
+      "case": "original-script",
+      "scale": 2,
+      "repeats": [
+        {
+          "repeat": 0,
+          "loaderId": "840AA265C4D6C07F35BF11FAE876072D",
+          "metric": {
+            "viewport": {
+              "width": 800,
+              "height": 600,
+              "dpr": 2
+            },
+            "container": {
+              "clientWidth": 200,
+              "clientHeight": 150,
+              "scrollWidth": 250,
+              "scrollHeight": 150,
+              "offsetWidth": 202,
+              "offsetHeight": 152,
+              "scrollLeft": 0,
+              "scrollTop": 0,
+              "rect": {
+                "x": 20,
+                "y": 20,
+                "left": 20,
+                "top": 20,
+                "right": 222,
+                "bottom": 172,
+                "width": 202,
+                "height": 152
+              },
+              "computed": {
+                "overflowX": "scroll",
+                "overflowY": "scroll",
+                "scrollbarWidth": "auto",
+                "borderLeft": "1px",
+                "borderRight": "1px"
+              }
+            },
+            "target": {
+              "rect": {
+                "x": -129,
+                "y": -54,
+                "left": -129,
+                "top": -54,
+                "right": 271,
+                "bottom": 146,
+                "width": 400,
+                "height": 200
+              },
+              "offsetWidth": 100,
+              "offsetHeight": 50,
+              "computed": {
+                "width": "100px",
+                "height": "50px",
+                "transform": "matrix(4, 0, 0, 4, 0, 0)",
+                "transformOrigin": "50px 25px"
+              }
+            },
+            "scripts": {
+              "count": 1,
+              "contents": [
+                "\n  // 1st transform triggers layer creation, and full layout.\n  // 2nd transform just updates overflow, which does not update scrollbars.\n  // This triggers the bug.\n  document.body.offsetTop;\n  document.querySelector(\"#target\").style.transform = \"scale(1.5)\";\n  document.body.offsetTop;\n  document.querySelector(\"#target\").style.transform = \"scale(4.0)\";\n"
+              ]
+            }
+          },
+          "png_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-ordered-transform-oracle-opacity-census-audit-v4535/original-script-scale-2-repeat-0.png",
+          "png_sha256": "7ea76af2f8f7082fd863fdf8ec961d354ee888ac1ebabbbb9d20ffda3a8ab7db",
+          "two_captures_exact": true
+        },
+        {
+          "repeat": 1,
+          "loaderId": "168D4A57E98BA2C7342C6BEB69D7E8D8",
+          "metric": {
+            "viewport": {
+              "width": 800,
+              "height": 600,
+              "dpr": 2
+            },
+            "container": {
+              "clientWidth": 200,
+              "clientHeight": 150,
+              "scrollWidth": 250,
+              "scrollHeight": 150,
+              "offsetWidth": 202,
+              "offsetHeight": 152,
+              "scrollLeft": 0,
+              "scrollTop": 0,
+              "rect": {
+                "x": 20,
+                "y": 20,
+                "left": 20,
+                "top": 20,
+                "right": 222,
+                "bottom": 172,
+                "width": 202,
+                "height": 152
+              },
+              "computed": {
+                "overflowX": "scroll",
+                "overflowY": "scroll",
+                "scrollbarWidth": "auto",
+                "borderLeft": "1px",
+                "borderRight": "1px"
+              }
+            },
+            "target": {
+              "rect": {
+                "x": -129,
+                "y": -54,
+                "left": -129,
+                "top": -54,
+                "right": 271,
+                "bottom": 146,
+                "width": 400,
+                "height": 200
+              },
+              "offsetWidth": 100,
+              "offsetHeight": 50,
+              "computed": {
+                "width": "100px",
+                "height": "50px",
+                "transform": "matrix(4, 0, 0, 4, 0, 0)",
+                "transformOrigin": "50px 25px"
+              }
+            },
+            "scripts": {
+              "count": 1,
+              "contents": [
+                "\n  // 1st transform triggers layer creation, and full layout.\n  // 2nd transform just updates overflow, which does not update scrollbars.\n  // This triggers the bug.\n  document.body.offsetTop;\n  document.querySelector(\"#target\").style.transform = \"scale(1.5)\";\n  document.body.offsetTop;\n  document.querySelector(\"#target\").style.transform = \"scale(4.0)\";\n"
+              ]
+            }
+          },
+          "png_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-ordered-transform-oracle-opacity-census-audit-v4535/original-script-scale-2-repeat-1.png",
+          "png_sha256": "7ea76af2f8f7082fd863fdf8ec961d354ee888ac1ebabbbb9d20ffda3a8ab7db",
+          "two_captures_exact": true
+        }
+      ],
+      "repeat_exact": true
+    },
+    {
+      "case": "final-template",
+      "scale": 2,
+      "repeats": [
+        {
+          "repeat": 0,
+          "loaderId": "084BA66814F06F9D57931FDB5BF3C015",
+          "metric": {
+            "viewport": {
+              "width": 800,
+              "height": 600,
+              "dpr": 2
+            },
+            "container": {
+              "clientWidth": 200,
+              "clientHeight": 150,
+              "scrollWidth": 250,
+              "scrollHeight": 150,
+              "offsetWidth": 202,
+              "offsetHeight": 152,
+              "scrollLeft": 0,
+              "scrollTop": 0,
+              "rect": {
+                "x": 20,
+                "y": 20,
+                "left": 20,
+                "top": 20,
+                "right": 222,
+                "bottom": 172,
+                "width": 202,
+                "height": 152
+              },
+              "computed": {
+                "overflowX": "scroll",
+                "overflowY": "scroll",
+                "scrollbarWidth": "auto",
+                "borderLeft": "1px",
+                "borderRight": "1px"
+              }
+            },
+            "target": {
+              "rect": {
+                "x": -129,
+                "y": -54,
+                "left": -129,
+                "top": -54,
+                "right": 271,
+                "bottom": 146,
+                "width": 400,
+                "height": 200
+              },
+              "offsetWidth": 100,
+              "offsetHeight": 50,
+              "computed": {
+                "width": "100px",
+                "height": "50px",
+                "transform": "matrix(4, 0, 0, 4, 0, 0)",
+                "transformOrigin": "50px 25px"
+              }
+            },
+            "scripts": {
+              "count": 0,
+              "contents": []
+            }
+          },
+          "png_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-ordered-transform-oracle-opacity-census-audit-v4535/final-template-scale-2-repeat-0.png",
+          "png_sha256": "7ea76af2f8f7082fd863fdf8ec961d354ee888ac1ebabbbb9d20ffda3a8ab7db",
+          "two_captures_exact": true
+        },
+        {
+          "repeat": 1,
+          "loaderId": "C98B96F34700BD029E7AB0BA2C6AC6F4",
+          "metric": {
+            "viewport": {
+              "width": 800,
+              "height": 600,
+              "dpr": 2
+            },
+            "container": {
+              "clientWidth": 200,
+              "clientHeight": 150,
+              "scrollWidth": 250,
+              "scrollHeight": 150,
+              "offsetWidth": 202,
+              "offsetHeight": 152,
+              "scrollLeft": 0,
+              "scrollTop": 0,
+              "rect": {
+                "x": 20,
+                "y": 20,
+                "left": 20,
+                "top": 20,
+                "right": 222,
+                "bottom": 172,
+                "width": 202,
+                "height": 152
+              },
+              "computed": {
+                "overflowX": "scroll",
+                "overflowY": "scroll",
+                "scrollbarWidth": "auto",
+                "borderLeft": "1px",
+                "borderRight": "1px"
+              }
+            },
+            "target": {
+              "rect": {
+                "x": -129,
+                "y": -54,
+                "left": -129,
+                "top": -54,
+                "right": 271,
+                "bottom": 146,
+                "width": 400,
+                "height": 200
+              },
+              "offsetWidth": 100,
+              "offsetHeight": 50,
+              "computed": {
+                "width": "100px",
+                "height": "50px",
+                "transform": "matrix(4, 0, 0, 4, 0, 0)",
+                "transformOrigin": "50px 25px"
+              }
+            },
+            "scripts": {
+              "count": 0,
+              "contents": []
+            }
+          },
+          "png_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-ordered-transform-oracle-opacity-census-audit-v4535/final-template-scale-2-repeat-1.png",
+          "png_sha256": "7ea76af2f8f7082fd863fdf8ec961d354ee888ac1ebabbbb9d20ffda3a8ab7db",
+          "two_captures_exact": true
+        }
+      ],
+      "repeat_exact": true
+    }
+  ],
+  "browser_owners": [
+    {
+      "pid": 3309651,
+      "profile": "/tmp/oui-transform-overflow-opacity-census-audit-v4535/profile-hfnwx907",
+      "flags": [
+        "/home/nero/code/open-ui/chrome/linux-147.0.7727.50/chrome-linux64/chrome",
+        "--headless",
+        "--disable-gpu",
+        "--no-sandbox",
+        "--no-first-run",
+        "--no-default-browser-check",
+        "--remote-debugging-port=0",
+        "--user-data-dir=/tmp/oui-transform-overflow-opacity-census-audit-v4535/profile-hfnwx907",
+        "--window-size=1600,1287",
+        "about:blank"
+      ],
+      "actual_exit": 0,
+      "group_has_live_processes": false
+    }
+  ],
+  "execution_complete": true,
+  "browser_children_cleanup_complete": true,
+  "enclosing_owner_actual_exit": null,
+  "client_closed": true,
+  "profile_removed_after_stop": true,
+  "owned_tmp_removed_after_stop": true,
+  "immutable_inputs_verified_after": true
+}

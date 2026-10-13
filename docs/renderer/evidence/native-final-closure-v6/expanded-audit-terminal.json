@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "source_operation": "read-only old/full versus new/expanded audit",
+  "audit_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-expanded-evidence-audit-v4532/audit-v2.json",
+  "audit_sha256": "85959b4ddf0d64d06b02a106fcc4a951d9f38b9cf6e33d045a485598132f7699",
+  "owner_session": 44562,
+  "owner_actual_exit_code": 0,
+  "owner_terminal_chunk": "d256a3",
+  "owner_reaped": true,
+  "owner_pid": 3295935,
+  "owner_pid_absent": true,
+  "pixel_qualification": false
+}
