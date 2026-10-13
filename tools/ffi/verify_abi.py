@@ -71,6 +71,10 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--library", type=Path, default=DEFAULT_LIBRARY)
     parser.add_argument("--skip-run", action="store_true")
+    parser.add_argument(
+        "--keep-going", action="store_true",
+        help="run every linked consumer and fail if any consumer fails",
+    )
     args = parser.parse_args()
     cc, cxx, c_flags, cxx_flags, link_flags = compilers()
     if not cc or not cxx or not shutil.which("nm"):
@@ -128,10 +132,18 @@ def main() -> None:
                     ]
                 )
                 binaries[language].append(output)
+        failures: list[tuple[str, int]] = []
         if not args.skip_run:
             for consumers in binaries.values():
                 for binary in consumers:
-                    run([str(binary)])
+                    try:
+                        run([str(binary)])
+                    except subprocess.CalledProcessError as error:
+                        if not args.keep_going:
+                            raise
+                        failures.append((binary.name, error.returncode))
+        if failures:
+            raise SystemExit(f"C ABI consumer failures: {failures}")
     print(
         f"C ABI verified: symbols={len(expected)} C_examples={len(binaries['C'])} "
         f"C++={len(binaries['C++'])} ran={not args.skip_run} "
