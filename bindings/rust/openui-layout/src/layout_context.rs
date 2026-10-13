@@ -229,6 +229,8 @@ pub(crate) fn retain_layout_box(
             .to_logical_size(rect.size);
             fragment.box_geometry = Some(crate::FragmentBoxGeometry {
                 source_size: rect.size,
+                source_fragment_size: fragment.size,
+                source_border_box_rect: rect,
                 source_border: fragment.border,
                 source_padding: fragment.padding,
                 stitched_size: rect.size,

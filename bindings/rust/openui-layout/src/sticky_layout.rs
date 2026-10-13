@@ -615,6 +615,8 @@ mod tests {
             fragment.offset.left = lu(x);
             fragment.box_geometry = Some(FragmentBoxGeometry {
                 source_size: PhysicalSize::new(lu(100), lu(260)),
+                source_fragment_size: PhysicalSize::new(lu(100), lu(260)),
+                source_border_box_rect: PhysicalRect::from_xywh(lu(0), lu(0), lu(100), lu(260)),
                 source_border: BoxStrut::zero(),
                 source_padding: BoxStrut::zero(),
                 stitched_size: PhysicalSize::new(lu(100), lu(260)),
@@ -671,6 +673,8 @@ mod tests {
         block.padding = BoxStrut::new(lu(3), lu(0), lu(0), lu(0));
         block.box_geometry = Some(FragmentBoxGeometry {
             source_size: PhysicalSize::new(lu(100), lu(200)),
+            source_fragment_size: PhysicalSize::new(lu(100), lu(200)),
+            source_border_box_rect: PhysicalRect::from_xywh(lu(0), lu(0), lu(100), lu(200)),
             source_border: BoxStrut::new(lu(2), lu(0), lu(4), lu(0)),
             source_padding: BoxStrut::new(lu(3), lu(0), lu(7), lu(0)),
             stitched_size: PhysicalSize::new(lu(100), lu(200)),
