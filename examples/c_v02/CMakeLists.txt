@@ -72,3 +72,12 @@ set_target_properties(openui_named_timelines PROPERTIES C_STANDARD 11 C_STANDARD
 add_executable(openui_named_timelines_cpp named_timelines.cc)
 target_link_libraries(openui_named_timelines_cpp PRIVATE OpenUI::OpenUI)
 set_target_properties(openui_named_timelines_cpp PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES)
+
+foreach(example IN ITEMS accessibility_scroll accessibility_scroll_info)
+  add_executable(openui_${example} ${example}.c)
+  target_link_libraries(openui_${example} PRIVATE OpenUI::OpenUI)
+  set_target_properties(openui_${example} PROPERTIES C_STANDARD 11 C_STANDARD_REQUIRED YES)
+  add_executable(openui_${example}_cpp ${example}.cc)
+  target_link_libraries(openui_${example}_cpp PRIVATE OpenUI::OpenUI)
+  set_target_properties(openui_${example}_cpp PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES)
+endforeach()

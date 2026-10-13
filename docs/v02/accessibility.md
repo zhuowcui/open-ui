@@ -53,3 +53,29 @@ inspection and operation still require measured Linux qualification.
 The v0.2 accessibility scope covers the core interactive controls and their
 text editing behavior. Rich hypertext navigation beyond those controls remains
 deferred.
+
+## Owned native scroll metadata
+
+`oui_accessibility_snapshot_get_scroll_info_v1` copies current X/Y offsets,
+minimum/maximum offsets and advertised directional actions from an owned tree.
+Presence flags distinguish a missing scroll box from a valid zero offset or
+zero range. These values retain the framework's native `double` precision in
+logical coordinates; they are not Chromium's integer accessibility wire values.
+The getter reads no live Engine state and remains available after the document
+has been destroyed, on the snapshot's owning thread. It validates the size/ABI
+prefix before accessing a complete output and writes only on success. A larger
+future output keeps its trailing bytes.
+
+Scroll metadata uses retained used overflow and ownership. Programmatically
+scrollable hidden boxes retain offsets and limits without user scroll actions;
+actual auto/scroll overflow advertises all four directional actions. Table
+normalization, replaced boxes, the viewport and delegated fieldset content use
+the same native geometry as the public dimension and scrolling APIs. The
+existing native AccessKit directional step is 40 logical pixels; matching
+Chromium's accessibility paging step remains a separate measured requirement.
+
+The additive getter preserves all prior C exports and layouts. Source guards
+and C/C++ consumers cover offsets/ranges, hidden/clip mutations, negative RTL
+origins, output prefixes/tails/errors, owning-thread access and snapshot lifetime.
+Their current source checkpoint has not been compiled or executed; native and
+physical accessibility qualification are still required.

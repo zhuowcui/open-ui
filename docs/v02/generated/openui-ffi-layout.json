@@ -10,6 +10,10 @@
       "align": 8,
       "size": 112
     },
+    "OuiAccessibilityScrollInfoV1": {
+      "align": 8,
+      "size": 64
+    },
     "OuiAccessibilitySnapshotInfo": {
       "align": 8,
       "size": 56

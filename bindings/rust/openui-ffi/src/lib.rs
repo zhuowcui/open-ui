@@ -6,6 +6,8 @@
 // the remaining readable/writable-memory preconditions in its safety contract.
 #![allow(clippy::not_unsafe_ptr_arg_deref)]
 
+#[cfg(test)]
+mod accessibility_scroll_info_tests;
 mod accessibility_snapshot;
 #[cfg(test)]
 mod copy_output_tests;
@@ -48,6 +50,7 @@ mod versioned_input_tests;
 #[cfg(test)]
 mod versioned_output_tests;
 
+pub use accessibility_snapshot::oui_accessibility_snapshot_get_scroll_info_v1;
 pub use easing_curve::{
     oui_element_animate_v1, oui_element_smooth_scroll_into_view_v2,
     oui_element_smooth_scroll_to_v1, oui_element_transition_v1,

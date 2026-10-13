@@ -787,6 +787,34 @@ typedef struct OuiAccessibilityUpdate {
 } OuiAccessibilityUpdate;
 
 /* New snapshot structs are append-only and start with size and ABI version. */
+enum {
+  OUI_ACCESSIBILITY_SCROLL_HAS_X = 1u << 0,
+  OUI_ACCESSIBILITY_SCROLL_HAS_Y = 1u << 1,
+  OUI_ACCESSIBILITY_SCROLL_HAS_X_MIN = 1u << 2,
+  OUI_ACCESSIBILITY_SCROLL_HAS_X_MAX = 1u << 3,
+  OUI_ACCESSIBILITY_SCROLL_HAS_Y_MIN = 1u << 4,
+  OUI_ACCESSIBILITY_SCROLL_HAS_Y_MAX = 1u << 5,
+  OUI_ACCESSIBILITY_SCROLL_DIRECTION_ACTION_MASK =
+      (1u << 11) | (1u << 12) | (1u << 13) | (1u << 14)
+};
+
+/* Owned native logical scroll metadata. Flags distinguish absent fields from
+ * zero values. actions uses the existing directional NodeInfo action bits.
+ * Values retain native double precision; these are not Chromium AX wire ints.
+ */
+typedef struct OuiAccessibilityScrollInfoV1 {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  uint32_t flags;
+  uint32_t actions;
+  double scroll_x;
+  double scroll_y;
+  double scroll_x_min;
+  double scroll_x_max;
+  double scroll_y_min;
+  double scroll_y_max;
+} OuiAccessibilityScrollInfoV1;
+
 typedef struct OuiAccessibilitySnapshotInfo {
   uint32_t struct_size;
   uint32_t abi_version;
@@ -1032,6 +1060,10 @@ OuiStatus oui_accessibility_snapshot_destroy(OuiAccessibilitySnapshot* snapshot)
 OuiStatus oui_accessibility_snapshot_get_info(const OuiAccessibilitySnapshot* snapshot, OuiAccessibilitySnapshotInfo* out_info);
 OuiStatus oui_accessibility_snapshot_get_node(const OuiAccessibilitySnapshot* snapshot, size_t index, OuiAccessibilityNodeInfo* out_node);
 OuiStatus oui_accessibility_snapshot_get_node_state(const OuiAccessibilitySnapshot* snapshot, uint64_t node_id, OuiAccessibilityNodeState* out_state);
+/* Prefix-first validation; writes only on success, preserves future tails.
+ * Readable after document destruction, on the snapshot's owning thread.
+ */
+OuiStatus oui_accessibility_snapshot_get_scroll_info_v1(const OuiAccessibilitySnapshot* snapshot, uint64_t node_id, OuiAccessibilityScrollInfoV1* out_info);
 OuiStatus oui_accessibility_snapshot_copy_text(const OuiAccessibilitySnapshot* snapshot, uint64_t node_id, uint32_t field, uint8_t* destination, size_t capacity, size_t* out_length);
 OuiStatus oui_accessibility_snapshot_copy_character_lengths(const OuiAccessibilitySnapshot* snapshot, uint64_t node_id, uint8_t* destination, size_t capacity, size_t* out_count);
 OuiStatus oui_accessibility_snapshot_copy_ids(const OuiAccessibilitySnapshot* snapshot, uint64_t node_id, uint32_t kind, uint64_t* destination, size_t capacity, size_t* out_count);

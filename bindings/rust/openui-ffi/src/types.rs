@@ -460,6 +460,32 @@ pub const OUI_ACCESSIBILITY_NODE_READ_ONLY: u32 = 1 << 2;
 pub const OUI_ACCESSIBILITY_NODE_MODAL: u32 = 1 << 3;
 pub const OUI_ACCESSIBILITY_NODE_HAS_BOUNDS: u32 = 1 << 4;
 
+pub const OUI_ACCESSIBILITY_SCROLL_HAS_X: u32 = 1 << 0;
+pub const OUI_ACCESSIBILITY_SCROLL_HAS_Y: u32 = 1 << 1;
+pub const OUI_ACCESSIBILITY_SCROLL_HAS_X_MIN: u32 = 1 << 2;
+pub const OUI_ACCESSIBILITY_SCROLL_HAS_X_MAX: u32 = 1 << 3;
+pub const OUI_ACCESSIBILITY_SCROLL_HAS_Y_MIN: u32 = 1 << 4;
+pub const OUI_ACCESSIBILITY_SCROLL_HAS_Y_MAX: u32 = 1 << 5;
+pub const OUI_ACCESSIBILITY_SCROLL_DIRECTION_ACTION_MASK: u32 =
+    (1 << 11) | (1 << 12) | (1 << 13) | (1 << 14);
+
+/// Owned accessibility scroll metadata in native logical coordinates. Absent
+/// optional fields are zero; `flags` preserves their presence independently.
+#[repr(C)]
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct OuiAccessibilityScrollInfoV1 {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub flags: u32,
+    pub actions: u32,
+    pub scroll_x: f64,
+    pub scroll_y: f64,
+    pub scroll_x_min: f64,
+    pub scroll_x_max: f64,
+    pub scroll_y_min: f64,
+    pub scroll_y_max: f64,
+}
+
 #[repr(C)]
 #[derive(Clone, Copy, Default)]
 pub struct OuiAccessibilitySnapshotInfo {

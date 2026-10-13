@@ -368,6 +368,61 @@ pub extern "C" fn oui_accessibility_snapshot_get_node_state(
     })
 }
 
+// SAFETY CONTRACT: `out_info` has an initialized readable size/ABI prefix and,
+// after that declared size is accepted, aligned writable storage for the value.
+// The snapshot owns this data; no live document/Engine borrow is needed.
+#[no_mangle]
+pub extern "C" fn oui_accessibility_snapshot_get_scroll_info_v1(
+    snapshot_handle: *const OuiAccessibilitySnapshot,
+    node_id: u64,
+    out_info: *mut OuiAccessibilityScrollInfoV1,
+) -> OuiStatus {
+    ffi(|| {
+        let (struct_size, abi_version) = unsafe { output_header(out_info) }?;
+        let snapshot = snapshot(snapshot_handle as usize)?;
+        let node = node_by_id(&snapshot, node_id)?;
+        let values = [
+            (node.scroll_x(), OUI_ACCESSIBILITY_SCROLL_HAS_X),
+            (node.scroll_y(), OUI_ACCESSIBILITY_SCROLL_HAS_Y),
+            (node.scroll_x_min(), OUI_ACCESSIBILITY_SCROLL_HAS_X_MIN),
+            (node.scroll_x_max(), OUI_ACCESSIBILITY_SCROLL_HAS_X_MAX),
+            (node.scroll_y_min(), OUI_ACCESSIBILITY_SCROLL_HAS_Y_MIN),
+            (node.scroll_y_max(), OUI_ACCESSIBILITY_SCROLL_HAS_Y_MAX),
+        ];
+        let flags = values.iter().fold(0, |flags, (value, presence)| {
+            flags | if value.is_some() { *presence } else { 0 }
+        });
+        // These are the existing OuiAccessibilityNodeInfo directional bits,
+        // copied from the owned node, without deriving another scroll policy.
+        let actions = [
+            (Action::ScrollDown, 11),
+            (Action::ScrollUp, 12),
+            (Action::ScrollLeft, 13),
+            (Action::ScrollRight, 14),
+        ]
+        .iter()
+        .fold(0, |bits, (action, bit)| {
+            bits | (u32::from(node.supports_action(*action)) << bit)
+        });
+        let info = OuiAccessibilityScrollInfoV1 {
+            struct_size,
+            abi_version,
+            flags,
+            actions,
+            scroll_x: values[0].0.unwrap_or(0.0),
+            scroll_y: values[1].0.unwrap_or(0.0),
+            scroll_x_min: values[2].0.unwrap_or(0.0),
+            scroll_x_max: values[3].0.unwrap_or(0.0),
+            scroll_y_min: values[4].0.unwrap_or(0.0),
+            scroll_y_max: values[5].0.unwrap_or(0.0),
+        };
+        // SAFETY: all fallible checks succeeded; the caller's validated extent
+        // covers this value. Future trailing storage remains unchanged.
+        unsafe { ptr::write(out_info, info) };
+        Ok(())
+    })
+}
+
 // SAFETY CONTRACT: `destination` is writable for `capacity` bytes and
 // `out_length` is writable. A null destination with zero capacity queries size.
 #[no_mangle]
