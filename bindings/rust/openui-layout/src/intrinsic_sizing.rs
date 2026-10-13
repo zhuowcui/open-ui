@@ -416,6 +416,10 @@ fn compute_inline_items_intrinsic_sizes(
     // state; zero advance also cannot distinguish empty text from content.
     // A recursive whitespace-only contribution can explicitly own neighbors.
     let mut leading_collapsible_whitespace = !preserve_boundary_whitespace;
+    // WBR can start a min-content line even under nowrap without starting a
+    // max-content line. Its following collapsed spaces can therefore be
+    // leading for min-content and interior for max-content at the same time.
+    let mut min_leading_collapsible_whitespace = leading_collapsible_whitespace;
 
     let commit_soft_segment = |min_segment: &mut LayoutUnit,
                                min_content: &mut LayoutUnit,
@@ -494,8 +498,31 @@ fn compute_inline_items_intrinsic_sizes(
                 max_line = max_line - shaping_run_rounding_excess;
                 last_content_was_text = false;
             }
+            InlineItemType::Control if !item.is_end_collapsible_newline => {
+                // Native WBR is a zero-advance discretionary control. Pinned
+                // .50 HandleControlItem permits its break even under nowrap;
+                // max-content still measures the complete unbroken line.
+                min_segment = min_segment + pending_open_edges;
+                pending_open_edges = LayoutUnit::zero();
+                for entry in &mut stack {
+                    entry.active_on_segment = true;
+                }
+                pending_min_collapsible_space = LayoutUnit::zero();
+                commit_soft_segment(
+                    &mut min_segment,
+                    &mut min_content,
+                    &mut pending_open_edges,
+                    &mut stack,
+                );
+                min_leading_collapsible_whitespace = true;
+                soft_break_pending = false;
+                soft_break_after_pending_edges = false;
+                last_content_was_text = false;
+            }
             InlineItemType::Control => {
                 leading_collapsible_whitespace = true;
+                min_leading_collapsible_whitespace = true;
+                soft_break_pending = false;
                 soft_break_after_pending_edges = false;
                 last_content_was_text = false;
                 pending_min_collapsible_space = LayoutUnit::zero();
@@ -511,6 +538,7 @@ fn compute_inline_items_intrinsic_sizes(
             }
             InlineItemType::AtomicInline => {
                 leading_collapsible_whitespace = false;
+                min_leading_collapsible_whitespace = false;
                 min_segment = min_segment + pending_min_collapsible_space;
                 pending_min_collapsible_space = LayoutUnit::zero();
                 if soft_break_pending {
@@ -603,17 +631,32 @@ fn compute_inline_items_intrinsic_sizes(
                         max_line_start_char = char_end;
                         continue;
                     }
+                    if is_space && collapses && min_leading_collapsible_whitespace {
+                        // A WBR min break trims this prefix, while max-content
+                        // retains the same space as interior content. Keep the
+                        // max shaped prefix so its snapped deltas telescope.
+                        pending_collapsible_space = intrinsic_text_width(
+                            shape.width_for_range(max_line_start_char, char_end),
+                        ) - intrinsic_text_width(
+                            shape.width_for_range(max_line_start_char, index),
+                        );
+                        run_start = byte_end;
+                        run_start_char = char_end;
+                        min_range_start_char = char_end;
+                        continue;
+                    }
                     // The break iterator still contains the omitted Leading
                     // space. Its following boundary cannot separate inline
                     // start decorations from the first visible character.
                     // Read the state before that character ends Leading.
                     let is_soft_break_before = wraps
-                        && !leading_collapsible_whitespace
+                        && !min_leading_collapsible_whitespace
                         && item_breaks
                             .binary_search(&(item.text_range.start + byte_index))
                             .is_ok();
                     if !is_forced {
                         leading_collapsible_whitespace = false;
+                        min_leading_collapsible_whitespace = false;
                     }
                     if !is_space && !is_forced && !is_soft_break_before {
                         continue;
@@ -652,14 +695,11 @@ fn compute_inline_items_intrinsic_sizes(
                         soft_break_pending = false;
                         soft_break_after_pending_edges = false;
                         last_content_was_text = true;
-                        let width = if wraps {
-                            intrinsic_text_width(shape.width_for_range(min_range_start_char, index))
-                                - intrinsic_text_width(
-                                    shape.width_for_range(min_range_start_char, run_start_char),
-                                )
-                        } else {
-                            max_width
-                        };
+                        let width = intrinsic_text_width(
+                            shape.width_for_range(min_range_start_char, index),
+                        ) - intrinsic_text_width(
+                            shape.width_for_range(min_range_start_char, run_start_char),
+                        );
                         min_segment = min_segment + width;
                         max_line = max_line + pending_collapsible_space + max_width;
                         pending_collapsible_space = LayoutUnit::zero();
@@ -667,6 +707,7 @@ fn compute_inline_items_intrinsic_sizes(
 
                     if is_forced {
                         leading_collapsible_whitespace = true;
+                        min_leading_collapsible_whitespace = true;
                         soft_break_pending = false;
                         soft_break_after_pending_edges = false;
                         last_content_was_text = false;
@@ -700,7 +741,15 @@ fn compute_inline_items_intrinsic_sizes(
                         ) - intrinsic_text_width(
                             shape.width_for_range(max_line_start_char, index),
                         );
-                        let width = if wraps { width } else { max_width };
+                        let width = if wraps {
+                            width
+                        } else {
+                            intrinsic_text_width(
+                                shape.width_for_range(min_range_start_char, char_end),
+                            ) - intrinsic_text_width(
+                                shape.width_for_range(min_range_start_char, index),
+                            )
+                        };
                         if collapses {
                             pending_collapsible_space = max_width;
                         } else {
@@ -791,15 +840,11 @@ fn compute_inline_items_intrinsic_sizes(
                     // No-wrap items and preserved-space break ranges both use
                     // differences of snapped prefixes, rather than snapping
                     // the bookkeeping chunks independently.
-                    let width = if wraps {
-                        intrinsic_text_width(
-                            shape.width_for_range(min_range_start_char, shape.num_characters),
-                        ) - intrinsic_text_width(
-                            shape.width_for_range(min_range_start_char, run_start_char),
-                        )
-                    } else {
-                        max_width
-                    };
+                    let width = intrinsic_text_width(
+                        shape.width_for_range(min_range_start_char, shape.num_characters),
+                    ) - intrinsic_text_width(
+                        shape.width_for_range(min_range_start_char, run_start_char),
+                    );
                     min_segment = min_segment + width;
                     max_line = max_line + pending_collapsible_space + max_width;
                     pending_collapsible_space = LayoutUnit::zero();
@@ -807,6 +852,7 @@ fn compute_inline_items_intrinsic_sizes(
             }
             InlineItemType::BlockInInline => {
                 leading_collapsible_whitespace = false;
+                min_leading_collapsible_whitespace = false;
             }
         }
     }

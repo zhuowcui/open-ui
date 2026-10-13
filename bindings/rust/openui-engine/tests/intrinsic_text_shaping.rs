@@ -725,3 +725,232 @@ fn inline_edges_and_empty_tags_keep_leading_state_but_atomic_content_ends_it() {
         }
     }
 }
+
+#[test]
+fn native_wbr_keeps_max_line_and_splits_min_content_even_under_nowrap() {
+    for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
+        let mut engine = Engine::new_with_font_collection(
+            ViewportMetrics::from_logical_size(320.0, 240.0, scale).unwrap(),
+            FontCollection::deterministic_test(),
+        )
+        .unwrap();
+        engine
+            .set_property(
+                engine.root(),
+                StyleProperty::WhiteSpace,
+                WhiteSpaceShorthand {
+                    collapse: WhiteSpaceCollapse::Collapse,
+                    wrap: TextWrapMode::Nowrap,
+                }
+                .into(),
+            )
+            .unwrap();
+        for (control, expected_min, expected_max) in [
+            (None, 100.0, 100.0),
+            (Some(ElementTag::WordBreak), 60.0, 100.0),
+            (Some(ElementTag::Break), 60.0, 60.0),
+        ] {
+            let host = engine.create_native_element(ElementTag::Span).unwrap();
+            engine
+                .set_property(host, StyleProperty::Display, Display::InlineBlock.into())
+                .unwrap();
+            engine.append_child(engine.root(), host).unwrap();
+            for (index, width) in [40.0, 60.0].into_iter().enumerate() {
+                if index == 1 {
+                    if let Some(tag) = control {
+                        let marker = engine.create_native_element(tag).unwrap();
+                        engine.append_child(host, marker).unwrap();
+                    }
+                }
+                let atomic = engine.create_native_element(ElementTag::Span).unwrap();
+                engine
+                    .set_property(atomic, StyleProperty::Display, Display::InlineBlock.into())
+                    .unwrap();
+                engine
+                    .set_property(atomic, StyleProperty::Width, LengthValue::px(width).into())
+                    .unwrap();
+                engine
+                    .set_property(atomic, StyleProperty::Height, LengthValue::px(10.0).into())
+                    .unwrap();
+                engine.append_child(host, atomic).unwrap();
+            }
+            for (width, expected) in [
+                (Length::min_content(), expected_min),
+                (Length::max_content(), expected_max),
+            ] {
+                engine
+                    .set_property(
+                        host,
+                        StyleProperty::Width,
+                        LengthValue::Computed(width).into(),
+                    )
+                    .unwrap();
+                assert_eq!(engine.bounds(host).unwrap().unwrap().width, expected);
+            }
+        }
+    }
+}
+
+#[test]
+fn native_wbr_keeps_independent_leading_states_and_preserved_space_ranges() {
+    let mut engine = engine_with_families(&["Ahem"]);
+    for zero_atomic in [false, true] {
+        for decorated_inline in [false, true] {
+            let host = engine.create_native_element(ElementTag::Span).unwrap();
+            engine
+                .set_property(host, StyleProperty::Display, Display::InlineBlock.into())
+                .unwrap();
+            engine.append_child(engine.root(), host).unwrap();
+            if zero_atomic {
+                let atomic = engine.create_native_element(ElementTag::Span).unwrap();
+                engine
+                    .set_property(atomic, StyleProperty::Display, Display::InlineBlock.into())
+                    .unwrap();
+                engine
+                    .set_property(atomic, StyleProperty::Width, LengthValue::px(0.0).into())
+                    .unwrap();
+                engine
+                    .set_property(atomic, StyleProperty::Height, LengthValue::px(10.0).into())
+                    .unwrap();
+                engine.append_child(host, atomic).unwrap();
+            }
+            let marker = engine.create_native_element(ElementTag::WordBreak).unwrap();
+            engine.append_child(host, marker).unwrap();
+            let (text_parent, edges) = if decorated_inline {
+                let inline = engine.create_native_element(ElementTag::Span).unwrap();
+                engine
+                    .set_property(inline, StyleProperty::Display, Display::Inline.into())
+                    .unwrap();
+                engine
+                    .set_property(
+                        inline,
+                        StyleProperty::PaddingLeft,
+                        LengthValue::px(3.0).into(),
+                    )
+                    .unwrap();
+                engine
+                    .set_property(
+                        inline,
+                        StyleProperty::PaddingRight,
+                        LengthValue::px(2.0).into(),
+                    )
+                    .unwrap();
+                engine.append_child(host, inline).unwrap();
+                (inline, 5.0)
+            } else {
+                (host, 0.0)
+            };
+            let text = engine.create_text(" X").unwrap();
+            engine.append_child(text_parent, text).unwrap();
+            for (width, measured) in [
+                (Length::min_content(), "X"),
+                (Length::max_content(), if zero_atomic { " X" } else { "X" }),
+            ] {
+                engine
+                    .set_property(
+                        host,
+                        StyleProperty::Width,
+                        LengthValue::Computed(width).into(),
+                    )
+                    .unwrap();
+                assert_eq!(
+                    engine.bounds(host).unwrap().unwrap().width,
+                    shaped_snapped_width(&engine, measured) + edges
+                );
+            }
+            engine
+                .set_property(
+                    host,
+                    StyleProperty::WhiteSpace,
+                    WhiteSpaceShorthand {
+                        collapse: WhiteSpaceCollapse::Preserve,
+                        wrap: TextWrapMode::Nowrap,
+                    }
+                    .into(),
+                )
+                .unwrap();
+            for width in [Length::min_content(), Length::max_content()] {
+                engine
+                    .set_property(
+                        host,
+                        StyleProperty::Width,
+                        LengthValue::Computed(width).into(),
+                    )
+                    .unwrap();
+                assert_eq!(
+                    engine.bounds(host).unwrap().unwrap().width,
+                    shaped_snapped_width(&engine, " X") + edges
+                );
+            }
+            assert_eq!(engine.text_data(text).unwrap(), " X");
+        }
+    }
+}
+
+#[test]
+fn native_wbr_preserves_clone_edges_on_both_min_content_segments() {
+    let mut engine = engine_with_families(&["Ahem"]);
+    let host = engine.create_native_element(ElementTag::Span).unwrap();
+    engine
+        .set_property(host, StyleProperty::Display, Display::InlineBlock.into())
+        .unwrap();
+    engine.append_child(engine.root(), host).unwrap();
+    let inline = engine.create_native_element(ElementTag::Span).unwrap();
+    engine
+        .set_property(inline, StyleProperty::Display, Display::Inline.into())
+        .unwrap();
+    engine
+        .set_property(
+            inline,
+            StyleProperty::PaddingLeft,
+            LengthValue::px(3.0).into(),
+        )
+        .unwrap();
+    engine
+        .set_property(
+            inline,
+            StyleProperty::PaddingRight,
+            LengthValue::px(2.0).into(),
+        )
+        .unwrap();
+    engine
+        .set_property(
+            inline,
+            StyleProperty::BoxDecorationBreak,
+            StyleValue::Renderer(RendererStyleValue::BoxDecorationBreak(
+                openui_style::BoxDecorationBreak::Clone,
+            )),
+        )
+        .unwrap();
+    engine.append_child(host, inline).unwrap();
+    for (index, width) in [40.0, 60.0].into_iter().enumerate() {
+        if index == 1 {
+            let marker = engine.create_native_element(ElementTag::WordBreak).unwrap();
+            engine.append_child(inline, marker).unwrap();
+        }
+        let atomic = engine.create_native_element(ElementTag::Span).unwrap();
+        engine
+            .set_property(atomic, StyleProperty::Display, Display::InlineBlock.into())
+            .unwrap();
+        engine
+            .set_property(atomic, StyleProperty::Width, LengthValue::px(width).into())
+            .unwrap();
+        engine
+            .set_property(atomic, StyleProperty::Height, LengthValue::px(10.0).into())
+            .unwrap();
+        engine.append_child(inline, atomic).unwrap();
+    }
+    for (width, expected) in [
+        (Length::min_content(), 65.0),
+        (Length::max_content(), 105.0),
+    ] {
+        engine
+            .set_property(
+                host,
+                StyleProperty::Width,
+                LengthValue::Computed(width).into(),
+            )
+            .unwrap();
+        assert_eq!(engine.bounds(host).unwrap().unwrap().width, expected);
+    }
+}
