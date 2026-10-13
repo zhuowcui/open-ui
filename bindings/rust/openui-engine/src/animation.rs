@@ -134,6 +134,11 @@ pub(crate) struct AnimationInstance {
     pub options: AnimationOptions,
     pub timing_options: AnimationOptions,
     pub timing_seconds: AnimationTimingSeconds,
+    // Boundary alignment belongs to the normalized timing cache, not to each
+    // sampled local time. A seek can clear automatic start alignment without
+    // invalidating these retained phase operands (pinned .50 animation_effect).
+    normalized_boundary_alignment: (bool, bool),
+    normalized_timing_dirty: bool,
     pub timeline: RetainedAnimationTimeline,
     pub timeline_snapshot: Option<crate::animation_timeline::ProgressTimelineSnapshot>,
     pub auto_align_start_time: bool,
@@ -147,6 +152,9 @@ pub(crate) struct AnimationInstance {
     pub last_phase: Option<AnimationPhase>,
     pub last_iteration: u64,
     pub last_current_time_seconds: f64,
+    // OnValidateSnapshot clears progress previous_current_time_ when a new
+    // automatic start is requested. Event elapsed history stays separate.
+    previous_progress_time_seconds: Option<f64>,
     pub ended: bool,
 }
 
@@ -161,13 +169,7 @@ impl AnimationInstance {
         &self,
         local_time_seconds: f64,
     ) -> (openui_style::AnimationSample, bool) {
-        let (start, end) = self.timeline_snapshot.map_or((false, false), |timeline| {
-            timeline.boundary_alignment(
-                &self.timing_options,
-                self.timing_seconds,
-                self.auto_align_start_time,
-            )
-        });
+        let (start, end) = self.normalized_boundary_alignment;
         self.timing_options
             .sample_local_time_seconds_with_direction_and_boundaries(
                 local_time_seconds,
@@ -175,6 +177,19 @@ impl AnimationInstance {
                 start,
                 end,
             )
+    }
+
+    fn normalize_progress_timing(&mut self) {
+        let Some(timeline) = self.timeline_snapshot else {
+            return;
+        };
+        (self.timing_options, self.timing_seconds) = timeline.normalize(&self.options);
+        self.normalized_boundary_alignment = timeline.boundary_alignment(
+            &self.timing_options,
+            self.timing_seconds,
+            self.auto_align_start_time,
+        );
+        self.normalized_timing_dirty = false;
     }
 
     // Document running time uses the authoritative start-time expression.
@@ -250,25 +265,34 @@ impl AnimationInstance {
             let end = self.timing_seconds.effect_end(self.options.iterations);
             self.hold_time_seconds = Some(if did_seek {
                 unconstrained
-            } else if self.last_current_time_seconds > end {
-                self.last_current_time_seconds
+            } else if self
+                .previous_progress_time_seconds
+                .is_some_and(|previous| previous > end)
+            {
+                self.previous_progress_time_seconds
+                    .expect("resolved outside progress time")
             } else {
                 end
             });
         } else if self.options.playback_rate < 0.0 && unconstrained <= 0.0 {
             let held = if did_seek {
-                unconstrained
-            } else if self.last_current_time_seconds <= 0.0 {
-                self.last_current_time_seconds
+                Some(unconstrained)
+            } else if self
+                .previous_progress_time_seconds
+                .is_none_or(|previous| previous <= 0.0)
+            {
+                self.previous_progress_time_seconds
             } else {
-                0.0
+                Some(0.0)
             };
             // This is TimingCalculations::IsWithinAnimationTimeEpsilon, a
             // distinct two-bit double arithmetic rule, not the 1us phase rule.
-            self.hold_time_seconds = Some(if held.abs() <= 2.0 * f64::EPSILON {
-                0.0
-            } else {
-                held
+            self.hold_time_seconds = held.map(|held| {
+                if held.abs() <= 2.0 * f64::EPSILON {
+                    0.0
+                } else {
+                    held
+                }
             });
         } else {
             if did_seek {
@@ -304,6 +328,7 @@ impl AnimationInstance {
         // A later continuous sample retains an explicitly outside time rather
         // than the boundary that was current before this discontinuous seek.
         self.last_current_time_seconds = self.current_time(timeline_time_seconds);
+        self.previous_progress_time_seconds = Some(self.last_current_time_seconds);
     }
 
     fn reanchor_progress(&mut self, timeline_time_seconds: f64, local_time_seconds: f64) {
@@ -548,6 +573,9 @@ impl Engine {
             },
             |snapshot| snapshot.normalize(&options),
         );
+        let normalized_boundary_alignment = timeline_snapshot.map_or((false, false), |snapshot| {
+            snapshot.boundary_alignment(&timing_options, timing_seconds, true)
+        });
         let initial_time = if timeline.is_document() {
             initial_local_time(&options)?
         } else {
@@ -602,6 +630,8 @@ impl Engine {
                 options,
                 timing_options,
                 timing_seconds,
+                normalized_boundary_alignment,
+                normalized_timing_dirty: !timeline.is_document() && timeline_snapshot.is_none(),
                 timeline,
                 timeline_snapshot,
                 auto_align_start_time: true,
@@ -615,6 +645,7 @@ impl Engine {
                 last_phase: None,
                 last_iteration: 0,
                 last_current_time_seconds: initial_time,
+                previous_progress_time_seconds: None,
                 ended: false,
             },
         );
@@ -667,7 +698,9 @@ impl Engine {
         if instance.timeline.is_document() {
             instance.reanchor(now, current);
         } else {
-            instance.auto_align_start_time = false;
+            // PauseInternal preserves a resolved automatic start policy. Only
+            // an explicit time setter disables it; pausing alone does not
+            // invalidate the cached normalized boundary flags either.
             instance.reanchor_progress(now, current);
         }
         self.sample_animations()
@@ -683,15 +716,18 @@ impl Engine {
             instance.options.play_state = PlayState::Running;
             instance.timing_options.play_state = PlayState::Running;
             instance.auto_align_start_time = true;
+            // PlayInternal requests a newly resolved automatic start, which
+            // invalidates normalized timing in OnValidateSnapshot.
+            instance.normalized_timing_dirty = true;
             // A newer play request supersedes an unresolved percentage seek.
             // Its time will come from the retained range's automatic alignment.
             instance.pending_progress_seek = None;
-            instance.start_time_seconds = instance.timeline_snapshot.map_or(0.0, |snapshot| {
-                snapshot.automatic_start_time_seconds(instance.options.playback_rate)
-            });
             instance.offset_seconds = 0.0;
-            instance.hold_time_seconds = None;
-            instance.progress_start_resolved = instance.timeline_snapshot.is_some();
+            // PlayInternal holds current time and clears the logical start;
+            // OnValidateSnapshot performs automatic resolution and resets the
+            // finished-state history before the next continuous sample.
+            instance.hold_time_seconds = Some(current);
+            instance.progress_start_resolved = false;
             return self.sample_animations();
         }
         if snapshot.timeline.is_document() {
@@ -780,6 +816,11 @@ impl Engine {
         let instance = self.animations.get_mut(&id).expect("live animation");
         instance.options.playback_rate = playback_rate;
         instance.timing_options.playback_rate = playback_rate;
+        if !instance.timeline.is_document() {
+            // Both an actual rate change and setting the same rate invalidate
+            // normalized timing in pinned .50 setPlaybackRate.
+            instance.normalized_timing_dirty = true;
+        }
         if instance.timeline.is_document() {
             instance.reanchor(now, current);
         } else if (snapshot.options.playback_rate < 0.0) != (playback_rate < 0.0) {
@@ -955,10 +996,17 @@ impl Engine {
             offset_reference: snapshot.target,
         };
         instance.auto_align_start_time = true;
+        if changed && !instance.timeline.is_document() {
+            instance.normalized_timing_dirty = true;
+        }
         if !instance.timeline.is_document() && instance.options.play_state == PlayState::Running {
-            // Setting the range resumes automatic running alignment, including
-            // an unchanged descriptor. Paused time requests remain held.
-            instance.pending_progress_seek = None;
+            // SetRange enables automatic alignment even for equal descriptors,
+            // but only OnRangeUpdate for changed endpoints requests a new start.
+            // An unchanged range retains a resolved manual anchor and any
+            // unresolved explicit time request.
+            if changed {
+                instance.pending_progress_seek = None;
+            }
         }
         if changed
             && !instance.timeline.is_document()
@@ -968,6 +1016,7 @@ impl Engine {
             // or finished animations; paused effects preserve their hold time.
             instance.hold_time_seconds = None;
             instance.offset_seconds = 0.0;
+            instance.progress_start_resolved = false;
         }
         self.sample_animations()
     }
@@ -1269,6 +1318,9 @@ impl Engine {
                 instance.last_phase = Some(sample.phase);
                 instance.last_iteration = sample.iteration;
                 instance.last_current_time_seconds = current_time;
+                if !instance.timeline.is_document() {
+                    instance.previous_progress_time_seconds = Some(current_time);
+                }
                 instance.ended = finished;
             }
         }
@@ -1590,6 +1642,14 @@ impl Engine {
         let next = self.progress_timeline_snapshot(previous.timeline);
         let instance = self.animations.get_mut(&id).expect("live animation");
         if let Some(next) = next {
+            // ScrollSnapshotTimeline passes HasConsistentLayout to
+            // OnValidateSnapshot. Current scroll/time alone is not a normalized
+            // timing invalidation; genuine cover/view or attachment changes are.
+            let geometry_changed = previous.timeline_snapshot.is_none_or(|old| {
+                !old.has_consistent_normalized_layout(next)
+                    || old.attachment_start_fraction != next.attachment_start_fraction
+                    || old.attachment_end_fraction != next.attachment_end_fraction
+            });
             if let Some(old) = previous.timeline_snapshot {
                 let duration_changed = old.duration_seconds != next.duration_seconds;
                 if duration_changed {
@@ -1616,15 +1676,35 @@ impl Engine {
                     }
                 }
             }
-            if instance.auto_align_start_time {
-                instance.start_time_seconds =
-                    next.automatic_start_time_seconds(instance.options.playback_rate);
+            let needs_new_start = if instance.options.play_state == PlayState::Paused
+                || instance.progress_pause_pending
+            {
+                !instance.progress_start_resolved && instance.hold_time_seconds.is_none()
+            } else {
+                instance.auto_align_start_time
+                    && (!instance.progress_start_resolved || geometry_changed)
+            };
+            if needs_new_start {
+                // Pinned OnValidateSnapshot resolves only a missing start or
+                // changed layout/range. Merely setting equal range endpoints
+                // restores the policy flag without replacing a manual anchor.
+                instance.previous_progress_time_seconds = None;
+                let previous_start = instance
+                    .progress_start_resolved
+                    .then_some(instance.start_time_seconds);
+                let start = next.automatic_start_time_seconds(instance.options.playback_rate);
+                instance.start_time_seconds = start;
                 instance.offset_seconds = 0.0;
-                instance.progress_start_resolved =
-                    instance.options.play_state == PlayState::Running;
+                instance.progress_start_resolved = true;
+                if previous_start != Some(start) {
+                    instance.hold_time_seconds = None;
+                }
+                instance.normalized_timing_dirty = true;
             }
-            (instance.timing_options, instance.timing_seconds) = next.normalize(&instance.options);
             instance.timeline_snapshot = Some(next);
+            if instance.normalized_timing_dirty || geometry_changed {
+                instance.normalize_progress_timing();
+            }
             if let Some(percentage) = instance.pending_progress_seek.take() {
                 resolved_seek = true;
                 instance.seek_progress_time(

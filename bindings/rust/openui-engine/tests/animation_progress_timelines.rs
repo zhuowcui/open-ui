@@ -4,8 +4,8 @@ use openui_geometry::ViewportMetrics;
 use openui_style::{
     AnimationAttachmentRange, AnimationOptions, AnimationPhase, Color, Direction, Display,
     FillMode, FlexDirection, IterationCount, Keyframes, LengthValue, Overflow, PlayState, Position,
-    PropertyKeyframes, StyleProperty, StyleValue, TimelineAxis, TimelineRange, TransformList,
-    TransformOperation, ViewTimelineInset, WritingMode,
+    PropertyKeyframes, StyleProperty, StyleValue, TimelineAxis, TimelineNamedRange, TimelineRange,
+    TimelineRangeOffset, TransformList, TransformOperation, ViewTimelineInset, WritingMode,
 };
 
 fn set(
@@ -526,7 +526,7 @@ fn integer_scroll_api_and_fractional_attachment_alignment_keep_distinct_clock_po
 }
 
 #[test]
-fn auto_aligned_physical_endpoints_are_active_but_interior_and_explicit_boundaries_end() {
+fn normalized_physical_endpoints_survive_seek_until_rate_or_geometry_invalidates() {
     for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
         for rate in [1.0, -1.0] {
             let (mut engine, source, _, target) = fixture(scale);
@@ -567,6 +567,21 @@ fn auto_aligned_physical_endpoints_are_active_but_interior_and_explicit_boundari
             engine
                 .seek_animation_progress(id, if rate > 0.0 { 100.0 } else { 0.0 })
                 .unwrap();
+            // Stock .50 retains normalized inclusive boundary operands across
+            // a currentTime setter at unchanged geometry. This also preserves
+            // the published endpoint and suppresses a premature phase End.
+            assert_eq!(
+                engine.animation_state(id).unwrap().phase,
+                AnimationPhase::Active
+            );
+            assert_eq!(opacity(&engine, target), if rate > 0.0 { 1.0 } else { 0.0 });
+            assert!(engine
+                .drain_animation_events()
+                .iter()
+                .all(|event| { event.kind != openui_engine::AnimationEventKind::End }));
+            // setPlaybackRate invalidates normalized timing even for the same
+            // rate, so the now explicit start policy becomes exclusive.
+            engine.set_animation_playback_rate(id, rate).unwrap();
             assert_eq!(
                 engine.animation_state(id).unwrap().phase,
                 if rate > 0.0 {
@@ -609,6 +624,414 @@ fn auto_aligned_physical_endpoints_are_active_but_interior_and_explicit_boundari
                 1
             );
         }
+    }
+}
+
+#[test]
+fn zero_duration_progress_holds_zero_with_cached_fill_none_phase_at_five_scales() {
+    for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
+        for initial in [0.0, 50.0, 100.0] {
+            let (mut engine, source, _, target) = fixture(scale);
+            set(&mut engine, target, StyleProperty::Opacity, 0.25_f32);
+            engine.scroll_to(source, 0.0, initial).unwrap();
+            let id = animate(
+                &mut engine,
+                target,
+                scroll(source, TimelineAxis::Y, 0.0, 100.0),
+                AnimationOptions {
+                    duration_ms: 0.0,
+                    fill: FillMode::None,
+                    ..options()
+                },
+            );
+            for position in [initial, 50.0, 100.0, 0.0] {
+                engine.scroll_to(source, 0.0, position).unwrap();
+                let state = engine.animation_state(id).unwrap();
+                assert_eq!(state.phase, AnimationPhase::Active);
+                assert!(state.finished);
+                assert_eq!(state.current_time_ms, 0.0);
+                assert_eq!(
+                    engine
+                        .animation_timeline_snapshot(id)
+                        .unwrap()
+                        .unwrap()
+                        .current_time_percentage,
+                    Some(0.0)
+                );
+                assert_eq!(opacity(&engine, target), 1.0);
+            }
+            engine.seek_animation_progress(id, 100.0).unwrap();
+            assert_eq!(
+                engine.animation_state(id).unwrap().phase,
+                AnimationPhase::After
+            );
+            assert_eq!(opacity(&engine, target), 0.25);
+            assert_eq!(
+                engine
+                    .animation_timeline_snapshot(id)
+                    .unwrap()
+                    .unwrap()
+                    .current_time_percentage,
+                Some(100.0)
+            );
+            engine.seek_animation_progress(id, 0.0).unwrap();
+            assert_eq!(
+                engine.animation_state(id).unwrap().phase,
+                AnimationPhase::Active
+            );
+            assert_eq!(opacity(&engine, target), 1.0);
+            // Pure sampling and an unrelated target layout mutation retain the
+            // normalized phase context rather than using a global layout epoch.
+            set(
+                &mut engine,
+                target,
+                StyleProperty::Width,
+                LengthValue::px(20.0),
+            );
+            engine.update().unwrap();
+            assert_eq!(
+                engine.animation_state(id).unwrap().phase,
+                AnimationPhase::Active
+            );
+            assert_eq!(opacity(&engine, target), 1.0);
+            engine.set_animation_playback_rate(id, 1.0).unwrap();
+            assert_eq!(
+                engine.animation_state(id).unwrap().phase,
+                AnimationPhase::After
+            );
+            assert_eq!(opacity(&engine, target), 0.25);
+            engine.play_animation(id).unwrap();
+            assert_eq!(
+                engine.animation_state(id).unwrap().phase,
+                AnimationPhase::Active
+            );
+            assert_eq!(opacity(&engine, target), 1.0);
+        }
+    }
+}
+
+#[test]
+fn genuine_cover_and_attachment_changes_rebuild_normalized_phase_context() {
+    for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
+        let (mut engine, source, content, target) = fixture(scale);
+        set(&mut engine, target, StyleProperty::Opacity, 0.25_f32);
+        engine.scroll_to(source, 0.0, 100.0).unwrap();
+        let id = animate(
+            &mut engine,
+            target,
+            scroll(source, TimelineAxis::Y, 0.0, 100.0),
+            AnimationOptions {
+                fill: FillMode::None,
+                ..options()
+            },
+        );
+        engine.seek_animation_progress(id, 100.0).unwrap();
+        assert_eq!(
+            engine.animation_state(id).unwrap().phase,
+            AnimationPhase::Active
+        );
+        assert_eq!(opacity(&engine, target), 1.0);
+        set(
+            &mut engine,
+            target,
+            StyleProperty::Width,
+            LengthValue::px(20.0),
+        );
+        engine.update().unwrap();
+        assert_eq!(
+            engine.animation_state(id).unwrap().phase,
+            AnimationPhase::Active
+        );
+        set(
+            &mut engine,
+            content,
+            StyleProperty::Height,
+            LengthValue::px(280.0),
+        );
+        engine.update().unwrap();
+        assert_eq!(
+            engine.animation_state(id).unwrap().phase,
+            AnimationPhase::After
+        );
+        assert_eq!(opacity(&engine, target), 0.25);
+        engine
+            .set_animation_attachment_range(id, AnimationAttachmentRange::default())
+            .unwrap();
+        engine.scroll_to(source, 0.0, 200.0).unwrap();
+        assert_eq!(
+            engine.animation_state(id).unwrap().phase,
+            AnimationPhase::Active
+        );
+        assert_eq!(opacity(&engine, target), 1.0);
+        engine.seek_animation_progress(id, 100.0).unwrap();
+        assert_eq!(
+            engine.animation_state(id).unwrap().phase,
+            AnimationPhase::Active
+        );
+        engine.pause_animation(id).unwrap();
+        assert_eq!(
+            engine.animation_state(id).unwrap().phase,
+            AnimationPhase::Active
+        );
+        assert_eq!(opacity(&engine, target), 1.0);
+        engine.set_animation_playback_rate(id, 1.0).unwrap();
+        assert_eq!(
+            engine.animation_state(id).unwrap().phase,
+            AnimationPhase::After
+        );
+        assert_eq!(opacity(&engine, target), 0.25);
+        engine.play_animation(id).unwrap();
+        assert_eq!(
+            engine.animation_state(id).unwrap().phase,
+            AnimationPhase::Active
+        );
+        assert_eq!(opacity(&engine, target), 1.0);
+        set(&mut engine, source, StyleProperty::Display, Display::None);
+        assert!(
+            !engine
+                .animation_timeline_snapshot(id)
+                .unwrap()
+                .unwrap()
+                .active
+        );
+        set(&mut engine, source, StyleProperty::Display, Display::Block);
+        engine.update().unwrap();
+        assert_eq!(
+            engine.animation_state(id).unwrap().phase,
+            AnimationPhase::Active
+        );
+        assert_eq!(opacity(&engine, target), 1.0);
+    }
+}
+
+#[test]
+fn equal_attachment_endpoints_preserve_manual_start_and_cached_phase_operands() {
+    for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
+        let (mut engine, source, _, target) = fixture(scale);
+        engine.scroll_to(source, 0.0, 25.0).unwrap();
+        let id = engine
+            .animate_with_attachment_range(
+                target,
+                PropertyKeyframes::typed(
+                    StyleProperty::Opacity,
+                    Keyframes::from_values(0.0_f32, 1.0_f32),
+                )
+                .unwrap(),
+                AnimationOptions {
+                    fill: FillMode::None,
+                    ..options()
+                },
+                AnimationTimelineSource::Scroll {
+                    source,
+                    axis: TimelineAxis::Y,
+                },
+                AnimationAttachmentRange::default(),
+            )
+            .unwrap();
+        let duration_seconds = 100.0 * 16.0 / 1_000_000.0;
+        let requested = (50.0 / 100.0) * duration_seconds;
+        let manual_start = (25.0 * 16.0 / 1_000_000.0) - requested;
+        engine.seek_animation_progress(id, 50.0).unwrap();
+        engine
+            .set_animation_attachment_range(id, AnimationAttachmentRange::default())
+            .unwrap();
+        assert_eq!(
+            engine.animation_state(id).unwrap().current_time_ms,
+            requested * 1000.0
+        );
+        engine.scroll_to(source, 0.0, 50.0).unwrap();
+        let current = (50.0 * 16.0 / 1_000_000.0) - manual_start;
+        assert_eq!(
+            engine.animation_state(id).unwrap().current_time_ms,
+            current * 1000.0
+        );
+        assert_eq!(
+            engine
+                .animation_timeline_snapshot(id)
+                .unwrap()
+                .unwrap()
+                .current_time_percentage,
+            Some((current / duration_seconds) * 100.0)
+        );
+        assert_eq!(opacity(&engine, target), 0.75);
+        engine.pause_animation(id).unwrap();
+        engine
+            .set_animation_attachment_range(id, AnimationAttachmentRange::default())
+            .unwrap();
+        engine.scroll_to(source, 0.0, 0.0).unwrap();
+        assert_eq!(
+            engine.animation_state(id).unwrap().current_time_ms,
+            current * 1000.0
+        );
+        engine.play_animation(id).unwrap();
+        assert_eq!(engine.animation_state(id).unwrap().current_time_ms, 0.0);
+        assert_eq!(opacity(&engine, target), 0.0);
+
+        // Equal range setters restore the policy flag, but do not invalidate
+        // an already normalized exclusive end after an explicit seek/rate call.
+        engine.scroll_to(source, 0.0, 100.0).unwrap();
+        engine.seek_animation_progress(id, 100.0).unwrap();
+        engine.set_animation_playback_rate(id, 1.0).unwrap();
+        assert_eq!(
+            engine.animation_state(id).unwrap().phase,
+            AnimationPhase::After
+        );
+        engine
+            .set_animation_attachment_range(id, AnimationAttachmentRange::default())
+            .unwrap();
+        assert_eq!(
+            engine.animation_state(id).unwrap().phase,
+            AnimationPhase::After
+        );
+        assert_eq!(
+            engine.animation_state(id).unwrap().current_time_ms,
+            duration_seconds * 1000.0
+        );
+        engine.play_animation(id).unwrap();
+        assert_eq!(
+            engine.animation_state(id).unwrap().phase,
+            AnimationPhase::Active
+        );
+        assert_eq!(opacity(&engine, target), 1.0);
+    }
+}
+
+#[test]
+fn new_automatic_start_does_not_retain_an_explicit_outside_finished_hold() {
+    for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
+        let (mut engine, source, _, target) = fixture(scale);
+        engine.scroll_to(source, 0.0, 100.0).unwrap();
+        let id = engine
+            .animate_with_attachment_range(
+                target,
+                PropertyKeyframes::typed(
+                    StyleProperty::Opacity,
+                    Keyframes::from_values(0.0_f32, 1.0_f32),
+                )
+                .unwrap(),
+                AnimationOptions {
+                    fill: FillMode::None,
+                    ..options()
+                },
+                AnimationTimelineSource::Scroll {
+                    source,
+                    axis: TimelineAxis::Y,
+                },
+                AnimationAttachmentRange::default(),
+            )
+            .unwrap();
+        engine.seek_animation_progress(id, 400.0).unwrap();
+        assert_eq!(
+            engine
+                .animation_timeline_snapshot(id)
+                .unwrap()
+                .unwrap()
+                .current_time_percentage,
+            Some(400.0)
+        );
+        engine.play_animation(id).unwrap();
+        assert_eq!(
+            engine
+                .animation_timeline_snapshot(id)
+                .unwrap()
+                .unwrap()
+                .current_time_percentage,
+            Some(100.0)
+        );
+        engine.seek_animation_progress(id, 400.0).unwrap();
+        engine
+            .set_animation_attachment_range(
+                id,
+                AnimationAttachmentRange::new(
+                    TimelineRangeOffset::new(TimelineNamedRange::Cover, LengthValue::percent(20.0))
+                        .unwrap(),
+                    TimelineRangeOffset::new(
+                        TimelineNamedRange::Cover,
+                        LengthValue::percent(100.0),
+                    )
+                    .unwrap(),
+                )
+                .unwrap(),
+            )
+            .unwrap();
+        // The new range has a real new start. Its first continuous finish uses
+        // the new effect end rather than the former explicitly outside hold.
+        let end = (100.0 * 16.0 / 1_000_000.0) * (1.0 - 0.2);
+        assert_eq!(
+            engine.animation_state(id).unwrap().current_time_ms,
+            end * 1000.0
+        );
+        assert_eq!(
+            engine.animation_state(id).unwrap().phase,
+            AnimationPhase::Active
+        );
+        assert!(engine.animation_state(id).unwrap().finished);
+        assert_eq!(opacity(&engine, target), 1.0);
+        engine.scroll_to(source, 0.0, 60.0).unwrap();
+        assert_eq!(
+            engine.animation_state(id).unwrap().phase,
+            AnimationPhase::Active
+        );
+        assert!(!engine.animation_state(id).unwrap().finished);
+        assert_eq!(opacity(&engine, target), 0.5);
+    }
+}
+
+#[test]
+fn reverse_zero_duration_reentry_keeps_start_alignment_without_filling_the_interior() {
+    for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
+        let (mut engine, source, _, target) = fixture(scale);
+        set(&mut engine, target, StyleProperty::Opacity, 0.25_f32);
+        engine.scroll_to(source, 0.0, 100.0).unwrap();
+        let id = animate(
+            &mut engine,
+            target,
+            scroll(source, TimelineAxis::Y, 0.0, 100.0),
+            AnimationOptions {
+                duration_ms: 0.0,
+                playback_rate: -1.0,
+                fill: FillMode::None,
+                ..options()
+            },
+        );
+        assert_eq!(
+            engine.animation_state(id).unwrap().phase,
+            AnimationPhase::Active
+        );
+        assert_eq!(engine.animation_state(id).unwrap().current_time_ms, 0.0);
+        assert!(engine.animation_state(id).unwrap().finished);
+        assert_eq!(opacity(&engine, target), 1.0);
+        engine.scroll_to(source, 0.0, 50.0).unwrap();
+        assert_eq!(
+            engine.animation_state(id).unwrap().phase,
+            AnimationPhase::After
+        );
+        assert!(!engine.animation_state(id).unwrap().finished);
+        assert_eq!(opacity(&engine, target), 0.25);
+        engine.scroll_to(source, 0.0, 100.0).unwrap();
+        assert_eq!(
+            engine.animation_state(id).unwrap().phase,
+            AnimationPhase::Active
+        );
+        assert_eq!(opacity(&engine, target), 1.0);
+        engine.seek_animation_progress(id, 0.0).unwrap();
+        assert_eq!(
+            engine.animation_state(id).unwrap().phase,
+            AnimationPhase::Active
+        );
+        assert_eq!(opacity(&engine, target), 1.0);
+        engine.set_animation_playback_rate(id, -1.0).unwrap();
+        assert_eq!(
+            engine.animation_state(id).unwrap().phase,
+            AnimationPhase::Before
+        );
+        assert_eq!(opacity(&engine, target), 0.25);
+        engine.seek_animation_progress(id, 100.0).unwrap();
+        assert_eq!(
+            engine.animation_state(id).unwrap().phase,
+            AnimationPhase::After
+        );
+        assert_eq!(opacity(&engine, target), 0.25);
     }
 }
 

@@ -67,14 +67,22 @@ fn native_scroll_changes_picture_and_delivers_lifecycle_without_document_clock_t
             })
             .unwrap();
         source.scroll_to(0.0, 100.0).unwrap();
-        // An auto-aligned physical endpoint remains active. Explicit native
-        // seeking disables that context and reaches the exclusive effect end.
+        // The physical endpoint and an explicit seek at unchanged geometry
+        // retain the same normalized inclusive boundary context in stock .50.
         assert!(events.borrow().is_empty());
         assert_eq!(
             document.animation_state(id).unwrap().phase,
             AnimationPhase::Active
         );
         document.seek_animation_progress(id, 100.0).unwrap();
+        assert!(events.borrow().is_empty());
+        assert_eq!(
+            document.animation_state(id).unwrap().phase,
+            AnimationPhase::Active
+        );
+        // A rate setter rebuilds normalized timing under the explicit start
+        // policy, producing the exclusive boundary and its one End callback.
+        document.set_animation_playback_rate(id, 1.0).unwrap();
         assert_eq!(&*events.borrow(), &[(0.0, Some(100.0))]);
         source.scroll_to(0.0, 100.0).unwrap();
         document.update_all().unwrap();
@@ -133,7 +141,7 @@ fn native_inactive_source_reports_unresolved_time_and_preserves_the_live_applica
 }
 
 #[test]
-fn native_fill_none_keeps_physical_end_value_and_explicit_seek_restores_underlying() {
+fn native_fill_none_keeps_cached_end_value_until_normalized_timing_invalidates() {
     for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
         let (document, source, target, previous) = fixture(scale);
         document.cancel_animation(previous).unwrap();
@@ -164,13 +172,20 @@ fn native_fill_none_keeps_physical_end_value_and_explicit_seek_restores_underlyi
         document.seek_animation_progress(id, 100.0).unwrap();
         assert_eq!(
             document.animation_state(id).unwrap().phase,
+            AnimationPhase::Active
+        );
+        assert_eq!(target.computed_style().unwrap().opacity, 1.0);
+        assert_eq!(document.render_to_png_buffer().unwrap(), endpoint);
+        document.set_animation_playback_rate(id, 1.0).unwrap();
+        assert_eq!(
+            document.animation_state(id).unwrap().phase,
             AnimationPhase::After
         );
         assert_eq!(target.computed_style().unwrap().opacity, 0.25);
         assert_eq!(document.render_to_png_buffer().unwrap(), underlying);
         document.cancel_animation(id).unwrap();
-        // An explicitly zero-duration effect has no active interval at the
-        // physical endpoint and keeps the unfilled underlying publication.
+        // Stock .50 naturally holds a zero-duration effect at its zero end.
+        // The normalized inclusive boundary still publishes the endpoint.
         let zero = target
             .animate_on_scroll(
                 StyleProperty::Opacity,
@@ -185,6 +200,29 @@ fn native_fill_none_keeps_physical_end_value_and_explicit_seek_restores_underlyi
                 TimelineRange::new(0.0, 100.0).unwrap(),
             )
             .unwrap();
+        assert_eq!(
+            document.animation_state(zero).unwrap().phase,
+            AnimationPhase::Active
+        );
+        assert_eq!(document.animation_state(zero).unwrap().current_time_ms, 0.0);
+        assert_eq!(snapshot(&document, zero).current_time_percentage, Some(0.0));
+        assert_eq!(target.computed_style().unwrap().opacity, 1.0);
+        assert_eq!(document.render_to_png_buffer().unwrap(), endpoint);
+        document.seek_animation_progress(zero, 100.0).unwrap();
+        assert_eq!(
+            document.animation_state(zero).unwrap().phase,
+            AnimationPhase::After
+        );
+        assert_eq!(target.computed_style().unwrap().opacity, 0.25);
+        assert_eq!(document.render_to_png_buffer().unwrap(), underlying);
+        document.seek_animation_progress(zero, 0.0).unwrap();
+        assert_eq!(
+            document.animation_state(zero).unwrap().phase,
+            AnimationPhase::Active
+        );
+        assert_eq!(target.computed_style().unwrap().opacity, 1.0);
+        assert_eq!(document.render_to_png_buffer().unwrap(), endpoint);
+        document.set_animation_playback_rate(zero, 1.0).unwrap();
         assert_eq!(
             document.animation_state(zero).unwrap().phase,
             AnimationPhase::After

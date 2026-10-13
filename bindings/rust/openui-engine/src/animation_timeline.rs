@@ -75,6 +75,17 @@ pub(crate) struct ProgressTimelineSnapshot {
 }
 
 impl ProgressTimelineSnapshot {
+    pub fn has_consistent_normalized_layout(self, other: Self) -> bool {
+        // Pinned .50 TimelineState::HasConsistentLayout compares scroll_offsets,
+        // zoom and view_offsets, excluding its current-time/scroll-position
+        // sample. Native geometry is already expressed in logical CSS pixels;
+        // cover bounds and view crossing distances retain those layout operands.
+        self.cover_start == other.cover_start
+            && self.cover_end == other.cover_end
+            && self.entry_crossing_distance == other.entry_crossing_distance
+            && self.exit_crossing_distance == other.exit_crossing_distance
+    }
+
     pub fn reflection(self, local_time_seconds: Option<f64>) -> AnimationTimelineSnapshot {
         AnimationTimelineSnapshot {
             source: Some(self.source),

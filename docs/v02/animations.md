@@ -114,8 +114,15 @@ The internal progress clock follows the pinned Chromium scale
 of 16 microseconds per CSS pixel. Cover-relative current time converts to integer
 microseconds before attachment alignment; duration retains the pinned double
 seconds calculation. Auto-aligned effects include the physical scroll endpoints
-in their active phase, while an interior attachment end or an explicit seek keeps
-its exclusive phase boundary. Finite and infinite effect timing normalizes
+in their active phase, while an interior attachment end is exclusive. Boundary
+flags are retained with normalized timing: an explicit seek at unchanged geometry
+does not replace them. Setting an unchanged attachment range also retains a
+resolved manual start and these flags. Genuine cover/view geometry, changed
+attachment endpoints, playback rate and newly resolved automatic-start changes
+rebuild that context. Thus a naturally
+held zero-duration effect can remain active with progress one and `fill: none`;
+seeking beyond its zero end still restores the underlying value. Finite and
+infinite effect timing normalizes
 to the attachment range. Consequently `current_time_ms` on a progress effect
 reports normalized internal milliseconds, while a document effect reports
 ordinary document-clock milliseconds. Existing field and method layouts remain
@@ -206,8 +213,9 @@ snapshot remains available; its range values are cover-relative pixel offsets
 when active. For an inactive browser attachment those two scalar fields are zero
 and must be read together with `active`; the additive snapshot carries optional
 bounds explicitly. `set_animation_attachment_range` changes endpoints on the
-same retained animation. Paused effects keep their hold time; running effects
-resume automatic attachment alignment. Invalid offsets leave the descriptor and
+same retained animation. Paused effects keep their hold time; changed endpoints
+resume automatic running attachment alignment. Equal endpoints preserve an
+already resolved manual start. Invalid offsets leave the descriptor and
 animation unchanged.
 
 The original `TimelineRange` API retains oriented numeric endpoints. The new
@@ -225,7 +233,7 @@ measurements remain required until their evidence is recorded.
 
 ### Ordering controls on inactive progress sources
 
-The retained native API stores an explicit percentage seek while source geometry is inactive. A later successful millisecond seek, play, finish or running attachment-range alignment replaces that deferred request. Pause and playback-rate changes preserve the requested held percentage; rejected nonfinite controls leave it intact. Native Engine and Rust application guards cover activation after each order. These guards remain uncompiled and unexecuted; the independent v1 source review identified the stale-request defect and v2 corrects it.
+The retained native API stores an explicit percentage seek while source geometry is inactive. A later successful millisecond seek, play, finish or changed running attachment range replaces that deferred request. Pause and playback-rate changes preserve the requested held percentage; rejected nonfinite controls leave it intact. Native Engine and Rust application guards cover activation after each order. These guards remain uncompiled and unexecuted; the independent v1 source review identified the stale-request defect and v2 corrects it.
 
 
 ### Fragmented principal-box geometry (source checkpoint)
