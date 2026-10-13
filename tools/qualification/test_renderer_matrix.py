@@ -22,6 +22,66 @@ SPEC.loader.exec_module(MATRIX)
 import audit_chromium_oracles as ORACLE_AUDIT
 
 
+class ContentAddressedPngTests(unittest.TestCase):
+    def test_concurrent_publish_preserves_complete_bytes_and_existing_inode(self):
+        import concurrent.futures
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            source = root / "source.png"
+            Image.new("RGBA", (4, 4), (10, 20, 30, 255)).save(source)
+            digest = MATRIX.sha256(source)
+            cache = root / "cache"
+            with concurrent.futures.ThreadPoolExecutor(max_workers=8) as workers:
+                paths = list(workers.map(
+                    lambda _: MATRIX.store_content_addressed_png(cache, source, digest),
+                    range(64),
+                ))
+            self.assertEqual(len(set(paths)), 1)
+            destination = cache / paths[0]
+            self.assertEqual(destination.read_bytes(), source.read_bytes())
+            inode = destination.stat().st_ino
+            MATRIX.store_content_addressed_png(cache, source, digest)
+            self.assertEqual(destination.stat().st_ino, inode)
+            self.assertEqual(list(destination.parent.glob("*.tmp")), [])
+
+    def test_wrong_source_digest_cannot_publish(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            source = root / "source.png"
+            source.write_bytes(b"actual bytes")
+            cache = root / "cache"
+            with self.assertRaisesRegex(ValueError, "source hash mismatch"):
+                MATRIX.store_content_addressed_png(cache, source, "0" * 64)
+            self.assertEqual(list(cache.rglob("*.png")), [])
+
+    def test_existing_corrupt_entry_is_preserved_and_rejected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            source = root / "source.png"
+            source.write_bytes(b"actual bytes")
+            digest = MATRIX.sha256(source)
+            cache = root / "cache"
+            destination = cache / "png" / digest[:2] / f"{digest}.png"
+            destination.parent.mkdir(parents=True)
+            destination.write_bytes(b"corrupt")
+            with self.assertRaisesRegex(ValueError, "hash collision"):
+                MATRIX.store_content_addressed_png(cache, source, digest)
+            self.assertEqual(destination.read_bytes(), b"corrupt")
+
+    def test_failed_publication_cleans_temporary_file_and_stays_failed(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            source = root / "source.png"
+            source.write_bytes(b"actual bytes")
+            digest = MATRIX.sha256(source)
+            cache = root / "cache"
+            with patch.object(MATRIX.os, "link", side_effect=OSError("publication failed")):
+                with self.assertRaisesRegex(OSError, "publication failed"):
+                    MATRIX.store_content_addressed_png(cache, source, digest)
+            self.assertEqual(list(cache.rglob("*.png")), [])
+            self.assertEqual(list(cache.rglob("*.tmp")), [])
+
+
 class RendererBuildIdentityTests(unittest.TestCase):
     def setUp(self):
         self.source = {

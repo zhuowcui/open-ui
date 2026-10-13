@@ -536,14 +536,33 @@ def store_content_addressed_png(cache_dir: Path, source: Path, digest: str) -> s
     relative = Path("png") / digest[:2] / f"{digest}.png"
     destination = cache_dir / relative
     destination.parent.mkdir(parents=True, exist_ok=True)
-    if not destination.is_file():
-        temporary = destination.with_name(
-            f".{destination.name}.{threading.get_ident()}.tmp"
-        )
+    if sha256(source) != digest:
+        raise ValueError(f"content-addressed PNG source hash mismatch: {source}")
+    if destination.is_file():
+        if sha256(destination) != digest:
+            raise ValueError(f"content-addressed PNG hash collision: {destination}")
+        return str(relative)
+
+    # Workers often produce identical PNGs. Publish a verified, complete file
+    # without replacing a destination installed by another worker. Replacing
+    # an existing file can briefly hide it on filesystems used by release labs.
+    with tempfile.NamedTemporaryFile(
+        prefix=f".{destination.name}.", suffix=".tmp",
+        dir=destination.parent, delete=False,
+    ) as output:
+        temporary = Path(output.name)
+    try:
         shutil.copyfile(source, temporary)
-        temporary.replace(destination)
-    elif sha256(destination) != digest:
-        raise ValueError(f"content-addressed PNG hash collision: {destination}")
+        if sha256(temporary) != digest:
+            raise ValueError(f"content-addressed PNG source changed: {source}")
+        try:
+            os.link(temporary, destination)
+        except FileExistsError:
+            pass
+        if sha256(destination) != digest:
+            raise ValueError(f"content-addressed PNG hash collision: {destination}")
+    finally:
+        temporary.unlink(missing_ok=True)
     return str(relative)
 
 
