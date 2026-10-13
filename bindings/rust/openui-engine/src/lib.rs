@@ -14,6 +14,7 @@ mod interaction;
 mod scroll_button;
 mod scroll_into_view;
 mod scroll_notifications;
+mod scroll_overflow;
 mod table_spans;
 
 pub use scroll_button::{
@@ -2511,12 +2512,7 @@ impl Engine {
     fn update_once(&mut self) -> Result<&SceneSnapshot, EngineError> {
         self.synchronize_font_collection()?;
         if !self.dirty.layout && self.dirty.visual() {
-            if let Some(fragment) = self.latest_fragment.as_mut() {
-                openui_layout::finalize_fragment_transforms(
-                    &self.document,
-                    Arc::make_mut(fragment),
-                );
-            }
+            self.refresh_retained_scroll_overflow();
         }
         if !self.dirty.layout && self.latest_fragment.is_some() {
             self.refresh_scroll_button_states();

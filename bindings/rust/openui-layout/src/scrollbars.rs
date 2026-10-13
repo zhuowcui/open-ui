@@ -188,6 +188,32 @@ pub(crate) fn layout(doc: &dyn LayoutDocument, node: NodeId, space: &ConstraintS
     }
 }
 
+/// The same actual existence policy used after layout, now evaluated against
+/// refreshed transform overflow. A changed gutter needs real child sizing.
+pub(crate) fn retained_requires_layout(doc: &dyn LayoutDocument, fragment: &Fragment) -> bool {
+    let Some(current) = fragment.element_scrollbars else {
+        return false;
+    };
+    let Some(area) = fragment.scroll_area else {
+        return false;
+    };
+    let style = fragment.layout_style(&doc.node(fragment.node_id).style);
+    let enabled = style.scrollbar_width != ScrollbarWidth::None
+        && !crate::scroll_area::is_replaced_layout_box(doc, fragment.node_id);
+    let (x, y) = area.limits();
+    let horizontal = enabled
+        && (area.overflow_x == Overflow::Scroll || area.overflow_x == Overflow::Auto && x.0 != x.1);
+    let vertical = enabled
+        && (area.overflow_y == Overflow::Scroll || area.overflow_y == Overflow::Auto && y.0 != y.1);
+    let mut next = geometry(style, horizontal, vertical);
+    next.insets.left = next.insets.left.min_of(
+        (crate::scroll_area::client_rect(fragment, BoxStrut::zero()).width()
+            - crate::ScrollArea::used_padding(fragment).inline_sum())
+        .clamp_negative_to_zero(),
+    );
+    next != current
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

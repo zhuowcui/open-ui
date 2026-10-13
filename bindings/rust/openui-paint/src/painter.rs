@@ -12235,6 +12235,7 @@ fn paint_element_scrollbars(
         return;
     };
     let scrollport = openui_layout::ViewportScrollport {
+        layout_box_rect: fragment.border_box_rect(),
         client_rect: area.client_rect,
         content_rect: area.content_rect,
         horizontal_scrollbar: bars.horizontal,

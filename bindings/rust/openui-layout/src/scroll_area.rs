@@ -365,6 +365,16 @@ fn reachable(rect: PhysicalRect, client: PhysicalRect, x: bool, y: bool) -> Phys
     PhysicalRect::from_xywh(left, top, right - left, bottom - top)
 }
 
+fn scrollable_child_offset(child: &Fragment) -> PhysicalOffset {
+    // Sticky is a paint/scroll adjustment. Its retained normal offset owns
+    // scrollable overflow, just like Blink's unchanged fragment child offset.
+    child
+        .sticky_timeline_geometry
+        .map_or(child.offset, |geometry| {
+            geometry.parent_relative_normal_offset
+        })
+}
+
 fn propagated(doc: &dyn LayoutDocument, child: &Fragment) -> PhysicalRect {
     let border = child.border_box_rect();
     let Some(area) = child.scroll_area else {
@@ -376,8 +386,9 @@ fn propagated(doc: &dyn LayoutDocument, child: &Fragment) -> PhysicalRect {
             // physical coordinates instead of treating that size as a clip.
             for descendant in &child.children {
                 let mut overflow = propagated(doc, descendant);
-                overflow.offset.left = overflow.offset.left + descendant.offset.left;
-                overflow.offset.top = overflow.offset.top + descendant.offset.top;
+                let offset = scrollable_child_offset(descendant);
+                overflow.offset.left = overflow.offset.left + offset.left;
+                overflow.offset.top = overflow.offset.top + offset.top;
                 rect = union(rect, overflow);
             }
         }
@@ -495,7 +506,16 @@ pub(crate) fn populate(doc: &dyn LayoutDocument, fragment: &mut Fragment) {
     for child in &mut fragment.children {
         populate(doc, child);
     }
-    if let Some(viewport) = fragment.viewport_scrollport {
+    if let Some(mut viewport) = fragment.viewport_scrollport {
+        viewport.content_rect = viewport_content_rect(
+            doc,
+            fragment,
+            viewport.layout_box_rect,
+            viewport.client_rect,
+            viewport.negative_x,
+            viewport.negative_y,
+        );
+        fragment.viewport_scrollport = Some(viewport);
         fragment.scroll_area = Some(ScrollArea {
             client_rect: viewport.client_rect,
             content_rect: viewport.content_rect,
@@ -541,8 +561,9 @@ pub(crate) fn populate(doc: &dyn LayoutDocument, fragment: &mut Fragment) {
             continue;
         }
         let mut child_rect = propagated(doc, child);
-        child_rect.offset.left = child_rect.offset.left + child.offset.left;
-        child_rect.offset.top = child_rect.offset.top + child.offset.top;
+        let offset = scrollable_child_offset(child);
+        child_rect.offset.left = child_rect.offset.left + offset.left;
+        child_rect.offset.top = child_rect.offset.top + offset.top;
         content = union(
             content,
             reachable(child_rect, client, negative_x, negative_y),
@@ -554,7 +575,7 @@ pub(crate) fn populate(doc: &dyn LayoutDocument, fragment: &mut Fragment) {
                 .position
                 .is_absolutely_positioned()
         {
-            let bounds = PhysicalRect::new(child.offset, child.size);
+            let bounds = PhysicalRect::new(offset, child.size);
             inflow = Some(inflow.map_or(bounds, |current| union(current, bounds)));
         }
     }
@@ -595,10 +616,156 @@ pub(crate) fn populate(doc: &dyn LayoutDocument, fragment: &mut Fragment) {
     });
 }
 
+/// Recompute viewport overflow from its actual principal layout rectangle and
+/// current descendants. The later restored outside size includes gutters and
+/// is not a substitute for that original own size/padding contribution.
+pub(crate) fn viewport_content_rect(
+    doc: &dyn LayoutDocument,
+    fragment: &Fragment,
+    layout_box_rect: PhysicalRect,
+    client: PhysicalRect,
+    negative_x: bool,
+    negative_y: bool,
+) -> PhysicalRect {
+    let mut content = union(
+        client,
+        reachable(layout_box_rect, client, negative_x, negative_y),
+    );
+    for child in &fragment.children {
+        let mut rect = propagated(doc, child);
+        let offset = scrollable_child_offset(child);
+        rect.offset.left = rect.offset.left + offset.left;
+        rect.offset.top = rect.offset.top + offset.top;
+        content = union(content, reachable(rect, client, negative_x, negative_y));
+    }
+    content
+}
+
+/// Dependencies discovered while refreshing retained transform overflow.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct RetainedOverflowUpdate {
+    pub transforms_changed: bool,
+    pub ranges_changed: bool,
+    /// Actual scrollbar space or conservative projective geometry requires
+    /// layout. Ordinary two-dimensional transform updates retain box sizing.
+    pub requires_layout: bool,
+}
+
+/// Refresh the owned transform and scroll geometry without measuring boxes.
+/// Blink147 RecalcScrollableOverflowNG uses the existing fragment tree; an auto
+/// scrollbar existence change schedules layout before publishing dimensions.
+pub fn refresh_fragment_overflow(
+    document: &Document,
+    fragment: &mut Fragment,
+) -> RetainedOverflowUpdate {
+    fn transforms(document: &Document, fragment: &Fragment, update: &mut RetainedOverflowUpdate) {
+        if fragment.owns_element_box() {
+            let style = &document.node(fragment.node_id).style;
+            let resolved = crate::resolved_fragment_transform(fragment, style);
+            if fragment.resolved_transform != Some(resolved) {
+                update.transforms_changed = true;
+                if !resolved.local_applied.is_2d()
+                    || fragment
+                        .resolved_transform
+                        .is_some_and(|old| !old.local_applied.is_2d())
+                    || style
+                        .native_transform
+                        .as_ref()
+                        .is_some_and(openui_style::transform_contains_3d)
+                {
+                    update.requires_layout = true;
+                }
+            }
+        }
+        for child in &fragment.children {
+            transforms(document, child, update);
+        }
+    }
+    fn old_areas(fragment: &Fragment, values: &mut Vec<Option<ScrollArea>>) {
+        values.push(fragment.scroll_area);
+        for child in &fragment.children {
+            old_areas(child, values);
+        }
+    }
+    fn check(
+        document: &Document,
+        fragment: &Fragment,
+        previous: &mut impl Iterator<Item = Option<ScrollArea>>,
+        update: &mut RetainedOverflowUpdate,
+    ) {
+        update.ranges_changed |=
+            previous.next().expect("same retained fragment tree") != fragment.scroll_area;
+        update.requires_layout |= crate::scrollbars::retained_requires_layout(document, fragment);
+        if let Some(viewport) = fragment.viewport_scrollport {
+            let enabled = viewport.scrollbar_thickness > LayoutUnit::zero();
+            let horizontal = enabled
+                && (viewport.overflow_x == Overflow::Scroll
+                    || viewport.overflow_x == Overflow::Auto
+                        && (viewport.content_rect.x() < viewport.client_rect.x()
+                            || viewport.content_rect.right() > viewport.client_rect.right()));
+            let vertical = enabled
+                && (viewport.overflow_y == Overflow::Scroll
+                    || viewport.overflow_y == Overflow::Auto
+                        && (viewport.content_rect.y() < viewport.client_rect.y()
+                            || viewport.content_rect.bottom() > viewport.client_rect.bottom()));
+            update.requires_layout |= (horizontal, vertical)
+                != (viewport.horizontal_scrollbar, viewport.vertical_scrollbar);
+        }
+        for child in &fragment.children {
+            check(document, child, previous, update);
+        }
+    }
+    let mut update = RetainedOverflowUpdate::default();
+    transforms(document, fragment, &mut update);
+    let mut previous = Vec::new();
+    old_areas(fragment, &mut previous);
+    crate::finalize_fragment_transforms(document, fragment);
+    populate(document, fragment);
+    check(document, fragment, &mut previous.into_iter(), &mut update);
+    update
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::FragmentBoxOwnership;
+
+    #[test]
+    fn retained_refresh_traverses_borrowed_helpers_without_duplicate_transforms() {
+        let mut doc = Document::new();
+        let owner = doc.create_node(ElementTag::Div);
+        let child = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(owner, |style| {
+            style.display = Display::Block;
+            style.overflow_x = Overflow::Hidden;
+            style.overflow_y = Overflow::Hidden;
+        });
+        doc.update_resolved_style(child, |style| style.display = Display::Block);
+        let lu = LayoutUnit::from_i32;
+        let mut fragment = Fragment::new_box(owner, PhysicalSize::new(lu(200), lu(150)));
+        let mut helper = Fragment::new_box(owner, PhysicalSize::new(lu(100), lu(50)));
+        helper.box_ownership = FragmentBoxOwnership::LayoutHelper;
+        helper
+            .children
+            .push(Fragment::new_box(child, PhysicalSize::new(lu(100), lu(50))));
+        fragment.children.push(helper);
+        populate(&doc, &mut fragment);
+        crate::finalize_fragment_transforms(&doc, &mut fragment);
+        doc.update_resolved_style(child, |style| {
+            style.native_transform = Some(openui_style::TransformList(vec![
+                openui_style::TransformOperation::Scale(4.0, 4.0),
+            ]));
+        });
+        let update = refresh_fragment_overflow(&doc, &mut fragment);
+        assert!(update.transforms_changed && update.ranges_changed);
+        assert!(!update.requires_layout);
+        assert_eq!(fragment.scroll_area.unwrap().content_rect.width(), lu(250));
+        assert!(fragment.children[0].scroll_area.is_none());
+        assert_eq!(
+            refresh_fragment_overflow(&doc, &mut fragment),
+            RetainedOverflowUpdate::default()
+        );
+    }
 
     #[test]
     fn legal_bounds_snap_each_size_and_retain_the_fractional_rtl_origin() {

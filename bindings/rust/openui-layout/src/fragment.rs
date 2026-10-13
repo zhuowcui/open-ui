@@ -108,6 +108,9 @@ pub struct TableColumnBackgroundPositioning {
 /// same geometry.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ViewportScrollport {
+    /// Actual principal layout box before outer viewport gutters are restored.
+    /// It retains authored size/padding independently from aggregate child overflow.
+    pub layout_box_rect: PhysicalRect,
     pub client_rect: PhysicalRect,
     pub content_rect: PhysicalRect,
     pub horizontal_scrollbar: bool,

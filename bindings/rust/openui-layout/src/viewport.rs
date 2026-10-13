@@ -75,7 +75,16 @@ pub(crate) fn layout(doc: &dyn LayoutDocument, root: NodeId, space: &ConstraintS
         client_space.percentage_resolution_inline_size = inline_size;
         client_space.percentage_resolution_block_size = block_size;
         let mut fragment = block_layout_contents(doc, root, &client_space);
-        let raw_content = fragment.scrollable_overflow();
+        let layout_box_rect = fragment.border_box_rect();
+        crate::scroll_area::populate(doc, &mut fragment);
+        let raw_content = crate::scroll_area::viewport_content_rect(
+            doc,
+            &fragment,
+            layout_box_rect,
+            PhysicalRect::new(PhysicalOffset::zero(), client),
+            negative_x,
+            negative_y,
+        );
         // Overflow before the scroll origin is unreachable in a positive
         // axis; overflow after it is unreachable in a negative axis. Ink in
         // that region must not create a scrollbar or expand the scroll range.
@@ -117,6 +126,7 @@ pub(crate) fn layout(doc: &dyn LayoutDocument, root: NodeId, space: &ConstraintS
             continue;
         }
         fragment.viewport_scrollport = Some(ViewportScrollport {
+            layout_box_rect,
             client_rect: PhysicalRect::new(PhysicalOffset::zero(), client),
             content_rect: content,
             horizontal_scrollbar: show_x,
