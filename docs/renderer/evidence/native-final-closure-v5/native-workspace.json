@@ -1,0 +1,116 @@
+{
+  "owner_pid": 2047168,
+  "source": {
+    "commit": "1d98a22eb3e86bc887cd9da8575c21933d880aec",
+    "clean": true,
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "source_tree_sha256": "3de84f67611c7943d55c51c204468bb84f63b57fb38cea4e1a45ad98e12c1b0a",
+    "harness_sha256": "73bb1acc3025ef54a34eceea8c0ebb40c2a6ed45a3e83dcf15131517a0ac6120"
+  },
+  "checks": [
+    {
+      "name": "engine-cohort-guards",
+      "argv": [
+        "cargo",
+        "+stable",
+        "--config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "--offline",
+        "--no-fail-fast",
+        "-p",
+        "openui-engine",
+        "--test",
+        "opacity_operation_folding",
+        "--test",
+        "overflow_clip_owned_radii",
+        "--test",
+        "accessibility_pages",
+        "--test",
+        "animation_progress_timelines",
+        "--test",
+        "authored_property_removal"
+      ],
+      "pid": 2048371,
+      "actual_exit_code": 101,
+      "terminal_reaped": true,
+      "log_sha256": "5cb88a551fe45d325d12f9aa7a679ed264915eca99d050dfa694965160b6e50a",
+      "reported_passed": 59,
+      "reported_failed": 3,
+      "reported_ignored": 0
+    },
+    {
+      "name": "workspace-all-targets",
+      "argv": [
+        "cargo",
+        "+stable",
+        "--config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "--offline",
+        "--no-fail-fast",
+        "--workspace",
+        "--all-targets"
+      ],
+      "pid": 2058855,
+      "actual_exit_code": 101,
+      "terminal_reaped": true,
+      "log_sha256": "e71b0ebe2b1738c752fa3c0305d10f6820a27357b417f4389d371013758a958f",
+      "reported_passed": 9223,
+      "reported_failed": 3,
+      "reported_ignored": 0
+    },
+    {
+      "name": "workspace-doctests",
+      "argv": [
+        "cargo",
+        "+stable",
+        "--config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "--offline",
+        "--no-fail-fast",
+        "--workspace",
+        "--doc"
+      ],
+      "pid": 2298594,
+      "actual_exit_code": 0,
+      "terminal_reaped": true,
+      "log_sha256": "5917e8106301fa27ba61c9a203631b7c3da711cd3771354661e938c901783227",
+      "reported_passed": 2,
+      "reported_failed": 0,
+      "reported_ignored": 13
+    }
+  ],
+  "complete": true,
+  "renderer_qualified": false,
+  "release_qualified": false,
+  "runtime_scope": "complete locked native development workspace after publicradius/FFIevent guard compile repairs; shared proven redundant structural hardclip elision and native reduced opacity guard; semantic physical+live-origin cycle rejection; no Chromium pixel or release qualification",
+  "independent_live_pixel_epoch": {
+    "source_before": {
+      "commit": "fb1b68fa8cdf8ac505f677ab31c2a00f43d105fa",
+      "clean": true,
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_tree_sha256": "4d82b3190b089e9184d5198fd5c8919a724f6b4ed496f26f7af61ceb263e9e53",
+      "harness_sha256": "abff37553c0abe146718cec361f956bfcc75bfcfeaf7feb82682f6122e920ccd"
+    },
+    "runner_sha256": "2a3b8a857fad0ec5a961bc1d0485d2de0e4bf1e8d7cb2cc1da7bff72029947e7",
+    "performance_qualification": false,
+    "shared_cargo_target_used_by_pixel_runner": false,
+    "source_unchanged": true,
+    "runner_unchanged": true
+  },
+  "boot_id": "362ae37b-d85f-4812-9f25-ef02cf732134",
+  "source_after": {
+    "commit": "1d98a22eb3e86bc887cd9da8575c21933d880aec",
+    "clean": true,
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "source_tree_sha256": "3de84f67611c7943d55c51c204468bb84f63b57fb38cea4e1a45ad98e12c1b0a",
+    "harness_sha256": "73bb1acc3025ef54a34eceea8c0ebb40c2a6ed45a3e83dcf15131517a0ac6120"
+  },
+  "source_unchanged": true,
+  "intended_exit_code": 1
+}

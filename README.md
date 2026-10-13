@@ -31,37 +31,47 @@ right picture or the Chromium test uses a script. See the
 
 The last complete original Chromium census is **21,317/22,924 exact (93.0%)**
 at clean `fe51eab9`: **1,607 differences, zero render errors**. This is the
-pixel score, not a whole-project completion percentage. The later `c48ff96c`
-run completed focused **640/640 exact** before the environment restarted.
-Its primitive run was interrupted; the original and expanded runs did not
-start. These results do not qualify the current source.
+pixel score, not a whole-project completion percentage.
 
-The dependency audit passes: both lockfiles have zero reported advisories,
-and **364/364** registry-version checks completed with no yanks or errors.
-The integrated lockfiles match the audited bytes. Rust 1.85, packaged consumers
-and the registry consumer's dependency graph still need qualification.
+At clean `fb1b68fa`, focused **640/640** and primitive **960/960** comparisons
+are exact. The full census stopped on a PNG-cache publication error and has
+no valid total. Its failed evidence is preserved; a retry with one worker is
+queued. The expanded census is still running. None of these results qualifies
+later source changes.
 
-The latest complete native workspace run at `7b81b9e9` passes **9,146 tests /
-0 failures / 0 ignored**. Doctests report **2 passed / 0 failed / 13 ignored**.
-All **64 C/C++ consumers** run successfully against the freshly built library.
-The strict canvas-sizing, fragmented-geometry and scroll-callback tests pass.
+The shared opacity repair matches two original fragmented cases in **8/8**
+whole-image comparisons across the four required profiles. Its reduced native
+guard passes at five scales. These are diagnostic results at `96bfa002`,
+without fresh full-library provenance. The contained case still differs in
+all four profiles and needs separate transparent layer/effect publication.
 
-C applications can now read owned accessibility scroll offsets, limits and
-available actions through a versioned snapshot query. The later API checkpoint
-passes its complete FFI tests and all **66 C/C++ consumers** with **157 exports**;
-the previous exports and measured struct layouts are preserved. These are
-headless checks; real Linux windows and AT-SPI operation remain required.
+The complete native workspace at `1d98a22e` reports **9,223 passed / 3 failed /
+0 ignored**. The failures concern progress-timeline held time, continuation
+border metadata and collapsed-table clipping. Repairs are in progress.
+Doctests report **2 passed / 0 failed / 13 ignored**.
 
-All **304 Python tests** pass at `8666d185`. All **18 generated checks** pass at
-`dac1db8a`, after the actual generator regenerated the changed
-native style inventory. Each result retains its measured source identity.
+Native authored-property removal now has a shared Rust/C operation. All
+**68 C/C++ consumers** pass against the fresh `539ab92d` library, with **158
+exports** and the prior exports and measured layouts preserved. The enclosing
+workspace run failed to compile a test and is not a complete workspace pass.
 
-Native APIs, retained compositor/3D, real Linux windows and accessibility,
-hardware performance, packaging, signing and publication remain open.
-Open UI executes no JavaScript; applications use native Rust APIs and callbacks.
-Chromium defines rendering correctness. Prior evidence retains its measured
-checkpoint and does not qualify later source changes.
-[Current closure evidence](docs/renderer/generated/native-final-closure-status-v4.json).
+All **313 Python tests in 20 modules** pass at `1d98a22e`. All **18 generated
+checks** and the **clang-format 18.1.3** check pass at that checkpoint.
+Hosted format, CI and manual hardening jobs pass at `fb1b68fa`, including the
+locked Rust 1.85 check, sanitizers, fuzz smoke and one Miri handle probe.
+Hosted X11/Wayland software and Mesa checks pass; physical GPU and real
+AT-SPI operation still need qualification.
+
+Both lockfiles have zero reported advisories; **364/364** registry-version
+checks completed with no yanks or errors. Packaged applications and the
+registry consumer's dependency graph still need qualification.
+
+Native APIs, retained compositor/3D, remaining Chromium pixels, hardware
+performance, packaging, signing and publication remain open. Open UI executes
+no JavaScript; applications use native Rust APIs and callbacks. Chromium
+defines rendering correctness. Earlier evidence keeps its measured source
+identity and does not qualify later changes.
+[Current closure evidence](docs/renderer/generated/native-final-closure-status-v5.json).
 
 ### Table ownership and opacity repair (full renderer gate open)
 
