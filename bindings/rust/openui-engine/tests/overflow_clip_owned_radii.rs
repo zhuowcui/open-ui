@@ -7,8 +7,9 @@ use openui_geometry::Length;
 use openui_paint::OverflowClipContourPurpose;
 use openui_style::{
     Border, BorderCollapse, BorderStyle, BoxSizing, Color, ColumnFill, Containment, CornerRadii,
-    Display, Edges, LengthValue, Overflow, OverflowClipBox, Position, RendererStyleValue,
-    ScrollbarWidth, StyleProperty, StyleValue, TransformList, TransformOperation, WritingMode,
+    Direction, Display, Edges, LengthValue, Overflow, OverflowClipBox, Position,
+    RendererStyleValue, ScrollbarWidth, StyleProperty, StyleValue, TransformList,
+    TransformOperation, WritingMode,
 };
 const SCALES: [f64; 5] = [1.0, 1.25, 1.5, 1.75, 2.0];
 fn engine(scale: f64) -> Engine {
@@ -441,6 +442,201 @@ fn real_bordered_continuations_keep_paint_source_and_direct_fragment_operands_di
     }
 }
 #[test]
+fn real_anisotropic_continuations_retain_physical_used_edges_in_both_vertical_directions() {
+    use openui_geometry::{BoxStrut, LayoutUnit};
+    let lu = LayoutUnit::from_i32;
+    let full_border = BoxStrut::new(lu(3), lu(5), lu(7), lu(11));
+    let full_padding = BoxStrut::new(lu(2), lu(4), lu(6), lu(8));
+    for scale in SCALES {
+        for mode in [
+            WritingMode::HorizontalTb,
+            WritingMode::VerticalRl,
+            WritingMode::VerticalLr,
+        ] {
+            for direction in [Direction::Ltr, Direction::Rtl] {
+                let mut e = engine(scale);
+                let root = e.root();
+                let (width, height) = if mode == WritingMode::HorizontalTb {
+                    (200.0, 40.0)
+                } else {
+                    (40.0, 200.0)
+                };
+                let columns = box_(&mut e, root, ElementTag::Div, width, height);
+                set(
+                    &mut e,
+                    columns,
+                    StyleProperty::WritingMode,
+                    StyleValue::Renderer(RendererStyleValue::WritingMode(mode)),
+                );
+                set(
+                    &mut e,
+                    columns,
+                    StyleProperty::Direction,
+                    StyleValue::Renderer(RendererStyleValue::Direction(direction)),
+                );
+                set(&mut e, columns, StyleProperty::ColumnCount, 2_i32);
+                set(
+                    &mut e,
+                    columns,
+                    StyleProperty::ColumnGap,
+                    LengthValue::px(0.0),
+                );
+                set(
+                    &mut e,
+                    columns,
+                    StyleProperty::ColumnFill,
+                    StyleValue::Renderer(RendererStyleValue::ColumnFill(ColumnFill::Auto)),
+                );
+                let continued = box_(&mut e, columns, ElementTag::Div, 100.0, 100.0);
+                set(
+                    &mut e,
+                    continued,
+                    StyleProperty::Border,
+                    Border {
+                        width: 1.0,
+                        style: BorderStyle::Solid,
+                        color: Color::BLACK,
+                    },
+                );
+                for (property, value) in [
+                    (StyleProperty::BorderTopWidth, 3_i32),
+                    (StyleProperty::BorderRightWidth, 5_i32),
+                    (StyleProperty::BorderBottomWidth, 7_i32),
+                    (StyleProperty::BorderLeftWidth, 11_i32),
+                ] {
+                    set(&mut e, continued, property, value);
+                }
+                set(
+                    &mut e,
+                    continued,
+                    StyleProperty::Padding,
+                    Edges {
+                        top: LengthValue::px(2.0),
+                        right: LengthValue::px(4.0),
+                        bottom: LengthValue::px(6.0),
+                        left: LengthValue::px(8.0),
+                    },
+                );
+                set(
+                    &mut e,
+                    continued,
+                    StyleProperty::BorderRadius,
+                    CornerRadii(Edges::all(LengthValue::percent(50.0))),
+                );
+                set(
+                    &mut e,
+                    continued,
+                    StyleProperty::Contain,
+                    StyleValue::Renderer(RendererStyleValue::Contain(Containment::PAINT)),
+                );
+                let child = box_(&mut e, continued, ElementTag::Div, 60.0, 60.0);
+                set(&mut e, child, StyleProperty::BackgroundColor, Color::GREEN);
+                let scene = e.scene().unwrap();
+                let parts = &scene
+                    .retained_scene()
+                    .unwrap()
+                    .clips()
+                    .iter()
+                    .find(|c| c.owner == identity(continued) && c.role == SceneBoxRole::Principal)
+                    .unwrap()
+                    .projections;
+                assert!(parts.len() >= 3, "{mode:?} {direction:?}");
+                let mut saw_start = false;
+                let mut saw_middle = false;
+                let mut saw_end = false;
+                for part in parts.iter() {
+                    // These are physical CSS sides, not the algorithm's
+                    // temporary (inline, block) struts. Unequal values detect
+                    // a swap that the uniform-border continuation cannot.
+                    let b = part.used_border;
+                    let p = part.used_padding;
+                    match mode {
+                        WritingMode::HorizontalTb => {
+                            assert_eq!((b.right, b.left), (full_border.right, full_border.left));
+                            assert_eq!((p.right, p.left), (full_padding.right, full_padding.left));
+                            assert!(b.top == lu(0) || b.top == full_border.top);
+                            assert!(b.bottom == lu(0) || b.bottom == full_border.bottom);
+                            assert_eq!(
+                                p.top,
+                                if b.top == lu(0) {
+                                    lu(0)
+                                } else {
+                                    full_padding.top
+                                }
+                            );
+                            assert_eq!(
+                                p.bottom,
+                                if b.bottom == lu(0) {
+                                    lu(0)
+                                } else {
+                                    full_padding.bottom
+                                }
+                            );
+                            saw_start |= b.top == full_border.top && b.bottom == lu(0);
+                            saw_middle |= b.top == lu(0) && b.bottom == lu(0);
+                            saw_end |= b.top == lu(0) && b.bottom == full_border.bottom;
+                        }
+                        WritingMode::VerticalRl | WritingMode::VerticalLr => {
+                            assert_eq!((b.top, b.bottom), (full_border.top, full_border.bottom));
+                            assert_eq!((p.top, p.bottom), (full_padding.top, full_padding.bottom));
+                            assert!(b.right == lu(0) || b.right == full_border.right);
+                            assert!(b.left == lu(0) || b.left == full_border.left);
+                            assert_eq!(
+                                p.right,
+                                if b.right == lu(0) {
+                                    lu(0)
+                                } else {
+                                    full_padding.right
+                                }
+                            );
+                            assert_eq!(
+                                p.left,
+                                if b.left == lu(0) {
+                                    lu(0)
+                                } else {
+                                    full_padding.left
+                                }
+                            );
+                            let (start, end) = if mode == WritingMode::VerticalRl {
+                                (b.right, b.left)
+                            } else {
+                                (b.left, b.right)
+                            };
+                            saw_start |= start != lu(0) && end == lu(0);
+                            saw_middle |= start == lu(0) && end == lu(0);
+                            saw_end |= start == lu(0) && end != lu(0);
+                        }
+                        _ => unreachable!(),
+                    }
+                    let basis = part.hit_border_radius_reference_box;
+                    let direct = part.direct_hit_clip_geometry.rounded.as_ref().unwrap();
+                    let snap = |value: f32| LayoutUnit::from_f32(value).round().to_f32();
+                    // The separate direct fragment hit route contracts by all
+                    // four full computed physical borders, even on a middle
+                    // continuation with excluded used block edges.
+                    assert_eq!(direct.rect.0, snap(basis.0 + 11.0));
+                    assert_eq!(direct.rect.1, snap(basis.1 + 3.0));
+                    assert_eq!(
+                        direct.rect.2,
+                        (snap(basis.0 + basis.2 - 5.0) - snap(basis.0 + 11.0)).max(0.0)
+                    );
+                    assert_eq!(
+                        direct.rect.3,
+                        (snap(basis.1 + basis.3 - 7.0) - snap(basis.1 + 3.0)).max(0.0)
+                    );
+                }
+                assert!(saw_start && saw_middle && saw_end, "{mode:?} {direction:?}");
+                let image = pixels(&scene);
+                let stats = e.stats();
+                assert_eq!(e.scene().unwrap().generation(), scene.generation());
+                assert_eq!(e.stats(), stats);
+                drop(e);
+                assert_eq!(pixels(&scene), image);
+            }
+        }
+    }
+}
+#[test]
 fn mixed_css_axes_keep_paint_and_direct_child_hit_route_policies_explicit() {
     let mut e = engine(1.0);
     let root = e.root();
@@ -586,47 +782,215 @@ fn fractional_layout_placement_transform_and_scroll_preserve_source_radius_neigh
     }
 }
 #[test]
-fn internal_and_collapsed_tables_keep_ignored_radii_out_of_clip_geometry() {
-    for collapse in [BorderCollapse::Separate, BorderCollapse::Collapse] {
-        let mut e = engine(1.0);
-        let root = e.root();
-        let table = box_(&mut e, root, ElementTag::Table, 100.0, 60.0);
-        set(&mut e, table, StyleProperty::Display, Display::Table);
-        set(
-            &mut e,
-            table,
-            StyleProperty::BorderCollapse,
-            StyleValue::Renderer(RendererStyleValue::BorderCollapse(collapse)),
-        );
-        set(&mut e, table, StyleProperty::Overflow, Overflow::Hidden);
-        set(
-            &mut e,
-            table,
-            StyleProperty::BorderRadius,
-            CornerRadii(Edges::all(LengthValue::calc_percent_px(20.0, 4.0))),
-        );
-        let row = box_(&mut e, table, ElementTag::TableRow, 100.0, 60.0);
-        set(&mut e, row, StyleProperty::Display, Display::TableRow);
-        set(
-            &mut e,
-            row,
-            StyleProperty::BorderRadius,
-            CornerRadii(Edges::all(LengthValue::px(20.0))),
-        );
-        let cell = box_(&mut e, row, ElementTag::TableCell, 100.0, 60.0);
-        set(&mut e, cell, StyleProperty::Display, Display::TableCell);
-        set(&mut e, cell, StyleProperty::BackgroundColor, Color::GREEN);
-        let scene = e.scene().unwrap();
-        let table_clip = clip(&scene, table, SceneBoxRole::Principal);
-        let row_clip = clip(&scene, row, SceneBoxRole::Principal);
-        assert!(row_clip.paint_clip_geometry.rounded.is_none());
-        assert!(row_clip.direct_hit_clip_geometry.rounded.is_none());
-        if collapse == BorderCollapse::Collapse {
-            assert!(table_clip.paint_clip_geometry.rounded.is_none());
-            assert_eq!(table_clip.border_radius_lengths, [None; 4]);
-        } else {
+fn internal_table_decoration_and_owned_table_overflow_keep_distinct_radius_policies() {
+    for scale in SCALES {
+        for collapse in [BorderCollapse::Separate, BorderCollapse::Collapse] {
+            let mut e = engine(scale);
+            let root = e.root();
+            let table = box_(&mut e, root, ElementTag::Table, 100.0, 60.0);
+            set(&mut e, table, StyleProperty::Display, Display::Table);
+            set(
+                &mut e,
+                table,
+                StyleProperty::BorderCollapse,
+                StyleValue::Renderer(RendererStyleValue::BorderCollapse(collapse)),
+            );
+            set(&mut e, table, StyleProperty::Overflow, Overflow::Hidden);
+            set(
+                &mut e,
+                table,
+                StyleProperty::BorderRadius,
+                CornerRadii(Edges::all(LengthValue::calc_percent_px(20.0, 4.0))),
+            );
+            let row = box_(&mut e, table, ElementTag::TableRow, 100.0, 60.0);
+            set(&mut e, row, StyleProperty::Display, Display::TableRow);
+            set(
+                &mut e,
+                row,
+                StyleProperty::BorderRadius,
+                CornerRadii(Edges::all(LengthValue::px(20.0))),
+            );
+            let cell = box_(&mut e, row, ElementTag::TableCell, 100.0, 60.0);
+            set(&mut e, cell, StyleProperty::Display, Display::TableCell);
+            set(&mut e, cell, StyleProperty::BackgroundColor, Color::GREEN);
+            let scene = e.scene().unwrap();
+            let table_clip = clip(&scene, table, SceneBoxRole::Principal);
+            let row_clip = clip(&scene, row, SceneBoxRole::Principal);
+            assert!(row_clip.paint_clip_geometry.rounded.is_none());
+            assert!(row_clip.direct_hit_clip_geometry.rounded.is_none());
+            // Stock147.0.7727.50 rounds an owned hidden-overflow table in both
+            // border models. Collapse only suppresses internal decoration radii;
+            // it does not remove the wrapper's overflow radius source.
             assert!(table_clip.paint_clip_geometry.rounded.is_some());
+            assert!(table_clip.direct_hit_clip_geometry.rounded.is_some());
             assert!(table_clip.border_radius_lengths.iter().all(Option::is_some));
+            set(&mut e, table, StyleProperty::Overflow, Overflow::Visible);
+            let visible = e.scene().unwrap();
+            let table_clip = clip(&visible, table, SceneBoxRole::Principal);
+            assert!(table_clip.paint_clip_geometry.rounded.is_none());
+            assert!(table_clip.direct_hit_clip_geometry.rounded.is_none());
+            assert!(table_clip.border_radius_lengths.iter().all(Option::is_some));
+            let stats = e.stats();
+            assert_eq!(e.scene().unwrap().generation(), visible.generation());
+            assert_eq!(e.stats(), stats);
+        }
+    }
+}
+
+#[test]
+fn collapsed_cell_decoration_does_not_disable_its_owned_overflow_radius() {
+    for scale in SCALES {
+        for collapse in [BorderCollapse::Separate, BorderCollapse::Collapse] {
+            let mut e = engine(scale);
+            let root = e.root();
+            let table = box_(&mut e, root, ElementTag::Table, 100.0, 60.0);
+            set(&mut e, table, StyleProperty::Display, Display::Table);
+            set(
+                &mut e,
+                table,
+                StyleProperty::BorderCollapse,
+                StyleValue::Renderer(RendererStyleValue::BorderCollapse(collapse)),
+            );
+            set(
+                &mut e,
+                table,
+                StyleProperty::BorderSpacing,
+                StyleValue::Renderer(RendererStyleValue::BorderSpacing((
+                    Length::px(0.0),
+                    Length::px(0.0),
+                ))),
+            );
+            let row = box_(&mut e, table, ElementTag::TableRow, 100.0, 60.0);
+            set(&mut e, row, StyleProperty::Display, Display::TableRow);
+            let cell = box_(&mut e, row, ElementTag::TableCell, 100.0, 60.0);
+            set(&mut e, cell, StyleProperty::Display, Display::TableCell);
+            set(&mut e, cell, StyleProperty::Overflow, Overflow::Hidden);
+            set(
+                &mut e,
+                cell,
+                StyleProperty::BorderRadius,
+                CornerRadii(Edges::all(LengthValue::px(20.0))),
+            );
+            let child = box_(&mut e, cell, ElementTag::Div, 100.0, 60.0);
+            set(&mut e, child, StyleProperty::BackgroundColor, Color::GREEN);
+            let hidden = e.scene().unwrap();
+            let projection = clip(&hidden, cell, SceneBoxRole::Principal);
+            assert_eq!(
+                projection.border_radius_lengths,
+                [Some((Length::px(20.0), Length::px(20.0))); 4]
+            );
+            assert_eq!(
+                projection
+                    .paint_clip_geometry
+                    .rounded
+                    .as_ref()
+                    .unwrap()
+                    .radii,
+                [(20.0, 20.0); 4]
+            );
+            assert_eq!(
+                projection
+                    .direct_hit_clip_geometry
+                    .rounded
+                    .as_ref()
+                    .unwrap()
+                    .radii,
+                [(20.0, 20.0); 4]
+            );
+            let bounds = e.bounds(cell).unwrap().unwrap();
+            let corner = (f64::from(bounds.x) + 1.0, f64::from(bounds.y) + 1.0);
+            let center = (
+                f64::from(bounds.x) + f64::from(bounds.width) * 0.5,
+                f64::from(bounds.y) + f64::from(bounds.height) * 0.5,
+            );
+            assert_ne!(e.hit_test(corner.0, corner.1).unwrap(), Some(child));
+            assert_eq!(e.hit_test(center.0, center.1).unwrap(), Some(child));
+            let frame = SoftwareCompositor::default().render(&hidden).unwrap();
+            let sample = |frame: &openui_compositor::Frame, point: (f64, f64)| {
+                let x = (point.0 * scale).round() as usize;
+                let y = (point.1 * scale).round() as usize;
+                let start = y * frame.stride + x * 4;
+                <[u8; 4]>::try_from(&frame.pixels[start..start + 4]).unwrap()
+            };
+            // Two exact stock .50 captures per border model: the corner is
+            // white and the opaque center green under this cell-owned clip.
+            assert_eq!(sample(&frame, corner), [255, 255, 255, 255]);
+            assert_eq!(sample(&frame, center), [0, 128, 0, 255]);
+            set(&mut e, cell, StyleProperty::Overflow, Overflow::Visible);
+            let visible = e.scene().unwrap();
+            let projection = clip(&visible, cell, SceneBoxRole::Principal);
+            assert!(projection.paint_clip_geometry.rounded.is_none());
+            assert!(projection.direct_hit_clip_geometry.rounded.is_none());
+            let frame = SoftwareCompositor::default().render(&visible).unwrap();
+            assert_eq!(sample(&frame, corner), [0, 128, 0, 255]);
+            assert_eq!(e.hit_test(corner.0, corner.1).unwrap(), Some(child));
+            let stats = e.stats();
+            assert_eq!(e.scene().unwrap().generation(), visible.generation());
+            assert_eq!(e.stats(), stats);
+            let retained_pixels = pixels(&hidden);
+            drop(e);
+            assert_eq!(pixels(&hidden), retained_pixels);
+        }
+    }
+}
+
+#[test]
+fn table_row_group_and_column_sources_do_not_acquire_rounded_overflow() {
+    for scale in SCALES {
+        for collapse in [BorderCollapse::Separate, BorderCollapse::Collapse] {
+            let mut e = engine(scale);
+            let root = e.root();
+            let table = box_(&mut e, root, ElementTag::Table, 100.0, 60.0);
+            set(&mut e, table, StyleProperty::Display, Display::Table);
+            set(
+                &mut e,
+                table,
+                StyleProperty::BorderCollapse,
+                StyleValue::Renderer(RendererStyleValue::BorderCollapse(collapse)),
+            );
+            let columns = box_(&mut e, table, ElementTag::TableColumnGroup, 100.0, 60.0);
+            set(
+                &mut e,
+                columns,
+                StyleProperty::Display,
+                Display::TableColumnGroup,
+            );
+            let column = box_(&mut e, columns, ElementTag::TableColumn, 100.0, 60.0);
+            set(&mut e, column, StyleProperty::Display, Display::TableColumn);
+            let body = box_(&mut e, table, ElementTag::TableBody, 100.0, 60.0);
+            set(&mut e, body, StyleProperty::Display, Display::TableRowGroup);
+            let row = box_(&mut e, body, ElementTag::TableRow, 100.0, 60.0);
+            set(&mut e, row, StyleProperty::Display, Display::TableRow);
+            let cell = box_(&mut e, row, ElementTag::TableCell, 100.0, 60.0);
+            set(&mut e, cell, StyleProperty::Display, Display::TableCell);
+            set(&mut e, cell, StyleProperty::BackgroundColor, Color::GREEN);
+            for structural in [columns, column, body, row] {
+                set(
+                    &mut e,
+                    structural,
+                    StyleProperty::BorderRadius,
+                    CornerRadii(Edges::all(LengthValue::calc_percent_px(20.0, 4.0))),
+                );
+                set(
+                    &mut e,
+                    structural,
+                    StyleProperty::Overflow,
+                    Overflow::Hidden,
+                );
+            }
+            let scene = e.scene().unwrap();
+            for structural in [columns, column, body, row] {
+                let projection = clip(&scene, structural, SceneBoxRole::Principal);
+                assert!(projection.paint_clip_geometry.rounded.is_none());
+                assert!(projection.direct_hit_clip_geometry.rounded.is_none());
+                assert_eq!(projection.border_radius_lengths, [None; 4]);
+            }
+            let image = pixels(&scene);
+            let stats = e.stats();
+            assert_eq!(e.scene().unwrap().generation(), scene.generation());
+            assert_eq!(e.stats(), stats);
+            drop(e);
+            assert_eq!(pixels(&scene), image);
         }
     }
 }

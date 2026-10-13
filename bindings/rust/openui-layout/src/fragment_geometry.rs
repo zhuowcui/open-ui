@@ -38,11 +38,11 @@ pub(crate) fn capture_source(fragment: &mut Fragment, direction: WritingDirectio
         // Collapsed borders are already retained in their real physical table
         // writing direction; ordinary block/multicol working edges are logical.
         let source_border = if fragment.collapsed_table_border_data.is_some() {
-            crate::ScrollArea::used_border(fragment)
+            crate::ScrollArea::source_border(fragment)
         } else {
-            physical_edges(crate::ScrollArea::used_border(fragment))
+            physical_edges(crate::ScrollArea::source_border(fragment))
         };
-        let source_padding = physical_edges(crate::ScrollArea::used_padding(fragment));
+        let source_padding = physical_edges(crate::ScrollArea::source_padding(fragment));
         fragment.box_geometry = Some(FragmentBoxGeometry {
             source_size,
             source_fragment_size,

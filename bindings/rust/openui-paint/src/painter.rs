@@ -10111,6 +10111,17 @@ fn overflow_clip_base_geometry(
     )
 }
 
+/// Whether authored radii affect this owned box's overflow contour. Collapsed
+/// cells ignore radii for border/background decoration, but retain the ordinary
+/// rounded overflow clip on their descendants. Structural row/group/column
+/// boxes do not acquire rounded overflow from those same authored inputs.
+pub fn has_overflow_border_radius(fragment: &Fragment, style: &ComputedStyle) -> bool {
+    fragment.owns_layout_box()
+        && style.has_border_radius()
+        && !table_internal_ignores_border_radius(style.display)
+        && (!fragment.ignore_border_radius || style.display == Display::TableCell)
+}
+
 /// CSS mixed Clip/Visible axes retain a rectangular paint-property clip.
 /// A separate layout-owned continuation clip keeps its existing rounded
 /// source contour; it is not evidence of an authored both-axis overflow node.
@@ -10121,10 +10132,7 @@ fn paint_rounded_overflow_clip_eligible(
 ) -> bool {
     let pair = paint_overflow_pair(fragment, style, doc);
     let axes = paint_overflow_clip_axes(fragment, style, doc);
-    fragment.owns_layout_box()
-        && style.has_border_radius()
-        && !fragment.ignore_border_radius
-        && !table_internal_ignores_border_radius(style.display)
+    has_overflow_border_radius(fragment, style)
         && !matches!(
             pair,
             (Overflow::Clip, Overflow::Visible) | (Overflow::Visible, Overflow::Clip)
@@ -10147,10 +10155,7 @@ pub fn compute_overflow_clip_geometry(
     let style = adjusted.as_ref().unwrap_or(style);
     let (rect, axes, margins) = overflow_clip_base_geometry(fragment, doc, offset, style);
     let direct_clips = paint_overflow_pair(fragment, style, doc);
-    let eligible = fragment.owns_layout_box()
-        && style.has_border_radius()
-        && !fragment.ignore_border_radius
-        && !table_internal_ignores_border_radius(style.display);
+    let eligible = has_overflow_border_radius(fragment, style);
     let rounded = (eligible
         && match purpose {
             OverflowClipContourPurpose::PaintSource => {
@@ -10895,7 +10900,7 @@ fn build_clip_rrect(
     // reapplying all authored radii to every slice exposes the element's
     // background between clipped descendants at each column boundary.
     let outer = if fragment.decoration_slice.is_some() || fragment.is_inline_box_fragment {
-        fragment_border_radii(style, fragment, &border_rect, bt)
+        slice_border_radii(style, fragment, &border_rect, bt)
     } else {
         normalized_border_radii(style, &border_rect)
     };
@@ -11076,6 +11081,15 @@ fn fragment_border_radii(
     if fragment.ignore_border_radius {
         return [Point::new(0.0, 0.0); 4];
     }
+    slice_border_radii(style, fragment, rect, border_width)
+}
+
+fn slice_border_radii(
+    style: &ComputedStyle,
+    fragment: &Fragment,
+    rect: &Rect,
+    border_width: f32,
+) -> [Point; 4] {
     let normalization_rect = decoration_source_rect(fragment, *rect);
     if fragment.is_inline_box_fragment {
         // Suppressed slice edges also suppress their corner radii before the

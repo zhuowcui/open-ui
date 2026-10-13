@@ -36,10 +36,17 @@ impl ScrollArea {
         is_scrollable_pair((self.overflow_x, self.overflow_y))
     }
 
-    /// Layout-owned used borders of the principal scrolling box. A captioned
-    /// table places decoration on a grid helper while its wrapper owns the
-    /// scrolling box; that separation must not discard the table's used edges.
+    /// Layout-owned used borders of the physical continuation. A captioned
+    /// table delegates its source edges to the grid decoration; excluded slice
+    /// sides are removed from that source for the retained scrolling box.
     pub fn used_border(fragment: &Fragment) -> BoxStrut {
+        truncate_fragment_edges(fragment, Self::source_border(fragment))
+    }
+
+    /// Unsliced source borders, before continuation sides are excluded.
+    /// Layout's source-geometry capture must retain these independently from
+    /// the current physical fragment's client/content edges.
+    pub(crate) fn source_border(fragment: &Fragment) -> BoxStrut {
         if fragment.owns_element_box() {
             if let Some(data) = &fragment.collapsed_table_border_data {
                 return data
@@ -58,9 +65,13 @@ impl ScrollArea {
         fragment.border
     }
 
-    /// Actual CSS padding delegated to a captioned table's grid decoration.
-    /// The wrapper retains ownership of the layout client/content rectangles.
+    /// Actual CSS padding of this physical continuation, with excluded slice
+    /// sides removed independently from the source padding.
     pub fn used_padding(fragment: &Fragment) -> BoxStrut {
+        truncate_fragment_edges(fragment, Self::source_padding(fragment))
+    }
+
+    pub(crate) fn source_padding(fragment: &Fragment) -> BoxStrut {
         if fragment.owns_element_box() {
             if let Some(grid) = fragment
                 .children
@@ -140,6 +151,44 @@ impl ScrollArea {
             ),
         )
     }
+}
+
+/// Blink147 BoxFragmentBuilder::ApplicableBorders/ApplicablePadding removes
+/// excluded logical block sides before storing physical fragment struts. Native
+/// Fragment keeps the source struts for decoration/source geometry, so project
+/// that same exclusion only at the used-edge read. Clone pieces keep both
+/// first/last decoration flags; inline layout already stores used physical sides.
+fn truncate_fragment_edges(fragment: &Fragment, mut edges: BoxStrut) -> BoxStrut {
+    if !fragment.owns_layout_box() || fragment.is_inline_box_fragment {
+        return edges;
+    }
+    match fragment.fragmentation_writing_direction {
+        Some(direction) if !direction.is_horizontal() && direction.is_flipped_blocks() => {
+            if !fragment.is_first_for_node {
+                edges.right = LayoutUnit::zero();
+            }
+            if !fragment.is_last_for_node {
+                edges.left = LayoutUnit::zero();
+            }
+        }
+        Some(direction) if !direction.is_horizontal() => {
+            if !fragment.is_first_for_node {
+                edges.left = LayoutUnit::zero();
+            }
+            if !fragment.is_last_for_node {
+                edges.right = LayoutUnit::zero();
+            }
+        }
+        _ => {
+            if !fragment.is_first_for_node {
+                edges.top = LayoutUnit::zero();
+            }
+            if !fragment.is_last_for_node {
+                edges.bottom = LayoutUnit::zero();
+            }
+        }
+    }
+    edges
 }
 
 fn union(a: PhysicalRect, b: PhysicalRect) -> PhysicalRect {
@@ -632,6 +681,65 @@ mod tests {
         let area = parent.scroll_area.unwrap();
         assert_eq!(area.content_rect.width(), LayoutUnit::from_i32(100));
         assert_eq!(area.limits(), ((0.0, 70.0), (0.0, 0.0)));
+    }
+    #[test]
+    fn continuation_used_edges_exclude_sides_without_mutating_source_or_clone_edges() {
+        let mut doc = Document::new();
+        let node = doc.create_node(ElementTag::Div);
+        let lu = LayoutUnit::from_i32;
+        let border = BoxStrut::new(lu(11), lu(13), lu(17), lu(19));
+        let padding = BoxStrut::new(lu(3), lu(5), lu(7), lu(9));
+        for mode in [
+            WritingMode::HorizontalTb,
+            WritingMode::VerticalRl,
+            WritingMode::VerticalLr,
+        ] {
+            for (first, last) in [(true, false), (false, false), (false, true), (true, true)] {
+                let mut part = Fragment::new_box(node, PhysicalSize::new(lu(100), lu(80)));
+                part.border = border;
+                part.padding = padding;
+                part.is_first_for_node = first;
+                part.is_last_for_node = last;
+                part.fragmentation_writing_direction =
+                    Some(doc.node(node).style.direction.writing_direction(mode));
+                let expected = |source: BoxStrut| match mode {
+                    WritingMode::HorizontalTb => BoxStrut::new(
+                        if first { source.top } else { lu(0) },
+                        source.right,
+                        if last { source.bottom } else { lu(0) },
+                        source.left,
+                    ),
+                    WritingMode::VerticalRl => BoxStrut::new(
+                        source.top,
+                        if first { source.right } else { lu(0) },
+                        source.bottom,
+                        if last { source.left } else { lu(0) },
+                    ),
+                    WritingMode::VerticalLr => BoxStrut::new(
+                        source.top,
+                        if last { source.right } else { lu(0) },
+                        source.bottom,
+                        if first { source.left } else { lu(0) },
+                    ),
+                    _ => unreachable!(),
+                };
+                assert_eq!(ScrollArea::used_border(&part), expected(border));
+                assert_eq!(ScrollArea::used_padding(&part), expected(padding));
+                assert_eq!(ScrollArea::source_border(&part), border);
+                assert_eq!(ScrollArea::source_padding(&part), padding);
+                assert_eq!(part.border, border);
+                assert_eq!(part.padding, padding);
+                // Borrowed helpers do not acquire the source element's slice
+                // policy; their stored structural edges remain authoritative.
+                part.box_ownership = FragmentBoxOwnership::LayoutHelper;
+                assert_eq!(ScrollArea::used_border(&part), border);
+                assert_eq!(ScrollArea::used_padding(&part), padding);
+                part.box_ownership = FragmentBoxOwnership::AuthoredElement;
+                part.is_inline_box_fragment = true;
+                assert_eq!(ScrollArea::used_border(&part), border);
+                assert_eq!(ScrollArea::used_padding(&part), padding);
+            }
+        }
     }
 }
 

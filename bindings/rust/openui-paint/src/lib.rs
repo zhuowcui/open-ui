@@ -25,8 +25,9 @@ pub use paint_program::{
 };
 pub use painter::paint_fragment;
 pub use painter::{
-    compute_clip_rect, compute_overflow_clip_geometry, overflow_border_radius_reference_box,
-    OverflowClipContour, OverflowClipContourPurpose, OverflowClipGeometry,
+    compute_clip_rect, compute_overflow_clip_geometry, has_overflow_border_radius,
+    overflow_border_radius_reference_box, OverflowClipContour, OverflowClipContourPurpose,
+    OverflowClipGeometry,
 };
 pub use render::{
     raster_surface_properties, rasterize_picture, record_document, record_fragment,

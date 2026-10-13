@@ -487,7 +487,7 @@ fn clip_projection(
         block_axis_clip_only: fragment.block_axis_clip_only,
         inline_axis_clip_only: fragment.inline_axis_clip_only,
         fragmentation_writing_direction: fragment.fragmentation_writing_direction,
-        border_radii: if fragment.ignore_border_radius {
+        border_radii: if !openui_paint::has_overflow_border_radius(fragment, effective) {
             [(0.0, 0.0); 4]
         } else {
             [
@@ -497,12 +497,12 @@ fn clip_projection(
                 effective.border_bottom_left_radius,
             ]
         },
-        border_radius_percent: if fragment.ignore_border_radius {
+        border_radius_percent: if !openui_paint::has_overflow_border_radius(fragment, effective) {
             [(false, false); 4]
         } else {
             effective.border_radius_percent
         },
-        border_radius_lengths: if fragment.ignore_border_radius {
+        border_radius_lengths: if !openui_paint::has_overflow_border_radius(fragment, effective) {
             [None; 4]
         } else {
             effective.border_radius_lengths
