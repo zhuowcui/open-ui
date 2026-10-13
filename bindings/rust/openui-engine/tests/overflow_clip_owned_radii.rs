@@ -918,9 +918,51 @@ fn collapsed_cell_decoration_does_not_disable_its_owned_overflow_radius() {
                 let start = y * frame.stride + x * 4;
                 <[u8; 4]>::try_from(&frame.pixels[start..start + 4]).unwrap()
             };
+            if let Some(directory) = std::env::var_os("OPENUI_RADIUS_DIAGNOSTIC_DIR") {
+                let directory = std::path::PathBuf::from(directory);
+                std::fs::create_dir_all(&directory).unwrap();
+                let prefix = format!("rounded-cell-{collapse:?}-scale-{scale}");
+                let recording = hidden
+                    .retained_scene()
+                    .unwrap()
+                    .recordings()
+                    .iter()
+                    .find(|r| r.role() == openui_compositor::SceneRecordingRole::Canonical)
+                    .unwrap();
+                std::fs::write(
+                    directory.join(format!("{prefix}.skp")),
+                    recording.picture().serialize().as_bytes(),
+                )
+                .unwrap();
+                std::fs::write(directory.join(format!("{prefix}.rgba")), &frame.pixels).unwrap();
+                std::fs::write(
+                    directory.join(format!("{prefix}-frame.txt")),
+                    format!(
+                        "{} {} {}
+",
+                        frame.width, frame.height, frame.stride
+                    ),
+                )
+                .unwrap();
+                std::fs::write(
+                    directory.join(format!("{prefix}-geometry.txt")),
+                    format!(
+                        "bounds={bounds:?}
+projection={projection:#?}
+fragments={:#?}
+",
+                        hidden.fragments()
+                    ),
+                )
+                .unwrap();
+            }
             // Two exact stock .50 captures per border model: the corner is
             // white and the opaque center green under this cell-owned clip.
-            assert_eq!(sample(&frame, corner), [255, 255, 255, 255]);
+            assert_eq!(
+                sample(&frame, corner),
+                [255, 255, 255, 255],
+                "{collapse:?} at scale {scale}, bounds {bounds:?}"
+            );
             assert_eq!(sample(&frame, center), [0, 128, 0, 255]);
             set(&mut e, cell, StyleProperty::Overflow, Overflow::Visible);
             let visible = e.scene().unwrap();
