@@ -1064,7 +1064,7 @@ fn apply_relative_offset_in_algorithm_axes(
     let logical = physical_vector_to_logical(physical, writing_direction);
     fragment.offset.left = fragment.offset.left + logical.left;
     fragment.offset.top = fragment.offset.top + logical.top;
-    fragment.fragmentation_visual_offset = physical;
+    fragment.record_relative_fragmentation_offset(physical);
 }
 
 /// Project one multicol-owned logical fragment outer box to physical storage.
@@ -2866,7 +2866,7 @@ pub(crate) fn block_layout_contents(
                         border.left + padding.left + logical_inline_relative_offset.left,
                         current_block_offset + logical_inline_relative_offset.top,
                     );
-                    positioned_block.fragmentation_visual_offset = inline_relative_offset;
+                    positioned_block.record_reconstructed_inline_offset(inline_relative_offset);
                     apply_relative_offset_in_algorithm_axes(
                         &mut positioned_block,
                         block_child_style,
@@ -3092,7 +3092,7 @@ pub(crate) fn block_layout_contents(
                                 fragment.offset.top =
                                     fragment.offset.top + interrupted_inline_offset.top;
                             }
-                            fragment.fragmentation_visual_offset = interrupted_inline_offset;
+                            fragment.record_reconstructed_inline_offset(interrupted_inline_offset);
                             if let Some(positioned) = &mut fragment.positioned_fragmentation {
                                 positioned.block_in_inline_static_advance =
                                     block_in_inline_static_advance;
@@ -16324,11 +16324,16 @@ fn fragment_direct_positioned_children_in_multicol(
             } else {
                 let fragment_style = &doc.node(fragment.node_id).style;
                 let relative = if fragment_style.position == Position::Relative {
-                    crate::relative::compute_relative_offset(
-                        fragment_style,
-                        fragment.size.width,
-                        fragment.size.height,
-                    )
+                    fragment
+                        .fragmentation_visual_offsets
+                        .relative
+                        .unwrap_or_else(|| {
+                            crate::relative::compute_relative_offset(
+                                fragment_style,
+                                fragment.size.width,
+                                fragment.size.height,
+                            )
+                        })
                 } else {
                     PhysicalOffset::zero()
                 };
@@ -16361,26 +16366,15 @@ fn fragment_direct_positioned_children_in_multicol(
                 ancestor_authored_visual_offset.left + own_authored_visual_offset.left,
                 ancestor_authored_visual_offset.top + own_authored_visual_offset.top,
             );
-            let mut reconstructed_inline_offset =
-                if fragment.fragmentation_visual_offset != PhysicalOffset::zero() {
-                    fragment.fragmentation_visual_offset
-                } else {
-                    ancestor_reconstructed_inline_offset
-                };
-            if !fragment.node_id.is_none()
-                && doc
-                    .node(fragment.node_id)
-                    .style
-                    .has_transform_containing_block()
-                && reconstructed_inline_offset == ancestor_authored_visual_offset
-            {
-                // Relative positioning is recorded both on the fragmented
-                // ancestor and as its authored visual offset. Once that box
-                // establishes the containing block for a promoted descendant,
-                // the two records describe the same displacement rather than
-                // two nested translations.
-                reconstructed_inline_offset = PhysicalOffset::zero();
-            }
+            // The relative producer and inline reconstruction can both move
+            // this box, even by equal vectors. Their retained roles determine
+            // source coordinates; numerical equality does not establish that
+            // two independent displacements are the same contribution.
+            let reconstructed_inline_offset = fragment
+                .fragmentation_visual_offsets
+                .reconstructed_inline
+                .filter(|offset| *offset != PhysicalOffset::zero())
+                .unwrap_or(ancestor_reconstructed_inline_offset);
             let physical_visual_offset = PhysicalOffset::new(
                 authored_visual_offset.left
                     + transform_translation.left
@@ -26164,7 +26158,7 @@ fn layout_multicol(
                         positioned.offset.left =
                             positioned.offset.left + logical_relative_offset.left;
                         positioned.offset.top = positioned.offset.top + logical_relative_offset.top;
-                        positioned.fragmentation_visual_offset = *inline_relative_offset;
+                        positioned.record_reconstructed_inline_offset(*inline_relative_offset);
                     }
                     let spread_zero_height_forced_break_flex_items = !wraps_rows
                         && algo.column_fill == ColumnFill::Auto
@@ -30279,7 +30273,7 @@ fn layout_multicol(
                                 );
                                 part.offset.left = part.offset.left + logical_relative_offset.left;
                                 part.offset.top = part.offset.top + logical_relative_offset.top;
-                                part.fragmentation_visual_offset = *inline_relative_offset;
+                                part.record_reconstructed_inline_offset(*inline_relative_offset);
                             }
                             // Fragment relative descendants in normal-flow
                             // coordinates, then apply their visual translation

@@ -189,7 +189,7 @@ fn promoted_multicol_ancestor_transform_reaches_native_rectangles_and_input() {
             e.set_property(columns, property, StyleValue::Renderer(value))
                 .unwrap();
         }
-        let ancestor = box_(&mut e, columns, 100.0, 100.0);
+        let ancestor = box_(&mut e, columns, 100.0, 20.0);
         e.set_property(
             ancestor,
             StyleProperty::Transform,
@@ -235,8 +235,12 @@ fn promoted_multicol_ancestor_transform_reaches_native_rectangles_and_input() {
             .unwrap();
             assert_eq!(has_promoted(e.scene().unwrap().fragments()), promoted);
             let rectangles = e.client_rects(child).unwrap();
-            assert!(!rectangles.is_empty());
+            // Pinned .50, five scales: a real 20px source fits the 40px
+            // column; Top(50px) moves its 4px fixed child from y=5 to y=55.
+            assert_eq!(rectangles.len(), 1);
             for rect in &rectangles {
+                assert_eq!(rect.x, 25.0);
+                assert_eq!(rect.y, if promoted { 55.0 } else { 5.0 });
                 assert_eq!(rect.width, 4.0);
                 assert_eq!(rect.height, 4.0);
             }

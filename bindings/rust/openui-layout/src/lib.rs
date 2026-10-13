@@ -50,8 +50,8 @@ pub use flex::flex_layout;
 pub use fragment::{
     resolve_text_run_orientation, AnonymousLayoutBox, DecorationSlice, Fragment,
     FragmentBoxGeometry, FragmentBoxOwnership, FragmentKind, FragmentTablePart,
-    PromotedTransformAncestor, StickyTimelineGeometry, TableColumnBackgroundPositioning,
-    TextRunOrientation, ViewportScrollport,
+    FragmentVisualOffsets, PromotedTransformAncestor, StickyTimelineGeometry,
+    TableColumnBackgroundPositioning, TextRunOrientation, ViewportScrollport,
 };
 pub use fragmentation::{
     BlockBreakToken, BreakAppeal, BreakToken, FragmentainerSpace, InlineBreakToken,

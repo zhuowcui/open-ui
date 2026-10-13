@@ -258,7 +258,7 @@ pub struct PromotedTransformAncestor {
     pub visual_offset: PhysicalOffset,
     pub fragment_offset: PhysicalOffset,
     pub fragment_size: PhysicalSize,
-    /// Actual owned box, excluding a caption/helper extent, in source space.
+    /// Actual owned border box in source space, retaining its principal origin.
     pub source_reference_box: PhysicalRect,
     /// Owned reference box in this physical continuation's local coordinates.
     pub fragment_reference_box: PhysicalRect,
@@ -340,6 +340,25 @@ pub struct StickyTimelineGeometry {
     pub total_sticky_box_offset: PhysicalOffset,
     pub total_containing_block_offset: PhysicalOffset,
     pub is_fixed_to_view: bool,
+}
+
+/// Distinct physical movements retained before fragmentation. Inline
+/// reconstruction can remove an ancestor while the box also has its own
+/// relative positioning; neither contribution replaces the other.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct FragmentVisualOffsets {
+    pub relative: Option<PhysicalOffset>,
+    pub reconstructed_inline: Option<PhysicalOffset>,
+}
+
+impl FragmentVisualOffsets {
+    fn total(self) -> PhysicalOffset {
+        let relative = self.relative.unwrap_or_else(PhysicalOffset::zero);
+        let inline = self
+            .reconstructed_inline
+            .unwrap_or_else(PhysicalOffset::zero);
+        PhysicalOffset::new(relative.left + inline.left, relative.top + inline.top)
+    }
 }
 
 /// A positioned layout fragment, ready for painting.
@@ -473,11 +492,11 @@ pub struct Fragment {
     pub column_block_start_ink_overflow: LayoutUnit,
     pub column_block_end_ink_overflow: LayoutUnit,
 
-    /// Visual translation inherited from inline ancestors that were removed
-    /// by block-in-inline anonymous-box reconstruction. Fragmentation uses
-    /// this to slice in normal-flow coordinates while moving each slice and
-    /// its clip with the interrupted inline continuation.
+    /// Complete physical visual movement before fragmentation, including
+    /// relative positioning and removed inline ancestors. Existing projection
+    /// consumers use this sum; extraction uses the retained contributions.
     pub fragmentation_visual_offset: PhysicalOffset,
+    pub fragmentation_visual_offsets: FragmentVisualOffsets,
 
     /// Source and consumed principal-box geometry for native dimension/timeline
     /// consumers. Paint and hit testing continue to use the actual local box.
@@ -697,6 +716,16 @@ pub struct Fragment {
 }
 
 impl Fragment {
+    pub(crate) fn record_relative_fragmentation_offset(&mut self, offset: PhysicalOffset) {
+        self.fragmentation_visual_offsets.relative = Some(offset);
+        self.fragmentation_visual_offset = self.fragmentation_visual_offsets.total();
+    }
+
+    pub(crate) fn record_reconstructed_inline_offset(&mut self, offset: PhysicalOffset) {
+        self.fragmentation_visual_offsets.reconstructed_inline = Some(offset);
+        self.fragmentation_visual_offset = self.fragmentation_visual_offsets.total();
+    }
+
     /// Whether this box contributes geometry and input for its source element.
     ///
     /// Authored viewport boxes preserve the root element's geometry. Text,
@@ -846,6 +875,7 @@ impl Fragment {
             column_block_start_ink_overflow: LayoutUnit::zero(),
             column_block_end_ink_overflow: LayoutUnit::zero(),
             fragmentation_visual_offset: PhysicalOffset::zero(),
+            fragmentation_visual_offsets: FragmentVisualOffsets::default(),
             box_geometry: None,
             sticky_timeline_geometry: None,
             positioned_fragmentation: None,
@@ -927,6 +957,7 @@ impl Fragment {
             column_block_start_ink_overflow: LayoutUnit::zero(),
             column_block_end_ink_overflow: LayoutUnit::zero(),
             fragmentation_visual_offset: PhysicalOffset::zero(),
+            fragmentation_visual_offsets: FragmentVisualOffsets::default(),
             box_geometry: None,
             sticky_timeline_geometry: None,
             positioned_fragmentation: None,
