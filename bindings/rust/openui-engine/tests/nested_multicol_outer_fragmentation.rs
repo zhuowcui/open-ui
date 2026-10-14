@@ -382,21 +382,63 @@ fn check_capacity(f: &mut Fixture, capacity: f64, principal: f64, vertical: bool
 fn raster(s: &SceneSnapshot) -> Frame {
     SoftwareCompositor::default().render(s).unwrap()
 }
-fn exact_green_square(frame: &Frame, scale: f64) {
+// Exact Chromium RGBA8 crops and the independently verified opaque-white
+// exterior. Provenance and unmodified source PNG hashes live beside the bytes.
+fn exact_chromium_final_frame(frame: &Frame, scale: f64) {
+    let (side, width, height, pixels): (usize, u32, u32, &[u8]) = match scale {
+        1.0 => (
+            100,
+            800,
+            600,
+            include_bytes!("fixtures/nested-multicol-chromium-oracle/scale-1_0.rgba"),
+        ),
+        2.0 => (
+            200,
+            750,
+            1334,
+            include_bytes!("fixtures/nested-multicol-chromium-oracle/scale-2_0.rgba"),
+        ),
+        1.25 => (
+            125,
+            1600,
+            900,
+            include_bytes!("fixtures/nested-multicol-chromium-oracle/scale-1_25.rgba"),
+        ),
+        1.5 => (
+            150,
+            2880,
+            1620,
+            include_bytes!("fixtures/nested-multicol-chromium-oracle/scale-1_5.rgba"),
+        ),
+        1.75 => (
+            175,
+            1400,
+            1050,
+            include_bytes!("fixtures/nested-multicol-chromium-oracle/scale-1_75.rgba"),
+        ),
+        _ => panic!("no pinned Chromium oracle for scale {scale}"),
+    };
+    assert_eq!(
+        (frame.width, frame.height),
+        (width, height),
+        "pinned Chromium viewport @{scale}"
+    );
+    assert_eq!(pixels.len(), side * side * 4);
     let start = (20.0 * scale) as usize;
-    let end = (120.0 * scale) as usize;
+    let end = start + side;
     for y in 0..frame.height as usize {
         for x in 0..frame.width as usize {
             let off = y * frame.stride as usize + x * 4;
             let wanted = if x >= start && x < end && y >= start && y < end {
-                [0, 128, 0, 255]
+                let source = ((y - start) * side + x - start) * 4;
+                &pixels[source..source + 4]
             } else {
-                [255, 255, 255, 255]
+                &[255, 255, 255, 255]
             };
             assert_eq!(
                 &frame.pixels[off..off + 4],
-                &wanted,
-                "whole-image {x},{y} @{scale}"
+                wanted,
+                "whole-image Chromium oracle {x},{y} @{scale}"
             );
         }
     }
@@ -454,7 +496,7 @@ fn ordered_and_independently_built_final_state_own_one_complete_inner_row() {
         let fa = raster(&sa);
         let fb = raster(&sb);
         assert_eq!(fa.pixels, fb.pixels, "ordered and final @{scale}");
-        exact_green_square(&fa, scale);
+        exact_chromium_final_frame(&fa, scale);
         let generation = sa.generation();
         let stats = a.engine.stats();
         assert_eq!(a.engine.scene().unwrap().generation(), generation);
