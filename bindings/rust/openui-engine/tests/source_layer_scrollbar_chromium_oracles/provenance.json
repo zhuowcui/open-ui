@@ -1,0 +1,2954 @@
+{
+  "author": "scroll_button_api_review",
+  "base": "e6b8bfc6dd44957287c2ee76433b687d09a0cfee",
+  "chromium_receipt_sha256": "678f8721add1eb9a670806c4eed26d795830dcb51dd5321eba47eea2fcff7743",
+  "chromium_version": "147.0.7727.50",
+  "current_test_runtime_executed_by_author": false,
+  "default_renderer_changed": false,
+  "guard_scope": "Only modes1/8 false literal blue-row premise replaced with complete measured frames at all5 scales",
+  "inputs": [
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/receipt.json",
+      "sha256": "678f8721add1eb9a670806c4eed26d795830dcb51dd5321eba47eea2fcff7743"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/receipt.json",
+      "sha256": "702c0b644a0502ffca1c37182722d9b28f76c691f49202e845da918210ee56e8"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/terminal-record.json",
+      "sha256": "b28d2f8cda5fb5d77768fd0aea9c807fbacda688de60ba687b4e45a0d72b5cbc"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/terminal-record.json",
+      "sha256": "58d46755003fc3f7d8218b1ac9f74e2a87db7d9fc7aa97f0abeb708e5152e9d4"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/measured-edge-transition-audit-v1.json",
+      "sha256": "ad0032cbad37c849d34a63d8e3aae11d959c97bd6a98b2383dce6b405e94cfe4"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-control-browser-inputs-scroll-v1/browser-counterpart-proposal-v2.json",
+      "sha256": "499f3623c22e89649c0397668da4e7d137a43c472766202bf4079c516f153cfb"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-control-browser-inputs-scroll-v1/control-0.html",
+      "sha256": "d044101266c0049263cb2b4b6f57f31e0b296c679e2f80e9e2787b17c0ae99fd"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-control-browser-inputs-scroll-v1/control-1.html",
+      "sha256": "04525f7b4363408e506f3236988f85c44a4a78370cd527e59283882754cb0a4d"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-control-browser-inputs-scroll-v1/control-2.html",
+      "sha256": "6c54f82b114afd51e8a8d97f21f8ef6b15634d299df272ca526a4c490cadb501"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-control-browser-inputs-scroll-v1/control-3.html",
+      "sha256": "8eb7fc9c9740c06a63748036224ae2c4211e26e84f6d86ec2b274d03f0388e88"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-control-browser-inputs-scroll-v1/control-4.html",
+      "sha256": "2a5397c7babf95ef91afaed2be2b80b5a974594fa59c263bfdac1b01b15e7fef"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-control-browser-inputs-scroll-v1/control-5.html",
+      "sha256": "6ce8b03d7a375d5dbbc761ad11dfb231b6876ed76998bc04f7c0bd9ae83f7142"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-control-browser-inputs-scroll-v1/control-6.html",
+      "sha256": "d05210fac0f207d666d0bfc153493eafe9794264a1b2eb46f573cde4acb964f0"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-control-browser-inputs-scroll-v1/control-7.html",
+      "sha256": "a2f7fe4c941f259556addc2e846f70aec7a16e6476560816435220874e9a8b74"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-control-browser-inputs-scroll-v1/control-8.html",
+      "sha256": "848f383e9e2d11e6b6e5485e1e2d7d6e04480fe3e42d9ab62f78ef0dd0f641d0"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-control-browser-inputs-scroll-v1/observe-edge-controls-v2.js",
+      "sha256": "20962f7e7242c5a7802475f7608edf89ef4d0749dc0fbd685ffa78b00e1be38f"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-control-browser-inputs-scroll-v1/observe-edge-controls.js",
+      "sha256": "93b4b82b862bbe27b0c9b32252a7589acd2cc9b7127a61bdee30741f2c22a2a4"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-0-scale-1.0/canonical.rgba",
+      "sha256": "dfbac632657fbafbef36853bc6bacee8a5079f5354d28c927110d0d7dd3cfa46"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-0-scale-1.0/exact-spine.rgba",
+      "sha256": "dfbac632657fbafbef36853bc6bacee8a5079f5354d28c927110d0d7dd3cfa46"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-0-scale-1.0/local-source.rgba",
+      "sha256": "dfbac632657fbafbef36853bc6bacee8a5079f5354d28c927110d0d7dd3cfa46"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-0-scale-1.0/metadata.json",
+      "sha256": "aa0551ccc91bfeb0817a34e3bf0d4e3d8355ef253f2a666cda64453e70fdd392"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-0-scale-1.25/canonical.rgba",
+      "sha256": "da7e48ed4900e7295992f7b443e87deb575c6bf090e02b326e9cff9b8ea55ac4"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-0-scale-1.25/exact-spine.rgba",
+      "sha256": "da7e48ed4900e7295992f7b443e87deb575c6bf090e02b326e9cff9b8ea55ac4"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-0-scale-1.25/local-source.rgba",
+      "sha256": "4066349ee1a2fd92f7b9db2fd49e4dec759f9eb6689f2f452968575eaa51e7d9"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-0-scale-1.25/metadata.json",
+      "sha256": "cbad02fb78efe34748f8730860924edf3a6a02fdfba0e17f60797e7251a7559c"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-0-scale-1.5/canonical.rgba",
+      "sha256": "1fe3209213e54babe667cdb8e77866af192275d433df45f3929d33986170214e"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-0-scale-1.5/exact-spine.rgba",
+      "sha256": "1fe3209213e54babe667cdb8e77866af192275d433df45f3929d33986170214e"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-0-scale-1.5/local-source.rgba",
+      "sha256": "1fe3209213e54babe667cdb8e77866af192275d433df45f3929d33986170214e"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-0-scale-1.5/metadata.json",
+      "sha256": "126454ff8792e077bb80110db1ddac824595bcf6f9b185cc1d402ac5738b0e2e"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-0-scale-1.75/canonical.rgba",
+      "sha256": "1fdf6d75c18a9a0fd315fbc662674b40c7ead5a1419609c7d7ee9961241baa1f"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-0-scale-1.75/exact-spine.rgba",
+      "sha256": "1fdf6d75c18a9a0fd315fbc662674b40c7ead5a1419609c7d7ee9961241baa1f"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-0-scale-1.75/local-source.rgba",
+      "sha256": "4837d3716a21a808a84b8017529d0ec18ac929235ff650c8743b4e0c71637c40"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-0-scale-1.75/metadata.json",
+      "sha256": "38f64bed38bcd16625780d743dade73cdf8b335cb30f80cba69ccbabfaaae295"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-0-scale-2.0/canonical.rgba",
+      "sha256": "1714693d24a266959b5c4cfc16754dfcab05c67081c3e49e443108d1ce08fceb"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-0-scale-2.0/exact-spine.rgba",
+      "sha256": "1714693d24a266959b5c4cfc16754dfcab05c67081c3e49e443108d1ce08fceb"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-0-scale-2.0/local-source.rgba",
+      "sha256": "1714693d24a266959b5c4cfc16754dfcab05c67081c3e49e443108d1ce08fceb"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-0-scale-2.0/metadata.json",
+      "sha256": "3f459d7f0c001c30702a8766559318364abbc8c200c32486320c2bdead586ba1"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-1-scale-1.0/canonical.rgba",
+      "sha256": "d7d7981a46d49c784bffef4cb7b14306562c2ccd651a4ff5465c2c254f5529e6"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-1-scale-1.0/exact-spine.rgba",
+      "sha256": "d7d7981a46d49c784bffef4cb7b14306562c2ccd651a4ff5465c2c254f5529e6"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-1-scale-1.0/local-source.rgba",
+      "sha256": "d7d7981a46d49c784bffef4cb7b14306562c2ccd651a4ff5465c2c254f5529e6"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-1-scale-1.0/metadata.json",
+      "sha256": "dd199a4aafca93f52d907538170e1036637fbee287b4871f8cf44ee16b8689d0"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-1-scale-1.25/canonical.rgba",
+      "sha256": "d46bf60d43e49736cc36bce29fe3e0e14cacf9ae07f0c5360733ef633c2ad0f5"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-1-scale-1.25/exact-spine.rgba",
+      "sha256": "d46bf60d43e49736cc36bce29fe3e0e14cacf9ae07f0c5360733ef633c2ad0f5"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-1-scale-1.25/local-source.rgba",
+      "sha256": "a41fce3666df92f0e319dc68b75fc8b0997f1c7c2a9afff149ebc576b1bd75fb"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-1-scale-1.25/metadata.json",
+      "sha256": "40ffc95a416371a316c287165513496a2112015a8e47214736a63d8223033395"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-1-scale-1.5/canonical.rgba",
+      "sha256": "5e74d69e80ebca625a5e9df09d8b3c19471e30f6366d620fea116e511fcbc28f"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-1-scale-1.5/exact-spine.rgba",
+      "sha256": "5e74d69e80ebca625a5e9df09d8b3c19471e30f6366d620fea116e511fcbc28f"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-1-scale-1.5/local-source.rgba",
+      "sha256": "5e74d69e80ebca625a5e9df09d8b3c19471e30f6366d620fea116e511fcbc28f"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-1-scale-1.5/metadata.json",
+      "sha256": "dc898a5f5bc4c5d7d810a829d57d0b09994998ade38c6cdce36017dfe218fc13"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-1-scale-1.75/canonical.rgba",
+      "sha256": "dee19209071925d729f6d12d28c073671bd69eb7c54e168180a7875d26bcd403"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-1-scale-1.75/exact-spine.rgba",
+      "sha256": "dee19209071925d729f6d12d28c073671bd69eb7c54e168180a7875d26bcd403"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-1-scale-1.75/local-source.rgba",
+      "sha256": "f20722a496d5ed57a553c3e4b9121994b54a5c34b2c68f103f344b13897021c1"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-1-scale-1.75/metadata.json",
+      "sha256": "e940e24531c565ba6f183942b53ed8922dda28b40ba37ab1651aa6a6d2058893"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-1-scale-2.0/canonical.rgba",
+      "sha256": "fbd31f435f0e36bf6e38cfeb8f7d211ea9a85c3b87ac56a0c6568aa50f6110c7"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-1-scale-2.0/exact-spine.rgba",
+      "sha256": "fbd31f435f0e36bf6e38cfeb8f7d211ea9a85c3b87ac56a0c6568aa50f6110c7"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-1-scale-2.0/local-source.rgba",
+      "sha256": "fbd31f435f0e36bf6e38cfeb8f7d211ea9a85c3b87ac56a0c6568aa50f6110c7"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-1-scale-2.0/metadata.json",
+      "sha256": "8c8d2416bc661c6886b60b7c8dedf575d8c07d34bda5169c7444b97a46e17e52"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-2-scale-1.0/canonical.rgba",
+      "sha256": "dfbac632657fbafbef36853bc6bacee8a5079f5354d28c927110d0d7dd3cfa46"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-2-scale-1.0/exact-spine.rgba",
+      "sha256": "dfbac632657fbafbef36853bc6bacee8a5079f5354d28c927110d0d7dd3cfa46"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-2-scale-1.0/local-source.rgba",
+      "sha256": "dfbac632657fbafbef36853bc6bacee8a5079f5354d28c927110d0d7dd3cfa46"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-2-scale-1.0/metadata.json",
+      "sha256": "ff3d977e441a56bd9b52ddcda209a9a0a731710d22811e3f1c07222cdfbd55ac"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-2-scale-1.25/canonical.rgba",
+      "sha256": "da7e48ed4900e7295992f7b443e87deb575c6bf090e02b326e9cff9b8ea55ac4"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-2-scale-1.25/exact-spine.rgba",
+      "sha256": "da7e48ed4900e7295992f7b443e87deb575c6bf090e02b326e9cff9b8ea55ac4"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-2-scale-1.25/local-source.rgba",
+      "sha256": "da7e48ed4900e7295992f7b443e87deb575c6bf090e02b326e9cff9b8ea55ac4"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-2-scale-1.25/metadata.json",
+      "sha256": "8c4709e3f5775fba542f14bcd9e7abea7db72e314444c96827080ba6a8fab883"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-2-scale-1.5/canonical.rgba",
+      "sha256": "1fe3209213e54babe667cdb8e77866af192275d433df45f3929d33986170214e"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-2-scale-1.5/exact-spine.rgba",
+      "sha256": "1fe3209213e54babe667cdb8e77866af192275d433df45f3929d33986170214e"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-2-scale-1.5/local-source.rgba",
+      "sha256": "1fe3209213e54babe667cdb8e77866af192275d433df45f3929d33986170214e"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-2-scale-1.5/metadata.json",
+      "sha256": "a3074ed61cad713ab8035adf7e1716981a5bfa13031c9226329e25d978b06c2c"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-2-scale-1.75/canonical.rgba",
+      "sha256": "1fdf6d75c18a9a0fd315fbc662674b40c7ead5a1419609c7d7ee9961241baa1f"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-2-scale-1.75/exact-spine.rgba",
+      "sha256": "1fdf6d75c18a9a0fd315fbc662674b40c7ead5a1419609c7d7ee9961241baa1f"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-2-scale-1.75/local-source.rgba",
+      "sha256": "1fdf6d75c18a9a0fd315fbc662674b40c7ead5a1419609c7d7ee9961241baa1f"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-2-scale-1.75/metadata.json",
+      "sha256": "dd986b659bef0dc79bd4e13ab695473c0660718a1feb04a0de8ec011bb072071"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-2-scale-2.0/canonical.rgba",
+      "sha256": "1714693d24a266959b5c4cfc16754dfcab05c67081c3e49e443108d1ce08fceb"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-2-scale-2.0/exact-spine.rgba",
+      "sha256": "1714693d24a266959b5c4cfc16754dfcab05c67081c3e49e443108d1ce08fceb"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-2-scale-2.0/local-source.rgba",
+      "sha256": "1714693d24a266959b5c4cfc16754dfcab05c67081c3e49e443108d1ce08fceb"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-2-scale-2.0/metadata.json",
+      "sha256": "092dd643377ff14a33603871856ad2ea1539ad6d4678fb29946870d5c943a2fd"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-3-scale-1.0/canonical.rgba",
+      "sha256": "bcacf16d757b95dc0591a0dd7036ee941a92794e85359bc9aa380d578d9bbd0c"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-3-scale-1.0/exact-spine.rgba",
+      "sha256": "bcacf16d757b95dc0591a0dd7036ee941a92794e85359bc9aa380d578d9bbd0c"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-3-scale-1.0/local-source.rgba",
+      "sha256": "bcacf16d757b95dc0591a0dd7036ee941a92794e85359bc9aa380d578d9bbd0c"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-3-scale-1.0/metadata.json",
+      "sha256": "d502899e816dcc694f5d182c29b8b9b433bb3388a4648cda7905cc17530ddb83"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-3-scale-1.25/canonical.rgba",
+      "sha256": "206c369dfaa57040ff0e3b97825db070fabd3b8a59615c724f7bfea2e6b579b6"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-3-scale-1.25/exact-spine.rgba",
+      "sha256": "206c369dfaa57040ff0e3b97825db070fabd3b8a59615c724f7bfea2e6b579b6"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-3-scale-1.25/local-source.rgba",
+      "sha256": "206c369dfaa57040ff0e3b97825db070fabd3b8a59615c724f7bfea2e6b579b6"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-3-scale-1.25/metadata.json",
+      "sha256": "8581e5723b882df232aed68319db67afcb3bf42450900c8fa990df7d906d3bf8"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-3-scale-1.5/canonical.rgba",
+      "sha256": "77a634f32c8bdeb2256a082f954012f1d55f567277e084429fb897282c04fc4e"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-3-scale-1.5/exact-spine.rgba",
+      "sha256": "77a634f32c8bdeb2256a082f954012f1d55f567277e084429fb897282c04fc4e"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-3-scale-1.5/local-source.rgba",
+      "sha256": "77a634f32c8bdeb2256a082f954012f1d55f567277e084429fb897282c04fc4e"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-3-scale-1.5/metadata.json",
+      "sha256": "92494331a0fbf2934eb7c4addc5b993e7be53c21998b29536e2180d458fb28d4"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-3-scale-1.75/canonical.rgba",
+      "sha256": "1fba26edcbccbdccb3f2ae91b4a0561928967cc89e52268dad9f7f8f8fbe0ab4"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-3-scale-1.75/exact-spine.rgba",
+      "sha256": "1fba26edcbccbdccb3f2ae91b4a0561928967cc89e52268dad9f7f8f8fbe0ab4"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-3-scale-1.75/local-source.rgba",
+      "sha256": "1fba26edcbccbdccb3f2ae91b4a0561928967cc89e52268dad9f7f8f8fbe0ab4"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-3-scale-1.75/metadata.json",
+      "sha256": "a435b6b8117350e881bdd220fa066db91e161c34ef8740b45fb65920a3ed26f8"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-3-scale-2.0/canonical.rgba",
+      "sha256": "b8ca0653a0724b6ff716d50df3a6e34f954f79f2891e94a85ac6064132b2faf7"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-3-scale-2.0/exact-spine.rgba",
+      "sha256": "b8ca0653a0724b6ff716d50df3a6e34f954f79f2891e94a85ac6064132b2faf7"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-3-scale-2.0/local-source.rgba",
+      "sha256": "b8ca0653a0724b6ff716d50df3a6e34f954f79f2891e94a85ac6064132b2faf7"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-3-scale-2.0/metadata.json",
+      "sha256": "e46a31f125ac974d6c18f364e97cf9b84142f206a59c700cd6ac0474d65dc13a"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-4-scale-1.0/canonical.rgba",
+      "sha256": "dfbac632657fbafbef36853bc6bacee8a5079f5354d28c927110d0d7dd3cfa46"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-4-scale-1.0/exact-spine.rgba",
+      "sha256": "dfbac632657fbafbef36853bc6bacee8a5079f5354d28c927110d0d7dd3cfa46"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-4-scale-1.0/local-source.rgba",
+      "sha256": "dfbac632657fbafbef36853bc6bacee8a5079f5354d28c927110d0d7dd3cfa46"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-4-scale-1.0/metadata.json",
+      "sha256": "7480aad9987f99717971f9625298448d4353cc15a63aba3ae27811931afc24ae"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-4-scale-1.25/canonical.rgba",
+      "sha256": "da7e48ed4900e7295992f7b443e87deb575c6bf090e02b326e9cff9b8ea55ac4"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-4-scale-1.25/exact-spine.rgba",
+      "sha256": "da7e48ed4900e7295992f7b443e87deb575c6bf090e02b326e9cff9b8ea55ac4"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-4-scale-1.25/local-source.rgba",
+      "sha256": "4066349ee1a2fd92f7b9db2fd49e4dec759f9eb6689f2f452968575eaa51e7d9"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-4-scale-1.25/metadata.json",
+      "sha256": "42bc44afc5ddf554578fdb5bd72f00fe6d6f7255948b96c7548fdad6f04d1c9c"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-4-scale-1.5/canonical.rgba",
+      "sha256": "1fe3209213e54babe667cdb8e77866af192275d433df45f3929d33986170214e"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-4-scale-1.5/exact-spine.rgba",
+      "sha256": "1fe3209213e54babe667cdb8e77866af192275d433df45f3929d33986170214e"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-4-scale-1.5/local-source.rgba",
+      "sha256": "1fe3209213e54babe667cdb8e77866af192275d433df45f3929d33986170214e"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-4-scale-1.5/metadata.json",
+      "sha256": "02e47c964f3273ea72c30de66899cea76921978a954e18dd598d9c17e73b5401"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-4-scale-1.75/canonical.rgba",
+      "sha256": "1fdf6d75c18a9a0fd315fbc662674b40c7ead5a1419609c7d7ee9961241baa1f"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-4-scale-1.75/exact-spine.rgba",
+      "sha256": "1fdf6d75c18a9a0fd315fbc662674b40c7ead5a1419609c7d7ee9961241baa1f"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-4-scale-1.75/local-source.rgba",
+      "sha256": "4837d3716a21a808a84b8017529d0ec18ac929235ff650c8743b4e0c71637c40"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-4-scale-1.75/metadata.json",
+      "sha256": "93318d404f643232e0d13b287de2f3a16dad8f60b632496b0ccf3f1cc25224b7"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-4-scale-2.0/canonical.rgba",
+      "sha256": "1714693d24a266959b5c4cfc16754dfcab05c67081c3e49e443108d1ce08fceb"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-4-scale-2.0/exact-spine.rgba",
+      "sha256": "1714693d24a266959b5c4cfc16754dfcab05c67081c3e49e443108d1ce08fceb"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-4-scale-2.0/local-source.rgba",
+      "sha256": "1714693d24a266959b5c4cfc16754dfcab05c67081c3e49e443108d1ce08fceb"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-4-scale-2.0/metadata.json",
+      "sha256": "de80fbf6c60f096cb9ad0b79a9acb7654ec4b5f676adabca3ad078f39fabaea6"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-5-scale-1.0/canonical.rgba",
+      "sha256": "85f680febadd0da14d87924a949820a8f0e1c1e523ed154ce1e5484c43419ea4"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-5-scale-1.0/exact-spine.rgba",
+      "sha256": "85f680febadd0da14d87924a949820a8f0e1c1e523ed154ce1e5484c43419ea4"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-5-scale-1.0/local-source.rgba",
+      "sha256": "f59e18fd74c91f1415bf9e5f88e847d6e2e2fc75e6fab30b8c234d8e96edbf0e"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-5-scale-1.0/metadata.json",
+      "sha256": "d57ea4f086f5b52f56dd6b58e187ea0ae7bbab75ada6b571cfce15d1b75838e6"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-5-scale-1.25/canonical.rgba",
+      "sha256": "b8d1c9f2bf0b24e06b1564e5ab2321614730c12c335da8e9140826ccd37aefa8"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-5-scale-1.25/exact-spine.rgba",
+      "sha256": "b8d1c9f2bf0b24e06b1564e5ab2321614730c12c335da8e9140826ccd37aefa8"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-5-scale-1.25/local-source.rgba",
+      "sha256": "bebd3ef0c098c35182c9d7ec1e848598a620108cf465397ad970655ab3141d06"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-5-scale-1.25/metadata.json",
+      "sha256": "8731d57bd3da3a64f80c023ffa3178b35203049d0ccb7dd33753d8cc38b528ec"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-5-scale-1.5/canonical.rgba",
+      "sha256": "20a791b66ede62ce720a0e22afaf1f5f579cec4a71daca7bc430ee409b6c9579"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-5-scale-1.5/exact-spine.rgba",
+      "sha256": "20a791b66ede62ce720a0e22afaf1f5f579cec4a71daca7bc430ee409b6c9579"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-5-scale-1.5/local-source.rgba",
+      "sha256": "3526ab8796705be38c00ba535e3a2a597a1571093383c6df036139c8eebfd2eb"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-5-scale-1.5/metadata.json",
+      "sha256": "8b68efd2e6d39b6c513135c47f633e899ac65774ffb4b2efa0d1846fbd0ab419"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-5-scale-1.75/canonical.rgba",
+      "sha256": "abfba0a933ca0ca3697d52c383b582555ad5bff5293b3a4cea320d75d1d3327d"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-5-scale-1.75/exact-spine.rgba",
+      "sha256": "abfba0a933ca0ca3697d52c383b582555ad5bff5293b3a4cea320d75d1d3327d"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-5-scale-1.75/local-source.rgba",
+      "sha256": "7d1c24e97547c89e63598dcfaf8c58f96cd0cd6d88457c3b4db7ae0df8e7de8e"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-5-scale-1.75/metadata.json",
+      "sha256": "6e4fd781a55bd2935c9b242c9e209a6cbfa8f2a77ccbd2ba67c641f7224209f5"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-5-scale-2.0/canonical.rgba",
+      "sha256": "46a69e064ae5583989ea135e4fbb4903a2446a0c06494ce3a6c190a281d8e47d"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-5-scale-2.0/exact-spine.rgba",
+      "sha256": "46a69e064ae5583989ea135e4fbb4903a2446a0c06494ce3a6c190a281d8e47d"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-5-scale-2.0/local-source.rgba",
+      "sha256": "0b97ea58316f3d8f8e4e874c9f8b944d6db3912ca8d2447cf27f5ed5da0e34ab"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-5-scale-2.0/metadata.json",
+      "sha256": "8e93182b784d49f49b39da634c51d4eaae0383d8759332cb4ef80cbb45e446e6"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-6-scale-1.0/canonical.rgba",
+      "sha256": "f772bb5d568f88ceb4b014e8536e84b7ca91582a7a5367a938aeca45edc8ff84"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-6-scale-1.0/exact-spine.rgba",
+      "sha256": "f772bb5d568f88ceb4b014e8536e84b7ca91582a7a5367a938aeca45edc8ff84"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-6-scale-1.0/local-source.rgba",
+      "sha256": "f772bb5d568f88ceb4b014e8536e84b7ca91582a7a5367a938aeca45edc8ff84"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-6-scale-1.0/metadata.json",
+      "sha256": "45a80d41c91312a9b361ef6b1a34d97a8f757a36b8ec74b7855bb0262ddc0ce2"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-6-scale-1.25/canonical.rgba",
+      "sha256": "c1ff1e4fa8db09a997778d6db2f0799b5246d13cab539d14ea0971b7e31129a0"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-6-scale-1.25/exact-spine.rgba",
+      "sha256": "c1ff1e4fa8db09a997778d6db2f0799b5246d13cab539d14ea0971b7e31129a0"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-6-scale-1.25/local-source.rgba",
+      "sha256": "0ff261a4b5bed8606892dcbab0cecb4a8036447f21444819ab79e9eb6d190715"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-6-scale-1.25/metadata.json",
+      "sha256": "090a185c54d1516e86d90dd0a59dc0ea7dce2f64e2fbbad399ced8a9b5d868ee"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-6-scale-1.5/canonical.rgba",
+      "sha256": "e842778cd0ded9ae98d82d0f5e926ef2b0eb25f25f05bd207d9ccbb03fd5aa63"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-6-scale-1.5/exact-spine.rgba",
+      "sha256": "e842778cd0ded9ae98d82d0f5e926ef2b0eb25f25f05bd207d9ccbb03fd5aa63"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-6-scale-1.5/local-source.rgba",
+      "sha256": "e842778cd0ded9ae98d82d0f5e926ef2b0eb25f25f05bd207d9ccbb03fd5aa63"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-6-scale-1.5/metadata.json",
+      "sha256": "570466e9e213497668a3e0819a627fbceb64021a59bdcacdb5634d9ba082f3ec"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-6-scale-1.75/canonical.rgba",
+      "sha256": "40c71fcf8a6e0549ade74e00cd043a187a14b081a343f3fb4c5b0ad2f65d0494"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-6-scale-1.75/exact-spine.rgba",
+      "sha256": "40c71fcf8a6e0549ade74e00cd043a187a14b081a343f3fb4c5b0ad2f65d0494"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-6-scale-1.75/local-source.rgba",
+      "sha256": "32a11b9ae429fb7e6f26625845a17bff8ba29f6873e58955f3d6048f895a969a"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-6-scale-1.75/metadata.json",
+      "sha256": "7feb6eff098bacf3a37bb7f4342468da8e5a2e7223cf2611f9e9d89acee831b4"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-6-scale-2.0/canonical.rgba",
+      "sha256": "17a1ebdb81b6cc5e47304354b4dd97d1f06f3bf4b8d223abe0a7c3898ed545a4"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-6-scale-2.0/exact-spine.rgba",
+      "sha256": "17a1ebdb81b6cc5e47304354b4dd97d1f06f3bf4b8d223abe0a7c3898ed545a4"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-6-scale-2.0/local-source.rgba",
+      "sha256": "17a1ebdb81b6cc5e47304354b4dd97d1f06f3bf4b8d223abe0a7c3898ed545a4"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-6-scale-2.0/metadata.json",
+      "sha256": "1fec430c81c0be5761e8802986158bf313330ed4077c0027d241a7be1de6705e"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-7-scale-1.0/canonical.rgba",
+      "sha256": "232ebbda0cfdcc9795e6f2d5c80a281424d0a9a76cb1716e55d6f32638709aa2"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-7-scale-1.0/exact-spine.rgba",
+      "sha256": "232ebbda0cfdcc9795e6f2d5c80a281424d0a9a76cb1716e55d6f32638709aa2"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-7-scale-1.0/local-source.rgba",
+      "sha256": "232ebbda0cfdcc9795e6f2d5c80a281424d0a9a76cb1716e55d6f32638709aa2"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-7-scale-1.0/metadata.json",
+      "sha256": "45308406e16d5291051c19fd4e0f555d31c99f77d00a143fa9c522c456367c3f"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-7-scale-1.25/canonical.rgba",
+      "sha256": "013ad766c4319929038a4fd72137f87514fb2cf8a91e28e5d90e52071c809ade"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-7-scale-1.25/exact-spine.rgba",
+      "sha256": "013ad766c4319929038a4fd72137f87514fb2cf8a91e28e5d90e52071c809ade"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-7-scale-1.25/local-source.rgba",
+      "sha256": "f01d3d5bf157cec9b9a70431ba437e2db01f36b4bfc39d8e81aeb381d808c4f9"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-7-scale-1.25/metadata.json",
+      "sha256": "c0eb71950133e6345bc098c3621cb19d3c730b032598b4da4c7ae6624a795f4f"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-7-scale-1.5/canonical.rgba",
+      "sha256": "c5eaa601a6f41a9058bbf7ac772a7b5156e9adb353349739ab222986d4c00994"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-7-scale-1.5/exact-spine.rgba",
+      "sha256": "c5eaa601a6f41a9058bbf7ac772a7b5156e9adb353349739ab222986d4c00994"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-7-scale-1.5/local-source.rgba",
+      "sha256": "c5eaa601a6f41a9058bbf7ac772a7b5156e9adb353349739ab222986d4c00994"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-7-scale-1.5/metadata.json",
+      "sha256": "0930f89cf970a376e61d339eab8b9370db12427b3bb47a8854db32ba248499f9"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-7-scale-1.75/canonical.rgba",
+      "sha256": "b15137e32960467116e9d3f092eb96d644fd42c16ab61674492861f34863aca8"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-7-scale-1.75/exact-spine.rgba",
+      "sha256": "b15137e32960467116e9d3f092eb96d644fd42c16ab61674492861f34863aca8"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-7-scale-1.75/local-source.rgba",
+      "sha256": "db44811678708a774f9226052f619f35cc34812b7f73c807c73b71c5feb8c55a"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-7-scale-1.75/metadata.json",
+      "sha256": "78c5627e745dc072d34ac655a5efebf441662466660a74a3765dfd3d0a2ac218"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-7-scale-2.0/canonical.rgba",
+      "sha256": "f64c45c8d36e347b7d8b8851f02a9a5ec446ee658bb3067b2e79df028ce875e8"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-7-scale-2.0/exact-spine.rgba",
+      "sha256": "f64c45c8d36e347b7d8b8851f02a9a5ec446ee658bb3067b2e79df028ce875e8"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-7-scale-2.0/local-source.rgba",
+      "sha256": "f64c45c8d36e347b7d8b8851f02a9a5ec446ee658bb3067b2e79df028ce875e8"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-7-scale-2.0/metadata.json",
+      "sha256": "f7db576b3341e99aec4fb0a9dc16328e64cdaac1ef563eb26b8677d349d587c7"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-8-scale-1.0/canonical.rgba",
+      "sha256": "c0ed2f3ce77edb9ddc0ce03c53baf19808c525788904561690492e465a689400"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-8-scale-1.0/exact-spine.rgba",
+      "sha256": "c0ed2f3ce77edb9ddc0ce03c53baf19808c525788904561690492e465a689400"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-8-scale-1.0/local-source.rgba",
+      "sha256": "c0ed2f3ce77edb9ddc0ce03c53baf19808c525788904561690492e465a689400"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-8-scale-1.0/metadata.json",
+      "sha256": "987d750d56786396a378b6189bdcfd0061aa4d6c725f6b20f022a8e565131bca"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-8-scale-1.25/canonical.rgba",
+      "sha256": "12d55a3e6cf3178fb251565aef9ff66fc58dae336345489e1fe47c01b71e0842"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-8-scale-1.25/exact-spine.rgba",
+      "sha256": "12d55a3e6cf3178fb251565aef9ff66fc58dae336345489e1fe47c01b71e0842"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-8-scale-1.25/local-source.rgba",
+      "sha256": "3382a8fb2a45100d35a214abed95470ab754694c432a177865c86d8c531da79f"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-8-scale-1.25/metadata.json",
+      "sha256": "1e3595622a25a6bd743e4feebcdcb136f2a167df39b3a0a5c3e7e25d135fd451"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-8-scale-1.5/canonical.rgba",
+      "sha256": "aef3b8420c082c4105ce7373c6e529b544ab9df7f875119ae5d2e5bd1fc96d4a"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-8-scale-1.5/exact-spine.rgba",
+      "sha256": "aef3b8420c082c4105ce7373c6e529b544ab9df7f875119ae5d2e5bd1fc96d4a"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-8-scale-1.5/local-source.rgba",
+      "sha256": "aef3b8420c082c4105ce7373c6e529b544ab9df7f875119ae5d2e5bd1fc96d4a"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-8-scale-1.5/metadata.json",
+      "sha256": "74272894e7435fba9599b6f53d6c9cb3fc59f1189bcfeb14555c943bdd190038"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-8-scale-1.75/canonical.rgba",
+      "sha256": "f819f48e4f9425333729418e0eefb8a8c42578f931a32ae471206a9d137313a3"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-8-scale-1.75/exact-spine.rgba",
+      "sha256": "f819f48e4f9425333729418e0eefb8a8c42578f931a32ae471206a9d137313a3"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-8-scale-1.75/local-source.rgba",
+      "sha256": "8cf7c208a85c9c45d521d83e67d8b17b41b5ccd73c5e096c77c6ed014ada900a"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-8-scale-1.75/metadata.json",
+      "sha256": "cf4a0470b4ba41a53056261f03d0b067e7d92cd75e5d75e4e09bb60672e47b19"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-8-scale-2.0/canonical.rgba",
+      "sha256": "d36f8570c6a2dbfcaf0c81337cc49379f1f5f3a143fa4b09401ed30fbfc2d176"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-8-scale-2.0/exact-spine.rgba",
+      "sha256": "d36f8570c6a2dbfcaf0c81337cc49379f1f5f3a143fa4b09401ed30fbfc2d176"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-8-scale-2.0/local-source.rgba",
+      "sha256": "d36f8570c6a2dbfcaf0c81337cc49379f1f5f3a143fa4b09401ed30fbfc2d176"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/control-8-scale-2.0/metadata.json",
+      "sha256": "e3a101572c5ba83e611ec50312b0ce120344ec61b987d5bbfaaa3f4d41d1eff5"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-real-diagnostics-runtime-v4684/native80/receipt.json",
+      "sha256": "8f8ef21016b9504a34ad6769d9d8129553856589980e04698907630338463c70"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1/repeat-0/test.html",
+      "sha256": "04525f7b4363408e506f3236988f85c44a4a78370cd527e59283882754cb0a4d"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1/repeat-0/chromium.png",
+      "sha256": "a79d12d32f5e8b577bce0f57c374071f3670a1b3d512ebdd7c58e91d7131fd40"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1/repeat-0/chromium-capture-0.png",
+      "sha256": "a79d12d32f5e8b577bce0f57c374071f3670a1b3d512ebdd7c58e91d7131fd40"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1/repeat-0/chromium-capture-1.png",
+      "sha256": "a79d12d32f5e8b577bce0f57c374071f3670a1b3d512ebdd7c58e91d7131fd40"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1/repeat-0/observer-off.png",
+      "sha256": "a79d12d32f5e8b577bce0f57c374071f3670a1b3d512ebdd7c58e91d7131fd40"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1/repeat-0/observer-off-capture-0.png",
+      "sha256": "a79d12d32f5e8b577bce0f57c374071f3670a1b3d512ebdd7c58e91d7131fd40"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1/repeat-0/observer-off-capture-1.png",
+      "sha256": "a79d12d32f5e8b577bce0f57c374071f3670a1b3d512ebdd7c58e91d7131fd40"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1/repeat-1/test.html",
+      "sha256": "04525f7b4363408e506f3236988f85c44a4a78370cd527e59283882754cb0a4d"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1/repeat-1/chromium.png",
+      "sha256": "a79d12d32f5e8b577bce0f57c374071f3670a1b3d512ebdd7c58e91d7131fd40"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1/repeat-1/chromium-capture-0.png",
+      "sha256": "a79d12d32f5e8b577bce0f57c374071f3670a1b3d512ebdd7c58e91d7131fd40"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1/repeat-1/chromium-capture-1.png",
+      "sha256": "a79d12d32f5e8b577bce0f57c374071f3670a1b3d512ebdd7c58e91d7131fd40"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1/repeat-1/observer-off.png",
+      "sha256": "a79d12d32f5e8b577bce0f57c374071f3670a1b3d512ebdd7c58e91d7131fd40"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1/repeat-1/observer-off-capture-0.png",
+      "sha256": "a79d12d32f5e8b577bce0f57c374071f3670a1b3d512ebdd7c58e91d7131fd40"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1/repeat-1/observer-off-capture-1.png",
+      "sha256": "a79d12d32f5e8b577bce0f57c374071f3670a1b3d512ebdd7c58e91d7131fd40"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/control-1-scale-1-repeat-0/local_source.rgba",
+      "sha256": "194ccdb5ff4c7c5291df801d155d00ea0208e6ff66ed403003af7dcdb7594c9c"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/control-1-scale-1-repeat-1/local_source.rgba",
+      "sha256": "194ccdb5ff4c7c5291df801d155d00ea0208e6ff66ed403003af7dcdb7594c9c"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.25/repeat-0/test.html",
+      "sha256": "04525f7b4363408e506f3236988f85c44a4a78370cd527e59283882754cb0a4d"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.25/repeat-0/chromium.png",
+      "sha256": "7318d54299aecdb12e441afc87d1936451fdcc50c20b9d297bd1127671744381"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.25/repeat-0/chromium-capture-0.png",
+      "sha256": "7318d54299aecdb12e441afc87d1936451fdcc50c20b9d297bd1127671744381"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.25/repeat-0/chromium-capture-1.png",
+      "sha256": "7318d54299aecdb12e441afc87d1936451fdcc50c20b9d297bd1127671744381"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.25/repeat-0/observer-off.png",
+      "sha256": "7318d54299aecdb12e441afc87d1936451fdcc50c20b9d297bd1127671744381"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.25/repeat-0/observer-off-capture-0.png",
+      "sha256": "7318d54299aecdb12e441afc87d1936451fdcc50c20b9d297bd1127671744381"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.25/repeat-0/observer-off-capture-1.png",
+      "sha256": "7318d54299aecdb12e441afc87d1936451fdcc50c20b9d297bd1127671744381"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.25/repeat-1/test.html",
+      "sha256": "04525f7b4363408e506f3236988f85c44a4a78370cd527e59283882754cb0a4d"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.25/repeat-1/chromium.png",
+      "sha256": "7318d54299aecdb12e441afc87d1936451fdcc50c20b9d297bd1127671744381"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.25/repeat-1/chromium-capture-0.png",
+      "sha256": "7318d54299aecdb12e441afc87d1936451fdcc50c20b9d297bd1127671744381"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.25/repeat-1/chromium-capture-1.png",
+      "sha256": "7318d54299aecdb12e441afc87d1936451fdcc50c20b9d297bd1127671744381"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.25/repeat-1/observer-off.png",
+      "sha256": "7318d54299aecdb12e441afc87d1936451fdcc50c20b9d297bd1127671744381"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.25/repeat-1/observer-off-capture-0.png",
+      "sha256": "7318d54299aecdb12e441afc87d1936451fdcc50c20b9d297bd1127671744381"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.25/repeat-1/observer-off-capture-1.png",
+      "sha256": "7318d54299aecdb12e441afc87d1936451fdcc50c20b9d297bd1127671744381"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/control-1-scale-1.25-repeat-0/local_source.rgba",
+      "sha256": "74dd955986d610c653822f6bf4d0784c3651fabd41ab923d76fcbb869eda0dcb"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/control-1-scale-1.25-repeat-1/local_source.rgba",
+      "sha256": "74dd955986d610c653822f6bf4d0784c3651fabd41ab923d76fcbb869eda0dcb"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.5/repeat-0/test.html",
+      "sha256": "04525f7b4363408e506f3236988f85c44a4a78370cd527e59283882754cb0a4d"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.5/repeat-0/chromium.png",
+      "sha256": "10fbdb515f6c73152d731c2473efd9a432fb8e6617f87544db9ee3293bd8d8f9"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.5/repeat-0/chromium-capture-0.png",
+      "sha256": "10fbdb515f6c73152d731c2473efd9a432fb8e6617f87544db9ee3293bd8d8f9"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.5/repeat-0/chromium-capture-1.png",
+      "sha256": "10fbdb515f6c73152d731c2473efd9a432fb8e6617f87544db9ee3293bd8d8f9"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.5/repeat-0/observer-off.png",
+      "sha256": "10fbdb515f6c73152d731c2473efd9a432fb8e6617f87544db9ee3293bd8d8f9"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.5/repeat-0/observer-off-capture-0.png",
+      "sha256": "10fbdb515f6c73152d731c2473efd9a432fb8e6617f87544db9ee3293bd8d8f9"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.5/repeat-0/observer-off-capture-1.png",
+      "sha256": "10fbdb515f6c73152d731c2473efd9a432fb8e6617f87544db9ee3293bd8d8f9"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.5/repeat-1/test.html",
+      "sha256": "04525f7b4363408e506f3236988f85c44a4a78370cd527e59283882754cb0a4d"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.5/repeat-1/chromium.png",
+      "sha256": "10fbdb515f6c73152d731c2473efd9a432fb8e6617f87544db9ee3293bd8d8f9"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.5/repeat-1/chromium-capture-0.png",
+      "sha256": "10fbdb515f6c73152d731c2473efd9a432fb8e6617f87544db9ee3293bd8d8f9"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.5/repeat-1/chromium-capture-1.png",
+      "sha256": "10fbdb515f6c73152d731c2473efd9a432fb8e6617f87544db9ee3293bd8d8f9"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.5/repeat-1/observer-off.png",
+      "sha256": "10fbdb515f6c73152d731c2473efd9a432fb8e6617f87544db9ee3293bd8d8f9"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.5/repeat-1/observer-off-capture-0.png",
+      "sha256": "10fbdb515f6c73152d731c2473efd9a432fb8e6617f87544db9ee3293bd8d8f9"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.5/repeat-1/observer-off-capture-1.png",
+      "sha256": "10fbdb515f6c73152d731c2473efd9a432fb8e6617f87544db9ee3293bd8d8f9"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/control-1-scale-1.5-repeat-0/local_source.rgba",
+      "sha256": "53de46f322144af2d145f1ec4902c02a60f09e9eb3d2c2e95564b31afcb4b79f"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/control-1-scale-1.5-repeat-1/local_source.rgba",
+      "sha256": "53de46f322144af2d145f1ec4902c02a60f09e9eb3d2c2e95564b31afcb4b79f"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.75/repeat-0/test.html",
+      "sha256": "04525f7b4363408e506f3236988f85c44a4a78370cd527e59283882754cb0a4d"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.75/repeat-0/chromium.png",
+      "sha256": "2a0025abf8ed2c4b1687321b59e53a3fadcfce16b1ced4d1fe8ab9023054c792"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.75/repeat-0/chromium-capture-0.png",
+      "sha256": "2a0025abf8ed2c4b1687321b59e53a3fadcfce16b1ced4d1fe8ab9023054c792"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.75/repeat-0/chromium-capture-1.png",
+      "sha256": "2a0025abf8ed2c4b1687321b59e53a3fadcfce16b1ced4d1fe8ab9023054c792"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.75/repeat-0/observer-off.png",
+      "sha256": "2a0025abf8ed2c4b1687321b59e53a3fadcfce16b1ced4d1fe8ab9023054c792"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.75/repeat-0/observer-off-capture-0.png",
+      "sha256": "2a0025abf8ed2c4b1687321b59e53a3fadcfce16b1ced4d1fe8ab9023054c792"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.75/repeat-0/observer-off-capture-1.png",
+      "sha256": "2a0025abf8ed2c4b1687321b59e53a3fadcfce16b1ced4d1fe8ab9023054c792"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.75/repeat-1/test.html",
+      "sha256": "04525f7b4363408e506f3236988f85c44a4a78370cd527e59283882754cb0a4d"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.75/repeat-1/chromium.png",
+      "sha256": "2a0025abf8ed2c4b1687321b59e53a3fadcfce16b1ced4d1fe8ab9023054c792"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.75/repeat-1/chromium-capture-0.png",
+      "sha256": "2a0025abf8ed2c4b1687321b59e53a3fadcfce16b1ced4d1fe8ab9023054c792"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.75/repeat-1/chromium-capture-1.png",
+      "sha256": "2a0025abf8ed2c4b1687321b59e53a3fadcfce16b1ced4d1fe8ab9023054c792"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.75/repeat-1/observer-off.png",
+      "sha256": "2a0025abf8ed2c4b1687321b59e53a3fadcfce16b1ced4d1fe8ab9023054c792"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.75/repeat-1/observer-off-capture-0.png",
+      "sha256": "2a0025abf8ed2c4b1687321b59e53a3fadcfce16b1ced4d1fe8ab9023054c792"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.75/repeat-1/observer-off-capture-1.png",
+      "sha256": "2a0025abf8ed2c4b1687321b59e53a3fadcfce16b1ced4d1fe8ab9023054c792"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/control-1-scale-1.75-repeat-0/local_source.rgba",
+      "sha256": "ac6857827f5d8ce4b219c9024d486718c306ed1d1b1d72bf3c1776de9d67af98"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/control-1-scale-1.75-repeat-1/local_source.rgba",
+      "sha256": "ac6857827f5d8ce4b219c9024d486718c306ed1d1b1d72bf3c1776de9d67af98"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@2/repeat-0/test.html",
+      "sha256": "04525f7b4363408e506f3236988f85c44a4a78370cd527e59283882754cb0a4d"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@2/repeat-0/chromium.png",
+      "sha256": "6280e1311051a8fe9e2cfa2037b0c6a44f73073738e55fc556043455ac5d3692"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@2/repeat-0/chromium-capture-0.png",
+      "sha256": "6280e1311051a8fe9e2cfa2037b0c6a44f73073738e55fc556043455ac5d3692"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@2/repeat-0/chromium-capture-1.png",
+      "sha256": "6280e1311051a8fe9e2cfa2037b0c6a44f73073738e55fc556043455ac5d3692"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@2/repeat-0/observer-off.png",
+      "sha256": "6280e1311051a8fe9e2cfa2037b0c6a44f73073738e55fc556043455ac5d3692"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@2/repeat-0/observer-off-capture-0.png",
+      "sha256": "6280e1311051a8fe9e2cfa2037b0c6a44f73073738e55fc556043455ac5d3692"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@2/repeat-0/observer-off-capture-1.png",
+      "sha256": "6280e1311051a8fe9e2cfa2037b0c6a44f73073738e55fc556043455ac5d3692"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@2/repeat-1/test.html",
+      "sha256": "04525f7b4363408e506f3236988f85c44a4a78370cd527e59283882754cb0a4d"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@2/repeat-1/chromium.png",
+      "sha256": "6280e1311051a8fe9e2cfa2037b0c6a44f73073738e55fc556043455ac5d3692"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@2/repeat-1/chromium-capture-0.png",
+      "sha256": "6280e1311051a8fe9e2cfa2037b0c6a44f73073738e55fc556043455ac5d3692"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@2/repeat-1/chromium-capture-1.png",
+      "sha256": "6280e1311051a8fe9e2cfa2037b0c6a44f73073738e55fc556043455ac5d3692"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@2/repeat-1/observer-off.png",
+      "sha256": "6280e1311051a8fe9e2cfa2037b0c6a44f73073738e55fc556043455ac5d3692"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@2/repeat-1/observer-off-capture-0.png",
+      "sha256": "6280e1311051a8fe9e2cfa2037b0c6a44f73073738e55fc556043455ac5d3692"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@2/repeat-1/observer-off-capture-1.png",
+      "sha256": "6280e1311051a8fe9e2cfa2037b0c6a44f73073738e55fc556043455ac5d3692"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/control-1-scale-2-repeat-0/local_source.rgba",
+      "sha256": "9be42ce2184c4ca43aeae2ec14be6abc4ff653a049fb2cfd7484ed6d0add1506"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/control-1-scale-2-repeat-1/local_source.rgba",
+      "sha256": "9be42ce2184c4ca43aeae2ec14be6abc4ff653a049fb2cfd7484ed6d0add1506"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1/repeat-0/test.html",
+      "sha256": "848f383e9e2d11e6b6e5485e1e2d7d6e04480fe3e42d9ab62f78ef0dd0f641d0"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1/repeat-0/chromium.png",
+      "sha256": "3b02925278e42e8d26817ec9896a966156eaffe2e78785391f074b2dc5d69491"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1/repeat-0/chromium-capture-0.png",
+      "sha256": "3b02925278e42e8d26817ec9896a966156eaffe2e78785391f074b2dc5d69491"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1/repeat-0/chromium-capture-1.png",
+      "sha256": "3b02925278e42e8d26817ec9896a966156eaffe2e78785391f074b2dc5d69491"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1/repeat-0/observer-off.png",
+      "sha256": "3b02925278e42e8d26817ec9896a966156eaffe2e78785391f074b2dc5d69491"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1/repeat-0/observer-off-capture-0.png",
+      "sha256": "3b02925278e42e8d26817ec9896a966156eaffe2e78785391f074b2dc5d69491"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1/repeat-0/observer-off-capture-1.png",
+      "sha256": "3b02925278e42e8d26817ec9896a966156eaffe2e78785391f074b2dc5d69491"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1/repeat-1/test.html",
+      "sha256": "848f383e9e2d11e6b6e5485e1e2d7d6e04480fe3e42d9ab62f78ef0dd0f641d0"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1/repeat-1/chromium.png",
+      "sha256": "3b02925278e42e8d26817ec9896a966156eaffe2e78785391f074b2dc5d69491"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1/repeat-1/chromium-capture-0.png",
+      "sha256": "3b02925278e42e8d26817ec9896a966156eaffe2e78785391f074b2dc5d69491"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1/repeat-1/chromium-capture-1.png",
+      "sha256": "3b02925278e42e8d26817ec9896a966156eaffe2e78785391f074b2dc5d69491"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1/repeat-1/observer-off.png",
+      "sha256": "3b02925278e42e8d26817ec9896a966156eaffe2e78785391f074b2dc5d69491"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1/repeat-1/observer-off-capture-0.png",
+      "sha256": "3b02925278e42e8d26817ec9896a966156eaffe2e78785391f074b2dc5d69491"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1/repeat-1/observer-off-capture-1.png",
+      "sha256": "3b02925278e42e8d26817ec9896a966156eaffe2e78785391f074b2dc5d69491"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/control-8-scale-1-repeat-0/local_source.rgba",
+      "sha256": "7e1a9126c828ed156024c7cdf232ad00b63bad7dcf57e20d6f9d1e116f9a4b57"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/control-8-scale-1-repeat-1/local_source.rgba",
+      "sha256": "7e1a9126c828ed156024c7cdf232ad00b63bad7dcf57e20d6f9d1e116f9a4b57"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.25/repeat-0/test.html",
+      "sha256": "848f383e9e2d11e6b6e5485e1e2d7d6e04480fe3e42d9ab62f78ef0dd0f641d0"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.25/repeat-0/chromium.png",
+      "sha256": "10c60355b9dacf590197edf418630f833bcd77168ffd29cfc86783ee6c3bacc7"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.25/repeat-0/chromium-capture-0.png",
+      "sha256": "10c60355b9dacf590197edf418630f833bcd77168ffd29cfc86783ee6c3bacc7"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.25/repeat-0/chromium-capture-1.png",
+      "sha256": "10c60355b9dacf590197edf418630f833bcd77168ffd29cfc86783ee6c3bacc7"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.25/repeat-0/observer-off.png",
+      "sha256": "10c60355b9dacf590197edf418630f833bcd77168ffd29cfc86783ee6c3bacc7"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.25/repeat-0/observer-off-capture-0.png",
+      "sha256": "10c60355b9dacf590197edf418630f833bcd77168ffd29cfc86783ee6c3bacc7"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.25/repeat-0/observer-off-capture-1.png",
+      "sha256": "10c60355b9dacf590197edf418630f833bcd77168ffd29cfc86783ee6c3bacc7"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.25/repeat-1/test.html",
+      "sha256": "848f383e9e2d11e6b6e5485e1e2d7d6e04480fe3e42d9ab62f78ef0dd0f641d0"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.25/repeat-1/chromium.png",
+      "sha256": "10c60355b9dacf590197edf418630f833bcd77168ffd29cfc86783ee6c3bacc7"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.25/repeat-1/chromium-capture-0.png",
+      "sha256": "10c60355b9dacf590197edf418630f833bcd77168ffd29cfc86783ee6c3bacc7"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.25/repeat-1/chromium-capture-1.png",
+      "sha256": "10c60355b9dacf590197edf418630f833bcd77168ffd29cfc86783ee6c3bacc7"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.25/repeat-1/observer-off.png",
+      "sha256": "10c60355b9dacf590197edf418630f833bcd77168ffd29cfc86783ee6c3bacc7"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.25/repeat-1/observer-off-capture-0.png",
+      "sha256": "10c60355b9dacf590197edf418630f833bcd77168ffd29cfc86783ee6c3bacc7"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.25/repeat-1/observer-off-capture-1.png",
+      "sha256": "10c60355b9dacf590197edf418630f833bcd77168ffd29cfc86783ee6c3bacc7"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/control-8-scale-1.25-repeat-0/local_source.rgba",
+      "sha256": "fd8af7bed6cecca532329e3346d3983dfc28eae0f48a6d580cdc77bd7a19644e"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/control-8-scale-1.25-repeat-1/local_source.rgba",
+      "sha256": "fd8af7bed6cecca532329e3346d3983dfc28eae0f48a6d580cdc77bd7a19644e"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.5/repeat-0/test.html",
+      "sha256": "848f383e9e2d11e6b6e5485e1e2d7d6e04480fe3e42d9ab62f78ef0dd0f641d0"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.5/repeat-0/chromium.png",
+      "sha256": "5b880a46c0a315636806d7618b06e74ca85bf56eef2677e42a8631c7ad528c2d"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.5/repeat-0/chromium-capture-0.png",
+      "sha256": "5b880a46c0a315636806d7618b06e74ca85bf56eef2677e42a8631c7ad528c2d"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.5/repeat-0/chromium-capture-1.png",
+      "sha256": "5b880a46c0a315636806d7618b06e74ca85bf56eef2677e42a8631c7ad528c2d"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.5/repeat-0/observer-off.png",
+      "sha256": "5b880a46c0a315636806d7618b06e74ca85bf56eef2677e42a8631c7ad528c2d"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.5/repeat-0/observer-off-capture-0.png",
+      "sha256": "5b880a46c0a315636806d7618b06e74ca85bf56eef2677e42a8631c7ad528c2d"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.5/repeat-0/observer-off-capture-1.png",
+      "sha256": "5b880a46c0a315636806d7618b06e74ca85bf56eef2677e42a8631c7ad528c2d"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.5/repeat-1/test.html",
+      "sha256": "848f383e9e2d11e6b6e5485e1e2d7d6e04480fe3e42d9ab62f78ef0dd0f641d0"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.5/repeat-1/chromium.png",
+      "sha256": "5b880a46c0a315636806d7618b06e74ca85bf56eef2677e42a8631c7ad528c2d"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.5/repeat-1/chromium-capture-0.png",
+      "sha256": "5b880a46c0a315636806d7618b06e74ca85bf56eef2677e42a8631c7ad528c2d"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.5/repeat-1/chromium-capture-1.png",
+      "sha256": "5b880a46c0a315636806d7618b06e74ca85bf56eef2677e42a8631c7ad528c2d"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.5/repeat-1/observer-off.png",
+      "sha256": "5b880a46c0a315636806d7618b06e74ca85bf56eef2677e42a8631c7ad528c2d"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.5/repeat-1/observer-off-capture-0.png",
+      "sha256": "5b880a46c0a315636806d7618b06e74ca85bf56eef2677e42a8631c7ad528c2d"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.5/repeat-1/observer-off-capture-1.png",
+      "sha256": "5b880a46c0a315636806d7618b06e74ca85bf56eef2677e42a8631c7ad528c2d"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/control-8-scale-1.5-repeat-0/local_source.rgba",
+      "sha256": "f52168086679db3b106d02bf9e1edead2b802e248272f3485736f1f4087774e5"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/control-8-scale-1.5-repeat-1/local_source.rgba",
+      "sha256": "f52168086679db3b106d02bf9e1edead2b802e248272f3485736f1f4087774e5"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.75/repeat-0/test.html",
+      "sha256": "848f383e9e2d11e6b6e5485e1e2d7d6e04480fe3e42d9ab62f78ef0dd0f641d0"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.75/repeat-0/chromium.png",
+      "sha256": "3e1615f3ca65b6161b3428ebce923eb70a6d71a5cc79de7cd9dd2c86e9869264"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.75/repeat-0/chromium-capture-0.png",
+      "sha256": "3e1615f3ca65b6161b3428ebce923eb70a6d71a5cc79de7cd9dd2c86e9869264"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.75/repeat-0/chromium-capture-1.png",
+      "sha256": "3e1615f3ca65b6161b3428ebce923eb70a6d71a5cc79de7cd9dd2c86e9869264"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.75/repeat-0/observer-off.png",
+      "sha256": "3e1615f3ca65b6161b3428ebce923eb70a6d71a5cc79de7cd9dd2c86e9869264"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.75/repeat-0/observer-off-capture-0.png",
+      "sha256": "3e1615f3ca65b6161b3428ebce923eb70a6d71a5cc79de7cd9dd2c86e9869264"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.75/repeat-0/observer-off-capture-1.png",
+      "sha256": "3e1615f3ca65b6161b3428ebce923eb70a6d71a5cc79de7cd9dd2c86e9869264"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.75/repeat-1/test.html",
+      "sha256": "848f383e9e2d11e6b6e5485e1e2d7d6e04480fe3e42d9ab62f78ef0dd0f641d0"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.75/repeat-1/chromium.png",
+      "sha256": "3e1615f3ca65b6161b3428ebce923eb70a6d71a5cc79de7cd9dd2c86e9869264"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.75/repeat-1/chromium-capture-0.png",
+      "sha256": "3e1615f3ca65b6161b3428ebce923eb70a6d71a5cc79de7cd9dd2c86e9869264"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.75/repeat-1/chromium-capture-1.png",
+      "sha256": "3e1615f3ca65b6161b3428ebce923eb70a6d71a5cc79de7cd9dd2c86e9869264"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.75/repeat-1/observer-off.png",
+      "sha256": "3e1615f3ca65b6161b3428ebce923eb70a6d71a5cc79de7cd9dd2c86e9869264"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.75/repeat-1/observer-off-capture-0.png",
+      "sha256": "3e1615f3ca65b6161b3428ebce923eb70a6d71a5cc79de7cd9dd2c86e9869264"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.75/repeat-1/observer-off-capture-1.png",
+      "sha256": "3e1615f3ca65b6161b3428ebce923eb70a6d71a5cc79de7cd9dd2c86e9869264"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/control-8-scale-1.75-repeat-0/local_source.rgba",
+      "sha256": "a931a6ac32e7f337a7c6f75d21ee9da08ee55f0c6d1e09f66518d95bee595ee7"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/control-8-scale-1.75-repeat-1/local_source.rgba",
+      "sha256": "a931a6ac32e7f337a7c6f75d21ee9da08ee55f0c6d1e09f66518d95bee595ee7"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@2/repeat-0/test.html",
+      "sha256": "848f383e9e2d11e6b6e5485e1e2d7d6e04480fe3e42d9ab62f78ef0dd0f641d0"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@2/repeat-0/chromium.png",
+      "sha256": "6dac2bc683b7b36b7b2ef86d69072d4b1f102c4e4b8b786a89b4899aa86327d8"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@2/repeat-0/chromium-capture-0.png",
+      "sha256": "6dac2bc683b7b36b7b2ef86d69072d4b1f102c4e4b8b786a89b4899aa86327d8"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@2/repeat-0/chromium-capture-1.png",
+      "sha256": "6dac2bc683b7b36b7b2ef86d69072d4b1f102c4e4b8b786a89b4899aa86327d8"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@2/repeat-0/observer-off.png",
+      "sha256": "6dac2bc683b7b36b7b2ef86d69072d4b1f102c4e4b8b786a89b4899aa86327d8"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@2/repeat-0/observer-off-capture-0.png",
+      "sha256": "6dac2bc683b7b36b7b2ef86d69072d4b1f102c4e4b8b786a89b4899aa86327d8"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@2/repeat-0/observer-off-capture-1.png",
+      "sha256": "6dac2bc683b7b36b7b2ef86d69072d4b1f102c4e4b8b786a89b4899aa86327d8"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@2/repeat-1/test.html",
+      "sha256": "848f383e9e2d11e6b6e5485e1e2d7d6e04480fe3e42d9ab62f78ef0dd0f641d0"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@2/repeat-1/chromium.png",
+      "sha256": "6dac2bc683b7b36b7b2ef86d69072d4b1f102c4e4b8b786a89b4899aa86327d8"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@2/repeat-1/chromium-capture-0.png",
+      "sha256": "6dac2bc683b7b36b7b2ef86d69072d4b1f102c4e4b8b786a89b4899aa86327d8"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@2/repeat-1/chromium-capture-1.png",
+      "sha256": "6dac2bc683b7b36b7b2ef86d69072d4b1f102c4e4b8b786a89b4899aa86327d8"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@2/repeat-1/observer-off.png",
+      "sha256": "6dac2bc683b7b36b7b2ef86d69072d4b1f102c4e4b8b786a89b4899aa86327d8"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@2/repeat-1/observer-off-capture-0.png",
+      "sha256": "6dac2bc683b7b36b7b2ef86d69072d4b1f102c4e4b8b786a89b4899aa86327d8"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@2/repeat-1/observer-off-capture-1.png",
+      "sha256": "6dac2bc683b7b36b7b2ef86d69072d4b1f102c4e4b8b786a89b4899aa86327d8"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/control-8-scale-2-repeat-0/local_source.rgba",
+      "sha256": "8693429504bf289b26d10856ce0350de0711bd079a4ebb7cf93b5fa8cde78e5e"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/control-8-scale-2-repeat-1/local_source.rgba",
+      "sha256": "8693429504bf289b26d10856ce0350de0711bd079a4ebb7cf93b5fa8cde78e5e"
+    }
+  ],
+  "native_receipt_sha256": "702c0b644a0502ffca1c37182722d9b28f76c691f49202e845da918210ee56e8",
+  "oracle_identity": "unchanged Engine original_edge modes 1 and 8, not the original raw-WPT mutation history",
+  "original_png_rgba_inputs_mutated": false,
+  "pixel_tolerance": 0,
+  "production_changed": false,
+  "renderer_qualified": false,
+  "rows": [
+    {
+      "browser_captures": [
+        {
+          "dom_before_sha256": "7391c9783b90817d0d65332378f4344e26a3fea00a4d582ea475a2fb464234bd",
+          "html_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1/repeat-0/test.html",
+          "html_sha256": "04525f7b4363408e506f3236988f85c44a4a78370cd527e59283882754cb0a4d",
+          "physical_size": [
+            800,
+            600
+          ],
+          "pngs": [
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1/repeat-0/chromium.png",
+              "png_sha256": "a79d12d32f5e8b577bce0f57c374071f3670a1b3d512ebdd7c58e91d7131fd40",
+              "rgba_sha256": "194ccdb5ff4c7c5291df801d155d00ea0208e6ff66ed403003af7dcdb7594c9c"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1/repeat-0/chromium-capture-0.png",
+              "png_sha256": "a79d12d32f5e8b577bce0f57c374071f3670a1b3d512ebdd7c58e91d7131fd40",
+              "rgba_sha256": "194ccdb5ff4c7c5291df801d155d00ea0208e6ff66ed403003af7dcdb7594c9c"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1/repeat-0/chromium-capture-1.png",
+              "png_sha256": "a79d12d32f5e8b577bce0f57c374071f3670a1b3d512ebdd7c58e91d7131fd40",
+              "rgba_sha256": "194ccdb5ff4c7c5291df801d155d00ea0208e6ff66ed403003af7dcdb7594c9c"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1/repeat-0/observer-off.png",
+              "png_sha256": "a79d12d32f5e8b577bce0f57c374071f3670a1b3d512ebdd7c58e91d7131fd40",
+              "rgba_sha256": "194ccdb5ff4c7c5291df801d155d00ea0208e6ff66ed403003af7dcdb7594c9c"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1/repeat-0/observer-off-capture-0.png",
+              "png_sha256": "a79d12d32f5e8b577bce0f57c374071f3670a1b3d512ebdd7c58e91d7131fd40",
+              "rgba_sha256": "194ccdb5ff4c7c5291df801d155d00ea0208e6ff66ed403003af7dcdb7594c9c"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1/repeat-0/observer-off-capture-1.png",
+              "png_sha256": "a79d12d32f5e8b577bce0f57c374071f3670a1b3d512ebdd7c58e91d7131fd40",
+              "rgba_sha256": "194ccdb5ff4c7c5291df801d155d00ea0208e6ff66ed403003af7dcdb7594c9c"
+            }
+          ],
+          "repeat": 0,
+          "viewport_metrics": {
+            "clientHeight": 600,
+            "clientWidth": 785,
+            "scrollHeight": 1000,
+            "scrollLeft": 0,
+            "scrollTop": 0,
+            "scrollWidth": 785
+          }
+        },
+        {
+          "dom_before_sha256": "8ea872550df47ee135dc54a62d3e455305070dd6f335b9ca6f2667506e621921",
+          "html_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1/repeat-1/test.html",
+          "html_sha256": "04525f7b4363408e506f3236988f85c44a4a78370cd527e59283882754cb0a4d",
+          "physical_size": [
+            800,
+            600
+          ],
+          "pngs": [
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1/repeat-1/chromium.png",
+              "png_sha256": "a79d12d32f5e8b577bce0f57c374071f3670a1b3d512ebdd7c58e91d7131fd40",
+              "rgba_sha256": "194ccdb5ff4c7c5291df801d155d00ea0208e6ff66ed403003af7dcdb7594c9c"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1/repeat-1/chromium-capture-0.png",
+              "png_sha256": "a79d12d32f5e8b577bce0f57c374071f3670a1b3d512ebdd7c58e91d7131fd40",
+              "rgba_sha256": "194ccdb5ff4c7c5291df801d155d00ea0208e6ff66ed403003af7dcdb7594c9c"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1/repeat-1/chromium-capture-1.png",
+              "png_sha256": "a79d12d32f5e8b577bce0f57c374071f3670a1b3d512ebdd7c58e91d7131fd40",
+              "rgba_sha256": "194ccdb5ff4c7c5291df801d155d00ea0208e6ff66ed403003af7dcdb7594c9c"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1/repeat-1/observer-off.png",
+              "png_sha256": "a79d12d32f5e8b577bce0f57c374071f3670a1b3d512ebdd7c58e91d7131fd40",
+              "rgba_sha256": "194ccdb5ff4c7c5291df801d155d00ea0208e6ff66ed403003af7dcdb7594c9c"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1/repeat-1/observer-off-capture-0.png",
+              "png_sha256": "a79d12d32f5e8b577bce0f57c374071f3670a1b3d512ebdd7c58e91d7131fd40",
+              "rgba_sha256": "194ccdb5ff4c7c5291df801d155d00ea0208e6ff66ed403003af7dcdb7594c9c"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1/repeat-1/observer-off-capture-1.png",
+              "png_sha256": "a79d12d32f5e8b577bce0f57c374071f3670a1b3d512ebdd7c58e91d7131fd40",
+              "rgba_sha256": "194ccdb5ff4c7c5291df801d155d00ea0208e6ff66ed403003af7dcdb7594c9c"
+            }
+          ],
+          "repeat": 1,
+          "viewport_metrics": {
+            "clientHeight": 600,
+            "clientWidth": 785,
+            "scrollHeight": 1000,
+            "scrollLeft": 0,
+            "scrollTop": 0,
+            "scrollWidth": 785
+          }
+        }
+      ],
+      "current_native_local_source": [
+        {
+          "height": 600,
+          "original_stride": 3200,
+          "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/control-1-scale-1-repeat-0/local_source.rgba",
+          "repeat": 0,
+          "sha256": "194ccdb5ff4c7c5291df801d155d00ea0208e6ff66ed403003af7dcdb7594c9c",
+          "width": 800
+        },
+        {
+          "height": 600,
+          "original_stride": 3200,
+          "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/control-1-scale-1-repeat-1/local_source.rgba",
+          "repeat": 1,
+          "sha256": "194ccdb5ff4c7c5291df801d155d00ea0208e6ff66ed403003af7dcdb7594c9c",
+          "width": 800
+        }
+      ],
+      "full_rgba_bytes": 1920000,
+      "full_rgba_sha256": "194ccdb5ff4c7c5291df801d155d00ea0208e6ff66ed403003af7dcdb7594c9c",
+      "full_stride": 3200,
+      "logical_viewport": [
+        800,
+        600
+      ],
+      "mode": 1,
+      "packed_asset": "control-1-scale-1.rgba",
+      "packed_bytes": 193000,
+      "packed_sha256": "4b5aee6a88a69b7fb5709223e14d6678434376048dd7d06f16f9810ffd8e0183",
+      "packing": {
+        "all_unpacked_pixels": [
+          255,
+          255,
+          255,
+          255
+        ],
+        "complete_reconstruction_equals_source": true,
+        "every_unpacked_source_pixel_verified": true,
+        "format": "RGBA8888 opaque, lossless two bands, top-to-bottom",
+        "lower_right_start_x": 785,
+        "lower_right_width": 15,
+        "top_full_width_rows": 50
+      },
+      "physical_height": 600,
+      "physical_width": 800,
+      "scale": 1.0
+    },
+    {
+      "browser_captures": [
+        {
+          "dom_before_sha256": "7a341c85e44c8a78a3efbaeb9926fdec0b54927aa49164ac5012b878cc7dac60",
+          "html_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.25/repeat-0/test.html",
+          "html_sha256": "04525f7b4363408e506f3236988f85c44a4a78370cd527e59283882754cb0a4d",
+          "physical_size": [
+            1000,
+            750
+          ],
+          "pngs": [
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.25/repeat-0/chromium.png",
+              "png_sha256": "7318d54299aecdb12e441afc87d1936451fdcc50c20b9d297bd1127671744381",
+              "rgba_sha256": "74dd955986d610c653822f6bf4d0784c3651fabd41ab923d76fcbb869eda0dcb"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.25/repeat-0/chromium-capture-0.png",
+              "png_sha256": "7318d54299aecdb12e441afc87d1936451fdcc50c20b9d297bd1127671744381",
+              "rgba_sha256": "74dd955986d610c653822f6bf4d0784c3651fabd41ab923d76fcbb869eda0dcb"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.25/repeat-0/chromium-capture-1.png",
+              "png_sha256": "7318d54299aecdb12e441afc87d1936451fdcc50c20b9d297bd1127671744381",
+              "rgba_sha256": "74dd955986d610c653822f6bf4d0784c3651fabd41ab923d76fcbb869eda0dcb"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.25/repeat-0/observer-off.png",
+              "png_sha256": "7318d54299aecdb12e441afc87d1936451fdcc50c20b9d297bd1127671744381",
+              "rgba_sha256": "74dd955986d610c653822f6bf4d0784c3651fabd41ab923d76fcbb869eda0dcb"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.25/repeat-0/observer-off-capture-0.png",
+              "png_sha256": "7318d54299aecdb12e441afc87d1936451fdcc50c20b9d297bd1127671744381",
+              "rgba_sha256": "74dd955986d610c653822f6bf4d0784c3651fabd41ab923d76fcbb869eda0dcb"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.25/repeat-0/observer-off-capture-1.png",
+              "png_sha256": "7318d54299aecdb12e441afc87d1936451fdcc50c20b9d297bd1127671744381",
+              "rgba_sha256": "74dd955986d610c653822f6bf4d0784c3651fabd41ab923d76fcbb869eda0dcb"
+            }
+          ],
+          "repeat": 0,
+          "viewport_metrics": {
+            "clientHeight": 600,
+            "clientWidth": 785,
+            "scrollHeight": 1000,
+            "scrollLeft": 0,
+            "scrollTop": 0,
+            "scrollWidth": 785
+          }
+        },
+        {
+          "dom_before_sha256": "69ffab0dc5a4c8e5f15bcb799575cc2fe4565d4419401effa983e21cb8a3f6a6",
+          "html_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.25/repeat-1/test.html",
+          "html_sha256": "04525f7b4363408e506f3236988f85c44a4a78370cd527e59283882754cb0a4d",
+          "physical_size": [
+            1000,
+            750
+          ],
+          "pngs": [
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.25/repeat-1/chromium.png",
+              "png_sha256": "7318d54299aecdb12e441afc87d1936451fdcc50c20b9d297bd1127671744381",
+              "rgba_sha256": "74dd955986d610c653822f6bf4d0784c3651fabd41ab923d76fcbb869eda0dcb"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.25/repeat-1/chromium-capture-0.png",
+              "png_sha256": "7318d54299aecdb12e441afc87d1936451fdcc50c20b9d297bd1127671744381",
+              "rgba_sha256": "74dd955986d610c653822f6bf4d0784c3651fabd41ab923d76fcbb869eda0dcb"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.25/repeat-1/chromium-capture-1.png",
+              "png_sha256": "7318d54299aecdb12e441afc87d1936451fdcc50c20b9d297bd1127671744381",
+              "rgba_sha256": "74dd955986d610c653822f6bf4d0784c3651fabd41ab923d76fcbb869eda0dcb"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.25/repeat-1/observer-off.png",
+              "png_sha256": "7318d54299aecdb12e441afc87d1936451fdcc50c20b9d297bd1127671744381",
+              "rgba_sha256": "74dd955986d610c653822f6bf4d0784c3651fabd41ab923d76fcbb869eda0dcb"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.25/repeat-1/observer-off-capture-0.png",
+              "png_sha256": "7318d54299aecdb12e441afc87d1936451fdcc50c20b9d297bd1127671744381",
+              "rgba_sha256": "74dd955986d610c653822f6bf4d0784c3651fabd41ab923d76fcbb869eda0dcb"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.25/repeat-1/observer-off-capture-1.png",
+              "png_sha256": "7318d54299aecdb12e441afc87d1936451fdcc50c20b9d297bd1127671744381",
+              "rgba_sha256": "74dd955986d610c653822f6bf4d0784c3651fabd41ab923d76fcbb869eda0dcb"
+            }
+          ],
+          "repeat": 1,
+          "viewport_metrics": {
+            "clientHeight": 600,
+            "clientWidth": 785,
+            "scrollHeight": 1000,
+            "scrollLeft": 0,
+            "scrollTop": 0,
+            "scrollWidth": 785
+          }
+        }
+      ],
+      "current_native_local_source": [
+        {
+          "height": 750,
+          "original_stride": 4000,
+          "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/control-1-scale-1.25-repeat-0/local_source.rgba",
+          "repeat": 0,
+          "sha256": "74dd955986d610c653822f6bf4d0784c3651fabd41ab923d76fcbb869eda0dcb",
+          "width": 1000
+        },
+        {
+          "height": 750,
+          "original_stride": 4000,
+          "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/control-1-scale-1.25-repeat-1/local_source.rgba",
+          "repeat": 1,
+          "sha256": "74dd955986d610c653822f6bf4d0784c3651fabd41ab923d76fcbb869eda0dcb",
+          "width": 1000
+        }
+      ],
+      "full_rgba_bytes": 3000000,
+      "full_rgba_sha256": "74dd955986d610c653822f6bf4d0784c3651fabd41ab923d76fcbb869eda0dcb",
+      "full_stride": 4000,
+      "logical_viewport": [
+        800,
+        600
+      ],
+      "mode": 1,
+      "packed_asset": "control-1-scale-1_25.rgba",
+      "packed_bytes": 304212,
+      "packed_sha256": "ec6b6f2afca8f824c6a8a98fe1fb06425072e0ae2caf55bc9585fce5eb51fb51",
+      "packing": {
+        "all_unpacked_pixels": [
+          255,
+          255,
+          255,
+          255
+        ],
+        "complete_reconstruction_equals_source": true,
+        "every_unpacked_source_pixel_verified": true,
+        "format": "RGBA8888 opaque, lossless two bands, top-to-bottom",
+        "lower_right_start_x": 981,
+        "lower_right_width": 19,
+        "top_full_width_rows": 63
+      },
+      "physical_height": 750,
+      "physical_width": 1000,
+      "scale": 1.25
+    },
+    {
+      "browser_captures": [
+        {
+          "dom_before_sha256": "27895d793f6778b1509029ae820fd45cb9170a15da9d4312705978c20fce6ae8",
+          "html_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.5/repeat-0/test.html",
+          "html_sha256": "04525f7b4363408e506f3236988f85c44a4a78370cd527e59283882754cb0a4d",
+          "physical_size": [
+            1200,
+            900
+          ],
+          "pngs": [
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.5/repeat-0/chromium.png",
+              "png_sha256": "10fbdb515f6c73152d731c2473efd9a432fb8e6617f87544db9ee3293bd8d8f9",
+              "rgba_sha256": "53de46f322144af2d145f1ec4902c02a60f09e9eb3d2c2e95564b31afcb4b79f"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.5/repeat-0/chromium-capture-0.png",
+              "png_sha256": "10fbdb515f6c73152d731c2473efd9a432fb8e6617f87544db9ee3293bd8d8f9",
+              "rgba_sha256": "53de46f322144af2d145f1ec4902c02a60f09e9eb3d2c2e95564b31afcb4b79f"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.5/repeat-0/chromium-capture-1.png",
+              "png_sha256": "10fbdb515f6c73152d731c2473efd9a432fb8e6617f87544db9ee3293bd8d8f9",
+              "rgba_sha256": "53de46f322144af2d145f1ec4902c02a60f09e9eb3d2c2e95564b31afcb4b79f"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.5/repeat-0/observer-off.png",
+              "png_sha256": "10fbdb515f6c73152d731c2473efd9a432fb8e6617f87544db9ee3293bd8d8f9",
+              "rgba_sha256": "53de46f322144af2d145f1ec4902c02a60f09e9eb3d2c2e95564b31afcb4b79f"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.5/repeat-0/observer-off-capture-0.png",
+              "png_sha256": "10fbdb515f6c73152d731c2473efd9a432fb8e6617f87544db9ee3293bd8d8f9",
+              "rgba_sha256": "53de46f322144af2d145f1ec4902c02a60f09e9eb3d2c2e95564b31afcb4b79f"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.5/repeat-0/observer-off-capture-1.png",
+              "png_sha256": "10fbdb515f6c73152d731c2473efd9a432fb8e6617f87544db9ee3293bd8d8f9",
+              "rgba_sha256": "53de46f322144af2d145f1ec4902c02a60f09e9eb3d2c2e95564b31afcb4b79f"
+            }
+          ],
+          "repeat": 0,
+          "viewport_metrics": {
+            "clientHeight": 600,
+            "clientWidth": 785,
+            "scrollHeight": 1000,
+            "scrollLeft": 0,
+            "scrollTop": 0,
+            "scrollWidth": 785
+          }
+        },
+        {
+          "dom_before_sha256": "296daffb88d0ae4da68b382c2d5531a03ac53b73a088093956ac7aabb131140e",
+          "html_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.5/repeat-1/test.html",
+          "html_sha256": "04525f7b4363408e506f3236988f85c44a4a78370cd527e59283882754cb0a4d",
+          "physical_size": [
+            1200,
+            900
+          ],
+          "pngs": [
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.5/repeat-1/chromium.png",
+              "png_sha256": "10fbdb515f6c73152d731c2473efd9a432fb8e6617f87544db9ee3293bd8d8f9",
+              "rgba_sha256": "53de46f322144af2d145f1ec4902c02a60f09e9eb3d2c2e95564b31afcb4b79f"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.5/repeat-1/chromium-capture-0.png",
+              "png_sha256": "10fbdb515f6c73152d731c2473efd9a432fb8e6617f87544db9ee3293bd8d8f9",
+              "rgba_sha256": "53de46f322144af2d145f1ec4902c02a60f09e9eb3d2c2e95564b31afcb4b79f"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.5/repeat-1/chromium-capture-1.png",
+              "png_sha256": "10fbdb515f6c73152d731c2473efd9a432fb8e6617f87544db9ee3293bd8d8f9",
+              "rgba_sha256": "53de46f322144af2d145f1ec4902c02a60f09e9eb3d2c2e95564b31afcb4b79f"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.5/repeat-1/observer-off.png",
+              "png_sha256": "10fbdb515f6c73152d731c2473efd9a432fb8e6617f87544db9ee3293bd8d8f9",
+              "rgba_sha256": "53de46f322144af2d145f1ec4902c02a60f09e9eb3d2c2e95564b31afcb4b79f"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.5/repeat-1/observer-off-capture-0.png",
+              "png_sha256": "10fbdb515f6c73152d731c2473efd9a432fb8e6617f87544db9ee3293bd8d8f9",
+              "rgba_sha256": "53de46f322144af2d145f1ec4902c02a60f09e9eb3d2c2e95564b31afcb4b79f"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.5/repeat-1/observer-off-capture-1.png",
+              "png_sha256": "10fbdb515f6c73152d731c2473efd9a432fb8e6617f87544db9ee3293bd8d8f9",
+              "rgba_sha256": "53de46f322144af2d145f1ec4902c02a60f09e9eb3d2c2e95564b31afcb4b79f"
+            }
+          ],
+          "repeat": 1,
+          "viewport_metrics": {
+            "clientHeight": 600,
+            "clientWidth": 785,
+            "scrollHeight": 1000,
+            "scrollLeft": 0,
+            "scrollTop": 0,
+            "scrollWidth": 785
+          }
+        }
+      ],
+      "current_native_local_source": [
+        {
+          "height": 900,
+          "original_stride": 4800,
+          "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/control-1-scale-1.5-repeat-0/local_source.rgba",
+          "repeat": 0,
+          "sha256": "53de46f322144af2d145f1ec4902c02a60f09e9eb3d2c2e95564b31afcb4b79f",
+          "width": 1200
+        },
+        {
+          "height": 900,
+          "original_stride": 4800,
+          "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/control-1-scale-1.5-repeat-1/local_source.rgba",
+          "repeat": 1,
+          "sha256": "53de46f322144af2d145f1ec4902c02a60f09e9eb3d2c2e95564b31afcb4b79f",
+          "width": 1200
+        }
+      ],
+      "full_rgba_bytes": 4320000,
+      "full_rgba_sha256": "53de46f322144af2d145f1ec4902c02a60f09e9eb3d2c2e95564b31afcb4b79f",
+      "full_stride": 4800,
+      "logical_viewport": [
+        800,
+        600
+      ],
+      "mode": 1,
+      "packed_asset": "control-1-scale-1_5.rgba",
+      "packed_bytes": 432600,
+      "packed_sha256": "50c239f6d2852898da40c49001f42c193c70dc57ff36ecc73b3dadafa3bf0c25",
+      "packing": {
+        "all_unpacked_pixels": [
+          255,
+          255,
+          255,
+          255
+        ],
+        "complete_reconstruction_equals_source": true,
+        "every_unpacked_source_pixel_verified": true,
+        "format": "RGBA8888 opaque, lossless two bands, top-to-bottom",
+        "lower_right_start_x": 1178,
+        "lower_right_width": 22,
+        "top_full_width_rows": 75
+      },
+      "physical_height": 900,
+      "physical_width": 1200,
+      "scale": 1.5
+    },
+    {
+      "browser_captures": [
+        {
+          "dom_before_sha256": "9f280051264d149050caa58d195ac7a9c7d2b0a1f3a7eec228e43c9e6e63b432",
+          "html_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.75/repeat-0/test.html",
+          "html_sha256": "04525f7b4363408e506f3236988f85c44a4a78370cd527e59283882754cb0a4d",
+          "physical_size": [
+            1400,
+            1050
+          ],
+          "pngs": [
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.75/repeat-0/chromium.png",
+              "png_sha256": "2a0025abf8ed2c4b1687321b59e53a3fadcfce16b1ced4d1fe8ab9023054c792",
+              "rgba_sha256": "ac6857827f5d8ce4b219c9024d486718c306ed1d1b1d72bf3c1776de9d67af98"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.75/repeat-0/chromium-capture-0.png",
+              "png_sha256": "2a0025abf8ed2c4b1687321b59e53a3fadcfce16b1ced4d1fe8ab9023054c792",
+              "rgba_sha256": "ac6857827f5d8ce4b219c9024d486718c306ed1d1b1d72bf3c1776de9d67af98"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.75/repeat-0/chromium-capture-1.png",
+              "png_sha256": "2a0025abf8ed2c4b1687321b59e53a3fadcfce16b1ced4d1fe8ab9023054c792",
+              "rgba_sha256": "ac6857827f5d8ce4b219c9024d486718c306ed1d1b1d72bf3c1776de9d67af98"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.75/repeat-0/observer-off.png",
+              "png_sha256": "2a0025abf8ed2c4b1687321b59e53a3fadcfce16b1ced4d1fe8ab9023054c792",
+              "rgba_sha256": "ac6857827f5d8ce4b219c9024d486718c306ed1d1b1d72bf3c1776de9d67af98"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.75/repeat-0/observer-off-capture-0.png",
+              "png_sha256": "2a0025abf8ed2c4b1687321b59e53a3fadcfce16b1ced4d1fe8ab9023054c792",
+              "rgba_sha256": "ac6857827f5d8ce4b219c9024d486718c306ed1d1b1d72bf3c1776de9d67af98"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.75/repeat-0/observer-off-capture-1.png",
+              "png_sha256": "2a0025abf8ed2c4b1687321b59e53a3fadcfce16b1ced4d1fe8ab9023054c792",
+              "rgba_sha256": "ac6857827f5d8ce4b219c9024d486718c306ed1d1b1d72bf3c1776de9d67af98"
+            }
+          ],
+          "repeat": 0,
+          "viewport_metrics": {
+            "clientHeight": 600,
+            "clientWidth": 785,
+            "scrollHeight": 1000,
+            "scrollLeft": 0,
+            "scrollTop": 0,
+            "scrollWidth": 785
+          }
+        },
+        {
+          "dom_before_sha256": "fa42909a79e5f7deebaf643882efdc54deb51a979f51b19b527bec0df911d98c",
+          "html_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.75/repeat-1/test.html",
+          "html_sha256": "04525f7b4363408e506f3236988f85c44a4a78370cd527e59283882754cb0a4d",
+          "physical_size": [
+            1400,
+            1050
+          ],
+          "pngs": [
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.75/repeat-1/chromium.png",
+              "png_sha256": "2a0025abf8ed2c4b1687321b59e53a3fadcfce16b1ced4d1fe8ab9023054c792",
+              "rgba_sha256": "ac6857827f5d8ce4b219c9024d486718c306ed1d1b1d72bf3c1776de9d67af98"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.75/repeat-1/chromium-capture-0.png",
+              "png_sha256": "2a0025abf8ed2c4b1687321b59e53a3fadcfce16b1ced4d1fe8ab9023054c792",
+              "rgba_sha256": "ac6857827f5d8ce4b219c9024d486718c306ed1d1b1d72bf3c1776de9d67af98"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.75/repeat-1/chromium-capture-1.png",
+              "png_sha256": "2a0025abf8ed2c4b1687321b59e53a3fadcfce16b1ced4d1fe8ab9023054c792",
+              "rgba_sha256": "ac6857827f5d8ce4b219c9024d486718c306ed1d1b1d72bf3c1776de9d67af98"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.75/repeat-1/observer-off.png",
+              "png_sha256": "2a0025abf8ed2c4b1687321b59e53a3fadcfce16b1ced4d1fe8ab9023054c792",
+              "rgba_sha256": "ac6857827f5d8ce4b219c9024d486718c306ed1d1b1d72bf3c1776de9d67af98"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.75/repeat-1/observer-off-capture-0.png",
+              "png_sha256": "2a0025abf8ed2c4b1687321b59e53a3fadcfce16b1ced4d1fe8ab9023054c792",
+              "rgba_sha256": "ac6857827f5d8ce4b219c9024d486718c306ed1d1b1d72bf3c1776de9d67af98"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@1.75/repeat-1/observer-off-capture-1.png",
+              "png_sha256": "2a0025abf8ed2c4b1687321b59e53a3fadcfce16b1ced4d1fe8ab9023054c792",
+              "rgba_sha256": "ac6857827f5d8ce4b219c9024d486718c306ed1d1b1d72bf3c1776de9d67af98"
+            }
+          ],
+          "repeat": 1,
+          "viewport_metrics": {
+            "clientHeight": 600,
+            "clientWidth": 785,
+            "scrollHeight": 1000,
+            "scrollLeft": 0,
+            "scrollTop": 0,
+            "scrollWidth": 785
+          }
+        }
+      ],
+      "current_native_local_source": [
+        {
+          "height": 1050,
+          "original_stride": 5600,
+          "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/control-1-scale-1.75-repeat-0/local_source.rgba",
+          "repeat": 0,
+          "sha256": "ac6857827f5d8ce4b219c9024d486718c306ed1d1b1d72bf3c1776de9d67af98",
+          "width": 1400
+        },
+        {
+          "height": 1050,
+          "original_stride": 5600,
+          "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/control-1-scale-1.75-repeat-1/local_source.rgba",
+          "repeat": 1,
+          "sha256": "ac6857827f5d8ce4b219c9024d486718c306ed1d1b1d72bf3c1776de9d67af98",
+          "width": 1400
+        }
+      ],
+      "full_rgba_bytes": 5880000,
+      "full_rgba_sha256": "ac6857827f5d8ce4b219c9024d486718c306ed1d1b1d72bf3c1776de9d67af98",
+      "full_stride": 5600,
+      "logical_viewport": [
+        800,
+        600
+      ],
+      "mode": 1,
+      "packed_asset": "control-1-scale-1_75.rgba",
+      "packed_bytes": 592848,
+      "packed_sha256": "4563156873746c899d344cc70f7efe6622002c6b586a88bacf6fe21897ab9d1f",
+      "packing": {
+        "all_unpacked_pixels": [
+          255,
+          255,
+          255,
+          255
+        ],
+        "complete_reconstruction_equals_source": true,
+        "every_unpacked_source_pixel_verified": true,
+        "format": "RGBA8888 opaque, lossless two bands, top-to-bottom",
+        "lower_right_start_x": 1374,
+        "lower_right_width": 26,
+        "top_full_width_rows": 88
+      },
+      "physical_height": 1050,
+      "physical_width": 1400,
+      "scale": 1.75
+    },
+    {
+      "browser_captures": [
+        {
+          "dom_before_sha256": "64efc875720ddf4d1d27e323870a5a2e7e87e205377d27f294dd4d894d64f480",
+          "html_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@2/repeat-0/test.html",
+          "html_sha256": "04525f7b4363408e506f3236988f85c44a4a78370cd527e59283882754cb0a4d",
+          "physical_size": [
+            1600,
+            1200
+          ],
+          "pngs": [
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@2/repeat-0/chromium.png",
+              "png_sha256": "6280e1311051a8fe9e2cfa2037b0c6a44f73073738e55fc556043455ac5d3692",
+              "rgba_sha256": "9be42ce2184c4ca43aeae2ec14be6abc4ff653a049fb2cfd7484ed6d0add1506"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@2/repeat-0/chromium-capture-0.png",
+              "png_sha256": "6280e1311051a8fe9e2cfa2037b0c6a44f73073738e55fc556043455ac5d3692",
+              "rgba_sha256": "9be42ce2184c4ca43aeae2ec14be6abc4ff653a049fb2cfd7484ed6d0add1506"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@2/repeat-0/chromium-capture-1.png",
+              "png_sha256": "6280e1311051a8fe9e2cfa2037b0c6a44f73073738e55fc556043455ac5d3692",
+              "rgba_sha256": "9be42ce2184c4ca43aeae2ec14be6abc4ff653a049fb2cfd7484ed6d0add1506"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@2/repeat-0/observer-off.png",
+              "png_sha256": "6280e1311051a8fe9e2cfa2037b0c6a44f73073738e55fc556043455ac5d3692",
+              "rgba_sha256": "9be42ce2184c4ca43aeae2ec14be6abc4ff653a049fb2cfd7484ed6d0add1506"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@2/repeat-0/observer-off-capture-0.png",
+              "png_sha256": "6280e1311051a8fe9e2cfa2037b0c6a44f73073738e55fc556043455ac5d3692",
+              "rgba_sha256": "9be42ce2184c4ca43aeae2ec14be6abc4ff653a049fb2cfd7484ed6d0add1506"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@2/repeat-0/observer-off-capture-1.png",
+              "png_sha256": "6280e1311051a8fe9e2cfa2037b0c6a44f73073738e55fc556043455ac5d3692",
+              "rgba_sha256": "9be42ce2184c4ca43aeae2ec14be6abc4ff653a049fb2cfd7484ed6d0add1506"
+            }
+          ],
+          "repeat": 0,
+          "viewport_metrics": {
+            "clientHeight": 600,
+            "clientWidth": 785,
+            "scrollHeight": 1000,
+            "scrollLeft": 0,
+            "scrollTop": 0,
+            "scrollWidth": 785
+          }
+        },
+        {
+          "dom_before_sha256": "a9f4285e4e162d3633904cf6f7f386ab06a2e0b269045866a3c5c40c718b8583",
+          "html_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@2/repeat-1/test.html",
+          "html_sha256": "04525f7b4363408e506f3236988f85c44a4a78370cd527e59283882754cb0a4d",
+          "physical_size": [
+            1600,
+            1200
+          ],
+          "pngs": [
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@2/repeat-1/chromium.png",
+              "png_sha256": "6280e1311051a8fe9e2cfa2037b0c6a44f73073738e55fc556043455ac5d3692",
+              "rgba_sha256": "9be42ce2184c4ca43aeae2ec14be6abc4ff653a049fb2cfd7484ed6d0add1506"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@2/repeat-1/chromium-capture-0.png",
+              "png_sha256": "6280e1311051a8fe9e2cfa2037b0c6a44f73073738e55fc556043455ac5d3692",
+              "rgba_sha256": "9be42ce2184c4ca43aeae2ec14be6abc4ff653a049fb2cfd7484ed6d0add1506"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@2/repeat-1/chromium-capture-1.png",
+              "png_sha256": "6280e1311051a8fe9e2cfa2037b0c6a44f73073738e55fc556043455ac5d3692",
+              "rgba_sha256": "9be42ce2184c4ca43aeae2ec14be6abc4ff653a049fb2cfd7484ed6d0add1506"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@2/repeat-1/observer-off.png",
+              "png_sha256": "6280e1311051a8fe9e2cfa2037b0c6a44f73073738e55fc556043455ac5d3692",
+              "rgba_sha256": "9be42ce2184c4ca43aeae2ec14be6abc4ff653a049fb2cfd7484ed6d0add1506"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@2/repeat-1/observer-off-capture-0.png",
+              "png_sha256": "6280e1311051a8fe9e2cfa2037b0c6a44f73073738e55fc556043455ac5d3692",
+              "rgba_sha256": "9be42ce2184c4ca43aeae2ec14be6abc4ff653a049fb2cfd7484ed6d0add1506"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-1@2/repeat-1/observer-off-capture-1.png",
+              "png_sha256": "6280e1311051a8fe9e2cfa2037b0c6a44f73073738e55fc556043455ac5d3692",
+              "rgba_sha256": "9be42ce2184c4ca43aeae2ec14be6abc4ff653a049fb2cfd7484ed6d0add1506"
+            }
+          ],
+          "repeat": 1,
+          "viewport_metrics": {
+            "clientHeight": 600,
+            "clientWidth": 785,
+            "scrollHeight": 1000,
+            "scrollLeft": 0,
+            "scrollTop": 0,
+            "scrollWidth": 785
+          }
+        }
+      ],
+      "current_native_local_source": [
+        {
+          "height": 1200,
+          "original_stride": 6400,
+          "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/control-1-scale-2-repeat-0/local_source.rgba",
+          "repeat": 0,
+          "sha256": "9be42ce2184c4ca43aeae2ec14be6abc4ff653a049fb2cfd7484ed6d0add1506",
+          "width": 1600
+        },
+        {
+          "height": 1200,
+          "original_stride": 6400,
+          "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/control-1-scale-2-repeat-1/local_source.rgba",
+          "repeat": 1,
+          "sha256": "9be42ce2184c4ca43aeae2ec14be6abc4ff653a049fb2cfd7484ed6d0add1506",
+          "width": 1600
+        }
+      ],
+      "full_rgba_bytes": 7680000,
+      "full_rgba_sha256": "9be42ce2184c4ca43aeae2ec14be6abc4ff653a049fb2cfd7484ed6d0add1506",
+      "full_stride": 6400,
+      "logical_viewport": [
+        800,
+        600
+      ],
+      "mode": 1,
+      "packed_asset": "control-1-scale-2.rgba",
+      "packed_bytes": 772000,
+      "packed_sha256": "c2719f76dd0f662907aa2866130a24ee717253bfd2fe2674770bc923ae166754",
+      "packing": {
+        "all_unpacked_pixels": [
+          255,
+          255,
+          255,
+          255
+        ],
+        "complete_reconstruction_equals_source": true,
+        "every_unpacked_source_pixel_verified": true,
+        "format": "RGBA8888 opaque, lossless two bands, top-to-bottom",
+        "lower_right_start_x": 1570,
+        "lower_right_width": 30,
+        "top_full_width_rows": 100
+      },
+      "physical_height": 1200,
+      "physical_width": 1600,
+      "scale": 2.0
+    },
+    {
+      "browser_captures": [
+        {
+          "dom_before_sha256": "e35d5acba875ab74a3000e2bd5c11e6ebedab4941022ebbb01900a9fc1588e3b",
+          "html_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1/repeat-0/test.html",
+          "html_sha256": "848f383e9e2d11e6b6e5485e1e2d7d6e04480fe3e42d9ab62f78ef0dd0f641d0",
+          "physical_size": [
+            1280,
+            720
+          ],
+          "pngs": [
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1/repeat-0/chromium.png",
+              "png_sha256": "3b02925278e42e8d26817ec9896a966156eaffe2e78785391f074b2dc5d69491",
+              "rgba_sha256": "7e1a9126c828ed156024c7cdf232ad00b63bad7dcf57e20d6f9d1e116f9a4b57"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1/repeat-0/chromium-capture-0.png",
+              "png_sha256": "3b02925278e42e8d26817ec9896a966156eaffe2e78785391f074b2dc5d69491",
+              "rgba_sha256": "7e1a9126c828ed156024c7cdf232ad00b63bad7dcf57e20d6f9d1e116f9a4b57"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1/repeat-0/chromium-capture-1.png",
+              "png_sha256": "3b02925278e42e8d26817ec9896a966156eaffe2e78785391f074b2dc5d69491",
+              "rgba_sha256": "7e1a9126c828ed156024c7cdf232ad00b63bad7dcf57e20d6f9d1e116f9a4b57"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1/repeat-0/observer-off.png",
+              "png_sha256": "3b02925278e42e8d26817ec9896a966156eaffe2e78785391f074b2dc5d69491",
+              "rgba_sha256": "7e1a9126c828ed156024c7cdf232ad00b63bad7dcf57e20d6f9d1e116f9a4b57"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1/repeat-0/observer-off-capture-0.png",
+              "png_sha256": "3b02925278e42e8d26817ec9896a966156eaffe2e78785391f074b2dc5d69491",
+              "rgba_sha256": "7e1a9126c828ed156024c7cdf232ad00b63bad7dcf57e20d6f9d1e116f9a4b57"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1/repeat-0/observer-off-capture-1.png",
+              "png_sha256": "3b02925278e42e8d26817ec9896a966156eaffe2e78785391f074b2dc5d69491",
+              "rgba_sha256": "7e1a9126c828ed156024c7cdf232ad00b63bad7dcf57e20d6f9d1e116f9a4b57"
+            }
+          ],
+          "repeat": 0,
+          "viewport_metrics": {
+            "clientHeight": 720,
+            "clientWidth": 1265,
+            "scrollHeight": 1000,
+            "scrollLeft": 0,
+            "scrollTop": 0,
+            "scrollWidth": 1265
+          }
+        },
+        {
+          "dom_before_sha256": "fd2ab1637a0a1ed95b23c897eba9189905b49689cf2a1ddfc20d82684aec7498",
+          "html_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1/repeat-1/test.html",
+          "html_sha256": "848f383e9e2d11e6b6e5485e1e2d7d6e04480fe3e42d9ab62f78ef0dd0f641d0",
+          "physical_size": [
+            1280,
+            720
+          ],
+          "pngs": [
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1/repeat-1/chromium.png",
+              "png_sha256": "3b02925278e42e8d26817ec9896a966156eaffe2e78785391f074b2dc5d69491",
+              "rgba_sha256": "7e1a9126c828ed156024c7cdf232ad00b63bad7dcf57e20d6f9d1e116f9a4b57"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1/repeat-1/chromium-capture-0.png",
+              "png_sha256": "3b02925278e42e8d26817ec9896a966156eaffe2e78785391f074b2dc5d69491",
+              "rgba_sha256": "7e1a9126c828ed156024c7cdf232ad00b63bad7dcf57e20d6f9d1e116f9a4b57"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1/repeat-1/chromium-capture-1.png",
+              "png_sha256": "3b02925278e42e8d26817ec9896a966156eaffe2e78785391f074b2dc5d69491",
+              "rgba_sha256": "7e1a9126c828ed156024c7cdf232ad00b63bad7dcf57e20d6f9d1e116f9a4b57"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1/repeat-1/observer-off.png",
+              "png_sha256": "3b02925278e42e8d26817ec9896a966156eaffe2e78785391f074b2dc5d69491",
+              "rgba_sha256": "7e1a9126c828ed156024c7cdf232ad00b63bad7dcf57e20d6f9d1e116f9a4b57"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1/repeat-1/observer-off-capture-0.png",
+              "png_sha256": "3b02925278e42e8d26817ec9896a966156eaffe2e78785391f074b2dc5d69491",
+              "rgba_sha256": "7e1a9126c828ed156024c7cdf232ad00b63bad7dcf57e20d6f9d1e116f9a4b57"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1/repeat-1/observer-off-capture-1.png",
+              "png_sha256": "3b02925278e42e8d26817ec9896a966156eaffe2e78785391f074b2dc5d69491",
+              "rgba_sha256": "7e1a9126c828ed156024c7cdf232ad00b63bad7dcf57e20d6f9d1e116f9a4b57"
+            }
+          ],
+          "repeat": 1,
+          "viewport_metrics": {
+            "clientHeight": 720,
+            "clientWidth": 1265,
+            "scrollHeight": 1000,
+            "scrollLeft": 0,
+            "scrollTop": 0,
+            "scrollWidth": 1265
+          }
+        }
+      ],
+      "current_native_local_source": [
+        {
+          "height": 720,
+          "original_stride": 5120,
+          "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/control-8-scale-1-repeat-0/local_source.rgba",
+          "repeat": 0,
+          "sha256": "7e1a9126c828ed156024c7cdf232ad00b63bad7dcf57e20d6f9d1e116f9a4b57",
+          "width": 1280
+        },
+        {
+          "height": 720,
+          "original_stride": 5120,
+          "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/control-8-scale-1-repeat-1/local_source.rgba",
+          "repeat": 1,
+          "sha256": "7e1a9126c828ed156024c7cdf232ad00b63bad7dcf57e20d6f9d1e116f9a4b57",
+          "width": 1280
+        }
+      ],
+      "full_rgba_bytes": 3686400,
+      "full_rgba_sha256": "7e1a9126c828ed156024c7cdf232ad00b63bad7dcf57e20d6f9d1e116f9a4b57",
+      "full_stride": 5120,
+      "logical_viewport": [
+        1280,
+        720
+      ],
+      "mode": 8,
+      "packed_asset": "control-8-scale-1.rgba",
+      "packed_bytes": 296200,
+      "packed_sha256": "d85144f16c354a564dc2fc051cd455705e36a3b22dca4315f4133972cd7c1244",
+      "packing": {
+        "all_unpacked_pixels": [
+          255,
+          255,
+          255,
+          255
+        ],
+        "complete_reconstruction_equals_source": true,
+        "every_unpacked_source_pixel_verified": true,
+        "format": "RGBA8888 opaque, lossless two bands, top-to-bottom",
+        "lower_right_start_x": 1265,
+        "lower_right_width": 15,
+        "top_full_width_rows": 50
+      },
+      "physical_height": 720,
+      "physical_width": 1280,
+      "scale": 1.0
+    },
+    {
+      "browser_captures": [
+        {
+          "dom_before_sha256": "49bee4343d6e3a816de17e108ca37c8dec6481cbc795d8c7450317e4ff02d49f",
+          "html_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.25/repeat-0/test.html",
+          "html_sha256": "848f383e9e2d11e6b6e5485e1e2d7d6e04480fe3e42d9ab62f78ef0dd0f641d0",
+          "physical_size": [
+            1600,
+            900
+          ],
+          "pngs": [
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.25/repeat-0/chromium.png",
+              "png_sha256": "10c60355b9dacf590197edf418630f833bcd77168ffd29cfc86783ee6c3bacc7",
+              "rgba_sha256": "fd8af7bed6cecca532329e3346d3983dfc28eae0f48a6d580cdc77bd7a19644e"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.25/repeat-0/chromium-capture-0.png",
+              "png_sha256": "10c60355b9dacf590197edf418630f833bcd77168ffd29cfc86783ee6c3bacc7",
+              "rgba_sha256": "fd8af7bed6cecca532329e3346d3983dfc28eae0f48a6d580cdc77bd7a19644e"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.25/repeat-0/chromium-capture-1.png",
+              "png_sha256": "10c60355b9dacf590197edf418630f833bcd77168ffd29cfc86783ee6c3bacc7",
+              "rgba_sha256": "fd8af7bed6cecca532329e3346d3983dfc28eae0f48a6d580cdc77bd7a19644e"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.25/repeat-0/observer-off.png",
+              "png_sha256": "10c60355b9dacf590197edf418630f833bcd77168ffd29cfc86783ee6c3bacc7",
+              "rgba_sha256": "fd8af7bed6cecca532329e3346d3983dfc28eae0f48a6d580cdc77bd7a19644e"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.25/repeat-0/observer-off-capture-0.png",
+              "png_sha256": "10c60355b9dacf590197edf418630f833bcd77168ffd29cfc86783ee6c3bacc7",
+              "rgba_sha256": "fd8af7bed6cecca532329e3346d3983dfc28eae0f48a6d580cdc77bd7a19644e"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.25/repeat-0/observer-off-capture-1.png",
+              "png_sha256": "10c60355b9dacf590197edf418630f833bcd77168ffd29cfc86783ee6c3bacc7",
+              "rgba_sha256": "fd8af7bed6cecca532329e3346d3983dfc28eae0f48a6d580cdc77bd7a19644e"
+            }
+          ],
+          "repeat": 0,
+          "viewport_metrics": {
+            "clientHeight": 720,
+            "clientWidth": 1265,
+            "scrollHeight": 1000,
+            "scrollLeft": 0,
+            "scrollTop": 0,
+            "scrollWidth": 1265
+          }
+        },
+        {
+          "dom_before_sha256": "286d3d926dc331ae82e91a3dd190fab2041278e4082ae342968903f522b2865b",
+          "html_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.25/repeat-1/test.html",
+          "html_sha256": "848f383e9e2d11e6b6e5485e1e2d7d6e04480fe3e42d9ab62f78ef0dd0f641d0",
+          "physical_size": [
+            1600,
+            900
+          ],
+          "pngs": [
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.25/repeat-1/chromium.png",
+              "png_sha256": "10c60355b9dacf590197edf418630f833bcd77168ffd29cfc86783ee6c3bacc7",
+              "rgba_sha256": "fd8af7bed6cecca532329e3346d3983dfc28eae0f48a6d580cdc77bd7a19644e"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.25/repeat-1/chromium-capture-0.png",
+              "png_sha256": "10c60355b9dacf590197edf418630f833bcd77168ffd29cfc86783ee6c3bacc7",
+              "rgba_sha256": "fd8af7bed6cecca532329e3346d3983dfc28eae0f48a6d580cdc77bd7a19644e"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.25/repeat-1/chromium-capture-1.png",
+              "png_sha256": "10c60355b9dacf590197edf418630f833bcd77168ffd29cfc86783ee6c3bacc7",
+              "rgba_sha256": "fd8af7bed6cecca532329e3346d3983dfc28eae0f48a6d580cdc77bd7a19644e"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.25/repeat-1/observer-off.png",
+              "png_sha256": "10c60355b9dacf590197edf418630f833bcd77168ffd29cfc86783ee6c3bacc7",
+              "rgba_sha256": "fd8af7bed6cecca532329e3346d3983dfc28eae0f48a6d580cdc77bd7a19644e"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.25/repeat-1/observer-off-capture-0.png",
+              "png_sha256": "10c60355b9dacf590197edf418630f833bcd77168ffd29cfc86783ee6c3bacc7",
+              "rgba_sha256": "fd8af7bed6cecca532329e3346d3983dfc28eae0f48a6d580cdc77bd7a19644e"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.25/repeat-1/observer-off-capture-1.png",
+              "png_sha256": "10c60355b9dacf590197edf418630f833bcd77168ffd29cfc86783ee6c3bacc7",
+              "rgba_sha256": "fd8af7bed6cecca532329e3346d3983dfc28eae0f48a6d580cdc77bd7a19644e"
+            }
+          ],
+          "repeat": 1,
+          "viewport_metrics": {
+            "clientHeight": 720,
+            "clientWidth": 1265,
+            "scrollHeight": 1000,
+            "scrollLeft": 0,
+            "scrollTop": 0,
+            "scrollWidth": 1265
+          }
+        }
+      ],
+      "current_native_local_source": [
+        {
+          "height": 900,
+          "original_stride": 6400,
+          "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/control-8-scale-1.25-repeat-0/local_source.rgba",
+          "repeat": 0,
+          "sha256": "fd8af7bed6cecca532329e3346d3983dfc28eae0f48a6d580cdc77bd7a19644e",
+          "width": 1600
+        },
+        {
+          "height": 900,
+          "original_stride": 6400,
+          "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/control-8-scale-1.25-repeat-1/local_source.rgba",
+          "repeat": 1,
+          "sha256": "fd8af7bed6cecca532329e3346d3983dfc28eae0f48a6d580cdc77bd7a19644e",
+          "width": 1600
+        }
+      ],
+      "full_rgba_bytes": 5760000,
+      "full_rgba_sha256": "fd8af7bed6cecca532329e3346d3983dfc28eae0f48a6d580cdc77bd7a19644e",
+      "full_stride": 6400,
+      "logical_viewport": [
+        1280,
+        720
+      ],
+      "mode": 8,
+      "packed_asset": "control-8-scale-1_25.rgba",
+      "packed_bytes": 466812,
+      "packed_sha256": "59092e47f85c904cb7cc9893e87f17f6f27c58ffaaebd14d4f473360aedf0958",
+      "packing": {
+        "all_unpacked_pixels": [
+          255,
+          255,
+          255,
+          255
+        ],
+        "complete_reconstruction_equals_source": true,
+        "every_unpacked_source_pixel_verified": true,
+        "format": "RGBA8888 opaque, lossless two bands, top-to-bottom",
+        "lower_right_start_x": 1581,
+        "lower_right_width": 19,
+        "top_full_width_rows": 63
+      },
+      "physical_height": 900,
+      "physical_width": 1600,
+      "scale": 1.25
+    },
+    {
+      "browser_captures": [
+        {
+          "dom_before_sha256": "e2c7d91298f4d5ad72877c378c851af091e7b458e43668ab63c553cfe2d4c1de",
+          "html_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.5/repeat-0/test.html",
+          "html_sha256": "848f383e9e2d11e6b6e5485e1e2d7d6e04480fe3e42d9ab62f78ef0dd0f641d0",
+          "physical_size": [
+            1920,
+            1080
+          ],
+          "pngs": [
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.5/repeat-0/chromium.png",
+              "png_sha256": "5b880a46c0a315636806d7618b06e74ca85bf56eef2677e42a8631c7ad528c2d",
+              "rgba_sha256": "f52168086679db3b106d02bf9e1edead2b802e248272f3485736f1f4087774e5"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.5/repeat-0/chromium-capture-0.png",
+              "png_sha256": "5b880a46c0a315636806d7618b06e74ca85bf56eef2677e42a8631c7ad528c2d",
+              "rgba_sha256": "f52168086679db3b106d02bf9e1edead2b802e248272f3485736f1f4087774e5"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.5/repeat-0/chromium-capture-1.png",
+              "png_sha256": "5b880a46c0a315636806d7618b06e74ca85bf56eef2677e42a8631c7ad528c2d",
+              "rgba_sha256": "f52168086679db3b106d02bf9e1edead2b802e248272f3485736f1f4087774e5"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.5/repeat-0/observer-off.png",
+              "png_sha256": "5b880a46c0a315636806d7618b06e74ca85bf56eef2677e42a8631c7ad528c2d",
+              "rgba_sha256": "f52168086679db3b106d02bf9e1edead2b802e248272f3485736f1f4087774e5"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.5/repeat-0/observer-off-capture-0.png",
+              "png_sha256": "5b880a46c0a315636806d7618b06e74ca85bf56eef2677e42a8631c7ad528c2d",
+              "rgba_sha256": "f52168086679db3b106d02bf9e1edead2b802e248272f3485736f1f4087774e5"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.5/repeat-0/observer-off-capture-1.png",
+              "png_sha256": "5b880a46c0a315636806d7618b06e74ca85bf56eef2677e42a8631c7ad528c2d",
+              "rgba_sha256": "f52168086679db3b106d02bf9e1edead2b802e248272f3485736f1f4087774e5"
+            }
+          ],
+          "repeat": 0,
+          "viewport_metrics": {
+            "clientHeight": 720,
+            "clientWidth": 1265,
+            "scrollHeight": 1000,
+            "scrollLeft": 0,
+            "scrollTop": 0,
+            "scrollWidth": 1265
+          }
+        },
+        {
+          "dom_before_sha256": "58a917bd8a23c52520b493f515d348d65550d262c0801b91d4a8861be6fca10b",
+          "html_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.5/repeat-1/test.html",
+          "html_sha256": "848f383e9e2d11e6b6e5485e1e2d7d6e04480fe3e42d9ab62f78ef0dd0f641d0",
+          "physical_size": [
+            1920,
+            1080
+          ],
+          "pngs": [
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.5/repeat-1/chromium.png",
+              "png_sha256": "5b880a46c0a315636806d7618b06e74ca85bf56eef2677e42a8631c7ad528c2d",
+              "rgba_sha256": "f52168086679db3b106d02bf9e1edead2b802e248272f3485736f1f4087774e5"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.5/repeat-1/chromium-capture-0.png",
+              "png_sha256": "5b880a46c0a315636806d7618b06e74ca85bf56eef2677e42a8631c7ad528c2d",
+              "rgba_sha256": "f52168086679db3b106d02bf9e1edead2b802e248272f3485736f1f4087774e5"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.5/repeat-1/chromium-capture-1.png",
+              "png_sha256": "5b880a46c0a315636806d7618b06e74ca85bf56eef2677e42a8631c7ad528c2d",
+              "rgba_sha256": "f52168086679db3b106d02bf9e1edead2b802e248272f3485736f1f4087774e5"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.5/repeat-1/observer-off.png",
+              "png_sha256": "5b880a46c0a315636806d7618b06e74ca85bf56eef2677e42a8631c7ad528c2d",
+              "rgba_sha256": "f52168086679db3b106d02bf9e1edead2b802e248272f3485736f1f4087774e5"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.5/repeat-1/observer-off-capture-0.png",
+              "png_sha256": "5b880a46c0a315636806d7618b06e74ca85bf56eef2677e42a8631c7ad528c2d",
+              "rgba_sha256": "f52168086679db3b106d02bf9e1edead2b802e248272f3485736f1f4087774e5"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.5/repeat-1/observer-off-capture-1.png",
+              "png_sha256": "5b880a46c0a315636806d7618b06e74ca85bf56eef2677e42a8631c7ad528c2d",
+              "rgba_sha256": "f52168086679db3b106d02bf9e1edead2b802e248272f3485736f1f4087774e5"
+            }
+          ],
+          "repeat": 1,
+          "viewport_metrics": {
+            "clientHeight": 720,
+            "clientWidth": 1265,
+            "scrollHeight": 1000,
+            "scrollLeft": 0,
+            "scrollTop": 0,
+            "scrollWidth": 1265
+          }
+        }
+      ],
+      "current_native_local_source": [
+        {
+          "height": 1080,
+          "original_stride": 7680,
+          "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/control-8-scale-1.5-repeat-0/local_source.rgba",
+          "repeat": 0,
+          "sha256": "f52168086679db3b106d02bf9e1edead2b802e248272f3485736f1f4087774e5",
+          "width": 1920
+        },
+        {
+          "height": 1080,
+          "original_stride": 7680,
+          "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/control-8-scale-1.5-repeat-1/local_source.rgba",
+          "repeat": 1,
+          "sha256": "f52168086679db3b106d02bf9e1edead2b802e248272f3485736f1f4087774e5",
+          "width": 1920
+        }
+      ],
+      "full_rgba_bytes": 8294400,
+      "full_rgba_sha256": "f52168086679db3b106d02bf9e1edead2b802e248272f3485736f1f4087774e5",
+      "full_stride": 7680,
+      "logical_viewport": [
+        1280,
+        720
+      ],
+      "mode": 8,
+      "packed_asset": "control-8-scale-1_5.rgba",
+      "packed_bytes": 664440,
+      "packed_sha256": "825bcaeee78cf0fee1dd4d46d8cb7d96639cdd6c4046c938d6605c31fb176211",
+      "packing": {
+        "all_unpacked_pixels": [
+          255,
+          255,
+          255,
+          255
+        ],
+        "complete_reconstruction_equals_source": true,
+        "every_unpacked_source_pixel_verified": true,
+        "format": "RGBA8888 opaque, lossless two bands, top-to-bottom",
+        "lower_right_start_x": 1898,
+        "lower_right_width": 22,
+        "top_full_width_rows": 75
+      },
+      "physical_height": 1080,
+      "physical_width": 1920,
+      "scale": 1.5
+    },
+    {
+      "browser_captures": [
+        {
+          "dom_before_sha256": "e3d70df538313ebc571954c2f9b510e9f268d4e7c393f1e54f2305221d027c9d",
+          "html_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.75/repeat-0/test.html",
+          "html_sha256": "848f383e9e2d11e6b6e5485e1e2d7d6e04480fe3e42d9ab62f78ef0dd0f641d0",
+          "physical_size": [
+            2240,
+            1260
+          ],
+          "pngs": [
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.75/repeat-0/chromium.png",
+              "png_sha256": "3e1615f3ca65b6161b3428ebce923eb70a6d71a5cc79de7cd9dd2c86e9869264",
+              "rgba_sha256": "a931a6ac32e7f337a7c6f75d21ee9da08ee55f0c6d1e09f66518d95bee595ee7"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.75/repeat-0/chromium-capture-0.png",
+              "png_sha256": "3e1615f3ca65b6161b3428ebce923eb70a6d71a5cc79de7cd9dd2c86e9869264",
+              "rgba_sha256": "a931a6ac32e7f337a7c6f75d21ee9da08ee55f0c6d1e09f66518d95bee595ee7"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.75/repeat-0/chromium-capture-1.png",
+              "png_sha256": "3e1615f3ca65b6161b3428ebce923eb70a6d71a5cc79de7cd9dd2c86e9869264",
+              "rgba_sha256": "a931a6ac32e7f337a7c6f75d21ee9da08ee55f0c6d1e09f66518d95bee595ee7"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.75/repeat-0/observer-off.png",
+              "png_sha256": "3e1615f3ca65b6161b3428ebce923eb70a6d71a5cc79de7cd9dd2c86e9869264",
+              "rgba_sha256": "a931a6ac32e7f337a7c6f75d21ee9da08ee55f0c6d1e09f66518d95bee595ee7"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.75/repeat-0/observer-off-capture-0.png",
+              "png_sha256": "3e1615f3ca65b6161b3428ebce923eb70a6d71a5cc79de7cd9dd2c86e9869264",
+              "rgba_sha256": "a931a6ac32e7f337a7c6f75d21ee9da08ee55f0c6d1e09f66518d95bee595ee7"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.75/repeat-0/observer-off-capture-1.png",
+              "png_sha256": "3e1615f3ca65b6161b3428ebce923eb70a6d71a5cc79de7cd9dd2c86e9869264",
+              "rgba_sha256": "a931a6ac32e7f337a7c6f75d21ee9da08ee55f0c6d1e09f66518d95bee595ee7"
+            }
+          ],
+          "repeat": 0,
+          "viewport_metrics": {
+            "clientHeight": 720,
+            "clientWidth": 1265,
+            "scrollHeight": 1000,
+            "scrollLeft": 0,
+            "scrollTop": 0,
+            "scrollWidth": 1265
+          }
+        },
+        {
+          "dom_before_sha256": "251ef129fdbf253154a482db43d9446cc057d327d23a53042d1419e28795adbd",
+          "html_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.75/repeat-1/test.html",
+          "html_sha256": "848f383e9e2d11e6b6e5485e1e2d7d6e04480fe3e42d9ab62f78ef0dd0f641d0",
+          "physical_size": [
+            2240,
+            1260
+          ],
+          "pngs": [
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.75/repeat-1/chromium.png",
+              "png_sha256": "3e1615f3ca65b6161b3428ebce923eb70a6d71a5cc79de7cd9dd2c86e9869264",
+              "rgba_sha256": "a931a6ac32e7f337a7c6f75d21ee9da08ee55f0c6d1e09f66518d95bee595ee7"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.75/repeat-1/chromium-capture-0.png",
+              "png_sha256": "3e1615f3ca65b6161b3428ebce923eb70a6d71a5cc79de7cd9dd2c86e9869264",
+              "rgba_sha256": "a931a6ac32e7f337a7c6f75d21ee9da08ee55f0c6d1e09f66518d95bee595ee7"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.75/repeat-1/chromium-capture-1.png",
+              "png_sha256": "3e1615f3ca65b6161b3428ebce923eb70a6d71a5cc79de7cd9dd2c86e9869264",
+              "rgba_sha256": "a931a6ac32e7f337a7c6f75d21ee9da08ee55f0c6d1e09f66518d95bee595ee7"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.75/repeat-1/observer-off.png",
+              "png_sha256": "3e1615f3ca65b6161b3428ebce923eb70a6d71a5cc79de7cd9dd2c86e9869264",
+              "rgba_sha256": "a931a6ac32e7f337a7c6f75d21ee9da08ee55f0c6d1e09f66518d95bee595ee7"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.75/repeat-1/observer-off-capture-0.png",
+              "png_sha256": "3e1615f3ca65b6161b3428ebce923eb70a6d71a5cc79de7cd9dd2c86e9869264",
+              "rgba_sha256": "a931a6ac32e7f337a7c6f75d21ee9da08ee55f0c6d1e09f66518d95bee595ee7"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@1.75/repeat-1/observer-off-capture-1.png",
+              "png_sha256": "3e1615f3ca65b6161b3428ebce923eb70a6d71a5cc79de7cd9dd2c86e9869264",
+              "rgba_sha256": "a931a6ac32e7f337a7c6f75d21ee9da08ee55f0c6d1e09f66518d95bee595ee7"
+            }
+          ],
+          "repeat": 1,
+          "viewport_metrics": {
+            "clientHeight": 720,
+            "clientWidth": 1265,
+            "scrollHeight": 1000,
+            "scrollLeft": 0,
+            "scrollTop": 0,
+            "scrollWidth": 1265
+          }
+        }
+      ],
+      "current_native_local_source": [
+        {
+          "height": 1260,
+          "original_stride": 8960,
+          "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/control-8-scale-1.75-repeat-0/local_source.rgba",
+          "repeat": 0,
+          "sha256": "a931a6ac32e7f337a7c6f75d21ee9da08ee55f0c6d1e09f66518d95bee595ee7",
+          "width": 2240
+        },
+        {
+          "height": 1260,
+          "original_stride": 8960,
+          "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/control-8-scale-1.75-repeat-1/local_source.rgba",
+          "repeat": 1,
+          "sha256": "a931a6ac32e7f337a7c6f75d21ee9da08ee55f0c6d1e09f66518d95bee595ee7",
+          "width": 2240
+        }
+      ],
+      "full_rgba_bytes": 11289600,
+      "full_rgba_sha256": "a931a6ac32e7f337a7c6f75d21ee9da08ee55f0c6d1e09f66518d95bee595ee7",
+      "full_stride": 8960,
+      "logical_viewport": [
+        1280,
+        720
+      ],
+      "mode": 8,
+      "packed_asset": "control-8-scale-1_75.rgba",
+      "packed_bytes": 910368,
+      "packed_sha256": "5ef28c3c749fe4837ba21a2f62c54599283f87a386e5f98821194caa120a11db",
+      "packing": {
+        "all_unpacked_pixels": [
+          255,
+          255,
+          255,
+          255
+        ],
+        "complete_reconstruction_equals_source": true,
+        "every_unpacked_source_pixel_verified": true,
+        "format": "RGBA8888 opaque, lossless two bands, top-to-bottom",
+        "lower_right_start_x": 2214,
+        "lower_right_width": 26,
+        "top_full_width_rows": 88
+      },
+      "physical_height": 1260,
+      "physical_width": 2240,
+      "scale": 1.75
+    },
+    {
+      "browser_captures": [
+        {
+          "dom_before_sha256": "aac93bd7638a740571ab084ec81759160d9ca07142aa5270cf98c6aaf46fb114",
+          "html_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@2/repeat-0/test.html",
+          "html_sha256": "848f383e9e2d11e6b6e5485e1e2d7d6e04480fe3e42d9ab62f78ef0dd0f641d0",
+          "physical_size": [
+            2560,
+            1440
+          ],
+          "pngs": [
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@2/repeat-0/chromium.png",
+              "png_sha256": "6dac2bc683b7b36b7b2ef86d69072d4b1f102c4e4b8b786a89b4899aa86327d8",
+              "rgba_sha256": "8693429504bf289b26d10856ce0350de0711bd079a4ebb7cf93b5fa8cde78e5e"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@2/repeat-0/chromium-capture-0.png",
+              "png_sha256": "6dac2bc683b7b36b7b2ef86d69072d4b1f102c4e4b8b786a89b4899aa86327d8",
+              "rgba_sha256": "8693429504bf289b26d10856ce0350de0711bd079a4ebb7cf93b5fa8cde78e5e"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@2/repeat-0/chromium-capture-1.png",
+              "png_sha256": "6dac2bc683b7b36b7b2ef86d69072d4b1f102c4e4b8b786a89b4899aa86327d8",
+              "rgba_sha256": "8693429504bf289b26d10856ce0350de0711bd079a4ebb7cf93b5fa8cde78e5e"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@2/repeat-0/observer-off.png",
+              "png_sha256": "6dac2bc683b7b36b7b2ef86d69072d4b1f102c4e4b8b786a89b4899aa86327d8",
+              "rgba_sha256": "8693429504bf289b26d10856ce0350de0711bd079a4ebb7cf93b5fa8cde78e5e"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@2/repeat-0/observer-off-capture-0.png",
+              "png_sha256": "6dac2bc683b7b36b7b2ef86d69072d4b1f102c4e4b8b786a89b4899aa86327d8",
+              "rgba_sha256": "8693429504bf289b26d10856ce0350de0711bd079a4ebb7cf93b5fa8cde78e5e"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@2/repeat-0/observer-off-capture-1.png",
+              "png_sha256": "6dac2bc683b7b36b7b2ef86d69072d4b1f102c4e4b8b786a89b4899aa86327d8",
+              "rgba_sha256": "8693429504bf289b26d10856ce0350de0711bd079a4ebb7cf93b5fa8cde78e5e"
+            }
+          ],
+          "repeat": 0,
+          "viewport_metrics": {
+            "clientHeight": 720,
+            "clientWidth": 1265,
+            "scrollHeight": 1000,
+            "scrollLeft": 0,
+            "scrollTop": 0,
+            "scrollWidth": 1265
+          }
+        },
+        {
+          "dom_before_sha256": "c66078caf00ce620b3a71c0bf472a91925d86dcbfbc0a35923b32bd026ab83be",
+          "html_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@2/repeat-1/test.html",
+          "html_sha256": "848f383e9e2d11e6b6e5485e1e2d7d6e04480fe3e42d9ab62f78ef0dd0f641d0",
+          "physical_size": [
+            2560,
+            1440
+          ],
+          "pngs": [
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@2/repeat-1/chromium.png",
+              "png_sha256": "6dac2bc683b7b36b7b2ef86d69072d4b1f102c4e4b8b786a89b4899aa86327d8",
+              "rgba_sha256": "8693429504bf289b26d10856ce0350de0711bd079a4ebb7cf93b5fa8cde78e5e"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@2/repeat-1/chromium-capture-0.png",
+              "png_sha256": "6dac2bc683b7b36b7b2ef86d69072d4b1f102c4e4b8b786a89b4899aa86327d8",
+              "rgba_sha256": "8693429504bf289b26d10856ce0350de0711bd079a4ebb7cf93b5fa8cde78e5e"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@2/repeat-1/chromium-capture-1.png",
+              "png_sha256": "6dac2bc683b7b36b7b2ef86d69072d4b1f102c4e4b8b786a89b4899aa86327d8",
+              "rgba_sha256": "8693429504bf289b26d10856ce0350de0711bd079a4ebb7cf93b5fa8cde78e5e"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@2/repeat-1/observer-off.png",
+              "png_sha256": "6dac2bc683b7b36b7b2ef86d69072d4b1f102c4e4b8b786a89b4899aa86327d8",
+              "rgba_sha256": "8693429504bf289b26d10856ce0350de0711bd079a4ebb7cf93b5fa8cde78e5e"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@2/repeat-1/observer-off-capture-0.png",
+              "png_sha256": "6dac2bc683b7b36b7b2ef86d69072d4b1f102c4e4b8b786a89b4899aa86327d8",
+              "rgba_sha256": "8693429504bf289b26d10856ce0350de0711bd079a4ebb7cf93b5fa8cde78e5e"
+            },
+            {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-layer-edge-chromium-oracle-v4717/control-8@2/repeat-1/observer-off-capture-1.png",
+              "png_sha256": "6dac2bc683b7b36b7b2ef86d69072d4b1f102c4e4b8b786a89b4899aa86327d8",
+              "rgba_sha256": "8693429504bf289b26d10856ce0350de0711bd079a4ebb7cf93b5fa8cde78e5e"
+            }
+          ],
+          "repeat": 1,
+          "viewport_metrics": {
+            "clientHeight": 720,
+            "clientWidth": 1265,
+            "scrollHeight": 1000,
+            "scrollLeft": 0,
+            "scrollTop": 0,
+            "scrollWidth": 1265
+          }
+        }
+      ],
+      "current_native_local_source": [
+        {
+          "height": 1440,
+          "original_stride": 10240,
+          "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/control-8-scale-2-repeat-0/local_source.rgba",
+          "repeat": 0,
+          "sha256": "8693429504bf289b26d10856ce0350de0711bd079a4ebb7cf93b5fa8cde78e5e",
+          "width": 2560
+        },
+        {
+          "height": 1440,
+          "original_stride": 10240,
+          "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-current-edge-diagnostics-v4735/control-8-scale-2-repeat-1/local_source.rgba",
+          "repeat": 1,
+          "sha256": "8693429504bf289b26d10856ce0350de0711bd079a4ebb7cf93b5fa8cde78e5e",
+          "width": 2560
+        }
+      ],
+      "full_rgba_bytes": 14745600,
+      "full_rgba_sha256": "8693429504bf289b26d10856ce0350de0711bd079a4ebb7cf93b5fa8cde78e5e",
+      "full_stride": 10240,
+      "logical_viewport": [
+        1280,
+        720
+      ],
+      "mode": 8,
+      "packed_asset": "control-8-scale-2.rgba",
+      "packed_bytes": 1184800,
+      "packed_sha256": "f276b3d8a8f0231d157a857c474b11d6b37dafa98f15ed78bac87a8c69f3b851",
+      "packing": {
+        "all_unpacked_pixels": [
+          255,
+          255,
+          255,
+          255
+        ],
+        "complete_reconstruction_equals_source": true,
+        "every_unpacked_source_pixel_verified": true,
+        "format": "RGBA8888 opaque, lossless two bands, top-to-bottom",
+        "lower_right_start_x": 2530,
+        "lower_right_width": 30,
+        "top_full_width_rows": 100
+      },
+      "physical_height": 1440,
+      "physical_width": 2560,
+      "scale": 2.0
+    }
+  ],
+  "schema_version": 1,
+  "source_guard_parent_sha256": "dd9d3291bae2713d6c0344d61cfebf34319007705fc6d8f3c9159b5f6b05d7de",
+  "source_guard_sha256": "45a20cee0e63d92b47fc4b9e102eeea35d54126b76a4506cddcedd2437a69cb6"
+}

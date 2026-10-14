@@ -208,6 +208,145 @@ fn assert_chromium_frame(frame: &Frame, kind: SourceChromiumFrame, scale: f64) {
     }
 }
 
+// Exact pinned Chromium frames for the two overflowing viewport fixtures.
+// Lossless storage: complete top rows, then the right scrollbar band below.
+// Every lower-left source pixel was verified opaque white. Reconstruction
+// compares every physical pixel, including scrollbar tracks, thumbs and edges.
+fn assert_chromium_scrollbar_frame(frame: &Frame, mode: usize, scale: f64) {
+    let index = SCALES.iter().position(|value| *value == scale).unwrap();
+    let (width, height, top_rows, bar_start, expected): (u32, u32, u32, u32, &[u8]) = match mode {
+        1 => [
+            (
+                800,
+                600,
+                50,
+                785,
+                include_bytes!("source_layer_scrollbar_chromium_oracles/control-1-scale-1.rgba")
+                    .as_slice(),
+            ),
+            (
+                1000,
+                750,
+                63,
+                981,
+                include_bytes!("source_layer_scrollbar_chromium_oracles/control-1-scale-1_25.rgba")
+                    .as_slice(),
+            ),
+            (
+                1200,
+                900,
+                75,
+                1178,
+                include_bytes!("source_layer_scrollbar_chromium_oracles/control-1-scale-1_5.rgba")
+                    .as_slice(),
+            ),
+            (
+                1400,
+                1050,
+                88,
+                1374,
+                include_bytes!("source_layer_scrollbar_chromium_oracles/control-1-scale-1_75.rgba")
+                    .as_slice(),
+            ),
+            (
+                1600,
+                1200,
+                100,
+                1570,
+                include_bytes!("source_layer_scrollbar_chromium_oracles/control-1-scale-2.rgba")
+                    .as_slice(),
+            ),
+        ][index],
+        8 => [
+            (
+                1280,
+                720,
+                50,
+                1265,
+                include_bytes!("source_layer_scrollbar_chromium_oracles/control-8-scale-1.rgba")
+                    .as_slice(),
+            ),
+            (
+                1600,
+                900,
+                63,
+                1581,
+                include_bytes!("source_layer_scrollbar_chromium_oracles/control-8-scale-1_25.rgba")
+                    .as_slice(),
+            ),
+            (
+                1920,
+                1080,
+                75,
+                1898,
+                include_bytes!("source_layer_scrollbar_chromium_oracles/control-8-scale-1_5.rgba")
+                    .as_slice(),
+            ),
+            (
+                2240,
+                1260,
+                88,
+                2214,
+                include_bytes!("source_layer_scrollbar_chromium_oracles/control-8-scale-1_75.rgba")
+                    .as_slice(),
+            ),
+            (
+                2560,
+                1440,
+                100,
+                2530,
+                include_bytes!("source_layer_scrollbar_chromium_oracles/control-8-scale-2.rgba")
+                    .as_slice(),
+            ),
+        ][index],
+        _ => unreachable!("Only measured modes 1 and 8 have scrollbar oracles"),
+    };
+    assert_eq!(
+        frame.width, width,
+        "mode {mode} scale {scale}: physical width"
+    );
+    assert_eq!(
+        frame.height, height,
+        "mode {mode} scale {scale}: physical height"
+    );
+    assert_eq!(
+        frame.stride,
+        width as usize * 4,
+        "mode {mode} scale {scale}: packed RGBA stride"
+    );
+    assert_eq!(
+        frame.pixels.len(),
+        frame.stride * height as usize,
+        "mode {mode} scale {scale}: full RGBA length"
+    );
+    assert!(top_rows <= height && bar_start <= width);
+    let top_bytes = top_rows as usize * width as usize * 4;
+    let bar_width = (width - bar_start) as usize;
+    assert_eq!(
+        expected.len(),
+        top_bytes + (height - top_rows) as usize * bar_width * 4
+    );
+    for y in 0..height {
+        for x in 0..width {
+            let wanted: [u8; 4] = if y < top_rows {
+                let offset = (y as usize * width as usize + x as usize) * 4;
+                expected[offset..offset + 4].try_into().unwrap()
+            } else if x >= bar_start {
+                let offset = top_bytes
+                    + ((y - top_rows) as usize * bar_width + (x - bar_start) as usize) * 4;
+                expected[offset..offset + 4].try_into().unwrap()
+            } else {
+                [255, 255, 255, 255]
+            };
+            assert_eq!(
+                pixel(frame, x, y),
+                wanted,
+                "mode {mode} scale {scale}: Chromium RGBA at ({x}, {y})"
+            );
+        }
+    }
+}
+
 #[test]
 fn source_background_single_record_and_child_picture_are_real_strategies() {
     for scale in SCALES {
@@ -340,7 +479,10 @@ fn original_edge_and_all_eight_controls_keep_real_property_boundaries() {
                 );
             }
             let f = frame(&scene);
-            if scale == 1.25 && [0, 1, 4, 7, 8].contains(&mode) {
+            if mode == 1 || mode == 8 {
+                assert_chromium_scrollbar_frame(&f, mode, scale);
+            }
+            if scale == 1.25 && [0, 4, 7].contains(&mode) {
                 for x in 0..f.width {
                     assert_eq!(pixel(&f, x, 62), [0, 0, 255, 255], "state {mode} x{x}");
                 }
