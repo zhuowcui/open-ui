@@ -22,46 +22,61 @@ remain open.
 
 ## Current closure work (13 October 2026)
 
-At clean `5520ed92`, the complete CPU renderer census against pinned Chromium
-147.0.7727.50 records **21,006/22,924 original comparisons exact (91.6%)**,
-with **1,918 differences and zero errors**. The expanded census records
-**21,734/23,728 exact**, with **1,994 differences and zero errors**. Of the
-201 added fixture IDs, **182 match at all four required profiles**.
+At clean `8bcc6dfa`, the latest complete CPU census against pinned Chromium
+147.0.7727.50 records **21,007/22,924 original comparisons exact (91.6%)**,
+with **1,917 differences and zero errors**. The expanded census records
+**21,735/23,728 exact**, with **1,993 differences and zero errors**.
+Of the 201 added fixture IDs, **182 match at all four required profiles**.
 Focused **640/640** and primitive **960/960** comparisons are exact.
-These are renderer measurements at that commit; there is no measured
+These numbers measure that renderer checkpoint. There is no measured
 whole-project completion percentage.
 
-At later clean `9ad2fb26`, focused and primitive matrices are also exact.
-All eight audited original rows are unchanged from `5520ed92`; the earlier
-report of three new losses was incorrect. A complete census on later renderer
-source is still required. Historical reports and inputs remain preserved.
+The full audit from `5520ed92` to `8bcc6dfa` finds **three gains and two
+losses**, with eight changed native images and **zero changed Chromium
+images or oracle inputs**. The balance case worsened at all four profiles.
+All 5,731 original HTML inputs, 201 added inputs, fonts, resources and
+capture identities remain unchanged. There is no contradictory pixel oracle
+in this comparison. The 957 original residual fixture IDs still require
+reviewed ownership and exact repair.
 
-At clean `890faec0`, the native workspace records **9,301 passed / 0 failed**; doctests record **2 passed / 0 failed / 13 ignored**. The 163-export C library's 40 C and 34 C++ consumers all pass.
-All **331 Python tests in 21 modules** and **21 generated/format checks** pass. The shared border literal API now accepts all ten existing border styles; the earlier five wheel setup failures and C++ initializer failure are retained as history. These checks qualify this source checkpoint only.
+At later clean `3225774a`, focused and primitive comparisons remain exact.
+The three pending native final-state cases now match **9/12** comparisons:
+nested columns **4/4**, fixed positioning **3/4**, scrollbars **2/4**.
+The browser's ordered history and independent final DOM agree; native
+repeats are deterministic. The nested case is awaiting admission checks.
+Open UI executes no JavaScript. Consuming apps use native Rust APIs and
+callbacks over the shared Engine.
 
-The three pending final-state cases replay native Engine mutations and layout
-barriers. A corrected, separate Chromium oracle now checks the unchanged
-original browser scripts against independent script-free final DOMs. All
-**12/12 oracle comparisons** and independent repeats agree. Open UI matches
-**5/12**: nested columns **0/4**, fixed positioning **3/4**, scrollbars **2/4**.
-No case matches all four profiles, so none is admitted. The previous alias
-comparison omitted the nested case's new child and cannot qualify that replay.
-Open UI executes no JavaScript; consuming apps use native Rust APIs and callbacks.
+The nested-column guard now compares the complete native frame with actual
+pinned Chromium pixels at all five scales, including fractional edges.
+That guard passes. The new retained source-layer diagnostic still has
+**five runtime failures** in its Engine and paint tests; the existing
+canonical layered replay's five test groups pass. Source-layer output is
+an explicit diagnostic and is not a qualified rendering path.
 
-Chromium tracing links the fixed-background edge to the actual owning layer.
-Opaque solid-color and opaque picture layers both retain an opaque fractional
-edge; transformed and nonopaque neighbors antialias it. Final draw-material
-attribution and the shared native repair remain open. The default font policy
-is unchanged; partial font diagnostics are not qualification.
+The balanced nested-row candidate at clean `26044df5` fixes three original
+comparisons but loses four previously exact comparisons in the scoped
+16-comparison run. One balance comparison still has a 125-pixel fractional
+edge difference. Its tests also expose vertical continuation and neighboring
+flow failures; two new guard setups accidentally used inline elements and
+are being corrected. Shared multicolumn units **16/16**, clip **1/1**,
+constraint **2/2**, and generated/format checks **21/21** pass. The candidate
+remains unqualified. A complete census on later source is still required.
 
-All seven manual hardening jobs pass at `5520ed92`. Hosted verification of
-the corrected source is pending. Native API completion, the remaining exact
-pixels, independent retained layers and presentation tracks, 3D, physical
-GPU/AT-SPI/performance, reproducible packaging, signing and publication remain
-open. Chromium defines correct pixels. Old Open UI images preserve history
-and are never a correctness target or release gate.
+At `8bcc6dfa`, the native workspace records **9,304 passed / zero failed**;
+doctests record **two passed / 13 ignored**. All **40 C and 34 C++** consumers
+pass against 163 exports. Its required hosted jobs and seven manual hardening
+jobs pass. Later native timeline reassignment passes **18 Rust/Engine/C ABI
+guards** and all **41 C and 35 C++** consumers against 164 exports. These
+source-specific checks do not qualify the current renderer or all native APIs.
 
-[Current closure evidence](../renderer/generated/native-final-closure-status-v8.json).
+Remaining work includes exact pixels, missing native APIs, retained layers
+and presentation tracks, 3D, physical GPU/AT-SPI/performance checks,
+reproducible packages, signing and publication. Chromium defines correct
+pixels. Historical Open UI images remain immutable history and never define
+pixel correctness or a release gate.
+
+[Current closure evidence](../renderer/generated/native-final-closure-status-v9.json).
 
 The sections below record earlier checkpoints. Their source-specific measurements remain historical evidence.
 

@@ -1,0 +1,121 @@
+{
+  "checks": [
+    {
+      "actual_exit_code": 0,
+      "argv": [
+        "cargo",
+        "+stable",
+        "--config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "--offline",
+        "--no-fail-fast",
+        "-p",
+        "openui-paint",
+        "--lib",
+        "source_layer_program::tests"
+      ],
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "9799a966398a3f5fa20643480b6b60c2dc1fe9ea6219f38f2a6abd211a9a563b",
+      "name": "source-layer-paint-unit-guards",
+      "passed": 0,
+      "pid": 3596227,
+      "terminal_reaped": true
+    },
+    {
+      "actual_exit_code": 0,
+      "argv": [
+        "cargo",
+        "+stable",
+        "--config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "--offline",
+        "--no-fail-fast",
+        "-p",
+        "openui-paint",
+        "--test",
+        "source_layer_program"
+      ],
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "041efeeac26d27763a75138010c3912db31fc3036a640309bf26f57cfb1ca3f6",
+      "name": "source-layer-paint-integration-guards",
+      "passed": 2,
+      "pid": 3596500,
+      "terminal_reaped": true
+    },
+    {
+      "actual_exit_code": 101,
+      "argv": [
+        "cargo",
+        "+stable",
+        "--config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "--offline",
+        "--no-fail-fast",
+        "-p",
+        "openui-engine",
+        "--test",
+        "source_layer_raster"
+      ],
+      "failed": 4,
+      "ignored": 0,
+      "log_sha256": "672e1d33a5f980baf64b0b1bdad16b258f66702e2a61ea8058de444cc7f9f924",
+      "name": "source-layer-engine-integration-guards",
+      "passed": 2,
+      "pid": 3596714,
+      "terminal_reaped": true
+    },
+    {
+      "actual_exit_code": 0,
+      "argv": [
+        "cargo",
+        "+stable",
+        "--config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "openui-engine",
+        "--test",
+        "nested_multicol_outer_fragmentation",
+        "ordered_and_independently_built_final_state_own_one_complete_inner_row",
+        "--",
+        "--exact"
+      ],
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "e9b9af415a3ab05f3a9dbdd1b13bc8b33488428c4502a906c73bbb62d6d2398f",
+      "name": "nested-chromium-five-scale-oracle-guard",
+      "passed": 1,
+      "pid": 3596891,
+      "terminal_reaped": true
+    }
+  ],
+  "complete": true,
+  "owner_pid": 3596176,
+  "qualification": false,
+  "scope": "Reviewed source-layer V3 static diagnostic: source paint unit/integration and Engine immutable scene/cache guards plus corrected actualChromium five-scale ordered/direct final-frame guard; no Chromium, animation or release qualification",
+  "source": {
+    "clean": true,
+    "commit": "b5cedc5b41c68d3a1d24df5f4280c38a91268790",
+    "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6",
+    "source_tree_sha256": "b1fb6e9e6b52d38ef6eb9b788ea4a051c430e8689407a93fa97bddbf2656006e",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "b5cedc5b41c68d3a1d24df5f4280c38a91268790",
+    "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6",
+    "source_tree_sha256": "b1fb6e9e6b52d38ef6eb9b788ea4a051c430e8689407a93fa97bddbf2656006e",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_unchanged": true
+}

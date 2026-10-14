@@ -1,0 +1,257 @@
+{
+  "all_hosted_jobs_completed": true,
+  "all_required_jobs_passed": true,
+  "checks": [
+    {
+      "actual_exit_code": 0,
+      "argv": [
+        "gh",
+        "pr",
+        "view",
+        "3",
+        "--repo",
+        "zhuowcui/open-ui",
+        "--json",
+        "headRefOid,headRefName,isDraft,state,url"
+      ],
+      "name": "pr3",
+      "pid": 3558746,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "5d3395d1eac8845f24aa53239ad49e75ae85747c8d7bd86829f0845aabe2bee2",
+      "terminal_reaped": true
+    },
+    {
+      "actual_exit_code": 0,
+      "argv": [
+        "gh",
+        "run",
+        "view",
+        "38503002502",
+        "--repo",
+        "zhuowcui/open-ui",
+        "--json",
+        "databaseId,headSha,event,status,conclusion,jobs,url"
+      ],
+      "name": "38503002502",
+      "pid": 3558786,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "60bd3c149357bfb4b296f49d739d11f52aa343cae304195f860fb762e746a0d2",
+      "terminal_reaped": true
+    },
+    {
+      "actual_exit_code": 0,
+      "argv": [
+        "gh",
+        "run",
+        "view",
+        "38503002464",
+        "--repo",
+        "zhuowcui/open-ui",
+        "--json",
+        "databaseId,headSha,event,status,conclusion,jobs,url"
+      ],
+      "name": "38503002464",
+      "pid": 3558821,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "82ca4bdfb7058e0b7e3d11fc1e680dd87ee03be34080c637b181cac2185b34fd",
+      "terminal_reaped": true
+    },
+    {
+      "actual_exit_code": 0,
+      "argv": [
+        "gh",
+        "run",
+        "view",
+        "38503002481",
+        "--repo",
+        "zhuowcui/open-ui",
+        "--json",
+        "databaseId,headSha,event,status,conclusion,jobs,url"
+      ],
+      "name": "38503002481",
+      "pid": 3558851,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "ee7f6e2595c524117a7b9f28de31cffecedbedb7b27e0120b7d36d5592aba0fe",
+      "terminal_reaped": true
+    },
+    {
+      "actual_exit_code": 0,
+      "argv": [
+        "gh",
+        "run",
+        "view",
+        "38503083930",
+        "--repo",
+        "zhuowcui/open-ui",
+        "--json",
+        "databaseId,headSha,event,status,conclusion,jobs,url"
+      ],
+      "name": "38503083930",
+      "pid": 3558871,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "b89c7d4cad7aa5b15e5496f7c5150330f4a6134de2727d87e66123e5349215c6",
+      "terminal_reaped": true
+    }
+  ],
+  "complete": true,
+  "completed_utc": "2026-10-14T03:33:45.761826+00:00",
+  "hosted_snapshot_only": true,
+  "owner_pid": 3558741,
+  "pr": {
+    "headRefName": "agent/v02-final-closure",
+    "headRefOid": "8bcc6dfa7240a34149d6351623a907723186f82d",
+    "isDraft": true,
+    "state": "OPEN",
+    "url": "https://github.com/zhuowcui/open-ui/pull/3"
+  },
+  "release_qualified": false,
+  "runs": [
+    {
+      "conclusion": "success",
+      "event": "pull_request",
+      "jobs": [
+        {
+          "conclusion": "success",
+          "name": "clang-format",
+          "status": "completed",
+          "url": "https://github.com/zhuowcui/open-ui/actions/runs/38503002502/job/115654050293"
+        },
+        {
+          "conclusion": "success",
+          "name": "gn-format",
+          "status": "completed",
+          "url": "https://github.com/zhuowcui/open-ui/actions/runs/38503002502/job/115654050499"
+        }
+      ],
+      "run_id": 38503002502,
+      "status": "completed",
+      "url": "https://github.com/zhuowcui/open-ui/actions/runs/38503002502"
+    },
+    {
+      "conclusion": "success",
+      "event": "pull_request",
+      "jobs": [
+        {
+          "conclusion": "success",
+          "name": "conformance-and-platform",
+          "status": "completed",
+          "url": "https://github.com/zhuowcui/open-ui/actions/runs/38503002464/job/115654050168"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "msrv",
+          "status": "completed",
+          "url": "https://github.com/zhuowcui/open-ui/actions/runs/38503002464/job/115654051248"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "native-sanitizers",
+          "status": "completed",
+          "url": "https://github.com/zhuowcui/open-ui/actions/runs/38503002464/job/115654051276"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "c-undefined-sanitizer",
+          "status": "completed",
+          "url": "https://github.com/zhuowcui/open-ui/actions/runs/38503002464/job/115654051428"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "miri-handles",
+          "status": "completed",
+          "url": "https://github.com/zhuowcui/open-ui/actions/runs/38503002464/job/115654051509"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "fuzz-smoke",
+          "status": "completed",
+          "url": "https://github.com/zhuowcui/open-ui/actions/runs/38503002464/job/115654086702"
+        }
+      ],
+      "run_id": 38503002464,
+      "status": "completed",
+      "url": "https://github.com/zhuowcui/open-ui/actions/runs/38503002464"
+    },
+    {
+      "conclusion": "success",
+      "event": "pull_request",
+      "jobs": [
+        {
+          "conclusion": "success",
+          "name": "rust-parity",
+          "status": "completed",
+          "url": "https://github.com/zhuowcui/open-ui/actions/runs/38503002481/job/115654050239"
+        },
+        {
+          "conclusion": "success",
+          "name": "python-accountability",
+          "status": "completed",
+          "url": "https://github.com/zhuowcui/open-ui/actions/runs/38503002481/job/115654050338"
+        },
+        {
+          "conclusion": "success",
+          "name": "historical-pixel-audit",
+          "status": "completed",
+          "url": "https://github.com/zhuowcui/open-ui/actions/runs/38503002481/job/115654050386"
+        }
+      ],
+      "run_id": 38503002481,
+      "status": "completed",
+      "url": "https://github.com/zhuowcui/open-ui/actions/runs/38503002481"
+    },
+    {
+      "conclusion": "success",
+      "event": "workflow_dispatch",
+      "jobs": [
+        {
+          "conclusion": "success",
+          "name": "fuzz-smoke",
+          "status": "completed",
+          "url": "https://github.com/zhuowcui/open-ui/actions/runs/38503083930/job/115654307996"
+        },
+        {
+          "conclusion": "success",
+          "name": "c-undefined-sanitizer",
+          "status": "completed",
+          "url": "https://github.com/zhuowcui/open-ui/actions/runs/38503083930/job/115654308116"
+        },
+        {
+          "conclusion": "success",
+          "name": "native-sanitizers (leak)",
+          "status": "completed",
+          "url": "https://github.com/zhuowcui/open-ui/actions/runs/38503083930/job/115654308122"
+        },
+        {
+          "conclusion": "success",
+          "name": "native-sanitizers (address)",
+          "status": "completed",
+          "url": "https://github.com/zhuowcui/open-ui/actions/runs/38503083930/job/115654308208"
+        },
+        {
+          "conclusion": "success",
+          "name": "conformance-and-platform",
+          "status": "completed",
+          "url": "https://github.com/zhuowcui/open-ui/actions/runs/38503083930/job/115654308256"
+        },
+        {
+          "conclusion": "success",
+          "name": "miri-handles",
+          "status": "completed",
+          "url": "https://github.com/zhuowcui/open-ui/actions/runs/38503083930/job/115654308285"
+        },
+        {
+          "conclusion": "success",
+          "name": "msrv",
+          "status": "completed",
+          "url": "https://github.com/zhuowcui/open-ui/actions/runs/38503083930/job/115654308900"
+        }
+      ],
+      "run_id": 38503083930,
+      "status": "completed",
+      "url": "https://github.com/zhuowcui/open-ui/actions/runs/38503083930"
+    }
+  ],
+  "schema_version": 1,
+  "source_commit": "8bcc6dfa7240a34149d6351623a907723186f82d",
+  "started_utc": "2026-10-14T03:33:36.984354+00:00"
+}

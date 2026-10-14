@@ -1,0 +1,15 @@
+{
+  "session_id": 59789,
+  "actual_exit_code": 1,
+  "reaped": true,
+  "tool_chunk": "062314",
+  "receipt_sha256": "d7b03a3a18e88925b75be9f7932d82f92195b6f5461366d3f2a9f1c66cb62005",
+  "all_owned_pids_absent": [
+    3597313,
+    3597357
+  ],
+  "actual_guards_executed": 6,
+  "passed": 5,
+  "failed": 1,
+  "qualified": false
+}

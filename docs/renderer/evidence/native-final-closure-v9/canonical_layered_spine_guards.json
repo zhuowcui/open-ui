@@ -1,0 +1,47 @@
+{
+  "checks": [
+    {
+      "actual_exit_code": 0,
+      "argv": [
+        "cargo",
+        "+stable",
+        "--config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "--offline",
+        "--no-fail-fast",
+        "-p",
+        "openui-engine",
+        "--test",
+        "layered_paint_diagnostics"
+      ],
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "9518965ef7da35e0aa2be5aeb9b786aa1ec063837473f54fbd4280c80c344173",
+      "name": "existing-canonical-layered-paint-diagnostics",
+      "passed": 5,
+      "pid": 3598063,
+      "terminal_reaped": true
+    }
+  ],
+  "complete": true,
+  "owner_pid": 3598015,
+  "qualification": false,
+  "scope": "Reviewed source-layer V3 static diagnostic: existing five canonical/exact-spine effect/clip/scroll/helper/resource/identity/zero-work groups to resolve canonical-regression risk; no Chromium, animation or release qualification",
+  "source": {
+    "clean": true,
+    "commit": "b5cedc5b41c68d3a1d24df5f4280c38a91268790",
+    "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6",
+    "source_tree_sha256": "b1fb6e9e6b52d38ef6eb9b788ea4a051c430e8689407a93fa97bddbf2656006e",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "b5cedc5b41c68d3a1d24df5f4280c38a91268790",
+    "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6",
+    "source_tree_sha256": "b1fb6e9e6b52d38ef6eb9b788ea4a051c430e8689407a93fa97bddbf2656006e",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_unchanged": true
+}

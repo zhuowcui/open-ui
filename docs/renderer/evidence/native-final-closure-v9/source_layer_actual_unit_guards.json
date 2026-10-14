@@ -1,0 +1,47 @@
+{
+  "checks": [
+    {
+      "actual_exit_code": 101,
+      "argv": [
+        "cargo",
+        "+stable",
+        "--config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "--offline",
+        "--no-fail-fast",
+        "-p",
+        "openui-paint",
+        "--lib",
+        "source_layer_program::source_tests"
+      ],
+      "failed": 1,
+      "ignored": 0,
+      "log_sha256": "9ef8f4020bcb1d3aa30d8d99aef1d91687da5064d1d74e04be546f95109581cc",
+      "name": "source-layer-actual-six-unit-guards",
+      "passed": 5,
+      "pid": 3597357,
+      "terminal_reaped": true
+    }
+  ],
+  "complete": true,
+  "owner_pid": 3597313,
+  "qualification": false,
+  "scope": "Reviewed source-layer V3 static diagnostic: correct actual source_tests filter, six paint ownership/bounds/extraction unit groups; no Chromium, animation or release qualification",
+  "source": {
+    "clean": true,
+    "commit": "b5cedc5b41c68d3a1d24df5f4280c38a91268790",
+    "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6",
+    "source_tree_sha256": "b1fb6e9e6b52d38ef6eb9b788ea4a051c430e8689407a93fa97bddbf2656006e",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "b5cedc5b41c68d3a1d24df5f4280c38a91268790",
+    "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6",
+    "source_tree_sha256": "b1fb6e9e6b52d38ef6eb9b788ea4a051c430e8689407a93fa97bddbf2656006e",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_unchanged": true
+}

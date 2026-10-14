@@ -1,0 +1,172 @@
+{
+  "owner_pid": 3564912,
+  "source": {
+    "commit": "7bc403e2b17cb9925e760c7467e3742889bd7283",
+    "clean": true,
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "source_tree_sha256": "2d4eb6c5149146f90096c8be2cc5cc20ee78906c99017efaa9606e3e481cc36e",
+    "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6"
+  },
+  "checks": [
+    {
+      "name": "engine-reassignment-guards",
+      "argv": [
+        "cargo",
+        "+stable",
+        "--config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "--offline",
+        "--no-fail-fast",
+        "-p",
+        "openui-engine",
+        "--test",
+        "animation_timeline_reassignment"
+      ],
+      "pid": 3565140,
+      "actual_exit_code": 0,
+      "terminal_reaped": true,
+      "log_sha256": "d6f3a47d9c7864d50b2818c67623ad9a90f6f93bf8ad0e435292a1d4f0567680",
+      "reported_passed": 11,
+      "reported_failed": 0,
+      "reported_ignored": 0
+    },
+    {
+      "name": "rust-reassignment-guards",
+      "argv": [
+        "cargo",
+        "+stable",
+        "--config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "openui",
+        "--test",
+        "native_timeline_reassignment"
+      ],
+      "pid": 3565393,
+      "actual_exit_code": 0,
+      "terminal_reaped": true,
+      "log_sha256": "21a419d14c8bdbb0046835b9370518b7e6ef879ad342b34f425cdb9b60c387fd",
+      "reported_passed": 3,
+      "reported_failed": 0,
+      "reported_ignored": 0
+    },
+    {
+      "name": "ffi-reassignment-guards",
+      "argv": [
+        "cargo",
+        "+stable",
+        "--config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "openui-ffi",
+        "--lib",
+        "timeline_reassignment_tests"
+      ],
+      "pid": 3565642,
+      "actual_exit_code": 0,
+      "terminal_reaped": true,
+      "log_sha256": "55a2ddde1e391e0e7cf8d50b1f8c1e9d01e2bcac61ccd78f304f9a38801279e1",
+      "reported_passed": 4,
+      "reported_failed": 0,
+      "reported_ignored": 0
+    },
+    {
+      "name": "nested-runtime-geometry-diagnostic",
+      "argv": [
+        "python3",
+        "-B",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-nested-geometry-runtime-v4638/run.py",
+        "7bc403e2b17cb9925e760c7467e3742889bd7283"
+      ],
+      "pid": 3565909,
+      "actual_exit_code": 1,
+      "terminal_reaped": true,
+      "log_sha256": "07e7333831553a512a1e2de315e04d22dbd4af8090cf45a70907c6f799b1ff26",
+      "reported_passed": 0,
+      "reported_failed": 0,
+      "reported_ignored": 0
+    },
+    {
+      "name": "c-abi-library-build",
+      "argv": [
+        "cargo",
+        "+stable",
+        "--config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "build",
+        "--locked",
+        "--offline",
+        "-p",
+        "openui-ffi"
+      ],
+      "pid": 3566137,
+      "actual_exit_code": 0,
+      "terminal_reaped": true,
+      "log_sha256": "579563a8292620694c5b5ab312583bee0122b3b35371aa82322ba917f242fb41",
+      "reported_passed": 0,
+      "reported_failed": 0,
+      "reported_ignored": 0
+    },
+    {
+      "name": "c-cpp-headless-consumers",
+      "argv": [
+        "python3",
+        "-B",
+        "/home/nero/code/open-ui/tools/ffi/verify_abi.py",
+        "--library",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-timeline-reassignment-runtime-v4635/libopenui_ffi.so",
+        "--keep-going"
+      ],
+      "pid": 3566510,
+      "actual_exit_code": 0,
+      "terminal_reaped": true,
+      "log_sha256": "5f91a962583cd184258a1b4305dd2c15d1c15a3d6a096243d9002331f0fe9d46",
+      "reported_passed": 0,
+      "reported_failed": 0,
+      "reported_ignored": 0
+    }
+  ],
+  "complete": true,
+  "renderer_qualified": false,
+  "release_qualified": false,
+  "runtime_scope": "Exact Engine timeline reassignment target, public Rust target and FFI reassignment groups; current-source additive164-export library and all 41 C+35 C++ headless consumers. Other known nested-layout failures and all Chromium/lab/release gates remain separate",
+  "independent_live_pixel_epoch": {
+    "source_before": {
+      "commit": "8bcc6dfa7240a34149d6351623a907723186f82d",
+      "clean": true,
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_tree_sha256": "91527a0d74a10b04afd52eac3b1a7f362a488ca29cb7c73bfce7168dd8edf5e8",
+      "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6"
+    },
+    "runner_sha256": "2b11ee0fc5b2b1067a064f8f86d339d932cd72fd2af8d776efe9394d727bc889",
+    "performance_qualification": false,
+    "shared_cargo_target_used_by_pixel_runner": false,
+    "fresh_runner_build_receipt_sha256": "cee58778a313d4d2f82b1e6e83bb012933857c3879910235a5cc591f18fcf000",
+    "source_unchanged": true,
+    "runner_unchanged": true
+  },
+  "boot_id": "362ae37b-d85f-4812-9f25-ef02cf732134",
+  "current_source_library": {
+    "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-timeline-reassignment-runtime-v4635/libopenui_ffi.so",
+    "sha256": "574a1520e37189249e29b8678f075cd84639cf078862b2a82d0c738ef8ca9cfa",
+    "source_commit": "7bc403e2b17cb9925e760c7467e3742889bd7283",
+    "successful_build_pid": 3566137
+  },
+  "source_after": {
+    "commit": "7bc403e2b17cb9925e760c7467e3742889bd7283",
+    "clean": true,
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "source_tree_sha256": "2d4eb6c5149146f90096c8be2cc5cc20ee78906c99017efaa9606e3e481cc36e",
+    "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6"
+  },
+  "source_unchanged": true,
+  "intended_exit_code": 1
+}

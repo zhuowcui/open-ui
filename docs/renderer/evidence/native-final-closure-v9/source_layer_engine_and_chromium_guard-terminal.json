@@ -1,0 +1,20 @@
+{
+  "session_id": 47632,
+  "actual_exit_code": 1,
+  "reaped": true,
+  "tool_chunk_id": "36a99d",
+  "receipt_sha256": "1e1b9247cb78041a0bc4b4c5adf6c6f0228b413ed2a822501b12ed939c07588e",
+  "all_owned_pids_absent": [
+    3596176,
+    3596227,
+    3596500,
+    3596714,
+    3596891
+  ],
+  "source_unit_filter_ran_zero_tests_not_a_pass": true,
+  "source_paint_integration_pass": 2,
+  "source_engine_pass": 2,
+  "source_engine_fail": 4,
+  "corrected_five_scale_chromium_oracle_pass": 1,
+  "qualified": false
+}
