@@ -2985,7 +2985,8 @@
       "consumers": [
         "bindings/rust/openui-layout/src/scrollbars.rs",
         "bindings/rust/openui-layout/src/viewport.rs",
-        "bindings/rust/openui-engine/src/control_geometry.rs"
+        "bindings/rust/openui-engine/src/control_geometry.rs",
+        "bindings/rust/openui-engine/src/lib.rs"
       ],
       "css_name": "scrollbar-width",
       "field": "scrollbar_width",
