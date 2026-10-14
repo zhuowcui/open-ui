@@ -344,7 +344,7 @@ fn check_capacity(f: &mut Fixture, capacity: f64, principal: f64, vertical: bool
     );
     let r = f.engine.bounds(f.inner).unwrap().unwrap();
     assert_eq!(
-        (r.width, r.height),
+        (f64::from(r.width), f64::from(r.height)),
         if vertical {
             (principal, 100.0)
         } else {
