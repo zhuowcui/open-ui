@@ -114,7 +114,7 @@ pub(crate) enum OwnedDraw {
 }
 
 impl OwnedDraw {
-    fn shader_dependency(&self) -> PaintShaderDependency {
+    pub(crate) fn shader_dependency(&self) -> PaintShaderDependency {
         let paint = match self {
             Self::Rect(_, paint)
             | Self::Line(_, _, paint)
@@ -140,6 +140,25 @@ impl OwnedDraw {
             // has no image children. Retain that dependency as unclassified.
             PaintShaderDependency::Unclassified
         }
+    }
+
+    pub(crate) fn has_filter_dependency(&self) -> bool {
+        let paint = match self {
+            Self::Rect(_, p)
+            | Self::Line(_, _, p)
+            | Self::Oval(_, p)
+            | Self::Circle(_, _, p)
+            | Self::RRect(_, p)
+            | Self::RoundRect(_, _, _, p)
+            | Self::DRRect(_, _, p)
+            | Self::Path(_, p)
+            | Self::Image(_, _, _, _, p)
+            | Self::TextBlob(_, _, p)
+            | Self::String(_, _, _, p) => Some(p),
+            Self::ImageNine(_, _, _, _, p) | Self::Picture(_, _, p) => p.as_ref(),
+            Self::Clear(_) | Self::Color(_, _) => None,
+        };
+        paint.is_some_and(|p| p.image_filter().is_some() || p.mask_filter().is_some())
     }
 
     pub(crate) fn replay(&self, canvas: &dyn PaintCanvas) {
@@ -253,6 +272,7 @@ pub(crate) enum ProgramOperation {
     Draw(usize),
     EnterOwner(PaintProgramOwner, PaintOwnerPhase, PaintLayoutScopeRole),
     ExitOwner,
+    Property(crate::surface_program::PropertyMarker),
 }
 
 /// Bounds admission for an experimental intrinsic picture.
@@ -370,6 +390,24 @@ pub(crate) fn replay_operations<'a>(
     canvas: &Canvas,
     draw: impl Fn(usize) -> &'a OwnedDraw,
 ) {
+    let result = replay_operations_with(operations, canvas, draw, |_, _, _, _| {
+        Ok::<_, std::convert::Infallible>(None)
+    });
+    match result {
+        Ok(()) => {}
+        Err(never) => match never {},
+    }
+}
+
+/// The canonical interpreter also supplies the diagnostic substitution seam.
+/// The callback may consume one complete interval; all remaining operations use
+/// this same state spine. An error restores the caller's original canvas state.
+pub(crate) fn replay_operations_with<'a, E>(
+    operations: &[ProgramOperation],
+    canvas: &Canvas,
+    draw: impl Fn(usize) -> &'a OwnedDraw,
+    mut substitute: impl FnMut(usize, &dyn PaintCanvas, &M44, usize) -> Result<Option<usize>, E>,
+) -> Result<(), E> {
     let tracked: &dyn PaintCanvas = canvas;
     tracked.legacy_helper_boundary();
     let host_count = canvas.save_count();
@@ -390,7 +428,17 @@ pub(crate) fn replay_operations<'a>(
     let base = canvas.save_count();
     let base_matrix = canvas.local_to_device();
     let _opacity_scope = tracked.opacity_scope();
-    for operation in operations {
+    let mut operation_index = 0;
+    while operation_index < operations.len() {
+        if let Some(next) = substitute(operation_index, tracked, &base_matrix, base)? {
+            assert!(
+                next > operation_index && next <= operations.len(),
+                "validated diagnostic interval"
+            );
+            operation_index = next;
+            continue;
+        }
+        let operation = &operations[operation_index];
         match operation {
             ProgramOperation::Save => {
                 tracked.save();
@@ -444,10 +492,14 @@ pub(crate) fn replay_operations<'a>(
             ProgramOperation::Draw(index) => {
                 draw(*index).replay(tracked);
             }
-            ProgramOperation::EnterOwner(..) | ProgramOperation::ExitOwner => {}
+            ProgramOperation::EnterOwner(..)
+            | ProgramOperation::ExitOwner
+            | ProgramOperation::Property(..) => {}
         }
+        operation_index += 1;
     }
     tracked.restore_to_count(host_count);
+    Ok(())
 }
 
 struct Capture {
@@ -481,6 +533,61 @@ pub(crate) fn is_capturing(canvas: &Canvas) -> bool {
             .iter()
             .any(|c| c.canvas == canvas as *const Canvas as usize)
     })
+}
+
+/// Diagnostic metadata observes the actual painter choice and never changes
+/// its canonical save stack, pending float-alpha operation or draw operands.
+pub(crate) fn record_fragment_property(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    decision: crate::PaintPropertyDecision,
+) {
+    record_property_owner(
+        canvas,
+        fragment.node_id,
+        fragment.owns_element_box(),
+        layout_scope_role(fragment),
+        decision,
+    );
+}
+
+pub(crate) fn record_property_owner(
+    canvas: &Canvas,
+    node: openui_dom::NodeId,
+    owns_element_box: bool,
+    layout_role: PaintLayoutScopeRole,
+    decision: crate::PaintPropertyDecision,
+) {
+    record_operation(
+        canvas,
+        ProgramOperation::Property(crate::surface_program::PropertyMarker {
+            node,
+            owns_element_box,
+            layout_role,
+            decision,
+        }),
+    );
+}
+
+fn layout_scope_role(fragment: &Fragment) -> PaintLayoutScopeRole {
+    if matches!(
+        fragment.anonymous_layout_box,
+        Some(openui_layout::AnonymousLayoutBox::FieldsetContent { .. })
+    ) {
+        PaintLayoutScopeRole::FieldsetContent
+    } else if fragment.owns_element_box() {
+        PaintLayoutScopeRole::AuthoredBox
+    } else if fragment.table_part.is_some() {
+        PaintLayoutScopeRole::TableHelper
+    } else {
+        match fragment.kind {
+            openui_layout::FragmentKind::Text => PaintLayoutScopeRole::TextRun,
+            openui_layout::FragmentKind::ColumnBox | openui_layout::FragmentKind::ColumnRule => {
+                PaintLayoutScopeRole::Column
+            }
+            _ => PaintLayoutScopeRole::LayoutHelper,
+        }
+    }
 }
 
 pub(crate) fn record_operation(canvas: &Canvas, operation: ProgramOperation) {
@@ -632,23 +739,7 @@ impl<'a> PaintOwnerScope<'a> {
             node_id: fragment.node_id,
             owns_element_box: fragment.owns_element_box(),
         };
-        let role = if matches!(
-            fragment.anonymous_layout_box,
-            Some(openui_layout::AnonymousLayoutBox::FieldsetContent { .. })
-        ) {
-            PaintLayoutScopeRole::FieldsetContent
-        } else if owner.owns_element_box {
-            PaintLayoutScopeRole::AuthoredBox
-        } else if fragment.table_part.is_some() {
-            PaintLayoutScopeRole::TableHelper
-        } else {
-            match fragment.kind {
-                openui_layout::FragmentKind::Text => PaintLayoutScopeRole::TextRun,
-                openui_layout::FragmentKind::ColumnBox
-                | openui_layout::FragmentKind::ColumnRule => PaintLayoutScopeRole::Column,
-                _ => PaintLayoutScopeRole::LayoutHelper,
-            }
-        };
+        let role = layout_scope_role(fragment);
         matching(canvas, |capture| {
             capture.owners.push(owner);
             capture

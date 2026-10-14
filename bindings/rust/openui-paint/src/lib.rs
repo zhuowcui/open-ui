@@ -17,6 +17,7 @@ mod paint_program;
 mod paint_record;
 mod painter;
 mod render;
+mod surface_program;
 pub mod text_painter;
 
 pub use content_layer::RecordedContentLayer;
@@ -37,3 +38,4 @@ pub use render::{
     record_fragment_with_program, render_to_png, render_to_surface, LayeredPaintCapture,
     RecordedPaintCapture, RecordedPicture,
 };
+pub use surface_program::*;

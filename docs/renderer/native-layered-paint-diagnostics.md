@@ -87,3 +87,42 @@ classification guards are source-only until Root runs the current-source gates.
 PaintLayerCoverage has two additive Rust fields and PaintShaderDependency is an
 additive typed inspection API. Downstream struct literals must include these
 fields; no C layouts or exported ABI symbols change.
+
+
+## Transparent effect-source diagnostics (source candidate)
+
+Actual painter decisions now emit immutable transform, overflow-clip, clip-path,
+filter, mask and opacity projections. A projection uses the real retained source
+generation and layout role. A removed transform ancestor with no retained layer
+ID remains explicitly unbound; it does not borrow its child's identity. A cell
+background clip can retain the cell owner while the active draw scope belongs to
+its table. Fieldset content clips retain the wrapper source and their separate
+content role, with no additional authored opacity. These annotations do not
+change the canonical canvas calls.
+
+`LayeredPaintProgram::transparent_surface_program` owns the actual opacity
+intervals, original draw operands, independent world-baked source programs and
+pictures, font bytes and cache lease. The selected diagnostic reason is the
+actual painter opacity interval with a will-change-transform decision. It is
+not a Chromium layer-admission assertion. Ancestor matrices and save depths
+remain in each source. Ancestor clips/effects stay on the original parent spine
+and apply once. Ordinary intervals replay unchanged; selected intervals use
+explicit transparent N32 targets and compose the owning alpha once, including
+nested selected intervals. Allocation happens before output replay. Full caller
+bounds are the only reported damage; tighter independent culling is unqualified.
+
+Incomplete raw captures, hidden opaque Pictures, image/mask filters and unknown
+shader graphs fail closed for extraction. Original SVG/Picture pixels remain
+available through canonical replay; SVG owner presence is not complete operand
+capture. Fixed canvas queries remain visible dependencies. The source pictures'
+cull rectangles, arbitrary host movement, text/LCD policy, tile phase and color
+space remain unqualified. Typed source replay retains original operands and
+does not substitute the experimental source Picture.
+
+The first API operates on the actual standalone recording program, including
+the separately retained viewport child program. It does not yet replace that
+child's opaque Picture in its parent, compose a complete tiled document, select
+a release renderer path, or publish presentation tracks/worker clocks. Those
+remain required follow-up work. Static native guards and exact current Chromium
+RGBA gates must pass before any selection is admitted. Historical archives stay
+intact for history; their known-wrong bytes are not a correctness requirement.

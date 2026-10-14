@@ -1371,6 +1371,13 @@ fn paint_fragment_contents(
             -promoted_transform_parent_offset.left.to_f32(),
             -promoted_transform_parent_offset.top.to_f32(),
         ));
+        crate::paint_program::record_property_owner(
+            canvas.raw_tracking_target(),
+            ancestor.node_id,
+            true,
+            crate::PaintLayoutScopeRole::AuthoredBox,
+            crate::PaintPropertyDecision::Transform,
+        );
         canvas.save();
         concat_transform_matrix(canvas, applied.matrix);
         css_matrix = css_matrix.concat(applied);
@@ -1454,6 +1461,11 @@ fn paint_fragment_contents(
         canvas.clip_rect(clip, ClipOp::Intersect, false);
     }
     if has_precomposited_transform {
+        crate::paint_program::record_fragment_property(
+            canvas.raw_tracking_target(),
+            fragment,
+            crate::PaintPropertyDecision::Transform,
+        );
         let bounds = promoted_transform_backing_bounds(fragment);
         let raster_width = bounds.width().ceil().max(1.0) as i32;
         let raster_height = bounds.height().ceil().max(1.0) as i32;
@@ -1504,6 +1516,11 @@ fn paint_fragment_contents(
         return;
     }
     if has_transform {
+        crate::paint_program::record_fragment_property(
+            canvas.raw_tracking_target(),
+            fragment,
+            crate::PaintPropertyDecision::Transform,
+        );
         // Fragment geometry is stored in the untransformed coordinate space.
         // Apply the element's affine transform while painting its complete
         // fragment subtree, around the CSS transform-origin in the border box.
@@ -1516,6 +1533,11 @@ fn paint_fragment_contents(
     }
     let has_clip_path = fragment.owns_element_box() && style.clip_path_inset.is_some();
     if let Some(inset) = style.clip_path_inset.as_ref().filter(|_| has_clip_path) {
+        crate::paint_program::record_fragment_property(
+            canvas.raw_tracking_target(),
+            fragment,
+            crate::PaintPropertyDecision::ClipPath,
+        );
         // ClipPathClipper::LocalReferenceBox uses the owned border box. A
         // captioned table's authored wrapper includes its caption and grid.
         // BasicShapeInset then resolves each length with FloatValueForLength.
@@ -1581,10 +1603,20 @@ fn paint_fragment_contents(
         paint
     });
     if let Some(paint) = filter_paint.as_ref() {
+        crate::paint_program::record_fragment_property(
+            canvas.raw_tracking_target(),
+            fragment,
+            crate::PaintPropertyDecision::Filter,
+        );
         canvas.save_layer_owned(None, Some(paint), SaveLayerFlags::empty());
     }
     let needs_mask_layer = fragment.owns_element_box() && !style.mask_layers.is_empty();
     if needs_mask_layer {
+        crate::paint_program::record_fragment_property(
+            canvas.raw_tracking_target(),
+            fragment,
+            crate::PaintPropertyDecision::Mask,
+        );
         canvas.save_layer_alpha_f(None, 1.0);
     }
 
@@ -1593,6 +1625,14 @@ fn paint_fragment_contents(
     // cc float-alpha rule. Layout/DOM shape does not decide fold eligibility.
     let needs_layer = style.opacity < 1.0;
     if needs_layer {
+        crate::paint_program::record_fragment_property(
+            canvas.raw_tracking_target(),
+            fragment,
+            crate::PaintPropertyDecision::Opacity {
+                alpha: style.opacity,
+                will_change_transform: style.will_change_transform,
+            },
+        );
         // Chromium's SaveLayerAlphaOp uses the destination's ordinary layer
         // format. Subtree contents do not select an F16 opacity intermediate:
         // that changes packed premultiply/composite rounding for vector groups.
@@ -6901,6 +6941,11 @@ fn prepaint_collapsed_table_backgrounds(
     let clips = needs_overflow_clip(fragment, style, doc);
     let rounded = clips && paint_rounded_overflow_clip_eligible(fragment, style, doc);
     let content_clip_scope = clips.then(|| {
+        crate::paint_program::record_fragment_property(
+            canvas.raw_tracking_target(),
+            fragment,
+            crate::PaintPropertyDecision::OverflowClip,
+        );
         if rounded {
             let (clip, _, (margin_x, margin_y)) =
                 overflow_clip_base_geometry(fragment, doc, offset, style);
@@ -10722,6 +10767,13 @@ fn paint_with_overflow_clip(
     // Only this proven no-op intersection may disappear. An actual clip,
     // rounded/analytic edge, effect, scroll or outline retains its full scope.
     // The unchanged one-draw opacity rule can then fold the original operands.
+    if !omit_structural_scope {
+        crate::paint_program::record_fragment_property(
+            canvas.raw_tracking_target(),
+            fragment,
+            crate::PaintPropertyDecision::OverflowClip,
+        );
+    }
     let content_clip_scope = (!omit_structural_scope)
         .then(|| OverflowContentClipScope::new(canvas, clip_rect, packed_rounded_mask));
 

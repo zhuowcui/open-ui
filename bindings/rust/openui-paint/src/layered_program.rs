@@ -62,6 +62,7 @@ pub enum LayeredPaintError {
     UnboundOwner(NodeId),
     UnbalancedOwnerScopes,
     InvalidDrawReference,
+    InvalidPropertyReference,
     IncompleteCapture(PaintCaptureStatus),
 }
 
@@ -190,6 +191,7 @@ pub struct LayeredPaintProgram {
     draw_references: Arc<[PaintLayerDrawReference]>,
     state_references: Arc<[PaintLayerStateReference]>,
     scopes: Arc<[PaintLayerScope]>,
+    properties: Arc<[crate::PaintPropertyProjection]>,
     status: PaintCaptureStatus,
     coverage: PaintLayerCoverage,
 }
@@ -224,6 +226,7 @@ impl RecordedPaintProgram {
         let mut locations = vec![None; self.chunks.len()];
         let mut references = Vec::new();
         let mut states = Vec::new();
+        let mut properties = Vec::new();
         let mut previous_source = None;
         let mut coverage = PaintLayerCoverage {
             fixed_canvas_queries: self.canvas_queries,
@@ -273,6 +276,55 @@ impl RecordedPaintProgram {
                         .pop()
                         .ok_or(LayeredPaintError::UnbalancedOwnerScopes)?;
                     scopes[index].end_operation = operation_index + 1;
+                }
+                ProgramOperation::Property(marker) => {
+                    // The actual background phase can clip a cell while the
+                    // enclosing draw scope belongs to its table. Resolve that
+                    // real property owner instead of inventing an EnterOwner.
+                    let inherited = stack
+                        .iter()
+                        .rev()
+                        .find(|(owner, _, _)| owner.node_id == marker.node)
+                        .map(|(_, binding, _)| *binding);
+                    let binding = if marker.node.is_none() {
+                        inherited
+                            .or_else(|| stack.last().map(|(_, b, _)| *b))
+                            .or(Some(fallback))
+                    } else {
+                        resolve(marker.node).or(inherited)
+                    };
+                    if let Some(binding) = binding {
+                        if !binding.valid() {
+                            return Err(LayeredPaintError::InvalidBinding);
+                        }
+                        if let Some(index) = indices.get(&binding.id).copied() {
+                            if sources[index].binding != binding {
+                                return Err(LayeredPaintError::ConflictingIdentity(binding.id));
+                            }
+                        } else {
+                            indices.insert(binding.id, sources.len());
+                            sources.push(SourceBuilder {
+                                binding,
+                                chunks: Vec::new(),
+                                runs: Vec::new(),
+                            });
+                        }
+                    }
+                    properties.push(crate::PaintPropertyProjection {
+                        identity: binding.map(|binding| crate::PaintPropertyIdentity {
+                            source: binding.id,
+                            role: marker.decision.role(),
+                            layout_role: marker.layout_role,
+                        }),
+                        binding,
+                        owner: PaintProgramOwner {
+                            node_id: marker.node,
+                            owns_element_box: marker.owns_element_box,
+                        },
+                        layout_role: marker.layout_role,
+                        decision: marker.decision,
+                        operation: operation_index,
+                    });
                 }
                 ProgramOperation::Draw(draw_index) => {
                     let chunk = self
@@ -373,6 +425,7 @@ impl RecordedPaintProgram {
             draw_references: references.into(),
             state_references: states.into(),
             scopes: scopes.into(),
+            properties: properties.into(),
             status: self.status(),
             coverage,
         })
@@ -399,11 +452,19 @@ fn state_kind(operation: &ProgramOperation) -> PaintLayerStateKind {
         ProgramOperation::ClipPath(..) => K::ClipPath,
         ProgramOperation::Draw(..)
         | ProgramOperation::EnterOwner(..)
-        | ProgramOperation::ExitOwner => unreachable!("non-state operation"),
+        | ProgramOperation::ExitOwner
+        | ProgramOperation::Property(..) => unreachable!("non-state operation"),
     }
 }
 
 impl LayeredPaintProgram {
+    pub(crate) fn operations(&self) -> &[ProgramOperation] {
+        &self.operations
+    }
+    pub(crate) fn owned_draw(&self, index: usize) -> &OwnedDraw {
+        let location = self.draws[index];
+        &self.sources[location.source].chunks[location.draw].draw
+    }
     pub fn sources(&self) -> &[RetainedPaintLayerSource] {
         &self.sources
     }
@@ -415,6 +476,9 @@ impl LayeredPaintProgram {
     }
     pub fn scopes(&self) -> &[PaintLayerScope] {
         &self.scopes
+    }
+    pub fn properties(&self) -> &[crate::PaintPropertyProjection] {
+        &self.properties
     }
     pub fn operation_count(&self) -> usize {
         self.operations.len()
