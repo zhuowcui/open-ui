@@ -81,7 +81,22 @@ fn source_background_single_record_and_child_picture_are_real_strategies() {
             .flat_map(|p| p.sources())
             .find(|s| s.binding().owner == Some(identity(n)))
             .unwrap();
-        assert_eq!(source.strategy(), SourceLayerStrategy::SolidColor);
+        // Actual background item records one draw plus two Save/Restore pairs.
+        // The pure captured(0) paint-unit neighbor is the true one-op solid source.
+        assert_eq!(source.strategy(), SourceLayerStrategy::OpaquePicture);
+        let backgrounds: Vec<_> = capture
+            .recording_programs()
+            .flat_map(|p| p.display_items())
+            .filter(|item| item.binding.owner == Some(identity(n)) && item.draw_count > 0)
+            .collect();
+        assert_eq!(backgrounds.len(), 1);
+        assert_eq!(
+            backgrounds[0].role,
+            openui_paint::PaintDisplayItemRole::BoxDecorationBackground
+        );
+        assert_eq!(backgrounds[0].draw_count, 1);
+        assert_eq!(backgrounds[0].record_operation_count, 5);
+        assert_eq!(source.rect_known_to_be_opaque(), source.bounds());
         assert_eq!(
             source.qualification(),
             SourceLayerQualification::UnqualifiedStaticDiagnostic
@@ -225,10 +240,49 @@ fn font_svg_resource_dependencies_stay_owned_without_claiming_child_extraction()
         set(&mut e, n, StyleProperty::Top, LengthValue::px(60.0));
         let scene = e.scene().unwrap().with_source_layer_diagnostic().unwrap();
         let capture = scene.source_layer_paint_capture().unwrap();
-        assert!(capture.unavailable_recordings().iter().any(|p| matches!(
-            p.capture_status,
-            openui_paint::PaintCaptureStatus::Incomplete(_)
-        )));
+        // set_image_resource publishes Image even for SVG MIME; decoding
+        // rasterizes this resource before ordinary tracked image painting.
+        assert!(capture.unavailable_recordings().is_empty());
+        let layered = scene.layered_paint_capture().unwrap();
+        assert!(layered.recording_programs().all(|program| {
+            program.capture_status() == &openui_paint::PaintCaptureStatus::Complete
+        }));
+        let image_program = layered
+            .recording_programs()
+            .find(|program| {
+                program
+                    .sources()
+                    .iter()
+                    .any(|source| source.binding().owner == Some(identity(image)))
+            })
+            .unwrap();
+        let image_source = image_program
+            .sources()
+            .iter()
+            .find(|source| source.binding().owner == Some(identity(image)))
+            .unwrap();
+        assert_eq!(image_source.chunks().len(), 1);
+        assert!(image_program
+            .draw_references()
+            .iter()
+            .any(|draw| draw.source == image_source.binding().id));
+        if scale == 1.0 {
+            assert!(image_program.coverage().unclassified_image_draws > 0);
+            assert_eq!(
+                image_source.chunks()[0].shader_dependency(),
+                openui_paint::PaintShaderDependency::None
+            );
+        } else {
+            assert!(image_program.coverage().unclassified_image_shader_draws > 0);
+            assert_eq!(
+                image_source.chunks()[0].shader_dependency(),
+                openui_paint::PaintShaderDependency::Image
+            );
+        }
+        assert!(capture
+            .recording_programs()
+            .flat_map(|p| p.sources())
+            .all(|source| source.binding().owner != Some(identity(image))));
         let expected = frame(&scene);
         assert!(expected
             .pixels
@@ -385,6 +439,56 @@ fn overlapping_alpha_and_fieldset_helper_keep_one_effect_and_structural_owner() 
         assert_eq!(
             frame(&scene).pixels,
             SoftwareCompositor::default().render(&scene).unwrap().pixels
+        );
+    }
+}
+
+#[test]
+fn explicit_static_svg_raw_helper_retains_canonical_pixels_without_source_extraction() {
+    for scale in SCALES {
+        let mut e =
+            Engine::new(ViewportMetrics::from_logical_size(80.0, 64.0, scale).unwrap()).unwrap();
+        e.set_layered_paint_capture_enabled(true);
+        let image = e.create_native_element(ElementTag::Image).unwrap();
+        let root = e.root();
+        e.append_child(root, image).unwrap();
+        set(&mut e, image, StyleProperty::Display, Display::Block);
+        set(&mut e, image, StyleProperty::Width, LengthValue::px(20.0));
+        set(&mut e, image, StyleProperty::Height, LengthValue::px(20.0));
+        let resource=e.register_image_resource("memory:source-layer-static-svg","image/svg+xml",
+            "809bab3d90547e75eda8d473aa72a4f4f20b9e23ea7885f2e900eb0cf61aa6de",
+            br##"<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"><rect width="1" height="1" fill="#008080"/></svg>"##.to_vec());
+        e.set_renderer_node_state(
+            image,
+            openui_engine::RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
+                resource: openui_dom::ReplacedResourceKind::StaticSvg(resource),
+                intrinsic_width: Some(1.0),
+                intrinsic_height: Some(1.0),
+                intrinsic_ratio: Some((1.0, 1.0)),
+            })),
+        )
+        .unwrap();
+        let scene = e.scene().unwrap().with_source_layer_diagnostic().unwrap();
+        let capture = scene.source_layer_paint_capture().unwrap();
+        assert!(capture.unavailable_recordings().iter().any(|recording| matches!(
+            &recording.capture_status,
+            openui_paint::PaintCaptureStatus::Incomplete(reasons)
+                if reasons.contains(&openui_paint::PaintCaptureIncompleteReason::RawCanvasAccess)
+        )));
+        assert!(capture
+            .recording_programs()
+            .flat_map(|p| p.sources())
+            .all(|source| source.binding().owner != Some(identity(image))));
+        let expected = SoftwareCompositor::default().render(&scene).unwrap();
+        assert!(expected
+            .pixels
+            .chunks_exact(4)
+            .any(|p| p == [0, 128, 128, 255]));
+        assert_eq!(frame(&scene), expected);
+        drop(e);
+        assert_eq!(
+            std::thread::spawn(move || frame(&scene)).join().unwrap(),
+            expected
         );
     }
 }
