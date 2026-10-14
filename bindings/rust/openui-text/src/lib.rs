@@ -43,6 +43,11 @@ pub use font::{
     FontPaletteValuesDescriptor, FontPlatformData, FontRelativeLengthResolver, FontRelativeUnit,
     FontStyleRange, FontUnicodeRange, UsedLineHeightMetrics,
 };
+pub use font::{
+    AppliedPlatformFontSettings, AppliedSkFontSettings, FontFaceSourceInfo, FontInstantiation,
+    FontProviderConstruction, FontRenderHintStyle, FontRenderPreference, FontRenderQueryIntent,
+    FontRenderStyle, FontSelectionOrigin, FontSelectionSource,
+};
 
 pub use shaping::{
     RunSegment, RunSegmenter, ShapeResult, ShapeResultCharacterData, ShapeResultRun, TextDirection,

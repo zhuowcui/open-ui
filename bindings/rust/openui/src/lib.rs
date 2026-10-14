@@ -127,6 +127,11 @@ pub mod typed_style {
 }
 pub use openui_style::{ComputedStyle, Style, StyleProperty, StyleValue};
 pub use openui_text::{
+    AppliedPlatformFontSettings, AppliedSkFontSettings, FontFaceSourceInfo, FontInstantiation,
+    FontProviderConstruction, FontRenderHintStyle, FontRenderPreference, FontRenderQueryIntent,
+    FontRenderStyle, FontSelectionOrigin, FontSelectionSource,
+};
+pub use openui_text::{
     FontAxisRange, FontCollection, FontCollectionError, FontCollectionStats, FontContainerFormat,
     FontFaceDescriptor, FontFaceHandle, FontFaceInfo, FontFeatureDefault, FontMetricOverrides,
     FontPaletteBase, FontPaletteEntryOverride, FontPaletteHandle, FontPaletteValuesDescriptor,
