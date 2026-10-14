@@ -2622,6 +2622,258 @@ fn paint_select_arrow(
     canvas.draw_path(&path.detach(), &paint);
 }
 
+/// The integer FRAME operands used by Chromium's overflow-controls clip.
+/// `first_offset` determines the snapped stitched size used for containment;
+/// `current_offset` independently positions the installed clip in paint space.
+#[derive(Clone, Copy, Debug)]
+struct OverflowControlFrame {
+    rect: IRect,
+    thickness: i32,
+}
+
+#[derive(Clone, Copy, Debug)]
+struct OverflowControlsFrameInputs {
+    stitched_size: PhysicalSize,
+    first_offset: PhysicalOffset,
+    current_offset: PhysicalOffset,
+    border: BoxStrut,
+    horizontal: Option<OverflowControlFrame>,
+    vertical: Option<OverflowControlFrame>,
+    theme_auto_thickness: i32,
+    vertical_on_left: bool,
+    can_resize: bool,
+    has_scroll_corner: bool,
+}
+
+#[derive(Clone, Copy, Debug)]
+struct OverflowControlsFrameGeometry {
+    corner: Option<IRect>,
+    controls_bounds: Option<IRect>,
+    border_clip: Option<Rect>,
+}
+
+impl OverflowControlsFrameGeometry {
+    fn resolve(input: OverflowControlsFrameInputs) -> Self {
+        let snapped = snapped_border_contour_rect(input.first_offset, input.stitched_size, false);
+        let border_box = IRect::from_xywh(0, 0, snapped.width() as i32, snapped.height() as i32);
+        // PaintLayerScrollableArea::CornerRect uses actual bar thickness when
+        // present; otherwise ThemeAuto is independent of intrinsic capture A.
+        let (width, height) = match (input.horizontal, input.vertical) {
+            (Some(horizontal), Some(vertical)) => (vertical.thickness, horizontal.thickness),
+            (Some(bar), None) | (None, Some(bar)) => (bar.thickness, bar.thickness),
+            (None, None) => (input.theme_auto_thickness, input.theme_auto_thickness),
+        };
+        let corner = (input.can_resize || input.has_scroll_corner).then(|| {
+            IRect::from_xywh(
+                if input.vertical_on_left {
+                    input.border.left.to_i32()
+                } else {
+                    border_box.right - width - input.border.right.to_i32()
+                },
+                border_box.bottom - height - input.border.bottom.to_i32(),
+                width,
+                height,
+            )
+        });
+        let mut controls_bounds: Option<IRect> = None;
+        for rect in [
+            corner,
+            input.horizontal.map(|bar| bar.rect),
+            input.vertical.map(|bar| bar.rect),
+        ]
+        .into_iter()
+        .flatten()
+        .filter(|rect| !rect.is_empty())
+        {
+            controls_bounds = Some(match controls_bounds {
+                None => rect,
+                Some(union) => IRect::new(
+                    union.left.min(rect.left),
+                    union.top.min(rect.top),
+                    union.right.max(rect.right),
+                    union.bottom.max(rect.bottom),
+                ),
+            });
+        }
+        let border_clip = controls_bounds
+            .filter(|bounds| {
+                bounds.left < border_box.left
+                    || bounds.top < border_box.top
+                    || bounds.right > border_box.right
+                    || bounds.bottom > border_box.bottom
+            })
+            .map(|_| snapped_border_contour_rect(input.current_offset, input.stitched_size, false));
+        Self {
+            corner,
+            controls_bounds,
+            border_clip,
+        }
+    }
+}
+
+/// Installs the hard snapped border clip only when a control FRAME protrudes.
+/// The guard also restores nested saves on early return or unwinding.
+struct OverflowControlsClipScope<'a> {
+    canvas: &'a Canvas,
+    saved_count: Option<usize>,
+}
+
+impl<'a> OverflowControlsClipScope<'a> {
+    fn new(canvas: &'a Canvas, clip: Option<Rect>) -> Self {
+        let scope = Self {
+            canvas,
+            saved_count: clip.map(|_| canvas.save_count()),
+        };
+        if let Some(clip) = clip {
+            canvas.save();
+            canvas.clip_rect(clip, ClipOp::Intersect, false);
+        }
+        scope
+    }
+}
+
+impl Drop for OverflowControlsClipScope<'_> {
+    fn drop(&mut self) {
+        if let Some(count) = self.saved_count {
+            self.canvas.restore_to_count(count);
+        }
+    }
+}
+
+fn computed_control_borders(style: &ComputedStyle) -> BoxStrut {
+    BoxStrut::new(
+        LayoutUnit::from_i32(style.effective_border_top()),
+        LayoutUnit::from_i32(style.effective_border_right()),
+        LayoutUnit::from_i32(style.effective_border_bottom()),
+        LayoutUnit::from_i32(style.effective_border_left()),
+    )
+}
+
+fn native_textarea_can_resize(style: &ComputedStyle) -> bool {
+    // LayoutBox::CanResize: a scroll container and computed HasResize.
+    style.is_scroll_container() && style.resize != openui_style::Resize::None
+}
+
+fn native_scrollbar_frame(
+    scrollport: openui_layout::ViewportScrollport,
+    horizontal: bool,
+    vertical_on_left: bool,
+) -> openui_geometry::PhysicalRect {
+    let client = scrollport.client_rect;
+    let thickness = scrollport.scrollbar_thickness;
+    if horizontal {
+        openui_geometry::PhysicalRect::new(
+            client.x(),
+            client.y() + client.height(),
+            client.width(),
+            thickness,
+        )
+    } else {
+        openui_geometry::PhysicalRect::new(
+            if vertical_on_left {
+                client.x() - thickness
+            } else {
+                client.x() + client.width()
+            },
+            client.y(),
+            thickness,
+            client.height(),
+        )
+    }
+}
+
+fn native_scrollbar_paint_frame(
+    scrollport: openui_layout::ViewportScrollport,
+    horizontal: bool,
+    vertical_on_left: bool,
+) -> Rect {
+    let frame = native_scrollbar_frame(scrollport, horizontal, vertical_on_left);
+    Rect::from_xywh(
+        (frame.x() - scrollport.client_rect.x()).to_f32(),
+        (frame.y() - scrollport.client_rect.y()).to_f32(),
+        frame.width().to_f32(),
+        frame.height().to_f32(),
+    )
+}
+
+fn snapped_native_scrollbar_frame(
+    scrollport: openui_layout::ViewportScrollport,
+    horizontal: bool,
+    vertical_on_left: bool,
+    first_offset: PhysicalOffset,
+) -> OverflowControlFrame {
+    let frame = native_scrollbar_frame(scrollport, horizontal, vertical_on_left);
+    let snapped = snapped_border_contour_rect(
+        PhysicalOffset::new(first_offset.left + frame.x(), first_offset.top + frame.y()),
+        PhysicalSize::new(frame.width(), frame.height()),
+        true,
+    );
+    OverflowControlFrame {
+        rect: IRect::from_xywh(
+            snapped.left as i32 - first_offset.left.round_i32(),
+            snapped.top as i32 - first_offset.top.round_i32(),
+            snapped.width() as i32,
+            snapped.height() as i32,
+        ),
+        thickness: scrollport.scrollbar_thickness.to_i32(),
+    }
+}
+
+fn owned_element_scrollport(fragment: &Fragment) -> Option<openui_layout::ViewportScrollport> {
+    if !fragment.owns_scroll_box() {
+        return None;
+    }
+    let bars = fragment.element_scrollbars?;
+    let area = fragment.scroll_area?;
+    Some(openui_layout::ViewportScrollport {
+        layout_box_rect: fragment.border_box_rect(),
+        client_rect: area.client_rect,
+        content_rect: area.content_rect,
+        horizontal_scrollbar: bars.horizontal,
+        vertical_scrollbar: bars.vertical,
+        scrollbar_thickness: bars.thickness,
+        overflow_x: area.overflow_x,
+        overflow_y: area.overflow_y,
+        negative_x: area.negative_x,
+        negative_y: area.negative_y,
+    })
+}
+
+fn overflow_controls_have_monolithic_offset(fragment: &Fragment) -> bool {
+    fragment.is_first_for_node && fragment.is_last_for_node && fragment.decoration_slice.is_none()
+}
+
+fn native_overflow_controls_geometry(
+    fragment: &Fragment,
+    style: &ComputedStyle,
+    offset: PhysicalOffset,
+    scrollport: Option<openui_layout::ViewportScrollport>,
+    can_resize: bool,
+) -> OverflowControlsFrameGeometry {
+    let vertical_on_left = style.writing_mode.is_horizontal() && style.direction == Direction::Rtl;
+    let horizontal = scrollport
+        .filter(|port| port.horizontal_scrollbar)
+        .map(|port| snapped_native_scrollbar_frame(port, true, vertical_on_left, offset));
+    let vertical = scrollport
+        .filter(|port| port.vertical_scrollbar)
+        .map(|port| snapped_native_scrollbar_frame(port, false, vertical_on_left, offset));
+    // Native textarea is monolithic (node_is_monolithic_for_fragmentation).
+    // The admitted first-and-last unsliced box has its real first/current
+    // offset here. A continuation requires an independent first-offset producer.
+    OverflowControlsFrameGeometry::resolve(OverflowControlsFrameInputs {
+        stitched_size: fragment.size,
+        first_offset: offset,
+        current_offset: offset,
+        border: computed_control_borders(style),
+        horizontal,
+        vertical,
+        theme_auto_thickness: 15,
+        vertical_on_left,
+        can_resize,
+        has_scroll_corner: horizontal.is_some() && vertical.is_some(),
+    })
+}
+
 /// Paint the deterministic lower-right resize affordance of a native
 /// textarea. The pinned Linux theme uses two one-device-pixel diagonals.
 fn paint_textarea_resize_grip(
@@ -2631,12 +2883,24 @@ fn paint_textarea_resize_grip(
     abs_offset: PhysicalOffset,
     opacity_multiplier: f32,
 ) {
-    // Resize is an authored/computed property. A text-area role alone does
-    // not enable its affordance. The motif must also fit inside the box.
-    if style.resize == openui_style::Resize::None || fragment.size.height < LayoutUnit::from_i32(15)
-    {
+    if !fragment.owns_element_box() || !native_textarea_can_resize(style) {
         return;
     }
+    // A caller-supplied continuation does not supply a retained first paint
+    // offset. Do not infer that operand from its decoration metadata.
+    let clip = if overflow_controls_have_monolithic_offset(fragment) {
+        native_overflow_controls_geometry(
+            fragment,
+            style,
+            abs_offset,
+            owned_element_scrollport(fragment),
+            true,
+        )
+        .border_clip
+    } else {
+        None
+    };
+    let _controls_clip = OverflowControlsClipScope::new(canvas, clip);
     let right = (abs_offset.left + fragment.size.width).round().to_f32();
     let bottom = (abs_offset.top + fragment.size.height).round().to_f32();
 
@@ -2724,6 +2988,391 @@ fn paint_textarea_resize_grip(
     light_lines.move_to((right - 2.0, bottom - 4.0));
     light_lines.line_to((right - 4.0, bottom - 2.0));
     canvas.draw_path(&light_lines.detach(), &paint);
+}
+
+#[cfg(test)]
+mod overflow_controls_frame_guards {
+    use super::*;
+
+    fn input(width: f32, height: f32) -> OverflowControlsFrameInputs {
+        OverflowControlsFrameInputs {
+            stitched_size: PhysicalSize::new(
+                LayoutUnit::from_f32(width),
+                LayoutUnit::from_f32(height),
+            ),
+            first_offset: PhysicalOffset::zero(),
+            current_offset: PhysicalOffset::zero(),
+            border: BoxStrut::zero(),
+            horizontal: None,
+            vertical: None,
+            theme_auto_thickness: 15,
+            vertical_on_left: false,
+            can_resize: true,
+            has_scroll_corner: false,
+        }
+    }
+
+    #[test]
+    fn actual_frame_union_controls_clip_admission_including_empty_controls() {
+        let mut operands = input(20.0, 20.0);
+        operands.can_resize = false;
+        let empty = OverflowControlsFrameGeometry::resolve(operands);
+        assert!(empty.corner.is_none());
+        assert!(empty.controls_bounds.is_none());
+        assert!(empty.border_clip.is_none());
+        operands.can_resize = true;
+        let contained = OverflowControlsFrameGeometry::resolve(operands);
+        assert_eq!(contained.corner, Some(IRect::from_xywh(5, 5, 15, 15)));
+        assert_eq!(contained.controls_bounds, contained.corner);
+        assert!(contained.border_clip.is_none());
+        let protruding = OverflowControlsFrameGeometry::resolve(input(14.0, 20.0));
+        assert_eq!(protruding.corner, Some(IRect::from_xywh(-1, 5, 15, 15)));
+        assert_eq!(
+            protruding.border_clip,
+            Some(Rect::from_xywh(0.0, 0.0, 14.0, 20.0))
+        );
+        // An entire scrollbar FRAME protrudes even when its thumb or motif
+        // would fit. Admission must not inspect painted ink.
+        operands = input(100.0, 100.0);
+        operands.can_resize = false;
+        operands.horizontal = Some(OverflowControlFrame {
+            rect: IRect::from_xywh(-1, 85, 100, 15),
+            thickness: 15,
+        });
+        let bar = OverflowControlsFrameGeometry::resolve(operands);
+        assert!(bar.corner.is_none());
+        assert_eq!(bar.controls_bounds, Some(IRect::from_xywh(-1, 85, 100, 15)));
+        assert!(bar.border_clip.is_some());
+        operands.horizontal.as_mut().unwrap().rect = IRect::from_xywh(-1, 85, 0, 15);
+        assert!(OverflowControlsFrameGeometry::resolve(operands)
+            .border_clip
+            .is_none());
+    }
+
+    #[test]
+    fn first_offset_size_and_current_offset_clip_are_independent_layoutunit_operands() {
+        let mut operands = input(14.25, 20.0);
+        operands.first_offset.left = LayoutUnit::from_f32(0.75);
+        operands.current_offset =
+            PhysicalOffset::new(LayoutUnit::from_f32(40.25), LayoutUnit::from_f32(-0.5));
+        let geometry = OverflowControlsFrameGeometry::resolve(operands);
+        assert_eq!(geometry.corner, Some(IRect::from_xywh(-1, 5, 15, 15)));
+        assert_eq!(
+            geometry.border_clip,
+            Some(Rect::from_xywh(40.0, 0.0, 15.0, 20.0))
+        );
+        operands.first_offset.left = LayoutUnit::from_f32(0.25);
+        operands.current_offset.left = LayoutUnit::from_f32(40.75);
+        assert!(OverflowControlsFrameGeometry::resolve(operands)
+            .border_clip
+            .is_none());
+        operands.stitched_size =
+            PhysicalSize::new(LayoutUnit::from_raw(5), LayoutUnit::from_raw(4));
+        operands.first_offset = PhysicalOffset::zero();
+        operands.current_offset =
+            PhysicalOffset::new(LayoutUnit::from_f32(-0.5), LayoutUnit::from_f32(-1.5));
+        let quantum = OverflowControlsFrameGeometry::resolve(operands);
+        assert_eq!(quantum.corner, Some(IRect::from_xywh(-14, -15, 15, 15)));
+        assert_eq!(
+            quantum.border_clip,
+            Some(Rect::from_xywh(0.0, -1.0, 1.0, 0.0))
+        );
+    }
+
+    #[test]
+    fn corner_uses_full_computed_sides_and_actual_bar_thickness_on_both_sides() {
+        let mut operands = input(30.0, 40.0);
+        operands.border = BoxStrut::new(
+            LayoutUnit::from_i32(2),
+            LayoutUnit::from_i32(3),
+            LayoutUnit::from_i32(4),
+            LayoutUnit::from_i32(5),
+        );
+        assert_eq!(
+            OverflowControlsFrameGeometry::resolve(operands).corner,
+            Some(IRect::from_xywh(12, 21, 15, 15))
+        );
+        operands.vertical_on_left = true;
+        assert_eq!(
+            OverflowControlsFrameGeometry::resolve(operands).corner,
+            Some(IRect::from_xywh(5, 21, 15, 15))
+        );
+        operands.horizontal = Some(OverflowControlFrame {
+            rect: IRect::from_xywh(5, 26, 12, 10),
+            thickness: 10,
+        });
+        operands.vertical = Some(OverflowControlFrame {
+            rect: IRect::from_xywh(5, 2, 8, 24),
+            thickness: 8,
+        });
+        assert_eq!(
+            OverflowControlsFrameGeometry::resolve(operands).corner,
+            Some(IRect::from_xywh(5, 26, 8, 10))
+        );
+        operands.vertical = None;
+        assert_eq!(
+            OverflowControlsFrameGeometry::resolve(operands).corner,
+            Some(IRect::from_xywh(5, 26, 10, 10))
+        );
+        operands.horizontal = None;
+        assert_eq!(
+            OverflowControlsFrameGeometry::resolve(operands).corner,
+            Some(IRect::from_xywh(5, 21, 15, 15))
+        );
+    }
+
+    #[test]
+    fn can_resize_uses_computed_scroll_container_without_a_minimum_box_size() {
+        let mut style = ComputedStyle::initial();
+        for overflow in [
+            Overflow::Auto,
+            Overflow::Hidden,
+            Overflow::Clip,
+            Overflow::Visible,
+        ] {
+            style.overflow_x = overflow;
+            style.overflow_y = overflow;
+            style.resize = openui_style::Resize::Both;
+            assert_eq!(
+                native_textarea_can_resize(&style),
+                matches!(overflow, Overflow::Auto | Overflow::Hidden)
+            );
+            style.resize = openui_style::Resize::None;
+            assert!(!native_textarea_can_resize(&style));
+        }
+        style.overflow_x = Overflow::Hidden;
+        style.overflow_y = Overflow::Visible;
+        style.resize = openui_style::Resize::Both;
+        assert!(native_textarea_can_resize(&style));
+        for width in [0.0, 1.0, 14.0, 15.0, 16.0] {
+            for height in [0.0, 1.0, 14.0, 15.0, 16.0] {
+                let geometry = OverflowControlsFrameGeometry::resolve(input(width, height));
+                assert_eq!(geometry.corner.unwrap().width(), 15);
+                assert_eq!(geometry.corner.unwrap().height(), 15);
+                assert_eq!(
+                    geometry.border_clip.is_some(),
+                    width < 15.0 || height < 15.0
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn owned_actual_bars_supply_resize_frame_thickness_and_helpers_cannot_borrow_them() {
+        let mut doc = Document::new();
+        let node = doc.create_node(ElementTag::TextArea);
+        doc.update_resolved_style(node, |style| {
+            style.resize = openui_style::Resize::Both;
+            style.overflow_x = Overflow::Scroll;
+            style.overflow_y = Overflow::Scroll;
+        });
+        let mut fragment = Fragment::new_box(
+            node,
+            PhysicalSize::new(LayoutUnit::from_i32(14), LayoutUnit::from_i32(14)),
+        );
+        let client = openui_geometry::PhysicalRect::new(
+            LayoutUnit::zero(),
+            LayoutUnit::zero(),
+            LayoutUnit::from_i32(4),
+            LayoutUnit::from_i32(4),
+        );
+        fragment.element_scrollbars = Some(openui_layout::ElementScrollbars {
+            insets: BoxStrut::new(
+                LayoutUnit::zero(),
+                LayoutUnit::from_i32(10),
+                LayoutUnit::from_i32(10),
+                LayoutUnit::zero(),
+            ),
+            horizontal: true,
+            vertical: true,
+            thickness: LayoutUnit::from_i32(10),
+        });
+        fragment.scroll_area = Some(openui_layout::ScrollArea {
+            client_rect: client,
+            content_rect: client,
+            overflow_x: Overflow::Scroll,
+            overflow_y: Overflow::Scroll,
+            negative_x: false,
+            negative_y: false,
+            contents_snap_origin: PhysicalOffset::zero(),
+            integer_offsets: true,
+        });
+        let geometry = native_overflow_controls_geometry(
+            &fragment,
+            &doc.node(node).style,
+            PhysicalOffset::zero(),
+            owned_element_scrollport(&fragment),
+            true,
+        );
+        assert_eq!(geometry.corner, Some(IRect::from_xywh(4, 4, 10, 10)));
+        assert_eq!(
+            geometry.controls_bounds,
+            Some(IRect::from_xywh(0, 0, 14, 14))
+        );
+        assert!(geometry.border_clip.is_none());
+        fragment.box_ownership = openui_layout::FragmentBoxOwnership::LayoutHelper;
+        assert!(owned_element_scrollport(&fragment).is_none());
+        // A real native replaced control without actual bars still uses
+        // independent ThemeAuto, even if layout carries Thin/None metrics.
+        fragment.box_ownership = openui_layout::FragmentBoxOwnership::AuthoredElement;
+        fragment.element_scrollbars.as_mut().unwrap().horizontal = false;
+        fragment.element_scrollbars.as_mut().unwrap().vertical = false;
+        let no_bars = native_overflow_controls_geometry(
+            &fragment,
+            &doc.node(node).style,
+            PhysicalOffset::zero(),
+            owned_element_scrollport(&fragment),
+            true,
+        );
+        assert_eq!(no_bars.corner, Some(IRect::from_xywh(-1, -1, 15, 15)));
+        assert!(no_bars.border_clip.is_some());
+        assert!(overflow_controls_have_monolithic_offset(&fragment));
+        for (first, last) in [(true, false), (false, true), (false, false)] {
+            fragment.is_first_for_node = first;
+            fragment.is_last_for_node = last;
+            assert!(
+                !overflow_controls_have_monolithic_offset(&fragment),
+                "no first-fragment producer may be inferred from an unsliced continuation"
+            );
+        }
+    }
+
+    #[test]
+    fn contained_controls_add_no_recorded_canvas_operation_or_opacity_barrier() {
+        let surface = surfaces::raster_n32_premul((32, 32)).unwrap();
+        let raw = surface.canvas();
+        let canvas: &Canvas = raw;
+        let capture = crate::paint_program::PaintProgramScope::new(raw);
+        let before = capture.snapshot().operation_count();
+        {
+            let geometry = OverflowControlsFrameGeometry::resolve(input(20.0, 20.0));
+            let _scope = OverflowControlsClipScope::new(canvas, geometry.border_clip);
+        }
+        assert_eq!(capture.snapshot().operation_count(), before);
+        {
+            let geometry = OverflowControlsFrameGeometry::resolve(input(14.0, 20.0));
+            let _scope = OverflowControlsClipScope::new(canvas, geometry.border_clip);
+        }
+        assert!(capture.snapshot().operation_count() > before);
+        assert_eq!(
+            capture.snapshot().status(),
+            crate::PaintCaptureStatus::Complete
+        );
+    }
+
+    #[test]
+    fn scope_restores_matrix_clip_and_nested_saves_on_return_and_unwind() {
+        let mut surface = surfaces::raster_n32_premul((64, 64)).unwrap();
+        let raw = surface.canvas();
+        raw.translate((3.0, 4.0));
+        raw.clip_rect(
+            Rect::from_xywh(0.0, 0.0, 40.0, 40.0),
+            ClipOp::Intersect,
+            false,
+        );
+        let canvas: &Canvas = raw;
+        let count = raw.save_count();
+        let matrix = raw.local_to_device_as_3x3();
+        let clip = raw.device_clip_bounds();
+        for unwind in [false, true] {
+            let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                let _scope = OverflowControlsClipScope::new(
+                    canvas,
+                    Some(Rect::from_xywh(8.0, 9.0, 10.0, 11.0)),
+                );
+                canvas.save();
+                canvas.translate((12.0, 13.0));
+                if unwind {
+                    panic!("exercise overflow-controls scope unwind");
+                }
+            }));
+            assert_eq!(result.is_err(), unwind);
+            assert_eq!(raw.save_count(), count);
+            assert_eq!(raw.local_to_device_as_3x3(), matrix);
+            assert_eq!(raw.device_clip_bounds(), clip);
+        }
+        {
+            let _contained = OverflowControlsClipScope::new(canvas, None);
+            assert_eq!(raw.save_count(), count);
+            assert_eq!(raw.local_to_device_as_3x3(), matrix);
+            assert_eq!(raw.device_clip_bounds(), clip);
+        }
+        raw.draw_color(skia_safe::Color::RED, None);
+        let info = ImageInfo::new((64, 64), ColorType::RGBA8888, AlphaType::Premul, None);
+        let mut pixels = vec![0; 64 * 64 * 4];
+        assert!(surface.image_snapshot().read_pixels(
+            &info,
+            &mut pixels,
+            64 * 4,
+            (0, 0),
+            skia_safe::image::CachingHint::Allow
+        ));
+        // Caller ink outside the transient controls clip is visible again.
+        assert_eq!(&pixels[(6 * 64 + 5) * 4..][..4], &[255, 0, 0, 255]);
+    }
+
+    #[test]
+    fn small_textarea_grip_is_clipped_without_borrowing_client_padding_or_helpers() {
+        let mut doc = Document::new();
+        let node = doc.create_node(ElementTag::TextArea);
+        doc.update_resolved_style(node, |style| {
+            style.resize = openui_style::Resize::Both;
+            style.overflow_x = Overflow::Hidden;
+            style.overflow_y = Overflow::Hidden;
+        });
+        for scale in [1.0_f32, 1.25, 1.5, 1.75, 2.0] {
+            let mut fragment = Fragment::new_box(
+                node,
+                PhysicalSize::new(LayoutUnit::from_i32(14), LayoutUnit::from_i32(14)),
+            );
+            fragment.border = BoxStrut::new(
+                LayoutUnit::from_i32(8),
+                LayoutUnit::zero(),
+                LayoutUnit::from_i32(8),
+                LayoutUnit::zero(),
+            );
+            fragment.padding = fragment.border;
+            for helper in [false, true] {
+                fragment.box_ownership = if helper {
+                    openui_layout::FragmentBoxOwnership::LayoutHelper
+                } else {
+                    openui_layout::FragmentBoxOwnership::AuthoredElement
+                };
+                let mut surface = surfaces::raster_n32_premul((80, 80)).unwrap();
+                surface.canvas().clear(skia_safe::Color::WHITE);
+                surface.canvas().scale((scale, scale));
+                paint_textarea_resize_grip(
+                    surface.canvas(),
+                    &fragment,
+                    &doc.node(node).style,
+                    PhysicalOffset::new(LayoutUnit::from_i32(20), LayoutUnit::from_i32(20)),
+                    1.0,
+                );
+                let mut pixels = vec![0; 80 * 80 * 4];
+                let info = ImageInfo::new((80, 80), ColorType::RGBA8888, AlphaType::Premul, None);
+                assert!(surface.image_snapshot().read_pixels(
+                    &info,
+                    &mut pixels,
+                    80 * 4,
+                    (0, 0),
+                    skia_safe::image::CachingHint::Allow
+                ));
+                let mut changed = false;
+                for y in 0..80 {
+                    for x in 0..80 {
+                        let pixel = &pixels[(y * 80 + x) * 4..][..4];
+                        if pixel != [255, 255, 255, 255] {
+                            changed = true;
+                            assert!(!helper);
+                            assert!(x as f32 >= 20.0 * scale && (x as f32) < 34.0 * scale);
+                            assert!(y as f32 >= 20.0 * scale && (y as f32) < 34.0 * scale);
+                        }
+                    }
+                }
+                assert_eq!(changed, !helper, "scale={scale}, helper={helper}");
+            }
+        }
+    }
 }
 
 fn paint_native_listbox_corners(
@@ -12430,36 +13079,27 @@ fn paint_element_scrollbars(
     doc: &Document,
     offset: PhysicalOffset,
 ) {
-    if !fragment.owns_scroll_box() {
-        return;
-    }
-    let (Some(bars), Some(area)) = (fragment.element_scrollbars, fragment.scroll_area) else {
+    let Some(scrollport) = owned_element_scrollport(fragment) else {
         return;
     };
-    let scrollport = openui_layout::ViewportScrollport {
-        layout_box_rect: fragment.border_box_rect(),
-        client_rect: area.client_rect,
-        content_rect: area.content_rect,
-        horizontal_scrollbar: bars.horizontal,
-        vertical_scrollbar: bars.vertical,
-        scrollbar_thickness: bars.thickness,
-        overflow_x: area.overflow_x,
-        overflow_y: area.overflow_y,
-        negative_x: area.negative_x,
-        negative_y: area.negative_y,
+    let style = fragment.layout_style(&doc.node(fragment.node_id).style);
+    // Source-owned continuation offsets are not retained yet. Resolve this
+    // checkpoint only for an actual first-and-last unsliced owned box.
+    let clip = if overflow_controls_have_monolithic_offset(fragment) {
+        native_overflow_controls_geometry(fragment, style, offset, Some(scrollport), false)
+            .border_clip
+    } else {
+        None
     };
+    let _controls_clip = OverflowControlsClipScope::new(canvas, clip);
     paint_native_scrollbars(
         canvas,
         fragment,
         doc,
         offset,
         scrollport,
-        fragment.layout_style(&doc.node(fragment.node_id).style),
-        doc.node(fragment.node_id)
-            .style
-            .writing_mode
-            .is_horizontal()
-            && doc.node(fragment.node_id).style.direction == openui_style::Direction::Rtl,
+        style,
+        style.writing_mode.is_horizontal() && style.direction == Direction::Rtl,
     );
 }
 
@@ -12515,17 +13155,8 @@ fn paint_native_scrollbars(
             if !visible {
                 continue;
             }
-            let length = if horizontal {
-                client_width
-            } else {
-                client_height
-            };
             let corner = !horizontal && scrollport.horizontal_scrollbar;
-            let outer = if horizontal {
-                Rect::from_xywh(0.0, client_height, length, thickness)
-            } else {
-                Rect::from_xywh(vertical_x, 0.0, thickness, length)
-            };
+            let outer = native_scrollbar_paint_frame(scrollport, horizontal, vertical_on_left);
             paint_fluent_scrollbar_picture(
                 canvas,
                 outer,
@@ -12567,11 +13198,7 @@ fn paint_native_scrollbars(
             // A forced bar with no range remains an ordinary picture even
             // when the other axis uses a PaintedScrollbarLayer. Its adjacent
             // corner shares that picture's raster and composition transform.
-            let outer = if horizontal {
-                Rect::from_xywh(0.0, client_height, length, thickness)
-            } else {
-                Rect::from_xywh(vertical_x, 0.0, thickness, length)
-            };
+            let outer = native_scrollbar_paint_frame(scrollport, horizontal, vertical_on_left);
             paint_fluent_scrollbar_picture(
                 canvas,
                 outer,
@@ -12611,11 +13238,7 @@ fn paint_native_scrollbars(
         };
         let raw_thickness = (9.0 * proportion).round();
         let thumb_thickness = raw_thickness - (thickness - raw_thickness) % 2.0;
-        let outer = if horizontal {
-            Rect::from_xywh(0.0, client_height, length, thickness)
-        } else {
-            Rect::from_xywh(vertical_x, 0.0, thickness, length)
-        };
+        let outer = native_scrollbar_paint_frame(scrollport, horizontal, vertical_on_left);
         paint_fluent_scrollbar_track(
             canvas,
             outer,
