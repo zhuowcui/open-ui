@@ -16542,6 +16542,14 @@ fn fragment_direct_positioned_children_in_multicol(
                 // Promoting it into a second, parallel continuation flow
                 // makes an ancestor multicol paint the same row twice.
                 && (!resumes_with_fragmented_containing_block
+                    // A decoration slice does not map an unfragmented OOF
+                    // source that crosses the column. Select its actual source
+                    // interval once before the ancestor consumes this row.
+                    || (visible_in_flow_overflow_crosses_fragmentainer
+                        && fragment.positioned_fragmentation.is_some_and(|positioned| {
+                            positioned.fragmentainer_index.is_none()
+                                && positioned.split_containing_block_source_offset.is_none()
+                        }))
                     || !writing_direction.is_horizontal()
                     || has_oversized_monolithic_in_flow_overflow)
                 && !in_fragmented_clipping_containing_block
@@ -21272,18 +21280,11 @@ fn layout_multicol(
                     } else {
                         openui_geometry::INDEFINITE_SIZE
                     };
-                    let auto_nested_multicol_owns_fragmentation = algo.column_height.is_some()
-                        && child_style.height.is_auto()
-                        && child_column_algo.as_ref().is_some_and(|child_algo| {
-                            child_algo.column_height.is_none()
-                                && child_algo.column_wrap == openui_style::ColumnWrap::Auto
-                        });
                     let child_parallel_to_multicol = child_space.writing_direction.is_horizontal()
                         == space.writing_direction.is_horizontal();
                     if child_parallel_to_multicol
                         && !inherited_fragmentainer_block.is_indefinite()
                         && !auto_column_flex_uses_outer_fragmentation
-                        && !auto_nested_multicol_owns_fragmentation
                     {
                         child_space.fragmentainer_block_size = inherited_fragmentainer_block;
                     }
@@ -22560,6 +22561,33 @@ fn layout_multicol(
                 None
             };
 
+            // Auto-filled nested columns use the known enclosing capacity,
+            // even when their principal in-flow contribution is shorter. Keep
+            // that capacity separate from the container's used block size;
+            // positioned descendants still fragment through the full column.
+            let known_auto_row_capacity = (!has_explicit_height
+                && algo.column_fill == ColumnFill::Auto
+                && algo.column_height.is_none()
+                && algo.column_wrap == openui_style::ColumnWrap::Auto
+                && resolved_max_height.is_none()
+                && !has_spanner_after
+                && space.has_block_fragmentation())
+            .then(|| {
+                let remaining_outer = (space.fragmentainer_block_size
+                    - space.block_offset_in_fragmentainer
+                    - border_padding_block)
+                    .clamp_negative_to_zero();
+                // A prior spanner selected the actual row remainder above.
+                // Do not subtract its accumulated source offset again or
+                // take it modulo a short first capacity.
+                let remaining_row = if group_available_block.is_indefinite() {
+                    (remaining_outer - total_block_offset).clamp_negative_to_zero()
+                } else {
+                    group_available_block.min_of(remaining_outer)
+                };
+                remaining_row.max_of(LayoutUnit::from_i32(1))
+            });
+
             let mut column_height = if let Some(list_item_height) = post_spanner_list_item_height {
                 list_item_height
             } else if overflowed_extracted_split_before_spanner
@@ -22667,6 +22695,8 @@ fn layout_multicol(
                             } else {
                                 mh
                             }
+                        } else if let Some(capacity) = known_auto_row_capacity {
+                            capacity
                         } else {
                             // column-fill:auto with no height/max-height:
                             // the auto fragmentainer size is balanced across
@@ -22972,8 +23002,9 @@ fn layout_multicol(
             } else {
                 None
             };
-            let auto_wraps_outer_fragments = outer_fragment_content_size.is_some_and(|outer| {
-                algo.column_height.is_none()
+            let auto_wraps_outer_fragments = known_auto_row_capacity.is_some()
+                || outer_fragment_content_size.is_some_and(|outer| {
+                    algo.column_height.is_none()
                     && algo.column_wrap == openui_style::ColumnWrap::Auto
                     && (algo.column_fill == ColumnFill::Auto || resolved.count > 1)
                     // A positioned descendant of a fragmented flexbox uses
@@ -22999,7 +23030,7 @@ fn layout_multicol(
                     && (column_height > outer
                         || fragmentation_content_extent
                             >= outer * LayoutUnit::from_i32(resolved.count.max(1) as i32))
-            });
+                });
             let positioned_uses_outer_fragmentainer =
                 outer_fragment_content_size.is_some_and(|outer| {
                     algo.column_height.is_none()
@@ -23014,7 +23045,14 @@ fn layout_multicol(
                                     && subtree_has_positioned_descendant(doc, info.id)
                             }))
                 });
-            if auto_wraps_outer_fragments || positioned_uses_outer_fragmentainer {
+            if let Some(capacity) = known_auto_row_capacity {
+                // Wrapping selects source placement. Retain the selected
+                // remainder and any real unbreakable/forced-content floor;
+                // neither becomes a fresh full-height row by wrapping.
+                column_height = column_height.max_of(capacity);
+            } else if !has_spanner_after
+                && (auto_wraps_outer_fragments || positioned_uses_outer_fragmentainer)
+            {
                 column_height = outer_fragment_content_size.unwrap();
             }
             if style.height.is_auto()
@@ -24557,21 +24595,32 @@ fn layout_multicol(
                             && leading > col_remaining
                             && leading <= column_height
                     });
-                if col_remaining > LayoutUnit::zero()
-                    && child_height > col_remaining
+                let nested_available_after_margin =
+                    (col_remaining - margin_space).clamp_negative_to_zero();
+                let nested_auto_uses_remaining_capacity = child_style.height.is_auto()
+                    && child_style.column_fill == ColumnFill::Auto
+                    && child_style.column_height.is_none()
+                    && child_style.column_wrap == openui_style::ColumnWrap::Auto
+                    && child_style.max_height.is_none()
+                    && crate::multicol::ColumnLayoutAlgorithm::from_style(child_style).is_some()
+                    && nested_available_after_margin != column_height
+                    && !leading_nested_unit_requires_fresh_column;
+                if nested_available_after_margin > LayoutUnit::zero()
                     && child_style.height.is_auto()
                     && crate::multicol::ColumnLayoutAlgorithm::from_style(child_style).is_some()
-                    && !child_is_auto_single_column_multicol
-                    && (prop_break_before.is_avoid()
-                        || child_style.break_before.is_avoid()
-                        || (subtree_has_monolithic_descendant(doc, child_node_id)
-                            && !leading_nested_unit_requires_fresh_column))
+                    && (nested_auto_uses_remaining_capacity
+                        || (child_height > col_remaining
+                            && !child_is_auto_single_column_multicol
+                            && (prop_break_before.is_avoid()
+                                || child_style.break_before.is_avoid()
+                                || (subtree_has_monolithic_descendant(doc, child_node_id)
+                                    && !leading_nested_unit_requires_fresh_column))))
                 {
                     let mut nested_space = crate::logical_geometry::block_child_constraint_space(
                         space,
                         child_style,
                         child_frag.size.width,
-                        col_remaining,
+                        nested_available_after_margin,
                         column_width,
                         first_pass_pct_basis,
                         establishes_new_fc_for_node(doc, child_node_id),
@@ -24579,8 +24628,8 @@ fn layout_multicol(
                     let child_parallel_to_multicol = nested_space.writing_direction.is_horizontal()
                         == space.writing_direction.is_horizontal();
                     if child_parallel_to_multicol {
-                        nested_space.fragmentainer_block_size = col_remaining;
-                        if i + 1 == child_count {
+                        nested_space.fragmentainer_block_size = nested_available_after_margin;
+                        if i + 1 == child_count || nested_auto_uses_remaining_capacity {
                             nested_space.outer_fragmentainer_block_size = column_height;
                         }
                     }
@@ -30239,6 +30288,12 @@ fn layout_multicol(
                             if child_style.position == Position::Relative
                                 && child_style.overflow_x == Overflow::Visible
                                 && child_style.overflow_y == Overflow::Visible
+                                && fragment_visual_translation(
+                                    &part,
+                                    doc,
+                                    column_width,
+                                    child_percentage_block_size,
+                                ) != PhysicalOffset::zero()
                             {
                                 // The continuation clip belongs to the visual
                                 // fragment, so it moves with the relative box.
@@ -32231,7 +32286,12 @@ fn layout_multicol(
                 column_height
             } else if style.height.is_auto() {
                 if algo.column_fill == ColumnFill::Auto && !has_spanner_after {
-                    if wraps_rows {
+                    if known_auto_row_capacity.is_some() {
+                        // Only normal-flow progress contributes to this row's
+                        // principal size. OOF ink may use the full column but
+                        // must not cause the ancestor to consume the row twice.
+                        max_col_content.min_of(column_height)
+                    } else if wraps_rows {
                         max_col_content
                             .max_of(max_col_visual_content)
                             .max_of(wrapped_group_height)
@@ -32635,57 +32695,60 @@ fn layout_multicol(
                 } else {
                     LayoutUnit::zero()
                 };
-                let col_box_height = if positioned_only_empty_group {
-                    column_height
-                } else if style.height.is_auto()
-                    && style.max_height.is_none()
-                    && !subtree_has_in_flow_spanner_descendant(doc, node_id)
-                    && !subtree_has_flex_descendant(doc, node_id)
-                    && !subtree_has_forced_break_descendant(doc, node_id)
-                    && subtree_has_positioned_descendant(doc, node_id)
-                {
-                    if space.fragmentainer_block_size > LayoutUnit::zero() {
+                let col_box_height =
+                    if known_auto_row_capacity.is_some() || positioned_only_empty_group {
+                        // Cropping a short principal contribution must not shrink
+                        // the anonymous column's independent source capacity.
+                        column_height
+                    } else if style.height.is_auto()
+                        && style.max_height.is_none()
+                        && !subtree_has_in_flow_spanner_descendant(doc, node_id)
+                        && !subtree_has_flex_descendant(doc, node_id)
+                        && !subtree_has_forced_break_descendant(doc, node_id)
+                        && subtree_has_positioned_descendant(doc, node_id)
+                    {
+                        if space.fragmentainer_block_size > LayoutUnit::zero() {
+                            space.fragmentainer_block_size
+                        } else {
+                            visual_column_height
+                        }
+                    } else if style.height.is_auto()
+                        && style.max_height.is_none()
+                        && !subtree_has_in_flow_spanner_descendant(doc, node_id)
+                        && !subtree_has_flex_descendant(doc, node_id)
+                        && !subtree_has_forced_break_descendant(doc, node_id)
+                        && subtree_has_authored_inline_overflow_descendant(doc, node_id)
+                        && space.fragmentainer_block_size > LayoutUnit::zero()
+                    {
                         space.fragmentainer_block_size
+                    } else if explicit_wrapped_nested_auto_child && visual_column_height.raw() > 0 {
+                        (child_percentage_block_size - col_extra_block_offset_for(ci))
+                            .clamp_negative_to_zero()
+                            .min_of(visual_column_height)
+                    } else if let Some(row_heights) = wrapped_auto_row_heights.as_ref() {
+                        row_heights
+                            .get(ci / positions.len().max(1))
+                            .copied()
+                            .unwrap_or(LayoutUnit::zero())
+                    } else if wraps_rows && visual_column_height.raw() > 0 {
+                        let remaining_row_extent = (actual_group_height
+                            - col_extra_block_offset_for(ci))
+                        .clamp_negative_to_zero();
+                        if resolved_max_height.is_some() {
+                            // A max-height establishes the block capacity of
+                            // every wrapped column row.  The aggregate wrapped
+                            // group may be taller, but using that aggregate as
+                            // each ColumnBox clip makes early rows overlap every
+                            // later row and gives ancestor fragmentainers stale
+                            // resumption geometry.
+                            remaining_row_extent.min_of(visual_column_height)
+                        } else {
+                            remaining_row_extent
+                        }
                     } else {
-                        visual_column_height
+                        actual_group_height
                     }
-                } else if style.height.is_auto()
-                    && style.max_height.is_none()
-                    && !subtree_has_in_flow_spanner_descendant(doc, node_id)
-                    && !subtree_has_flex_descendant(doc, node_id)
-                    && !subtree_has_forced_break_descendant(doc, node_id)
-                    && subtree_has_authored_inline_overflow_descendant(doc, node_id)
-                    && space.fragmentainer_block_size > LayoutUnit::zero()
-                {
-                    space.fragmentainer_block_size
-                } else if explicit_wrapped_nested_auto_child && visual_column_height.raw() > 0 {
-                    (child_percentage_block_size - col_extra_block_offset_for(ci))
-                        .clamp_negative_to_zero()
-                        .min_of(visual_column_height)
-                } else if let Some(row_heights) = wrapped_auto_row_heights.as_ref() {
-                    row_heights
-                        .get(ci / positions.len().max(1))
-                        .copied()
-                        .unwrap_or(LayoutUnit::zero())
-                } else if wraps_rows && visual_column_height.raw() > 0 {
-                    let remaining_row_extent = (actual_group_height
-                        - col_extra_block_offset_for(ci))
-                    .clamp_negative_to_zero();
-                    if resolved_max_height.is_some() {
-                        // A max-height establishes the block capacity of
-                        // every wrapped column row.  The aggregate wrapped
-                        // group may be taller, but using that aggregate as
-                        // each ColumnBox clip makes early rows overlap every
-                        // later row and gives ancestor fragmentainers stale
-                        // resumption geometry.
-                        remaining_row_extent.min_of(visual_column_height)
-                    } else {
-                        remaining_row_extent
-                    }
-                } else {
-                    actual_group_height
-                }
-                .max_of(cloned_decoration_height);
+                    .max_of(cloned_decoration_height);
                 let col_box_height = col_box_height
                     .max_of(pre_spanner_visual_height)
                     .max_of(unsplittable_overflow_visual_height)
