@@ -1,0 +1,1022 @@
+[
+  {
+    "bytes": 0,
+    "path": "native-fontations-factory-prototype-v1920/format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 1046,
+    "path": "native-fontations-factory-prototype-v1920/receipt.json",
+    "sha256": "78880bf20a41758ccdeab17579f669433bcaed64574e34c6ab93671958046af5"
+  },
+  {
+    "bytes": 642,
+    "path": "native-fontations-factory-prototype-v1920/resolve-lockfile.log",
+    "sha256": "22f0e34469f1ccbc24c5d5b7c2798247118d8af2bc41e9a6db36c8cf4045dd35"
+  },
+  {
+    "bytes": 10028,
+    "path": "native-fontations-factory-prototype-v1922/factory-build.log",
+    "sha256": "f1727fa4069d856eb38a5a9950e556b4aa34e2724cdf2189f3a7edf6f2c19302"
+  },
+  {
+    "bytes": 0,
+    "path": "native-fontations-factory-prototype-v1922/format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 1621,
+    "path": "native-fontations-factory-prototype-v1922/receipt.json",
+    "sha256": "ac7086afae63d81ab2bc1cee53bfcafbd81565a95237301659368eefa4aeb81d"
+  },
+  {
+    "bytes": 642,
+    "path": "native-fontations-factory-prototype-v1922/resolve-lockfile.log",
+    "sha256": "22f0e34469f1ccbc24c5d5b7c2798247118d8af2bc41e9a6db36c8cf4045dd35"
+  },
+  {
+    "bytes": 2205,
+    "path": "native-fontations-factory-prototype-v1927/factory-build.log",
+    "sha256": "8248a668791654edffd2cc69dc409e09281e84ae8c556c346a620cc44f712826"
+  },
+  {
+    "bytes": 0,
+    "path": "native-fontations-factory-prototype-v1927/format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 1621,
+    "path": "native-fontations-factory-prototype-v1927/receipt.json",
+    "sha256": "5472b73376262431e41e74773bd6c8b9fe53404c84f90096a42c56251dbbd7ba"
+  },
+  {
+    "bytes": 642,
+    "path": "native-fontations-factory-prototype-v1927/resolve-lockfile.log",
+    "sha256": "22f0e34469f1ccbc24c5d5b7c2798247118d8af2bc41e9a6db36c8cf4045dd35"
+  },
+  {
+    "bytes": 1511,
+    "path": "native-fontations-factory-prototype-v1930/factory-build.log",
+    "sha256": "df6d7f7246733bc11a3854411c23520dc71206b33001faa1220025890def0b34"
+  },
+  {
+    "bytes": 0,
+    "path": "native-fontations-factory-prototype-v1930/format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 1621,
+    "path": "native-fontations-factory-prototype-v1930/receipt.json",
+    "sha256": "d105667297d1f37f1fd3d285fce4148d998359773fdd4fc04ba9f8e1be0e3ffe"
+  },
+  {
+    "bytes": 642,
+    "path": "native-fontations-factory-prototype-v1930/resolve-lockfile.log",
+    "sha256": "22f0e34469f1ccbc24c5d5b7c2798247118d8af2bc41e9a6db36c8cf4045dd35"
+  },
+  {
+    "bytes": 4424,
+    "path": "native-fontations-factory-prototype-v1932/factory-build.log",
+    "sha256": "779ba58fee3eb82d52ff27fb6c4879dc7f584242f1b20ec9478c42ba9e6f8a7a"
+  },
+  {
+    "bytes": 0,
+    "path": "native-fontations-factory-prototype-v1932/format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 1621,
+    "path": "native-fontations-factory-prototype-v1932/receipt.json",
+    "sha256": "00df8f3d8cff5487a1efdcc7a033a2b63f64c29d01b9aa9b00ca66b3ba3301ca"
+  },
+  {
+    "bytes": 642,
+    "path": "native-fontations-factory-prototype-v1932/resolve-lockfile.log",
+    "sha256": "22f0e34469f1ccbc24c5d5b7c2798247118d8af2bc41e9a6db36c8cf4045dd35"
+  },
+  {
+    "bytes": 170,
+    "path": "native-fontations-factory-prototype-v1934/factory-build.log",
+    "sha256": "8499f91331890eb33332258a82532fb8dade23328e23217bb14f5012f1e077cd"
+  },
+  {
+    "bytes": 0,
+    "path": "native-fontations-factory-prototype-v1934/format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 209,
+    "path": "native-fontations-factory-prototype-v1934/probe-Ahem.log",
+    "sha256": "68f96ebd4c0948262822269074dc8b8a38caf7062df03113e9782925647c9a14"
+  },
+  {
+    "bytes": 208,
+    "path": "native-fontations-factory-prototype-v1934/probe-DejaVu-Sans.log",
+    "sha256": "c94ac78bcabe1bea21fb61556e921e2f9a62db5e94839163617499383a8b0960"
+  },
+  {
+    "bytes": 2054,
+    "path": "native-fontations-factory-prototype-v1934/receipt.json",
+    "sha256": "d6a1b17d12b65960bc2f14d800fa09c2f749b9088b08348085c0250aad44c423"
+  },
+  {
+    "bytes": 642,
+    "path": "native-fontations-factory-prototype-v1934/resolve-lockfile.log",
+    "sha256": "22f0e34469f1ccbc24c5d5b7c2798247118d8af2bc41e9a6db36c8cf4045dd35"
+  },
+  {
+    "bytes": 30280,
+    "path": "native-fontations-umbrella-hosted-v1928/112205757579.log",
+    "sha256": "44fa00a183e8a8b1dfd15e6cf5eb8bde5094879e94d60dd52f84faa0b440a00e"
+  },
+  {
+    "bytes": 1311950,
+    "path": "native-fontations-umbrella-hosted-v1928/112205757621.log",
+    "sha256": "916857e9fed2d97b2e52b02879f610d708b26f8dc225311dfe6a783cf01e8bdf"
+  },
+  {
+    "bytes": 63730,
+    "path": "native-fontations-umbrella-hosted-v1928/112205757691.log",
+    "sha256": "1c07fc789a0e4a81b08fd6a0b91af2fc1aa305d532bc1895bd40edae47c2dec1"
+  },
+  {
+    "bytes": 346349,
+    "path": "native-fontations-umbrella-hosted-v1928/112205758824.log",
+    "sha256": "e315083766f0339a5f160c7deb934f8370dfd968e54c46cec46901282d37b042"
+  },
+  {
+    "bytes": 33414,
+    "path": "native-fontations-umbrella-hosted-v1928/112205761658.log",
+    "sha256": "7f6c575d3fde4007f776e0dbf3ec12303ba5d33cd4eb110ba5840642345933cd"
+  },
+  {
+    "bytes": 33864,
+    "path": "native-fontations-umbrella-hosted-v1928/112205761927.log",
+    "sha256": "5011ee5c0e5862318ac34d0bf330c5f55d8fe4556022fca3295e9779992c3f18"
+  },
+  {
+    "bytes": 5942,
+    "path": "native-fontations-umbrella-hosted-v1928/37444444733.json",
+    "sha256": "95493533b0c65719f037ff82e717cf50ca449ba1de210ffb2d3e16c79559a587"
+  },
+  {
+    "bytes": 4313,
+    "path": "native-fontations-umbrella-hosted-v1928/37444445078.json",
+    "sha256": "ac755e3993934c2c618c25b668e9ef5c9496f544f3b4756d547e99164194bc33"
+  },
+  {
+    "bytes": 2571,
+    "path": "native-fontations-umbrella-hosted-v1928/37444446045.json",
+    "sha256": "54306d47564da52aeb7aa0b05209339555a109d47443735898d82ff74e00f423"
+  },
+  {
+    "bytes": 5433,
+    "path": "native-fontations-umbrella-hosted-v1928/receipt.json",
+    "sha256": "f664ea88a8eabe9c30eee93f9bb7db37085656c52441d9d731b4675f404e334f"
+  },
+  {
+    "bytes": 10055,
+    "path": "pinned-skia-safe/core/font_arguments.rs",
+    "sha256": "87564da242d11863e97b3e0131876c2903591f000f1f527a563900cae068afa8"
+  },
+  {
+    "bytes": 5472,
+    "path": "pinned-skia-safe/wrapper.rs",
+    "sha256": "821d047e575cbe6239716f7bd3575c1b19785159ee992d68785ad2e4c6beffb8"
+  },
+  {
+    "bytes": 738,
+    "path": "pinned-skia-source/include/ports/SkTypeface_fontations.h",
+    "sha256": "3a88dae89669d0f9bbc057bb87973e57c89908fcde71bc083f97be5958962408"
+  },
+  {
+    "bytes": 6922,
+    "path": "pinned-skia-source/src/core/SkFontDescriptor.h",
+    "sha256": "94d5ce1d27fcd894b56f83eb06f9eba2cf61b140af0aa11acfee82895a1e8194"
+  },
+  {
+    "bytes": 74603,
+    "path": "pinned-skia-source/src/ports/SkTypeface_fontations.cpp",
+    "sha256": "0507775ddd5047dd51ea2f8317f1161541fa54c61ea72d066172c47bf109789e"
+  },
+  {
+    "bytes": 27635,
+    "path": "pinned-skia-source/src/ports/fontations/src/base.rs",
+    "sha256": "d81ffd8fa6099642980aa19188b9e727c6d4fee529884162613c568e73b2a43c"
+  },
+  {
+    "bytes": 16058,
+    "path": "pinned-skia-source/src/ports/fontations/src/ffi.rs",
+    "sha256": "223173aa97431b3484f8748743abb61f20c9ca84331dc9ecec03ca3e4094457a"
+  },
+  {
+    "bytes": 4649,
+    "path": "pinned-skia-source/src/ports/fontations/src/hinting.rs",
+    "sha256": "714fbd0851e097ada077616be4d52e4e81d764e64462266ee59afba523e32d34"
+  },
+  {
+    "bytes": 2608,
+    "path": "probes/openui-fontations-factory-prototype-inputs-v1918.json",
+    "sha256": "a987a4b38b8c0bf1c3c0905e748b31f428d0cb51ab182de57aee3dfc69c9d454"
+  },
+  {
+    "bytes": 2759,
+    "path": "probes/openui-fontations-factory-prototype-inputs-v1919.json",
+    "sha256": "88745b8a2cc940c107ab400136b52a39e4dd9131be3e148deac9414982418545"
+  },
+  {
+    "bytes": 4422,
+    "path": "probes/openui-fontations-factory-prototype-pipeline-v1920.py",
+    "sha256": "fd2e6efa8b065ed2560647b396413252995cb4472d93a2befb3fbcdfd3677684"
+  },
+  {
+    "bytes": 4422,
+    "path": "probes/openui-fontations-factory-prototype-pipeline-v1922.py",
+    "sha256": "102a9cf62470aed3d166a8ebc036372bc676b4946c0fb2dbed76a49d40ce39bb"
+  },
+  {
+    "bytes": 4422,
+    "path": "probes/openui-fontations-factory-prototype-pipeline-v1927.py",
+    "sha256": "dbd2ab12460bbe4a2c9859fbe15ecd3309c2419d78ccd8d2175c721137f8c4f1"
+  },
+  {
+    "bytes": 4422,
+    "path": "probes/openui-fontations-factory-prototype-pipeline-v1930.py",
+    "sha256": "49cb1710b6f4c39232a1a482284c0cd8c114d87f409e0fe65009552793fc9ab8"
+  },
+  {
+    "bytes": 4422,
+    "path": "probes/openui-fontations-factory-prototype-pipeline-v1932.py",
+    "sha256": "daa80297e33f878d6720664fcd8ff162f48075d4fd2f3f10b409d0993ee831fa"
+  },
+  {
+    "bytes": 4422,
+    "path": "probes/openui-fontations-factory-prototype-pipeline-v1934.py",
+    "sha256": "95645d35a8698ed6d8319d47222315df390206c6e922c08e2a7e6acd6baa8fd0"
+  },
+  {
+    "bytes": 351,
+    "path": "probes/openui-fontations-factory-prototype-preflight-retry-v1921.json",
+    "sha256": "6c0d4be1a616462c0ba858a7eea5852b89bd774e4f844b3d8c65a38d8be336d5"
+  },
+  {
+    "bytes": 788,
+    "path": "probes/openui-fontations-factory-prototype-retry-v1926.json",
+    "sha256": "19d40927bca5181e0191b2747819d76838f00f2a23dbb650f2fca333ac8b083b"
+  },
+  {
+    "bytes": 509,
+    "path": "probes/openui-fontations-factory-prototype-retry-v1929.json",
+    "sha256": "c0b0483b0262c028f37863c7299f4f56dbac610faed5911dc4f2c9f222ccb45e"
+  },
+  {
+    "bytes": 564,
+    "path": "probes/openui-fontations-factory-prototype-retry-v1931.json",
+    "sha256": "0004804cf4985a518064d3892b4d9f0e3cca9115dd750e7e82c9a134308f0bb9"
+  },
+  {
+    "bytes": 510,
+    "path": "probes/openui-fontations-factory-prototype-retry-v1933.json",
+    "sha256": "6313f90f16309540cf6c1dace0eb7bad44830b0e9ca8e0ce44cae389c1d6ff02"
+  },
+  {
+    "bytes": 1260,
+    "path": "probes/openui-fontations-upstream-source-comparison-v1923.json",
+    "sha256": "ec9710986de7c02a72b0841dcabe5bd5c91a4c5c77241c1b45effd080a303612"
+  },
+  {
+    "bytes": 7588,
+    "path": "probes/openui-native-fontations-factory-preserve-v1936.py",
+    "sha256": "998d8ccf66a3a412ceee32d5387fecc1885c179f56d43a13175d42dad40710b4"
+  },
+  {
+    "bytes": 3911,
+    "path": "probes/openui-native-fontations-umbrella-hosted-collect-v1928.py",
+    "sha256": "07845ddb46d9a188fbd6bcfb1ac52c6cd2e1cd6319ac5e26d26feba9451ee5e8"
+  },
+  {
+    "bytes": 74603,
+    "path": "reviewed-chromium-skia-source/src/ports/SkTypeface_fontations.cpp",
+    "sha256": "0507775ddd5047dd51ea2f8317f1161541fa54c61ea72d066172c47bf109789e"
+  },
+  {
+    "bytes": 27635,
+    "path": "reviewed-chromium-skia-source/src/ports/fontations/src/base.rs",
+    "sha256": "d81ffd8fa6099642980aa19188b9e727c6d4fee529884162613c568e73b2a43c"
+  },
+  {
+    "bytes": 16058,
+    "path": "reviewed-chromium-skia-source/src/ports/fontations/src/ffi.rs",
+    "sha256": "223173aa97431b3484f8748743abb61f20c9ca84331dc9ecec03ca3e4094457a"
+  },
+  {
+    "bytes": 4649,
+    "path": "reviewed-chromium-skia-source/src/ports/fontations/src/hinting.rs",
+    "sha256": "714fbd0851e097ada077616be4d52e4e81d764e64462266ee59afba523e32d34"
+  },
+  {
+    "bytes": 707,
+    "path": "standalone-source/v1918/Cargo.toml",
+    "sha256": "c2c02d9665c1c47e38e48474cacb16ee4814d0da3f6c0c01afc9aba5da871368"
+  },
+  {
+    "bytes": 1507,
+    "path": "standalone-source/v1918/LICENSE-skia",
+    "sha256": "5f787c1dee3c56547f09ccc2906ab5f5293c4d8dd6c8654e573216c38e908dbd"
+  },
+  {
+    "bytes": 74603,
+    "path": "standalone-source/v1918/SkTypeface_fontations.cpp",
+    "sha256": "0507775ddd5047dd51ea2f8317f1161541fa54c61ea72d066172c47bf109789e"
+  },
+  {
+    "bytes": 1120,
+    "path": "standalone-source/v1918/build.rs",
+    "sha256": "ea5460c4359cd4e4c5828060b6ee27cad2a4413badd6f62f11c4d1b715782289"
+  },
+  {
+    "bytes": 1553,
+    "path": "standalone-source/v1918/factory.cpp",
+    "sha256": "f9800faff34f141298ec2c4fc4351ecb3341315259bdc266621c14523cfa4671"
+  },
+  {
+    "bytes": 328,
+    "path": "standalone-source/v1918/factory.h",
+    "sha256": "492d1f7a92205e9d41b2bd65ef009fc7489e801a525a443d304c7517ed03fd32"
+  },
+  {
+    "bytes": 27635,
+    "path": "standalone-source/v1918/src/ports/fontations/src/base.rs",
+    "sha256": "d81ffd8fa6099642980aa19188b9e727c6d4fee529884162613c568e73b2a43c"
+  },
+  {
+    "bytes": 7670,
+    "path": "standalone-source/v1918/src/ports/fontations/src/bitmap.rs",
+    "sha256": "7a52cae8c2065e14475dc673e4c5ec8aa61ca472f3d8c6fba467d65238625c75"
+  },
+  {
+    "bytes": 16832,
+    "path": "standalone-source/v1918/src/ports/fontations/src/colr.rs",
+    "sha256": "5d06cb9ec0a04eae616a4f07d0c9b4277a5043889a929b454ab097cbae903279"
+  },
+  {
+    "bytes": 1328,
+    "path": "standalone-source/v1918/src/ports/fontations/src/factory.rs",
+    "sha256": "f309bdba83d831636a6885de6bda6a405458cf0f4128ea0e6967ca9e9a7566d7"
+  },
+  {
+    "bytes": 16076,
+    "path": "standalone-source/v1918/src/ports/fontations/src/ffi.rs",
+    "sha256": "7aac64328c55cd651f32bbc6505c35a3bf11cc15790d5af21227e9f41f33340c"
+  },
+  {
+    "bytes": 4649,
+    "path": "standalone-source/v1918/src/ports/fontations/src/hinting.rs",
+    "sha256": "714fbd0851e097ada077616be4d52e4e81d764e64462266ee59afba523e32d34"
+  },
+  {
+    "bytes": 2782,
+    "path": "standalone-source/v1918/src/ports/fontations/src/names.rs",
+    "sha256": "b22233019c17fcac2849281412acf581bfc0691b70ce07f0021731bdd3fa9e4d"
+  },
+  {
+    "bytes": 3517,
+    "path": "standalone-source/v1918/src/ports/fontations/src/skpath_bridge.h",
+    "sha256": "c1ddda8274a5d7b3bb9c4eea04fe240ba070cf40b87ba8adfc6ec286051d5718"
+  },
+  {
+    "bytes": 4800,
+    "path": "standalone-source/v1918/src/ports/fontations/src/verbs_points_pen.rs",
+    "sha256": "1c1606261c57711ae45b58d31893315e947f488f37c5dab0a6a855e93227023b"
+  },
+  {
+    "bytes": 8,
+    "path": "standalone-source/v1919/.gitignore",
+    "sha256": "44c92e3a70ad3307b7056871c2bdb096d8bfa9373f5bf06a79bb6324a20ff2fb"
+  },
+  {
+    "bytes": 19621,
+    "path": "standalone-source/v1919/Cargo.lock",
+    "sha256": "6e2fc697a1514982992f1b03b10a992efa7373efca61ac0b9d8ba5fd518ff798"
+  },
+  {
+    "bytes": 707,
+    "path": "standalone-source/v1919/Cargo.toml",
+    "sha256": "c2c02d9665c1c47e38e48474cacb16ee4814d0da3f6c0c01afc9aba5da871368"
+  },
+  {
+    "bytes": 1507,
+    "path": "standalone-source/v1919/LICENSE-skia",
+    "sha256": "5f787c1dee3c56547f09ccc2906ab5f5293c4d8dd6c8654e573216c38e908dbd"
+  },
+  {
+    "bytes": 74603,
+    "path": "standalone-source/v1919/SkTypeface_fontations.cpp",
+    "sha256": "0507775ddd5047dd51ea2f8317f1161541fa54c61ea72d066172c47bf109789e"
+  },
+  {
+    "bytes": 1173,
+    "path": "standalone-source/v1919/build.rs",
+    "sha256": "5d17bcbe28bb029aff42b65f6855b64478dbe7ce58b71b7209386998ec261bcf"
+  },
+  {
+    "bytes": 1081,
+    "path": "standalone-source/v1919/examples/factory_probe.rs",
+    "sha256": "d1d32c427e1bf33451c61a606a036200f5189a1293e830badc28772459bd4e7d"
+  },
+  {
+    "bytes": 936,
+    "path": "standalone-source/v1919/factory.cpp",
+    "sha256": "9258c46a6854b7794aafa9647bdec18fb431d7997d4c6f69a514d930cd727a03"
+  },
+  {
+    "bytes": 285,
+    "path": "standalone-source/v1919/factory.h",
+    "sha256": "a0f8b9501ea1fa86d57f6e09c79bfa772977fbd9088f567ee59e68bb31f16df8"
+  },
+  {
+    "bytes": 27635,
+    "path": "standalone-source/v1919/src/ports/fontations/src/base.rs",
+    "sha256": "d81ffd8fa6099642980aa19188b9e727c6d4fee529884162613c568e73b2a43c"
+  },
+  {
+    "bytes": 7670,
+    "path": "standalone-source/v1919/src/ports/fontations/src/bitmap.rs",
+    "sha256": "7a52cae8c2065e14475dc673e4c5ec8aa61ca472f3d8c6fba467d65238625c75"
+  },
+  {
+    "bytes": 16832,
+    "path": "standalone-source/v1919/src/ports/fontations/src/colr.rs",
+    "sha256": "5d06cb9ec0a04eae616a4f07d0c9b4277a5043889a929b454ab097cbae903279"
+  },
+  {
+    "bytes": 1284,
+    "path": "standalone-source/v1919/src/ports/fontations/src/factory.rs",
+    "sha256": "c25a8b2989533d6e930233d8e65c6de708ed95709c9a61b8d16d67fc9701f015"
+  },
+  {
+    "bytes": 16076,
+    "path": "standalone-source/v1919/src/ports/fontations/src/ffi.rs",
+    "sha256": "7aac64328c55cd651f32bbc6505c35a3bf11cc15790d5af21227e9f41f33340c"
+  },
+  {
+    "bytes": 4649,
+    "path": "standalone-source/v1919/src/ports/fontations/src/hinting.rs",
+    "sha256": "714fbd0851e097ada077616be4d52e4e81d764e64462266ee59afba523e32d34"
+  },
+  {
+    "bytes": 2782,
+    "path": "standalone-source/v1919/src/ports/fontations/src/names.rs",
+    "sha256": "b22233019c17fcac2849281412acf581bfc0691b70ce07f0021731bdd3fa9e4d"
+  },
+  {
+    "bytes": 3517,
+    "path": "standalone-source/v1919/src/ports/fontations/src/skpath_bridge.h",
+    "sha256": "c1ddda8274a5d7b3bb9c4eea04fe240ba070cf40b87ba8adfc6ec286051d5718"
+  },
+  {
+    "bytes": 4800,
+    "path": "standalone-source/v1919/src/ports/fontations/src/verbs_points_pen.rs",
+    "sha256": "1c1606261c57711ae45b58d31893315e947f488f37c5dab0a6a855e93227023b"
+  },
+  {
+    "bytes": 8,
+    "path": "standalone-source/v1921/.gitignore",
+    "sha256": "44c92e3a70ad3307b7056871c2bdb096d8bfa9373f5bf06a79bb6324a20ff2fb"
+  },
+  {
+    "bytes": 19621,
+    "path": "standalone-source/v1921/Cargo.lock",
+    "sha256": "6e2fc697a1514982992f1b03b10a992efa7373efca61ac0b9d8ba5fd518ff798"
+  },
+  {
+    "bytes": 707,
+    "path": "standalone-source/v1921/Cargo.toml",
+    "sha256": "c2c02d9665c1c47e38e48474cacb16ee4814d0da3f6c0c01afc9aba5da871368"
+  },
+  {
+    "bytes": 1507,
+    "path": "standalone-source/v1921/LICENSE-skia",
+    "sha256": "5f787c1dee3c56547f09ccc2906ab5f5293c4d8dd6c8654e573216c38e908dbd"
+  },
+  {
+    "bytes": 74603,
+    "path": "standalone-source/v1921/SkTypeface_fontations.cpp",
+    "sha256": "0507775ddd5047dd51ea2f8317f1161541fa54c61ea72d066172c47bf109789e"
+  },
+  {
+    "bytes": 1173,
+    "path": "standalone-source/v1921/build.rs",
+    "sha256": "5d17bcbe28bb029aff42b65f6855b64478dbe7ce58b71b7209386998ec261bcf"
+  },
+  {
+    "bytes": 1081,
+    "path": "standalone-source/v1921/examples/factory_probe.rs",
+    "sha256": "d1d32c427e1bf33451c61a606a036200f5189a1293e830badc28772459bd4e7d"
+  },
+  {
+    "bytes": 936,
+    "path": "standalone-source/v1921/factory.cpp",
+    "sha256": "9258c46a6854b7794aafa9647bdec18fb431d7997d4c6f69a514d930cd727a03"
+  },
+  {
+    "bytes": 285,
+    "path": "standalone-source/v1921/factory.h",
+    "sha256": "a0f8b9501ea1fa86d57f6e09c79bfa772977fbd9088f567ee59e68bb31f16df8"
+  },
+  {
+    "bytes": 27635,
+    "path": "standalone-source/v1921/src/ports/fontations/src/base.rs",
+    "sha256": "d81ffd8fa6099642980aa19188b9e727c6d4fee529884162613c568e73b2a43c"
+  },
+  {
+    "bytes": 7670,
+    "path": "standalone-source/v1921/src/ports/fontations/src/bitmap.rs",
+    "sha256": "7a52cae8c2065e14475dc673e4c5ec8aa61ca472f3d8c6fba467d65238625c75"
+  },
+  {
+    "bytes": 16832,
+    "path": "standalone-source/v1921/src/ports/fontations/src/colr.rs",
+    "sha256": "5d06cb9ec0a04eae616a4f07d0c9b4277a5043889a929b454ab097cbae903279"
+  },
+  {
+    "bytes": 1284,
+    "path": "standalone-source/v1921/src/ports/fontations/src/factory.rs",
+    "sha256": "c25a8b2989533d6e930233d8e65c6de708ed95709c9a61b8d16d67fc9701f015"
+  },
+  {
+    "bytes": 16076,
+    "path": "standalone-source/v1921/src/ports/fontations/src/ffi.rs",
+    "sha256": "7aac64328c55cd651f32bbc6505c35a3bf11cc15790d5af21227e9f41f33340c"
+  },
+  {
+    "bytes": 4649,
+    "path": "standalone-source/v1921/src/ports/fontations/src/hinting.rs",
+    "sha256": "714fbd0851e097ada077616be4d52e4e81d764e64462266ee59afba523e32d34"
+  },
+  {
+    "bytes": 2782,
+    "path": "standalone-source/v1921/src/ports/fontations/src/names.rs",
+    "sha256": "b22233019c17fcac2849281412acf581bfc0691b70ce07f0021731bdd3fa9e4d"
+  },
+  {
+    "bytes": 3517,
+    "path": "standalone-source/v1921/src/ports/fontations/src/skpath_bridge.h",
+    "sha256": "c1ddda8274a5d7b3bb9c4eea04fe240ba070cf40b87ba8adfc6ec286051d5718"
+  },
+  {
+    "bytes": 4800,
+    "path": "standalone-source/v1921/src/ports/fontations/src/verbs_points_pen.rs",
+    "sha256": "1c1606261c57711ae45b58d31893315e947f488f37c5dab0a6a855e93227023b"
+  },
+  {
+    "bytes": 8,
+    "path": "standalone-source/v1924/.gitignore",
+    "sha256": "44c92e3a70ad3307b7056871c2bdb096d8bfa9373f5bf06a79bb6324a20ff2fb"
+  },
+  {
+    "bytes": 19621,
+    "path": "standalone-source/v1924/Cargo.lock",
+    "sha256": "6e2fc697a1514982992f1b03b10a992efa7373efca61ac0b9d8ba5fd518ff798"
+  },
+  {
+    "bytes": 707,
+    "path": "standalone-source/v1924/Cargo.toml",
+    "sha256": "c2c02d9665c1c47e38e48474cacb16ee4814d0da3f6c0c01afc9aba5da871368"
+  },
+  {
+    "bytes": 1507,
+    "path": "standalone-source/v1924/LICENSE-skia",
+    "sha256": "5f787c1dee3c56547f09ccc2906ab5f5293c4d8dd6c8654e573216c38e908dbd"
+  },
+  {
+    "bytes": 74603,
+    "path": "standalone-source/v1924/SkTypeface_fontations.cpp",
+    "sha256": "0507775ddd5047dd51ea2f8317f1161541fa54c61ea72d066172c47bf109789e"
+  },
+  {
+    "bytes": 1173,
+    "path": "standalone-source/v1924/build.rs",
+    "sha256": "5d17bcbe28bb029aff42b65f6855b64478dbe7ce58b71b7209386998ec261bcf"
+  },
+  {
+    "bytes": 1081,
+    "path": "standalone-source/v1924/examples/factory_probe.rs",
+    "sha256": "d1d32c427e1bf33451c61a606a036200f5189a1293e830badc28772459bd4e7d"
+  },
+  {
+    "bytes": 933,
+    "path": "standalone-source/v1924/factory.cpp",
+    "sha256": "ab4d32eb6fcea81280d230c0ed3c88349ff98df86da2c14e5c05068a1472857a"
+  },
+  {
+    "bytes": 285,
+    "path": "standalone-source/v1924/factory.h",
+    "sha256": "a0f8b9501ea1fa86d57f6e09c79bfa772977fbd9088f567ee59e68bb31f16df8"
+  },
+  {
+    "bytes": 27635,
+    "path": "standalone-source/v1924/src/ports/fontations/src/base.rs",
+    "sha256": "d81ffd8fa6099642980aa19188b9e727c6d4fee529884162613c568e73b2a43c"
+  },
+  {
+    "bytes": 7670,
+    "path": "standalone-source/v1924/src/ports/fontations/src/bitmap.rs",
+    "sha256": "7a52cae8c2065e14475dc673e4c5ec8aa61ca472f3d8c6fba467d65238625c75"
+  },
+  {
+    "bytes": 16832,
+    "path": "standalone-source/v1924/src/ports/fontations/src/colr.rs",
+    "sha256": "5d06cb9ec0a04eae616a4f07d0c9b4277a5043889a929b454ab097cbae903279"
+  },
+  {
+    "bytes": 1284,
+    "path": "standalone-source/v1924/src/ports/fontations/src/factory.rs",
+    "sha256": "c25a8b2989533d6e930233d8e65c6de708ed95709c9a61b8d16d67fc9701f015"
+  },
+  {
+    "bytes": 16076,
+    "path": "standalone-source/v1924/src/ports/fontations/src/ffi.rs",
+    "sha256": "7aac64328c55cd651f32bbc6505c35a3bf11cc15790d5af21227e9f41f33340c"
+  },
+  {
+    "bytes": 4649,
+    "path": "standalone-source/v1924/src/ports/fontations/src/hinting.rs",
+    "sha256": "714fbd0851e097ada077616be4d52e4e81d764e64462266ee59afba523e32d34"
+  },
+  {
+    "bytes": 2782,
+    "path": "standalone-source/v1924/src/ports/fontations/src/names.rs",
+    "sha256": "b22233019c17fcac2849281412acf581bfc0691b70ce07f0021731bdd3fa9e4d"
+  },
+  {
+    "bytes": 3517,
+    "path": "standalone-source/v1924/src/ports/fontations/src/skpath_bridge.h",
+    "sha256": "c1ddda8274a5d7b3bb9c4eea04fe240ba070cf40b87ba8adfc6ec286051d5718"
+  },
+  {
+    "bytes": 4800,
+    "path": "standalone-source/v1924/src/ports/fontations/src/verbs_points_pen.rs",
+    "sha256": "1c1606261c57711ae45b58d31893315e947f488f37c5dab0a6a855e93227023b"
+  },
+  {
+    "bytes": 8,
+    "path": "standalone-source/v1926/.gitignore",
+    "sha256": "44c92e3a70ad3307b7056871c2bdb096d8bfa9373f5bf06a79bb6324a20ff2fb"
+  },
+  {
+    "bytes": 19621,
+    "path": "standalone-source/v1926/Cargo.lock",
+    "sha256": "6e2fc697a1514982992f1b03b10a992efa7373efca61ac0b9d8ba5fd518ff798"
+  },
+  {
+    "bytes": 707,
+    "path": "standalone-source/v1926/Cargo.toml",
+    "sha256": "c2c02d9665c1c47e38e48474cacb16ee4814d0da3f6c0c01afc9aba5da871368"
+  },
+  {
+    "bytes": 1507,
+    "path": "standalone-source/v1926/LICENSE-skia",
+    "sha256": "5f787c1dee3c56547f09ccc2906ab5f5293c4d8dd6c8654e573216c38e908dbd"
+  },
+  {
+    "bytes": 74603,
+    "path": "standalone-source/v1926/SkTypeface_fontations.cpp",
+    "sha256": "0507775ddd5047dd51ea2f8317f1161541fa54c61ea72d066172c47bf109789e"
+  },
+  {
+    "bytes": 1173,
+    "path": "standalone-source/v1926/build.rs",
+    "sha256": "5d17bcbe28bb029aff42b65f6855b64478dbe7ce58b71b7209386998ec261bcf"
+  },
+  {
+    "bytes": 1081,
+    "path": "standalone-source/v1926/examples/factory_probe.rs",
+    "sha256": "d1d32c427e1bf33451c61a606a036200f5189a1293e830badc28772459bd4e7d"
+  },
+  {
+    "bytes": 933,
+    "path": "standalone-source/v1926/factory.cpp",
+    "sha256": "ab4d32eb6fcea81280d230c0ed3c88349ff98df86da2c14e5c05068a1472857a"
+  },
+  {
+    "bytes": 285,
+    "path": "standalone-source/v1926/factory.h",
+    "sha256": "a0f8b9501ea1fa86d57f6e09c79bfa772977fbd9088f567ee59e68bb31f16df8"
+  },
+  {
+    "bytes": 27635,
+    "path": "standalone-source/v1926/src/ports/fontations/src/base.rs",
+    "sha256": "d81ffd8fa6099642980aa19188b9e727c6d4fee529884162613c568e73b2a43c"
+  },
+  {
+    "bytes": 7670,
+    "path": "standalone-source/v1926/src/ports/fontations/src/bitmap.rs",
+    "sha256": "7a52cae8c2065e14475dc673e4c5ec8aa61ca472f3d8c6fba467d65238625c75"
+  },
+  {
+    "bytes": 16832,
+    "path": "standalone-source/v1926/src/ports/fontations/src/colr.rs",
+    "sha256": "5d06cb9ec0a04eae616a4f07d0c9b4277a5043889a929b454ab097cbae903279"
+  },
+  {
+    "bytes": 1284,
+    "path": "standalone-source/v1926/src/ports/fontations/src/factory.rs",
+    "sha256": "c25a8b2989533d6e930233d8e65c6de708ed95709c9a61b8d16d67fc9701f015"
+  },
+  {
+    "bytes": 16076,
+    "path": "standalone-source/v1926/src/ports/fontations/src/ffi.rs",
+    "sha256": "7aac64328c55cd651f32bbc6505c35a3bf11cc15790d5af21227e9f41f33340c"
+  },
+  {
+    "bytes": 4649,
+    "path": "standalone-source/v1926/src/ports/fontations/src/hinting.rs",
+    "sha256": "714fbd0851e097ada077616be4d52e4e81d764e64462266ee59afba523e32d34"
+  },
+  {
+    "bytes": 2782,
+    "path": "standalone-source/v1926/src/ports/fontations/src/names.rs",
+    "sha256": "b22233019c17fcac2849281412acf581bfc0691b70ce07f0021731bdd3fa9e4d"
+  },
+  {
+    "bytes": 3517,
+    "path": "standalone-source/v1926/src/ports/fontations/src/skpath_bridge.h",
+    "sha256": "c1ddda8274a5d7b3bb9c4eea04fe240ba070cf40b87ba8adfc6ec286051d5718"
+  },
+  {
+    "bytes": 4800,
+    "path": "standalone-source/v1926/src/ports/fontations/src/verbs_points_pen.rs",
+    "sha256": "1c1606261c57711ae45b58d31893315e947f488f37c5dab0a6a855e93227023b"
+  },
+  {
+    "bytes": 8,
+    "path": "standalone-source/v1929/.gitignore",
+    "sha256": "44c92e3a70ad3307b7056871c2bdb096d8bfa9373f5bf06a79bb6324a20ff2fb"
+  },
+  {
+    "bytes": 19621,
+    "path": "standalone-source/v1929/Cargo.lock",
+    "sha256": "6e2fc697a1514982992f1b03b10a992efa7373efca61ac0b9d8ba5fd518ff798"
+  },
+  {
+    "bytes": 707,
+    "path": "standalone-source/v1929/Cargo.toml",
+    "sha256": "c2c02d9665c1c47e38e48474cacb16ee4814d0da3f6c0c01afc9aba5da871368"
+  },
+  {
+    "bytes": 1507,
+    "path": "standalone-source/v1929/LICENSE-skia",
+    "sha256": "5f787c1dee3c56547f09ccc2906ab5f5293c4d8dd6c8654e573216c38e908dbd"
+  },
+  {
+    "bytes": 74603,
+    "path": "standalone-source/v1929/SkTypeface_fontations.cpp",
+    "sha256": "0507775ddd5047dd51ea2f8317f1161541fa54c61ea72d066172c47bf109789e"
+  },
+  {
+    "bytes": 1173,
+    "path": "standalone-source/v1929/build.rs",
+    "sha256": "5d17bcbe28bb029aff42b65f6855b64478dbe7ce58b71b7209386998ec261bcf"
+  },
+  {
+    "bytes": 1081,
+    "path": "standalone-source/v1929/examples/factory_probe.rs",
+    "sha256": "d1d32c427e1bf33451c61a606a036200f5189a1293e830badc28772459bd4e7d"
+  },
+  {
+    "bytes": 933,
+    "path": "standalone-source/v1929/factory.cpp",
+    "sha256": "ab4d32eb6fcea81280d230c0ed3c88349ff98df86da2c14e5c05068a1472857a"
+  },
+  {
+    "bytes": 285,
+    "path": "standalone-source/v1929/factory.h",
+    "sha256": "a0f8b9501ea1fa86d57f6e09c79bfa772977fbd9088f567ee59e68bb31f16df8"
+  },
+  {
+    "bytes": 27635,
+    "path": "standalone-source/v1929/src/ports/fontations/src/base.rs",
+    "sha256": "d81ffd8fa6099642980aa19188b9e727c6d4fee529884162613c568e73b2a43c"
+  },
+  {
+    "bytes": 7670,
+    "path": "standalone-source/v1929/src/ports/fontations/src/bitmap.rs",
+    "sha256": "7a52cae8c2065e14475dc673e4c5ec8aa61ca472f3d8c6fba467d65238625c75"
+  },
+  {
+    "bytes": 16832,
+    "path": "standalone-source/v1929/src/ports/fontations/src/colr.rs",
+    "sha256": "5d06cb9ec0a04eae616a4f07d0c9b4277a5043889a929b454ab097cbae903279"
+  },
+  {
+    "bytes": 1288,
+    "path": "standalone-source/v1929/src/ports/fontations/src/factory.rs",
+    "sha256": "381748cd6a1644d984da87f04d8ffb2ee7698c0c10f6e3818a858cacc69e41c0"
+  },
+  {
+    "bytes": 16076,
+    "path": "standalone-source/v1929/src/ports/fontations/src/ffi.rs",
+    "sha256": "7aac64328c55cd651f32bbc6505c35a3bf11cc15790d5af21227e9f41f33340c"
+  },
+  {
+    "bytes": 4649,
+    "path": "standalone-source/v1929/src/ports/fontations/src/hinting.rs",
+    "sha256": "714fbd0851e097ada077616be4d52e4e81d764e64462266ee59afba523e32d34"
+  },
+  {
+    "bytes": 2782,
+    "path": "standalone-source/v1929/src/ports/fontations/src/names.rs",
+    "sha256": "b22233019c17fcac2849281412acf581bfc0691b70ce07f0021731bdd3fa9e4d"
+  },
+  {
+    "bytes": 3517,
+    "path": "standalone-source/v1929/src/ports/fontations/src/skpath_bridge.h",
+    "sha256": "c1ddda8274a5d7b3bb9c4eea04fe240ba070cf40b87ba8adfc6ec286051d5718"
+  },
+  {
+    "bytes": 4800,
+    "path": "standalone-source/v1929/src/ports/fontations/src/verbs_points_pen.rs",
+    "sha256": "1c1606261c57711ae45b58d31893315e947f488f37c5dab0a6a855e93227023b"
+  },
+  {
+    "bytes": 8,
+    "path": "standalone-source/v1931/.gitignore",
+    "sha256": "44c92e3a70ad3307b7056871c2bdb096d8bfa9373f5bf06a79bb6324a20ff2fb"
+  },
+  {
+    "bytes": 19621,
+    "path": "standalone-source/v1931/Cargo.lock",
+    "sha256": "6e2fc697a1514982992f1b03b10a992efa7373efca61ac0b9d8ba5fd518ff798"
+  },
+  {
+    "bytes": 707,
+    "path": "standalone-source/v1931/Cargo.toml",
+    "sha256": "c2c02d9665c1c47e38e48474cacb16ee4814d0da3f6c0c01afc9aba5da871368"
+  },
+  {
+    "bytes": 1507,
+    "path": "standalone-source/v1931/LICENSE-skia",
+    "sha256": "5f787c1dee3c56547f09ccc2906ab5f5293c4d8dd6c8654e573216c38e908dbd"
+  },
+  {
+    "bytes": 74603,
+    "path": "standalone-source/v1931/SkTypeface_fontations.cpp",
+    "sha256": "0507775ddd5047dd51ea2f8317f1161541fa54c61ea72d066172c47bf109789e"
+  },
+  {
+    "bytes": 1173,
+    "path": "standalone-source/v1931/build.rs",
+    "sha256": "5d17bcbe28bb029aff42b65f6855b64478dbe7ce58b71b7209386998ec261bcf"
+  },
+  {
+    "bytes": 1081,
+    "path": "standalone-source/v1931/examples/factory_probe.rs",
+    "sha256": "d1d32c427e1bf33451c61a606a036200f5189a1293e830badc28772459bd4e7d"
+  },
+  {
+    "bytes": 933,
+    "path": "standalone-source/v1931/factory.cpp",
+    "sha256": "ab4d32eb6fcea81280d230c0ed3c88349ff98df86da2c14e5c05068a1472857a"
+  },
+  {
+    "bytes": 285,
+    "path": "standalone-source/v1931/factory.h",
+    "sha256": "a0f8b9501ea1fa86d57f6e09c79bfa772977fbd9088f567ee59e68bb31f16df8"
+  },
+  {
+    "bytes": 27635,
+    "path": "standalone-source/v1931/src/ports/fontations/src/base.rs",
+    "sha256": "d81ffd8fa6099642980aa19188b9e727c6d4fee529884162613c568e73b2a43c"
+  },
+  {
+    "bytes": 7670,
+    "path": "standalone-source/v1931/src/ports/fontations/src/bitmap.rs",
+    "sha256": "7a52cae8c2065e14475dc673e4c5ec8aa61ca472f3d8c6fba467d65238625c75"
+  },
+  {
+    "bytes": 16832,
+    "path": "standalone-source/v1931/src/ports/fontations/src/colr.rs",
+    "sha256": "5d06cb9ec0a04eae616a4f07d0c9b4277a5043889a929b454ab097cbae903279"
+  },
+  {
+    "bytes": 1301,
+    "path": "standalone-source/v1931/src/ports/fontations/src/factory.rs",
+    "sha256": "743e09d90266c664106114a2a033fab5ab7d20d4760df8f364c5e74c47ef936b"
+  },
+  {
+    "bytes": 16076,
+    "path": "standalone-source/v1931/src/ports/fontations/src/ffi.rs",
+    "sha256": "7aac64328c55cd651f32bbc6505c35a3bf11cc15790d5af21227e9f41f33340c"
+  },
+  {
+    "bytes": 4649,
+    "path": "standalone-source/v1931/src/ports/fontations/src/hinting.rs",
+    "sha256": "714fbd0851e097ada077616be4d52e4e81d764e64462266ee59afba523e32d34"
+  },
+  {
+    "bytes": 2782,
+    "path": "standalone-source/v1931/src/ports/fontations/src/names.rs",
+    "sha256": "b22233019c17fcac2849281412acf581bfc0691b70ce07f0021731bdd3fa9e4d"
+  },
+  {
+    "bytes": 3517,
+    "path": "standalone-source/v1931/src/ports/fontations/src/skpath_bridge.h",
+    "sha256": "c1ddda8274a5d7b3bb9c4eea04fe240ba070cf40b87ba8adfc6ec286051d5718"
+  },
+  {
+    "bytes": 4800,
+    "path": "standalone-source/v1931/src/ports/fontations/src/verbs_points_pen.rs",
+    "sha256": "1c1606261c57711ae45b58d31893315e947f488f37c5dab0a6a855e93227023b"
+  },
+  {
+    "bytes": 8,
+    "path": "standalone-source/v1933/.gitignore",
+    "sha256": "44c92e3a70ad3307b7056871c2bdb096d8bfa9373f5bf06a79bb6324a20ff2fb"
+  },
+  {
+    "bytes": 19621,
+    "path": "standalone-source/v1933/Cargo.lock",
+    "sha256": "6e2fc697a1514982992f1b03b10a992efa7373efca61ac0b9d8ba5fd518ff798"
+  },
+  {
+    "bytes": 707,
+    "path": "standalone-source/v1933/Cargo.toml",
+    "sha256": "c2c02d9665c1c47e38e48474cacb16ee4814d0da3f6c0c01afc9aba5da871368"
+  },
+  {
+    "bytes": 1507,
+    "path": "standalone-source/v1933/LICENSE-skia",
+    "sha256": "5f787c1dee3c56547f09ccc2906ab5f5293c4d8dd6c8654e573216c38e908dbd"
+  },
+  {
+    "bytes": 74603,
+    "path": "standalone-source/v1933/SkTypeface_fontations.cpp",
+    "sha256": "0507775ddd5047dd51ea2f8317f1161541fa54c61ea72d066172c47bf109789e"
+  },
+  {
+    "bytes": 1209,
+    "path": "standalone-source/v1933/build.rs",
+    "sha256": "06e4af2d26aaf6f926b12f2d7ccebc1db5ac96f19363b72799f824697e8e1049"
+  },
+  {
+    "bytes": 1081,
+    "path": "standalone-source/v1933/examples/factory_probe.rs",
+    "sha256": "d1d32c427e1bf33451c61a606a036200f5189a1293e830badc28772459bd4e7d"
+  },
+  {
+    "bytes": 933,
+    "path": "standalone-source/v1933/factory.cpp",
+    "sha256": "ab4d32eb6fcea81280d230c0ed3c88349ff98df86da2c14e5c05068a1472857a"
+  },
+  {
+    "bytes": 285,
+    "path": "standalone-source/v1933/factory.h",
+    "sha256": "a0f8b9501ea1fa86d57f6e09c79bfa772977fbd9088f567ee59e68bb31f16df8"
+  },
+  {
+    "bytes": 27635,
+    "path": "standalone-source/v1933/src/ports/fontations/src/base.rs",
+    "sha256": "d81ffd8fa6099642980aa19188b9e727c6d4fee529884162613c568e73b2a43c"
+  },
+  {
+    "bytes": 7670,
+    "path": "standalone-source/v1933/src/ports/fontations/src/bitmap.rs",
+    "sha256": "7a52cae8c2065e14475dc673e4c5ec8aa61ca472f3d8c6fba467d65238625c75"
+  },
+  {
+    "bytes": 16832,
+    "path": "standalone-source/v1933/src/ports/fontations/src/colr.rs",
+    "sha256": "5d06cb9ec0a04eae616a4f07d0c9b4277a5043889a929b454ab097cbae903279"
+  },
+  {
+    "bytes": 1301,
+    "path": "standalone-source/v1933/src/ports/fontations/src/factory.rs",
+    "sha256": "743e09d90266c664106114a2a033fab5ab7d20d4760df8f364c5e74c47ef936b"
+  },
+  {
+    "bytes": 16076,
+    "path": "standalone-source/v1933/src/ports/fontations/src/ffi.rs",
+    "sha256": "7aac64328c55cd651f32bbc6505c35a3bf11cc15790d5af21227e9f41f33340c"
+  },
+  {
+    "bytes": 4649,
+    "path": "standalone-source/v1933/src/ports/fontations/src/hinting.rs",
+    "sha256": "714fbd0851e097ada077616be4d52e4e81d764e64462266ee59afba523e32d34"
+  },
+  {
+    "bytes": 2782,
+    "path": "standalone-source/v1933/src/ports/fontations/src/names.rs",
+    "sha256": "b22233019c17fcac2849281412acf581bfc0691b70ce07f0021731bdd3fa9e4d"
+  },
+  {
+    "bytes": 3517,
+    "path": "standalone-source/v1933/src/ports/fontations/src/skpath_bridge.h",
+    "sha256": "c1ddda8274a5d7b3bb9c4eea04fe240ba070cf40b87ba8adfc6ec286051d5718"
+  },
+  {
+    "bytes": 4800,
+    "path": "standalone-source/v1933/src/ports/fontations/src/verbs_points_pen.rs",
+    "sha256": "1c1606261c57711ae45b58d31893315e947f488f37c5dab0a6a855e93227023b"
+  }
+]

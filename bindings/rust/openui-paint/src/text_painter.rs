@@ -24,7 +24,7 @@ use skia_safe::{
 
 use openui_geometry::{PhysicalSnap, RasterBackend, RasterSnapping, TextEdging};
 use openui_layout::inline::text_combine::TextCombineLayout;
-use openui_style::{Color, ComputedStyle, FontFamily, GenericFontFamily};
+use openui_style::{Color, ComputedStyle, FontFamily};
 use openui_text::font::FontMetrics;
 use openui_text::shaping::{ShapeResult, TextRasterPolicy};
 
@@ -52,17 +52,33 @@ pub fn paint_text(
     origin: (f32, f32),
     style: &ComputedStyle,
 ) {
-    let author_lcd = uses_chromium_author_lcd(style);
+    paint_text_tracked(canvas, shape_result, origin, style);
+}
+
+pub(crate) fn paint_text_tracked(
+    canvas: &dyn crate::paint_record::PaintCanvas,
+    shape_result: &ShapeResult,
+    origin: (f32, f32),
+    style: &ComputedStyle,
+) {
+    canvas.legacy_helper_boundary();
+    let author_lcd = uses_chromium_author_lcd(style, shape_result);
     let raster_policy = if style.native_control_text {
         TextRasterPolicy::ChromiumNativeControl
     } else if style.embedded_document_text {
         TextRasterPolicy::ChromiumEmbeddedDocument
     } else if author_lcd {
         TextRasterPolicy::ChromiumAuthorLcd
+    } else if style.raster_configuration.backend == RasterBackend::ChromiumLinux
+        && style.raster_configuration.author_text.edging == TextEdging::Alias
+    {
+        // Fit hinted monochrome strikes with Fontations. The resolved font's
+        // hinting setting preserves the original outline for unhinted strikes.
+        TextRasterPolicy::ChromiumAuthorAliased
     } else {
         TextRasterPolicy::Skia
     };
-    paint_text_with_raster_policy(canvas, shape_result, origin, style, raster_policy);
+    paint_text_with_raster_policy_tracked(canvas, shape_result, origin, style, raster_policy);
 }
 
 /// Paint shaped glyphs with an explicit platform outline raster policy.
@@ -73,6 +89,17 @@ pub fn paint_text_with_raster_policy(
     style: &ComputedStyle,
     raster_policy: TextRasterPolicy,
 ) {
+    paint_text_with_raster_policy_tracked(canvas, shape_result, origin, style, raster_policy);
+}
+
+pub(crate) fn paint_text_with_raster_policy_tracked(
+    canvas: &dyn crate::paint_record::PaintCanvas,
+    shape_result: &ShapeResult,
+    origin: (f32, f32),
+    style: &ComputedStyle,
+    raster_policy: TextRasterPolicy,
+) {
+    canvas.legacy_helper_boundary();
     let text_raster = if style.native_control_text {
         style.raster_configuration.native_text
     } else if style.embedded_document_text {
@@ -143,12 +170,12 @@ pub fn paint_text_with_raster_policy(
         paint.set_anti_alias(true);
         paint.set_style(PaintStyle::Fill);
 
-        // Set the text color from the computed `color` property.
+        // Resolve the inherited text-fill color against final own color.
         // For non-color glyphs, this is used directly. For color glyphs
         // (COLR/CPAL, CBDT/CBLC, sbix, SVG), Skia overrides this paint
         // color with the glyph's embedded palette colors automatically.
         // Blink: TextPainterBase::UpdatePaint sets the fill color.
-        let c = &style.color;
+        let c = style.effective_text_fill_color();
         paint.set_color4f(Color4f::new(c.r, c.g, c.b, c.a), None::<&ColorSpace>);
 
         let physical_scale = style.device_scale_factor as f32;
@@ -172,32 +199,13 @@ pub fn paint_text_with_raster_policy(
     }
 }
 
-fn uses_chromium_author_lcd(style: &ComputedStyle) -> bool {
-    if style.native_control_text
-        || style.embedded_document_text
-        || style.raster_configuration.author_text.edging != TextEdging::Alias
-    {
-        return false;
-    }
-    match style.font_family.families.first() {
-        Some(FontFamily::Named(name)) => ![
-            "Ahem",
-            "Droid Sans Fallback",
-            "Noto Sans Devanagari",
-            "Noto Color Emoji",
-            "DejaVu Sans",
-        ]
-        .iter()
-        .any(|family| name.eq_ignore_ascii_case(family)),
-        Some(FontFamily::Generic(family)) => !matches!(
-            family,
-            GenericFontFamily::None
-                | GenericFontFamily::SansSerif
-                | GenericFontFamily::Emoji
-                | GenericFontFamily::UiSansSerif
-        ),
-        None => false,
-    }
+fn uses_chromium_author_lcd(style: &ComputedStyle, shape_result: &ShapeResult) -> bool {
+    !style.native_control_text
+        && !style.embedded_document_text
+        && style.raster_configuration.author_text.edging == TextEdging::Alias
+        && shape_result.runs.iter().any(|run| {
+            run.font_data.sk_font().edging() == skia_safe::font::Edging::SubpixelAntiAlias
+        })
 }
 
 /// Paint an upright run in a vertical line.
@@ -214,6 +222,17 @@ pub fn paint_vertical_text(
     top_y: f32,
     style: &ComputedStyle,
 ) {
+    paint_vertical_text_tracked(canvas, shape_result, vertical_baseline_x, top_y, style);
+}
+
+pub(crate) fn paint_vertical_text_tracked(
+    canvas: &dyn crate::paint_record::PaintCanvas,
+    shape_result: &ShapeResult,
+    vertical_baseline_x: f32,
+    top_y: f32,
+    style: &ComputedStyle,
+) {
+    canvas.legacy_helper_boundary();
     if shape_result.runs.is_empty() || shape_result.num_glyphs() == 0 {
         return;
     }
@@ -278,7 +297,7 @@ pub fn paint_vertical_text(
         let mut paint = Paint::default();
         paint.set_anti_alias(true);
         paint.set_style(PaintStyle::Fill);
-        let color = &style.color;
+        let color = style.effective_text_fill_color();
         paint.set_color4f(
             Color4f::new(color.r, color.g, color.b, color.a),
             None::<&ColorSpace>,
@@ -297,7 +316,10 @@ pub fn paint_vertical_text(
 /// Ahem has square glyphs with no negative inline bearing. If the run origin
 /// is on or beyond a hard overflow edge, its LCD filter fringe is not logical
 /// ink and must not leak one subpixel back into the clipped box.
-fn text_origin_is_past_device_clip_end(canvas: &Canvas, origin: (f32, f32)) -> bool {
+fn text_origin_is_past_device_clip_end(
+    canvas: &dyn crate::paint_record::PaintCanvas,
+    origin: (f32, f32),
+) -> bool {
     let device_origin = canvas
         .local_to_device_as_3x3()
         .map_point(Point::new(origin.0, origin.1));
@@ -310,7 +332,7 @@ fn text_origin_is_past_device_clip_end(canvas: &Canvas, origin: (f32, f32)) -> b
 /// clip.  `Canvas::local_clip_bounds` is deliberately outset for antialiasing,
 /// so use the non-outset device clip after mapping the blob bounds instead.
 fn text_blob_is_outside_device_clip(
-    canvas: &Canvas,
+    canvas: &dyn crate::paint_record::PaintCanvas,
     text_blob: &TextBlob,
     origin: (f32, f32),
 ) -> bool {
@@ -346,6 +368,16 @@ pub fn paint_text_shadows(
     origin: (f32, f32),
     style: &ComputedStyle,
 ) {
+    paint_text_shadows_tracked(canvas, shape_result, origin, style);
+}
+
+pub(crate) fn paint_text_shadows_tracked(
+    canvas: &dyn crate::paint_record::PaintCanvas,
+    shape_result: &ShapeResult,
+    origin: (f32, f32),
+    style: &ComputedStyle,
+) {
+    canvas.legacy_helper_boundary();
     if style.text_shadow.is_empty() {
         return;
     }
@@ -433,6 +465,17 @@ pub fn paint_text_combine(
     style: &ComputedStyle,
     layout: &TextCombineLayout,
 ) {
+    paint_text_combine_tracked(canvas, shape_result, origin, style, layout);
+}
+
+pub(crate) fn paint_text_combine_tracked(
+    canvas: &dyn crate::paint_record::PaintCanvas,
+    shape_result: &ShapeResult,
+    origin: (f32, f32),
+    style: &ComputedStyle,
+    layout: &TextCombineLayout,
+) {
+    canvas.legacy_helper_boundary();
     let text_blob = match shape_result.to_text_blob() {
         Some(blob) => blob,
         None => return,
@@ -442,7 +485,7 @@ pub fn paint_text_combine(
     paint.set_anti_alias(true);
     paint.set_style(PaintStyle::Fill);
 
-    let c = &style.color;
+    let c = style.effective_text_fill_color();
     paint.set_color4f(Color4f::new(c.r, c.g, c.b, c.a), None::<&ColorSpace>);
 
     let (translate_x, translate_y, scale_x) =

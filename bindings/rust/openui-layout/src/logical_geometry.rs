@@ -221,7 +221,7 @@ pub fn flex_child_constraint_space(
     )
 }
 
-fn logical_length_sides<'a>(
+pub(crate) fn logical_length_sides<'a>(
     top: &'a Length,
     right: &'a Length,
     bottom: &'a Length,

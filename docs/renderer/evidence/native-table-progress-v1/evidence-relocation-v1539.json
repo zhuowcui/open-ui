@@ -1,0 +1,32 @@
+{
+  "all_report_bytes_preserved": true,
+  "bytes_relocated": 143435107,
+  "cargo_commands_run": 0,
+  "files": [
+    {
+      "actual_exit": 1,
+      "age_hours": 65.83844223731094,
+      "bytes": 70699064,
+      "destination": "/mnt/e/openui-v02-qualification-d174ea0b/completed-summaries-v1539/solid-tile-clip-clean-full-v88/full-summary.json",
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/solid-tile-clip-clean-full-v88/full-summary.json",
+      "sha256": "ca32afff5352b7ebd7f72a1b025bfc187776375af86d6d909294d3b7099f2b7e"
+    },
+    {
+      "actual_exit": 1,
+      "age_hours": 65.83892641047636,
+      "bytes": 72736043,
+      "destination": "/mnt/e/openui-v02-qualification-d174ea0b/completed-summaries-v1539/solid-tile-clip-clean-expanded-v88/expanded-summary.json",
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/solid-tile-clip-clean-expanded-v88/expanded-summary.json",
+      "sha256": "1ec8e40d2fd8cd93153b4218351cf5ee41a589e25897d22cd47ba1f4d95ba82e"
+    }
+  ],
+  "no_active_inputs_or_cache_moved": true,
+  "no_owner_roots_or_probes_changed": true,
+  "probe_sha256": "0eb7a5cf59017afd4e29f6ad8eb5da73c74ba169104013de5e55dd66e5143d56",
+  "root_free_bytes_after": 701882368,
+  "root_free_bytes_before": 558465024,
+  "schema_version": 1,
+  "screenshots_generated": 0,
+  "terminal_index_path": "/home/nero/code/open-ui/docs/renderer/generated/native-viewport-full-v13.json",
+  "terminal_index_sha256": "a314e365f946fcdea546a32d39e848bd605147d021245acf7ba7ac1a9b6c6235"
+}

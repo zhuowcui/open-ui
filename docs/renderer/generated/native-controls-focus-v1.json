@@ -1,0 +1,317 @@
+{
+  "all_native_apis_qualified": false,
+  "artifacts": [
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-control-renderer-qualification-v2568/receipt.json",
+      "sha256": "9c46d1cb0bead00118828e221c66c8378bd6837e2dd479d0c3f66a150300d4bd"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-control-full-nonregression-v2590/report.json",
+      "sha256": "37babe11813eb7ba52261c32e43736684941daaaf7ec425e6682afaad332487f"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-control-expanded-nonregression-v2591/report.json",
+      "sha256": "f0568660794d87ef42866e248869382107ffe7c1af3ebf2feddac4f491bc6560"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-capture-full-byte-audit-v2583/report.json",
+      "sha256": "2c7a2a4e5b95bee3613db91774c4ac82dee8bfefbc74ce49f06a6b13e5d07628"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-control-hosted-hardening-v2589/report.json",
+      "sha256": "62e1dc0147efbc7897203b71c46d94a326914b55bb0b68b300ef1acc0bc2a63e"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-focus-qualification-v2586/receipt.json",
+      "sha256": "8d0e5ad15e4191cefff29e1904093cd3d18db1b6a996cc1e396c26d321f24c8c"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-focus-checks-v2592/receipt.json",
+      "sha256": "27c5b119b36da7a9a68712af4ab1211357041c0e1826dbfcec477a54bd07067b"
+    }
+  ],
+  "chromium_capture_changes": 10,
+  "combined_source_qualification_pending": true,
+  "completed_controls_matrices": {
+    "baseline-expanded": {
+      "observed_exit_code": 1,
+      "results": {
+        "different": 1595,
+        "errors": 0,
+        "exact": 22133,
+        "profile_result_sha256": "65cd2a71d7e74fb1912ac90a77df8417d8ea136a45c4248d15944b1904e88c23",
+        "total": 23728
+      },
+      "summary_sha256": "8ae1a3ab06efb0b13102287612ad6fc3a9d2601c5c3ec345a538e5e579cff407"
+    },
+    "baseline-focused": {
+      "observed_exit_code": 0,
+      "results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 640,
+        "profile_result_sha256": "cb6eaca161ccc50df26f82e92f00da940028631a5ab2b662e7b6d4865d8d1553",
+        "total": 640
+      },
+      "summary_sha256": "9d91bd28d1688ff42e43789929364b99d9339b3f0ddeec19ee6b64aaee1f18e6"
+    },
+    "baseline-full": {
+      "observed_exit_code": 1,
+      "results": {
+        "different": 1594,
+        "errors": 0,
+        "exact": 21330,
+        "profile_result_sha256": "be6d050ac0e84185613dee62cf73735d540b82fc197414325951f8292f1d1cdb",
+        "total": 22924
+      },
+      "summary_sha256": "08f53c983f072ad2e5cff829ba6d1be5ab824f7c062af94e6d4dba023550cb8e"
+    },
+    "baseline-primitive": {
+      "observed_exit_code": 0,
+      "results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 960,
+        "profile_result_sha256": "46c092639c8a0ab4e4aaa3e3216d6796b32ecc238f82d056f17c04aa50e421e5",
+        "total": 960
+      },
+      "summary_sha256": "37c0626878055b5bb15fae98829af17c8390786c9a9d0ac174cacbfce4237a9e"
+    },
+    "trial-expanded": {
+      "observed_exit_code": 1,
+      "results": {
+        "different": 1595,
+        "errors": 0,
+        "exact": 22133,
+        "profile_result_sha256": "6309a736d96c345eeba162d91186f2895fa6ca77bb750e83b5c745fda90770e1",
+        "total": 23728
+      },
+      "summary_sha256": "d64e080304c4385712d169c08d415122b4739920445c7e8aa20969d254eff3ab"
+    },
+    "trial-focused": {
+      "observed_exit_code": 0,
+      "results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 640,
+        "profile_result_sha256": "5da931519847281de815d03403504e43b7e00d980c7dfd939f643b4510e0ddce",
+        "total": 640
+      },
+      "summary_sha256": "8e2d3c39b21420c102398646f05fe5d54f809dabb119337072263161e410d0fd"
+    },
+    "trial-full": {
+      "observed_exit_code": 1,
+      "results": {
+        "different": 1594,
+        "errors": 0,
+        "exact": 21330,
+        "profile_result_sha256": "5d1e0cafc3bd0c99252d4777a037f4beec713b8373b07820937b2e5368775700",
+        "total": 22924
+      },
+      "summary_sha256": "4f5624ccf8abcc61ab931d8d28816a92763cc60ad4186a096edae7d25f3bc7a0"
+    },
+    "trial-primitive": {
+      "observed_exit_code": 0,
+      "results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 960,
+        "profile_result_sha256": "b0f27ce03c7e1f8cec4520e7c35d0cca1e5fcdce39aad25e3d48c033de1e2436",
+        "total": 960
+      },
+      "summary_sha256": "7c6e2f9dfde5a62dfaddba452af70b04c9de209585eb45f98c51c747a559a301"
+    }
+  },
+  "controls_current_main_nonregression_verified": true,
+  "current_main_source": {
+    "clean": true,
+    "commit": "a72c2e378e0a61dec864c081f06eca156f593220",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "72cdc2585c1ef346f5fef7e78a1f796b714998f13030dbe4a90b56b290ca81f7",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "focus_remaining_gates": [
+    "actual combined umbrella native and pixel qualification",
+    "hosted hardening on combined source",
+    "remaining focus contexts and needed native APIs"
+  ],
+  "focus_workspace_verification": {
+    "c_consumers": 15,
+    "cpp_consumers": 9,
+    "current_exports": 116,
+    "current_layouts": 32,
+    "existing_exports_preserved": 114,
+    "existing_layouts_preserved": 31,
+    "headless_c_tests": 47,
+    "observed_exit_code": 0,
+    "source": {
+      "clean": true,
+      "commit": "32a7d82ba7ec804bd440c24d8e916f60a1dbe384",
+      "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+      "source_tree_sha256": "c9968db5adc836020d688d33b798208df6814b8568e88f59f1e4703871b25b7e",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stages": 20,
+    "workspace_tests": {
+      "failed": 0,
+      "ignored": 13,
+      "passed": 8589
+    }
+  },
+  "hosted_hardening": {
+    "failed": 0,
+    "passed": 7,
+    "run_url": "https://github.com/zhuowcui/open-ui/actions/runs/37681694855",
+    "skipped": 0,
+    "source": {
+      "clean": true,
+      "commit": "a72c2e378e0a61dec864c081f06eca156f593220",
+      "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+      "source_tree_sha256": "72cdc2585c1ef346f5fef7e78a1f796b714998f13030dbe4a90b56b290ca81f7",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "implementation_integrated": true,
+  "integration_commits": {
+    "controls": "938315510afd7c226e22d3d1bac7b7c3962c708a",
+    "focus": "dcf125d8b8496435780bb08fe640b10f9aca6c78"
+  },
+  "javascript_executed_by_openui": false,
+  "native_capture_changes": 0,
+  "native_focus_observations": {
+    "c": {
+      "callback_rows": 338,
+      "differences": [],
+      "exact": true,
+      "first_sha256": "d0f18f1cb2752d07d2324a73924118077c10e9342ad519cc13a0302ad5fe89b1",
+      "repeated_identical": true,
+      "scenarios": 12,
+      "second_sha256": "d0f18f1cb2752d07d2324a73924118077c10e9342ad519cc13a0302ad5fe89b1"
+    },
+    "cpp": {
+      "callback_rows": 338,
+      "differences": [],
+      "exact": true,
+      "first_sha256": "d0f18f1cb2752d07d2324a73924118077c10e9342ad519cc13a0302ad5fe89b1",
+      "repeated_identical": true,
+      "scenarios": 12,
+      "second_sha256": "d0f18f1cb2752d07d2324a73924118077c10e9342ad519cc13a0302ad5fe89b1"
+    },
+    "rust": {
+      "callback_rows": 338,
+      "differences": [],
+      "exact": true,
+      "first_sha256": "ed3e1351cdc0c2b7e8ac36fb59babdf2e1baf919813f0e95e05168ed696eb47a",
+      "repeated_identical": true,
+      "scenarios": 12,
+      "second_sha256": "ed3e1351cdc0c2b7e8ac36fb59babdf2e1baf919813f0e95e05168ed696eb47a"
+    }
+  },
+  "native_focus_observed_exit_code": 0,
+  "native_focus_runtime_guards": {
+    "c": 8,
+    "pointer_boundary": 1,
+    "rust": 12
+  },
+  "new_release_comparisons_admitted": 0,
+  "pixel_target": "pinned Chromium",
+  "pixel_tolerance": 0,
+  "private_controls_source": {
+    "clean": true,
+    "commit": "2cea3f08ab15165fc215e220fe2b98c991139ed1",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "2497ad03c5e0178689bc25927a1874776f00294c110c114631d5019c4f0bc62c",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "private_focus_source": {
+    "clean": true,
+    "commit": "32a7d82ba7ec804bd440c24d8e916f60a1dbe384",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "c9968db5adc836020d688d33b798208df6814b8568e88f59f1e4703871b25b7e",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "release_qualification": false,
+  "review_evidence": [
+    {
+      "decoded_sha256": "9c46d1cb0bead00118828e221c66c8378bd6837e2dd479d0c3f66a150300d4bd",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-control-renderer-qualification-v2568/receipt.json",
+      "path": "docs/renderer/evidence/native-controls-focus-v1/controls-renderer-receipt.json.gz",
+      "sha256": "cd2b6501f1f51b2143295a174e1848b1279184cae02cd25c02ed0f636e020541"
+    },
+    {
+      "decoded_sha256": "37babe11813eb7ba52261c32e43736684941daaaf7ec425e6682afaad332487f",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-control-full-nonregression-v2590/report.json",
+      "path": "docs/renderer/evidence/native-controls-focus-v1/controls-full-nonregression.json.gz",
+      "sha256": "187ca4c9f486e546aada4501eb280ca998b65475ade8a67640bb4156d3d12820"
+    },
+    {
+      "decoded_sha256": "f0568660794d87ef42866e248869382107ffe7c1af3ebf2feddac4f491bc6560",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-control-expanded-nonregression-v2591/report.json",
+      "path": "docs/renderer/evidence/native-controls-focus-v1/controls-expanded-nonregression.json.gz",
+      "sha256": "1503cfb295e7a1cc56c6475d07a835b0b710ef55fd311d271a3ae10e5691d590"
+    },
+    {
+      "decoded_sha256": "2c7a2a4e5b95bee3613db91774c4ac82dee8bfefbc74ce49f06a6b13e5d07628",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-capture-full-byte-audit-v2583/report.json",
+      "path": "docs/renderer/evidence/native-controls-focus-v1/chromium-capture-byte-audit.json.gz",
+      "sha256": "988a366bca65cade039a7f58225bac05572421e7070aa2afd115da1b2e6c993b"
+    },
+    {
+      "decoded_sha256": "62e1dc0147efbc7897203b71c46d94a326914b55bb0b68b300ef1acc0bc2a63e",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-control-hosted-hardening-v2589/report.json",
+      "path": "docs/renderer/evidence/native-controls-focus-v1/hosted-hardening.json.gz",
+      "sha256": "8a10f146ddbf99ed7b6d09940c2b17c9d57b8d92a677e73041cb264e18876abd"
+    },
+    {
+      "decoded_sha256": "8d0e5ad15e4191cefff29e1904093cd3d18db1b6a996cc1e396c26d321f24c8c",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-focus-qualification-v2586/receipt.json",
+      "path": "docs/renderer/evidence/native-controls-focus-v1/focus-runtime-receipt.json.gz",
+      "sha256": "1412f8d4a82e5772566b48568ca2646a4af6d428740d0000a5254b20761eb75b"
+    },
+    {
+      "decoded_sha256": "27c5b119b36da7a9a68712af4ab1211357041c0e1826dbfcec477a54bd07067b",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-focus-checks-v2592/receipt.json",
+      "path": "docs/renderer/evidence/native-controls-focus-v1/focus-workspace-receipt.json.gz",
+      "sha256": "25fcd20c8edf52c7c3e97accd6cd2b045768b4d64910bcce3b982b7d4dfae434"
+    },
+    {
+      "decoded_sha256": "f72e7138ed26ae3e6f5c3244cea12aa7d219171712eb6b0d64641b8f60a700ff",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-focus-checks-v2592/locked-workspace-tests.log",
+      "path": "docs/renderer/evidence/native-controls-focus-v1/focus-workspace-tests.log.gz",
+      "sha256": "1ff1d56f34ccc6cd3c30c2c177b13b0189f12cc32b0db643d97d97f58417249f"
+    },
+    {
+      "decoded_sha256": "d0e4e364e9cef6c8f5a01dc3fa469abb7e5f9266b60be902cf78d3c05fccf727",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-focus-checks-v2592/all-c-cpp-consumers.log",
+      "path": "docs/renderer/evidence/native-controls-focus-v1/focus-abi-consumers.log.gz",
+      "sha256": "6fffe9c7ad84d04109699e51621fe70c358d250737b38b679b5af9d191de673d"
+    },
+    {
+      "decoded_sha256": "db89a8ddbdd3e06a20642f2e8fbbd2ae4e2d21e483119dbb24e07842f4304cf7",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-focus-related-oracle-v2535/observations-1.json",
+      "path": "docs/renderer/evidence/native-controls-focus-v1/focus-oracle-observations.json.gz",
+      "sha256": "440fd2ec5f5f378e513103edbf1a8e7c86b73733e5b246f51d17a609195b26d9"
+    },
+    {
+      "decoded_sha256": "ed3e1351cdc0c2b7e8ac36fb59babdf2e1baf919813f0e95e05168ed696eb47a",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-focus-qualification-v2586/rust-observations-1.json",
+      "path": "docs/renderer/evidence/native-controls-focus-v1/focus-rust-observations.json.gz",
+      "sha256": "408c72654628f534d53a94e026576012fecffd528005e150ac281c88c97da278"
+    },
+    {
+      "decoded_sha256": "d0f18f1cb2752d07d2324a73924118077c10e9342ad519cc13a0302ad5fe89b1",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-focus-qualification-v2586/c-observations-1.json",
+      "path": "docs/renderer/evidence/native-controls-focus-v1/focus-c-observations.json.gz",
+      "sha256": "ed9bd73310b3321335e4ea3b277fd3ba4ac8c3e7d9337d75b4e3b63a11383eed"
+    },
+    {
+      "decoded_sha256": "d0f18f1cb2752d07d2324a73924118077c10e9342ad519cc13a0302ad5fe89b1",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-focus-qualification-v2586/cpp-observations-1.json",
+      "path": "docs/renderer/evidence/native-controls-focus-v1/focus-cpp-observations.json.gz",
+      "sha256": "ed9bd73310b3321335e4ea3b277fd3ba4ac8c3e7d9337d75b4e3b63a11383eed"
+    }
+  ],
+  "schema_version": 1,
+  "whole_renderer_failure": "AssertionError('capture protocol or umbrella native bytes changed')",
+  "whole_renderer_observed_exit_code": 1
+}

@@ -1,0 +1,556 @@
+warning: unused import: `BfcOffset`
+  --> openui-layout/src/bfc_resolution.rs:17:23
+   |
+17 | use openui_geometry::{BfcOffset, BoxStrut, LayoutUnit, MarginStrut};
+   |                       ^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `balance_columns`
+     --> openui-layout/src/block.rs:19574:9
+      |
+19574 |         balance_columns, balance_columns_with_margins, compute_column_positions,
+      |         ^^^^^^^^^^^^^^^
+
+warning: unused import: `super::*`
+    --> openui-layout/src/intrinsic_sizing.rs:4006:9
+     |
+4006 |     use super::*;
+     |         ^^^^^^^^
+
+warning: unused import: `std::sync::Arc`
+  --> openui-layout/src/new_formatting_context.rs:17:5
+   |
+17 | use std::sync::Arc;
+   |     ^^^^^^^^^^^^^^
+
+warning: unused import: `ClearType`
+  --> openui-layout/src/new_formatting_context.rs:24:25
+   |
+24 | use crate::exclusions::{ClearType, ExclusionSpace};
+   |                         ^^^^^^^^^
+
+warning: unused import: `crate::layout_result::LayoutResult`
+  --> openui-layout/src/new_formatting_context.rs:26:5
+   |
+26 | use crate::layout_result::LayoutResult;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: variable `reconstructed_block_in_inline` is assigned to, but never used
+    --> openui-layout/src/block.rs:2104:9
+     |
+2104 |     let mut reconstructed_block_in_inline = false;
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     |
+     = note: consider using `_reconstructed_block_in_inline` instead
+     = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: variable does not need to be mutable
+    --> openui-layout/src/block.rs:6784:9
+     |
+6784 |     let mut child_margin = resolve_margins_in_parent_axes(
+     |         ----^^^^^^^^^^^^
+     |         |
+     |         help: remove this `mut`
+     |
+     = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+warning: field `source_caption_end` is never read
+    --> openui-layout/src/block.rs:9554:5
+     |
+9553 | struct CaptionedRepeatedTableFlow {
+     |        -------------------------- field in this struct
+9554 |     source_caption_end: LayoutUnit,
+     |     ^^^^^^^^^^^^^^^^^^
+     |
+     = note: `CaptionedRepeatedTableFlow` has derived impls for the traits `Debug` and `Clone`, but these are intentionally ignored during dead code analysis
+     = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `columns_needed_for_height` is never used
+   --> openui-layout/src/multicol/mod.rs:705:4
+    |
+705 | fn columns_needed_for_height(
+    |    ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: `openui-layout` (lib) generated 10 warnings (run `cargo fix --lib -p openui-layout` to apply 7 suggestions)
+warning: use of deprecated module `skia_safe::gradient_shader`: Use the skia_safe::gradient module
+  --> openui-paint/src/painter.rs:39:20
+   |
+39 |     color_filters, gradient_shader, image_filters, surfaces, AlphaType, BlendMode, ClipOp, Color4f,
+   |                    ^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+
+warning: use of deprecated function `skia_safe::gradient_shader::linear_with_interpolation`: Use the skia_safe::gradient module
+    --> openui-paint/src/painter.rs:1860:45
+     |
+1860 |     scrim_paint.set_shader(gradient_shader::linear_with_interpolation(
+     |                                             ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::linear_with_interpolation`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14056:51
+      |
+14056 |                 paint.set_shader(gradient_shader::linear_with_interpolation(
+      |                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::linear`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14069:51
+      |
+14069 |                 paint.set_shader(gradient_shader::linear(
+      |                                                   ^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::linear_with_interpolation`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14082:51
+      |
+14082 |                 paint.set_shader(gradient_shader::linear_with_interpolation(
+      |                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::two_point_conical_with_interpolation`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14178:55
+      |
+14178 |                     paint.set_shader(gradient_shader::two_point_conical_with_interpolation(
+      |                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::two_point_conical`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14192:55
+      |
+14192 |                     paint.set_shader(gradient_shader::two_point_conical(
+      |                                                       ^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::two_point_conical_with_interpolation`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14208:55
+      |
+14208 |                     paint.set_shader(gradient_shader::two_point_conical_with_interpolation(
+      |                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::two_point_conical_with_interpolation`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14228:51
+      |
+14228 |                 paint.set_shader(gradient_shader::two_point_conical_with_interpolation(
+      |                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::two_point_conical`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14242:51
+      |
+14242 |                 paint.set_shader(gradient_shader::two_point_conical(
+      |                                                   ^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::two_point_conical_with_interpolation`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14258:51
+      |
+14258 |                 paint.set_shader(gradient_shader::two_point_conical_with_interpolation(
+      |                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::sweep_with_interpolation`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14318:51
+      |
+14318 |                 paint.set_shader(gradient_shader::sweep_with_interpolation(
+      |                                                   ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::sweep`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14332:51
+      |
+14332 |                 paint.set_shader(gradient_shader::sweep(
+      |                                                   ^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::sweep_with_interpolation`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14346:51
+      |
+14346 |                 paint.set_shader(gradient_shader::sweep_with_interpolation(
+      |                                                   ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::linear`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:17719:55
+      |
+17719 |                     paint.set_shader(gradient_shader::linear(
+      |                                                       ^^^^^^
+
+warning: variant `RestoreTo` is never constructed
+  --> openui-paint/src/paint_record.rs:16:5
+   |
+13 | enum Operation {
+   |      --------- variant in this enum
+...
+16 |     RestoreTo(usize),
+   |     ^^^^^^^^^
+   |
+   = note: `Operation` has a derived impl for the trait `Clone`, but this is intentionally ignored during dead code analysis
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: methods `restore_to_count` and `save_count` are never used
+   --> openui-paint/src/paint_record.rs:131:19
+    |
+119 | impl dyn PaintCanvas + '_ {
+    | ------------------------- methods in this implementation
+...
+131 |     pub(crate) fn restore_to_count(&self, count: usize) -> &Self {
+    |                   ^^^^^^^^^^^^^^^^
+...
+137 |     pub(crate) fn save_count(&self) -> usize {
+    |                   ^^^^^^^^^^
+
+warning: `openui-paint` (lib) generated 17 warnings
+   Compiling pixel-compare v0.1.0 (/dev/shm/openui-native-font-consumer-0601cd30/bindings/rust/pixel-compare)
+   Compiling openui-ffi v0.2.0 (/dev/shm/openui-native-font-consumer-0601cd30/bindings/rust/openui-ffi)
+warning: unused imports: `PathBuf` and `Path`
+  --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:14:17
+   |
+14 | use std::path::{Path, PathBuf};
+   |                 ^^^^  ^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `render_to_png`
+  --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:20:20
+   |
+20 | use openui_paint::{render_to_png, render_to_surface};
+   |                    ^^^^^^^^^^^^^
+
+warning: unused variable: `div`
+   --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:427:9
+    |
+427 |     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::BLUE);
+    |         ^^^ help: if this is intentional, prefix it with an underscore: `_div`
+    |
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `div`
+   --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:926:9
+    |
+926 |     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Relative, Color::RED);
+    |         ^^^ help: if this is intentional, prefix it with an underscore: `_div`
+
+warning: unused variable: `div`
+    --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:1623:9
+     |
+1623 |     let div = add_positioned_block(&mut doc, vp, 80.0, 40.0, Position::Absolute, Color::RED);
+     |         ^^^ help: if this is intentional, prefix it with an underscore: `_div`
+
+warning: unused variable: `div`
+    --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:1634:9
+     |
+1634 |     let div = add_positioned_block(&mut doc, vp, 80.0, 40.0, Position::Absolute, Color::RED);
+     |         ^^^ help: if this is intentional, prefix it with an underscore: `_div`
+
+warning: unused variable: `div`
+    --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:1704:9
+     |
+1704 |     let div = add_positioned_block(&mut doc, vp, 60.0, 30.0, Position::Absolute, Color::BLUE);
+     |         ^^^ help: if this is intentional, prefix it with an underscore: `_div`
+
+warning: unused variable: `div`
+    --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:1720:9
+     |
+1720 |     let div = add_positioned_block(&mut doc, vp, 60.0, 30.0, Position::Absolute, Color::RED);
+     |         ^^^ help: if this is intentional, prefix it with an underscore: `_div`
+
+warning: unused variable: `a`
+    --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:1735:9
+     |
+1735 |     let a = add_positioned_block(&mut doc, vp, 60.0, 30.0, Position::Absolute, Color::RED);
+     |         ^ help: if this is intentional, prefix it with an underscore: `_a`
+
+warning: unused variable: `b`
+    --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:1736:9
+     |
+1736 |     let b = add_positioned_block(&mut doc, vp, 60.0, 30.0, Position::Absolute, Color::BLUE);
+     |         ^ help: if this is intentional, prefix it with an underscore: `_b`
+
+warning: unused variable: `abs`
+    --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:1760:9
+     |
+1760 |     let abs = add_positioned_block(
+     |         ^^^ help: if this is intentional, prefix it with an underscore: `_abs`
+
+warning: unused variable: `div`
+    --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:1799:9
+     |
+1799 |     let div = add_positioned_block(&mut doc, vp, 200.0, 100.0, Position::Absolute, Color::GREEN);
+     |         ^^^ help: if this is intentional, prefix it with an underscore: `_div`
+
+warning: unused variable: `div`
+    --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:1814:9
+     |
+1814 |     let div = add_positioned_block(&mut doc, vp, 10.0, 10.0, Position::Absolute, Color::RED);
+     |         ^^^ help: if this is intentional, prefix it with an underscore: `_div`
+
+warning: unused variable: `div`
+    --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:1922:9
+     |
+1922 |     let div = add_positioned_block(&mut doc, vp, 60.0, 30.0, Position::Fixed, Color::RED);
+     |         ^^^ help: if this is intentional, prefix it with an underscore: `_div`
+
+warning: struct `PixelDiff` is never constructed
+  --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:28:8
+   |
+28 | struct PixelDiff {
+   |        ^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: method `mismatch_percentage` is never used
+  --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:37:8
+   |
+36 | impl PixelDiff {
+   | -------------- method in this implementation
+37 |     fn mismatch_percentage(&self) -> f64 {
+   |        ^^^^^^^^^^^^^^^^^^^
+
+warning: function `pixel_diff` is never used
+  --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:62:4
+   |
+62 | fn pixel_diff(a: &(u32, u32, Vec<u8>), b: &(u32, u32, Vec<u8>), tolerance: u8) -> PixelDiff {
+   |    ^^^^^^^^^^
+
+warning: constant `CYAN` is never used
+   --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:195:7
+    |
+195 | const CYAN: (u8, u8, u8) = (0, 255, 255);
+    |       ^^^^
+
+warning: constant `MAGENTA` is never used
+   --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:196:7
+    |
+196 | const MAGENTA: (u8, u8, u8) = (255, 0, 255);
+    |       ^^^^^^^
+
+warning: constant `ORANGE` is never used
+   --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:198:7
+    |
+198 | const ORANGE: (u8, u8, u8) = (255, 165, 0);
+    |       ^^^^^^
+
+warning: function `add_block` is never used
+   --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:219:4
+    |
+219 | fn add_block(doc: &mut Document, parent: NodeId, width_px: f32) -> NodeId {
+    |    ^^^^^^^^^
+
+warning: `openui-paint` (test "sp12_i3_position_pixel_tests") generated 21 warnings (run `cargo fix --test "sp12_i3_position_pixel_tests" -p openui-paint` to apply 14 suggestions)
+warning: unused imports: `PathBuf` and `Path`
+  --> openui-paint/tests/sp12_i4_overflow_pixel_tests.rs:15:17
+   |
+15 | use std::path::{Path, PathBuf};
+   |                 ^^^^  ^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `render_to_png`
+  --> openui-paint/tests/sp12_i4_overflow_pixel_tests.rs:21:20
+   |
+21 | use openui_paint::{render_to_png, render_to_surface};
+   |                    ^^^^^^^^^^^^^
+
+warning: function `assert_pixel_color` is never used
+  --> openui-paint/tests/sp12_i4_overflow_pixel_tests.rs:72:4
+   |
+72 | fn assert_pixel_color(surface: &mut Surface, x: i32, y: i32, expected: (u8, u8, u8), msg: &str) {
+   |    ^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `openui-paint` (test "sp12_i4_overflow_pixel_tests") generated 3 warnings (run `cargo fix --test "sp12_i4_overflow_pixel_tests" -p openui-paint` to apply 2 suggestions)
+warning: unused variable: `l3`
+    --> openui-paint/tests/sp12_i1_block_pixel_tests.rs:2752:9
+     |
+2752 |     let l3 = add_colored_block(&mut doc, l2, 80.0, 60.0, Color::BLUE);
+     |         ^^ help: if this is intentional, prefix it with an underscore: `_l3`
+     |
+     = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `child`
+    --> openui-paint/tests/sp12_i1_block_pixel_tests.rs:2922:9
+     |
+2922 |     let child = add_colored_block(&mut doc, parent, 100.0, 40.0, Color::BLUE);
+     |         ^^^^^ help: if this is intentional, prefix it with an underscore: `_child`
+
+warning: unused variable: `l4`
+    --> openui-paint/tests/sp12_i1_block_pixel_tests.rs:3182:9
+     |
+3182 |     let l4 = add_colored_block(
+     |         ^^ help: if this is intentional, prefix it with an underscore: `_l4`
+
+warning: unused variable: `h`
+    --> openui-paint/tests/sp12_i1_block_pixel_tests.rs:3227:9
+     |
+3227 |     let h = add_colored_block(&mut doc, vp, 0.0, 60.0, Color::from_rgba8(0, 0, 128, 255));
+     |         ^ help: if this is intentional, prefix it with an underscore: `_h`
+
+warning: unused variable: `b`
+    --> openui-paint/tests/sp12_i1_block_pixel_tests.rs:3381:16
+     |
+3381 |     let (r, g, b, _) = get_pixel(&mut s, 120, 60);
+     |                ^ help: if this is intentional, prefix it with an underscore: `_b`
+
+warning: `openui-paint` (test "sp12_i1_block_pixel_tests") generated 5 warnings (run `cargo fix --test "sp12_i1_block_pixel_tests" -p openui-paint` to apply 5 suggestions)
+warning: unused imports: `PathBuf` and `Path`
+  --> openui-paint/tests/sp12_i2_float_pixel_tests.rs:13:17
+   |
+13 | use std::path::{Path, PathBuf};
+   |                 ^^^^  ^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `render_to_png`
+  --> openui-paint/tests/sp12_i2_float_pixel_tests.rs:19:20
+   |
+19 | use openui_paint::{render_to_png, render_to_surface};
+   |                    ^^^^^^^^^^^^^
+
+warning: struct `PixelDiff` is never constructed
+  --> openui-paint/tests/sp12_i2_float_pixel_tests.rs:27:8
+   |
+27 | struct PixelDiff {
+   |        ^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: method `mismatch_percentage` is never used
+  --> openui-paint/tests/sp12_i2_float_pixel_tests.rs:36:8
+   |
+35 | impl PixelDiff {
+   | -------------- method in this implementation
+36 |     fn mismatch_percentage(&self) -> f64 {
+   |        ^^^^^^^^^^^^^^^^^^^
+
+warning: function `pixel_diff` is never used
+  --> openui-paint/tests/sp12_i2_float_pixel_tests.rs:61:4
+   |
+61 | fn pixel_diff(a: &(u32, u32, Vec<u8>), b: &(u32, u32, Vec<u8>), tolerance: u8) -> PixelDiff {
+   |    ^^^^^^^^^^
+
+warning: constant `MAGENTA` is never used
+   --> openui-paint/tests/sp12_i2_float_pixel_tests.rs:195:7
+    |
+195 | const MAGENTA: (u8, u8, u8) = (255, 0, 255);
+    |       ^^^^^^^
+
+warning: constant `ORANGE` is never used
+   --> openui-paint/tests/sp12_i2_float_pixel_tests.rs:197:7
+    |
+197 | const ORANGE: (u8, u8, u8) = (255, 165, 0);
+    |       ^^^^^^
+
+warning: function `add_block` is never used
+   --> openui-paint/tests/sp12_i2_float_pixel_tests.rs:214:4
+    |
+214 | fn add_block(doc: &mut Document, parent: NodeId, width_px: f32) -> NodeId {
+    |    ^^^^^^^^^
+
+warning: `openui-paint` (test "sp12_i2_float_pixel_tests") generated 8 warnings (run `cargo fix --test "sp12_i2_float_pixel_tests" -p openui-paint` to apply 2 suggestions)
+warning: constant `WHITE` is never used
+  --> openui-paint/tests/sp13_j_inline_pixel_tests.rs:42:7
+   |
+42 | const WHITE: (u8, u8, u8) = (255, 255, 255);
+   |       ^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `openui-paint` (test "sp13_j_inline_pixel_tests") generated 1 warning
+warning: `openui-paint` (lib test) generated 17 warnings (17 duplicates)
+   Compiling openui v0.2.0 (/dev/shm/openui-native-font-consumer-0601cd30/bindings/rust/openui)
+error[E0599]: no function or associated item named `chromium_linux_fontations_lcd` found for struct `openui::RasterConfiguration` in the current scope
+  --> openui/examples/native_font_raster.rs:45:46
+   |
+45 |         "fontations" => RasterConfiguration::chromium_linux_fontations_lcd(),
+   |                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ function or associated item not found in `openui::RasterConfiguration`
+   |
+note: if you're trying to build a new `openui::RasterConfiguration` consider using one of the following associated functions:
+      openui::RasterConfiguration::deterministic_aliased
+      openui::RasterConfiguration::chromium_linux_lcd
+      openui::RasterConfiguration::chromium_linux_ganesh
+      openui::RasterConfiguration::legacy_deterministic_aliased
+      openui::RasterConfiguration::legacy_chromium_linux_lcd
+  --> openui-geometry/src/raster.rs:82:4
+help: there is an associated function `chromium_linux_lcd` with a similar name
+   |
+45 -         "fontations" => RasterConfiguration::chromium_linux_fontations_lcd(),
+45 +         "fontations" => RasterConfiguration::chromium_linux_lcd(),
+   |
+
+For more information about this error, try `rustc --explain E0599`.
+error: could not compile `openui` (example "native_font_raster") due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+warning: unused import: `NodeHandle as NodeId`
+ --> pixel-compare/src/wpt/wpt_css2_floats.rs:6:42
+  |
+6 | use openui_engine::{Engine, EngineError, NodeHandle as NodeId, RendererNodeState};
+  |                                          ^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `NodeHandle as NodeId`
+ --> pixel-compare/src/wpt/wpt_css_backgrounds.rs:6:42
+  |
+6 | use openui_engine::{Engine, EngineError, NodeHandle as NodeId, RendererNodeState};
+  |                                          ^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `NodeHandle as NodeId`
+ --> pixel-compare/src/wpt/wpt_css_box.rs:6:42
+  |
+6 | use openui_engine::{Engine, EngineError, NodeHandle as NodeId, RendererNodeState};
+  |                                          ^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `NodeHandle as NodeId`
+ --> pixel-compare/src/wpt/wpt_css_break.rs:6:42
+  |
+6 | use openui_engine::{Engine, EngineError, NodeHandle as NodeId, RendererNodeState};
+  |                                          ^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `NodeHandle as NodeId`
+ --> pixel-compare/src/wpt/wpt_css_display.rs:6:42
+  |
+6 | use openui_engine::{Engine, EngineError, NodeHandle as NodeId, RendererNodeState};
+  |                                          ^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `NodeHandle as NodeId`
+ --> pixel-compare/src/wpt/wpt_css_flexbox.rs:6:42
+  |
+6 | use openui_engine::{Engine, EngineError, NodeHandle as NodeId, RendererNodeState};
+  |                                          ^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `NodeHandle as NodeId`
+ --> pixel-compare/src/wpt/wpt_css_multicol.rs:6:42
+  |
+6 | use openui_engine::{Engine, EngineError, NodeHandle as NodeId, RendererNodeState};
+  |                                          ^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `NodeHandle as NodeId`
+ --> pixel-compare/src/wpt/wpt_css_overflow.rs:6:42
+  |
+6 | use openui_engine::{Engine, EngineError, NodeHandle as NodeId, RendererNodeState};
+  |                                          ^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `NodeHandle as NodeId`
+ --> pixel-compare/src/wpt/wpt_css_position.rs:6:42
+  |
+6 | use openui_engine::{Engine, EngineError, NodeHandle as NodeId, RendererNodeState};
+  |                                          ^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `NodeHandle as NodeId`
+ --> pixel-compare/src/wpt/wpt_css_sizing.rs:6:42
+  |
+6 | use openui_engine::{Engine, EngineError, NodeHandle as NodeId, RendererNodeState};
+  |                                          ^^^^^^^^^^^^^^^^^^^^
+
+error[E0599]: no function or associated item named `chromium_linux_fontations_lcd` found for struct `openui_geometry::RasterConfiguration` in the current scope
+   --> pixel-compare/src/main.rs:266:46
+    |
+266 |                         RasterConfiguration::chromium_linux_fontations_lcd()
+    |                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ function or associated item not found in `openui_geometry::RasterConfiguration`
+    |
+note: if you're trying to build a new `openui_geometry::RasterConfiguration` consider using one of the following associated functions:
+      openui_geometry::RasterConfiguration::deterministic_aliased
+      openui_geometry::RasterConfiguration::chromium_linux_lcd
+      openui_geometry::RasterConfiguration::chromium_linux_ganesh
+      openui_geometry::RasterConfiguration::legacy_deterministic_aliased
+      openui_geometry::RasterConfiguration::legacy_chromium_linux_lcd
+   --> openui-geometry/src/raster.rs:82:4
+help: there is an associated function `chromium_linux_lcd` with a similar name
+    |
+266 -                         RasterConfiguration::chromium_linux_fontations_lcd()
+266 +                         RasterConfiguration::chromium_linux_lcd()
+    |
+
+warning: `pixel-compare` (bin "pixel_compare" test) generated 10 warnings
+error: could not compile `pixel-compare` (bin "pixel_compare" test) due to 1 previous error; 10 warnings emitted

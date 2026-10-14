@@ -1,0 +1,51 @@
+{
+  "all_commands_terminal": true,
+  "all_compared_files_byte_identical": true,
+  "cargo_commands_run": 0,
+  "chromium_tag": "147.0.7727.50",
+  "compared_files": [
+    {
+      "byte_identical": true,
+      "local_sha256": "bdac62475f6db0c38ccfa399c0c46c22cf342961a3ad5cb1b14bc5b3306b87bd",
+      "official_url": "https://skia.googlesource.com/skia/+/abbe599fb3c0ef2fa82bfadbb0ddcd321f22faf0/src/core/SkColorPriv.h?format=TEXT",
+      "source": "src/core/SkColorPriv.h",
+      "upstream_sha256": "bdac62475f6db0c38ccfa399c0c46c22cf342961a3ad5cb1b14bc5b3306b87bd"
+    },
+    {
+      "byte_identical": true,
+      "local_sha256": "2cb79bde4289dc979029782cb50f83fb4664d077e97d48398615ca71f8062687",
+      "official_url": "https://skia.googlesource.com/skia/+/abbe599fb3c0ef2fa82bfadbb0ddcd321f22faf0/src/core/SkBlitter_ARGB32.cpp?format=TEXT",
+      "source": "src/core/SkBlitter_ARGB32.cpp",
+      "upstream_sha256": "2cb79bde4289dc979029782cb50f83fb4664d077e97d48398615ca71f8062687"
+    },
+    {
+      "byte_identical": true,
+      "local_sha256": "f2f5979f437e1b9e2d50d42838756cfd638c646ed452a71e177e94e140049ed5",
+      "official_url": "https://skia.googlesource.com/skia/+/abbe599fb3c0ef2fa82bfadbb0ddcd321f22faf0/src/opts/SkRasterPipeline_opts.h?format=TEXT",
+      "source": "src/opts/SkRasterPipeline_opts.h",
+      "upstream_sha256": "f2f5979f437e1b9e2d50d42838756cfd638c646ed452a71e177e94e140049ed5"
+    },
+    {
+      "byte_identical": true,
+      "local_sha256": "29908a9956d23feb0d5029ad8c8b5c4823ab8f60701f7febdd24a5a0f2805703",
+      "official_url": "https://skia.googlesource.com/skia/+/abbe599fb3c0ef2fa82bfadbb0ddcd321f22faf0/src/core/SkRasterPipelineBlitter.cpp?format=TEXT",
+      "source": "src/core/SkRasterPipelineBlitter.cpp",
+      "upstream_sha256": "29908a9956d23feb0d5029ad8c8b5c4823ab8f60701f7febdd24a5a0f2805703"
+    },
+    {
+      "byte_identical": true,
+      "local_sha256": "ea6f4d7033caffe6b0678c0938504994a27bebf4a8b245b6804b685ac2e2f4b1",
+      "official_url": "https://skia.googlesource.com/skia/+/abbe599fb3c0ef2fa82bfadbb0ddcd321f22faf0/src/core/SkColorData.h?format=TEXT",
+      "source": "src/core/SkColorData.h",
+      "upstream_sha256": "ea6f4d7033caffe6b0678c0938504994a27bebf4a8b245b6804b685ac2e2f4b1"
+    }
+  ],
+  "pin_changed": false,
+  "probe_sha256": "e731de3a25130b324699e992c23e69beb58a13ae085981bcc57d02b1843c2d95",
+  "release_qualification": false,
+  "rust_skia_commit": "a31b86ba3b767344d39af3b8c30043003d8fc991",
+  "schema_version": 1,
+  "screenshots_generated": 0,
+  "upstream_skia_commit": "abbe599fb3c0ef2fa82bfadbb0ddcd321f22faf0",
+  "whole_source_equivalence_claimed": false
+}

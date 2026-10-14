@@ -1,0 +1,293 @@
+{
+  "all_commands_terminal": true,
+  "baseline_regression_reproduced": true,
+  "javascript_executed_by_openui": false,
+  "probe_sha256": "8f0addd948cbab8d6e78e32d2e4c20c5eae5866d4506982bb54f2010ff0126eb",
+  "promotion_allowed": false,
+  "public_native_rust_api": true,
+  "release_qualification": false,
+  "schema_version": 1,
+  "selected_native_test_names": [
+    "tests::native_fragment_keywords_reach_engine_and_keep_owned_property_identity"
+  ],
+  "source": {
+    "clean": true,
+    "commit": "06e1f89a4a2e7a53465bceb780675383d9748464",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "7eccf4ec0f4bcd0ed4f1d7d26d02ac4fd99d73a4ca938e02d69d7ea35a24b067",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "06e1f89a4a2e7a53465bceb780675383d9748464",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "7eccf4ec0f4bcd0ed4f1d7d26d02ac4fd99d73a4ca938e02d69d7ea35a24b067",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "state": "fixed-guard-failed",
+  "steps": [
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "clean",
+        "-p",
+        "openui-geometry",
+        "-p",
+        "openui-style",
+        "-p",
+        "openui-dom",
+        "-p",
+        "openui-text",
+        "-p",
+        "openui-layout",
+        "-p",
+        "openui-paint",
+        "-p",
+        "openui-compositor",
+        "-p",
+        "openui-engine",
+        "-p",
+        "openui-platform",
+        "-p",
+        "openui-ffi",
+        "-p",
+        "openui",
+        "-p",
+        "openui-macros",
+        "-p",
+        "hello",
+        "-p",
+        "counter",
+        "-p",
+        "todo",
+        "-p",
+        "dashboard",
+        "-p",
+        "framework-test",
+        "-p",
+        "pixel-compare"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "66bde2c167aad085a64565180769008883175754df9cb60abd8ba29e14b0d076",
+      "name": "clean-baseline",
+      "observed_exit_code": 0,
+      "source": {
+        "clean": true,
+        "commit": "027480369dae42ca774ee8e4865ee29e9c634af1",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "60bc1e83915b97c68cea8748975f072dc06c3070d3e81e052adfc18b77d946e7",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "027480369dae42ca774ee8e4865ee29e9c634af1",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "60bc1e83915b97c68cea8748975f072dc06c3070d3e81e052adfc18b77d946e7",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "-p",
+        "openui-ffi",
+        "--lib",
+        "tests::native_fragment_keywords_reach_engine_and_keep_owned_property_identity",
+        "--",
+        "--exact"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "5d5712c72aef09a588ebbf4494a992da939caf143929adcfe00805e28f4e8081",
+      "name": "baseline-native-keyword-guard",
+      "observed_exit_code": 101,
+      "source": {
+        "clean": true,
+        "commit": "027480369dae42ca774ee8e4865ee29e9c634af1",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "60bc1e83915b97c68cea8748975f072dc06c3070d3e81e052adfc18b77d946e7",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "027480369dae42ca774ee8e4865ee29e9c634af1",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "60bc1e83915b97c68cea8748975f072dc06c3070d3e81e052adfc18b77d946e7",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "clean",
+        "-p",
+        "openui-geometry",
+        "-p",
+        "openui-style",
+        "-p",
+        "openui-dom",
+        "-p",
+        "openui-text",
+        "-p",
+        "openui-layout",
+        "-p",
+        "openui-paint",
+        "-p",
+        "openui-compositor",
+        "-p",
+        "openui-engine",
+        "-p",
+        "openui-platform",
+        "-p",
+        "openui-ffi",
+        "-p",
+        "openui",
+        "-p",
+        "openui-macros",
+        "-p",
+        "hello",
+        "-p",
+        "counter",
+        "-p",
+        "todo",
+        "-p",
+        "dashboard",
+        "-p",
+        "framework-test",
+        "-p",
+        "pixel-compare"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "c10818568b36fa0a0d2c6cf470dd4f2dd27340f4cebc184f9713182593c791d9",
+      "name": "clean-fixed",
+      "observed_exit_code": 0,
+      "source": {
+        "clean": true,
+        "commit": "06e1f89a4a2e7a53465bceb780675383d9748464",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "7eccf4ec0f4bcd0ed4f1d7d26d02ac4fd99d73a4ca938e02d69d7ea35a24b067",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "06e1f89a4a2e7a53465bceb780675383d9748464",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "7eccf4ec0f4bcd0ed4f1d7d26d02ac4fd99d73a4ca938e02d69d7ea35a24b067",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "-p",
+        "openui-ffi",
+        "--lib",
+        "tests::native_fragment_keywords_reach_engine_and_keep_owned_property_identity",
+        "--",
+        "--exact"
+      ],
+      "disk_guard_triggered": true,
+      "log_sha256": "602f2c1e3aec323cd3325db0f0d72c44e2abf5ba4fd36a03b63a3510aed36e4b",
+      "name": "fixed-owned-native-value-guard",
+      "observed_exit_code": -15,
+      "observed_named_tests": [],
+      "source": {
+        "clean": true,
+        "commit": "06e1f89a4a2e7a53465bceb780675383d9748464",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "7eccf4ec0f4bcd0ed4f1d7d26d02ac4fd99d73a4ca938e02d69d7ea35a24b067",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "06e1f89a4a2e7a53465bceb780675383d9748464",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "7eccf4ec0f4bcd0ed4f1d7d26d02ac4fd99d73a4ca938e02d69d7ea35a24b067",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "test_counts": []
+    },
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "-p",
+        "openui-ffi",
+        "--lib",
+        "tests::native_table_display_literals_keep_existing_scalar_encoding",
+        "--",
+        "--exact"
+      ],
+      "disk_guard_triggered": true,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "fixed-table-display-guard",
+      "observed_exit_code": -15,
+      "observed_named_tests": [],
+      "source": {
+        "clean": true,
+        "commit": "06e1f89a4a2e7a53465bceb780675383d9748464",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "7eccf4ec0f4bcd0ed4f1d7d26d02ac4fd99d73a4ca938e02d69d7ea35a24b067",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "06e1f89a4a2e7a53465bceb780675383d9748464",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "7eccf4ec0f4bcd0ed4f1d7d26d02ac4fd99d73a4ca938e02d69d7ea35a24b067",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "test_counts": []
+    },
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "-p",
+        "openui-style",
+        "--lib",
+        "property::tests::native_fragment_keyword_values_cover_declared_enum_variants",
+        "--",
+        "--exact"
+      ],
+      "disk_guard_triggered": true,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "fixed-enum-coverage-guard",
+      "observed_exit_code": -15,
+      "observed_named_tests": [],
+      "source": {
+        "clean": true,
+        "commit": "06e1f89a4a2e7a53465bceb780675383d9748464",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "7eccf4ec0f4bcd0ed4f1d7d26d02ac4fd99d73a4ca938e02d69d7ea35a24b067",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "06e1f89a4a2e7a53465bceb780675383d9748464",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "7eccf4ec0f4bcd0ed4f1d7d26d02ac4fd99d73a4ca938e02d69d7ea35a24b067",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "test_counts": []
+    }
+  ],
+  "workspace_cleaned_at_every_source_switch": true
+}

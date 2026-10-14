@@ -1,0 +1,120 @@
+{
+  "all_new_prototype_results_pending": true,
+  "applied_to_umbrella": false,
+  "artifacts": [
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-clip-prototype-v758.json",
+      "sha256": "8334afd47cae10ea1ad3af6ddc4a5a245adfed0feca72db073b095acb2b5e144"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-clip-prototype-v758.patch",
+      "sha256": "f2845fee4827f2a596c8db7b1bdcd174bed253a3623975b5162b8797cd3f946d"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-clip-checks-v759/receipt.json",
+      "sha256": "c3f5336ae55eb667cfcede40d402ea44dd91990bef6b9261db0e72bde71ccfce"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-viewport-fixed-prototype-v773.json",
+      "sha256": "b0bf8073a0246ea13326b5ebb6405182ab207130f306d103ce8f56ee4a0341bf"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-viewport-fixed-prototype-v773.patch",
+      "sha256": "019bc90fc81de2796ba58edab2d8f147f27cd361a5a321fbb3bde28a03c14070"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-viewport-fixed-checks-v774/receipt.json",
+      "sha256": "7bbe545dff1d2a103a835a9d3bfb011080e87a01a2e21b52e00f23fb54a4ecbc"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-viewport-fixed-combined-v775.json",
+      "sha256": "45ccee78ef167b1e16bf05e1883d089c657b935e7e736ead028cc3bb8ad55595"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-viewport-fixed-combined-v775.patch",
+      "sha256": "37c05f2f7647a2b3cbd82a76f11d2ff6b297a3f5f175b01075d83a2c976d5dca"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-viewport-fixed-checks-v776/receipt.json",
+      "sha256": "67e40dbd8ce23b63aed2c0a4065c24db3ad2174b9aa0d13720477bcfb09d20f7"
+    },
+    {
+      "path": "docs/renderer/evidence/native-scroll-clip-v1/native-scroll-clip-v1.patch",
+      "sha256": "f2845fee4827f2a596c8db7b1bdcd174bed253a3623975b5162b8797cd3f946d"
+    },
+    {
+      "path": "docs/renderer/evidence/native-viewport-fixed-v1/native-viewport-fixed-v1.patch",
+      "sha256": "37c05f2f7647a2b3cbd82a76f11d2ff6b297a3f5f175b01075d83a2c976d5dca"
+    },
+    {
+      "path": "docs/renderer/evidence/native-viewport-fixed-v1/native-viewport-fixed.c",
+      "sha256": "071533cbe9fd5662af67cc1f25d0ce4a9c03ebdd5eb2cf3b6fceb04a109be982"
+    }
+  ],
+  "cargo_and_local_image_sweeps_separated": true,
+  "javascript_executed_by_openui": false,
+  "native_interaction_contract": "Applications call public Rust methods and Rust callbacks over the shared Engine; C and accessibility share that Engine. Missing public operations remain framework work.",
+  "new_release_states_admitted": 0,
+  "pixel_target": "Pinned Chromium only; zero tolerance",
+  "previous_index": {
+    "path": "docs/renderer/generated/native-scroll-insets-v5.json",
+    "sha256": "3800ae7e4d874832f6de3fd6b3a0a8c205beef221456b3a257600d2dcabab7dc"
+  },
+  "release_qualification": false,
+  "remaining": [
+    "No promotion with two known screen exact losses",
+    "Complete original/expanded pixel gates and all admitted native final states",
+    "Public native API coverage including fixed geometry, transformed/fragmented reveal and other options",
+    "Retained per-node compositor/3D, hardware, performance, packaging and release gates"
+  ],
+  "schema_version": 1,
+  "scroll_edge_prototype": {
+    "behavior": "Retain analytic fractional-scale scrollport coverage for overflow:scroll as well as overflow:auto in direct CPU replay. No reference bytes or per-case corrections.",
+    "compiled": false,
+    "pixels_verified": false,
+    "read_only_checks_passed": 10,
+    "reviewed_primary_source": {
+      "finding": "Rectangular paint-property clips always retain antialias=true.",
+      "function": "ConversionContext::StartClip",
+      "lines": [
+        542,
+        566
+      ],
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-scroll-screen-primary-v672/third_party/blink/renderer/platform/graphics/compositing/paint_chunks_to_cc_layer.cc",
+      "sha256": "68292c768571eb0add2939928ac103410b15bf5b3d4cef2e9ea15948d497da39"
+    },
+    "source": {
+      "clean": true,
+      "commit": "c5769f2d4aeaf42a3ead0a3c4c4804802c08267a",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "e723670fe13eb7e5cbdd97b4143fc36f0d30e2bfffff768607bac058f06f660e",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "serial_verification_in_progress": [
+    "Both cf59 original and expanded complete censuses",
+    "Fresh six-step 2cc build, then original Rust/C guards and both 40-profile raster suites",
+    "Fresh already-scrolled Chromium/native C checks after the 2cc build",
+    "Fresh c576 build after all local image jobs terminate, then native and raster checks",
+    "Fresh combined viewport-fixed build after the preceding local image checks terminate"
+  ],
+  "viewport_fixed_combined_prototype": {
+    "additional_check_prepared": "Already-scrolled viewport, visible fixed target and absolute neighbor; separate fresh Chromium oracle followed by public native C consumption; no result inferred.",
+    "behavior": [
+      "Shared viewport-fixed predicate and document-scroll cancellation for bounds, hits and painting",
+      "Existing cf59 rectangular clip containment scope",
+      "Prepared c576 analytic overflow:scroll coverage correction"
+    ],
+    "compiled": false,
+    "pixels_verified": false,
+    "preserved_failed_read_only_check": "8bd90ba8 renderer check failed on two missing fragment consumer paths. Regenerated inventory changes only those two paths; current combined source passes all ten checks.",
+    "read_only_checks_passed": 10,
+    "source": {
+      "clean": true,
+      "commit": "4dd50621cb4d0332d8dbb2e0a2c1fcb8465fce9b",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "fb4e994d8bcd9aecadc19507e40f3d355bf7e5a4ed9c7bea988ebdb5c3815ab0",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

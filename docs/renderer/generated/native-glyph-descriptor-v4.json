@@ -1,0 +1,108 @@
+{
+  "absent_test_constructor_still_prevents_full_text_tests": true,
+  "all_available_job_logs_preserved": true,
+  "all_seven_hosted_jobs_passed": true,
+  "artifact_bytes": 293927,
+  "artifact_count": 11,
+  "artifacts": [
+    {
+      "bytes": 33645,
+      "path": "docs/renderer/evidence/native-glyph-descriptor-v4/hosted-terminal.json",
+      "sha256": "71978a8a9952a1d5db19fcb2ee7e0492516a21fd5a570ef4fbfd276bf0412b59",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-glyph-descriptor-hosted-v1760/receipt.json"
+    },
+    {
+      "bytes": 16055,
+      "path": "docs/renderer/evidence/native-glyph-descriptor-v4/hosted-attempt1.json",
+      "sha256": "b299c09aa25e40d615e510e3c31021111d52c156ab95351fd7836db1cb825b3b",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-glyph-descriptor-hosted-v1760/attempt1.json"
+    },
+    {
+      "bytes": 2153,
+      "path": "docs/renderer/evidence/native-glyph-descriptor-v4/hosted-collector.py",
+      "sha256": "4464ecd11e3e285442f9f83c863a5b7a464a6787971124c0cfa81f0f7e5da876",
+      "source_path": "/tmp/openui-native-glyph-descriptor-hosted-v1760.py"
+    },
+    {
+      "bytes": 20258,
+      "decompressed_bytes": 186313,
+      "decompressed_sha256": "7ac3366fe932070ca373b5685dbb2290f811533af418d6531f3db4498f670e30",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-glyph-descriptor-v4/112025402373.log.gz",
+      "sha256": "8396c7127755498aa2e2d07e3d42879532ec0cda5ef256c713a29174aea68357",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-glyph-descriptor-hosted-v1760/112025402373.log"
+    },
+    {
+      "bytes": 23857,
+      "decompressed_bytes": 200735,
+      "decompressed_sha256": "1de6dddb236c2d8c2483303bf9dd102eabf81fcc41fbc029d641a04838a035d7",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-glyph-descriptor-v4/112025402650.log.gz",
+      "sha256": "8be4c9656796eca5be3421b183f1f2c2be59d90648c5445de5b93389a078af43",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-glyph-descriptor-hosted-v1760/112025402650.log"
+    },
+    {
+      "bytes": 92645,
+      "decompressed_bytes": 893188,
+      "decompressed_sha256": "9e21638a8aeaa69bbd85d4eb1c8cc0670150c529aa8533d364fa75d54d33e764",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-glyph-descriptor-v4/112025402787.log.gz",
+      "sha256": "7f6c107528e273f427bbc35bfc2ae27d6b9e5d6e035b43447ea8f0521c849406",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-glyph-descriptor-hosted-v1760/112025402787.log"
+    },
+    {
+      "bytes": 20696,
+      "decompressed_bytes": 186677,
+      "decompressed_sha256": "5533376383a062717604e1ea3d39dbb5340ee90d62ad3e2b0529cd3e39110522",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-glyph-descriptor-v4/112025402833.log.gz",
+      "sha256": "4a440c2d1dcd9017afb57ea7067a389fa3a411612ca9bb5550ce5392c5b3766c",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-glyph-descriptor-hosted-v1760/112025402833.log"
+    },
+    {
+      "bytes": 16317,
+      "decompressed_bytes": 135688,
+      "decompressed_sha256": "3c87bacac82b38eef1580312c096e97c481fe1ea40d96ac7e526c9319bddf015",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-glyph-descriptor-v4/112025402913.log.gz",
+      "sha256": "b2192e8fd5b27629c2a0d37e9422e69a23b7e594df6bd21fae9574ea103f865b",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-glyph-descriptor-hosted-v1760/112025402913.log"
+    },
+    {
+      "bytes": 45525,
+      "decompressed_bytes": 389599,
+      "decompressed_sha256": "fc9c237f061d21f9dca8a68d286c008a4275982b978a2ec7d6a3db7a2495d266",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-glyph-descriptor-v4/112025403048.log.gz",
+      "sha256": "92566ecdadc4519356b10a80c31043425dddd60a4e30a983fee2e02da1dfc904",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-glyph-descriptor-hosted-v1760/112025403048.log"
+    },
+    {
+      "bytes": 17310,
+      "decompressed_bytes": 139338,
+      "decompressed_sha256": "9199ee291d2bec90840b51e621ce49003c5641a39107decf98b533659c2d2412",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-glyph-descriptor-v4/112025403101.log.gz",
+      "sha256": "37a276e5fb73c9d93dd11a2aca7d2091dd0c4132fee460db7710c6e8a8c8db67",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-glyph-descriptor-hosted-v1760/112025403101.log"
+    },
+    {
+      "bytes": 5466,
+      "path": "docs/renderer/evidence/native-glyph-descriptor-v4/preserver.py",
+      "sha256": "54a44e984b9378363a1c8a3e4dc8be7866085c05a7965d6bcb2acd1eb52fb672",
+      "source_path": "/tmp/openui-native-followup-results-preserve-v1763.py"
+    }
+  ],
+  "candidate_applied_to_umbrella": false,
+  "clean_local_glyph_guards_build_and_pixels_unexecuted": true,
+  "fresh_corrected_fce42e08_not_qualified_by_previous_source_hosted_run": true,
+  "full_text_crate_unit_tests_not_executed_by_hardening": true,
+  "javascript_executed_by_openui": false,
+  "new_release_states_admitted": 0,
+  "pixel_tolerance": 0,
+  "public_native_rust_apis_required": true,
+  "release_qualification": false,
+  "schema_version": 1,
+  "skipped_jobs": 0,
+  "source": "2f53d5de2e6fce9b4c9dc2fbc94fcfc763544b23"
+}

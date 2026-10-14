@@ -42,6 +42,11 @@ pub struct OuiBuffer {
     _private: [u8; 0],
 }
 
+#[repr(C)]
+pub struct OuiAccessibilitySnapshot {
+    _private: [u8; 0],
+}
+
 #[repr(i32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum OuiStatus {
@@ -132,6 +137,36 @@ pub struct OuiDocumentConfig {
     pub struct_size: u32,
     pub abi_version: u32,
     pub viewport: OuiViewportMetrics,
+}
+
+/// Caller-owned client and content dimensions in logical CSS pixels.
+#[repr(C)]
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct OuiScrollMetricsV1 {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub client_width: f64,
+    pub client_height: f64,
+    pub scroll_width: f64,
+    pub scroll_height: f64,
+}
+
+/// Owned numerical scroll-button state in logical CSS pixels. Related node
+/// identities are queried separately as independently owned element aliases.
+#[repr(C)]
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct OuiScrollButtonStateV1 {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub direction: u32,
+    pub availability: u32,
+    pub enabled: u8,
+    pub has_target: u8,
+    pub reserved: [u8; 6],
+    pub current_x: f64,
+    pub current_y: f64,
+    pub target_x: f64,
+    pub target_y: f64,
 }
 
 #[repr(C)]
@@ -256,6 +291,56 @@ pub struct OuiEasing {
     pub values: [f64; 4],
 }
 
+/// A caller-owned normalized or authored-percentage linear stop.
+#[repr(C)]
+#[derive(Debug, Clone, Copy)]
+pub struct OuiLinearStopV1 {
+    pub input: f64,
+    pub output: f64,
+}
+
+/// The known prefix of a caller-owned curve; future tails are ignored.
+#[repr(C)]
+#[derive(Debug, Clone, Copy)]
+pub struct OuiEasingCurveV1 {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub kind: u32,
+    pub step_position: u32,
+    pub step_count: u32,
+    pub reserved: u32,
+    pub values: [f64; 4],
+    pub stops: *const OuiLinearStopV1,
+    pub stop_count: usize,
+    pub stop_stride: usize,
+}
+
+#[repr(C)]
+#[derive(Debug, Clone, Copy)]
+pub struct OuiAnimationOptionsV1 {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub delay_ms: f64,
+    pub duration_ms: f64,
+    pub iterations: f64,
+    pub playback_rate: f64,
+    pub direction: u32,
+    pub fill: u32,
+    pub play_state: u32,
+    pub composite: u32,
+    pub easing: *const OuiEasingCurveV1,
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct OuiKeyframeV1 {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub offset: f64,
+    pub value: OuiStyleValue,
+    pub easing: *const OuiEasingCurveV1,
+}
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct OuiAnimationOptions {
@@ -324,6 +409,31 @@ pub struct OuiAnimationEvent {
 
 pub const OUI_EVENT_FLAG_DEFAULT_PREVENTED: u32 = 1 << 0;
 pub const OUI_EVENT_FLAG_PROPAGATION_STOPPED: u32 = 1 << 1;
+pub const OUI_EVENT_FLAG_IMMEDIATE_PROPAGATION_STOPPED: u32 = 1 << 2;
+pub const OUI_EDIT_MOVE: u32 = 0;
+pub const OUI_EDIT_DELETE: u32 = 1;
+pub const OUI_EDIT_SELECT_ALL: u32 = 2;
+pub const OUI_EDIT_UNDO: u32 = 3;
+pub const OUI_EDIT_REDO: u32 = 4;
+pub const OUI_TEXT_BACKWARD: u32 = 0;
+pub const OUI_TEXT_FORWARD: u32 = 1;
+pub const OUI_TEXT_GRAPHEME: u32 = 0;
+pub const OUI_TEXT_WORD: u32 = 1;
+pub const OUI_TEXT_LINE: u32 = 2;
+pub const OUI_TEXT_DOCUMENT: u32 = 3;
+
+#[repr(C)]
+#[derive(Debug, Clone, Copy)]
+pub struct OuiEditCommandV1 {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub command: u32,
+    pub direction: u32,
+    pub unit: u32,
+    pub extend_selection: u32,
+    pub reserved: [u32; 2],
+}
+
 pub const OUI_CONTROL_DISABLED: u32 = 1 << 0;
 pub const OUI_CONTROL_CHECKED: u32 = 1 << 1;
 pub const OUI_CONTROL_SELECTED: u32 = 1 << 2;
@@ -342,6 +452,96 @@ pub struct OuiAccessibilityUpdate {
     pub full_tree: u8,
     pub reduced_motion: u8,
     pub reserved: u16,
+}
+
+pub const OUI_ACCESSIBILITY_NODE_HIDDEN: u32 = 1 << 0;
+pub const OUI_ACCESSIBILITY_NODE_REQUIRED: u32 = 1 << 1;
+pub const OUI_ACCESSIBILITY_NODE_READ_ONLY: u32 = 1 << 2;
+pub const OUI_ACCESSIBILITY_NODE_MODAL: u32 = 1 << 3;
+pub const OUI_ACCESSIBILITY_NODE_HAS_BOUNDS: u32 = 1 << 4;
+
+pub const OUI_ACCESSIBILITY_SCROLL_HAS_X: u32 = 1 << 0;
+pub const OUI_ACCESSIBILITY_SCROLL_HAS_Y: u32 = 1 << 1;
+pub const OUI_ACCESSIBILITY_SCROLL_HAS_X_MIN: u32 = 1 << 2;
+pub const OUI_ACCESSIBILITY_SCROLL_HAS_X_MAX: u32 = 1 << 3;
+pub const OUI_ACCESSIBILITY_SCROLL_HAS_Y_MIN: u32 = 1 << 4;
+pub const OUI_ACCESSIBILITY_SCROLL_HAS_Y_MAX: u32 = 1 << 5;
+pub const OUI_ACCESSIBILITY_SCROLL_DIRECTION_ACTION_MASK: u32 =
+    (1 << 11) | (1 << 12) | (1 << 13) | (1 << 14);
+
+/// Owned accessibility scroll metadata in native logical coordinates. Absent
+/// optional fields are zero; `flags` preserves their presence independently.
+#[repr(C)]
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct OuiAccessibilityScrollInfoV1 {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub flags: u32,
+    pub actions: u32,
+    pub scroll_x: f64,
+    pub scroll_y: f64,
+    pub scroll_x_min: f64,
+    pub scroll_x_max: f64,
+    pub scroll_y_min: f64,
+    pub scroll_y_max: f64,
+}
+
+#[repr(C)]
+#[derive(Clone, Copy, Default)]
+pub struct OuiAccessibilitySnapshotInfo {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub generation: u64,
+    pub focus_id: u64,
+    pub node_count: usize,
+    pub changed_count: usize,
+    pub removed_count: usize,
+    pub full_tree: u8,
+    pub reduced_motion: u8,
+    pub reserved: [u8; 6],
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct OuiAccessibilityNodeInfo {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub id: u64,
+    pub role: u32,
+    pub flags: u32,
+    pub actions: u32,
+    pub reserved: u32,
+    pub bounds: OuiRect,
+    pub child_count: usize,
+    pub labelled_by_count: usize,
+    pub described_by_count: usize,
+    pub controls_count: usize,
+    pub details_count: usize,
+    pub label_length: usize,
+    pub description_length: usize,
+    pub value_length: usize,
+    pub role_name_length: usize,
+}
+
+#[repr(C)]
+#[derive(Clone, Copy, Default)]
+pub struct OuiAccessibilityNodeState {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub flags: u32,
+    pub live: u32,
+    pub numeric_value: f64,
+    pub numeric_min: f64,
+    pub numeric_max: f64,
+    pub numeric_step: f64,
+    pub scroll_x: f64,
+    pub scroll_y: f64,
+    pub placeholder_length: usize,
+    pub character_lengths_count: usize,
+    pub selection_anchor_node: u64,
+    pub selection_anchor_index: usize,
+    pub selection_focus_node: u64,
+    pub selection_focus_index: usize,
 }
 
 #[repr(C)]
@@ -365,6 +565,18 @@ pub struct OuiEvent {
     pub current_target: *mut OuiElement,
 }
 
+/// Owned metadata copied from a currently executing native focus callback.
+/// The related element handle must be released with oui_element_destroy.
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct OuiFocusEventInfoV1 {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub bubbles: u32,
+    pub cancelable: u32,
+    pub related_target: *mut OuiElement,
+}
+
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub struct OuiErrorInfo {
@@ -376,3 +588,159 @@ pub struct OuiErrorInfo {
 }
 
 pub type OuiEventCallback = unsafe extern "C" fn(event: *mut OuiEvent, user_data: *mut c_void);
+
+/// Borrowed platform event; all text/path storage is valid only during callback.
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct OuiPlatformEvent {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub event_type: u32,
+    pub phase: u32,
+    pub flags: u32,
+    pub backend: u32,
+    pub pointer_id: u64,
+    pub x: f32,
+    pub y: f32,
+    pub delta_x: f32,
+    pub delta_y: f32,
+    pub key_code: i32,
+    pub modifiers: u32,
+    pub button: u32,
+    pub reserved: u32,
+    pub frame_number: u64,
+    pub time_ms: f64,
+    pub text: OuiUtf8,
+    pub path: *const u8,
+    pub path_length: usize,
+    pub viewport: OuiViewportMetrics,
+}
+
+pub type OuiPlatformEventCallback =
+    unsafe extern "C" fn(app: *mut OuiApp, event: *const OuiPlatformEvent, user_data: *mut c_void);
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct OuiAppRunConfig {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub flags: u32,
+    pub reserved: u32,
+    pub callback: Option<OuiPlatformEventCallback>,
+    pub user_data: *mut c_void,
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct OuiInputEventInfoV1 {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub input_type: u32,
+    pub has_data: u32,
+    pub is_composing: u32,
+    pub bubbles: u32,
+    pub cancelable: u32,
+    pub data: *mut OuiBuffer,
+}
+
+/// Immutable event properties for an active native callback.
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct OuiEventPropertiesV1 {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub bubbles: u32,
+    pub cancelable: u32,
+}
+
+/// Versioned timeline descriptors carry f64 inputs checked into native f32 lengths.
+#[repr(C)]
+#[derive(Debug, Clone, Copy)]
+pub struct OuiTimelineLengthV1 {
+    pub value: f64,
+    pub calc_offset: f64,
+    pub unit: u32,
+    pub reserved: u32,
+}
+#[repr(C)]
+#[derive(Debug, Clone, Copy)]
+pub struct OuiTimelineRangeOffsetV1 {
+    pub name: u32,
+    pub reserved: u32,
+    pub offset: OuiTimelineLengthV1,
+}
+#[repr(C)]
+#[derive(Debug, Clone, Copy)]
+pub struct OuiAnimationAttachmentRangeV1 {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub present: u32,
+    pub reserved: u32,
+    pub start: OuiTimelineRangeOffsetV1,
+    pub end: OuiTimelineRangeOffsetV1,
+}
+#[repr(C)]
+#[derive(Debug, Clone, Copy)]
+pub struct OuiAnimationTimelineSourceV1 {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub kind: u32,
+    pub axis: u32,
+    pub source: *mut OuiElement,
+    pub inset_present: u32,
+    pub reserved: u32,
+    pub inset_start: OuiTimelineLengthV1,
+    pub inset_end: OuiTimelineLengthV1,
+}
+#[repr(C)]
+#[derive(Debug, Clone, Copy)]
+pub struct OuiTimelineRangeBoundsV1 {
+    pub start: f64,
+    pub end: f64,
+}
+#[repr(C)]
+#[derive(Debug, Clone, Copy)]
+pub struct OuiAnimationTimelineSnapshotV1 {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub present: u32,
+    pub active: u32,
+    pub physical_axis: u32,
+    pub reserved: u32,
+    pub source: *mut OuiElement,
+    pub scroll_offset: f64,
+    pub cover_start: f64,
+    pub cover_end: f64,
+    pub range_start: f64,
+    pub range_end: f64,
+    pub duration_ms: f64,
+    pub current_time_ms: f64,
+    pub current_time_percentage: f64,
+}
+#[repr(C)]
+#[derive(Debug, Clone, Copy)]
+pub struct OuiAnimationAttachmentSnapshotV1 {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub present: u32,
+    pub reserved: u32,
+    pub range: OuiAnimationAttachmentRangeV1,
+    pub source: *mut OuiElement,
+    pub named: [OuiTimelineRangeBoundsV1; 7],
+    pub attachment: OuiTimelineRangeBoundsV1,
+    pub entry_crossing_distance: f64,
+    pub exit_crossing_distance: f64,
+}
+
+/// Independent native radius-axis source length. Unit13 is calculated percent
+/// plus pixels; all other units retain the existing OuiLength unit numbers.
+#[repr(C)]
+#[derive(Debug, Clone, Copy)]
+pub struct OuiRadiusAxisLengthV1 {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub value: f32,
+    pub calc_offset: f32,
+    pub unit: u32,
+    pub reserved: u32,
+}

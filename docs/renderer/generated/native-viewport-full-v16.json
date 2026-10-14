@@ -1,0 +1,727 @@
+{
+  "accepted_complete_renderer_counts": {
+    "changed_by_these_private_trials": false,
+    "errors": 0,
+    "expanded_exact": 22111,
+    "expanded_total": 23728,
+    "original_exact": 21308,
+    "original_total": 22924,
+    "source": "079208f8"
+  },
+  "artifacts": [
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-direct-clean-v170/clean.log",
+      "sha256": "4bc71683980e3c27c8eacb7f5b2dfb5fe2710b6f34e76f61f5938f5565caaf25"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-direct-clean-v170/pixel-build.log",
+      "sha256": "0df01c89a8efb87c58fafa9c136f4a83802e47974aeb44fa5c69a02f9984ac30"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-direct-clean-v170/pixel_compare",
+      "sha256": "101f6d30c62792ac35e6a21f1e2d0e004528ac86ac0256614306f540f58b8c54"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-direct-clean-v170/native-build.log",
+      "sha256": "1d0f1354f0f54973bb4c388d1fd44d7465174053c35ee26bdb4cbe3bfd5c6db0"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-direct-clean-v170/native_viewport_scroll",
+      "sha256": "39998edce4a4a8b4e32a482e2bac23cea8d3e9b181792ef67f650a6591a3590d"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-direct-clean-v170/build.json",
+      "sha256": "289c7b52a01f98fccf2f14a9f875c4bb7682b5e1fdee31517d61adbd0ed46c97"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-direct-clean-v170/source-before.json",
+      "sha256": "2736c6e52e8fef036c9e28f0a862a37112132de76f7d82c16797cc58c874cc07"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-direct-clean-v170/pixel-embedded-source-identity.json",
+      "sha256": "80340ee71ee278e2f49585abb214f484cc7c03e73c3300530c199ed83d2f1ace"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-direct-selection-v171/full-summary.json",
+      "sha256": "d57fc0007951323f1840963afd28fbb40476c0de671d256a7a43e6b0ad919372"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-direct-selection-v171.log",
+      "sha256": "c16fb67588935701848ade541efa2f9816bbe8de7837916d26365aca67bd82c7"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-direct-native-v172/comparison.json",
+      "sha256": "20bae8ca00f676630f15eaa16128bbd5a71def158fb7c28c8c7d300fea8ba852"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opaque-clean-v173/clean.log",
+      "sha256": "6fa23c8fa2d52491aa4f7b98e7c0a1f5177b8c091fef740279c3a742cfb04421"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opaque-clean-v173/pixel-build.log",
+      "sha256": "78f52357ba0ef49269686d61c24ed213282e1dac1b4c82552afb2cef9f5158ef"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opaque-clean-v173/pixel_compare",
+      "sha256": "f81ed33376d14ab8dcf2352d0826ead98f1126985415447cf8a2c3a436c51675"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opaque-clean-v173/native-build.log",
+      "sha256": "52a1be30f3a0d5fc80288a9e429b82df4abc2ccaa07cf844e7c8a30ed07854dd"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opaque-clean-v173/native_viewport_scroll",
+      "sha256": "3ff4b2ca2557a97cd27e1960b36daf1afe6126bc2f35e74618822285ac89a6ce"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opaque-clean-v173/build.json",
+      "sha256": "9d78912e626e1ed5a8e9e1584e4639ce59a4888cb26db2947917d614f9a68c51"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opaque-clean-v173/source-before.json",
+      "sha256": "0d6afc9e734ae7776941bd51dc6049ec6954c4c86165bebcfc4afe8674c88cd9"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opaque-clean-v173/pixel-embedded-source-identity.json",
+      "sha256": "db04216f617af34e60e9eaf9fc8ae2b69722580ef52a8beff395a3a36f5d2744"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opaque-selection-v176/full-summary.json",
+      "sha256": "7336ea5dbd51ef0eb78d88aa66b3420683885d0c77103046d1ddfb45ef8dbd20"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opaque-selection-v176.log",
+      "sha256": "07a78bed7ffe41d4bf92f5faf8a47b7edbe1ab1efcf37b88231e9b4de77338cf"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opaque-native-v177/comparison.json",
+      "sha256": "4ec5c8b0a7ea080bb63991008c417f011a7a206a4d729aa312a9fb56296ec48f"
+    },
+    {
+      "path": "docs/renderer/evidence/native-viewport-scroll-v1/scroll-direct-replay-prototype-v170.patch",
+      "sha256": "38dc02b4ccb5c78e6f29107478f95bea7cf9f606b65d9d210d16528c1d3d6d4d"
+    },
+    {
+      "path": "docs/renderer/evidence/native-viewport-scroll-v1/scroll-opaque-composition-prototype-v173.patch",
+      "sha256": "670649918cdddd458196c99e7ae8deb057085acecc81044932d0afb5e3fd5a03"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-blend-primary-v174/receipts.json",
+      "sha256": "3f8ca73cf9890befced49498edede8ea30d313703fa252a5fb5ad078d27d8c84"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-blend-primary-v174/SkBlitter.cpp",
+      "sha256": "bd9c8a9cb0c70aee95008cdda508a756323c2065599cb8a85dd7712c9514171e"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-blend-primary-v179/receipts.json",
+      "sha256": "8f55af0bd75be295fc89969b17b6d801be56ba241fadc84adc26cc104b643f76"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-blend-primary-v179/SkBlendMode.cpp",
+      "sha256": "fe36f211b10e37712970dc6338fef0adbda4b533054cc92585ec1a1134730f71"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-blend-primary-v179/picture_layer_impl.cc",
+      "sha256": "59f3d876f20670e76a85ba4865f9a336a974a0b1fc34f2df462ac57956d7a94c"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-blend-primary-v179/software_renderer.cc",
+      "sha256": "c3dec17e4de86214cf02d9d550281e11374ef49c005d34e6eb4d0c223c48042a"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-blend-primary-v179/box_fragment_painter.cc",
+      "sha256": "c0cad4a86b11e466a477c791747fc62fb6c5726dd5d53e8c5c88ca8eadd6007e"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/overflow-area-chromium-trace-v168/metadata.json",
+      "sha256": "e9efd00ce11161ed239cbf0124b5cad267870840e2f5051bbfd2b579481139f1"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/overflow-area-chromium-trace-v168/system-info.json",
+      "sha256": "6ab03ed14d82831edb51e07a94a9fea8a961d210399adba702b28c0b81355efd"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/overflow-area-chromium-trace-v168.log",
+      "sha256": "c50cc53bb17b90216050950163feec1f8f60d8ff0f752da5dbb9da45a2b3e808"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/overflow-area-chromium-trace-v168/desktop-1280x720@1.25/overflow-area-001/trace.json",
+      "sha256": "0a03d06c051e438f0131cebe34e6205d2f08c94cb32e7e62502c20469161e257"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/overflow-area-chromium-trace-v168/desktop-1280x720@1.25/overflow-area-001/chromium.png",
+      "sha256": "b1506dda1975d49feda1ab77a319e29c695e22a27ae05ce2c5bc9eb55b1ca4e6"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/overflow-area-chromium-trace-v168/desktop-1280x720@1.25/overflow-area-001/layers.json",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/overflow-area-chromium-trace-v168/desktop-1280x720@1.25/overflow-area-002/trace.json",
+      "sha256": "1e52652b26b80b46f32cfb8ffb8a9268b6570739331184e0b515568179a7dc6d"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/overflow-area-chromium-trace-v168/desktop-1280x720@1.25/overflow-area-002/chromium.png",
+      "sha256": "7caa732d35a9030b26456d1b967d1730cb728c83f081672b252ad3eb55401dff"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/overflow-area-chromium-trace-v168/desktop-1280x720@1.25/overflow-area-002/layers.json",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/overflow-area-chromium-trace-v168/desktop-1920x1080@1.5/overflow-area-001/trace.json",
+      "sha256": "1b35c33966b357c6f4fb69c6be1f90de6f47aef043fe975a6e20de2a3f732410"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/overflow-area-chromium-trace-v168/desktop-1920x1080@1.5/overflow-area-001/chromium.png",
+      "sha256": "7b8bba1ed4b82c36b2c8a7a2f510932157502ad9560fdeca269a9d320f3d4a0a"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/overflow-area-chromium-trace-v168/desktop-1920x1080@1.5/overflow-area-001/layers.json",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/overflow-area-chromium-trace-v168/desktop-1920x1080@1.5/overflow-area-002/trace.json",
+      "sha256": "36da998784398dcf330b69c0e02eed47c28d83392e324036d320e52c648e5eed"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/overflow-area-chromium-trace-v168/desktop-1920x1080@1.5/overflow-area-002/chromium.png",
+      "sha256": "eea59e27acf527133b1deef44ea5ad53175fbefee8092484e4a01a9b8fc95367"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/overflow-area-chromium-trace-v168/desktop-1920x1080@1.5/overflow-area-002/layers.json",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opaque-clean-focused-v180/focused-summary.json",
+      "sha256": "41d78c7d4ff61bf53e20e366e92be0b3c416a5ecce941c3119499160bea7025c"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opaque-clean-focused-v180.log",
+      "sha256": "70d1e0bc171c7a4be2d34142015972771e3b0db64123bc79200a92c9996c9ee2"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opaque-focused-exit-v180.json",
+      "sha256": "8cdcda4d970a98adfc722712bfd4d856122e2b92bdfb93805c3c3be53e5356a3"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opaque-clean-primitive-v180/primitive-summary.json",
+      "sha256": "6e264d15f079abf460336836e10a3456288f7af42add521cec58980e2a0d036b"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opaque-clean-primitive-v180.log",
+      "sha256": "7df2d161187c59746751e7ae1639689147222474970c2e4291a36125a032a708"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opaque-primitive-exit-v180.json",
+      "sha256": "1d4473a23894ed7bea6dfb78134377a92b4549f8688fd92c5def8109d944a0ed"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/overflow-area-color-review-v169.json",
+      "sha256": "88a2ed61a73bf843caf10d07c9aaf2634425a6cae1df15716726d22ef5b9b2b0"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-direct-delta-v175.json",
+      "sha256": "c5c307ac46d850e1f2b8537e75016c6722d9e1b49103552078bef7480902edf9"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opaque-delta-v181.json",
+      "sha256": "10c618d36375f9ba1a250cea43a233d93c1fe27a66e6319f8858d548450dfb55"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opaque-raster-delta-v182.json",
+      "sha256": "86bace2c2f668bee1110e54b75b66d7886cdc1acf3956388c626f1a5ad49f46d"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-docs-ci-v178.json",
+      "sha256": "625df65d00608b74a4c911ddba33745bb5e51921ee3107e77884f3bc159d788b"
+    },
+    {
+      "path": "docs/renderer/generated/native-viewport-full-v15.json",
+      "sha256": "43538ec8b3d04d0c19bbdd75487855398974f494a3ae086f2620dfc512e70ce0"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/sampling-isolation-ids-v143.json",
+      "sha256": "19a1e226570325bbd8c48e4358ff25ed9c40b3677df78c6c687af322cad8d2f2"
+    }
+  ],
+  "focused_and_primitive": [
+    {
+      "all_eight_row_invariants_unchanged": true,
+      "observed_exit_code": 0,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opaque-clean-focused-v180/focused-summary.json",
+      "results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 640,
+        "profile_result_sha256": "aa72adbe799d443a49eb0b0d29f37c07a86908f636b1bccf49677d1e3c21f385",
+        "total": 640
+      },
+      "sha256": "41d78c7d4ff61bf53e20e366e92be0b3c416a5ecce941c3119499160bea7025c",
+      "source": {
+        "clean": true,
+        "commit": "b3c54ea84da0afa3195c5d5c43acfe885cd03fca",
+        "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+        "source_tree_sha256": "d9a8ed1b61cdb4abc87816eecbdc59c6720587298335ef33b2d16101b5a99775",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "b3c54ea84da0afa3195c5d5c43acfe885cd03fca",
+        "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+        "source_tree_sha256": "d9a8ed1b61cdb4abc87816eecbdc59c6720587298335ef33b2d16101b5a99775",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "suite": "focused"
+    },
+    {
+      "all_eight_row_invariants_unchanged": true,
+      "observed_exit_code": 0,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opaque-clean-primitive-v180/primitive-summary.json",
+      "results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 960,
+        "profile_result_sha256": "c18b41932f56c90debba26d5135adffa5e58372600ed6b78ba08d91f26f32612",
+        "total": 960
+      },
+      "sha256": "6e264d15f079abf460336836e10a3456288f7af42add521cec58980e2a0d036b",
+      "source": {
+        "clean": true,
+        "commit": "b3c54ea84da0afa3195c5d5c43acfe885cd03fca",
+        "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+        "source_tree_sha256": "d9a8ed1b61cdb4abc87816eecbdc59c6720587298335ef33b2d16101b5a99775",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "b3c54ea84da0afa3195c5d5c43acfe885cd03fca",
+        "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+        "source_tree_sha256": "d9a8ed1b61cdb4abc87816eecbdc59c6720587298335ef33b2d16101b5a99775",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "suite": "primitive"
+    }
+  ],
+  "hosted_prior_evidence": {
+    "all_workflows_completed": true,
+    "job_conclusions": {
+      "skipped": 5,
+      "success": 6
+    },
+    "release_qualification": false,
+    "skipped_jobs_are_not_passes": true,
+    "source": "fdac09eb5ab272b9ea5642fd1296eb0b14cfce28"
+  },
+  "javascript_executed_by_openui": false,
+  "opacity_metadata_limitation": "The trial tests background color opacity as its condition. That is not a complete layer opacity proof for arbitrary background clip, effects or incomplete coverage. Derive conservative immutable layer opacity metadata and guard transparent/clipped/effected neighbors before adopting the change. Own complete original/expanded censuses and one SVG exact regression remain open. No complete-census count is inferred.",
+  "own_native_api_censuses": {
+    "binary_sha256": "7fc0138e565b2ad26aff3cd2d43e87fb69607e060aca5c66527af912dbde8d24",
+    "scope": [
+      "full",
+      "expanded"
+    ],
+    "source": "9e0f01457621cff9757914b71d956d403e4ff117",
+    "state": "running; no completed or qualifying result claimed"
+  },
+  "owner": "openui-paint",
+  "patches": [
+    {
+      "applied_to_umbrella": false,
+      "path": "docs/renderer/evidence/native-viewport-scroll-v1/scroll-direct-replay-prototype-v170.patch",
+      "sha256": "38dc02b4ccb5c78e6f29107478f95bea7cf9f606b65d9d210d16528c1d3d6d4d"
+    },
+    {
+      "applied_to_umbrella": false,
+      "path": "docs/renderer/evidence/native-viewport-scroll-v1/scroll-opaque-composition-prototype-v173.patch",
+      "sha256": "670649918cdddd458196c99e7ae8deb057085acecc81044932d0afb5e3fd5a03"
+    }
+  ],
+  "pending_qualification": "Conservative layer opacity metadata and transparent/clipped/effected native neighbors, the remaining SVG exact regression, own complete original and expanded censuses, all other needed native APIs, hardening and release-lab qualification remain required. No complete-census count is inferred from the affected selection.",
+  "pixel_tolerance": 0,
+  "policy": "Chromium is the sole pixel target. Open UI never executes JavaScript. Needed application interactions require public native Rust APIs and callbacks over the shared Engine. Historical Open UI images remain provenance.",
+  "previous_evidence": "docs/renderer/generated/native-viewport-full-v15.json",
+  "primary_review_erratum": "The v174 diagnostic note incorrectly attributed Src-to-SrcOver simplification to opaque image shaders. Pinned CheckFastPath only simplifies an opaque solid color without a shader/filter. The correction is preserved in v179 and supports the reviewed Src image path. Source receipt bytes remain unchanged.",
+  "private_trials": [
+    {
+      "applied_to_umbrella": false,
+      "build_and_native_observed_exits": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "name": "direct-replay-rejected",
+      "native": {
+        "all_geometry_callbacks_and_teardown_exact": true,
+        "all_images_unchanged_against_corner_candidate": true,
+        "exact": 850,
+        "observed_exit_code": 0,
+        "total": 850
+      },
+      "native_binary_sha256": "39998edce4a4a8b4e32a482e2bac23cea8d3e9b181792ef67f650a6591a3590d",
+      "pixel_binary_sha256": "101f6d30c62792ac35e6a21f1e2d0e004528ac86ac0256614306f540f58b8c54",
+      "selected_matrix": {
+        "all_chromium_images_and_oracle_identities_unchanged": true,
+        "binary_unchanged": true,
+        "changed": 4,
+        "complete_contract_scope": false,
+        "evidence_kind": "diagnostic-selection",
+        "exact_gains": 0,
+        "exact_losses": 0,
+        "observed_exit_code": 1,
+        "results": {
+          "different": 136,
+          "errors": 0,
+          "exact": 168,
+          "profile_result_sha256": "db560043dfe0bfb1a70622780cedc39f30f422e77dc6851c551fe86e23af50cb",
+          "total": 304
+        },
+        "source_clean_and_unchanged": true,
+        "worsened": 4
+      },
+      "source": {
+        "clean": true,
+        "commit": "21a6c62dba684f93d66232a65b2f86d5851a0461",
+        "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+        "source_tree_sha256": "84a2710b87bd86ab78b76507390b814683fc9fc63545c485637caca43636a85a",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "applied_to_umbrella": false,
+      "build_and_native_observed_exits": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "name": "opaque-composition-unqualified",
+      "native": {
+        "all_geometry_callbacks_and_teardown_exact": true,
+        "all_images_unchanged_against_corner_candidate": true,
+        "exact": 850,
+        "observed_exit_code": 0,
+        "total": 850
+      },
+      "native_binary_sha256": "3ff4b2ca2557a97cd27e1960b36daf1afe6126bc2f35e74618822285ac89a6ce",
+      "pixel_binary_sha256": "f81ed33376d14ab8dcf2352d0826ead98f1126985415447cf8a2c3a436c51675",
+      "selected_matrix": {
+        "all_chromium_images_and_oracle_identities_unchanged": true,
+        "binary_unchanged": true,
+        "changed": 4,
+        "complete_contract_scope": false,
+        "evidence_kind": "diagnostic-selection",
+        "exact_gains": 4,
+        "exact_losses": 0,
+        "observed_exit_code": 1,
+        "results": {
+          "different": 132,
+          "errors": 0,
+          "exact": 172,
+          "profile_result_sha256": "ed6c099ee345a62c13808056fcfc7a06f6905e7f7a25dd634985137edd8f9cdd",
+          "total": 304
+        },
+        "source_clean_and_unchanged": true,
+        "worsened": 0
+      },
+      "source": {
+        "clean": true,
+        "commit": "b3c54ea84da0afa3195c5d5c43acfe885cd03fca",
+        "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+        "source_tree_sha256": "d9a8ed1b61cdb4abc87816eecbdc59c6720587298335ef33b2d16101b5a99775",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "rejected_direct_replay_finding": "Removing the fractional CPU scroll backing globally keeps the selected exact count and all native controls but worsens all four overflow-area failures. It is rejected. Four fresh Chromium screenshots reproduce immutable oracle PNGs byte-for-byte. Their compositor snapshots contain 17 opaque floating-flex scroll-content layers per case; the empty SoftwareRenderer DoDrawQuad trace arguments do not prove direct picture replay. Review opaque layer composition, source alpha declarations, clips and physical mapping before another change.",
+  "release_qualification": false,
+  "remaining_exact_regressions": [
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 1,
+            "maximum_absolute_delta": 1,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": -1,
+            "signed_delta_sum": -1
+          },
+          "green": {
+            "changed_pixels": 1,
+            "maximum_absolute_delta": 1,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": -1,
+            "signed_delta_sum": -1
+          },
+          "red": {
+            "changed_pixels": 1,
+            "maximum_absolute_delta": 1,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": -1,
+            "signed_delta_sum": -1
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 1,
+              "x": 20,
+              "y": 20
+            },
+            "mismatched_pixels": 1
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 1,
+          "width": 1,
+          "x": 20,
+          "y": 20
+        },
+        "mismatched_pixels": 1
+      },
+      "id": "wpt/css_backgrounds/tiny-foreignObject-double-border-radius-crash",
+      "owner": "openui-paint / raster image sampler",
+      "profile": "legacy-800x600@1",
+      "root_cause_status": "Legacy flag isolated; correct path for this operation unresolved"
+    }
+  ],
+  "residual_review_complete": false,
+  "reviewed_scroll_composition_root_cause": "Chromium SoftwareRenderer replaces opaque quad contents using Src. Open UI replayed its opaque-background software scroll backing with SrcOver, selecting the legacy N32 image sampler and its lower packed cyan edge values. The Src trial restores all four traced comparisons without changing backing size, phase, clipping or immutable Chromium input. Pinned CheckFastPath confirms image shader Src remains on the raster pipeline; its optimization to SrcOver is only for opaque solid colors without a shader/filter.",
+  "schema_version": 1,
+  "scrolling_repaired_comparisons": [
+    {
+      "after_mismatched_pixels": 0,
+      "after_rgba_sha256": "9b506fa42aba3dc33eac67a28f8de7975a46e442d784eecb50f250c36f573df2",
+      "after_status": "exact",
+      "before_mismatched_pixels": 1252,
+      "before_rgba_sha256": "adbfb15f8c306b86ed5a547340e06b68b7dde5d945b16ce39f6ba73aacf54654",
+      "before_status": "different",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "id": "wpt/css_flexbox/overflow-area-001",
+      "oracle_identity_sha256": "2646508bac1e1eaed98eb0de9b1890d917160fe833570f4c1d2a5a4222f9d616",
+      "owner": "openui-paint",
+      "profile": "desktop-1280x720@1.25"
+    },
+    {
+      "after_mismatched_pixels": 0,
+      "after_rgba_sha256": "72936b1e13c54331e34c826d339e2fb41f463ecb5d37a75b466f7c8bc7541414",
+      "after_status": "exact",
+      "before_mismatched_pixels": 1253,
+      "before_rgba_sha256": "59b95f8542fe8a507665df961004fd738d82e5270966c15ec4bffadd104c5e9f",
+      "before_status": "different",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "id": "wpt/css_flexbox/overflow-area-002",
+      "oracle_identity_sha256": "42e415af352b7ead354b34966b4e0fb5a9d2149938aa552fbe11ac9b6351e1bb",
+      "owner": "openui-paint",
+      "profile": "desktop-1280x720@1.25"
+    },
+    {
+      "after_mismatched_pixels": 0,
+      "after_rgba_sha256": "11c7d5b2ae8c02e6670c0a6b2f3a2a814f9a0fa0c6242e99a28076c9bae9e1e0",
+      "after_status": "exact",
+      "before_mismatched_pixels": 2992,
+      "before_rgba_sha256": "bf3dfd5b052c89eaf5890ed3b5976aa8d1c31264f27483b5c60cd7dbcb0b01fc",
+      "before_status": "different",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "id": "wpt/css_flexbox/overflow-area-001",
+      "oracle_identity_sha256": "9ca415ca5b16c50026e768b8c1c105ab5439b5cd4ba349c73ed13d3088b9402f",
+      "owner": "openui-paint",
+      "profile": "desktop-1920x1080@1.5"
+    },
+    {
+      "after_mismatched_pixels": 0,
+      "after_rgba_sha256": "b21416b54877d5e3f6b99138c8fdb118cc5bb07b8a84c407a249f1f80a4162a8",
+      "after_status": "exact",
+      "before_mismatched_pixels": 2992,
+      "before_rgba_sha256": "32c04a8409e90b303e6d8e23b70d8dee06190c3f6b4abae27fa6676c302e3593",
+      "before_status": "different",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "id": "wpt/css_flexbox/overflow-area-002",
+      "oracle_identity_sha256": "08e4afc5299fc9d412b30b02ea2c8cba1aecc954e46433535a600e78d1d84fb4",
+      "owner": "openui-paint",
+      "profile": "desktop-1920x1080@1.5"
+    }
+  ],
+  "traced_opaque_layer_counts": [
+    {
+      "all_declared_opaque": true,
+      "id": "wpt/css_flexbox/overflow-area-001",
+      "layers": 17,
+      "profile": "desktop-1280x720@1.25"
+    },
+    {
+      "all_declared_opaque": true,
+      "id": "wpt/css_flexbox/overflow-area-002",
+      "layers": 17,
+      "profile": "desktop-1280x720@1.25"
+    },
+    {
+      "all_declared_opaque": true,
+      "id": "wpt/css_flexbox/overflow-area-001",
+      "layers": 17,
+      "profile": "desktop-1920x1080@1.5"
+    },
+    {
+      "all_declared_opaque": true,
+      "id": "wpt/css_flexbox/overflow-area-002",
+      "layers": 17,
+      "profile": "desktop-1920x1080@1.5"
+    }
+  ]
+}

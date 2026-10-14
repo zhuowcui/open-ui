@@ -20,6 +20,7 @@ typedef struct OuiResource OuiResource;
 typedef struct OuiFontFace OuiFontFace;
 typedef struct OuiListener OuiListener;
 typedef struct OuiBuffer OuiBuffer;
+typedef struct OuiAccessibilitySnapshot OuiAccessibilitySnapshot;
 
 typedef enum OuiStatus {
   OUI_OK = 0,
@@ -42,6 +43,19 @@ typedef enum OuiBackendPreference {
   OUI_BACKEND_OPENGL = 1,
   OUI_BACKEND_SOFTWARE = 2
 } OuiBackendPreference;
+
+/* Logical axes follow the target element's writing mode and direction. */
+typedef enum OuiScrollAlignment {
+  OUI_SCROLL_START = 0,
+  OUI_SCROLL_CENTER = 1,
+  OUI_SCROLL_END = 2,
+  OUI_SCROLL_NEAREST = 3
+} OuiScrollAlignment;
+
+typedef enum OuiScrollIntoViewContainer {
+  OUI_SCROLL_CONTAINERS_ALL = 0,
+  OUI_SCROLL_CONTAINER_NEAREST = 1
+} OuiScrollIntoViewContainer;
 
 typedef enum OuiElementTag {
   OUI_ELEMENT_DIV = 0,
@@ -82,7 +96,11 @@ typedef enum OuiElementTag {
   OUI_ELEMENT_FORM = 35,
   OUI_ELEMENT_EMBED = 36,
   OUI_ELEMENT_HTML = 37,
-  OUI_ELEMENT_BODY = 38
+  OUI_ELEMENT_BODY = 38,
+  /* Native SVG viewport for retained UI children. Width/height include border
+   * and padding. Uses the shared Rust foreignObject constructor and ordinary
+   * element handles, styles, events, and document ownership. */
+  OUI_ELEMENT_SVG_FOREIGN_OBJECT = 39
 } OuiElementTag;
 
 typedef enum OuiLengthUnit {
@@ -95,7 +113,10 @@ typedef enum OuiLengthUnit {
   OUI_LENGTH_AUTO = 6,
   OUI_LENGTH_NONE = 7,
   OUI_LENGTH_VMIN = 8,
-  OUI_LENGTH_VMAX = 9
+  OUI_LENGTH_VMAX = 9,
+  OUI_LENGTH_CH = 10,
+  OUI_LENGTH_EX = 11,
+  OUI_LENGTH_LH = 12
 } OuiLengthUnit;
 
 /* Values for OUI_STYLE_VALUE_ENUM, selected by the property schema. */
@@ -137,7 +158,11 @@ typedef enum OuiAlignItems {
   OUI_ALIGN_ITEMS_NORMAL = 0, OUI_ALIGN_ITEMS_STRETCH = 1,
   OUI_ALIGN_ITEMS_CENTER = 2, OUI_ALIGN_ITEMS_START = 3,
   OUI_ALIGN_ITEMS_END = 4, OUI_ALIGN_ITEMS_FLEX_START = 5,
-  OUI_ALIGN_ITEMS_FLEX_END = 6, OUI_ALIGN_ITEMS_BASELINE = 7
+  OUI_ALIGN_ITEMS_FLEX_END = 6, OUI_ALIGN_ITEMS_BASELINE = 7,
+  OUI_ALIGN_ITEMS_AUTO = 8, OUI_ALIGN_ITEMS_SELF_START = 9,
+  OUI_ALIGN_ITEMS_SELF_END = 10, OUI_ALIGN_ITEMS_LEFT = 11,
+  OUI_ALIGN_ITEMS_RIGHT = 12, OUI_ALIGN_ITEMS_LAST_BASELINE = 13,
+  OUI_ALIGN_ITEMS_LEGACY = 14
 } OuiAlignItems;
 
 typedef enum OuiJustifyContent {
@@ -146,7 +171,9 @@ typedef enum OuiJustifyContent {
   OUI_JUSTIFY_CONTENT_FLEX_START = 4, OUI_JUSTIFY_CONTENT_FLEX_END = 5,
   OUI_JUSTIFY_CONTENT_SPACE_BETWEEN = 6,
   OUI_JUSTIFY_CONTENT_SPACE_AROUND = 7,
-  OUI_JUSTIFY_CONTENT_SPACE_EVENLY = 8
+  OUI_JUSTIFY_CONTENT_SPACE_EVENLY = 8, OUI_JUSTIFY_CONTENT_STRETCH = 9,
+  OUI_JUSTIFY_CONTENT_BASELINE = 10, OUI_JUSTIFY_CONTENT_LAST_BASELINE = 11,
+  OUI_JUSTIFY_CONTENT_LEFT = 12, OUI_JUSTIFY_CONTENT_RIGHT = 13
 } OuiJustifyContent;
 
 typedef enum OuiCursor {
@@ -203,6 +230,11 @@ typedef enum OuiEventType {
   OUI_EVENT_ANIMATION_ITERATION = 21,
   OUI_EVENT_ANIMATION_END = 22,
   OUI_EVENT_ANIMATION_CANCEL = 23,
+  OUI_EVENT_POINTER_CANCEL = 24,
+  OUI_EVENT_FOCUS_IN = 25,
+  OUI_EVENT_FOCUS_OUT = 26,
+  OUI_EVENT_SELECT = 27,
+  OUI_EVENT_SELECTION_CHANGE = 28,
 } OuiEventType;
 
 typedef enum OuiEventPhase {
@@ -213,7 +245,8 @@ typedef enum OuiEventPhase {
 
 typedef enum OuiEventFlags {
   OUI_EVENT_DEFAULT_PREVENTED = 1u << 0,
-  OUI_EVENT_PROPAGATION_STOPPED = 1u << 1
+  OUI_EVENT_PROPAGATION_STOPPED = 1u << 1,
+  OUI_EVENT_IMMEDIATE_PROPAGATION_STOPPED = 1u << 2
 } OuiEventFlags;
 
 typedef enum OuiModifiers {
@@ -258,8 +291,69 @@ typedef enum OuiAccessibilityRole {
   OUI_ACCESSIBILITY_ROLE_DIALOG = 12,
   OUI_ACCESSIBILITY_ROLE_HEADING = 13,
   OUI_ACCESSIBILITY_ROLE_STATUS = 14,
-  OUI_ACCESSIBILITY_ROLE_ALERT = 15
+  OUI_ACCESSIBILITY_ROLE_ALERT = 15,
+  OUI_ACCESSIBILITY_ROLE_OTHER = 16
 } OuiAccessibilityRole;
+
+typedef enum OuiAccessibilityNodeFlags {
+  OUI_ACCESSIBILITY_NODE_HIDDEN = 1u << 0,
+  OUI_ACCESSIBILITY_NODE_REQUIRED = 1u << 1,
+  OUI_ACCESSIBILITY_NODE_READ_ONLY = 1u << 2,
+  OUI_ACCESSIBILITY_NODE_MODAL = 1u << 3,
+  OUI_ACCESSIBILITY_NODE_HAS_BOUNDS = 1u << 4
+} OuiAccessibilityNodeFlags;
+
+typedef enum OuiAccessibilityNodeActions {
+  OUI_ACCESSIBILITY_ACTION_CLICK_BIT = 1u << 0,
+  OUI_ACCESSIBILITY_ACTION_FOCUS_BIT = 1u << 1,
+  OUI_ACCESSIBILITY_ACTION_BLUR_BIT = 1u << 2,
+  OUI_ACCESSIBILITY_ACTION_INCREMENT_BIT = 1u << 3,
+  OUI_ACCESSIBILITY_ACTION_DECREMENT_BIT = 1u << 4,
+  OUI_ACCESSIBILITY_ACTION_EXPAND_BIT = 1u << 5,
+  OUI_ACCESSIBILITY_ACTION_COLLAPSE_BIT = 1u << 6,
+  OUI_ACCESSIBILITY_ACTION_SCROLL_INTO_VIEW_BIT = 1u << 7,
+  OUI_ACCESSIBILITY_ACTION_SET_VALUE_BIT = 1u << 8,
+  OUI_ACCESSIBILITY_ACTION_REPLACE_SELECTED_TEXT_BIT = 1u << 9,
+  OUI_ACCESSIBILITY_ACTION_SET_TEXT_SELECTION_BIT = 1u << 10,
+  OUI_ACCESSIBILITY_ACTION_SCROLL_DOWN_BIT = 1u << 11,
+  OUI_ACCESSIBILITY_ACTION_SCROLL_UP_BIT = 1u << 12,
+  OUI_ACCESSIBILITY_ACTION_SCROLL_LEFT_BIT = 1u << 13,
+  OUI_ACCESSIBILITY_ACTION_SCROLL_RIGHT_BIT = 1u << 14
+} OuiAccessibilityNodeActions;
+
+typedef enum OuiAccessibilitySnapshotText {
+  OUI_ACCESSIBILITY_TEXT_LABEL = 0,
+  OUI_ACCESSIBILITY_TEXT_DESCRIPTION = 1,
+  OUI_ACCESSIBILITY_TEXT_VALUE = 2,
+  OUI_ACCESSIBILITY_TEXT_ROLE_NAME = 3,
+  OUI_ACCESSIBILITY_TEXT_PLACEHOLDER = 4
+} OuiAccessibilitySnapshotText;
+
+typedef enum OuiAccessibilityStateFlags {
+  OUI_ACCESSIBILITY_STATE_DISABLED = 1u << 0,
+  OUI_ACCESSIBILITY_STATE_HAS_SELECTED = 1u << 1,
+  OUI_ACCESSIBILITY_STATE_SELECTED = 1u << 2,
+  OUI_ACCESSIBILITY_STATE_HAS_EXPANDED = 1u << 3,
+  OUI_ACCESSIBILITY_STATE_EXPANDED = 1u << 4,
+  OUI_ACCESSIBILITY_STATE_HAS_TOGGLED = 1u << 5,
+  OUI_ACCESSIBILITY_STATE_TOGGLED_TRUE = 1u << 6,
+  OUI_ACCESSIBILITY_STATE_TOGGLED_MIXED = 1u << 7,
+  OUI_ACCESSIBILITY_STATE_HAS_NUMERIC_VALUE = 1u << 8,
+  OUI_ACCESSIBILITY_STATE_HAS_NUMERIC_MIN = 1u << 9,
+  OUI_ACCESSIBILITY_STATE_HAS_NUMERIC_MAX = 1u << 10,
+  OUI_ACCESSIBILITY_STATE_HAS_NUMERIC_STEP = 1u << 11,
+  OUI_ACCESSIBILITY_STATE_HAS_SCROLL_X = 1u << 12,
+  OUI_ACCESSIBILITY_STATE_HAS_SCROLL_Y = 1u << 13,
+  OUI_ACCESSIBILITY_STATE_HAS_TEXT_SELECTION = 1u << 14
+} OuiAccessibilityStateFlags;
+
+typedef enum OuiAccessibilitySnapshotIds {
+  OUI_ACCESSIBILITY_IDS_CHILDREN = 0,
+  OUI_ACCESSIBILITY_IDS_LABELLED_BY = 1,
+  OUI_ACCESSIBILITY_IDS_DESCRIBED_BY = 2,
+  OUI_ACCESSIBILITY_IDS_CONTROLS = 3,
+  OUI_ACCESSIBILITY_IDS_DETAILS = 4
+} OuiAccessibilitySnapshotIds;
 
 typedef enum OuiAccessibilityLive {
   OUI_ACCESSIBILITY_LIVE_OFF = 0,
@@ -285,7 +379,11 @@ typedef enum OuiAccessibilityAction {
   OUI_ACCESSIBILITY_SET_VALUE = 7,
   OUI_ACCESSIBILITY_REPLACE_SELECTED_TEXT = 8,
   OUI_ACCESSIBILITY_SET_TEXT_SELECTION = 9,
-  OUI_ACCESSIBILITY_SCROLL_INTO_VIEW = 10
+  OUI_ACCESSIBILITY_SCROLL_INTO_VIEW = 10,
+  OUI_ACCESSIBILITY_SCROLL_DOWN = 11,
+  OUI_ACCESSIBILITY_SCROLL_UP = 12,
+  OUI_ACCESSIBILITY_SCROLL_LEFT = 13,
+  OUI_ACCESSIBILITY_SCROLL_RIGHT = 14
 } OuiAccessibilityAction;
 
 typedef enum OuiTransformOperationKind {
@@ -357,6 +455,16 @@ typedef struct OuiDocumentConfig {
   uint32_t abi_version;
   OuiViewportMetrics viewport;
 } OuiDocumentConfig;
+
+/* Caller-owned client and content dimensions in logical CSS pixels. */
+typedef struct OuiScrollMetricsV1 {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  double client_width;
+  double client_height;
+  double scroll_width;
+  double scroll_height;
+} OuiScrollMetricsV1;
 
 typedef enum OuiFontFaceStyle {
   OUI_FONT_FACE_STYLE_NORMAL = 0,
@@ -453,6 +561,7 @@ typedef struct OuiBitmap {
   uint32_t width;
   uint32_t height;
   size_t stride;
+  /* Owned top-to-bottom RGBA8888 rows; colors are premultiplied by alpha. */
   OuiBuffer* pixels;
 } OuiBitmap;
 
@@ -485,6 +594,65 @@ typedef struct OuiEasing {
   uint32_t reserved;
   double values[4];
 } OuiEasing;
+
+/* Additive curve descriptor tags; OuiEasingKind and OuiEasing stay unchanged. */
+typedef enum OuiEasingCurveKindV1 {
+  OUI_EASING_CURVE_LINEAR = 0,
+  OUI_EASING_CURVE_CUBIC_BEZIER = 1,
+  OUI_EASING_CURVE_STEPS = 2,
+  OUI_EASING_CURVE_LINEAR_STOPS = 3,
+  OUI_EASING_CURVE_LINEAR_STOPS_PERCENT = 4
+} OuiEasingCurveKindV1;
+
+typedef struct OuiLinearStopV1 {
+  double input; /* normalized for kind 3; authored percent for kind 4 */
+  double output;
+} OuiLinearStopV1;
+
+/* Caller-owned input. Initialize size/version and zero unused/reserved fields.
+ * LINEAR uses no other fields. CUBIC_BEZIER uses values[0..3] as x1,y1,x2,y2.
+ * STEPS uses step_count and step_position. The two LINEAR_STOPS kinds use
+ * stops/count/stride and require at least two finite ordered points; equal
+ * inputs are accepted. Normalized points must span 0 through 1. Percentage
+ * points retain their authored units and need not begin at 0 or end at 100.
+ * Each point begins with OuiLinearStopV1; any stride tail is ignored. All
+ * descriptor/point storage is aligned, initialized, immutable and readable
+ * through the call. The known prefix is copied only after size/version checks;
+ * future descriptor tails are ignored. No caller pointer is retained. */
+typedef struct OuiEasingCurveV1 {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  uint32_t kind;
+  uint32_t step_position;
+  uint32_t step_count;
+  uint32_t reserved;
+  double values[4];
+  const OuiLinearStopV1* stops;
+  size_t stop_count;
+  size_t stop_stride;
+} OuiEasingCurveV1;
+
+typedef struct OuiAnimationOptionsV1 {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  double delay_ms;
+  double duration_ms;
+  double iterations; /* -1 means infinite */
+  double playback_rate;
+  uint32_t direction; /* legacy options tag meanings */
+  uint32_t fill;
+  uint32_t play_state;
+  uint32_t composite;
+  const OuiEasingCurveV1* easing; /* NULL means linear */
+} OuiAnimationOptionsV1;
+
+typedef struct OuiKeyframeV1 {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  double offset;
+  OuiStyleValue value;
+  const OuiEasingCurveV1* easing; /* NULL means a linear segment curve */
+} OuiKeyframeV1;
 
 typedef struct OuiAnimationOptions {
   uint32_t struct_size;
@@ -542,6 +710,9 @@ typedef struct OuiAnimationEvent {
   OuiElement* target;
 } OuiAnimationEvent;
 
+/* Callback payload is borrowed from an owned native event. Only flags carry
+ * cancellation/propagation requests back to the shared dispatcher. Copy text
+ * before returning if it is needed later; do not retain callback event pointers. */
 typedef struct OuiEvent {
   uint32_t struct_size;
   uint32_t abi_version;
@@ -561,6 +732,49 @@ typedef struct OuiEvent {
   OuiElement* current_target;
 } OuiEvent;
 
+/* Snapshot of a currently executing native focus callback. related_target is
+ * an independently owned, generation-checked handle: destroy it with
+ * oui_element_destroy when non-NULL. It does not keep its document alive.
+ * Release an earlier related_target before reusing this output structure. */
+typedef struct OuiFocusEventInfoV1 {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  uint32_t bubbles;
+  uint32_t cancelable;
+  OuiElement* related_target;
+} OuiFocusEventInfoV1;
+
+typedef enum OuiEditCommandKind {
+  OUI_EDIT_MOVE = 0,
+  OUI_EDIT_DELETE = 1,
+  OUI_EDIT_SELECT_ALL = 2,
+  OUI_EDIT_UNDO = 3,
+  OUI_EDIT_REDO = 4
+} OuiEditCommandKind;
+
+typedef enum OuiTextDirection {
+  OUI_TEXT_BACKWARD = 0,
+  OUI_TEXT_FORWARD = 1
+} OuiTextDirection;
+
+typedef enum OuiTextUnit {
+  OUI_TEXT_GRAPHEME = 0,
+  OUI_TEXT_WORD = 1,
+  OUI_TEXT_LINE = 2,
+  OUI_TEXT_DOCUMENT = 3
+} OuiTextUnit;
+
+/* Offsets and selection remain UTF-8 bytes on grapheme boundaries. */
+typedef struct OuiEditCommandV1 {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  uint32_t command; /* OuiEditCommandKind */
+  uint32_t direction; /* OuiTextDirection; zero unless MOVE or DELETE */
+  uint32_t unit; /* OuiTextUnit; zero unless MOVE or DELETE */
+  uint32_t extend_selection; /* 0 or 1 for MOVE; zero otherwise */
+  uint32_t reserved[2]; /* Must be zero */
+} OuiEditCommandV1;
+
 typedef struct OuiAccessibilityUpdate {
   uint32_t struct_size;
   uint32_t abi_version;
@@ -572,6 +786,87 @@ typedef struct OuiAccessibilityUpdate {
   uint16_t reserved;
 } OuiAccessibilityUpdate;
 
+/* New snapshot structs are append-only and start with size and ABI version. */
+enum {
+  OUI_ACCESSIBILITY_SCROLL_HAS_X = 1u << 0,
+  OUI_ACCESSIBILITY_SCROLL_HAS_Y = 1u << 1,
+  OUI_ACCESSIBILITY_SCROLL_HAS_X_MIN = 1u << 2,
+  OUI_ACCESSIBILITY_SCROLL_HAS_X_MAX = 1u << 3,
+  OUI_ACCESSIBILITY_SCROLL_HAS_Y_MIN = 1u << 4,
+  OUI_ACCESSIBILITY_SCROLL_HAS_Y_MAX = 1u << 5,
+  OUI_ACCESSIBILITY_SCROLL_DIRECTION_ACTION_MASK =
+      (1u << 11) | (1u << 12) | (1u << 13) | (1u << 14)
+};
+
+/* Owned native logical scroll metadata. Flags distinguish absent fields from
+ * zero values. actions uses the existing directional NodeInfo action bits.
+ * Values retain native double precision; these are not Chromium AX wire ints.
+ */
+typedef struct OuiAccessibilityScrollInfoV1 {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  uint32_t flags;
+  uint32_t actions;
+  double scroll_x;
+  double scroll_y;
+  double scroll_x_min;
+  double scroll_x_max;
+  double scroll_y_min;
+  double scroll_y_max;
+} OuiAccessibilityScrollInfoV1;
+
+typedef struct OuiAccessibilitySnapshotInfo {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  uint64_t generation;
+  uint64_t focus_id;
+  size_t node_count;
+  size_t changed_count;
+  size_t removed_count;
+  uint8_t full_tree;
+  uint8_t reduced_motion;
+  uint8_t reserved[6];
+} OuiAccessibilitySnapshotInfo;
+
+typedef struct OuiAccessibilityNodeInfo {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  uint64_t id;
+  uint32_t role;
+  uint32_t flags;
+  uint32_t actions;
+  uint32_t reserved;
+  OuiRect bounds;
+  size_t child_count;
+  size_t labelled_by_count;
+  size_t described_by_count;
+  size_t controls_count;
+  size_t details_count;
+  size_t label_length;
+  size_t description_length;
+  size_t value_length;
+  size_t role_name_length;
+} OuiAccessibilityNodeInfo;
+
+typedef struct OuiAccessibilityNodeState {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  uint32_t flags;
+  uint32_t live; /* 0 absent; otherwise OuiAccessibilityLive + 1 */
+  double numeric_value;
+  double numeric_min;
+  double numeric_max;
+  double numeric_step;
+  double scroll_x;
+  double scroll_y;
+  size_t placeholder_length;
+  size_t character_lengths_count;
+  uint64_t selection_anchor_node;
+  size_t selection_anchor_index;
+  uint64_t selection_focus_node;
+  size_t selection_focus_index;
+} OuiAccessibilityNodeState;
+
 typedef struct OuiErrorInfo {
   uint32_t struct_size;
   uint32_t abi_version;
@@ -581,6 +876,80 @@ typedef struct OuiErrorInfo {
 } OuiErrorInfo;
 
 typedef void (*OuiEventCallback)(OuiEvent* event, void* user_data);
+
+typedef enum OuiPlatformEventType {
+  OUI_PLATFORM_BACKEND_CHANGED = 1,
+  OUI_PLATFORM_RESIZED = 2,
+  OUI_PLATFORM_POINTER = 3,
+  OUI_PLATFORM_WHEEL = 4,
+  OUI_PLATFORM_KEY = 5,
+  OUI_PLATFORM_TEXT_INPUT = 6,
+  OUI_PLATFORM_COMPOSITION_START = 7,
+  OUI_PLATFORM_COMPOSITION_UPDATE = 8,
+  OUI_PLATFORM_COMPOSITION_END = 9,
+  OUI_PLATFORM_FOCUSED = 10,
+  OUI_PLATFORM_DROPPED_FILE = 11,
+  OUI_PLATFORM_HOVERED_FILE = 12,
+  OUI_PLATFORM_HOVERED_FILE_CANCELLED = 13,
+  OUI_PLATFORM_PRESENTED = 14,
+  OUI_PLATFORM_CLOSE_REQUESTED = 15
+} OuiPlatformEventType;
+
+enum {
+  OUI_PLATFORM_FLAG_REPEAT = 1u << 0,
+  OUI_PLATFORM_FLAG_FOCUSED = 1u << 1,
+  OUI_PLATFORM_FLAG_FALLBACK = 1u << 2,
+  OUI_PLATFORM_POINTER_MOVE = 0,
+  OUI_PLATFORM_POINTER_DOWN = 1,
+  OUI_PLATFORM_POINTER_UP = 2,
+  OUI_PLATFORM_POINTER_CANCEL = 3,
+  OUI_PLATFORM_POINTER_LEAVE = 4,
+  OUI_PLATFORM_KEY_DOWN = 0,
+  OUI_PLATFORM_KEY_UP = 1
+};
+
+/* Append-only platform notification. Unused fields are zero. text is UTF-8;
+ * path is a length-delimited native Linux filename, which need not be UTF-8.
+ * button is 0=left, 1=middle, 2=right, or 3 plus the native other-button ID.
+ * pointer_id is the full native 64-bit ID; legacy OuiEvent uses its low 32 bits.
+ * A legacy event target may be NULL when no C element handle exists for it.
+ */
+typedef struct OuiPlatformEvent {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  uint32_t event_type;
+  uint32_t phase;
+  uint32_t flags;
+  uint32_t backend;
+  uint64_t pointer_id;
+  float x;
+  float y;
+  float delta_x;
+  float delta_y;
+  int32_t key_code;
+  uint32_t modifiers;
+  uint32_t button;
+  uint32_t reserved;
+  uint64_t frame_number;
+  double time_ms;
+  OuiUtf8 text;
+  const uint8_t* path;
+  size_t path_length;
+  OuiViewportMetrics viewport;
+} OuiPlatformEvent;
+
+typedef void (*OuiPlatformEventCallback)(OuiApp* app,
+                                       const OuiPlatformEvent* event,
+                                       void* user_data);
+
+typedef struct OuiAppRunConfig {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  uint32_t flags;
+  uint32_t reserved;
+  OuiPlatformEventCallback callback;
+  void* user_data;
+} OuiAppRunConfig;
 
 /*
  * Ownership and callback contract:
@@ -594,6 +963,13 @@ typedef void (*OuiEventCallback)(OuiEvent* event, void* user_data);
  *   remain valid until its OuiListener is destroyed.
  * - Setting OUI_EVENT_DEFAULT_PREVENTED or OUI_EVENT_PROPAGATION_STOPPED in a
  *   callback updates dispatch state; callbacks must not retain OuiEvent*.
+ * - OUI_EVENT_IMMEDIATE_PROPAGATION_STOPPED also stops remaining listeners in
+ *   the current invocation, including Rust listeners on the shared route.
+ * - Accessibility snapshots own their nodes and strings. A snapshot remains
+ *   readable after its document is destroyed, on the snapshot's owning thread.
+ *   Destroy each snapshot after use. Output strings are raw UTF-8 bytes without
+ *   a terminator. The first copy call may use NULL and zero capacity to query
+ *   the required length or count.
  */
 
 uint32_t oui_abi_version(void);
@@ -604,6 +980,20 @@ OuiStatus oui_app_create(const OuiAppConfig* config, OuiApp** out_app);
 OuiStatus oui_app_destroy(OuiApp* app);
 OuiStatus oui_app_document(OuiApp* app, OuiDocument** out_document);
 
+/* Blocking Linux lifecycle, enabled by the SDK's linux feature. Call on the
+ * process's main/UI thread, using the app's existing retained document.
+ * An app may attempt run once. Nested runs return OUI_ERROR_REENTRANT.
+ * callback is optional; callback/user_data must remain valid until run returns.
+ * Callbacks run after document handling and engine/platform presentation
+ * borrows are released, may mutate retained elements and request exit, and
+ * must not unwind or retain event/text/path pointers. Copy payloads if needed.
+ * App destruction during run is rejected. Document handles remain usable.
+ * Request exit before run or within a UI-thread callback. Headless-only builds
+ * return OUI_ERROR_INVALID_STATE from run; the other app APIs remain available.
+ */
+OuiStatus oui_app_run(OuiApp* app, const OuiAppRunConfig* config);
+OuiStatus oui_app_request_exit(OuiApp* app);
+
 OuiStatus oui_document_create(const OuiDocumentConfig* config, OuiDocument** out_document);
 OuiStatus oui_document_destroy(OuiDocument* document);
 OuiStatus oui_document_root(OuiDocument* document, OuiElement** out_root);
@@ -612,14 +1002,72 @@ OuiStatus oui_document_get_viewport(OuiDocument* document, OuiViewportMetrics* o
 OuiStatus oui_document_begin_update(OuiDocument* document);
 OuiStatus oui_document_end_update(OuiDocument* document);
 OuiStatus oui_document_update(OuiDocument* document);
+/* Process one bounded selection-notification turn on the owning thread.
+ * Callbacks run after engine/platform borrows end. Reentry does not recursively
+ * deliver tasks. out_pending receives 0 or 1 only on success. Native Linux apps
+ * pump automatically; headless apps may call again while pending is 1. */
+OuiStatus oui_document_dispatch_pending_events_v1(OuiDocument* document, uint32_t* out_pending);
 OuiStatus oui_document_render_rgba(OuiDocument* document, OuiBitmap* out_bitmap);
 OuiStatus oui_document_render_png(OuiDocument* document, OuiBuffer** out_buffer);
+/* Explicit events use the same ordered Rust/C capture/target/bubble route.
+ * Native source bubbling/cancellation policy is used because this descriptor
+ * has no explicit policy fields. Pointer enter/leave do not bubble; those events
+ * and pointer cancel are noncancelable. Click, focus/blur and legacy text/IME
+ * defaults retain their native operations. Normalized editing APIs below are
+ * preferred when a focused edit and owned input metadata are needed. Callback
+ * cancellation may prevent a default; callbacks run without engine borrows.
+ * Input/output descriptor storage remains readable/writable through dispatch;
+ * result flags, target, current_target and completed-route phase are returned.
+ * The legacy completed-route phase differs from an active callback phase. */
 OuiStatus oui_document_dispatch_event(OuiDocument* document, OuiElement* target, OuiEvent* event);
+
+/* Call only on the owning thread during a native FOCUS, BLUR, FOCUS_IN or
+ * FOCUS_OUT listener, using that callback's exact borrowed event pointer.
+ * Initialize struct_size and abi_version; the output must cover that size.
+ * Nested callbacks preserve the outer callback's context. Outside an active
+ * callback scope, the query returns INVALID_STATE without dereferencing the
+ * event pointer. Callbacks must not retain the borrowed event pointer.
+ * The snapshot and its related handle may outlive the callback; node/document
+ * destruction makes the handle stale. All four focus events are noncancelable.
+ * FOCUS_IN/OUT bubble; FOCUS/BLUR visit capture and target listeners only. */
+OuiStatus oui_event_focus_info_v1(const OuiEvent* event, OuiFocusEventInfoV1* out_info);
+/* Copy the current focused element as an independently owned weak-document
+ * handle, or NULL when no element has focus. Destroy a non-NULL output with
+ * oui_element_destroy. The output is written only on success. */
+OuiStatus oui_document_focused_element_v1(OuiDocument* document, OuiElement** out_element);
+/*
+ * Native normalized input uses the focused control and the shared Rust/Linux
+ * default-action path. key->event_type is OUI_EVENT_KEY_DOWN or KEY_UP;
+ * key->text is the logical key name, distinct from committed_text. flags must
+ * be zero. The descriptor is not modified. Callbacks may cancel keydown or
+ * beforeinput; one input event follows a successful edit. Key-up, control/meta
+ * shortcuts and platform control characters do not insert committed_text.
+ * Both calls are synchronous and owning-thread-only. Descriptors and UTF-8
+ * slices need only remain readable through the call; callbacks and user_data
+ * obey the existing listener lifetime contract. No JavaScript is executed.
+ */
+OuiStatus oui_document_dispatch_key_input_v1(OuiDocument* document, const OuiEvent* key, OuiUtf8 committed_text);
+OuiStatus oui_document_dispatch_text_input_v1(OuiDocument* document, OuiUtf8 text);
 OuiStatus oui_document_dispatch_pointer_event(OuiDocument* document, OuiEvent* event);
 OuiStatus oui_document_hit_test(OuiDocument* document, float x, float y, OuiElement** out_element);
+/* Found elements return owned handles; destroy them with oui_element_destroy. */
+OuiStatus oui_document_element_by_id(OuiDocument* document, OuiUtf8 id, OuiElement** out_element);
 OuiStatus oui_document_advance_focus(OuiDocument* document, int32_t direction, OuiElement** out_element);
 OuiStatus oui_document_set_modal_root(OuiDocument* document, OuiElement* root);
 OuiStatus oui_document_accessibility_update(OuiDocument* document, OuiAccessibilityUpdate* out_update);
+OuiStatus oui_document_accessibility_snapshot(OuiDocument* document, const OuiAccessibilitySnapshot* previous, OuiAccessibilitySnapshot** out_snapshot);
+OuiStatus oui_accessibility_snapshot_destroy(OuiAccessibilitySnapshot* snapshot);
+OuiStatus oui_accessibility_snapshot_get_info(const OuiAccessibilitySnapshot* snapshot, OuiAccessibilitySnapshotInfo* out_info);
+OuiStatus oui_accessibility_snapshot_get_node(const OuiAccessibilitySnapshot* snapshot, size_t index, OuiAccessibilityNodeInfo* out_node);
+OuiStatus oui_accessibility_snapshot_get_node_state(const OuiAccessibilitySnapshot* snapshot, uint64_t node_id, OuiAccessibilityNodeState* out_state);
+/* Prefix-first validation; writes only on success, preserves future tails.
+ * Readable after document destruction, on the snapshot's owning thread.
+ */
+OuiStatus oui_accessibility_snapshot_get_scroll_info_v1(const OuiAccessibilitySnapshot* snapshot, uint64_t node_id, OuiAccessibilityScrollInfoV1* out_info);
+OuiStatus oui_accessibility_snapshot_copy_text(const OuiAccessibilitySnapshot* snapshot, uint64_t node_id, uint32_t field, uint8_t* destination, size_t capacity, size_t* out_length);
+OuiStatus oui_accessibility_snapshot_copy_character_lengths(const OuiAccessibilitySnapshot* snapshot, uint64_t node_id, uint8_t* destination, size_t capacity, size_t* out_count);
+OuiStatus oui_accessibility_snapshot_copy_ids(const OuiAccessibilitySnapshot* snapshot, uint64_t node_id, uint32_t kind, uint64_t* destination, size_t capacity, size_t* out_count);
+OuiStatus oui_accessibility_snapshot_copy_changes(const OuiAccessibilitySnapshot* snapshot, uint8_t removed, uint64_t* destination, size_t capacity, size_t* out_count);
 OuiStatus oui_document_set_reduced_motion(OuiDocument* document, uint8_t reduced);
 OuiStatus oui_document_set_animation_time(OuiDocument* document, double time_ms);
 OuiStatus oui_document_is_animating(OuiDocument* document, uint8_t* out_animating);
@@ -643,18 +1091,104 @@ OuiStatus oui_font_face_destroy(OuiFontFace* face);
 OuiStatus oui_element_create(OuiDocument* document, OuiElementTag tag, OuiElement** out_element);
 OuiStatus oui_text_create(OuiDocument* document, OuiUtf8 text, OuiElement** out_text);
 OuiStatus oui_element_destroy(OuiElement* element);
+/* Clone authored descendants and live input/default state into a detached tree.
+ * The result is an owned, owning-thread handle in the same document. Listeners,
+ * focus, scroll position and presentation tracks are not copied. Destroy the
+ * handle with oui_element_destroy. out_clone is unchanged on error. */
+OuiStatus oui_element_clone_subtree_v1(OuiElement* element, OuiElement** out_clone);
 OuiStatus oui_element_append_child(OuiElement* parent, OuiElement* child);
 OuiStatus oui_element_insert_before(OuiElement* parent, OuiElement* child, OuiElement* before);
 OuiStatus oui_element_remove(OuiElement* element);
+/* Detach without invalidating the node handle; reattach with append/insert. */
+OuiStatus oui_element_detach(OuiElement* element);
 OuiStatus oui_element_remove_all_children(OuiElement* element);
 OuiStatus oui_element_set_text(OuiElement* element, OuiUtf8 text);
 OuiStatus oui_element_set_attribute(OuiElement* element, OuiUtf8 name, OuiUtf8 value);
 OuiStatus oui_element_remove_attribute(OuiElement* element, OuiUtf8 name);
+/* Read an authored native attribute. A present value returns an independently
+ * owned UTF-8 buffer, including empty values; absence returns NULL. The caller
+ * destroys a returned buffer with oui_buffer_destroy. It survives subsequent
+ * element mutation and document destruction. out_value is unchanged on error.
+ * Attribute lookup uses the same retained Engine operation as Rust. */
+OuiStatus oui_element_get_attribute_v1(OuiElement* element, OuiUtf8 name,
+                                      OuiBuffer** out_value);
+/* LINE_HEIGHT additionally accepts OUI_STYLE_VALUE_LENGTH, including retained
+ * em/rem/ch/ex/lh/viewport units and percentages. The shared Engine computes
+ * font metrics and refreshes after native mutations. lh in line-height uses
+ * the parent line height; auto, none, negative and non-finite values fail. */
 OuiStatus oui_element_set_property(OuiElement* element, OuiStyleProperty property, const OuiStyleValue* value);
+/* Remove the property's surviving authored canonical fields through the shared
+ * native Engine. Removed longhands do not revive older shorthand contributions.
+ * Constructor defaults, inheritance and remaining declarations are recomputed;
+ * active animations may still mask the source until cancellation or an unfilled
+ * phase. out_removed is mandatory writable one-byte storage, written only on
+ * success: 1 for removed ownership, 0 for an unchanged missing owner. Invalid
+ * properties, handles, threads and reentrant borrows leave it unchanged. The
+ * owning-thread call retains no pointers and contains Rust panics. */
+OuiStatus oui_element_remove_property(OuiElement* element,
+                                      OuiStyleProperty property,
+                                      uint8_t* out_removed);
 OuiStatus oui_element_animate(OuiElement* element, OuiStyleProperty property, const OuiKeyframe* keyframes, size_t keyframe_count, const OuiAnimationOptions* options, const OuiAnimationTimeline* timeline, uint64_t* out_animation_id);
 OuiStatus oui_element_transition(OuiElement* element, OuiStyleProperty property, const OuiStyleValue* target, const OuiAnimationOptions* options, uint64_t* out_animation_id);
+/* Additive native curve APIs. Same timing, property/timeline ownership,
+ * interpolation, clock and events as the retained Rust Engine. Inputs and
+ * referenced stop arrays are copied synchronously on the owning thread before
+ * mutation; retain no pointers. Each strided keyframe has its own size/version
+ * prefix and its declared extent must fit its stride. Invalid descriptors,
+ * handles, threads and foreign timelines leave animation state and ID output
+ * unchanged. ID storage is aligned, writable and disjoint from all inputs.
+ * Event callbacks run after internal borrows end; existing listener/user_data
+ * lifetime and reentry rules apply. All boundaries contain Rust panics. */
+OuiStatus oui_element_animate_v1(OuiElement* element, OuiStyleProperty property, const OuiKeyframeV1* keyframes, size_t keyframe_count, size_t keyframe_stride, const OuiAnimationOptionsV1* options, const OuiAnimationTimeline* timeline, uint64_t* out_animation_id);
+OuiStatus oui_element_transition_v1(OuiElement* element, OuiStyleProperty property, const OuiStyleValue* target, const OuiAnimationOptionsV1* options, uint64_t* out_animation_id);
 OuiStatus oui_element_get_bounds(OuiElement* element, OuiRect* out_rect);
+/* Logical viewport border boxes in layout order after scroll/transforms.
+ * Includes hidden, empty and pointer-ineligible boxes; excludes detached and
+ * display:none elements. rects=NULL, capacity=0 queries the required count.
+ * On OUI_ERROR_BUFFER_TOO_SMALL, out_count is updated and rects remains untouched.
+ * Copies are caller-owned. Layout may change between the count and copy calls.
+ * out_count and rects must be writable, nonoverlapping caller storage. */
+OuiStatus oui_element_get_client_rects_v1(OuiElement* element, OuiRect* rects, size_t capacity, size_t* out_count);
+/* Resolve pending layout and copy shared native-engine scroll dimensions.
+ * Initialize struct_size and abi_version. Both outputs must be writable and
+ * nonoverlapping. A valid element without a layout box returns OUI_OK,
+ * out_has_metrics=0 and four zero dimensions. Outputs remain unchanged on
+ * error. No handle or buffer needs releasing; copies survive later mutations
+ * and document destruction. Must be called on the document's owning thread. */
+OuiStatus oui_element_get_scroll_metrics_v1(OuiElement* element, OuiScrollMetricsV1* out_metrics, uint8_t* out_has_metrics);
+/* Integer client/scroll dimensions through the same retained Engine getters
+ * used by native Rust applications. Resolve pending layout; round fractional
+ * LayoutUnit sizes to the nearest integer. Client dimensions exclude classic
+ * gutters, ignore this element's visual transform and include table wrapper
+ * borders/captions. Scroll dimensions retain layout overflow. Non-atomic inline
+ * and valid detached/display:none/no-box elements return OUI_OK with zero.
+ * out_value is nonnull, aligned writable int32_t storage; no version prefix is
+ * read and no ownership is transferred. Owning-thread/stale/invalid/reentrant
+ * errors leave it unchanged. OuiScrollMetricsV1 remains the fractional API. */
+OuiStatus oui_element_get_client_width_v1(OuiElement* element, int32_t* out_value);
+OuiStatus oui_element_get_client_height_v1(OuiElement* element, int32_t* out_value);
+OuiStatus oui_element_get_scroll_width_v1(OuiElement* element, int32_t* out_value);
+OuiStatus oui_element_get_scroll_height_v1(OuiElement* element, int32_t* out_value);
 OuiStatus oui_element_scroll_to(OuiElement* element, double x, double y);
+/* Reveal through the same retained Engine operation used by Rust and
+ * accessibility. Detached/unboxed elements are no-ops. Values must be the
+ * constants above; stale/foreign handles and invalid values are errors. */
+OuiStatus oui_element_scroll_into_view_v1(OuiElement* element, uint32_t block_alignment, uint32_t inline_alignment, uint32_t container);
+/* CSS ease curve on the native document clock. Duration must be finite and
+ * non-negative. Zero duration and reduced motion settle immediately. Calling
+ * scroll_to on a participating container cancels its pending animation. */
+OuiStatus oui_element_smooth_scroll_into_view_v1(OuiElement* element, uint32_t block_alignment, uint32_t inline_alignment, uint32_t container, double duration_ms);
+/* Shared native scroll animation/reveal operations with an owned curve. NULL
+ * means linear. Finite coordinates/duration are required; duration is >= 0.
+ * Zero duration and reduced motion settle immediately. Reveal applies the same
+ * curve to every participating ancestor; v1 retains its CSS ease default.
+ * Descriptors/points are copied during the call; no handles or caller pointers
+ * are retained by the curve. out_scroll_animation_id is aligned/writable and
+ * unchanged on validation/ownership failure. Calling oui_element_scroll_to
+ * cancels the container's pending scroll animation. */
+OuiStatus oui_element_smooth_scroll_to_v1(OuiElement* element, double x, double y, double duration_ms, const OuiEasingCurveV1* easing, uint64_t* out_scroll_animation_id);
+OuiStatus oui_element_smooth_scroll_into_view_v2(OuiElement* element, uint32_t block_alignment, uint32_t inline_alignment, uint32_t container, double duration_ms, const OuiEasingCurveV1* easing);
+/* Resolve pending layout before reading the retained logical scroll offsets. */
 OuiStatus oui_element_get_scroll_offset(OuiElement* element, double* out_x, double* out_y);
 OuiStatus oui_element_focus(OuiElement* element);
 OuiStatus oui_element_blur(OuiElement* element);
@@ -664,6 +1198,59 @@ OuiStatus oui_element_set_control_value(OuiElement* element, OuiUtf8 value);
 OuiStatus oui_element_copy_control_value(OuiElement* element, uint8_t* destination, size_t capacity, size_t* out_length);
 OuiStatus oui_element_set_selection(OuiElement* element, size_t anchor, size_t focus);
 OuiStatus oui_element_get_selection(OuiElement* element, size_t* out_anchor, size_t* out_focus);
+typedef enum OuiSelectionDirectionV1 {
+  OUI_SELECTION_DIRECTION_NONE = 0,
+  OUI_SELECTION_DIRECTION_FORWARD = 1,
+  OUI_SELECTION_DIRECTION_BACKWARD = 2
+} OuiSelectionDirectionV1;
+typedef enum OuiRangeSelectionModeV1 {
+  OUI_RANGE_SELECTION_PRESERVE = 0,
+  OUI_RANGE_SELECTION_SELECT = 1,
+  OUI_RANGE_SELECTION_START = 2,
+  OUI_RANGE_SELECTION_END = 3
+} OuiRangeSelectionModeV1;
+/* Text input/textarea only, owning thread. UTF-8 byte offsets; Unicode scalar
+ * boundaries within a grapheme are valid, code-point splits are invalid.
+ * End clamps to value length; start beyond end collapses at end. NONE normalizes
+ * to FORWARD on Linux/headless. Changed selection queues noncancelable SELECT
+ * and SELECTION_CHANGE; value setters queue only SELECTION_CHANGE. Callbacks
+ * arrive at a later native task turn. Existing grapheme-based API is unchanged. */
+OuiStatus oui_element_set_selection_range_v1(OuiElement* element, size_t start, size_t end, uint32_t direction);
+/* Output is written only on success. */
+OuiStatus oui_element_get_selection_direction_v1(OuiElement* element, uint32_t* out_direction);
+/* Native node queries, owning thread. Outputs are 0 or 1 and remain unchanged
+ * on failure. Connectivity reads no layout and cannot settle focus. Identity
+ * compares the retained node, including independently owned aliases. Valid
+ * nodes in different documents compare false; stale handles return an error. */
+/* Reflected own disabled state, without inheritance from groups. Supports
+ * fieldsets and optgroups as well as individual controls; other elements
+ * return 0. Output stays unchanged on error. Owning thread only, no layout. */
+OuiStatus oui_element_is_own_disabled_v1(OuiElement* element, uint32_t* out_disabled);
+/* Query shared native own/inherited disabled state without layout. Includes
+ * fieldset first-legend and direct optgroup/option rules. Reflected attributes
+ * and OUI_CONTROL_DISABLED retain their own-state meaning. Output is 0 or 1;
+ * it stays unchanged on error. Call only on the document's owning thread. */
+OuiStatus oui_element_is_effectively_disabled_v1(OuiElement* element, uint32_t* out_disabled);
+/* Query the same retained native active state as Rust Element::is_active.
+ * Owning thread only, no layout or callbacks. Output is 0 or 1 and is written
+ * only on success. The element and its document must remain live. */
+OuiStatus oui_element_is_active_v1(OuiElement* element, uint32_t* out_active);
+OuiStatus oui_element_is_connected_v1(OuiElement* element, uint32_t* out_connected);
+OuiStatus oui_element_is_same_node_v1(OuiElement* first, OuiElement* second, uint32_t* out_same);
+/* Replace range without INPUT/CHANGE. Queues selection notifications when value
+ * or selection changes. Reversed authored ranges, code-point splits and invalid
+ * modes fail before mutation. Readonly and disabled permit programmatic edits. */
+OuiStatus oui_element_replace_control_range_v1(OuiElement* element, OuiUtf8 replacement, size_t start, size_t end, uint32_t mode);
+/* Apply an editing command through the same retained Rust document and input
+ * event path as native keyboard editing. Requires the owning thread, a live
+ * input/textarea handle, and command storage readable for struct_size bytes.
+ * The command is copied during the call, never retained. Invalid values and
+ * nonzero reserved/unused fields are errors without mutation or callbacks.
+ * Value changes synchronously emit INPUT after engine borrows are released;
+ * selection-only commands emit no INPUT. Readonly controls permit selection,
+ * disabled controls reject every command. There is no synthetic keyboard event.
+ * Callback user_data follows add_event_listener lifetime rules. */
+OuiStatus oui_element_edit_text_v1(OuiElement* element, const OuiEditCommandV1* command);
 OuiStatus oui_element_get_control_flags(OuiElement* element, uint32_t* out_flags);
 OuiStatus oui_element_set_checked(OuiElement* element, uint8_t checked);
 OuiStatus oui_element_set_indeterminate(OuiElement* element, uint8_t indeterminate);
@@ -676,7 +1263,16 @@ OuiStatus oui_element_set_accessibility_value(OuiElement* element, OuiUtf8 value
 OuiStatus oui_element_set_accessibility_live(OuiElement* element, OuiAccessibilityLive live);
 OuiStatus oui_element_set_accessibility_hidden(OuiElement* element, uint8_t hidden);
 OuiStatus oui_element_set_accessibility_relation(OuiElement* element, OuiAccessibilityRelation relation, OuiElement* const* targets, size_t target_count);
+/* Directional scroll actions use the shared Rust/AccessKit logical scroll step
+ * and ordinary bounds clamping. Scroll notifications are queued on the same
+ * retained document. Drain them with oui_document_dispatch_pending_events_v1;
+ * listeners run after engine borrows are released. All actions require a live
+ * element on its owning thread. Value and anchor/focus are unused for scroll. */
 OuiStatus oui_element_perform_accessibility_action(OuiElement* element, OuiAccessibilityAction action, OuiUtf8 value, size_t anchor, size_t focus);
+/* callback/user_data must remain valid through every active callback, including
+ * when that callback destroys its own registration. Callbacks run on the owning
+ * thread after engine/listener borrows end, may reenter native APIs, must not
+ * unwind, and must not retain the borrowed event pointer. */
 OuiStatus oui_element_add_event_listener(OuiElement* element, OuiEventType event_type, uint8_t capture, OuiEventCallback callback, void* user_data, OuiListener** out_listener);
 OuiStatus oui_listener_destroy(OuiListener* listener);
 
@@ -688,8 +1284,25 @@ OuiStatus oui_corner_radii_create(const OuiLength values[4], OuiStyleCompound** 
 OuiStatus oui_transform_create(const OuiTransformOperation* operations, size_t operation_count, OuiStyleCompound** out_compound);
 /* Parses one schema-typed literal. If tag is OUI_STYLE_VALUE_COMPOUND, the
  * returned payload is owned by the caller and must be destroyed with
- * oui_style_compound_destroy after the value has been submitted. */
+ * oui_style_compound_destroy after the value has been submitted.
+ * ColumnCount uses the integer payload: 0 means auto, positive means count.
+ * Parsed C counts must fit int32_t; negative payloads are invalid. */
+/* Parse one native typed property value. Complex values that cannot use the
+ * property's scalar encoding return OUI_STYLE_VALUE_COMPOUND. Such values are
+ * bound to the selected property, preserve all native fields, and must be
+ * released with oui_style_compound_destroy after use. They are owned,
+ * thread-affine copies; the element clones them on submission. Existing scalar
+ * encodings are unchanged. No CSS stylesheet or JavaScript is executed. */
 OuiStatus oui_style_value_parse(OuiStyleProperty property, OuiUtf8 literal, OuiStyleValue* out_value);
+/* Construct a native sRGB color with normalized, unpremultiplied float channels.
+ * Each channel must be finite and in [0,1]. Supports every color longhand,
+ * including text-decoration-color and text-emphasis-color. Returns an owned,
+ * property-bound OUI_STYLE_VALUE_COMPOUND without quantizing to OuiColor's byte
+ * channels. Submit with oui_element_set_property, then release its compound
+ * with oui_style_compound_destroy. Both calls use the creating thread; the
+ * element retains its own copy. Failure leaves out_value unchanged.
+ * The v1 constructor preserves all existing value and struct layouts. */
+OuiStatus oui_style_value_color_f32_v1(OuiStyleProperty property, float red, float green, float blue, float alpha, OuiStyleValue* out_value);
 OuiStatus oui_style_compound_destroy(OuiStyleCompound* compound);
 
 OuiStatus oui_document_register_image(OuiDocument* document, OuiUtf8 source, OuiUtf8 mime_type, OuiUtf8 sha256, const uint8_t* bytes, size_t byte_length, OuiResource** out_resource);
@@ -699,6 +1312,368 @@ OuiStatus oui_resource_destroy(OuiResource* resource);
 const uint8_t* oui_buffer_data(const OuiBuffer* buffer);
 size_t oui_buffer_length(const OuiBuffer* buffer);
 OuiStatus oui_buffer_destroy(OuiBuffer* buffer);
+
+/* Native input metadata for the current callback.
+ * OuiEvent and the existing exported symbols and layouts retain their ABI. */
+typedef enum OuiInputTypeV1 {
+  OUI_INPUT_INSERT_TEXT = 1,
+  OUI_INPUT_INSERT_LINE_BREAK = 2,
+  OUI_INPUT_DELETE_CONTENT_BACKWARD = 3,
+  OUI_INPUT_DELETE_CONTENT_FORWARD = 4,
+  OUI_INPUT_HISTORY_UNDO = 5,
+  OUI_INPUT_HISTORY_REDO = 6,
+  OUI_INPUT_DELETE_WORD_BACKWARD = 7,
+  OUI_INPUT_DELETE_WORD_FORWARD = 8,
+  OUI_INPUT_DELETE_BY_CUT = 9,
+  OUI_INPUT_INSERT_FROM_PASTE = 10
+} OuiInputTypeV1;
+
+/* An owned snapshot of a native editing callback.
+ * input_type is a OuiInputTypeV1. has_data distinguishes null data from an
+ * empty string. When has_data is set, data is an owned OuiBuffer handle;
+ * release it using oui_buffer_destroy. Initialize data to NULL. Destroy an earlier data handle before
+ * reusing this output structure. Do not retain borrowed OuiEvent pointers.
+ * The snapshot remains usable after callback return or document destruction. */
+typedef struct OuiInputEventInfoV1 {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  uint32_t input_type;
+  uint32_t has_data;
+  uint32_t is_composing;
+  uint32_t bubbles;
+  uint32_t cancelable;
+  OuiBuffer* data;
+} OuiInputEventInfoV1;
+
+/* event must be the pointer supplied to a currently executing native input or
+ * beforeinput callback on its owning thread. The implementation validates it
+ * against active callback scopes without dereferencing stale event memory.
+ * Output remains unchanged on error. Nested callback scopes preserve outer
+ * event identity and immutable metadata. Existing legacy explicit events
+ * without a typed native editing operation return OUI_ERROR_INVALID_STATE.
+ * This API reports metadata from shared Rust operations; it executes no JS. */
+OuiStatus oui_event_input_info_v1(const OuiEvent* event,
+                                OuiInputEventInfoV1* out_info);
+
+/* Immutable properties for an event delivered through the shared native Rust
+ * pipeline. The event pointer is borrowed for its active owning-thread callback.
+ * Nested callbacks may query an outer active event. Pointers are matched against
+ * active scopes without reading expired event memory. Explicit raw events use
+ * the shared native route too; queries outside an active callback return
+ * OUI_ERROR_INVALID_STATE.
+ * Initialize struct_size and abi_version. Output remains unchanged on error;
+ * bytes beyond the current struct are preserved. Cancellation and propagation
+ * state continue to be available in OuiEvent.flags. No ownership is transferred. */
+typedef struct OuiEventPropertiesV1 {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  uint32_t bubbles;
+  uint32_t cancelable;
+} OuiEventPropertiesV1;
+OuiStatus oui_event_properties_v1(const OuiEvent* event,
+                                  OuiEventPropertiesV1* out_properties);
+
+/* Query the current associated form without layout or events. Non-associated
+ * native kinds or controls without an owner return NULL. Detached controls use
+ * the nearest form ancestor; connected explicit form attributes resolve the
+ * first nonempty ID match, which must be a form. The result is an independently
+ * owned element alias in the same document, released with oui_element_destroy.
+ * The document must remain alive. Owning-thread live input and writable output
+ * are required; output remains unchanged on error. Safe in native callbacks. */
+OuiStatus oui_element_associated_form_v1(OuiElement* element, OuiElement** out_form);
+/* Query the retained parent, including for detached subtrees. A node without
+ * a parent returns NULL. Ownership, thread, callback and output rules match
+ * oui_element_associated_form_v1. No layout, event dispatch or scripts run. */
+OuiStatus oui_element_parent_v1(OuiElement* element, OuiElement** out_parent);
+
+/* Native retained scroll buttons. Physical and logical directions remain
+ * distinct identities; logical directions resolve through the origin's writing
+ * mode. Every origin/direction pair is unique. Controls follow their origin
+ * through moves, detachment and removal; they cannot be moved independently. */
+typedef enum OuiScrollButtonDirectionV1 {
+  OUI_SCROLL_BUTTON_UP = 0,
+  OUI_SCROLL_BUTTON_RIGHT = 1,
+  OUI_SCROLL_BUTTON_DOWN = 2,
+  OUI_SCROLL_BUTTON_LEFT = 3,
+  OUI_SCROLL_BUTTON_BLOCK_START = 4,
+  OUI_SCROLL_BUTTON_BLOCK_END = 5,
+  OUI_SCROLL_BUTTON_INLINE_START = 6,
+  OUI_SCROLL_BUTTON_INLINE_END = 7
+} OuiScrollButtonDirectionV1;
+typedef enum OuiScrollButtonAvailabilityV1 {
+  OUI_SCROLL_BUTTON_AVAILABLE = 0,
+  OUI_SCROLL_BUTTON_BOUNDARY = 1,
+  OUI_SCROLL_BUTTON_NO_SCROLLPORT = 2,
+  OUI_SCROLL_BUTTON_AUTHORED_DISABLED = 3,
+  OUI_SCROLL_BUTTON_UNSUPPORTED = 4
+} OuiScrollButtonAvailabilityV1;
+typedef enum OuiScrollSnapStrictnessV1 {
+  OUI_SCROLL_SNAP_MANDATORY = 0,
+  OUI_SCROLL_SNAP_PROXIMITY = 1
+} OuiScrollSnapStrictnessV1;
+typedef enum OuiScrollButtonSnapPhaseV1 {
+  OUI_SCROLL_BUTTON_CURRENT_SNAP = 0,
+  OUI_SCROLL_BUTTON_PREVIEW_SNAP = 1
+} OuiScrollButtonSnapPhaseV1;
+/* Initialize struct_size and abi_version before querying. Owned numerical
+ * values use logical CSS pixels. has_target=0 makes target_x/target_y zero.
+ * The current and preview node identities use the separate owned-alias query.
+ * Layout is resolved before the snapshot. Errors leave all bytes unchanged;
+ * bytes beyond the current structure are preserved. No handle is retained in
+ * this copied structure; its contents survive mutation/document destruction. */
+typedef struct OuiScrollButtonStateV1 {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  uint32_t direction;
+  uint32_t availability;
+  uint8_t enabled;
+  uint8_t has_target;
+  uint8_t reserved[6];
+  double current_x;
+  double current_y;
+  double target_x;
+  double target_y;
+} OuiScrollButtonStateV1;
+/* All operations require owning-thread live handles. Outputs are writable
+ * caller storage and remain unchanged on error. Creation and queries return
+ * independently owned OuiElement aliases, released with oui_element_destroy.
+ * Destroying an alias leaves the control retained; oui_element_remove removes
+ * the control and invalidates every alias. The document must remain live.
+ * Missing directions and absent snap targets return OUI_OK and NULL. */
+OuiStatus oui_element_create_scroll_button_v1(OuiElement* origin, uint32_t direction, OuiElement** out_button);
+OuiStatus oui_element_get_scroll_button_v1(OuiElement* origin, uint32_t direction, OuiElement** out_button);
+OuiStatus oui_scroll_button_get_origin_v1(OuiElement* button, OuiElement** out_origin);
+OuiStatus oui_scroll_button_set_direction_v1(OuiElement* button, uint32_t direction);
+OuiStatus oui_scroll_button_get_state_v1(OuiElement* button, OuiScrollButtonStateV1* out_state);
+/* axis is physical X=0 or Y=1; phase selects committed or next-page identities.
+ * The shared Engine resolves layout before reading these identities. */
+OuiStatus oui_scroll_button_get_snap_target_v1(OuiElement* button, uint32_t axis, uint32_t phase, OuiElement** out_target);
+/* UNSUPPORTED is an open native behavior gap. This copies its reason as UTF-8
+ * without a terminator; other availability states return an empty string.
+ * NULL/zero capacity queries the required length. BUFFER_TOO_SMALL reports the
+ * required length and leaves destination bytes unchanged. */
+OuiStatus oui_scroll_button_copy_unavailable_reason_v1(OuiElement* button, uint8_t* destination, size_t capacity, size_t* out_length);
+/* Use ordinary element APIs for text, properties, disabled and aria-label.
+ * Set native appearance to 0 for author decoration or 1 for native decoration.
+ * Register listeners on the origin: public event targets and activeElement are
+ * the origin, while the Engine retains the button's hit/default-action identity.
+ * Activation shares the Rust cancelable click/accessibility default path; Enter
+ * and Space use key-down. Scroll activation emits no input/change events.
+ * Callbacks run after Engine/platform borrows end; the existing listener and
+ * user_data ownership/thread rules apply. Safe from an owning-thread callback. */
+OuiStatus oui_scroll_button_activate_v1(OuiElement* button);
+OuiStatus oui_element_set_native_appearance_v1(OuiElement* control, uint8_t enabled);
+OuiStatus oui_element_set_scroll_snap_strictness_v1(OuiElement* origin, uint32_t strictness);
+/* Explicit native end-of-scroll barrier. The shared Engine chooses the snap
+ * destination from current geometry and preserves committed target identity.
+ * out_changed is 0 or 1 and is written only on success. */
+OuiStatus oui_element_settle_scroll_snap_v1(OuiElement* origin, uint8_t* out_changed);
+/* Select an authored descendant as the preference for snap tie-breaking.
+ * NULL clears the preference. This starts no scroll and emits no event.
+ * Non-NULL target must be live and belong to the origin's document. */
+OuiStatus oui_element_set_scroll_snap_target_v1(OuiElement* origin, OuiElement* target);
+
+/* Length unit values preserve existing OuiLength unit numbering.
+ * 0 px, 1 percent, 2 em, 3 rem, 4 vw, 5 vh, 8 vmin, 9 vmax,
+ * 10 ch, 11 ex, 12 lh, 13 calc(percent + pixels).
+ * Auto/none units 6/7 are invalid in a present endpoint/inset.
+ * For unit13 value is the percentage coefficient and calc_offset is pixels.
+ * Other units require calc_offset == 0. Reserved fields must be zero.
+ */
+typedef struct OuiTimelineLengthV1 {
+    double value;
+    double calc_offset;
+    uint32_t unit;
+    uint32_t reserved;
+} OuiTimelineLengthV1;
+
+/* name: 0cover,1contain,2entry,3entry-crossing,4exit,5exit-crossing,6scroll */
+typedef struct OuiTimelineRangeOffsetV1 {
+    uint32_t name;
+    uint32_t reserved;
+    OuiTimelineLengthV1 offset;
+} OuiTimelineRangeOffsetV1;
+
+typedef struct OuiAnimationAttachmentRangeV1 {
+    uint32_t struct_size;
+    uint32_t abi_version;
+    uint32_t present; /* bit0 start, bit1 end; missing means normal */
+    uint32_t reserved;
+    OuiTimelineRangeOffsetV1 start;
+    OuiTimelineRangeOffsetV1 end;
+} OuiAnimationAttachmentRangeV1;
+
+typedef struct OuiAnimationTimelineSourceV1 {
+    uint32_t struct_size;
+    uint32_t abi_version;
+    uint32_t kind; /* 0document, 1scroll, 2view */
+    uint32_t axis; /* 0block, 1inline, 2x, 3y */
+    OuiElement *source; /* scroll source or view subject, borrowed for this call */
+    uint32_t inset_present; /* bit0 logical start, bit1 logical end; view only */
+    uint32_t reserved;
+    OuiTimelineLengthV1 inset_start;
+    OuiTimelineLengthV1 inset_end;
+} OuiAnimationTimelineSourceV1;
+
+typedef struct OuiTimelineRangeBoundsV1 {
+    double start;
+    double end;
+} OuiTimelineRangeBoundsV1;
+
+typedef struct OuiAnimationTimelineSnapshotV1 {
+    uint32_t struct_size;
+    uint32_t abi_version;
+    /* bit0 timeline,1source,2axis,3scroll-offset,4cover-start,5cover-end,
+     * 6duration,7current-ms,8current-percent. Missing scalars are zero.
+     */
+    uint32_t present;
+    uint32_t active;
+    uint32_t physical_axis;
+    uint32_t reserved;
+    OuiElement *source; /* owned alias when present; caller releases it */
+    double scroll_offset;
+    double cover_start;
+    double cover_end;
+    double range_start;
+    double range_end;
+    double duration_ms;
+    double current_time_ms;
+    double current_time_percentage;
+} OuiAnimationTimelineSnapshotV1;
+
+typedef struct OuiAnimationAttachmentSnapshotV1 {
+    uint32_t struct_size;
+    uint32_t abi_version;
+    uint32_t present; /* bit0 descriptor, bit1 resolved geometry */
+    uint32_t reserved;
+    OuiAnimationAttachmentRangeV1 range;
+    OuiElement *source; /* owned alias only when geometry resolved */
+    OuiTimelineRangeBoundsV1 named[7]; /* same order as name values above */
+    OuiTimelineRangeBoundsV1 attachment;
+    double entry_crossing_distance;
+    double exit_crossing_distance;
+} OuiAnimationAttachmentSnapshotV1;
+
+/* Named timelines use the same native Rust Engine, keyframe/curve parser and
+ * allocation-safe copying. Length fields are finite f64 inputs checked into
+ * the existing native f32 representation (overflow is rejected); snapshots
+ * reflect those owned native values. No caller pointer is retained.
+ *
+ * All calls require owning-thread live handles. Snapshot output needs only
+ * its initialized size word, then ABI word when declared size >=8, before
+ * full-prefix validation; errors leave all output bytes unchanged. Success
+ * writes only the known prefix and preserves future tails. Optional snapshot
+ * values have presence bits; absent values are zero. Returned source aliases
+ * are owned and require oui_element_destroy (ordinary C alias release).
+ * Callbacks run after Engine/registry borrows end; source and document identity
+ * are revalidated after callbacks before an alias is allocated.
+ *
+ * Existing keyframe/curve parser and allocation-safe copying are shared.
+ * NULL source means document; NULL range means normal cover endpoints.
+ * All input descriptor/payload/source pointers are copied/validated before
+ * shared Engine mutation; no caller pointer is retained.
+ */
+OuiStatus oui_element_animate_with_attachment_range_v1(
+    OuiElement *element, int32_t property,
+    const OuiKeyframeV1 *frames, size_t frame_count, size_t frame_stride,
+    const OuiAnimationOptionsV1 *timing,
+    const OuiAnimationTimelineSourceV1 *source,
+    const OuiAnimationAttachmentRangeV1 *range,
+    uint64_t *out_animation_id);
+
+OuiStatus oui_document_set_animation_attachment_range_v1(
+    OuiDocument *document, uint64_t animation_id,
+    const OuiAnimationAttachmentRangeV1 *range);
+OuiStatus oui_document_seek_animation_progress_v1(
+    OuiDocument *document, uint64_t animation_id, double percentage);
+OuiStatus oui_document_get_animation_timeline_snapshot_v1(
+    OuiDocument *document, uint64_t animation_id,
+    OuiAnimationTimelineSnapshotV1 *output);
+OuiStatus oui_document_get_animation_attachment_snapshot_v1(
+    OuiDocument *document, uint64_t animation_id,
+    OuiAnimationAttachmentSnapshotV1 *output);
+
+/* Native independent radius axes (IDs 251..258). These are typed framework
+ * component APIs, not additional browser CSS longhand syntax. Old OuiLength,
+ * property IDs, structs and exports retain their layouts and meanings.
+ *
+ * Descriptor uses sizeof(OuiRadiusAxisLengthV1), OUI_ABI_VERSION and native
+ * float precision. Units use OuiLengthUnit numbering; descriptor-local 13 is
+ * calc(value% + calc_offset px). auto/none, nonfinite coefficients, negative
+ * simple lengths, nonzero reserved and noncalc offset are rejected. Finite
+ * calc retains its coefficients; actual-box radius clamps to zero later.
+ *
+ * Factory copies the known input prefix and owns the returned property-bound
+ * compound. Release its data.compound via oui_style_compound_destroy; the
+ * Engine owns its copied value after oui_element_set_property succeeds. Reusing
+ * the carrier for another property is an error. No caller pointer is retained.
+ *
+ * Getter reflects current computed fixed/percent/calc source, not overlapped
+ * pixels; font/viewport units resolve through shared native declarations.
+ * Output reads only size then ABI header before full-prefix validation;
+ * success writes 24 bytes, preserves a future tail, and errors change no output.
+ * Getter requires live owning-thread element. Legacy unsupported/nonfinite
+ * computed sources return InvalidState. No callbacks run in this read operation.
+ */
+#define OUI_RADIUS_AXIS_LENGTH_CALCULATED 13u
+typedef struct OuiRadiusAxisLengthV1 {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  float value;
+  float calc_offset;
+  uint32_t unit;
+  uint32_t reserved;
+} OuiRadiusAxisLengthV1;
+
+OuiStatus oui_style_value_radius_axis_length_v1(
+    int32_t property, const OuiRadiusAxisLengthV1 *input,
+    OuiStyleValue *out_value);
+OuiStatus oui_element_radius_axis_length_v1(
+    OuiElement *element, int32_t property, OuiRadiusAxisLengthV1 *output);
+
+
+/* Shared native scroll-animation actions. Returned IDs are numeric values scoped
+ * to their owning document and scroll-animation API, not global opaque handles.
+ * Cancel preserves the current offset and unrelated tracks. Completed/unknown
+ * IDs use the shared native InvalidState result.
+ */
+OuiStatus oui_document_cancel_smooth_scroll_v1(OuiDocument* document, uint64_t scroll_animation_id);
+
+/* Animated nearest-point selection from explicit physical X/Y point arrays.
+ * This differs from oui_element_settle_scroll_snap_v1's immediate CSS-target
+ * operation, which retains its existing behavior. Empty axes retain their
+ * current offsets. Finite points keep the shared Rust order/tie/clamp rules.
+ * NULL arrays are legal at count0; otherwise arrays are aligned, contiguous,
+ * initialized readable doubles. Duration is finite/nonnegative; NULL easing
+ * selects linear. Curves follow OuiEasingCurveV1 and are validated even at no-op.
+ * Caller arrays/curve storage are copied before Engine action and never retained.
+ * Outputs are writable, ID-aligned and distinct; original inputs may alias them.
+ * Errors preserve both outputs and existing scroll state. Success writes ID0 and
+ * has_animation0 for no-op; otherwise has_animation1 and the returned scroll ID.
+ * A zero-duration track completes immediately and its ID is no longer cancelable.
+ * Owning-thread live element required; no callbacks run under Engine borrows.
+ */
+OuiStatus oui_element_settle_scroll_snap_with_easing_v1(OuiElement* element,
+                                                        const double* points_x,
+                                                        size_t points_x_count,
+                                                        const double* points_y,
+                                                        size_t points_y_count,
+                                                        double duration_ms,
+                                                        const OuiEasingCurveV1* easing,
+                                                        uint64_t* out_scroll_animation_id,
+                                                        uint8_t* out_has_animation);
+
+/* Normalized pixel-delta wheel input on the document owning thread. Requires
+ * OUI_EVENT_WHEEL, zero flags, known modifiers and finite x/y/delta_x/delta_y.
+ * Hit testing supplies the target; cancelable callbacks run before the shared
+ * retained scroll default, without Engine/listener borrows. The descriptor is
+ * copied and never written or retained. Its phase, timestamp, pointer/key/text
+ * and target fields are not normalized wheel operands (text must be valid
+ * UTF-8); native callback metadata uses the existing Rust wheel Event
+ * semantics. Generic oui_document_dispatch_event remains a wheel notification
+ * only. */
+OuiStatus oui_document_dispatch_wheel_input_v1(OuiDocument *document,
+                                               const OuiEvent *wheel);
 
 #ifdef __cplusplus
 }  /* extern "C" */

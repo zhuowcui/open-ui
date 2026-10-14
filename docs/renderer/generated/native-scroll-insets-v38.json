@@ -1,0 +1,576 @@
+{
+  "accepted_expanded": {
+    "actual_exit": 1,
+    "different": 1591,
+    "errors": 0,
+    "exact": 22137,
+    "total": 23728
+  },
+  "accepted_original": {
+    "actual_exit": 1,
+    "different": 1590,
+    "errors": 0,
+    "exact": 21334,
+    "total": 22924
+  },
+  "admitted_addition_cases": 201,
+  "admitted_addition_cases_quad_exact": 200,
+  "applied_to_umbrella": false,
+  "artifacts": {
+    "docs/renderer/evidence/native-raster-validation-v1/consumer-syntax-v1394.json": {
+      "bytes": 616,
+      "sha256": "ddb8b5eccefd81467a427edece59921a359be46a39c653a0ed27ebd0088782a1"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/consumer-syntax-v1395.json": {
+      "bytes": 3525,
+      "sha256": "767d463f98d820f76b56f3c4632f56e9665b5cfe06e0269b3e272876695c0de5"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/empty-whitespace-query-v1400-input.html": {
+      "bytes": 69764,
+      "sha256": "20a2e9be53411742a0b421f600720c46c8de8561f87b03d7d3521257a80468be"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/empty-whitespace-query-v1400-receipt.json": {
+      "bytes": 1245530,
+      "sha256": "ccbebba778aaca1d9486ae735ab0b83fd9d6a6019fce78b87231f06ce0ae08ff"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/fixed-guard-api.patch": {
+      "bytes": 3700,
+      "sha256": "e0e289cd859a2523f4c19b317506f8409130e16820007e83632c9777c5b5f1e9"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/hosted-at-observation-v1399.json": {
+      "bytes": 1158,
+      "sha256": "d198c184dc7014281bf846450861a6e28250839aaa60243ae652f00d994e1221"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/hosted-v1388-37252627351.json": {
+      "bytes": 16313,
+      "sha256": "e49e8b36f08b975874e02914f04d12863f167806618354742aaea6fc93b4b1d5"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/hosted-v1388-37252627351.log": {
+      "bytes": 2195974,
+      "sha256": "41f25f291c2635c85b0446caa655af80375aebd50e437bfb66a1de9d58e1c08c"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/hosted-v1388-receipt.json": {
+      "bytes": 18913,
+      "sha256": "4ba6163a6b683018da9ac5750df7ca2b1e794bd86ef72f415f30f7e2803641a8"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/intrinsic-hardening-complete-v1368.json": {
+      "bytes": 18608,
+      "sha256": "2e78d9a9bbbd27f5693185cfe9f4a4d0cbb88459a5f25c45e64ffa81db9452a0"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/local-pipeline-at-observation-v1398.json": {
+      "bytes": 4389,
+      "sha256": "613d8f7300ccac60a0339c600216930d37ad4ff09e83cb8da23c9941b7e86b5d"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/native-c-consumer-bounds.patch": {
+      "bytes": 774,
+      "sha256": "b583593c54fe3fe8f9f55ea1a11f14d99cca74a93336f1bbf016d473df1c5ab4"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/native-raster-validation-source-v1385.json": {
+      "bytes": 2186,
+      "sha256": "6b97c3b693dfc39d4c66c5f6987c88f3b9ae7a8db325db33159f624baf18a453"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/openui-native-empty-whitespace-query-v1400.py": {
+      "bytes": 6456,
+      "sha256": "7852894cb308023da4696edc35b87d96e6d6654ee0fa513e74b5546e09620499"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/openui-native-raster-consumer-application-v1397.py": {
+      "bytes": 9845,
+      "sha256": "683259aa7114f25749fa9a35bb0ab5701b6c2da6b7d9d34068cb12dabd58204b"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/openui-native-raster-consumer-build-v1397.py": {
+      "bytes": 7850,
+      "sha256": "7c6c325714c58fd8adf093a8bc6e80a0975850a437f82bcb292dc1b67b9c791f"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/openui-native-raster-consumer-consumer-v1397.py": {
+      "bytes": 20045,
+      "sha256": "72572d48c8eba39c67deccb8825f0727caf188d62d1c60e1c397ace475b3bacc"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/openui-native-raster-consumer-controls-v1397.py": {
+      "bytes": 5707,
+      "sha256": "9a59a1fb14cc2056b2104402b737e4c1b67dd69ff096d47defc086ca31de77c9"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/openui-native-raster-consumer-guards-v1397.py": {
+      "bytes": 6905,
+      "sha256": "22443c5bf538c58d83e1671e48f3a74cd88664a3d6d0328921fc83703ea39d2d"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/openui-native-raster-consumer-hardening-v1399.py": {
+      "bytes": 3228,
+      "sha256": "800afbcdee6e257e814a988f29b463ef50a171dfc36428a44f3f43e94be12a05"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/openui-native-raster-consumer-matrices-v1397.py": {
+      "bytes": 2250,
+      "sha256": "acbd64564c21848365d7c8a694b1e1c69a0f0fe5ecb412abd345691068a1078c"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/openui-native-raster-consumer-pipeline-v1398.py": {
+      "bytes": 7700,
+      "sha256": "a547652b0dc486becc287b25b384eaf49d2169aa75b80cf50b5ffba3c3bece0b"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/openui-native-raster-consumer-sizing-v1397.py": {
+      "bytes": 3806,
+      "sha256": "ce35761e8ffa80b471bf21fb75935106f56125c32590d9f9501740d020c4e708"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/openui-native-raster-consumer-static-v1397.py": {
+      "bytes": 5918,
+      "sha256": "1c3b038550530a15dd168088e632d0d8797cf18ea6ee6f3991d9801e62cf356c"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/phase-guard-api.patch": {
+      "bytes": 1975,
+      "sha256": "704731f925d5b35fa6b168be34e19653f33f3d19913b9ee748791ffe056a2357"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/prepared-guard-corrections-v1389.json": {
+      "bytes": 3058,
+      "sha256": "f2c75f007d5a3cd2de74214851967cf324f7a00ea0fde4ec36e7948c3db8ee82"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/prepared-pipeline-probes-v1397.json": {
+      "bytes": 2364,
+      "sha256": "3dd566b626e5e980efc971da54db99429f7fc0c712ed4bbf0bd559ef20570d30"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/raster_configuration.c": {
+      "bytes": 14114,
+      "sha256": "396cddb8f6ebbbb8f04cebb6e590a125c521d6c44cfe751268caef9fadeab500"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/raster_configuration.cc": {
+      "bytes": 102,
+      "sha256": "ecf47acf87e5731ef1c927b4cc8d10138e45243dfc4b7e8ae4d90280063e212d"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/read-only-checks-v1386.json": {
+      "bytes": 3524,
+      "sha256": "2fa4a2611c93943fc80c76ee4dcb863d64025302ee9d1e2a3881a28714a61aef"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/read-only-checks-v1396.json": {
+      "bytes": 3524,
+      "sha256": "25b2b4ef88818c4c83a066d9603b1290ab7106c66c545f5aa805136869cf5d07"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/strike-guard-api.patch": {
+      "bytes": 3700,
+      "sha256": "e0e289cd859a2523f4c19b317506f8409130e16820007e83632c9777c5b5f1e9"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/umbrella-ci-complete-v1381.json": {
+      "bytes": 22330,
+      "sha256": "c141f4c8312c1737d24f62196436a146038e7bd6368adfeabd3ac8c404244723"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/v1386-accountability.log": {
+      "bytes": 2867,
+      "sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/v1386-archive.log": {
+      "bytes": 45,
+      "sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/v1386-ffi.log": {
+      "bytes": 32,
+      "sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/v1386-multicol.log": {
+      "bytes": 59,
+      "sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/v1386-renderer.log": {
+      "bytes": 81,
+      "sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/v1386-sp17.log": {
+      "bytes": 86,
+      "sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/v1386-sp18.log": {
+      "bytes": 121,
+      "sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/v1386-sp20.log": {
+      "bytes": 142,
+      "sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/v1386-style.log": {
+      "bytes": 37,
+      "sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/v1386-v02.log": {
+      "bytes": 63,
+      "sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/v1394-baseline-c.log": {
+      "bytes": 863,
+      "sha256": "cbfdd6465f03c2c07b88a20dc1f75601e46fe4f95a2195d5545ff2314e029c33"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/v1394-baseline-cpp.log": {
+      "bytes": 754,
+      "sha256": "56c04ea95a086f2f5d4967f4979eeb6a7f22c32d3e004f6ab68478231f9184b8"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/v1395-baseline-c.log": {
+      "bytes": 863,
+      "sha256": "cbfdd6465f03c2c07b88a20dc1f75601e46fe4f95a2195d5545ff2314e029c33"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/v1395-baseline-cpp.log": {
+      "bytes": 754,
+      "sha256": "56c04ea95a086f2f5d4967f4979eeb6a7f22c32d3e004f6ab68478231f9184b8"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/v1395-fixed-c.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/v1395-fixed-cpp.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/v1396-accountability.log": {
+      "bytes": 2867,
+      "sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/v1396-archive.log": {
+      "bytes": 45,
+      "sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/v1396-ffi.log": {
+      "bytes": 32,
+      "sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/v1396-multicol.log": {
+      "bytes": 59,
+      "sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/v1396-renderer.log": {
+      "bytes": 81,
+      "sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/v1396-sp17.log": {
+      "bytes": 86,
+      "sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/v1396-sp18.log": {
+      "bytes": 121,
+      "sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/v1396-sp20.log": {
+      "bytes": 142,
+      "sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/v1396-style.log": {
+      "bytes": 37,
+      "sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1"
+    },
+    "docs/renderer/evidence/native-raster-validation-v1/v1396-v02.log": {
+      "bytes": 63,
+      "sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd"
+    }
+  },
+  "chromium_geometry": {
+    "all_logical_geometry_identical": true,
+    "canvas_pixels_generated": 0,
+    "cases": 450,
+    "independent_processes": 2,
+    "measured_absolute_normal_cases": {
+      "break": {
+        "-20": {
+          "height": 16,
+          "width": 0
+        },
+        "0": {
+          "height": 16,
+          "width": 0
+        },
+        "20": {
+          "height": 16,
+          "width": 20
+        }
+      },
+      "edge-span": {
+        "-20": {
+          "height": 16,
+          "width": 0
+        },
+        "0": {
+          "height": 16,
+          "width": 16
+        },
+        "20": {
+          "height": 16,
+          "width": 36
+        }
+      },
+      "empty": {
+        "-20": {
+          "height": 0,
+          "width": 0
+        },
+        "0": {
+          "height": 0,
+          "width": 0
+        },
+        "20": {
+          "height": 0,
+          "width": 0
+        }
+      },
+      "emspace": {
+        "-20": {
+          "height": 16,
+          "width": 0
+        },
+        "0": {
+          "height": 16,
+          "width": 16
+        },
+        "20": {
+          "height": 16,
+          "width": 36
+        }
+      },
+      "narrow-nbsp": {
+        "-20": {
+          "height": 16,
+          "width": 0
+        },
+        "0": {
+          "height": 16,
+          "width": 8
+        },
+        "20": {
+          "height": 16,
+          "width": 28
+        }
+      },
+      "nbsp": {
+        "-20": {
+          "height": 16,
+          "width": 0
+        },
+        "0": {
+          "height": 16,
+          "width": 16
+        },
+        "20": {
+          "height": 16,
+          "width": 36
+        }
+      },
+      "newline": {
+        "-20": {
+          "height": 0,
+          "width": 0
+        },
+        "0": {
+          "height": 0,
+          "width": 0
+        },
+        "20": {
+          "height": 0,
+          "width": 0
+        }
+      },
+      "space": {
+        "-20": {
+          "height": 0,
+          "width": 0
+        },
+        "0": {
+          "height": 0,
+          "width": 0
+        },
+        "20": {
+          "height": 0,
+          "width": 0
+        }
+      }
+    },
+    "native_geometry_not_yet_measured": true,
+    "next_step": "Verify native behavior before changing production. Guard collapsed ASCII whitespace separately from nonbreaking Unicode spaces, forced breaks and decorated inline boxes.",
+    "observations": 4500,
+    "scales": 5,
+    "screenshots_generated": 0
+  },
+  "contract": "Pinned Chromium alone is the pixel target, with zero tolerance. Open UI executes no JavaScript. Consuming apps use public Rust methods and Rust callbacks; needed element behavior must be implemented and exposed natively. Test fixtures and pixel exclusions never waive public API work.",
+  "corrections": [
+    {
+      "phase_baseline": "b7284ac9fb733d22f4314561c0ae19166007f444",
+      "scope": "Detached raster-test style setup uses existing update_derived closures. Assertions and production renderer are unchanged from 5ef50aac.",
+      "source": "0e1f12ff6bf971e4c5940f298521895cd8d933fb",
+      "strike_baseline": "5390b683c6b7898d79f36450f1034f0d6a89d37d"
+    },
+    {
+      "baseline_c_and_cpp_syntax_actual_exits": [
+        1,
+        1
+      ],
+      "corrected_c_and_cpp_syntax_actual_exits": [
+        0,
+        0
+      ],
+      "linked_native_execution": "pending",
+      "scope": "C/C++ consumer calls the existing two-argument bounds API. OUI_OK already requires a layout box. Only the shared C example changes; Rust renderer, exported functions, headers and workflows are unchanged from 0e1f12ff.",
+      "source": "3d4eea1184ac6703ae4b29de12ddb4cb75fe5ed3"
+    }
+  ],
+  "existing_umbrella_c_exports": 113,
+  "new_release_states_admitted": 0,
+  "observed_at_utc": "2026-10-05T02:32:44.016739+00:00",
+  "original_pixel_gate": "FAIL",
+  "own_hosted_at_observation": {
+    "all_commands_terminal": false,
+    "branch": "agent/native-raster-consumer-v1393",
+    "commit": "3d4eea1184ac6703ae4b29de12ddb4cb75fe5ed3",
+    "direct_cache_regression_qualification": false,
+    "last_observed_jobs": [
+      {
+        "conclusion": "",
+        "name": "fuzz-smoke",
+        "status": "in_progress"
+      },
+      {
+        "conclusion": "",
+        "name": "c-undefined-sanitizer",
+        "status": "in_progress"
+      },
+      {
+        "conclusion": "",
+        "name": "native-sanitizers (leak)",
+        "status": "in_progress"
+      },
+      {
+        "conclusion": "",
+        "name": "miri-handles",
+        "status": "in_progress"
+      },
+      {
+        "conclusion": "",
+        "name": "conformance-and-platform",
+        "status": "in_progress"
+      },
+      {
+        "conclusion": "",
+        "name": "msrv",
+        "status": "in_progress"
+      },
+      {
+        "conclusion": "",
+        "name": "native-sanitizers (address)",
+        "status": "in_progress"
+      }
+    ],
+    "probe_sha256": "800afbcdee6e257e814a988f29b463ef50a171dfc36428a44f3f43e94be12a05",
+    "release_qualification": false,
+    "run_id": 37255347853,
+    "schema_version": 1,
+    "state": "running-own-source-manual-hardening"
+  },
+  "own_local_at_observation": {
+    "all_commands_terminal": false,
+    "candidate_exports": 117,
+    "consumer_compile_correction_only": true,
+    "existing_113_umbrella_exports_preserved": true,
+    "expected_stages": 12,
+    "immutable_probe_hashes": {
+      "/tmp/openui-native-raster-consumer-application-v1397.py": "683259aa7114f25749fa9a35bb0ab5701b6c2da6b7d9d34068cb12dabd58204b",
+      "/tmp/openui-native-raster-consumer-build-v1397.py": "7c6c325714c58fd8adf093a8bc6e80a0975850a437f82bcb292dc1b67b9c791f",
+      "/tmp/openui-native-raster-consumer-consumer-v1397.py": "72572d48c8eba39c67deccb8825f0727caf188d62d1c60e1c397ace475b3bacc",
+      "/tmp/openui-native-raster-consumer-controls-v1397.py": "9a59a1fb14cc2056b2104402b737e4c1b67dd69ff096d47defc086ca31de77c9",
+      "/tmp/openui-native-raster-consumer-guards-v1397.py": "22443c5bf538c58d83e1671e48f3a74cd88664a3d6d0328921fc83703ea39d2d",
+      "/tmp/openui-native-raster-consumer-matrices-v1397.py": "acbd64564c21848365d7c8a694b1e1c69a0f0fe5ecb412abd345691068a1078c",
+      "/tmp/openui-native-raster-consumer-sizing-v1397.py": "ce35761e8ffa80b471bf21fb75935106f56125c32590d9f9501740d020c4e708",
+      "/tmp/openui-native-raster-consumer-static-v1397.py": "1c3b038550530a15dd168088e632d0d8797cf18ea6ee6f3991d9801e62cf356c"
+    },
+    "inherited_unqualified_raster_production": true,
+    "javascript_executed_by_openui": false,
+    "local_miri_delegated_to_own_source_hosted_workflow": true,
+    "new_release_states_admitted": 0,
+    "old_openui_pixels_are_provenance_only": true,
+    "ordered_build_and_image_stages": true,
+    "original_pixel_gate_remains_required": true,
+    "owner_pid": 3220674,
+    "parent_commit": "0e1f12ff6bf971e4c5940f298521895cd8d933fb",
+    "preserves_both_unstable_reference_captures": true,
+    "prior_whole_pipelines": [
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-umbrella-pipeline-v1291/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-retry-pipeline-v1310/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-retry-pipeline-v1311/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-c-raster-retry-pipeline-v1312/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-pipeline-v1337/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-default-strike-pipeline-v1338/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-integration-pipeline-v1341/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-capture-forensics-pipeline-v1346/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-style-integration-pipeline-v1354/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-constraints-pipeline-v1375/receipt.json"
+    ],
+    "probe_sha256": "a547652b0dc486becc287b25b384eaf49d2169aa75b80cf50b5ffba3c3bece0b",
+    "promotion_allowed": false,
+    "release_qualification": false,
+    "renderer_production_unchanged_from_prior_candidate": true,
+    "schema_version": 1,
+    "selection_hashes": {
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-retry-selection-v1311.json": "ca51d8b03dbff3b5c47f3f0dabf93fc631b37772947350a50e56f9e1bdbb00e2"
+    },
+    "source": {
+      "clean": true,
+      "commit": "3d4eea1184ac6703ae4b29de12ddb4cb75fe5ed3",
+      "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+      "source_tree_sha256": "b82ebc6c2753fdfefb35eda3bcf340c9b0fe798d962264761ba5e01021f6f31a",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "3d4eea1184ac6703ae4b29de12ddb4cb75fe5ed3",
+      "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+      "source_tree_sha256": "b82ebc6c2753fdfefb35eda3bcf340c9b0fe798d962264761ba5e01021f6f31a",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "state": "awaiting-all-ten-prior-whole-pipelines",
+    "steps": [],
+    "strict_chromium_capture_pairs": true,
+    "workspace_cleaned_at_every_source_switch": true
+  },
+  "prior_own_source_hardening": {
+    "failed_jobs": 1,
+    "failure": "C sanitizer stops compiling raster_configuration.c at an invalid three-argument oui_element_get_bounds call; it does not reach sanitizer execution.",
+    "overall": "FAIL",
+    "qualification_scope": "Hosted checks do not prove complete workspace or Chromium pixels.",
+    "run_id": 37252627351,
+    "skipped_jobs": 0,
+    "source": "0e1f12ff6bf971e4c5940f298521895cd8d933fb",
+    "strict_miri_version_prefix_test": "PASS",
+    "successful_jobs": 6
+  },
+  "promotion_allowed": false,
+  "proposed_c_exports": 117,
+  "read_only_checks": {
+    "0e1f12ff6bf971e4c5940f298521895cd8d933fb": 10,
+    "3d4eea1184ac6703ae4b29de12ddb4cb75fe5ed3": 10
+  },
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "3d4eea1184ac6703ae4b29de12ddb4cb75fe5ed3",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "b82ebc6c2753fdfefb35eda3bcf340c9b0fe798d962264761ba5e01021f6f31a",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "3d4eea1184ac6703ae4b29de12ddb4cb75fe5ed3",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "b82ebc6c2753fdfefb35eda3bcf340c9b0fe798d962264761ba5e01021f6f31a",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "validation_scope": {
+    "build_stages": 17,
+    "expanded_comparisons": 23728,
+    "focused_comparisons": 640,
+    "intrinsic_geometry_observations": 1000,
+    "named_baseline_failures_required": 3,
+    "original_comparisons": 22924,
+    "primitive_comparisons": 960,
+    "public_control_cases": 60,
+    "public_control_images": 120,
+    "public_control_states": 7680,
+    "public_phase_cases": 840,
+    "reference_capture_policy": "Preserve both consecutive captures in each independent Chromium process. Unequal captures fail; no retries, tolerance or reference rewrites.",
+    "rust_c_cpp_font_images": 1200,
+    "rust_c_cpp_logical_phase_states": 76800,
+    "selected_comparisons": 880,
+    "sequencing": "Builds and image sweeps are separate; all ten preceding entire local pipelines must be terminal.",
+    "source_switch_workspace_packages_cleaned": 18,
+    "static_explicit_fontations_gate_images": 60,
+    "static_images_recorded": 180,
+    "static_other_policy_results_remain_diagnostics": true
+  }
+}

@@ -1,0 +1,1231 @@
+{
+  "accepted_native_api_complete_censuses": {
+    "addition_comparisons": 804,
+    "additions_exact_all_four_profiles": 200,
+    "all_original_and_expanded_pixels_oracles_identities_signatures_unchanged": true,
+    "all_original_rows_agree_between_suites": true,
+    "binary_sha256": "7fc0138e565b2ad26aff3cd2d43e87fb69607e060aca5c66527af912dbde8d24",
+    "declared_additions": 201,
+    "javascript_executed_by_openui": false,
+    "matrices": [
+      {
+        "all_eight_comparison_invariants_unchanged": true,
+        "evidence_kind": "complete-clean-diagnostic-census",
+        "observed_exit_code": 1,
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-clean-full-v159/full-summary.json",
+        "pixel_gate_passed": false,
+        "reference_report_sha256": "8694f139c62fc479b7087b07b4d6db55a80aee0dd8ac2fa4e5933c9eb0beb630",
+        "results": {
+          "different": 1616,
+          "errors": 0,
+          "exact": 21308,
+          "profile_result_sha256": "d106b891b3adb6df72ab823b48f1dd8d18a822e70c7155bfa97c9df29f8e151c",
+          "total": 22924
+        },
+        "sha256": "604d9c1e3abc5df856b01a3fdc6e8b9b0ac15724f20bf7a53ba01d96745f1a3f",
+        "source": {
+          "clean": true,
+          "commit": "9e0f01457621cff9757914b71d956d403e4ff117",
+          "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+          "source_tree_sha256": "c28db0f09b5e5f6967b4a7563097997296c6d414ef005bd2d1e2fe554955225b",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "source_after": {
+          "clean": true,
+          "commit": "9e0f01457621cff9757914b71d956d403e4ff117",
+          "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+          "source_tree_sha256": "c28db0f09b5e5f6967b4a7563097997296c6d414ef005bd2d1e2fe554955225b",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "suite": "full"
+      },
+      {
+        "all_eight_comparison_invariants_unchanged": true,
+        "evidence_kind": "complete-clean-diagnostic-census",
+        "observed_exit_code": 1,
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-clean-expanded-v159/expanded-summary.json",
+        "pixel_gate_passed": false,
+        "reference_report_sha256": "b402a20878860b55dc5dc140d00a367538bd8147708eeb474e5ec30b23764201",
+        "results": {
+          "different": 1617,
+          "errors": 0,
+          "exact": 22111,
+          "profile_result_sha256": "a399cea7d5bc2043c8c43a123aea912945bcf9d853f27ea539e13808ee33fec2",
+          "total": 23728
+        },
+        "sha256": "c8b39dcc915491ca95807913d916062348905f3d027f7f9872916484cfed2e5c",
+        "source": {
+          "clean": true,
+          "commit": "9e0f01457621cff9757914b71d956d403e4ff117",
+          "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+          "source_tree_sha256": "c28db0f09b5e5f6967b4a7563097997296c6d414ef005bd2d1e2fe554955225b",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "source_after": {
+          "clean": true,
+          "commit": "9e0f01457621cff9757914b71d956d403e4ff117",
+          "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+          "source_tree_sha256": "c28db0f09b5e5f6967b4a7563097997296c6d414ef005bd2d1e2fe554955225b",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "suite": "expanded"
+      }
+    ],
+    "pixel_tolerance": 0,
+    "probe_sha256": "21a7f8aaa7323e78826e3687df1579fcb845fbad6d8d9d4951ec7284646df6b8",
+    "release_qualification": false,
+    "remaining_pixel_gate": "1616 original differences and one expanded-only fieldset/legend failure; ownership review and complete native API/hardening/lab gates remain open.",
+    "schema_version": 1,
+    "source": {
+      "clean": true,
+      "commit": "9e0f01457621cff9757914b71d956d403e4ff117",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "c28db0f09b5e5f6967b4a7563097997296c6d414ef005bd2d1e2fe554955225b",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "artifacts": [
+    {
+      "path": "docs/renderer/generated/native-viewport-full-v16.json",
+      "sha256": "e269c515f83b75bce9c5b2f8d7bcb9026a35d09d40a90078960a9b1ede514812"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-coverage-delta-v203.json",
+      "sha256": "a30fa4e3d687249dc567e5e3093fc9537333abe31fe1c568d38175a2a74d1adc"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-region-delta-v212.json",
+      "sha256": "aba45f9a22fa2c3660971f724b5d89e2c47c875817fec9438ce499b409ddf8bd"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-region-raster-delta-v215.json",
+      "sha256": "deb20e30f371b35af3493af80c6f883f72f7695b7be525e4ec865a00de9b7184"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-complete-delta-v219.json",
+      "sha256": "77e1e040415002b2ef4a33de28a6bebe0fe45b7a2e21eab1169181f3351db49a"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-native-alpha-review-v213.json",
+      "sha256": "a236973a2dfc36c199523501ef3f4576ac82bfb5fd688e9529803ad1a22c82a6"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-layer-consumer-lock-review-v201.json",
+      "sha256": "52f8b2f3c6c434b8d67dfea7f482c97a87fc51a1dac48e013afc8149bc33d41b"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-debug-worktree-preservation-v214.json",
+      "sha256": "967328cd66e32a43c62ab83ecada572c9f0afc21b7f5b80b6280f7fccd554471"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-composition-docs-ci-v193.json",
+      "sha256": "190879b6867d522d31e391f3eadfb4e8cd5172134f3b171fb3171833da69207d"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-build-v133/build.json",
+      "sha256": "a57809a14bfbeb6781f163fcd8d139d33bf84cfad3c697dd9c6a677770f278c6"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-build-v133/pixel_compare",
+      "sha256": "7fc0138e565b2ad26aff3cd2d43e87fb69607e060aca5c66527af912dbde8d24"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-layer-consumer-build-v187/build.json",
+      "sha256": "c6b3c10fe580de68335e988fa4aaa5ee3c19fce908f618778bbf30e41eeef55c"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-layer-consumer-build-v187/lock.log",
+      "sha256": "eaac512493302602bf6d384a56121f57ad02008ed946ce707c1bda1e99fe333a"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-layer-consumer-build-v188/build.json",
+      "sha256": "38e7d3428e82c05ef39fd33369c4c2db8ab7f0e86c8845f2a0354933717ab213"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-layer-consumer-build-v188/lock.log",
+      "sha256": "e0b24d320f674a0a002c6bec32e93b0e6e5ae6f6cad2ddc2babbcf6a3044bb7d"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-layer-consumer-build-v189/build.json",
+      "sha256": "0abf5c55c58ad1452e719568fcf883a664bfb13e60ef6e024c72ca35143d5098"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-layer-consumer-build-v189/lock.log",
+      "sha256": "dd6624a49222e5dc6453bb3f8fc005278c88027c41f437960f7a373fccbc2fc1"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-layer-consumer-build-v189/build.log",
+      "sha256": "98eacfaa1ad15ad6f71e0270e0506ce9318993962d01627797bce52cf4bd204c"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-layer-consumer-build-v191/build.json",
+      "sha256": "74dbc576f32f87373c8070c3b4735b9c6c1628b2e12aa75a4e20fe54879eec91"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-layer-consumer-build-v191/resolve-existing-lock-and-build.log",
+      "sha256": "0292185f82471bcfe26bf90cce626dd0dbe245aaa6dd2f0a7fa268fe8173fd25"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-layer-consumer-build-v192/build.json",
+      "sha256": "c94dc8332f33b40bf0ac66d69409f074ce1226cb8c6ef980d69655544a893e57"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-layer-consumer-build-v192/resolve-existing-lock-and-build.log",
+      "sha256": "10af062f157b7d74bbbcdafa222576a2265288edffebce53f7b180ac7e5a91da"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-layer-consumer-build-v192/locked-build.log",
+      "sha256": "1e3a99060e67bfff28b677607d62b79f40c7d1b0336756e13fc5e6646d68cb03"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-layer-consumer-build-v192/main.rs",
+      "sha256": "7cfe6ee0817e334d8cf90c55477c4c7f10fdf71d1c4394eb48e1fcd0e51da9b5"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-layer-consumer-build-v192/Cargo.toml",
+      "sha256": "3e970ec5fa61d8cacb70053385033e1daa57bd7cb3e656b5c46220ab9643c052"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-layer-consumer-build-v192/Cargo.lock",
+      "sha256": "81f942d78ce2248daba98007fd57851c1913c84ec109b53ae17fee06a86aca39"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-coverage-clean-v196/build.json",
+      "sha256": "92af61499714d2fa98a4ff585de8b4373b77c1548c3a5c95a3a278bfd535f9c0"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-coverage-clean-v196/clean.log",
+      "sha256": "72788a8f5fa76f1426f6aab0bad5e83ab495fbef56a9692b9c1ef7997e2b668e"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-coverage-clean-v196/pixel-build.log",
+      "sha256": "cf5dff65a61f145873c38382b6854d8405ab8e977a5ea6525c20f38db00174d7"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-coverage-clean-v196/pixel_compare",
+      "sha256": "5c3e207a70482950c5047851a44c2bdd78b68930b8233d35ef66dc2ff4e4c4c6"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-coverage-clean-v196/native-build.log",
+      "sha256": "e97605492d089d75c4c42934a6a967d0848135bd219a07fce0e48e7469f6da75"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-coverage-clean-v196/native_viewport_scroll",
+      "sha256": "f79b8717a1ac58564f32125c58b415ea58c0894a2deb3bb9b37121bf2b24ce83"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-coverage-clean-v196/layer-controls-build.log",
+      "sha256": "39a16f8e79bc965615930ba3df1552e23252cd86e2f19e95111f8bfe4e64919c"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-coverage-clean-v196/native_scroll_layer_opacity",
+      "sha256": "64f4a95b198e4a2a8e524bfa530da9964923d0a770435744ad4e340968903aac"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-coverage-clean-v196/source-before.json",
+      "sha256": "13dc3fe583fa081be44ada23f79df93360378774783ceda1ef603f93ce0df3c3"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-coverage-clean-v196/pixel-embedded-source-identity.json",
+      "sha256": "73cb8b2719de0e07a3cf7daedf2524879ababc3a8754d309872c2aa62329ecfc"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-debug-build-v202/build.json",
+      "sha256": "5ca0041ae8368a4af83b4fd9d5c43aed2c26f28d08227ac35bdc3ee44e44e4fa"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-debug-build-v202/clean.log",
+      "sha256": "e97356d0b8ac5ecd4642c912cf5e3cafdad1367985d1381400c43fa66a356d87"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-debug-build-v202/layer-controls-build.log",
+      "sha256": "c91ac720c1e231ea324bf58ec2dc83048419a7ea669a8661590b01414ca612a6"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-debug-build-v202/native_scroll_layer_opacity",
+      "sha256": "c61d172f2e7529af031ccfe8cccd48fbee61c63c21b2399a2605abf90592d3d8"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-debug-build-v202/source-before.json",
+      "sha256": "518c9a4a1b2c31287a7fcf3687260e15e53df48a053dda28dde4fb4e114ed86b"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-region-clean-v206/build.json",
+      "sha256": "0a00af6de4da3e3edf5ba7aad3eccfbddbe918385f31652d6afbaaa431a1a5af"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-region-clean-v206/clean.log",
+      "sha256": "919cdbd32854cf815108a8caa77e740f218d3ec0258aedeb29d6bdccb5a91877"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-region-clean-v206/pixel-build.log",
+      "sha256": "7234f821c21c37ac42020fb39ba4c3011d85747a575ca303238056acfe153b8b"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-region-clean-v206/source-before.json",
+      "sha256": "d9ad63c4951f4303ec6af88b9a70c7390e178843b129a651e27aaef77e9c534b"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-region-clean-v207/build.json",
+      "sha256": "3aaa80f4c3dca507b707c82211b6e4bd96120a8a6a0fc4341976aa1e6c22cdbb"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-region-clean-v207/clean.log",
+      "sha256": "318cba8a347d0c4a8a5c92174dd95eacbbfe22fa6fda4b8115ef5f91f6ee03b3"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-region-clean-v207/pixel-build.log",
+      "sha256": "981636e422803187bb1ae41741cb346a8b4dc610d72d23164eb9b1b3eb64fb16"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-region-clean-v207/pixel_compare",
+      "sha256": "b200dd89010c332602f32550c0c1083cb7f7d7520f82e478b41df4ecd7be5a33"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-region-clean-v207/native-build.log",
+      "sha256": "12f2e854b3f668a15ecb3074fb2fa4bf70554ff3420666ee2e57b8f9690fe2f2"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-region-clean-v207/native_viewport_scroll",
+      "sha256": "60351b3f64dd9d75592fc5a3ec3338403de1e74208f34e98d9b0f605c48fb38f"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-region-clean-v207/layer-controls-build.log",
+      "sha256": "a9585889fc5727f92e063c8f52d6308300147fd8ae5fd02b494e9b4205c069ab"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-region-clean-v207/native_scroll_layer_opacity",
+      "sha256": "72e2e3a7d7e328f38e73b76cda42ec03bf492489f878cd60283f291c4471b741"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-region-clean-v207/source-before.json",
+      "sha256": "986f7dfd36f7a2481690878fb3f450893ba1e166fe27c9f1e19d4133b4fc1632"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-region-clean-v207/pixel-embedded-source-identity.json",
+      "sha256": "b47f661980cb7cecba34ede5d9b9796da37ebd71bcf59dc1dd94138fbc58fea5"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-coverage-clean-v195/failure.json",
+      "sha256": "dbfa58b07eb77a65cf99a2cba91a151b555c6c4a8a10f37f528411b0da575a46"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-coverage-selection-v199/full-summary.json",
+      "sha256": "782ac18ab5b7a66eaf32551957698e2f90396d3f0b3906a395e67ead87806c86"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-coverage-selection-v199.log",
+      "sha256": "06fbb18567649d4f672964d78ee0cef62ecdd250bf2df2ee64cd686e621f063d"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-region-selection-v208/full-summary.json",
+      "sha256": "31d29011e9e35f05cbedbd450cb77131c4af7703868d9d370aba8009c4ccf518"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-region-selection-v208.log",
+      "sha256": "bfbbb814e2add3d18cf5304ba78aa2e693bf5d2898ede9063eaa4fba36f7add2"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-coverage-native-v200/comparison.json",
+      "sha256": "401cd4e0c5c96af793339fb52f54af41f164b756aa196a66c807ee8f397786ff"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-region-native-v209/comparison.json",
+      "sha256": "38dc1c56ac781ef39c1d3a540b2c6c46a8ba2cd1679a34bea2cf95b5848a59a7"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-layer-controls-baseline-v194/comparison.json",
+      "sha256": "1d6d56ce856201ed38b91a803ce37a1c0b1d8784f3e65b629c2938b7b052a960"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-layer-controls-coverage-v198/comparison.json",
+      "sha256": "6e00c0b5bcdbfeb4014ef35615fd23c5804de0bd4c7473200bb5be8e581bebb0"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-layer-controls-region-v210/comparison.json",
+      "sha256": "e3aaf94fa4099bbcb48058ed92884fe0a492afe71bbd0fec9e3f6cd3457cd9bd"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-layer-reference-controls-v218/comparison.json",
+      "sha256": "afec8f271da63e15bdaf4315957e17a8a0d5d0d3d0d06578d514ad4baaba77d5"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-region-clean-focused-v211/focused-summary.json",
+      "sha256": "7e147521a0cc19f58c1523e5656e95e8d3afe078a171219d459e2da30afde3e3"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-region-clean-focused-v211.log",
+      "sha256": "1aef5c82c4c50a9bf2f89bdd2a653d038dda4f9c0987fb9c8b2ae3639cf35e03"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-region-focused-exit-v211.json",
+      "sha256": "6711dec01232538e3bd9e64f337a105b917c52c1cd97e1352c0fa53f7bdb9760"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-region-clean-primitive-v211/primitive-summary.json",
+      "sha256": "2ca59605d8916c8d0a3257c48b0df809d86688122db25d129e4a03c871fdd6d8"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-region-clean-primitive-v211.log",
+      "sha256": "294143c52917e1379fcb1b7ffdf60ba984ba64fc28e02ddf334c76a6f96d2c68"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-region-primitive-exit-v211.json",
+      "sha256": "988bb4a9b28634a432acab50d4eaed01af916da7fc94912a91cbb7353b65351a"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-clean-full-v159/full-summary.json",
+      "sha256": "604d9c1e3abc5df856b01a3fdc6e8b9b0ac15724f20bf7a53ba01d96745f1a3f"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-clean-full-v159.log",
+      "sha256": "7b4b8c6346445999e1193863ab40495f7be5a800906f1bd010e5279df8a86d3f"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-full-exit-v159.json",
+      "sha256": "0cd744c3290d1e4f99a861b9a3cf6cd4eb9e076a35538cec838fc0bf534f1e13"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-clean-expanded-v159/expanded-summary.json",
+      "sha256": "c8b39dcc915491ca95807913d916062348905f3d027f7f9872916484cfed2e5c"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-clean-expanded-v159.log",
+      "sha256": "54f30416ec9758635bcecfa59ea805019dd424208eea590c2591ddc2dda5929a"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-expanded-exit-v159.json",
+      "sha256": "6f14313debb9dee8108aefa5d1cc520cb8977a75a74e204694b60f597bec74fc"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-primary-v197/receipt.json",
+      "sha256": "7f489fe91039351e066987109ac3a0ca75b579323a70aa632d42becb616af24d"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-primary-v197/SkBitmapDevice.cpp",
+      "sha256": "8258d967e52f6dfcbc8fb0db3a09f2492f45b0cedcb1e85673d0ec20d71d0671"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-primary-v197/SkRasterClip.h",
+      "sha256": "72d99c711c8dac891450f74283b2a61e7de32fc5a417f4428c7b6f4060a96924"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-primary-v197/SkAAClip.cpp",
+      "sha256": "06cb41aa21403067f6512396472a60579c7011055cdd7e5f71d46f62dc04434d"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-primary-v197/SkCanvas.cpp",
+      "sha256": "4bb08b43c9b027c64098b414986a7cde97748e0e7ef1b93083c4553e1a02bf6f"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-proof-diagnostic-v205/receipt.json",
+      "sha256": "e61d96ae1d6ed3084b77aa0f45a41e8fdd1f9752f04244bc56fae583027a3037"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-proof-diagnostic-v205/prototype.patch",
+      "sha256": "9b1f97618552be89989d24618ed461441455de1733b3efc1bdb7331fa6029631"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-proof-diagnostic-v204/failure.json",
+      "sha256": "19bafef209f87c7c5cfa93d5a4e23963c73e718d8f5bdf8d8ac80ec9e4a4dcba"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-proof-diagnostic-v205/1.25/0/reference/proof.log",
+      "sha256": "7c30a4ebe87d38299835f12436fbd64687dd7890f9595ba52e2eb5492a11183d"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-proof-diagnostic-v205/1.25/0/reference/geometry.json",
+      "sha256": "e6114fcd12d8e3c7ffec7dd3e934fe0c5d5ab01c23575ed9d4126d844c4d1ebd"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-proof-diagnostic-v205/1.25/0/opaque/proof.log",
+      "sha256": "f228dc26aeb0068f82642e9a7876843a0b9a0b5051fec3f28550dbe5242a3542"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-proof-diagnostic-v205/1.25/0/opaque/geometry.json",
+      "sha256": "2c4fc8f043e0caa695fb008ee6da1395f42c4db01f52e8150e1da833a031147a"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-proof-diagnostic-v205/1.25/0.25/reference/proof.log",
+      "sha256": "7c30a4ebe87d38299835f12436fbd64687dd7890f9595ba52e2eb5492a11183d"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-proof-diagnostic-v205/1.25/0.25/reference/geometry.json",
+      "sha256": "de9aecc4b19c622161035213d087d55f0678a3994796bbe916523a881836a561"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-proof-diagnostic-v205/1.25/0.25/opaque/proof.log",
+      "sha256": "f228dc26aeb0068f82642e9a7876843a0b9a0b5051fec3f28550dbe5242a3542"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-proof-diagnostic-v205/1.25/0.25/opaque/geometry.json",
+      "sha256": "be15a22723cba9977ffbec6250ab878cb443b7d275bfdca9bdc2d8b29f09d204"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-proof-diagnostic-v205/1.25/0.5/reference/proof.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-proof-diagnostic-v205/1.25/0.5/reference/geometry.json",
+      "sha256": "95a825cbd03a5e8ed00d08d934af81d96535ef26d437a7237c4b5e4b27161a4f"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-proof-diagnostic-v205/1.25/0.5/opaque/proof.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-proof-diagnostic-v205/1.25/0.5/opaque/geometry.json",
+      "sha256": "e9e0866efe1f3b5b0a5ee3b42da67dc512adc3ac72e1a3ae03e2cc86e19b66e0"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-proof-diagnostic-v205/1.25/0.75/reference/proof.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-proof-diagnostic-v205/1.25/0.75/reference/geometry.json",
+      "sha256": "fbe41a7645265d41b4baaaf5fc25c74c74e2548666a94478820f9c67209c679a"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-proof-diagnostic-v205/1.25/0.75/opaque/proof.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-proof-diagnostic-v205/1.25/0.75/opaque/geometry.json",
+      "sha256": "e347a7a37701282d238ea5f7d30d72ce31a9fcf38f8bd25440f787d7e16ca87e"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-proof-diagnostic-v205/1.5/0/reference/proof.log",
+      "sha256": "88701246180139470920c9a191ba4cdd023dff69878f8f56447ce0f4ef2960b4"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-proof-diagnostic-v205/1.5/0/reference/geometry.json",
+      "sha256": "e6114fcd12d8e3c7ffec7dd3e934fe0c5d5ab01c23575ed9d4126d844c4d1ebd"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-proof-diagnostic-v205/1.5/0/opaque/proof.log",
+      "sha256": "14b38fafc21ccbe3d4e734d7002fa65ba4a86ccb150a835f890ac201aa7131ee"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-proof-diagnostic-v205/1.5/0/opaque/geometry.json",
+      "sha256": "2c4fc8f043e0caa695fb008ee6da1395f42c4db01f52e8150e1da833a031147a"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-proof-diagnostic-v205/1.5/0.25/reference/proof.log",
+      "sha256": "bca021f5a875ba220e62e4ae8256e836fe601631045c8b38ad92ce49a4c0250c"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-proof-diagnostic-v205/1.5/0.25/reference/geometry.json",
+      "sha256": "de9aecc4b19c622161035213d087d55f0678a3994796bbe916523a881836a561"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-proof-diagnostic-v205/1.5/0.25/opaque/proof.log",
+      "sha256": "235111f8b9367838dd0614b2952a399a02c2a9bd5f2d2f1f56613ab058d57a2b"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-proof-diagnostic-v205/1.5/0.25/opaque/geometry.json",
+      "sha256": "be15a22723cba9977ffbec6250ab878cb443b7d275bfdca9bdc2d8b29f09d204"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-proof-diagnostic-v205/1.5/0.5/reference/proof.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-proof-diagnostic-v205/1.5/0.5/reference/geometry.json",
+      "sha256": "95a825cbd03a5e8ed00d08d934af81d96535ef26d437a7237c4b5e4b27161a4f"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-proof-diagnostic-v205/1.5/0.5/opaque/proof.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-proof-diagnostic-v205/1.5/0.5/opaque/geometry.json",
+      "sha256": "e9e0866efe1f3b5b0a5ee3b42da67dc512adc3ac72e1a3ae03e2cc86e19b66e0"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-proof-diagnostic-v205/1.5/0.75/reference/proof.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-proof-diagnostic-v205/1.5/0.75/reference/geometry.json",
+      "sha256": "fbe41a7645265d41b4baaaf5fc25c74c74e2548666a94478820f9c67209c679a"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-proof-diagnostic-v205/1.5/0.75/opaque/proof.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-proof-diagnostic-v205/1.5/0.75/opaque/geometry.json",
+      "sha256": "e347a7a37701282d238ea5f7d30d72ce31a9fcf38f8bd25440f787d7e16ca87e"
+    },
+    {
+      "path": "docs/renderer/evidence/native-viewport-scroll-v1/scroll-opaque-coverage-prototype-v196.patch",
+      "sha256": "45dda62dd7269f1442c067685e4f1f1de76206f703c8385ec4fa1270373f0f98"
+    },
+    {
+      "path": "docs/renderer/evidence/native-viewport-scroll-v1/scroll-opaque-region-prototype-v207.patch",
+      "sha256": "271454e67db466fa95ad9ed7534bb8add7ab54784d24b2699011181af30b9bc3"
+    },
+    {
+      "path": "docs/renderer/evidence/native-viewport-scroll-v1/native_scroll_layer_opacity.rs",
+      "sha256": "bb06efb23a45563c161dbe7d19efffa2d9fa881234eadfd0964fefa7cecafe4a"
+    }
+  ],
+  "coverage_candidate": {
+    "all_304_comparison_invariants_unchanged_vs_background_color_shortcut": true,
+    "all_chromium_images_and_oracle_identities_unchanged": true,
+    "all_four_scrolling_exact_repairs_preserved": true,
+    "alpha_repairs": [
+      {
+        "after_alpha_extrema": [
+          255,
+          255
+        ],
+        "after_mismatched_pixels": 701,
+        "before_alpha_extrema": [
+          0,
+          255
+        ],
+        "before_mismatched_pixels": 3528,
+        "case": "content-opaque",
+        "oracle_alpha_extrema": [
+          255,
+          255
+        ],
+        "owner": "openui-paint",
+        "phase": 0,
+        "scale": 1.25
+      },
+      {
+        "after_alpha_extrema": [
+          255,
+          255
+        ],
+        "after_mismatched_pixels": 949,
+        "before_alpha_extrema": [
+          0,
+          255
+        ],
+        "before_mismatched_pixels": 5899,
+        "case": "content-translucent",
+        "oracle_alpha_extrema": [
+          255,
+          255
+        ],
+        "owner": "openui-paint",
+        "phase": 0,
+        "scale": 1.25
+      },
+      {
+        "after_alpha_extrema": [
+          255,
+          255
+        ],
+        "after_mismatched_pixels": 255,
+        "before_alpha_extrema": [
+          191,
+          255
+        ],
+        "before_mismatched_pixels": 249,
+        "case": "padding-translucent",
+        "oracle_alpha_extrema": [
+          255,
+          255
+        ],
+        "owner": "openui-paint",
+        "phase": 0,
+        "scale": 1.25
+      },
+      {
+        "after_alpha_extrema": [
+          255,
+          255
+        ],
+        "after_mismatched_pixels": 1004,
+        "before_alpha_extrema": [
+          192,
+          255
+        ],
+        "before_mismatched_pixels": 6376,
+        "case": "scrolled-content",
+        "oracle_alpha_extrema": [
+          255,
+          255
+        ],
+        "owner": "openui-paint",
+        "phase": 0,
+        "scale": 1.25
+      },
+      {
+        "after_alpha_extrema": [
+          255,
+          255
+        ],
+        "after_mismatched_pixels": 701,
+        "before_alpha_extrema": [
+          0,
+          255
+        ],
+        "before_mismatched_pixels": 3528,
+        "case": "content-opaque",
+        "oracle_alpha_extrema": [
+          255,
+          255
+        ],
+        "owner": "openui-paint",
+        "phase": 0.25,
+        "scale": 1.25
+      },
+      {
+        "after_alpha_extrema": [
+          255,
+          255
+        ],
+        "after_mismatched_pixels": 949,
+        "before_alpha_extrema": [
+          0,
+          255
+        ],
+        "before_mismatched_pixels": 5899,
+        "case": "content-translucent",
+        "oracle_alpha_extrema": [
+          255,
+          255
+        ],
+        "owner": "openui-paint",
+        "phase": 0.25,
+        "scale": 1.25
+      },
+      {
+        "after_alpha_extrema": [
+          255,
+          255
+        ],
+        "after_mismatched_pixels": 255,
+        "before_alpha_extrema": [
+          191,
+          255
+        ],
+        "before_mismatched_pixels": 249,
+        "case": "padding-translucent",
+        "oracle_alpha_extrema": [
+          255,
+          255
+        ],
+        "owner": "openui-paint",
+        "phase": 0.25,
+        "scale": 1.25
+      },
+      {
+        "after_alpha_extrema": [
+          255,
+          255
+        ],
+        "after_mismatched_pixels": 1004,
+        "before_alpha_extrema": [
+          192,
+          255
+        ],
+        "before_mismatched_pixels": 6376,
+        "case": "scrolled-content",
+        "oracle_alpha_extrema": [
+          255,
+          255
+        ],
+        "owner": "openui-paint",
+        "phase": 0.25,
+        "scale": 1.25
+      },
+      {
+        "after_alpha_extrema": [
+          255,
+          255
+        ],
+        "after_mismatched_pixels": 271,
+        "before_alpha_extrema": [
+          0,
+          255
+        ],
+        "before_mismatched_pixels": 4720,
+        "case": "content-opaque",
+        "oracle_alpha_extrema": [
+          255,
+          255
+        ],
+        "owner": "openui-paint",
+        "phase": 0,
+        "scale": 1.5
+      },
+      {
+        "after_alpha_extrema": [
+          255,
+          255
+        ],
+        "after_mismatched_pixels": 512,
+        "before_alpha_extrema": [
+          0,
+          255
+        ],
+        "before_mismatched_pixels": 8339,
+        "case": "content-translucent",
+        "oracle_alpha_extrema": [
+          255,
+          255
+        ],
+        "owner": "openui-paint",
+        "phase": 0,
+        "scale": 1.5
+      },
+      {
+        "after_alpha_extrema": [
+          255,
+          255
+        ],
+        "after_mismatched_pixels": 598,
+        "before_alpha_extrema": [
+          127,
+          255
+        ],
+        "before_mismatched_pixels": 598,
+        "case": "padding-translucent",
+        "oracle_alpha_extrema": [
+          255,
+          255
+        ],
+        "owner": "openui-paint",
+        "phase": 0,
+        "scale": 1.5
+      },
+      {
+        "after_alpha_extrema": [
+          255,
+          255
+        ],
+        "after_mismatched_pixels": 902,
+        "before_alpha_extrema": [
+          192,
+          255
+        ],
+        "before_mismatched_pixels": 9000,
+        "case": "scrolled-content",
+        "oracle_alpha_extrema": [
+          255,
+          255
+        ],
+        "owner": "openui-paint",
+        "phase": 0,
+        "scale": 1.5
+      },
+      {
+        "after_alpha_extrema": [
+          255,
+          255
+        ],
+        "after_mismatched_pixels": 2,
+        "before_alpha_extrema": [
+          0,
+          255
+        ],
+        "before_mismatched_pixels": 4451,
+        "case": "content-opaque",
+        "oracle_alpha_extrema": [
+          255,
+          255
+        ],
+        "owner": "openui-paint",
+        "phase": 0.25,
+        "scale": 1.5
+      },
+      {
+        "after_alpha_extrema": [
+          255,
+          255
+        ],
+        "after_mismatched_pixels": 241,
+        "before_alpha_extrema": [
+          0,
+          255
+        ],
+        "before_mismatched_pixels": 8339,
+        "case": "content-translucent",
+        "oracle_alpha_extrema": [
+          255,
+          255
+        ],
+        "owner": "openui-paint",
+        "phase": 0.25,
+        "scale": 1.5
+      },
+      {
+        "after_alpha_extrema": [
+          255,
+          255
+        ],
+        "after_mismatched_pixels": 299,
+        "before_alpha_extrema": [
+          128,
+          255
+        ],
+        "before_mismatched_pixels": 299,
+        "case": "padding-translucent",
+        "oracle_alpha_extrema": [
+          255,
+          255
+        ],
+        "owner": "openui-paint",
+        "phase": 0.25,
+        "scale": 1.5
+      },
+      {
+        "after_alpha_extrema": [
+          255,
+          255
+        ],
+        "after_mismatched_pixels": 902,
+        "before_alpha_extrema": [
+          192,
+          255
+        ],
+        "before_mismatched_pixels": 9000,
+        "case": "scrolled-content",
+        "oracle_alpha_extrema": [
+          255,
+          255
+        ],
+        "owner": "openui-paint",
+        "phase": 0.25,
+        "scale": 1.5
+      }
+    ],
+    "applied_to_umbrella": false,
+    "artifacts": [
+      {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-region-clean-v207/build.json",
+        "sha256": "3aaa80f4c3dca507b707c82211b6e4bd96120a8a6a0fc4341976aa1e6c22cdbb"
+      },
+      {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-region-selection-v208/full-summary.json",
+        "sha256": "31d29011e9e35f05cbedbd450cb77131c4af7703868d9d370aba8009c4ccf518"
+      },
+      {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-region-native-v209/comparison.json",
+        "sha256": "38dc1c56ac781ef39c1d3a540b2c6c46a8ba2cd1679a34bea2cf95b5848a59a7"
+      },
+      {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-layer-controls-region-v210/comparison.json",
+        "sha256": "e3aaf94fa4099bbcb48058ed92884fe0a492afe71bbd0fec9e3f6cd3457cd9bd"
+      },
+      {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-native-alpha-review-v213.json",
+        "sha256": "a236973a2dfc36c199523501ef3f4576ac82bfb5fd688e9529803ad1a22c82a6"
+      },
+      {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-opacity-proof-diagnostic-v205/receipt.json",
+        "sha256": "e61d96ae1d6ed3084b77aa0f45a41e8fdd1f9752f04244bc56fae583027a3037"
+      }
+    ],
+    "coverage_review": "Actual rectangular raster clips and rect-staying canvas transforms yield inward-rounded fully covered physical cells. Owned region union retains every rectangle rather than choosing a single largest rectangle. A visible quad receives Src only when its entire linear-sampling source footprint is proven covered and its composition effects/opacity permit it. There is no image-pixel inspection, tolerance, fixture identity or color correction in the decision.",
+    "javascript_executed_by_openui": false,
+    "matrix_results": {
+      "different": 132,
+      "errors": 0,
+      "exact": 172,
+      "profile_result_sha256": "094c8d1777ac538022d6c8925b268dd110715ff4e1e9f3cc885469ac81a481ea",
+      "total": 304
+    },
+    "native_existing_exact": 850,
+    "native_existing_pixels_geometry_callbacks_teardown_unchanged": true,
+    "native_existing_total": 850,
+    "new_native_controls": {
+      "before_exact": 67,
+      "bounds_and_offsets_exact": 140,
+      "client_metrics_exact": 140,
+      "exact": 67,
+      "exact_gains": 0,
+      "exact_losses": 0,
+      "extent_metrics_exact": 0,
+      "geometry_exact": 0,
+      "pixel_changes": 24,
+      "total": 140
+    },
+    "observed_matrix_exit_code": 1,
+    "owners": {
+      "bordered_scroll_extent": "openui-engine/openui-layout",
+      "scroll_opacity_and_sampling": "openui-paint",
+      "svg_viewport_and_decoration": "openui-paint/openui-layout"
+    },
+    "pixel_tolerance": 0,
+    "qualification_limitation": "The SVG foreignObject path still has an unmodeled historical 49/50 decoration saveLayer alpha; it must be removed through the shared SVG viewport/paint correction and native API tests before opacity coverage can be considered general. The remaining original exact regression, native control raster and bordered-scroll extent failures, complete census, and hardening/lab gates remain open.",
+    "release_qualification": false,
+    "remaining_exact_regressions_vs_accepted_renderer": [
+      {
+        "difference": {
+          "channel_deltas": {
+            "alpha": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "blue": {
+              "changed_pixels": 1,
+              "maximum_absolute_delta": 1,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": -1,
+              "signed_delta_sum": -1
+            },
+            "green": {
+              "changed_pixels": 1,
+              "maximum_absolute_delta": 1,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": -1,
+              "signed_delta_sum": -1
+            },
+            "red": {
+              "changed_pixels": 1,
+              "maximum_absolute_delta": 1,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": -1,
+              "signed_delta_sum": -1
+            }
+          },
+          "comparable": true,
+          "connected_region_count": 1,
+          "connected_regions": [
+            {
+              "bounds": {
+                "height": 1,
+                "width": 1,
+                "x": 20,
+                "y": 20
+              },
+              "mismatched_pixels": 1
+            }
+          ],
+          "mismatch_bounds": {
+            "height": 1,
+            "width": 1,
+            "x": 20,
+            "y": 20
+          },
+          "mismatched_pixels": 1
+        },
+        "id": "wpt/css_backgrounds/tiny-foreignObject-double-border-radius-crash",
+        "owner": "openui-paint / raster image sampler",
+        "profile": "legacy-800x600@1",
+        "root_cause_status": "Legacy flag isolated; correct path for this operation unresolved"
+      }
+    ],
+    "schema_version": 1,
+    "source": {
+      "clean": true,
+      "commit": "6368057f993b41c3b010ee11e6e5ad3a2f4372b3",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "f127200c88e0092d59a92c286d2ddb1a753dd8e7d6f27c44578a450fd7796413",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "first_rectangle_candidate": {
+    "all_chromium_images_and_oracle_identities_unchanged": true,
+    "applied_to_umbrella": false,
+    "artifacts": [
+      {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-coverage-clean-v196/build.json",
+        "sha256": "92af61499714d2fa98a4ff585de8b4373b77c1548c3a5c95a3a278bfd535f9c0"
+      },
+      {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-coverage-selection-v199/full-summary.json",
+        "sha256": "782ac18ab5b7a66eaf32551957698e2f90396d3f0b3906a395e67ead87806c86"
+      },
+      {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-coverage-native-v200/comparison.json",
+        "sha256": "401cd4e0c5c96af793339fb52f54af41f164b756aa196a66c807ee8f397786ff"
+      },
+      {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-layer-controls-coverage-v198/comparison.json",
+        "sha256": "6e00c0b5bcdbfeb4014ef35615fd23c5804de0bd4c7473200bb5be8e581bebb0"
+      },
+      {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-layer-controls-baseline-v194/comparison.json",
+        "sha256": "1d6d56ce856201ed38b91a803ce37a1c0b1d8784f3e65b629c2938b7b052a960"
+      }
+    ],
+    "exact_losses_vs_background_color_shortcut": 2,
+    "javascript_executed_by_openui": false,
+    "matrix_results": {
+      "different": 134,
+      "errors": 0,
+      "exact": 170,
+      "profile_result_sha256": "598d551552e6aa65e44719965da9b75a102b45f841b7589f49e67d96b6932f55",
+      "total": 304
+    },
+    "native_existing_exact": 850,
+    "native_existing_pixels_geometry_callbacks_teardown_unchanged": true,
+    "native_existing_total": 850,
+    "new_native_control_review": "140 consuming-app runs use public Rust style setters and a Rust click callback, with owned geometry and teardown. Actual bounds, offsets and client metrics match Chromium; all extent metrics remain wrong because the native query includes border-box overflow in its scrollable padding area. 67/140 pixels are exact. 28 already failing images change, with no exact loss. Clipped backgrounds now retain the opaque white backdrop instead of erasing it to alpha 0/127; image sampling, opacity/rounded/filter details and metrics remain open. This is not admitted pixel or API qualification.",
+    "new_native_controls": {
+      "before_exact": 67,
+      "bounds_and_offsets_exact": 140,
+      "client_metrics_exact": 140,
+      "exact": 67,
+      "exact_gains": 0,
+      "exact_losses": 0,
+      "extent_metrics_exact": 0,
+      "geometry_exact": 0,
+      "pixel_changes": 28,
+      "total": 140
+    },
+    "observed_matrix_exit_code": 1,
+    "pending": "The conservative proof fixes false opaque claims but fails to prove some valid 1.25x opaque quads. Diagnose actual coverage and sampling inputs without relaxing the proof. Full matrices and the SVG regression remain required.",
+    "release_qualification": false,
+    "residual_owners": {
+      "bordered_scroll_extent": "openui-engine/openui-layout",
+      "remaining_svg_regression": "openui-paint/openui-layout",
+      "scroll_quad_proof_and_sampling": "openui-paint"
+    },
+    "schema_version": 1,
+    "selected_changed_comparisons": [
+      {
+        "after_mismatched_pixels": 301,
+        "after_status": "different",
+        "before_mismatched_pixels": 0,
+        "before_status": "exact",
+        "id": "wpt/css_flexbox/overflow-area-001",
+        "owner": "openui-paint",
+        "profile": "desktop-1280x720@1.25"
+      },
+      {
+        "after_mismatched_pixels": 302,
+        "after_status": "different",
+        "before_mismatched_pixels": 0,
+        "before_status": "exact",
+        "id": "wpt/css_flexbox/overflow-area-002",
+        "owner": "openui-paint",
+        "profile": "desktop-1280x720@1.25"
+      }
+    ],
+    "selected_unchanged_comparisons": 302,
+    "source": {
+      "clean": true,
+      "commit": "9ba5a21b47677e7c666e9ea6962bf85603afd6db",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "23cb6694f89fc9cc7b69b61beffe7a781077d4e818f32d7c533628aa0b9b8048",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_and_binary_clean_and_unchanged": true
+  },
+  "focused_and_primitive": [
+    {
+      "all_eight_row_invariants_unchanged": true,
+      "observed_exit_code": 0,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-region-clean-focused-v211/focused-summary.json",
+      "results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 640,
+        "profile_result_sha256": "c2bb8dcd2b42290421da479e014895f40e7f021eab6ccdaeac7cee9ad4d7e125",
+        "total": 640
+      },
+      "sha256": "7e147521a0cc19f58c1523e5656e95e8d3afe078a171219d459e2da30afde3e3",
+      "source": {
+        "clean": true,
+        "commit": "6368057f993b41c3b010ee11e6e5ad3a2f4372b3",
+        "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+        "source_tree_sha256": "f127200c88e0092d59a92c286d2ddb1a753dd8e7d6f27c44578a450fd7796413",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "6368057f993b41c3b010ee11e6e5ad3a2f4372b3",
+        "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+        "source_tree_sha256": "f127200c88e0092d59a92c286d2ddb1a753dd8e7d6f27c44578a450fd7796413",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "suite": "focused"
+    },
+    {
+      "all_eight_row_invariants_unchanged": true,
+      "observed_exit_code": 0,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-region-clean-primitive-v211/primitive-summary.json",
+      "results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 960,
+        "profile_result_sha256": "2502a08bf9bb09d23d935c6e20d0a654a3ebcbc017755bb2b3d8cb8410a4390b",
+        "total": 960
+      },
+      "sha256": "2ca59605d8916c8d0a3257c48b0df809d86688122db25d129e4a03c871fdd6d8",
+      "source": {
+        "clean": true,
+        "commit": "6368057f993b41c3b010ee11e6e5ad3a2f4372b3",
+        "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+        "source_tree_sha256": "f127200c88e0092d59a92c286d2ddb1a753dd8e7d6f27c44578a450fd7796413",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "6368057f993b41c3b010ee11e6e5ad3a2f4372b3",
+        "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+        "source_tree_sha256": "f127200c88e0092d59a92c286d2ddb1a753dd8e7d6f27c44578a450fd7796413",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "suite": "primitive"
+    }
+  ],
+  "hosted_previous_checkpoint": {
+    "all_workflows_completed": true,
+    "job_conclusions": {
+      "skipped": 5,
+      "success": 6
+    },
+    "skips_are_not_passes": true,
+    "source": "16abb91b0436245d661f4440d47efd03aa3835cf"
+  },
+  "javascript_executed_by_openui": false,
+  "new_native_controls": {
+    "alpha_repairs": 16,
+    "bounds_offsets_client_metrics_exact": 180,
+    "cases_admitted_to_release": 0,
+    "exact_pixels": 95,
+    "extent_metrics_exact": 0,
+    "fully_covering_child_controls": {
+      "exact": 28,
+      "geometry_exact": 0,
+      "total": 40
+    },
+    "original_controls": {
+      "exact": 67,
+      "exact_losses": 0,
+      "pixel_changes": 24,
+      "total": 140
+    },
+    "owner_metrics": "openui-engine/openui-layout",
+    "owner_pixels": "openui-paint",
+    "rust_callbacks_and_document_teardown_checked": 180,
+    "total": 180
+  },
+  "patches": [
+    {
+      "applied_to_umbrella": false,
+      "path": "docs/renderer/evidence/native-viewport-scroll-v1/scroll-opaque-coverage-prototype-v196.patch",
+      "sha256": "45dda62dd7269f1442c067685e4f1f1de76206f703c8385ec4fa1270373f0f98"
+    },
+    {
+      "applied_to_umbrella": false,
+      "path": "docs/renderer/evidence/native-viewport-scroll-v1/scroll-opaque-region-prototype-v207.patch",
+      "sha256": "271454e67db466fa95ad9ed7534bb8add7ab54784d24b2699011181af30b9bc3"
+    },
+    {
+      "applied_to_umbrella": false,
+      "path": "docs/renderer/evidence/native-viewport-scroll-v1/native_scroll_layer_opacity.rs",
+      "sha256": "bb06efb23a45563c161dbe7d19efffa2d9fa881234eadfd0964fefa7cecafe4a"
+    }
+  ],
+  "pixel_tolerance": 0,
+  "policy": "Chromium is the sole pixel target. Open UI never executes JavaScript. Needed application operations require shared Engine implementations and public native Rust APIs and callbacks. Historical Open UI images remain provenance.",
+  "previous_evidence": "docs/renderer/generated/native-viewport-full-v16.json",
+  "release_qualification": false,
+  "remaining_required_work": "Remove the historical SVG decoration alpha through shared SVG layout/paint and public native API work, resolve the SVG exact regression, complete nested native scroll metrics/ranges, review the native control raster residuals, run the candidate full/expanded censuses, and finish remaining native APIs, hardening and lab/release gates. No full-census count is inferred from the selected candidate.",
+  "residual_review_complete": false,
+  "schema_version": 1
+}

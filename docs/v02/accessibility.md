@@ -30,6 +30,80 @@ included in accessibility update metadata for native consumers. The Linux
 platform crate owns the AccessKit winit/Unix adapter and forwards its action
 requests into this API; AT-SPI is not accessed from headless builds.
 
+C applications can request an owned `OuiAccessibilitySnapshot` from the same
+engine tree. The snapshot exposes every node's stable ID, role and role name,
+label, description, value, placeholder, bounds, state flags, supported core
+actions, ordered children, labelled-by, described-by, controls, and details
+relations. Control state includes selected, expanded, toggled, live region,
+numeric values, scroll offsets, and text selection/character lengths. Its
+metadata includes focus, generation, and reduced-motion preference. Passing a
+previous snapshot from the same document returns changed and removed IDs;
+each snapshot still contains the full current tree. A snapshot remains readable
+after its document is destroyed and must be destroyed on its owning thread.
+This API does not consume the Rust/AccessKit incremental update stream.
+
+C callers can invoke every advertised directional scroll action with
+`OUI_ACCESSIBILITY_SCROLL_DOWN`, `SCROLL_UP`, `SCROLL_LEFT`, and `SCROLL_RIGHT`.
+These use the same target-aware physical page request and legal offset bounds
+as Rust and the Linux AccessKit adapter. A page is four fifths of the authored,
+untransformed stitched border-box dimension, rounded to the nearest integer
+with a minimum of one pixel. A document uses the full frame size. Client
+gutters do not reduce the page, and writing modes do not remap the four physical
+directions. The instant action bypasses selection of a new mandatory snap
+endpoint; explicit `ScrollBy` retains its native delta behavior. Scroll
+notifications use the document's pending event queue; call `oui_document_dispatch_pending_events_v1` to deliver them. Existing
+action numbers, exports and struct layouts retain their ABI. Physical AT-SPI
+inspection and operation still require measured Linux qualification.
+
 The v0.2 accessibility scope covers the core interactive controls and their
 text editing behavior. Rich hypertext navigation beyond those controls remains
 deferred.
+
+## Owned native scroll metadata
+
+`oui_accessibility_snapshot_get_scroll_info_v1` copies current X/Y offsets,
+minimum/maximum offsets and advertised directional actions from an owned tree.
+Presence flags distinguish a missing scroll box from a valid zero offset or
+zero range. These values retain the framework's native `double` precision in
+logical coordinates; they are not Chromium's integer accessibility wire values.
+The getter reads no live Engine state and remains available after the document
+has been destroyed, on the snapshot's owning thread. It validates the size/ABI
+prefix before accessing a complete output and writes only on success. A larger
+future output keeps its trailing bytes.
+
+Scroll metadata uses retained used overflow and ownership. Programmatically
+scrollable hidden boxes retain offsets and limits without user scroll actions;
+actual auto/scroll overflow advertises all four directional actions. Table
+normalization, replaced boxes and the viewport consume retained geometry.
+An authored fieldset AX wrapper has no scroll-area alias or directional action;
+its anonymous content still supports public element scrolling, metrics, wheel
+input, sticky layout and timelines. Legal offsets use the floored scroll origin
+and independently snapped content and rounded client sizes. Fractional RTL
+geometry can have a positive maximum as well as a negative minimum. Raw
+client/content rectangles and `ScrollMetrics` keep their fractional dimensions.
+
+The additive getter preserves all prior C exports and layouts. Source guards
+and C/C++ consumers cover offsets/ranges, hidden/clip mutations, negative RTL
+origins, output prefixes/tails/errors, owning-thread access and snapshot lifetime.
+The original getter checkpoint was source-only. This new paging checkpoint
+requires fresh native checks, and physical accessibility qualification remains
+open.
+
+## Directional page source checkpoint
+
+`AccessibilityAction::ScrollPage` and `AccessibilityScrollDirection` are additive
+native Rust interfaces. Existing action variants and C action IDs/layouts stay
+available. Downstream exhaustive Rust matches must handle the new variant.
+The retained `ScrollArea` source struct adds its content-snapping origin; callers
+constructing it directly must initialize that layout-owned metadata.
+
+The shared page and legal-bound calculations follow Chromium 147.0.7727.50
+`AXObject::Scroll`, `PaintLayerScrollableArea::MaximumScrollOffsetInt` and
+`UpdateScrollOrigin`. A separate stock Chromium DOM diagnostic observed exact
+fractional LTR/RTL endpoints at five raster scales, repeated twice. It measured
+DOM dimensions and offset clamps, not accessibility action delivery. This new
+source checkpoint's native guards and C consumers have not run. Live Chromium
+AX delivery, physical AT-SPI operation and optional keyboard synthesis remain
+unqualified. Forward/backward transport is separate from these four physical
+actions. No JavaScript runs in Open UI; browser diagnostic queries are oracle
+observations only.

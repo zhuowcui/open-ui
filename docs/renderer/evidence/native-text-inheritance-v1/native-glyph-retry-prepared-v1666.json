@@ -1,0 +1,16 @@
+{
+  "branch": "agent/native-glyph-guard-retry-v1666",
+  "guard_only": true,
+  "interruption_witness_sha256": "e3b0b081e43fdb29917909d2d8f03a643430bf17d971f1a3219211be612d29e2",
+  "original_owner_receipts_unchanged": true,
+  "parent_has_83_exact_losses": true,
+  "prior_whole_owners": 37,
+  "release_qualification": false,
+  "root": "/dev/shm/openui-native-glyph-guard-retry-3b2e0d1f",
+  "schema_version": 1,
+  "scripts": {
+    "/tmp/openui-native-glyph-guard-v1666.py": "f630c9ef2d86f380964f6a193120c593b427f65f2968cb55079320398af79146",
+    "/tmp/openui-native-glyph-retry-pipeline-v1667.py": "2edf3400d647985940aacd3eaac6bc1b8b81c43d517cf2a94e643ca469258dae"
+  },
+  "source": "3b2e0d1f60b90813859c4c24325c7b0061dea29c"
+}

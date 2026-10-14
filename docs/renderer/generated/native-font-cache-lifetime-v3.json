@@ -1,0 +1,373 @@
+{
+  "application": {
+    "artifacts": [
+      {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/native-font-cache-complete-audit-v627.json",
+        "sha256": "13b9b83b8af967be0d8e0c518496af43fa259f272a4a268e0bec30dba44c1984"
+      },
+      {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-insets-oracle-v634/oracle.json",
+        "sha256": "70e821ddd1af7cad4a577f07ae67adfb202ba29cc002be9aa20530030d1f152e"
+      },
+      {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-insets-checks-v636/receipt.json",
+        "sha256": "37e2b80307a227cd04506be59f426042b80bf93bdcdbae601051c636f3f56b5f"
+      }
+    ],
+    "font_candidate_applied": true,
+    "identity_command": [
+      "git",
+      "diff",
+      "ed52e817",
+      "a41fdeb9818e9dbe7b07642a911570acd4da45de",
+      "--",
+      "bindings",
+      "tools",
+      "include",
+      "examples",
+      ".cargo"
+    ],
+    "native_sources_tools_headers_examples_identical_to_tested_candidate": true,
+    "private_candidate": "ed52e817fb7c0308faed4600e2f150cfc68e10e6",
+    "private_scroll_insets_applied": false,
+    "release_qualification": false,
+    "schema_version": 1,
+    "source": {
+      "clean": true,
+      "commit": "a41fdeb9818e9dbe7b07642a911570acd4da45de",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "46806148bfa549d4ee430b1819be60fa7d6bb78324426423f7b3ca724677d599",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "artifacts": [
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-font-cache-complete-audit-v627.json",
+      "sha256": "13b9b83b8af967be0d8e0c518496af43fa259f272a4a268e0bec30dba44c1984"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-font-cache-clean-full-v625/full-summary.json",
+      "sha256": "76552942d0c5c68457499e621cee8a7a8b6cb59578229858513fb9965051eb4e"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-font-cache-clean-expanded-v625/expanded-summary.json",
+      "sha256": "706e4f31ee7941be46d7d7280b496643f0acc07e32fcacff9f529764234a16b5"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-font-cache-full-exit-v625.json",
+      "sha256": "60135f91cecf4b2ae5029cde216402e05d349f38578e77575ea4e4081fb185eb"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-font-cache-expanded-exit-v625.json",
+      "sha256": "e7b2642275685d8e7405ea355ed1ad81289f130d4acd3d00d59b5f35d6e57d90"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-font-cache-application-v638.json",
+      "sha256": "6853fbbe41a2a7a1df59825fa7954edfb5bc320afc679d2ebc625871619796c7"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-font-cache-umbrella-tests-v639/receipt.json",
+      "sha256": "ad0370752a26ea472e739db67b1f2210ffab474f3df92925c92bc9438d6b5372"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-font-cache-diagnostic-recovery-v641.json",
+      "sha256": "e0f4289f9fbc7bd951d79699e76a1fb1fdcd6cbbf3325d535ce96a8ce0632f69"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-font-cache-umbrella-tests-v642/receipt.json",
+      "sha256": "2b1c282876367bf3a65ca8a3dcd67590a7d6ba9b0d99f9b55eeeb17dd9207f9e"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-font-cache-umbrella-checks-v645/receipt.json",
+      "sha256": "88da92b9eb92d20a532bf4c15c4580d74dcee8a3558385c44ed5566396a2392d"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-font-cache-hosted-snapshot-v646.json",
+      "sha256": "a587a24884b5df4464b5cb3322ebc20baef4e7eb466404bd78a9464929d02b82"
+    }
+  ],
+  "complete_private_census": {
+    "addition_count": 201,
+    "all_804_addition_invariants_unchanged": true,
+    "all_eight_comparison_invariants_unchanged_vs_d174ea0b": true,
+    "exact_additions_at_all_four_profiles": 200,
+    "required_pixel_gate": "fail",
+    "results": {
+      "expanded": {
+        "different": 1591,
+        "errors": 0,
+        "exact": 22137,
+        "profile_result_sha256": "3e93fbe8a1e0f247d9736142c51d61ad70e65db9715ae204c1756dbf0b954b31",
+        "total": 23728
+      },
+      "full": {
+        "different": 1590,
+        "errors": 0,
+        "exact": 21334,
+        "profile_result_sha256": "2e5043e4a72cd38f2cceedadcc04ef601cd9ac003d877dc610290eebb0e3bf62",
+        "total": 22924
+      }
+    },
+    "source": {
+      "clean": true,
+      "commit": "ed52e817fb7c0308faed4600e2f150cfc68e10e6",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "6162fb2b05c2c6af54359f74cc4455eb0a27a990f5aee61ed40745147ca8ef28",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "hosted": {
+    "probe_sha256": "75041ffccd2657767acd332f45399905ea98d7959b33f03947b59961233a9788",
+    "release_qualification": false,
+    "runs": [
+      {
+        "conclusion": "success",
+        "databaseId": 37149513918,
+        "event": "pull_request",
+        "headSha": "a41fdeb9818e9dbe7b07642a911570acd4da45de",
+        "jobs": [
+          {
+            "conclusion": "success",
+            "databaseId": 111280195250,
+            "name": "clang-format",
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37149513918/job/111280195250"
+          },
+          {
+            "conclusion": "success",
+            "databaseId": 111280195487,
+            "name": "gn-format",
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37149513918/job/111280195487"
+          }
+        ],
+        "name": "Format Check",
+        "status": "completed",
+        "url": "https://github.com/zhuowcui/open-ui/actions/runs/37149513918"
+      },
+      {
+        "conclusion": "success",
+        "databaseId": 37149514012,
+        "event": "pull_request",
+        "headSha": "a41fdeb9818e9dbe7b07642a911570acd4da45de",
+        "jobs": [
+          {
+            "conclusion": "success",
+            "databaseId": 111280195778,
+            "name": "conformance-and-platform",
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37149514012/job/111280195778"
+          },
+          {
+            "conclusion": "skipped",
+            "databaseId": 111280196335,
+            "name": "native-sanitizers",
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37149514012/job/111280196335"
+          },
+          {
+            "conclusion": "skipped",
+            "databaseId": 111280196337,
+            "name": "miri-handles",
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37149514012/job/111280196337"
+          },
+          {
+            "conclusion": "skipped",
+            "databaseId": 111280196377,
+            "name": "fuzz-smoke",
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37149514012/job/111280196377"
+          },
+          {
+            "conclusion": "skipped",
+            "databaseId": 111280196454,
+            "name": "msrv",
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37149514012/job/111280196454"
+          },
+          {
+            "conclusion": "skipped",
+            "databaseId": 111280196480,
+            "name": "c-undefined-sanitizer",
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37149514012/job/111280196480"
+          }
+        ],
+        "name": "v0.2 Hardening",
+        "status": "completed",
+        "url": "https://github.com/zhuowcui/open-ui/actions/runs/37149514012"
+      },
+      {
+        "conclusion": "success",
+        "databaseId": 37149513901,
+        "event": "pull_request",
+        "headSha": "a41fdeb9818e9dbe7b07642a911570acd4da45de",
+        "jobs": [
+          {
+            "conclusion": "success",
+            "databaseId": 111280195265,
+            "name": "python-accountability",
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37149513901/job/111280195265"
+          },
+          {
+            "conclusion": "success",
+            "databaseId": 111280195456,
+            "name": "rust-parity",
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37149513901/job/111280195456"
+          },
+          {
+            "conclusion": "success",
+            "databaseId": 111280195465,
+            "name": "historical-pixel-audit",
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37149513901/job/111280195465"
+          }
+        ],
+        "name": "CI",
+        "status": "completed",
+        "url": "https://github.com/zhuowcui/open-ui/actions/runs/37149513901"
+      },
+      {
+        "conclusion": "",
+        "databaseId": 37149510887,
+        "event": "workflow_dispatch",
+        "headSha": "a41fdeb9818e9dbe7b07642a911570acd4da45de",
+        "jobs": [
+          {
+            "conclusion": "success",
+            "databaseId": 111280189159,
+            "name": "miri-handles",
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37149510887/job/111280189159"
+          },
+          {
+            "conclusion": "success",
+            "databaseId": 111280189271,
+            "name": "native-sanitizers (address)",
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37149510887/job/111280189271"
+          },
+          {
+            "conclusion": "success",
+            "databaseId": 111280189285,
+            "name": "native-sanitizers (leak)",
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37149510887/job/111280189285"
+          },
+          {
+            "conclusion": "success",
+            "databaseId": 111280189305,
+            "name": "c-undefined-sanitizer",
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37149510887/job/111280189305"
+          },
+          {
+            "conclusion": "",
+            "databaseId": 111280189313,
+            "name": "msrv",
+            "status": "in_progress",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37149510887/job/111280189313"
+          },
+          {
+            "conclusion": "success",
+            "databaseId": 111280189339,
+            "name": "conformance-and-platform",
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37149510887/job/111280189339"
+          },
+          {
+            "conclusion": "",
+            "databaseId": 111280189351,
+            "name": "fuzz-smoke",
+            "status": "in_progress",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37149510887/job/111280189351"
+          }
+        ],
+        "name": "v0.2 Hardening",
+        "status": "in_progress",
+        "url": "https://github.com/zhuowcui/open-ui/actions/runs/37149510887"
+      }
+    ],
+    "schema_version": 1,
+    "skips_are_passes": false,
+    "snapshot_utc": "2026-10-03T20:06:49.067760+00:00",
+    "source": {
+      "clean": true,
+      "commit": "a41fdeb9818e9dbe7b07642a911570acd4da45de",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "46806148bfa549d4ee430b1819be60fa7d6bb78324426423f7b3ca724677d599",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "a41fdeb9818e9dbe7b07642a911570acd4da45de",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "46806148bfa549d4ee430b1819be60fa7d6bb78324426423f7b3ca724677d599",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "interaction": "Open UI executes no JavaScript. Consuming applications call public native Rust APIs and callbacks. Missing needed public operations remain unfinished work.",
+  "own_workspace": {
+    "command": [
+      "cargo",
+      "--config",
+      ".cargo/config.chromium.toml",
+      "test",
+      "--workspace",
+      "--locked",
+      "--features",
+      "openui-ffi/linux"
+    ],
+    "disk_guard_triggered": false,
+    "failed": 0,
+    "ignored": 13,
+    "log_sha256": "377eac4c0c39ad8622d6400f297fc7950683f96531314e75b2cc0803f7122c58",
+    "observed_exit_code": 0,
+    "passed": 8526,
+    "release_qualification": false,
+    "schema_version": 1,
+    "source": {
+      "clean": true,
+      "commit": "a41fdeb9818e9dbe7b07642a911570acd4da45de",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "46806148bfa549d4ee430b1819be60fa7d6bb78324426423f7b3ca724677d599",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "a41fdeb9818e9dbe7b07642a911570acd4da45de",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "46806148bfa549d4ee430b1819be60fa7d6bb78324426423f7b3ca724677d599",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_unchanged": true
+  },
+  "pixel_reference": "Pinned Chromium only; historical Open UI renders remain provenance.",
+  "previous_snapshot": {
+    "path": "docs/renderer/generated/native-font-cache-lifetime-v2.json",
+    "sha256": "40f83bfa6b69c15471dc46893f5632cd662f47eb576616d5c3c3d08bdd756547",
+    "unchanged": true
+  },
+  "private_scroll_insets": {
+    "applied_to_umbrella": false,
+    "public_setters": 18,
+    "status": "under implementation and qualification; no complete API or pixel claim"
+  },
+  "read_only_checks": {
+    "accountability": 0,
+    "archive": 0,
+    "ffi": 0,
+    "multicol": 0,
+    "renderer": 0,
+    "sp17": 0,
+    "sp18": 0,
+    "sp20": 0,
+    "style": 0,
+    "v02": 0
+  },
+  "release_qualification": false,
+  "schema_version": 1
+}

@@ -1,0 +1,5 @@
+{"name": "clean-baseline", "observed_exit_code": 0, "disk_guard_triggered": false, "test_counts": []}
+{"name": "baseline-authored-glyph-precision", "observed_exit_code": 101, "disk_guard_triggered": false, "test_counts": [[0, 1, 0]]}
+{"name": "clean-fixed", "observed_exit_code": 0, "disk_guard_triggered": false, "test_counts": []}
+{"name": "fixed-authored-glyph-precision", "observed_exit_code": 0, "disk_guard_triggered": false, "test_counts": [[1, 0, 0]]}
+{"name": "fixed-text-suite", "observed_exit_code": 0, "disk_guard_triggered": false, "test_counts": [[342, 0, 0]]}

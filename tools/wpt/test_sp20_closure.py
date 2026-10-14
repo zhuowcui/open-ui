@@ -182,11 +182,36 @@ class Sp20ClosureAndPorterTests(unittest.TestCase):
         self.assertIn(
             "RendererStyleValue::BoxSizing(BoxSizing::BorderBox)", rust
         )
+        self.assertIn("RendererStyleValue::Resize(Resize::Both)", rust)
+        for declaration in ["all:initial", "all:unset"]:
+            reset = self.generate(
+                f"textarea{{{declaration}}}", "<textarea></textarea>"
+            )
+            self.assertNotIn("RendererStyleValue::Resize", reset)
+        for declaration, expected in [("resize:none", "None"), ("resize:both", "Both")]:
+            authored = self.generate(f"textarea{{{declaration}}}", "<textarea></textarea>")
+            resize_updates = [line for line in authored.splitlines() if "RendererStyleValue::Resize" in line]
+            self.assertIn(f"Resize::{expected}", resize_updates[-1])
 
     def test_18_select_option_optgroup_roles_emit(self):
         rust = self.generate("", "<select><optgroup><option>x</option></optgroup></select>")
         for role in ("Select", "OptGroup", "Option"):
             self.assertIn(f"FormControlRole::{role}", rust)
+        # The menu list must read the Engine-owned primary font. Deriving
+        # height from rounded font-size loses ascent/descent and theme padding.
+        for size in [10, 12, 13, 13.125, 13.333333, 14, 16, 20]:
+            for content in ["", "<option>abc</option>"]:
+                with self.subTest(size=size, content=content):
+                    generated = self.generate(
+                        f"select{{font-size:{size}px}}",
+                        f"<select>{content}</select>",
+                    )
+                    self.assertIn(f"_menu_description.size = {float(size)};", generated)
+                    self.assertIn("doc.font_collection()", generated)
+                    self.assertIn("metrics.int_ascent() + metrics.int_descent()", generated)
+                    self.assertIn("_menu_height + 2.0)", generated)
+        default = self.generate("", "<select></select>")
+        self.assertIn("_menu_description.size = 13.333333;", default)
 
     def test_19_form_and_embed_dom_roles_emit(self):
         rust = self.generate("embed{width:10px}", "<form><embed></form>")

@@ -1,0 +1,205 @@
+{
+  "chromium": {
+    "binary_sha256": "0ba87684df0afc11faaea40ac57bd2f1d68b67191443b38215a36b90e6f08848",
+    "build_identity": "147.0.7727.50",
+    "capture_harness_sha256": "1aa6f07a50e71c82ae715502b86f974915128f057c6963a6dfd49319fba3f582"
+  },
+  "contract_sha256": "bd31f7168671d23139ea9de51965f3612a3d7e88df89302c725be085ba4c5e09",
+  "entries": [
+    {
+      "comparisons": [
+        {
+          "connected_region_count": 1,
+          "diff_signature_sha256": "382acd87081385882a31d1c829c34498f237e864d6129866373f5caecf710271",
+          "maximum_absolute_channel_delta": {
+            "alpha": 0,
+            "blue": 1,
+            "green": 1,
+            "red": 1
+          },
+          "mismatch_bounds": {
+            "height": 56,
+            "width": 57,
+            "x": 62,
+            "y": 63
+          },
+          "mismatched_pixels": 112,
+          "profile": "focused-320x240@1.25"
+        },
+        {
+          "connected_region_count": 1,
+          "diff_signature_sha256": "382acd87081385882a31d1c829c34498f237e864d6129866373f5caecf710271",
+          "maximum_absolute_channel_delta": {
+            "alpha": 0,
+            "blue": 1,
+            "green": 1,
+            "red": 1
+          },
+          "mismatch_bounds": {
+            "height": 56,
+            "width": 57,
+            "x": 62,
+            "y": 63
+          },
+          "mismatched_pixels": 112,
+          "profile": "focused-375x667@1.25"
+        },
+        {
+          "connected_region_count": 1,
+          "diff_signature_sha256": "382acd87081385882a31d1c829c34498f237e864d6129866373f5caecf710271",
+          "maximum_absolute_channel_delta": {
+            "alpha": 0,
+            "blue": 1,
+            "green": 1,
+            "red": 1
+          },
+          "mismatch_bounds": {
+            "height": 56,
+            "width": 57,
+            "x": 62,
+            "y": 63
+          },
+          "mismatched_pixels": 112,
+          "profile": "focused-800x600@1.25"
+        },
+        {
+          "connected_region_count": 1,
+          "diff_signature_sha256": "382acd87081385882a31d1c829c34498f237e864d6129866373f5caecf710271",
+          "maximum_absolute_channel_delta": {
+            "alpha": 0,
+            "blue": 1,
+            "green": 1,
+            "red": 1
+          },
+          "mismatch_bounds": {
+            "height": 56,
+            "width": 57,
+            "x": 62,
+            "y": 63
+          },
+          "mismatched_pixels": 112,
+          "profile": "focused-600x1200@1.25"
+        },
+        {
+          "connected_region_count": 1,
+          "diff_signature_sha256": "382acd87081385882a31d1c829c34498f237e864d6129866373f5caecf710271",
+          "maximum_absolute_channel_delta": {
+            "alpha": 0,
+            "blue": 1,
+            "green": 1,
+            "red": 1
+          },
+          "mismatch_bounds": {
+            "height": 56,
+            "width": 57,
+            "x": 62,
+            "y": 63
+          },
+          "mismatched_pixels": 112,
+          "profile": "focused-1280x720@1.25"
+        },
+        {
+          "connected_region_count": 1,
+          "diff_signature_sha256": "382acd87081385882a31d1c829c34498f237e864d6129866373f5caecf710271",
+          "maximum_absolute_channel_delta": {
+            "alpha": 0,
+            "blue": 1,
+            "green": 1,
+            "red": 1
+          },
+          "mismatch_bounds": {
+            "height": 56,
+            "width": 57,
+            "x": 62,
+            "y": 63
+          },
+          "mismatched_pixels": 112,
+          "profile": "focused-1920x1080@1.25"
+        },
+        {
+          "connected_region_count": 1,
+          "diff_signature_sha256": "382acd87081385882a31d1c829c34498f237e864d6129866373f5caecf710271",
+          "maximum_absolute_channel_delta": {
+            "alpha": 0,
+            "blue": 1,
+            "green": 1,
+            "red": 1
+          },
+          "mismatch_bounds": {
+            "height": 56,
+            "width": 57,
+            "x": 62,
+            "y": 63
+          },
+          "mismatched_pixels": 112,
+          "profile": "focused-2560x1440@1.25"
+        },
+        {
+          "connected_region_count": 1,
+          "diff_signature_sha256": "382acd87081385882a31d1c829c34498f237e864d6129866373f5caecf710271",
+          "maximum_absolute_channel_delta": {
+            "alpha": 0,
+            "blue": 1,
+            "green": 1,
+            "red": 1
+          },
+          "mismatch_bounds": {
+            "height": 56,
+            "width": 57,
+            "x": 62,
+            "y": 63
+          },
+          "mismatched_pixels": 112,
+          "profile": "focused-3440x1440@1.25"
+        }
+      ],
+      "different_profiles": 8,
+      "minimized_reproducer": null,
+      "owning_subsystem": null,
+      "root_cause": null,
+      "test_id": "wpt/css_backgrounds/background-clip-content-box-with-border-radius-002"
+    }
+  ],
+  "focused": {
+    "different": 0,
+    "errors": 0,
+    "exact": 640,
+    "profile_result_sha256": "9d5238a4b870b5b1d277d162d82b0190f0f51e07e5b00cd5ca57cb9546cb910f",
+    "total": 640
+  },
+  "input_reports": {
+    "focused": "4b5500b020ea2903d85932e885ca24221b1de6bbd7e8e29aa6b8a6adb6a8d2ec",
+    "primitive": "6d81b08fe3a582ec0da92e35c273ed51fab07191a99a1592f7251d1a974876b7"
+  },
+  "openui": {
+    "binary_sha256": "ee464e406f193896b7e5c17c50e3ef2e7656df6b64924cdada77da1507ca4ec9",
+    "raster_backend_identity": {
+      "backend": "cpu-skia",
+      "color_type": "N32-premultiplied",
+      "driver": null,
+      "gl_renderer": null,
+      "gl_version": null,
+      "sample_count": 0,
+      "surface_properties": "scene-raster-configuration-v1"
+    }
+  },
+  "output_sha256": "12d6b77a25c65051f58142928315a4c73df422598c5a7406531df2ec06a8b301",
+  "ownership_input_sha256": "ca8d04dce8056248f785e0be572827462abe44fbf7b75c459abd08de9b110f7d",
+  "primitive": {
+    "different": 8,
+    "errors": 0,
+    "exact": 952,
+    "profile_result_sha256": "131a796340c8712916dcb3350a988382a71015fd028dcce0b45185cd539c9fca",
+    "total": 960
+  },
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "aa2d4d241385d75485aecd4e4908213c6c8788a2",
+    "harness_sha256": "573f472e78f7de1eeaaf0a9b7b80db5e1875c6c22e0f816debabbfc7aecb3d99",
+    "source_tree_sha256": "21e1c192c3a2e782df4b4c06c45f8a496e6e9997df974e79071c641cb6f4be02",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "status": "diagnostic-open",
+  "unowned_residual_test_count": 1
+}

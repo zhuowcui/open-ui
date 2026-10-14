@@ -70,6 +70,27 @@ pub fn paint_text_decorations(
     phase: DecorationPhase,
     text_content: Option<&str>,
 ) {
+    paint_text_decorations_tracked(
+        canvas,
+        shape_result,
+        origin,
+        style,
+        metrics,
+        phase,
+        text_content,
+    );
+}
+
+pub(crate) fn paint_text_decorations_tracked(
+    canvas: &dyn crate::paint_record::PaintCanvas,
+    shape_result: &ShapeResult,
+    origin: (f32, f32),
+    style: &ComputedStyle,
+    metrics: &FontMetrics,
+    phase: DecorationPhase,
+    text_content: Option<&str>,
+) {
+    canvas.legacy_helper_boundary();
     let decoration_line = style.text_decoration_line;
     if decoration_line.is_none() {
         return;
@@ -85,7 +106,9 @@ pub fn paint_text_decorations(
 
     // Resolve decoration color.
     // Blink: TextDecorationInfo::ResolvedColor()
-    let resolved_color = style.text_decoration_color.resolve(&style.color);
+    let resolved_color = style
+        .text_decoration_color
+        .resolve(&style.effective_text_fill_color());
 
     // Resolve decoration thickness.
     // Blink: TextDecorationInfo::ResolvedThickness() — uses UnderlineThickness()
@@ -202,7 +225,7 @@ const SKIP_INK_MAX_DILATION: f32 = 13.0;
 /// `ApplyDecorationOverrideForSkipInk()` which uses clip-out rectangles.
 /// We achieve the equivalent effect by splitting the line into segments.
 fn draw_decoration_line_with_skip_ink(
-    canvas: &Canvas,
+    canvas: &dyn crate::paint_record::PaintCanvas,
     paint: &Paint,
     shape_result: &ShapeResult,
     origin: (f32, f32),
@@ -505,7 +528,7 @@ fn resolve_thickness(
 /// Blink: `TextDecorationPainter::PaintDecorationUnderOrOverLine()` and
 /// `PaintDecorationLineThrough()` dispatch to style-specific drawing.
 fn draw_decoration_line(
-    canvas: &Canvas,
+    canvas: &dyn crate::paint_record::PaintCanvas,
     paint: &Paint,
     x: f32,
     y: f32,
@@ -537,7 +560,14 @@ fn draw_decoration_line(
 ///
 /// Blink: Draws a filled rect at (x, y - thickness/2) with the full width.
 /// The rect is centered on the decoration line position.
-fn draw_solid_line(canvas: &Canvas, paint: &Paint, x: f32, y: f32, width: f32, thickness: f32) {
+fn draw_solid_line(
+    canvas: &dyn crate::paint_record::PaintCanvas,
+    paint: &Paint,
+    x: f32,
+    y: f32,
+    width: f32,
+    thickness: f32,
+) {
     let mut fill_paint = paint.clone();
     fill_paint.set_style(PaintStyle::Fill);
     let rect = Rect::from_xywh(x, y - thickness / 2.0, width, thickness);
@@ -550,7 +580,7 @@ fn draw_solid_line(canvas: &Canvas, paint: &Paint, x: f32, y: f32, width: f32, t
 /// The offset between strokes is `thickness + 1.0` (fixed 1px gap),
 /// matching Blink's `double_offset = thickness + 1.0`.
 fn draw_double_line(
-    canvas: &Canvas,
+    canvas: &dyn crate::paint_record::PaintCanvas,
     paint: &Paint,
     x: f32,
     y: f32,
@@ -590,7 +620,14 @@ fn draw_double_line(
 ///
 /// Blink: Uses a round cap with dash path effect for dots.
 /// We draw individual circles for pixel-perfect matching.
-fn draw_dotted_line(canvas: &Canvas, paint: &Paint, x: f32, y: f32, width: f32, thickness: f32) {
+fn draw_dotted_line(
+    canvas: &dyn crate::paint_record::PaintCanvas,
+    paint: &Paint,
+    x: f32,
+    y: f32,
+    width: f32,
+    thickness: f32,
+) {
     let mut dot_paint = paint.clone();
     dot_paint.set_style(PaintStyle::Fill);
 
@@ -610,7 +647,14 @@ fn draw_dotted_line(canvas: &Canvas, paint: &Paint, x: f32, y: f32, width: f32, 
 ///
 /// Blink: `TextDecorationPainter` uses `SkDashPathEffect` with
 /// dash_length = 3 × thickness and gap = 2 × thickness.
-fn draw_dashed_line(canvas: &Canvas, paint: &Paint, x: f32, y: f32, width: f32, thickness: f32) {
+fn draw_dashed_line(
+    canvas: &dyn crate::paint_record::PaintCanvas,
+    paint: &Paint,
+    x: f32,
+    y: f32,
+    width: f32,
+    thickness: f32,
+) {
     let dash_length = thickness * 3.0;
     let gap_length = thickness * 2.0;
 
@@ -631,7 +675,7 @@ fn draw_dashed_line(canvas: &Canvas, paint: &Paint, x: f32, y: f32, width: f32, 
 /// Uses `step = thickness + 1.0` for both amplitude and half-wavelength step.
 /// The wave is offset away from text for underline/overline (by `step`).
 fn draw_wavy_line(
-    canvas: &Canvas,
+    canvas: &dyn crate::paint_record::PaintCanvas,
     paint: &Paint,
     x: f32,
     y: f32,

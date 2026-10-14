@@ -1,0 +1,152 @@
+{
+  "artifacts": [
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/content-layer-clean-focused-v60/focused-summary.json",
+      "sha256": "079e28b76aa504081579c23cebe695ef4dd1d9cc35399b08660caaca1253d7f7"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/client-scissor-clean-focused-v45/focused-summary.json",
+      "sha256": "a39b7a52cf2129ff1fec8ef711e71bab4a88aadffb0a51f66510554b1a8a89e2"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/content-layer-clean-focused-v60.log",
+      "sha256": "993e85cc39f2c7a1e47130b8f84c59d033d2c300093d9db9c6b9ef2a929936c9"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/content-layer-clean-primitive-v60/primitive-summary.json",
+      "sha256": "fb9322b715aa5787883b5f2d2fad03c6eda689b4dc8ef2042e14001febfb5cd9"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/client-scissor-clean-primitive-v45/primitive-summary.json",
+      "sha256": "cb6e4c92e46138103f5f178c7a2d051d05d148dd082918a76ef03420ff031680"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/content-layer-clean-primitive-v60.log",
+      "sha256": "51331efc10e02c2e3748225d6a2b7564c1bedaf943547ade03a91370a6cf3ce3"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/content-layer-raster-delta-v63.json",
+      "sha256": "c7d010f87c22141d1de3ad6beee762db69875add9d1f913b0de9321891fece78"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/solid_color_analyzer-147.50-v62.cc",
+      "sha256": "3dd3ecadeefaed3197d83f980ea95dc6cf99a30f470b2d930ef6bcff2ad51537"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/tile_manager-147.50-v62.cc",
+      "sha256": "74b4f55cbeb5d56079c5f3db413cdd342be3946f328fb3f06f734e528be97af4"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/display_item_list-147.50-v62.cc",
+      "sha256": "a08df6ae4505f40c56771fb08125d2cf5b05bef3ec58a2b21a6c52dfb82ef4d9"
+    },
+    {
+      "path": "docs/renderer/generated/native-viewport-full-v7.json",
+      "sha256": "dc47a0e678546c18d65389a7fcd720ffdea95b79f0552ad9b59752a2fe3151f9"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/primary-solid-tile-v62.json",
+      "sha256": "c0f9aa2e4f23f96b3d50f65c49b61d89529d8740a4949f6c409e8ad9f340ecd4"
+    }
+  ],
+  "complete_candidate_censuses": "Not started; six composition regressions remain unresolved.",
+  "content_layer_candidate_applied_to_umbrella": false,
+  "matrices": [
+    {
+      "all_native_and_chromium_images_oracle_identities_and_differences_unchanged": true,
+      "observed_exit_code": 0,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/content-layer-clean-focused-v60/focused-summary.json",
+      "results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 640,
+        "profile_result_sha256": "1438383414cfdfb3677aa78a23b49287c04704fe41064854658b7504187a818b",
+        "total": 640
+      },
+      "sha256": "079e28b76aa504081579c23cebe695ef4dd1d9cc35399b08660caaca1253d7f7",
+      "source": {
+        "clean": true,
+        "commit": "cae25afcc5ba0eab0e4b1f83cc60ca2bfec16464",
+        "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+        "source_tree_sha256": "3d13ffa52f87e07300caeb66703ce183cd4172204d9be65fd50ce9a17d4cfdfa",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "cae25afcc5ba0eab0e4b1f83cc60ca2bfec16464",
+        "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+        "source_tree_sha256": "3d13ffa52f87e07300caeb66703ce183cd4172204d9be65fd50ce9a17d4cfdfa",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "suite": "focused"
+    },
+    {
+      "all_native_and_chromium_images_oracle_identities_and_differences_unchanged": true,
+      "observed_exit_code": 0,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/content-layer-clean-primitive-v60/primitive-summary.json",
+      "results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 960,
+        "profile_result_sha256": "61de00308ee3c1715af8033cb9186bf8e87258622f29d535252f5df5c1cc7fd6",
+        "total": 960
+      },
+      "sha256": "fb9322b715aa5787883b5f2d2fad03c6eda689b4dc8ef2042e14001febfb5cd9",
+      "source": {
+        "clean": true,
+        "commit": "cae25afcc5ba0eab0e4b1f83cc60ca2bfec16464",
+        "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+        "source_tree_sha256": "3d13ffa52f87e07300caeb66703ce183cd4172204d9be65fd50ce9a17d4cfdfa",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "cae25afcc5ba0eab0e4b1f83cc60ca2bfec16464",
+        "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+        "source_tree_sha256": "3d13ffa52f87e07300caeb66703ce183cd4172204d9be65fd50ce9a17d4cfdfa",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "suite": "primitive"
+    }
+  ],
+  "native_candidate_state": {
+    "exact": 706,
+    "exact_losses": 0,
+    "newly_exact": 22,
+    "remaining_fractional_failures": 144,
+    "total": 850,
+    "workspace_failed": 0,
+    "workspace_ignored": 13,
+    "workspace_passed": 8498,
+    "worsened_direction_comparisons": 6
+  },
+  "next_investigation": {
+    "hypothesis": "Chromium can prove a tile is solid-colored and bypass raster playback. A white boundary tile may therefore omit the layer background-hint edge clear used by this direct-picture prototype. This has not been established as the cause of the six residual regressions.",
+    "not_a_measured_pixel_fix": true,
+    "primary_sources": [
+      {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/solid_color_analyzer-147.50-v62.cc",
+        "same_as_local_147_24": true,
+        "sha256": "3dd3ecadeefaed3197d83f980ea95dc6cf99a30f470b2d930ef6bcff2ad51537",
+        "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/cc/paint/solid_color_analyzer.cc?format=TEXT"
+      },
+      {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/tile_manager-147.50-v62.cc",
+        "same_as_local_147_24": true,
+        "sha256": "74b4f55cbeb5d56079c5f3db413cdd342be3946f328fb3f06f734e528be97af4",
+        "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/cc/tiles/tile_manager.cc?format=TEXT"
+      },
+      {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/display_item_list-147.50-v62.cc",
+        "same_as_local_147_24": true,
+        "sha256": "a08df6ae4505f40c56771fb08125d2cf5b05bef3ec58a2b21a6c52dfb82ef4d9",
+        "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/cc/paint/display_item_list.cc?format=TEXT"
+      }
+    ]
+  },
+  "owner": "openui-paint content recording and raster composition",
+  "policy": "Chromium is the sole pixel target. Open UI never executes JavaScript. Needed application behavior requires a shared Engine implementation and a public native Rust API.",
+  "previous_evidence": "docs/renderer/generated/native-viewport-full-v7.json",
+  "release_qualification": false,
+  "schema_version": 1
+}

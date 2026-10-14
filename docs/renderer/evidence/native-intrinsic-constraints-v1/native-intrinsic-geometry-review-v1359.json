@@ -1,0 +1,242 @@
+{
+  "all_commands_terminal": true,
+  "canvas_pixels_generated": 0,
+  "cargo_commands_run": 0,
+  "javascript_executed_by_openui": false,
+  "queries_only": true,
+  "reference_inputs_changed": false,
+  "release_qualification": false,
+  "runs": [
+    {
+      "binary_sha256": "cc3174c5eadc2e4ce6dec61e3a5ea90269758ab3e0a730279fe889bbda4989fd",
+      "build_receipt_sha256": "47bbe3450dc413505ef55b855f8cd62eebf68e341529a4e264ede6d05b3502d1",
+      "command": [
+        "out/renderer-evidence/native-viewport-scroll-v1/native-resolved-clean-v1122/pixel_compare",
+        "debug",
+        "wpt/css_sizing/intrinsic-size-min-content-box-sizing",
+        "--viewport",
+        "800x600",
+        "--scale",
+        "1"
+      ],
+      "id": "wpt/css_sizing/intrinsic-size-min-content-box-sizing",
+      "log_path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-geometry-review-v1359/prior-style-wpt__css_sizing__intrinsic-size-min-content-box-sizing.log",
+      "log_sha256": "5966adb58de5595c259baa333952b252e5c5b6f1a343a68673fdbc7b3bf4ae87",
+      "observed_exit_code": 0,
+      "role": "prior-style",
+      "source": "5cc75147b89e74198102314657689ab6bec1f77c"
+    },
+    {
+      "binary_sha256": "cc3174c5eadc2e4ce6dec61e3a5ea90269758ab3e0a730279fe889bbda4989fd",
+      "build_receipt_sha256": "47bbe3450dc413505ef55b855f8cd62eebf68e341529a4e264ede6d05b3502d1",
+      "command": [
+        "out/renderer-evidence/native-viewport-scroll-v1/native-resolved-clean-v1122/pixel_compare",
+        "debug",
+        "wpt/css_sizing/float-clearance-with-margin-collapse-and-fit-content-and-padding-percentage-001",
+        "--viewport",
+        "800x600",
+        "--scale",
+        "1"
+      ],
+      "id": "wpt/css_sizing/float-clearance-with-margin-collapse-and-fit-content-and-padding-percentage-001",
+      "log_path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-geometry-review-v1359/prior-style-wpt__css_sizing__float-clearance-with-margin-collapse-and-fit-content-and-padding-percentage-001.log",
+      "log_sha256": "7e45d3171618e362012e7248346e967658fe5b3285e9e8b39a773540ef680079",
+      "observed_exit_code": 0,
+      "role": "prior-style",
+      "source": "5cc75147b89e74198102314657689ab6bec1f77c"
+    },
+    {
+      "binary_sha256": "cc3174c5eadc2e4ce6dec61e3a5ea90269758ab3e0a730279fe889bbda4989fd",
+      "build_receipt_sha256": "47bbe3450dc413505ef55b855f8cd62eebf68e341529a4e264ede6d05b3502d1",
+      "command": [
+        "out/renderer-evidence/native-viewport-scroll-v1/native-resolved-clean-v1122/pixel_compare",
+        "debug",
+        "wpt/css2_floats/floats-in-table-caption-001",
+        "--viewport",
+        "800x600",
+        "--scale",
+        "1"
+      ],
+      "id": "wpt/css2_floats/floats-in-table-caption-001",
+      "log_path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-geometry-review-v1359/prior-style-wpt__css2_floats__floats-in-table-caption-001.log",
+      "log_sha256": "bf75c6be963d5176e56bb4beb57ac651db853e6454a5cdb868d0fc2a3243b2fb",
+      "observed_exit_code": 0,
+      "role": "prior-style",
+      "source": "5cc75147b89e74198102314657689ab6bec1f77c"
+    },
+    {
+      "binary_sha256": "cc3174c5eadc2e4ce6dec61e3a5ea90269758ab3e0a730279fe889bbda4989fd",
+      "build_receipt_sha256": "47bbe3450dc413505ef55b855f8cd62eebf68e341529a4e264ede6d05b3502d1",
+      "command": [
+        "out/renderer-evidence/native-viewport-scroll-v1/native-resolved-clean-v1122/pixel_compare",
+        "debug",
+        "wpt/css_sizing/intrinsic-percent-replaced-029.tentative",
+        "--viewport",
+        "800x600",
+        "--scale",
+        "1"
+      ],
+      "id": "wpt/css_sizing/intrinsic-percent-replaced-029.tentative",
+      "log_path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-geometry-review-v1359/prior-style-wpt__css_sizing__intrinsic-percent-replaced-029.tentative.log",
+      "log_sha256": "7a5f7b0489bea23da4df7747327e7838c1525178c3d4b19b5b468ceb38b50b30",
+      "observed_exit_code": 0,
+      "role": "prior-style",
+      "source": "5cc75147b89e74198102314657689ab6bec1f77c"
+    },
+    {
+      "binary_sha256": "cc3174c5eadc2e4ce6dec61e3a5ea90269758ab3e0a730279fe889bbda4989fd",
+      "build_receipt_sha256": "47bbe3450dc413505ef55b855f8cd62eebf68e341529a4e264ede6d05b3502d1",
+      "command": [
+        "out/renderer-evidence/native-viewport-scroll-v1/native-resolved-clean-v1122/pixel_compare",
+        "debug",
+        "wpt/css_sizing/clone-nowrap-intrinsic-size",
+        "--viewport",
+        "800x600",
+        "--scale",
+        "1"
+      ],
+      "id": "wpt/css_sizing/clone-nowrap-intrinsic-size",
+      "log_path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-geometry-review-v1359/prior-style-wpt__css_sizing__clone-nowrap-intrinsic-size.log",
+      "log_sha256": "c4843e78b6bf6bde8820cb4150fd1c2d0538de400710159958e5a5f87bbcc6ea",
+      "observed_exit_code": 0,
+      "role": "prior-style",
+      "source": "5cc75147b89e74198102314657689ab6bec1f77c"
+    },
+    {
+      "binary_sha256": "cc3174c5eadc2e4ce6dec61e3a5ea90269758ab3e0a730279fe889bbda4989fd",
+      "build_receipt_sha256": "47bbe3450dc413505ef55b855f8cd62eebf68e341529a4e264ede6d05b3502d1",
+      "command": [
+        "out/renderer-evidence/native-viewport-scroll-v1/native-resolved-clean-v1122/pixel_compare",
+        "debug",
+        "wpt/css_overflow/line-clamp_line-clamp-auto-045",
+        "--viewport",
+        "800x600",
+        "--scale",
+        "1"
+      ],
+      "id": "wpt/css_overflow/line-clamp_line-clamp-auto-045",
+      "log_path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-geometry-review-v1359/prior-style-wpt__css_overflow__line-clamp_line-clamp-auto-045.log",
+      "log_sha256": "01d9c9fddb64ab2d0a18b6fb07fa6845d79cd17ec39e79b4a16e99f06bd4f342",
+      "observed_exit_code": 0,
+      "role": "prior-style",
+      "source": "5cc75147b89e74198102314657689ab6bec1f77c"
+    },
+    {
+      "binary_sha256": "15d05c0c22ff6d02779a1b60dce086cb47a40518c9691a2d79f984a608207344",
+      "build_receipt_sha256": "66ebaa2ad63b69c9a4c99184955e74522416ed8b0652436d3cbf47df90bb36aa",
+      "command": [
+        "out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-retry-clean-v1310/pixel_compare",
+        "debug",
+        "wpt/css_sizing/intrinsic-size-min-content-box-sizing",
+        "--viewport",
+        "800x600",
+        "--scale",
+        "1"
+      ],
+      "id": "wpt/css_sizing/intrinsic-size-min-content-box-sizing",
+      "log_path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-geometry-review-v1359/fieldset-candidate-wpt__css_sizing__intrinsic-size-min-content-box-sizing.log",
+      "log_sha256": "61de2ff8b049dff2bd1cc9e97b89a6f523fa24b3b6110b497041964f856756fa",
+      "observed_exit_code": 0,
+      "role": "fieldset-candidate",
+      "source": "abed078ddb2c8c2442155d14571cbadcb3b94758"
+    },
+    {
+      "binary_sha256": "15d05c0c22ff6d02779a1b60dce086cb47a40518c9691a2d79f984a608207344",
+      "build_receipt_sha256": "66ebaa2ad63b69c9a4c99184955e74522416ed8b0652436d3cbf47df90bb36aa",
+      "command": [
+        "out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-retry-clean-v1310/pixel_compare",
+        "debug",
+        "wpt/css_sizing/float-clearance-with-margin-collapse-and-fit-content-and-padding-percentage-001",
+        "--viewport",
+        "800x600",
+        "--scale",
+        "1"
+      ],
+      "id": "wpt/css_sizing/float-clearance-with-margin-collapse-and-fit-content-and-padding-percentage-001",
+      "log_path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-geometry-review-v1359/fieldset-candidate-wpt__css_sizing__float-clearance-with-margin-collapse-and-fit-content-and-padding-percentage-001.log",
+      "log_sha256": "c023b2091538baf56e6aaa2538ead45e112ae8da7284d0e6f1f9748ba9282707",
+      "observed_exit_code": 0,
+      "role": "fieldset-candidate",
+      "source": "abed078ddb2c8c2442155d14571cbadcb3b94758"
+    },
+    {
+      "binary_sha256": "15d05c0c22ff6d02779a1b60dce086cb47a40518c9691a2d79f984a608207344",
+      "build_receipt_sha256": "66ebaa2ad63b69c9a4c99184955e74522416ed8b0652436d3cbf47df90bb36aa",
+      "command": [
+        "out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-retry-clean-v1310/pixel_compare",
+        "debug",
+        "wpt/css2_floats/floats-in-table-caption-001",
+        "--viewport",
+        "800x600",
+        "--scale",
+        "1"
+      ],
+      "id": "wpt/css2_floats/floats-in-table-caption-001",
+      "log_path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-geometry-review-v1359/fieldset-candidate-wpt__css2_floats__floats-in-table-caption-001.log",
+      "log_sha256": "80dd1fa592946bd29688597e2a784759aa5c426720694c2a651b6c1aa740e501",
+      "observed_exit_code": 0,
+      "role": "fieldset-candidate",
+      "source": "abed078ddb2c8c2442155d14571cbadcb3b94758"
+    },
+    {
+      "binary_sha256": "15d05c0c22ff6d02779a1b60dce086cb47a40518c9691a2d79f984a608207344",
+      "build_receipt_sha256": "66ebaa2ad63b69c9a4c99184955e74522416ed8b0652436d3cbf47df90bb36aa",
+      "command": [
+        "out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-retry-clean-v1310/pixel_compare",
+        "debug",
+        "wpt/css_sizing/intrinsic-percent-replaced-029.tentative",
+        "--viewport",
+        "800x600",
+        "--scale",
+        "1"
+      ],
+      "id": "wpt/css_sizing/intrinsic-percent-replaced-029.tentative",
+      "log_path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-geometry-review-v1359/fieldset-candidate-wpt__css_sizing__intrinsic-percent-replaced-029.tentative.log",
+      "log_sha256": "64b09f0e28d2eadbe140fb247f43cdb623b96adab5186aa48d82bbe119260b5b",
+      "observed_exit_code": 0,
+      "role": "fieldset-candidate",
+      "source": "abed078ddb2c8c2442155d14571cbadcb3b94758"
+    },
+    {
+      "binary_sha256": "15d05c0c22ff6d02779a1b60dce086cb47a40518c9691a2d79f984a608207344",
+      "build_receipt_sha256": "66ebaa2ad63b69c9a4c99184955e74522416ed8b0652436d3cbf47df90bb36aa",
+      "command": [
+        "out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-retry-clean-v1310/pixel_compare",
+        "debug",
+        "wpt/css_sizing/clone-nowrap-intrinsic-size",
+        "--viewport",
+        "800x600",
+        "--scale",
+        "1"
+      ],
+      "id": "wpt/css_sizing/clone-nowrap-intrinsic-size",
+      "log_path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-geometry-review-v1359/fieldset-candidate-wpt__css_sizing__clone-nowrap-intrinsic-size.log",
+      "log_sha256": "593bed6f56cc88067f2b1aff827ce7a4071d56dee0f6872f723488fcb99ddd48",
+      "observed_exit_code": 0,
+      "role": "fieldset-candidate",
+      "source": "abed078ddb2c8c2442155d14571cbadcb3b94758"
+    },
+    {
+      "binary_sha256": "15d05c0c22ff6d02779a1b60dce086cb47a40518c9691a2d79f984a608207344",
+      "build_receipt_sha256": "66ebaa2ad63b69c9a4c99184955e74522416ed8b0652436d3cbf47df90bb36aa",
+      "command": [
+        "out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-retry-clean-v1310/pixel_compare",
+        "debug",
+        "wpt/css_overflow/line-clamp_line-clamp-auto-045",
+        "--viewport",
+        "800x600",
+        "--scale",
+        "1"
+      ],
+      "id": "wpt/css_overflow/line-clamp_line-clamp-auto-045",
+      "log_path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-geometry-review-v1359/fieldset-candidate-wpt__css_overflow__line-clamp_line-clamp-auto-045.log",
+      "log_sha256": "6064e8da7e87610d7ba453c23dab5b4455f1caf18fcbf57d07ad6dd2faaa466a",
+      "observed_exit_code": 0,
+      "role": "fieldset-candidate",
+      "source": "abed078ddb2c8c2442155d14571cbadcb3b94758"
+    }
+  ],
+  "schema_version": 1,
+  "scope": "Read-only native Engine fragment geometry from already built, immutable runners. The debug command records a scene and prints fragments; it never invokes raster or writes an image.",
+  "screenshots_generated": 0
+}

@@ -1,0 +1,294 @@
+{
+  "actual_combined_umbrella_source_measured": true,
+  "all_commands_terminal": true,
+  "all_native_apis_qualified": false,
+  "cache_directory": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-renderer-cache-v3552",
+  "candidate_nonregression_verified": true,
+  "comparisons": {
+    "expanded": {
+      "audited_rows": 23728,
+      "changes": [],
+      "exact_gains": 0,
+      "exact_losses": 0,
+      "fields": [
+        "openui_png_sha256",
+        "openui_rgba_sha256",
+        "chromium_png_sha256",
+        "chromium_rgba_sha256",
+        "chromium_oracle_identity_sha256",
+        "chromium_oracle_rgba_sha256",
+        "mismatched_pixels",
+        "status",
+        "diff_signature"
+      ],
+      "previous_summary": "/mnt/d/openui-v02-qualification-d174ea0b/private-native-form-owner-renderer-v3478/trial/expanded-matrix/expanded-summary.json",
+      "previous_summary_sha256": "50a862a1a5dd58e53911d0e458d9bacb0a6f47d468cb85d3ff9d857ef3e859ce",
+      "worsened": 0
+    },
+    "focused": {
+      "audited_rows": 640,
+      "changes": [],
+      "exact_gains": 0,
+      "exact_losses": 0,
+      "fields": [
+        "openui_png_sha256",
+        "openui_rgba_sha256",
+        "chromium_png_sha256",
+        "chromium_rgba_sha256",
+        "chromium_oracle_identity_sha256",
+        "chromium_oracle_rgba_sha256",
+        "mismatched_pixels",
+        "status",
+        "diff_signature"
+      ],
+      "previous_summary": "/mnt/d/openui-v02-qualification-d174ea0b/private-native-form-owner-renderer-v3478/trial/focused-matrix/focused-summary.json",
+      "previous_summary_sha256": "b47d1cd8c9ed5987fdf7407146a3a8bf9343e36f7a2e2a74c82099884ce63721",
+      "worsened": 0
+    },
+    "full": {
+      "audited_rows": 22924,
+      "changes": [],
+      "exact_gains": 0,
+      "exact_losses": 0,
+      "fields": [
+        "openui_png_sha256",
+        "openui_rgba_sha256",
+        "chromium_png_sha256",
+        "chromium_rgba_sha256",
+        "chromium_oracle_identity_sha256",
+        "chromium_oracle_rgba_sha256",
+        "mismatched_pixels",
+        "status",
+        "diff_signature"
+      ],
+      "previous_summary": "/mnt/d/openui-v02-qualification-d174ea0b/private-native-form-owner-renderer-v3478/trial/full-matrix/full-summary.json",
+      "previous_summary_sha256": "cf5f32f438de29c3e337424c429c83d51c5c0bd335bbd646a8c55f4fb3af42f9",
+      "worsened": 0
+    },
+    "primitive": {
+      "audited_rows": 960,
+      "changes": [],
+      "exact_gains": 0,
+      "exact_losses": 0,
+      "fields": [
+        "openui_png_sha256",
+        "openui_rgba_sha256",
+        "chromium_png_sha256",
+        "chromium_rgba_sha256",
+        "chromium_oracle_identity_sha256",
+        "chromium_oracle_rgba_sha256",
+        "mismatched_pixels",
+        "status",
+        "diff_signature"
+      ],
+      "previous_summary": "/mnt/d/openui-v02-qualification-d174ea0b/private-native-form-owner-renderer-v3478/trial/primitive-matrix/primitive-summary.json",
+      "previous_summary_sha256": "ec3476d83c947fdd4a454fdc549566881a783fdee5f1dffd971e00231b0c6671",
+      "worsened": 0
+    }
+  },
+  "driver_sha256": "9e902c514b0536906d93d5cc8cc3725487ac9a7eff15d08f6e5ad9a875968fda",
+  "guarded_build_receipt_sha256": "b0aeefa215a778c32300ab239887be7eff77b9f1c0f424e800e82d350c240ef3",
+  "historical_openui_archive_is_a_pixel_target": false,
+  "implementation_integrated": true,
+  "javascript_executed_by_openui": false,
+  "matrices": {
+    "expanded": {
+      "observed_exit_code": 1,
+      "results": {
+        "different": 1587,
+        "errors": 0,
+        "exact": 22141,
+        "profile_result_sha256": "01560c07a5c8f922658ad3a32be8bc3cf2a54072b5aca9f907000dacc5db0ea8",
+        "total": 23728
+      },
+      "summary_sha256": "6f4aa74c4ff613d3825fb78feea8d59a4ec1bcdd16b2912b1b63f8cc1fa66c6e"
+    },
+    "focused": {
+      "observed_exit_code": 0,
+      "results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 640,
+        "profile_result_sha256": "6110a448a2238f79e7348c76bb2e0175467e105da453391df27767592e511ad5",
+        "total": 640
+      },
+      "summary_sha256": "0a14e11364b446636a06930c53fc6bb3aa092ba8d739db11abc9a65e200446da"
+    },
+    "full": {
+      "observed_exit_code": 1,
+      "results": {
+        "different": 1586,
+        "errors": 0,
+        "exact": 21338,
+        "profile_result_sha256": "51056b0f9cb1316afa330ede38a4fa1375f6840a0f9b8376c0c61fd2a3564d1d",
+        "total": 22924
+      },
+      "summary_sha256": "6f2a93574ca8d417fd84d1da6dd96375927b2db7b0c1994650f2bdbb8663033d"
+    },
+    "primitive": {
+      "observed_exit_code": 0,
+      "results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 960,
+        "profile_result_sha256": "b7bda2fa76ddcee04b83afedc875069f163867b8714522212eaba3c4529225ea",
+        "total": 960
+      },
+      "summary_sha256": "ad60cbf6baee9d27978c5479d9c8a9b37e26c6a05c42ce8fda66ccdcc770f784"
+    }
+  },
+  "native_completed_audit_sha256": "039bd70215e95336f6617e72537abd07f5c7b648480b32f43e6ee107efd19681",
+  "native_metadata_cache_fresh": true,
+  "native_terminal_proof_sha256": "ba50c33ac071e5c6aef9b8f0e2bd095faa8407428e6b4a5e1b420a449de925d8",
+  "observed_exit_code": 1,
+  "owner_pid": 160029,
+  "pixel_target": "pinned Chromium",
+  "pixel_tolerance": 0,
+  "png_pool": "/mnt/e/openui-v02-qualification-d174ea0b/renderer-cache/png",
+  "release_qualified": false,
+  "renderer_qualified": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "72f5b41e5c2d795d95ad0a198be2332f70c317d0",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "7c6711dea547053cbe16427e25fc8ad2b80385b034834c4702e99d1576d3ebb6",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "72f5b41e5c2d795d95ad0a198be2332f70c317d0",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "7c6711dea547053cbe16427e25fc8ad2b80385b034834c4702e99d1576d3ebb6",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_unchanged": true,
+  "steps": [
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/home/nero/code/open-ui/tools/qualification/build_renderer.py",
+        "--source-root",
+        "/home/nero/code/open-ui",
+        "--results-dir",
+        "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-renderer-v3552/guarded-build",
+        "--target-dir",
+        "/mnt/e/openui-v02-cargo-c73754e2/target",
+        "--cargo-config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "--offline"
+      ],
+      "log_sha256": "07843ffa9754b668a168801d444babdd2f6e40e6c6404bd77d423128bf39c186",
+      "name": "guarded-build",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/home/nero/code/open-ui/tools/qualification/run_renderer_matrix.py",
+        "--suite",
+        "focused",
+        "--results-dir",
+        "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-renderer-v3552/focused-matrix",
+        "--cache-dir",
+        "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-renderer-cache-v3552",
+        "--oracle-cache-dir",
+        "/home/nero/code/open-ui/out/renderer-qualification-cache/chromium-oracle",
+        "--pixel-compare",
+        "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-renderer-v3552/guarded-build/pixel_compare",
+        "--build-receipt",
+        "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-renderer-v3552/guarded-build/receipt.json",
+        "--chrome",
+        "/home/nero/code/open-ui/chrome/linux-147.0.7727.50/chrome-linux64/chrome",
+        "--raster-backend",
+        "cpu-skia",
+        "--jobs",
+        "2"
+      ],
+      "log_sha256": "8c33aa96feb12a8830c387b4090ab13be85160bf5adb8a424c4c44a6c20ca190",
+      "name": "focused",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/home/nero/code/open-ui/tools/qualification/run_renderer_matrix.py",
+        "--suite",
+        "primitive",
+        "--results-dir",
+        "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-renderer-v3552/primitive-matrix",
+        "--cache-dir",
+        "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-renderer-cache-v3552",
+        "--oracle-cache-dir",
+        "/home/nero/code/open-ui/out/renderer-qualification-cache/chromium-oracle",
+        "--pixel-compare",
+        "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-renderer-v3552/guarded-build/pixel_compare",
+        "--build-receipt",
+        "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-renderer-v3552/guarded-build/receipt.json",
+        "--chrome",
+        "/home/nero/code/open-ui/chrome/linux-147.0.7727.50/chrome-linux64/chrome",
+        "--raster-backend",
+        "cpu-skia",
+        "--jobs",
+        "2"
+      ],
+      "log_sha256": "9c56c23f5270b13703a7e6bd25b70be530a82f60aa8d4fa46a404fba6ef18064",
+      "name": "primitive",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/home/nero/code/open-ui/tools/qualification/run_renderer_matrix.py",
+        "--suite",
+        "full",
+        "--results-dir",
+        "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-renderer-v3552/full-matrix",
+        "--cache-dir",
+        "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-renderer-cache-v3552",
+        "--oracle-cache-dir",
+        "/home/nero/code/open-ui/out/renderer-qualification-cache/chromium-oracle",
+        "--pixel-compare",
+        "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-renderer-v3552/guarded-build/pixel_compare",
+        "--build-receipt",
+        "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-renderer-v3552/guarded-build/receipt.json",
+        "--chrome",
+        "/home/nero/code/open-ui/chrome/linux-147.0.7727.50/chrome-linux64/chrome",
+        "--raster-backend",
+        "cpu-skia",
+        "--jobs",
+        "8"
+      ],
+      "log_sha256": "58068a818d1d38186d8a4841a1ec31b98057560165351794693f6c38a9cc03fd",
+      "name": "full",
+      "observed_exit_code": 1
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/home/nero/code/open-ui/tools/qualification/run_renderer_matrix.py",
+        "--suite",
+        "expanded",
+        "--results-dir",
+        "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-renderer-v3552/expanded-matrix",
+        "--cache-dir",
+        "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-renderer-cache-v3552",
+        "--oracle-cache-dir",
+        "/home/nero/code/open-ui/out/renderer-qualification-cache/chromium-oracle",
+        "--pixel-compare",
+        "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-renderer-v3552/guarded-build/pixel_compare",
+        "--build-receipt",
+        "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-renderer-v3552/guarded-build/receipt.json",
+        "--chrome",
+        "/home/nero/code/open-ui/chrome/linux-147.0.7727.50/chrome-linux64/chrome",
+        "--raster-backend",
+        "cpu-skia",
+        "--jobs",
+        "8"
+      ],
+      "log_sha256": "38cfedd2037fe5bcec3e35c1545e69d6d059db9ff63acd9e6f00e00aa5d98259",
+      "name": "expanded",
+      "observed_exit_code": 1
+    }
+  ]
+}

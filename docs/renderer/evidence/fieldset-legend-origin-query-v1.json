@@ -1,0 +1,902 @@
+{
+  "canvas_pixels_generated": 0,
+  "capture_harness_sha256": "ad37344879ddda41e6570ea41c142103e58f5db05fb9c96c27c1ac62b67f92ea",
+  "chromium_binary_sha256": "0ba87684df0afc11faaea40ac57bd2f1d68b67191443b38215a36b90e6f08848",
+  "corrected_canvas_font_method": "Reconstruct Canvas font from fontStyle, fontWeight, fontSize and fontFamily; preserve selected font serialization in each result.",
+  "corrected_followup_is_terminal": true,
+  "first_failing_legend_index": 1,
+  "font_sha256": "b719ecb31c5b21fc573c03f6421c74ac63c271a5a3ff841e34f9705fb94b8448",
+  "fontconfig_sha256": "99fd54cf2f3875bba44a2272b3dfe5adc7c08263ca0511ec2473ec5e59c09195",
+  "full_reduced_second_legend_agrees": true,
+  "immutable_original_input_sha256": "ac249a03334dfe0067168cf56d9de1b8bdaf0e4c92c3f44de6aef4f222ac4266",
+  "independent_queries_identical": true,
+  "javascript_executed_by_openui": false,
+  "native_pixel_comparisons": 0,
+  "native_reproducer_verified": false,
+  "observations": [
+    {
+      "input": "full",
+      "legend": {
+        "bounds": {
+          "height": 10,
+          "width": 60,
+          "x": 22,
+          "y": 39
+        },
+        "canvasFont": "10px Ahem, \"Droid Sans Fallback\", \"Noto Sans Devanagari\", \"Noto Color Emoji\", \"DejaVu Sans\"",
+        "canvasMetrics": {
+          "actualBoundingBoxAscent": 8,
+          "actualBoundingBoxDescent": 2,
+          "actualBoundingBoxLeft": 0,
+          "actualBoundingBoxRight": 60,
+          "fontBoundingBoxAscent": 8,
+          "fontBoundingBoxDescent": 2,
+          "width": 60
+        },
+        "font": "",
+        "fontKerning": "none",
+        "fontSize": "10px",
+        "lineHeight": "normal",
+        "text": "LEGEND",
+        "textBounds": {
+          "height": 10,
+          "width": 60,
+          "x": 22,
+          "y": 39
+        }
+      },
+      "platform_fonts": [
+        {
+          "familyName": "Ahem",
+          "glyphCount": 6,
+          "isCustomFont": false,
+          "postScriptName": "Ahem"
+        }
+      ],
+      "repeat": 1,
+      "scale": 1.0
+    },
+    {
+      "input": "reduced",
+      "legend": {
+        "bounds": {
+          "height": 10,
+          "width": 60,
+          "x": 22,
+          "y": 39
+        },
+        "canvasFont": "10px Ahem, \"Droid Sans Fallback\", \"Noto Sans Devanagari\", \"Noto Color Emoji\", \"DejaVu Sans\"",
+        "canvasMetrics": {
+          "actualBoundingBoxAscent": 8,
+          "actualBoundingBoxDescent": 2,
+          "actualBoundingBoxLeft": 0,
+          "actualBoundingBoxRight": 60,
+          "fontBoundingBoxAscent": 8,
+          "fontBoundingBoxDescent": 2,
+          "width": 60
+        },
+        "font": "",
+        "fontKerning": "none",
+        "fontSize": "10px",
+        "lineHeight": "normal",
+        "text": "LEGEND",
+        "textBounds": {
+          "height": 10,
+          "width": 60,
+          "x": 22,
+          "y": 39
+        }
+      },
+      "platform_fonts": [
+        {
+          "familyName": "Ahem",
+          "glyphCount": 6,
+          "isCustomFont": false,
+          "postScriptName": "Ahem"
+        }
+      ],
+      "repeat": 1,
+      "scale": 1.0
+    },
+    {
+      "input": "full",
+      "legend": {
+        "bounds": {
+          "height": 10,
+          "width": 60,
+          "x": 22,
+          "y": 39
+        },
+        "canvasFont": "10px Ahem, \"Droid Sans Fallback\", \"Noto Sans Devanagari\", \"Noto Color Emoji\", \"DejaVu Sans\"",
+        "canvasMetrics": {
+          "actualBoundingBoxAscent": 8,
+          "actualBoundingBoxDescent": 2,
+          "actualBoundingBoxLeft": 0,
+          "actualBoundingBoxRight": 60,
+          "fontBoundingBoxAscent": 8,
+          "fontBoundingBoxDescent": 2,
+          "width": 60
+        },
+        "font": "",
+        "fontKerning": "none",
+        "fontSize": "10px",
+        "lineHeight": "normal",
+        "text": "LEGEND",
+        "textBounds": {
+          "height": 10,
+          "width": 60,
+          "x": 22,
+          "y": 39
+        }
+      },
+      "platform_fonts": [
+        {
+          "familyName": "Ahem",
+          "glyphCount": 6,
+          "isCustomFont": false,
+          "postScriptName": "Ahem"
+        }
+      ],
+      "repeat": 1,
+      "scale": 1.25
+    },
+    {
+      "input": "reduced",
+      "legend": {
+        "bounds": {
+          "height": 10,
+          "width": 60,
+          "x": 22,
+          "y": 39
+        },
+        "canvasFont": "10px Ahem, \"Droid Sans Fallback\", \"Noto Sans Devanagari\", \"Noto Color Emoji\", \"DejaVu Sans\"",
+        "canvasMetrics": {
+          "actualBoundingBoxAscent": 8,
+          "actualBoundingBoxDescent": 2,
+          "actualBoundingBoxLeft": 0,
+          "actualBoundingBoxRight": 60,
+          "fontBoundingBoxAscent": 8,
+          "fontBoundingBoxDescent": 2,
+          "width": 60
+        },
+        "font": "",
+        "fontKerning": "none",
+        "fontSize": "10px",
+        "lineHeight": "normal",
+        "text": "LEGEND",
+        "textBounds": {
+          "height": 10,
+          "width": 60,
+          "x": 22,
+          "y": 39
+        }
+      },
+      "platform_fonts": [
+        {
+          "familyName": "Ahem",
+          "glyphCount": 6,
+          "isCustomFont": false,
+          "postScriptName": "Ahem"
+        }
+      ],
+      "repeat": 1,
+      "scale": 1.25
+    },
+    {
+      "input": "full",
+      "legend": {
+        "bounds": {
+          "height": 10,
+          "width": 60,
+          "x": 22,
+          "y": 39
+        },
+        "canvasFont": "10px Ahem, \"Droid Sans Fallback\", \"Noto Sans Devanagari\", \"Noto Color Emoji\", \"DejaVu Sans\"",
+        "canvasMetrics": {
+          "actualBoundingBoxAscent": 8,
+          "actualBoundingBoxDescent": 2,
+          "actualBoundingBoxLeft": 0,
+          "actualBoundingBoxRight": 60,
+          "fontBoundingBoxAscent": 8,
+          "fontBoundingBoxDescent": 2,
+          "width": 60
+        },
+        "font": "",
+        "fontKerning": "none",
+        "fontSize": "10px",
+        "lineHeight": "normal",
+        "text": "LEGEND",
+        "textBounds": {
+          "height": 10,
+          "width": 60,
+          "x": 22,
+          "y": 39
+        }
+      },
+      "platform_fonts": [
+        {
+          "familyName": "Ahem",
+          "glyphCount": 6,
+          "isCustomFont": false,
+          "postScriptName": "Ahem"
+        }
+      ],
+      "repeat": 1,
+      "scale": 1.5
+    },
+    {
+      "input": "reduced",
+      "legend": {
+        "bounds": {
+          "height": 10,
+          "width": 60,
+          "x": 22,
+          "y": 39
+        },
+        "canvasFont": "10px Ahem, \"Droid Sans Fallback\", \"Noto Sans Devanagari\", \"Noto Color Emoji\", \"DejaVu Sans\"",
+        "canvasMetrics": {
+          "actualBoundingBoxAscent": 8,
+          "actualBoundingBoxDescent": 2,
+          "actualBoundingBoxLeft": 0,
+          "actualBoundingBoxRight": 60,
+          "fontBoundingBoxAscent": 8,
+          "fontBoundingBoxDescent": 2,
+          "width": 60
+        },
+        "font": "",
+        "fontKerning": "none",
+        "fontSize": "10px",
+        "lineHeight": "normal",
+        "text": "LEGEND",
+        "textBounds": {
+          "height": 10,
+          "width": 60,
+          "x": 22,
+          "y": 39
+        }
+      },
+      "platform_fonts": [
+        {
+          "familyName": "Ahem",
+          "glyphCount": 6,
+          "isCustomFont": false,
+          "postScriptName": "Ahem"
+        }
+      ],
+      "repeat": 1,
+      "scale": 1.5
+    },
+    {
+      "input": "full",
+      "legend": {
+        "bounds": {
+          "height": 10,
+          "width": 60,
+          "x": 22,
+          "y": 39
+        },
+        "canvasFont": "10px Ahem, \"Droid Sans Fallback\", \"Noto Sans Devanagari\", \"Noto Color Emoji\", \"DejaVu Sans\"",
+        "canvasMetrics": {
+          "actualBoundingBoxAscent": 8,
+          "actualBoundingBoxDescent": 2,
+          "actualBoundingBoxLeft": 0,
+          "actualBoundingBoxRight": 60,
+          "fontBoundingBoxAscent": 8,
+          "fontBoundingBoxDescent": 2,
+          "width": 60
+        },
+        "font": "",
+        "fontKerning": "none",
+        "fontSize": "10px",
+        "lineHeight": "normal",
+        "text": "LEGEND",
+        "textBounds": {
+          "height": 10,
+          "width": 60,
+          "x": 22,
+          "y": 39
+        }
+      },
+      "platform_fonts": [
+        {
+          "familyName": "Ahem",
+          "glyphCount": 6,
+          "isCustomFont": false,
+          "postScriptName": "Ahem"
+        }
+      ],
+      "repeat": 1,
+      "scale": 2.0
+    },
+    {
+      "input": "reduced",
+      "legend": {
+        "bounds": {
+          "height": 10,
+          "width": 60,
+          "x": 22,
+          "y": 39
+        },
+        "canvasFont": "10px Ahem, \"Droid Sans Fallback\", \"Noto Sans Devanagari\", \"Noto Color Emoji\", \"DejaVu Sans\"",
+        "canvasMetrics": {
+          "actualBoundingBoxAscent": 8,
+          "actualBoundingBoxDescent": 2,
+          "actualBoundingBoxLeft": 0,
+          "actualBoundingBoxRight": 60,
+          "fontBoundingBoxAscent": 8,
+          "fontBoundingBoxDescent": 2,
+          "width": 60
+        },
+        "font": "",
+        "fontKerning": "none",
+        "fontSize": "10px",
+        "lineHeight": "normal",
+        "text": "LEGEND",
+        "textBounds": {
+          "height": 10,
+          "width": 60,
+          "x": 22,
+          "y": 39
+        }
+      },
+      "platform_fonts": [
+        {
+          "familyName": "Ahem",
+          "glyphCount": 6,
+          "isCustomFont": false,
+          "postScriptName": "Ahem"
+        }
+      ],
+      "repeat": 1,
+      "scale": 2.0
+    },
+    {
+      "input": "full",
+      "legend": {
+        "bounds": {
+          "height": 10,
+          "width": 60,
+          "x": 22,
+          "y": 39
+        },
+        "canvasFont": "10px Ahem, \"Droid Sans Fallback\", \"Noto Sans Devanagari\", \"Noto Color Emoji\", \"DejaVu Sans\"",
+        "canvasMetrics": {
+          "actualBoundingBoxAscent": 8,
+          "actualBoundingBoxDescent": 2,
+          "actualBoundingBoxLeft": 0,
+          "actualBoundingBoxRight": 60,
+          "fontBoundingBoxAscent": 8,
+          "fontBoundingBoxDescent": 2,
+          "width": 60
+        },
+        "font": "",
+        "fontKerning": "none",
+        "fontSize": "10px",
+        "lineHeight": "normal",
+        "text": "LEGEND",
+        "textBounds": {
+          "height": 10,
+          "width": 60,
+          "x": 22,
+          "y": 39
+        }
+      },
+      "platform_fonts": [
+        {
+          "familyName": "Ahem",
+          "glyphCount": 6,
+          "isCustomFont": false,
+          "postScriptName": "Ahem"
+        }
+      ],
+      "repeat": 1,
+      "scale": 3.0
+    },
+    {
+      "input": "reduced",
+      "legend": {
+        "bounds": {
+          "height": 10,
+          "width": 60,
+          "x": 22,
+          "y": 39
+        },
+        "canvasFont": "10px Ahem, \"Droid Sans Fallback\", \"Noto Sans Devanagari\", \"Noto Color Emoji\", \"DejaVu Sans\"",
+        "canvasMetrics": {
+          "actualBoundingBoxAscent": 8,
+          "actualBoundingBoxDescent": 2,
+          "actualBoundingBoxLeft": 0,
+          "actualBoundingBoxRight": 60,
+          "fontBoundingBoxAscent": 8,
+          "fontBoundingBoxDescent": 2,
+          "width": 60
+        },
+        "font": "",
+        "fontKerning": "none",
+        "fontSize": "10px",
+        "lineHeight": "normal",
+        "text": "LEGEND",
+        "textBounds": {
+          "height": 10,
+          "width": 60,
+          "x": 22,
+          "y": 39
+        }
+      },
+      "platform_fonts": [
+        {
+          "familyName": "Ahem",
+          "glyphCount": 6,
+          "isCustomFont": false,
+          "postScriptName": "Ahem"
+        }
+      ],
+      "repeat": 1,
+      "scale": 3.0
+    },
+    {
+      "input": "full",
+      "legend": {
+        "bounds": {
+          "height": 10,
+          "width": 60,
+          "x": 22,
+          "y": 39
+        },
+        "canvasFont": "10px Ahem, \"Droid Sans Fallback\", \"Noto Sans Devanagari\", \"Noto Color Emoji\", \"DejaVu Sans\"",
+        "canvasMetrics": {
+          "actualBoundingBoxAscent": 8,
+          "actualBoundingBoxDescent": 2,
+          "actualBoundingBoxLeft": 0,
+          "actualBoundingBoxRight": 60,
+          "fontBoundingBoxAscent": 8,
+          "fontBoundingBoxDescent": 2,
+          "width": 60
+        },
+        "font": "",
+        "fontKerning": "none",
+        "fontSize": "10px",
+        "lineHeight": "normal",
+        "text": "LEGEND",
+        "textBounds": {
+          "height": 10,
+          "width": 60,
+          "x": 22,
+          "y": 39
+        }
+      },
+      "platform_fonts": [
+        {
+          "familyName": "Ahem",
+          "glyphCount": 6,
+          "isCustomFont": false,
+          "postScriptName": "Ahem"
+        }
+      ],
+      "repeat": 2,
+      "scale": 1.0
+    },
+    {
+      "input": "reduced",
+      "legend": {
+        "bounds": {
+          "height": 10,
+          "width": 60,
+          "x": 22,
+          "y": 39
+        },
+        "canvasFont": "10px Ahem, \"Droid Sans Fallback\", \"Noto Sans Devanagari\", \"Noto Color Emoji\", \"DejaVu Sans\"",
+        "canvasMetrics": {
+          "actualBoundingBoxAscent": 8,
+          "actualBoundingBoxDescent": 2,
+          "actualBoundingBoxLeft": 0,
+          "actualBoundingBoxRight": 60,
+          "fontBoundingBoxAscent": 8,
+          "fontBoundingBoxDescent": 2,
+          "width": 60
+        },
+        "font": "",
+        "fontKerning": "none",
+        "fontSize": "10px",
+        "lineHeight": "normal",
+        "text": "LEGEND",
+        "textBounds": {
+          "height": 10,
+          "width": 60,
+          "x": 22,
+          "y": 39
+        }
+      },
+      "platform_fonts": [
+        {
+          "familyName": "Ahem",
+          "glyphCount": 6,
+          "isCustomFont": false,
+          "postScriptName": "Ahem"
+        }
+      ],
+      "repeat": 2,
+      "scale": 1.0
+    },
+    {
+      "input": "full",
+      "legend": {
+        "bounds": {
+          "height": 10,
+          "width": 60,
+          "x": 22,
+          "y": 39
+        },
+        "canvasFont": "10px Ahem, \"Droid Sans Fallback\", \"Noto Sans Devanagari\", \"Noto Color Emoji\", \"DejaVu Sans\"",
+        "canvasMetrics": {
+          "actualBoundingBoxAscent": 8,
+          "actualBoundingBoxDescent": 2,
+          "actualBoundingBoxLeft": 0,
+          "actualBoundingBoxRight": 60,
+          "fontBoundingBoxAscent": 8,
+          "fontBoundingBoxDescent": 2,
+          "width": 60
+        },
+        "font": "",
+        "fontKerning": "none",
+        "fontSize": "10px",
+        "lineHeight": "normal",
+        "text": "LEGEND",
+        "textBounds": {
+          "height": 10,
+          "width": 60,
+          "x": 22,
+          "y": 39
+        }
+      },
+      "platform_fonts": [
+        {
+          "familyName": "Ahem",
+          "glyphCount": 6,
+          "isCustomFont": false,
+          "postScriptName": "Ahem"
+        }
+      ],
+      "repeat": 2,
+      "scale": 1.25
+    },
+    {
+      "input": "reduced",
+      "legend": {
+        "bounds": {
+          "height": 10,
+          "width": 60,
+          "x": 22,
+          "y": 39
+        },
+        "canvasFont": "10px Ahem, \"Droid Sans Fallback\", \"Noto Sans Devanagari\", \"Noto Color Emoji\", \"DejaVu Sans\"",
+        "canvasMetrics": {
+          "actualBoundingBoxAscent": 8,
+          "actualBoundingBoxDescent": 2,
+          "actualBoundingBoxLeft": 0,
+          "actualBoundingBoxRight": 60,
+          "fontBoundingBoxAscent": 8,
+          "fontBoundingBoxDescent": 2,
+          "width": 60
+        },
+        "font": "",
+        "fontKerning": "none",
+        "fontSize": "10px",
+        "lineHeight": "normal",
+        "text": "LEGEND",
+        "textBounds": {
+          "height": 10,
+          "width": 60,
+          "x": 22,
+          "y": 39
+        }
+      },
+      "platform_fonts": [
+        {
+          "familyName": "Ahem",
+          "glyphCount": 6,
+          "isCustomFont": false,
+          "postScriptName": "Ahem"
+        }
+      ],
+      "repeat": 2,
+      "scale": 1.25
+    },
+    {
+      "input": "full",
+      "legend": {
+        "bounds": {
+          "height": 10,
+          "width": 60,
+          "x": 22,
+          "y": 39
+        },
+        "canvasFont": "10px Ahem, \"Droid Sans Fallback\", \"Noto Sans Devanagari\", \"Noto Color Emoji\", \"DejaVu Sans\"",
+        "canvasMetrics": {
+          "actualBoundingBoxAscent": 8,
+          "actualBoundingBoxDescent": 2,
+          "actualBoundingBoxLeft": 0,
+          "actualBoundingBoxRight": 60,
+          "fontBoundingBoxAscent": 8,
+          "fontBoundingBoxDescent": 2,
+          "width": 60
+        },
+        "font": "",
+        "fontKerning": "none",
+        "fontSize": "10px",
+        "lineHeight": "normal",
+        "text": "LEGEND",
+        "textBounds": {
+          "height": 10,
+          "width": 60,
+          "x": 22,
+          "y": 39
+        }
+      },
+      "platform_fonts": [
+        {
+          "familyName": "Ahem",
+          "glyphCount": 6,
+          "isCustomFont": false,
+          "postScriptName": "Ahem"
+        }
+      ],
+      "repeat": 2,
+      "scale": 1.5
+    },
+    {
+      "input": "reduced",
+      "legend": {
+        "bounds": {
+          "height": 10,
+          "width": 60,
+          "x": 22,
+          "y": 39
+        },
+        "canvasFont": "10px Ahem, \"Droid Sans Fallback\", \"Noto Sans Devanagari\", \"Noto Color Emoji\", \"DejaVu Sans\"",
+        "canvasMetrics": {
+          "actualBoundingBoxAscent": 8,
+          "actualBoundingBoxDescent": 2,
+          "actualBoundingBoxLeft": 0,
+          "actualBoundingBoxRight": 60,
+          "fontBoundingBoxAscent": 8,
+          "fontBoundingBoxDescent": 2,
+          "width": 60
+        },
+        "font": "",
+        "fontKerning": "none",
+        "fontSize": "10px",
+        "lineHeight": "normal",
+        "text": "LEGEND",
+        "textBounds": {
+          "height": 10,
+          "width": 60,
+          "x": 22,
+          "y": 39
+        }
+      },
+      "platform_fonts": [
+        {
+          "familyName": "Ahem",
+          "glyphCount": 6,
+          "isCustomFont": false,
+          "postScriptName": "Ahem"
+        }
+      ],
+      "repeat": 2,
+      "scale": 1.5
+    },
+    {
+      "input": "full",
+      "legend": {
+        "bounds": {
+          "height": 10,
+          "width": 60,
+          "x": 22,
+          "y": 39
+        },
+        "canvasFont": "10px Ahem, \"Droid Sans Fallback\", \"Noto Sans Devanagari\", \"Noto Color Emoji\", \"DejaVu Sans\"",
+        "canvasMetrics": {
+          "actualBoundingBoxAscent": 8,
+          "actualBoundingBoxDescent": 2,
+          "actualBoundingBoxLeft": 0,
+          "actualBoundingBoxRight": 60,
+          "fontBoundingBoxAscent": 8,
+          "fontBoundingBoxDescent": 2,
+          "width": 60
+        },
+        "font": "",
+        "fontKerning": "none",
+        "fontSize": "10px",
+        "lineHeight": "normal",
+        "text": "LEGEND",
+        "textBounds": {
+          "height": 10,
+          "width": 60,
+          "x": 22,
+          "y": 39
+        }
+      },
+      "platform_fonts": [
+        {
+          "familyName": "Ahem",
+          "glyphCount": 6,
+          "isCustomFont": false,
+          "postScriptName": "Ahem"
+        }
+      ],
+      "repeat": 2,
+      "scale": 2.0
+    },
+    {
+      "input": "reduced",
+      "legend": {
+        "bounds": {
+          "height": 10,
+          "width": 60,
+          "x": 22,
+          "y": 39
+        },
+        "canvasFont": "10px Ahem, \"Droid Sans Fallback\", \"Noto Sans Devanagari\", \"Noto Color Emoji\", \"DejaVu Sans\"",
+        "canvasMetrics": {
+          "actualBoundingBoxAscent": 8,
+          "actualBoundingBoxDescent": 2,
+          "actualBoundingBoxLeft": 0,
+          "actualBoundingBoxRight": 60,
+          "fontBoundingBoxAscent": 8,
+          "fontBoundingBoxDescent": 2,
+          "width": 60
+        },
+        "font": "",
+        "fontKerning": "none",
+        "fontSize": "10px",
+        "lineHeight": "normal",
+        "text": "LEGEND",
+        "textBounds": {
+          "height": 10,
+          "width": 60,
+          "x": 22,
+          "y": 39
+        }
+      },
+      "platform_fonts": [
+        {
+          "familyName": "Ahem",
+          "glyphCount": 6,
+          "isCustomFont": false,
+          "postScriptName": "Ahem"
+        }
+      ],
+      "repeat": 2,
+      "scale": 2.0
+    },
+    {
+      "input": "full",
+      "legend": {
+        "bounds": {
+          "height": 10,
+          "width": 60,
+          "x": 22,
+          "y": 39
+        },
+        "canvasFont": "10px Ahem, \"Droid Sans Fallback\", \"Noto Sans Devanagari\", \"Noto Color Emoji\", \"DejaVu Sans\"",
+        "canvasMetrics": {
+          "actualBoundingBoxAscent": 8,
+          "actualBoundingBoxDescent": 2,
+          "actualBoundingBoxLeft": 0,
+          "actualBoundingBoxRight": 60,
+          "fontBoundingBoxAscent": 8,
+          "fontBoundingBoxDescent": 2,
+          "width": 60
+        },
+        "font": "",
+        "fontKerning": "none",
+        "fontSize": "10px",
+        "lineHeight": "normal",
+        "text": "LEGEND",
+        "textBounds": {
+          "height": 10,
+          "width": 60,
+          "x": 22,
+          "y": 39
+        }
+      },
+      "platform_fonts": [
+        {
+          "familyName": "Ahem",
+          "glyphCount": 6,
+          "isCustomFont": false,
+          "postScriptName": "Ahem"
+        }
+      ],
+      "repeat": 2,
+      "scale": 3.0
+    },
+    {
+      "input": "reduced",
+      "legend": {
+        "bounds": {
+          "height": 10,
+          "width": 60,
+          "x": 22,
+          "y": 39
+        },
+        "canvasFont": "10px Ahem, \"Droid Sans Fallback\", \"Noto Sans Devanagari\", \"Noto Color Emoji\", \"DejaVu Sans\"",
+        "canvasMetrics": {
+          "actualBoundingBoxAscent": 8,
+          "actualBoundingBoxDescent": 2,
+          "actualBoundingBoxLeft": 0,
+          "actualBoundingBoxRight": 60,
+          "fontBoundingBoxAscent": 8,
+          "fontBoundingBoxDescent": 2,
+          "width": 60
+        },
+        "font": "",
+        "fontKerning": "none",
+        "fontSize": "10px",
+        "lineHeight": "normal",
+        "text": "LEGEND",
+        "textBounds": {
+          "height": 10,
+          "width": 60,
+          "x": 22,
+          "y": 39
+        }
+      },
+      "platform_fonts": [
+        {
+          "familyName": "Ahem",
+          "glyphCount": 6,
+          "isCustomFont": false,
+          "postScriptName": "Ahem"
+        }
+      ],
+      "repeat": 2,
+      "scale": 3.0
+    }
+  ],
+  "observed_exit_code": 0,
+  "physical_bounds": {
+    "bottom": 61.25,
+    "height": 12.5,
+    "width": 75,
+    "x": 27.5,
+    "y": 48.75
+  },
+  "prior_query_corrections": {
+    "path": "out/renderer-evidence/native-viewport-scroll-v1/ahem-legend-query-corrections-v1250.json",
+    "sha256": "bd293c8e21539a807ae57a8dabbb8504cd6f59dc4ffbfd48e36036e4952f6d0c"
+  },
+  "prior_query_failures": [
+    {
+      "failure": "Probe assumed 25 legend nodes; parsed source and Chromium both have 23.",
+      "observed_exit_code": 1,
+      "prior_all_commands_terminal_field_is_stale": true,
+      "prior_receipt_sha256": "85dd34d1327f8d7e36a63fa3dca188e3f20d283d5ae67f03e2573e51c7846464",
+      "session_34215_observed_terminal": true,
+      "version": 1247
+    },
+    {
+      "canvas_metrics_are_not_ahem": "ComputedStyle.font shorthand was empty because other font longhands were set. Assigning that to Canvas left its default font active; raw DOM range measurements and platform Ahem selection are unaffected.",
+      "dom_geometry_and_platform_font_queries_valid": true,
+      "observed_exit_code": 0,
+      "prior_receipt_sha256": "8faecebaa2be9c88943053601ed34a6f055db9638268a9e9e862be4ae3fd1c9a",
+      "version": 1248
+    }
+  ],
+  "promotion_allowed": false,
+  "queries_only": true,
+  "raster_root_cause_reviewed": false,
+  "raw_receipt": {
+    "path": "out/renderer-evidence/native-viewport-scroll-v1/ahem-legend-query-v1251/receipt.json",
+    "sha256": "90c6e1dfb0864baa04a2fa3d862eeb29f37574c8dc73f848fd4dc39a1bf7e9dd"
+  },
+  "release_qualification": false,
+  "reproducer": {
+    "path": "docs/renderer/reproducers/fieldset-legend-fractional-origin-v1.html",
+    "sha256": "15a5a6be1b57d812cf33d0c133de346bb259c4e2cd1967a6483c3cd75bf55a85"
+  },
+  "required_scale": 1.25,
+  "schema_version": 1,
+  "screenshots_generated": 0
+}

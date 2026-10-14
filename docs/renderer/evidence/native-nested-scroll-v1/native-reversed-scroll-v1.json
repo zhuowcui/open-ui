@@ -1,0 +1,30 @@
+{
+  "args": [
+    "output_directory",
+    "scale",
+    "row|row-reverse|column|column-reverse",
+    "ltr|rtl",
+    "background_alpha",
+    "phase"
+  ],
+  "expected_states": [
+    "initial",
+    "positive",
+    "negative",
+    "by",
+    "smooth-half",
+    "smooth-end",
+    "shrink",
+    "resize"
+  ],
+  "javascript_executed_by_openui": false,
+  "next_qualification": "Build from a clean isolated commit after the current full/expanded image sweeps terminate. Compare geometry and images against independent fresh pinned Chromium captures, including fractional relative requests. Preserve all existing reference/input bytes.",
+  "published_source_path": "docs/renderer/evidence/native-nested-scroll-v1/native_reversed_scroll-v1.rs",
+  "published_source_sha256": "792dc12a05e65674e86967d9d1c8a999165387f8bd40502f99c31e50ee465641",
+  "purpose": "Reduce reversed scroll origin and fractional backing behavior through public Rust construction, callbacks, direct/by/smooth scrolling, owned snapshots, shrink/resize and teardown.",
+  "release_qualification": false,
+  "schema_version": 1,
+  "source_commit": "7c8345ec90d08a4d6d7bf78a332c07356aa2b409",
+  "source_path": "bindings/rust/openui/examples/native_reversed_scroll.rs",
+  "status": "Source prepared and formatted; not compiled or run. No metrics, pixel pass or application API qualification inferred."
+}

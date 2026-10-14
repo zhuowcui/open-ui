@@ -1,0 +1,1200 @@
+{
+  "ahem_font_sha256": "b719ecb31c5b21fc573c03f6421c74ac63c271a5a3ff841e34f9705fb94b8448",
+  "all_bounds_exact": true,
+  "all_commands_terminal": true,
+  "all_native_apis_qualified": false,
+  "all_pixels_exact": true,
+  "build_receipt_sha256": "4c456998512c4d98cc14f1ec4b12944a38ab04c890bf174f579ef8a7fa934552",
+  "build_terminal_sha256": "ee17e6c083fabf96e3b81712880dae296886bbd01ec7b9b1046496b6521eae38",
+  "capture_harness_sha256": "97444384d43fd032a13f71c2b5c8330b6bc7533157f5af17ffc93488a341e321",
+  "cases": [
+    {
+      "height": 600,
+      "input_sha256": "773768943cf161ab16616e78bda0b2ac2700aedd1207b948fd6579fdfcaacda6",
+      "native_runs": [
+        {
+          "directory": "/mnt/d/openui-v02-qualification-d174ea0b/native-font-units-chromium-v3628/profile-0/native-1",
+          "files": {
+            "after.json": "a97901a7a026ce54cd5cfc0ce5e0d1b04e6a91e50545ed28fbd15318aec32da7",
+            "after.png": "d4e2bf1140a8827d57a2a590f8b78fdcedb5cad36f857a801a73c7ed1826dbc2",
+            "before.json": "ff2077cb46c8c3dd3bcbd4c0f1501d3710e88bc382b8de9e0e283dc2b0482ece",
+            "before.png": "e17eae469e8c821aceca60dfab0d55dcc9545fa14cf4476e2fe5eb9121e2e0d7",
+            "lifecycle.json": "a5788a7097df2d105c5ddbccf4f12bbc4e15ca0e745e8de428b8f7dacbc0f8ca"
+          }
+        },
+        {
+          "directory": "/mnt/d/openui-v02-qualification-d174ea0b/native-font-units-chromium-v3628/profile-0/native-2",
+          "files": {
+            "after.json": "a97901a7a026ce54cd5cfc0ce5e0d1b04e6a91e50545ed28fbd15318aec32da7",
+            "after.png": "d4e2bf1140a8827d57a2a590f8b78fdcedb5cad36f857a801a73c7ed1826dbc2",
+            "before.json": "ff2077cb46c8c3dd3bcbd4c0f1501d3710e88bc382b8de9e0e283dc2b0482ece",
+            "before.png": "e17eae469e8c821aceca60dfab0d55dcc9545fa14cf4476e2fe5eb9121e2e0d7",
+            "lifecycle.json": "a5788a7097df2d105c5ddbccf4f12bbc4e15ca0e745e8de428b8f7dacbc0f8ca"
+          }
+        }
+      ],
+      "profile": "legacy-800x600@1",
+      "scale": 1.0,
+      "stages": {
+        "after": {
+          "analysis": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "bounds_count": 4,
+          "bounds_exact": true,
+          "chromium_bounds": [
+            {
+              "bounds": {
+                "height": 10,
+                "width": 50,
+                "x": 10,
+                "y": 10
+              },
+              "name": "ch"
+            },
+            {
+              "bounds": {
+                "height": 10,
+                "width": 40.734375,
+                "x": 10,
+                "y": 35
+              },
+              "name": "ex"
+            },
+            {
+              "bounds": {
+                "height": 10,
+                "width": 61.046875,
+                "x": 10,
+                "y": 60
+              },
+              "name": "lh-number"
+            },
+            {
+              "bounds": {
+                "height": 10,
+                "width": 64.671875,
+                "x": 10,
+                "y": 85
+              },
+              "name": "lh-percent"
+            }
+          ],
+          "chromium_png_sha256": "ac353875562ab95bf678ff39cf13373f0f0d68f8ad9030308ccb650d628f0fb3",
+          "native_bounds": [
+            {
+              "bounds": {
+                "height": 10.0,
+                "width": 50.0,
+                "x": 10.0,
+                "y": 10.0
+              },
+              "name": "ch"
+            },
+            {
+              "bounds": {
+                "height": 10.0,
+                "width": 40.734375,
+                "x": 10.0,
+                "y": 35.0
+              },
+              "name": "ex"
+            },
+            {
+              "bounds": {
+                "height": 10.0,
+                "width": 61.046875,
+                "x": 10.0,
+                "y": 60.0
+              },
+              "name": "lh-number"
+            },
+            {
+              "bounds": {
+                "height": 10.0,
+                "width": 64.671875,
+                "x": 10.0,
+                "y": 85.0
+              },
+              "name": "lh-percent"
+            }
+          ],
+          "native_png_sha256": "d4e2bf1140a8827d57a2a590f8b78fdcedb5cad36f857a801a73c7ed1826dbc2"
+        },
+        "before": {
+          "analysis": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "bounds_count": 4,
+          "bounds_exact": true,
+          "chromium_bounds": [
+            {
+              "bounds": {
+                "height": 10,
+                "width": 47.5,
+                "x": 10,
+                "y": 10
+              },
+              "name": "ch"
+            },
+            {
+              "bounds": {
+                "height": 10,
+                "width": 37.40625,
+                "x": 10,
+                "y": 35
+              },
+              "name": "ex"
+            },
+            {
+              "bounds": {
+                "height": 10,
+                "width": 56.125,
+                "x": 10,
+                "y": 60
+              },
+              "name": "lh-number"
+            },
+            {
+              "bounds": {
+                "height": 10,
+                "width": 59.421875,
+                "x": 10,
+                "y": 85
+              },
+              "name": "lh-percent"
+            }
+          ],
+          "chromium_png_sha256": "0c1dbdc003d71090cd26d566b0fd99034f298793f57ec2872305ede86cbb9686",
+          "native_bounds": [
+            {
+              "bounds": {
+                "height": 10.0,
+                "width": 47.5,
+                "x": 10.0,
+                "y": 10.0
+              },
+              "name": "ch"
+            },
+            {
+              "bounds": {
+                "height": 10.0,
+                "width": 37.40625,
+                "x": 10.0,
+                "y": 35.0
+              },
+              "name": "ex"
+            },
+            {
+              "bounds": {
+                "height": 10.0,
+                "width": 56.125,
+                "x": 10.0,
+                "y": 60.0
+              },
+              "name": "lh-number"
+            },
+            {
+              "bounds": {
+                "height": 10.0,
+                "width": 59.421875,
+                "x": 10.0,
+                "y": 85.0
+              },
+              "name": "lh-percent"
+            }
+          ],
+          "native_png_sha256": "e17eae469e8c821aceca60dfab0d55dcc9545fa14cf4476e2fe5eb9121e2e0d7"
+        }
+      },
+      "width": 800
+    },
+    {
+      "height": 667,
+      "input_sha256": "773768943cf161ab16616e78bda0b2ac2700aedd1207b948fd6579fdfcaacda6",
+      "native_runs": [
+        {
+          "directory": "/mnt/d/openui-v02-qualification-d174ea0b/native-font-units-chromium-v3628/profile-1/native-1",
+          "files": {
+            "after.json": "a97901a7a026ce54cd5cfc0ce5e0d1b04e6a91e50545ed28fbd15318aec32da7",
+            "after.png": "cf1b70d3605b480b4d2972f6516816474d38d8fef3ed9d0b13896a480ab56a33",
+            "before.json": "ff2077cb46c8c3dd3bcbd4c0f1501d3710e88bc382b8de9e0e283dc2b0482ece",
+            "before.png": "21acc5b472629c4c9b8c106e39b05b88c5fa9aa04b516adb20bb6fcf6ed7a2cf",
+            "lifecycle.json": "a5788a7097df2d105c5ddbccf4f12bbc4e15ca0e745e8de428b8f7dacbc0f8ca"
+          }
+        },
+        {
+          "directory": "/mnt/d/openui-v02-qualification-d174ea0b/native-font-units-chromium-v3628/profile-1/native-2",
+          "files": {
+            "after.json": "a97901a7a026ce54cd5cfc0ce5e0d1b04e6a91e50545ed28fbd15318aec32da7",
+            "after.png": "cf1b70d3605b480b4d2972f6516816474d38d8fef3ed9d0b13896a480ab56a33",
+            "before.json": "ff2077cb46c8c3dd3bcbd4c0f1501d3710e88bc382b8de9e0e283dc2b0482ece",
+            "before.png": "21acc5b472629c4c9b8c106e39b05b88c5fa9aa04b516adb20bb6fcf6ed7a2cf",
+            "lifecycle.json": "a5788a7097df2d105c5ddbccf4f12bbc4e15ca0e745e8de428b8f7dacbc0f8ca"
+          }
+        }
+      ],
+      "profile": "mobile-375x667@2",
+      "scale": 2.0,
+      "stages": {
+        "after": {
+          "analysis": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "bounds_count": 4,
+          "bounds_exact": true,
+          "chromium_bounds": [
+            {
+              "bounds": {
+                "height": 10,
+                "width": 50,
+                "x": 10,
+                "y": 10
+              },
+              "name": "ch"
+            },
+            {
+              "bounds": {
+                "height": 10,
+                "width": 40.734375,
+                "x": 10,
+                "y": 35
+              },
+              "name": "ex"
+            },
+            {
+              "bounds": {
+                "height": 10,
+                "width": 61.046875,
+                "x": 10,
+                "y": 60
+              },
+              "name": "lh-number"
+            },
+            {
+              "bounds": {
+                "height": 10,
+                "width": 64.671875,
+                "x": 10,
+                "y": 85
+              },
+              "name": "lh-percent"
+            }
+          ],
+          "chromium_png_sha256": "f36d43d78b1bcf106187682bee297103777a44b049df057ad7b04bc39b6356b6",
+          "native_bounds": [
+            {
+              "bounds": {
+                "height": 10.0,
+                "width": 50.0,
+                "x": 10.0,
+                "y": 10.0
+              },
+              "name": "ch"
+            },
+            {
+              "bounds": {
+                "height": 10.0,
+                "width": 40.734375,
+                "x": 10.0,
+                "y": 35.0
+              },
+              "name": "ex"
+            },
+            {
+              "bounds": {
+                "height": 10.0,
+                "width": 61.046875,
+                "x": 10.0,
+                "y": 60.0
+              },
+              "name": "lh-number"
+            },
+            {
+              "bounds": {
+                "height": 10.0,
+                "width": 64.671875,
+                "x": 10.0,
+                "y": 85.0
+              },
+              "name": "lh-percent"
+            }
+          ],
+          "native_png_sha256": "cf1b70d3605b480b4d2972f6516816474d38d8fef3ed9d0b13896a480ab56a33"
+        },
+        "before": {
+          "analysis": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "bounds_count": 4,
+          "bounds_exact": true,
+          "chromium_bounds": [
+            {
+              "bounds": {
+                "height": 10,
+                "width": 47.5,
+                "x": 10,
+                "y": 10
+              },
+              "name": "ch"
+            },
+            {
+              "bounds": {
+                "height": 10,
+                "width": 37.40625,
+                "x": 10,
+                "y": 35
+              },
+              "name": "ex"
+            },
+            {
+              "bounds": {
+                "height": 10,
+                "width": 56.125,
+                "x": 10,
+                "y": 60
+              },
+              "name": "lh-number"
+            },
+            {
+              "bounds": {
+                "height": 10,
+                "width": 59.421875,
+                "x": 10,
+                "y": 85
+              },
+              "name": "lh-percent"
+            }
+          ],
+          "chromium_png_sha256": "5a8fbead512bbfcaf60d3b75294919c0b8cde560d91557b11c1f544f702ba1cc",
+          "native_bounds": [
+            {
+              "bounds": {
+                "height": 10.0,
+                "width": 47.5,
+                "x": 10.0,
+                "y": 10.0
+              },
+              "name": "ch"
+            },
+            {
+              "bounds": {
+                "height": 10.0,
+                "width": 37.40625,
+                "x": 10.0,
+                "y": 35.0
+              },
+              "name": "ex"
+            },
+            {
+              "bounds": {
+                "height": 10.0,
+                "width": 56.125,
+                "x": 10.0,
+                "y": 60.0
+              },
+              "name": "lh-number"
+            },
+            {
+              "bounds": {
+                "height": 10.0,
+                "width": 59.421875,
+                "x": 10.0,
+                "y": 85.0
+              },
+              "name": "lh-percent"
+            }
+          ],
+          "native_png_sha256": "21acc5b472629c4c9b8c106e39b05b88c5fa9aa04b516adb20bb6fcf6ed7a2cf"
+        }
+      },
+      "width": 375
+    },
+    {
+      "height": 720,
+      "input_sha256": "773768943cf161ab16616e78bda0b2ac2700aedd1207b948fd6579fdfcaacda6",
+      "native_runs": [
+        {
+          "directory": "/mnt/d/openui-v02-qualification-d174ea0b/native-font-units-chromium-v3628/profile-2/native-1",
+          "files": {
+            "after.json": "a97901a7a026ce54cd5cfc0ce5e0d1b04e6a91e50545ed28fbd15318aec32da7",
+            "after.png": "2dc1f259a61f2ea2efa066caac1d812ab7efa76ed359ba6268daac2d58e0d9f2",
+            "before.json": "ff2077cb46c8c3dd3bcbd4c0f1501d3710e88bc382b8de9e0e283dc2b0482ece",
+            "before.png": "982b9573b4fb4e37a2f8f24f9a1f9240cd20ca03cb5fd7dd6086df05e9f211c4",
+            "lifecycle.json": "a5788a7097df2d105c5ddbccf4f12bbc4e15ca0e745e8de428b8f7dacbc0f8ca"
+          }
+        },
+        {
+          "directory": "/mnt/d/openui-v02-qualification-d174ea0b/native-font-units-chromium-v3628/profile-2/native-2",
+          "files": {
+            "after.json": "a97901a7a026ce54cd5cfc0ce5e0d1b04e6a91e50545ed28fbd15318aec32da7",
+            "after.png": "2dc1f259a61f2ea2efa066caac1d812ab7efa76ed359ba6268daac2d58e0d9f2",
+            "before.json": "ff2077cb46c8c3dd3bcbd4c0f1501d3710e88bc382b8de9e0e283dc2b0482ece",
+            "before.png": "982b9573b4fb4e37a2f8f24f9a1f9240cd20ca03cb5fd7dd6086df05e9f211c4",
+            "lifecycle.json": "a5788a7097df2d105c5ddbccf4f12bbc4e15ca0e745e8de428b8f7dacbc0f8ca"
+          }
+        }
+      ],
+      "profile": "desktop-1280x720@1.25",
+      "scale": 1.25,
+      "stages": {
+        "after": {
+          "analysis": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "bounds_count": 4,
+          "bounds_exact": true,
+          "chromium_bounds": [
+            {
+              "bounds": {
+                "height": 10,
+                "width": 50,
+                "x": 10,
+                "y": 10
+              },
+              "name": "ch"
+            },
+            {
+              "bounds": {
+                "height": 10,
+                "width": 40.734375,
+                "x": 10,
+                "y": 35
+              },
+              "name": "ex"
+            },
+            {
+              "bounds": {
+                "height": 10,
+                "width": 61.046875,
+                "x": 10,
+                "y": 60
+              },
+              "name": "lh-number"
+            },
+            {
+              "bounds": {
+                "height": 10,
+                "width": 64.671875,
+                "x": 10,
+                "y": 85
+              },
+              "name": "lh-percent"
+            }
+          ],
+          "chromium_png_sha256": "b47d5618213ca23aabeffa9ef3827dadf27365df76d28501431eea9d45b88962",
+          "native_bounds": [
+            {
+              "bounds": {
+                "height": 10.0,
+                "width": 50.0,
+                "x": 10.0,
+                "y": 10.0
+              },
+              "name": "ch"
+            },
+            {
+              "bounds": {
+                "height": 10.0,
+                "width": 40.734375,
+                "x": 10.0,
+                "y": 35.0
+              },
+              "name": "ex"
+            },
+            {
+              "bounds": {
+                "height": 10.0,
+                "width": 61.046875,
+                "x": 10.0,
+                "y": 60.0
+              },
+              "name": "lh-number"
+            },
+            {
+              "bounds": {
+                "height": 10.0,
+                "width": 64.671875,
+                "x": 10.0,
+                "y": 85.0
+              },
+              "name": "lh-percent"
+            }
+          ],
+          "native_png_sha256": "2dc1f259a61f2ea2efa066caac1d812ab7efa76ed359ba6268daac2d58e0d9f2"
+        },
+        "before": {
+          "analysis": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "bounds_count": 4,
+          "bounds_exact": true,
+          "chromium_bounds": [
+            {
+              "bounds": {
+                "height": 10,
+                "width": 47.5,
+                "x": 10,
+                "y": 10
+              },
+              "name": "ch"
+            },
+            {
+              "bounds": {
+                "height": 10,
+                "width": 37.40625,
+                "x": 10,
+                "y": 35
+              },
+              "name": "ex"
+            },
+            {
+              "bounds": {
+                "height": 10,
+                "width": 56.125,
+                "x": 10,
+                "y": 60
+              },
+              "name": "lh-number"
+            },
+            {
+              "bounds": {
+                "height": 10,
+                "width": 59.421875,
+                "x": 10,
+                "y": 85
+              },
+              "name": "lh-percent"
+            }
+          ],
+          "chromium_png_sha256": "d941c1414fea9d5972c3455e29a9544e5a9c4b4b60081ff36ee8e0302b28f2ba",
+          "native_bounds": [
+            {
+              "bounds": {
+                "height": 10.0,
+                "width": 47.5,
+                "x": 10.0,
+                "y": 10.0
+              },
+              "name": "ch"
+            },
+            {
+              "bounds": {
+                "height": 10.0,
+                "width": 37.40625,
+                "x": 10.0,
+                "y": 35.0
+              },
+              "name": "ex"
+            },
+            {
+              "bounds": {
+                "height": 10.0,
+                "width": 56.125,
+                "x": 10.0,
+                "y": 60.0
+              },
+              "name": "lh-number"
+            },
+            {
+              "bounds": {
+                "height": 10.0,
+                "width": 59.421875,
+                "x": 10.0,
+                "y": 85.0
+              },
+              "name": "lh-percent"
+            }
+          ],
+          "native_png_sha256": "982b9573b4fb4e37a2f8f24f9a1f9240cd20ca03cb5fd7dd6086df05e9f211c4"
+        }
+      },
+      "width": 1280
+    },
+    {
+      "height": 1080,
+      "input_sha256": "773768943cf161ab16616e78bda0b2ac2700aedd1207b948fd6579fdfcaacda6",
+      "native_runs": [
+        {
+          "directory": "/mnt/d/openui-v02-qualification-d174ea0b/native-font-units-chromium-v3628/profile-3/native-1",
+          "files": {
+            "after.json": "a97901a7a026ce54cd5cfc0ce5e0d1b04e6a91e50545ed28fbd15318aec32da7",
+            "after.png": "ca5e83577cce46ff5d47ed4fd258112e34e745cb3d9c78a68f8f3c642bafb679",
+            "before.json": "ff2077cb46c8c3dd3bcbd4c0f1501d3710e88bc382b8de9e0e283dc2b0482ece",
+            "before.png": "cc6eca0f1b34e30abb7012cf98a806855bb5b23baef3b01dd9efe0bb43c2e757",
+            "lifecycle.json": "a5788a7097df2d105c5ddbccf4f12bbc4e15ca0e745e8de428b8f7dacbc0f8ca"
+          }
+        },
+        {
+          "directory": "/mnt/d/openui-v02-qualification-d174ea0b/native-font-units-chromium-v3628/profile-3/native-2",
+          "files": {
+            "after.json": "a97901a7a026ce54cd5cfc0ce5e0d1b04e6a91e50545ed28fbd15318aec32da7",
+            "after.png": "ca5e83577cce46ff5d47ed4fd258112e34e745cb3d9c78a68f8f3c642bafb679",
+            "before.json": "ff2077cb46c8c3dd3bcbd4c0f1501d3710e88bc382b8de9e0e283dc2b0482ece",
+            "before.png": "cc6eca0f1b34e30abb7012cf98a806855bb5b23baef3b01dd9efe0bb43c2e757",
+            "lifecycle.json": "a5788a7097df2d105c5ddbccf4f12bbc4e15ca0e745e8de428b8f7dacbc0f8ca"
+          }
+        }
+      ],
+      "profile": "desktop-1920x1080@1.5",
+      "scale": 1.5,
+      "stages": {
+        "after": {
+          "analysis": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "bounds_count": 4,
+          "bounds_exact": true,
+          "chromium_bounds": [
+            {
+              "bounds": {
+                "height": 10,
+                "width": 50,
+                "x": 10,
+                "y": 10
+              },
+              "name": "ch"
+            },
+            {
+              "bounds": {
+                "height": 10,
+                "width": 40.734375,
+                "x": 10,
+                "y": 35
+              },
+              "name": "ex"
+            },
+            {
+              "bounds": {
+                "height": 10,
+                "width": 61.046875,
+                "x": 10,
+                "y": 60
+              },
+              "name": "lh-number"
+            },
+            {
+              "bounds": {
+                "height": 10,
+                "width": 64.671875,
+                "x": 10,
+                "y": 85
+              },
+              "name": "lh-percent"
+            }
+          ],
+          "chromium_png_sha256": "366ad70058fa42ffe3740d0cba6b0b31d0437aa6d1eb20fec088182f984e584e",
+          "native_bounds": [
+            {
+              "bounds": {
+                "height": 10.0,
+                "width": 50.0,
+                "x": 10.0,
+                "y": 10.0
+              },
+              "name": "ch"
+            },
+            {
+              "bounds": {
+                "height": 10.0,
+                "width": 40.734375,
+                "x": 10.0,
+                "y": 35.0
+              },
+              "name": "ex"
+            },
+            {
+              "bounds": {
+                "height": 10.0,
+                "width": 61.046875,
+                "x": 10.0,
+                "y": 60.0
+              },
+              "name": "lh-number"
+            },
+            {
+              "bounds": {
+                "height": 10.0,
+                "width": 64.671875,
+                "x": 10.0,
+                "y": 85.0
+              },
+              "name": "lh-percent"
+            }
+          ],
+          "native_png_sha256": "ca5e83577cce46ff5d47ed4fd258112e34e745cb3d9c78a68f8f3c642bafb679"
+        },
+        "before": {
+          "analysis": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "bounds_count": 4,
+          "bounds_exact": true,
+          "chromium_bounds": [
+            {
+              "bounds": {
+                "height": 10,
+                "width": 47.5,
+                "x": 10,
+                "y": 10
+              },
+              "name": "ch"
+            },
+            {
+              "bounds": {
+                "height": 10,
+                "width": 37.40625,
+                "x": 10,
+                "y": 35
+              },
+              "name": "ex"
+            },
+            {
+              "bounds": {
+                "height": 10,
+                "width": 56.125,
+                "x": 10,
+                "y": 60
+              },
+              "name": "lh-number"
+            },
+            {
+              "bounds": {
+                "height": 10,
+                "width": 59.421875,
+                "x": 10,
+                "y": 85
+              },
+              "name": "lh-percent"
+            }
+          ],
+          "chromium_png_sha256": "7cf155b4315ce0f7d62d1f085d7414c2a545c0be65c305955948a633f0dd2c05",
+          "native_bounds": [
+            {
+              "bounds": {
+                "height": 10.0,
+                "width": 47.5,
+                "x": 10.0,
+                "y": 10.0
+              },
+              "name": "ch"
+            },
+            {
+              "bounds": {
+                "height": 10.0,
+                "width": 37.40625,
+                "x": 10.0,
+                "y": 35.0
+              },
+              "name": "ex"
+            },
+            {
+              "bounds": {
+                "height": 10.0,
+                "width": 56.125,
+                "x": 10.0,
+                "y": 60.0
+              },
+              "name": "lh-number"
+            },
+            {
+              "bounds": {
+                "height": 10.0,
+                "width": 59.421875,
+                "x": 10.0,
+                "y": 85.0
+              },
+              "name": "lh-percent"
+            }
+          ],
+          "native_png_sha256": "cc6eca0f1b34e30abb7012cf98a806855bb5b23baef3b01dd9efe0bb43c2e757"
+        }
+      },
+      "width": 1920
+    }
+  ],
+  "chromium_binary_sha256": "0ba87684df0afc11faaea40ac57bd2f1d68b67191443b38215a36b90e6f08848",
+  "chromium_version": "Google Chrome for Testing 147.0.7727.50",
+  "driver_sha256": "1a377a0df9394bd5cc73277fd18fc8c86fcb9ad3f6fc94cee0b7edbc12ed4fd6",
+  "fontconfig_sha256": "99fd54cf2f3875bba44a2272b3dfe5adc7c08263ca0511ec2473ec5e59c09195",
+  "full_renderer_contract_qualified": false,
+  "historical_openui_archive_is_a_pixel_target": false,
+  "javascript_executed_by_openui": false,
+  "native_binary_sha256": "e029ea715cd214b335e20eb9d8d2571795ba1d93c2fe19c600db4cf6ed28adec",
+  "observed_exit_code": 0,
+  "owner_pid": 289558,
+  "pixel_target": "pinned Chromium",
+  "pixel_tolerance": 0,
+  "release_qualified": false,
+  "schema_version": 1,
+  "scripts_run_only_in_separate_chromium_reference_process": true,
+  "source": {
+    "clean": true,
+    "commit": "45d2164801a94995bac4927fab2aa517b1364e6c",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "b3c3887214d9b5c9bb15eebaed8626e10d5611f0f6c046405f3db09b82751f59",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "45d2164801a94995bac4927fab2aa517b1364e6c",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "b3c3887214d9b5c9bb15eebaed8626e10d5611f0f6c046405f3db09b82751f59",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_unchanged": true,
+  "steps": [
+    {
+      "actual_exit_code": 0,
+      "name": "profile-0-native-1",
+      "pid": 289634
+    },
+    {
+      "actual_exit_code": 0,
+      "name": "profile-0-native-2",
+      "pid": 289647
+    },
+    {
+      "actual_exit_code": 0,
+      "name": "chromium-profile-0-1",
+      "pid": 289648
+    },
+    {
+      "actual_exit_code": 0,
+      "name": "chromium-profile-0-2",
+      "pid": 289768
+    },
+    {
+      "actual_exit_code": 0,
+      "name": "profile-1-native-1",
+      "pid": 289885
+    },
+    {
+      "actual_exit_code": 0,
+      "name": "profile-1-native-2",
+      "pid": 289900
+    },
+    {
+      "actual_exit_code": 0,
+      "name": "chromium-profile-1-1",
+      "pid": 289901
+    },
+    {
+      "actual_exit_code": 0,
+      "name": "chromium-profile-1-2",
+      "pid": 290023
+    },
+    {
+      "actual_exit_code": 0,
+      "name": "profile-2-native-1",
+      "pid": 290151
+    },
+    {
+      "actual_exit_code": 0,
+      "name": "profile-2-native-2",
+      "pid": 290158
+    },
+    {
+      "actual_exit_code": 0,
+      "name": "chromium-profile-2-1",
+      "pid": 290171
+    },
+    {
+      "actual_exit_code": 0,
+      "name": "chromium-profile-2-2",
+      "pid": 290290
+    },
+    {
+      "actual_exit_code": 0,
+      "name": "profile-3-native-1",
+      "pid": 290415
+    },
+    {
+      "actual_exit_code": 0,
+      "name": "profile-3-native-2",
+      "pid": 290418
+    },
+    {
+      "actual_exit_code": 0,
+      "name": "chromium-profile-3-1",
+      "pid": 290432
+    },
+    {
+      "actual_exit_code": 0,
+      "name": "chromium-profile-3-2",
+      "pid": 290550
+    }
+  ]
+}

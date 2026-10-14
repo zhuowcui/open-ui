@@ -1,0 +1,30 @@
+{
+  "all_commands_terminal": true,
+  "cargo_commands_run": 0,
+  "images_generated": 0,
+  "pixel_bytes_changed": false,
+  "release_qualification": false,
+  "rows": [
+    {
+      "endpoint_exposed": false,
+      "error": "Chromium exited before exposing its DevTools endpoint",
+      "exited_before_cleanup": -5,
+      "name": "previous-long",
+      "profile": "/dev/shm/openui-native-rust-integrated-chromium-temporary-v1810/profile-7z1vk1sx",
+      "stderr_sha256": "a12709d03abe25a7d3d5c16ce3992b3e73da8e5fbd10ee46eb0ec87ab6cf80be",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tmpdir": "/dev/shm/openui-native-rust-integrated-chromium-temporary-v1810",
+      "tmpdir_length": 63
+    },
+    {
+      "endpoint_exposed": true,
+      "name": "short",
+      "profile": "/dev/shm/oui1813/profile-f3xubhb1",
+      "stderr_sha256": "0399316068ea749d43340ee5cc8ce924fd5958e38b36438eb681b677c6a18872",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tmpdir": "/dev/shm/oui1813",
+      "tmpdir_length": 16
+    }
+  ],
+  "schema_version": 1
+}

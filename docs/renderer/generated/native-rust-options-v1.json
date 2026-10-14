@@ -1,0 +1,902 @@
+{
+  "all_15_read_only_checks_passed": true,
+  "all_commands_terminal": true,
+  "all_configuration_field_rendering_effects_unqualified": true,
+  "all_four_guards_executed_and_passed": true,
+  "artifact_bytes": 477127,
+  "artifact_count": 127,
+  "artifacts": [
+    {
+      "bytes": 2755,
+      "path": "docs/renderer/evidence/native-rust-options-v1/owner.json",
+      "sha256": "1766ce501a12fbaf93794fb0614f0040190f648398d31e04169aecfeca5f7e49",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-pipeline-v1801/receipt.json"
+    },
+    {
+      "bytes": 162,
+      "decompressed_bytes": 380,
+      "decompressed_sha256": "8760b5c4a49a5cda4dc6dc524218895d3d6920fa2be064cb9bf3e2a54433b168",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v1/owner-clean-build-and-native-app.log.gz",
+      "sha256": "666cdfda6dc0938fdb38c8dbf45faad56d30dc35458ad9c8390a0a5157009c1d",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-pipeline-v1801/clean-build-and-native-app.log"
+    },
+    {
+      "bytes": 78,
+      "decompressed_bytes": 221,
+      "decompressed_sha256": "f68bdcc6ef50d88492b2b12f025a60ac8f91d018a97dbb9a347ed9e305872d4f",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v1/owner-native-chromium-images.log.gz",
+      "sha256": "91d7b70833b30feca073746771f07671539dea87d20282c0d1d33706cbdb4049",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-pipeline-v1801/native-chromium-images.log"
+    },
+    {
+      "bytes": 3663,
+      "path": "docs/renderer/evidence/native-rust-options-v1/build.json",
+      "sha256": "14f77769a5c625e314341f2e800d2a63853274ff68b3b8a8cfd5a30ae75b3850",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-clean-v1800/build.json"
+    },
+    {
+      "bytes": 56,
+      "decompressed_bytes": 38,
+      "decompressed_sha256": "f3ad7b2e5438078b9fc59976dec27dc218bf246dabe72d17d6b8d3ec9a1f68ca",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v1/build-clean-workspace.log.gz",
+      "sha256": "511c6b4df0840bf3af1b1d349466a89a8041d67a9ebc82ae7613d5720943bb8b",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-clean-v1800/clean-workspace.log"
+    },
+    {
+      "bytes": 86854,
+      "decompressed_bytes": 490358,
+      "decompressed_sha256": "87119e53080207cacff56703a74b49fdcf762b9d24a2d7355ad92f31676604ac",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v1/build-workspace.log.gz",
+      "sha256": "ed593518274bbea56d57b83543a2a8d9d5e1401572820d1308f0f1a37a33feb9",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-clean-v1800/workspace.log"
+    },
+    {
+      "bytes": 1894,
+      "decompressed_bytes": 10502,
+      "decompressed_sha256": "9f37e08a4971738b3523c8f990ba5837924a1b5293958f6c0f90bed2d8159d10",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v1/build-options-build.log.gz",
+      "sha256": "ca2d8dfce75dcc9d571cb7b3cba10b9dc04c76e1d88ebc8c1049245bec741edc",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-clean-v1800/options-build.log"
+    },
+    {
+      "bytes": 103,
+      "decompressed_bytes": 355,
+      "decompressed_sha256": "eaa864b92112bc4aee364971f8a096a9ff9dc033166c03da0d4c3031ea42247c",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v1/build-native-rust-application.log.gz",
+      "sha256": "d10bd7d027cdb862b3b3b9fedbfa354786e8b6d13b11b34953e2bdf11e0f62d7",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-clean-v1800/native-rust-application.log"
+    },
+    {
+      "bytes": 30071,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/receipt.json",
+      "sha256": "86bedaf66ba41570e015f581f7584a7fd261cd58e3c6661d3e22c3fe6dfa8ced",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/receipt.json"
+    },
+    {
+      "bytes": 179,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/1.0/after-chromium-1-first-capture.png",
+      "sha256": "b2e98d74ade8158a1331bb08c6323571decebd18533d59faf1b223c1b7669c64",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/1.0/after-chromium-1-first-capture.png"
+    },
+    {
+      "bytes": 179,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/1.0/after-chromium-1-second-capture.png",
+      "sha256": "b2e98d74ade8158a1331bb08c6323571decebd18533d59faf1b223c1b7669c64",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/1.0/after-chromium-1-second-capture.png"
+    },
+    {
+      "bytes": 179,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/1.0/after-chromium-1.png",
+      "sha256": "b2e98d74ade8158a1331bb08c6323571decebd18533d59faf1b223c1b7669c64",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/1.0/after-chromium-1.png"
+    },
+    {
+      "bytes": 179,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/1.0/after-chromium-2-first-capture.png",
+      "sha256": "b2e98d74ade8158a1331bb08c6323571decebd18533d59faf1b223c1b7669c64",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/1.0/after-chromium-2-first-capture.png"
+    },
+    {
+      "bytes": 179,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/1.0/after-chromium-2-second-capture.png",
+      "sha256": "b2e98d74ade8158a1331bb08c6323571decebd18533d59faf1b223c1b7669c64",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/1.0/after-chromium-2-second-capture.png"
+    },
+    {
+      "bytes": 179,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/1.0/after-chromium-2.png",
+      "sha256": "b2e98d74ade8158a1331bb08c6323571decebd18533d59faf1b223c1b7669c64",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/1.0/after-chromium-2.png"
+    },
+    {
+      "bytes": 180,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/1.0/before-chromium-1-first-capture.png",
+      "sha256": "e65a83429f5e4986a4beebd57ca22c4febabb7f222f44c63d5d75f9c18ed64f3",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/1.0/before-chromium-1-first-capture.png"
+    },
+    {
+      "bytes": 180,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/1.0/before-chromium-1-second-capture.png",
+      "sha256": "e65a83429f5e4986a4beebd57ca22c4febabb7f222f44c63d5d75f9c18ed64f3",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/1.0/before-chromium-1-second-capture.png"
+    },
+    {
+      "bytes": 180,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/1.0/before-chromium-1.png",
+      "sha256": "e65a83429f5e4986a4beebd57ca22c4febabb7f222f44c63d5d75f9c18ed64f3",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/1.0/before-chromium-1.png"
+    },
+    {
+      "bytes": 180,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/1.0/before-chromium-2-first-capture.png",
+      "sha256": "e65a83429f5e4986a4beebd57ca22c4febabb7f222f44c63d5d75f9c18ed64f3",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/1.0/before-chromium-2-first-capture.png"
+    },
+    {
+      "bytes": 180,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/1.0/before-chromium-2-second-capture.png",
+      "sha256": "e65a83429f5e4986a4beebd57ca22c4febabb7f222f44c63d5d75f9c18ed64f3",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/1.0/before-chromium-2-second-capture.png"
+    },
+    {
+      "bytes": 180,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/1.0/before-chromium-2.png",
+      "sha256": "e65a83429f5e4986a4beebd57ca22c4febabb7f222f44c63d5d75f9c18ed64f3",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/1.0/before-chromium-2.png"
+    },
+    {
+      "bytes": 195,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/1.25/after-chromium-1-first-capture.png",
+      "sha256": "a2704189614eb4e6610b3523a7f706175b23db8660cf9148981080fabfab5537",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/1.25/after-chromium-1-first-capture.png"
+    },
+    {
+      "bytes": 195,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/1.25/after-chromium-1-second-capture.png",
+      "sha256": "a2704189614eb4e6610b3523a7f706175b23db8660cf9148981080fabfab5537",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/1.25/after-chromium-1-second-capture.png"
+    },
+    {
+      "bytes": 195,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/1.25/after-chromium-1.png",
+      "sha256": "a2704189614eb4e6610b3523a7f706175b23db8660cf9148981080fabfab5537",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/1.25/after-chromium-1.png"
+    },
+    {
+      "bytes": 195,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/1.25/after-chromium-2-first-capture.png",
+      "sha256": "a2704189614eb4e6610b3523a7f706175b23db8660cf9148981080fabfab5537",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/1.25/after-chromium-2-first-capture.png"
+    },
+    {
+      "bytes": 195,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/1.25/after-chromium-2-second-capture.png",
+      "sha256": "a2704189614eb4e6610b3523a7f706175b23db8660cf9148981080fabfab5537",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/1.25/after-chromium-2-second-capture.png"
+    },
+    {
+      "bytes": 195,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/1.25/after-chromium-2.png",
+      "sha256": "a2704189614eb4e6610b3523a7f706175b23db8660cf9148981080fabfab5537",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/1.25/after-chromium-2.png"
+    },
+    {
+      "bytes": 199,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/1.25/before-chromium-1-first-capture.png",
+      "sha256": "a74df3d71b3d9164da0467455085e114e76ec7aa7c917ca030c607e076117e6a",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/1.25/before-chromium-1-first-capture.png"
+    },
+    {
+      "bytes": 199,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/1.25/before-chromium-1-second-capture.png",
+      "sha256": "a74df3d71b3d9164da0467455085e114e76ec7aa7c917ca030c607e076117e6a",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/1.25/before-chromium-1-second-capture.png"
+    },
+    {
+      "bytes": 199,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/1.25/before-chromium-1.png",
+      "sha256": "a74df3d71b3d9164da0467455085e114e76ec7aa7c917ca030c607e076117e6a",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/1.25/before-chromium-1.png"
+    },
+    {
+      "bytes": 199,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/1.25/before-chromium-2-first-capture.png",
+      "sha256": "a74df3d71b3d9164da0467455085e114e76ec7aa7c917ca030c607e076117e6a",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/1.25/before-chromium-2-first-capture.png"
+    },
+    {
+      "bytes": 199,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/1.25/before-chromium-2-second-capture.png",
+      "sha256": "a74df3d71b3d9164da0467455085e114e76ec7aa7c917ca030c607e076117e6a",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/1.25/before-chromium-2-second-capture.png"
+    },
+    {
+      "bytes": 199,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/1.25/before-chromium-2.png",
+      "sha256": "a74df3d71b3d9164da0467455085e114e76ec7aa7c917ca030c607e076117e6a",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/1.25/before-chromium-2.png"
+    },
+    {
+      "bytes": 263,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/1.5/after-chromium-1-first-capture.png",
+      "sha256": "186754e6ba4435b97c36363e13069315bb16bf89b2e153921e58fbd36b847f34",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/1.5/after-chromium-1-first-capture.png"
+    },
+    {
+      "bytes": 263,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/1.5/after-chromium-1-second-capture.png",
+      "sha256": "186754e6ba4435b97c36363e13069315bb16bf89b2e153921e58fbd36b847f34",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/1.5/after-chromium-1-second-capture.png"
+    },
+    {
+      "bytes": 263,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/1.5/after-chromium-1.png",
+      "sha256": "186754e6ba4435b97c36363e13069315bb16bf89b2e153921e58fbd36b847f34",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/1.5/after-chromium-1.png"
+    },
+    {
+      "bytes": 263,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/1.5/after-chromium-2-first-capture.png",
+      "sha256": "186754e6ba4435b97c36363e13069315bb16bf89b2e153921e58fbd36b847f34",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/1.5/after-chromium-2-first-capture.png"
+    },
+    {
+      "bytes": 263,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/1.5/after-chromium-2-second-capture.png",
+      "sha256": "186754e6ba4435b97c36363e13069315bb16bf89b2e153921e58fbd36b847f34",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/1.5/after-chromium-2-second-capture.png"
+    },
+    {
+      "bytes": 263,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/1.5/after-chromium-2.png",
+      "sha256": "186754e6ba4435b97c36363e13069315bb16bf89b2e153921e58fbd36b847f34",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/1.5/after-chromium-2.png"
+    },
+    {
+      "bytes": 265,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/1.5/before-chromium-1-first-capture.png",
+      "sha256": "2ba03361b95b65eb16ae212e99d357b96d7d61831bbd59033a1a9d42598f3c42",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/1.5/before-chromium-1-first-capture.png"
+    },
+    {
+      "bytes": 265,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/1.5/before-chromium-1-second-capture.png",
+      "sha256": "2ba03361b95b65eb16ae212e99d357b96d7d61831bbd59033a1a9d42598f3c42",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/1.5/before-chromium-1-second-capture.png"
+    },
+    {
+      "bytes": 265,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/1.5/before-chromium-1.png",
+      "sha256": "2ba03361b95b65eb16ae212e99d357b96d7d61831bbd59033a1a9d42598f3c42",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/1.5/before-chromium-1.png"
+    },
+    {
+      "bytes": 265,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/1.5/before-chromium-2-first-capture.png",
+      "sha256": "2ba03361b95b65eb16ae212e99d357b96d7d61831bbd59033a1a9d42598f3c42",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/1.5/before-chromium-2-first-capture.png"
+    },
+    {
+      "bytes": 265,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/1.5/before-chromium-2-second-capture.png",
+      "sha256": "2ba03361b95b65eb16ae212e99d357b96d7d61831bbd59033a1a9d42598f3c42",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/1.5/before-chromium-2-second-capture.png"
+    },
+    {
+      "bytes": 265,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/1.5/before-chromium-2.png",
+      "sha256": "2ba03361b95b65eb16ae212e99d357b96d7d61831bbd59033a1a9d42598f3c42",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/1.5/before-chromium-2.png"
+    },
+    {
+      "bytes": 329,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/2.0/after-chromium-1-first-capture.png",
+      "sha256": "40e11cf4c8c6fa55936fd7c0003cf1467d599b356f67756cd970fd941cb3da93",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/2.0/after-chromium-1-first-capture.png"
+    },
+    {
+      "bytes": 329,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/2.0/after-chromium-1-second-capture.png",
+      "sha256": "40e11cf4c8c6fa55936fd7c0003cf1467d599b356f67756cd970fd941cb3da93",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/2.0/after-chromium-1-second-capture.png"
+    },
+    {
+      "bytes": 329,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/2.0/after-chromium-1.png",
+      "sha256": "40e11cf4c8c6fa55936fd7c0003cf1467d599b356f67756cd970fd941cb3da93",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/2.0/after-chromium-1.png"
+    },
+    {
+      "bytes": 329,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/2.0/after-chromium-2-first-capture.png",
+      "sha256": "40e11cf4c8c6fa55936fd7c0003cf1467d599b356f67756cd970fd941cb3da93",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/2.0/after-chromium-2-first-capture.png"
+    },
+    {
+      "bytes": 329,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/2.0/after-chromium-2-second-capture.png",
+      "sha256": "40e11cf4c8c6fa55936fd7c0003cf1467d599b356f67756cd970fd941cb3da93",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/2.0/after-chromium-2-second-capture.png"
+    },
+    {
+      "bytes": 329,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/2.0/after-chromium-2.png",
+      "sha256": "40e11cf4c8c6fa55936fd7c0003cf1467d599b356f67756cd970fd941cb3da93",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/2.0/after-chromium-2.png"
+    },
+    {
+      "bytes": 331,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/2.0/before-chromium-1-first-capture.png",
+      "sha256": "4f1531b2339ca5a407f649c30da637bf54a9b6be08b2dc91b4eb21527d2bbccc",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/2.0/before-chromium-1-first-capture.png"
+    },
+    {
+      "bytes": 331,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/2.0/before-chromium-1-second-capture.png",
+      "sha256": "4f1531b2339ca5a407f649c30da637bf54a9b6be08b2dc91b4eb21527d2bbccc",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/2.0/before-chromium-1-second-capture.png"
+    },
+    {
+      "bytes": 331,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/2.0/before-chromium-1.png",
+      "sha256": "4f1531b2339ca5a407f649c30da637bf54a9b6be08b2dc91b4eb21527d2bbccc",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/2.0/before-chromium-1.png"
+    },
+    {
+      "bytes": 331,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/2.0/before-chromium-2-first-capture.png",
+      "sha256": "4f1531b2339ca5a407f649c30da637bf54a9b6be08b2dc91b4eb21527d2bbccc",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/2.0/before-chromium-2-first-capture.png"
+    },
+    {
+      "bytes": 331,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/2.0/before-chromium-2-second-capture.png",
+      "sha256": "4f1531b2339ca5a407f649c30da637bf54a9b6be08b2dc91b4eb21527d2bbccc",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/2.0/before-chromium-2-second-capture.png"
+    },
+    {
+      "bytes": 331,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/2.0/before-chromium-2.png",
+      "sha256": "4f1531b2339ca5a407f649c30da637bf54a9b6be08b2dc91b4eb21527d2bbccc",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/2.0/before-chromium-2.png"
+    },
+    {
+      "bytes": 467,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/3.0/after-chromium-1-first-capture.png",
+      "sha256": "1b72541053317afc4bc3aa4317cbaf7b8def54a90764802b02cb207efd2f7a61",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/3.0/after-chromium-1-first-capture.png"
+    },
+    {
+      "bytes": 467,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/3.0/after-chromium-1-second-capture.png",
+      "sha256": "1b72541053317afc4bc3aa4317cbaf7b8def54a90764802b02cb207efd2f7a61",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/3.0/after-chromium-1-second-capture.png"
+    },
+    {
+      "bytes": 467,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/3.0/after-chromium-1.png",
+      "sha256": "1b72541053317afc4bc3aa4317cbaf7b8def54a90764802b02cb207efd2f7a61",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/3.0/after-chromium-1.png"
+    },
+    {
+      "bytes": 467,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/3.0/after-chromium-2-first-capture.png",
+      "sha256": "1b72541053317afc4bc3aa4317cbaf7b8def54a90764802b02cb207efd2f7a61",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/3.0/after-chromium-2-first-capture.png"
+    },
+    {
+      "bytes": 467,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/3.0/after-chromium-2-second-capture.png",
+      "sha256": "1b72541053317afc4bc3aa4317cbaf7b8def54a90764802b02cb207efd2f7a61",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/3.0/after-chromium-2-second-capture.png"
+    },
+    {
+      "bytes": 467,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/3.0/after-chromium-2.png",
+      "sha256": "1b72541053317afc4bc3aa4317cbaf7b8def54a90764802b02cb207efd2f7a61",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/3.0/after-chromium-2.png"
+    },
+    {
+      "bytes": 467,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/3.0/before-chromium-1-first-capture.png",
+      "sha256": "5af081698d64bae5df66fb3a3fb173efa80e20dcadc8b375db22707646d16742",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/3.0/before-chromium-1-first-capture.png"
+    },
+    {
+      "bytes": 467,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/3.0/before-chromium-1-second-capture.png",
+      "sha256": "5af081698d64bae5df66fb3a3fb173efa80e20dcadc8b375db22707646d16742",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/3.0/before-chromium-1-second-capture.png"
+    },
+    {
+      "bytes": 467,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/3.0/before-chromium-1.png",
+      "sha256": "5af081698d64bae5df66fb3a3fb173efa80e20dcadc8b375db22707646d16742",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/3.0/before-chromium-1.png"
+    },
+    {
+      "bytes": 467,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/3.0/before-chromium-2-first-capture.png",
+      "sha256": "5af081698d64bae5df66fb3a3fb173efa80e20dcadc8b375db22707646d16742",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/3.0/before-chromium-2-first-capture.png"
+    },
+    {
+      "bytes": 467,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/3.0/before-chromium-2-second-capture.png",
+      "sha256": "5af081698d64bae5df66fb3a3fb173efa80e20dcadc8b375db22707646d16742",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/3.0/before-chromium-2-second-capture.png"
+    },
+    {
+      "bytes": 467,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/3.0/before-chromium-2.png",
+      "sha256": "5af081698d64bae5df66fb3a3fb173efa80e20dcadc8b375db22707646d16742",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/3.0/before-chromium-2.png"
+    },
+    {
+      "bytes": 486,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/after.html",
+      "sha256": "1c3f1e3cf05f084cb067aaceebcbc6527d7ced78a97cb269030ad58baa0d5193",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/after.html"
+    },
+    {
+      "bytes": 412,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/before.html",
+      "sha256": "0847b1401e497b93dcddd17db95013159892c5310c442b678db17dfe31c747ee",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/before.html"
+    },
+    {
+      "bytes": 238,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/native-1/scale-1/after.png",
+      "sha256": "7e3e260b23a84519d80c5941069e592c68ce4dc7b6cec05a3e084b882066b53e",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/native-1/scale-1/after.png"
+    },
+    {
+      "bytes": 243,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/native-1/scale-1/before.png",
+      "sha256": "42abc7a8cd5e217fca1ef52e81a897fb2fde4dfb357964a49c65f9e4170e5cfd",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/native-1/scale-1/before.png"
+    },
+    {
+      "bytes": 266,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/native-1/scale-1.25/after.png",
+      "sha256": "729398b03659f4cba5c7e01161b2bbf1a5f7a37c12819c839e7373261274cd75",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/native-1/scale-1.25/after.png"
+    },
+    {
+      "bytes": 271,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/native-1/scale-1.25/before.png",
+      "sha256": "33d61453f1cd2651314df0b3503499f97fed7ece7f73016d54a4036dfa468060",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/native-1/scale-1.25/before.png"
+    },
+    {
+      "bytes": 298,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/native-1/scale-1.5/after.png",
+      "sha256": "6e32cf9085e36efab02d8e91ae4aa7874c0b410760b357ea73e13a2661bedab5",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/native-1/scale-1.5/after.png"
+    },
+    {
+      "bytes": 299,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/native-1/scale-1.5/before.png",
+      "sha256": "05052b8e203d160c1037d4661f50ce43dc1a23a097fdcb8e389cb29875b205a0",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/native-1/scale-1.5/before.png"
+    },
+    {
+      "bytes": 369,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/native-1/scale-2/after.png",
+      "sha256": "7f28080ec2597bc5095f7e71eebbc193f244906880af8275866d6b3d1474bc34",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/native-1/scale-2/after.png"
+    },
+    {
+      "bytes": 375,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/native-1/scale-2/before.png",
+      "sha256": "5545c8a370c82042a02693bfd98ecb67780dffb704821aa5e85eac4f863db61a",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/native-1/scale-2/before.png"
+    },
+    {
+      "bytes": 522,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/native-1/scale-3/after.png",
+      "sha256": "9b7f2961149aabbdb4bfe9b4f141e2104487033ef9f343ce037abb75178914b7",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/native-1/scale-3/after.png"
+    },
+    {
+      "bytes": 524,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/native-1/scale-3/before.png",
+      "sha256": "b1ab8b5024f0340689ff6690197305bccca8774015605db57440de38adf2a3fe",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/native-1/scale-3/before.png"
+    },
+    {
+      "bytes": 103,
+      "decompressed_bytes": 355,
+      "decompressed_sha256": "eaa864b92112bc4aee364971f8a096a9ff9dc033166c03da0d4c3031ea42247c",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/native-1.log.gz",
+      "sha256": "d10bd7d027cdb862b3b3b9fedbfa354786e8b6d13b11b34953e2bdf11e0f62d7",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/native-1.log"
+    },
+    {
+      "bytes": 238,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/native-2/scale-1/after.png",
+      "sha256": "7e3e260b23a84519d80c5941069e592c68ce4dc7b6cec05a3e084b882066b53e",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/native-2/scale-1/after.png"
+    },
+    {
+      "bytes": 243,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/native-2/scale-1/before.png",
+      "sha256": "42abc7a8cd5e217fca1ef52e81a897fb2fde4dfb357964a49c65f9e4170e5cfd",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/native-2/scale-1/before.png"
+    },
+    {
+      "bytes": 266,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/native-2/scale-1.25/after.png",
+      "sha256": "729398b03659f4cba5c7e01161b2bbf1a5f7a37c12819c839e7373261274cd75",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/native-2/scale-1.25/after.png"
+    },
+    {
+      "bytes": 271,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/native-2/scale-1.25/before.png",
+      "sha256": "33d61453f1cd2651314df0b3503499f97fed7ece7f73016d54a4036dfa468060",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/native-2/scale-1.25/before.png"
+    },
+    {
+      "bytes": 298,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/native-2/scale-1.5/after.png",
+      "sha256": "6e32cf9085e36efab02d8e91ae4aa7874c0b410760b357ea73e13a2661bedab5",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/native-2/scale-1.5/after.png"
+    },
+    {
+      "bytes": 299,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/native-2/scale-1.5/before.png",
+      "sha256": "05052b8e203d160c1037d4661f50ce43dc1a23a097fdcb8e389cb29875b205a0",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/native-2/scale-1.5/before.png"
+    },
+    {
+      "bytes": 369,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/native-2/scale-2/after.png",
+      "sha256": "7f28080ec2597bc5095f7e71eebbc193f244906880af8275866d6b3d1474bc34",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/native-2/scale-2/after.png"
+    },
+    {
+      "bytes": 375,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/native-2/scale-2/before.png",
+      "sha256": "5545c8a370c82042a02693bfd98ecb67780dffb704821aa5e85eac4f863db61a",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/native-2/scale-2/before.png"
+    },
+    {
+      "bytes": 522,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/native-2/scale-3/after.png",
+      "sha256": "9b7f2961149aabbdb4bfe9b4f141e2104487033ef9f343ce037abb75178914b7",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/native-2/scale-3/after.png"
+    },
+    {
+      "bytes": 524,
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/native-2/scale-3/before.png",
+      "sha256": "b1ab8b5024f0340689ff6690197305bccca8774015605db57440de38adf2a3fe",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/native-2/scale-3/before.png"
+    },
+    {
+      "bytes": 103,
+      "decompressed_bytes": 355,
+      "decompressed_sha256": "eaa864b92112bc4aee364971f8a096a9ff9dc033166c03da0d4c3031ea42247c",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v1/consumer/native-2.log.gz",
+      "sha256": "d10bd7d027cdb862b3b3b9fedbfa354786e8b6d13b11b34953e2bdf11e0f62d7",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-consumer-v1800/native-2.log"
+    },
+    {
+      "bytes": 8951,
+      "path": "docs/renderer/evidence/native-rust-options-v1/checks.json",
+      "sha256": "3a1d2b5e26e8a9715f2b59ac9519da8c8f2fb3fcfa1b33c313aea61b5c4a328c",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-checks-v1798/receipt.json"
+    },
+    {
+      "bytes": 95,
+      "decompressed_bytes": 81,
+      "decompressed_sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v1/check-renderer.log.gz",
+      "sha256": "d2b79cb72721d10fece4b15d0f646423937282376e09b24612cf252d1dfa8316",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-checks-v1798/renderer.log"
+    },
+    {
+      "bytes": 79,
+      "decompressed_bytes": 59,
+      "decompressed_sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v1/check-multicol.log.gz",
+      "sha256": "fd7419d14ad0bcdcbbacbaf00c01710e85416d2018b9addb2b26f3cff95775e1",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-checks-v1798/multicol.log"
+    },
+    {
+      "bytes": 102,
+      "decompressed_bytes": 86,
+      "decompressed_sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v1/check-sp17.log.gz",
+      "sha256": "3f7d3c871f9e93684439793e60873829691e5dee51d51b30ab55fa940ef55df4",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-checks-v1798/sp17.log"
+    },
+    {
+      "bytes": 123,
+      "decompressed_bytes": 121,
+      "decompressed_sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v1/check-sp18.log.gz",
+      "sha256": "50c99e0d37a26a36c607fd5e7dbf96f4aedf46d045824ff09490252f4c3a35ee",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-checks-v1798/sp18.log"
+    },
+    {
+      "bytes": 143,
+      "decompressed_bytes": 142,
+      "decompressed_sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v1/check-sp20.log.gz",
+      "sha256": "3705c08adcf75d9113bbf4ee522c73c0bbcdb1f0e9e50947c0a4eb54e214d64e",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-checks-v1798/sp20.log"
+    },
+    {
+      "bytes": 80,
+      "decompressed_bytes": 63,
+      "decompressed_sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v1/check-v02.log.gz",
+      "sha256": "ec1277c807103cfdee77b77954961b24a58ce62612d9dbf58594043db7efc478",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-checks-v1798/v02.log"
+    },
+    {
+      "bytes": 57,
+      "decompressed_bytes": 37,
+      "decompressed_sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v1/check-style.log.gz",
+      "sha256": "1b70c8a7ba0f84375105255b165129e2f427ca1072a832c28efb9f840d539b10",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-checks-v1798/style.log"
+    },
+    {
+      "bytes": 52,
+      "decompressed_bytes": 32,
+      "decompressed_sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v1/check-ffi.log.gz",
+      "sha256": "55406c87d9571bf98d31b05240f488bb4ab3c159f8a3c2f654148ee72b439592",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-checks-v1798/ffi.log"
+    },
+    {
+      "bytes": 65,
+      "decompressed_bytes": 45,
+      "decompressed_sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v1/check-archive.log.gz",
+      "sha256": "d9ac32c4015a03a8f742aaef97d2271555824a1bc37f48615bc942ea11dc71d8",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-checks-v1798/archive.log"
+    },
+    {
+      "bytes": 1055,
+      "decompressed_bytes": 2867,
+      "decompressed_sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v1/check-accountability.log.gz",
+      "sha256": "a7ddfb15636772a7ed177d92cd310c67cc38a082a9aae491e62d04518aa2f463",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-checks-v1798/accountability.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v1/check-rust-format.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-checks-v1798/rust-format.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v1/check-syntax-c.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-checks-v1798/syntax-c.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v1/check-syntax-cpp.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-checks-v1798/syntax-cpp.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v1/check-clang-format.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-checks-v1798/clang-format.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v1/check-native-options-rust-format.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-checks-v1798/native-options-rust-format.log"
+    },
+    {
+      "bytes": 3635,
+      "path": "docs/renderer/evidence/native-rust-options-v1/hosted.json",
+      "sha256": "58557b1d0cd16cede4af11b477131ae026b8214172004cfbae45cf430cc2c484",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-hosted-v1807/receipt.json"
+    },
+    {
+      "bytes": 10671,
+      "path": "docs/renderer/evidence/native-rust-options-v1/hosted-37402273852.json",
+      "sha256": "34b6dd6e3f194e3c9c9b0ecad021577740ccf4b1a37e6911b67377a35d775049",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-hosted-v1807/37402273852.json"
+    },
+    {
+      "bytes": 95017,
+      "decompressed_bytes": 913776,
+      "decompressed_sha256": "ca4b95049475c1f09563f750b1d17ee07f758d016bf7205fd85e8fc7808a0447",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v1/hosted-112071893546.log.gz",
+      "sha256": "362f7ba800df74de8fea72877523a3fec023039ff07d75c2f6b3543df6239d82",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-hosted-v1807/112071893546.log"
+    },
+    {
+      "bytes": 17176,
+      "decompressed_bytes": 138267,
+      "decompressed_sha256": "f5d4353449b1dbe22ebbb01724568504b696775044e40fa9d287824c4de353ef",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v1/hosted-112071893641.log.gz",
+      "sha256": "3891076786d52136516d942ed22f5e8cdce2047748131fddce591dd2e9a1c72c",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-hosted-v1807/112071893641.log"
+    },
+    {
+      "bytes": 45718,
+      "decompressed_bytes": 392223,
+      "decompressed_sha256": "bda1304606f3efefe6391a5985f3f3890a8d2ef33033606be9d937c7a0342cb9",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v1/hosted-112071893651.log.gz",
+      "sha256": "b87a85a610b0c887876a5f04b38c603e3fe9d3b4ff0008c43133bc07746f4e89",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-hosted-v1807/112071893651.log"
+    },
+    {
+      "bytes": 20760,
+      "decompressed_bytes": 190847,
+      "decompressed_sha256": "1b9c32018614d8cd92350488ffbfcffe0775721db47db3c0790346f240a3f279",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v1/hosted-112071893664.log.gz",
+      "sha256": "f425b2a01b504297524da01d6f8240810186b3be8ada76509c95b5777a4e079c",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-hosted-v1807/112071893664.log"
+    },
+    {
+      "bytes": 20463,
+      "decompressed_bytes": 185141,
+      "decompressed_sha256": "cc4fdf63b8e6acda655feedb1218e4d3e15dccdfc6575a635b940250f53025f4",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v1/hosted-112071893683.log.gz",
+      "sha256": "b12acf1fff74007347d21be06c217de1f75b902a4d5d267d797a2593a6f99d11",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-hosted-v1807/112071893683.log"
+    },
+    {
+      "bytes": 23882,
+      "decompressed_bytes": 201129,
+      "decompressed_sha256": "d519f619b91e5e9589bcab96e4cc16c78027a78f1cf37fae18ac2b460730d264",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v1/hosted-112071893713.log.gz",
+      "sha256": "73ccaed9884d5b25ad1697c211da0cdb8ac754557956740361b29918daba438a",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-hosted-v1807/112071893713.log"
+    },
+    {
+      "bytes": 16019,
+      "decompressed_bytes": 133740,
+      "decompressed_sha256": "e49230ee832b3c5ace5167fe5e90e6a94b3bb2587a11c9628483aad6df6e50cd",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v1/hosted-112071893718.log.gz",
+      "sha256": "58e513f62de399b541cd0b84b9b8fdad4aa9897d33b18e86415c0484b1b8368c",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-hosted-v1807/112071893718.log"
+    },
+    {
+      "bytes": 13060,
+      "path": "docs/renderer/evidence/native-rust-options-v1/probes/openui-native-image-coverage-fieldsets-v1448.py",
+      "sha256": "b1a480f5f49bada97d341d5cf5e7626f8f03496bc87b4ef83b40c298331d1710",
+      "source_path": "/tmp/openui-native-image-coverage-fieldsets-v1448.py"
+    },
+    {
+      "bytes": 5220,
+      "path": "docs/renderer/evidence/native-rust-options-v1/probes/openui-native-rust-options-build-v1800.py",
+      "sha256": "c808dbccba606603a305536f7ed9b19d5bb3847abac80eb45fd53a566bb29e3c",
+      "source_path": "/tmp/openui-native-rust-options-build-v1800.py"
+    },
+    {
+      "bytes": 7706,
+      "path": "docs/renderer/evidence/native-rust-options-v1/probes/openui-native-rust-options-consumer-v1800.py",
+      "sha256": "17c7a208524a319cccc493add1fae02fc0f0091ee36464603a6029e5d404caaa",
+      "source_path": "/tmp/openui-native-rust-options-consumer-v1800.py"
+    },
+    {
+      "bytes": 4918,
+      "path": "docs/renderer/evidence/native-rust-options-v1/probes/owner.py",
+      "sha256": "580a1f55fa80d641aed0e87f98affed3d3b80021cc7d308622431bc11dc92f32",
+      "source_path": "/tmp/openui-native-rust-options-pipeline-v1801.py"
+    },
+    {
+      "bytes": 3486,
+      "path": "docs/renderer/evidence/native-rust-options-v1/probes/checks.py",
+      "sha256": "b4187cdccc3bddd3c1c0af0f9c18436d91d5a4f6f2c2dd52f794822109106710",
+      "source_path": "/tmp/openui-native-rust-options-checks-v1798.py"
+    },
+    {
+      "bytes": 2856,
+      "path": "docs/renderer/evidence/native-rust-options-v1/probes/hosted.py",
+      "sha256": "4ff6d54933f041d059cba32df06e0fa0518dd523427b15a28f5e746a61da0d89",
+      "source_path": "/tmp/openui-native-rust-options-hosted-collect-v1807.py"
+    },
+    {
+      "bytes": 1943,
+      "path": "docs/renderer/evidence/native-rust-options-v1/preparation.json",
+      "sha256": "d807e42c74ffca0b9bb45e21dd911141e3dcc49ba6eacc7c09b89abcea5236d0",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-prepared-v1802.json"
+    },
+    {
+      "bytes": 15893,
+      "path": "docs/renderer/evidence/native-rust-options-v1/source.patch",
+      "sha256": "3cb93cc85eb99127756219e7356cef91437f1dff161132726ab55296c8e32c41"
+    },
+    {
+      "bytes": 7002,
+      "path": "docs/renderer/evidence/native-rust-options-v1/preserver.py",
+      "sha256": "8497716e15b142db6214235d6aad71842f58321d17286a91ed7cc2a6a82dbb64",
+      "source_path": "/tmp/openui-native-rust-options-preserve-v1812.py"
+    }
+  ],
+  "consecutive_chromium_captures": 40,
+  "consuming_rust_app_callbacks_bounds_configurations_and_teardown_passed": true,
+  "default_constructor_behaviour_guard_passed": true,
+  "failed_hosted_jobs": 0,
+  "ganesh_selection_no_cpu_fallback_guard_passed": true,
+  "independent_chromium_processes": 20,
+  "independent_native_runs": 2,
+  "javascript_executed_by_openui": false,
+  "native_geometry_exact": 10,
+  "native_pixel_exact": 10,
+  "new_release_states_admitted": 0,
+  "own_complete_renderer_matrices_unexecuted": true,
+  "pixel_tolerance": 0,
+  "public_native_rust_apis_required": true,
+  "public_native_rust_options_guard_names": [
+    "native_raster_selection_survives_callbacks_cloning_and_resize",
+    "default_native_constructors_preserve_rendering_and_configuration",
+    "window_and_headless_apps_keep_explicit_native_raster_selection",
+    "selecting_ganesh_does_not_fall_back_to_cpu_raster"
+  ],
+  "release_qualification": false,
+  "schema_version": 1,
+  "skipped_hosted_jobs": 0,
+  "source": {
+    "clean": true,
+    "commit": "27a47ba25185e20e7ae20801d0a45a386ce9e78c",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "5b94003af7eefc5faf9af934c9123f5783f0ff600710bd7440ece2a2ee8ee28e",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "27a47ba25185e20e7ae20801d0a45a386ce9e78c",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "5b94003af7eefc5faf9af934c9123f5783f0ff600710bd7440ece2a2ee8ee28e",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "successful_hosted_jobs": 7,
+  "workspace_failed": 0,
+  "workspace_ignored": 13,
+  "workspace_passed": 8555
+}

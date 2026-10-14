@@ -63,7 +63,7 @@ jobs:
             build-essential clang libclang-18-dev libfontconfig1-dev \
             libfreetype-dev libgl1-mesa-dev libwayland-dev libx11-dev \
             libx11-xcb-dev libxcb1-dev libxkbcommon-dev mesa-utils \
-            ninja-build pkg-config python3 weston xvfb
+            ninja-build pkg-config python3 weston xvfb libxkbcommon-x11-0
           rustup toolchain install 1.94.1 --profile minimal --component rustfmt
           rustup default 1.94.1
       - uses: actions/cache@v5
@@ -85,6 +85,17 @@ jobs:
       - name: Build Linux example
         working-directory: bindings/rust
         run: cargo build --locked --package hello --features linux
+      - name: Build and test the C Linux application surface
+        working-directory: bindings/rust
+        run: |
+          RUST_MIN_STACK=4194304 cargo test --locked --package openui-ffi --features linux
+          cargo build --locked --package openui-ffi --features linux
+      - name: Exercise native C and C++ windows on X11 with software and Mesa OpenGL
+        run: |
+          xvfb-run --auto-servernum python3 tools/ffi/verify_native_window.py \
+            --protocol x11 --backend software --report "$RUNNER_TEMP/native-x11-software.json"
+          xvfb-run --auto-servernum python3 tools/ffi/verify_native_window.py \
+            --protocol x11 --backend opengl --report "$RUNNER_TEMP/native-x11-opengl.json"
       - name: Smoke-test X11 with Mesa OpenGL
         working-directory: bindings/rust
         run: xvfb-run --auto-servernum env OUI_BACKEND=opengl OUI_SMOKE_EXIT=1 target/debug/hello
@@ -102,6 +113,16 @@ jobs:
             sleep 0.1
           done
           env -u DISPLAY WAYLAND_DISPLAY=wayland-openui OUI_BACKEND=software OUI_SMOKE_EXIT=1 target/debug/hello
+          env -u DISPLAY WAYLAND_DISPLAY=wayland-openui \
+            python3 ../../tools/ffi/verify_native_window.py --protocol wayland \
+              --backend software --report "$RUNNER_TEMP/native-wayland-software.json"
+      - name: Preserve native C/C++ smoke reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: native-c-cpp-window-smokes
+          path: ${{ runner.temp }}/native-*.json
+          if-no-files-found: ignore
 
   miri-handles:
     if: github.event_name != 'pull_request'
@@ -109,11 +130,17 @@ jobs:
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v6
+      - name: Install native build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends \
+            build-essential clang libclang-18-dev libfontconfig1-dev \
+            libfreetype-dev libgl1-mesa-dev ninja-build pkg-config
       - name: Install pinned nightly Miri
         run: rustup toolchain install nightly-2026-09-01 --profile minimal --component miri,rust-src
-      - name: Exercise safe generation-checked handles
+      - name: Exercise opaque handle ownership under Miri
         working-directory: bindings/rust
-        run: cargo +nightly-2026-09-01 miri test --package openui-engine stale_and_cross_document_handles_are_rejected
+        run: cargo +nightly-2026-09-01 miri test --package openui-ffi opaque_handles_reject_wrong_kind_thread_and_reuse
 
   native-sanitizers:
     if: github.event_name != 'pull_request'
@@ -179,6 +206,8 @@ jobs:
       - name: Run each fuzz target
         working-directory: bindings/rust/fuzz
         run: |
+          cargo +nightly-2026-09-01 metadata --locked --format-version=1 > /dev/null
           for target in ffi_style_values tree_mutations event_sequences resources animation_sampling; do
             cargo +nightly-2026-09-01 fuzz run "$target" -- -max_total_time=30
+            git diff --exit-code
           done

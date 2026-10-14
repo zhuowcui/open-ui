@@ -1,0 +1,97 @@
+{
+  "all_selected_chromium_rgba_unchanged": true,
+  "baseline_counts": {
+    "different": 275,
+    "error": 0,
+    "exact": 1421
+  },
+  "baseline_report_sha256": "b20f90812863730358c238a1aeb48cfec6445377f5f4cf556b034368b6686a3f",
+  "baseline_source_commit": "9534c9f6ddf50a5177dce4089cf39be6b6beae93",
+  "changed_comparisons": [
+    {
+      "baseline_mismatched_pixels": 0,
+      "baseline_openui_rgba_sha256": "77f0dc3bc310aaac461d67e1f3ba02daca8b872138b761be77ce880cad67c26b",
+      "baseline_status": "exact",
+      "chromium_rgba_sha256": "77f0dc3bc310aaac461d67e1f3ba02daca8b872138b761be77ce880cad67c26b",
+      "diagnostic_mismatched_pixels": 498,
+      "diagnostic_openui_rgba_sha256": "b3322d8177d6f2a495d641c3bf9e45945a197f5c5a3ecf1ce12b36e2e5cb91e0",
+      "diagnostic_status": "different",
+      "profile": "desktop-1280x720@1.25",
+      "test_id": "wpt/css_flexbox/min-size-auto-overflow-clip"
+    },
+    {
+      "baseline_mismatched_pixels": 0,
+      "baseline_openui_rgba_sha256": "bf8d88a0192aee64d26714a86147b4a6f8b0b526047df8c5cc9c6fedc25907ea",
+      "baseline_status": "exact",
+      "chromium_rgba_sha256": "bf8d88a0192aee64d26714a86147b4a6f8b0b526047df8c5cc9c6fedc25907ea",
+      "diagnostic_mismatched_pixels": 748,
+      "diagnostic_openui_rgba_sha256": "188946f71653ec179e1b937eaed0517b24c8ef912f13ae96fe0376476c1bef0f",
+      "diagnostic_status": "different",
+      "profile": "desktop-1280x720@1.25",
+      "test_id": "wpt/css_overflow/overflow-clip-margin-visual-box-and-value"
+    },
+    {
+      "baseline_mismatched_pixels": 125,
+      "baseline_openui_rgba_sha256": "b8fe20378b4efce311861d3d785e2cfd380ca46d1df79179bfbd96143efa36fc",
+      "baseline_status": "different",
+      "chromium_rgba_sha256": "571e1298e4ad4decf1fc354dcd791e88a0694130233d5e1ba1e2220b1e395c55",
+      "diagnostic_mismatched_pixels": 0,
+      "diagnostic_openui_rgba_sha256": "571e1298e4ad4decf1fc354dcd791e88a0694130233d5e1ba1e2220b1e395c55",
+      "diagnostic_status": "exact",
+      "profile": "desktop-1280x720@1.25",
+      "test_id": "wpt/css_position/containing-block-change-button-ref"
+    },
+    {
+      "baseline_mismatched_pixels": 0,
+      "baseline_openui_rgba_sha256": "8bb09eb3407adb38d515ea2a56beed7f2428ff835354b2e34e93eccc00c9bcd5",
+      "baseline_status": "exact",
+      "chromium_rgba_sha256": "8bb09eb3407adb38d515ea2a56beed7f2428ff835354b2e34e93eccc00c9bcd5",
+      "diagnostic_mismatched_pixels": 600,
+      "diagnostic_openui_rgba_sha256": "c3857ef201563e09bd45d0f3d6f9a82a1381f3ed93d6c1b2fe6238e7165075f5",
+      "diagnostic_status": "different",
+      "profile": "desktop-1920x1080@1.5",
+      "test_id": "wpt/css_flexbox/min-size-auto-overflow-clip"
+    },
+    {
+      "baseline_mismatched_pixels": 0,
+      "baseline_openui_rgba_sha256": "3441c4db8f5a8b0995498d0e15188608871b00b5c500b4d36a6fe9f8798a49af",
+      "baseline_status": "exact",
+      "chromium_rgba_sha256": "3441c4db8f5a8b0995498d0e15188608871b00b5c500b4d36a6fe9f8798a49af",
+      "diagnostic_mismatched_pixels": 900,
+      "diagnostic_openui_rgba_sha256": "e97a72e45482f8f71d03f6b1e43a749f9f277f0d9e4e8ab72a59894512ab3eb9",
+      "diagnostic_status": "different",
+      "profile": "desktop-1920x1080@1.5",
+      "test_id": "wpt/css_overflow/overflow-clip-margin-visual-box-and-value"
+    }
+  ],
+  "changed_openui_rgba_count": 5,
+  "comparison_count": 1696,
+  "diagnostic_counts": {
+    "different": 278,
+    "error": 0,
+    "exact": 1418
+  },
+  "diagnostic_report_sha256": "61b97d9176d804e1d7b3aa8f4fd5dc2b6dab5a558bcb0b21c69991f8c96b1642",
+  "diagnostic_source_commit": "a201102a087a145f012ef4abc1e652c0e565809b",
+  "expanded_baseline_report_sha256": "de128fd7b9f3c1277b9440e1cc160fdad80f59d9c97dd532c733601b6f621fda",
+  "expanded_diagnostic_report_sha256": "38e08338d15c9d888918c878de47be48754b3e211873f10c33b8f7f4f25c962b",
+  "expanded_target": {
+    "baseline_mismatched_pixels": 125,
+    "baseline_openui_rgba_sha256": "9c08f49306bd23ae322fd810e595401adc77e07ec0a3c3c4e56e36e4d0c38760",
+    "chromium_rgba_sha256": "13dc01a02064a059a9b0e546394d6db08640f8869a4eb7d7a87cacd05db2bf84",
+    "diagnostic_mismatched_pixels": 0,
+    "diagnostic_openui_rgba_sha256": "13dc01a02064a059a9b0e546394d6db08640f8869a4eb7d7a87cacd05db2bf84",
+    "profile": "desktop-1280x720@1.25",
+    "test_id": "wpt/css_position/containing-block-change-button"
+  },
+  "kind": "rejected-dirty-renderer-diagnostic",
+  "newly_exact": 1,
+  "regressed": 4,
+  "schema_version": 1,
+  "selected_manifest_sha256": "59e058eca9b4ba301394595c3dded10d52b3ecf5f290e411d434aab08404cb14",
+  "selected_profiles": [
+    "desktop-1280x720@1.25",
+    "desktop-1920x1080@1.5"
+  ],
+  "selected_test_count": 848
+}

@@ -1,0 +1,92 @@
+diff --git a/bindings/rust/openui-paint/src/painter.rs b/bindings/rust/openui-paint/src/painter.rs
+index 86c93884..126fc4ca 100644
+--- a/bindings/rust/openui-paint/src/painter.rs
++++ b/bindings/rust/openui-paint/src/painter.rs
+@@ -9266,17 +9266,21 @@ fn scroll_backing_phase_adjustment(logical_origin: f32, backing_scale: f32) -> f
+     (compositor_phase - physical_phase).rem_euclid(1.0) / backing_scale
+ }
+ 
+-/// Scroll translations without an authored transform ancestry use the same
+-/// physical snapping as the viewport. Chromium creates a snapped compositor
+-/// transform for every scroll node, including non-composited scrollers.
++/// Snap an element's scroll transform after including its screen origin and
++/// already realized ancestor scroll translations. Chromium's TransformTree
++/// rounds the complete screen transform, then maps that correction back into
++/// the scroll node's local translation. Independently rounding the scroll
++/// distance loses the physical phase of the containing box.
+ /// Retained offsets and geometry stay logical; only paint movement is snapped.
+ ///
+ /// An authored transform or SVG viewport supplies another screen-space
+ /// origin. That path still needs the complete retained transform tree rather
+ /// than independently snapping a local delta at the document's device scale.
+ fn element_scroll_paint_translation(
++    canvas: &Canvas,
+     fragment: &Fragment,
+     doc: &Document,
++    offset: PhysicalOffset,
+     scroll_x: f32,
+     scroll_y: f32,
+ ) -> (f32, f32) {
+@@ -9311,9 +9315,50 @@ fn element_scroll_paint_translation(
+                 .floor(),
+         )
+     });
++    // Blink does not create a scroll translation for an unscrolled hidden
++    // container with an origin of zero. Auto/scroll overflow and reversed
++    // origins can require that node even when the public offset is zero.
++    let scrolls_overflow = fragment.scroll_area.is_some_and(|area| {
++        let (x, y) = area.limits();
++        (matches!(area.overflow_x, Overflow::Auto | Overflow::Scroll) && x != (0.0, 0.0))
++            || (matches!(area.overflow_y, Overflow::Auto | Overflow::Scroll) && y != (0.0, 0.0))
++    });
++    if !scrolls_overflow && (scroll_x, scroll_y, origin_x, origin_y) == (0.0, 0.0, 0.0, 0.0) {
++        return (0.0, 0.0);
++    }
++
++    // A pre-rastered backing owns a different mapping to the presentation
++    // surface. Its nested contents retain the existing backing replay until
++    // that mapping is represented by the retained transform tree.
++    let matrix = canvas.local_to_device_as_3x3();
++    if CONTENT_BACKGROUND_DEVICE_SPACE.with(|space| space.get())
++        || matrix.has_perspective()
++        || matrix.scale_x() != 1.0
++        || matrix.scale_y() != 1.0
++        || matrix.skew_x() != 0.0
++        || matrix.skew_y() != 0.0
++    {
++        return (
++            origin_x + snapping.logical_coordinate(-(scroll_x + origin_x), PhysicalSnap::Nearest),
++            origin_y + snapping.logical_coordinate(-(scroll_y + origin_y), PhysicalSnap::Nearest),
++        );
++    }
++    // PaintOffsetTranslation uses a rounded CSS origin. Fractional layout
++    // accumulation remains in the decoration coordinates rather than being
++    // included a second time in the compositor transform's snap amount.
++    let screen_origin = matrix.map_point(Point::new(
++        offset.left.round().to_f32(),
++        offset.top.round().to_f32(),
++    ));
+     (
+-        origin_x + snapping.logical_coordinate(-(scroll_x + origin_x), PhysicalSnap::Nearest),
+-        origin_y + snapping.logical_coordinate(-(scroll_y + origin_y), PhysicalSnap::Nearest),
++        origin_x
++            + snapping
++                .logical_coordinate(screen_origin.x - scroll_x - origin_x, PhysicalSnap::Nearest)
++            - screen_origin.x,
++        origin_y
++            + snapping
++                .logical_coordinate(screen_origin.y - scroll_y - origin_y, PhysicalSnap::Nearest)
++            - screen_origin.y,
+     )
+ }
+ 
+@@ -9929,7 +9974,8 @@ fn paint_with_overflow_clip(
+             let node = doc.node(fragment.node_id);
+             (node.scroll_left, node.scroll_top)
+         };
+-        let translation = element_scroll_paint_translation(fragment, doc, scroll_x, scroll_y);
++        let translation =
++            element_scroll_paint_translation(canvas, fragment, doc, offset, scroll_x, scroll_y);
+         if translation != (0.0, 0.0) {
+             canvas.translate(translation);
+         }

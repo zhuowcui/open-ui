@@ -1,0 +1,117 @@
+{
+  "all_commands_terminal": true,
+  "baseline_regression_reproduced": false,
+  "build_identity": {
+    "schema_version": 1,
+    "skia_gn_args": "extra_cflags += [ \"-DSK_SUPPORT_LEGACY_CONIC_CHOP\", \"-DSK_ENABLE_LEGACY_SHADERCONTEXT\", \"-DSK_USE_FREETYPE_EMBOLDEN\", \"-DSK_GAMMA_EXPONENT=1.2\", \"-DSK_GAMMA_CONTRAST=0.2\", \"-fno-strict-aliasing\", \"-msse3\", \"--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot\" ]",
+    "source": {
+      "clean": true,
+      "commit": "c68d946c18ecd1bb6d2f3f84accecaa84cba3651",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "0d7ce4426f3ee68297ee0c0caa073714269d3f0446f762ed3a98e8f442b9d84f",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "javascript_executed_by_openui": false,
+  "label": "candidate",
+  "observed_exit_code": 0,
+  "pixel_tolerance": 0,
+  "probe_sha256": "8e6c1c2a55867f7603e0dbfa485de2491819883511c8cfd6f39b496536d60e45",
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "c68d946c18ecd1bb6d2f3f84accecaa84cba3651",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "0d7ce4426f3ee68297ee0c0caa073714269d3f0446f762ed3a98e8f442b9d84f",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "c68d946c18ecd1bb6d2f3f84accecaa84cba3651",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "0d7ce4426f3ee68297ee0c0caa073714269d3f0446f762ed3a98e8f442b9d84f",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "steps": [
+    {
+      "disk_guard_triggered": false,
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "3037b4be1eb5e3762f2161f174ea98068e158b63fd213b1040d328b1e7a301ec",
+      "name": "clean-workspace",
+      "observed_exit_code": 0,
+      "passed": 0
+    },
+    {
+      "disk_guard_triggered": false,
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "41a1af22757dd511dcf80c591737a96b1eb6ebd0f6dc92c6b88e7d9020b707e8",
+      "name": "physical-strike-guard",
+      "observed_exit_code": 0,
+      "passed": 1
+    },
+    {
+      "disk_guard_triggered": false,
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "6ba43f6ec336c9a9623839d46e6eec5d5cdcccde1006f8c8af2ad90495d60525",
+      "name": "all-text-tests",
+      "observed_exit_code": 0,
+      "passed": 343
+    },
+    {
+      "disk_guard_triggered": false,
+      "failed": 0,
+      "ignored": 13,
+      "log_sha256": "3d7a587e5b9fb6f3d48f77b383e34ec44727b22bb6c5a39ce68dbc596fc1d8e4",
+      "name": "workspace",
+      "observed_exit_code": 0,
+      "passed": 8560
+    },
+    {
+      "binary": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-glyph-current-candidate-build-v1828/native_glyph_coverage",
+      "binary_sha256": "2e12d5d74b3adef1604facf3dccb34f52467cf5bdc78785cf9b2a7e8456ddb72",
+      "disk_guard_triggered": false,
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "e6281835e96ad9b7f741e67c12bdac26981507110331b7dd12ceadfbcf254d63",
+      "name": "glyph-build",
+      "observed_exit_code": 0,
+      "passed": 0
+    },
+    {
+      "binary": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-glyph-current-candidate-build-v1828/libopenui_ffi.so",
+      "binary_sha256": "9bb774540bc86ff791e0b45383ee4dc7e377ad17909a24fe4e3cef7a7d667833",
+      "disk_guard_triggered": false,
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "e327e62d405ebd4eafe1ccd273184863fc41119d977c75d9529d0ff0fc4c291d",
+      "name": "ffi-build",
+      "observed_exit_code": 0,
+      "passed": 0
+    },
+    {
+      "disk_guard_triggered": false,
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "c264daf858d185eaf307e79a882afa780b170b395932b1ebcf03d478c0ecec6a",
+      "name": "ffi-consumers",
+      "observed_exit_code": 0,
+      "passed": 0
+    },
+    {
+      "binary": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-glyph-current-candidate-build-v1828/pixel_compare",
+      "binary_sha256": "2da3702fca7135281203f7b28cc08b0e27b956f3ac325db906cb73a118cb879b",
+      "disk_guard_triggered": false,
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "829ad5bb989360567b737bdea66d86430e1b77ff0c5af6828ae1f9968bd56211",
+      "name": "pixel-build",
+      "observed_exit_code": 0,
+      "passed": 0
+    }
+  ],
+  "workspace_packages_cleaned": 18
+}

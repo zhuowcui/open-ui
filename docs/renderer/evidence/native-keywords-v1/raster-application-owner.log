@@ -1,0 +1,284 @@
+/tmp/openui-native-raster-fields-retry-application-v1559.py:134: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  pixels = list(image.convert('RGB').getdata())
+/tmp/openui-native-raster-fields-retry-application-v1559.py:101: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  for pixel in shifted.crop(edge_box).getdata())
+{"policy": "freetype", "family": "Ahem", "scale": 1.0, "settings": "lcd-none-True-False"}
+{"policy": "freetype", "family": "Ahem", "scale": 1.0, "settings": "lcd-normal-True-False"}
+{"policy": "freetype", "family": "Ahem", "scale": 1.0, "settings": "lcd-normal-True-True"}
+{"policy": "freetype", "family": "Ahem", "scale": 1.0, "settings": "lcd-full-True-False"}
+{"policy": "freetype", "family": "Ahem", "scale": 1.0, "settings": "lcd-slight-False-False"}
+{"policy": "freetype", "family": "Ahem", "scale": 1.0, "settings": "aa-none-True-False"}
+{"policy": "freetype", "family": "Ahem", "scale": 1.0, "settings": "alias-full-False-False"}
+{"policy": "freetype", "family": "Ahem", "scale": 1.25, "settings": "lcd-none-True-False"}
+{"policy": "freetype", "family": "Ahem", "scale": 1.25, "settings": "lcd-normal-True-False"}
+{"policy": "freetype", "family": "Ahem", "scale": 1.25, "settings": "lcd-normal-True-True"}
+{"policy": "freetype", "family": "Ahem", "scale": 1.25, "settings": "lcd-full-True-False"}
+{"policy": "freetype", "family": "Ahem", "scale": 1.25, "settings": "lcd-slight-False-False"}
+{"policy": "freetype", "family": "Ahem", "scale": 1.25, "settings": "aa-none-True-False"}
+{"policy": "freetype", "family": "Ahem", "scale": 1.25, "settings": "alias-full-False-False"}
+{"policy": "freetype", "family": "Ahem", "scale": 1.5, "settings": "lcd-none-True-False"}
+{"policy": "freetype", "family": "Ahem", "scale": 1.5, "settings": "lcd-normal-True-False"}
+{"policy": "freetype", "family": "Ahem", "scale": 1.5, "settings": "lcd-normal-True-True"}
+{"policy": "freetype", "family": "Ahem", "scale": 1.5, "settings": "lcd-full-True-False"}
+{"policy": "freetype", "family": "Ahem", "scale": 1.5, "settings": "lcd-slight-False-False"}
+{"policy": "freetype", "family": "Ahem", "scale": 1.5, "settings": "aa-none-True-False"}
+{"policy": "freetype", "family": "Ahem", "scale": 1.5, "settings": "alias-full-False-False"}
+{"policy": "freetype", "family": "Ahem", "scale": 2.0, "settings": "lcd-none-True-False"}
+{"policy": "freetype", "family": "Ahem", "scale": 2.0, "settings": "lcd-normal-True-False"}
+{"policy": "freetype", "family": "Ahem", "scale": 2.0, "settings": "lcd-normal-True-True"}
+{"policy": "freetype", "family": "Ahem", "scale": 2.0, "settings": "lcd-full-True-False"}
+{"policy": "freetype", "family": "Ahem", "scale": 2.0, "settings": "lcd-slight-False-False"}
+{"policy": "freetype", "family": "Ahem", "scale": 2.0, "settings": "aa-none-True-False"}
+{"policy": "freetype", "family": "Ahem", "scale": 2.0, "settings": "alias-full-False-False"}
+{"policy": "freetype", "family": "Ahem", "scale": 3.0, "settings": "lcd-none-True-False"}
+{"policy": "freetype", "family": "Ahem", "scale": 3.0, "settings": "lcd-normal-True-False"}
+{"policy": "freetype", "family": "Ahem", "scale": 3.0, "settings": "lcd-normal-True-True"}
+{"policy": "freetype", "family": "Ahem", "scale": 3.0, "settings": "lcd-full-True-False"}
+{"policy": "freetype", "family": "Ahem", "scale": 3.0, "settings": "lcd-slight-False-False"}
+{"policy": "freetype", "family": "Ahem", "scale": 3.0, "settings": "aa-none-True-False"}
+{"policy": "freetype", "family": "Ahem", "scale": 3.0, "settings": "alias-full-False-False"}
+{"policy": "freetype", "family": "DejaVu Sans", "scale": 1.0, "settings": "lcd-none-True-False"}
+{"policy": "freetype", "family": "DejaVu Sans", "scale": 1.0, "settings": "lcd-normal-True-False"}
+{"policy": "freetype", "family": "DejaVu Sans", "scale": 1.0, "settings": "lcd-normal-True-True"}
+{"policy": "freetype", "family": "DejaVu Sans", "scale": 1.0, "settings": "lcd-full-True-False"}
+{"policy": "freetype", "family": "DejaVu Sans", "scale": 1.0, "settings": "lcd-slight-False-False"}
+{"policy": "freetype", "family": "DejaVu Sans", "scale": 1.0, "settings": "aa-none-True-False"}
+{"policy": "freetype", "family": "DejaVu Sans", "scale": 1.0, "settings": "alias-full-False-False"}
+{"policy": "freetype", "family": "DejaVu Sans", "scale": 1.25, "settings": "lcd-none-True-False"}
+{"policy": "freetype", "family": "DejaVu Sans", "scale": 1.25, "settings": "lcd-normal-True-False"}
+{"policy": "freetype", "family": "DejaVu Sans", "scale": 1.25, "settings": "lcd-normal-True-True"}
+{"policy": "freetype", "family": "DejaVu Sans", "scale": 1.25, "settings": "lcd-full-True-False"}
+{"policy": "freetype", "family": "DejaVu Sans", "scale": 1.25, "settings": "lcd-slight-False-False"}
+{"policy": "freetype", "family": "DejaVu Sans", "scale": 1.25, "settings": "aa-none-True-False"}
+{"policy": "freetype", "family": "DejaVu Sans", "scale": 1.25, "settings": "alias-full-False-False"}
+{"policy": "freetype", "family": "DejaVu Sans", "scale": 1.5, "settings": "lcd-none-True-False"}
+{"policy": "freetype", "family": "DejaVu Sans", "scale": 1.5, "settings": "lcd-normal-True-False"}
+{"policy": "freetype", "family": "DejaVu Sans", "scale": 1.5, "settings": "lcd-normal-True-True"}
+{"policy": "freetype", "family": "DejaVu Sans", "scale": 1.5, "settings": "lcd-full-True-False"}
+{"policy": "freetype", "family": "DejaVu Sans", "scale": 1.5, "settings": "lcd-slight-False-False"}
+{"policy": "freetype", "family": "DejaVu Sans", "scale": 1.5, "settings": "aa-none-True-False"}
+{"policy": "freetype", "family": "DejaVu Sans", "scale": 1.5, "settings": "alias-full-False-False"}
+{"policy": "freetype", "family": "DejaVu Sans", "scale": 2.0, "settings": "lcd-none-True-False"}
+{"policy": "freetype", "family": "DejaVu Sans", "scale": 2.0, "settings": "lcd-normal-True-False"}
+{"policy": "freetype", "family": "DejaVu Sans", "scale": 2.0, "settings": "lcd-normal-True-True"}
+{"policy": "freetype", "family": "DejaVu Sans", "scale": 2.0, "settings": "lcd-full-True-False"}
+{"policy": "freetype", "family": "DejaVu Sans", "scale": 2.0, "settings": "lcd-slight-False-False"}
+{"policy": "freetype", "family": "DejaVu Sans", "scale": 2.0, "settings": "aa-none-True-False"}
+{"policy": "freetype", "family": "DejaVu Sans", "scale": 2.0, "settings": "alias-full-False-False"}
+{"policy": "freetype", "family": "DejaVu Sans", "scale": 3.0, "settings": "lcd-none-True-False"}
+{"policy": "freetype", "family": "DejaVu Sans", "scale": 3.0, "settings": "lcd-normal-True-False"}
+{"policy": "freetype", "family": "DejaVu Sans", "scale": 3.0, "settings": "lcd-normal-True-True"}
+{"policy": "freetype", "family": "DejaVu Sans", "scale": 3.0, "settings": "lcd-full-True-False"}
+{"policy": "freetype", "family": "DejaVu Sans", "scale": 3.0, "settings": "lcd-slight-False-False"}
+{"policy": "freetype", "family": "DejaVu Sans", "scale": 3.0, "settings": "aa-none-True-False"}
+{"policy": "freetype", "family": "DejaVu Sans", "scale": 3.0, "settings": "alias-full-False-False"}
+{"policy": "freetype", "family": "DejaVu Serif", "scale": 1.0, "settings": "lcd-none-True-False"}
+{"policy": "freetype", "family": "DejaVu Serif", "scale": 1.0, "settings": "lcd-normal-True-False"}
+{"policy": "freetype", "family": "DejaVu Serif", "scale": 1.0, "settings": "lcd-normal-True-True"}
+{"policy": "freetype", "family": "DejaVu Serif", "scale": 1.0, "settings": "lcd-full-True-False"}
+{"policy": "freetype", "family": "DejaVu Serif", "scale": 1.0, "settings": "lcd-slight-False-False"}
+{"policy": "freetype", "family": "DejaVu Serif", "scale": 1.0, "settings": "aa-none-True-False"}
+{"policy": "freetype", "family": "DejaVu Serif", "scale": 1.0, "settings": "alias-full-False-False"}
+{"policy": "freetype", "family": "DejaVu Serif", "scale": 1.25, "settings": "lcd-none-True-False"}
+{"policy": "freetype", "family": "DejaVu Serif", "scale": 1.25, "settings": "lcd-normal-True-False"}
+{"policy": "freetype", "family": "DejaVu Serif", "scale": 1.25, "settings": "lcd-normal-True-True"}
+{"policy": "freetype", "family": "DejaVu Serif", "scale": 1.25, "settings": "lcd-full-True-False"}
+{"policy": "freetype", "family": "DejaVu Serif", "scale": 1.25, "settings": "lcd-slight-False-False"}
+{"policy": "freetype", "family": "DejaVu Serif", "scale": 1.25, "settings": "aa-none-True-False"}
+{"policy": "freetype", "family": "DejaVu Serif", "scale": 1.25, "settings": "alias-full-False-False"}
+{"policy": "freetype", "family": "DejaVu Serif", "scale": 1.5, "settings": "lcd-none-True-False"}
+{"policy": "freetype", "family": "DejaVu Serif", "scale": 1.5, "settings": "lcd-normal-True-False"}
+{"policy": "freetype", "family": "DejaVu Serif", "scale": 1.5, "settings": "lcd-normal-True-True"}
+{"policy": "freetype", "family": "DejaVu Serif", "scale": 1.5, "settings": "lcd-full-True-False"}
+{"policy": "freetype", "family": "DejaVu Serif", "scale": 1.5, "settings": "lcd-slight-False-False"}
+{"policy": "freetype", "family": "DejaVu Serif", "scale": 1.5, "settings": "aa-none-True-False"}
+{"policy": "freetype", "family": "DejaVu Serif", "scale": 1.5, "settings": "alias-full-False-False"}
+{"policy": "freetype", "family": "DejaVu Serif", "scale": 2.0, "settings": "lcd-none-True-False"}
+{"policy": "freetype", "family": "DejaVu Serif", "scale": 2.0, "settings": "lcd-normal-True-False"}
+{"policy": "freetype", "family": "DejaVu Serif", "scale": 2.0, "settings": "lcd-normal-True-True"}
+{"policy": "freetype", "family": "DejaVu Serif", "scale": 2.0, "settings": "lcd-full-True-False"}
+{"policy": "freetype", "family": "DejaVu Serif", "scale": 2.0, "settings": "lcd-slight-False-False"}
+{"policy": "freetype", "family": "DejaVu Serif", "scale": 2.0, "settings": "aa-none-True-False"}
+{"policy": "freetype", "family": "DejaVu Serif", "scale": 2.0, "settings": "alias-full-False-False"}
+{"policy": "freetype", "family": "DejaVu Serif", "scale": 3.0, "settings": "lcd-none-True-False"}
+{"policy": "freetype", "family": "DejaVu Serif", "scale": 3.0, "settings": "lcd-normal-True-False"}
+{"policy": "freetype", "family": "DejaVu Serif", "scale": 3.0, "settings": "lcd-normal-True-True"}
+{"policy": "freetype", "family": "DejaVu Serif", "scale": 3.0, "settings": "lcd-full-True-False"}
+{"policy": "freetype", "family": "DejaVu Serif", "scale": 3.0, "settings": "lcd-slight-False-False"}
+{"policy": "freetype", "family": "DejaVu Serif", "scale": 3.0, "settings": "aa-none-True-False"}
+{"policy": "freetype", "family": "DejaVu Serif", "scale": 3.0, "settings": "alias-full-False-False"}
+{"policy": "freetype", "family": "DejaVu Sans Mono", "scale": 1.0, "settings": "lcd-none-True-False"}
+{"policy": "freetype", "family": "DejaVu Sans Mono", "scale": 1.0, "settings": "lcd-normal-True-False"}
+{"policy": "freetype", "family": "DejaVu Sans Mono", "scale": 1.0, "settings": "lcd-normal-True-True"}
+{"policy": "freetype", "family": "DejaVu Sans Mono", "scale": 1.0, "settings": "lcd-full-True-False"}
+{"policy": "freetype", "family": "DejaVu Sans Mono", "scale": 1.0, "settings": "lcd-slight-False-False"}
+{"policy": "freetype", "family": "DejaVu Sans Mono", "scale": 1.0, "settings": "aa-none-True-False"}
+{"policy": "freetype", "family": "DejaVu Sans Mono", "scale": 1.0, "settings": "alias-full-False-False"}
+{"policy": "freetype", "family": "DejaVu Sans Mono", "scale": 1.25, "settings": "lcd-none-True-False"}
+{"policy": "freetype", "family": "DejaVu Sans Mono", "scale": 1.25, "settings": "lcd-normal-True-False"}
+{"policy": "freetype", "family": "DejaVu Sans Mono", "scale": 1.25, "settings": "lcd-normal-True-True"}
+{"policy": "freetype", "family": "DejaVu Sans Mono", "scale": 1.25, "settings": "lcd-full-True-False"}
+{"policy": "freetype", "family": "DejaVu Sans Mono", "scale": 1.25, "settings": "lcd-slight-False-False"}
+{"policy": "freetype", "family": "DejaVu Sans Mono", "scale": 1.25, "settings": "aa-none-True-False"}
+{"policy": "freetype", "family": "DejaVu Sans Mono", "scale": 1.25, "settings": "alias-full-False-False"}
+{"policy": "freetype", "family": "DejaVu Sans Mono", "scale": 1.5, "settings": "lcd-none-True-False"}
+{"policy": "freetype", "family": "DejaVu Sans Mono", "scale": 1.5, "settings": "lcd-normal-True-False"}
+{"policy": "freetype", "family": "DejaVu Sans Mono", "scale": 1.5, "settings": "lcd-normal-True-True"}
+{"policy": "freetype", "family": "DejaVu Sans Mono", "scale": 1.5, "settings": "lcd-full-True-False"}
+{"policy": "freetype", "family": "DejaVu Sans Mono", "scale": 1.5, "settings": "lcd-slight-False-False"}
+{"policy": "freetype", "family": "DejaVu Sans Mono", "scale": 1.5, "settings": "aa-none-True-False"}
+{"policy": "freetype", "family": "DejaVu Sans Mono", "scale": 1.5, "settings": "alias-full-False-False"}
+{"policy": "freetype", "family": "DejaVu Sans Mono", "scale": 2.0, "settings": "lcd-none-True-False"}
+{"policy": "freetype", "family": "DejaVu Sans Mono", "scale": 2.0, "settings": "lcd-normal-True-False"}
+{"policy": "freetype", "family": "DejaVu Sans Mono", "scale": 2.0, "settings": "lcd-normal-True-True"}
+{"policy": "freetype", "family": "DejaVu Sans Mono", "scale": 2.0, "settings": "lcd-full-True-False"}
+{"policy": "freetype", "family": "DejaVu Sans Mono", "scale": 2.0, "settings": "lcd-slight-False-False"}
+{"policy": "freetype", "family": "DejaVu Sans Mono", "scale": 2.0, "settings": "aa-none-True-False"}
+{"policy": "freetype", "family": "DejaVu Sans Mono", "scale": 2.0, "settings": "alias-full-False-False"}
+{"policy": "freetype", "family": "DejaVu Sans Mono", "scale": 3.0, "settings": "lcd-none-True-False"}
+{"policy": "freetype", "family": "DejaVu Sans Mono", "scale": 3.0, "settings": "lcd-normal-True-False"}
+{"policy": "freetype", "family": "DejaVu Sans Mono", "scale": 3.0, "settings": "lcd-normal-True-True"}
+{"policy": "freetype", "family": "DejaVu Sans Mono", "scale": 3.0, "settings": "lcd-full-True-False"}
+{"policy": "freetype", "family": "DejaVu Sans Mono", "scale": 3.0, "settings": "lcd-slight-False-False"}
+{"policy": "freetype", "family": "DejaVu Sans Mono", "scale": 3.0, "settings": "aa-none-True-False"}
+{"policy": "freetype", "family": "DejaVu Sans Mono", "scale": 3.0, "settings": "alias-full-False-False"}
+{"policy": "fontations", "family": "Ahem", "scale": 1.0, "settings": "lcd-none-True-False"}
+{"policy": "fontations", "family": "Ahem", "scale": 1.0, "settings": "lcd-normal-True-False"}
+{"policy": "fontations", "family": "Ahem", "scale": 1.0, "settings": "lcd-normal-True-True"}
+{"policy": "fontations", "family": "Ahem", "scale": 1.0, "settings": "lcd-full-True-False"}
+{"policy": "fontations", "family": "Ahem", "scale": 1.0, "settings": "lcd-slight-False-False"}
+{"policy": "fontations", "family": "Ahem", "scale": 1.0, "settings": "aa-none-True-False"}
+{"policy": "fontations", "family": "Ahem", "scale": 1.0, "settings": "alias-full-False-False"}
+{"policy": "fontations", "family": "Ahem", "scale": 1.25, "settings": "lcd-none-True-False"}
+{"policy": "fontations", "family": "Ahem", "scale": 1.25, "settings": "lcd-normal-True-False"}
+{"policy": "fontations", "family": "Ahem", "scale": 1.25, "settings": "lcd-normal-True-True"}
+{"policy": "fontations", "family": "Ahem", "scale": 1.25, "settings": "lcd-full-True-False"}
+{"policy": "fontations", "family": "Ahem", "scale": 1.25, "settings": "lcd-slight-False-False"}
+{"policy": "fontations", "family": "Ahem", "scale": 1.25, "settings": "aa-none-True-False"}
+{"policy": "fontations", "family": "Ahem", "scale": 1.25, "settings": "alias-full-False-False"}
+{"policy": "fontations", "family": "Ahem", "scale": 1.5, "settings": "lcd-none-True-False"}
+{"policy": "fontations", "family": "Ahem", "scale": 1.5, "settings": "lcd-normal-True-False"}
+{"policy": "fontations", "family": "Ahem", "scale": 1.5, "settings": "lcd-normal-True-True"}
+{"policy": "fontations", "family": "Ahem", "scale": 1.5, "settings": "lcd-full-True-False"}
+{"policy": "fontations", "family": "Ahem", "scale": 1.5, "settings": "lcd-slight-False-False"}
+{"policy": "fontations", "family": "Ahem", "scale": 1.5, "settings": "aa-none-True-False"}
+{"policy": "fontations", "family": "Ahem", "scale": 1.5, "settings": "alias-full-False-False"}
+{"policy": "fontations", "family": "Ahem", "scale": 2.0, "settings": "lcd-none-True-False"}
+{"policy": "fontations", "family": "Ahem", "scale": 2.0, "settings": "lcd-normal-True-False"}
+{"policy": "fontations", "family": "Ahem", "scale": 2.0, "settings": "lcd-normal-True-True"}
+{"policy": "fontations", "family": "Ahem", "scale": 2.0, "settings": "lcd-full-True-False"}
+{"policy": "fontations", "family": "Ahem", "scale": 2.0, "settings": "lcd-slight-False-False"}
+{"policy": "fontations", "family": "Ahem", "scale": 2.0, "settings": "aa-none-True-False"}
+{"policy": "fontations", "family": "Ahem", "scale": 2.0, "settings": "alias-full-False-False"}
+{"policy": "fontations", "family": "Ahem", "scale": 3.0, "settings": "lcd-none-True-False"}
+{"policy": "fontations", "family": "Ahem", "scale": 3.0, "settings": "lcd-normal-True-False"}
+{"policy": "fontations", "family": "Ahem", "scale": 3.0, "settings": "lcd-normal-True-True"}
+{"policy": "fontations", "family": "Ahem", "scale": 3.0, "settings": "lcd-full-True-False"}
+{"policy": "fontations", "family": "Ahem", "scale": 3.0, "settings": "lcd-slight-False-False"}
+{"policy": "fontations", "family": "Ahem", "scale": 3.0, "settings": "aa-none-True-False"}
+{"policy": "fontations", "family": "Ahem", "scale": 3.0, "settings": "alias-full-False-False"}
+{"policy": "fontations", "family": "DejaVu Sans", "scale": 1.0, "settings": "lcd-none-True-False"}
+{"policy": "fontations", "family": "DejaVu Sans", "scale": 1.0, "settings": "lcd-normal-True-False"}
+{"policy": "fontations", "family": "DejaVu Sans", "scale": 1.0, "settings": "lcd-normal-True-True"}
+{"policy": "fontations", "family": "DejaVu Sans", "scale": 1.0, "settings": "lcd-full-True-False"}
+{"policy": "fontations", "family": "DejaVu Sans", "scale": 1.0, "settings": "lcd-slight-False-False"}
+{"policy": "fontations", "family": "DejaVu Sans", "scale": 1.0, "settings": "aa-none-True-False"}
+{"policy": "fontations", "family": "DejaVu Sans", "scale": 1.0, "settings": "alias-full-False-False"}
+{"policy": "fontations", "family": "DejaVu Sans", "scale": 1.25, "settings": "lcd-none-True-False"}
+{"policy": "fontations", "family": "DejaVu Sans", "scale": 1.25, "settings": "lcd-normal-True-False"}
+{"policy": "fontations", "family": "DejaVu Sans", "scale": 1.25, "settings": "lcd-normal-True-True"}
+{"policy": "fontations", "family": "DejaVu Sans", "scale": 1.25, "settings": "lcd-full-True-False"}
+{"policy": "fontations", "family": "DejaVu Sans", "scale": 1.25, "settings": "lcd-slight-False-False"}
+{"policy": "fontations", "family": "DejaVu Sans", "scale": 1.25, "settings": "aa-none-True-False"}
+{"policy": "fontations", "family": "DejaVu Sans", "scale": 1.25, "settings": "alias-full-False-False"}
+{"policy": "fontations", "family": "DejaVu Sans", "scale": 1.5, "settings": "lcd-none-True-False"}
+{"policy": "fontations", "family": "DejaVu Sans", "scale": 1.5, "settings": "lcd-normal-True-False"}
+{"policy": "fontations", "family": "DejaVu Sans", "scale": 1.5, "settings": "lcd-normal-True-True"}
+{"policy": "fontations", "family": "DejaVu Sans", "scale": 1.5, "settings": "lcd-full-True-False"}
+{"policy": "fontations", "family": "DejaVu Sans", "scale": 1.5, "settings": "lcd-slight-False-False"}
+{"policy": "fontations", "family": "DejaVu Sans", "scale": 1.5, "settings": "aa-none-True-False"}
+{"policy": "fontations", "family": "DejaVu Sans", "scale": 1.5, "settings": "alias-full-False-False"}
+{"policy": "fontations", "family": "DejaVu Sans", "scale": 2.0, "settings": "lcd-none-True-False"}
+{"policy": "fontations", "family": "DejaVu Sans", "scale": 2.0, "settings": "lcd-normal-True-False"}
+{"policy": "fontations", "family": "DejaVu Sans", "scale": 2.0, "settings": "lcd-normal-True-True"}
+{"policy": "fontations", "family": "DejaVu Sans", "scale": 2.0, "settings": "lcd-full-True-False"}
+{"policy": "fontations", "family": "DejaVu Sans", "scale": 2.0, "settings": "lcd-slight-False-False"}
+{"policy": "fontations", "family": "DejaVu Sans", "scale": 2.0, "settings": "aa-none-True-False"}
+{"policy": "fontations", "family": "DejaVu Sans", "scale": 2.0, "settings": "alias-full-False-False"}
+{"policy": "fontations", "family": "DejaVu Sans", "scale": 3.0, "settings": "lcd-none-True-False"}
+{"policy": "fontations", "family": "DejaVu Sans", "scale": 3.0, "settings": "lcd-normal-True-False"}
+{"policy": "fontations", "family": "DejaVu Sans", "scale": 3.0, "settings": "lcd-normal-True-True"}
+{"policy": "fontations", "family": "DejaVu Sans", "scale": 3.0, "settings": "lcd-full-True-False"}
+{"policy": "fontations", "family": "DejaVu Sans", "scale": 3.0, "settings": "lcd-slight-False-False"}
+{"policy": "fontations", "family": "DejaVu Sans", "scale": 3.0, "settings": "aa-none-True-False"}
+{"policy": "fontations", "family": "DejaVu Sans", "scale": 3.0, "settings": "alias-full-False-False"}
+{"policy": "fontations", "family": "DejaVu Serif", "scale": 1.0, "settings": "lcd-none-True-False"}
+{"policy": "fontations", "family": "DejaVu Serif", "scale": 1.0, "settings": "lcd-normal-True-False"}
+{"policy": "fontations", "family": "DejaVu Serif", "scale": 1.0, "settings": "lcd-normal-True-True"}
+{"policy": "fontations", "family": "DejaVu Serif", "scale": 1.0, "settings": "lcd-full-True-False"}
+{"policy": "fontations", "family": "DejaVu Serif", "scale": 1.0, "settings": "lcd-slight-False-False"}
+{"policy": "fontations", "family": "DejaVu Serif", "scale": 1.0, "settings": "aa-none-True-False"}
+{"policy": "fontations", "family": "DejaVu Serif", "scale": 1.0, "settings": "alias-full-False-False"}
+{"policy": "fontations", "family": "DejaVu Serif", "scale": 1.25, "settings": "lcd-none-True-False"}
+{"policy": "fontations", "family": "DejaVu Serif", "scale": 1.25, "settings": "lcd-normal-True-False"}
+{"policy": "fontations", "family": "DejaVu Serif", "scale": 1.25, "settings": "lcd-normal-True-True"}
+{"policy": "fontations", "family": "DejaVu Serif", "scale": 1.25, "settings": "lcd-full-True-False"}
+{"policy": "fontations", "family": "DejaVu Serif", "scale": 1.25, "settings": "lcd-slight-False-False"}
+{"policy": "fontations", "family": "DejaVu Serif", "scale": 1.25, "settings": "aa-none-True-False"}
+{"policy": "fontations", "family": "DejaVu Serif", "scale": 1.25, "settings": "alias-full-False-False"}
+{"policy": "fontations", "family": "DejaVu Serif", "scale": 1.5, "settings": "lcd-none-True-False"}
+{"policy": "fontations", "family": "DejaVu Serif", "scale": 1.5, "settings": "lcd-normal-True-False"}
+{"policy": "fontations", "family": "DejaVu Serif", "scale": 1.5, "settings": "lcd-normal-True-True"}
+{"policy": "fontations", "family": "DejaVu Serif", "scale": 1.5, "settings": "lcd-full-True-False"}
+{"policy": "fontations", "family": "DejaVu Serif", "scale": 1.5, "settings": "lcd-slight-False-False"}
+{"policy": "fontations", "family": "DejaVu Serif", "scale": 1.5, "settings": "aa-none-True-False"}
+{"policy": "fontations", "family": "DejaVu Serif", "scale": 1.5, "settings": "alias-full-False-False"}
+{"policy": "fontations", "family": "DejaVu Serif", "scale": 2.0, "settings": "lcd-none-True-False"}
+{"policy": "fontations", "family": "DejaVu Serif", "scale": 2.0, "settings": "lcd-normal-True-False"}
+{"policy": "fontations", "family": "DejaVu Serif", "scale": 2.0, "settings": "lcd-normal-True-True"}
+{"policy": "fontations", "family": "DejaVu Serif", "scale": 2.0, "settings": "lcd-full-True-False"}
+{"policy": "fontations", "family": "DejaVu Serif", "scale": 2.0, "settings": "lcd-slight-False-False"}
+{"policy": "fontations", "family": "DejaVu Serif", "scale": 2.0, "settings": "aa-none-True-False"}
+{"policy": "fontations", "family": "DejaVu Serif", "scale": 2.0, "settings": "alias-full-False-False"}
+{"policy": "fontations", "family": "DejaVu Serif", "scale": 3.0, "settings": "lcd-none-True-False"}
+{"policy": "fontations", "family": "DejaVu Serif", "scale": 3.0, "settings": "lcd-normal-True-False"}
+{"policy": "fontations", "family": "DejaVu Serif", "scale": 3.0, "settings": "lcd-normal-True-True"}
+{"policy": "fontations", "family": "DejaVu Serif", "scale": 3.0, "settings": "lcd-full-True-False"}
+{"policy": "fontations", "family": "DejaVu Serif", "scale": 3.0, "settings": "lcd-slight-False-False"}
+{"policy": "fontations", "family": "DejaVu Serif", "scale": 3.0, "settings": "aa-none-True-False"}
+{"policy": "fontations", "family": "DejaVu Serif", "scale": 3.0, "settings": "alias-full-False-False"}
+{"policy": "fontations", "family": "DejaVu Sans Mono", "scale": 1.0, "settings": "lcd-none-True-False"}
+{"policy": "fontations", "family": "DejaVu Sans Mono", "scale": 1.0, "settings": "lcd-normal-True-False"}
+{"policy": "fontations", "family": "DejaVu Sans Mono", "scale": 1.0, "settings": "lcd-normal-True-True"}
+{"policy": "fontations", "family": "DejaVu Sans Mono", "scale": 1.0, "settings": "lcd-full-True-False"}
+{"policy": "fontations", "family": "DejaVu Sans Mono", "scale": 1.0, "settings": "lcd-slight-False-False"}
+{"policy": "fontations", "family": "DejaVu Sans Mono", "scale": 1.0, "settings": "aa-none-True-False"}
+{"policy": "fontations", "family": "DejaVu Sans Mono", "scale": 1.0, "settings": "alias-full-False-False"}
+{"policy": "fontations", "family": "DejaVu Sans Mono", "scale": 1.25, "settings": "lcd-none-True-False"}
+{"policy": "fontations", "family": "DejaVu Sans Mono", "scale": 1.25, "settings": "lcd-normal-True-False"}
+{"policy": "fontations", "family": "DejaVu Sans Mono", "scale": 1.25, "settings": "lcd-normal-True-True"}
+{"policy": "fontations", "family": "DejaVu Sans Mono", "scale": 1.25, "settings": "lcd-full-True-False"}
+{"policy": "fontations", "family": "DejaVu Sans Mono", "scale": 1.25, "settings": "lcd-slight-False-False"}
+{"policy": "fontations", "family": "DejaVu Sans Mono", "scale": 1.25, "settings": "aa-none-True-False"}
+{"policy": "fontations", "family": "DejaVu Sans Mono", "scale": 1.25, "settings": "alias-full-False-False"}
+{"policy": "fontations", "family": "DejaVu Sans Mono", "scale": 1.5, "settings": "lcd-none-True-False"}
+{"policy": "fontations", "family": "DejaVu Sans Mono", "scale": 1.5, "settings": "lcd-normal-True-False"}
+{"policy": "fontations", "family": "DejaVu Sans Mono", "scale": 1.5, "settings": "lcd-normal-True-True"}
+{"policy": "fontations", "family": "DejaVu Sans Mono", "scale": 1.5, "settings": "lcd-full-True-False"}
+{"policy": "fontations", "family": "DejaVu Sans Mono", "scale": 1.5, "settings": "lcd-slight-False-False"}
+{"policy": "fontations", "family": "DejaVu Sans Mono", "scale": 1.5, "settings": "aa-none-True-False"}
+{"policy": "fontations", "family": "DejaVu Sans Mono", "scale": 1.5, "settings": "alias-full-False-False"}
+{"policy": "fontations", "family": "DejaVu Sans Mono", "scale": 2.0, "settings": "lcd-none-True-False"}
+{"policy": "fontations", "family": "DejaVu Sans Mono", "scale": 2.0, "settings": "lcd-normal-True-False"}
+{"policy": "fontations", "family": "DejaVu Sans Mono", "scale": 2.0, "settings": "lcd-normal-True-True"}
+{"policy": "fontations", "family": "DejaVu Sans Mono", "scale": 2.0, "settings": "lcd-full-True-False"}
+{"policy": "fontations", "family": "DejaVu Sans Mono", "scale": 2.0, "settings": "lcd-slight-False-False"}
+{"policy": "fontations", "family": "DejaVu Sans Mono", "scale": 2.0, "settings": "aa-none-True-False"}
+{"policy": "fontations", "family": "DejaVu Sans Mono", "scale": 2.0, "settings": "alias-full-False-False"}
+{"policy": "fontations", "family": "DejaVu Sans Mono", "scale": 3.0, "settings": "lcd-none-True-False"}
+{"policy": "fontations", "family": "DejaVu Sans Mono", "scale": 3.0, "settings": "lcd-normal-True-False"}
+{"policy": "fontations", "family": "DejaVu Sans Mono", "scale": 3.0, "settings": "lcd-normal-True-True"}
+{"policy": "fontations", "family": "DejaVu Sans Mono", "scale": 3.0, "settings": "lcd-full-True-False"}
+{"policy": "fontations", "family": "DejaVu Sans Mono", "scale": 3.0, "settings": "lcd-slight-False-False"}
+{"policy": "fontations", "family": "DejaVu Sans Mono", "scale": 3.0, "settings": "aa-none-True-False"}
+{"policy": "fontations", "family": "DejaVu Sans Mono", "scale": 3.0, "settings": "alias-full-False-False"}

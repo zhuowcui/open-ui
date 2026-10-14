@@ -1,0 +1,5466 @@
+{
+  "accepted_main_attribution": {
+    "all_commands_terminal": true,
+    "build_identity": {
+      "schema_version": 1,
+      "skia_gn_args": "extra_cflags += [ \"-DSK_SUPPORT_LEGACY_CONIC_CHOP\", \"-DSK_ENABLE_LEGACY_SHADERCONTEXT\", \"-DSK_USE_FREETYPE_EMBOLDEN\", \"-DSK_GAMMA_EXPONENT=1.2\", \"-DSK_GAMMA_CONTRAST=0.2\", \"-fno-strict-aliasing\", \"-msse3\", \"--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot\" ]",
+      "source": {
+        "clean": true,
+        "commit": "2827a03d2798eeee94eb75a9a2af358938e752b7",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "4624f2b6bb10c3478d8afa58cb7766eb238f947848402fb2e847528b4a049877",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "cleaned_workspace_packages": [
+      "openui-geometry",
+      "openui-style",
+      "openui-dom",
+      "openui-text",
+      "openui-layout",
+      "openui-paint",
+      "openui-compositor",
+      "openui-engine",
+      "openui-platform",
+      "openui-ffi",
+      "openui",
+      "openui-macros",
+      "hello",
+      "counter",
+      "todo",
+      "dashboard",
+      "framework-test",
+      "pixel-compare"
+    ],
+    "clears_authored_line_height_under_chromium_conditions": false,
+    "clip_vs_own_main_baseline": {
+      "all_chromium_inputs_unchanged": true,
+      "changes": [
+        {
+          "baseline_wrong_pixels": 108,
+          "changed_fields": [
+            "openui_png_sha256",
+            "openui_rgba_sha256",
+            "status",
+            "mismatched_pixels",
+            "diff_signature"
+          ],
+          "exact_gain": true,
+          "exact_loss": false,
+          "id": "wpt/css_overflow/input-scrollable-region-001",
+          "more_wrong_pixels": false,
+          "profile": "mobile-375x667@2",
+          "wrong_pixels": 0
+        },
+        {
+          "baseline_wrong_pixels": 153,
+          "changed_fields": [
+            "openui_png_sha256",
+            "openui_rgba_sha256",
+            "mismatched_pixels",
+            "diff_signature"
+          ],
+          "exact_gain": false,
+          "exact_loss": false,
+          "id": "wpt/css_flexbox/flexbox-align-self-baseline-horiz-008",
+          "more_wrong_pixels": false,
+          "profile": "desktop-1280x720@1.25",
+          "wrong_pixels": 68
+        },
+        {
+          "baseline_wrong_pixels": 153,
+          "changed_fields": [
+            "openui_png_sha256",
+            "openui_rgba_sha256",
+            "mismatched_pixels",
+            "diff_signature"
+          ],
+          "exact_gain": false,
+          "exact_loss": false,
+          "id": "wpt/css_flexbox/flexbox-align-self-baseline-horiz-008-ref",
+          "more_wrong_pixels": false,
+          "profile": "desktop-1280x720@1.25",
+          "wrong_pixels": 68
+        },
+        {
+          "baseline_wrong_pixels": 136,
+          "changed_fields": [
+            "openui_png_sha256",
+            "openui_rgba_sha256",
+            "mismatched_pixels",
+            "diff_signature"
+          ],
+          "exact_gain": false,
+          "exact_loss": false,
+          "id": "wpt/css_overflow/input-scrollable-region-001",
+          "more_wrong_pixels": false,
+          "profile": "desktop-1280x720@1.25",
+          "wrong_pixels": 68
+        },
+        {
+          "baseline_wrong_pixels": 920,
+          "changed_fields": [
+            "openui_png_sha256",
+            "openui_rgba_sha256",
+            "mismatched_pixels",
+            "diff_signature"
+          ],
+          "exact_gain": false,
+          "exact_loss": false,
+          "id": "wpt/css_position/position-absolute-semi-replaced-stretch-input",
+          "more_wrong_pixels": false,
+          "profile": "desktop-1280x720@1.25",
+          "wrong_pixels": 904
+        },
+        {
+          "baseline_wrong_pixels": 920,
+          "changed_fields": [
+            "openui_png_sha256",
+            "openui_rgba_sha256",
+            "mismatched_pixels",
+            "diff_signature"
+          ],
+          "exact_gain": false,
+          "exact_loss": false,
+          "id": "wpt/css_position/position-absolute-semi-replaced-stretch-input-ref",
+          "more_wrong_pixels": false,
+          "profile": "desktop-1280x720@1.25",
+          "wrong_pixels": 904
+        },
+        {
+          "baseline_wrong_pixels": 57,
+          "changed_fields": [
+            "openui_png_sha256",
+            "openui_rgba_sha256",
+            "mismatched_pixels",
+            "diff_signature"
+          ],
+          "exact_gain": false,
+          "exact_loss": false,
+          "id": "wpt/css_sizing/block-size-with-min-or-max-content-1-ref",
+          "more_wrong_pixels": true,
+          "profile": "desktop-1280x720@1.25",
+          "wrong_pixels": 114
+        },
+        {
+          "baseline_wrong_pixels": 57,
+          "changed_fields": [
+            "openui_png_sha256",
+            "openui_rgba_sha256",
+            "mismatched_pixels",
+            "diff_signature"
+          ],
+          "exact_gain": false,
+          "exact_loss": false,
+          "id": "wpt/css_sizing/block-size-with-min-or-max-content-1a",
+          "more_wrong_pixels": true,
+          "profile": "desktop-1280x720@1.25",
+          "wrong_pixels": 114
+        },
+        {
+          "baseline_wrong_pixels": 57,
+          "changed_fields": [
+            "openui_png_sha256",
+            "openui_rgba_sha256",
+            "mismatched_pixels",
+            "diff_signature"
+          ],
+          "exact_gain": false,
+          "exact_loss": false,
+          "id": "wpt/css_sizing/block-size-with-min-or-max-content-1b",
+          "more_wrong_pixels": true,
+          "profile": "desktop-1280x720@1.25",
+          "wrong_pixels": 114
+        },
+        {
+          "baseline_wrong_pixels": 1977,
+          "changed_fields": [
+            "openui_png_sha256",
+            "openui_rgba_sha256",
+            "mismatched_pixels",
+            "diff_signature"
+          ],
+          "exact_gain": false,
+          "exact_loss": false,
+          "id": "wpt/css_sizing/max-content-input-001",
+          "more_wrong_pixels": false,
+          "profile": "desktop-1280x720@1.25",
+          "wrong_pixels": 1477
+        },
+        {
+          "baseline_wrong_pixels": 1888,
+          "changed_fields": [
+            "openui_png_sha256",
+            "openui_rgba_sha256",
+            "mismatched_pixels",
+            "diff_signature"
+          ],
+          "exact_gain": false,
+          "exact_loss": false,
+          "id": "wpt/css_sizing/max-content-input-001-ref",
+          "more_wrong_pixels": false,
+          "profile": "desktop-1280x720@1.25",
+          "wrong_pixels": 1364
+        },
+        {
+          "baseline_wrong_pixels": 34,
+          "changed_fields": [
+            "openui_png_sha256",
+            "openui_rgba_sha256",
+            "mismatched_pixels",
+            "diff_signature"
+          ],
+          "exact_gain": false,
+          "exact_loss": false,
+          "id": "wpt/css_sizing/stretch_stretch-quirk-001",
+          "more_wrong_pixels": false,
+          "profile": "desktop-1280x720@1.25",
+          "wrong_pixels": 18
+        },
+        {
+          "baseline_wrong_pixels": 16,
+          "changed_fields": [
+            "openui_png_sha256",
+            "openui_rgba_sha256",
+            "status",
+            "mismatched_pixels",
+            "diff_signature"
+          ],
+          "exact_gain": true,
+          "exact_loss": false,
+          "id": "wpt/css_sizing/stretch_stretch-quirk-001-ref",
+          "more_wrong_pixels": false,
+          "profile": "desktop-1280x720@1.25",
+          "wrong_pixels": 0
+        },
+        {
+          "baseline_wrong_pixels": 81,
+          "changed_fields": [
+            "openui_png_sha256",
+            "openui_rgba_sha256",
+            "status",
+            "mismatched_pixels",
+            "diff_signature"
+          ],
+          "exact_gain": true,
+          "exact_loss": false,
+          "id": "wpt/css_overflow/input-scrollable-region-001",
+          "more_wrong_pixels": false,
+          "profile": "desktop-1920x1080@1.5",
+          "wrong_pixels": 0
+        },
+        {
+          "baseline_wrong_pixels": 384,
+          "changed_fields": [
+            "openui_png_sha256",
+            "openui_rgba_sha256",
+            "mismatched_pixels",
+            "diff_signature"
+          ],
+          "exact_gain": false,
+          "exact_loss": false,
+          "id": "wpt/css_sizing/block-size-with-min-or-max-content-1-ref",
+          "more_wrong_pixels": true,
+          "profile": "desktop-1920x1080@1.5",
+          "wrong_pixels": 406
+        },
+        {
+          "baseline_wrong_pixels": 384,
+          "changed_fields": [
+            "openui_png_sha256",
+            "openui_rgba_sha256",
+            "mismatched_pixels",
+            "diff_signature"
+          ],
+          "exact_gain": false,
+          "exact_loss": false,
+          "id": "wpt/css_sizing/block-size-with-min-or-max-content-1a",
+          "more_wrong_pixels": true,
+          "profile": "desktop-1920x1080@1.5",
+          "wrong_pixels": 406
+        },
+        {
+          "baseline_wrong_pixels": 384,
+          "changed_fields": [
+            "openui_png_sha256",
+            "openui_rgba_sha256",
+            "mismatched_pixels",
+            "diff_signature"
+          ],
+          "exact_gain": false,
+          "exact_loss": false,
+          "id": "wpt/css_sizing/block-size-with-min-or-max-content-1b",
+          "more_wrong_pixels": true,
+          "profile": "desktop-1920x1080@1.5",
+          "wrong_pixels": 406
+        },
+        {
+          "baseline_wrong_pixels": 743,
+          "changed_fields": [
+            "openui_png_sha256",
+            "openui_rgba_sha256",
+            "mismatched_pixels",
+            "diff_signature"
+          ],
+          "exact_gain": false,
+          "exact_loss": false,
+          "id": "wpt/css_sizing/max-content-input-001",
+          "more_wrong_pixels": false,
+          "profile": "desktop-1920x1080@1.5",
+          "wrong_pixels": 443
+        },
+        {
+          "baseline_wrong_pixels": 301,
+          "changed_fields": [
+            "openui_png_sha256",
+            "openui_rgba_sha256",
+            "mismatched_pixels",
+            "diff_signature"
+          ],
+          "exact_gain": false,
+          "exact_loss": false,
+          "id": "wpt/css_sizing/max-content-input-001-ref",
+          "more_wrong_pixels": false,
+          "profile": "desktop-1920x1080@1.5",
+          "wrong_pixels": 1
+        }
+      ],
+      "comparisons": 48,
+      "exact_gains": 3,
+      "exact_losses": 0,
+      "more_wrong_comparisons": 6,
+      "selected_diagnostic_not_full_census": true
+    },
+    "complete_renderer_matrices_not_run": true,
+    "font_raster_policy_changed": false,
+    "javascript_executed_by_openui": false,
+    "matrices": {
+      "selected-main-baseline": {
+        "changed_comparisons": [],
+        "comparisons": 48,
+        "exact_gains": 0,
+        "exact_losses": 0,
+        "observed_exit_code": 1,
+        "partial_selection_not_qualifying": true,
+        "results": {
+          "different": 32,
+          "errors": 0,
+          "exact": 16,
+          "profile_result_sha256": "e087f09cd07b1abeb804fdf01233acaf2db86cf1a72086e875a6aed51a622118",
+          "total": 48
+        },
+        "summary_sha256": "9da28d56d9d2265801044411e5c3993bb376defb4dc7cb11c183fd83ba8e2fdf",
+        "worsened_comparisons": 0
+      }
+    },
+    "new_font_name_size_or_test_id_conditions": false,
+    "new_release_states_admitted": 0,
+    "observed_exit_code": 1,
+    "owner_pid": 729753,
+    "pixel_binary_sha256": "c0df8e4721ef27d8171081363a4a00ec6fa95cd74341c4aa009d7039ca5fcee8",
+    "pixel_tolerance": 0,
+    "probe_sha256": "0d90bcd34b0eee3d063551f09cb9493bb8c5bb3cc05193feac832d76b9e7f6dc",
+    "promotion_allowed": false,
+    "public_source": {
+      "clean": true,
+      "commit": "2827a03d2798eeee94eb75a9a2af358938e752b7",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "4624f2b6bb10c3478d8afa58cb7766eb238f947848402fb2e847528b4a049877",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "public_source_after": {
+      "clean": true,
+      "commit": "2827a03d2798eeee94eb75a9a2af358938e752b7",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "4624f2b6bb10c3478d8afa58cb7766eb238f947848402fb2e847528b4a049877",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "public_source_unchanged": true,
+    "release_qualification": false,
+    "schema_version": 1,
+    "selected_ids": [
+      "wpt/css_flexbox/flexbox-align-self-baseline-horiz-008",
+      "wpt/css_flexbox/flexbox-align-self-baseline-horiz-008-ref",
+      "wpt/css_overflow/input-scrollable-region-001",
+      "wpt/css_position/position-absolute-semi-replaced-stretch-input",
+      "wpt/css_position/position-absolute-semi-replaced-stretch-input-ref",
+      "wpt/css_sizing/block-size-with-min-or-max-content-1-ref",
+      "wpt/css_sizing/block-size-with-min-or-max-content-1a",
+      "wpt/css_sizing/block-size-with-min-or-max-content-1b",
+      "wpt/css_sizing/max-content-input-001",
+      "wpt/css_sizing/max-content-input-001-ref",
+      "wpt/css_sizing/stretch_stretch-quirk-001",
+      "wpt/css_sizing/stretch_stretch-quirk-001-ref"
+    ],
+    "shared_native_editor_scrollport_changed": false,
+    "source": {
+      "clean": true,
+      "commit": "2827a03d2798eeee94eb75a9a2af358938e752b7",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "4624f2b6bb10c3478d8afa58cb7766eb238f947848402fb2e847528b4a049877",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "2827a03d2798eeee94eb75a9a2af358938e752b7",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "4624f2b6bb10c3478d8afa58cb7766eb238f947848402fb2e847528b4a049877",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_from_accepted_umbrella": true,
+    "source_unchanged": true,
+    "steps": [
+      {
+        "disk_guard_triggered": false,
+        "failed": 0,
+        "ignored": 0,
+        "log_sha256": "9bf7562db9ffdd1450b045b3fec5e1db161e5b089ea5775419c184a2e9384b9b",
+        "name": "locked-metadata",
+        "observed_exit_code": 0,
+        "passed": 0
+      },
+      {
+        "disk_guard_triggered": false,
+        "failed": 0,
+        "ignored": 0,
+        "log_sha256": "818b439b785a32fc32981e04d6ab2699c0e721aae019eb6779c330370bbd264c",
+        "name": "clean-workspace-rust-packages",
+        "observed_exit_code": 0,
+        "passed": 0
+      },
+      {
+        "disk_guard_triggered": false,
+        "failed": 0,
+        "ignored": 0,
+        "log_sha256": "814c6e7dcef7c858136697553a6210730906137075256134758b2e8209ba4bbb",
+        "name": "pixel-build",
+        "observed_exit_code": 0,
+        "passed": 0
+      },
+      {
+        "disk_guard_triggered": false,
+        "failed": 0,
+        "ignored": 0,
+        "log_sha256": "cf2b59b2210205c6b28f38e11953e45572cc201bc8ec7a3bb7b04cbc615c776d",
+        "name": "selected-main-baseline-matrix",
+        "observed_exit_code": 1,
+        "passed": 0
+      }
+    ],
+    "tracked_diagnostic_png_unchanged": true
+  },
+  "accepted_main_vs_clip_selected_comparisons": {
+    "changes": [
+      {
+        "baseline_wrong_pixels": 108,
+        "changed_fields": [
+          "openui_png_sha256",
+          "openui_rgba_sha256",
+          "status",
+          "mismatched_pixels",
+          "diff_signature"
+        ],
+        "exact_gain": true,
+        "exact_loss": false,
+        "id": "wpt/css_overflow/input-scrollable-region-001",
+        "more_wrong_pixels": false,
+        "profile": "mobile-375x667@2",
+        "wrong_pixels": 0
+      },
+      {
+        "baseline_wrong_pixels": 136,
+        "changed_fields": [
+          "openui_png_sha256",
+          "openui_rgba_sha256",
+          "mismatched_pixels",
+          "diff_signature"
+        ],
+        "exact_gain": false,
+        "exact_loss": false,
+        "id": "wpt/css_overflow/input-scrollable-region-001",
+        "more_wrong_pixels": false,
+        "profile": "desktop-1280x720@1.25",
+        "wrong_pixels": 68
+      },
+      {
+        "baseline_wrong_pixels": 920,
+        "changed_fields": [
+          "openui_png_sha256",
+          "openui_rgba_sha256",
+          "mismatched_pixels",
+          "diff_signature"
+        ],
+        "exact_gain": false,
+        "exact_loss": false,
+        "id": "wpt/css_position/position-absolute-semi-replaced-stretch-input",
+        "more_wrong_pixels": false,
+        "profile": "desktop-1280x720@1.25",
+        "wrong_pixels": 904
+      },
+      {
+        "baseline_wrong_pixels": 920,
+        "changed_fields": [
+          "openui_png_sha256",
+          "openui_rgba_sha256",
+          "mismatched_pixels",
+          "diff_signature"
+        ],
+        "exact_gain": false,
+        "exact_loss": false,
+        "id": "wpt/css_position/position-absolute-semi-replaced-stretch-input-ref",
+        "more_wrong_pixels": false,
+        "profile": "desktop-1280x720@1.25",
+        "wrong_pixels": 904
+      },
+      {
+        "baseline_wrong_pixels": 1977,
+        "changed_fields": [
+          "openui_png_sha256",
+          "openui_rgba_sha256",
+          "mismatched_pixels",
+          "diff_signature"
+        ],
+        "exact_gain": false,
+        "exact_loss": false,
+        "id": "wpt/css_sizing/max-content-input-001",
+        "more_wrong_pixels": false,
+        "profile": "desktop-1280x720@1.25",
+        "wrong_pixels": 1477
+      },
+      {
+        "baseline_wrong_pixels": 1888,
+        "changed_fields": [
+          "openui_png_sha256",
+          "openui_rgba_sha256",
+          "mismatched_pixels",
+          "diff_signature"
+        ],
+        "exact_gain": false,
+        "exact_loss": false,
+        "id": "wpt/css_sizing/max-content-input-001-ref",
+        "more_wrong_pixels": false,
+        "profile": "desktop-1280x720@1.25",
+        "wrong_pixels": 1364
+      },
+      {
+        "baseline_wrong_pixels": 34,
+        "changed_fields": [
+          "openui_png_sha256",
+          "openui_rgba_sha256",
+          "mismatched_pixels",
+          "diff_signature"
+        ],
+        "exact_gain": false,
+        "exact_loss": false,
+        "id": "wpt/css_sizing/stretch_stretch-quirk-001",
+        "more_wrong_pixels": false,
+        "profile": "desktop-1280x720@1.25",
+        "wrong_pixels": 18
+      },
+      {
+        "baseline_wrong_pixels": 16,
+        "changed_fields": [
+          "openui_png_sha256",
+          "openui_rgba_sha256",
+          "status",
+          "mismatched_pixels",
+          "diff_signature"
+        ],
+        "exact_gain": true,
+        "exact_loss": false,
+        "id": "wpt/css_sizing/stretch_stretch-quirk-001-ref",
+        "more_wrong_pixels": false,
+        "profile": "desktop-1280x720@1.25",
+        "wrong_pixels": 0
+      },
+      {
+        "baseline_wrong_pixels": 81,
+        "changed_fields": [
+          "openui_png_sha256",
+          "openui_rgba_sha256",
+          "status",
+          "mismatched_pixels",
+          "diff_signature"
+        ],
+        "exact_gain": true,
+        "exact_loss": false,
+        "id": "wpt/css_overflow/input-scrollable-region-001",
+        "more_wrong_pixels": false,
+        "profile": "desktop-1920x1080@1.5",
+        "wrong_pixels": 0
+      },
+      {
+        "baseline_wrong_pixels": 743,
+        "changed_fields": [
+          "openui_png_sha256",
+          "openui_rgba_sha256",
+          "mismatched_pixels",
+          "diff_signature"
+        ],
+        "exact_gain": false,
+        "exact_loss": false,
+        "id": "wpt/css_sizing/max-content-input-001",
+        "more_wrong_pixels": false,
+        "profile": "desktop-1920x1080@1.5",
+        "wrong_pixels": 443
+      },
+      {
+        "baseline_wrong_pixels": 301,
+        "changed_fields": [
+          "openui_png_sha256",
+          "openui_rgba_sha256",
+          "mismatched_pixels",
+          "diff_signature"
+        ],
+        "exact_gain": false,
+        "exact_loss": false,
+        "id": "wpt/css_sizing/max-content-input-001-ref",
+        "more_wrong_pixels": false,
+        "profile": "desktop-1920x1080@1.5",
+        "wrong_pixels": 1
+      }
+    ],
+    "comparisons": 48,
+    "exact_gains": 3,
+    "exact_losses": 0,
+    "more_wrong_comparisons": 0,
+    "selected_diagnostic_not_full_main_census": true
+  },
+  "accepted_original_exact": 21334,
+  "accepted_original_total": 22924,
+  "all_candidates_private_and_unapplied": true,
+  "all_commands_terminal": true,
+  "archive": {
+    "all_member_bytes_verified": true,
+    "bytes": 20022671,
+    "members": 1080,
+    "path": "docs/renderer/evidence/native-input-editor-scrollport-v1/completed-evidence.tar.gz",
+    "sha256": "56bc92372c756b87ec1ac7773b28d873f655da0cbf89faf0f4913739c665a44f"
+  },
+  "baseline_images_exact": 22,
+  "chromium_reference_bytes_preserved": true,
+  "earlier_library_dependency_provenance_not_established": true,
+  "earlier_mixed_dependency_main_attribution": {
+    "all_commands_terminal": true,
+    "build_identity": {
+      "schema_version": 1,
+      "skia_gn_args": "extra_cflags += [ \"-DSK_SUPPORT_LEGACY_CONIC_CHOP\", \"-DSK_ENABLE_LEGACY_SHADERCONTEXT\", \"-DSK_USE_FREETYPE_EMBOLDEN\", \"-DSK_GAMMA_EXPONENT=1.2\", \"-DSK_GAMMA_CONTRAST=0.2\", \"-fno-strict-aliasing\", \"-msse3\", \"--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot\" ]",
+      "source": {
+        "clean": true,
+        "commit": "2827a03d2798eeee94eb75a9a2af358938e752b7",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "4624f2b6bb10c3478d8afa58cb7766eb238f947848402fb2e847528b4a049877",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "clears_authored_line_height_under_chromium_conditions": false,
+    "clip_vs_own_main_baseline": {
+      "all_chromium_inputs_unchanged": true,
+      "changes": [],
+      "comparisons": 48,
+      "exact_gains": 0,
+      "exact_losses": 0,
+      "more_wrong_comparisons": 0,
+      "selected_diagnostic_not_full_census": true
+    },
+    "complete_renderer_matrices_not_run": true,
+    "font_raster_policy_changed": false,
+    "javascript_executed_by_openui": false,
+    "matrices": {
+      "selected-main-baseline": {
+        "changed_comparisons": [
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "status",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": true,
+            "exact_loss": false,
+            "id": "wpt/css_overflow/input-scrollable-region-001",
+            "mismatched_pixels": 0,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 108,
+            "prior_status": "different",
+            "profile": "mobile-375x667@2",
+            "status": "exact"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_flexbox/flexbox-align-self-baseline-horiz-008",
+            "mismatched_pixels": 68,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 153,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_flexbox/flexbox-align-self-baseline-horiz-008-ref",
+            "mismatched_pixels": 68,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 153,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_overflow/input-scrollable-region-001",
+            "mismatched_pixels": 68,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 136,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_position/position-absolute-semi-replaced-stretch-input",
+            "mismatched_pixels": 904,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 920,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_position/position-absolute-semi-replaced-stretch-input-ref",
+            "mismatched_pixels": 904,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 920,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/block-size-with-min-or-max-content-1-ref",
+            "mismatched_pixels": 114,
+            "more_wrong_pixels": true,
+            "prior_mismatched_pixels": 57,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/block-size-with-min-or-max-content-1a",
+            "mismatched_pixels": 114,
+            "more_wrong_pixels": true,
+            "prior_mismatched_pixels": 57,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/block-size-with-min-or-max-content-1b",
+            "mismatched_pixels": 114,
+            "more_wrong_pixels": true,
+            "prior_mismatched_pixels": 57,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/max-content-input-001",
+            "mismatched_pixels": 1477,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 1977,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/max-content-input-001-ref",
+            "mismatched_pixels": 1364,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 1888,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/stretch_stretch-quirk-001",
+            "mismatched_pixels": 18,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 34,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "status",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": true,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/stretch_stretch-quirk-001-ref",
+            "mismatched_pixels": 0,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 16,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "exact"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "status",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": true,
+            "exact_loss": false,
+            "id": "wpt/css_overflow/input-scrollable-region-001",
+            "mismatched_pixels": 0,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 81,
+            "prior_status": "different",
+            "profile": "desktop-1920x1080@1.5",
+            "status": "exact"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/block-size-with-min-or-max-content-1-ref",
+            "mismatched_pixels": 406,
+            "more_wrong_pixels": true,
+            "prior_mismatched_pixels": 384,
+            "prior_status": "different",
+            "profile": "desktop-1920x1080@1.5",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/block-size-with-min-or-max-content-1a",
+            "mismatched_pixels": 406,
+            "more_wrong_pixels": true,
+            "prior_mismatched_pixels": 384,
+            "prior_status": "different",
+            "profile": "desktop-1920x1080@1.5",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/block-size-with-min-or-max-content-1b",
+            "mismatched_pixels": 406,
+            "more_wrong_pixels": true,
+            "prior_mismatched_pixels": 384,
+            "prior_status": "different",
+            "profile": "desktop-1920x1080@1.5",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/max-content-input-001",
+            "mismatched_pixels": 443,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 743,
+            "prior_status": "different",
+            "profile": "desktop-1920x1080@1.5",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/max-content-input-001-ref",
+            "mismatched_pixels": 1,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 301,
+            "prior_status": "different",
+            "profile": "desktop-1920x1080@1.5",
+            "status": "different"
+          }
+        ],
+        "comparisons": 48,
+        "exact_gains": 3,
+        "exact_losses": 0,
+        "observed_exit_code": 1,
+        "partial_selection_not_qualifying": true,
+        "results": {
+          "different": 29,
+          "errors": 0,
+          "exact": 19,
+          "profile_result_sha256": "f68620816779070b082abb640af61b945a38ad5fa074c82e460e53e08087f429",
+          "total": 48
+        },
+        "summary_sha256": "580a6c34a7a2bbb980479f4a04d7d96018b4d2630c50479d321b57bbc2262d5b",
+        "worsened_comparisons": 6
+      }
+    },
+    "new_font_name_size_or_test_id_conditions": false,
+    "new_release_states_admitted": 0,
+    "observed_exit_code": 0,
+    "owner_pid": 728603,
+    "pixel_binary_sha256": "1cd87b00d97fe5decf6b0ca337aace2713f3fc711facb1c1048ac36884e93b07",
+    "pixel_tolerance": 0,
+    "probe_sha256": "19d699c628d828980623b4512c80d3ca8f62f3860e45019af57e2f76280de8a1",
+    "promotion_allowed": false,
+    "public_source": {
+      "clean": true,
+      "commit": "2827a03d2798eeee94eb75a9a2af358938e752b7",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "4624f2b6bb10c3478d8afa58cb7766eb238f947848402fb2e847528b4a049877",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "public_source_after": {
+      "clean": true,
+      "commit": "2827a03d2798eeee94eb75a9a2af358938e752b7",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "4624f2b6bb10c3478d8afa58cb7766eb238f947848402fb2e847528b4a049877",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "public_source_unchanged": true,
+    "release_qualification": false,
+    "schema_version": 1,
+    "selected_ids": [
+      "wpt/css_flexbox/flexbox-align-self-baseline-horiz-008",
+      "wpt/css_flexbox/flexbox-align-self-baseline-horiz-008-ref",
+      "wpt/css_overflow/input-scrollable-region-001",
+      "wpt/css_position/position-absolute-semi-replaced-stretch-input",
+      "wpt/css_position/position-absolute-semi-replaced-stretch-input-ref",
+      "wpt/css_sizing/block-size-with-min-or-max-content-1-ref",
+      "wpt/css_sizing/block-size-with-min-or-max-content-1a",
+      "wpt/css_sizing/block-size-with-min-or-max-content-1b",
+      "wpt/css_sizing/max-content-input-001",
+      "wpt/css_sizing/max-content-input-001-ref",
+      "wpt/css_sizing/stretch_stretch-quirk-001",
+      "wpt/css_sizing/stretch_stretch-quirk-001-ref"
+    ],
+    "shared_native_editor_scrollport_changed": false,
+    "source": {
+      "clean": true,
+      "commit": "2827a03d2798eeee94eb75a9a2af358938e752b7",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "4624f2b6bb10c3478d8afa58cb7766eb238f947848402fb2e847528b4a049877",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "2827a03d2798eeee94eb75a9a2af358938e752b7",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "4624f2b6bb10c3478d8afa58cb7766eb238f947848402fb2e847528b4a049877",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_from_accepted_umbrella": true,
+    "source_unchanged": true,
+    "steps": [
+      {
+        "disk_guard_triggered": false,
+        "failed": 0,
+        "ignored": 0,
+        "log_sha256": "9bf7562db9ffdd1450b045b3fec5e1db161e5b089ea5775419c184a2e9384b9b",
+        "name": "locked-metadata",
+        "observed_exit_code": 0,
+        "passed": 0
+      },
+      {
+        "disk_guard_triggered": false,
+        "failed": 0,
+        "ignored": 0,
+        "log_sha256": "ffa45d70a75de496b47e642d6a3efe0fb61cc286d587b2fdd53acf5ed881088d",
+        "name": "clean-pixel-package",
+        "observed_exit_code": 0,
+        "passed": 0
+      },
+      {
+        "disk_guard_triggered": false,
+        "failed": 0,
+        "ignored": 0,
+        "log_sha256": "0f0e8c2eaa69a57d7079cb0aea3a2f7cced32c4ea880273555e16a2aec549824",
+        "name": "pixel-build",
+        "observed_exit_code": 0,
+        "passed": 0
+      },
+      {
+        "disk_guard_triggered": false,
+        "failed": 0,
+        "ignored": 0,
+        "log_sha256": "27e34b2806ea55f01e339531bcb6a33033be2de31207d030612147fb19c4eb7a",
+        "name": "selected-main-baseline-matrix",
+        "observed_exit_code": 1,
+        "passed": 0
+      }
+    ],
+    "tracked_diagnostic_png_unchanged": true
+  },
+  "earlier_mixed_dependency_renderer_gates": {
+    "all_commands_terminal": true,
+    "build_identity": {
+      "schema_version": 1,
+      "skia_gn_args": "extra_cflags += [ \"-DSK_SUPPORT_LEGACY_CONIC_CHOP\", \"-DSK_ENABLE_LEGACY_SHADERCONTEXT\", \"-DSK_USE_FREETYPE_EMBOLDEN\", \"-DSK_GAMMA_EXPONENT=1.2\", \"-DSK_GAMMA_CONTRAST=0.2\", \"-fno-strict-aliasing\", \"-msse3\", \"--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot\" ]",
+      "source": {
+        "clean": true,
+        "commit": "e0f0e57758d663cd8d3052cabbf546de67343826",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "7b0dc6d6c48ee6b674e3d837c7a3176629ccd4b242c182f4fc2cfc43e7139670",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "cargo_commands_run": 0,
+    "carried_completed_same_source_matrices": [
+      "control-and-text-neighbors",
+      "focused",
+      "primitive"
+    ],
+    "clears_authored_line_height_under_chromium_conditions": true,
+    "complete_renderer_matrices_not_run": false,
+    "font_raster_policy_changed": false,
+    "interrupted_whole_pipeline_preserved": true,
+    "javascript_executed_by_openui": false,
+    "matrices": {
+      "control-and-text-neighbors": {
+        "changed_comparisons": [
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "status",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": true,
+            "exact_loss": false,
+            "id": "wpt/css_overflow/input-scrollable-region-001",
+            "mismatched_pixels": 0,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 108,
+            "prior_status": "different",
+            "profile": "mobile-375x667@2",
+            "status": "exact"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_overflow/input-scrollable-region-001",
+            "mismatched_pixels": 68,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 136,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_position/position-absolute-semi-replaced-stretch-input",
+            "mismatched_pixels": 904,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 920,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_position/position-absolute-semi-replaced-stretch-input-ref",
+            "mismatched_pixels": 904,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 920,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/max-content-input-001",
+            "mismatched_pixels": 1477,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 1977,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/max-content-input-001-ref",
+            "mismatched_pixels": 1364,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 1888,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "status",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": true,
+            "exact_loss": false,
+            "id": "wpt/css_overflow/input-scrollable-region-001",
+            "mismatched_pixels": 0,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 81,
+            "prior_status": "different",
+            "profile": "desktop-1920x1080@1.5",
+            "status": "exact"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/max-content-input-001",
+            "mismatched_pixels": 443,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 743,
+            "prior_status": "different",
+            "profile": "desktop-1920x1080@1.5",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/max-content-input-001-ref",
+            "mismatched_pixels": 1,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 301,
+            "prior_status": "different",
+            "profile": "desktop-1920x1080@1.5",
+            "status": "different"
+          }
+        ],
+        "comparisons": 268,
+        "exact_gains": 2,
+        "exact_losses": 0,
+        "observed_exit_code": 1,
+        "partial_selection_not_qualifying": true,
+        "results": {
+          "different": 125,
+          "errors": 0,
+          "exact": 143,
+          "profile_result_sha256": "01253a57ef6ae0c5958f7e9de0e396cd94d144d4ced66356eaa65ca75cc03000",
+          "total": 268
+        },
+        "summary_sha256": "f968e51b622c2be1a0259eb525417b0f7849e9c56ebfa295f0e09db87f2e9a8f",
+        "worsened_comparisons": 0
+      },
+      "expanded": {
+        "changed_comparisons": [
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "status",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": true,
+            "exact_loss": false,
+            "id": "wpt/css_overflow/input-scrollable-region-001",
+            "mismatched_pixels": 0,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 108,
+            "prior_status": "different",
+            "profile": "mobile-375x667@2",
+            "status": "exact"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_flexbox/flexbox-align-self-baseline-horiz-008",
+            "mismatched_pixels": 68,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 153,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_flexbox/flexbox-align-self-baseline-horiz-008-ref",
+            "mismatched_pixels": 68,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 153,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_overflow/input-scrollable-region-001",
+            "mismatched_pixels": 68,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 136,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_position/position-absolute-semi-replaced-stretch-input",
+            "mismatched_pixels": 904,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 920,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_position/position-absolute-semi-replaced-stretch-input-ref",
+            "mismatched_pixels": 904,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 920,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/block-size-with-min-or-max-content-1-ref",
+            "mismatched_pixels": 114,
+            "more_wrong_pixels": true,
+            "prior_mismatched_pixels": 57,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/block-size-with-min-or-max-content-1a",
+            "mismatched_pixels": 114,
+            "more_wrong_pixels": true,
+            "prior_mismatched_pixels": 57,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/block-size-with-min-or-max-content-1b",
+            "mismatched_pixels": 114,
+            "more_wrong_pixels": true,
+            "prior_mismatched_pixels": 57,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/max-content-input-001",
+            "mismatched_pixels": 1477,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 1977,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/max-content-input-001-ref",
+            "mismatched_pixels": 1364,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 1888,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/stretch_stretch-quirk-001",
+            "mismatched_pixels": 18,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 34,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "status",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": true,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/stretch_stretch-quirk-001-ref",
+            "mismatched_pixels": 0,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 16,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "exact"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "status",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": true,
+            "exact_loss": false,
+            "id": "wpt/css_overflow/input-scrollable-region-001",
+            "mismatched_pixels": 0,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 81,
+            "prior_status": "different",
+            "profile": "desktop-1920x1080@1.5",
+            "status": "exact"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/block-size-with-min-or-max-content-1-ref",
+            "mismatched_pixels": 406,
+            "more_wrong_pixels": true,
+            "prior_mismatched_pixels": 384,
+            "prior_status": "different",
+            "profile": "desktop-1920x1080@1.5",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/block-size-with-min-or-max-content-1a",
+            "mismatched_pixels": 406,
+            "more_wrong_pixels": true,
+            "prior_mismatched_pixels": 384,
+            "prior_status": "different",
+            "profile": "desktop-1920x1080@1.5",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/block-size-with-min-or-max-content-1b",
+            "mismatched_pixels": 406,
+            "more_wrong_pixels": true,
+            "prior_mismatched_pixels": 384,
+            "prior_status": "different",
+            "profile": "desktop-1920x1080@1.5",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/max-content-input-001",
+            "mismatched_pixels": 443,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 743,
+            "prior_status": "different",
+            "profile": "desktop-1920x1080@1.5",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/max-content-input-001-ref",
+            "mismatched_pixels": 1,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 301,
+            "prior_status": "different",
+            "profile": "desktop-1920x1080@1.5",
+            "status": "different"
+          }
+        ],
+        "comparisons": 23728,
+        "exact_gains": 3,
+        "exact_losses": 0,
+        "observed_exit_code": 1,
+        "partial_selection_not_qualifying": false,
+        "results": {
+          "different": 1588,
+          "errors": 0,
+          "exact": 22140,
+          "profile_result_sha256": "c7af9311f63dcdee675068a77dc2c7606b5d122ad2cca68fa4fb76473d211787",
+          "total": 23728
+        },
+        "summary_sha256": "bc97df04956311370665c2bbc87be225868d57663e5b0ab2427a38398a4dd045",
+        "worsened_comparisons": 6
+      },
+      "focused": {
+        "changed_comparisons": [],
+        "comparisons": 640,
+        "exact_gains": 0,
+        "exact_losses": 0,
+        "observed_exit_code": 0,
+        "partial_selection_not_qualifying": false,
+        "results": {
+          "different": 0,
+          "errors": 0,
+          "exact": 640,
+          "profile_result_sha256": "8d0c62c0e98b8fd9a517bdcdc04ba382bf15123371e8d2a4d9a9e80f20f0e395",
+          "total": 640
+        },
+        "summary_sha256": "d84106341a332525135d41e0446cdad45f23c0ca5ae83bb84547a3cc9280ac6c",
+        "worsened_comparisons": 0
+      },
+      "full": {
+        "changed_comparisons": [
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "status",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": true,
+            "exact_loss": false,
+            "id": "wpt/css_overflow/input-scrollable-region-001",
+            "mismatched_pixels": 0,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 108,
+            "prior_status": "different",
+            "profile": "mobile-375x667@2",
+            "status": "exact"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_flexbox/flexbox-align-self-baseline-horiz-008",
+            "mismatched_pixels": 68,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 153,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_flexbox/flexbox-align-self-baseline-horiz-008-ref",
+            "mismatched_pixels": 68,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 153,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_overflow/input-scrollable-region-001",
+            "mismatched_pixels": 68,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 136,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_position/position-absolute-semi-replaced-stretch-input",
+            "mismatched_pixels": 904,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 920,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_position/position-absolute-semi-replaced-stretch-input-ref",
+            "mismatched_pixels": 904,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 920,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/block-size-with-min-or-max-content-1-ref",
+            "mismatched_pixels": 114,
+            "more_wrong_pixels": true,
+            "prior_mismatched_pixels": 57,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/block-size-with-min-or-max-content-1a",
+            "mismatched_pixels": 114,
+            "more_wrong_pixels": true,
+            "prior_mismatched_pixels": 57,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/block-size-with-min-or-max-content-1b",
+            "mismatched_pixels": 114,
+            "more_wrong_pixels": true,
+            "prior_mismatched_pixels": 57,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/max-content-input-001",
+            "mismatched_pixels": 1477,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 1977,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/max-content-input-001-ref",
+            "mismatched_pixels": 1364,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 1888,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/stretch_stretch-quirk-001",
+            "mismatched_pixels": 18,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 34,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "status",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": true,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/stretch_stretch-quirk-001-ref",
+            "mismatched_pixels": 0,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 16,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "exact"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "status",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": true,
+            "exact_loss": false,
+            "id": "wpt/css_overflow/input-scrollable-region-001",
+            "mismatched_pixels": 0,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 81,
+            "prior_status": "different",
+            "profile": "desktop-1920x1080@1.5",
+            "status": "exact"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/block-size-with-min-or-max-content-1-ref",
+            "mismatched_pixels": 406,
+            "more_wrong_pixels": true,
+            "prior_mismatched_pixels": 384,
+            "prior_status": "different",
+            "profile": "desktop-1920x1080@1.5",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/block-size-with-min-or-max-content-1a",
+            "mismatched_pixels": 406,
+            "more_wrong_pixels": true,
+            "prior_mismatched_pixels": 384,
+            "prior_status": "different",
+            "profile": "desktop-1920x1080@1.5",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/block-size-with-min-or-max-content-1b",
+            "mismatched_pixels": 406,
+            "more_wrong_pixels": true,
+            "prior_mismatched_pixels": 384,
+            "prior_status": "different",
+            "profile": "desktop-1920x1080@1.5",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/max-content-input-001",
+            "mismatched_pixels": 443,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 743,
+            "prior_status": "different",
+            "profile": "desktop-1920x1080@1.5",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/max-content-input-001-ref",
+            "mismatched_pixels": 1,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 301,
+            "prior_status": "different",
+            "profile": "desktop-1920x1080@1.5",
+            "status": "different"
+          }
+        ],
+        "comparisons": 22924,
+        "exact_gains": 3,
+        "exact_losses": 0,
+        "observed_exit_code": 1,
+        "partial_selection_not_qualifying": false,
+        "results": {
+          "different": 1587,
+          "errors": 0,
+          "exact": 21337,
+          "profile_result_sha256": "a1ea47a570851ededa16d146a382e2d0de2c02cd8786dd1d5eff7ae71b49f3fc",
+          "total": 22924
+        },
+        "summary_sha256": "fef3c5a64affd0e85099e9a67d36203084928fc346679466fcdef6bea1397649",
+        "worsened_comparisons": 6
+      },
+      "primitive": {
+        "changed_comparisons": [],
+        "comparisons": 960,
+        "exact_gains": 0,
+        "exact_losses": 0,
+        "observed_exit_code": 0,
+        "partial_selection_not_qualifying": false,
+        "results": {
+          "different": 0,
+          "errors": 0,
+          "exact": 960,
+          "profile_result_sha256": "5119e9b0c957e9a96409f5f3d3d02ada4213b5f3c4f0b5bcdac855909a54e503",
+          "total": 960
+        },
+        "summary_sha256": "6d74f2e6cbcd43331efb30160c9553424ee36765be9f262c82e61756cca266a9",
+        "worsened_comparisons": 0
+      }
+    },
+    "native_reproducer_receipt_sha256": "f497a4d04e1843642ed0ad1f183171ab003b2b58faa61bd018966e081d5bd2ff",
+    "new_font_name_size_or_test_id_conditions": false,
+    "new_release_states_admitted": 0,
+    "observed_exit_code": 1,
+    "owner_pid": 719354,
+    "pixel_binary_sha256": "03e7354ceccbba2164b5315795f5bec906514301f1554a92e1d5800ea6da8be6",
+    "pixel_tolerance": 0,
+    "prior_receipt_sha256": "43aae6fe62775474058a71f5f42a19bba4a3e5c0fbbc6d4de7de8cf400c5365f",
+    "probe_sha256": "da6917ee16433527d0adf01db74987e760dd6e02ddd4c3c518054f4d1fb1b149",
+    "promotion_allowed": false,
+    "public_source": {
+      "clean": true,
+      "commit": "2827a03d2798eeee94eb75a9a2af358938e752b7",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "4624f2b6bb10c3478d8afa58cb7766eb238f947848402fb2e847528b4a049877",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "public_source_after": {
+      "clean": true,
+      "commit": "2827a03d2798eeee94eb75a9a2af358938e752b7",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "4624f2b6bb10c3478d8afa58cb7766eb238f947848402fb2e847528b4a049877",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "public_source_unchanged": true,
+    "release_qualification": false,
+    "same_clean_source_binary_reused": true,
+    "schema_version": 1,
+    "shared_native_editor_scrollport_changed": true,
+    "source": {
+      "clean": true,
+      "commit": "e0f0e57758d663cd8d3052cabbf546de67343826",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "7b0dc6d6c48ee6b674e3d837c7a3176629ccd4b242c182f4fc2cfc43e7139670",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "e0f0e57758d663cd8d3052cabbf546de67343826",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "7b0dc6d6c48ee6b674e3d837c7a3176629ccd4b242c182f4fc2cfc43e7139670",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_from_accepted_umbrella": true,
+    "source_unchanged": true,
+    "steps": [
+      {
+        "disk_guard_triggered": false,
+        "failed": 0,
+        "ignored": 0,
+        "log_sha256": "8dd6c93bc25aafb4b6c48854c7aab8e909271db3b89d3c8bbcc0dcc723766338",
+        "name": "full-matrix",
+        "observed_exit_code": 1,
+        "passed": 0
+      },
+      {
+        "disk_guard_triggered": false,
+        "failed": 0,
+        "ignored": 0,
+        "log_sha256": "521041b93e36d3a7528f17a2535842d360ff7c6d82aa3ae725014869e9176b20",
+        "name": "expanded-matrix",
+        "observed_exit_code": 1,
+        "passed": 0
+      }
+    ],
+    "tracked_diagnostic_png_unchanged": true
+  },
+  "fresh_libraries_own_parent_comparison": {
+    "changes": [
+      {
+        "baseline_wrong_pixels": 108,
+        "changed_fields": [
+          "openui_png_sha256",
+          "openui_rgba_sha256",
+          "status",
+          "mismatched_pixels",
+          "diff_signature"
+        ],
+        "exact_gain": true,
+        "exact_loss": false,
+        "id": "wpt/css_overflow/input-scrollable-region-001",
+        "more_wrong_pixels": false,
+        "profile": "mobile-375x667@2",
+        "wrong_pixels": 0
+      },
+      {
+        "baseline_wrong_pixels": 136,
+        "changed_fields": [
+          "openui_png_sha256",
+          "openui_rgba_sha256",
+          "mismatched_pixels",
+          "diff_signature"
+        ],
+        "exact_gain": false,
+        "exact_loss": false,
+        "id": "wpt/css_overflow/input-scrollable-region-001",
+        "more_wrong_pixels": false,
+        "profile": "desktop-1280x720@1.25",
+        "wrong_pixels": 68
+      },
+      {
+        "baseline_wrong_pixels": 920,
+        "changed_fields": [
+          "openui_png_sha256",
+          "openui_rgba_sha256",
+          "mismatched_pixels",
+          "diff_signature"
+        ],
+        "exact_gain": false,
+        "exact_loss": false,
+        "id": "wpt/css_position/position-absolute-semi-replaced-stretch-input",
+        "more_wrong_pixels": false,
+        "profile": "desktop-1280x720@1.25",
+        "wrong_pixels": 904
+      },
+      {
+        "baseline_wrong_pixels": 920,
+        "changed_fields": [
+          "openui_png_sha256",
+          "openui_rgba_sha256",
+          "mismatched_pixels",
+          "diff_signature"
+        ],
+        "exact_gain": false,
+        "exact_loss": false,
+        "id": "wpt/css_position/position-absolute-semi-replaced-stretch-input-ref",
+        "more_wrong_pixels": false,
+        "profile": "desktop-1280x720@1.25",
+        "wrong_pixels": 904
+      },
+      {
+        "baseline_wrong_pixels": 1977,
+        "changed_fields": [
+          "openui_png_sha256",
+          "openui_rgba_sha256",
+          "mismatched_pixels",
+          "diff_signature"
+        ],
+        "exact_gain": false,
+        "exact_loss": false,
+        "id": "wpt/css_sizing/max-content-input-001",
+        "more_wrong_pixels": false,
+        "profile": "desktop-1280x720@1.25",
+        "wrong_pixels": 1477
+      },
+      {
+        "baseline_wrong_pixels": 1888,
+        "changed_fields": [
+          "openui_png_sha256",
+          "openui_rgba_sha256",
+          "mismatched_pixels",
+          "diff_signature"
+        ],
+        "exact_gain": false,
+        "exact_loss": false,
+        "id": "wpt/css_sizing/max-content-input-001-ref",
+        "more_wrong_pixels": false,
+        "profile": "desktop-1280x720@1.25",
+        "wrong_pixels": 1364
+      },
+      {
+        "baseline_wrong_pixels": 34,
+        "changed_fields": [
+          "openui_png_sha256",
+          "openui_rgba_sha256",
+          "mismatched_pixels",
+          "diff_signature"
+        ],
+        "exact_gain": false,
+        "exact_loss": false,
+        "id": "wpt/css_sizing/stretch_stretch-quirk-001",
+        "more_wrong_pixels": false,
+        "profile": "desktop-1280x720@1.25",
+        "wrong_pixels": 18
+      },
+      {
+        "baseline_wrong_pixels": 16,
+        "changed_fields": [
+          "openui_png_sha256",
+          "openui_rgba_sha256",
+          "status",
+          "mismatched_pixels",
+          "diff_signature"
+        ],
+        "exact_gain": true,
+        "exact_loss": false,
+        "id": "wpt/css_sizing/stretch_stretch-quirk-001-ref",
+        "more_wrong_pixels": false,
+        "profile": "desktop-1280x720@1.25",
+        "wrong_pixels": 0
+      },
+      {
+        "baseline_wrong_pixels": 81,
+        "changed_fields": [
+          "openui_png_sha256",
+          "openui_rgba_sha256",
+          "status",
+          "mismatched_pixels",
+          "diff_signature"
+        ],
+        "exact_gain": true,
+        "exact_loss": false,
+        "id": "wpt/css_overflow/input-scrollable-region-001",
+        "more_wrong_pixels": false,
+        "profile": "desktop-1920x1080@1.5",
+        "wrong_pixels": 0
+      },
+      {
+        "baseline_wrong_pixels": 743,
+        "changed_fields": [
+          "openui_png_sha256",
+          "openui_rgba_sha256",
+          "mismatched_pixels",
+          "diff_signature"
+        ],
+        "exact_gain": false,
+        "exact_loss": false,
+        "id": "wpt/css_sizing/max-content-input-001",
+        "more_wrong_pixels": false,
+        "profile": "desktop-1920x1080@1.5",
+        "wrong_pixels": 443
+      },
+      {
+        "baseline_wrong_pixels": 301,
+        "changed_fields": [
+          "openui_png_sha256",
+          "openui_rgba_sha256",
+          "mismatched_pixels",
+          "diff_signature"
+        ],
+        "exact_gain": false,
+        "exact_loss": false,
+        "id": "wpt/css_sizing/max-content-input-001-ref",
+        "more_wrong_pixels": false,
+        "profile": "desktop-1920x1080@1.5",
+        "wrong_pixels": 1
+      }
+    ],
+    "comparisons": 48,
+    "exact_gains": 3,
+    "exact_losses": 0,
+    "more_wrong_comparisons": 0,
+    "selected_diagnostic_not_full_main_census": true
+  },
+  "full_census_individual_image_caches_not_duplicated": true,
+  "full_census_summaries_archived": true,
+  "full_gates_failed": true,
+  "interrupted_renderer_gates": {
+    "all_commands_terminal": true,
+    "build_identity": {
+      "schema_version": 1,
+      "skia_gn_args": "extra_cflags += [ \"-DSK_SUPPORT_LEGACY_CONIC_CHOP\", \"-DSK_ENABLE_LEGACY_SHADERCONTEXT\", \"-DSK_USE_FREETYPE_EMBOLDEN\", \"-DSK_GAMMA_EXPONENT=1.2\", \"-DSK_GAMMA_CONTRAST=0.2\", \"-fno-strict-aliasing\", \"-msse3\", \"--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot\" ]",
+      "source": {
+        "clean": true,
+        "commit": "e0f0e57758d663cd8d3052cabbf546de67343826",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "7b0dc6d6c48ee6b674e3d837c7a3176629ccd4b242c182f4fc2cfc43e7139670",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "clears_authored_line_height_under_chromium_conditions": true,
+    "complete_renderer_matrices_not_run": true,
+    "failure": "",
+    "font_raster_policy_changed": false,
+    "javascript_executed_by_openui": false,
+    "matrices": {
+      "control-and-text-neighbors": {
+        "changed_comparisons": [
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "status",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": true,
+            "exact_loss": false,
+            "id": "wpt/css_overflow/input-scrollable-region-001",
+            "mismatched_pixels": 0,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 108,
+            "prior_status": "different",
+            "profile": "mobile-375x667@2",
+            "status": "exact"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_overflow/input-scrollable-region-001",
+            "mismatched_pixels": 68,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 136,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_position/position-absolute-semi-replaced-stretch-input",
+            "mismatched_pixels": 904,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 920,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_position/position-absolute-semi-replaced-stretch-input-ref",
+            "mismatched_pixels": 904,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 920,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/max-content-input-001",
+            "mismatched_pixels": 1477,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 1977,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/max-content-input-001-ref",
+            "mismatched_pixels": 1364,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 1888,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "status",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": true,
+            "exact_loss": false,
+            "id": "wpt/css_overflow/input-scrollable-region-001",
+            "mismatched_pixels": 0,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 81,
+            "prior_status": "different",
+            "profile": "desktop-1920x1080@1.5",
+            "status": "exact"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/max-content-input-001",
+            "mismatched_pixels": 443,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 743,
+            "prior_status": "different",
+            "profile": "desktop-1920x1080@1.5",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/max-content-input-001-ref",
+            "mismatched_pixels": 1,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 301,
+            "prior_status": "different",
+            "profile": "desktop-1920x1080@1.5",
+            "status": "different"
+          }
+        ],
+        "comparisons": 268,
+        "exact_gains": 2,
+        "exact_losses": 0,
+        "observed_exit_code": 1,
+        "partial_selection_not_qualifying": true,
+        "results": {
+          "different": 125,
+          "errors": 0,
+          "exact": 143,
+          "profile_result_sha256": "01253a57ef6ae0c5958f7e9de0e396cd94d144d4ced66356eaa65ca75cc03000",
+          "total": 268
+        },
+        "summary_sha256": "f968e51b622c2be1a0259eb525417b0f7849e9c56ebfa295f0e09db87f2e9a8f",
+        "worsened_comparisons": 0
+      },
+      "focused": {
+        "changed_comparisons": [],
+        "comparisons": 640,
+        "exact_gains": 0,
+        "exact_losses": 0,
+        "observed_exit_code": 0,
+        "partial_selection_not_qualifying": false,
+        "results": {
+          "different": 0,
+          "errors": 0,
+          "exact": 640,
+          "profile_result_sha256": "8d0c62c0e98b8fd9a517bdcdc04ba382bf15123371e8d2a4d9a9e80f20f0e395",
+          "total": 640
+        },
+        "summary_sha256": "d84106341a332525135d41e0446cdad45f23c0ca5ae83bb84547a3cc9280ac6c",
+        "worsened_comparisons": 0
+      },
+      "primitive": {
+        "changed_comparisons": [],
+        "comparisons": 960,
+        "exact_gains": 0,
+        "exact_losses": 0,
+        "observed_exit_code": 0,
+        "partial_selection_not_qualifying": false,
+        "results": {
+          "different": 0,
+          "errors": 0,
+          "exact": 960,
+          "profile_result_sha256": "5119e9b0c957e9a96409f5f3d3d02ada4213b5f3c4f0b5bcdac855909a54e503",
+          "total": 960
+        },
+        "summary_sha256": "6d74f2e6cbcd43331efb30160c9553424ee36765be9f262c82e61756cca266a9",
+        "worsened_comparisons": 0
+      }
+    },
+    "native_reproducer_receipt_sha256": "f497a4d04e1843642ed0ad1f183171ab003b2b58faa61bd018966e081d5bd2ff",
+    "new_font_name_size_or_test_id_conditions": false,
+    "new_release_states_admitted": 0,
+    "observed_exit_code": 1,
+    "owner_pid": 691812,
+    "pixel_binary_sha256": "03e7354ceccbba2164b5315795f5bec906514301f1554a92e1d5800ea6da8be6",
+    "pixel_tolerance": 0,
+    "probe_sha256": "a6b3809a929d53e60223466690739d8eab82852b9dbe7507644da7c51250ea3f",
+    "promotion_allowed": false,
+    "public_source": {
+      "clean": true,
+      "commit": "2827a03d2798eeee94eb75a9a2af358938e752b7",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "4624f2b6bb10c3478d8afa58cb7766eb238f947848402fb2e847528b4a049877",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "public_source_after": {
+      "clean": true,
+      "commit": "2827a03d2798eeee94eb75a9a2af358938e752b7",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "4624f2b6bb10c3478d8afa58cb7766eb238f947848402fb2e847528b4a049877",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "public_source_unchanged": true,
+    "release_qualification": false,
+    "schema_version": 1,
+    "selected_control_and_text_ids": [
+      "wpt/css_backgrounds/first-letter-space-not-selected",
+      "wpt/css_break/flexbox_button-in-multicol-crash",
+      "wpt/css_break/flexbox_textarea-input-flex-items-in-multicol-crash",
+      "wpt/css_break/form-control",
+      "wpt/css_display/display-contents-button",
+      "wpt/css_display/select-4-option-optgroup-display-none",
+      "wpt/css_display/select-4-option-optgroup-display-none-ref",
+      "wpt/css_flexbox/button-column-wrap-crash",
+      "wpt/css_flexbox/flexbox-basic-textarea-horiz-001",
+      "wpt/css_flexbox/flexbox-basic-textarea-horiz-001-ref",
+      "wpt/css_flexbox/flexbox-basic-textarea-vert-001",
+      "wpt/css_flexbox/flexbox-basic-textarea-vert-001-ref",
+      "wpt/css_flexbox/select-element-multiple",
+      "wpt/css_flexbox/select-element-multiple-ref",
+      "wpt/css_flexbox/select-element-zero-height-001",
+      "wpt/css_flexbox/select-element-zero-height-001-ref",
+      "wpt/css_flexbox/select-element-zero-height-002",
+      "wpt/css_flexbox/select-element-zero-height-002-ref",
+      "wpt/css_flexbox/stretch-flex-item-checkbox-input",
+      "wpt/css_flexbox/stretch-flex-item-checkbox-input-ref",
+      "wpt/css_flexbox/stretch-flex-item-radio-input",
+      "wpt/css_flexbox/stretch-flex-item-radio-input-ref",
+      "wpt/css_flexbox/stretch-input-in-column",
+      "wpt/css_multicol/multicol-span-all-button-001",
+      "wpt/css_multicol/multicol-span-all-button-001-ref",
+      "wpt/css_multicol/multicol-span-all-button-002",
+      "wpt/css_multicol/multicol-span-all-button-002-ref",
+      "wpt/css_multicol/multicol-span-all-button-003",
+      "wpt/css_multicol/multicol-span-all-button-003-ref",
+      "wpt/css_overflow/input-scrollable-region-001",
+      "wpt/css_overflow/scroll-markers_root-scroll-button",
+      "wpt/css_overflow/scroll-markers_root-scroll-button-ref",
+      "wpt/css_overflow/scroll-markers_scroll-button-on-object-ref",
+      "wpt/css_overflow/scroll-markers_scroll-buttons-001",
+      "wpt/css_overflow/scroll-markers_scroll-buttons-001-ref",
+      "wpt/css_overflow/scroll-markers_scroll-buttons-003",
+      "wpt/css_overflow/scroll-markers_scroll-buttons-004",
+      "wpt/css_overflow/scroll-markers_scroll-buttons-appearance",
+      "wpt/css_overflow/scroll-markers_scroll-buttons-appearance-ref",
+      "wpt/css_overflow/scroll-markers_scroll-buttons-container-query-crash",
+      "wpt/css_overflow/scroll-markers_scroll-buttons-enabled",
+      "wpt/css_overflow/scroll-markers_scroll-buttons-enabled-ref",
+      "wpt/css_overflow/scroll-markers_scroll-buttons-enabled-rtl",
+      "wpt/css_overflow/scroll-markers_scroll-buttons-enabled-rtl-ref",
+      "wpt/css_overflow/scroll-markers_scroll-buttons-enabled-vertical-ltr",
+      "wpt/css_overflow/scroll-markers_scroll-buttons-enabled-vertical-ltr-ref",
+      "wpt/css_overflow/scroll-markers_scroll-buttons-layout-parent",
+      "wpt/css_overflow/scroll-markers_scroll-marker-selection-in-2d",
+      "wpt/css_overflow/scroll-markers_scroll-marker-selection-in-2d-ref",
+      "wpt/css_overflow/scroll-markers_scroll-markers-inside-select-crash",
+      "wpt/css_overflow/scroll-markers_targeted-column-scroll-marker-selection-001-ref",
+      "wpt/css_overflow/scroll-markers_targeted-column-scroll-marker-selection-002-ref",
+      "wpt/css_overflow/scroll-markers_targeted-column-scroll-marker-selection-003-ref",
+      "wpt/css_overflow/scroll-markers_targeted-column-scroll-marker-selection-004-ref",
+      "wpt/css_overflow/scrollable-overflow-input-001-ref",
+      "wpt/css_overflow/scrollable-overflow-input-002-ref",
+      "wpt/css_overflow/text-overflow-ellipsis-editing-input-ref",
+      "wpt/css_position/containing-block-change-button-ref",
+      "wpt/css_position/overlay_overlay-button-appearance-ref",
+      "wpt/css_position/position-absolute-semi-replaced-stretch-button",
+      "wpt/css_position/position-absolute-semi-replaced-stretch-button-ref",
+      "wpt/css_position/position-absolute-semi-replaced-stretch-input",
+      "wpt/css_position/position-absolute-semi-replaced-stretch-input-ref",
+      "wpt/css_position/resources_position-sticky-fixed-ancestor-iframe-child",
+      "wpt/css_position/sticky_position-sticky-fixed-ancestor-003",
+      "wpt/css_sizing/max-content-input-001",
+      "wpt/css_sizing/max-content-input-001-ref"
+    ],
+    "shared_native_editor_scrollport_changed": true,
+    "source": {
+      "clean": true,
+      "commit": "e0f0e57758d663cd8d3052cabbf546de67343826",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "7b0dc6d6c48ee6b674e3d837c7a3176629ccd4b242c182f4fc2cfc43e7139670",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "e0f0e57758d663cd8d3052cabbf546de67343826",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "7b0dc6d6c48ee6b674e3d837c7a3176629ccd4b242c182f4fc2cfc43e7139670",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_from_accepted_umbrella": true,
+    "source_unchanged": true,
+    "steps": [
+      {
+        "disk_guard_triggered": false,
+        "failed": 0,
+        "ignored": 0,
+        "log_sha256": "2edfe30151907f8b03d1ad745e9e727c2f7c4a3f67d5d68ac41b3c63a4709a14",
+        "name": "locked-metadata",
+        "observed_exit_code": 0,
+        "passed": 0
+      },
+      {
+        "disk_guard_triggered": false,
+        "failed": 0,
+        "ignored": 0,
+        "log_sha256": "6d7bc42784d1e02257350bee7d52b01eb0db0e548c4a1c608eff52f08152b9f9",
+        "name": "clean-pixel-package",
+        "observed_exit_code": 0,
+        "passed": 0
+      },
+      {
+        "disk_guard_triggered": false,
+        "failed": 0,
+        "ignored": 0,
+        "log_sha256": "f08065873c704c39ac9ea224d7b52927abbd232fbf1494b4d172de5fa3f786fa",
+        "name": "pixel-build",
+        "observed_exit_code": 0,
+        "passed": 0
+      },
+      {
+        "disk_guard_triggered": false,
+        "failed": 0,
+        "ignored": 0,
+        "log_sha256": "c878e83310ad563eb88c42a31d7f9481d26671cdd61dc6a36310fe507a22e8ba",
+        "name": "control-and-text-neighbors-matrix",
+        "observed_exit_code": 1,
+        "passed": 0
+      },
+      {
+        "disk_guard_triggered": false,
+        "failed": 0,
+        "ignored": 0,
+        "log_sha256": "af9c0870bfbe2897d681321da04151c12c1de4321668231722f628fb1f0c8457",
+        "name": "focused-matrix",
+        "observed_exit_code": 0,
+        "passed": 0
+      },
+      {
+        "disk_guard_triggered": false,
+        "failed": 0,
+        "ignored": 0,
+        "log_sha256": "954157495294c875b1e676af48df92c4e4582ec2a1aaf08ecedbbd2931adb46b",
+        "name": "primitive-matrix",
+        "observed_exit_code": 0,
+        "passed": 0
+      },
+      {
+        "disk_guard_triggered": true,
+        "failed": 0,
+        "ignored": 0,
+        "log_sha256": "1811e917b436af045402068d2e65369ef2268e5b452f94216bbec7e947dfdd6b",
+        "name": "full-matrix",
+        "observed_exit_code": -15,
+        "passed": 0
+      }
+    ],
+    "tracked_diagnostic_png_unchanged": true
+  },
+  "javascript_executed_by_openui": false,
+  "latest_geometry_exact": 30,
+  "latest_images_exact": 28,
+  "no_new_release_state_admitted": true,
+  "own_parent_comparisons": [
+    {
+      "after_receipt_sha256": "8ef713594bff2dd375b6ca618343f3574bbf8bf6759e4c9962502115ba452821",
+      "after_source": {
+        "clean": true,
+        "commit": "a062ef3c38cadcc6276848aa9eca0e02d2bd4309",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "dc9d60f2d42223a81fa4afd0de383c8d600c3ed832a099431f025f2c412ed30f",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "before_receipt_sha256": "db4ab9eca4d178465112f2eb86858c48a722669291013d60b6c31b8db2bfe3f7",
+      "before_source": {
+        "clean": true,
+        "commit": "e811f3d9a9c8f12c49a2ad918e763c72f042a2b9",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "497194a3a2beebf3e2452702e029e2986b18ae7d2afd764e717c99a6f8b0158d",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "changed_states": [
+        {
+          "exact_gain": false,
+          "exact_loss": true,
+          "label": "input-legacy",
+          "more_wrong_pixels": true,
+          "prior_wrong_pixels": 0,
+          "state": "before",
+          "wrong_pixels": 181
+        },
+        {
+          "exact_gain": false,
+          "exact_loss": true,
+          "label": "input-legacy",
+          "more_wrong_pixels": true,
+          "prior_wrong_pixels": 0,
+          "state": "after",
+          "wrong_pixels": 181
+        },
+        {
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-mobile",
+          "more_wrong_pixels": true,
+          "prior_wrong_pixels": 108,
+          "state": "before",
+          "wrong_pixels": 572
+        },
+        {
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-mobile",
+          "more_wrong_pixels": true,
+          "prior_wrong_pixels": 108,
+          "state": "after",
+          "wrong_pixels": 572
+        },
+        {
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-desktop",
+          "more_wrong_pixels": true,
+          "prior_wrong_pixels": 136,
+          "state": "before",
+          "wrong_pixels": 351
+        },
+        {
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-desktop",
+          "more_wrong_pixels": true,
+          "prior_wrong_pixels": 136,
+          "state": "after",
+          "wrong_pixels": 333
+        },
+        {
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-large",
+          "more_wrong_pixels": true,
+          "prior_wrong_pixels": 81,
+          "state": "before",
+          "wrong_pixels": 350
+        },
+        {
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-large",
+          "more_wrong_pixels": true,
+          "prior_wrong_pixels": 81,
+          "state": "after",
+          "wrong_pixels": 428
+        },
+        {
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-triple",
+          "more_wrong_pixels": true,
+          "prior_wrong_pixels": 162,
+          "state": "before",
+          "wrong_pixels": 1023
+        },
+        {
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-triple",
+          "more_wrong_pixels": true,
+          "prior_wrong_pixels": 162,
+          "state": "after",
+          "wrong_pixels": 1023
+        }
+      ],
+      "gains": 0,
+      "label": "rejected_native_text_policy",
+      "losses": 2,
+      "more_wrong_states": 10,
+      "prior_totals": {
+        "different_images": 10,
+        "exact_geometry": 30,
+        "exact_images": 20,
+        "geometry_states": 30,
+        "image_states": 30
+      },
+      "totals": {
+        "different_images": 12,
+        "exact_geometry": 30,
+        "exact_images": 18,
+        "geometry_states": 30,
+        "image_states": 30
+      }
+    },
+    {
+      "after_receipt_sha256": "baa55658180b190ddf5ae9442b7f3b3ccbfcb0e1875e8c6fe26c97d96cd4f1c9",
+      "after_source": {
+        "clean": true,
+        "commit": "31def4493cd199027694c4e47e05068366cae1ec",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "7c0e882b4871e50f8ac6f43f5351bbe664e8766fd966f378a1e730b0381997e1",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "before_receipt_sha256": "db4ab9eca4d178465112f2eb86858c48a722669291013d60b6c31b8db2bfe3f7",
+      "before_source": {
+        "clean": true,
+        "commit": "e811f3d9a9c8f12c49a2ad918e763c72f042a2b9",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "497194a3a2beebf3e2452702e029e2986b18ae7d2afd764e717c99a6f8b0158d",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "changed_states": [
+        {
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-mobile",
+          "more_wrong_pixels": false,
+          "prior_wrong_pixels": 108,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-mobile",
+          "more_wrong_pixels": false,
+          "prior_wrong_pixels": 108,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-desktop",
+          "more_wrong_pixels": false,
+          "prior_wrong_pixels": 136,
+          "state": "before",
+          "wrong_pixels": 68
+        },
+        {
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-desktop",
+          "more_wrong_pixels": false,
+          "prior_wrong_pixels": 136,
+          "state": "after",
+          "wrong_pixels": 68
+        },
+        {
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-large",
+          "more_wrong_pixels": false,
+          "prior_wrong_pixels": 81,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-large",
+          "more_wrong_pixels": false,
+          "prior_wrong_pixels": 81,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-triple",
+          "more_wrong_pixels": false,
+          "prior_wrong_pixels": 162,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-triple",
+          "more_wrong_pixels": false,
+          "prior_wrong_pixels": 162,
+          "state": "after",
+          "wrong_pixels": 0
+        }
+      ],
+      "gains": 6,
+      "label": "editor_clip_on_em_outline_trial",
+      "losses": 0,
+      "more_wrong_states": 0,
+      "prior_totals": {
+        "different_images": 10,
+        "exact_geometry": 30,
+        "exact_images": 20,
+        "geometry_states": 30,
+        "image_states": 30
+      },
+      "totals": {
+        "different_images": 4,
+        "exact_geometry": 30,
+        "exact_images": 26,
+        "geometry_states": 30,
+        "image_states": 30
+      }
+    },
+    {
+      "after_receipt_sha256": "f497a4d04e1843642ed0ad1f183171ab003b2b58faa61bd018966e081d5bd2ff",
+      "after_source": {
+        "clean": true,
+        "commit": "e0f0e57758d663cd8d3052cabbf546de67343826",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "7b0dc6d6c48ee6b674e3d837c7a3176629ccd4b242c182f4fc2cfc43e7139670",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "before_receipt_sha256": "2bf0b3a9c20b7a3d94a82f0b5c690181852535450841736dd0dc0d98b2cfae49",
+      "before_source": {
+        "clean": true,
+        "commit": "2827a03d2798eeee94eb75a9a2af358938e752b7",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "4624f2b6bb10c3478d8afa58cb7766eb238f947848402fb2e847528b4a049877",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "changed_states": [
+        {
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-mobile",
+          "more_wrong_pixels": false,
+          "prior_wrong_pixels": 108,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-mobile",
+          "more_wrong_pixels": false,
+          "prior_wrong_pixels": 108,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-desktop",
+          "more_wrong_pixels": false,
+          "prior_wrong_pixels": 136,
+          "state": "before",
+          "wrong_pixels": 68
+        },
+        {
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-desktop",
+          "more_wrong_pixels": false,
+          "prior_wrong_pixels": 136,
+          "state": "after",
+          "wrong_pixels": 68
+        },
+        {
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-large",
+          "more_wrong_pixels": false,
+          "prior_wrong_pixels": 81,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-large",
+          "more_wrong_pixels": false,
+          "prior_wrong_pixels": 81,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-triple",
+          "more_wrong_pixels": false,
+          "prior_wrong_pixels": 162,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-triple",
+          "more_wrong_pixels": false,
+          "prior_wrong_pixels": 162,
+          "state": "after",
+          "wrong_pixels": 0
+        }
+      ],
+      "gains": 6,
+      "label": "editor_clip_on_accepted_renderer",
+      "losses": 0,
+      "more_wrong_states": 0,
+      "prior_totals": {
+        "different_images": 8,
+        "exact_geometry": 30,
+        "exact_images": 22,
+        "geometry_states": 30,
+        "image_states": 30
+      },
+      "totals": {
+        "different_images": 2,
+        "exact_geometry": 30,
+        "exact_images": 28,
+        "geometry_states": 30,
+        "image_states": 30
+      }
+    }
+  ],
+  "pixel_tolerance": 0,
+  "probe_sha256": "dc16d7eaf4916c07dd904b3019b71e09518dde0fae551b8a62c61b8c305a7aa4",
+  "promotion_allowed": false,
+  "public_native_api_signatures_changed": false,
+  "public_source": {
+    "clean": true,
+    "commit": "2827a03d2798eeee94eb75a9a2af358938e752b7",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "4624f2b6bb10c3478d8afa58cb7766eb238f947848402fb2e847528b4a049877",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "release_qualification": false,
+  "remaining_native_residuals": [
+    {
+      "bounds": {
+        "height": 1,
+        "width": 68,
+        "x": 39,
+        "y": 54
+      },
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 68,
+            "maximum_absolute_delta": 255,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": -255,
+            "signed_delta_sum": -17340
+          },
+          "green": {
+            "changed_pixels": 68,
+            "maximum_absolute_delta": 255,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": -255,
+            "signed_delta_sum": -17340
+          },
+          "red": {
+            "changed_pixels": 68,
+            "maximum_absolute_delta": 255,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": -255,
+            "signed_delta_sum": -17340
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 68,
+              "x": 39,
+              "y": 54
+            },
+            "mismatched_pixels": 68
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 1,
+          "width": 68,
+          "x": 39,
+          "y": 54
+        },
+        "mismatched_pixels": 68
+      },
+      "label": "input-desktop",
+      "precise_remaining_glyph_mask_root_cause": "open",
+      "reviewed_owner": "text-and-paint; native-control editor",
+      "rgba_pairs": [
+        {
+          "chromium": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "native": [
+            0,
+            0,
+            0,
+            255
+          ],
+          "pixels": 68
+        }
+      ],
+      "scale": 1.25,
+      "state": "before"
+    },
+    {
+      "bounds": {
+        "height": 1,
+        "width": 68,
+        "x": 40,
+        "y": 55
+      },
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 68,
+            "maximum_absolute_delta": 255,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": -255,
+            "signed_delta_sum": -17340
+          },
+          "green": {
+            "changed_pixels": 68,
+            "maximum_absolute_delta": 255,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": -255,
+            "signed_delta_sum": -17340
+          },
+          "red": {
+            "changed_pixels": 68,
+            "maximum_absolute_delta": 255,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": -255,
+            "signed_delta_sum": -17340
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 68,
+              "x": 40,
+              "y": 55
+            },
+            "mismatched_pixels": 68
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 1,
+          "width": 68,
+          "x": 40,
+          "y": 55
+        },
+        "mismatched_pixels": 68
+      },
+      "label": "input-desktop",
+      "precise_remaining_glyph_mask_root_cause": "open",
+      "reviewed_owner": "text-and-paint; native-control editor",
+      "rgba_pairs": [
+        {
+          "chromium": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "native": [
+            0,
+            0,
+            0,
+            255
+          ],
+          "pixels": 68
+        }
+      ],
+      "scale": 1.25,
+      "state": "after"
+    }
+  ],
+  "renderer_gates": {
+    "all_commands_terminal": true,
+    "all_nine_linked_workspace_crates_freshly_compiled_from_measured_sdk": true,
+    "build_identity": {
+      "schema_version": 1,
+      "skia_gn_args": "extra_cflags += [ \"-DSK_SUPPORT_LEGACY_CONIC_CHOP\", \"-DSK_ENABLE_LEGACY_SHADERCONTEXT\", \"-DSK_USE_FREETYPE_EMBOLDEN\", \"-DSK_GAMMA_EXPONENT=1.2\", \"-DSK_GAMMA_CONTRAST=0.2\", \"-fno-strict-aliasing\", \"-msse3\", \"--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot\" ]",
+      "source": {
+        "clean": true,
+        "commit": "e0f0e57758d663cd8d3052cabbf546de67343826",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "7b0dc6d6c48ee6b674e3d837c7a3176629ccd4b242c182f4fc2cfc43e7139670",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "cleaned_workspace_packages": [
+      "openui-geometry",
+      "openui-style",
+      "openui-dom",
+      "openui-text",
+      "openui-layout",
+      "openui-paint",
+      "openui-compositor",
+      "openui-engine",
+      "openui-platform",
+      "openui-ffi",
+      "openui",
+      "openui-macros",
+      "hello",
+      "counter",
+      "todo",
+      "dashboard",
+      "framework-test",
+      "pixel-compare"
+    ],
+    "clears_authored_line_height_under_chromium_conditions": true,
+    "clip_vs_fresh_main_selection": {
+      "changes": [
+        {
+          "baseline_wrong_pixels": 108,
+          "changed_fields": [
+            "openui_png_sha256",
+            "openui_rgba_sha256",
+            "status",
+            "mismatched_pixels",
+            "diff_signature"
+          ],
+          "exact_gain": true,
+          "exact_loss": false,
+          "id": "wpt/css_overflow/input-scrollable-region-001",
+          "more_wrong_pixels": false,
+          "profile": "mobile-375x667@2",
+          "wrong_pixels": 0
+        },
+        {
+          "baseline_wrong_pixels": 136,
+          "changed_fields": [
+            "openui_png_sha256",
+            "openui_rgba_sha256",
+            "mismatched_pixels",
+            "diff_signature"
+          ],
+          "exact_gain": false,
+          "exact_loss": false,
+          "id": "wpt/css_overflow/input-scrollable-region-001",
+          "more_wrong_pixels": false,
+          "profile": "desktop-1280x720@1.25",
+          "wrong_pixels": 68
+        },
+        {
+          "baseline_wrong_pixels": 920,
+          "changed_fields": [
+            "openui_png_sha256",
+            "openui_rgba_sha256",
+            "mismatched_pixels",
+            "diff_signature"
+          ],
+          "exact_gain": false,
+          "exact_loss": false,
+          "id": "wpt/css_position/position-absolute-semi-replaced-stretch-input",
+          "more_wrong_pixels": false,
+          "profile": "desktop-1280x720@1.25",
+          "wrong_pixels": 904
+        },
+        {
+          "baseline_wrong_pixels": 920,
+          "changed_fields": [
+            "openui_png_sha256",
+            "openui_rgba_sha256",
+            "mismatched_pixels",
+            "diff_signature"
+          ],
+          "exact_gain": false,
+          "exact_loss": false,
+          "id": "wpt/css_position/position-absolute-semi-replaced-stretch-input-ref",
+          "more_wrong_pixels": false,
+          "profile": "desktop-1280x720@1.25",
+          "wrong_pixels": 904
+        },
+        {
+          "baseline_wrong_pixels": 1977,
+          "changed_fields": [
+            "openui_png_sha256",
+            "openui_rgba_sha256",
+            "mismatched_pixels",
+            "diff_signature"
+          ],
+          "exact_gain": false,
+          "exact_loss": false,
+          "id": "wpt/css_sizing/max-content-input-001",
+          "more_wrong_pixels": false,
+          "profile": "desktop-1280x720@1.25",
+          "wrong_pixels": 1477
+        },
+        {
+          "baseline_wrong_pixels": 1888,
+          "changed_fields": [
+            "openui_png_sha256",
+            "openui_rgba_sha256",
+            "mismatched_pixels",
+            "diff_signature"
+          ],
+          "exact_gain": false,
+          "exact_loss": false,
+          "id": "wpt/css_sizing/max-content-input-001-ref",
+          "more_wrong_pixels": false,
+          "profile": "desktop-1280x720@1.25",
+          "wrong_pixels": 1364
+        },
+        {
+          "baseline_wrong_pixels": 34,
+          "changed_fields": [
+            "openui_png_sha256",
+            "openui_rgba_sha256",
+            "mismatched_pixels",
+            "diff_signature"
+          ],
+          "exact_gain": false,
+          "exact_loss": false,
+          "id": "wpt/css_sizing/stretch_stretch-quirk-001",
+          "more_wrong_pixels": false,
+          "profile": "desktop-1280x720@1.25",
+          "wrong_pixels": 18
+        },
+        {
+          "baseline_wrong_pixels": 16,
+          "changed_fields": [
+            "openui_png_sha256",
+            "openui_rgba_sha256",
+            "status",
+            "mismatched_pixels",
+            "diff_signature"
+          ],
+          "exact_gain": true,
+          "exact_loss": false,
+          "id": "wpt/css_sizing/stretch_stretch-quirk-001-ref",
+          "more_wrong_pixels": false,
+          "profile": "desktop-1280x720@1.25",
+          "wrong_pixels": 0
+        },
+        {
+          "baseline_wrong_pixels": 81,
+          "changed_fields": [
+            "openui_png_sha256",
+            "openui_rgba_sha256",
+            "status",
+            "mismatched_pixels",
+            "diff_signature"
+          ],
+          "exact_gain": true,
+          "exact_loss": false,
+          "id": "wpt/css_overflow/input-scrollable-region-001",
+          "more_wrong_pixels": false,
+          "profile": "desktop-1920x1080@1.5",
+          "wrong_pixels": 0
+        },
+        {
+          "baseline_wrong_pixels": 743,
+          "changed_fields": [
+            "openui_png_sha256",
+            "openui_rgba_sha256",
+            "mismatched_pixels",
+            "diff_signature"
+          ],
+          "exact_gain": false,
+          "exact_loss": false,
+          "id": "wpt/css_sizing/max-content-input-001",
+          "more_wrong_pixels": false,
+          "profile": "desktop-1920x1080@1.5",
+          "wrong_pixels": 443
+        },
+        {
+          "baseline_wrong_pixels": 301,
+          "changed_fields": [
+            "openui_png_sha256",
+            "openui_rgba_sha256",
+            "mismatched_pixels",
+            "diff_signature"
+          ],
+          "exact_gain": false,
+          "exact_loss": false,
+          "id": "wpt/css_sizing/max-content-input-001-ref",
+          "more_wrong_pixels": false,
+          "profile": "desktop-1920x1080@1.5",
+          "wrong_pixels": 1
+        }
+      ],
+      "comparisons": 48,
+      "exact_gains": 3,
+      "exact_losses": 0,
+      "more_wrong_comparisons": 0,
+      "selected_diagnostic_not_full_main_census": true
+    },
+    "complete_renderer_matrices_not_run": false,
+    "earlier_build_dependency_provenance_not_established": true,
+    "font_raster_policy_changed": false,
+    "fresh_main_baseline_receipt_sha256": "dc4d5df410c2360ef91e7295b29397dc959770036d600a99860fe09b372b7459",
+    "javascript_executed_by_openui": false,
+    "matrices": {
+      "control-and-text-neighbors": {
+        "changed_comparisons": [
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "status",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": true,
+            "exact_loss": false,
+            "id": "wpt/css_overflow/input-scrollable-region-001",
+            "mismatched_pixels": 0,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 108,
+            "prior_status": "different",
+            "profile": "mobile-375x667@2",
+            "status": "exact"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_overflow/input-scrollable-region-001",
+            "mismatched_pixels": 68,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 136,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_position/position-absolute-semi-replaced-stretch-input",
+            "mismatched_pixels": 904,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 920,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_position/position-absolute-semi-replaced-stretch-input-ref",
+            "mismatched_pixels": 904,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 920,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/max-content-input-001",
+            "mismatched_pixels": 1477,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 1977,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/max-content-input-001-ref",
+            "mismatched_pixels": 1364,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 1888,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "status",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": true,
+            "exact_loss": false,
+            "id": "wpt/css_overflow/input-scrollable-region-001",
+            "mismatched_pixels": 0,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 81,
+            "prior_status": "different",
+            "profile": "desktop-1920x1080@1.5",
+            "status": "exact"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/max-content-input-001",
+            "mismatched_pixels": 443,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 743,
+            "prior_status": "different",
+            "profile": "desktop-1920x1080@1.5",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/max-content-input-001-ref",
+            "mismatched_pixels": 1,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 301,
+            "prior_status": "different",
+            "profile": "desktop-1920x1080@1.5",
+            "status": "different"
+          }
+        ],
+        "comparisons": 268,
+        "exact_gains": 2,
+        "exact_losses": 0,
+        "observed_exit_code": 1,
+        "partial_selection_not_qualifying": true,
+        "results": {
+          "different": 125,
+          "errors": 0,
+          "exact": 143,
+          "profile_result_sha256": "fef1c064af34617f3a156098479f804dd8bb9b84566864ae0a9bdc6a95b65319",
+          "total": 268
+        },
+        "summary_sha256": "153bec496e9253d3cf24399ba45783917a9446c3bf3687d64ece7a35e722fff8",
+        "worsened_comparisons": 0
+      },
+      "expanded": {
+        "changed_comparisons": [
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "status",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": true,
+            "exact_loss": false,
+            "id": "wpt/css_overflow/input-scrollable-region-001",
+            "mismatched_pixels": 0,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 108,
+            "prior_status": "different",
+            "profile": "mobile-375x667@2",
+            "status": "exact"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_overflow/input-scrollable-region-001",
+            "mismatched_pixels": 68,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 136,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_position/position-absolute-semi-replaced-stretch-input",
+            "mismatched_pixels": 904,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 920,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_position/position-absolute-semi-replaced-stretch-input-ref",
+            "mismatched_pixels": 904,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 920,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/max-content-input-001",
+            "mismatched_pixels": 1477,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 1977,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/max-content-input-001-ref",
+            "mismatched_pixels": 1364,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 1888,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/stretch_stretch-quirk-001",
+            "mismatched_pixels": 18,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 34,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "status",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": true,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/stretch_stretch-quirk-001-ref",
+            "mismatched_pixels": 0,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 16,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "exact"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "status",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": true,
+            "exact_loss": false,
+            "id": "wpt/css_overflow/input-scrollable-region-001",
+            "mismatched_pixels": 0,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 81,
+            "prior_status": "different",
+            "profile": "desktop-1920x1080@1.5",
+            "status": "exact"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/max-content-input-001",
+            "mismatched_pixels": 443,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 743,
+            "prior_status": "different",
+            "profile": "desktop-1920x1080@1.5",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/max-content-input-001-ref",
+            "mismatched_pixels": 1,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 301,
+            "prior_status": "different",
+            "profile": "desktop-1920x1080@1.5",
+            "status": "different"
+          }
+        ],
+        "comparisons": 23728,
+        "exact_gains": 3,
+        "exact_losses": 0,
+        "observed_exit_code": 1,
+        "partial_selection_not_qualifying": false,
+        "results": {
+          "different": 1588,
+          "errors": 0,
+          "exact": 22140,
+          "profile_result_sha256": "73d21c9178738a558891331679142fd435738bcfb91dab3a44e535e9246f0d62",
+          "total": 23728
+        },
+        "summary_sha256": "7fc5c38ea2aa606dd8b37e56f12886e82075204b708002e298d6a8c1c1518ae8",
+        "worsened_comparisons": 0
+      },
+      "focused": {
+        "changed_comparisons": [],
+        "comparisons": 640,
+        "exact_gains": 0,
+        "exact_losses": 0,
+        "observed_exit_code": 0,
+        "partial_selection_not_qualifying": false,
+        "results": {
+          "different": 0,
+          "errors": 0,
+          "exact": 640,
+          "profile_result_sha256": "8d503708f75c50be5300624af7ef62a57523070db9c352209c85c65a1c8cdd2b",
+          "total": 640
+        },
+        "summary_sha256": "f6a90defb63722107173c3d322b7ba3f148f0e1d516ff521b282433419f4c44e",
+        "worsened_comparisons": 0
+      },
+      "full": {
+        "changed_comparisons": [
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "status",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": true,
+            "exact_loss": false,
+            "id": "wpt/css_overflow/input-scrollable-region-001",
+            "mismatched_pixels": 0,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 108,
+            "prior_status": "different",
+            "profile": "mobile-375x667@2",
+            "status": "exact"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_overflow/input-scrollable-region-001",
+            "mismatched_pixels": 68,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 136,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_position/position-absolute-semi-replaced-stretch-input",
+            "mismatched_pixels": 904,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 920,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_position/position-absolute-semi-replaced-stretch-input-ref",
+            "mismatched_pixels": 904,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 920,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/max-content-input-001",
+            "mismatched_pixels": 1477,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 1977,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/max-content-input-001-ref",
+            "mismatched_pixels": 1364,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 1888,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/stretch_stretch-quirk-001",
+            "mismatched_pixels": 18,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 34,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "status",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": true,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/stretch_stretch-quirk-001-ref",
+            "mismatched_pixels": 0,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 16,
+            "prior_status": "different",
+            "profile": "desktop-1280x720@1.25",
+            "status": "exact"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "status",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": true,
+            "exact_loss": false,
+            "id": "wpt/css_overflow/input-scrollable-region-001",
+            "mismatched_pixels": 0,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 81,
+            "prior_status": "different",
+            "profile": "desktop-1920x1080@1.5",
+            "status": "exact"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/max-content-input-001",
+            "mismatched_pixels": 443,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 743,
+            "prior_status": "different",
+            "profile": "desktop-1920x1080@1.5",
+            "status": "different"
+          },
+          {
+            "changed_fields": [
+              "openui_png_sha256",
+              "openui_rgba_sha256",
+              "mismatched_pixels",
+              "diff_signature"
+            ],
+            "exact_gain": false,
+            "exact_loss": false,
+            "id": "wpt/css_sizing/max-content-input-001-ref",
+            "mismatched_pixels": 1,
+            "more_wrong_pixels": false,
+            "prior_mismatched_pixels": 301,
+            "prior_status": "different",
+            "profile": "desktop-1920x1080@1.5",
+            "status": "different"
+          }
+        ],
+        "comparisons": 22924,
+        "exact_gains": 3,
+        "exact_losses": 0,
+        "observed_exit_code": 1,
+        "partial_selection_not_qualifying": false,
+        "results": {
+          "different": 1587,
+          "errors": 0,
+          "exact": 21337,
+          "profile_result_sha256": "044d9e5438d291a2e504b4c859c133715798331658ee1f53d0b734f0ee1d9a26",
+          "total": 22924
+        },
+        "summary_sha256": "2fc46d2645617a5f79cb7a96405057e3c8e4549f02c92a6b3c2871914c16f444",
+        "worsened_comparisons": 0
+      },
+      "primitive": {
+        "changed_comparisons": [],
+        "comparisons": 960,
+        "exact_gains": 0,
+        "exact_losses": 0,
+        "observed_exit_code": 0,
+        "partial_selection_not_qualifying": false,
+        "results": {
+          "different": 0,
+          "errors": 0,
+          "exact": 960,
+          "profile_result_sha256": "e3b20cd11cee6845fe993e89470a0442b90d5bb2c6ebe134d4d9522ac033763d",
+          "total": 960
+        },
+        "summary_sha256": "dd944f7ec73dd4a28339efe260d956995ed97e4dd144cbe43a8a52ed2b04a947",
+        "worsened_comparisons": 0
+      }
+    },
+    "native_reproducer_receipt_sha256": "f497a4d04e1843642ed0ad1f183171ab003b2b58faa61bd018966e081d5bd2ff",
+    "new_font_name_size_or_test_id_conditions": false,
+    "new_release_states_admitted": 0,
+    "observed_exit_code": 0,
+    "owner_pid": 730887,
+    "pixel_binary_sha256": "c58615ee46be9b0bb37839a0e8dd656c791ade2efe5065c3e4ed04130bd585b2",
+    "pixel_tolerance": 0,
+    "probe_sha256": "fd7205e72f3ef3082b49287ee728a7c730b420a6864fe3ac67f44a048516a7a0",
+    "promotion_allowed": false,
+    "public_source": {
+      "clean": true,
+      "commit": "2827a03d2798eeee94eb75a9a2af358938e752b7",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "4624f2b6bb10c3478d8afa58cb7766eb238f947848402fb2e847528b4a049877",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "public_source_after": {
+      "clean": true,
+      "commit": "2827a03d2798eeee94eb75a9a2af358938e752b7",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "4624f2b6bb10c3478d8afa58cb7766eb238f947848402fb2e847528b4a049877",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "public_source_unchanged": true,
+    "release_qualification": false,
+    "schema_version": 1,
+    "selected_control_and_text_ids": [
+      "wpt/css_backgrounds/first-letter-space-not-selected",
+      "wpt/css_break/flexbox_button-in-multicol-crash",
+      "wpt/css_break/flexbox_textarea-input-flex-items-in-multicol-crash",
+      "wpt/css_break/form-control",
+      "wpt/css_display/display-contents-button",
+      "wpt/css_display/select-4-option-optgroup-display-none",
+      "wpt/css_display/select-4-option-optgroup-display-none-ref",
+      "wpt/css_flexbox/button-column-wrap-crash",
+      "wpt/css_flexbox/flexbox-basic-textarea-horiz-001",
+      "wpt/css_flexbox/flexbox-basic-textarea-horiz-001-ref",
+      "wpt/css_flexbox/flexbox-basic-textarea-vert-001",
+      "wpt/css_flexbox/flexbox-basic-textarea-vert-001-ref",
+      "wpt/css_flexbox/select-element-multiple",
+      "wpt/css_flexbox/select-element-multiple-ref",
+      "wpt/css_flexbox/select-element-zero-height-001",
+      "wpt/css_flexbox/select-element-zero-height-001-ref",
+      "wpt/css_flexbox/select-element-zero-height-002",
+      "wpt/css_flexbox/select-element-zero-height-002-ref",
+      "wpt/css_flexbox/stretch-flex-item-checkbox-input",
+      "wpt/css_flexbox/stretch-flex-item-checkbox-input-ref",
+      "wpt/css_flexbox/stretch-flex-item-radio-input",
+      "wpt/css_flexbox/stretch-flex-item-radio-input-ref",
+      "wpt/css_flexbox/stretch-input-in-column",
+      "wpt/css_multicol/multicol-span-all-button-001",
+      "wpt/css_multicol/multicol-span-all-button-001-ref",
+      "wpt/css_multicol/multicol-span-all-button-002",
+      "wpt/css_multicol/multicol-span-all-button-002-ref",
+      "wpt/css_multicol/multicol-span-all-button-003",
+      "wpt/css_multicol/multicol-span-all-button-003-ref",
+      "wpt/css_overflow/input-scrollable-region-001",
+      "wpt/css_overflow/scroll-markers_root-scroll-button",
+      "wpt/css_overflow/scroll-markers_root-scroll-button-ref",
+      "wpt/css_overflow/scroll-markers_scroll-button-on-object-ref",
+      "wpt/css_overflow/scroll-markers_scroll-buttons-001",
+      "wpt/css_overflow/scroll-markers_scroll-buttons-001-ref",
+      "wpt/css_overflow/scroll-markers_scroll-buttons-003",
+      "wpt/css_overflow/scroll-markers_scroll-buttons-004",
+      "wpt/css_overflow/scroll-markers_scroll-buttons-appearance",
+      "wpt/css_overflow/scroll-markers_scroll-buttons-appearance-ref",
+      "wpt/css_overflow/scroll-markers_scroll-buttons-container-query-crash",
+      "wpt/css_overflow/scroll-markers_scroll-buttons-enabled",
+      "wpt/css_overflow/scroll-markers_scroll-buttons-enabled-ref",
+      "wpt/css_overflow/scroll-markers_scroll-buttons-enabled-rtl",
+      "wpt/css_overflow/scroll-markers_scroll-buttons-enabled-rtl-ref",
+      "wpt/css_overflow/scroll-markers_scroll-buttons-enabled-vertical-ltr",
+      "wpt/css_overflow/scroll-markers_scroll-buttons-enabled-vertical-ltr-ref",
+      "wpt/css_overflow/scroll-markers_scroll-buttons-layout-parent",
+      "wpt/css_overflow/scroll-markers_scroll-marker-selection-in-2d",
+      "wpt/css_overflow/scroll-markers_scroll-marker-selection-in-2d-ref",
+      "wpt/css_overflow/scroll-markers_scroll-markers-inside-select-crash",
+      "wpt/css_overflow/scroll-markers_targeted-column-scroll-marker-selection-001-ref",
+      "wpt/css_overflow/scroll-markers_targeted-column-scroll-marker-selection-002-ref",
+      "wpt/css_overflow/scroll-markers_targeted-column-scroll-marker-selection-003-ref",
+      "wpt/css_overflow/scroll-markers_targeted-column-scroll-marker-selection-004-ref",
+      "wpt/css_overflow/scrollable-overflow-input-001-ref",
+      "wpt/css_overflow/scrollable-overflow-input-002-ref",
+      "wpt/css_overflow/text-overflow-ellipsis-editing-input-ref",
+      "wpt/css_position/containing-block-change-button-ref",
+      "wpt/css_position/overlay_overlay-button-appearance-ref",
+      "wpt/css_position/position-absolute-semi-replaced-stretch-button",
+      "wpt/css_position/position-absolute-semi-replaced-stretch-button-ref",
+      "wpt/css_position/position-absolute-semi-replaced-stretch-input",
+      "wpt/css_position/position-absolute-semi-replaced-stretch-input-ref",
+      "wpt/css_position/resources_position-sticky-fixed-ancestor-iframe-child",
+      "wpt/css_position/sticky_position-sticky-fixed-ancestor-003",
+      "wpt/css_sizing/max-content-input-001",
+      "wpt/css_sizing/max-content-input-001-ref"
+    ],
+    "shared_native_editor_scrollport_changed": true,
+    "source": {
+      "clean": true,
+      "commit": "e0f0e57758d663cd8d3052cabbf546de67343826",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "7b0dc6d6c48ee6b674e3d837c7a3176629ccd4b242c182f4fc2cfc43e7139670",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "e0f0e57758d663cd8d3052cabbf546de67343826",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "7b0dc6d6c48ee6b674e3d837c7a3176629ccd4b242c182f4fc2cfc43e7139670",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_from_accepted_umbrella": true,
+    "source_unchanged": true,
+    "steps": [
+      {
+        "disk_guard_triggered": false,
+        "failed": 0,
+        "ignored": 0,
+        "log_sha256": "2edfe30151907f8b03d1ad745e9e727c2f7c4a3f67d5d68ac41b3c63a4709a14",
+        "name": "locked-metadata",
+        "observed_exit_code": 0,
+        "passed": 0
+      },
+      {
+        "disk_guard_triggered": false,
+        "failed": 0,
+        "ignored": 0,
+        "log_sha256": "8ab7611ce92d5807d3d0fcd655c34a3c95cb80ab907f084653030ee794fe00eb",
+        "name": "clean-workspace-rust-packages",
+        "observed_exit_code": 0,
+        "passed": 0
+      },
+      {
+        "disk_guard_triggered": false,
+        "failed": 0,
+        "ignored": 0,
+        "log_sha256": "e40ef70a992c9710de9b88c22a02499f60b362837f98f82882adc4980c9ddba8",
+        "name": "pixel-build",
+        "observed_exit_code": 0,
+        "passed": 0
+      },
+      {
+        "disk_guard_triggered": false,
+        "failed": 0,
+        "ignored": 0,
+        "log_sha256": "379ecc2df2e3c4ac6e9b293a1611698634168c573b7ae53153546bd40a73e125",
+        "name": "control-and-text-neighbors-matrix",
+        "observed_exit_code": 1,
+        "passed": 0
+      },
+      {
+        "disk_guard_triggered": false,
+        "failed": 0,
+        "ignored": 0,
+        "log_sha256": "0a95424a6aae6ce9869bac27dd757ee4b1e4d497ed604dfced98370c7060bd6d",
+        "name": "focused-matrix",
+        "observed_exit_code": 0,
+        "passed": 0
+      },
+      {
+        "disk_guard_triggered": false,
+        "failed": 0,
+        "ignored": 0,
+        "log_sha256": "c7f819dda9f9af1591659cf3792133fdb1b6d20e60e50940610bbb1c185047fc",
+        "name": "primitive-matrix",
+        "observed_exit_code": 0,
+        "passed": 0
+      },
+      {
+        "disk_guard_triggered": false,
+        "failed": 0,
+        "ignored": 0,
+        "log_sha256": "c5d4061c660fda795422534a5d9dfcaa4295000347bcc31b41dddcd45e48861d",
+        "name": "full-matrix",
+        "observed_exit_code": 1,
+        "passed": 0
+      },
+      {
+        "disk_guard_triggered": false,
+        "failed": 0,
+        "ignored": 0,
+        "log_sha256": "834e3402a09aebd14b99e7ee331fd92f0ddf5727a14319eafcda9578d5f6dc92",
+        "name": "expanded-matrix",
+        "observed_exit_code": 1,
+        "passed": 0
+      }
+    ],
+    "tracked_diagnostic_png_unchanged": true
+  },
+  "runs": [
+    {
+      "all_commands_terminal": true,
+      "changes": [
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": true,
+          "label": "input-legacy",
+          "more_wrong_pixels": true,
+          "state": "before",
+          "wrong_pixels": 181
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": true,
+          "label": "input-legacy",
+          "more_wrong_pixels": true,
+          "state": "after",
+          "wrong_pixels": 181
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-legacy",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-legacy",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-legacy",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-legacy",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 108,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-mobile",
+          "more_wrong_pixels": true,
+          "state": "before",
+          "wrong_pixels": 572
+        },
+        {
+          "before_wrong_pixels": 108,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-mobile",
+          "more_wrong_pixels": true,
+          "state": "after",
+          "wrong_pixels": 572
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-mobile",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-mobile",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-mobile",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-mobile",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 136,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-desktop",
+          "more_wrong_pixels": true,
+          "state": "before",
+          "wrong_pixels": 351
+        },
+        {
+          "before_wrong_pixels": 136,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-desktop",
+          "more_wrong_pixels": true,
+          "state": "after",
+          "wrong_pixels": 333
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": true,
+          "label": "large-text-desktop",
+          "more_wrong_pixels": true,
+          "state": "before",
+          "wrong_pixels": 1440
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-desktop",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": true,
+          "label": "sticky-desktop",
+          "more_wrong_pixels": true,
+          "state": "before",
+          "wrong_pixels": 1440
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-desktop",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 81,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-large",
+          "more_wrong_pixels": true,
+          "state": "before",
+          "wrong_pixels": 350
+        },
+        {
+          "before_wrong_pixels": 81,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-large",
+          "more_wrong_pixels": true,
+          "state": "after",
+          "wrong_pixels": 428
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-large",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-large",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-large",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-large",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 162,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-triple",
+          "more_wrong_pixels": true,
+          "state": "before",
+          "wrong_pixels": 1023
+        },
+        {
+          "before_wrong_pixels": 162,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-triple",
+          "more_wrong_pixels": true,
+          "state": "after",
+          "wrong_pixels": 1023
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-triple",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-triple",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-triple",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-triple",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        }
+      ],
+      "exact_gains": 0,
+      "exact_losses": 4,
+      "more_wrong_states": 12,
+      "name": "native-glyph-regression-pipeline-v2353",
+      "observed_exit_code": 1,
+      "receipt_sha256": "8ef713594bff2dd375b6ca618343f3574bbf8bf6759e4c9962502115ba452821",
+      "source": {
+        "clean": true,
+        "commit": "a062ef3c38cadcc6276848aa9eca0e02d2bd4309",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "dc9d60f2d42223a81fa4afd0de383c8d600c3ed832a099431f025f2c412ed30f",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "totals": {
+        "different_images": 12,
+        "exact_geometry": 30,
+        "exact_images": 18,
+        "geometry_states": 30,
+        "image_states": 30
+      }
+    },
+    {
+      "all_commands_terminal": true,
+      "changes": [
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-legacy",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-legacy",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-legacy",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-legacy",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-legacy",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-legacy",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 108,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-mobile",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 108,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-mobile",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-mobile",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-mobile",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-mobile",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-mobile",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 136,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-desktop",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 68
+        },
+        {
+          "before_wrong_pixels": 136,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-desktop",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 68
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": true,
+          "label": "large-text-desktop",
+          "more_wrong_pixels": true,
+          "state": "before",
+          "wrong_pixels": 1440
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-desktop",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": true,
+          "label": "sticky-desktop",
+          "more_wrong_pixels": true,
+          "state": "before",
+          "wrong_pixels": 1440
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-desktop",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 81,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-large",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 81,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-large",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-large",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-large",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-large",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-large",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 162,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-triple",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 162,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-triple",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-triple",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-triple",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-triple",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-triple",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        }
+      ],
+      "exact_gains": 6,
+      "exact_losses": 2,
+      "more_wrong_states": 2,
+      "name": "native-glyph-regression-pipeline-v2359",
+      "observed_exit_code": 1,
+      "receipt_sha256": "baa55658180b190ddf5ae9442b7f3b3ccbfcb0e1875e8c6fe26c97d96cd4f1c9",
+      "source": {
+        "clean": true,
+        "commit": "31def4493cd199027694c4e47e05068366cae1ec",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "7c0e882b4871e50f8ac6f43f5351bbe664e8766fd966f378a1e730b0381997e1",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "totals": {
+        "different_images": 4,
+        "exact_geometry": 30,
+        "exact_images": 26,
+        "geometry_states": 30,
+        "image_states": 30
+      }
+    },
+    {
+      "all_commands_terminal": true,
+      "changes": [
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-legacy",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-legacy",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-legacy",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-legacy",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-legacy",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-legacy",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 108,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-mobile",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 108
+        },
+        {
+          "before_wrong_pixels": 108,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-mobile",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 108
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-mobile",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-mobile",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-mobile",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-mobile",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 136,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-desktop",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 136
+        },
+        {
+          "before_wrong_pixels": 136,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-desktop",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 136
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-desktop",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-desktop",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-desktop",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-desktop",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 81,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-large",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 81
+        },
+        {
+          "before_wrong_pixels": 81,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-large",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 81
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-large",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-large",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-large",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-large",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 162,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-triple",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 162
+        },
+        {
+          "before_wrong_pixels": 162,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-triple",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 162
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-triple",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-triple",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-triple",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-triple",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        }
+      ],
+      "exact_gains": 0,
+      "exact_losses": 0,
+      "more_wrong_states": 0,
+      "name": "native-glyph-regression-pipeline-v2366",
+      "observed_exit_code": 1,
+      "receipt_sha256": "2bf0b3a9c20b7a3d94a82f0b5c690181852535450841736dd0dc0d98b2cfae49",
+      "source": {
+        "clean": true,
+        "commit": "2827a03d2798eeee94eb75a9a2af358938e752b7",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "4624f2b6bb10c3478d8afa58cb7766eb238f947848402fb2e847528b4a049877",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "totals": {
+        "different_images": 8,
+        "exact_geometry": 30,
+        "exact_images": 22,
+        "geometry_states": 30,
+        "image_states": 30
+      }
+    },
+    {
+      "all_commands_terminal": true,
+      "changes": [
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-legacy",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-legacy",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-legacy",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-legacy",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-legacy",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-legacy",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 108,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-mobile",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 108,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-mobile",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-mobile",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-mobile",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-mobile",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-mobile",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 136,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-desktop",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 68
+        },
+        {
+          "before_wrong_pixels": 136,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-desktop",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 68
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-desktop",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-desktop",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-desktop",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-desktop",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 81,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-large",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 81,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-large",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-large",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-large",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-large",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-large",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 162,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-triple",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 162,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-triple",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-triple",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-triple",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-triple",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-triple",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        }
+      ],
+      "exact_gains": 6,
+      "exact_losses": 0,
+      "more_wrong_states": 0,
+      "name": "native-glyph-regression-pipeline-v2364",
+      "observed_exit_code": 1,
+      "receipt_sha256": "f497a4d04e1843642ed0ad1f183171ab003b2b58faa61bd018966e081d5bd2ff",
+      "source": {
+        "clean": true,
+        "commit": "e0f0e57758d663cd8d3052cabbf546de67343826",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "7b0dc6d6c48ee6b674e3d837c7a3176629ccd4b242c182f4fc2cfc43e7139670",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "totals": {
+        "different_images": 2,
+        "exact_geometry": 30,
+        "exact_images": 28,
+        "geometry_states": 30,
+        "image_states": 30
+      }
+    }
+  ],
+  "schema_version": 1,
+  "sources": [
+    {
+      "identity": {
+        "clean": true,
+        "commit": "a062ef3c38cadcc6276848aa9eca0e02d2bd4309",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "dc9d60f2d42223a81fa4afd0de383c8d600c3ed832a099431f025f2c412ed30f",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "root": "private-native-input-raster-v2351"
+    },
+    {
+      "identity": {
+        "clean": true,
+        "commit": "31def4493cd199027694c4e47e05068366cae1ec",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "7c0e882b4871e50f8ac6f43f5351bbe664e8766fd966f378a1e730b0381997e1",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "root": "private-native-editor-clip-v2357"
+    },
+    {
+      "identity": {
+        "clean": true,
+        "commit": "e0f0e57758d663cd8d3052cabbf546de67343826",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "7b0dc6d6c48ee6b674e3d837c7a3176629ccd4b242c182f4fc2cfc43e7139670",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "root": "private-native-editor-clip-main-v2362"
+    }
+  ],
+  "stale_build_library_cause_reviewed": true,
+  "stale_workspace_library_reuse_reproduced": true,
+  "two_extra_format_checks_referenced_unintegrated_private_tests": true,
+  "workspace_and_c_abi_not_run_on_new_sources": true
+}

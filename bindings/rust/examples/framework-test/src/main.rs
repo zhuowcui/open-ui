@@ -69,27 +69,15 @@ fn application_view(count: Signal<i32>) -> ViewNode {
     }
 }
 
-fn find_by_id(root: Element, id: &str) -> Result<Option<Element>, Error> {
-    if root.get_attribute("id")?.as_deref() == Some(id) {
-        return Ok(Some(root));
-    }
-    let mut child = root.first_child()?;
-    while let Some(node) = child {
-        if let Some(found) = find_by_id(node.clone(), id)? {
-            return Ok(Some(found));
-        }
-        child = node.next_sibling()?;
-    }
-    Ok(None)
-}
-
 fn run_headless(path: &Path) -> Result<(), Error> {
     let count = create_signal(0_i32);
     let mut app = HeadlessApp::new(ViewportMetrics::from_logical_size(800.0, 600.0, 1.0)?)?;
     app.mount(move || application_view(count))?;
 
     let before = app.render_at(0.0)?;
-    let button = find_by_id(app.document().body(), "increment")?
+    let button = app
+        .document()
+        .element_by_id("increment")?
         .ok_or(Error::InvalidArgument("increment button was not mounted"))?;
     let bounds = button
         .bounding_rect()?

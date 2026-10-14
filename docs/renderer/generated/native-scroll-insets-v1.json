@@ -1,0 +1,4065 @@
+{
+  "applied_to_umbrella": false,
+  "artifacts": [
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-insets-oracle-v634/oracle.json",
+      "sha256": "70e821ddd1af7cad4a577f07ae67adfb202ba29cc002be9aa20530030d1f152e"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-insets-clean-v637/build.json",
+      "sha256": "a08ceda80baa0fd9bbb18242c29429e1a730635a2b8901cf7d777d6601761982"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-insets-checks-v636/receipt.json",
+      "sha256": "37e2b80307a227cd04506be59f426042b80bf93bdcdbae601051c636f3f56b5f"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-insets-workspace-v644/receipt.json",
+      "sha256": "e9a01c8406892e46899309d6dc678952999acdbbe94aca9c52dc721cb80d0ad3"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-insets-workspace-v647/receipt.json",
+      "sha256": "dcb8d4c97e677a929cf5855af57bd9ca12938b2bd7e9149971d527de299957da"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-insets-workspace-v650/receipt.json",
+      "sha256": "9ca5e97df5dd84bca23d26608bf8a8c14e6dbc30f151b4792791d7cc0994f71b"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-insets-clean-v648/build.json",
+      "sha256": "5685db5ce68cbb84034e8ae0fc88669b2c17538b9089f5e30d340006fcafce16"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-insets-compare-v640/comparison.json",
+      "sha256": "d5418ca6f076448e8c25f7da2e74ffde7ea4e18729182e8d955e456b1a384418"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-insets-ffi-v643/receipt.json",
+      "sha256": "cb9326f1b887316a095fa8321768427b1ef883bddaf364c830ada456552c920f"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-insets-raster-audit-v656.json",
+      "sha256": "eef8e67816804f5d489f3baa0d55325dd88aa6c33947ca33e4ada37370455555"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-insets-checks-v657/receipt.json",
+      "sha256": "fa2ff6db3818fa6a6cc77e894f3b184b6c6596ab6311070a1f53dffada33f3c3"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-insets-clean-focused-v655/focused-summary.json",
+      "sha256": "39cb3d507140226874bf5541d8a60a992be4c0de689130579c27bd2acf774bde"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-insets-clean-primitive-v655/primitive-summary.json",
+      "sha256": "6972eaa42b2e6cfbf742c9878876adcf42bf5df9508c9dc35adf1e4ac585c745"
+    }
+  ],
+  "c_and_cpp": {
+    "c_consumers": 10,
+    "c_inset_cases": 70,
+    "cpp_consumers": 4,
+    "exports": 112,
+    "header_checksum": "sha256:bec231d31e3adea6b378084cb398963c86beebc23d66e3fe9314482595dc4c6d",
+    "native_assertions_enabled": true,
+    "observed_exit_code": 0,
+    "previous_84_exports_and_30_layouts_preserved": true
+  },
+  "earlier_failed_attempts": {
+    "v644": "Mixed-worktree Cargo artifacts; no test passed in that attempt.",
+    "v647": "Clean rebuild passed 7423 assertions before the schema-count test expected 237 properties; corrected for appended IDs while preserving every old ID."
+  },
+  "implementation": "Public typed Rust and C physical/logical scroll margin and padding; bounded declaration ordering, relative-unit reprojection, atomic validation and shared native instant/smooth/accessibility reveal planning.",
+  "javascript_executed_by_openui": false,
+  "native_comparison": {
+    "actual_exit_code": 1,
+    "all_failures_scale": 1.25,
+    "all_native_app_exits": 0,
+    "callbacks_and_weak_teardown_checked": true,
+    "different": 58,
+    "geometry_exact": 510,
+    "pixel_tolerance": 0,
+    "pixels_exact": 452,
+    "states": 510
+  },
+  "pixel_reference": "Pinned Chromium only. Historical Open UI renders remain immutable provenance.",
+  "public_style_properties": {
+    "added": 18,
+    "all_previous_237_rows_unchanged": true,
+    "ids": "238 through 255",
+    "total": 255
+  },
+  "raster": {
+    "actual_exit_codes": [
+      0,
+      0
+    ],
+    "all_eight_invariants_unchanged_vs_d174ea0b": true,
+    "focused_exact": 640,
+    "primitive_exact": 960,
+    "profiles": 40
+  },
+  "read_only_checks": {
+    "accountability": 0,
+    "archive": 0,
+    "ffi": 0,
+    "multicol": 0,
+    "renderer": 0,
+    "sp17": 0,
+    "sp18": 0,
+    "sp20": 0,
+    "style": 0,
+    "v02": 0
+  },
+  "release_qualification": false,
+  "reproducer": {
+    "applies_to_current_umbrella": true,
+    "arguments": [
+      "OUTPUT_DIRECTORY",
+      "1.25",
+      "hidden",
+      "none"
+    ],
+    "patch_path": "docs/renderer/evidence/native-scroll-insets-v1/native-scroll-insets-v1.patch",
+    "patch_sha256": "6689a36127d36f86492b20f0d7bfba55f2218f2bef2a95e97850fad42c48665f",
+    "public_rust_example": "bindings/rust/openui/examples/native_scroll_into_view.rs",
+    "variants": "Each case name in the comparison selects native Rust setter calls in the consuming example, never renderer pixel changes by ID."
+  },
+  "required_remaining": [
+    "Correct native endpoint raster differences without tolerance or fixture patches.",
+    "Complete original and expanded census on the final candidate.",
+    "Containing-block/fixed traversal, remaining native reveal options and automatic snap behavior.",
+    "Own-source hardening after implementation is promoted.",
+    "Complete all needed native application APIs; test-only capabilities do not satisfy this contract."
+  ],
+  "residual_ownership": {
+    "measured": "All geometry agrees; different pixels form one or two horizontal regions along the leading/trailing green edges at 1.25 scale. The unchanged no-inset control has the same 52-pixel signature as the previous reveal evidence.",
+    "owner": "openui-paint",
+    "root_cause": "Paint/raster phase and coverage investigation remains open; exact source correction is not yet proved.",
+    "unowned_residuals": 0
+  },
+  "residuals": [
+    {
+      "case": "none",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -16,
+            "signed_delta_sum": 1176
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 149,
+              "y": 112
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 149,
+              "y": 137
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 149,
+          "y": 112
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "hidden",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "reveal"
+    },
+    {
+      "case": "none",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -16,
+            "signed_delta_sum": 1176
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 149,
+              "y": 112
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 149,
+              "y": 137
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 149,
+          "y": 112
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "hidden",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "smooth-end"
+    },
+    {
+      "case": "margin",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -16,
+            "signed_delta_sum": 1176
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 137,
+              "y": 112
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 137,
+              "y": 137
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 137,
+          "y": 112
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "hidden",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "reveal"
+    },
+    {
+      "case": "margin",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -16,
+            "signed_delta_sum": 1176
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 137,
+              "y": 112
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 137,
+              "y": 137
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 137,
+          "y": 112
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "hidden",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "smooth-end"
+    },
+    {
+      "case": "negative-margin",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 16,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 1969
+          },
+          "green": {
+            "changed_pixels": 16,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 977
+          },
+          "red": {
+            "changed_pixels": 16,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 1969
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 16,
+              "x": 159,
+              "y": 132
+            },
+            "mismatched_pixels": 16
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 1,
+          "width": 16,
+          "x": 159,
+          "y": 132
+        },
+        "mismatched_pixels": 16
+      },
+      "overflow": "hidden",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "reveal"
+    },
+    {
+      "case": "negative-margin",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 16,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 1969
+          },
+          "green": {
+            "changed_pixels": 16,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 977
+          },
+          "red": {
+            "changed_pixels": 16,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 1969
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 16,
+              "x": 159,
+              "y": 132
+            },
+            "mismatched_pixels": 16
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 1,
+          "width": 16,
+          "x": 159,
+          "y": 132
+        },
+        "mismatched_pixels": 16
+      },
+      "overflow": "hidden",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "smooth-end"
+    },
+    {
+      "case": "padding",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -16,
+            "signed_delta_sum": 1176
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 137,
+              "y": 112
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 137,
+              "y": 137
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 137,
+          "y": 112
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "hidden",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "reveal"
+    },
+    {
+      "case": "padding",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -16,
+            "signed_delta_sum": 1176
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 137,
+              "y": 112
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 137,
+              "y": 137
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 137,
+          "y": 112
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "hidden",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "smooth-end"
+    },
+    {
+      "case": "asymmetric",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -16,
+            "signed_delta_sum": 1176
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 129,
+              "y": 112
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 129,
+              "y": 137
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 129,
+          "y": 112
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "hidden",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "reveal"
+    },
+    {
+      "case": "asymmetric",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -16,
+            "signed_delta_sum": 1176
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 129,
+              "y": 112
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 129,
+              "y": 137
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 129,
+          "y": 112
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "hidden",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "smooth-end"
+    },
+    {
+      "case": "percent-padding",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -16,
+            "signed_delta_sum": 1176
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 133,
+              "y": 112
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 133,
+              "y": 137
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 133,
+          "y": 112
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "hidden",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "reveal"
+    },
+    {
+      "case": "percent-padding",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -16,
+            "signed_delta_sum": 1176
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 133,
+              "y": 112
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 133,
+              "y": 137
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 133,
+          "y": 112
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "hidden",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "smooth-end"
+    },
+    {
+      "case": "start",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -16,
+            "signed_delta_sum": 1176
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 112,
+              "y": 112
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 112,
+              "y": 137
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 112,
+          "y": 112
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "hidden",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "reveal"
+    },
+    {
+      "case": "start",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -16,
+            "signed_delta_sum": 1176
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 112,
+              "y": 112
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 112,
+              "y": 137
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 112,
+          "y": 112
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "hidden",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "smooth-end"
+    },
+    {
+      "case": "center",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -16,
+            "signed_delta_sum": 1176
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 112,
+              "y": 112
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 112,
+              "y": 137
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 112,
+          "y": 112
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "hidden",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "reveal"
+    },
+    {
+      "case": "center",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -16,
+            "signed_delta_sum": 1176
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 112,
+              "y": 112
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 112,
+              "y": 137
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 112,
+          "y": 112
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "hidden",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "smooth-end"
+    },
+    {
+      "case": "end",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -16,
+            "signed_delta_sum": 1176
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 124,
+              "y": 112
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 124,
+              "y": 137
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 124,
+          "y": 112
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "hidden",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "reveal"
+    },
+    {
+      "case": "end",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -16,
+            "signed_delta_sum": 1176
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 124,
+              "y": 112
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 124,
+              "y": 137
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 124,
+          "y": 112
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "hidden",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "smooth-end"
+    },
+    {
+      "case": "logical-rtl",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -16,
+            "signed_delta_sum": 1176
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 119,
+              "y": 112
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 119,
+              "y": 137
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 119,
+          "y": 112
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "hidden",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "reveal"
+    },
+    {
+      "case": "logical-rtl",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -16,
+            "signed_delta_sum": 1176
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 119,
+              "y": 112
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 119,
+              "y": 137
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 119,
+          "y": 112
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "hidden",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "smooth-end"
+    },
+    {
+      "case": "logical-reorder",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -16,
+            "signed_delta_sum": 1176
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 149,
+              "y": 112
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 149,
+              "y": 137
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 149,
+          "y": 112
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "hidden",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "reveal"
+    },
+    {
+      "case": "logical-reorder",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -16,
+            "signed_delta_sum": 1176
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 149,
+              "y": 112
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 149,
+              "y": 137
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 149,
+          "y": 112
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "hidden",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "smooth-end"
+    },
+    {
+      "case": "writing-mode-change",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -16,
+            "signed_delta_sum": 1176
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 149,
+              "y": 112
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 149,
+              "y": 137
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 149,
+          "y": 112
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "hidden",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "reveal"
+    },
+    {
+      "case": "writing-mode-change",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -16,
+            "signed_delta_sum": 1176
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 149,
+              "y": 112
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 149,
+              "y": 137
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 149,
+          "y": 112
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "hidden",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "smooth-end"
+    },
+    {
+      "case": "relative-font",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -16,
+            "signed_delta_sum": 1176
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 149,
+              "y": 112
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 149,
+              "y": 137
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 149,
+          "y": 112
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "hidden",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "reveal"
+    },
+    {
+      "case": "relative-font",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -16,
+            "signed_delta_sum": 1176
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 149,
+              "y": 112
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 149,
+              "y": 137
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 149,
+          "y": 112
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "hidden",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "smooth-end"
+    },
+    {
+      "case": "relative-viewport",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -16,
+            "signed_delta_sum": 1176
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 123,
+              "y": 112
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 123,
+              "y": 137
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 123,
+          "y": 112
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "hidden",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "reveal"
+    },
+    {
+      "case": "relative-viewport",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -16,
+            "signed_delta_sum": 1176
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 123,
+              "y": 112
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 123,
+              "y": 137
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 123,
+          "y": 112
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "hidden",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "smooth-end"
+    },
+    {
+      "case": "none",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 191,
+            "maximum_signed_delta": 191,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 3176
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 95,
+            "maximum_signed_delta": 95,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 1576
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 191,
+            "maximum_signed_delta": 191,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 3176
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 149,
+              "y": 112
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 149,
+              "y": 137
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 149,
+          "y": 112
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "clip",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "reveal"
+    },
+    {
+      "case": "none",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 191,
+            "maximum_signed_delta": 191,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 3176
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 95,
+            "maximum_signed_delta": 95,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 1576
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 191,
+            "maximum_signed_delta": 191,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 3176
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 149,
+              "y": 112
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 149,
+              "y": 137
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 149,
+          "y": 112
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "clip",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "smooth-end"
+    },
+    {
+      "case": "margin",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 1576
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 776
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 1576
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 137,
+              "y": 99
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 137,
+              "y": 124
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 137,
+          "y": 99
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "clip",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "reveal"
+    },
+    {
+      "case": "margin",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 1576
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 776
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 1576
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 137,
+              "y": 99
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 137,
+              "y": 124
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 137,
+          "y": 99
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "clip",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "smooth-end"
+    },
+    {
+      "case": "negative-margin",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 16,
+            "maximum_absolute_delta": 191,
+            "maximum_signed_delta": 191,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 2961
+          },
+          "green": {
+            "changed_pixels": 16,
+            "maximum_absolute_delta": 95,
+            "maximum_signed_delta": 95,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 1473
+          },
+          "red": {
+            "changed_pixels": 16,
+            "maximum_absolute_delta": 191,
+            "maximum_signed_delta": 191,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 2961
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 16,
+              "x": 159,
+              "y": 122
+            },
+            "mismatched_pixels": 16
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 1,
+          "width": 16,
+          "x": 159,
+          "y": 122
+        },
+        "mismatched_pixels": 16
+      },
+      "overflow": "clip",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "reveal"
+    },
+    {
+      "case": "negative-margin",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 16,
+            "maximum_absolute_delta": 191,
+            "maximum_signed_delta": 191,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 2961
+          },
+          "green": {
+            "changed_pixels": 16,
+            "maximum_absolute_delta": 95,
+            "maximum_signed_delta": 95,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 1473
+          },
+          "red": {
+            "changed_pixels": 16,
+            "maximum_absolute_delta": 191,
+            "maximum_signed_delta": 191,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 2961
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 16,
+              "x": 159,
+              "y": 122
+            },
+            "mismatched_pixels": 16
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 1,
+          "width": 16,
+          "x": 159,
+          "y": 122
+        },
+        "mismatched_pixels": 16
+      },
+      "overflow": "clip",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "smooth-end"
+    },
+    {
+      "case": "padding",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 1576
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 776
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 1576
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 137,
+              "y": 99
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 137,
+              "y": 124
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 137,
+          "y": 99
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "clip",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "reveal"
+    },
+    {
+      "case": "padding",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 1576
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 776
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 1576
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 137,
+              "y": 99
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 137,
+              "y": 124
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 137,
+          "y": 99
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "clip",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "smooth-end"
+    },
+    {
+      "case": "asymmetric",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 1576
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 776
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 1576
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 129,
+              "y": 84
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 129,
+              "y": 109
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 129,
+          "y": 84
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "clip",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "reveal"
+    },
+    {
+      "case": "asymmetric",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 1576
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 776
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 1576
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 129,
+              "y": 84
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 129,
+              "y": 109
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 129,
+          "y": 84
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "clip",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "smooth-end"
+    },
+    {
+      "case": "percent-padding",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 1576
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 776
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 1576
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 133,
+              "y": 99
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 133,
+              "y": 124
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 133,
+          "y": 99
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "clip",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "reveal"
+    },
+    {
+      "case": "percent-padding",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 1576
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 776
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 1576
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 133,
+              "y": 99
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 133,
+              "y": 124
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 133,
+          "y": 99
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "clip",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "smooth-end"
+    },
+    {
+      "case": "start",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 191,
+            "maximum_signed_delta": 191,
+            "minimum_signed_delta": -128,
+            "signed_delta_sum": 1576
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 95,
+            "maximum_signed_delta": 95,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 776
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 191,
+            "maximum_signed_delta": 191,
+            "minimum_signed_delta": -128,
+            "signed_delta_sum": 1576
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 112,
+              "y": 62
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 112,
+              "y": 87
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 112,
+          "y": 62
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "clip",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "reveal"
+    },
+    {
+      "case": "start",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 191,
+            "maximum_signed_delta": 191,
+            "minimum_signed_delta": -128,
+            "signed_delta_sum": 1576
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 95,
+            "maximum_signed_delta": 95,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 776
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 191,
+            "maximum_signed_delta": 191,
+            "minimum_signed_delta": -128,
+            "signed_delta_sum": 1576
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 112,
+              "y": 62
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 112,
+              "y": 87
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 112,
+          "y": 62
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "clip",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "smooth-end"
+    },
+    {
+      "case": "center",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 1576
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 776
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 1576
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 112,
+              "y": 74
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 112,
+              "y": 99
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 112,
+          "y": 74
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "clip",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "reveal"
+    },
+    {
+      "case": "center",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 1576
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 776
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 1576
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 112,
+              "y": 74
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 112,
+              "y": 99
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 112,
+          "y": 74
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "clip",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "smooth-end"
+    },
+    {
+      "case": "end",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 191,
+            "maximum_signed_delta": 191,
+            "minimum_signed_delta": -128,
+            "signed_delta_sum": 1576
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 95,
+            "maximum_signed_delta": 95,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 776
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 191,
+            "maximum_signed_delta": 191,
+            "minimum_signed_delta": -128,
+            "signed_delta_sum": 1576
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 124,
+              "y": 87
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 124,
+              "y": 112
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 124,
+          "y": 87
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "clip",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "reveal"
+    },
+    {
+      "case": "end",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 191,
+            "maximum_signed_delta": 191,
+            "minimum_signed_delta": -128,
+            "signed_delta_sum": 1576
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 95,
+            "maximum_signed_delta": 95,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 776
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 191,
+            "maximum_signed_delta": 191,
+            "minimum_signed_delta": -128,
+            "signed_delta_sum": 1576
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 124,
+              "y": 87
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 124,
+              "y": 112
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 124,
+          "y": 87
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "clip",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "smooth-end"
+    },
+    {
+      "case": "logical-rtl",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 1576
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 776
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 1576
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 119,
+              "y": 103
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 119,
+              "y": 128
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 119,
+          "y": 103
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "clip",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "reveal"
+    },
+    {
+      "case": "logical-rtl",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 1576
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 776
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 1576
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 119,
+              "y": 103
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 119,
+              "y": 128
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 119,
+          "y": 103
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "clip",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "smooth-end"
+    },
+    {
+      "case": "logical-reorder",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 1576
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 776
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 1576
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 149,
+              "y": 98
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 149,
+              "y": 123
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 149,
+          "y": 98
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "clip",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "reveal"
+    },
+    {
+      "case": "logical-reorder",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 1576
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 776
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 1576
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 149,
+              "y": 98
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 149,
+              "y": 123
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 149,
+          "y": 98
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "clip",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "smooth-end"
+    },
+    {
+      "case": "writing-mode-change",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 191,
+            "maximum_signed_delta": 191,
+            "minimum_signed_delta": -128,
+            "signed_delta_sum": 1576
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 95,
+            "maximum_signed_delta": 95,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 776
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 191,
+            "maximum_signed_delta": 191,
+            "minimum_signed_delta": -128,
+            "signed_delta_sum": 1576
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 149,
+              "y": 77
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 149,
+              "y": 102
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 149,
+          "y": 77
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "clip",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "reveal"
+    },
+    {
+      "case": "writing-mode-change",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 191,
+            "maximum_signed_delta": 191,
+            "minimum_signed_delta": -128,
+            "signed_delta_sum": 1576
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 95,
+            "maximum_signed_delta": 95,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 776
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 191,
+            "maximum_signed_delta": 191,
+            "minimum_signed_delta": -128,
+            "signed_delta_sum": 1576
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 149,
+              "y": 77
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 149,
+              "y": 102
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 149,
+          "y": 77
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "clip",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "smooth-end"
+    },
+    {
+      "case": "relative-font",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 191,
+            "maximum_signed_delta": 191,
+            "minimum_signed_delta": -128,
+            "signed_delta_sum": 1576
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 95,
+            "maximum_signed_delta": 95,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 776
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 191,
+            "maximum_signed_delta": 191,
+            "minimum_signed_delta": -128,
+            "signed_delta_sum": 1576
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 149,
+              "y": 92
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 149,
+              "y": 117
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 149,
+          "y": 92
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "clip",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "reveal"
+    },
+    {
+      "case": "relative-font",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 191,
+            "maximum_signed_delta": 191,
+            "minimum_signed_delta": -128,
+            "signed_delta_sum": 1576
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 95,
+            "maximum_signed_delta": 95,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 776
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 191,
+            "maximum_signed_delta": 191,
+            "minimum_signed_delta": -128,
+            "signed_delta_sum": 1576
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 149,
+              "y": 92
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 149,
+              "y": 117
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 149,
+          "y": 92
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "clip",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "smooth-end"
+    },
+    {
+      "case": "relative-viewport",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 191,
+            "maximum_signed_delta": 191,
+            "minimum_signed_delta": -128,
+            "signed_delta_sum": 1576
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 95,
+            "maximum_signed_delta": 95,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 776
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 191,
+            "maximum_signed_delta": 191,
+            "minimum_signed_delta": -128,
+            "signed_delta_sum": 1576
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 123,
+              "y": 102
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 123,
+              "y": 127
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 123,
+          "y": 102
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "clip",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "reveal"
+    },
+    {
+      "case": "relative-viewport",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 191,
+            "maximum_signed_delta": 191,
+            "minimum_signed_delta": -128,
+            "signed_delta_sum": 1576
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 95,
+            "maximum_signed_delta": 95,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 776
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 191,
+            "maximum_signed_delta": 191,
+            "minimum_signed_delta": -128,
+            "signed_delta_sum": 1576
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 123,
+              "y": 102
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 123,
+              "y": 127
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 123,
+          "y": 102
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "clip",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "smooth-end"
+    },
+    {
+      "case": "nearest-container",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 1576
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 776
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 1576
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 137,
+              "y": 99
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 137,
+              "y": 124
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 137,
+          "y": 99
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "clip",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "reveal"
+    },
+    {
+      "case": "nearest-container",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 1576
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 776
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 1576
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 137,
+              "y": 99
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 137,
+              "y": 124
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 137,
+          "y": 99
+        },
+        "mismatched_pixels": 52
+      },
+      "overflow": "clip",
+      "owner": "openui-paint",
+      "scale": 1.25,
+      "state": "smooth-end"
+    }
+  ],
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "45ddd7a438afbe2b132887dad9f566b8d60f175f",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "f78e5cf479e621b9ce376f9ebd64fc0c1cbbf73c497203df4d4fabc2a65ac108",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "workspace": {
+    "failed": 0,
+    "ignored": 13,
+    "observed_exit_code": 0,
+    "passed": 8532,
+    "source_unchanged": true
+  }
+}

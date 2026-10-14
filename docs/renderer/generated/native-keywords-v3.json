@@ -1,0 +1,111 @@
+{
+  "all_available_job_logs_preserved": true,
+  "all_seven_hosted_jobs_passed": true,
+  "artifact_bytes": 296980,
+  "artifact_count": 11,
+  "artifacts": [
+    {
+      "bytes": 33645,
+      "path": "docs/renderer/evidence/native-keywords-v3/hosted-terminal.json",
+      "sha256": "2272da9b41553fd38e81e837664ebd646f91b62db9768edf838d9e286ec4559b",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-hosted-v1762/receipt.json"
+    },
+    {
+      "bytes": 16055,
+      "path": "docs/renderer/evidence/native-keywords-v3/hosted-attempt1.json",
+      "sha256": "ac94c2ab59d890e08d88eae1f15a93d5af40d4f6e5986e26bbc43de878d82edd",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-hosted-v1762/attempt1.json"
+    },
+    {
+      "bytes": 2153,
+      "path": "docs/renderer/evidence/native-keywords-v3/hosted-collector.py",
+      "sha256": "762f029603e1d37d4cf240088c17dfddef0236607f0cc4804c104eb548a943c8",
+      "source_path": "/tmp/openui-native-keywords-current-hosted-v1762.py"
+    },
+    {
+      "bytes": 20928,
+      "decompressed_bytes": 191638,
+      "decompressed_sha256": "cef415747d58df6a2a6bda302fa125af034a64a759da62e28e7f98e94be1ef32",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v3/112028161074.log.gz",
+      "sha256": "648f77741fd8dcb4ce389a0fee6f57491abde159fa5d3c8dbf4c2cd1c4622789",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-hosted-v1762/112028161074.log"
+    },
+    {
+      "bytes": 46036,
+      "decompressed_bytes": 393440,
+      "decompressed_sha256": "21856397821b53f146965b47d6087b51ba7d8b3ee966528a896116e9db170597",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v3/112028161243.log.gz",
+      "sha256": "e6ea915d6f2269335ee53cbb57d5b5f8f25d4d08e10ce70e1d8afbf920141d7c",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-hosted-v1762/112028161243.log"
+    },
+    {
+      "bytes": 20708,
+      "decompressed_bytes": 186924,
+      "decompressed_sha256": "b54472cd333c9af23ddf232d7734d2b60c62f3f375b6454e9b1e7f3d36934bf6",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v3/112028161268.log.gz",
+      "sha256": "4498373bfe65619e3e47910163b92a858adbdeed69dec27eda96865d54dc3639",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-hosted-v1762/112028161268.log"
+    },
+    {
+      "bytes": 23502,
+      "decompressed_bytes": 199718,
+      "decompressed_sha256": "bdec1349e65058f28ed30f8222e3627712ccb043187d990250def00c6178138d",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v3/112028161309.log.gz",
+      "sha256": "cd3080a2d8768aa4c287f05294b7e9f8aecfe9b167fa58d0eceba2ef0273d54f",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-hosted-v1762/112028161309.log"
+    },
+    {
+      "bytes": 16656,
+      "decompressed_bytes": 138711,
+      "decompressed_sha256": "0eddeda8cb7cdb1bea31b9f38f4bb27e5abe10e7c6a5033d022d37a056132ec5",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v3/112028161384.log.gz",
+      "sha256": "ca196efacc14d757ac1e82bcc9883b53b88134dd4f49e030813a6ec22481ccbe",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-hosted-v1762/112028161384.log"
+    },
+    {
+      "bytes": 94504,
+      "decompressed_bytes": 901764,
+      "decompressed_sha256": "91cd071c4871896338d10d6c08318cf93979a573a66c3510828fcb90aaf8809e",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v3/112028161396.log.gz",
+      "sha256": "536ccd40bf8a1618517b34e9a31bfcb4c82b9e380c0c70cf9d233980a59ff153",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-hosted-v1762/112028161396.log"
+    },
+    {
+      "bytes": 17327,
+      "decompressed_bytes": 139235,
+      "decompressed_sha256": "1f74ce185031666504e0dc6721abc5557ae82b88f594c3ec350c7e8ba88e2aff",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v3/112028161411.log.gz",
+      "sha256": "5befbf65797ef174a4d38a92bf4f093424c7d747126e21482e5043e89586df3e",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-hosted-v1762/112028161411.log"
+    },
+    {
+      "bytes": 5466,
+      "path": "docs/renderer/evidence/native-keywords-v3/preserver.py",
+      "sha256": "54a44e984b9378363a1c8a3e4dc8be7866085c05a7965d6bcb2acd1eb52fb672",
+      "source_path": "/tmp/openui-native-followup-results-preserve-v1763.py"
+    }
+  ],
+  "both_named_ffi_keyword_guards_pass_in_hosted_platform_job": true,
+  "candidate_applied_to_umbrella": false,
+  "clean_local_build_consuming_applications_and_pixels_unexecuted": true,
+  "javascript_executed_by_openui": false,
+  "new_release_states_admitted": 0,
+  "pixel_tolerance": 0,
+  "public_native_rust_apis_required": true,
+  "release_qualification": false,
+  "schema_version": 1,
+  "selected_named_guards": [
+    "tests::native_fragment_keywords_reach_engine_and_keep_owned_property_identity",
+    "tests::native_table_display_literals_keep_existing_scalar_encoding"
+  ],
+  "skipped_jobs": 0,
+  "source": "7d6ffabfea1f72c90f97475488dba8a8058ac4c7",
+  "source_identified_local_baseline_and_fixed_guards_still_required": true
+}

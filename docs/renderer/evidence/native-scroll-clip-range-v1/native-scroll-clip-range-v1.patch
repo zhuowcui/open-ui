@@ -1,0 +1,328 @@
+diff --git a/bindings/rust/openui-engine/src/lib.rs b/bindings/rust/openui-engine/src/lib.rs
+index 8d25235a..c89e8711 100644
+--- a/bindings/rust/openui-engine/src/lib.rs
++++ b/bindings/rust/openui-engine/src/lib.rs
+@@ -2265,6 +2265,90 @@ mod tests {
+         TransformOperation,
+     };
+ 
++    #[test]
++    fn trailing_child_margin_retains_scroll_range_and_native_mutations_clamp_it() {
++        for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
++            let mut engine =
++                Engine::new(ViewportMetrics::from_logical_size(640.0, 480.0, scale).unwrap())
++                    .unwrap();
++            let scroller = engine.create_element(ElementTag::Div).unwrap();
++            let child = engine.create_element(ElementTag::Div).unwrap();
++            engine.append_child(engine.root(), scroller).unwrap();
++            engine.append_child(scroller, child).unwrap();
++            for element in [scroller, child] {
++                engine
++                    .set_property(element, StyleProperty::Display, Display::Block.into())
++                    .unwrap();
++                engine
++                    .set_property(element, StyleProperty::Width, LengthValue::px(600.0).into())
++                    .unwrap();
++                engine
++                    .set_property(
++                        element,
++                        StyleProperty::Height,
++                        LengthValue::px(300.0).into(),
++                    )
++                    .unwrap();
++            }
++            engine
++                .set_property(scroller, StyleProperty::Overflow, Overflow::Scroll.into())
++                .unwrap();
++            engine
++                .set_property(
++                    scroller,
++                    StyleProperty::ScrollbarWidth,
++                    StyleValue::Renderer(openui_style::RendererStyleValue::ScrollbarWidth(
++                        openui_style::ScrollbarWidth::None,
++                    )),
++                )
++                .unwrap();
++            engine
++                .set_property(
++                    child,
++                    StyleProperty::MarginBottom,
++                    LengthValue::px(20.0).into(),
++                )
++                .unwrap();
++            let original = engine.scroll_metrics(scroller).unwrap().unwrap();
++            assert_eq!(
++                (original.client_height, original.scroll_height),
++                (300.0, 320.0)
++            );
++            engine.scroll_to(scroller, 0.0, 1000.0).unwrap();
++            assert_eq!(engine.scroll_offset(scroller).unwrap(), (0.0, 20.0));
++
++            engine
++                .set_property(
++                    child,
++                    StyleProperty::MarginBottom,
++                    LengthValue::px(40.0).into(),
++                )
++                .unwrap();
++            assert_eq!(
++                engine
++                    .scroll_metrics(scroller)
++                    .unwrap()
++                    .unwrap()
++                    .scroll_height,
++                340.0
++            );
++            engine.scroll_to(scroller, 0.0, 1000.0).unwrap();
++            assert_eq!(engine.scroll_offset(scroller).unwrap(), (0.0, 40.0));
++            engine
++                .set_property(
++                    child,
++                    StyleProperty::MarginBottom,
++                    LengthValue::px(0.0).into(),
++                )
++                .unwrap();
++            let shrunk = engine.scroll_metrics(scroller).unwrap().unwrap();
++            assert_eq!(shrunk.scroll_height, 300.0);
++            assert_eq!(engine.scroll_offset(scroller).unwrap(), (0.0, 0.0));
++            // Owned snapshots survive later mutations without changing.
++            assert_eq!(original.scroll_height, 320.0);
++        }
++    }
++
+     #[test]
+     fn stale_and_cross_document_handles_are_rejected() {
+         let mut a =
+diff --git a/bindings/rust/openui-layout/src/scroll_area.rs b/bindings/rust/openui-layout/src/scroll_area.rs
+index 934e3551..330d2eb7 100644
+--- a/bindings/rust/openui-layout/src/scroll_area.rs
++++ b/bindings/rust/openui-layout/src/scroll_area.rs
+@@ -311,6 +311,74 @@ fn propagated(doc: &Document, child: &Fragment) -> PhysicalRect {
+     rect
+ }
+ 
++/// In-flow bounds include margins before the scroll container's padding is
++/// added. Ink overflow alone omits a trailing margin and can therefore erase
++/// a real scroll range. Blink's BoxFragmentBuilder clamps the margin on the
++/// scroll-origin side to zero, and the margin on the reachable side to minus
++/// the child's size. Keep these layout bounds separate from propagated ink.
++fn inflow_child_bounds(
++    doc: &Document,
++    parent: &Fragment,
++    child: &Fragment,
++    client: PhysicalRect,
++    negative_x: bool,
++    negative_y: bool,
++) -> PhysicalRect {
++    let bounds = PhysicalRect::new(child.offset, child.size);
++    if child.node_id.is_none() {
++        return bounds;
++    }
++    let parent_style = &doc.node(parent.node_id).style;
++    let child_style = &doc.node(child.node_id).style;
++    let content_width =
++        (client.width() - parent.padding.left - parent.padding.right).clamp_negative_to_zero();
++    let content_height =
++        (client.height() - parent.padding.top - parent.padding.bottom).clamp_negative_to_zero();
++    let inline_size = if parent_style.writing_mode == WritingMode::HorizontalTb {
++        content_width
++    } else {
++        content_height
++    };
++    // Used block margins can contain the width-equation remainder. Blink's
++    // inflow bounds use authored margins, with auto resolving to zero.
++    let mut margins = crate::block::resolve_margins(child_style, inline_size);
++    let (left, right) = if negative_x {
++        (
++            margins.left.max_of(-child.size.width),
++            margins.right.clamp_negative_to_zero(),
++        )
++    } else {
++        (
++            margins.left.clamp_negative_to_zero(),
++            margins.right.max_of(-child.size.width),
++        )
++    };
++    let (top, bottom) = if negative_y {
++        (
++            margins.top.max_of(-child.size.height),
++            margins.bottom.clamp_negative_to_zero(),
++        )
++    } else {
++        (
++            margins.top.clamp_negative_to_zero(),
++            margins.bottom.max_of(-child.size.height),
++        )
++    };
++    margins = BoxStrut::new(top, right, bottom, left);
++    // Relative positioning moves ink, not the original in-flow padding area.
++    let relative = if child_style.position == openui_style::Position::Relative {
++        crate::relative::compute_relative_offset(child_style, content_width, content_height)
++    } else {
++        PhysicalOffset::zero()
++    };
++    PhysicalRect::from_xywh(
++        child.offset.left - relative.left - margins.left,
++        child.offset.top - relative.top - margins.top,
++        child.size.width + margins.left + margins.right,
++        child.size.height + margins.top + margins.bottom,
++    )
++}
++
+ pub(crate) fn populate(doc: &Document, fragment: &mut Fragment) {
+     for child in &mut fragment.children {
+         populate(doc, child);
+@@ -365,7 +433,11 @@ pub(crate) fn populate(doc: &Document, fragment: &mut Fragment) {
+                 .position
+                 .is_absolutely_positioned()
+         {
+-            let bounds = PhysicalRect::new(child.offset, child.size);
++            let bounds = if style.is_scroll_container() {
++                inflow_child_bounds(doc, fragment, child, client, negative_x, negative_y)
++            } else {
++                PhysicalRect::new(child.offset, child.size)
++            };
+             inflow = Some(inflow.map_or(bounds, |current| union(current, bounds)));
+         }
+     }
+diff --git a/bindings/rust/openui-paint/src/painter.rs b/bindings/rust/openui-paint/src/painter.rs
+index ce9093a4..03be22f0 100644
+--- a/bindings/rust/openui-paint/src/painter.rs
++++ b/bindings/rust/openui-paint/src/painter.rs
+@@ -9425,6 +9425,17 @@ fn scroll_backing_phase_adjustment(logical_origin: f32, backing_scale: f32) -> f
+     (compositor_phase - physical_phase).rem_euclid(1.0) / backing_scale
+ }
+ 
++/// Reachable user-scrollable overflow in retained layout coordinates. Use
++/// this for both scroll translation and overflow-clip ownership, so an auto
++/// box without overflow does not acquire compositor scroll behavior.
++fn has_user_scrollable_range(fragment: &Fragment) -> bool {
++    fragment.scroll_area.is_some_and(|area| {
++        let (x, y) = area.limits();
++        (matches!(area.overflow_x, Overflow::Auto | Overflow::Scroll) && x != (0.0, 0.0))
++            || (matches!(area.overflow_y, Overflow::Auto | Overflow::Scroll) && y != (0.0, 0.0))
++    })
++}
++
+ /// Snap an element's scroll transform after including its screen origin and
+ /// already realized ancestor scroll translations. Chromium's TransformTree
+ /// rounds the complete screen transform, then maps that correction back into
+@@ -9477,11 +9488,7 @@ fn element_scroll_paint_translation(
+     // Blink does not create a scroll translation for an unscrolled hidden
+     // container with an origin of zero. Auto/scroll overflow and reversed
+     // origins can require that node even when the public offset is zero.
+-    let scrolls_overflow = fragment.scroll_area.is_some_and(|area| {
+-        let (x, y) = area.limits();
+-        (matches!(area.overflow_x, Overflow::Auto | Overflow::Scroll) && x != (0.0, 0.0))
+-            || (matches!(area.overflow_y, Overflow::Auto | Overflow::Scroll) && y != (0.0, 0.0))
+-    });
++    let scrolls_overflow = has_user_scrollable_range(fragment);
+     if !scrolls_overflow && (scroll_x, scroll_y, origin_x, origin_y) == (0.0, 0.0, 0.0, 0.0) {
+         return (0.0, 0.0);
+     }
+@@ -10051,13 +10058,24 @@ fn paint_with_overflow_clip(
+         && !has_scroll_range
+         && (style.overflow_x == Overflow::Scroll || style.overflow_y == Overflow::Scroll)
+         && opaque_in_flow_child_covers_inner_border_box(fragment, doc);
+-    // Raster-inducing scroll contents remain below their scrollport's
+-    // geometric clip. At fractional replay scales, both auto and explicitly
+-    // scrollable boxes retain that clip's analytic edge coverage, even when
+-    // the scroll transform snaps an opaque child past the scrollport edge.
++    // Chromium's WidgetBase::ComputeLCDTextPreference stops strongly
++    // preferring LCD text at DPR 1.5. PaintArtifactCompositor then composites
++    // ordinary user-scrollable contents and moves their overflow clip out of
++    // the raster display list into the compositor property tree. CPU replay
++    // must retain that hard clip rather than apply another analytic mask.
++    // Below this threshold a noncomposited scroll display list retains its
++    // analytic clip. A box with no reachable scroll range has no ordinary
++    // scroll transform at any DPR, so its overflow clip also stays in paint.
++    // Use the same retained range as scroll translation, including margins
++    // and padding; authored overflow alone does not imply a scroll node.
++    // This does not change the selected raster backend.
++    // Opaque scrolling chunks and direct compositing reasons can also move
++    // the clip to the compositor below the threshold; those need retained
++    // paint-property ownership, not a scale-only classification.
+     let antialias_transformed_clip = analytic_table_slice_end
+         || antialias_rectangular_overflow_clip(fragment, doc, style)
+         || (!composited_scroll_layer
++            && (style.device_scale_factor < 1.5 || !has_user_scrollable_range(fragment))
+             && style.device_scale_factor.fract().abs() > f64::EPSILON
+             && (matches!(style.overflow_x, Overflow::Auto | Overflow::Scroll)
+                 || matches!(style.overflow_y, Overflow::Auto | Overflow::Scroll)));
+diff --git a/bindings/rust/openui/examples/native_scroll_clip.rs b/bindings/rust/openui/examples/native_scroll_clip.rs
+new file mode 100644
+index 00000000..4a28e262
+--- /dev/null
++++ b/bindings/rust/openui/examples/native_scroll_clip.rs
+@@ -0,0 +1,71 @@
++//! Consuming native Rust app for scroll clip coverage across display scales.
++use openui::prelude::*;
++
++fn child(document: &Document, scroller: &Element) -> Result<Element, Error> {
++    let element = Element::create(document, "div")?;
++    element.set_width(LengthValue::px(600.0))?;
++    element.set_height(LengthValue::px(300.0))?;
++    element.set_margin_bottom(LengthValue::px(20.0))?;
++    element.set_background_color(Color::from_rgba8(0, 128, 0, 255))?;
++    scroller.append_child(&element)?;
++    Ok(element)
++}
++
++fn main() -> Result<(), Box<dyn std::error::Error>> {
++    let mut args = std::env::args().skip(1);
++    let png = args.next().ok_or("PNG path required")?;
++    let scale: f64 = args.next().ok_or("display scale required")?.parse()?;
++    let phase: f32 = args.next().ok_or("position phase required")?.parse()?;
++    let geometry = args.next().ok_or("geometry path required")?;
++    let children: usize = args
++        .next()
++        .map(|value| value.parse())
++        .transpose()?
++        .unwrap_or(2);
++    if !matches!(children, 1 | 2) {
++        return Err("expected one or two children".into());
++    }
++    let metrics_path = args.next();
++    let document =
++        Document::with_viewport_metrics(ViewportMetrics::from_logical_size(640.0, 480.0, scale)?)?;
++    let root = document.body();
++    root.set_background_color(Color::WHITE)?;
++    root.set_scrollbar_width(ScrollbarWidth::None)?;
++    let scroller = Element::create(&document, "div")?;
++    scroller.set_position(Position::Absolute)?;
++    scroller.set_left(Length::px(20.0 + phase))?;
++    scroller.set_top(Length::px(46.0 + phase))?;
++    scroller.set_width(LengthValue::px(600.0))?;
++    scroller.set_height(LengthValue::px(300.0))?;
++    scroller.set_overflow(Overflow::Scroll)?;
++    scroller.set_scrollbar_width(ScrollbarWidth::None)?;
++    root.append_child(&scroller)?;
++    let target = child(&document, &scroller)?;
++    let _second = if children == 2 {
++        Some(child(&document, &scroller)?)
++    } else {
++        None
++    };
++    let bounds = target.bounding_rect()?.ok_or("missing native bounds")?;
++    std::fs::write(png, document.render_to_png_buffer()?)?;
++    std::fs::write(
++        geometry,
++        format!(
++            "{{\"x\":{},\"y\":{},\"width\":{},\"height\":{}}}\n",
++            bounds.x, bounds.y, bounds.width, bounds.height
++        ),
++    )?;
++    if let Some(path) = metrics_path {
++        let metrics = scroller.scroll_metrics()?.ok_or("missing native metrics")?;
++        std::fs::write(
++            path,
++            format!(
++                "{{\"bounds\":{{\"x\":{},\"y\":{},\"width\":{},\"height\":{}}},\"clientWidth\":{},\"clientHeight\":{},\"scrollWidth\":{},\"scrollHeight\":{},\"scrollTop\":{},\"scrollLeft\":{}}}\n",
++                bounds.x, bounds.y, bounds.width, bounds.height, metrics.client_width,
++                metrics.client_height, metrics.scroll_width, metrics.scroll_height,
++                scroller.scroll_top()?, scroller.scroll_left()?,
++            ),
++        )?;
++    }
++    Ok(())
++}

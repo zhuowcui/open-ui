@@ -1,0 +1,218 @@
+{
+  "all_commands_terminal": true,
+  "named_baseline_failures_reproduced": [
+    "tests::native_atomic_constraints_contribute_to_enclosing_intrinsic_size"
+  ],
+  "observed_exit_code": 1,
+  "probe_sha256": "b911d96fe2fc8c9104a84e086a0230608e8a746f67dbc46310fc674e51ad8a1b",
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "7d723caa7541882da6f403152b1432f0d45c50a8",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "77f7d76cfc00668dc9bc9e3db52d3ef22a236a9dd593af534eadaedfb39e4bef",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "7d723caa7541882da6f403152b1432f0d45c50a8",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "77f7d76cfc00668dc9bc9e3db52d3ef22a236a9dd593af534eadaedfb39e4bef",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "steps": [
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "clean",
+        "-p",
+        "openui-geometry",
+        "-p",
+        "openui-style",
+        "-p",
+        "openui-dom",
+        "-p",
+        "openui-text",
+        "-p",
+        "openui-layout",
+        "-p",
+        "openui-paint",
+        "-p",
+        "openui-compositor",
+        "-p",
+        "openui-engine",
+        "-p",
+        "openui-platform",
+        "-p",
+        "openui-ffi",
+        "-p",
+        "openui",
+        "-p",
+        "openui-macros",
+        "-p",
+        "hello",
+        "-p",
+        "counter",
+        "-p",
+        "todo",
+        "-p",
+        "dashboard",
+        "-p",
+        "framework-test",
+        "-p",
+        "pixel-compare"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "e32c12c735041940b05f8b1aac4dc35ed0ddba5e2bbc3ff31d6cb6ed33849748",
+      "name": "clean-baseline-atomic",
+      "observed_exit_code": 0,
+      "source": {
+        "clean": true,
+        "commit": "e0ab6c32167806ce81cc26720505f060e1570c10",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "4593800a88b511fef56e49e1a5e2b71b7a7194a74192ae3214414d3e0e5901dd",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "e0ab6c32167806ce81cc26720505f060e1570c10",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "4593800a88b511fef56e49e1a5e2b71b7a7194a74192ae3214414d3e0e5901dd",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "-p",
+        "openui-engine",
+        "--lib",
+        "tests::native_atomic_constraints_contribute_to_enclosing_intrinsic_size",
+        "--",
+        "--exact"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "e50d8a3627cf21ae9f143c33b70effd67748d2e2494fd9fc4fbe334c9cbeca8f",
+      "name": "baseline-atomic",
+      "observed_exit_code": 101,
+      "source": {
+        "clean": true,
+        "commit": "e0ab6c32167806ce81cc26720505f060e1570c10",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "4593800a88b511fef56e49e1a5e2b71b7a7194a74192ae3214414d3e0e5901dd",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "e0ab6c32167806ce81cc26720505f060e1570c10",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "4593800a88b511fef56e49e1a5e2b71b7a7194a74192ae3214414d3e0e5901dd",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "clean",
+        "-p",
+        "openui-geometry",
+        "-p",
+        "openui-style",
+        "-p",
+        "openui-dom",
+        "-p",
+        "openui-text",
+        "-p",
+        "openui-layout",
+        "-p",
+        "openui-paint",
+        "-p",
+        "openui-compositor",
+        "-p",
+        "openui-engine",
+        "-p",
+        "openui-platform",
+        "-p",
+        "openui-ffi",
+        "-p",
+        "openui",
+        "-p",
+        "openui-macros",
+        "-p",
+        "hello",
+        "-p",
+        "counter",
+        "-p",
+        "todo",
+        "-p",
+        "dashboard",
+        "-p",
+        "framework-test",
+        "-p",
+        "pixel-compare"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "fecad3eb7a131dc49ab4a6c3c7687c68763b33df93826446239fc24902e2cea7",
+      "name": "clean-baseline-leading",
+      "observed_exit_code": 0,
+      "source": {
+        "clean": true,
+        "commit": "3096820371973e6e17c8a94be188f1e8160e953b",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "9bfb2d69b8397bb8d493d63c7c988aa6683b201cf19412765eedf7020374950f",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "3096820371973e6e17c8a94be188f1e8160e953b",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "9bfb2d69b8397bb8d493d63c7c988aa6683b201cf19412765eedf7020374950f",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "-p",
+        "openui-engine",
+        "--lib",
+        "tests::native_intrinsic_collapsible_leading_spaces_preserve_width_and_indentation",
+        "--",
+        "--exact"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "89c4b4b360583d07e5b2ef2f07b609a8e249e92f45bb8f2ab20be2a93eefa930",
+      "name": "baseline-leading",
+      "observed_exit_code": 101,
+      "source": {
+        "clean": true,
+        "commit": "3096820371973e6e17c8a94be188f1e8160e953b",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "9bfb2d69b8397bb8d493d63c7c988aa6683b201cf19412765eedf7020374950f",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "3096820371973e6e17c8a94be188f1e8160e953b",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "9bfb2d69b8397bb8d493d63c7c988aa6683b201cf19412765eedf7020374950f",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "workspace_cleaned_at_every_source_switch": true
+}

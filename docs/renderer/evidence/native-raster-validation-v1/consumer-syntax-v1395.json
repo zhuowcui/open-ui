@@ -1,0 +1,91 @@
+{
+  "all_commands_terminal": true,
+  "baseline_source": {
+    "clean": true,
+    "commit": "0e1f12ff6bf971e4c5940f298521895cd8d933fb",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "f321bf534cf3c8f923dde882df9e35907184c3cc7db0236c7d01b065d297a752",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "cargo_commands": 0,
+  "consumer_correction_only": true,
+  "generated_images": 0,
+  "header_unchanged": true,
+  "observed_exit_code": 0,
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "3d4eea1184ac6703ae4b29de12ddb4cb75fe5ed3",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "b82ebc6c2753fdfefb35eda3bcf340c9b0fe798d962264761ba5e01021f6f31a",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "state": "complete",
+  "steps": [
+    {
+      "command": [
+        "/home/nero/chromium/src/third_party/llvm-build/Release+Asserts/bin/clang",
+        "-std=c11",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot",
+        "-I/dev/shm/openui-native-raster-validation-5ef50aac/include",
+        "-fsyntax-only",
+        "/dev/shm/openui-native-raster-validation-5ef50aac/examples/c_v02/raster_configuration.c"
+      ],
+      "log_sha256": "cbfdd6465f03c2c07b88a20dc1f75601e46fe4f95a2195d5545ff2314e029c33",
+      "name": "baseline-c",
+      "observed_exit_code": 1
+    },
+    {
+      "command": [
+        "/home/nero/chromium/src/third_party/llvm-build/Release+Asserts/bin/clang++",
+        "-std=c++17",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot",
+        "-I/dev/shm/openui-native-raster-validation-5ef50aac/include",
+        "-fsyntax-only",
+        "/dev/shm/openui-native-raster-validation-5ef50aac/examples/c_v02/raster_configuration.cc"
+      ],
+      "log_sha256": "56c04ea95a086f2f5d4967f4979eeb6a7f22c32d3e004f6ab68478231f9184b8",
+      "name": "baseline-cpp",
+      "observed_exit_code": 1
+    },
+    {
+      "command": [
+        "/home/nero/chromium/src/third_party/llvm-build/Release+Asserts/bin/clang",
+        "-std=c11",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot",
+        "-I/dev/shm/openui-native-raster-consumer-0e1f12ff/include",
+        "-fsyntax-only",
+        "/dev/shm/openui-native-raster-consumer-0e1f12ff/examples/c_v02/raster_configuration.c"
+      ],
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "fixed-c",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/home/nero/chromium/src/third_party/llvm-build/Release+Asserts/bin/clang++",
+        "-std=c++17",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot",
+        "-I/dev/shm/openui-native-raster-consumer-0e1f12ff/include",
+        "-fsyntax-only",
+        "/dev/shm/openui-native-raster-consumer-0e1f12ff/examples/c_v02/raster_configuration.cc"
+      ],
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "fixed-cpp",
+      "observed_exit_code": 0
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "all_bytes_preserved": true,
+  "all_commands_terminal": true,
+  "build_receipt_sha256": "4795069932c02a93a2a487c33fce4e11f67ff7a9c314c17eefac4b35f63afc45",
+  "destination": "/mnt/e/openui-v02-qualification-d174ea0b/native-keywords-abi-owned-scratch-v1777",
+  "file_count": 4,
+  "files": {
+    "accessibility.c.bin": {
+      "bytes": 19904,
+      "sha256": "5154326e52cad31d0910264acb692edcd9b1d75651e3d2e9a298fc39045566d4"
+    },
+    "accessibility.c.o": {
+      "bytes": 19448,
+      "sha256": "0feb6e5d0612f93ea5fbe3a52ba35ecec86f8ee963c4459c4f0c28f364845577"
+    },
+    "counter.c.o": {
+      "bytes": 6312,
+      "sha256": "55bf4ba4fc6dab0e49a4cc2ea659d40b06e63887c3d46fa4140c5e2ab2439b3d"
+    },
+    "libopenui.so.0": {
+      "bytes": 69719864,
+      "sha256": "efe9446a7fe7a63c986af6a37a30aacf5ad553e1bd2cc0abd47832501fbad5e7"
+    }
+  },
+  "free_bytes_after": 530202624,
+  "free_bytes_before": 460427264,
+  "no_qualification_reference_changed": true,
+  "observed_exit_code": 0,
+  "owned_scratch_library_matches_source_7d6ffabf": true,
+  "owner_receipt_sha256": "189711442797ae28149d346c7caa1b75dc768e81066bdab258f1167b79a12ba7",
+  "probe_sha256": "6259ecbb81acd0f86921deb8ad51d218139317b86d3193aae0de54c22ebd6c27",
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": "/tmp/openui-ffi-_1lng7e8"
+}

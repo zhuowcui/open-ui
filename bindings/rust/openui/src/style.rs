@@ -2,7 +2,7 @@
 
 pub use openui_compositor::SceneRect as Rect;
 
-/// Owned premultiplied 32-bit bitmap produced by the software compositor.
+/// Owned premultiplied RGBA8888 bitmap produced by the software compositor.
 #[derive(Debug, Clone, PartialEq)]
 pub struct Bitmap {
     pub(crate) pixels: Vec<u8>,
@@ -13,6 +13,7 @@ pub struct Bitmap {
 }
 
 impl Bitmap {
+    /// Top-to-bottom RGBA bytes. Color channels are premultiplied by alpha.
     pub fn pixels(&self) -> &[u8] {
         &self.pixels
     }

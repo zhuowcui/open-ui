@@ -1,0 +1,190 @@
+diff --git a/bindings/rust/openui-engine/src/lib.rs b/bindings/rust/openui-engine/src/lib.rs
+index 32ec4ebc..72f0238f 100644
+--- a/bindings/rust/openui-engine/src/lib.rs
++++ b/bindings/rust/openui-engine/src/lib.rs
+@@ -2036,10 +2036,25 @@ impl Engine {
+                 // moves them. Their DOM parents may belong to scrollports
+                 // outside this geometry chain. Continuation fragments retain
+                 // the first principal box's ancestry, just like box_worlds.
++                let root_style = &document.node(document.root()).style;
++                let viewport_fixed = document.node(fragment.node_id).style.position
++                    == openui_style::Position::Fixed
++                    && fragment
++                        .positioned_fragmentation
++                        .as_ref()
++                        .is_some_and(|positioned| {
++                            positioned.containing_block_node == document.root()
++                        })
++                    && !root_style.establishes_transform_containing_block
++                    && !root_style.has_layout_containment();
++                // A viewport-anchored fixed box cannot be revealed by moving
++                // the document. Descendants may move this box's own scrollport,
++                // but the reveal chain ends before the viewport scroll node.
++                let reveal_parent = if viewport_fixed { None } else { parent_box };
+                 geometry
+                     .box_parents
+                     .entry(fragment.node_id)
+-                    .or_insert(parent_box.filter(|parent| *parent != fragment.node_id));
++                    .or_insert(reveal_parent.filter(|parent| *parent != fragment.node_id));
+             }
+             let child_parent_box = if has_element_box {
+                 Some(fragment.node_id)
+diff --git a/bindings/rust/openui-engine/src/scroll_into_view.rs b/bindings/rust/openui-engine/src/scroll_into_view.rs
+index d3ebefb4..384704ca 100644
+--- a/bindings/rust/openui-engine/src/scroll_into_view.rs
++++ b/bindings/rust/openui-engine/src/scroll_into_view.rs
+@@ -271,6 +271,96 @@ mod tests {
+         assert_eq!(engine.stats().layouts, layouts + 2);
+     }
+ 
++    #[test]
++    fn offscreen_viewport_fixed_reveal_preserves_document_scroll() {
++        for position in [Position::Fixed, Position::Absolute] {
++            for smooth in [false, true] {
++                let (mut engine, outer, inner, target) = nested();
++                let root = engine.root();
++                let filler = box_node(&mut engine, root, 320.0, 1000.0);
++                engine.insert_before(root, filler, outer).unwrap();
++                engine
++                    .set_property(outer, StyleProperty::Position, Position::Static.into())
++                    .unwrap();
++                engine
++                    .set_property(
++                        outer,
++                        StyleProperty::MarginLeft,
++                        LengthValue::px(40.0).into(),
++                    )
++                    .unwrap();
++                engine
++                    .set_property(
++                        outer,
++                        StyleProperty::MarginTop,
++                        LengthValue::px(30.0).into(),
++                    )
++                    .unwrap();
++                engine
++                    .set_property(
++                        target,
++                        StyleProperty::MarginLeft,
++                        LengthValue::px(0.0).into(),
++                    )
++                    .unwrap();
++                engine
++                    .set_property(
++                        target,
++                        StyleProperty::MarginTop,
++                        LengthValue::px(0.0).into(),
++                    )
++                    .unwrap();
++                engine
++                    .set_property(target, StyleProperty::Position, position.into())
++                    .unwrap();
++                engine
++                    .set_property(target, StyleProperty::Left, LengthValue::px(280.0).into())
++                    .unwrap();
++                engine
++                    .set_property(target, StyleProperty::Top, LengthValue::px(500.0).into())
++                    .unwrap();
++                if smooth {
++                    engine
++                        .smooth_scroll_into_view(target, nearest(), 100.0)
++                        .unwrap();
++                    engine.set_animation_time(100.0).unwrap();
++                } else {
++                    engine.scroll_into_view(target, nearest()).unwrap();
++                }
++                let fixed = position == Position::Fixed;
++                assert_eq!(
++                    engine.scroll_offset(root).unwrap(),
++                    (0.0, if fixed { 0.0 } else { 280.0 })
++                );
++                assert_eq!(engine.scroll_offset(outer).unwrap(), (0.0, 0.0));
++                assert_eq!(engine.scroll_offset(inner).unwrap(), (0.0, 0.0));
++                let bounds = engine.bounds(target).unwrap().unwrap();
++                assert_eq!(
++                    (bounds.x, bounds.y),
++                    (280.0, if fixed { 500.0 } else { 220.0 })
++                );
++                assert!(!engine.is_animating());
++            }
++        }
++    }
++
++    #[test]
++    fn descendant_reveal_can_scroll_fixed_container_without_scrolling_document() {
++        let (mut engine, outer, inner, target) = nested();
++        let root = engine.root();
++        let filler = box_node(&mut engine, root, 320.0, 1000.0);
++        engine.insert_before(root, filler, outer).unwrap();
++        engine
++            .set_property(outer, StyleProperty::Position, Position::Fixed.into())
++            .unwrap();
++        engine.scroll_into_view(target, nearest()).unwrap();
++        assert_eq!(engine.scroll_offset(inner).unwrap(), (0.0, 40.0));
++        assert_eq!(engine.scroll_offset(outer).unwrap(), (70.0, 220.0));
++        assert_eq!(engine.scroll_offset(root).unwrap(), (0.0, 0.0));
++        let bounds = engine.bounds(target).unwrap().unwrap();
++        assert_eq!((bounds.x, bounds.y), (120.0, 90.0));
++    }
++
+     #[test]
+     fn reveal_nested_hidden_scrollports_and_preserve_unchanged_frame() {
+         let (mut engine, outer, inner, target) = nested();
+diff --git a/bindings/rust/openui/examples/native_reveal_containers.rs b/bindings/rust/openui/examples/native_reveal_containers.rs
+index be612c57..71727d60 100644
+--- a/bindings/rust/openui/examples/native_reveal_containers.rs
++++ b/bindings/rust/openui/examples/native_reveal_containers.rs
+@@ -55,6 +55,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
+         "absolute-root",
+         "fixed-root",
+         "fixed-transform",
++        "fixed-root-scrollable",
++        "absolute-root-scrollable",
+     ]
+     .contains(&case.as_str())
+     {
+@@ -66,8 +68,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
+     let root = document.body();
+     root.set_background_color(Color::WHITE)?;
+     root.set_scrollbar_width(ScrollbarWidth::None)?;
++    let root_scroll_case = case.ends_with("-scrollable");
++    let root_filler = if root_scroll_case {
++        Some(block(&document, &root, 320.0, 1000.0)?)
++    } else {
++        None
++    };
+     let outer = block(&document, &root, 100.0, 80.0)?;
+-    if case == "absolute-root" {
++    if case == "absolute-root" || root_scroll_case {
+         outer.set_margin_left(LengthValue::px(40.0))?;
+         outer.set_margin_top(LengthValue::px(30.0))?;
+     } else {
+@@ -106,8 +114,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
+         })?;
+         let (left, top) = if case == "absolute-inner" {
+             (150.0, 120.0)
+-        } else if case == "absolute-root" || case == "fixed-root" {
+-            (280.0, 200.0)
++        } else if case == "absolute-root" || case == "fixed-root" || root_scroll_case {
++            (280.0, if root_scroll_case { 500.0 } else { 200.0 })
+         } else {
+             (250.0, 180.0)
+         };
+@@ -169,7 +177,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
+         format!("[{}]\n", records.join(",")),
+     )?;
+     let weak = target.downgrade();
+-    drop((target, filler, inner, spacer, outer, root, document));
++    drop((
++        target,
++        filler,
++        inner,
++        spacer,
++        outer,
++        root_filler,
++        root,
++        document,
++    ));
+     assert!(
+         weak.upgrade().is_none(),
+         "native callback retained document"

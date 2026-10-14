@@ -1,0 +1,79 @@
+{
+  "adapted_reference_function_sha256": "fd890215fa3c0b7d2650ffedd6f8f27d3a98229debcb1f43d391e138a418a964",
+  "all_commands_terminal": true,
+  "build_receipt_sha256": "4083c7a346b88fab318cfd5e32421ee249a5c329a0eb678a0b6caf05dbc70787",
+  "capture_conditions_unchanged": true,
+  "capture_harness_sha256": "ad37344879ddda41e6570ea41c142103e58f5db05fb9c96c27c1ac62b67f92ea",
+  "capture_visual_conditions_unchanged": true,
+  "cases": [
+    {
+      "images": [],
+      "scale": 1.0
+    }
+  ],
+  "chrome_profile_storage_correction_only": true,
+  "chromium_binary_sha256": "0ba87684df0afc11faaea40ac57bd2f1d68b67191443b38215a36b90e6f08848",
+  "failure": "Chromium exited before exposing its DevTools endpoint",
+  "fontconfig_sha256": "99fd54cf2f3875bba44a2272b3dfe5adc7c08263ca0511ec2473ec5e59c09195",
+  "inputs": {
+    "after": {
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-options-consumer-v1810/after.html",
+      "sha256": "1c3f1e3cf05f084cb067aaceebcbc6527d7ced78a97cb269030ad58baa0d5193"
+    },
+    "before": {
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-options-consumer-v1810/before.html",
+      "sha256": "0847b1401e497b93dcddd17db95013159892c5310c442b678db17dfe31c747ee"
+    }
+  },
+  "javascript_executed_by_openui": false,
+  "native_binary_sha256": "a128e9261875583923b98eae958f3cc221d21fad9a0386f782895ec422958f93",
+  "native_runs": [
+    {
+      "command": [
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-clean-v1810/native_raster_options",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-options-consumer-v1810/native-1"
+      ],
+      "log_sha256": "eaa864b92112bc4aee364971f8a096a9ff9dc033166c03da0d4c3031ea42247c",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-clean-v1810/native_raster_options",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-options-consumer-v1810/native-2"
+      ],
+      "log_sha256": "eaa864b92112bc4aee364971f8a096a9ff9dc033166c03da0d4c3031ea42247c",
+      "observed_exit_code": 0
+    }
+  ],
+  "new_release_states_admitted": 0,
+  "observed_exit_code": 1,
+  "original_reference_function_sha256": "f434cfbb9ad7746e87d7ccb0cc56e7019e2b658b29acfc72a3619d9d30f0594c",
+  "pixel_tolerance": 0,
+  "preserves_both_unstable_reference_captures": true,
+  "probe_sha256": "dea84d6cfce9fc3a2a14b22151ed18979fcb35b9ae360ce19dc12fd1de28b82d",
+  "promotion_allowed": false,
+  "public_native_rust_api": true,
+  "reference_adaptations": [
+    "Remove image natural-size assertion for a div case",
+    "Store Chromium profile and socket temporary files on a native Linux filesystem"
+  ],
+  "reference_source_sha256": "b1a480f5f49bada97d341d5cf5e7626f8f03496bc87b4ef83b40c298331d1710",
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "2d338d6cf8334bae0d7893315d85633d2d586aad",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "cfbb9630870e1733b5ba0d622c7aba70dbe27f64bc2dbbf793d0336ffcaefa04",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "2d338d6cf8334bae0d7893315d85633d2d586aad",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "cfbb9630870e1733b5ba0d622c7aba70dbe27f64bc2dbbf793d0336ffcaefa04",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "strict_chromium_capture_pairs": true,
+  "unstable_reference_captures": []
+}

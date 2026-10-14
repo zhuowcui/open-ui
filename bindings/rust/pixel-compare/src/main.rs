@@ -2,6 +2,9 @@
 //!
 //! Usage:
 //!   pixel_compare list                              # List all test IDs
+//!   pixel_compare build-source-identity             # Source recorded by Cargo
+//!   pixel_compare export-picture <test_id> <output.skp> [profile options]
+//!       # Diagnostic canonical recording; does not render or qualify pixels
 //!   pixel_compare render <test_id> <output.png> [--viewport WxH] [--scale N]
 //!       [--raster-config PROFILE] [--backend cpu-skia|ganesh-gl]
 //!   pixel_compare render-all <output_dir> [--viewport WxH] [--scale N]
@@ -21,6 +24,8 @@ use std::sync::OnceLock;
 #[rustfmt::skip]
 mod wpt;
 
+mod pending_native_mutation_v1;
+
 const LEGACY_WIDTH: f64 = 800.0;
 const LEGACY_HEIGHT: f64 = 600.0;
 const LEGACY_SCALE: f64 = 1.0;
@@ -33,18 +38,29 @@ static ACTIVE_RASTER_CONFIGURATION: OnceLock<RasterConfiguration> = OnceLock::ne
 /// document nor mutable computed styles.
 pub struct FixtureEngine {
     inner: Engine,
+    authored_scrollbar_widths: std::collections::HashMap<NodeId, ScrollbarWidth>,
 }
 
 impl FixtureEngine {
     fn new(viewport: ViewportMetrics) -> Result<Self, EngineError> {
+        let mut inner = Engine::new_with_font_collection_and_options(
+            viewport,
+            openui_text::FontCollection::deterministic_test(),
+            EngineOptions {
+                raster_configuration: active_raster_configuration(),
+            },
+        )?;
+        // The immutable capture styles hide webkit scrollbar pseudo-elements.
+        // Standard non-auto width/color declarations take precedence over
+        // those pseudo-elements in Chromium. Resolve that capture policy in
+        // this adapter; native scrollbar-width:none always remains hidden.
+        inner.set_renderer_style(
+            inner.root(),
+            RendererStyleValue::ScrollbarWidth(ScrollbarWidth::None),
+        )?;
         Ok(Self {
-            inner: Engine::new_with_font_collection_and_options(
-                viewport,
-                openui_text::FontCollection::deterministic_test(),
-                EngineOptions {
-                    raster_configuration: active_raster_configuration(),
-                },
-            )?,
+            inner,
+            authored_scrollbar_widths: std::collections::HashMap::new(),
         })
     }
 
@@ -57,7 +73,14 @@ impl FixtureEngine {
     }
 
     fn create_node(&mut self, tag: ElementTag) -> NodeId {
-        self.inner.create_element(tag).expect("fixture element")
+        let node = self.inner.create_element(tag).expect("fixture element");
+        self.inner
+            .set_renderer_style(
+                node,
+                RendererStyleValue::ScrollbarWidth(ScrollbarWidth::None),
+            )
+            .expect("fixture capture-harness scrollbar style");
+        node
     }
 
     fn append_child(&mut self, parent: NodeId, child: NodeId) {
@@ -73,9 +96,37 @@ impl FixtureEngine {
     }
 
     fn set_style(&mut self, node: NodeId, value: RendererStyleValue) {
+        let affects_scrollbars = matches!(
+            &value,
+            RendererStyleValue::ScrollbarWidth(_)
+                | RendererStyleValue::ScrollbarThumbColor(_)
+                | RendererStyleValue::ScrollbarTrackColor(_)
+        );
+        if let RendererStyleValue::ScrollbarWidth(width) = &value {
+            self.authored_scrollbar_widths.insert(node, *width);
+        }
         self.inner
             .set_renderer_style(node, value)
-            .expect("schema-validated fixture style")
+            .expect("schema-validated fixture style");
+        if affects_scrollbars {
+            let authored = self
+                .authored_scrollbar_widths
+                .get(&node)
+                .copied()
+                .unwrap_or(ScrollbarWidth::Auto);
+            let computed = self.inner.computed_style(node).expect("fixture style read");
+            let effective = if authored != ScrollbarWidth::Auto
+                || computed.scrollbar_thumb_color.is_some()
+                || computed.scrollbar_track_color.is_some()
+            {
+                authored
+            } else {
+                ScrollbarWidth::None
+            };
+            self.inner
+                .set_renderer_style(node, RendererStyleValue::ScrollbarWidth(effective))
+                .expect("capture scrollbar precedence");
+        }
     }
 
     fn set_internal_style(&mut self, node: NodeId, value: RendererInternalStyleValue) {
@@ -214,6 +265,7 @@ fn parse_viewport_options(
                     "deterministic-alias-subpixel" => {
                         RasterConfiguration::deterministic_aliased(true)
                     }
+                    "chromium-linux-monochrome" => RasterConfiguration::chromium_linux_monochrome(),
                     "chromium-linux-lcd" => RasterConfiguration::chromium_linux_lcd(),
                     "legacy-deterministic-alias" => {
                         RasterConfiguration::legacy_deterministic_aliased(false)
@@ -289,12 +341,42 @@ fn main() {
     let args: Vec<String> = std::env::args().collect();
 
     match args.get(1).map(|s| s.as_str()) {
+        Some("build-source-identity") => print!(
+            "{}",
+            include_str!(concat!(env!("OUT_DIR"), "/renderer-build-identity.json"))
+        ),
         Some("list") => {
             for (id, _) in registry() {
                 println!("{}", id);
             }
         }
         Some("raster-identity") => print_raster_identity(&args[2..]),
+        Some("export-picture") => {
+            let test_id = args.get(2).expect(
+                "Usage: pixel_compare export-picture <test_id> <output.skp> [profile options]",
+            );
+            let output = args.get(3).expect("missing output.skp");
+            let viewport = install_viewport(&args[4..]);
+            let tests = registry();
+            let (_, builder) = tests
+                .iter()
+                .find(|(id, _)| *id == test_id)
+                .expect("unknown fixture ID");
+            let mut engine = builder(viewport).expect("fixture build");
+            let scene = engine.scene().expect("fixture scene");
+            let canonical = scene
+                .retained_scene()
+                .expect("owned scene recordings")
+                .recordings()
+                .iter()
+                .find(|recording| {
+                    recording.role() == openui_compositor::SceneRecordingRole::Canonical
+                })
+                .expect("canonical scene recording");
+            let data = canonical.picture().serialize();
+            std::fs::write(output, data.as_bytes()).expect("write canonical picture");
+            println!("Exported canonical Engine picture to {output}");
+        }
         Some("debug") => {
             let test_id = args.get(2).expect("Usage: pixel_compare debug <test_id>");
             let viewport = install_viewport(&args[3..]);
@@ -854,7 +936,34 @@ fn registry() -> Vec<(&'static str, TestBuilder)> {
     ];
     // Extend with auto-generated WPT tests
     tests.extend(wpt::all_wpt_registry());
+    // Distinct pending IDs preserve historical builders and qualification.
+    tests.extend([
+        ("pending/native-mutation-v1/wpt/css_break/out-of-flow-in-multicolumn-120", pending_mutation_prepend as TestBuilder),
+        ("pending/native-mutation-v1/wpt/css_position/position-fixed-dynamic-transformed-sibling", pending_mutation_display_remove as TestBuilder),
+        ("pending/native-mutation-v1/wpt/css_overflow/scrollbars-chrome-bug-001", pending_mutation_transform_barriers as TestBuilder),
+    ]);
     tests
+}
+
+fn pending_mutation_prepend(viewport: ViewportMetrics) -> Result<Engine, EngineError> {
+    let mut engine = FixtureEngine::new(viewport)?.into_engine();
+    let replay = pending_native_mutation_v1::replay_0(&mut engine)?;
+    let _ = (replay.handles.len(), replay.barriers.len());
+    Ok(engine)
+}
+
+fn pending_mutation_display_remove(viewport: ViewportMetrics) -> Result<Engine, EngineError> {
+    let mut engine = FixtureEngine::new(viewport)?.into_engine();
+    let replay = pending_native_mutation_v1::replay_1(&mut engine)?;
+    let _ = (replay.handles.len(), replay.barriers.len());
+    Ok(engine)
+}
+
+fn pending_mutation_transform_barriers(viewport: ViewportMetrics) -> Result<Engine, EngineError> {
+    let mut engine = FixtureEngine::new(viewport)?.into_engine();
+    let replay = pending_native_mutation_v1::replay_2(&mut engine)?;
+    let _ = (replay.handles.len(), replay.barriers.len());
+    Ok(engine)
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -869,6 +978,10 @@ pub fn base_doc(viewport_metrics: ViewportMetrics) -> (FixtureEngine, NodeId) {
     let viewport = doc.root();
     // Viewport: no margin/padding, just a container matching screen dimensions
     doc.set_style(viewport, RendererStyleValue::Display(Display::Block));
+    // BODY_STYLE also sets `html { overflow: hidden; }`; the body itself
+    // remains visible below so its background and overflowing ink can propagate.
+    doc.set_style(viewport, RendererStyleValue::OverflowX(Overflow::Hidden));
+    doc.set_style(viewport, RendererStyleValue::OverflowY(Overflow::Hidden));
     // The raster surface itself supplies the initial white canvas. Keep the
     // synthetic viewport transparent so an explicitly emitted legacy `html`
     // background can be distinguished from that initial canvas color.
@@ -4864,6 +4977,72 @@ fn sp13_inline_with_float(viewport: ViewportMetrics) -> Result<Engine, EngineErr
 #[cfg(test)]
 mod profile_tests {
     use super::*;
+
+    #[test]
+    fn adjacent_row_flex_items_keep_their_own_height_across_columns() {
+        fn second_or_third_column_items(
+            test_id: &str,
+            column: usize,
+        ) -> Vec<openui_layout::Fragment> {
+            let (viewport, _) = parse_viewport_options(&[
+                "--viewport".into(),
+                "800x600".into(),
+                "--scale".into(),
+                "1".into(),
+            ])
+            .unwrap();
+            let tests = registry();
+            let (_, builder) = tests.iter().find(|(id, _)| *id == test_id).unwrap();
+            let mut engine = builder(viewport).unwrap();
+            let scene = engine.scene().unwrap();
+            fn columns<'a>(
+                fragment: &'a openui_layout::Fragment,
+                out: &mut Vec<&'a openui_layout::Fragment>,
+            ) {
+                if fragment.kind == openui_layout::FragmentKind::ColumnBox {
+                    out.push(fragment);
+                }
+                for child in &fragment.children {
+                    columns(child, out);
+                }
+            }
+            let mut found = Vec::new();
+            columns(scene.fragments(), &mut found);
+            found[column].children[0].children.clone()
+        }
+
+        let adjacent = second_or_third_column_items(
+            "wpt/css_break/flexbox_multi-line-row-flex-fragmentation-001",
+            2,
+        );
+        assert_eq!(
+            adjacent[0].size.height,
+            openui_geometry::LayoutUnit::from_i32(250)
+        );
+        assert_eq!(
+            adjacent[1].size.height,
+            openui_geometry::LayoutUnit::from_i32(250)
+        );
+        assert_eq!(
+            adjacent[2].offset.top,
+            openui_geometry::LayoutUnit::from_i32(50)
+        );
+
+        // A forced break with no following item still needs a visual
+        // continuation. It must keep its green background through the column.
+        let continued = second_or_third_column_items(
+            "wpt/css_break/flexbox_multi-line-row-flex-fragmentation-023",
+            1,
+        );
+        assert_eq!(
+            continued[2].offset.top,
+            openui_geometry::LayoutUnit::from_i32(-20)
+        );
+        assert_eq!(
+            continued[2].size.height,
+            openui_geometry::LayoutUnit::from_i32(120)
+        );
+    }
 
     #[test]
     fn qualification_profile_uses_logical_authority_and_winit_rounding() {

@@ -1,0 +1,39 @@
+{
+  "baseline_clean_commit": "dc451061ec3099c6298b52061d39db09b2cf325d",
+  "baseline_report_sha256": "d8103e865c5cd675b5f2df0921d54ae2d806288a5f52c9d781f3b40e0fe1bda5",
+  "chromium_oracle_identity_changes": 0,
+  "chromium_oracle_rgba_changes": 0,
+  "clean_source_commit": "d39282e4dc24ce4540d8d8908a97343864394e9a",
+  "comparisons": {
+    "different": 3,
+    "errors": 0,
+    "exact": 801,
+    "profile_result_sha256": "cf52d5ead35e80958cf511245ac8faf270b03af3be7baf9a6fe2d0f46fff59fe",
+    "total": 804
+  },
+  "contract_sha256": "b51624ccb5b994601e3b96bca0be7442c926b5abdbc325f233524dcfe5a14e0e",
+  "openui_rgba_changes": 0,
+  "qualification": false,
+  "remaining_differences": [
+    {
+      "mismatched_pixels": 1315,
+      "profile": "desktop-1280x720@1.25",
+      "test_id": "wpt/css_display/display-contents-dynamic-fieldset-legend-001"
+    },
+    {
+      "mismatched_pixels": 64,
+      "profile": "mobile-375x667@2",
+      "test_id": "wpt/css_multicol/crashtests_table-cell-writing-mode-root"
+    },
+    {
+      "mismatched_pixels": 125,
+      "profile": "desktop-1280x720@1.25",
+      "test_id": "wpt/css_position/containing-block-change-button"
+    }
+  ],
+  "schema_version": 1,
+  "scope": "all 201 admitted additions at four required profiles; complete expanded manifest not run at this checkpoint",
+  "selected_cases": 201,
+  "selected_report_sha256": "4a13c92d762a02d707368735afaa2b6161081f6f6b39dbd3d37b780b70e322e3",
+  "status_changes": 0
+}

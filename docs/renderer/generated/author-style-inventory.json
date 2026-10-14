@@ -1,12 +1,13 @@
 {
   "consumer_roots": [
     "bindings/rust/openui-layout/src",
-    "bindings/rust/openui-paint/src"
+    "bindings/rust/openui-paint/src",
+    "bindings/rust/openui-engine/src"
   ],
   "counts": {
-    "consumed": 216,
-    "internal": 14,
-    "public_typed": 202,
+    "consumed": 235,
+    "internal": 18,
+    "public_typed": 217,
     "unclassified": 0
   },
   "fields": [
@@ -15,6 +16,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/grid.rs",
         "bindings/rust/openui-paint/src/painter.rs"
@@ -30,6 +32,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/grid.rs",
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs"
@@ -60,6 +63,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/grid.rs",
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
@@ -105,6 +109,7 @@
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-paint/src/content_layer.rs",
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-paint/src/render.rs"
       ],
@@ -160,7 +165,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
-        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/collapsed_table_painter.rs",
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-paint/src/render.rs"
       ],
@@ -174,7 +179,9 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
-        "bindings/rust/openui-paint/src/painter.rs"
+        "bindings/rust/openui-layout/src/fieldset.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-engine/src/compositor_scene.rs"
       ],
       "css_name": "border-bottom-left-radius",
       "field": "border_bottom_left_radius",
@@ -186,7 +193,9 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
-        "bindings/rust/openui-paint/src/painter.rs"
+        "bindings/rust/openui-layout/src/fieldset.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-engine/src/compositor_scene.rs"
       ],
       "css_name": "border-bottom-right-radius",
       "field": "border_bottom_right_radius",
@@ -203,6 +212,7 @@
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
         "bindings/rust/openui-layout/src/inline/line_breaker.rs",
         "bindings/rust/openui-layout/src/logical_geometry.rs",
+        "bindings/rust/openui-layout/src/resolved_table_borders.rs",
         "bindings/rust/openui-layout/src/table.rs",
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-paint/src/render.rs"
@@ -222,6 +232,7 @@
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
         "bindings/rust/openui-layout/src/inline/line_breaker.rs",
         "bindings/rust/openui-layout/src/logical_geometry.rs",
+        "bindings/rust/openui-layout/src/resolved_table_borders.rs",
         "bindings/rust/openui-layout/src/table.rs",
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-paint/src/render.rs"
@@ -237,8 +248,10 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/scroll_area.rs",
         "bindings/rust/openui-layout/src/table.rs",
-        "bindings/rust/openui-paint/src/painter.rs"
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-engine/src/element_dimensions.rs"
       ],
       "css_name": "border-collapse",
       "field": "border_collapse",
@@ -264,7 +277,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
-        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/collapsed_table_painter.rs",
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-paint/src/render.rs"
       ],
@@ -283,6 +296,7 @@
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
         "bindings/rust/openui-layout/src/inline/line_breaker.rs",
         "bindings/rust/openui-layout/src/logical_geometry.rs",
+        "bindings/rust/openui-layout/src/resolved_table_borders.rs",
         "bindings/rust/openui-layout/src/table.rs",
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-paint/src/render.rs"
@@ -302,6 +316,7 @@
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
         "bindings/rust/openui-layout/src/inline/line_breaker.rs",
         "bindings/rust/openui-layout/src/logical_geometry.rs",
+        "bindings/rust/openui-layout/src/resolved_table_borders.rs",
         "bindings/rust/openui-layout/src/table.rs",
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-paint/src/render.rs"
@@ -313,10 +328,24 @@
       "rust_type": "i32"
     },
     {
+      "canonical_schema_entry": false,
+      "classification": "internal",
+      "consumers": [
+        "bindings/rust/openui-layout/src/fieldset.rs",
+        "bindings/rust/openui-engine/src/compositor_scene.rs"
+      ],
+      "css_name": null,
+      "field": "border_radius_lengths",
+      "internal_rationale": "Retains resolved native length pairs and source kinds per corner while the existing numeric and percentage transports remain explicit computed overrides.",
+      "property_id": null,
+      "rust_type": "[Option<(Length, Length)>; 4]"
+    },
+    {
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
-        "bindings/rust/openui-paint/src/painter.rs"
+        "bindings/rust/openui-layout/src/fieldset.rs",
+        "bindings/rust/openui-engine/src/compositor_scene.rs"
       ],
       "css_name": "border-radius-percent",
       "field": "border_radius_percent",
@@ -329,7 +358,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
-        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/collapsed_table_painter.rs",
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-paint/src/render.rs"
       ],
@@ -348,6 +377,7 @@
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
         "bindings/rust/openui-layout/src/inline/line_breaker.rs",
         "bindings/rust/openui-layout/src/logical_geometry.rs",
+        "bindings/rust/openui-layout/src/resolved_table_borders.rs",
         "bindings/rust/openui-layout/src/table.rs",
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-paint/src/render.rs"
@@ -367,6 +397,7 @@
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
         "bindings/rust/openui-layout/src/inline/line_breaker.rs",
         "bindings/rust/openui-layout/src/logical_geometry.rs",
+        "bindings/rust/openui-layout/src/resolved_table_borders.rs",
         "bindings/rust/openui-layout/src/table.rs",
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-paint/src/render.rs"
@@ -381,6 +412,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/table.rs"
       ],
       "css_name": "border-spacing",
@@ -394,7 +426,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
-        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/collapsed_table_painter.rs",
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-paint/src/render.rs"
       ],
@@ -408,7 +440,10 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
-        "bindings/rust/openui-paint/src/painter.rs"
+        "bindings/rust/openui-layout/src/fieldset.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-engine/src/compositor_scene.rs",
+        "bindings/rust/openui-engine/src/lib.rs"
       ],
       "css_name": "border-top-left-radius",
       "field": "border_top_left_radius",
@@ -420,7 +455,9 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
-        "bindings/rust/openui-paint/src/painter.rs"
+        "bindings/rust/openui-layout/src/fieldset.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-engine/src/compositor_scene.rs"
       ],
       "css_name": "border-top-right-radius",
       "field": "border_top_right_radius",
@@ -437,6 +474,7 @@
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
         "bindings/rust/openui-layout/src/inline/line_breaker.rs",
         "bindings/rust/openui-layout/src/logical_geometry.rs",
+        "bindings/rust/openui-layout/src/resolved_table_borders.rs",
         "bindings/rust/openui-layout/src/table.rs",
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-paint/src/render.rs"
@@ -456,6 +494,7 @@
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
         "bindings/rust/openui-layout/src/inline/line_breaker.rs",
         "bindings/rust/openui-layout/src/logical_geometry.rs",
+        "bindings/rust/openui-layout/src/resolved_table_borders.rs",
         "bindings/rust/openui-layout/src/table.rs",
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-paint/src/render.rs"
@@ -472,19 +511,34 @@
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/exclusions/float_utils.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/fragment.rs",
+        "bindings/rust/openui-layout/src/fragment_geometry.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
         "bindings/rust/openui-layout/src/logical_geometry.rs",
         "bindings/rust/openui-layout/src/margin_collapsing.rs",
         "bindings/rust/openui-layout/src/out_of_flow.rs",
         "bindings/rust/openui-layout/src/relative.rs",
+        "bindings/rust/openui-layout/src/scroll_area.rs",
+        "bindings/rust/openui-layout/src/scrollbars.rs",
         "bindings/rust/openui-layout/src/sticky.rs",
+        "bindings/rust/openui-layout/src/sticky_layout.rs",
         "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-layout/src/transform.rs",
+        "bindings/rust/openui-layout/src/viewport.rs",
+        "bindings/rust/openui-paint/src/content_layer.rs",
         "bindings/rust/openui-paint/src/image_resource.rs",
+        "bindings/rust/openui-paint/src/paint_program.rs",
+        "bindings/rust/openui-paint/src/paint_record.rs",
         "bindings/rust/openui-paint/src/painter.rs",
-        "bindings/rust/openui-paint/src/text_painter.rs"
+        "bindings/rust/openui-paint/src/surface_program.rs",
+        "bindings/rust/openui-paint/src/text_painter.rs",
+        "bindings/rust/openui-engine/src/animation_timeline.rs",
+        "bindings/rust/openui-engine/src/element_dimensions.rs",
+        "bindings/rust/openui-engine/src/lib.rs",
+        "bindings/rust/openui-engine/src/scroll_into_view.rs"
       ],
       "css_name": "bottom",
       "field": "bottom",
@@ -497,6 +551,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/line_breaker.rs",
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
@@ -526,6 +581,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/grid.rs",
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
@@ -604,9 +660,19 @@
         "bindings/rust/openui-layout/src/inline/score_line_breaker.rs",
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
         "bindings/rust/openui-layout/src/multicol/mod.rs",
+        "bindings/rust/openui-layout/src/resolved_table_borders.rs",
         "bindings/rust/openui-paint/src/image_resource.rs",
+        "bindings/rust/openui-paint/src/layered_program.rs",
+        "bindings/rust/openui-paint/src/paint_program.rs",
+        "bindings/rust/openui-paint/src/paint_record.rs",
         "bindings/rust/openui-paint/src/painter.rs",
-        "bindings/rust/openui-paint/src/render.rs"
+        "bindings/rust/openui-paint/src/render.rs",
+        "bindings/rust/openui-paint/src/surface_program.rs",
+        "bindings/rust/openui-engine/src/accessibility.rs",
+        "bindings/rust/openui-engine/src/authored_source.rs",
+        "bindings/rust/openui-engine/src/interaction.rs",
+        "bindings/rust/openui-engine/src/lib.rs",
+        "bindings/rust/openui-engine/src/scroll_notifications.rs"
       ],
       "css_name": "clear",
       "field": "clear",
@@ -618,7 +684,10 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
-        "bindings/rust/openui-paint/src/painter.rs"
+        "bindings/rust/openui-paint/src/paint_order.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-engine/src/compositor_scene.rs",
+        "bindings/rust/openui-engine/src/lib.rs"
       ],
       "css_name": "clip-path-inset",
       "field": "clip_path_inset",
@@ -633,11 +702,14 @@
         "bindings/rust/openui-layout/src/inline/first_line.rs",
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
         "bindings/rust/openui-layout/src/multicol/mod.rs",
-        "bindings/rust/openui-paint/src/decoration_painter.rs",
+        "bindings/rust/openui-paint/src/collapsed_table_painter.rs",
         "bindings/rust/openui-paint/src/emphasis_painter.rs",
         "bindings/rust/openui-paint/src/image_resource.rs",
         "bindings/rust/openui-paint/src/painter.rs",
-        "bindings/rust/openui-paint/src/text_painter.rs"
+        "bindings/rust/openui-paint/src/text_painter.rs",
+        "bindings/rust/openui-engine/src/animation.rs",
+        "bindings/rust/openui-engine/src/lib.rs",
+        "bindings/rust/openui-engine/src/semantic_insertion_tests.rs"
       ],
       "css_name": "color",
       "field": "color",
@@ -650,9 +722,11 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
         "bindings/rust/openui-layout/src/multicol/mod.rs",
         "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/collapsed_table_painter.rs",
         "bindings/rust/openui-paint/src/painter.rs"
       ],
       "css_name": "column-count",
@@ -666,7 +740,9 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
-        "bindings/rust/openui-layout/src/multicol/mod.rs"
+        "bindings/rust/openui-layout/src/fieldset.rs",
+        "bindings/rust/openui-layout/src/multicol/mod.rs",
+        "bindings/rust/openui-layout/src/table.rs"
       ],
       "css_name": "column-fill",
       "field": "column_fill",
@@ -679,10 +755,13 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/grid.rs",
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
-        "bindings/rust/openui-layout/src/multicol/mod.rs"
+        "bindings/rust/openui-layout/src/multicol/mod.rs",
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-engine/src/lib.rs"
       ],
       "css_name": "column-gap",
       "field": "column_gap",
@@ -695,6 +774,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/multicol/mod.rs"
       ],
       "css_name": "column-height",
@@ -707,6 +787,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/multicol/mod.rs",
         "bindings/rust/openui-paint/src/painter.rs"
       ],
@@ -721,6 +802,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/multicol/mod.rs",
         "bindings/rust/openui-paint/src/painter.rs"
       ],
@@ -735,6 +817,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/multicol/mod.rs"
       ],
       "css_name": "column-rule-width",
@@ -750,8 +833,10 @@
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/grid.rs",
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/resolved_table_borders.rs",
         "bindings/rust/openui-layout/src/table.rs",
-        "bindings/rust/openui-paint/src/painter.rs"
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-engine/src/table_spans.rs"
       ],
       "css_name": "column-span",
       "field": "column_span",
@@ -764,6 +849,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
         "bindings/rust/openui-layout/src/multicol/mod.rs",
         "bindings/rust/openui-layout/src/ruby/layout.rs",
@@ -780,6 +866,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/multicol/mod.rs"
       ],
       "css_name": "column-wrap",
@@ -793,7 +880,10 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
-        "bindings/rust/openui-layout/src/containment.rs"
+        "bindings/rust/openui-layout/src/containment.rs",
+        "bindings/rust/openui-layout/src/scroll_area.rs",
+        "bindings/rust/openui-layout/src/sticky_layout.rs",
+        "bindings/rust/openui-paint/src/painter.rs"
       ],
       "css_name": "contain",
       "field": "contain",
@@ -831,7 +921,8 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
-        "bindings/rust/openui-layout/src/containment.rs"
+        "bindings/rust/openui-layout/src/containment.rs",
+        "bindings/rust/openui-layout/src/scroll_area.rs"
       ],
       "css_name": "container-type",
       "field": "container_type",
@@ -843,7 +934,8 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
-        "bindings/rust/openui-paint/src/painter.rs"
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/render.rs"
       ],
       "css_name": "content",
       "field": "content",
@@ -855,12 +947,17 @@
       "canonical_schema_entry": false,
       "classification": "internal",
       "consumers": [
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/layout_context.rs",
         "bindings/rust/openui-layout/src/table.rs",
         "bindings/rust/openui-paint/src/decoration_painter.rs",
         "bindings/rust/openui-paint/src/emphasis_painter.rs",
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-paint/src/render.rs",
-        "bindings/rust/openui-paint/src/text_painter.rs"
+        "bindings/rust/openui-paint/src/surface_program.rs",
+        "bindings/rust/openui-paint/src/text_painter.rs",
+        "bindings/rust/openui-engine/src/authored_source.rs",
+        "bindings/rust/openui-engine/src/lib.rs"
       ],
       "css_name": null,
       "field": "device_scale_factor",
@@ -873,6 +970,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/fragment.rs",
         "bindings/rust/openui-layout/src/grid.rs",
@@ -880,12 +978,24 @@
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
         "bindings/rust/openui-layout/src/inline/line_breaker.rs",
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/layout_context.rs",
         "bindings/rust/openui-layout/src/logical_geometry.rs",
         "bindings/rust/openui-layout/src/out_of_flow.rs",
         "bindings/rust/openui-layout/src/relative.rs",
+        "bindings/rust/openui-layout/src/scroll_area.rs",
+        "bindings/rust/openui-layout/src/scrollbars.rs",
+        "bindings/rust/openui-layout/src/sticky_layout.rs",
         "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-layout/src/transform.rs",
+        "bindings/rust/openui-layout/src/viewport.rs",
         "bindings/rust/openui-paint/src/painter.rs",
-        "bindings/rust/openui-paint/src/render.rs"
+        "bindings/rust/openui-paint/src/render.rs",
+        "bindings/rust/openui-engine/src/animation_timeline.rs",
+        "bindings/rust/openui-engine/src/element_dimensions.rs",
+        "bindings/rust/openui-engine/src/lib.rs",
+        "bindings/rust/openui-engine/src/scroll_button.rs",
+        "bindings/rust/openui-engine/src/scroll_into_view.rs",
+        "bindings/rust/openui-engine/src/semantic_insertion_tests.rs"
       ],
       "css_name": "direction",
       "field": "direction",
@@ -898,6 +1008,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/grid.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
@@ -908,9 +1019,22 @@
         "bindings/rust/openui-layout/src/new_formatting_context.rs",
         "bindings/rust/openui-layout/src/out_of_flow.rs",
         "bindings/rust/openui-layout/src/relative.rs",
+        "bindings/rust/openui-layout/src/scroll_area.rs",
+        "bindings/rust/openui-layout/src/scrollbars.rs",
+        "bindings/rust/openui-layout/src/sticky_layout.rs",
         "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/paint_order.rs",
         "bindings/rust/openui-paint/src/painter.rs",
-        "bindings/rust/openui-paint/src/render.rs"
+        "bindings/rust/openui-paint/src/render.rs",
+        "bindings/rust/openui-engine/src/accessibility.rs",
+        "bindings/rust/openui-engine/src/authored_source.rs",
+        "bindings/rust/openui-engine/src/control_geometry.rs",
+        "bindings/rust/openui-engine/src/element_dimensions.rs",
+        "bindings/rust/openui-engine/src/interaction.rs",
+        "bindings/rust/openui-engine/src/lib.rs",
+        "bindings/rust/openui-engine/src/scroll_button.rs",
+        "bindings/rust/openui-engine/src/scroll_into_view.rs",
+        "bindings/rust/openui-engine/src/semantic_insertion_tests.rs"
       ],
       "css_name": "display",
       "field": "display",
@@ -922,6 +1046,7 @@
       "canonical_schema_entry": false,
       "classification": "internal",
       "consumers": [
+        "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-paint/src/text_painter.rs"
       ],
       "css_name": null,
@@ -934,8 +1059,6 @@
       "canonical_schema_entry": false,
       "classification": "internal",
       "consumers": [
-        "bindings/rust/openui-layout/src/block.rs",
-        "bindings/rust/openui-layout/src/grid.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
         "bindings/rust/openui-layout/src/table.rs",
@@ -952,7 +1075,9 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
-        "bindings/rust/openui-paint/src/painter.rs"
+        "bindings/rust/openui-paint/src/paint_order.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-engine/src/compositor_scene.rs"
       ],
       "css_name": "filter-blur",
       "field": "filter_blur",
@@ -965,7 +1090,9 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
-        "bindings/rust/openui-paint/src/painter.rs"
+        "bindings/rust/openui-paint/src/paint_order.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-engine/src/compositor_scene.rs"
       ],
       "css_name": "filter-grayscale",
       "field": "filter_grayscale",
@@ -977,7 +1104,8 @@
       "canonical_schema_entry": false,
       "classification": "internal",
       "consumers": [
-        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-engine/src/lib.rs"
       ],
       "css_name": null,
       "field": "first_letter_style",
@@ -991,7 +1119,8 @@
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
-        "bindings/rust/openui-layout/src/inline/first_line.rs"
+        "bindings/rust/openui-layout/src/inline/first_line.rs",
+        "bindings/rust/openui-engine/src/lib.rs"
       ],
       "css_name": null,
       "field": "first_line_style",
@@ -1018,8 +1147,11 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
-        "bindings/rust/openui-layout/src/intrinsic_sizing.rs"
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/scroll_area.rs",
+        "bindings/rust/openui-layout/src/scrollbars.rs"
       ],
       "css_name": "flex-direction",
       "field": "flex_direction",
@@ -1048,7 +1180,8 @@
       "consumers": [
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/flex/line_flexer.rs",
-        "bindings/rust/openui-layout/src/intrinsic_sizing.rs"
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/scrollbars.rs"
       ],
       "css_name": "flex-shrink",
       "field": "flex_shrink",
@@ -1061,8 +1194,10 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
-        "bindings/rust/openui-layout/src/intrinsic_sizing.rs"
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/scroll_area.rs"
       ],
       "css_name": "flex-wrap",
       "field": "flex_wrap",
@@ -1083,6 +1218,7 @@
         "bindings/rust/openui-layout/src/logical_geometry.rs",
         "bindings/rust/openui-layout/src/new_formatting_context.rs",
         "bindings/rust/openui-layout/src/out_of_flow.rs",
+        "bindings/rust/openui-paint/src/paint_order.rs",
         "bindings/rust/openui-paint/src/painter.rs"
       ],
       "css_name": "float",
@@ -1181,11 +1317,17 @@
         "bindings/rust/openui-layout/src/inline/first_line.rs",
         "bindings/rust/openui-layout/src/inline/initial_letter.rs",
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
         "bindings/rust/openui-layout/src/multicol/mod.rs",
         "bindings/rust/openui-layout/src/table.rs",
         "bindings/rust/openui-paint/src/decoration_painter.rs",
         "bindings/rust/openui-paint/src/emphasis_painter.rs",
-        "bindings/rust/openui-paint/src/painter.rs"
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-engine/src/animation.rs",
+        "bindings/rust/openui-engine/src/animation_timeline.rs",
+        "bindings/rust/openui-engine/src/authored_source.rs",
+        "bindings/rust/openui-engine/src/control_geometry.rs",
+        "bindings/rust/openui-engine/src/lib.rs"
       ],
       "css_name": "font-size",
       "field": "font_size",
@@ -1344,7 +1486,8 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
-        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs"
       ],
       "css_name": "font-variant-ligatures",
       "field": "font_variant_ligatures",
@@ -1394,7 +1537,8 @@
       "consumers": [
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/first_line.rs",
-        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-engine/src/lib.rs"
       ],
       "css_name": "font-weight",
       "field": "font_weight",
@@ -1406,6 +1550,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/grid.rs"
       ],
       "css_name": "grid-auto-columns",
@@ -1418,6 +1563,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/grid.rs"
       ],
       "css_name": "grid-auto-flow",
@@ -1430,6 +1576,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/grid.rs"
       ],
       "css_name": "grid-auto-rows",
@@ -1442,6 +1589,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/grid.rs"
       ],
       "css_name": "grid-column",
@@ -1454,6 +1602,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/grid.rs"
       ],
       "css_name": "grid-row",
@@ -1466,6 +1615,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/grid.rs"
       ],
       "css_name": "grid-template-areas",
@@ -1478,7 +1628,9 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
-        "bindings/rust/openui-layout/src/grid.rs"
+        "bindings/rust/openui-layout/src/fieldset.rs",
+        "bindings/rust/openui-layout/src/grid.rs",
+        "bindings/rust/openui-layout/src/scrollbars.rs"
       ],
       "css_name": "grid-template-columns",
       "field": "grid_template_columns",
@@ -1490,7 +1642,9 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
-        "bindings/rust/openui-layout/src/grid.rs"
+        "bindings/rust/openui-layout/src/fieldset.rs",
+        "bindings/rust/openui-layout/src/grid.rs",
+        "bindings/rust/openui-layout/src/scrollbars.rs"
       ],
       "css_name": "grid-template-rows",
       "field": "grid_template_rows",
@@ -1504,8 +1658,10 @@
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/exclusions/float_utils.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/fragment.rs",
+        "bindings/rust/openui-layout/src/fragment_geometry.rs",
         "bindings/rust/openui-layout/src/grid.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/first_letter.rs",
@@ -1514,11 +1670,28 @@
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
         "bindings/rust/openui-layout/src/logical_geometry.rs",
         "bindings/rust/openui-layout/src/out_of_flow.rs",
+        "bindings/rust/openui-layout/src/scroll_area.rs",
+        "bindings/rust/openui-layout/src/scrollbars.rs",
         "bindings/rust/openui-layout/src/sticky.rs",
+        "bindings/rust/openui-layout/src/sticky_layout.rs",
         "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-layout/src/transform.rs",
+        "bindings/rust/openui-layout/src/viewport.rs",
+        "bindings/rust/openui-paint/src/collapsed_table_painter.rs",
+        "bindings/rust/openui-paint/src/content_layer.rs",
         "bindings/rust/openui-paint/src/image_resource.rs",
+        "bindings/rust/openui-paint/src/paint_record.rs",
         "bindings/rust/openui-paint/src/painter.rs",
-        "bindings/rust/openui-paint/src/render.rs"
+        "bindings/rust/openui-paint/src/render.rs",
+        "bindings/rust/openui-engine/src/accessibility.rs",
+        "bindings/rust/openui-engine/src/animation_timeline.rs",
+        "bindings/rust/openui-engine/src/client_geometry.rs",
+        "bindings/rust/openui-engine/src/control_geometry.rs",
+        "bindings/rust/openui-engine/src/element_dimensions.rs",
+        "bindings/rust/openui-engine/src/hit_geometry.rs",
+        "bindings/rust/openui-engine/src/lib.rs",
+        "bindings/rust/openui-engine/src/scroll_button.rs",
+        "bindings/rust/openui-engine/src/scroll_into_view.rs"
       ],
       "css_name": "height",
       "field": "height",
@@ -1585,6 +1758,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/grid.rs"
       ],
@@ -1598,6 +1772,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/grid.rs"
       ],
       "css_name": "justify-items",
@@ -1625,19 +1800,37 @@
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/exclusions/float_utils.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/fragment.rs",
+        "bindings/rust/openui-layout/src/fragment_geometry.rs",
         "bindings/rust/openui-layout/src/grid.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
         "bindings/rust/openui-layout/src/logical_geometry.rs",
         "bindings/rust/openui-layout/src/out_of_flow.rs",
         "bindings/rust/openui-layout/src/relative.rs",
+        "bindings/rust/openui-layout/src/scroll_area.rs",
+        "bindings/rust/openui-layout/src/scrollbars.rs",
         "bindings/rust/openui-layout/src/sticky.rs",
+        "bindings/rust/openui-layout/src/sticky_layout.rs",
         "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-layout/src/transform.rs",
+        "bindings/rust/openui-paint/src/collapsed_table_painter.rs",
+        "bindings/rust/openui-paint/src/content_layer.rs",
         "bindings/rust/openui-paint/src/image_resource.rs",
+        "bindings/rust/openui-paint/src/paint_program.rs",
+        "bindings/rust/openui-paint/src/paint_record.rs",
         "bindings/rust/openui-paint/src/painter.rs",
-        "bindings/rust/openui-paint/src/text_painter.rs"
+        "bindings/rust/openui-paint/src/surface_program.rs",
+        "bindings/rust/openui-paint/src/text_painter.rs",
+        "bindings/rust/openui-engine/src/animation_timeline.rs",
+        "bindings/rust/openui-engine/src/client_geometry.rs",
+        "bindings/rust/openui-engine/src/compositor_scene.rs",
+        "bindings/rust/openui-engine/src/element_dimensions.rs",
+        "bindings/rust/openui-engine/src/lib.rs",
+        "bindings/rust/openui-engine/src/scroll_button.rs",
+        "bindings/rust/openui-engine/src/scroll_into_view.rs"
       ],
       "css_name": "left",
       "field": "left",
@@ -1679,6 +1872,7 @@
       "consumers": [
         "bindings/rust/openui-layout/src/inline/first_line.rs",
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
         "bindings/rust/openui-paint/src/painter.rs"
       ],
       "css_name": "letter-spacing",
@@ -1726,14 +1920,27 @@
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/first_line.rs",
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
-        "bindings/rust/openui-layout/src/table.rs",
-        "bindings/rust/openui-paint/src/painter.rs"
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-engine/src/control_geometry.rs",
+        "bindings/rust/openui-engine/src/lib.rs"
       ],
       "css_name": "line-height",
       "field": "line_height",
       "internal_rationale": null,
       "property_id": 68,
       "rust_type": "LineHeight"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "internal",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs"
+      ],
+      "css_name": null,
+      "field": "list_item_is_flow_root",
+      "internal_rationale": "Caches a layout classification derived from the authored display value.",
+      "property_id": null,
+      "rust_type": "bool"
     },
     {
       "canonical_schema_entry": true,
@@ -1766,7 +1973,8 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
-        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-engine/src/lib.rs"
       ],
       "css_name": "locale",
       "field": "locale",
@@ -1779,6 +1987,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
@@ -1787,7 +1996,8 @@
         "bindings/rust/openui-layout/src/logical_geometry.rs",
         "bindings/rust/openui-layout/src/margin_collapsing.rs",
         "bindings/rust/openui-layout/src/new_formatting_context.rs",
-        "bindings/rust/openui-layout/src/out_of_flow.rs"
+        "bindings/rust/openui-layout/src/out_of_flow.rs",
+        "bindings/rust/openui-layout/src/sticky_layout.rs"
       ],
       "css_name": "margin-bottom",
       "field": "margin_bottom",
@@ -1800,6 +2010,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
@@ -1807,7 +2018,8 @@
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
         "bindings/rust/openui-layout/src/logical_geometry.rs",
         "bindings/rust/openui-layout/src/new_formatting_context.rs",
-        "bindings/rust/openui-layout/src/out_of_flow.rs"
+        "bindings/rust/openui-layout/src/out_of_flow.rs",
+        "bindings/rust/openui-layout/src/sticky_layout.rs"
       ],
       "css_name": "margin-left",
       "field": "margin_left",
@@ -1820,6 +2032,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/first_letter.rs",
@@ -1828,7 +2041,8 @@
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
         "bindings/rust/openui-layout/src/logical_geometry.rs",
         "bindings/rust/openui-layout/src/new_formatting_context.rs",
-        "bindings/rust/openui-layout/src/out_of_flow.rs"
+        "bindings/rust/openui-layout/src/out_of_flow.rs",
+        "bindings/rust/openui-layout/src/sticky_layout.rs"
       ],
       "css_name": "margin-right",
       "field": "margin_right",
@@ -1841,6 +2055,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
@@ -1849,7 +2064,8 @@
         "bindings/rust/openui-layout/src/logical_geometry.rs",
         "bindings/rust/openui-layout/src/margin_collapsing.rs",
         "bindings/rust/openui-layout/src/new_formatting_context.rs",
-        "bindings/rust/openui-layout/src/out_of_flow.rs"
+        "bindings/rust/openui-layout/src/out_of_flow.rs",
+        "bindings/rust/openui-layout/src/sticky_layout.rs"
       ],
       "css_name": "margin-top",
       "field": "margin_top",
@@ -1874,7 +2090,8 @@
       "classification": "internal",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
-        "bindings/rust/openui-paint/src/painter.rs"
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-engine/src/lib.rs"
       ],
       "css_name": null,
       "field": "marker_style",
@@ -1886,6 +2103,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-paint/src/paint_order.rs",
         "bindings/rust/openui-paint/src/painter.rs"
       ],
       "css_name": "mask-layers",
@@ -1946,6 +2164,7 @@
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
         "bindings/rust/openui-layout/src/logical_geometry.rs",
         "bindings/rust/openui-layout/src/out_of_flow.rs",
+        "bindings/rust/openui-layout/src/scrollbars.rs",
         "bindings/rust/openui-layout/src/table.rs"
       ],
       "css_name": "min-height",
@@ -1965,6 +2184,7 @@
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
         "bindings/rust/openui-layout/src/logical_geometry.rs",
         "bindings/rust/openui-layout/src/out_of_flow.rs",
+        "bindings/rust/openui-layout/src/scrollbars.rs",
         "bindings/rust/openui-layout/src/table.rs"
       ],
       "css_name": "min-width",
@@ -1999,6 +2219,22 @@
       "rust_type": "bool"
     },
     {
+      "canonical_schema_entry": false,
+      "classification": "internal",
+      "consumers": [
+        "bindings/rust/openui-layout/src/scroll_area.rs",
+        "bindings/rust/openui-layout/src/transform.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-engine/src/scroll_button.rs",
+        "bindings/rust/openui-engine/src/snapshot_scroll_snap_tests.rs"
+      ],
+      "css_name": null,
+      "field": "native_transform",
+      "internal_rationale": "Retains the owned typed native transform source for effect composition and actual post-layout reference-box resolution.",
+      "property_id": null,
+      "rust_type": "Option<crate::TransformList>"
+    },
+    {
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
@@ -2028,7 +2264,10 @@
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/table.rs",
-        "bindings/rust/openui-paint/src/painter.rs"
+        "bindings/rust/openui-paint/src/paint_order.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-engine/src/animation.rs",
+        "bindings/rust/openui-engine/src/compositor_scene.rs"
       ],
       "css_name": "opacity",
       "field": "opacity",
@@ -2042,7 +2281,9 @@
       "consumers": [
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/grid.rs",
-        "bindings/rust/openui-layout/src/intrinsic_sizing.rs"
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-engine/src/scroll_button.rs",
+        "bindings/rust/openui-engine/src/semantic_insertion_tests.rs"
       ],
       "css_name": "order",
       "field": "order",
@@ -2116,7 +2357,9 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
-        "bindings/rust/openui-paint/src/painter.rs"
+        "bindings/rust/openui-layout/src/scroll_area.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-engine/src/compositor_scene.rs"
       ],
       "css_name": "overflow-clip-box",
       "field": "overflow_clip_box",
@@ -2128,7 +2371,9 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
-        "bindings/rust/openui-paint/src/painter.rs"
+        "bindings/rust/openui-layout/src/scroll_area.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-engine/src/compositor_scene.rs"
       ],
       "css_name": "overflow-clip-margin",
       "field": "overflow_clip_margin",
@@ -2142,7 +2387,8 @@
       "consumers": [
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
-        "bindings/rust/openui-layout/src/inline/line_breaker.rs"
+        "bindings/rust/openui-layout/src/inline/line_breaker.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs"
       ],
       "css_name": "overflow-wrap",
       "field": "overflow_wrap",
@@ -2155,13 +2401,22 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
-        "bindings/rust/openui-layout/src/grid.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
         "bindings/rust/openui-layout/src/new_formatting_context.rs",
-        "bindings/rust/openui-layout/src/table.rs",
-        "bindings/rust/openui-paint/src/painter.rs"
+        "bindings/rust/openui-layout/src/scroll_area.rs",
+        "bindings/rust/openui-layout/src/scrollbars.rs",
+        "bindings/rust/openui-layout/src/sticky_layout.rs",
+        "bindings/rust/openui-layout/src/viewport.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/render.rs",
+        "bindings/rust/openui-engine/src/accessibility.rs",
+        "bindings/rust/openui-engine/src/animation_timeline.rs",
+        "bindings/rust/openui-engine/src/compositor_scene.rs",
+        "bindings/rust/openui-engine/src/control_geometry.rs",
+        "bindings/rust/openui-engine/src/lib.rs"
       ],
       "css_name": "overflow-x",
       "field": "overflow_x",
@@ -2174,12 +2429,21 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
-        "bindings/rust/openui-layout/src/grid.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
-        "bindings/rust/openui-layout/src/table.rs",
-        "bindings/rust/openui-paint/src/painter.rs"
+        "bindings/rust/openui-layout/src/scroll_area.rs",
+        "bindings/rust/openui-layout/src/scrollbars.rs",
+        "bindings/rust/openui-layout/src/sticky_layout.rs",
+        "bindings/rust/openui-layout/src/viewport.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/render.rs",
+        "bindings/rust/openui-engine/src/accessibility.rs",
+        "bindings/rust/openui-engine/src/animation_timeline.rs",
+        "bindings/rust/openui-engine/src/compositor_scene.rs",
+        "bindings/rust/openui-engine/src/control_geometry.rs",
+        "bindings/rust/openui-engine/src/lib.rs"
       ],
       "css_name": "overflow-y",
       "field": "overflow_y",
@@ -2192,6 +2456,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
@@ -2211,6 +2476,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
@@ -2232,6 +2498,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
@@ -2253,13 +2520,15 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
         "bindings/rust/openui-layout/src/inline/line_breaker.rs",
         "bindings/rust/openui-layout/src/logical_geometry.rs",
         "bindings/rust/openui-paint/src/painter.rs",
-        "bindings/rust/openui-paint/src/render.rs"
+        "bindings/rust/openui-paint/src/render.rs",
+        "bindings/rust/openui-engine/src/lib.rs"
       ],
       "css_name": "padding-top",
       "field": "padding_top",
@@ -2271,7 +2540,8 @@
       "canonical_schema_entry": false,
       "classification": "internal",
       "consumers": [
-        "bindings/rust/openui-paint/src/painter.rs"
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-engine/src/lib.rs"
       ],
       "css_name": null,
       "field": "placeholder_style",
@@ -2283,7 +2553,20 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-engine/src/lib.rs"
+      ],
+      "css_name": "pointer-events",
+      "field": "pointer_events",
+      "internal_rationale": null,
+      "property_id": 46,
+      "rust_type": "crate::PointerEvents"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/flex/alignment.rs",
         "bindings/rust/openui-layout/src/grid.rs",
@@ -2291,13 +2574,23 @@
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
         "bindings/rust/openui-layout/src/inline/line_breaker.rs",
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/layout_context.rs",
         "bindings/rust/openui-layout/src/new_formatting_context.rs",
         "bindings/rust/openui-layout/src/out_of_flow.rs",
         "bindings/rust/openui-layout/src/relative.rs",
         "bindings/rust/openui-layout/src/ruby/layout.rs",
+        "bindings/rust/openui-layout/src/scroll_area.rs",
         "bindings/rust/openui-layout/src/sticky.rs",
+        "bindings/rust/openui-layout/src/sticky_layout.rs",
         "bindings/rust/openui-layout/src/table.rs",
-        "bindings/rust/openui-paint/src/painter.rs"
+        "bindings/rust/openui-paint/src/paint_order.rs",
+        "bindings/rust/openui-paint/src/paint_record.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/surface_program.rs",
+        "bindings/rust/openui-engine/src/animation.rs",
+        "bindings/rust/openui-engine/src/interaction.rs",
+        "bindings/rust/openui-engine/src/lib.rs",
+        "bindings/rust/openui-engine/src/scroll_into_view.rs"
       ],
       "css_name": "position",
       "field": "position",
@@ -2333,11 +2626,15 @@
       "canonical_schema_entry": false,
       "classification": "internal",
       "consumers": [
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/layout_context.rs",
         "bindings/rust/openui-layout/src/table.rs",
         "bindings/rust/openui-paint/src/emphasis_painter.rs",
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-paint/src/render.rs",
-        "bindings/rust/openui-paint/src/text_painter.rs"
+        "bindings/rust/openui-paint/src/text_painter.rs",
+        "bindings/rust/openui-engine/src/authored_source.rs",
+        "bindings/rust/openui-engine/src/lib.rs"
       ],
       "css_name": null,
       "field": "raster_configuration",
@@ -2364,19 +2661,34 @@
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/exclusions/float_utils.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/fragment.rs",
+        "bindings/rust/openui-layout/src/fragment_geometry.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
         "bindings/rust/openui-layout/src/logical_geometry.rs",
         "bindings/rust/openui-layout/src/out_of_flow.rs",
         "bindings/rust/openui-layout/src/relative.rs",
+        "bindings/rust/openui-layout/src/scroll_area.rs",
+        "bindings/rust/openui-layout/src/scrollbars.rs",
         "bindings/rust/openui-layout/src/sticky.rs",
+        "bindings/rust/openui-layout/src/sticky_layout.rs",
         "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-layout/src/transform.rs",
+        "bindings/rust/openui-layout/src/viewport.rs",
+        "bindings/rust/openui-paint/src/content_layer.rs",
         "bindings/rust/openui-paint/src/emphasis_painter.rs",
         "bindings/rust/openui-paint/src/image_resource.rs",
+        "bindings/rust/openui-paint/src/paint_program.rs",
+        "bindings/rust/openui-paint/src/paint_record.rs",
         "bindings/rust/openui-paint/src/painter.rs",
-        "bindings/rust/openui-paint/src/text_painter.rs"
+        "bindings/rust/openui-paint/src/surface_program.rs",
+        "bindings/rust/openui-paint/src/text_painter.rs",
+        "bindings/rust/openui-engine/src/animation_timeline.rs",
+        "bindings/rust/openui-engine/src/element_dimensions.rs",
+        "bindings/rust/openui-engine/src/lib.rs",
+        "bindings/rust/openui-engine/src/scroll_into_view.rs"
       ],
       "css_name": "right",
       "field": "right",
@@ -2389,10 +2701,12 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/grid.rs",
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
-        "bindings/rust/openui-layout/src/multicol/mod.rs"
+        "bindings/rust/openui-layout/src/multicol/mod.rs",
+        "bindings/rust/openui-engine/src/lib.rs"
       ],
       "css_name": "row-gap",
       "field": "row_gap",
@@ -2442,6 +2756,54 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-engine/src/scroll_button.rs"
+      ],
+      "css_name": "scroll-margin-bottom",
+      "field": "scroll_margin_bottom",
+      "internal_rationale": null,
+      "property_id": 244,
+      "rust_type": "Length"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-engine/src/scroll_button.rs"
+      ],
+      "css_name": "scroll-margin-left",
+      "field": "scroll_margin_left",
+      "internal_rationale": null,
+      "property_id": 245,
+      "rust_type": "Length"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-engine/src/scroll_button.rs"
+      ],
+      "css_name": "scroll-margin-right",
+      "field": "scroll_margin_right",
+      "internal_rationale": null,
+      "property_id": 243,
+      "rust_type": "Length"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-engine/src/scroll_button.rs"
+      ],
+      "css_name": "scroll-margin-top",
+      "field": "scroll_margin_top",
+      "internal_rationale": null,
+      "property_id": 242,
+      "rust_type": "Length"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
         "bindings/rust/openui-layout/src/block.rs"
       ],
       "css_name": "scroll-marker-group",
@@ -2454,7 +2816,59 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
-        "bindings/rust/openui-layout/src/block.rs"
+        "bindings/rust/openui-engine/src/animation_timeline.rs",
+        "bindings/rust/openui-engine/src/scroll_button.rs"
+      ],
+      "css_name": "scroll-padding-bottom",
+      "field": "scroll_padding_bottom",
+      "internal_rationale": null,
+      "property_id": 240,
+      "rust_type": "Length"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-engine/src/animation_timeline.rs",
+        "bindings/rust/openui-engine/src/scroll_button.rs"
+      ],
+      "css_name": "scroll-padding-left",
+      "field": "scroll_padding_left",
+      "internal_rationale": null,
+      "property_id": 241,
+      "rust_type": "Length"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-engine/src/animation_timeline.rs",
+        "bindings/rust/openui-engine/src/scroll_button.rs"
+      ],
+      "css_name": "scroll-padding-right",
+      "field": "scroll_padding_right",
+      "internal_rationale": null,
+      "property_id": 239,
+      "rust_type": "Length"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-engine/src/animation_timeline.rs",
+        "bindings/rust/openui-engine/src/scroll_button.rs"
+      ],
+      "css_name": "scroll-padding-top",
+      "field": "scroll_padding_top",
+      "internal_rationale": null,
+      "property_id": 238,
+      "rust_type": "Length"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-engine/src/scroll_button.rs"
       ],
       "css_name": "scroll-snap-align",
       "field": "scroll_snap_align",
@@ -2466,7 +2880,31 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
-        "bindings/rust/openui-layout/src/block.rs"
+        "bindings/rust/openui-engine/src/scroll_button.rs"
+      ],
+      "css_name": "scroll-snap-align-block",
+      "field": "scroll_snap_align_block",
+      "internal_rationale": null,
+      "property_id": 248,
+      "rust_type": "Option<ScrollSnapAlign>"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-engine/src/scroll_button.rs"
+      ],
+      "css_name": "scroll-snap-align-inline",
+      "field": "scroll_snap_align_inline",
+      "internal_rationale": null,
+      "property_id": 249,
+      "rust_type": "Option<ScrollSnapAlign>"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-engine/src/scroll_button.rs"
       ],
       "css_name": "scroll-snap-axis",
       "field": "scroll_snap_axis",
@@ -2478,7 +2916,32 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
-        "bindings/rust/openui-layout/src/block.rs"
+        "bindings/rust/openui-engine/src/scroll_button.rs"
+      ],
+      "css_name": "scroll-snap-stop",
+      "field": "scroll_snap_stop",
+      "internal_rationale": null,
+      "property_id": 247,
+      "rust_type": "ScrollSnapStop"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-engine/src/scroll_button.rs"
+      ],
+      "css_name": "scroll-snap-strictness",
+      "field": "scroll_snap_strictness",
+      "internal_rationale": null,
+      "property_id": 246,
+      "rust_type": "ScrollSnapStrictness"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/scrollbars.rs",
+        "bindings/rust/openui-engine/src/element_dimensions.rs"
       ],
       "css_name": "scrollbar-gutter",
       "field": "scrollbar_gutter",
@@ -2492,6 +2955,19 @@
       "consumers": [
         "bindings/rust/openui-paint/src/painter.rs"
       ],
+      "css_name": "scrollbar-thumb-color",
+      "field": "scrollbar_thumb_color",
+      "internal_rationale": null,
+      "property_id": 234,
+      "rust_type": "Option<Color>"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/render.rs"
+      ],
       "css_name": "scrollbar-track-color",
       "field": "scrollbar_track_color",
       "internal_rationale": null,
@@ -2502,7 +2978,9 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
-        "bindings/rust/openui-layout/src/block.rs"
+        "bindings/rust/openui-layout/src/scrollbars.rs",
+        "bindings/rust/openui-layout/src/viewport.rs",
+        "bindings/rust/openui-engine/src/control_geometry.rs"
       ],
       "css_name": "scrollbar-width",
       "field": "scrollbar_width",
@@ -2539,6 +3017,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/line_breaker.rs"
       ],
@@ -2629,7 +3108,8 @@
       "consumers": [
         "bindings/rust/openui-layout/src/inline/first_line.rs",
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
-        "bindings/rust/openui-paint/src/decoration_painter.rs"
+        "bindings/rust/openui-paint/src/decoration_painter.rs",
+        "bindings/rust/openui-engine/src/lib.rs"
       ],
       "css_name": "text-decoration-line",
       "field": "text_decoration_line",
@@ -2736,7 +3216,20 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
-        "bindings/rust/openui-layout/src/inline/algorithm.rs"
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "-webkit-text-fill-color",
+      "field": "text_fill_color",
+      "internal_rationale": null,
+      "property_id": 250,
+      "rust_type": "StyleColor"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-engine/src/lib.rs"
       ],
       "css_name": "text-indent",
       "field": "text_indent",
@@ -2836,7 +3329,8 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/first_line.rs",
-        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs"
       ],
       "css_name": "text-transform",
       "field": "text_transform",
@@ -2913,8 +3407,10 @@
         "bindings/rust/openui-layout/src/bfc_resolution.rs",
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/exclusions/float_utils.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/fragment.rs",
+        "bindings/rust/openui-layout/src/fragment_geometry.rs",
         "bindings/rust/openui-layout/src/grid.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
@@ -2922,11 +3418,27 @@
         "bindings/rust/openui-layout/src/margin_collapsing.rs",
         "bindings/rust/openui-layout/src/out_of_flow.rs",
         "bindings/rust/openui-layout/src/relative.rs",
+        "bindings/rust/openui-layout/src/scroll_area.rs",
+        "bindings/rust/openui-layout/src/scrollbars.rs",
         "bindings/rust/openui-layout/src/sticky.rs",
+        "bindings/rust/openui-layout/src/sticky_layout.rs",
         "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-layout/src/transform.rs",
+        "bindings/rust/openui-paint/src/collapsed_table_painter.rs",
+        "bindings/rust/openui-paint/src/content_layer.rs",
         "bindings/rust/openui-paint/src/image_resource.rs",
+        "bindings/rust/openui-paint/src/paint_program.rs",
+        "bindings/rust/openui-paint/src/paint_record.rs",
         "bindings/rust/openui-paint/src/painter.rs",
-        "bindings/rust/openui-paint/src/text_painter.rs"
+        "bindings/rust/openui-paint/src/surface_program.rs",
+        "bindings/rust/openui-paint/src/text_painter.rs",
+        "bindings/rust/openui-engine/src/animation_timeline.rs",
+        "bindings/rust/openui-engine/src/client_geometry.rs",
+        "bindings/rust/openui-engine/src/compositor_scene.rs",
+        "bindings/rust/openui-engine/src/element_dimensions.rs",
+        "bindings/rust/openui-engine/src/lib.rs",
+        "bindings/rust/openui-engine/src/scroll_button.rs",
+        "bindings/rust/openui-engine/src/scroll_into_view.rs"
       ],
       "css_name": "top",
       "field": "top",
@@ -2938,9 +3450,12 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
-        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/transform.rs",
+        "bindings/rust/openui-paint/src/paint_order.rs",
         "bindings/rust/openui-paint/src/painter.rs",
-        "bindings/rust/openui-paint/src/render.rs"
+        "bindings/rust/openui-paint/src/render.rs",
+        "bindings/rust/openui-engine/src/client_geometry.rs",
+        "bindings/rust/openui-engine/src/lib.rs"
       ],
       "css_name": "transform",
       "field": "transform",
@@ -2949,10 +3464,23 @@
       "rust_type": "Transform2D"
     },
     {
+      "canonical_schema_entry": false,
+      "classification": "internal",
+      "consumers": [
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-engine/src/scroll_button.rs"
+      ],
+      "css_name": null,
+      "field": "transform_matrix",
+      "internal_rationale": "Retains a complete constant native transform matrix while the existing affine field remains a compatibility view.",
+      "property_id": null,
+      "rust_type": "Option<crate::TransformMatrix>"
+    },
+    {
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
-        "bindings/rust/openui-paint/src/painter.rs"
+        "bindings/rust/openui-layout/src/transform.rs"
       ],
       "css_name": "transform-origin",
       "field": "transform_origin",
@@ -2964,6 +3492,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs"
@@ -2996,7 +3525,11 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
-        "bindings/rust/openui-paint/src/painter.rs"
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-engine/src/accessibility.rs",
+        "bindings/rust/openui-engine/src/interaction.rs",
+        "bindings/rust/openui-engine/src/lib.rs"
       ],
       "css_name": "visibility",
       "field": "visibility",
@@ -3025,7 +3558,8 @@
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
         "bindings/rust/openui-layout/src/inline/line_breaker.rs",
-        "bindings/rust/openui-layout/src/intrinsic_sizing.rs"
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-engine/src/lib.rs"
       ],
       "css_name": "white-space",
       "field": "white_space",
@@ -3063,8 +3597,10 @@
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/exclusions/float_utils.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/fragment.rs",
+        "bindings/rust/openui-layout/src/fragment_geometry.rs",
         "bindings/rust/openui-layout/src/grid.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/first_letter.rs",
@@ -3075,13 +3611,34 @@
         "bindings/rust/openui-layout/src/multicol/mod.rs",
         "bindings/rust/openui-layout/src/new_formatting_context.rs",
         "bindings/rust/openui-layout/src/out_of_flow.rs",
+        "bindings/rust/openui-layout/src/resolved_table_borders.rs",
+        "bindings/rust/openui-layout/src/scroll_area.rs",
+        "bindings/rust/openui-layout/src/scrollbars.rs",
         "bindings/rust/openui-layout/src/sticky.rs",
+        "bindings/rust/openui-layout/src/sticky_layout.rs",
         "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-layout/src/transform.rs",
+        "bindings/rust/openui-layout/src/viewport.rs",
+        "bindings/rust/openui-paint/src/collapsed_table_painter.rs",
+        "bindings/rust/openui-paint/src/content_layer.rs",
         "bindings/rust/openui-paint/src/decoration_painter.rs",
         "bindings/rust/openui-paint/src/emphasis_painter.rs",
         "bindings/rust/openui-paint/src/image_resource.rs",
+        "bindings/rust/openui-paint/src/paint_record.rs",
         "bindings/rust/openui-paint/src/painter.rs",
-        "bindings/rust/openui-paint/src/render.rs"
+        "bindings/rust/openui-paint/src/render.rs",
+        "bindings/rust/openui-engine/src/accessibility.rs",
+        "bindings/rust/openui-engine/src/animation_timeline.rs",
+        "bindings/rust/openui-engine/src/client_geometry.rs",
+        "bindings/rust/openui-engine/src/control_geometry.rs",
+        "bindings/rust/openui-engine/src/element_dimensions.rs",
+        "bindings/rust/openui-engine/src/hit_geometry.rs",
+        "bindings/rust/openui-engine/src/interaction.rs",
+        "bindings/rust/openui-engine/src/lib.rs",
+        "bindings/rust/openui-engine/src/scroll_button.rs",
+        "bindings/rust/openui-engine/src/scroll_into_view.rs",
+        "bindings/rust/openui-engine/src/semantic_insertion_tests.rs",
+        "bindings/rust/openui-engine/src/snapshot_scroll_snap_tests.rs"
       ],
       "css_name": "width",
       "field": "width",
@@ -3094,7 +3651,8 @@
       "classification": "internal",
       "consumers": [
         "bindings/rust/openui-paint/src/painter.rs",
-        "bindings/rust/openui-paint/src/render.rs"
+        "bindings/rust/openui-paint/src/render.rs",
+        "bindings/rust/openui-engine/src/compositor_scene.rs"
       ],
       "css_name": null,
       "field": "will_change_transform",
@@ -3122,7 +3680,8 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/first_line.rs",
-        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs"
       ],
       "css_name": "word-spacing",
       "field": "word_spacing",
@@ -3136,18 +3695,31 @@
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/containment.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/fragment.rs",
         "bindings/rust/openui-layout/src/grid.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/layout_context.rs",
         "bindings/rust/openui-layout/src/logical_geometry.rs",
         "bindings/rust/openui-layout/src/out_of_flow.rs",
+        "bindings/rust/openui-layout/src/scroll_area.rs",
+        "bindings/rust/openui-layout/src/scrollbars.rs",
+        "bindings/rust/openui-layout/src/sticky_layout.rs",
         "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-layout/src/transform.rs",
+        "bindings/rust/openui-layout/src/viewport.rs",
         "bindings/rust/openui-paint/src/emphasis_painter.rs",
         "bindings/rust/openui-paint/src/painter.rs",
-        "bindings/rust/openui-paint/src/render.rs"
+        "bindings/rust/openui-paint/src/render.rs",
+        "bindings/rust/openui-engine/src/animation_timeline.rs",
+        "bindings/rust/openui-engine/src/control_geometry.rs",
+        "bindings/rust/openui-engine/src/element_dimensions.rs",
+        "bindings/rust/openui-engine/src/lib.rs",
+        "bindings/rust/openui-engine/src/scroll_button.rs",
+        "bindings/rust/openui-engine/src/scroll_into_view.rs"
       ],
       "css_name": "writing-mode",
       "field": "writing_mode",
@@ -3159,7 +3731,8 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
-        "bindings/rust/openui-paint/src/painter.rs"
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-engine/src/lib.rs"
       ],
       "css_name": "z-index",
       "field": "z_index",

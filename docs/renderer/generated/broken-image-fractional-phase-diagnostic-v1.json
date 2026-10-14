@@ -1,0 +1,164 @@
+{
+  "baseline": {
+    "evidence": "four-profile-census-v31.json",
+    "selected_exact": 204,
+    "source_commit": "9534c9f6ddf50a5177dce4089cf39be6b6beae93"
+  },
+  "changed_openui_comparisons": [
+    {
+      "baseline": {
+        "mismatched_pixels": 0,
+        "openui_rgba_sha256": "a8b33994a604312b453bdd1778a34a84b7bfe896966f245ac0e5f37ac237a5c7",
+        "status": "exact"
+      },
+      "diagnostic": {
+        "mismatched_pixels": 142,
+        "openui_rgba_sha256": "874ce0aeeae5fb79abcc1ec56b34d9e15b5859d7cf54ec9d964475eea71bdbbe",
+        "status": "different"
+      },
+      "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-012",
+      "profile": "desktop-1280x720@1.25"
+    },
+    {
+      "baseline": {
+        "mismatched_pixels": 0,
+        "openui_rgba_sha256": "a8b33994a604312b453bdd1778a34a84b7bfe896966f245ac0e5f37ac237a5c7",
+        "status": "exact"
+      },
+      "diagnostic": {
+        "mismatched_pixels": 142,
+        "openui_rgba_sha256": "874ce0aeeae5fb79abcc1ec56b34d9e15b5859d7cf54ec9d964475eea71bdbbe",
+        "status": "different"
+      },
+      "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-017",
+      "profile": "desktop-1280x720@1.25"
+    },
+    {
+      "baseline": {
+        "mismatched_pixels": 0,
+        "openui_rgba_sha256": "a8b33994a604312b453bdd1778a34a84b7bfe896966f245ac0e5f37ac237a5c7",
+        "status": "exact"
+      },
+      "diagnostic": {
+        "mismatched_pixels": 142,
+        "openui_rgba_sha256": "874ce0aeeae5fb79abcc1ec56b34d9e15b5859d7cf54ec9d964475eea71bdbbe",
+        "status": "different"
+      },
+      "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-020",
+      "profile": "desktop-1280x720@1.25"
+    },
+    {
+      "baseline": {
+        "mismatched_pixels": 0,
+        "openui_rgba_sha256": "a8b33994a604312b453bdd1778a34a84b7bfe896966f245ac0e5f37ac237a5c7",
+        "status": "exact"
+      },
+      "diagnostic": {
+        "mismatched_pixels": 142,
+        "openui_rgba_sha256": "874ce0aeeae5fb79abcc1ec56b34d9e15b5859d7cf54ec9d964475eea71bdbbe",
+        "status": "different"
+      },
+      "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-027",
+      "profile": "desktop-1280x720@1.25"
+    },
+    {
+      "baseline": {
+        "mismatched_pixels": 0,
+        "openui_rgba_sha256": "a8b33994a604312b453bdd1778a34a84b7bfe896966f245ac0e5f37ac237a5c7",
+        "status": "exact"
+      },
+      "diagnostic": {
+        "mismatched_pixels": 142,
+        "openui_rgba_sha256": "874ce0aeeae5fb79abcc1ec56b34d9e15b5859d7cf54ec9d964475eea71bdbbe",
+        "status": "different"
+      },
+      "id": "wpt/css_sizing/grid-item-image-percentage-min-height-computes-as-0",
+      "profile": "desktop-1280x720@1.25"
+    },
+    {
+      "baseline": {
+        "mismatched_pixels": 100,
+        "openui_rgba_sha256": "21843320e0bb80c78387024d3a6274a584c5da404cfc13016754c75b55c457ef",
+        "status": "different"
+      },
+      "diagnostic": {
+        "mismatched_pixels": 89,
+        "openui_rgba_sha256": "07c43d6d09cf3a6b2607a77ff941cee961842df2c0f3837ee9f8b38d0ea185aa",
+        "status": "different"
+      },
+      "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-012",
+      "profile": "desktop-1920x1080@1.5"
+    },
+    {
+      "baseline": {
+        "mismatched_pixels": 100,
+        "openui_rgba_sha256": "21843320e0bb80c78387024d3a6274a584c5da404cfc13016754c75b55c457ef",
+        "status": "different"
+      },
+      "diagnostic": {
+        "mismatched_pixels": 89,
+        "openui_rgba_sha256": "07c43d6d09cf3a6b2607a77ff941cee961842df2c0f3837ee9f8b38d0ea185aa",
+        "status": "different"
+      },
+      "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-017",
+      "profile": "desktop-1920x1080@1.5"
+    },
+    {
+      "baseline": {
+        "mismatched_pixels": 100,
+        "openui_rgba_sha256": "21843320e0bb80c78387024d3a6274a584c5da404cfc13016754c75b55c457ef",
+        "status": "different"
+      },
+      "diagnostic": {
+        "mismatched_pixels": 89,
+        "openui_rgba_sha256": "07c43d6d09cf3a6b2607a77ff941cee961842df2c0f3837ee9f8b38d0ea185aa",
+        "status": "different"
+      },
+      "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-020",
+      "profile": "desktop-1920x1080@1.5"
+    },
+    {
+      "baseline": {
+        "mismatched_pixels": 100,
+        "openui_rgba_sha256": "21843320e0bb80c78387024d3a6274a584c5da404cfc13016754c75b55c457ef",
+        "status": "different"
+      },
+      "diagnostic": {
+        "mismatched_pixels": 89,
+        "openui_rgba_sha256": "07c43d6d09cf3a6b2607a77ff941cee961842df2c0f3837ee9f8b38d0ea185aa",
+        "status": "different"
+      },
+      "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-027",
+      "profile": "desktop-1920x1080@1.5"
+    },
+    {
+      "baseline": {
+        "mismatched_pixels": 100,
+        "openui_rgba_sha256": "21843320e0bb80c78387024d3a6274a584c5da404cfc13016754c75b55c457ef",
+        "status": "different"
+      },
+      "diagnostic": {
+        "mismatched_pixels": 89,
+        "openui_rgba_sha256": "07c43d6d09cf3a6b2607a77ff941cee961842df2c0f3837ee9f8b38d0ea185aa",
+        "status": "different"
+      },
+      "id": "wpt/css_sizing/grid-item-image-percentage-min-height-computes-as-0",
+      "profile": "desktop-1920x1080@1.5"
+    }
+  ],
+  "chromium_oracle_unchanged": true,
+  "diagnostic": {
+    "complete_contract_scope": false,
+    "selected_different": 13,
+    "selected_errors": 0,
+    "selected_exact": 199,
+    "source_commit": "445302673f0e7c1ec5ddd3b9d05d571d6621e86c"
+  },
+  "name": "broken-image-fractional-phase-diagnostic",
+  "schema_version": 1,
+  "selection": {
+    "comparisons": 212,
+    "rule": "All original test IDs containing contain-intrinsic-size or grid-item-image-percentage-min-height-computes-as-0",
+    "test_ids": 53
+  }
+}

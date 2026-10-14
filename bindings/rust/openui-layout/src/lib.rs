@@ -10,6 +10,7 @@ pub mod css_sizing;
 pub mod exclusions;
 pub mod flex;
 mod fragment;
+mod fragment_geometry;
 pub mod fragmentation;
 pub mod grid;
 pub mod inflow_position;
@@ -23,10 +24,16 @@ pub mod multicol;
 pub mod new_formatting_context;
 pub mod out_of_flow;
 pub mod relative;
+mod resolved_table_borders;
 pub mod ruby;
+mod scroll_area;
+mod scrollbars;
 pub mod size_constraints;
 pub mod sticky;
+mod sticky_layout;
 pub mod table;
+mod transform;
+mod viewport;
 
 pub use crate::inline::algorithm::inline_layout;
 pub use crate::inline::algorithm::{apply_inline_fragmentation, resume_inline_from_break_token};
@@ -41,7 +48,10 @@ pub use css_sizing::{
 pub use exclusions::ExclusionSpace;
 pub use flex::flex_layout;
 pub use fragment::{
-    resolve_text_run_orientation, DecorationSlice, Fragment, FragmentKind, TextRunOrientation,
+    resolve_text_run_orientation, AnonymousLayoutBox, DecorationSlice, Fragment,
+    FragmentBoxGeometry, FragmentBoxOwnership, FragmentKind, FragmentTablePart,
+    FragmentVisualOffsets, PromotedTransformAncestor, StickyTimelineGeometry,
+    TableColumnBackgroundPositioning, TextRunOrientation, ViewportScrollport,
 };
 pub use fragmentation::{
     BlockBreakToken, BreakAppeal, BreakToken, FragmentainerSpace, InlineBreakToken,
@@ -62,10 +72,28 @@ pub use multicol::{layout_columns, resolve_column_count_and_width};
 pub use new_formatting_context::{creates_new_formatting_context, layout_new_formatting_context};
 pub use out_of_flow::{layout_out_of_flow_children, OutOfFlowCandidate, StaticPositionEdge};
 pub use relative::apply_relative_offset;
+pub use resolved_table_borders::{
+    BorderCandidate, BorderSourceKind, CanonicalColumnLocation, CanonicalRowSize,
+    CollapsedTableBorderData, CollapsedTableSectionData, PhysicalBorderSide,
+    ResolvedCollapsedBorders, ResolvedEdge,
+};
 pub use ruby::{clamp_overhang, compute_ruby_layout, max_ruby_overhang, RubyInfo, RubyLayout};
+pub use scroll_area::{
+    overflow_pair as computed_overflow_pair, refresh_fragment_overflow, used_overflow_pair,
+    RetainedOverflowUpdate, ScrollArea,
+};
+pub use scrollbars::ElementScrollbars;
 pub use size_constraints::{
     apply_box_sizing_adjustment, constrain_block_size, constrain_inline_size, resolve_block_size,
     resolve_inline_size, resolve_size_constraints, SizeConstraint,
 };
 pub use sticky::{apply_sticky_offset, compute_sticky_offset, StickyPositionData};
 pub use table::table_layout;
+pub use transform::{
+    finalize_fragment_transforms, promoted_ancestor_applied_transform, resolved_fragment_transform,
+    resolved_transform_for_reference_box, ResolvedFragmentTransform,
+};
+
+mod fieldset;
+mod layout_context;
+pub(crate) use block::block_layout_with_layout;

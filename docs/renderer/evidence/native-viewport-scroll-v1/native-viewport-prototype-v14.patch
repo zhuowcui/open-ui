@@ -1,0 +1,1263 @@
+diff --git a/bindings/rust/openui-engine/src/animation.rs b/bindings/rust/openui-engine/src/animation.rs
+index bfb929e5..5806b393 100644
+--- a/bindings/rust/openui-engine/src/animation.rs
++++ b/bindings/rust/openui-engine/src/animation.rs
+@@ -99,9 +99,10 @@ impl Engine {
+             ));
+         }
+         let node = self.resolve(target)?;
++        let clamped = self.clamp_scroll_offset(target, x, y)?;
+         let source = self.document.node(node);
+         let from = (source.scroll_left as f64, source.scroll_top as f64);
+-        let to = (x.max(0.0), y.max(0.0));
++        let to = (clamped.0 as f64, clamped.1 as f64);
+         self.scroll_animations
+             .retain(|_, animation| animation.target != target);
+         let id = ScrollAnimationId(self.next_scroll_animation_id);
+@@ -536,8 +537,8 @@ impl Engine {
+             .collect::<Vec<_>>();
+         for (id, target, x, y, finished) in samples {
+             let node = self.resolve(target)?;
++            let next = self.clamp_scroll_offset(target, x, y)?;
+             let data = self.document.node_mut(node);
+-            let next = (x.max(0.0) as f32, y.max(0.0) as f32);
+             if (data.scroll_left, data.scroll_top) != next {
+                 data.scroll_left = next.0;
+                 data.scroll_top = next.1;
+diff --git a/bindings/rust/openui-engine/src/lib.rs b/bindings/rust/openui-engine/src/lib.rs
+index a0a322d5..b859cef1 100644
+--- a/bindings/rust/openui-engine/src/lib.rs
++++ b/bindings/rust/openui-engine/src/lib.rs
+@@ -57,6 +57,15 @@ pub struct NodeHandle {
+     generation: u32,
+ }
+ 
++/// Owned, resolved dimensions of an element's scrolling area, in logical pixels.
++#[derive(Debug, Clone, Copy, PartialEq)]
++pub struct ScrollMetrics {
++    pub client_width: f64,
++    pub client_height: f64,
++    pub scroll_width: f64,
++    pub scroll_height: f64,
++}
++
+ impl NodeHandle {
+     pub fn document_id(self) -> u64 {
+         self.document
+@@ -1403,12 +1412,51 @@ impl Engine {
+         Ok((node.scroll_left as f64, node.scroll_top as f64))
+     }
+ 
++    /// Resolve pending layout and return an owned scroll-area snapshot.
++    /// Elements without a layout box have no metrics.
++    pub fn scroll_metrics(
++        &mut self,
++        handle: NodeHandle,
++    ) -> Result<Option<ScrollMetrics>, EngineError> {
++        let node = self.resolve(handle)?;
++        self.update()?;
++        fn find(fragment: &Fragment, node: NodeId) -> Option<&Fragment> {
++            if fragment.node_id == node {
++                return Some(fragment);
++            }
++            fragment.children.iter().find_map(|child| find(child, node))
++        }
++        let Some(fragment) = self
++            .latest_fragment
++            .as_ref()
++            .and_then(|root| find(root, node))
++        else {
++            return Ok(None);
++        };
++        let (client, content) = if let Some(scrollport) = fragment.viewport_scrollport {
++            (scrollport.client_rect.size, scrollport.content_rect.size)
++        } else {
++            (
++                fragment.padding_box_size(),
++                fragment.scrollable_overflow().size,
++            )
++        };
++        Ok(Some(ScrollMetrics {
++            client_width: client.width.to_f64(),
++            client_height: client.height.to_f64(),
++            scroll_width: content.width.to_f64(),
++            scroll_height: content.height.to_f64(),
++        }))
++    }
++
+     pub fn scroll_to(&mut self, handle: NodeHandle, x: f64, y: f64) -> Result<(), EngineError> {
+         if !x.is_finite() || !y.is_finite() {
+             return Err(EngineError::Render("scroll offsets must be finite".into()));
+         }
+         let node = self.resolve(handle)?;
+-        let (x, y) = (x.max(0.0) as f32, y.max(0.0) as f32);
++        let (x, y) = self.clamp_scroll_offset(handle, x, y)?;
++        self.scroll_animations
++            .retain(|_, animation| animation.target != handle);
+         if (
+             self.document.node(node).scroll_left,
+             self.document.node(node).scroll_top,
+@@ -1416,8 +1464,6 @@ impl Engine {
+         {
+             return Ok(());
+         }
+-        self.scroll_animations
+-            .retain(|_, animation| animation.target != handle);
+         let data = self.document.node_mut(node);
+         data.scroll_left = x;
+         data.scroll_top = y;
+@@ -1426,6 +1472,110 @@ impl Engine {
+         Ok(())
+     }
+ 
++    pub fn scroll_by(&mut self, handle: NodeHandle, dx: f64, dy: f64) -> Result<(), EngineError> {
++        if !dx.is_finite() || !dy.is_finite() {
++            return Err(EngineError::InvalidInput("scroll deltas must be finite"));
++        }
++        self.resolve(handle)?;
++        self.update()?;
++        let (x, y) = self.scroll_offset(handle)?;
++        self.scroll_to(handle, x + dx, y + dy)
++    }
++
++    fn clamp_scroll_offset(
++        &mut self,
++        handle: NodeHandle,
++        x: f64,
++        y: f64,
++    ) -> Result<(f32, f32), EngineError> {
++        let node = self.resolve(handle)?;
++        if node != self.document.root() {
++            // Nested scroll containers retain their existing path while
++            // their geometry and writing-direction ranges are qualified.
++            return Ok((
++                x.max(0.0).min(f32::MAX as f64) as f32,
++                y.max(0.0).min(f32::MAX as f64) as f32,
++            ));
++        }
++        self.update()?;
++        let scrollport = self
++            .latest_fragment
++            .as_ref()
++            .and_then(|fragment| fragment.viewport_scrollport)
++            .expect("viewport layout establishes a scrollport");
++        let (x_range, y_range) = self.viewport_scroll_limits(scrollport);
++        Ok((
++            x.clamp(x_range.0, x_range.1) as f32,
++            y.clamp(y_range.0, y_range.1) as f32,
++        ))
++    }
++
++    fn viewport_scroll_limits(
++        &self,
++        scrollport: openui_layout::ViewportScrollport,
++    ) -> ((f64, f64), (f64, f64)) {
++        let x_range = if scrollport.negative_x {
++            (scrollport.content_rect.x().to_f64().min(0.0), 0.0)
++        } else {
++            (
++                0.0,
++                (scrollport.content_rect.right() - scrollport.client_rect.width())
++                    .to_f64()
++                    .max(0.0),
++            )
++        };
++        let y_range = if scrollport.negative_y {
++            (scrollport.content_rect.y().to_f64().min(0.0), 0.0)
++        } else {
++            (
++                0.0,
++                (scrollport.content_rect.bottom() - scrollport.client_rect.height())
++                    .to_f64()
++                    .max(0.0),
++            )
++        };
++        (x_range, y_range)
++    }
++
++    /// Apply user wheel input through the document-owned viewport geometry.
++    /// A hidden viewport remains available to programmatic scrolling only.
++    pub fn scroll_wheel(
++        &mut self,
++        handle: NodeHandle,
++        delta_x: f64,
++        delta_y: f64,
++    ) -> Result<bool, EngineError> {
++        if !delta_x.is_finite() || !delta_y.is_finite() {
++            return Err(EngineError::InvalidInput("wheel deltas must be finite"));
++        }
++        let node = self.resolve(handle)?;
++        let (user_x, user_y) = if node == self.document.root() {
++            self.update()?;
++            let scrollport = self
++                .latest_fragment
++                .as_ref()
++                .and_then(|fragment| fragment.viewport_scrollport)
++                .expect("viewport layout establishes a scrollport");
++            (
++                scrollport.overflow_x.is_scrollable(),
++                scrollport.overflow_y.is_scrollable(),
++            )
++        } else {
++            let style = &self.document.node(node).style;
++            (
++                style.overflow_x.is_scrollable(),
++                style.overflow_y.is_scrollable(),
++            )
++        };
++        let before = self.scroll_offset(handle)?;
++        self.scroll_to(
++            handle,
++            before.0 + if user_x { delta_x } else { 0.0 },
++            before.1 + if user_y { delta_y } else { 0.0 },
++        )?;
++        Ok(self.scroll_offset(handle)? != before)
++    }
++
+     pub fn focus(&mut self, handle: NodeHandle) -> Result<(), EngineError> {
+         self.focus_with_origin(handle, FocusOrigin::Script)
+             .map(|_| ())
+@@ -1519,11 +1669,27 @@ impl Engine {
+                 openui_geometry::LayoutUnit::from_f64(height),
+                 direction,
+             );
+-            let fragment = Arc::new(openui_layout::block_layout(
+-                &self.document,
+-                self.document.root(),
+-                &space,
+-            ));
++            let mut fragment =
++                openui_layout::block_layout(&self.document, self.document.root(), &space);
++            if let Some(scrollport) = fragment.viewport_scrollport {
++                let (x_range, y_range) = self.viewport_scroll_limits(scrollport);
++                let root = self.document.root();
++                let old = (
++                    self.document.node(root).scroll_left,
++                    self.document.node(root).scroll_top,
++                );
++                let next = (
++                    (old.0 as f64).clamp(x_range.0, x_range.1) as f32,
++                    (old.1 as f64).clamp(y_range.0, y_range.1) as f32,
++                );
++                if old != next {
++                    self.document.node_mut(root).scroll_left = next.0;
++                    self.document.node_mut(root).scroll_top = next.1;
++                    // Sticky layout consumes the retained offset too.
++                    fragment = openui_layout::block_layout(&self.document, root, &space);
++                }
++            }
++            let fragment = Arc::new(fragment);
+             self.stats.layouts += 1;
+             self.rebuild_hit_test(&fragment);
+             self.latest_fragment = Some(fragment);
+@@ -1789,11 +1955,18 @@ impl Engine {
+                 // flow extent carrying its visible descendants.
+                 let clips_authored_box = style.overflow_x != openui_style::Overflow::Visible
+                     || style.overflow_y != openui_style::Overflow::Visible;
+-                let (clip_world, clip_width, clip_height) = if clips_authored_box {
+-                    (box_world, box_width, box_height)
+-                } else {
+-                    (world, width, height)
+-                };
++                let (clip_world, clip_width, clip_height) =
++                    if let Some(scrollport) = fragment.viewport_scrollport {
++                        (
++                            world,
++                            scrollport.client_rect.width().to_f32(),
++                            scrollport.client_rect.height().to_f32(),
++                        )
++                    } else if clips_authored_box {
++                        (box_world, box_width, box_height)
++                    } else {
++                        (world, width, height)
++                    };
+                 if let Some(world_to_local) =
+                     clip_world.inverse().filter(|_| fragment.has_overflow_clip)
+                 {
+diff --git a/bindings/rust/openui-layout/src/block.rs b/bindings/rust/openui-layout/src/block.rs
+index 7453a1ea..fa78039a 100644
+--- a/bindings/rust/openui-layout/src/block.rs
++++ b/bindings/rust/openui-layout/src/block.rs
+@@ -1519,6 +1519,17 @@ fn project_oof_candidate_to_physical(
+ ///
+ /// Returns a `Fragment` with resolved sizes and positioned children.
+ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> Fragment {
++    if doc.node(node_id).tag == ElementTag::Viewport {
++        return crate::viewport::layout(doc, node_id, space);
++    }
++    block_layout_contents(doc, node_id, space)
++}
++
++pub(crate) fn block_layout_contents(
++    doc: &Document,
++    node_id: NodeId,
++    space: &ConstraintSpace,
++) -> Fragment {
+     let physical_style = &doc.node(node_id).style;
+ 
+     if doc.node(node_id).replaced.is_some() {
+diff --git a/bindings/rust/openui-layout/src/fragment.rs b/bindings/rust/openui-layout/src/fragment.rs
+index b880129d..e54eadf5 100644
+--- a/bindings/rust/openui-layout/src/fragment.rs
++++ b/bindings/rust/openui-layout/src/fragment.rs
+@@ -9,7 +9,7 @@ use openui_dom::NodeId;
+ use openui_geometry::{
+     BoxStrut, LayoutUnit, PhysicalOffset, PhysicalRect, PhysicalSize, WritingDirectionMode,
+ };
+-use openui_style::{ComputedStyle, TextOrientation, WritingMode};
++use openui_style::{ComputedStyle, Overflow, TextOrientation, WritingMode};
+ use openui_text::ShapeResult;
+ use std::sync::Arc;
+ 
+@@ -32,6 +32,24 @@ pub enum FragmentKind {
+     ColumnBox,
+ }
+ 
++/// Immutable geometry of the document's viewport scroll container.
++///
++/// Scrollbar gutters belong to the viewport, rather than to an authored
++/// element's border or padding. Layout, paint and native input consume this
++/// same geometry.
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++pub struct ViewportScrollport {
++    pub client_rect: PhysicalRect,
++    pub content_rect: PhysicalRect,
++    pub horizontal_scrollbar: bool,
++    pub vertical_scrollbar: bool,
++    pub scrollbar_thickness: LayoutUnit,
++    pub overflow_x: Overflow,
++    pub overflow_y: Overflow,
++    pub negative_x: bool,
++    pub negative_y: bool,
++}
++
+ /// Resolved orientation of one shaped text run in physical fragment storage.
+ ///
+ /// Inline layout is the authority for this value. Paint consumes it without
+@@ -267,6 +285,10 @@ pub struct Fragment {
+     /// Blink: `PhysicalBoxFragment::ScrollableOverflow()`.
+     pub overflow_rect: Option<PhysicalRect>,
+ 
++    /// Layout-owned viewport client and content extents. Scrollbar space is
++    /// separate from authored borders and padding.
++    pub viewport_scrollport: Option<ViewportScrollport>,
++
+     /// Whether this fragment clips overflowing content.
+     ///
+     /// Set to `true` when the element's `overflow-x` or `overflow-y` is not
+@@ -501,6 +523,7 @@ impl Fragment {
+             baseline_offset: 0.0,
+             text_combine: None,
+             overflow_rect: None,
++            viewport_scrollport: None,
+             has_overflow_clip: false,
+             block_axis_clip_only: false,
+             inline_axis_clip_only: false,
+@@ -567,6 +590,7 @@ impl Fragment {
+             baseline_offset: 0.0,
+             text_combine: None,
+             overflow_rect: None,
++            viewport_scrollport: None,
+             has_overflow_clip: false,
+             block_axis_clip_only: false,
+             inline_axis_clip_only: false,
+diff --git a/bindings/rust/openui-layout/src/lib.rs b/bindings/rust/openui-layout/src/lib.rs
+index c649e515..873209ea 100644
+--- a/bindings/rust/openui-layout/src/lib.rs
++++ b/bindings/rust/openui-layout/src/lib.rs
+@@ -27,6 +27,7 @@ pub mod ruby;
+ pub mod size_constraints;
+ pub mod sticky;
+ pub mod table;
++mod viewport;
+ 
+ pub use crate::inline::algorithm::inline_layout;
+ pub use crate::inline::algorithm::{apply_inline_fragmentation, resume_inline_from_break_token};
+@@ -42,6 +43,7 @@ pub use exclusions::ExclusionSpace;
+ pub use flex::flex_layout;
+ pub use fragment::{
+     resolve_text_run_orientation, DecorationSlice, Fragment, FragmentKind, TextRunOrientation,
++    ViewportScrollport,
+ };
+ pub use fragmentation::{
+     BlockBreakToken, BreakAppeal, BreakToken, FragmentainerSpace, InlineBreakToken,
+diff --git a/bindings/rust/openui-layout/src/viewport.rs b/bindings/rust/openui-layout/src/viewport.rs
+new file mode 100644
+index 00000000..3c6a3019
+--- /dev/null
++++ b/bindings/rust/openui-layout/src/viewport.rs
+@@ -0,0 +1,141 @@
++//! Layout of the initial containing block and its native scrollport.
++
++use crate::{block::block_layout_contents, ConstraintSpace, Fragment, ViewportScrollport};
++use openui_dom::{Document, NodeId};
++use openui_geometry::{LayoutUnit, PhysicalOffset, PhysicalRect, PhysicalSize};
++use openui_style::{Overflow, ScrollbarWidth, WritingMode};
++
++pub(crate) fn layout(doc: &Document, root: NodeId, space: &ConstraintSpace) -> Fragment {
++    let source = if doc.body_overflow_is_propagated() {
++        doc.body_element().unwrap_or(root)
++    } else {
++        doc.document_element().unwrap_or(root)
++    };
++    let style = &doc.node(source).style;
++    // CSS Overflow: visible on the viewport is auto, and clip is hidden.
++    // In particular, a clipped viewport can still be scrolled by a native
++    // application, though it exposes no user-operated scrollbar.
++    let viewport_overflow = |overflow| match overflow {
++        Overflow::Visible => Overflow::Auto,
++        Overflow::Clip => Overflow::Hidden,
++        other => other,
++    };
++    let overflow_x = viewport_overflow(style.overflow_x);
++    let overflow_y = viewport_overflow(style.overflow_y);
++    let direction = style.direction.writing_direction(style.writing_mode);
++    let negative_x = if direction.is_horizontal() {
++        direction.is_rtl()
++    } else {
++        direction.is_flipped_blocks()
++    };
++    let negative_y = !direction.is_horizontal()
++        && (direction.is_rtl() != (style.writing_mode == WritingMode::SidewaysLr));
++    let thickness = LayoutUnit::from_i32(match style.scrollbar_width {
++        ScrollbarWidth::Auto => 15,
++        ScrollbarWidth::Thin => 10,
++        ScrollbarWidth::None => 0,
++    });
++    let outer_size = if space.writing_direction.is_horizontal() {
++        PhysicalSize::new(space.available_inline_size, space.available_block_size)
++    } else {
++        PhysicalSize::new(space.available_block_size, space.available_inline_size)
++    };
++    let mut show_x = overflow_x == Overflow::Scroll && thickness > LayoutUnit::zero();
++    let mut show_y = overflow_y == Overflow::Scroll && thickness > LayoutUnit::zero();
++    // Reserving one scrollbar can make the other axis overflow. Re-layout
++    // against the reduced initial containing block until both agree.
++    loop {
++        let client = PhysicalSize::new(
++            (outer_size.width
++                - if show_y {
++                    thickness
++                } else {
++                    LayoutUnit::zero()
++                })
++            .clamp_negative_to_zero(),
++            (outer_size.height
++                - if show_x {
++                    thickness
++                } else {
++                    LayoutUnit::zero()
++                })
++            .clamp_negative_to_zero(),
++        );
++        let mut client_space = space.clone();
++        let (inline_size, block_size) = if space.writing_direction.is_horizontal() {
++            (client.width, client.height)
++        } else {
++            (client.height, client.width)
++        };
++        client_space.available_inline_size = inline_size;
++        client_space.available_block_size = block_size;
++        client_space.percentage_resolution_inline_size = inline_size;
++        client_space.percentage_resolution_block_size = block_size;
++        let mut fragment = block_layout_contents(doc, root, &client_space);
++        let raw_content = fragment.scrollable_overflow();
++        // Overflow before the scroll origin is unreachable in a positive
++        // axis; overflow after it is unreachable in a negative axis. Ink in
++        // that region must not create a scrollbar or expand the scroll range.
++        let left = if negative_x {
++            raw_content.x().min_of(LayoutUnit::zero())
++        } else {
++            LayoutUnit::zero()
++        };
++        let top = if negative_y {
++            raw_content.y().min_of(LayoutUnit::zero())
++        } else {
++            LayoutUnit::zero()
++        };
++        let right = if negative_x {
++            client.width
++        } else {
++            raw_content.right().max_of(client.width)
++        };
++        let bottom = if negative_y {
++            client.height
++        } else {
++            raw_content.bottom().max_of(client.height)
++        };
++        let content = PhysicalRect::new(
++            PhysicalOffset::new(left, top),
++            PhysicalSize::new(right - left, bottom - top),
++        );
++        let next_x = show_x
++            || (overflow_x == Overflow::Auto
++                && thickness > LayoutUnit::zero()
++                && (content.x() < LayoutUnit::zero() || content.right() > client.width));
++        let next_y = show_y
++            || (overflow_y == Overflow::Auto
++                && thickness > LayoutUnit::zero()
++                && (content.y() < LayoutUnit::zero() || content.bottom() > client.height));
++        if (next_x, next_y) != (show_x, show_y) {
++            show_x = next_x;
++            show_y = next_y;
++            continue;
++        }
++        fragment.viewport_scrollport = Some(ViewportScrollport {
++            client_rect: PhysicalRect::new(PhysicalOffset::zero(), client),
++            content_rect: content,
++            horizontal_scrollbar: show_x,
++            vertical_scrollbar: show_y,
++            scrollbar_thickness: thickness,
++            overflow_x,
++            overflow_y,
++            negative_x,
++            negative_y,
++        });
++        // A viewport box that fills the client describes the outside window
++        // after its gutter is restored. A content-sized formatting context
++        // keeps its computed size, even when the authored dimension is auto.
++        // Gutters remain independent of authored borders and padding.
++        let root_style = &doc.node(root).style;
++        if root_style.width.is_auto() && fragment.size.width == client.width {
++            fragment.size.width = outer_size.width;
++        }
++        if root_style.height.is_auto() && fragment.size.height == client.height {
++            fragment.size.height = outer_size.height;
++        }
++        fragment.has_overflow_clip = true;
++        return fragment;
++    }
++}
+diff --git a/bindings/rust/openui-paint/src/painter.rs b/bindings/rust/openui-paint/src/painter.rs
+index 8d2149ac..89897c73 100644
+--- a/bindings/rust/openui-paint/src/painter.rs
++++ b/bindings/rust/openui-paint/src/painter.rs
+@@ -1303,6 +1303,30 @@ fn paint_fragment_contents(
+     {
+         // The platform control renderer above consumed the directional
+         // single-character content with its native LCD mask.
++    } else if let Some(scrollport) = fragment.viewport_scrollport {
++        canvas.save();
++        canvas.clip_rect(
++            Rect::from_xywh(
++                abs_offset.left.to_f32(),
++                abs_offset.top.to_f32(),
++                scrollport.client_rect.width().to_f32(),
++                scrollport.client_rect.height().to_f32(),
++            ),
++            ClipOp::Intersect,
++            false,
++        );
++        let node = doc.node(fragment.node_id);
++        canvas.translate((-node.scroll_left, -node.scroll_top));
++        paint_children_with_stacking_order(
++            canvas,
++            &fragment.children,
++            doc,
++            abs_offset,
++            true,
++            style.display.is_flex() && fragmented_flex_has_internal_four_way_junction(fragment),
++        );
++        canvas.restore();
++        paint_viewport_scrollbars(canvas, fragment, doc, abs_offset);
+     } else if needs_clip {
+         paint_with_overflow_clip(canvas, fragment, doc, abs_offset, style);
+     } else {
+@@ -10996,6 +11020,288 @@ fn paint_scrollbars_if_needed(
+     }
+ }
+ 
++/// Paint the pinned Linux Chromium Fluent viewport scrollbar theme.
++/// Geometry follows ScrollbarThemeFluent and cc::ScrollUtils; colors follow
++/// ui/color/fluent_ui_color_mixer.cc in Chromium 147.0.7727.50.
++fn paint_viewport_scrollbars(
++    canvas: &Canvas,
++    fragment: &Fragment,
++    doc: &Document,
++    offset: PhysicalOffset,
++) {
++    let Some(scrollport) = fragment.viewport_scrollport else {
++        return;
++    };
++    let source = if doc.body_overflow_is_propagated() {
++        doc.body_element().unwrap_or(fragment.node_id)
++    } else {
++        doc.document_element().unwrap_or(fragment.node_id)
++    };
++    let style = &doc.node(source).style;
++    let thickness = scrollport.scrollbar_thickness.to_f32();
++    let client_width = scrollport.client_rect.width().to_f32();
++    let client_height = scrollport.client_rect.height().to_f32();
++    let node = doc.node(fragment.node_id);
++    let mut track = Paint::default();
++    track.set_color(skia_safe::Color::from_rgb(252, 252, 252));
++    if let Some(color) = style.scrollbar_track_color {
++        set_paint_css_color(&mut track, &color);
++    }
++    let mut thumb = Paint::default();
++    thumb.set_anti_alias(true);
++    thumb.set_color(skia_safe::Color::from_rgb(139, 139, 139));
++    if let Some(color) = style.scrollbar_thumb_color {
++        set_paint_css_color(&mut thumb, &color);
++    }
++    canvas.save();
++    canvas.translate((offset.left.to_f32(), offset.top.to_f32()));
++    for horizontal in [false, true] {
++        let visible = if horizontal {
++            scrollport.horizontal_scrollbar
++        } else {
++            scrollport.vertical_scrollbar
++        };
++        if !visible {
++            continue;
++        }
++        let length = if horizontal {
++            client_width
++        } else {
++            client_height
++        };
++        let proportion = thickness / 15.0;
++        let button = (18.0 * proportion).round().min((length / 2.0).floor());
++        let track_length = (length - 2.0 * button).max(0.0);
++        let total = if horizontal {
++            scrollport.content_rect.width().to_f32()
++        } else {
++            scrollport.content_rect.height().to_f32()
++        };
++        let scroll = if horizontal {
++            if scrollport.negative_x {
++                node.scroll_left - scrollport.content_rect.x().to_f32()
++            } else {
++                node.scroll_left
++            }
++        } else {
++            if scrollport.negative_y {
++                node.scroll_top - scrollport.content_rect.y().to_f32()
++            } else {
++                node.scroll_top
++            }
++        };
++        let maximum = (total - length).max(0.0);
++        let thumb_length = ((length / total.max(1.0) * track_length).round())
++            .max((17.0 * proportion).round())
++            .min(track_length);
++        let raw_position = if maximum > 0.0 {
++            scroll.max(0.0) * (track_length - thumb_length) / maximum
++        } else {
++            0.0
++        };
++        let position = if raw_position > 0.0 && raw_position < 1.0 {
++            1.0
++        } else {
++            raw_position.trunc()
++        };
++        let raw_thickness = (9.0 * proportion).round();
++        let thumb_thickness = raw_thickness - (thickness - raw_thickness) % 2.0;
++        let outer = if horizontal {
++            Rect::from_xywh(0.0, client_height, length, thickness)
++        } else {
++            Rect::from_xywh(client_width, 0.0, thickness, length)
++        };
++        paint_fluent_scrollbar_track(
++            canvas,
++            outer,
++            horizontal,
++            button,
++            style.device_scale_factor as f32,
++            &track,
++            &thumb,
++        );
++        let thumb_rect = if horizontal {
++            Rect::from_xywh(
++                button + position,
++                client_height + (thickness - thumb_thickness) / 2.0,
++                thumb_length,
++                thumb_thickness,
++            )
++        } else {
++            Rect::from_xywh(
++                client_width + (thickness - thumb_thickness) / 2.0,
++                button + position,
++                thumb_thickness,
++                thumb_length,
++            )
++        };
++        if maximum > 0.0 && thumb_length > 0.0 {
++            // The software compositor clips a solid-color quad with the
++            // Fluent rounded-corner mask; it does not directly draw an RRect.
++            canvas.save();
++            canvas.clip_rrect(
++                RRect::new_rect_xy(thumb_rect, thumb_thickness, thumb_thickness),
++                ClipOp::Intersect,
++                true,
++            );
++            let mut fill = thumb.clone();
++            fill.set_anti_alias(false);
++            canvas.draw_rect(thumb_rect, &fill);
++            canvas.restore();
++        }
++    }
++    if scrollport.horizontal_scrollbar && scrollport.vertical_scrollbar {
++        canvas.draw_rect(
++            Rect::from_xywh(client_width, client_height, thickness, thickness),
++            &track,
++        );
++    }
++    canvas.restore();
++}
++
++fn paint_fluent_scrollbar_track(
++    canvas: &Canvas,
++    outer: Rect,
++    horizontal: bool,
++    button: f32,
++    scale: f32,
++    track: &Paint,
++    thumb: &Paint,
++) {
++    // Chromium stores the track and buttons in a compact N32 nine-patch.
++    // The across-axis resource size floors while its length ceils. Keeping
++    // this raster transform separate from the presentation transform matters
++    // at fractional device scales.
++    let thickness = if horizontal {
++        outer.height()
++    } else {
++        outer.width()
++    };
++    let length = if horizontal {
++        outer.width()
++    } else {
++        outer.height()
++    };
++    let skin_length = length.min(2.0 * button + 1.0);
++    let across = (thickness * scale).floor().max(1.0) as i32;
++    let along = (skin_length * scale).ceil().max(1.0) as i32;
++    let (width, height) = if horizontal {
++        (along, across)
++    } else {
++        (across, along)
++    };
++    let Some(mut surface) = surfaces::raster_n32_premul((width, height)) else {
++        return;
++    };
++    let painter = surface.canvas();
++    painter.clear(skia_safe::Color::TRANSPARENT);
++    painter.scale((
++        width as f32 / if horizontal { skin_length } else { thickness },
++        height as f32 / if horizontal { thickness } else { skin_length },
++    ));
++    painter.draw_rect(
++        Rect::from_xywh(
++            0.0,
++            0.0,
++            if horizontal { skin_length } else { thickness },
++            if horizontal { thickness } else { skin_length },
++        ),
++        track,
++    );
++    for forward in [false, true] {
++        let start = if forward { skin_length - button } else { 0.0 };
++        let rect = if horizontal {
++            Rect::from_xywh(start, 0.0, button, thickness)
++        } else {
++            Rect::from_xywh(0.0, start, thickness, button)
++        };
++        paint_fluent_scrollbar_arrow(painter, rect, horizontal, forward, thumb);
++    }
++    let image = surface.image_snapshot();
++    let aperture_size = 2 - along % 2;
++    let aperture_start = along / 2 - (1 - along % 2);
++    let center = if horizontal {
++        IRect::from_xywh(aperture_start, 0, aperture_size, across)
++    } else {
++        IRect::from_xywh(0, aperture_start, across, aperture_size)
++    };
++    let destination = Rect::from_xywh(
++        outer.left * scale,
++        outer.top * scale,
++        (outer.width() * scale).ceil(),
++        (outer.height() * scale).ceil(),
++    );
++    let mut replay = Paint::default();
++    replay
++        .set_anti_alias((outer.left * scale).fract() != 0.0 || (outer.top * scale).fract() != 0.0);
++    // Nine-patch borders retain the source image's pixel dimensions. Replay
++    // in physical units, as Chromium's scaled track quads do, so those already
++    // scaled borders do not receive the device scale a second time.
++    canvas.save();
++    canvas.scale((scale.recip(), scale.recip()));
++    canvas.draw_image_nine(
++        &image,
++        center,
++        destination,
++        FilterMode::Linear,
++        Some(&replay),
++    );
++    canvas.restore();
++}
++
++fn paint_fluent_scrollbar_arrow(
++    canvas: &Canvas,
++    button: Rect,
++    horizontal: bool,
++    forward: bool,
++    color: &Paint,
++) {
++    let scale = button.width().max(button.height()) / 18.0;
++    let mut side = (9.0 * scale).ceil();
++    side += (button.width().min(button.height()) - side) % 2.0;
++    let mut x = (button.left + (button.width() - side) / 2.0).floor();
++    let mut y = (button.top + (button.height() - side) / 2.0).floor();
++    let shift = (if forward { scale } else { -scale }).round();
++    if horizontal {
++        x += shift;
++    } else {
++        y += shift;
++    }
++    let arrow_size = (side.round() as i32 / 2 + 1) as f32;
++    let mut points = if horizontal {
++        let start = x + (arrow_size as i32 / 2) as f32;
++        [
++            (start, y),
++            (start, y + side),
++            (start + arrow_size, y + side / 2.0),
++        ]
++    } else {
++        let start = y + side - (arrow_size as i32 / 2) as f32 + 1.0;
++        [
++            (x, start),
++            (x + side, start),
++            (x + side / 2.0, start - arrow_size),
++        ]
++    };
++    if horizontal && !forward {
++        for point in &mut points {
++            point.0 = x * 2.0 + side - point.0;
++        }
++    } else if !horizontal && forward {
++        for point in &mut points {
++            point.1 = y * 2.0 + side - point.1;
++        }
++    }
++    let mut path = PathBuilder::new();
++    path.move_to(points[0]);
++    path.line_to(points[1]);
++    path.line_to(points[2]);
++    path.close();
++    let mut paint = color.clone();
++    paint.set_anti_alias(false);
++    canvas.draw_path(&path.detach(), &paint);
++}
++
+ /// Paint Chromium's seven-pixel native resize grip for a non-scrollbar
+ /// overflow corner. The grip is two crisp black/white alpha diagonals, so its
+ /// colors compose from the element background instead of being hard-coded.
+diff --git a/bindings/rust/openui-paint/tests/text_paint_tests.rs b/bindings/rust/openui-paint/tests/text_paint_tests.rs
+index aa3533ac..b9187252 100644
+--- a/bindings/rust/openui-paint/tests/text_paint_tests.rs
++++ b/bindings/rust/openui-paint/tests/text_paint_tests.rs
+@@ -1121,6 +1121,7 @@ fn paint_text_fragment_no_shape_result() {
+         baseline_offset: 0.0,
+         text_combine: None,
+         overflow_rect: None,
++        viewport_scrollport: None,
+         has_overflow_clip: false,
+         block_axis_clip_only: false,
+         inline_axis_clip_only: false,
+@@ -1512,6 +1513,7 @@ fn paint_ellipsis_hidden_visibility_no_output() {
+         baseline_offset: metrics.ascent,
+         text_combine: None,
+         overflow_rect: None,
++        viewport_scrollport: None,
+         has_overflow_clip: false,
+         block_axis_clip_only: false,
+         inline_axis_clip_only: false,
+diff --git a/bindings/rust/openui/examples/native_viewport_scroll.rs b/bindings/rust/openui/examples/native_viewport_scroll.rs
+new file mode 100644
+index 00000000..a473db39
+--- /dev/null
++++ b/bindings/rust/openui/examples/native_viewport_scroll.rs
+@@ -0,0 +1,99 @@
++//! Native viewport scrolling through a Rust callback and normalized wheel input.
++
++use openui::prelude::*;
++use std::{cell::Cell, path::PathBuf, rc::Rc};
++
++fn main() -> Result<(), Box<dyn std::error::Error>> {
++    let mut args = std::env::args().skip(1);
++    let output = PathBuf::from(args.next().ok_or("output directory required")?);
++    let scale: f64 = args.next().ok_or("scale required")?.parse()?;
++    let width: f32 = args.next().ok_or("content width required")?.parse()?;
++    let height: f32 = args.next().ok_or("content height required")?.parse()?;
++    let overflow = match args.next().ok_or("overflow required")?.as_str() {
++        "visible" => Overflow::Visible,
++        "auto" => Overflow::Auto,
++        "hidden" => Overflow::Hidden,
++        "clip" => Overflow::Clip,
++        "scroll" => Overflow::Scroll,
++        _ => return Err("unknown overflow".into()),
++    };
++    let requested_x: f64 = args.next().ok_or("scroll x required")?.parse()?;
++    let requested_y: f64 = args.next().ok_or("scroll y required")?.parse()?;
++    let wheel_y: f32 = args.next().ok_or("wheel y required")?.parse()?;
++    let writing_mode = match args.next().as_deref().unwrap_or("horizontal-tb") {
++        "horizontal-tb" => WritingMode::HorizontalTb,
++        "vertical-rl" => WritingMode::VerticalRl,
++        "vertical-lr" => WritingMode::VerticalLr,
++        "sideways-rl" => WritingMode::SidewaysRl,
++        "sideways-lr" => WritingMode::SidewaysLr,
++        _ => return Err("unknown writing mode".into()),
++    };
++    let direction = match args.next().as_deref().unwrap_or("ltr") {
++        "ltr" => Direction::Ltr,
++        "rtl" => Direction::Rtl,
++        _ => return Err("unknown direction".into()),
++    };
++    let left: f32 = args.next().unwrap_or_else(|| "27".into()).parse()?;
++    let document =
++        Document::with_viewport_metrics(ViewportMetrics::from_logical_size(320.0, 240.0, scale)?)?;
++    let root = document.body();
++    root.set_background_color(Color::WHITE)?;
++    root.set_overflow_x(overflow)?;
++    root.set_overflow_y(overflow)?;
++    root.set_writing_mode(writing_mode)?;
++    root.set_direction(direction)?;
++    let child = Element::create(&document, "div")?;
++    child.set_position(Position::Absolute)?;
++    child.set_display(Display::Block)?;
++    child.set_left(Length::px(left))?;
++    child.set_top(Length::px(22.0))?;
++    child.set_width(LengthValue::px(width))?;
++    child.set_height(LengthValue::px(height))?;
++    child.set_background_color(Color::GREEN)?;
++    root.append_child(&child)?;
++    let _initial = document.render_to_png_buffer()?;
++    let calls = Rc::new(Cell::new(0));
++    let callback_calls = calls.clone();
++    let target = root.downgrade();
++    child.on("click", move |_| {
++        target
++            .upgrade()
++            .expect("viewport remains owned")
++            .scroll_to(requested_x, requested_y)
++            .expect("native viewport scroll");
++        callback_calls.set(callback_calls.get() + 1);
++    })?;
++    child.click()?;
++    if calls.get() != 1 {
++        return Err("native callback did not run exactly once".into());
++    }
++    if wheel_y != 0.0 {
++        document.dispatch_wheel_event(30.0, 30.0, 0.0, wheel_y, Modifiers::NONE)?;
++    }
++    let rect = child
++        .bounding_rect()?
++        .ok_or("content has no owned bounds")?;
++    let scroll_x = root.scroll_left()?;
++    let scroll_y = root.scroll_top()?;
++    let metrics = root
++        .scroll_metrics()?
++        .ok_or("viewport has no scroll metrics")?;
++    std::fs::create_dir_all(&output)?;
++    std::fs::write(
++        output.join("geometry.json"),
++        format!(
++            "{{\"callback_count\":{},\"scroll\":{{\"x\":{},\"y\":{}}},\"client\":{{\"width\":{},\"height\":{}}},\"extent\":{{\"width\":{},\"height\":{}}},\"nodes\":{{\"content\":{{\"bounds\":{{\"x\":{},\"y\":{},\"width\":{},\"height\":{}}}}}}}}}\n",
++            calls.get(), scroll_x, scroll_y, metrics.client_width, metrics.client_height,
++            metrics.scroll_width, metrics.scroll_height, rect.x, rect.y, rect.width, rect.height,
++        ),
++    )?;
++    std::fs::write(output.join("openui.png"), document.render_to_png_buffer()?)?;
++    let target = root.downgrade();
++    drop(child);
++    drop(root);
++    drop(document);
++    if target.upgrade().is_some() {
++        return Err("scroll callback retained the document after teardown".into());
++    }
++    Ok(())
++}
+diff --git a/bindings/rust/openui/src/document.rs b/bindings/rust/openui/src/document.rs
+index ffb92dd9..1ecf57d0 100644
+--- a/bindings/rust/openui/src/document.rs
++++ b/bindings/rust/openui/src/document.rs
+@@ -765,16 +765,10 @@ impl Document {
+             if !event.default_prevented() {
+                 let mut current = Some(target);
+                 while let Some(node) = current {
+-                    let scrollable = self.with_engine(|engine| {
+-                        engine.computed_style(node).is_ok_and(|style| {
+-                            style.overflow_x.is_scrollable() || style.overflow_y.is_scrollable()
+-                        })
++                    let scrolled = self.with_engine_mut(|engine| {
++                        engine.scroll_wheel(node, delta_x as f64, delta_y as f64)
+                     })?;
+-                    if scrollable {
+-                        self.with_engine_mut(|engine| {
+-                            let (left, top) = engine.scroll_offset(node)?;
+-                            engine.scroll_to(node, left + delta_x as f64, top + delta_y as f64)
+-                        })?;
++                    if scrolled {
+                         break;
+                     }
+                     current = self.with_engine(|engine| engine.parent(node))??;
+diff --git a/bindings/rust/openui/src/element.rs b/bindings/rust/openui/src/element.rs
+index bf906f91..a4dc5dd0 100644
+--- a/bindings/rust/openui/src/element.rs
++++ b/bindings/rust/openui/src/element.rs
+@@ -550,14 +550,26 @@ impl Element {
+     pub fn scroll_left(&self) -> Result<f64, Error> {
+         Ok(self
+             .document
+-            .with_engine(|engine| engine.scroll_offset(self.handle))??
++            .with_engine_mut(|engine| {
++                engine.update()?;
++                engine.scroll_offset(self.handle)
++            })?
+             .0)
+     }
+ 
++    /// Owned client and content dimensions after resolving pending layout.
++    pub fn scroll_metrics(&self) -> Result<Option<crate::ScrollMetrics>, Error> {
++        self.document
++            .with_engine_mut(|engine| engine.scroll_metrics(self.handle))
++    }
++
+     pub fn scroll_top(&self) -> Result<f64, Error> {
+         Ok(self
+             .document
+-            .with_engine(|engine| engine.scroll_offset(self.handle))??
++            .with_engine_mut(|engine| {
++                engine.update()?;
++                engine.scroll_offset(self.handle)
++            })?
+             .1)
+     }
+ 
+@@ -567,10 +579,8 @@ impl Element {
+     }
+ 
+     pub fn scroll_by(&self, dx: f64, dy: f64) -> Result<(), Error> {
+-        let (x, y) = self
+-            .document
+-            .with_engine(|engine| engine.scroll_offset(self.handle))??;
+-        self.scroll_to(x + dx, y + dy)
++        self.document
++            .with_engine_mut(|engine| engine.scroll_by(self.handle, dx, dy))
+     }
+ 
+     pub fn control_value(&self) -> Result<Option<String>, Error> {
+diff --git a/bindings/rust/openui/src/lib.rs b/bindings/rust/openui/src/lib.rs
+index d71048ed..9806c7f2 100644
+--- a/bindings/rust/openui/src/lib.rs
++++ b/bindings/rust/openui/src/lib.rs
+@@ -140,7 +140,7 @@ pub use openui_engine::{
+     AccessibilityPlatformAction, AccessibilityRelation, AccessibilityRole, AccessibilityTreeUpdate,
+     AnimationEvent, AnimationEventKind, AnimationId, AnimationState, ControlAdjustment,
+     EditCommand, EngineOptions, FocusOrigin, PointerEventKind, RasterConfiguration,
+-    ScrollAnimationId, TextDirection, TextUnit, ViewportAuthority, ViewportMetrics,
++    ScrollAnimationId, ScrollMetrics, TextDirection, TextUnit, ViewportAuthority, ViewportMetrics,
+     ViewportMetricsError,
+ };
+ #[cfg(all(feature = "linux", target_os = "linux"))]
+diff --git a/bindings/rust/openui/src/prelude.rs b/bindings/rust/openui/src/prelude.rs
+index 2dc8a878..4febd3dc 100644
+--- a/bindings/rust/openui/src/prelude.rs
++++ b/bindings/rust/openui/src/prelude.rs
+@@ -20,7 +20,7 @@ pub use crate::view_node::{mount_view, IntoView, ViewNode};
+ pub use crate::ElementTag;
+ pub use crate::{
+     AccessibilityAction, AccessibilityLive, AccessibilityRelation, AccessibilityRole,
+-    ViewportAuthority, ViewportMetrics,
++    ScrollMetrics, ViewportAuthority, ViewportMetrics,
+ };
+ pub use openui_macros::{component, view};
+ pub use openui_text::{
+diff --git a/bindings/rust/openui/tests/v02_conformance.rs b/bindings/rust/openui/tests/v02_conformance.rs
+index c112be77..3f91f26c 100644
+--- a/bindings/rust/openui/tests/v02_conformance.rs
++++ b/bindings/rust/openui/tests/v02_conformance.rs
+@@ -1467,6 +1467,121 @@ fn nested_scroll_container_consumes_wheel() {
+     );
+ }
+ 
++fn overflowing_viewport(document: &Document) -> Element {
++    let content = child(document, "div");
++    sized(&content, 300.0, 224.0);
++    content.set_position(Position::Absolute).unwrap();
++    content.set_left(Length::px(27.0)).unwrap();
++    content.set_top(Length::px(22.0)).unwrap();
++    content
++}
++
++#[test]
++fn viewport_native_scroll_clamps_extremes_and_resolves_pending_layout() {
++    let document = document();
++    let content = overflowing_viewport(&document);
++    let root = document.body();
++    root.scroll_to(f64::MAX, f64::MAX).unwrap();
++    // Repeated Chromium queries: both 15px bars leave a 305x225 client.
++    assert_eq!(
++        (root.scroll_left().unwrap(), root.scroll_top().unwrap()),
++        (22.0, 21.0)
++    );
++    let rect = content.bounding_rect().unwrap().unwrap();
++    assert_eq!((rect.x, rect.y), (5.0, 1.0));
++    root.scroll_to(-1000.0, -1000.0).unwrap();
++    assert_eq!(
++        (root.scroll_left().unwrap(), root.scroll_top().unwrap()),
++        (0.0, 0.0)
++    );
++    root.scroll_to(1000.0, 1000.0).unwrap();
++    root.set_overflow(Overflow::Hidden).unwrap();
++    // Changing overflow removes both gutters and clamps the previous offset.
++    root.scroll_by(-1.0, -1.0).unwrap();
++    assert_eq!(
++        (root.scroll_left().unwrap(), root.scroll_top().unwrap()),
++        (6.0, 5.0)
++    );
++    content.set_width(LengthValue::px(80.0)).unwrap();
++    content.set_height(LengthValue::px(40.0)).unwrap();
++    assert_eq!(
++        (root.scroll_left().unwrap(), root.scroll_top().unwrap()),
++        (0.0, 0.0)
++    );
++    assert!(root.scroll_to(f64::INFINITY, 0.0).is_err());
++}
++
++#[test]
++fn viewport_wheel_uses_the_same_limits_and_respects_cancelation() {
++    let document = document();
++    let content = overflowing_viewport(&document);
++    let root = document.body();
++    document
++        .dispatch_wheel_event(30.0, 30.0, 1000.0, 1000.0, Modifiers::NONE)
++        .unwrap();
++    assert_eq!(
++        (root.scroll_left().unwrap(), root.scroll_top().unwrap()),
++        (22.0, 21.0)
++    );
++    root.scroll_to(0.0, 0.0).unwrap();
++    content
++        .on("wheel", |event| event.prevent_default())
++        .unwrap();
++    document
++        .dispatch_wheel_event(30.0, 30.0, 1000.0, 1000.0, Modifiers::NONE)
++        .unwrap();
++    assert_eq!(
++        (root.scroll_left().unwrap(), root.scroll_top().unwrap()),
++        (0.0, 0.0)
++    );
++    // Authored hidden and clip viewport overflow still allow Rust scroll calls.
++    for overflow in [Overflow::Hidden, Overflow::Clip] {
++        let document = Document::new(320, 240).unwrap();
++        let _content = overflowing_viewport(&document);
++        let root = document.body();
++        root.set_overflow(overflow).unwrap();
++        root.scroll_to(1000.0, 1000.0).unwrap();
++        assert_eq!(
++            (root.scroll_left().unwrap(), root.scroll_top().unwrap()),
++            (7.0, 6.0)
++        );
++        root.scroll_to(0.0, 0.0).unwrap();
++        document
++            .dispatch_wheel_event(30.0, 30.0, 1000.0, 1000.0, Modifiers::NONE)
++            .unwrap();
++        assert_eq!(
++            (root.scroll_left().unwrap(), root.scroll_top().unwrap()),
++            (0.0, 0.0)
++        );
++    }
++}
++
++#[test]
++fn viewport_smooth_scroll_clamps_its_target_and_tracks_content_shrink() {
++    let document = document();
++    let content = overflowing_viewport(&document);
++    let root = document.body();
++    root.smooth_scroll_to(1000.0, 1000.0, 100.0, Easing::Linear)
++        .unwrap();
++    document.advance_time(50.0).unwrap();
++    assert_eq!(
++        (root.scroll_left().unwrap(), root.scroll_top().unwrap()),
++        (11.0, 10.5)
++    );
++    document.advance_time(100.0).unwrap();
++    assert_eq!(
++        (root.scroll_left().unwrap(), root.scroll_top().unwrap()),
++        (22.0, 21.0)
++    );
++    content.set_width(LengthValue::px(80.0)).unwrap();
++    content.set_height(LengthValue::px(40.0)).unwrap();
++    assert_eq!(
++        (root.scroll_left().unwrap(), root.scroll_top().unwrap()),
++        (0.0, 0.0)
++    );
++    assert!(!document.is_animating().unwrap());
++}
++
+ #[test]
+ fn smooth_scroll_uses_manual_clock() {
+     let document = document();
+diff --git a/bindings/rust/pixel-compare/src/main.rs b/bindings/rust/pixel-compare/src/main.rs
+index b0636472..edcabe08 100644
+--- a/bindings/rust/pixel-compare/src/main.rs
++++ b/bindings/rust/pixel-compare/src/main.rs
+@@ -38,15 +38,21 @@ pub struct FixtureEngine {
+ 
+ impl FixtureEngine {
+     fn new(viewport: ViewportMetrics) -> Result<Self, EngineError> {
+-        Ok(Self {
+-            inner: Engine::new_with_font_collection_and_options(
+-                viewport,
+-                openui_text::FontCollection::deterministic_test(),
+-                EngineOptions {
+-                    raster_configuration: active_raster_configuration(),
+-                },
+-            )?,
+-        })
++        let mut inner = Engine::new_with_font_collection_and_options(
++            viewport,
++            openui_text::FontCollection::deterministic_test(),
++            EngineOptions {
++                raster_configuration: active_raster_configuration(),
++            },
++        )?;
++        // Both immutable Chromium capture styles hide every scrollbar with
++        // `::-webkit-scrollbar { display: none; }`. Represent that input through
++        // the typed native style before applying authored fixture declarations.
++        inner.set_renderer_style(
++            inner.root(),
++            RendererStyleValue::ScrollbarWidth(ScrollbarWidth::None),
++        )?;
++        Ok(Self { inner })
+     }
+ 
+     fn into_engine(self) -> Engine {
+@@ -58,7 +64,14 @@ impl FixtureEngine {
+     }
+ 
+     fn create_node(&mut self, tag: ElementTag) -> NodeId {
+-        self.inner.create_element(tag).expect("fixture element")
++        let node = self.inner.create_element(tag).expect("fixture element");
++        self.inner
++            .set_renderer_style(
++                node,
++                RendererStyleValue::ScrollbarWidth(ScrollbarWidth::None),
++            )
++            .expect("fixture capture-harness scrollbar style");
++        node
+     }
+ 
+     fn append_child(&mut self, parent: NodeId, child: NodeId) {
+@@ -874,6 +887,10 @@ pub fn base_doc(viewport_metrics: ViewportMetrics) -> (FixtureEngine, NodeId) {
+     let viewport = doc.root();
+     // Viewport: no margin/padding, just a container matching screen dimensions
+     doc.set_style(viewport, RendererStyleValue::Display(Display::Block));
++    // BODY_STYLE also sets `html { overflow: hidden; }`; the body itself
++    // remains visible below so its background and overflowing ink can propagate.
++    doc.set_style(viewport, RendererStyleValue::OverflowX(Overflow::Hidden));
++    doc.set_style(viewport, RendererStyleValue::OverflowY(Overflow::Hidden));
+     // The raster surface itself supplies the initial white canvas. Keep the
+     // synthetic viewport transparent so an explicitly emitted legacy `html`
+     // background can be distinguished from that initial canvas color.

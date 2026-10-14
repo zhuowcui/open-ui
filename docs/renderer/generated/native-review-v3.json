@@ -1,0 +1,518 @@
+{
+  "accepted_renderer_unchanged": true,
+  "artifact_bytes": 8344226,
+  "artifact_count": 82,
+  "artifacts": [
+    {
+      "bytes": 13704,
+      "path": "docs/renderer/evidence/native-review-v3/inline-owner-receipt.json",
+      "sha256": "943b1102c78235a6cdd57d80b4ceee4b04d59f307548dadb68f0ba1fe2d5210b"
+    },
+    {
+      "bytes": 5855,
+      "path": "docs/renderer/evidence/native-review-v3/inline-owner-guards.log",
+      "sha256": "00649f0a330369d5396b16047a51e6a909d88156861201f69d1520d6fdb54de8"
+    },
+    {
+      "bytes": 3269,
+      "path": "docs/renderer/evidence/native-review-v3/inline-owner-native-build.log",
+      "sha256": "d3c39a3f6371fde1f1f11e3b79b554aaea4b1dc77c95094fae3371cee3cdef9c"
+    },
+    {
+      "bytes": 1163,
+      "path": "docs/renderer/evidence/native-review-v3/inline-owner-native-application.log",
+      "sha256": "e332899ff6ac20dfb8c004d5d1a4c07fbe0a98ff24e2d913a7571a2b4193051f"
+    },
+    {
+      "bytes": 915,
+      "path": "docs/renderer/evidence/native-review-v3/inline-owner-focused.log",
+      "sha256": "84789f797a855a95f4a52d1210dd8db8840ec45218471ef182bd4688cac5c0ee"
+    },
+    {
+      "bytes": 921,
+      "path": "docs/renderer/evidence/native-review-v3/inline-owner-primitive.log",
+      "sha256": "c10fd79ed48b569537f6fb72533aee90b2e67ec9feed9ca73d55a20b52acfada"
+    },
+    {
+      "bytes": 906,
+      "path": "docs/renderer/evidence/native-review-v3/inline-owner-full.log",
+      "sha256": "11743eb919b18a2aa65775dcb00dcae8eee9a5a6a42fddc08899c7d4d453d16b"
+    },
+    {
+      "bytes": 918,
+      "path": "docs/renderer/evidence/native-review-v3/inline-owner-expanded.log",
+      "sha256": "24d27fae633697ac14b130db99d4e3832cf93be0c3e4f09ff1eb766c86f27b33"
+    },
+    {
+      "bytes": 3864,
+      "path": "docs/renderer/evidence/native-review-v3/inline-original-audit.json",
+      "sha256": "ea61ae662e3310dbef9d5d86c3e870b06840c49da1405678472b2fa1a14125ab"
+    },
+    {
+      "bytes": 6503,
+      "path": "docs/renderer/evidence/native-review-v3/inline-expanded-audit.json",
+      "sha256": "08b941cc6b93b40a1f2ba57f2f2048bc02ff43d8689333079e81a27ca4a49d64"
+    },
+    {
+      "bytes": 996,
+      "path": "docs/renderer/evidence/native-review-v3/inline-full-exit.json",
+      "sha256": "30df51e825c215c59dd9bec2b6578fbc667e7ff19973fadda8d72e7c1b56d0f9"
+    },
+    {
+      "bytes": 1008,
+      "path": "docs/renderer/evidence/native-review-v3/inline-expanded-exit.json",
+      "sha256": "1de0cd5d2fc9879fc36316379bd9f7f6bbf1ecfbfe93403054330c93260a45d0"
+    },
+    {
+      "bytes": 5406,
+      "path": "docs/renderer/evidence/native-review-v3/openui-native-inline-replaced-full-audit-v1555.py",
+      "sha256": "e03aee384a4aed6c3bbe51201db4f8565d669c0fcb66e0773064feed26fce7ca"
+    },
+    {
+      "bytes": 5872,
+      "path": "docs/renderer/evidence/native-review-v3/openui-native-inline-replaced-full-audit-v1556.py",
+      "sha256": "2cb6f75806656d562904e78d45320eb2045c7e9d4d26421d47809f28e502a57b"
+    },
+    {
+      "bytes": 7193,
+      "path": "docs/renderer/evidence/native-review-v3/openui-native-inline-replaced-expanded-audit-v1561.py",
+      "sha256": "3cacecf72a63fae8b87fc5a42d9a8701c195d52c3f99b0c65b033f101af77213"
+    },
+    {
+      "bytes": 12372,
+      "path": "docs/renderer/evidence/native-review-v3/table-owner-receipt.json",
+      "sha256": "83beb778e7c8e70895f912cd1bb9794860890e364f6172d8506adba85754d851"
+    },
+    {
+      "bytes": 5058,
+      "path": "docs/renderer/evidence/native-review-v3/table-owner-guards.log",
+      "sha256": "9111475b32f870c1b52025b88ff27a5a79a0c0c26f12978400003b2c304c4d5a"
+    },
+    {
+      "bytes": 7592,
+      "path": "docs/renderer/evidence/native-review-v3/table-guards-receipt.json",
+      "sha256": "6eb147eb01bb1f9b4f3c1fc15daeda1bcedd39e5577492d3bc3bd930f122965e"
+    },
+    {
+      "bytes": 38,
+      "path": "docs/renderer/evidence/native-review-v3/table-guards-clean-baseline.log",
+      "sha256": "eef7f125d76a415f070eef558aaefcd145d1a09c5bb371e9c28c3082524e0418"
+    },
+    {
+      "bytes": 11275,
+      "path": "docs/renderer/evidence/native-review-v3/table-guards-baseline-table-progress-guard.log",
+      "sha256": "7243b7dfc8505b010a4a3528b9b23800ae2e8d4abb90c309a2d86f1b58445d8c"
+    },
+    {
+      "bytes": 38,
+      "path": "docs/renderer/evidence/native-review-v3/table-guards-clean-fixed.log",
+      "sha256": "9ffa6dda2ea7b54fc250f5afd334d5cd09201df663ff3253a2afd6c840bb4921"
+    },
+    {
+      "bytes": 10688,
+      "path": "docs/renderer/evidence/native-review-v3/table-guards-fixed-table-progress-guard.log",
+      "sha256": "869ff117052cf7b2717d28670c3893db4766b6f9daf0b0020c4857051619ad1d"
+    },
+    {
+      "bytes": 3988617,
+      "path": "docs/renderer/evidence/native-review-v3/table-absolute-chromium-geometry.json",
+      "sha256": "dc5a20dc68a84d85b03d13e0c2baa4bf8eb632c06ef7401499db2b40bbf72af1"
+    },
+    {
+      "bytes": 1475,
+      "path": "docs/renderer/evidence/native-review-v3/absolute-height-40.html",
+      "sha256": "2f943b2f1cf596f82bf74d0758417ef57f33b6bc663a38dc87328d6ee8f8909d"
+    },
+    {
+      "bytes": 1475,
+      "path": "docs/renderer/evidence/native-review-v3/absolute-height-30.html",
+      "sha256": "c9aba9797f2369bd1cb2d4f3270dbf8a39eb5ccda4d6aa6d4f9c878c51565dcf"
+    },
+    {
+      "bytes": 1475,
+      "path": "docs/renderer/evidence/native-review-v3/absolute-height-20.html",
+      "sha256": "daa80acafa1fc43439e166e10fd27bed2159e91af38f8c2457293e4b38ec413a"
+    },
+    {
+      "bytes": 1477,
+      "path": "docs/renderer/evidence/native-review-v3/absolute-height-40.5.html",
+      "sha256": "e1e789c92492fab8aa1d7853b4f91a7b07ea0575d3a3bd7d66e5472b48dd5809"
+    },
+    {
+      "bytes": 5161,
+      "path": "docs/renderer/evidence/native-review-v3/openui-native-table-progress-absolute-geometry-v1562.py",
+      "sha256": "7d50dd324c17a9a8c9f0e564103b20770213016f279be8f57cf72915b79e2df4"
+    },
+    {
+      "bytes": 1574,
+      "path": "docs/renderer/evidence/native-review-v3/table-own-source-hosted.json",
+      "sha256": "0fe3b9613e69e009cba7fcf90fe3c9f2ae8cdd04df7b8e85dab605dd2ba6fc38"
+    },
+    {
+      "bytes": 16071,
+      "path": "docs/renderer/evidence/native-review-v3/table-hosted.json",
+      "sha256": "f1a0e9371754f763faf4f9eebbe4a2ea1adf0eab7e8c815923579900f4681c9f"
+    },
+    {
+      "bytes": 2133645,
+      "path": "docs/renderer/evidence/native-review-v3/table-hosted.log",
+      "sha256": "5c350a31723f2698908560fbfbef5be493ffe325958460543e4a96ff807fa4c5"
+    },
+    {
+      "bytes": 2657,
+      "path": "docs/renderer/evidence/native-review-v3/openui-native-table-progress-hosted-v1550.py",
+      "sha256": "7524dad9df1aa5cf309289ff88a01972b52a269669bc116e2f2e3f5d760463f4"
+    },
+    {
+      "bytes": 22330,
+      "path": "docs/renderer/evidence/native-review-v3/umbrella-hosted.json",
+      "sha256": "35bf8f7b346c5cd4c1ffa968455c52317ac63076db0770b79fab4f06d069671e"
+    },
+    {
+      "bytes": 8994,
+      "path": "docs/renderer/evidence/native-review-v3/umbrella-37327074067.json",
+      "sha256": "5c9eda129b5d298b8f1e75fbc54dbb4046c7ecf5f3791e2880f473a7507580ab"
+    },
+    {
+      "bytes": 1389635,
+      "path": "docs/renderer/evidence/native-review-v3/umbrella-37327074067.log",
+      "sha256": "9f42846723737a7d50ffa3a2229a6f44c1271aadbcc052d30834a67dc7bb970b"
+    },
+    {
+      "bytes": 3932,
+      "path": "docs/renderer/evidence/native-review-v3/umbrella-37327074091.json",
+      "sha256": "1a1f62cc8c8eb3dc5ba21830e5301e6b7358c748a394e0552429c687f3ba853f"
+    },
+    {
+      "bytes": 59330,
+      "path": "docs/renderer/evidence/native-review-v3/umbrella-37327074091.log",
+      "sha256": "326bbe904f6fa08e2cfca65a99289ccc19d7aab5babcb64279c05de684fd9195"
+    },
+    {
+      "bytes": 6235,
+      "path": "docs/renderer/evidence/native-review-v3/umbrella-37327074058.json",
+      "sha256": "aa28316bfbd26c808169e040a7064fb315b59c666dc1da497962acbd97743cca"
+    },
+    {
+      "bytes": 339255,
+      "path": "docs/renderer/evidence/native-review-v3/umbrella-37327074058.log",
+      "sha256": "96cdf2d02744183a79ceecfb6def16a380140a2d542d9fb532e93a3e1be2c306"
+    },
+    {
+      "bytes": 25227,
+      "path": "docs/renderer/evidence/native-review-v3/raster-retry-guards-receipt.json",
+      "sha256": "e0fb34102014e5e75c1165e16bd646a509672c7e4303a78fb4bcd545904b6e08"
+    },
+    {
+      "bytes": 38,
+      "path": "docs/renderer/evidence/native-review-v3/raster-retry-guards-clean-baseline-phase-and-settings.log",
+      "sha256": "eea389c7fd08bb3c92d55288e7892f8da1717d26b241b3575ec22ddf05715879"
+    },
+    {
+      "bytes": 11164,
+      "path": "docs/renderer/evidence/native-review-v3/raster-retry-guards-baseline-lcd_phase_moves_ink_by_physical_pixels_for_each_text_role.log",
+      "sha256": "9033533362cf28f9d3a23d465d6ecb9b423af57df8e5ecd177f324f3627c52ec"
+    },
+    {
+      "bytes": 1127,
+      "path": "docs/renderer/evidence/native-review-v3/raster-retry-guards-baseline-fontations_preserves_requested_mask_and_position_settings.log",
+      "sha256": "f40ebb6acd4ad01c115f71670db8b3e040def966032177e65b6ec13d77dba2c8"
+    },
+    {
+      "bytes": 38,
+      "path": "docs/renderer/evidence/native-review-v3/raster-retry-guards-clean-baseline-default-strike.log",
+      "sha256": "a79a2d979e2e50d79450d60e3634e1f2da73d69a20a78e3ac38968bbf550c1e4"
+    },
+    {
+      "bytes": 10540,
+      "path": "docs/renderer/evidence/native-review-v3/raster-retry-guards-baseline-native_outlines_fit_at_physical_size_with_default_and_explicit_backends.log",
+      "sha256": "a1e4e47e268a7e48a4e0aa823c917f63fe30830fbf1e99878a730a8aeca5d45c"
+    },
+    {
+      "bytes": 38,
+      "path": "docs/renderer/evidence/native-review-v3/raster-retry-guards-clean-fixed.log",
+      "sha256": "987b838705a1713620c051bca3bcb8b1de7a230b34536de5c560c658f3e3accf"
+    },
+    {
+      "bytes": 9928,
+      "path": "docs/renderer/evidence/native-review-v3/raster-retry-guards-fixed-lcd_phase_moves_ink_by_physical_pixels_for_each_text_role.log",
+      "sha256": "0850ef0fbe70465e4b312b8d3029a85aef4b28234fd179bc34397f52f52af7c9"
+    },
+    {
+      "bytes": 503,
+      "path": "docs/renderer/evidence/native-review-v3/raster-retry-guards-fixed-fontations_preserves_requested_mask_and_position_settings.log",
+      "sha256": "9f6c14e4bb28aebb651df4c094b4ed317b8da6ddb9b4efae7185a09ee5f5d08b"
+    },
+    {
+      "bytes": 9370,
+      "path": "docs/renderer/evidence/native-review-v3/raster-retry-guards-fixed-native_outlines_fit_at_physical_size_with_default_and_explicit_backends.log",
+      "sha256": "fe99f6720a1a80204c4b24d058ea133b9385f764595f1d8a5b71f37a438d66ac"
+    },
+    {
+      "bytes": 385,
+      "path": "docs/renderer/evidence/native-review-v3/raster-retry-guards-fixed-fontations_lcd_hints_at_physical_size_before_replay.log",
+      "sha256": "3b7d770eaa7dad7461662e830136508e2421d83e7252776eaa3f660fcb846016"
+    },
+    {
+      "bytes": 9466,
+      "path": "docs/renderer/evidence/native-review-v3/raster-retry-guards-fixed-compositor_distinguishes_owned_recordings_with_equal_document_generations.log",
+      "sha256": "dd8e6338aa287515dbaadc6014a9f96c9aae319ba3934b04408544da466c297e"
+    },
+    {
+      "bytes": 20675,
+      "path": "docs/renderer/evidence/native-review-v3/raster-retry-guards-text-library.log",
+      "sha256": "6a9a93db180733c57563cfcdfb312f0ed683b6c6811cd6730e486fa997b89240"
+    },
+    {
+      "bytes": 9441,
+      "path": "docs/renderer/evidence/native-review-v3/raster-retry-guards-paint-raster-configuration.log",
+      "sha256": "943fb405e215aa1c4871e1cf54e9878b2fb2977f3f7daf330ef0f477c36474b7"
+    },
+    {
+      "bytes": 13189,
+      "path": "docs/renderer/evidence/native-review-v3/raster-retry-guards-engine-library.log",
+      "sha256": "e002358f913b7c2ece6112f91a4a4e26e92929e6ec22d772ee1d2d72c3ebd5cc"
+    },
+    {
+      "bytes": 9681,
+      "path": "docs/renderer/evidence/native-review-v3/raster-retry-guards-software-compositor.log",
+      "sha256": "74ba93591faeaf1d78f25a3dd838e189db9cc308a548346781552f694f78c1cb"
+    },
+    {
+      "bytes": 10220,
+      "path": "docs/renderer/evidence/native-review-v3/raster-retry-guards-ganesh-compositor.log",
+      "sha256": "27199a88925ee0836403697221e230c06389fed6aef84ad08a772e050c1b054c"
+    },
+    {
+      "bytes": 4203,
+      "path": "docs/renderer/evidence/native-review-v3/raster-retry-queue.json",
+      "sha256": "46dd2a87fd998f7314a43009134ce55b89804df0f75d9b5548877868334519c9"
+    },
+    {
+      "bytes": 9857,
+      "path": "docs/renderer/evidence/native-review-v3/openui-native-raster-fields-retry-application-v1559.py",
+      "sha256": "b31121e8805edea8f72046ed5c0aaebc14529e7e62988cf0f8b35f88727ea925"
+    },
+    {
+      "bytes": 7858,
+      "path": "docs/renderer/evidence/native-review-v3/openui-native-raster-fields-retry-build-v1559.py",
+      "sha256": "c825b33cb6c2187ea5d7a779339c6d81f7a9357c8999f5b575d0858f518003be"
+    },
+    {
+      "bytes": 20057,
+      "path": "docs/renderer/evidence/native-review-v3/openui-native-raster-fields-retry-consumer-v1559.py",
+      "sha256": "e63e40424c1a4de418106d5500ae0e9c597c2880604a9993fdfc1c275ad39eed"
+    },
+    {
+      "bytes": 5719,
+      "path": "docs/renderer/evidence/native-review-v3/openui-native-raster-fields-retry-controls-v1559.py",
+      "sha256": "2dfeb1398480de7a5d47af035f83ed20d5d3ffa1292634cb5721b98c4bdb23b3"
+    },
+    {
+      "bytes": 7012,
+      "path": "docs/renderer/evidence/native-review-v3/openui-native-raster-fields-retry-guards-v1559.py",
+      "sha256": "a83f5445615ee0bf6a88c761724563ddf476892fc94225db301d06f99ddc8ca0"
+    },
+    {
+      "bytes": 2270,
+      "path": "docs/renderer/evidence/native-review-v3/openui-native-raster-fields-retry-matrices-v1559.py",
+      "sha256": "77b2ffaf549a6875e86892622b7acf52f345a367ab72853d8293e400886ece32"
+    },
+    {
+      "bytes": 8675,
+      "path": "docs/renderer/evidence/native-review-v3/openui-native-raster-fields-retry-pipeline-v1560.py",
+      "sha256": "ec2f8969d7f40c9ff96ae6cc2cca25c6def47b208971c207d403c54f864a0b20"
+    },
+    {
+      "bytes": 3818,
+      "path": "docs/renderer/evidence/native-review-v3/openui-native-raster-fields-retry-sizing-v1559.py",
+      "sha256": "f38e79bd95be46f6d5ed739d86996b15068d52ef9f74b6d2a80b8eb66bd3a829"
+    },
+    {
+      "bytes": 5930,
+      "path": "docs/renderer/evidence/native-review-v3/openui-native-raster-fields-retry-static-v1559.py",
+      "sha256": "a4c8ad0e0af2c4b8bd6cbc5f5b0c16b4bd92d5614536f7f918806bd9d073459d"
+    },
+    {
+      "bytes": 2002,
+      "path": "docs/renderer/evidence/native-review-v3/openui-native-raster-fields-retry-checks-v1558.py",
+      "sha256": "3027bbcd140942fc0d4bab0c4bd8b8b756c3feb158318d944228e36ac312c75d"
+    },
+    {
+      "bytes": 5073,
+      "path": "docs/renderer/evidence/native-review-v3/openui-native-raster-fields-retry-prepare-v1559.py",
+      "sha256": "2b3b43eecaae92b1e11f42425620203e9beeeb779e4d07cf0488ce41c879908e"
+    },
+    {
+      "bytes": 3700,
+      "path": "docs/renderer/evidence/native-review-v3/raster-retry-checks.json",
+      "sha256": "a2f3088a2e58304f7c6913a9e393274b18fe1331d26acb1aadfba8833475c021"
+    },
+    {
+      "bytes": 81,
+      "path": "docs/renderer/evidence/native-review-v3/raster-check-renderer.log",
+      "sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691"
+    },
+    {
+      "bytes": 59,
+      "path": "docs/renderer/evidence/native-review-v3/raster-check-multicol.log",
+      "sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222"
+    },
+    {
+      "bytes": 86,
+      "path": "docs/renderer/evidence/native-review-v3/raster-check-sp17.log",
+      "sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a"
+    },
+    {
+      "bytes": 121,
+      "path": "docs/renderer/evidence/native-review-v3/raster-check-sp18.log",
+      "sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763"
+    },
+    {
+      "bytes": 142,
+      "path": "docs/renderer/evidence/native-review-v3/raster-check-sp20.log",
+      "sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d"
+    },
+    {
+      "bytes": 63,
+      "path": "docs/renderer/evidence/native-review-v3/raster-check-v02.log",
+      "sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd"
+    },
+    {
+      "bytes": 37,
+      "path": "docs/renderer/evidence/native-review-v3/raster-check-style.log",
+      "sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1"
+    },
+    {
+      "bytes": 32,
+      "path": "docs/renderer/evidence/native-review-v3/raster-check-ffi.log",
+      "sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821"
+    },
+    {
+      "bytes": 45,
+      "path": "docs/renderer/evidence/native-review-v3/raster-check-archive.log",
+      "sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32"
+    },
+    {
+      "bytes": 2867,
+      "path": "docs/renderer/evidence/native-review-v3/raster-check-accountability.log",
+      "sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1"
+    },
+    {
+      "bytes": 13038,
+      "path": "docs/renderer/evidence/native-review-v3/raster-owner-at-observation.json",
+      "sha256": "0879132d7323a51e3b920674d783383a331cd237116a00f0943bd7e01fa40dac"
+    },
+    {
+      "bytes": 1581,
+      "path": "docs/renderer/evidence/native-review-v3/evidence-relocation-v1553.json",
+      "sha256": "28cb67fa4a247be27849dfa64304a3eb04912a3706978a419c79fecf36351b0b"
+    },
+    {
+      "bytes": 9978,
+      "path": "docs/renderer/evidence/native-review-v3/openui-native-review-preserve-v1563.py",
+      "sha256": "b0714ec3e2f28d11fe4f24e2d092bf71c2bbbcb547c049d5a00cee09406fb8be"
+    }
+  ],
+  "inline": {
+    "addition_cases_four_profile_exact": 199,
+    "chromium_inputs_unchanged": 46652,
+    "exact_gains": 0,
+    "exact_losses": 4,
+    "expanded": {
+      "different": 1595,
+      "errors": 0,
+      "exact": 22133,
+      "total": 23728
+    },
+    "focused_exact": 640,
+    "native_application_exact": 60,
+    "original": {
+      "different": 1590,
+      "errors": 0,
+      "exact": 21334,
+      "total": 22924
+    },
+    "primitive_exact": 960,
+    "regression_id": "wpt/css_multicol/multicol-on-broken-image-alt-text",
+    "rejected_for_promotion": true,
+    "reviewed_root_cause": "The generic image tag is routed to atomic inline layout even when the retained node has fallback children and no decoded replaced resource.",
+    "root_cause_owner": "openui-layout inline replacement versus fallback flow",
+    "source": {
+      "clean": true,
+      "commit": "c92e2d08163779f5e55784f14e556ecaa9d16e7f",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "161deb9aa4a63ea5c5e66f7b7198d1d04acaf9f14e4593a949a771b1f838fc97",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stage_exits": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1
+    ],
+    "whole_pipeline_terminal": true
+  },
+  "javascript_executed_by_openui": false,
+  "needed_native_operations_not_waived_by_pixel_exclusion": true,
+  "new_release_states_admitted": 0,
+  "observed_at_utc": "2026-10-05T15:12:14.665221+00:00",
+  "old_openui_pixels_are_provenance_only": true,
+  "pixel_tolerance": 0,
+  "promotion_allowed": false,
+  "public_native_rust_api_required": true,
+  "raster_retry": {
+    "fresh_root": true,
+    "guard_actual_exit": 0,
+    "guard_stage_terminal": true,
+    "observed_state": "running-native-build",
+    "old_failure_root_and_probes_unchanged": true,
+    "remaining_native_and_pixel_stages_pending": true,
+    "restore_branch_corrected": true,
+    "source": {
+      "clean": true,
+      "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+      "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+      "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "three_named_baselines_failed_and_fixed_passed": true,
+    "whole_pipeline_terminal": false
+  },
+  "release_qualification": false,
+  "schema_version": 1,
+  "table": {
+    "absolute_geometry_queries": 96,
+    "application_not_executed": true,
+    "baseline_actual_exit": 101,
+    "baseline_fragments": 4,
+    "chromium_fragments": 41,
+    "fixed_actual_exit": 101,
+    "fixed_fragments": 4,
+    "matrices_not_executed": true,
+    "own_source_hosted_skips": 0,
+    "own_source_hosted_success": 7,
+    "owner_actual_exit": 1,
+    "root_cause_owner": "openui-layout repeated-table continuation and fragment propagation",
+    "source": {
+      "clean": true,
+      "commit": "4b3cb72c03c58416a736a207b97cdcc8a225cb5a",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "d8eaca6088506b473ed388a005e3f688efebbec9893768f9ca4149f64110fdb7",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "two_geometry_runs_identical": true,
+    "whole_pipeline_terminal": true,
+    "workspace_not_executed": true
+  },
+  "umbrella_hosted": {
+    "jobs_skipped": 5,
+    "jobs_success": 6,
+    "skips_are_not_passes": true,
+    "source": "4144c85a26f567d70d07ae09932d4b4d05c68792",
+    "workflows_success": 3
+  }
+}

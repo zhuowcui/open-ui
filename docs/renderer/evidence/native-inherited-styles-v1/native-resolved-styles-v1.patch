@@ -1,0 +1,569 @@
+diff --git a/bindings/rust/openui-engine/src/animation.rs b/bindings/rust/openui-engine/src/animation.rs
+index aa724958..dd30fb73 100644
+--- a/bindings/rust/openui-engine/src/animation.rs
++++ b/bindings/rust/openui-engine/src/animation.rs
+@@ -593,23 +593,33 @@ impl Engine {
+         value: &StyleValue,
+     ) -> Result<(), EngineError> {
+         let node = self.resolve(target)?;
++        let viewport = (
++            self.viewport.logical_width() as f32,
++            self.viewport.logical_height() as f32,
++        );
++        let font = if property == StyleProperty::FontSize {
++            let parent = self.document.node(node).parent;
++            if parent.is_none() {
++                openui_style::ComputedStyle::initial().font_size
++            } else {
++                self.document.node(parent).style.font_size
++            }
++        } else {
++            self.document.node(node).style.font_size
++        };
++        let root_font = if node == self.document.root() && property == StyleProperty::FontSize {
++            openui_style::ComputedStyle::initial().font_size
++        } else {
++            self.document.node(self.document.root()).style.font_size
++        };
++        let resolved = Self::resolve_native_lengths(property, value, font, root_font, viewport);
++        // Publish to resolved targets as well as authored targets. The shared
++        // refresh then updates relative lengths and native descendants.
++        self.document
++            .apply_style_property(node, property, &resolved, viewport)
++            .map_err(|_| EngineError::PropertyType { property })?;
+         if property.metadata().inherited {
+             self.refresh_inherited_styles(node)?;
+-        } else {
+-            let viewport = (
+-                self.viewport.logical_width() as f32,
+-                self.viewport.logical_height() as f32,
+-            );
+-            let resolved = Self::resolve_native_lengths(
+-                property,
+-                value,
+-                self.document.node(node).style.font_size,
+-                self.document.node(self.document.root()).style.font_size,
+-                viewport,
+-            );
+-            self.document
+-                .apply_style_property(node, property, &resolved, viewport)
+-                .map_err(|_| EngineError::PropertyType { property })?;
+         }
+         self.dirty.hit_test = true;
+         self.mark_dirty(property.metadata().invalidation);
+diff --git a/bindings/rust/openui-engine/src/lib.rs b/bindings/rust/openui-engine/src/lib.rs
+index 572a7ba3..6803d203 100644
+--- a/bindings/rust/openui-engine/src/lib.rs
++++ b/bindings/rust/openui-engine/src/lib.rs
+@@ -1259,17 +1259,58 @@ impl Engine {
+         Ok(())
+     }
+ 
+-    /// Apply a schema-generated computed longhand value. This is used by
+-    /// generated renderer fixtures whose values are already resolved; normal
+-    /// applications should prefer `set_property` or generated framework
+-    /// setters.
++    /// Apply a schema-generated computed longhand to a resolved snapshot.
++    /// Omitted fields retain their computed defaults; they must not inherit
++    /// again. This input freezes the current author declarations into computed
++    /// state. Native applications use `set_property` or framework setters to
++    /// retain declarations that respond to parent and viewport changes.
+     #[doc(hidden)]
+     pub fn set_renderer_style(
+         &mut self,
+         handle: NodeHandle,
+         value: RendererStyleValue,
+     ) -> Result<(), EngineError> {
+-        self.set_property(handle, value.property(), StyleValue::Renderer(value))
++        let node = self.resolve(handle)?;
++        let property = value.property();
++        let value = StyleValue::Renderer(value);
++        let slot = &self.slots[handle.index as usize];
++        if slot.resolved_style_snapshot
++            && slot.authored.is_empty()
++            && slot.authored_pseudo.iter().all(Option::is_none)
++            && !self
++                .animations
++                .values()
++                .any(|animation| animation.target == handle)
++            && openui_style::value_from_computed(&self.document.node(node).style, property) == value
++        {
++            return Ok(());
++        }
++        let viewport = (
++            self.viewport.logical_width() as f32,
++            self.viewport.logical_height() as f32,
++        );
++        self.document
++            .apply_style_property(node, property, &value, viewport)
++            .map_err(|_| EngineError::PropertyType { property })?;
++        let slot = &mut self.slots[handle.index as usize];
++        slot.authored.clear();
++        slot.authored_order.clear();
++        slot.resolved_style_snapshot = true;
++        self.refresh_inherited_styles(node)?;
++        let mut has_animation = false;
++        for animation in self.animations.values_mut().filter(|animation| {
++            animation.target == handle && animation.keyframes.property() == property
++        }) {
++            animation.underlying = value.clone();
++            animation.last_applied = None;
++            has_animation = true;
++        }
++        self.dirty.hit_test = true;
++        self.mark_dirty(property.metadata().invalidation);
++        if has_animation {
++            self.sample_animations()?;
++        }
++        Ok(())
+     }
+ 
+     /// Apply engine-owned derived style state. These values are explicitly
+@@ -1296,7 +1337,11 @@ impl Engine {
+     ) -> Result<(), EngineError> {
+         let node = self.resolve(handle)?;
+         self.document.install_resolved_style(node, style);
+-        self.slots[handle.index as usize].resolved_style_snapshot = true;
++        let slot = &mut self.slots[handle.index as usize];
++        slot.authored.clear();
++        slot.authored_order.clear();
++        slot.authored_pseudo = std::array::from_fn(|_| None);
++        slot.resolved_style_snapshot = true;
+         self.refresh_inherited_descendants(node)?;
+         self.dirty.hit_test = true;
+         self.mark_dirty(InvalidationClass::Subtree);
+@@ -1315,7 +1360,12 @@ impl Engine {
+         while let Some(node) = pending.pop() {
+             if let Some(index) = self.node_slots.get(&node).copied() {
+                 let slot = &self.slots[index as usize];
+-                if !slot.resolved_style_snapshot {
++                if !slot.resolved_style_snapshot
++                    || !slot.authored.is_empty()
++                    || self.animations.values().any(|animation| {
++                        animation.target.index == index && animation.last_applied.is_some()
++                    })
++                {
+                     let declarations: Vec<_> = slot
+                         .authored_order
+                         .iter()
+@@ -1358,7 +1408,9 @@ impl Engine {
+                         self.document.node(self.document.root()).style.font_size
+                     };
+                     let mut style = self.document.node(node).style.clone();
+-                    style.inherit_properties_from(&parent);
++                    if !slot.resolved_style_snapshot {
++                        style.inherit_properties_from(&parent);
++                    }
+                     let style = Self::resolve_native_declarations(
+                         style,
+                         &declarations,
+@@ -1430,9 +1482,7 @@ impl Engine {
+                 }
+             })?;
+             style.update_derived(|fields| fields.font_size = font_size);
+-            if matches!(property, StyleProperty::Font | StyleProperty::LineHeight)
+-                && !matches!(value, StyleValue::Renderer(_))
+-            {
++            if matches!(property, StyleProperty::Font | StyleProperty::LineHeight) {
+                 authored_line_height = true;
+             }
+         }
+@@ -2494,6 +2544,216 @@ mod tests {
+         TransformOperation,
+     };
+ 
++    #[test]
++    fn native_resolved_computed_defaults_preserve_snapshots_and_native_inheritance() {
++        let mut engine =
++            Engine::new(ViewportMetrics::from_logical_size(320.0, 240.0, 1.0).unwrap()).unwrap();
++        let parent = engine.root();
++        engine
++            .set_property(
++                parent,
++                StyleProperty::TextIndent,
++                LengthValue::px(20.0).into(),
++            )
++            .unwrap();
++        engine
++            .set_property(parent, StyleProperty::Color, Color::RED.into())
++            .unwrap();
++        let computed = engine.create_native_element(ElementTag::Span).unwrap();
++        engine
++            .set_renderer_style(computed, RendererStyleValue::FontSize(16.0))
++            .unwrap();
++        engine.append_child(parent, computed).unwrap();
++        let initial = engine.computed_style(computed).unwrap().clone();
++        assert_eq!(initial.text_indent.value(), 0.0);
++        assert_eq!(initial.color, Color::BLACK);
++        let native = engine.create_native_element(ElementTag::Span).unwrap();
++        engine
++            .set_property(native, StyleProperty::Display, Display::Inline.into())
++            .unwrap();
++        engine.append_child(parent, native).unwrap();
++        assert_eq!(
++            engine.computed_style(native).unwrap().text_indent.value(),
++            20.0
++        );
++        assert_eq!(engine.computed_style(native).unwrap().color, Color::RED);
++        let descendant = engine.create_native_element(ElementTag::Span).unwrap();
++        engine.append_child(computed, descendant).unwrap();
++        engine
++            .set_renderer_style(computed, RendererStyleValue::Color(Color::GREEN))
++            .unwrap();
++        assert_eq!(
++            engine.computed_style(descendant).unwrap().color,
++            Color::GREEN
++        );
++        engine
++            .set_property(
++                parent,
++                StyleProperty::TextIndent,
++                LengthValue::px(28.0).into(),
++            )
++            .unwrap();
++        assert_eq!(
++            engine.computed_style(native).unwrap().text_indent.value(),
++            28.0
++        );
++        assert_eq!(
++            engine.computed_style(computed).unwrap().text_indent.value(),
++            0.0
++        );
++        let clone = engine.clone_subtree(computed).unwrap();
++        engine.append_child(parent, clone).unwrap();
++        assert_eq!(
++            engine.computed_style(clone).unwrap().text_indent.value(),
++            0.0
++        );
++        assert_eq!(engine.computed_style(clone).unwrap().color, Color::GREEN);
++        assert_eq!(initial.color, Color::BLACK);
++        assert_eq!(initial.text_indent.value(), 0.0);
++    }
++
++    #[test]
++    fn native_resolved_style_animation_refreshes_target_and_native_dependents() {
++        use openui_style::{AnimationOptions, FillMode, Keyframes, PropertyKeyframes};
++        let mut engine =
++            Engine::new(ViewportMetrics::from_logical_size(320.0, 240.0, 1.0).unwrap()).unwrap();
++        let target = engine.create_native_element(ElementTag::Div).unwrap();
++        let mut style = ComputedStyle::initial();
++        style.update_derived(|fields| fields.font_size = 20.0);
++        engine.install_derived_style(target, style).unwrap();
++        engine.append_child(engine.root(), target).unwrap();
++        engine
++            .set_property(target, StyleProperty::Width, LengthValue::Em(3.0).into())
++            .unwrap();
++        let child = engine.create_native_element(ElementTag::Div).unwrap();
++        engine.append_child(target, child).unwrap();
++        engine
++            .set_property(child, StyleProperty::Width, LengthValue::Em(2.0).into())
++            .unwrap();
++        let before = engine.computed_style(target).unwrap().clone();
++        let animation = engine
++            .animate(
++                target,
++                PropertyKeyframes::typed(
++                    StyleProperty::FontSize,
++                    Keyframes::from_values(LengthValue::Em(1.0), LengthValue::Em(2.0)),
++                )
++                .unwrap(),
++                AnimationOptions {
++                    duration_ms: 100.0,
++                    fill: FillMode::Both,
++                    ..AnimationOptions::default()
++                },
++                AnimationTimeline::Document,
++            )
++            .unwrap();
++        assert_eq!(engine.computed_style(target).unwrap().font_size, 16.0);
++        assert_eq!(engine.computed_style(target).unwrap().width.value(), 48.0);
++        assert_eq!(engine.computed_style(child).unwrap().width.value(), 32.0);
++        engine.set_animation_time(50.0).unwrap();
++        assert_eq!(engine.computed_style(target).unwrap().font_size, 24.0);
++        assert_eq!(engine.computed_style(target).unwrap().width.value(), 72.0);
++        assert_eq!(engine.computed_style(child).unwrap().width.value(), 48.0);
++        engine.cancel_animation(animation).unwrap();
++        assert_eq!(engine.computed_style(target).unwrap().font_size, 20.0);
++        assert_eq!(engine.computed_style(target).unwrap().width.value(), 60.0);
++        assert_eq!(engine.computed_style(child).unwrap().width.value(), 40.0);
++        assert_eq!(before.font_size, 20.0);
++        assert_eq!(before.width.value(), 60.0);
++    }
++
++    #[test]
++    fn native_resolved_style_replacement_drops_previous_native_declarations() {
++        let mut engine =
++            Engine::new(ViewportMetrics::from_logical_size(320.0, 240.0, 1.0).unwrap()).unwrap();
++        let target = engine.create_native_element(ElementTag::Div).unwrap();
++        engine
++            .set_property(target, StyleProperty::Color, Color::RED.into())
++            .unwrap();
++        let mut style = ComputedStyle::initial();
++        style.update_derived(|fields| fields.color = Color::BLUE);
++        engine.install_derived_style(target, style).unwrap();
++        assert_eq!(engine.computed_style(target).unwrap().color, Color::BLUE);
++        engine
++            .set_property(target, StyleProperty::Color, Color::RED.into())
++            .unwrap();
++        assert_eq!(engine.computed_style(target).unwrap().color, Color::RED);
++    }
++
++    #[test]
++    fn native_resolved_repeated_computed_value_preserves_unchanged_work() {
++        let mut engine =
++            Engine::new(ViewportMetrics::from_logical_size(320.0, 240.0, 1.0).unwrap()).unwrap();
++        let target = engine.create_native_element(ElementTag::Div).unwrap();
++        engine
++            .set_renderer_style(target, RendererStyleValue::Color(Color::GREEN))
++            .unwrap();
++        engine.append_child(engine.root(), target).unwrap();
++        engine.scene().unwrap();
++        let before = engine.dirty_generations();
++        engine
++            .set_renderer_style(target, RendererStyleValue::Color(Color::GREEN))
++            .unwrap();
++        assert_eq!(engine.dirty_generations(), before);
++        engine.scene().unwrap();
++        assert_eq!(engine.dirty_generations(), before);
++    }
++
++    #[test]
++    fn native_inheritance_computes_renderer_line_height_percentages() {
++        use openui_style::LineHeight;
++        let mut engine =
++            Engine::new(ViewportMetrics::from_logical_size(320.0, 240.0, 1.0).unwrap()).unwrap();
++        let root = engine.root();
++        engine
++            .set_property(root, StyleProperty::FontSize, LengthValue::px(24.0).into())
++            .unwrap();
++        engine
++            .set_property(
++                root,
++                StyleProperty::LineHeight,
++                LineHeight::Percentage(150.0).into(),
++            )
++            .unwrap();
++        let child = engine.create_native_element(ElementTag::Span).unwrap();
++        engine
++            .set_property(child, StyleProperty::FontSize, LengthValue::px(40.0).into())
++            .unwrap();
++        engine.append_child(root, child).unwrap();
++        assert_eq!(
++            engine.computed_style(root).unwrap().line_height,
++            LineHeight::Length(36.0)
++        );
++        assert_eq!(
++            engine.computed_style(child).unwrap().line_height,
++            LineHeight::Length(36.0)
++        );
++        engine
++            .set_property(root, StyleProperty::FontSize, LengthValue::px(20.0).into())
++            .unwrap();
++        assert_eq!(
++            engine.computed_style(child).unwrap().line_height,
++            LineHeight::Length(30.0)
++        );
++        engine
++            .set_property(
++                root,
++                StyleProperty::LineHeight,
++                StyleValue::Renderer(RendererStyleValue::LineHeight(LineHeight::Percentage(
++                    150.0,
++                ))),
++            )
++            .unwrap();
++        assert_eq!(
++            engine.computed_style(root).unwrap().line_height,
++            LineHeight::Length(30.0)
++        );
++        assert_eq!(
++            engine.computed_style(child).unwrap().line_height,
++            LineHeight::Length(30.0)
++        );
++    }
++
+     #[test]
+     fn native_inherited_styles_follow_parent_mutations_and_tree_changes() {
+         use openui_style::{Direction, LengthValue, Visibility};
+diff --git a/bindings/rust/openui/examples/native_static_position.rs b/bindings/rust/openui/examples/native_static_position.rs
+new file mode 100644
+index 00000000..52325072
+--- /dev/null
++++ b/bindings/rust/openui/examples/native_static_position.rs
+@@ -0,0 +1,176 @@
++//! Native app guards for indented inline and block static positions.
++use openui::prelude::*;
++use std::{cell::Cell, path::PathBuf, rc::Rc};
++
++fn main() -> Result<(), Box<dyn std::error::Error>> {
++    let mut args = std::env::args().skip(1);
++    let output = PathBuf::from(args.next().ok_or("output directory required")?);
++    let scale: f64 = args.next().ok_or("device scale required")?.parse()?;
++    let case = args.next().ok_or("case required")?;
++    if args.next().is_some()
++        || !matches!(
++            case.as_str(),
++            "inline-reset"
++                | "block-reset"
++                | "inline-inherit"
++                | "block-inherit"
++                | "inline-relative-reset"
++                | "block-relative-reset"
++        )
++    {
++        return Err("invalid native static-position arguments".into());
++    }
++    let is_block = case.starts_with("block");
++    let reset = case.ends_with("reset");
++    let relative = case.contains("relative");
++    let document = Document::with_font_collection(
++        ViewportMetrics::from_logical_size(320.0, 160.0, scale)?,
++        FontCollection::deterministic_test(),
++    )?;
++    let root = document.body();
++    root.set_background_color(Color::WHITE)?;
++    root.set_overflow(Overflow::Hidden)?;
++    root.set_padding_top(LengthValue::px(20.0))?;
++    root.set_padding_left(LengthValue::px(20.0))?;
++    let container = Element::create(&document, "div")?;
++    container.set_position(Position::Relative)?;
++    container.set_width(LengthValue::px(240.0))?;
++    container.set_background_color(Color::GREEN)?;
++    container.set_color(Color::GREEN)?;
++    container.set_font_family(FontFamilyList::single("Ahem"))?;
++    container.set_font_size(LengthValue::px(16.0))?;
++    container.set_line_height(LineHeight::Number(1.0))?;
++    container.set_text_indent(LengthValue::px(20.0))?;
++    container.set_border_top_width(3)?;
++    container.set_border_right_width(3)?;
++    container.set_border_bottom_width(3)?;
++    container.set_border_left_width(3)?;
++    container.set_border_top_style(BorderStyle::Solid)?;
++    container.set_border_right_style(BorderStyle::Solid)?;
++    container.set_border_bottom_style(BorderStyle::Solid)?;
++    container.set_border_left_style(BorderStyle::Solid)?;
++    container.set_border_top_color(StyleColor::Resolved(Color::BLACK))?;
++    container.set_border_right_color(StyleColor::Resolved(Color::BLACK))?;
++    container.set_border_bottom_color(StyleColor::Resolved(Color::BLACK))?;
++    container.set_border_left_color(StyleColor::Resolved(Color::BLACK))?;
++    container.set_text("XXX")?;
++    root.append_child(&container)?;
++    let span = Element::create(&document, "span")?;
++    span.set_text("XX")?;
++    if reset {
++        span.set_text_indent(LengthValue::px(0.0))?;
++    }
++    if relative {
++        span.set_position(Position::Relative)?;
++    }
++    container.append_child(&span)?;
++    let absolute = Element::create(&document, "div")?;
++    absolute.set_display(if is_block {
++        Display::Block
++    } else {
++        Display::Inline
++    })?;
++    absolute.set_position(Position::Absolute)?;
++    if reset {
++        absolute.set_text_indent(LengthValue::px(0.0))?;
++    }
++    absolute.set_text("XXXXX")?;
++    span.append_child(&absolute)?;
++    let line_break = if is_block {
++        let node = Element::create(&document, "br")?;
++        if reset {
++            node.set_text_indent(LengthValue::px(0.0))?;
++        }
++        span.append_child(&node)?;
++        Some(node)
++    } else {
++        None
++    };
++    let red = Element::create(&document, "span")?;
++    red.set_color(Color::RED)?;
++    if reset {
++        red.set_text_indent(LengthValue::px(0.0))?;
++    }
++    red.set_text("XXXXX")?;
++    span.append_child(&red)?;
++    let before_style = absolute.computed_style()?;
++    assert_eq!(
++        before_style.text_indent.value(),
++        if reset { 0.0 } else { 20.0 }
++    );
++    let before_bounds = absolute
++        .bounding_rect()?
++        .ok_or("native absolute bounds required")?;
++    let before = document.render_to_png_buffer()?;
++    let calls = Rc::new(Cell::new(0));
++    let callback_calls = calls.clone();
++    let weak_container = container.downgrade();
++    absolute.on("click", move |_| {
++        weak_container
++            .upgrade()
++            .expect("live native container")
++            .set_text_indent(LengthValue::px(28.0))
++            .expect("native indentation mutation");
++        callback_calls.set(callback_calls.get() + 1);
++    })?;
++    absolute.click()?;
++    assert_eq!(calls.get(), 1);
++    let after_style = absolute.computed_style()?;
++    assert_eq!(
++        after_style.text_indent.value(),
++        if reset { 0.0 } else { 28.0 }
++    );
++    let after_bounds = absolute
++        .bounding_rect()?
++        .ok_or("native absolute bounds required")?;
++    let after = document.render_to_png_buffer()?;
++    // Exercise the public typed line-height setter as well as the generic
++    // property transport. Percentages compute on the parent before inheritance.
++    let percent_parent = Element::create(&document, "div")?;
++    percent_parent.set_display(Display::None)?;
++    percent_parent.set_font_size(LengthValue::px(24.0))?;
++    percent_parent.set_line_height(LineHeight::Percentage(150.0))?;
++    let percent_child = Element::create(&document, "span")?;
++    percent_child.set_font_size(LengthValue::px(40.0))?;
++    percent_parent.append_child(&percent_child)?;
++    root.append_child(&percent_parent)?;
++    let percent_style = percent_child.computed_style()?;
++    assert_eq!(percent_style.line_height, LineHeight::Length(36.0));
++    let weak_absolute = absolute.downgrade();
++    drop(percent_child);
++    drop(percent_parent);
++    drop(line_break);
++    drop(red);
++    drop(absolute);
++    drop(span);
++    drop(container);
++    drop(root);
++    drop(document);
++    assert!(weak_absolute.upgrade().is_none());
++    assert_eq!(
++        before_style.text_indent.value(),
++        if reset { 0.0 } else { 20.0 }
++    );
++    assert_eq!(percent_style.line_height, LineHeight::Length(36.0));
++    std::fs::create_dir_all(&output)?;
++    std::fs::write(output.join("before.png"), before)?;
++    std::fs::write(output.join("after.png"), after)?;
++    let rectangle = |rect: Rect| {
++        format!(
++            "{{\"x\":{},\"y\":{},\"width\":{},\"height\":{}}}",
++            rect.x, rect.y, rect.width, rect.height
++        )
++    };
++    std::fs::write(
++        output.join("geometry.json"),
++        format!(
++            "{{\"before\":{},\"after\":{}}}\n",
++            rectangle(before_bounds),
++            rectangle(after_bounds)
++        ),
++    )?;
++    println!(
++        "native static positions: case={case} scale={scale} callback=1 owned-snapshots=2 passed"
++    );
++    Ok(())
++}

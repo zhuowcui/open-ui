@@ -1,0 +1,3602 @@
+{
+  "backend": "cpu-skia",
+  "binaries": {
+    "constrained_box_geometry-balance-candidate-v1": "ca4c9db494f1b93b3cec40aa2cc9cda43b034546e7192555aec4f035fb2138a9",
+    "constrained_box_geometry-baseline-547c7081": "f8bce71c0ba3c03096d95521b9e6332c9ea5350dbcec5949adcc8e492c078b06",
+    "constrained_box_geometry-candidate-v1": "633a4b5a3c223d46ab102b9389c8468bf1d5345d86032ac19bc42ce1a4ea76a3",
+    "constrained_box_geometry-column-cap-v1": "d7601186b1b883d58d36480fc345127398b9ffa7453e5bf08a162f922acc2da7",
+    "constrained_box_geometry-column-cap-v2": "3580cb87a23168e899ba57a2fd4b8fb429a7fd90d385e0bb682f246b7281e875",
+    "libopenui_ffi-balance-candidate-v1-linux.so": "d2efb7f35f5ef3d2137aec7a0b12286de09bdfeff19a1b941c5bd3832e86e9ff",
+    "pixel_compare_monolithic_balance_candidate": "beca2841c9e1cb937767709b32f0b1886fcdb544e070e24e4003186ae1851d03"
+  },
+  "cases": [
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 0,
+      "scale": 1
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 20,
+      "scale": 1
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 40,
+      "scale": 1
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 68,
+      "scale": 1
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 69,
+      "scale": 1
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 90,
+      "scale": 1
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 200,
+      "scale": 1
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 300,
+      "scale": 1
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 0,
+      "scale": 1.25
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 20,
+      "scale": 1.25
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 40,
+      "scale": 1.25
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 68,
+      "scale": 1.25
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 69,
+      "scale": 1.25
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 90,
+      "scale": 1.25
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 200,
+      "scale": 1.25
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 300,
+      "scale": 1.25
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 0,
+      "scale": 1.5
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 20,
+      "scale": 1.5
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 40,
+      "scale": 1.5
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 68,
+      "scale": 1.5
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 69,
+      "scale": 1.5
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 90,
+      "scale": 1.5
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 200,
+      "scale": 1.5
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 300,
+      "scale": 1.5
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 0,
+      "scale": 2
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 20,
+      "scale": 2
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 40,
+      "scale": 2
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 68,
+      "scale": 2
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 69,
+      "scale": 2
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 90,
+      "scale": 2
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 200,
+      "scale": 2
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 300,
+      "scale": 2
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 0,
+      "scale": 3
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 20,
+      "scale": 3
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 40,
+      "scale": 3
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 68,
+      "scale": 3
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 69,
+      "scale": 3
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 90,
+      "scale": 3
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 200,
+      "scale": 3
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 300,
+      "scale": 3
+    }
+  ],
+  "constrained_column_cases": [
+    {
+      "chromium_geometry": {
+        "hit": "border",
+        "nodes": {
+          "border": {
+            "bounds": {
+              "height": 68.671875,
+              "width": 272,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 68.671875,
+                "width": 56,
+                "x": 0,
+                "y": 0
+              },
+              {
+                "height": 68.671875,
+                "width": 56,
+                "x": 108,
+                "y": 0
+              },
+              {
+                "height": 68.65625,
+                "width": 56,
+                "x": 216,
+                "y": 0
+              }
+            ]
+          },
+          "columns": {
+            "bounds": {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 68.671875,
+                "width": 300,
+                "x": 0,
+                "y": 0
+              }
+            ]
+          },
+          "limit": {
+            "bounds": {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 68.671875,
+                "width": 84,
+                "x": 0,
+                "y": 0
+              },
+              {
+                "height": 68.671875,
+                "width": 84,
+                "x": 108,
+                "y": 0
+              },
+              {
+                "height": 22.65625,
+                "width": 84,
+                "x": 216,
+                "y": 0
+              }
+            ]
+          }
+        },
+        "viewport": {
+          "dpr": 1,
+          "height": 340,
+          "width": 320
+        }
+      },
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 0,
+      "native_geometry": {
+        "case": "clipped-descendant",
+        "nodes": {
+          "border": {
+            "bounds": {
+              "height": 68.671875,
+              "width": 272,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 68.671875,
+                "width": 56,
+                "x": 0,
+                "y": 0
+              },
+              {
+                "height": 68.671875,
+                "width": 56,
+                "x": 108,
+                "y": 0
+              },
+              {
+                "height": 68.65625,
+                "width": 56,
+                "x": 216,
+                "y": 0
+              }
+            ]
+          },
+          "columns": {
+            "bounds": {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 68.671875,
+                "width": 300,
+                "x": 0,
+                "y": 0
+              }
+            ]
+          },
+          "limit": {
+            "bounds": {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 68.671875,
+                "width": 84,
+                "x": 0,
+                "y": 0
+              },
+              {
+                "height": 68.671875,
+                "width": 84,
+                "x": 108,
+                "y": 0
+              },
+              {
+                "height": 22.65625,
+                "width": 84,
+                "x": 216,
+                "y": 0
+              }
+            ]
+          }
+        },
+        "viewport": [
+          320,
+          340,
+          1
+        ]
+      }
+    },
+    {
+      "chromium_geometry": {
+        "hit": "border",
+        "nodes": {
+          "border": {
+            "bounds": {
+              "height": 68.671875,
+              "width": 272,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 68.671875,
+                "width": 56,
+                "x": 0,
+                "y": 0
+              },
+              {
+                "height": 68.671875,
+                "width": 56,
+                "x": 108,
+                "y": 0
+              },
+              {
+                "height": 68.65625,
+                "width": 56,
+                "x": 216,
+                "y": 0
+              }
+            ]
+          },
+          "columns": {
+            "bounds": {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 68.671875,
+                "width": 300,
+                "x": 0,
+                "y": 0
+              }
+            ]
+          },
+          "limit": {
+            "bounds": {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 68.671875,
+                "width": 84,
+                "x": 0,
+                "y": 0
+              },
+              {
+                "height": 68.671875,
+                "width": 84,
+                "x": 108,
+                "y": 0
+              },
+              {
+                "height": 22.65625,
+                "width": 84,
+                "x": 216,
+                "y": 0
+              }
+            ]
+          }
+        },
+        "viewport": {
+          "dpr": 1,
+          "height": 340,
+          "width": 320
+        }
+      },
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 20,
+      "native_geometry": {
+        "case": "clipped-descendant",
+        "nodes": {
+          "border": {
+            "bounds": {
+              "height": 68.671875,
+              "width": 272,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 68.671875,
+                "width": 56,
+                "x": 0,
+                "y": 0
+              },
+              {
+                "height": 68.671875,
+                "width": 56,
+                "x": 108,
+                "y": 0
+              },
+              {
+                "height": 68.65625,
+                "width": 56,
+                "x": 216,
+                "y": 0
+              }
+            ]
+          },
+          "columns": {
+            "bounds": {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 68.671875,
+                "width": 300,
+                "x": 0,
+                "y": 0
+              }
+            ]
+          },
+          "limit": {
+            "bounds": {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 68.671875,
+                "width": 84,
+                "x": 0,
+                "y": 0
+              },
+              {
+                "height": 68.671875,
+                "width": 84,
+                "x": 108,
+                "y": 0
+              },
+              {
+                "height": 22.65625,
+                "width": 84,
+                "x": 216,
+                "y": 0
+              }
+            ]
+          }
+        },
+        "viewport": [
+          320,
+          340,
+          1
+        ]
+      }
+    },
+    {
+      "chromium_geometry": {
+        "hit": "border",
+        "nodes": {
+          "border": {
+            "bounds": {
+              "height": 68.671875,
+              "width": 272,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 68.671875,
+                "width": 56,
+                "x": 0,
+                "y": 0
+              },
+              {
+                "height": 68.671875,
+                "width": 56,
+                "x": 108,
+                "y": 0
+              },
+              {
+                "height": 68.65625,
+                "width": 56,
+                "x": 216,
+                "y": 0
+              }
+            ]
+          },
+          "columns": {
+            "bounds": {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 68.671875,
+                "width": 300,
+                "x": 0,
+                "y": 0
+              }
+            ]
+          },
+          "limit": {
+            "bounds": {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 68.671875,
+                "width": 84,
+                "x": 0,
+                "y": 0
+              },
+              {
+                "height": 68.671875,
+                "width": 84,
+                "x": 108,
+                "y": 0
+              },
+              {
+                "height": 22.65625,
+                "width": 84,
+                "x": 216,
+                "y": 0
+              }
+            ]
+          }
+        },
+        "viewport": {
+          "dpr": 1,
+          "height": 340,
+          "width": 320
+        }
+      },
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 40,
+      "native_geometry": {
+        "case": "clipped-descendant",
+        "nodes": {
+          "border": {
+            "bounds": {
+              "height": 68.671875,
+              "width": 272,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 68.671875,
+                "width": 56,
+                "x": 0,
+                "y": 0
+              },
+              {
+                "height": 68.671875,
+                "width": 56,
+                "x": 108,
+                "y": 0
+              },
+              {
+                "height": 68.65625,
+                "width": 56,
+                "x": 216,
+                "y": 0
+              }
+            ]
+          },
+          "columns": {
+            "bounds": {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 68.671875,
+                "width": 300,
+                "x": 0,
+                "y": 0
+              }
+            ]
+          },
+          "limit": {
+            "bounds": {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 68.671875,
+                "width": 84,
+                "x": 0,
+                "y": 0
+              },
+              {
+                "height": 68.671875,
+                "width": 84,
+                "x": 108,
+                "y": 0
+              },
+              {
+                "height": 22.65625,
+                "width": 84,
+                "x": 216,
+                "y": 0
+              }
+            ]
+          }
+        },
+        "viewport": [
+          320,
+          340,
+          1
+        ]
+      }
+    },
+    {
+      "chromium_geometry": {
+        "hit": "border",
+        "nodes": {
+          "border": {
+            "bounds": {
+              "height": 71,
+              "width": 272,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 71,
+                "width": 56,
+                "x": 0,
+                "y": 0
+              },
+              {
+                "height": 71,
+                "width": 56,
+                "x": 108,
+                "y": 0
+              },
+              {
+                "height": 64,
+                "width": 56,
+                "x": 216,
+                "y": 0
+              }
+            ]
+          },
+          "columns": {
+            "bounds": {
+              "height": 71,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 71,
+                "width": 300,
+                "x": 0,
+                "y": 0
+              }
+            ]
+          },
+          "limit": {
+            "bounds": {
+              "height": 71,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 71,
+                "width": 84,
+                "x": 0,
+                "y": 0
+              },
+              {
+                "height": 71,
+                "width": 84,
+                "x": 108,
+                "y": 0
+              },
+              {
+                "height": 18,
+                "width": 84,
+                "x": 216,
+                "y": 0
+              }
+            ]
+          }
+        },
+        "viewport": {
+          "dpr": 1,
+          "height": 340,
+          "width": 320
+        }
+      },
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 68,
+      "native_geometry": {
+        "case": "clipped-descendant",
+        "nodes": {
+          "border": {
+            "bounds": {
+              "height": 71,
+              "width": 272,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 71,
+                "width": 56,
+                "x": 0,
+                "y": 0
+              },
+              {
+                "height": 71,
+                "width": 56,
+                "x": 108,
+                "y": 0
+              },
+              {
+                "height": 64,
+                "width": 56,
+                "x": 216,
+                "y": 0
+              }
+            ]
+          },
+          "columns": {
+            "bounds": {
+              "height": 71,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 71,
+                "width": 300,
+                "x": 0,
+                "y": 0
+              }
+            ]
+          },
+          "limit": {
+            "bounds": {
+              "height": 71,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 71,
+                "width": 84,
+                "x": 0,
+                "y": 0
+              },
+              {
+                "height": 71,
+                "width": 84,
+                "x": 108,
+                "y": 0
+              },
+              {
+                "height": 18,
+                "width": 84,
+                "x": 216,
+                "y": 0
+              }
+            ]
+          }
+        },
+        "viewport": [
+          320,
+          340,
+          1
+        ]
+      }
+    },
+    {
+      "chromium_geometry": {
+        "hit": "border",
+        "nodes": {
+          "border": {
+            "bounds": {
+              "height": 72,
+              "width": 272,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 72,
+                "width": 56,
+                "x": 0,
+                "y": 0
+              },
+              {
+                "height": 72,
+                "width": 56,
+                "x": 108,
+                "y": 0
+              },
+              {
+                "height": 62,
+                "width": 56,
+                "x": 216,
+                "y": 0
+              }
+            ]
+          },
+          "columns": {
+            "bounds": {
+              "height": 72,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 72,
+                "width": 300,
+                "x": 0,
+                "y": 0
+              }
+            ]
+          },
+          "limit": {
+            "bounds": {
+              "height": 72,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 72,
+                "width": 84,
+                "x": 0,
+                "y": 0
+              },
+              {
+                "height": 72,
+                "width": 84,
+                "x": 108,
+                "y": 0
+              },
+              {
+                "height": 16,
+                "width": 84,
+                "x": 216,
+                "y": 0
+              }
+            ]
+          }
+        },
+        "viewport": {
+          "dpr": 1,
+          "height": 340,
+          "width": 320
+        }
+      },
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "height": 69,
+      "native_geometry": {
+        "case": "clipped-descendant",
+        "nodes": {
+          "border": {
+            "bounds": {
+              "height": 72,
+              "width": 272,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 72,
+                "width": 56,
+                "x": 0,
+                "y": 0
+              },
+              {
+                "height": 72,
+                "width": 56,
+                "x": 108,
+                "y": 0
+              },
+              {
+                "height": 62,
+                "width": 56,
+                "x": 216,
+                "y": 0
+              }
+            ]
+          },
+          "columns": {
+            "bounds": {
+              "height": 72,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 72,
+                "width": 300,
+                "x": 0,
+                "y": 0
+              }
+            ]
+          },
+          "limit": {
+            "bounds": {
+              "height": 72,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 72,
+                "width": 84,
+                "x": 0,
+                "y": 0
+              },
+              {
+                "height": 72,
+                "width": 84,
+                "x": 108,
+                "y": 0
+              },
+              {
+                "height": 16,
+                "width": 84,
+                "x": 216,
+                "y": 0
+              }
+            ]
+          }
+        },
+        "viewport": [
+          320,
+          340,
+          1
+        ]
+      }
+    },
+    {
+      "chromium_geometry": {
+        "hit": "columns",
+        "nodes": {
+          "border": {
+            "bounds": {
+              "height": 90,
+              "width": 272,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 80,
+                "width": 56,
+                "x": 0,
+                "y": 0
+              },
+              {
+                "height": 90,
+                "width": 56,
+                "x": 108,
+                "y": 0
+              },
+              {
+                "height": 36,
+                "width": 56,
+                "x": 216,
+                "y": 0
+              }
+            ]
+          },
+          "columns": {
+            "bounds": {
+              "height": 80,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 80,
+                "width": 300,
+                "x": 0,
+                "y": 0
+              }
+            ]
+          },
+          "limit": {
+            "bounds": {
+              "height": 80,
+              "width": 192,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 80,
+                "width": 84,
+                "x": 0,
+                "y": 0
+              },
+              {
+                "height": 80,
+                "width": 84,
+                "x": 108,
+                "y": 0
+              },
+              {
+                "height": 0,
+                "width": 84,
+                "x": 216,
+                "y": 0
+              }
+            ]
+          }
+        },
+        "viewport": {
+          "dpr": 1,
+          "height": 340,
+          "width": 320
+        }
+      },
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 2484,
+            "maximum_absolute_delta": 255,
+            "maximum_signed_delta": 255,
+            "minimum_signed_delta": -255,
+            "signed_delta_sum": -131064
+          },
+          "green": {
+            "changed_pixels": 1470,
+            "maximum_absolute_delta": 255,
+            "maximum_signed_delta": 255,
+            "minimum_signed_delta": -255,
+            "signed_delta_sum": -131064
+          },
+          "red": {
+            "changed_pixels": 1470,
+            "maximum_absolute_delta": 255,
+            "maximum_signed_delta": 255,
+            "minimum_signed_delta": -255,
+            "signed_delta_sum": -131064
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 3,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 13,
+              "width": 84,
+              "x": 0,
+              "y": 80
+            },
+            "mismatched_pixels": 1092
+          },
+          {
+            "bounds": {
+              "height": 23,
+              "width": 84,
+              "x": 108,
+              "y": 67
+            },
+            "mismatched_pixels": 1074
+          },
+          {
+            "bounds": {
+              "height": 6,
+              "width": 56,
+              "x": 216,
+              "y": 30
+            },
+            "mismatched_pixels": 318
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 63,
+          "width": 272,
+          "x": 0,
+          "y": 30
+        },
+        "mismatched_pixels": 2484
+      },
+      "geometry_exact": false,
+      "height": 90,
+      "native_geometry": {
+        "case": "clipped-descendant",
+        "nodes": {
+          "border": {
+            "bounds": {
+              "height": 93,
+              "width": 272,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 93,
+                "width": 56,
+                "x": 0,
+                "y": 0
+              },
+              {
+                "height": 80,
+                "width": 56,
+                "x": 108,
+                "y": 0
+              },
+              {
+                "height": 33,
+                "width": 56,
+                "x": 216,
+                "y": 0
+              }
+            ]
+          },
+          "columns": {
+            "bounds": {
+              "height": 80,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 80,
+                "width": 300,
+                "x": 0,
+                "y": 0
+              }
+            ]
+          },
+          "limit": {
+            "bounds": {
+              "height": 93,
+              "width": 192,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 93,
+                "width": 84,
+                "x": 0,
+                "y": 0
+              },
+              {
+                "height": 67,
+                "width": 84,
+                "x": 108,
+                "y": 0
+              },
+              {
+                "height": 0,
+                "width": 84,
+                "x": 216,
+                "y": 0
+              }
+            ]
+          }
+        },
+        "viewport": [
+          320,
+          340,
+          1
+        ]
+      }
+    },
+    {
+      "chromium_geometry": {
+        "hit": "columns",
+        "nodes": {
+          "border": {
+            "bounds": {
+              "height": 126,
+              "width": 164,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 80,
+                "width": 56,
+                "x": 0,
+                "y": 0
+              },
+              {
+                "height": 126,
+                "width": 56,
+                "x": 108,
+                "y": 0
+              }
+            ]
+          },
+          "columns": {
+            "bounds": {
+              "height": 80,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 80,
+                "width": 300,
+                "x": 0,
+                "y": 0
+              }
+            ]
+          },
+          "limit": {
+            "bounds": {
+              "height": 80,
+              "width": 192,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 80,
+                "width": 84,
+                "x": 0,
+                "y": 0
+              },
+              {
+                "height": 80,
+                "width": 84,
+                "x": 108,
+                "y": 0
+              }
+            ]
+          }
+        },
+        "viewport": {
+          "dpr": 1,
+          "height": 340,
+          "width": 320
+        }
+      },
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 14124,
+            "maximum_absolute_delta": 255,
+            "maximum_signed_delta": 255,
+            "minimum_signed_delta": -255,
+            "signed_delta_sum": -810600
+          },
+          "green": {
+            "changed_pixels": 7884,
+            "maximum_absolute_delta": 255,
+            "maximum_signed_delta": 255,
+            "minimum_signed_delta": -255,
+            "signed_delta_sum": -810600
+          },
+          "red": {
+            "changed_pixels": 7884,
+            "maximum_absolute_delta": 255,
+            "maximum_signed_delta": 255,
+            "minimum_signed_delta": -255,
+            "signed_delta_sum": -810600
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 126,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            "mismatched_pixels": 7146
+          },
+          {
+            "bounds": {
+              "height": 123,
+              "width": 84,
+              "x": 0,
+              "y": 80
+            },
+            "mismatched_pixels": 6978
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 203,
+          "width": 192,
+          "x": 0,
+          "y": 0
+        },
+        "mismatched_pixels": 14124
+      },
+      "geometry_exact": false,
+      "height": 200,
+      "native_geometry": {
+        "case": "clipped-descendant",
+        "nodes": {
+          "border": {
+            "bounds": {
+              "height": 203,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 203,
+                "width": 56,
+                "x": 0,
+                "y": 0
+              }
+            ]
+          },
+          "columns": {
+            "bounds": {
+              "height": 80,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 80,
+                "width": 300,
+                "x": 0,
+                "y": 0
+              }
+            ]
+          },
+          "limit": {
+            "bounds": {
+              "height": 160,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 160,
+                "width": 84,
+                "x": 0,
+                "y": 0
+              },
+              {
+                "height": 0,
+                "width": 84,
+                "x": 108,
+                "y": 0
+              }
+            ]
+          }
+        },
+        "viewport": [
+          320,
+          340,
+          1
+        ]
+      }
+    },
+    {
+      "chromium_geometry": {
+        "hit": "columns",
+        "nodes": {
+          "border": {
+            "bounds": {
+              "height": 126,
+              "width": 164,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 80,
+                "width": 56,
+                "x": 0,
+                "y": 0
+              },
+              {
+                "height": 126,
+                "width": 56,
+                "x": 108,
+                "y": 0
+              }
+            ]
+          },
+          "columns": {
+            "bounds": {
+              "height": 80,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 80,
+                "width": 300,
+                "x": 0,
+                "y": 0
+              }
+            ]
+          },
+          "limit": {
+            "bounds": {
+              "height": 80,
+              "width": 192,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 80,
+                "width": 84,
+                "x": 0,
+                "y": 0
+              },
+              {
+                "height": 80,
+                "width": 84,
+                "x": 108,
+                "y": 0
+              }
+            ]
+          }
+        },
+        "viewport": {
+          "dpr": 1,
+          "height": 340,
+          "width": 320
+        }
+      },
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 14292,
+            "maximum_absolute_delta": 255,
+            "maximum_signed_delta": 255,
+            "minimum_signed_delta": -255,
+            "signed_delta_sum": -853440
+          },
+          "green": {
+            "changed_pixels": 8052,
+            "maximum_absolute_delta": 255,
+            "maximum_signed_delta": 255,
+            "minimum_signed_delta": -255,
+            "signed_delta_sum": -853440
+          },
+          "red": {
+            "changed_pixels": 8052,
+            "maximum_absolute_delta": 255,
+            "maximum_signed_delta": 255,
+            "minimum_signed_delta": -255,
+            "signed_delta_sum": -853440
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 126,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            "mismatched_pixels": 7146
+          },
+          {
+            "bounds": {
+              "height": 126,
+              "width": 84,
+              "x": 0,
+              "y": 80
+            },
+            "mismatched_pixels": 7146
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 206,
+          "width": 192,
+          "x": 0,
+          "y": 0
+        },
+        "mismatched_pixels": 14292
+      },
+      "geometry_exact": false,
+      "height": 300,
+      "native_geometry": {
+        "case": "clipped-descendant",
+        "nodes": {
+          "border": {
+            "bounds": {
+              "height": 206,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 206,
+                "width": 56,
+                "x": 0,
+                "y": 0
+              }
+            ]
+          },
+          "columns": {
+            "bounds": {
+              "height": 80,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 80,
+                "width": 300,
+                "x": 0,
+                "y": 0
+              }
+            ]
+          },
+          "limit": {
+            "bounds": {
+              "height": 160,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            "rects": [
+              {
+                "height": 160,
+                "width": 84,
+                "x": 0,
+                "y": 0
+              }
+            ]
+          }
+        },
+        "viewport": [
+          320,
+          340,
+          1
+        ]
+      }
+    }
+  ],
+  "input_reports": {
+    "/tmp/openui-clipped-descendant-balance-c-abi-v1.log": "cf70434cec189263b156755a6c2fdecea8082fede8ae7407ffab2ddc5da77ef8",
+    "/tmp/openui-clipped-descendant-balance-native-baseline-v1.log": "a393045115e820c05e10da60a72735c5ba429fd1d2056d2c0bd2f402aba4714d",
+    "/tmp/openui-clipped-descendant-balance-native-linux-v1.log": "eefe53c80da02979a7087d4a975eb91a7ca7d924b23ab9bee2e8a3f58321cd42",
+    "/tmp/openui-clipped-descendant-balance-pixel-build-v1.log": "d4a9017990a73567a3000c8712f4721139d300f58bb043bacc95a52c733818ec",
+    "/tmp/openui-clipped-descendant-balance-workspace-v1.log": "a5e98ba70a2bf159c246a547ed243cc760c1bfe119f8d9818b2aac5bd4b2a06e",
+    "/tmp/openui-clipped-descendant-column-cap-build-v2.log": "d6e9c76dfa07ed8a85bddcaa5c89a043e89de8af7309fc3caa372cd4060dd357",
+    "/tmp/openui-clipped-descendant-paint-native-baseline-v1.log": "f0e131da2d021606de631d0d3f93791fe0c563bbf6b45da2aadff28084044e73",
+    "out/renderer-evidence/clipped-descendant-paint-v1/40-case-balance-candidate-v1-comparison.json": "2f1bc78bab36555e0ffb79f55b38d42af0855e8a2795b23292e60a194e9a996c",
+    "out/renderer-evidence/clipped-descendant-paint-v1/40-case-candidate-v1-comparison.json": "b484e7da960b52d0e2bd04119ab1f4a15526e81f7f703de874f5aafe1636e281",
+    "out/renderer-evidence/clipped-descendant-paint-v1/40-case-final-source-recheck-v1.json": "42ec0e2a84a5af0db07398b566fa20a67467190587f98c83edba5378c45357e8",
+    "out/renderer-evidence/clipped-descendant-paint-v1/65-constrained-guard-balance-v1.json": "51edb344b8331e8b9dd6cb41aa62d96eb9db5343eeca506b7421499ea2c6d2e5",
+    "out/renderer-evidence/clipped-descendant-paint-v1/8-case-column-cap-v1-comparison.json": "45eed698f7c03e980bb3d1719699ec66e805efe5ffbd45543944b3eee8eb9320",
+    "out/renderer-evidence/clipped-descendant-paint-v1/balance-cohort/full-summary.json": "a93a2799844cea6e4e935059a39a27791fe4ca5aa3f31285ced476ae066cc463",
+    "out/renderer-evidence/clipped-descendant-paint-v1/balance-focused/focused-summary.json": "e014320382bc0e82ba11dcef991815c3846f61979850f79f07f82cab839bb3e9",
+    "out/renderer-evidence/clipped-descendant-paint-v1/balance-primitive/primitive-summary.json": "b0253e3132be63738438e5a1bce366fa8becb9f955a30fc18b0cfbbdd919d885",
+    "out/renderer-evidence/clipped-descendant-paint-v1/rejected-stale-column-cap-artifact-v1.json": "49b0cd4015f8f14485cdf634a5041da85d9a4e9f41e11f59328f3f2fcaaa8ab4"
+  },
+  "inputs": {
+    "docs/v02/evidence/native-atomic-columns-v1/max80/height-0/test.html": "9764fb1ac4d05967d966a713c70bd842f02375cff67e84564c2d00b19f59d3de",
+    "docs/v02/evidence/native-atomic-columns-v1/max80/height-20/test.html": "f5d8e8939daa291fceb26468a29d645b957c530fbb9d47a359d1498595982217",
+    "docs/v02/evidence/native-atomic-columns-v1/max80/height-200/test.html": "767f5c697126631876662a8251123e22679432da14559fa3280e6785767145ed",
+    "docs/v02/evidence/native-atomic-columns-v1/max80/height-300/test.html": "732938bcc9629521f031b67382f8aa046cd3326f80928e8004204b24f4dc19ce",
+    "docs/v02/evidence/native-atomic-columns-v1/max80/height-40/test.html": "68e2e6b3cbf102f81e13d7878c03d5cf8f291263cac4b50e9536a537e1de4e12",
+    "docs/v02/evidence/native-atomic-columns-v1/max80/height-68/test.html": "c9c1f29df552bbc6c91cab6ab737563c888e1e09d14f73589efb5a1dc60517a3",
+    "docs/v02/evidence/native-atomic-columns-v1/max80/height-69/test.html": "fe2bad862b5e489947e0479934e6ac7a7b17ce47897ee1de1a44b0dc61f1cf27",
+    "docs/v02/evidence/native-atomic-columns-v1/max80/height-90/test.html": "5604581489242ce5bb7239e4a20d3ed53e90c33ef6ef5493251663318e27399e",
+    "docs/v02/evidence/native-atomic-columns-v1/unconstrained/height-0/test.html": "575ebe985a122953392c47506afc70079e61100cd31fac8b8fdf2d5f7e05a7cb",
+    "docs/v02/evidence/native-atomic-columns-v1/unconstrained/height-20/test.html": "b80148668f2ac0dc9ee6db69e42b5335178377f6c902a85fc831fe6864b2b9ee",
+    "docs/v02/evidence/native-atomic-columns-v1/unconstrained/height-200/test.html": "9ec7372269762b45fd2f3c130d4e0ed4b9d86818fbe7f8b07ecc8f3a974c6beb",
+    "docs/v02/evidence/native-atomic-columns-v1/unconstrained/height-300/test.html": "2cfae5102733fb6966842bad32ef66392b061cded2d86a74aa20f9c5e4a3d0ba",
+    "docs/v02/evidence/native-atomic-columns-v1/unconstrained/height-40/test.html": "b29a49ab55a97833d5b4f37ab8abcd4a032dab7a221c635448b5881b40588602",
+    "docs/v02/evidence/native-atomic-columns-v1/unconstrained/height-68/test.html": "0d1a9504a1d20837651ce78a2c2a2e3ae1238e082ed08f4e388d2325db83233e",
+    "docs/v02/evidence/native-atomic-columns-v1/unconstrained/height-69/test.html": "2b344598010ae3b7dc2e25a282c8824f49964c6670f94d9b834485b90efd2df7",
+    "docs/v02/evidence/native-atomic-columns-v1/unconstrained/height-90/test.html": "f4b0e98a1fb1ef97d99c60522f5e27a9b6672904f9abf3362c0ada95b6cbb526"
+  },
+  "output_sha256": "59908c123a0c10547dc840b5756f24f338f2a3793b1d3cd45a3f624ff343dfd3",
+  "qualification_remaining": [
+    "complete clean original four-profile census",
+    "complete clean expanded manifest",
+    "final focused and primitive matrices",
+    "wider candidate column/fragmentation diagnostics",
+    "remaining constrained column/native API cases",
+    "other renderer/native API/hardening/hardware/release gates"
+  ],
+  "release_qualification": false,
+  "results": {
+    "column_max80_at_scale1": {
+      "comparisons": 8,
+      "complete_geometry_exact": 5,
+      "different": 3,
+      "pixel_exact": 5,
+      "remaining_children": [
+        90,
+        200,
+        300
+      ]
+    },
+    "previous_constrained_cases": {
+      "comparisons": 65,
+      "image_and_geometry_unchanged": 65,
+      "pixel_exact": 43
+    },
+    "unconstrained": {
+      "baseline_exact": 0,
+      "comparisons": 40,
+      "complete_three_node_geometry_exact": 40,
+      "different": 0,
+      "paint_only_exact": 15,
+      "pixel_exact": 40
+    }
+  },
+  "reviewed_cause": {
+    "causes": [
+      "complete decoration replay selected by a clipping descendant that fit the continuation",
+      "parent decoration budget omitted when any descendant clipped",
+      "constrained ordinary box leading indivisible unit omitted from balanced column minimum"
+    ],
+    "owning_subsystems": [
+      "openui-layout",
+      "openui-paint"
+    ],
+    "remaining": "constrained column ownership still couples the parent border-box source interval to oversized child progress; 90/200/300px children at column max-height80 remain different"
+  },
+  "scales": [
+    1,
+    1.25,
+    1.5,
+    2,
+    3
+  ],
+  "schema_version": 1,
+  "source": {
+    "checkpoint": "547c708181a3426c86022ea69b02f36b2d089fd0",
+    "clean": false,
+    "code_file_sha256": {
+      "bindings/rust/openui-engine/examples/constrained_box_geometry.rs": "ead6c4295406faaf25979be3acd010ab1ea5b713a58a612ed63b4b1856741616",
+      "bindings/rust/openui-layout/src/block.rs": "b21f2b638951aed0be66a082e1e07a73f1606567a9a42bfbd56c5006273904b3",
+      "bindings/rust/openui-paint/src/painter.rs": "6aa25468168bb61dbff7485468bf9a499ebbfee39844fa41ef8f659656a11676",
+      "bindings/rust/openui/tests/v02_conformance.rs": "e0f862cde2cdc44a37de4938a86ebd4314f98a8ca098ed73d036d6a68a88c58a"
+    }
+  },
+  "stale_artifact": "rejected; source restoration retained an older modification time, so a default-feature layout artifact was reused; rebuilt native output reproduces all 40 correct images and geometry records",
+  "verification": {
+    "c_abi": {
+      "c_consumers": 6,
+      "cpp_header_consumers": 1,
+      "exports": 109,
+      "frozen_exports": 84
+    },
+    "formatting": "pass",
+    "native_rust_linux": {
+      "failed": 0,
+      "passed": 55
+    },
+    "read_only_generators": "pass",
+    "renderer_diagnostics": {
+      "column_cohort": {
+        "comparison_to_clean_822e0462": {
+          "all_chromium_rgba_and_oracle_identities_unchanged": true,
+          "changed_openui_images": 4,
+          "changes": [
+            {
+              "after_mismatched_pixels": 626,
+              "after_openui_rgba_sha256": "1dae4e7d0418d817e85f50ccba6f9259e0d7d4259e1f17d1047201a063100df0",
+              "before_mismatched_pixels": 554,
+              "before_openui_rgba_sha256": "4f5534b3469d17b0a1024ebd4023eaffa897c2b886cc12ca21d5fcd5442baad1",
+              "chromium_oracle_identity_sha256": "70f805365863412c7dd6b56ef4aa7275db89d7ff29cfaf9bca0e1bdca323e635",
+              "chromium_rgba_sha256": "b0b2d3e9a2dcccf6ae083a3dc309f8a75d99d2269b773edfffc429ff9b46c823",
+              "id": "wpt/css_break/block-max-height-004",
+              "profile": "desktop-1280x720@1.25"
+            },
+            {
+              "after_mismatched_pixels": 626,
+              "after_openui_rgba_sha256": "1dae4e7d0418d817e85f50ccba6f9259e0d7d4259e1f17d1047201a063100df0",
+              "before_mismatched_pixels": 554,
+              "before_openui_rgba_sha256": "4f5534b3469d17b0a1024ebd4023eaffa897c2b886cc12ca21d5fcd5442baad1",
+              "chromium_oracle_identity_sha256": "694e5c229f3a8d612ece8fba3c725d1c3f2335d6b62275351e1296a2675b1297",
+              "chromium_rgba_sha256": "b0b2d3e9a2dcccf6ae083a3dc309f8a75d99d2269b773edfffc429ff9b46c823",
+              "id": "wpt/css_break/block-max-height-004-ref",
+              "profile": "desktop-1280x720@1.25"
+            },
+            {
+              "after_mismatched_pixels": 531,
+              "after_openui_rgba_sha256": "00a09204e3b86c9b3fa6f6f3d5273cf0e90cf5f4a66893bd7b0c307802682ea0",
+              "before_mismatched_pixels": 456,
+              "before_openui_rgba_sha256": "106ff1904fec24a5180e1591ae99583da76507fb4096fc38cb4cae0589fd72ef",
+              "chromium_oracle_identity_sha256": "3a2ce650dbf043aff6b4dc1d80faeaaa32df420ecb82836f968d6e14e28be8e1",
+              "chromium_rgba_sha256": "9be6491e4513c3ce097cf8837f3a27a7b68f27ae60486e0a019216ef17afbc41",
+              "id": "wpt/css_break/block-max-height-004",
+              "profile": "desktop-1920x1080@1.5"
+            },
+            {
+              "after_mismatched_pixels": 531,
+              "after_openui_rgba_sha256": "00a09204e3b86c9b3fa6f6f3d5273cf0e90cf5f4a66893bd7b0c307802682ea0",
+              "before_mismatched_pixels": 456,
+              "before_openui_rgba_sha256": "106ff1904fec24a5180e1591ae99583da76507fb4096fc38cb4cae0589fd72ef",
+              "chromium_oracle_identity_sha256": "858fcb03b9d497786725228ad319b8ad05a17b19a6a9e6192dfb1c598f8273fe",
+              "chromium_rgba_sha256": "9be6491e4513c3ce097cf8837f3a27a7b68f27ae60486e0a019216ef17afbc41",
+              "id": "wpt/css_break/block-max-height-004-ref",
+              "profile": "desktop-1920x1080@1.5"
+            }
+          ],
+          "comparisons": 7680,
+          "exact_regressions": 0,
+          "new_exact": 0
+        },
+        "comparison_to_paint_only": {
+          "all_openui_rgba_unchanged": true,
+          "comparisons": 7680,
+          "report_sha256": "a3623e9a9e8c4a8a1e94f4722da3f3a94562d95dbe24c9429cc0ae29a22acd3c"
+        },
+        "complete_contract_scope": false,
+        "counts": {
+          "different": 646,
+          "errors": 0,
+          "exact": 7034,
+          "profile_result_sha256": "8a53ac69e9d4d02829b019c9dff1b8f935e8bd1a0498733ae6226e98763ba4cb",
+          "total": 7680
+        },
+        "evidence": {
+          "kind": "diagnostic-census",
+          "qualification_backend_match": true,
+          "qualified": false,
+          "tolerance_pixels": 0
+        },
+        "report_sha256": "a93a2799844cea6e4e935059a39a27791fe4ca5aa3f31285ced476ae066cc463",
+        "source": {
+          "clean": false,
+          "commit": "547c708181a3426c86022ea69b02f36b2d089fd0",
+          "harness_sha256": "7e12afd1dbb867f13f5a82f9bb25efac2bd5c8d4af0ae199efe858723dd57b6a",
+          "source_tree_sha256": "4073ad84437f10fd6d8e907badadf09665ad787f64a8e6602f512fecf8b7fccf",
+          "status_sha256": "efa650907d8ace7ad77b34ff2ad2e9529ce744ce66e3a349e56a139985ec6ea5"
+        }
+      },
+      "focused": {
+        "complete_contract_scope": true,
+        "counts": {
+          "different": 0,
+          "errors": 0,
+          "exact": 640,
+          "profile_result_sha256": "60ecdae8c2817182ab278980e457a017593ecd68921804ba19961b48dadf0583",
+          "total": 640
+        },
+        "evidence": {
+          "kind": "diagnostic-census",
+          "qualification_backend_match": true,
+          "qualified": false,
+          "tolerance_pixels": 0
+        },
+        "report_sha256": "e014320382bc0e82ba11dcef991815c3846f61979850f79f07f82cab839bb3e9",
+        "source": {
+          "clean": false,
+          "commit": "547c708181a3426c86022ea69b02f36b2d089fd0",
+          "harness_sha256": "7e12afd1dbb867f13f5a82f9bb25efac2bd5c8d4af0ae199efe858723dd57b6a",
+          "source_tree_sha256": "4073ad84437f10fd6d8e907badadf09665ad787f64a8e6602f512fecf8b7fccf",
+          "status_sha256": "efa650907d8ace7ad77b34ff2ad2e9529ce744ce66e3a349e56a139985ec6ea5"
+        }
+      },
+      "primitive": {
+        "complete_contract_scope": true,
+        "counts": {
+          "different": 0,
+          "errors": 0,
+          "exact": 960,
+          "profile_result_sha256": "54980fb474b142d8d95c80a54be120564bac771eef2c4cf3b3586cf384d89d6a",
+          "total": 960
+        },
+        "evidence": {
+          "kind": "diagnostic-census",
+          "qualification_backend_match": true,
+          "qualified": false,
+          "tolerance_pixels": 0
+        },
+        "report_sha256": "b0253e3132be63738438e5a1bce366fa8becb9f955a30fc18b0cfbbdd919d885",
+        "source": {
+          "clean": false,
+          "commit": "547c708181a3426c86022ea69b02f36b2d089fd0",
+          "harness_sha256": "7e12afd1dbb867f13f5a82f9bb25efac2bd5c8d4af0ae199efe858723dd57b6a",
+          "source_tree_sha256": "4073ad84437f10fd6d8e907badadf09665ad787f64a8e6602f512fecf8b7fccf",
+          "status_sha256": "efa650907d8ace7ad77b34ff2ad2e9529ce744ce66e3a349e56a139985ec6ea5"
+        }
+      }
+    },
+    "workspace": {
+      "failed": 0,
+      "ignored": 13,
+      "passed": 8491,
+      "suites": 147
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "actual_workflow_conclusion": "success",
+  "all_local_gh_commands_terminal": true,
+  "all_native_apis_qualified": false,
+  "full_renderer_contract_qualified": false,
+  "head_sha": "e98a5a17b6c9700a641079f3137572e0dfc85dd7",
+  "jobs": {
+    "c-undefined-sanitizer": "success",
+    "conformance-and-platform": "success",
+    "fuzz-smoke": "success",
+    "miri-handles": "success",
+    "msrv": "success",
+    "native-sanitizers (address)": "success",
+    "native-sanitizers (leak)": "success"
+  },
+  "physical_hardware_qualified": false,
+  "raw_snapshot_sha256": "c2e6262f3b5f2e828d3572c6c3081cc71d079f75ab622d404ca5fadaabdcabe0",
+  "release_qualified": false,
+  "schema_version": 1,
+  "url": "https://github.com/zhuowcui/open-ui/actions/runs/38051654348",
+  "workflow_dispatch_run_id": 38051654348
+}

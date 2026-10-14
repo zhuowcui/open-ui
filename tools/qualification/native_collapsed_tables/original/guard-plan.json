@@ -1,0 +1,228 @@
+{
+  "schema_version": 1,
+  "source_only": true,
+  "cases": [
+    {
+      "name": "style-solid",
+      "html": "/mnt/d/openui-v02-qualification-d174ea0b/native-collapsed-table-paint-source-review-fe51eab9/guards/style-solid.html",
+      "sha256": "37abb1a980a17ce579eba09ee1642eb577ec59ae9f839a683125f2bbbf37185a",
+      "purpose": "Ordered independently antialiased edge/joint operations and CSS shading for solid",
+      "engine_input": "Lower this same deterministic DOM/style input through native Engine APIs; no JS evaluation",
+      "qualified": false
+    },
+    {
+      "name": "style-double",
+      "html": "/mnt/d/openui-v02-qualification-d174ea0b/native-collapsed-table-paint-source-review-fe51eab9/guards/style-double.html",
+      "sha256": "48c82be2dd9331686ccaea8f49b7c18deb2f840c7904120d78373878441fcf40",
+      "purpose": "Ordered independently antialiased edge/joint operations and CSS shading for double",
+      "engine_input": "Lower this same deterministic DOM/style input through native Engine APIs; no JS evaluation",
+      "qualified": false
+    },
+    {
+      "name": "style-ridge",
+      "html": "/mnt/d/openui-v02-qualification-d174ea0b/native-collapsed-table-paint-source-review-fe51eab9/guards/style-ridge.html",
+      "sha256": "296844a5fb4ff3d256f89534af9f0c5158e094406257c5c355974db475573f2e",
+      "purpose": "Ordered independently antialiased edge/joint operations and CSS shading for ridge",
+      "engine_input": "Lower this same deterministic DOM/style input through native Engine APIs; no JS evaluation",
+      "qualified": false
+    },
+    {
+      "name": "style-groove",
+      "html": "/mnt/d/openui-v02-qualification-d174ea0b/native-collapsed-table-paint-source-review-fe51eab9/guards/style-groove.html",
+      "sha256": "2ca25076170a60a60482f8615367b28bf0a10c20aa98b4391b7e25730d69f72e",
+      "purpose": "Ordered independently antialiased edge/joint operations and CSS shading for groove",
+      "engine_input": "Lower this same deterministic DOM/style input through native Engine APIs; no JS evaluation",
+      "qualified": false
+    },
+    {
+      "name": "style-dashed",
+      "html": "/mnt/d/openui-v02-qualification-d174ea0b/native-collapsed-table-paint-source-review-fe51eab9/guards/style-dashed.html",
+      "sha256": "53dd6f13027405cc038452490c04afaf8ac0f2bbdee518d072d6d0d435e75243",
+      "purpose": "Ordered independently antialiased edge/joint operations and CSS shading for dashed",
+      "engine_input": "Lower this same deterministic DOM/style input through native Engine APIs; no JS evaluation",
+      "qualified": false
+    },
+    {
+      "name": "style-dotted",
+      "html": "/mnt/d/openui-v02-qualification-d174ea0b/native-collapsed-table-paint-source-review-fe51eab9/guards/style-dotted.html",
+      "sha256": "ebcec90be38ceeff3b724a8fb1751305fe0ef58705457b3cb2a0ac1034820b79",
+      "purpose": "Ordered independently antialiased edge/joint operations and CSS shading for dotted",
+      "engine_input": "Lower this same deterministic DOM/style input through native Engine APIs; no JS evaluation",
+      "qualified": false
+    },
+    {
+      "name": "style-inset",
+      "html": "/mnt/d/openui-v02-qualification-d174ea0b/native-collapsed-table-paint-source-review-fe51eab9/guards/style-inset.html",
+      "sha256": "9a920f9bde636e3c52612e78545f6cadab6f6a1a741beb04fe05fb1eb0df86f5",
+      "purpose": "Ordered independently antialiased edge/joint operations and CSS shading for inset",
+      "engine_input": "Lower this same deterministic DOM/style input through native Engine APIs; no JS evaluation",
+      "qualified": false
+    },
+    {
+      "name": "style-outset",
+      "html": "/mnt/d/openui-v02-qualification-d174ea0b/native-collapsed-table-paint-source-review-fe51eab9/guards/style-outset.html",
+      "sha256": "4165a25d211e906fd2becf6b282d2df167bbd341faf42dfa8970d9daa28f16f1",
+      "purpose": "Ordered independently antialiased edge/joint operations and CSS shading for outset",
+      "engine_input": "Lower this same deterministic DOM/style input through native Engine APIs; no JS evaluation",
+      "qualified": false
+    },
+    {
+      "name": "short-axes",
+      "html": "/mnt/d/openui-v02-qualification-d174ea0b/native-collapsed-table-paint-source-review-fe51eab9/guards/short-axes.html",
+      "sha256": "3a7a68b3d84f3d5723cf062f7b180e56bcf85ea3cbc059e48a4ab8b775205bd7",
+      "purpose": "Explicit axis must survive square or shorter-than-thickness border rectangles",
+      "engine_input": "Lower this same deterministic DOM/style input through native Engine APIs; no JS evaluation",
+      "qualified": false
+    },
+    {
+      "name": "small-widths",
+      "html": "/mnt/d/openui-v02-qualification-d174ea0b/native-collapsed-table-paint-source-review-fe51eab9/guards/small-widths.html",
+      "sha256": "8511b92beeef47e94a7a8e2c9732fb2dec098e0729d3b0593af1c711dad84194",
+      "purpose": "Effective style is selected using snapped CSS thickness after graph conflicts",
+      "engine_input": "Lower this same deterministic DOM/style input through native Engine APIs; no JS evaluation",
+      "qualified": false
+    },
+    {
+      "name": "translucent-ties",
+      "html": "/mnt/d/openui-v02-qualification-d174ea0b/native-collapsed-table-paint-source-review-fe51eab9/guards/translucent-ties.html",
+      "sha256": "0d26226dded28650e772354b7ef630af5cf7bdaeb406571114fb0a097a8977cc",
+      "purpose": "Equal perpendicular joint coverage and row-major V/H ordering, without alpha union",
+      "engine_input": "Lower this same deterministic DOM/style input through native Engine APIs; no JS evaluation",
+      "qualified": false
+    },
+    {
+      "name": "span-interior",
+      "html": "/mnt/d/openui-v02-qualification-d174ea0b/native-collapsed-table-paint-source-review-fe51eab9/guards/span-interior.html",
+      "sha256": "89ee21040eab3ab27b955f71971026405b6d90b773f1e8a4d3f4d40413e55f9e",
+      "purpose": "Source precedence, blocked span interiors and per-cell used struts",
+      "engine_input": "Lower this same deterministic DOM/style input through native Engine APIs; no JS evaluation",
+      "qualified": false
+    },
+    {
+      "name": "source-color-side",
+      "html": "/mnt/d/openui-v02-qualification-d174ea0b/native-collapsed-table-paint-source-review-fe51eab9/guards/source-color-side.html",
+      "sha256": "e7ba7b71997e189f1c8e3ba8c524201c853d11c19f849e0eaf983a4089acf159",
+      "purpose": "Winning physical property must supply color while draw-axis shading stays Top/Left",
+      "engine_input": "Lower this same deterministic DOM/style input through native Engine APIs; no JS evaluation",
+      "qualified": false
+    },
+    {
+      "name": "negative-midpoints",
+      "html": "/mnt/d/openui-v02-qualification-d174ea0b/native-collapsed-table-paint-source-review-fe51eab9/guards/negative-midpoints.html",
+      "sha256": "5e13b3c30dac4bb39314fb5b5fa9c4e9a3a04e7dfb202df784bcd01b157b0612",
+      "purpose": "Absolute integer 3D midpoint with negative coordinates and low contrast black shading",
+      "engine_input": "Lower this same deterministic DOM/style input through native Engine APIs; no JS evaluation",
+      "qualified": false
+    },
+    {
+      "name": "writing-horizontal-tb-rtl",
+      "html": "/mnt/d/openui-v02-qualification-d174ea0b/native-collapsed-table-paint-source-review-fe51eab9/guards/writing-horizontal-tb-rtl.html",
+      "sha256": "8c277b2f86aa2ca799cd88be76ec4d316f9a1a8e0282044c1f796afd0278a637",
+      "purpose": "Logical section origins, caption displacement, source side colors and physical conversion",
+      "engine_input": "Lower this same deterministic DOM/style input through native Engine APIs; no JS evaluation",
+      "qualified": false
+    },
+    {
+      "name": "writing-vertical-rl-ltr",
+      "html": "/mnt/d/openui-v02-qualification-d174ea0b/native-collapsed-table-paint-source-review-fe51eab9/guards/writing-vertical-rl-ltr.html",
+      "sha256": "007da071df171b68f10fc5d19cd963ab59297b9b9646ad1aff9ce766d506194f",
+      "purpose": "Logical section origins, caption displacement, source side colors and physical conversion",
+      "engine_input": "Lower this same deterministic DOM/style input through native Engine APIs; no JS evaluation",
+      "qualified": false
+    },
+    {
+      "name": "writing-vertical-lr-rtl",
+      "html": "/mnt/d/openui-v02-qualification-d174ea0b/native-collapsed-table-paint-source-review-fe51eab9/guards/writing-vertical-lr-rtl.html",
+      "sha256": "7d582c56cf10305f9b61d9d9a68e341ebd676d522b091ec35684493af6a7b574",
+      "purpose": "Logical section origins, caption displacement, source side colors and physical conversion",
+      "engine_input": "Lower this same deterministic DOM/style input through native Engine APIs; no JS evaluation",
+      "qualified": false
+    },
+    {
+      "name": "writing-sideways-rl-rtl",
+      "html": "/mnt/d/openui-v02-qualification-d174ea0b/native-collapsed-table-paint-source-review-fe51eab9/guards/writing-sideways-rl-rtl.html",
+      "sha256": "fc68a2f6e493b5cdd72df64c32b4c4eb4e6d5bc4ec78be7402f4e8f10ca7018e",
+      "purpose": "Logical section origins, caption displacement, source side colors and physical conversion",
+      "engine_input": "Lower this same deterministic DOM/style input through native Engine APIs; no JS evaluation",
+      "qualified": false
+    },
+    {
+      "name": "writing-sideways-lr-ltr",
+      "html": "/mnt/d/openui-v02-qualification-d174ea0b/native-collapsed-table-paint-source-review-fe51eab9/guards/writing-sideways-lr-ltr.html",
+      "sha256": "5b302e8450ba12ee1a268c15d28c105582aedb797db2e3ba839ed62e482438da",
+      "purpose": "Logical section origins, caption displacement, source side colors and physical conversion",
+      "engine_input": "Lower this same deterministic DOM/style input through native Engine APIs; no JS evaluation",
+      "qualified": false
+    },
+    {
+      "name": "collapsed-tracks",
+      "html": "/mnt/d/openui-v02-qualification-d174ea0b/native-collapsed-table-paint-source-review-fe51eab9/guards/collapsed-tracks.html",
+      "sha256": "64cef3f1dc15038baa5d26137cf3fcfe8bfc706b65b881d13b03a6841626c5d2",
+      "purpose": "Zero-size tracks retain distinct source edges and junctions; hidden cell subtree is absent",
+      "engine_input": "Lower this same deterministic DOM/style input through native Engine APIs; no JS evaluation",
+      "qualified": false
+    },
+    {
+      "name": "empty-section-seams",
+      "html": "/mnt/d/openui-v02-qualification-d174ea0b/native-collapsed-table-paint-source-review-fe51eab9/guards/empty-section-seams.html",
+      "sha256": "73cffdb3f5d7853f5810ce93ff6b25529e3abeb0a9a0449e53b8eddcdd6d4b68",
+      "purpose": "Ignore empty section projections for fragmentation masks and deduplicate shared H boundary once",
+      "engine_input": "Lower this same deterministic DOM/style input through native Engine APIs; no JS evaluation",
+      "qualified": false
+    },
+    {
+      "name": "background-before-text",
+      "html": "/mnt/d/openui-v02-qualification-d174ea0b/native-collapsed-table-paint-source-review-fe51eab9/guards/background-before-text.html",
+      "sha256": "321b4b5a0326fd13bebfc25bec239a3dbcdcd859c9bda5edebc89524fd03b17c",
+      "purpose": "Cell backgrounds precede graph borders and overflowing glyph ink follows them",
+      "engine_input": "Lower this same deterministic DOM/style input through native Engine APIs; no JS evaluation",
+      "qualified": false
+    },
+    {
+      "name": "layered-parts",
+      "html": "/mnt/d/openui-v02-qualification-d174ea0b/native-collapsed-table-paint-source-review-fe51eab9/guards/layered-parts.html",
+      "sha256": "1912ae0edce82f5ce4b3d94ddcb1e2aed76665649dd2d8db902ffa4ff274274a",
+      "purpose": "Cell/row/section layer backgrounds need actual per-cell used-strut clipping and atomic effects",
+      "engine_input": "Lower this same deterministic DOM/style input through native Engine APIs; no JS evaluation",
+      "qualified": false
+    },
+    {
+      "name": "fragmented-body",
+      "html": "/mnt/d/openui-v02-qualification-d174ea0b/native-collapsed-table-paint-source-review-fe51eab9/guards/fragmented-body.html",
+      "sha256": "1db15576af7028eaa2dcc2a29e429b1e5f733c7dacde3f085124ea9e5819a06b",
+      "purpose": "Local continuation row offsets, repeated section source identity, half edges and fragmented-row omissions",
+      "engine_input": "Lower this same deterministic DOM/style input through native Engine APIs; no JS evaluation",
+      "qualified": false
+    },
+    {
+      "name": "fragmented-row",
+      "html": "/mnt/d/openui-v02-qualification-d174ea0b/native-collapsed-table-paint-source-review-fe51eab9/guards/fragmented-row.html",
+      "sha256": "9630ce432ca231789539b400dfbdf56f350c5e085c2da2e1792e066376e0c5ad",
+      "purpose": "Partial start/end row flags suppress H edges and remove V joint extension",
+      "engine_input": "Lower this same deterministic DOM/style input through native Engine APIs; no JS evaluation",
+      "qualified": false
+    },
+    {
+      "name": "structural-owners",
+      "html": "/mnt/d/openui-v02-qualification-d174ea0b/native-collapsed-table-paint-source-review-fe51eab9/guards/structural-owners.html",
+      "sha256": "bb194e90a2305f156cc8046f35437da742d87896d3d6ceac9634ecc93f2c50ee",
+      "purpose": "Cells/rows/sections/columns/colgroups/table source precedence with one shared colgroup marker order",
+      "engine_input": "Lower this same deterministic DOM/style input through native Engine APIs; no JS evaluation",
+      "qualified": false
+    }
+  ],
+  "pixel_target": "Chromium 147.0.7727.50 only",
+  "pixel_tolerance": 0,
+  "javascript_runtime_or_scripts": false,
+  "required_profiles": "All four original contract profiles and all focused 40 profiles, with affected primitive scales/phases",
+  "required_native_application": "Engine API DOM/style lowering, ordered native mutations+layout barriers if needed",
+  "executed": false,
+  "qualified": false,
+  "must_assert": [
+    "Actual public cell/section bounds and hit rectangles",
+    "Exactly one authored source box and effect group per real node",
+    "Immutable border winner graph shared across continuations",
+    "Static and unchanged-frame behavior remains exact",
+    "No render errors or unowned residuals"
+  ]
+}

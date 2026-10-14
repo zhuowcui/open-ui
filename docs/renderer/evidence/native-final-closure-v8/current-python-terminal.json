@@ -1,0 +1,13 @@
+{
+  "actual_exit_code": 0,
+  "checks": 21,
+  "complete": true,
+  "known_pid_count": 22,
+  "known_pids_absent": true,
+  "reaped_chunk_id": "0d1910",
+  "receipt_sha256": "8b684391ef5c20599ebdf322f24db8284352daf1e13470a44ef749bbd807eb3a",
+  "release_qualified": false,
+  "renderer_qualified": false,
+  "schema_version": 1,
+  "session_id": 80756
+}

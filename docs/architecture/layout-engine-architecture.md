@@ -4,6 +4,10 @@
 > records the original LayoutNG extraction analysis. Open UI v0.2 uses the
 > pure-Rust `openui-layout` crate through `openui-engine`; see the
 > [Rendering pipeline overview](rendering-pipeline-overview.md).
+> Open UI never executes JavaScript. Needed element behavior belongs in the
+> shared Rust engine and must be exposed through public Rust methods and Rust
+> callbacks to the consuming native application. See the
+> [native interaction contract](../v02/supported-platforms.md#native-interaction-api).
 
 > **Component:** `libopenui_layout`
 > **Chromium Source:** `third_party/blink/renderer/core/layout/ng/`
@@ -1295,8 +1299,8 @@ These components transfer largely intact:
 | `Node*` back-pointers | Optional opaque user-data pointer on `LayoutNode` |
 | `LayoutObject::SetNeedsLayout()` | `LayoutNode::MarkDirty()` with ancestor propagation |
 | `StyleResolver` | `libopenui_style` (extracted separately in SP5) |
-| `V8` / JavaScript bindings | Not needed. |
-| `DOMTokenList`, `NamedNodeMap`, etc. | Not needed. |
+| `V8` / JavaScript bindings | No runtime or bindings; consuming apps call public native Rust APIs and supply Rust callbacks. |
+| `DOMTokenList`, `NamedNodeMap`, etc. | Needed token and attribute operations are implemented in the shared Rust engine and exposed through public Rust APIs. Browser object names are not an API requirement. |
 
 ### 9.4 What We Extract Alongside
 

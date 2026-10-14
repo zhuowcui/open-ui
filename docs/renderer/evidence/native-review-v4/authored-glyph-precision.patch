@@ -1,0 +1,23 @@
+diff --git a/bindings/rust/openui-text/src/shaping/shape_result.rs b/bindings/rust/openui-text/src/shaping/shape_result.rs
+index d250e0f0..a6e126e3 100644
+--- a/bindings/rust/openui-text/src/shaping/shape_result.rs
++++ b/bindings/rust/openui-text/src/shaping/shape_result.rs
+@@ -545,14 +545,10 @@ impl ShapeResult {
+                 let local_x = x + run.offsets[i].0;
+                 let raster_x = device_origin_x.map_or(local_x, |origin| {
+                     let mut device_x = origin + local_x;
+-                    if matches!(
+-                        raster_policy,
+-                        TextRasterPolicy::ChromiumNativeControl
+-                            | TextRasterPolicy::ChromiumAuthorLcd
+-                    ) {
+-                        // Blink hands native-control glyph origins to Skia in
+-                        // LayoutUnit coordinates. Preserve that 1/64-device-
+-                        // pixel boundary before Skia selects its LCD phase.
++                    if raster_policy == TextRasterPolicy::ChromiumNativeControl {
++                        // Retain the existing native-control positioning.
++                        // Authored glyphs carry their finer shaped advances to
++                        // Skia, which selects the final physical LCD phase.
+                         device_x = (device_x * 64.0).round() / 64.0;
+                     }
+                     device_x - origin

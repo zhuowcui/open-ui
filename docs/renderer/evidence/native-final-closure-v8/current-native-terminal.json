@@ -1,0 +1,19 @@
+{
+  "actual_exit_code": 0,
+  "c_consumers": 40,
+  "c_exports": 163,
+  "complete": true,
+  "cpp_consumers": 34,
+  "doctest_ignored": 13,
+  "doctest_passed": 2,
+  "known_pid_count": 7,
+  "known_pids_absent": true,
+  "reaped_chunk_id": "6aaa7e",
+  "receipt_sha256": "06a0abc45af4dc5242048e76b441ce64129f34bb5b384ac1f3aea4cdd5595098",
+  "release_qualified": false,
+  "renderer_qualified": false,
+  "schema_version": 1,
+  "session_id": 27328,
+  "workspace_failed": 0,
+  "workspace_tests": 9301
+}

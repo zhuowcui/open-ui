@@ -1,0 +1,62 @@
+{
+  "all_commands_terminal": true,
+  "cases": [
+    {
+      "bounds": {
+        "height": 1,
+        "width": 1440,
+        "x": 25,
+        "y": 384
+      },
+      "chromium_png_sha256": "e4d8f7a7bc0c8c863f9ebe183f26867923217ebbe9b212bcb4b36bff98a8ffbe",
+      "chromium_rgba": [
+        0,
+        128,
+        0,
+        255
+      ],
+      "every_pixel_in_region_verified": true,
+      "meaning": "extra white glyph row",
+      "native_png_sha256": "ad1bfb3f74f963c172acf16d956e73796fee345286e3d8c22dced50389a721b9",
+      "native_rgba": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "profile": "desktop-1280x720@1.25"
+    },
+    {
+      "bounds": {
+        "height": 1,
+        "width": 2592,
+        "x": 30,
+        "y": 30
+      },
+      "chromium_png_sha256": "d149a928a2272556e90f4be6be8867d9d79c5cde7e2081c0b83f737c6f420d81",
+      "chromium_rgba": [
+        0,
+        128,
+        0,
+        255
+      ],
+      "every_pixel_in_region_verified": true,
+      "meaning": "extra white glyph row",
+      "native_png_sha256": "43d54ba238d6b2029722455a306ad21cda48d21675dd7f2753d2d3bae8088a68",
+      "native_rgba": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "profile": "desktop-1920x1080@1.5"
+    }
+  ],
+  "full_summary_sha256": "7989dfe37ad89a2cbe5b2cf208a6bc0295fa00f58bb98f5424f6706980d9e9a4",
+  "prior_missing_or_lost_white_row_description_incorrect": true,
+  "reduced_native_before_states_have_same_region_bounds_and_pixel_direction": true,
+  "reference_images_changed": false,
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": "4839e107fee5ae07e28fcda990f3433216263580"
+}

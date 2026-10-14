@@ -1,0 +1,2583 @@
+{
+  "accepted_renderer_totals_unchanged": true,
+  "all_four_pixel_matrices_required": true,
+  "applied_to_umbrella": false,
+  "artifact_bytes": 1581467,
+  "artifact_count": 503,
+  "artifacts": [
+    {
+      "bytes": 6093,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/build.json",
+      "sha256": "eb6fdd7b423ff3f41207a51f276ab5701483e431e75a0f262103aa25823aed2b"
+    },
+    {
+      "bytes": 38,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/build-clean-workspace.log",
+      "sha256": "9ffa6dda2ea7b54fc250f5afd334d5cd09201df663ff3253a2afd6c840bb4921"
+    },
+    {
+      "bytes": 488201,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/build-workspace.log",
+      "sha256": "cd1c804262a23bc86d0eec04a5fb346b5634b7dc04bf374fbe9f5691fc6d9e1e"
+    },
+    {
+      "bytes": 9780,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/build-inline-build.log",
+      "sha256": "652eaba569753b8bdc10f76b357f649b2f6b42bd89534e16ad8ff3630f01c7ed"
+    },
+    {
+      "bytes": 9105,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/build-ffi-build.log",
+      "sha256": "8d117a75983deff1bbb0500a3be8e2da98cd86fc69fd9f505933e95eac21c43d"
+    },
+    {
+      "bytes": 11806,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/build-pixel-build.log",
+      "sha256": "9e69d735a701d6b87f0dc9fdb7d0a8593dd2bb32b46fc48b6d5102c78387d872"
+    },
+    {
+      "bytes": 985,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/build-native-rust-geometry.log",
+      "sha256": "44300a3eb4285fbf2dc35f3662950df8ae755ed3b7f651d5ac8424ac62725af8"
+    },
+    {
+      "bytes": 3665,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/build-ffi-consumers.log",
+      "sha256": "2212c99d77e4048d7690cff5da434fd92d5661aa77971a185ac90b9878581c27"
+    },
+    {
+      "bytes": 156630,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/native-app.json",
+      "sha256": "4d03bd8e7ebaa23e5adbdb6dba53b96c7dd0708ab608beda73e97b90da5d87db"
+    },
+    {
+      "bytes": 985,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/native-1.log",
+      "sha256": "44300a3eb4285fbf2dc35f3662950df8ae755ed3b7f651d5ac8424ac62725af8"
+    },
+    {
+      "bytes": 985,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/native-2.log",
+      "sha256": "44300a3eb4285fbf2dc35f3662950df8ae755ed3b7f651d5ac8424ac62725af8"
+    },
+    {
+      "bytes": 745,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/phase-0-after.html",
+      "sha256": "8a8ce0337428cf3dfd64af0a3cc8084535585a6d6cb704f3df76528ff8627792"
+    },
+    {
+      "bytes": 745,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/phase-0-before.html",
+      "sha256": "fc84a483871a34f0bdf6a2f086e0b1e25e8666589e1c76ca80f73450a183c417"
+    },
+    {
+      "bytes": 743,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/phase-0-hidden.html",
+      "sha256": "abdee2ba30137a82813ea0ab21998eaf1f9e67529a2800a526b18c577fb1e1f7"
+    },
+    {
+      "bytes": 745,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/phase-0-reattached.html",
+      "sha256": "8a8ce0337428cf3dfd64af0a3cc8084535585a6d6cb704f3df76528ff8627792"
+    },
+    {
+      "bytes": 747,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/phase-0.25-after.html",
+      "sha256": "bc58947d7698477949a1ccb17ef22b1e75fd5ea3e2cc9dd65c5744d0c86baaa3"
+    },
+    {
+      "bytes": 747,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/phase-0.25-before.html",
+      "sha256": "0d1614c53315b4b96dcdc19ea554544e455744ab32c0e8c811292a4aa818c2f2"
+    },
+    {
+      "bytes": 745,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/phase-0.25-hidden.html",
+      "sha256": "b280933b6f62f7af9b533006b8feae191ae0b17691ddc9f2319c3ad2f5712a84"
+    },
+    {
+      "bytes": 747,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/phase-0.25-reattached.html",
+      "sha256": "bc58947d7698477949a1ccb17ef22b1e75fd5ea3e2cc9dd65c5744d0c86baaa3"
+    },
+    {
+      "bytes": 745,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/phase-0.5-after.html",
+      "sha256": "3b6e3808d2f4ad41f808a19a8080873cb0ee532491e8793efa8538c35f479b4f"
+    },
+    {
+      "bytes": 745,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/phase-0.5-before.html",
+      "sha256": "877cd4bd4a7bc3c3014dafc6704539a0f0b93681a071d53b4c598ca486a3d8c8"
+    },
+    {
+      "bytes": 743,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/phase-0.5-hidden.html",
+      "sha256": "2ba195a095ea377a726973fa65538044277088792fc061179154250f7174de5e"
+    },
+    {
+      "bytes": 745,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/phase-0.5-reattached.html",
+      "sha256": "3b6e3808d2f4ad41f808a19a8080873cb0ee532491e8793efa8538c35f479b4f"
+    },
+    {
+      "bytes": 917,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0-before-native.png",
+      "sha256": "0b8de05d890af418b98fd45488bbb65d2a346e8cd02e18b648bdf03a86a80670"
+    },
+    {
+      "bytes": 917,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0-before-native-repeat.png",
+      "sha256": "0b8de05d890af418b98fd45488bbb65d2a346e8cd02e18b648bdf03a86a80670"
+    },
+    {
+      "bytes": 807,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0-before-chromium-1.png",
+      "sha256": "5e1d569cd3806ba7b259e9c19cce4ba4a698e6291dba1e5a8879bb20aee892bd"
+    },
+    {
+      "bytes": 807,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0-before-chromium-1-first-capture.png",
+      "sha256": "5e1d569cd3806ba7b259e9c19cce4ba4a698e6291dba1e5a8879bb20aee892bd"
+    },
+    {
+      "bytes": 807,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0-before-chromium-1-second-capture.png",
+      "sha256": "5e1d569cd3806ba7b259e9c19cce4ba4a698e6291dba1e5a8879bb20aee892bd"
+    },
+    {
+      "bytes": 807,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0-before-chromium-2.png",
+      "sha256": "5e1d569cd3806ba7b259e9c19cce4ba4a698e6291dba1e5a8879bb20aee892bd"
+    },
+    {
+      "bytes": 807,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0-before-chromium-2-first-capture.png",
+      "sha256": "5e1d569cd3806ba7b259e9c19cce4ba4a698e6291dba1e5a8879bb20aee892bd"
+    },
+    {
+      "bytes": 807,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0-before-chromium-2-second-capture.png",
+      "sha256": "5e1d569cd3806ba7b259e9c19cce4ba4a698e6291dba1e5a8879bb20aee892bd"
+    },
+    {
+      "bytes": 920,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0-after-native.png",
+      "sha256": "cf701e75c1c03e90fed7efbf9789b7a46ca1e6ccd5d59f7702fa40826bb2bdd0"
+    },
+    {
+      "bytes": 920,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0-after-native-repeat.png",
+      "sha256": "cf701e75c1c03e90fed7efbf9789b7a46ca1e6ccd5d59f7702fa40826bb2bdd0"
+    },
+    {
+      "bytes": 810,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0-after-chromium-1.png",
+      "sha256": "8ecd7bb6cc0e56ea5d02e7499656014fd26cdf401134e38e6ae5862d57eb6827"
+    },
+    {
+      "bytes": 810,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0-after-chromium-1-first-capture.png",
+      "sha256": "8ecd7bb6cc0e56ea5d02e7499656014fd26cdf401134e38e6ae5862d57eb6827"
+    },
+    {
+      "bytes": 810,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0-after-chromium-1-second-capture.png",
+      "sha256": "8ecd7bb6cc0e56ea5d02e7499656014fd26cdf401134e38e6ae5862d57eb6827"
+    },
+    {
+      "bytes": 810,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0-after-chromium-2.png",
+      "sha256": "8ecd7bb6cc0e56ea5d02e7499656014fd26cdf401134e38e6ae5862d57eb6827"
+    },
+    {
+      "bytes": 810,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0-after-chromium-2-first-capture.png",
+      "sha256": "8ecd7bb6cc0e56ea5d02e7499656014fd26cdf401134e38e6ae5862d57eb6827"
+    },
+    {
+      "bytes": 810,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0-after-chromium-2-second-capture.png",
+      "sha256": "8ecd7bb6cc0e56ea5d02e7499656014fd26cdf401134e38e6ae5862d57eb6827"
+    },
+    {
+      "bytes": 895,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0-hidden-native.png",
+      "sha256": "9b073a39ce590dfbf5b1d4cafb67ff08e003b182dc516e6ee07d4fe227cb78d9"
+    },
+    {
+      "bytes": 895,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0-hidden-native-repeat.png",
+      "sha256": "9b073a39ce590dfbf5b1d4cafb67ff08e003b182dc516e6ee07d4fe227cb78d9"
+    },
+    {
+      "bytes": 762,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0-hidden-chromium-1.png",
+      "sha256": "dfabed62605d9e177ffddf1dd25885f3d743a2215f480a1f26ff3c8816852040"
+    },
+    {
+      "bytes": 762,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0-hidden-chromium-1-first-capture.png",
+      "sha256": "dfabed62605d9e177ffddf1dd25885f3d743a2215f480a1f26ff3c8816852040"
+    },
+    {
+      "bytes": 762,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0-hidden-chromium-1-second-capture.png",
+      "sha256": "dfabed62605d9e177ffddf1dd25885f3d743a2215f480a1f26ff3c8816852040"
+    },
+    {
+      "bytes": 762,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0-hidden-chromium-2.png",
+      "sha256": "dfabed62605d9e177ffddf1dd25885f3d743a2215f480a1f26ff3c8816852040"
+    },
+    {
+      "bytes": 762,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0-hidden-chromium-2-first-capture.png",
+      "sha256": "dfabed62605d9e177ffddf1dd25885f3d743a2215f480a1f26ff3c8816852040"
+    },
+    {
+      "bytes": 762,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0-hidden-chromium-2-second-capture.png",
+      "sha256": "dfabed62605d9e177ffddf1dd25885f3d743a2215f480a1f26ff3c8816852040"
+    },
+    {
+      "bytes": 920,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0-reattached-native.png",
+      "sha256": "cf701e75c1c03e90fed7efbf9789b7a46ca1e6ccd5d59f7702fa40826bb2bdd0"
+    },
+    {
+      "bytes": 920,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0-reattached-native-repeat.png",
+      "sha256": "cf701e75c1c03e90fed7efbf9789b7a46ca1e6ccd5d59f7702fa40826bb2bdd0"
+    },
+    {
+      "bytes": 810,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0-reattached-chromium-1.png",
+      "sha256": "8ecd7bb6cc0e56ea5d02e7499656014fd26cdf401134e38e6ae5862d57eb6827"
+    },
+    {
+      "bytes": 810,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0-reattached-chromium-1-first-capture.png",
+      "sha256": "8ecd7bb6cc0e56ea5d02e7499656014fd26cdf401134e38e6ae5862d57eb6827"
+    },
+    {
+      "bytes": 810,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0-reattached-chromium-1-second-capture.png",
+      "sha256": "8ecd7bb6cc0e56ea5d02e7499656014fd26cdf401134e38e6ae5862d57eb6827"
+    },
+    {
+      "bytes": 810,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0-reattached-chromium-2.png",
+      "sha256": "8ecd7bb6cc0e56ea5d02e7499656014fd26cdf401134e38e6ae5862d57eb6827"
+    },
+    {
+      "bytes": 810,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0-reattached-chromium-2-first-capture.png",
+      "sha256": "8ecd7bb6cc0e56ea5d02e7499656014fd26cdf401134e38e6ae5862d57eb6827"
+    },
+    {
+      "bytes": 810,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0-reattached-chromium-2-second-capture.png",
+      "sha256": "8ecd7bb6cc0e56ea5d02e7499656014fd26cdf401134e38e6ae5862d57eb6827"
+    },
+    {
+      "bytes": 917,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.25-before-native.png",
+      "sha256": "0b8de05d890af418b98fd45488bbb65d2a346e8cd02e18b648bdf03a86a80670"
+    },
+    {
+      "bytes": 917,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.25-before-native-repeat.png",
+      "sha256": "0b8de05d890af418b98fd45488bbb65d2a346e8cd02e18b648bdf03a86a80670"
+    },
+    {
+      "bytes": 807,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.25-before-chromium-1.png",
+      "sha256": "5e1d569cd3806ba7b259e9c19cce4ba4a698e6291dba1e5a8879bb20aee892bd"
+    },
+    {
+      "bytes": 807,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.25-before-chromium-1-first-capture.png",
+      "sha256": "5e1d569cd3806ba7b259e9c19cce4ba4a698e6291dba1e5a8879bb20aee892bd"
+    },
+    {
+      "bytes": 807,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.25-before-chromium-1-second-capture.png",
+      "sha256": "5e1d569cd3806ba7b259e9c19cce4ba4a698e6291dba1e5a8879bb20aee892bd"
+    },
+    {
+      "bytes": 807,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.25-before-chromium-2.png",
+      "sha256": "5e1d569cd3806ba7b259e9c19cce4ba4a698e6291dba1e5a8879bb20aee892bd"
+    },
+    {
+      "bytes": 807,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.25-before-chromium-2-first-capture.png",
+      "sha256": "5e1d569cd3806ba7b259e9c19cce4ba4a698e6291dba1e5a8879bb20aee892bd"
+    },
+    {
+      "bytes": 807,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.25-before-chromium-2-second-capture.png",
+      "sha256": "5e1d569cd3806ba7b259e9c19cce4ba4a698e6291dba1e5a8879bb20aee892bd"
+    },
+    {
+      "bytes": 920,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.25-after-native.png",
+      "sha256": "cf701e75c1c03e90fed7efbf9789b7a46ca1e6ccd5d59f7702fa40826bb2bdd0"
+    },
+    {
+      "bytes": 920,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.25-after-native-repeat.png",
+      "sha256": "cf701e75c1c03e90fed7efbf9789b7a46ca1e6ccd5d59f7702fa40826bb2bdd0"
+    },
+    {
+      "bytes": 810,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.25-after-chromium-1.png",
+      "sha256": "8ecd7bb6cc0e56ea5d02e7499656014fd26cdf401134e38e6ae5862d57eb6827"
+    },
+    {
+      "bytes": 810,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.25-after-chromium-1-first-capture.png",
+      "sha256": "8ecd7bb6cc0e56ea5d02e7499656014fd26cdf401134e38e6ae5862d57eb6827"
+    },
+    {
+      "bytes": 810,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.25-after-chromium-1-second-capture.png",
+      "sha256": "8ecd7bb6cc0e56ea5d02e7499656014fd26cdf401134e38e6ae5862d57eb6827"
+    },
+    {
+      "bytes": 810,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.25-after-chromium-2.png",
+      "sha256": "8ecd7bb6cc0e56ea5d02e7499656014fd26cdf401134e38e6ae5862d57eb6827"
+    },
+    {
+      "bytes": 810,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.25-after-chromium-2-first-capture.png",
+      "sha256": "8ecd7bb6cc0e56ea5d02e7499656014fd26cdf401134e38e6ae5862d57eb6827"
+    },
+    {
+      "bytes": 810,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.25-after-chromium-2-second-capture.png",
+      "sha256": "8ecd7bb6cc0e56ea5d02e7499656014fd26cdf401134e38e6ae5862d57eb6827"
+    },
+    {
+      "bytes": 895,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.25-hidden-native.png",
+      "sha256": "9b073a39ce590dfbf5b1d4cafb67ff08e003b182dc516e6ee07d4fe227cb78d9"
+    },
+    {
+      "bytes": 895,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.25-hidden-native-repeat.png",
+      "sha256": "9b073a39ce590dfbf5b1d4cafb67ff08e003b182dc516e6ee07d4fe227cb78d9"
+    },
+    {
+      "bytes": 762,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.25-hidden-chromium-1.png",
+      "sha256": "dfabed62605d9e177ffddf1dd25885f3d743a2215f480a1f26ff3c8816852040"
+    },
+    {
+      "bytes": 762,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.25-hidden-chromium-1-first-capture.png",
+      "sha256": "dfabed62605d9e177ffddf1dd25885f3d743a2215f480a1f26ff3c8816852040"
+    },
+    {
+      "bytes": 762,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.25-hidden-chromium-1-second-capture.png",
+      "sha256": "dfabed62605d9e177ffddf1dd25885f3d743a2215f480a1f26ff3c8816852040"
+    },
+    {
+      "bytes": 762,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.25-hidden-chromium-2.png",
+      "sha256": "dfabed62605d9e177ffddf1dd25885f3d743a2215f480a1f26ff3c8816852040"
+    },
+    {
+      "bytes": 762,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.25-hidden-chromium-2-first-capture.png",
+      "sha256": "dfabed62605d9e177ffddf1dd25885f3d743a2215f480a1f26ff3c8816852040"
+    },
+    {
+      "bytes": 762,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.25-hidden-chromium-2-second-capture.png",
+      "sha256": "dfabed62605d9e177ffddf1dd25885f3d743a2215f480a1f26ff3c8816852040"
+    },
+    {
+      "bytes": 920,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.25-reattached-native.png",
+      "sha256": "cf701e75c1c03e90fed7efbf9789b7a46ca1e6ccd5d59f7702fa40826bb2bdd0"
+    },
+    {
+      "bytes": 920,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.25-reattached-native-repeat.png",
+      "sha256": "cf701e75c1c03e90fed7efbf9789b7a46ca1e6ccd5d59f7702fa40826bb2bdd0"
+    },
+    {
+      "bytes": 810,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.25-reattached-chromium-1.png",
+      "sha256": "8ecd7bb6cc0e56ea5d02e7499656014fd26cdf401134e38e6ae5862d57eb6827"
+    },
+    {
+      "bytes": 810,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.25-reattached-chromium-1-first-capture.png",
+      "sha256": "8ecd7bb6cc0e56ea5d02e7499656014fd26cdf401134e38e6ae5862d57eb6827"
+    },
+    {
+      "bytes": 810,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.25-reattached-chromium-1-second-capture.png",
+      "sha256": "8ecd7bb6cc0e56ea5d02e7499656014fd26cdf401134e38e6ae5862d57eb6827"
+    },
+    {
+      "bytes": 810,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.25-reattached-chromium-2.png",
+      "sha256": "8ecd7bb6cc0e56ea5d02e7499656014fd26cdf401134e38e6ae5862d57eb6827"
+    },
+    {
+      "bytes": 810,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.25-reattached-chromium-2-first-capture.png",
+      "sha256": "8ecd7bb6cc0e56ea5d02e7499656014fd26cdf401134e38e6ae5862d57eb6827"
+    },
+    {
+      "bytes": 810,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.25-reattached-chromium-2-second-capture.png",
+      "sha256": "8ecd7bb6cc0e56ea5d02e7499656014fd26cdf401134e38e6ae5862d57eb6827"
+    },
+    {
+      "bytes": 917,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.5-before-native.png",
+      "sha256": "1df1b2564bc1fe21f1d325ff0cdcd92c8c480e391f059ce1811708d2e57a679d"
+    },
+    {
+      "bytes": 917,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.5-before-native-repeat.png",
+      "sha256": "1df1b2564bc1fe21f1d325ff0cdcd92c8c480e391f059ce1811708d2e57a679d"
+    },
+    {
+      "bytes": 807,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.5-before-chromium-1.png",
+      "sha256": "760b1e36814b81d8ae7ec300585f74d8be3074b54325385f7a5ddb8871ce4050"
+    },
+    {
+      "bytes": 807,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.5-before-chromium-1-first-capture.png",
+      "sha256": "760b1e36814b81d8ae7ec300585f74d8be3074b54325385f7a5ddb8871ce4050"
+    },
+    {
+      "bytes": 807,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.5-before-chromium-1-second-capture.png",
+      "sha256": "760b1e36814b81d8ae7ec300585f74d8be3074b54325385f7a5ddb8871ce4050"
+    },
+    {
+      "bytes": 807,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.5-before-chromium-2.png",
+      "sha256": "760b1e36814b81d8ae7ec300585f74d8be3074b54325385f7a5ddb8871ce4050"
+    },
+    {
+      "bytes": 807,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.5-before-chromium-2-first-capture.png",
+      "sha256": "760b1e36814b81d8ae7ec300585f74d8be3074b54325385f7a5ddb8871ce4050"
+    },
+    {
+      "bytes": 807,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.5-before-chromium-2-second-capture.png",
+      "sha256": "760b1e36814b81d8ae7ec300585f74d8be3074b54325385f7a5ddb8871ce4050"
+    },
+    {
+      "bytes": 921,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.5-after-native.png",
+      "sha256": "cb54e51763d473e8b7f079bf3506c3f35a513ffacca1828984f34d724b90c8d1"
+    },
+    {
+      "bytes": 921,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.5-after-native-repeat.png",
+      "sha256": "cb54e51763d473e8b7f079bf3506c3f35a513ffacca1828984f34d724b90c8d1"
+    },
+    {
+      "bytes": 810,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.5-after-chromium-1.png",
+      "sha256": "af9ec8f52b7e9ca00125b697fae06561cf91f1d44810b4746ccb8ea44041e7d1"
+    },
+    {
+      "bytes": 810,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.5-after-chromium-1-first-capture.png",
+      "sha256": "af9ec8f52b7e9ca00125b697fae06561cf91f1d44810b4746ccb8ea44041e7d1"
+    },
+    {
+      "bytes": 810,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.5-after-chromium-1-second-capture.png",
+      "sha256": "af9ec8f52b7e9ca00125b697fae06561cf91f1d44810b4746ccb8ea44041e7d1"
+    },
+    {
+      "bytes": 810,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.5-after-chromium-2.png",
+      "sha256": "af9ec8f52b7e9ca00125b697fae06561cf91f1d44810b4746ccb8ea44041e7d1"
+    },
+    {
+      "bytes": 810,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.5-after-chromium-2-first-capture.png",
+      "sha256": "af9ec8f52b7e9ca00125b697fae06561cf91f1d44810b4746ccb8ea44041e7d1"
+    },
+    {
+      "bytes": 810,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.5-after-chromium-2-second-capture.png",
+      "sha256": "af9ec8f52b7e9ca00125b697fae06561cf91f1d44810b4746ccb8ea44041e7d1"
+    },
+    {
+      "bytes": 895,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.5-hidden-native.png",
+      "sha256": "9b073a39ce590dfbf5b1d4cafb67ff08e003b182dc516e6ee07d4fe227cb78d9"
+    },
+    {
+      "bytes": 895,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.5-hidden-native-repeat.png",
+      "sha256": "9b073a39ce590dfbf5b1d4cafb67ff08e003b182dc516e6ee07d4fe227cb78d9"
+    },
+    {
+      "bytes": 762,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.5-hidden-chromium-1.png",
+      "sha256": "dfabed62605d9e177ffddf1dd25885f3d743a2215f480a1f26ff3c8816852040"
+    },
+    {
+      "bytes": 762,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.5-hidden-chromium-1-first-capture.png",
+      "sha256": "dfabed62605d9e177ffddf1dd25885f3d743a2215f480a1f26ff3c8816852040"
+    },
+    {
+      "bytes": 762,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.5-hidden-chromium-1-second-capture.png",
+      "sha256": "dfabed62605d9e177ffddf1dd25885f3d743a2215f480a1f26ff3c8816852040"
+    },
+    {
+      "bytes": 762,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.5-hidden-chromium-2.png",
+      "sha256": "dfabed62605d9e177ffddf1dd25885f3d743a2215f480a1f26ff3c8816852040"
+    },
+    {
+      "bytes": 762,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.5-hidden-chromium-2-first-capture.png",
+      "sha256": "dfabed62605d9e177ffddf1dd25885f3d743a2215f480a1f26ff3c8816852040"
+    },
+    {
+      "bytes": 762,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.5-hidden-chromium-2-second-capture.png",
+      "sha256": "dfabed62605d9e177ffddf1dd25885f3d743a2215f480a1f26ff3c8816852040"
+    },
+    {
+      "bytes": 921,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.5-reattached-native.png",
+      "sha256": "cb54e51763d473e8b7f079bf3506c3f35a513ffacca1828984f34d724b90c8d1"
+    },
+    {
+      "bytes": 921,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.5-reattached-native-repeat.png",
+      "sha256": "cb54e51763d473e8b7f079bf3506c3f35a513ffacca1828984f34d724b90c8d1"
+    },
+    {
+      "bytes": 810,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.5-reattached-chromium-1.png",
+      "sha256": "af9ec8f52b7e9ca00125b697fae06561cf91f1d44810b4746ccb8ea44041e7d1"
+    },
+    {
+      "bytes": 810,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.5-reattached-chromium-1-first-capture.png",
+      "sha256": "af9ec8f52b7e9ca00125b697fae06561cf91f1d44810b4746ccb8ea44041e7d1"
+    },
+    {
+      "bytes": 810,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.5-reattached-chromium-1-second-capture.png",
+      "sha256": "af9ec8f52b7e9ca00125b697fae06561cf91f1d44810b4746ccb8ea44041e7d1"
+    },
+    {
+      "bytes": 810,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.5-reattached-chromium-2.png",
+      "sha256": "af9ec8f52b7e9ca00125b697fae06561cf91f1d44810b4746ccb8ea44041e7d1"
+    },
+    {
+      "bytes": 810,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.5-reattached-chromium-2-first-capture.png",
+      "sha256": "af9ec8f52b7e9ca00125b697fae06561cf91f1d44810b4746ccb8ea44041e7d1"
+    },
+    {
+      "bytes": 810,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1-phase-0.5-reattached-chromium-2-second-capture.png",
+      "sha256": "af9ec8f52b7e9ca00125b697fae06561cf91f1d44810b4746ccb8ea44041e7d1"
+    },
+    {
+      "bytes": 1211,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0-before-native.png",
+      "sha256": "18b6f8af0da4a9fb7f59b088bb447793c69e802024940ae8a874300936a6c60b"
+    },
+    {
+      "bytes": 1211,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0-before-native-repeat.png",
+      "sha256": "18b6f8af0da4a9fb7f59b088bb447793c69e802024940ae8a874300936a6c60b"
+    },
+    {
+      "bytes": 1109,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0-before-chromium-1.png",
+      "sha256": "d33161137d1de09aae309452f597b268f5ff171af37a8b9c407468023ad8224b"
+    },
+    {
+      "bytes": 1109,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0-before-chromium-1-first-capture.png",
+      "sha256": "d33161137d1de09aae309452f597b268f5ff171af37a8b9c407468023ad8224b"
+    },
+    {
+      "bytes": 1109,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0-before-chromium-1-second-capture.png",
+      "sha256": "d33161137d1de09aae309452f597b268f5ff171af37a8b9c407468023ad8224b"
+    },
+    {
+      "bytes": 1109,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0-before-chromium-2.png",
+      "sha256": "d33161137d1de09aae309452f597b268f5ff171af37a8b9c407468023ad8224b"
+    },
+    {
+      "bytes": 1109,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0-before-chromium-2-first-capture.png",
+      "sha256": "d33161137d1de09aae309452f597b268f5ff171af37a8b9c407468023ad8224b"
+    },
+    {
+      "bytes": 1109,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0-before-chromium-2-second-capture.png",
+      "sha256": "d33161137d1de09aae309452f597b268f5ff171af37a8b9c407468023ad8224b"
+    },
+    {
+      "bytes": 1201,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0-after-native.png",
+      "sha256": "f4f949dea471cad9447b4d32a6728d322f6aca6673e5b9c8cbdca31c6bd1b747"
+    },
+    {
+      "bytes": 1201,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0-after-native-repeat.png",
+      "sha256": "f4f949dea471cad9447b4d32a6728d322f6aca6673e5b9c8cbdca31c6bd1b747"
+    },
+    {
+      "bytes": 1101,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0-after-chromium-1.png",
+      "sha256": "76eb4fb9ae45a12f2ed71cf14ab33bf452cf03b9b6987181c7bca7bddcc19853"
+    },
+    {
+      "bytes": 1101,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0-after-chromium-1-first-capture.png",
+      "sha256": "76eb4fb9ae45a12f2ed71cf14ab33bf452cf03b9b6987181c7bca7bddcc19853"
+    },
+    {
+      "bytes": 1101,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0-after-chromium-1-second-capture.png",
+      "sha256": "76eb4fb9ae45a12f2ed71cf14ab33bf452cf03b9b6987181c7bca7bddcc19853"
+    },
+    {
+      "bytes": 1101,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0-after-chromium-2.png",
+      "sha256": "76eb4fb9ae45a12f2ed71cf14ab33bf452cf03b9b6987181c7bca7bddcc19853"
+    },
+    {
+      "bytes": 1101,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0-after-chromium-2-first-capture.png",
+      "sha256": "76eb4fb9ae45a12f2ed71cf14ab33bf452cf03b9b6987181c7bca7bddcc19853"
+    },
+    {
+      "bytes": 1101,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0-after-chromium-2-second-capture.png",
+      "sha256": "76eb4fb9ae45a12f2ed71cf14ab33bf452cf03b9b6987181c7bca7bddcc19853"
+    },
+    {
+      "bytes": 1169,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0-hidden-native.png",
+      "sha256": "f0e417a86b7825a929052aa3618f8fc6679ba08fc8794bf379b8e8fc6cdaf8b5"
+    },
+    {
+      "bytes": 1169,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0-hidden-native-repeat.png",
+      "sha256": "f0e417a86b7825a929052aa3618f8fc6679ba08fc8794bf379b8e8fc6cdaf8b5"
+    },
+    {
+      "bytes": 1039,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0-hidden-chromium-1.png",
+      "sha256": "c6043306e25687d0024bd4df45eb459e506be62a9371aff4039aeb9516c07b1e"
+    },
+    {
+      "bytes": 1039,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0-hidden-chromium-1-first-capture.png",
+      "sha256": "c6043306e25687d0024bd4df45eb459e506be62a9371aff4039aeb9516c07b1e"
+    },
+    {
+      "bytes": 1039,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0-hidden-chromium-1-second-capture.png",
+      "sha256": "c6043306e25687d0024bd4df45eb459e506be62a9371aff4039aeb9516c07b1e"
+    },
+    {
+      "bytes": 1039,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0-hidden-chromium-2.png",
+      "sha256": "c6043306e25687d0024bd4df45eb459e506be62a9371aff4039aeb9516c07b1e"
+    },
+    {
+      "bytes": 1039,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0-hidden-chromium-2-first-capture.png",
+      "sha256": "c6043306e25687d0024bd4df45eb459e506be62a9371aff4039aeb9516c07b1e"
+    },
+    {
+      "bytes": 1039,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0-hidden-chromium-2-second-capture.png",
+      "sha256": "c6043306e25687d0024bd4df45eb459e506be62a9371aff4039aeb9516c07b1e"
+    },
+    {
+      "bytes": 1201,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0-reattached-native.png",
+      "sha256": "f4f949dea471cad9447b4d32a6728d322f6aca6673e5b9c8cbdca31c6bd1b747"
+    },
+    {
+      "bytes": 1201,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0-reattached-native-repeat.png",
+      "sha256": "f4f949dea471cad9447b4d32a6728d322f6aca6673e5b9c8cbdca31c6bd1b747"
+    },
+    {
+      "bytes": 1101,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0-reattached-chromium-1.png",
+      "sha256": "76eb4fb9ae45a12f2ed71cf14ab33bf452cf03b9b6987181c7bca7bddcc19853"
+    },
+    {
+      "bytes": 1101,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0-reattached-chromium-1-first-capture.png",
+      "sha256": "76eb4fb9ae45a12f2ed71cf14ab33bf452cf03b9b6987181c7bca7bddcc19853"
+    },
+    {
+      "bytes": 1101,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0-reattached-chromium-1-second-capture.png",
+      "sha256": "76eb4fb9ae45a12f2ed71cf14ab33bf452cf03b9b6987181c7bca7bddcc19853"
+    },
+    {
+      "bytes": 1101,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0-reattached-chromium-2.png",
+      "sha256": "76eb4fb9ae45a12f2ed71cf14ab33bf452cf03b9b6987181c7bca7bddcc19853"
+    },
+    {
+      "bytes": 1101,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0-reattached-chromium-2-first-capture.png",
+      "sha256": "76eb4fb9ae45a12f2ed71cf14ab33bf452cf03b9b6987181c7bca7bddcc19853"
+    },
+    {
+      "bytes": 1101,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0-reattached-chromium-2-second-capture.png",
+      "sha256": "76eb4fb9ae45a12f2ed71cf14ab33bf452cf03b9b6987181c7bca7bddcc19853"
+    },
+    {
+      "bytes": 1211,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.25-before-native.png",
+      "sha256": "18b6f8af0da4a9fb7f59b088bb447793c69e802024940ae8a874300936a6c60b"
+    },
+    {
+      "bytes": 1211,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.25-before-native-repeat.png",
+      "sha256": "18b6f8af0da4a9fb7f59b088bb447793c69e802024940ae8a874300936a6c60b"
+    },
+    {
+      "bytes": 1109,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.25-before-chromium-1.png",
+      "sha256": "d33161137d1de09aae309452f597b268f5ff171af37a8b9c407468023ad8224b"
+    },
+    {
+      "bytes": 1109,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.25-before-chromium-1-first-capture.png",
+      "sha256": "d33161137d1de09aae309452f597b268f5ff171af37a8b9c407468023ad8224b"
+    },
+    {
+      "bytes": 1109,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.25-before-chromium-1-second-capture.png",
+      "sha256": "d33161137d1de09aae309452f597b268f5ff171af37a8b9c407468023ad8224b"
+    },
+    {
+      "bytes": 1109,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.25-before-chromium-2.png",
+      "sha256": "d33161137d1de09aae309452f597b268f5ff171af37a8b9c407468023ad8224b"
+    },
+    {
+      "bytes": 1109,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.25-before-chromium-2-first-capture.png",
+      "sha256": "d33161137d1de09aae309452f597b268f5ff171af37a8b9c407468023ad8224b"
+    },
+    {
+      "bytes": 1109,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.25-before-chromium-2-second-capture.png",
+      "sha256": "d33161137d1de09aae309452f597b268f5ff171af37a8b9c407468023ad8224b"
+    },
+    {
+      "bytes": 1201,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.25-after-native.png",
+      "sha256": "f4f949dea471cad9447b4d32a6728d322f6aca6673e5b9c8cbdca31c6bd1b747"
+    },
+    {
+      "bytes": 1201,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.25-after-native-repeat.png",
+      "sha256": "f4f949dea471cad9447b4d32a6728d322f6aca6673e5b9c8cbdca31c6bd1b747"
+    },
+    {
+      "bytes": 1101,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.25-after-chromium-1.png",
+      "sha256": "76eb4fb9ae45a12f2ed71cf14ab33bf452cf03b9b6987181c7bca7bddcc19853"
+    },
+    {
+      "bytes": 1101,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.25-after-chromium-1-first-capture.png",
+      "sha256": "76eb4fb9ae45a12f2ed71cf14ab33bf452cf03b9b6987181c7bca7bddcc19853"
+    },
+    {
+      "bytes": 1101,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.25-after-chromium-1-second-capture.png",
+      "sha256": "76eb4fb9ae45a12f2ed71cf14ab33bf452cf03b9b6987181c7bca7bddcc19853"
+    },
+    {
+      "bytes": 1101,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.25-after-chromium-2.png",
+      "sha256": "76eb4fb9ae45a12f2ed71cf14ab33bf452cf03b9b6987181c7bca7bddcc19853"
+    },
+    {
+      "bytes": 1101,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.25-after-chromium-2-first-capture.png",
+      "sha256": "76eb4fb9ae45a12f2ed71cf14ab33bf452cf03b9b6987181c7bca7bddcc19853"
+    },
+    {
+      "bytes": 1101,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.25-after-chromium-2-second-capture.png",
+      "sha256": "76eb4fb9ae45a12f2ed71cf14ab33bf452cf03b9b6987181c7bca7bddcc19853"
+    },
+    {
+      "bytes": 1169,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.25-hidden-native.png",
+      "sha256": "f0e417a86b7825a929052aa3618f8fc6679ba08fc8794bf379b8e8fc6cdaf8b5"
+    },
+    {
+      "bytes": 1169,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.25-hidden-native-repeat.png",
+      "sha256": "f0e417a86b7825a929052aa3618f8fc6679ba08fc8794bf379b8e8fc6cdaf8b5"
+    },
+    {
+      "bytes": 1039,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.25-hidden-chromium-1.png",
+      "sha256": "c6043306e25687d0024bd4df45eb459e506be62a9371aff4039aeb9516c07b1e"
+    },
+    {
+      "bytes": 1039,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.25-hidden-chromium-1-first-capture.png",
+      "sha256": "c6043306e25687d0024bd4df45eb459e506be62a9371aff4039aeb9516c07b1e"
+    },
+    {
+      "bytes": 1039,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.25-hidden-chromium-1-second-capture.png",
+      "sha256": "c6043306e25687d0024bd4df45eb459e506be62a9371aff4039aeb9516c07b1e"
+    },
+    {
+      "bytes": 1039,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.25-hidden-chromium-2.png",
+      "sha256": "c6043306e25687d0024bd4df45eb459e506be62a9371aff4039aeb9516c07b1e"
+    },
+    {
+      "bytes": 1039,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.25-hidden-chromium-2-first-capture.png",
+      "sha256": "c6043306e25687d0024bd4df45eb459e506be62a9371aff4039aeb9516c07b1e"
+    },
+    {
+      "bytes": 1039,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.25-hidden-chromium-2-second-capture.png",
+      "sha256": "c6043306e25687d0024bd4df45eb459e506be62a9371aff4039aeb9516c07b1e"
+    },
+    {
+      "bytes": 1201,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.25-reattached-native.png",
+      "sha256": "f4f949dea471cad9447b4d32a6728d322f6aca6673e5b9c8cbdca31c6bd1b747"
+    },
+    {
+      "bytes": 1201,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.25-reattached-native-repeat.png",
+      "sha256": "f4f949dea471cad9447b4d32a6728d322f6aca6673e5b9c8cbdca31c6bd1b747"
+    },
+    {
+      "bytes": 1101,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.25-reattached-chromium-1.png",
+      "sha256": "76eb4fb9ae45a12f2ed71cf14ab33bf452cf03b9b6987181c7bca7bddcc19853"
+    },
+    {
+      "bytes": 1101,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.25-reattached-chromium-1-first-capture.png",
+      "sha256": "76eb4fb9ae45a12f2ed71cf14ab33bf452cf03b9b6987181c7bca7bddcc19853"
+    },
+    {
+      "bytes": 1101,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.25-reattached-chromium-1-second-capture.png",
+      "sha256": "76eb4fb9ae45a12f2ed71cf14ab33bf452cf03b9b6987181c7bca7bddcc19853"
+    },
+    {
+      "bytes": 1101,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.25-reattached-chromium-2.png",
+      "sha256": "76eb4fb9ae45a12f2ed71cf14ab33bf452cf03b9b6987181c7bca7bddcc19853"
+    },
+    {
+      "bytes": 1101,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.25-reattached-chromium-2-first-capture.png",
+      "sha256": "76eb4fb9ae45a12f2ed71cf14ab33bf452cf03b9b6987181c7bca7bddcc19853"
+    },
+    {
+      "bytes": 1101,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.25-reattached-chromium-2-second-capture.png",
+      "sha256": "76eb4fb9ae45a12f2ed71cf14ab33bf452cf03b9b6987181c7bca7bddcc19853"
+    },
+    {
+      "bytes": 1235,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.5-before-native.png",
+      "sha256": "b2fe643835e1ade75405be47ec6d30ba5e45de6a537b7f59c752521d95ad8385"
+    },
+    {
+      "bytes": 1235,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.5-before-native-repeat.png",
+      "sha256": "b2fe643835e1ade75405be47ec6d30ba5e45de6a537b7f59c752521d95ad8385"
+    },
+    {
+      "bytes": 1130,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.5-before-chromium-1.png",
+      "sha256": "9993c0a08e7a9edea8462dde7ad281e609b360834f1a489878721491a3cdfbe9"
+    },
+    {
+      "bytes": 1130,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.5-before-chromium-1-first-capture.png",
+      "sha256": "9993c0a08e7a9edea8462dde7ad281e609b360834f1a489878721491a3cdfbe9"
+    },
+    {
+      "bytes": 1130,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.5-before-chromium-1-second-capture.png",
+      "sha256": "9993c0a08e7a9edea8462dde7ad281e609b360834f1a489878721491a3cdfbe9"
+    },
+    {
+      "bytes": 1130,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.5-before-chromium-2.png",
+      "sha256": "9993c0a08e7a9edea8462dde7ad281e609b360834f1a489878721491a3cdfbe9"
+    },
+    {
+      "bytes": 1130,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.5-before-chromium-2-first-capture.png",
+      "sha256": "9993c0a08e7a9edea8462dde7ad281e609b360834f1a489878721491a3cdfbe9"
+    },
+    {
+      "bytes": 1130,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.5-before-chromium-2-second-capture.png",
+      "sha256": "9993c0a08e7a9edea8462dde7ad281e609b360834f1a489878721491a3cdfbe9"
+    },
+    {
+      "bytes": 1250,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.5-after-native.png",
+      "sha256": "d8f78e67c42a4d091a2339b1897ea7ee2c805af89c4d9acad329a19d8a909d90"
+    },
+    {
+      "bytes": 1250,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.5-after-native-repeat.png",
+      "sha256": "d8f78e67c42a4d091a2339b1897ea7ee2c805af89c4d9acad329a19d8a909d90"
+    },
+    {
+      "bytes": 1140,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.5-after-chromium-1.png",
+      "sha256": "cdeeafd81975770fb9c5d5dbeb1eb0b25f2fcea2b6e52d1356dcbf8cbdd1b44f"
+    },
+    {
+      "bytes": 1140,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.5-after-chromium-1-first-capture.png",
+      "sha256": "cdeeafd81975770fb9c5d5dbeb1eb0b25f2fcea2b6e52d1356dcbf8cbdd1b44f"
+    },
+    {
+      "bytes": 1140,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.5-after-chromium-1-second-capture.png",
+      "sha256": "cdeeafd81975770fb9c5d5dbeb1eb0b25f2fcea2b6e52d1356dcbf8cbdd1b44f"
+    },
+    {
+      "bytes": 1140,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.5-after-chromium-2.png",
+      "sha256": "cdeeafd81975770fb9c5d5dbeb1eb0b25f2fcea2b6e52d1356dcbf8cbdd1b44f"
+    },
+    {
+      "bytes": 1140,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.5-after-chromium-2-first-capture.png",
+      "sha256": "cdeeafd81975770fb9c5d5dbeb1eb0b25f2fcea2b6e52d1356dcbf8cbdd1b44f"
+    },
+    {
+      "bytes": 1140,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.5-after-chromium-2-second-capture.png",
+      "sha256": "cdeeafd81975770fb9c5d5dbeb1eb0b25f2fcea2b6e52d1356dcbf8cbdd1b44f"
+    },
+    {
+      "bytes": 1169,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.5-hidden-native.png",
+      "sha256": "f0e417a86b7825a929052aa3618f8fc6679ba08fc8794bf379b8e8fc6cdaf8b5"
+    },
+    {
+      "bytes": 1169,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.5-hidden-native-repeat.png",
+      "sha256": "f0e417a86b7825a929052aa3618f8fc6679ba08fc8794bf379b8e8fc6cdaf8b5"
+    },
+    {
+      "bytes": 1039,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.5-hidden-chromium-1.png",
+      "sha256": "c6043306e25687d0024bd4df45eb459e506be62a9371aff4039aeb9516c07b1e"
+    },
+    {
+      "bytes": 1039,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.5-hidden-chromium-1-first-capture.png",
+      "sha256": "c6043306e25687d0024bd4df45eb459e506be62a9371aff4039aeb9516c07b1e"
+    },
+    {
+      "bytes": 1039,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.5-hidden-chromium-1-second-capture.png",
+      "sha256": "c6043306e25687d0024bd4df45eb459e506be62a9371aff4039aeb9516c07b1e"
+    },
+    {
+      "bytes": 1039,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.5-hidden-chromium-2.png",
+      "sha256": "c6043306e25687d0024bd4df45eb459e506be62a9371aff4039aeb9516c07b1e"
+    },
+    {
+      "bytes": 1039,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.5-hidden-chromium-2-first-capture.png",
+      "sha256": "c6043306e25687d0024bd4df45eb459e506be62a9371aff4039aeb9516c07b1e"
+    },
+    {
+      "bytes": 1039,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.5-hidden-chromium-2-second-capture.png",
+      "sha256": "c6043306e25687d0024bd4df45eb459e506be62a9371aff4039aeb9516c07b1e"
+    },
+    {
+      "bytes": 1250,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.5-reattached-native.png",
+      "sha256": "d8f78e67c42a4d091a2339b1897ea7ee2c805af89c4d9acad329a19d8a909d90"
+    },
+    {
+      "bytes": 1250,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.5-reattached-native-repeat.png",
+      "sha256": "d8f78e67c42a4d091a2339b1897ea7ee2c805af89c4d9acad329a19d8a909d90"
+    },
+    {
+      "bytes": 1140,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.5-reattached-chromium-1.png",
+      "sha256": "cdeeafd81975770fb9c5d5dbeb1eb0b25f2fcea2b6e52d1356dcbf8cbdd1b44f"
+    },
+    {
+      "bytes": 1140,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.5-reattached-chromium-1-first-capture.png",
+      "sha256": "cdeeafd81975770fb9c5d5dbeb1eb0b25f2fcea2b6e52d1356dcbf8cbdd1b44f"
+    },
+    {
+      "bytes": 1140,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.5-reattached-chromium-1-second-capture.png",
+      "sha256": "cdeeafd81975770fb9c5d5dbeb1eb0b25f2fcea2b6e52d1356dcbf8cbdd1b44f"
+    },
+    {
+      "bytes": 1140,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.5-reattached-chromium-2.png",
+      "sha256": "cdeeafd81975770fb9c5d5dbeb1eb0b25f2fcea2b6e52d1356dcbf8cbdd1b44f"
+    },
+    {
+      "bytes": 1140,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.5-reattached-chromium-2-first-capture.png",
+      "sha256": "cdeeafd81975770fb9c5d5dbeb1eb0b25f2fcea2b6e52d1356dcbf8cbdd1b44f"
+    },
+    {
+      "bytes": 1140,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.25-phase-0.5-reattached-chromium-2-second-capture.png",
+      "sha256": "cdeeafd81975770fb9c5d5dbeb1eb0b25f2fcea2b6e52d1356dcbf8cbdd1b44f"
+    },
+    {
+      "bytes": 1531,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0-before-native.png",
+      "sha256": "311890ac4aff729caa4dfb656718309cf8e216c82c2b0fa2cf2787dc22214b3d"
+    },
+    {
+      "bytes": 1531,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0-before-native-repeat.png",
+      "sha256": "311890ac4aff729caa4dfb656718309cf8e216c82c2b0fa2cf2787dc22214b3d"
+    },
+    {
+      "bytes": 1374,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0-before-chromium-1.png",
+      "sha256": "91d6361b0aa083df159ef0805bc6df8fb419d4d54cf0baa5176beb7843f154d5"
+    },
+    {
+      "bytes": 1374,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0-before-chromium-1-first-capture.png",
+      "sha256": "91d6361b0aa083df159ef0805bc6df8fb419d4d54cf0baa5176beb7843f154d5"
+    },
+    {
+      "bytes": 1374,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0-before-chromium-1-second-capture.png",
+      "sha256": "91d6361b0aa083df159ef0805bc6df8fb419d4d54cf0baa5176beb7843f154d5"
+    },
+    {
+      "bytes": 1374,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0-before-chromium-2.png",
+      "sha256": "91d6361b0aa083df159ef0805bc6df8fb419d4d54cf0baa5176beb7843f154d5"
+    },
+    {
+      "bytes": 1374,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0-before-chromium-2-first-capture.png",
+      "sha256": "91d6361b0aa083df159ef0805bc6df8fb419d4d54cf0baa5176beb7843f154d5"
+    },
+    {
+      "bytes": 1374,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0-before-chromium-2-second-capture.png",
+      "sha256": "91d6361b0aa083df159ef0805bc6df8fb419d4d54cf0baa5176beb7843f154d5"
+    },
+    {
+      "bytes": 1532,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0-after-native.png",
+      "sha256": "fb3afa6f7c83804fa6dcee0ee0f1a8897fd4396ce9a1db6848f8c95295de479f"
+    },
+    {
+      "bytes": 1532,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0-after-native-repeat.png",
+      "sha256": "fb3afa6f7c83804fa6dcee0ee0f1a8897fd4396ce9a1db6848f8c95295de479f"
+    },
+    {
+      "bytes": 1376,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0-after-chromium-1.png",
+      "sha256": "9dca73fa0db02279253b650e0178768c26b66d84c0addbb67f32a7fe2ce83893"
+    },
+    {
+      "bytes": 1376,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0-after-chromium-1-first-capture.png",
+      "sha256": "9dca73fa0db02279253b650e0178768c26b66d84c0addbb67f32a7fe2ce83893"
+    },
+    {
+      "bytes": 1376,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0-after-chromium-1-second-capture.png",
+      "sha256": "9dca73fa0db02279253b650e0178768c26b66d84c0addbb67f32a7fe2ce83893"
+    },
+    {
+      "bytes": 1376,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0-after-chromium-2.png",
+      "sha256": "9dca73fa0db02279253b650e0178768c26b66d84c0addbb67f32a7fe2ce83893"
+    },
+    {
+      "bytes": 1376,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0-after-chromium-2-first-capture.png",
+      "sha256": "9dca73fa0db02279253b650e0178768c26b66d84c0addbb67f32a7fe2ce83893"
+    },
+    {
+      "bytes": 1376,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0-after-chromium-2-second-capture.png",
+      "sha256": "9dca73fa0db02279253b650e0178768c26b66d84c0addbb67f32a7fe2ce83893"
+    },
+    {
+      "bytes": 1510,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0-hidden-native.png",
+      "sha256": "c0b97cee7198b1ff6c927e3b459d89fcdfb0f705f8c90797fdf439dab3d03d3d"
+    },
+    {
+      "bytes": 1510,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0-hidden-native-repeat.png",
+      "sha256": "c0b97cee7198b1ff6c927e3b459d89fcdfb0f705f8c90797fdf439dab3d03d3d"
+    },
+    {
+      "bytes": 1317,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0-hidden-chromium-1.png",
+      "sha256": "b904f0ffd3261fe320fc4b834650b8e43ebe5118d2d56359a90377c6c2901b04"
+    },
+    {
+      "bytes": 1317,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0-hidden-chromium-1-first-capture.png",
+      "sha256": "b904f0ffd3261fe320fc4b834650b8e43ebe5118d2d56359a90377c6c2901b04"
+    },
+    {
+      "bytes": 1317,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0-hidden-chromium-1-second-capture.png",
+      "sha256": "b904f0ffd3261fe320fc4b834650b8e43ebe5118d2d56359a90377c6c2901b04"
+    },
+    {
+      "bytes": 1317,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0-hidden-chromium-2.png",
+      "sha256": "b904f0ffd3261fe320fc4b834650b8e43ebe5118d2d56359a90377c6c2901b04"
+    },
+    {
+      "bytes": 1317,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0-hidden-chromium-2-first-capture.png",
+      "sha256": "b904f0ffd3261fe320fc4b834650b8e43ebe5118d2d56359a90377c6c2901b04"
+    },
+    {
+      "bytes": 1317,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0-hidden-chromium-2-second-capture.png",
+      "sha256": "b904f0ffd3261fe320fc4b834650b8e43ebe5118d2d56359a90377c6c2901b04"
+    },
+    {
+      "bytes": 1532,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0-reattached-native.png",
+      "sha256": "fb3afa6f7c83804fa6dcee0ee0f1a8897fd4396ce9a1db6848f8c95295de479f"
+    },
+    {
+      "bytes": 1532,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0-reattached-native-repeat.png",
+      "sha256": "fb3afa6f7c83804fa6dcee0ee0f1a8897fd4396ce9a1db6848f8c95295de479f"
+    },
+    {
+      "bytes": 1376,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0-reattached-chromium-1.png",
+      "sha256": "9dca73fa0db02279253b650e0178768c26b66d84c0addbb67f32a7fe2ce83893"
+    },
+    {
+      "bytes": 1376,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0-reattached-chromium-1-first-capture.png",
+      "sha256": "9dca73fa0db02279253b650e0178768c26b66d84c0addbb67f32a7fe2ce83893"
+    },
+    {
+      "bytes": 1376,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0-reattached-chromium-1-second-capture.png",
+      "sha256": "9dca73fa0db02279253b650e0178768c26b66d84c0addbb67f32a7fe2ce83893"
+    },
+    {
+      "bytes": 1376,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0-reattached-chromium-2.png",
+      "sha256": "9dca73fa0db02279253b650e0178768c26b66d84c0addbb67f32a7fe2ce83893"
+    },
+    {
+      "bytes": 1376,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0-reattached-chromium-2-first-capture.png",
+      "sha256": "9dca73fa0db02279253b650e0178768c26b66d84c0addbb67f32a7fe2ce83893"
+    },
+    {
+      "bytes": 1376,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0-reattached-chromium-2-second-capture.png",
+      "sha256": "9dca73fa0db02279253b650e0178768c26b66d84c0addbb67f32a7fe2ce83893"
+    },
+    {
+      "bytes": 1531,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.25-before-native.png",
+      "sha256": "311890ac4aff729caa4dfb656718309cf8e216c82c2b0fa2cf2787dc22214b3d"
+    },
+    {
+      "bytes": 1531,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.25-before-native-repeat.png",
+      "sha256": "311890ac4aff729caa4dfb656718309cf8e216c82c2b0fa2cf2787dc22214b3d"
+    },
+    {
+      "bytes": 1374,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.25-before-chromium-1.png",
+      "sha256": "91d6361b0aa083df159ef0805bc6df8fb419d4d54cf0baa5176beb7843f154d5"
+    },
+    {
+      "bytes": 1374,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.25-before-chromium-1-first-capture.png",
+      "sha256": "91d6361b0aa083df159ef0805bc6df8fb419d4d54cf0baa5176beb7843f154d5"
+    },
+    {
+      "bytes": 1374,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.25-before-chromium-1-second-capture.png",
+      "sha256": "91d6361b0aa083df159ef0805bc6df8fb419d4d54cf0baa5176beb7843f154d5"
+    },
+    {
+      "bytes": 1374,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.25-before-chromium-2.png",
+      "sha256": "91d6361b0aa083df159ef0805bc6df8fb419d4d54cf0baa5176beb7843f154d5"
+    },
+    {
+      "bytes": 1374,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.25-before-chromium-2-first-capture.png",
+      "sha256": "91d6361b0aa083df159ef0805bc6df8fb419d4d54cf0baa5176beb7843f154d5"
+    },
+    {
+      "bytes": 1374,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.25-before-chromium-2-second-capture.png",
+      "sha256": "91d6361b0aa083df159ef0805bc6df8fb419d4d54cf0baa5176beb7843f154d5"
+    },
+    {
+      "bytes": 1532,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.25-after-native.png",
+      "sha256": "fb3afa6f7c83804fa6dcee0ee0f1a8897fd4396ce9a1db6848f8c95295de479f"
+    },
+    {
+      "bytes": 1532,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.25-after-native-repeat.png",
+      "sha256": "fb3afa6f7c83804fa6dcee0ee0f1a8897fd4396ce9a1db6848f8c95295de479f"
+    },
+    {
+      "bytes": 1376,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.25-after-chromium-1.png",
+      "sha256": "9dca73fa0db02279253b650e0178768c26b66d84c0addbb67f32a7fe2ce83893"
+    },
+    {
+      "bytes": 1376,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.25-after-chromium-1-first-capture.png",
+      "sha256": "9dca73fa0db02279253b650e0178768c26b66d84c0addbb67f32a7fe2ce83893"
+    },
+    {
+      "bytes": 1376,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.25-after-chromium-1-second-capture.png",
+      "sha256": "9dca73fa0db02279253b650e0178768c26b66d84c0addbb67f32a7fe2ce83893"
+    },
+    {
+      "bytes": 1376,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.25-after-chromium-2.png",
+      "sha256": "9dca73fa0db02279253b650e0178768c26b66d84c0addbb67f32a7fe2ce83893"
+    },
+    {
+      "bytes": 1376,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.25-after-chromium-2-first-capture.png",
+      "sha256": "9dca73fa0db02279253b650e0178768c26b66d84c0addbb67f32a7fe2ce83893"
+    },
+    {
+      "bytes": 1376,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.25-after-chromium-2-second-capture.png",
+      "sha256": "9dca73fa0db02279253b650e0178768c26b66d84c0addbb67f32a7fe2ce83893"
+    },
+    {
+      "bytes": 1510,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.25-hidden-native.png",
+      "sha256": "c0b97cee7198b1ff6c927e3b459d89fcdfb0f705f8c90797fdf439dab3d03d3d"
+    },
+    {
+      "bytes": 1510,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.25-hidden-native-repeat.png",
+      "sha256": "c0b97cee7198b1ff6c927e3b459d89fcdfb0f705f8c90797fdf439dab3d03d3d"
+    },
+    {
+      "bytes": 1317,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.25-hidden-chromium-1.png",
+      "sha256": "b904f0ffd3261fe320fc4b834650b8e43ebe5118d2d56359a90377c6c2901b04"
+    },
+    {
+      "bytes": 1317,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.25-hidden-chromium-1-first-capture.png",
+      "sha256": "b904f0ffd3261fe320fc4b834650b8e43ebe5118d2d56359a90377c6c2901b04"
+    },
+    {
+      "bytes": 1317,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.25-hidden-chromium-1-second-capture.png",
+      "sha256": "b904f0ffd3261fe320fc4b834650b8e43ebe5118d2d56359a90377c6c2901b04"
+    },
+    {
+      "bytes": 1317,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.25-hidden-chromium-2.png",
+      "sha256": "b904f0ffd3261fe320fc4b834650b8e43ebe5118d2d56359a90377c6c2901b04"
+    },
+    {
+      "bytes": 1317,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.25-hidden-chromium-2-first-capture.png",
+      "sha256": "b904f0ffd3261fe320fc4b834650b8e43ebe5118d2d56359a90377c6c2901b04"
+    },
+    {
+      "bytes": 1317,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.25-hidden-chromium-2-second-capture.png",
+      "sha256": "b904f0ffd3261fe320fc4b834650b8e43ebe5118d2d56359a90377c6c2901b04"
+    },
+    {
+      "bytes": 1532,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.25-reattached-native.png",
+      "sha256": "fb3afa6f7c83804fa6dcee0ee0f1a8897fd4396ce9a1db6848f8c95295de479f"
+    },
+    {
+      "bytes": 1532,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.25-reattached-native-repeat.png",
+      "sha256": "fb3afa6f7c83804fa6dcee0ee0f1a8897fd4396ce9a1db6848f8c95295de479f"
+    },
+    {
+      "bytes": 1376,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.25-reattached-chromium-1.png",
+      "sha256": "9dca73fa0db02279253b650e0178768c26b66d84c0addbb67f32a7fe2ce83893"
+    },
+    {
+      "bytes": 1376,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.25-reattached-chromium-1-first-capture.png",
+      "sha256": "9dca73fa0db02279253b650e0178768c26b66d84c0addbb67f32a7fe2ce83893"
+    },
+    {
+      "bytes": 1376,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.25-reattached-chromium-1-second-capture.png",
+      "sha256": "9dca73fa0db02279253b650e0178768c26b66d84c0addbb67f32a7fe2ce83893"
+    },
+    {
+      "bytes": 1376,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.25-reattached-chromium-2.png",
+      "sha256": "9dca73fa0db02279253b650e0178768c26b66d84c0addbb67f32a7fe2ce83893"
+    },
+    {
+      "bytes": 1376,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.25-reattached-chromium-2-first-capture.png",
+      "sha256": "9dca73fa0db02279253b650e0178768c26b66d84c0addbb67f32a7fe2ce83893"
+    },
+    {
+      "bytes": 1376,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.25-reattached-chromium-2-second-capture.png",
+      "sha256": "9dca73fa0db02279253b650e0178768c26b66d84c0addbb67f32a7fe2ce83893"
+    },
+    {
+      "bytes": 1573,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.5-before-native.png",
+      "sha256": "1e9c5775a39e169ffb23acff9be6d9cf16ca564f9c95ee37b85ded87238e91ce"
+    },
+    {
+      "bytes": 1573,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.5-before-native-repeat.png",
+      "sha256": "1e9c5775a39e169ffb23acff9be6d9cf16ca564f9c95ee37b85ded87238e91ce"
+    },
+    {
+      "bytes": 1413,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.5-before-chromium-1.png",
+      "sha256": "c2ff37fb8caf0b9fbe75e4bf63d8d86614fb5792335081a2d9abd9bcfffba72e"
+    },
+    {
+      "bytes": 1413,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.5-before-chromium-1-first-capture.png",
+      "sha256": "c2ff37fb8caf0b9fbe75e4bf63d8d86614fb5792335081a2d9abd9bcfffba72e"
+    },
+    {
+      "bytes": 1413,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.5-before-chromium-1-second-capture.png",
+      "sha256": "c2ff37fb8caf0b9fbe75e4bf63d8d86614fb5792335081a2d9abd9bcfffba72e"
+    },
+    {
+      "bytes": 1413,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.5-before-chromium-2.png",
+      "sha256": "c2ff37fb8caf0b9fbe75e4bf63d8d86614fb5792335081a2d9abd9bcfffba72e"
+    },
+    {
+      "bytes": 1413,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.5-before-chromium-2-first-capture.png",
+      "sha256": "c2ff37fb8caf0b9fbe75e4bf63d8d86614fb5792335081a2d9abd9bcfffba72e"
+    },
+    {
+      "bytes": 1413,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.5-before-chromium-2-second-capture.png",
+      "sha256": "c2ff37fb8caf0b9fbe75e4bf63d8d86614fb5792335081a2d9abd9bcfffba72e"
+    },
+    {
+      "bytes": 1578,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.5-after-native.png",
+      "sha256": "6fce9fb19c54cb10cf2c6740cbb39cf154cbc67d5c1f945e56fc169a57952520"
+    },
+    {
+      "bytes": 1578,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.5-after-native-repeat.png",
+      "sha256": "6fce9fb19c54cb10cf2c6740cbb39cf154cbc67d5c1f945e56fc169a57952520"
+    },
+    {
+      "bytes": 1418,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.5-after-chromium-1.png",
+      "sha256": "fb162d84cd3b7f7712e59f804dba73c74e58cad0aeddab64d4e3952bd8b6605f"
+    },
+    {
+      "bytes": 1418,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.5-after-chromium-1-first-capture.png",
+      "sha256": "fb162d84cd3b7f7712e59f804dba73c74e58cad0aeddab64d4e3952bd8b6605f"
+    },
+    {
+      "bytes": 1418,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.5-after-chromium-1-second-capture.png",
+      "sha256": "fb162d84cd3b7f7712e59f804dba73c74e58cad0aeddab64d4e3952bd8b6605f"
+    },
+    {
+      "bytes": 1418,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.5-after-chromium-2.png",
+      "sha256": "fb162d84cd3b7f7712e59f804dba73c74e58cad0aeddab64d4e3952bd8b6605f"
+    },
+    {
+      "bytes": 1418,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.5-after-chromium-2-first-capture.png",
+      "sha256": "fb162d84cd3b7f7712e59f804dba73c74e58cad0aeddab64d4e3952bd8b6605f"
+    },
+    {
+      "bytes": 1418,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.5-after-chromium-2-second-capture.png",
+      "sha256": "fb162d84cd3b7f7712e59f804dba73c74e58cad0aeddab64d4e3952bd8b6605f"
+    },
+    {
+      "bytes": 1510,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.5-hidden-native.png",
+      "sha256": "c0b97cee7198b1ff6c927e3b459d89fcdfb0f705f8c90797fdf439dab3d03d3d"
+    },
+    {
+      "bytes": 1510,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.5-hidden-native-repeat.png",
+      "sha256": "c0b97cee7198b1ff6c927e3b459d89fcdfb0f705f8c90797fdf439dab3d03d3d"
+    },
+    {
+      "bytes": 1317,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.5-hidden-chromium-1.png",
+      "sha256": "b904f0ffd3261fe320fc4b834650b8e43ebe5118d2d56359a90377c6c2901b04"
+    },
+    {
+      "bytes": 1317,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.5-hidden-chromium-1-first-capture.png",
+      "sha256": "b904f0ffd3261fe320fc4b834650b8e43ebe5118d2d56359a90377c6c2901b04"
+    },
+    {
+      "bytes": 1317,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.5-hidden-chromium-1-second-capture.png",
+      "sha256": "b904f0ffd3261fe320fc4b834650b8e43ebe5118d2d56359a90377c6c2901b04"
+    },
+    {
+      "bytes": 1317,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.5-hidden-chromium-2.png",
+      "sha256": "b904f0ffd3261fe320fc4b834650b8e43ebe5118d2d56359a90377c6c2901b04"
+    },
+    {
+      "bytes": 1317,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.5-hidden-chromium-2-first-capture.png",
+      "sha256": "b904f0ffd3261fe320fc4b834650b8e43ebe5118d2d56359a90377c6c2901b04"
+    },
+    {
+      "bytes": 1317,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.5-hidden-chromium-2-second-capture.png",
+      "sha256": "b904f0ffd3261fe320fc4b834650b8e43ebe5118d2d56359a90377c6c2901b04"
+    },
+    {
+      "bytes": 1578,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.5-reattached-native.png",
+      "sha256": "6fce9fb19c54cb10cf2c6740cbb39cf154cbc67d5c1f945e56fc169a57952520"
+    },
+    {
+      "bytes": 1578,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.5-reattached-native-repeat.png",
+      "sha256": "6fce9fb19c54cb10cf2c6740cbb39cf154cbc67d5c1f945e56fc169a57952520"
+    },
+    {
+      "bytes": 1418,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.5-reattached-chromium-1.png",
+      "sha256": "fb162d84cd3b7f7712e59f804dba73c74e58cad0aeddab64d4e3952bd8b6605f"
+    },
+    {
+      "bytes": 1418,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.5-reattached-chromium-1-first-capture.png",
+      "sha256": "fb162d84cd3b7f7712e59f804dba73c74e58cad0aeddab64d4e3952bd8b6605f"
+    },
+    {
+      "bytes": 1418,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.5-reattached-chromium-1-second-capture.png",
+      "sha256": "fb162d84cd3b7f7712e59f804dba73c74e58cad0aeddab64d4e3952bd8b6605f"
+    },
+    {
+      "bytes": 1418,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.5-reattached-chromium-2.png",
+      "sha256": "fb162d84cd3b7f7712e59f804dba73c74e58cad0aeddab64d4e3952bd8b6605f"
+    },
+    {
+      "bytes": 1418,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.5-reattached-chromium-2-first-capture.png",
+      "sha256": "fb162d84cd3b7f7712e59f804dba73c74e58cad0aeddab64d4e3952bd8b6605f"
+    },
+    {
+      "bytes": 1418,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-1.5-phase-0.5-reattached-chromium-2-second-capture.png",
+      "sha256": "fb162d84cd3b7f7712e59f804dba73c74e58cad0aeddab64d4e3952bd8b6605f"
+    },
+    {
+      "bytes": 2359,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0-before-native.png",
+      "sha256": "0b4f7a2823254bdc06b638f4c3cdb58ebe45f65acd8fa9457dedcc98cc831ae6"
+    },
+    {
+      "bytes": 2359,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0-before-native-repeat.png",
+      "sha256": "0b4f7a2823254bdc06b638f4c3cdb58ebe45f65acd8fa9457dedcc98cc831ae6"
+    },
+    {
+      "bytes": 1975,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0-before-chromium-1.png",
+      "sha256": "9232c53acb90ce207eeda2c2dda6fa2040b6fd9815ba8e30bbcea63095c8a303"
+    },
+    {
+      "bytes": 1975,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0-before-chromium-1-first-capture.png",
+      "sha256": "9232c53acb90ce207eeda2c2dda6fa2040b6fd9815ba8e30bbcea63095c8a303"
+    },
+    {
+      "bytes": 1975,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0-before-chromium-1-second-capture.png",
+      "sha256": "9232c53acb90ce207eeda2c2dda6fa2040b6fd9815ba8e30bbcea63095c8a303"
+    },
+    {
+      "bytes": 1975,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0-before-chromium-2.png",
+      "sha256": "9232c53acb90ce207eeda2c2dda6fa2040b6fd9815ba8e30bbcea63095c8a303"
+    },
+    {
+      "bytes": 1975,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0-before-chromium-2-first-capture.png",
+      "sha256": "9232c53acb90ce207eeda2c2dda6fa2040b6fd9815ba8e30bbcea63095c8a303"
+    },
+    {
+      "bytes": 1975,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0-before-chromium-2-second-capture.png",
+      "sha256": "9232c53acb90ce207eeda2c2dda6fa2040b6fd9815ba8e30bbcea63095c8a303"
+    },
+    {
+      "bytes": 2359,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0-after-native.png",
+      "sha256": "5bd5861219624877877ed6bcd2141db686d0c6f53834ec523b03e7e53dc5f1fa"
+    },
+    {
+      "bytes": 2359,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0-after-native-repeat.png",
+      "sha256": "5bd5861219624877877ed6bcd2141db686d0c6f53834ec523b03e7e53dc5f1fa"
+    },
+    {
+      "bytes": 1977,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0-after-chromium-1.png",
+      "sha256": "eaeadaac984a760e1f4a152d38e75272d02bd369e17e7ba5b62ee951567359d2"
+    },
+    {
+      "bytes": 1977,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0-after-chromium-1-first-capture.png",
+      "sha256": "eaeadaac984a760e1f4a152d38e75272d02bd369e17e7ba5b62ee951567359d2"
+    },
+    {
+      "bytes": 1977,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0-after-chromium-1-second-capture.png",
+      "sha256": "eaeadaac984a760e1f4a152d38e75272d02bd369e17e7ba5b62ee951567359d2"
+    },
+    {
+      "bytes": 1977,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0-after-chromium-2.png",
+      "sha256": "eaeadaac984a760e1f4a152d38e75272d02bd369e17e7ba5b62ee951567359d2"
+    },
+    {
+      "bytes": 1977,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0-after-chromium-2-first-capture.png",
+      "sha256": "eaeadaac984a760e1f4a152d38e75272d02bd369e17e7ba5b62ee951567359d2"
+    },
+    {
+      "bytes": 1977,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0-after-chromium-2-second-capture.png",
+      "sha256": "eaeadaac984a760e1f4a152d38e75272d02bd369e17e7ba5b62ee951567359d2"
+    },
+    {
+      "bytes": 2335,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0-hidden-native.png",
+      "sha256": "87c9493103f0a827ccf807939078d825253d7df137a35de91fca6832eb9d0c5c"
+    },
+    {
+      "bytes": 2335,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0-hidden-native-repeat.png",
+      "sha256": "87c9493103f0a827ccf807939078d825253d7df137a35de91fca6832eb9d0c5c"
+    },
+    {
+      "bytes": 1903,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0-hidden-chromium-1.png",
+      "sha256": "2b6f5dadafc15613197994b2dc486e938b1e443d7520f1adcec05dd93a90f503"
+    },
+    {
+      "bytes": 1903,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0-hidden-chromium-1-first-capture.png",
+      "sha256": "2b6f5dadafc15613197994b2dc486e938b1e443d7520f1adcec05dd93a90f503"
+    },
+    {
+      "bytes": 1903,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0-hidden-chromium-1-second-capture.png",
+      "sha256": "2b6f5dadafc15613197994b2dc486e938b1e443d7520f1adcec05dd93a90f503"
+    },
+    {
+      "bytes": 1903,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0-hidden-chromium-2.png",
+      "sha256": "2b6f5dadafc15613197994b2dc486e938b1e443d7520f1adcec05dd93a90f503"
+    },
+    {
+      "bytes": 1903,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0-hidden-chromium-2-first-capture.png",
+      "sha256": "2b6f5dadafc15613197994b2dc486e938b1e443d7520f1adcec05dd93a90f503"
+    },
+    {
+      "bytes": 1903,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0-hidden-chromium-2-second-capture.png",
+      "sha256": "2b6f5dadafc15613197994b2dc486e938b1e443d7520f1adcec05dd93a90f503"
+    },
+    {
+      "bytes": 2359,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0-reattached-native.png",
+      "sha256": "5bd5861219624877877ed6bcd2141db686d0c6f53834ec523b03e7e53dc5f1fa"
+    },
+    {
+      "bytes": 2359,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0-reattached-native-repeat.png",
+      "sha256": "5bd5861219624877877ed6bcd2141db686d0c6f53834ec523b03e7e53dc5f1fa"
+    },
+    {
+      "bytes": 1977,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0-reattached-chromium-1.png",
+      "sha256": "eaeadaac984a760e1f4a152d38e75272d02bd369e17e7ba5b62ee951567359d2"
+    },
+    {
+      "bytes": 1977,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0-reattached-chromium-1-first-capture.png",
+      "sha256": "eaeadaac984a760e1f4a152d38e75272d02bd369e17e7ba5b62ee951567359d2"
+    },
+    {
+      "bytes": 1977,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0-reattached-chromium-1-second-capture.png",
+      "sha256": "eaeadaac984a760e1f4a152d38e75272d02bd369e17e7ba5b62ee951567359d2"
+    },
+    {
+      "bytes": 1977,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0-reattached-chromium-2.png",
+      "sha256": "eaeadaac984a760e1f4a152d38e75272d02bd369e17e7ba5b62ee951567359d2"
+    },
+    {
+      "bytes": 1977,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0-reattached-chromium-2-first-capture.png",
+      "sha256": "eaeadaac984a760e1f4a152d38e75272d02bd369e17e7ba5b62ee951567359d2"
+    },
+    {
+      "bytes": 1977,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0-reattached-chromium-2-second-capture.png",
+      "sha256": "eaeadaac984a760e1f4a152d38e75272d02bd369e17e7ba5b62ee951567359d2"
+    },
+    {
+      "bytes": 2359,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.25-before-native.png",
+      "sha256": "0b4f7a2823254bdc06b638f4c3cdb58ebe45f65acd8fa9457dedcc98cc831ae6"
+    },
+    {
+      "bytes": 2359,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.25-before-native-repeat.png",
+      "sha256": "0b4f7a2823254bdc06b638f4c3cdb58ebe45f65acd8fa9457dedcc98cc831ae6"
+    },
+    {
+      "bytes": 1975,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.25-before-chromium-1.png",
+      "sha256": "9232c53acb90ce207eeda2c2dda6fa2040b6fd9815ba8e30bbcea63095c8a303"
+    },
+    {
+      "bytes": 1975,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.25-before-chromium-1-first-capture.png",
+      "sha256": "9232c53acb90ce207eeda2c2dda6fa2040b6fd9815ba8e30bbcea63095c8a303"
+    },
+    {
+      "bytes": 1975,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.25-before-chromium-1-second-capture.png",
+      "sha256": "9232c53acb90ce207eeda2c2dda6fa2040b6fd9815ba8e30bbcea63095c8a303"
+    },
+    {
+      "bytes": 1975,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.25-before-chromium-2.png",
+      "sha256": "9232c53acb90ce207eeda2c2dda6fa2040b6fd9815ba8e30bbcea63095c8a303"
+    },
+    {
+      "bytes": 1975,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.25-before-chromium-2-first-capture.png",
+      "sha256": "9232c53acb90ce207eeda2c2dda6fa2040b6fd9815ba8e30bbcea63095c8a303"
+    },
+    {
+      "bytes": 1975,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.25-before-chromium-2-second-capture.png",
+      "sha256": "9232c53acb90ce207eeda2c2dda6fa2040b6fd9815ba8e30bbcea63095c8a303"
+    },
+    {
+      "bytes": 2359,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.25-after-native.png",
+      "sha256": "5bd5861219624877877ed6bcd2141db686d0c6f53834ec523b03e7e53dc5f1fa"
+    },
+    {
+      "bytes": 2359,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.25-after-native-repeat.png",
+      "sha256": "5bd5861219624877877ed6bcd2141db686d0c6f53834ec523b03e7e53dc5f1fa"
+    },
+    {
+      "bytes": 1977,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.25-after-chromium-1.png",
+      "sha256": "eaeadaac984a760e1f4a152d38e75272d02bd369e17e7ba5b62ee951567359d2"
+    },
+    {
+      "bytes": 1977,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.25-after-chromium-1-first-capture.png",
+      "sha256": "eaeadaac984a760e1f4a152d38e75272d02bd369e17e7ba5b62ee951567359d2"
+    },
+    {
+      "bytes": 1977,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.25-after-chromium-1-second-capture.png",
+      "sha256": "eaeadaac984a760e1f4a152d38e75272d02bd369e17e7ba5b62ee951567359d2"
+    },
+    {
+      "bytes": 1977,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.25-after-chromium-2.png",
+      "sha256": "eaeadaac984a760e1f4a152d38e75272d02bd369e17e7ba5b62ee951567359d2"
+    },
+    {
+      "bytes": 1977,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.25-after-chromium-2-first-capture.png",
+      "sha256": "eaeadaac984a760e1f4a152d38e75272d02bd369e17e7ba5b62ee951567359d2"
+    },
+    {
+      "bytes": 1977,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.25-after-chromium-2-second-capture.png",
+      "sha256": "eaeadaac984a760e1f4a152d38e75272d02bd369e17e7ba5b62ee951567359d2"
+    },
+    {
+      "bytes": 2335,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.25-hidden-native.png",
+      "sha256": "87c9493103f0a827ccf807939078d825253d7df137a35de91fca6832eb9d0c5c"
+    },
+    {
+      "bytes": 2335,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.25-hidden-native-repeat.png",
+      "sha256": "87c9493103f0a827ccf807939078d825253d7df137a35de91fca6832eb9d0c5c"
+    },
+    {
+      "bytes": 1903,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.25-hidden-chromium-1.png",
+      "sha256": "2b6f5dadafc15613197994b2dc486e938b1e443d7520f1adcec05dd93a90f503"
+    },
+    {
+      "bytes": 1903,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.25-hidden-chromium-1-first-capture.png",
+      "sha256": "2b6f5dadafc15613197994b2dc486e938b1e443d7520f1adcec05dd93a90f503"
+    },
+    {
+      "bytes": 1903,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.25-hidden-chromium-1-second-capture.png",
+      "sha256": "2b6f5dadafc15613197994b2dc486e938b1e443d7520f1adcec05dd93a90f503"
+    },
+    {
+      "bytes": 1903,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.25-hidden-chromium-2.png",
+      "sha256": "2b6f5dadafc15613197994b2dc486e938b1e443d7520f1adcec05dd93a90f503"
+    },
+    {
+      "bytes": 1903,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.25-hidden-chromium-2-first-capture.png",
+      "sha256": "2b6f5dadafc15613197994b2dc486e938b1e443d7520f1adcec05dd93a90f503"
+    },
+    {
+      "bytes": 1903,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.25-hidden-chromium-2-second-capture.png",
+      "sha256": "2b6f5dadafc15613197994b2dc486e938b1e443d7520f1adcec05dd93a90f503"
+    },
+    {
+      "bytes": 2359,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.25-reattached-native.png",
+      "sha256": "5bd5861219624877877ed6bcd2141db686d0c6f53834ec523b03e7e53dc5f1fa"
+    },
+    {
+      "bytes": 2359,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.25-reattached-native-repeat.png",
+      "sha256": "5bd5861219624877877ed6bcd2141db686d0c6f53834ec523b03e7e53dc5f1fa"
+    },
+    {
+      "bytes": 1977,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.25-reattached-chromium-1.png",
+      "sha256": "eaeadaac984a760e1f4a152d38e75272d02bd369e17e7ba5b62ee951567359d2"
+    },
+    {
+      "bytes": 1977,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.25-reattached-chromium-1-first-capture.png",
+      "sha256": "eaeadaac984a760e1f4a152d38e75272d02bd369e17e7ba5b62ee951567359d2"
+    },
+    {
+      "bytes": 1977,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.25-reattached-chromium-1-second-capture.png",
+      "sha256": "eaeadaac984a760e1f4a152d38e75272d02bd369e17e7ba5b62ee951567359d2"
+    },
+    {
+      "bytes": 1977,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.25-reattached-chromium-2.png",
+      "sha256": "eaeadaac984a760e1f4a152d38e75272d02bd369e17e7ba5b62ee951567359d2"
+    },
+    {
+      "bytes": 1977,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.25-reattached-chromium-2-first-capture.png",
+      "sha256": "eaeadaac984a760e1f4a152d38e75272d02bd369e17e7ba5b62ee951567359d2"
+    },
+    {
+      "bytes": 1977,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.25-reattached-chromium-2-second-capture.png",
+      "sha256": "eaeadaac984a760e1f4a152d38e75272d02bd369e17e7ba5b62ee951567359d2"
+    },
+    {
+      "bytes": 2359,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.5-before-native.png",
+      "sha256": "01189f2bd9fc48edf9bc6a4ce68f23592f1fa717369d63b4d820436e5f0b8bfc"
+    },
+    {
+      "bytes": 2359,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.5-before-native-repeat.png",
+      "sha256": "01189f2bd9fc48edf9bc6a4ce68f23592f1fa717369d63b4d820436e5f0b8bfc"
+    },
+    {
+      "bytes": 1975,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.5-before-chromium-1.png",
+      "sha256": "a3b72568b0e672575b96ae0740c3e9567b4cb9b2ced043d52d5d2f760e2bf69c"
+    },
+    {
+      "bytes": 1975,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.5-before-chromium-1-first-capture.png",
+      "sha256": "a3b72568b0e672575b96ae0740c3e9567b4cb9b2ced043d52d5d2f760e2bf69c"
+    },
+    {
+      "bytes": 1975,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.5-before-chromium-1-second-capture.png",
+      "sha256": "a3b72568b0e672575b96ae0740c3e9567b4cb9b2ced043d52d5d2f760e2bf69c"
+    },
+    {
+      "bytes": 1975,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.5-before-chromium-2.png",
+      "sha256": "a3b72568b0e672575b96ae0740c3e9567b4cb9b2ced043d52d5d2f760e2bf69c"
+    },
+    {
+      "bytes": 1975,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.5-before-chromium-2-first-capture.png",
+      "sha256": "a3b72568b0e672575b96ae0740c3e9567b4cb9b2ced043d52d5d2f760e2bf69c"
+    },
+    {
+      "bytes": 1975,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.5-before-chromium-2-second-capture.png",
+      "sha256": "a3b72568b0e672575b96ae0740c3e9567b4cb9b2ced043d52d5d2f760e2bf69c"
+    },
+    {
+      "bytes": 2359,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.5-after-native.png",
+      "sha256": "657d1df4eec881b2a11a9dac405c05c27faad19d3ce914506dca7b7dd2ff1202"
+    },
+    {
+      "bytes": 2359,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.5-after-native-repeat.png",
+      "sha256": "657d1df4eec881b2a11a9dac405c05c27faad19d3ce914506dca7b7dd2ff1202"
+    },
+    {
+      "bytes": 1977,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.5-after-chromium-1.png",
+      "sha256": "7754e74bd2c156863ea9936cf0d3d097bfa3eb92d04c6161ec4cd2c93cbcd224"
+    },
+    {
+      "bytes": 1977,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.5-after-chromium-1-first-capture.png",
+      "sha256": "7754e74bd2c156863ea9936cf0d3d097bfa3eb92d04c6161ec4cd2c93cbcd224"
+    },
+    {
+      "bytes": 1977,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.5-after-chromium-1-second-capture.png",
+      "sha256": "7754e74bd2c156863ea9936cf0d3d097bfa3eb92d04c6161ec4cd2c93cbcd224"
+    },
+    {
+      "bytes": 1977,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.5-after-chromium-2.png",
+      "sha256": "7754e74bd2c156863ea9936cf0d3d097bfa3eb92d04c6161ec4cd2c93cbcd224"
+    },
+    {
+      "bytes": 1977,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.5-after-chromium-2-first-capture.png",
+      "sha256": "7754e74bd2c156863ea9936cf0d3d097bfa3eb92d04c6161ec4cd2c93cbcd224"
+    },
+    {
+      "bytes": 1977,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.5-after-chromium-2-second-capture.png",
+      "sha256": "7754e74bd2c156863ea9936cf0d3d097bfa3eb92d04c6161ec4cd2c93cbcd224"
+    },
+    {
+      "bytes": 2335,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.5-hidden-native.png",
+      "sha256": "87c9493103f0a827ccf807939078d825253d7df137a35de91fca6832eb9d0c5c"
+    },
+    {
+      "bytes": 2335,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.5-hidden-native-repeat.png",
+      "sha256": "87c9493103f0a827ccf807939078d825253d7df137a35de91fca6832eb9d0c5c"
+    },
+    {
+      "bytes": 1903,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.5-hidden-chromium-1.png",
+      "sha256": "2b6f5dadafc15613197994b2dc486e938b1e443d7520f1adcec05dd93a90f503"
+    },
+    {
+      "bytes": 1903,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.5-hidden-chromium-1-first-capture.png",
+      "sha256": "2b6f5dadafc15613197994b2dc486e938b1e443d7520f1adcec05dd93a90f503"
+    },
+    {
+      "bytes": 1903,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.5-hidden-chromium-1-second-capture.png",
+      "sha256": "2b6f5dadafc15613197994b2dc486e938b1e443d7520f1adcec05dd93a90f503"
+    },
+    {
+      "bytes": 1903,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.5-hidden-chromium-2.png",
+      "sha256": "2b6f5dadafc15613197994b2dc486e938b1e443d7520f1adcec05dd93a90f503"
+    },
+    {
+      "bytes": 1903,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.5-hidden-chromium-2-first-capture.png",
+      "sha256": "2b6f5dadafc15613197994b2dc486e938b1e443d7520f1adcec05dd93a90f503"
+    },
+    {
+      "bytes": 1903,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.5-hidden-chromium-2-second-capture.png",
+      "sha256": "2b6f5dadafc15613197994b2dc486e938b1e443d7520f1adcec05dd93a90f503"
+    },
+    {
+      "bytes": 2359,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.5-reattached-native.png",
+      "sha256": "657d1df4eec881b2a11a9dac405c05c27faad19d3ce914506dca7b7dd2ff1202"
+    },
+    {
+      "bytes": 2359,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.5-reattached-native-repeat.png",
+      "sha256": "657d1df4eec881b2a11a9dac405c05c27faad19d3ce914506dca7b7dd2ff1202"
+    },
+    {
+      "bytes": 1977,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.5-reattached-chromium-1.png",
+      "sha256": "7754e74bd2c156863ea9936cf0d3d097bfa3eb92d04c6161ec4cd2c93cbcd224"
+    },
+    {
+      "bytes": 1977,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.5-reattached-chromium-1-first-capture.png",
+      "sha256": "7754e74bd2c156863ea9936cf0d3d097bfa3eb92d04c6161ec4cd2c93cbcd224"
+    },
+    {
+      "bytes": 1977,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.5-reattached-chromium-1-second-capture.png",
+      "sha256": "7754e74bd2c156863ea9936cf0d3d097bfa3eb92d04c6161ec4cd2c93cbcd224"
+    },
+    {
+      "bytes": 1977,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.5-reattached-chromium-2.png",
+      "sha256": "7754e74bd2c156863ea9936cf0d3d097bfa3eb92d04c6161ec4cd2c93cbcd224"
+    },
+    {
+      "bytes": 1977,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.5-reattached-chromium-2-first-capture.png",
+      "sha256": "7754e74bd2c156863ea9936cf0d3d097bfa3eb92d04c6161ec4cd2c93cbcd224"
+    },
+    {
+      "bytes": 1977,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-2-phase-0.5-reattached-chromium-2-second-capture.png",
+      "sha256": "7754e74bd2c156863ea9936cf0d3d097bfa3eb92d04c6161ec4cd2c93cbcd224"
+    },
+    {
+      "bytes": 4368,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0-before-native.png",
+      "sha256": "b9ffe0da7144b1b0a5f69d68a3331f05b8737e1b278b4f2d926d26478566456a"
+    },
+    {
+      "bytes": 4368,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0-before-native-repeat.png",
+      "sha256": "b9ffe0da7144b1b0a5f69d68a3331f05b8737e1b278b4f2d926d26478566456a"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0-before-chromium-1.png",
+      "sha256": "009e5e77358b2aa5d3d5103f8b6f8c457fafaec32068980da9725c23135d8d0d"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0-before-chromium-1-first-capture.png",
+      "sha256": "009e5e77358b2aa5d3d5103f8b6f8c457fafaec32068980da9725c23135d8d0d"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0-before-chromium-1-second-capture.png",
+      "sha256": "009e5e77358b2aa5d3d5103f8b6f8c457fafaec32068980da9725c23135d8d0d"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0-before-chromium-2.png",
+      "sha256": "009e5e77358b2aa5d3d5103f8b6f8c457fafaec32068980da9725c23135d8d0d"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0-before-chromium-2-first-capture.png",
+      "sha256": "009e5e77358b2aa5d3d5103f8b6f8c457fafaec32068980da9725c23135d8d0d"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0-before-chromium-2-second-capture.png",
+      "sha256": "009e5e77358b2aa5d3d5103f8b6f8c457fafaec32068980da9725c23135d8d0d"
+    },
+    {
+      "bytes": 4370,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0-after-native.png",
+      "sha256": "0227f6d44d0506d0ee16244ace2a5c3710da1561c29b2a2fb8f77af564869212"
+    },
+    {
+      "bytes": 4370,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0-after-native-repeat.png",
+      "sha256": "0227f6d44d0506d0ee16244ace2a5c3710da1561c29b2a2fb8f77af564869212"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0-after-chromium-1.png",
+      "sha256": "1a5b33ab473404b4590104cdb5ff503b7dd8a09cb973e1acf15e19ac84d3468a"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0-after-chromium-1-first-capture.png",
+      "sha256": "1a5b33ab473404b4590104cdb5ff503b7dd8a09cb973e1acf15e19ac84d3468a"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0-after-chromium-1-second-capture.png",
+      "sha256": "1a5b33ab473404b4590104cdb5ff503b7dd8a09cb973e1acf15e19ac84d3468a"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0-after-chromium-2.png",
+      "sha256": "1a5b33ab473404b4590104cdb5ff503b7dd8a09cb973e1acf15e19ac84d3468a"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0-after-chromium-2-first-capture.png",
+      "sha256": "1a5b33ab473404b4590104cdb5ff503b7dd8a09cb973e1acf15e19ac84d3468a"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0-after-chromium-2-second-capture.png",
+      "sha256": "1a5b33ab473404b4590104cdb5ff503b7dd8a09cb973e1acf15e19ac84d3468a"
+    },
+    {
+      "bytes": 4347,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0-hidden-native.png",
+      "sha256": "78d502069435879d7846f966cf3250c1a254042b05d44a2ded02c429cd42edff"
+    },
+    {
+      "bytes": 4347,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0-hidden-native-repeat.png",
+      "sha256": "78d502069435879d7846f966cf3250c1a254042b05d44a2ded02c429cd42edff"
+    },
+    {
+      "bytes": 3523,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0-hidden-chromium-1.png",
+      "sha256": "8a93d3a3ff37d5e7b78c6067d3bc9461389aa3cc9741f8b709c681033abe4a0c"
+    },
+    {
+      "bytes": 3523,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0-hidden-chromium-1-first-capture.png",
+      "sha256": "8a93d3a3ff37d5e7b78c6067d3bc9461389aa3cc9741f8b709c681033abe4a0c"
+    },
+    {
+      "bytes": 3523,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0-hidden-chromium-1-second-capture.png",
+      "sha256": "8a93d3a3ff37d5e7b78c6067d3bc9461389aa3cc9741f8b709c681033abe4a0c"
+    },
+    {
+      "bytes": 3523,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0-hidden-chromium-2.png",
+      "sha256": "8a93d3a3ff37d5e7b78c6067d3bc9461389aa3cc9741f8b709c681033abe4a0c"
+    },
+    {
+      "bytes": 3523,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0-hidden-chromium-2-first-capture.png",
+      "sha256": "8a93d3a3ff37d5e7b78c6067d3bc9461389aa3cc9741f8b709c681033abe4a0c"
+    },
+    {
+      "bytes": 3523,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0-hidden-chromium-2-second-capture.png",
+      "sha256": "8a93d3a3ff37d5e7b78c6067d3bc9461389aa3cc9741f8b709c681033abe4a0c"
+    },
+    {
+      "bytes": 4370,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0-reattached-native.png",
+      "sha256": "0227f6d44d0506d0ee16244ace2a5c3710da1561c29b2a2fb8f77af564869212"
+    },
+    {
+      "bytes": 4370,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0-reattached-native-repeat.png",
+      "sha256": "0227f6d44d0506d0ee16244ace2a5c3710da1561c29b2a2fb8f77af564869212"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0-reattached-chromium-1.png",
+      "sha256": "1a5b33ab473404b4590104cdb5ff503b7dd8a09cb973e1acf15e19ac84d3468a"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0-reattached-chromium-1-first-capture.png",
+      "sha256": "1a5b33ab473404b4590104cdb5ff503b7dd8a09cb973e1acf15e19ac84d3468a"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0-reattached-chromium-1-second-capture.png",
+      "sha256": "1a5b33ab473404b4590104cdb5ff503b7dd8a09cb973e1acf15e19ac84d3468a"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0-reattached-chromium-2.png",
+      "sha256": "1a5b33ab473404b4590104cdb5ff503b7dd8a09cb973e1acf15e19ac84d3468a"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0-reattached-chromium-2-first-capture.png",
+      "sha256": "1a5b33ab473404b4590104cdb5ff503b7dd8a09cb973e1acf15e19ac84d3468a"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0-reattached-chromium-2-second-capture.png",
+      "sha256": "1a5b33ab473404b4590104cdb5ff503b7dd8a09cb973e1acf15e19ac84d3468a"
+    },
+    {
+      "bytes": 4368,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.25-before-native.png",
+      "sha256": "b9ffe0da7144b1b0a5f69d68a3331f05b8737e1b278b4f2d926d26478566456a"
+    },
+    {
+      "bytes": 4368,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.25-before-native-repeat.png",
+      "sha256": "b9ffe0da7144b1b0a5f69d68a3331f05b8737e1b278b4f2d926d26478566456a"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.25-before-chromium-1.png",
+      "sha256": "009e5e77358b2aa5d3d5103f8b6f8c457fafaec32068980da9725c23135d8d0d"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.25-before-chromium-1-first-capture.png",
+      "sha256": "009e5e77358b2aa5d3d5103f8b6f8c457fafaec32068980da9725c23135d8d0d"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.25-before-chromium-1-second-capture.png",
+      "sha256": "009e5e77358b2aa5d3d5103f8b6f8c457fafaec32068980da9725c23135d8d0d"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.25-before-chromium-2.png",
+      "sha256": "009e5e77358b2aa5d3d5103f8b6f8c457fafaec32068980da9725c23135d8d0d"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.25-before-chromium-2-first-capture.png",
+      "sha256": "009e5e77358b2aa5d3d5103f8b6f8c457fafaec32068980da9725c23135d8d0d"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.25-before-chromium-2-second-capture.png",
+      "sha256": "009e5e77358b2aa5d3d5103f8b6f8c457fafaec32068980da9725c23135d8d0d"
+    },
+    {
+      "bytes": 4370,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.25-after-native.png",
+      "sha256": "0227f6d44d0506d0ee16244ace2a5c3710da1561c29b2a2fb8f77af564869212"
+    },
+    {
+      "bytes": 4370,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.25-after-native-repeat.png",
+      "sha256": "0227f6d44d0506d0ee16244ace2a5c3710da1561c29b2a2fb8f77af564869212"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.25-after-chromium-1.png",
+      "sha256": "1a5b33ab473404b4590104cdb5ff503b7dd8a09cb973e1acf15e19ac84d3468a"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.25-after-chromium-1-first-capture.png",
+      "sha256": "1a5b33ab473404b4590104cdb5ff503b7dd8a09cb973e1acf15e19ac84d3468a"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.25-after-chromium-1-second-capture.png",
+      "sha256": "1a5b33ab473404b4590104cdb5ff503b7dd8a09cb973e1acf15e19ac84d3468a"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.25-after-chromium-2.png",
+      "sha256": "1a5b33ab473404b4590104cdb5ff503b7dd8a09cb973e1acf15e19ac84d3468a"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.25-after-chromium-2-first-capture.png",
+      "sha256": "1a5b33ab473404b4590104cdb5ff503b7dd8a09cb973e1acf15e19ac84d3468a"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.25-after-chromium-2-second-capture.png",
+      "sha256": "1a5b33ab473404b4590104cdb5ff503b7dd8a09cb973e1acf15e19ac84d3468a"
+    },
+    {
+      "bytes": 4347,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.25-hidden-native.png",
+      "sha256": "78d502069435879d7846f966cf3250c1a254042b05d44a2ded02c429cd42edff"
+    },
+    {
+      "bytes": 4347,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.25-hidden-native-repeat.png",
+      "sha256": "78d502069435879d7846f966cf3250c1a254042b05d44a2ded02c429cd42edff"
+    },
+    {
+      "bytes": 3523,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.25-hidden-chromium-1.png",
+      "sha256": "8a93d3a3ff37d5e7b78c6067d3bc9461389aa3cc9741f8b709c681033abe4a0c"
+    },
+    {
+      "bytes": 3523,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.25-hidden-chromium-1-first-capture.png",
+      "sha256": "8a93d3a3ff37d5e7b78c6067d3bc9461389aa3cc9741f8b709c681033abe4a0c"
+    },
+    {
+      "bytes": 3523,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.25-hidden-chromium-1-second-capture.png",
+      "sha256": "8a93d3a3ff37d5e7b78c6067d3bc9461389aa3cc9741f8b709c681033abe4a0c"
+    },
+    {
+      "bytes": 3523,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.25-hidden-chromium-2.png",
+      "sha256": "8a93d3a3ff37d5e7b78c6067d3bc9461389aa3cc9741f8b709c681033abe4a0c"
+    },
+    {
+      "bytes": 3523,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.25-hidden-chromium-2-first-capture.png",
+      "sha256": "8a93d3a3ff37d5e7b78c6067d3bc9461389aa3cc9741f8b709c681033abe4a0c"
+    },
+    {
+      "bytes": 3523,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.25-hidden-chromium-2-second-capture.png",
+      "sha256": "8a93d3a3ff37d5e7b78c6067d3bc9461389aa3cc9741f8b709c681033abe4a0c"
+    },
+    {
+      "bytes": 4370,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.25-reattached-native.png",
+      "sha256": "0227f6d44d0506d0ee16244ace2a5c3710da1561c29b2a2fb8f77af564869212"
+    },
+    {
+      "bytes": 4370,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.25-reattached-native-repeat.png",
+      "sha256": "0227f6d44d0506d0ee16244ace2a5c3710da1561c29b2a2fb8f77af564869212"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.25-reattached-chromium-1.png",
+      "sha256": "1a5b33ab473404b4590104cdb5ff503b7dd8a09cb973e1acf15e19ac84d3468a"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.25-reattached-chromium-1-first-capture.png",
+      "sha256": "1a5b33ab473404b4590104cdb5ff503b7dd8a09cb973e1acf15e19ac84d3468a"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.25-reattached-chromium-1-second-capture.png",
+      "sha256": "1a5b33ab473404b4590104cdb5ff503b7dd8a09cb973e1acf15e19ac84d3468a"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.25-reattached-chromium-2.png",
+      "sha256": "1a5b33ab473404b4590104cdb5ff503b7dd8a09cb973e1acf15e19ac84d3468a"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.25-reattached-chromium-2-first-capture.png",
+      "sha256": "1a5b33ab473404b4590104cdb5ff503b7dd8a09cb973e1acf15e19ac84d3468a"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.25-reattached-chromium-2-second-capture.png",
+      "sha256": "1a5b33ab473404b4590104cdb5ff503b7dd8a09cb973e1acf15e19ac84d3468a"
+    },
+    {
+      "bytes": 4368,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.5-before-native.png",
+      "sha256": "9108fb08f44467e64a0544786f54dc8e5b65603758904a738fda0bf38aa88063"
+    },
+    {
+      "bytes": 4368,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.5-before-native-repeat.png",
+      "sha256": "9108fb08f44467e64a0544786f54dc8e5b65603758904a738fda0bf38aa88063"
+    },
+    {
+      "bytes": 3627,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.5-before-chromium-1.png",
+      "sha256": "67e51d3a27d6585b46d30bc414de41be38cbf13f06ed8b981c4718530870108c"
+    },
+    {
+      "bytes": 3627,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.5-before-chromium-1-first-capture.png",
+      "sha256": "67e51d3a27d6585b46d30bc414de41be38cbf13f06ed8b981c4718530870108c"
+    },
+    {
+      "bytes": 3627,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.5-before-chromium-1-second-capture.png",
+      "sha256": "67e51d3a27d6585b46d30bc414de41be38cbf13f06ed8b981c4718530870108c"
+    },
+    {
+      "bytes": 3627,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.5-before-chromium-2.png",
+      "sha256": "67e51d3a27d6585b46d30bc414de41be38cbf13f06ed8b981c4718530870108c"
+    },
+    {
+      "bytes": 3627,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.5-before-chromium-2-first-capture.png",
+      "sha256": "67e51d3a27d6585b46d30bc414de41be38cbf13f06ed8b981c4718530870108c"
+    },
+    {
+      "bytes": 3627,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.5-before-chromium-2-second-capture.png",
+      "sha256": "67e51d3a27d6585b46d30bc414de41be38cbf13f06ed8b981c4718530870108c"
+    },
+    {
+      "bytes": 4369,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.5-after-native.png",
+      "sha256": "49f9ca140590ed0728dd7e4a29747a43dc0c6c0a6f7affe755db9e80f63edd0a"
+    },
+    {
+      "bytes": 4369,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.5-after-native-repeat.png",
+      "sha256": "49f9ca140590ed0728dd7e4a29747a43dc0c6c0a6f7affe755db9e80f63edd0a"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.5-after-chromium-1.png",
+      "sha256": "8915855cf41355dae921fe32eb94b800e55b4139488c1c59e4f9be88dd5b164f"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.5-after-chromium-1-first-capture.png",
+      "sha256": "8915855cf41355dae921fe32eb94b800e55b4139488c1c59e4f9be88dd5b164f"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.5-after-chromium-1-second-capture.png",
+      "sha256": "8915855cf41355dae921fe32eb94b800e55b4139488c1c59e4f9be88dd5b164f"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.5-after-chromium-2.png",
+      "sha256": "8915855cf41355dae921fe32eb94b800e55b4139488c1c59e4f9be88dd5b164f"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.5-after-chromium-2-first-capture.png",
+      "sha256": "8915855cf41355dae921fe32eb94b800e55b4139488c1c59e4f9be88dd5b164f"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.5-after-chromium-2-second-capture.png",
+      "sha256": "8915855cf41355dae921fe32eb94b800e55b4139488c1c59e4f9be88dd5b164f"
+    },
+    {
+      "bytes": 4347,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.5-hidden-native.png",
+      "sha256": "78d502069435879d7846f966cf3250c1a254042b05d44a2ded02c429cd42edff"
+    },
+    {
+      "bytes": 4347,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.5-hidden-native-repeat.png",
+      "sha256": "78d502069435879d7846f966cf3250c1a254042b05d44a2ded02c429cd42edff"
+    },
+    {
+      "bytes": 3523,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.5-hidden-chromium-1.png",
+      "sha256": "8a93d3a3ff37d5e7b78c6067d3bc9461389aa3cc9741f8b709c681033abe4a0c"
+    },
+    {
+      "bytes": 3523,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.5-hidden-chromium-1-first-capture.png",
+      "sha256": "8a93d3a3ff37d5e7b78c6067d3bc9461389aa3cc9741f8b709c681033abe4a0c"
+    },
+    {
+      "bytes": 3523,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.5-hidden-chromium-1-second-capture.png",
+      "sha256": "8a93d3a3ff37d5e7b78c6067d3bc9461389aa3cc9741f8b709c681033abe4a0c"
+    },
+    {
+      "bytes": 3523,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.5-hidden-chromium-2.png",
+      "sha256": "8a93d3a3ff37d5e7b78c6067d3bc9461389aa3cc9741f8b709c681033abe4a0c"
+    },
+    {
+      "bytes": 3523,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.5-hidden-chromium-2-first-capture.png",
+      "sha256": "8a93d3a3ff37d5e7b78c6067d3bc9461389aa3cc9741f8b709c681033abe4a0c"
+    },
+    {
+      "bytes": 3523,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.5-hidden-chromium-2-second-capture.png",
+      "sha256": "8a93d3a3ff37d5e7b78c6067d3bc9461389aa3cc9741f8b709c681033abe4a0c"
+    },
+    {
+      "bytes": 4369,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.5-reattached-native.png",
+      "sha256": "49f9ca140590ed0728dd7e4a29747a43dc0c6c0a6f7affe755db9e80f63edd0a"
+    },
+    {
+      "bytes": 4369,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.5-reattached-native-repeat.png",
+      "sha256": "49f9ca140590ed0728dd7e4a29747a43dc0c6c0a6f7affe755db9e80f63edd0a"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.5-reattached-chromium-1.png",
+      "sha256": "8915855cf41355dae921fe32eb94b800e55b4139488c1c59e4f9be88dd5b164f"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.5-reattached-chromium-1-first-capture.png",
+      "sha256": "8915855cf41355dae921fe32eb94b800e55b4139488c1c59e4f9be88dd5b164f"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.5-reattached-chromium-1-second-capture.png",
+      "sha256": "8915855cf41355dae921fe32eb94b800e55b4139488c1c59e4f9be88dd5b164f"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.5-reattached-chromium-2.png",
+      "sha256": "8915855cf41355dae921fe32eb94b800e55b4139488c1c59e4f9be88dd5b164f"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.5-reattached-chromium-2-first-capture.png",
+      "sha256": "8915855cf41355dae921fe32eb94b800e55b4139488c1c59e4f9be88dd5b164f"
+    },
+    {
+      "bytes": 3628,
+      "path": "docs/renderer/evidence/native-inline-replaced-v1/scale-3-phase-0.5-reattached-chromium-2-second-capture.png",
+      "sha256": "8915855cf41355dae921fe32eb94b800e55b4139488c1c59e4f9be88dd5b164f"
+    }
+  ],
+  "complete_pixel_matrices_pending": true,
+  "consuming_app": {
+    "consecutive_chromium_captures": 240,
+    "deterministic_native_image_pairs": 60,
+    "geometry_exact": 60,
+    "images": 60,
+    "independent_chromium_capture_processes": 120,
+    "native_application_runs": 2,
+    "native_callback_states": 30,
+    "pixel_exact": 60
+  },
+  "existing_abi": {
+    "c_consumers": 12,
+    "cpp_consumers": 6,
+    "existing_exports_and_struct_layouts_preserved": true,
+    "exports": 113
+  },
+  "javascript_executed_by_openui": false,
+  "native_application_gate_passed": true,
+  "new_release_states_admitted": 0,
+  "observed_at_utc": "2026-10-05T13:43:42.500780+00:00",
+  "pixel_target": "pinned-chromium-147.0.7727.50",
+  "pixel_tolerance": 0,
+  "preservation_recovery": {
+    "copied_artifact_bytes_unchanged": true,
+    "previous_actual_exit": 1,
+    "previous_probe": "/tmp/openui-native-inline-replaced-preserve-v1534.py",
+    "reason": "Exact ABI output label is C++, not C++_consumers"
+  },
+  "preserver_sha256": "01b26347c99aab88361627cde017e723e362a45d4b5972a89736881ddfa2cdac",
+  "previous_review": {
+    "path": "docs/renderer/generated/native-review-v2.json",
+    "sha256": "1a7cd71009bafc5111f8806d7cc4775eeeb24fe9f33b9dc7a2eb6b4b9044e717"
+  },
+  "public_native_rust_api": true,
+  "release_qualification": false,
+  "root_cause_owner": "openui-layout shared inline replaced box collection",
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "c92e2d08163779f5e55784f14e556ecaa9d16e7f",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "161deb9aa4a63ea5c5e66f7b7198d1d04acaf9f14e4593a949a771b1f838fc97",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "c92e2d08163779f5e55784f14e556ecaa9d16e7f",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "161deb9aa4a63ea5c5e66f7b7198d1d04acaf9f14e4593a949a771b1f838fc97",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "workspace": {
+    "failed": 0,
+    "ignored": 13,
+    "observed_exit_code": 0,
+    "packages_cleaned": 18,
+    "passed": 8538
+  }
+}

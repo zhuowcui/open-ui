@@ -62641,6 +62641,7 @@ fn css2_floats_floats_wrap_bfc_outside_001(
     );
     doc.set_node_state(n4, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n4, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n4, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n4, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n4, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n4, RendererStyleValue::BorderTopWidth(1));
@@ -62909,6 +62910,7 @@ fn css2_floats_floats_wrap_bfc_outside_001_ref(
     );
     doc.set_node_state(n4, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n4, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n4, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n4, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n4, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n4, RendererStyleValue::BorderTopWidth(1));

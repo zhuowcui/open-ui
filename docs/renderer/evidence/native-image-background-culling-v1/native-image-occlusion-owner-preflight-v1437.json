@@ -1,0 +1,11 @@
+{
+  "expected_stages": 8,
+  "local_cargo_commands_run": 0,
+  "probes_parsed": 6,
+  "read_only_checks_passed": 10,
+  "release_qualification": false,
+  "schema_version": 1,
+  "screenshots_generated": 0,
+  "source": "d913041dba9b36987ce83a1b3ed85dc6b4bf93e4",
+  "whole_prior_pipeline_count": 16
+}

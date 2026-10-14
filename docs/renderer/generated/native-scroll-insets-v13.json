@@ -1,0 +1,135 @@
+{
+  "applied_to_umbrella": false,
+  "artifacts": [
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-collapse-source-tools-v939/openui-native-scroll-collapse-chromium-v928.py",
+      "sha256": "0beb6444754bbd94f54571fd84865542caadacf8a65a79f0b244c11e56b6c8d4"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-collapse-source-tools-v939/openui-native-scroll-collapse-checks-v934.py",
+      "sha256": "d2ed07e8d757bd65acae552d8b9ce07ecbbfc28e33ba4164b8a71e0ba6c89b36"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-collapse-source-tools-v939/openui-native-scroll-collapse-build-v935.py",
+      "sha256": "6461a6fc86ee7a922633b3a9c26d63b41d19540fd9c9b737a7de4341405c83e1"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-collapse-source-tools-v939/openui-native-scroll-collapse-rust-v936.py",
+      "sha256": "cbc7c18c0d1662fbd4905ba37a5a71f0037dbd4c55c4824f6ec5f009e52654bb"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-collapse-source-tools-v939/openui-native-scroll-collapse-c-v937.py",
+      "sha256": "57202566fa3b45853ce0e880760b000bdca5a4227780fa410d1850392a884e10"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-collapse-primary-v927/sources.json",
+      "sha256": "075e04d265f47deeac1f6665458d4bc712dcc03d82f7d9790011d71522119330"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-collapse-chromium-v928/receipt.json",
+      "sha256": "73ff65adbd05db2899943783ea0cccf2a88c0e3c30ed07e15f47ce6c68d95079"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-collapse-checks-v934/receipt.json",
+      "sha256": "a5c97f40a33269fd846c7ff46baf9355f3e571690c401b56333ef6ffeba4ab49"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-collapse-source-review-v938.json",
+      "sha256": "b5005be33ddde428f9d3eb5f4ddea92ef3f9b01570c63ec88ccb3782c0581831"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-collapse-queue-retirement-v933.json",
+      "sha256": "1aab50a782aadb70eabd94f4b0c4b628aebfe6046cc5367d130b200cc4340861"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-docs-ci-v924/receipt.json",
+      "sha256": "ade1a9d98dec283b7e29b1c38017984005f5f5d559c8c1f317a3720504f9f005"
+    }
+  ],
+  "documentation_checkpoint_ca5dc7f1": {
+    "all_three_hosted_workflows_complete_success": true,
+    "private_runtime_qualification": false,
+    "skipped_jobs": 5,
+    "skipped_jobs_are_not_passes": true,
+    "successful_jobs": 6
+  },
+  "fresh_chromium_metric_references": {
+    "all_45_prior_reference_states_unchanged": true,
+    "images_rendered": 0,
+    "mutations": [
+      "initial",
+      "scroll to reachable end",
+      "remove end margin"
+    ],
+    "negative_margins_and_following_siblings": true,
+    "not_native_api_passes": true,
+    "observations": 255,
+    "scales": [
+      1,
+      1.25,
+      1.5,
+      2,
+      3
+    ],
+    "states": 765,
+    "structures": [
+      "leaf",
+      "nested",
+      "empty",
+      "nested-empty",
+      "first-empty",
+      "nested-first-empty"
+    ],
+    "writing_modes": [
+      "horizontal-tb",
+      "vertical-rl",
+      "vertical-lr"
+    ]
+  },
+  "inherited_passes": false,
+  "javascript_executed_by_openui": false,
+  "new_release_states_admitted": 0,
+  "permanent_application_contract": "Open UI executes no JavaScript in any version. Consuming native apps use public Rust APIs and Rust callbacks; needed browser-style element behavior is shared Rust Engine work. C/accessibility share that Engine. Separate reference tools alone may execute scripts inside Chromium.",
+  "pixel_target": "Pinned Chromium only, zero tolerance",
+  "previous_index": {
+    "path": "docs/renderer/generated/native-scroll-insets-v12.json",
+    "sha256": "2f6c336e56278543607ada89b9fd9d047397c305eba44e870d2fba7cefb888a5"
+  },
+  "prior_locked_source45": {
+    "api_states_exact": 25,
+    "api_states_total": 45,
+    "commit": "45ddeee3b5abceca5f8e0f0a752aa1e9d10ac14e",
+    "expanded_census": "running, no complete result claimed",
+    "opaque_white_pixel_failures": 14,
+    "original_census": "running, no complete result claimed",
+    "qualification": false
+  },
+  "private_collapsed_margin_trial": {
+    "cargo_and_local_images_run_separately": true,
+    "earlier_unbuilt_queue_retired": "New Engine guard changed to the shared native element constructor before any Cargo or pixel run.",
+    "new_public_rust_consumer": "bindings/rust/openui/examples/native_scroll_collapsed.rs",
+    "new_public_rust_consumer_sha256": "bf61c3779e904ce60a5e1c38099faeaf80b74513a309ccef28257455a93d995a",
+    "own_clean_build": "queued after immutable45 image sweeps and strict audit",
+    "own_native_c_probe": "45 states queued after own clean build",
+    "own_native_rust_probe": "765 states queued after own clean build",
+    "own_pixel_result": "not run; no qualification or gain claimed",
+    "owner": "openui-layout/openui-engine",
+    "read_only_checks_zero": 10,
+    "retained_data": "Collapsed block-end contribution kept separately from an empty child's normal-flow position, using the parent writing mode."
+  },
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "reviewable_patch": {
+    "path": "docs/renderer/evidence/native-scroll-collapsed-v1/native-scroll-collapsed-v1.patch",
+    "reverse_apply_check": 0,
+    "sha256": "4bd5c25eda577f272cd7f6594e950f4e4420d58fc9a35da9ee6ad3d131b62416"
+  },
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "af89e377edae118b2d681048c764bf31bfdfaf7c",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "4accccef0a69c88e220d728974d4c160b92c3264d450a9e17e4ff730f959c1d7",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

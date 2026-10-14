@@ -1,0 +1,13 @@
+{
+  "all_original_source_and_probes_preserved": true,
+  "cargo_commands_run": 0,
+  "failed_assertion": "production == old_production",
+  "fresh_source_root_and_probes_used_for_retry": true,
+  "owner_launched": false,
+  "partial_probes_written": true,
+  "preparation_actual_exit": 1,
+  "reason": "the FFI diff index hashes also change when the test viewport setup changes",
+  "retry_queue": "native-text-content-viewport-queue-prepared-v1635.json",
+  "schema_version": 1,
+  "screenshots_generated": 0
+}

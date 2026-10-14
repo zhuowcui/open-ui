@@ -1,0 +1,23 @@
+<!DOCTYPE html><html><head><style style="display:none!important">* { margin: 0; padding: 0; box-sizing: content-box; } *, *::before, *::after { animation-play-state: paused !important; } ::-webkit-scrollbar { display: none; } html { overflow: hidden; } body { margin: 0; padding: 20px; font-family: DejaVu Sans, sans-serif; font-size: 16px; color: black; background-color: white; }</style></head><body><style>
+  .multicol {
+    column-count: 2;
+    column-fill: auto;
+    column-gap: 0px;
+  }
+  #outer {
+    height: 100px;
+    width: 100px;
+  }
+  #inner {
+    background-color: red;
+    width: 50px;
+    position: relative;
+  }
+  .abs {
+    position: absolute;
+    width: 50px;
+    height: 200px;
+    background-color: green;
+  }
+</style>
+<div class="multicol" id="outer"><div class="multicol" id="inner"><div class="abs"></div></div></div><style>.abs{background:transparent !important}</style></body></html>

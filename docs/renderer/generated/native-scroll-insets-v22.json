@@ -1,0 +1,176 @@
+{
+  "artifacts": [
+    {
+      "name": "original",
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-resolved-full-audit-v1160.json",
+      "sha256": "2d5ec54b21fdec39ebcffb71aae45ef77d74b491bccc23fa725e4bc3f0c145bc"
+    },
+    {
+      "name": "expanded",
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-resolved-expanded-audit-v1164.json",
+      "sha256": "8762a88f1998788ff190566e62c972857c245d9484d20c5c3cf4310b494ba564"
+    },
+    {
+      "name": "raster",
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-resolved-raster-audit-v1135.json",
+      "sha256": "16bf7965ea326aee57bbfae61dc7fef3d02a23a3abb1f2c1fefcce4112b63c55"
+    },
+    {
+      "name": "review",
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-reviewed-cause-v1163.json",
+      "sha256": "80248a94cd9f8ba8aa46f53f62b5ee885a21c12f9dc18d77de05278f7de1bc0f"
+    },
+    {
+      "name": "checks",
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-checks-v1156/receipt.json",
+      "sha256": "c6579ec5c77fd861c07aec13b8463aa26ab6daa966709b2670ad4e26cce2f028"
+    },
+    {
+      "name": "resolved_pipeline",
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-resolved-pipeline-v1134/receipt.json",
+      "sha256": "e7b34ca7c05f1a10efd6ef933a1a398ae2cd4e598f82c3779afbca6152c30435"
+    }
+  ],
+  "contract": "Open UI executes no JavaScript in any version. Consuming apps call public native Rust APIs and Rust callbacks over the shared Engine. Needed browser element behavior must be implemented in Rust and tested from a consuming app. Chromium alone supplies expected pixels with zero tolerance; old Open UI screenshots are immutable provenance.",
+  "new_release_states_admitted": 0,
+  "prior_snapshot": {
+    "path": "docs/renderer/generated/native-scroll-insets-v21.json",
+    "sha256": "506f4d13482a202aab3861a0531d61857039f0f2c4d0df1fe35118487d9f0fec"
+  },
+  "private_intrinsic_and_raster_options_candidate": {
+    "applied_to_umbrella": false,
+    "base_commit": "5cc75147b89e74198102314657689ab6bec1f77c",
+    "baseline_engine_guard": {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "-p",
+        "openui-engine",
+        "native_intrinsic_absolute_width_preserves_shaped_grid_and_indentation",
+        "--",
+        "--nocapture"
+      ],
+      "failed": 1,
+      "log_sha256": "bb4f92a9015f54c5e0f71e5cc49b7887960644cf8ca70008ec302e4d0bec462c",
+      "name": "baseline-engine-guard",
+      "observed_exit_code": 101,
+      "passed": 0,
+      "source": {
+        "clean": true,
+        "commit": "05dc5b22af6500bbc71354e0017371d8c40d42e3",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "981e1e94612979040bc0beb1f3ceb2b13d7ce86454ddfa5aa3c82dce7cdbe724",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "05dc5b22af6500bbc71354e0017371d8c40d42e3",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "981e1e94612979040bc0beb1f3ceb2b13d7ce86454ddfa5aa3c82dce7cdbe724",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "build_snapshot": {
+      "path": "docs/renderer/evidence/native-inherited-styles-v1/native-intrinsic-build-snapshot-v1.json",
+      "sha256": "b0baa0f8bf399d0b2640ff89e8b1b1f0409852f4da0fe77cf2575389ca756d6b"
+    },
+    "build_state_at_snapshot": "running-fresh-fixed-build",
+    "fixed_full_census_pass_claimed": false,
+    "fixed_native_pixels_pass_claimed": false,
+    "fixed_rust_tests_pass_claimed": false,
+    "independent_chromium_advance_observations": 120,
+    "independent_chromium_neighbor_observations": 2000,
+    "local_builds_and_pixel_sweeps_are_separate": true,
+    "new_public_rust_api": [
+      "Document::with_options",
+      "Document::with_font_collection_and_options",
+      "Document::raster_configuration",
+      "AppBuilder::raster_configuration",
+      "HeadlessApp::with_options"
+    ],
+    "oracle_inputs_changed": false,
+    "public_native_consumer_cases_prepared": 200,
+    "read_only_checks_passed": 10,
+    "reviewed_cause": {
+      "path": "docs/renderer/evidence/native-inherited-styles-v1/native-intrinsic-reviewed-cause-v1.json",
+      "sha256": "80248a94cd9f8ba8aa46f53f62b5ee885a21c12f9dc18d77de05278f7de1bc0f"
+    },
+    "reviewed_root_causes": [
+      "Intrinsic width discarded positive shaped-advance remainders before LayoutUnit ceiling; Chromium retains them.",
+      "Ordinary inline sequences and element-owned native text bypassed shaped intrinsic sequence sizing, and first-line text indentation was omitted.",
+      "Intrinsic fallback used direct SkFont measurement rather than the shaped run used by inline layout."
+    ],
+    "source": {
+      "clean": true,
+      "commit": "c4a74a6d9a77a6f597601370d07343f16bbe5f0a",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "65947a145d6643aa41d56c7017209397df8acb2949c2fd6fe8780f0b8e98968e",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_patch": {
+      "bytes": 33546,
+      "path": "docs/renderer/evidence/native-inherited-styles-v1/native-intrinsic-and-raster-options-v1.patch",
+      "sha256": "b948be231bac7edfb66fd6e5098a9da8633cefa30a32c7260f47d55ff676687d"
+    },
+    "verification_snapshot": {
+      "path": "docs/renderer/evidence/native-inherited-styles-v1/native-intrinsic-pipeline-snapshot-v1.json",
+      "sha256": "0a285add678730243a648e7a4a380801b4d5dbd65d4e49c074b70cf65261ef35"
+    },
+    "verification_state_at_snapshot": "awaiting-separate-native-build"
+  },
+  "private_resolved_style_candidate": {
+    "actual_strict_census_exits": [
+      1,
+      1
+    ],
+    "all_1600_raster_invariants_unchanged": true,
+    "all_804_addition_invariants_unchanged": true,
+    "all_original_and_expanded_comparison_invariants_restore_applied_baseline": true,
+    "applied_to_umbrella": false,
+    "expanded_addition_cases_exact_all_four_profiles": 200,
+    "expanded_addition_cases_total": 201,
+    "expanded_results": {
+      "different": 1591,
+      "errors": 0,
+      "exact": 22137,
+      "profile_result_sha256": "6b9e3def73e3c5bdcac6e643526a666f3c07cbe37756af032fd5be826e02f02a",
+      "total": 23728
+    },
+    "focused_exact": 640,
+    "new_original_exact_gains_above_applied_baseline": 0,
+    "new_static_consumer_geometry_exact": 0,
+    "new_static_consumer_pixels_exact": 0,
+    "new_static_consumer_results_remain_failures": true,
+    "new_static_consumer_total": 60,
+    "original_exact_matches_restored": 22,
+    "original_residual_ids": 882,
+    "original_results": {
+      "different": 1590,
+      "errors": 0,
+      "exact": 21334,
+      "profile_result_sha256": "0a40d5179299212c5ec682d1efa8a66d0389f8e9ea64d32ee7d79b9e47d97d97",
+      "total": 22924
+    },
+    "primitive_exact": 960,
+    "source": {
+      "clean": true,
+      "commit": "5cc75147b89e74198102314657689ab6bec1f77c",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "ede290a86642a93227b44509da846fc2b22821f235129c93c8d79d54c6a0f5ff",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "probe_sha256": "f21e5cc47e19bfe189125b53a4b7b8db92e0f8231f9796a4eb1462e3a3875807",
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "required_work_still_open": [
+    "Complete original and expanded Chromium equality with reviewed residual ownership.",
+    "Fix native absolute intrinsic widths and review glyph advance and paint discrepancies.",
+    "Complete all needed public native Rust element APIs and shared C/accessibility parity.",
+    "Complete compositor/3D, blocked-UI animation, hardening, hardware, accessibility, performance, packaging, provenance and approved signed publication."
+  ],
+  "schema_version": 1
+}

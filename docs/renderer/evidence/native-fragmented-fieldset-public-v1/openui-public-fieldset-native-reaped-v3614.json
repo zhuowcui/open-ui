@@ -1,0 +1,27 @@
+{
+  "actual_audit_exit_code": 0,
+  "actual_owner_exit_code": 0,
+  "all_local_commands_terminal": true,
+  "all_native_apis_qualified": false,
+  "audit_session": 95097,
+  "audit_sha256": "df6ae1977b16b68dd509e5e4102bac1923fc173ada2d36735992419434141ed0",
+  "full_renderer_contract_qualified": false,
+  "native_bounds_exact": 187,
+  "native_client_rect_sets_exact": 187,
+  "native_images_different": 4,
+  "native_images_exact": 7,
+  "owner_absent": true,
+  "owner_session": 83645,
+  "paint_tests_passed": 168,
+  "receipt_sha256": "42d89437aa8fe4d9eff08f37d16d9337f7a194fa76a9a1ebb16bdc4fcc001314",
+  "release_qualified": false,
+  "retired_for_reexecution_after_source_or_target_mutation": true,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "dc8a540e6281a83dc2e71e5248f297e1c3baf83d",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "e6ac872db488e23c7d0967cb90e8bfc6848a53269549ad1f4817cc6bcb1e51f7",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

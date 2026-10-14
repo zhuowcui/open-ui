@@ -1,0 +1,24 @@
+{
+  "all_commands_terminal": false,
+  "new_release_states_admitted": 0,
+  "probe_sha256": "a1e2805213658553b1787caf5fdd87fb5b7593c64845d978076044e2c49b318b",
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "c4a74a6d9a77a6f597601370d07343f16bbe5f0a",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "65947a145d6643aa41d56c7017209397df8acb2949c2fd6fe8780f0b8e98968e",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "c4a74a6d9a77a6f597601370d07343f16bbe5f0a",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "65947a145d6643aa41d56c7017209397df8acb2949c2fd6fe8780f0b8e98968e",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "state": "awaiting-separate-native-build",
+  "steps": []
+}

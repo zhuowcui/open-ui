@@ -1,0 +1,669 @@
+diff --git a/bindings/rust/openui-engine/src/lib.rs b/bindings/rust/openui-engine/src/lib.rs
+index 6c14aebb..51cd5e4b 100644
+--- a/bindings/rust/openui-engine/src/lib.rs
++++ b/bindings/rust/openui-engine/src/lib.rs
+@@ -2501,6 +2501,106 @@ mod tests {
+         );
+     }
+ 
++    #[test]
++    fn opaque_image_foreground_obscures_only_a_fully_covered_native_background() {
++        for display in [Display::Block, Display::Inline] {
++            let mut engine = Engine::new_with_options(
++                ViewportMetrics::from_logical_size(320.0, 240.0, 1.25).unwrap(),
++                EngineOptions {
++                    raster_configuration: RasterConfiguration::deterministic_aliased(false),
++                },
++            )
++            .unwrap();
++            engine
++                .set_property(
++                    engine.root(),
++                    StyleProperty::BackgroundColor,
++                    Color::WHITE.into(),
++                )
++                .unwrap();
++            let parent = engine.create_native_element(ElementTag::Div).unwrap();
++            for (property, value) in [
++                (StyleProperty::Position, Position::Absolute.into()),
++                (StyleProperty::Left, LengthValue::px(20.0).into()),
++                (StyleProperty::Top, LengthValue::px(20.0).into()),
++                (StyleProperty::Width, LengthValue::px(150.0).into()),
++                (StyleProperty::Height, LengthValue::px(150.0).into()),
++                (StyleProperty::BackgroundColor, Color::RED.into()),
++            ] {
++                engine.set_property(parent, property, value).unwrap();
++            }
++            engine.append_child(engine.root(), parent).unwrap();
++            let image = engine.create_native_element(ElementTag::Image).unwrap();
++            let resource = engine.register_image_resource(
++                "memory:opaque-green-image",
++                "image/png",
++                "d49ce16b513fa1b4fcf1431bc2915799ee8effb452820f35e9e6fba251e8cafe",
++                include_bytes!("../../openui/tests/assets/green-200.png").to_vec(),
++            );
++            engine
++                .set_image_resource(image, resource, Some((200.0, 200.0)))
++                .unwrap();
++            engine
++                .set_property(image, StyleProperty::Display, display.into())
++                .unwrap();
++            engine
++                .set_property(image, StyleProperty::Width, LengthValue::px(150.0).into())
++                .unwrap();
++            engine
++                .set_property(image, StyleProperty::Height, LengthValue::px(150.0).into())
++                .unwrap();
++            engine.append_child(parent, image).unwrap();
++            assert_eq!(
++                engine.bounds(parent).unwrap(),
++                engine.bounds(image).unwrap()
++            );
++            let frame = SoftwareCompositor::default()
++                .render(&engine.scene().unwrap())
++                .unwrap();
++            let edge = 50 * frame.stride + 212 * 4;
++            // Immutable Chromium captures show one green edge over white,
++            // without the otherwise obscured red background underneath.
++            assert_eq!(
++                &frame.pixels[edge..edge + 4],
++                &[126, 191, 126, 255],
++                "display={display:?}"
++            );
++
++            engine
++                .set_property(image, StyleProperty::Width, LengthValue::px(100.0).into())
++                .unwrap();
++            let frame = SoftwareCompositor::default()
++                .render(&engine.scene().unwrap())
++                .unwrap();
++            let uncovered = 50 * frame.stride + 200 * 4;
++            assert_eq!(
++                &frame.pixels[uncovered..uncovered + 4],
++                &[255, 0, 0, 255],
++                "partial image must retain background"
++            );
++
++            engine
++                .set_property(image, StyleProperty::Width, LengthValue::px(150.0).into())
++                .unwrap();
++            engine
++                .set_property(image, StyleProperty::Opacity, 0.5f32.into())
++                .unwrap();
++            let frame = SoftwareCompositor::default()
++                .render(&engine.scene().unwrap())
++                .unwrap();
++            let interior = 50 * frame.stride + 50 * 4;
++            assert_eq!(
++                frame.pixels[interior + 2],
++                0,
++                "translucent image must blend over red"
++            );
++            assert!(
++                frame.pixels[interior] > 0,
++                "translucent image must reveal red"
++            );
++        }
++    }
++
+     #[test]
+     fn application_fonts_are_document_owned_invalidate_and_survive_in_scenes() {
+         let viewport = ViewportMetrics::from_logical_size(64.0, 64.0, 1.0).unwrap();
+diff --git a/bindings/rust/openui-paint/src/painter.rs b/bindings/rust/openui-paint/src/painter.rs
+index 86c93884..d7aafb1a 100644
+--- a/bindings/rust/openui-paint/src/painter.rs
++++ b/bindings/rust/openui-paint/src/painter.rs
+@@ -16704,7 +16704,8 @@ fn has_negative_stacking_descendant(fragment: &Fragment, doc: &Document) -> bool
+ /// below a border: retaining it makes independently antialiased border and
+ /// child edges blend against that color instead of their shared backdrop.
+ /// Keep this deliberately conservative. It recognizes only a single
+-/// axis-aligned, unfragmented box whose own border-box background is opaque.
++/// axis-aligned, unfragmented box with an opaque border-box background or a
++/// decoded opaque image covering its complete border box.
+ /// An anonymous line may wrap an atomic inline box without changing where
+ /// that box paints; include that line's offset when testing coverage.
+ fn opaque_in_flow_child_covers_inner_border_box(fragment: &Fragment, doc: &Document) -> bool {
+@@ -16758,8 +16759,7 @@ fn opaque_in_flow_child_covers_inner_border_box(fragment: &Fragment, doc: &Docum
+             .paint_background_color_override
+             .as_ref()
+             .unwrap_or(&child_style.background_color);
+-        if !background_color.is_opaque()
+-            || child_style.opacity < 1.0
++        if child_style.opacity < 1.0
+             || child_style.visibility != Visibility::Visible
+             || child_style.position != Position::Static
+             || child_style.transform != openui_style::Transform2D::IDENTITY
+@@ -16777,13 +16777,52 @@ fn opaque_in_flow_child_covers_inner_border_box(fragment: &Fragment, doc: &Docum
+         let child_top = wrapper_offset.top + child.offset.top;
+         let child_right = child_left + child.size.width;
+         let child_bottom = child_top + child.size.height;
+-        child_left <= inner_left
++        let covers_inner_border_box = child_left <= inner_left
+             && child_top <= inner_top
+             && child_right >= inner_right
+-            && child_bottom >= inner_bottom
++            && child_bottom >= inner_bottom;
++        covers_inner_border_box
++            && (background_color.is_opaque()
++                || (!fragment.node_id.is_none()
++                    && fragment.node_id != doc.root()
++                    && doc.node(fragment.node_id).style.box_shadow.is_empty()
++                    && opaque_image_covers_border_box(child, doc)))
+     })
+ }
+ 
++/// Blink's LayoutImage opacity proof includes image foreground, not only its
++/// background color. Restrict this proof to the default object position and
++/// fill/cover fits, with no border, padding, or layer that could expose the
++/// parent. Image alpha is checked on the actual decoded document resource.
++fn opaque_image_covers_border_box(fragment: &Fragment, doc: &Document) -> bool {
++    let node = doc.node(fragment.node_id);
++    let style = &node.style;
++    if fragment.border != BoxStrut::zero()
++        || fragment.padding != BoxStrut::zero()
++        || fragment.size.width <= LayoutUnit::zero()
++        || fragment.size.height <= LayoutUnit::zero()
++        || fragment.block_axis_clip_only
++        || fragment.inline_axis_clip_only
++        || !fragment.promoted_transform_ancestors.is_empty()
++        || style.establishes_transform_containing_block
++        || style.will_change_transform
++        || style.filter_grayscale > 0.0
++        || !matches!(style.shape_outside, openui_style::ShapeOutside::None)
++        || !matches!(style.object_fit, ObjectFit::Fill | ObjectFit::Cover)
++        || !matches!(style.object_position.x, BackgroundPosition::Percent(value) if value == 50.0)
++        || !matches!(style.object_position.y, BackgroundPosition::Percent(value) if value == 50.0)
++    {
++        return false;
++    }
++    let Some(replaced) = node.replaced else {
++        return false;
++    };
++    let ReplacedResourceKind::Image(id) = replaced.resource else {
++        return false;
++    };
++    crate::image_resource::decode_image_resource(doc, id).is_ok_and(|image| image.is_opaque())
++}
++
+ /// A child may cover the local border box but still be moved or clipped in a
+ /// fragmentainer. Preserve the parent's background in that context.
+ fn borderless_background_can_be_occluded(fragment: &Fragment, doc: &Document) -> bool {
+@@ -22033,6 +22072,123 @@ mod tests {
+         ));
+     }
+ 
++    #[test]
++    fn opaque_image_background_culling_preserves_uncovered_and_effected_boxes() {
++        let mut doc = Document::new();
++        let parent = doc.create_node(ElementTag::Div);
++        let image_node = doc.create_node(ElementTag::Image);
++        let resource = doc.register_image_resource(
++            "memory:opaque-image-guard",
++            "image/png",
++            "d49ce16b513fa1b4fcf1431bc2915799ee8effb452820f35e9e6fba251e8cafe",
++            include_bytes!("../../openui/tests/assets/green-200.png").to_vec(),
++        );
++        let replaced = openui_dom::ReplacedContent {
++            resource: ReplacedResourceKind::Image(resource),
++            intrinsic_width: Some(200.0),
++            intrinsic_height: Some(200.0),
++            intrinsic_ratio: Some((200.0, 200.0)),
++        };
++        doc.node_mut(image_node).replaced = Some(replaced);
++        let size = PhysicalSize::new(LayoutUnit::from_i32(150), LayoutUnit::from_i32(150));
++        let mut fragment = Fragment::new_box(parent, size);
++        fragment.children.push(Fragment::new_box(image_node, size));
++        assert!(opaque_in_flow_child_covers_inner_border_box(
++            &fragment, &doc
++        ));
++
++        fragment.children[0].size.width = LayoutUnit::from_i32(100);
++        assert!(!opaque_in_flow_child_covers_inner_border_box(
++            &fragment, &doc
++        ));
++        fragment.children[0].size = size;
++        fragment.children[0].padding.left = LayoutUnit::from_i32(1);
++        assert!(!opaque_in_flow_child_covers_inner_border_box(
++            &fragment, &doc
++        ));
++        fragment.children[0].padding = BoxStrut::zero();
++        fragment.children[0].border.left = LayoutUnit::from_i32(1);
++        assert!(!opaque_in_flow_child_covers_inner_border_box(
++            &fragment, &doc
++        ));
++        fragment.children[0].border = BoxStrut::zero();
++
++        for fit in [ObjectFit::Contain, ObjectFit::None, ObjectFit::ScaleDown] {
++            doc.update_resolved_style(image_node, |style| style.object_fit = fit);
++            assert!(!opaque_in_flow_child_covers_inner_border_box(
++                &fragment, &doc
++            ));
++        }
++        doc.update_resolved_style(image_node, |style| style.object_fit = ObjectFit::Cover);
++        assert!(opaque_in_flow_child_covers_inner_border_box(
++            &fragment, &doc
++        ));
++        let original_style = doc.node(image_node).style.clone();
++        let changes: [fn(&mut ComputedStyle); 7] = [
++            |style: &mut ComputedStyle| style.opacity = 0.5,
++            |style: &mut ComputedStyle| style.filter_blur = 1.0,
++            |style: &mut ComputedStyle| style.filter_grayscale = 0.5,
++            |style: &mut ComputedStyle| style.will_change_transform = true,
++            |style: &mut ComputedStyle| style.establishes_transform_containing_block = true,
++            |style: &mut ComputedStyle| style.object_position.x = BackgroundPosition::start(),
++            |style: &mut ComputedStyle| style.shape_outside = openui_style::ShapeOutside::BorderBox,
++        ];
++        for change in changes {
++            doc.update_resolved_style(image_node, |style| {
++                *style = original_style.clone();
++                change(style);
++            });
++            assert!(!opaque_in_flow_child_covers_inner_border_box(
++                &fragment, &doc
++            ));
++        }
++        doc.update_resolved_style(image_node, |style| *style = original_style);
++        doc.update_resolved_style(parent, |style| {
++            style.box_shadow.push(BoxShadow {
++                offset_x: 1.0,
++                offset_y: 1.0,
++                blur_radius: 1.0,
++                spread_radius: 0.0,
++                color: Color::BLACK,
++                inset: false,
++            });
++        });
++        assert!(!opaque_in_flow_child_covers_inner_border_box(
++            &fragment, &doc
++        ));
++        doc.update_resolved_style(parent, |style| style.box_shadow.clear());
++        doc.node_mut(image_node).replaced = Some(openui_dom::ReplacedContent {
++            resource: ReplacedResourceKind::TransparentCanvas,
++            ..replaced
++        });
++        assert!(!opaque_in_flow_child_covers_inner_border_box(
++            &fragment, &doc
++        ));
++        doc.node_mut(image_node).replaced = Some(openui_dom::ReplacedContent {
++            resource: ReplacedResourceKind::Image(ImageResourceId::new(999)),
++            ..replaced
++        });
++        assert!(!opaque_in_flow_child_covers_inner_border_box(
++            &fragment, &doc
++        ));
++
++        let translucent = doc.register_image_resource(
++            "memory:translucent-image-guard",
++            "image/x-openui-rgba8",
++            "54a971547aa343f51a9e41492ecffecf7d6106939467fa4307370edf3fa12607",
++            vec![
++                79, 85, 73, 82, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 128, 0, 128,
++            ],
++        );
++        doc.node_mut(image_node).replaced = Some(openui_dom::ReplacedContent {
++            resource: ReplacedResourceKind::Image(translucent),
++            ..replaced
++        });
++        assert!(!opaque_in_flow_child_covers_inner_border_box(
++            &fragment, &doc
++        ));
++    }
++
+     #[test]
+     fn generated_images_resample_only_when_repetition_or_rounding_requires_it() {
+         let resolved = (24.0, 18.0);
+diff --git a/bindings/rust/openui/examples/native_fieldset_intrinsics.rs b/bindings/rust/openui/examples/native_fieldset_intrinsics.rs
+new file mode 100644
+index 00000000..b8af7b57
+--- /dev/null
++++ b/bindings/rust/openui/examples/native_fieldset_intrinsics.rs
+@@ -0,0 +1,131 @@
++//! Native fieldset and image sizing, including mutation from a Rust callback.
++
++use openui::prelude::*;
++use std::{cell::Cell, path::PathBuf, rc::Rc};
++
++fn bounds_json(element: &Element) -> Result<String, Box<dyn std::error::Error>> {
++    let bounds = element.bounding_rect()?.ok_or("native box required")?;
++    Ok(format!(
++        "{{\"x\":{},\"y\":{},\"width\":{},\"height\":{}}}",
++        f64::from(bounds.x),
++        f64::from(bounds.y),
++        f64::from(bounds.width),
++        f64::from(bounds.height),
++    ))
++}
++
++fn main() -> Result<(), Box<dyn std::error::Error>> {
++    let mut args = std::env::args().skip(1);
++    let output = PathBuf::from(args.next().ok_or("output directory required")?);
++    let scale: f64 = args.next().ok_or("device scale required")?.parse()?;
++    let tag = args.next().ok_or("container kind required")?;
++    let padding: f32 = args.next().unwrap_or_else(|| "0".into()).parse()?;
++    let sizing = args.next().unwrap_or_else(|| "content-box".into());
++    let width: f64 = args.next().unwrap_or_else(|| "800".into()).parse()?;
++    let height: f64 = args.next().unwrap_or_else(|| "600".into()).parse()?;
++    if args.next().is_some() || !matches!(tag.as_str(), "div" | "fieldset") {
++        return Err("unexpected container or arguments".into());
++    }
++    if !matches!(padding, 0.0 | 10.0) {
++        return Err("padding must be zero or ten logical pixels".into());
++    }
++    let box_sizing = match sizing.as_str() {
++        "content-box" => BoxSizing::ContentBox,
++        "border-box" => BoxSizing::BorderBox,
++        _ => return Err("unknown box sizing".into()),
++    };
++    let document = Document::with_font_collection(
++        ViewportMetrics::from_logical_size(width, height, scale)?,
++        FontCollection::deterministic_test(),
++    )?;
++    let root = document.body();
++    root.set_background_color(Color::WHITE)?;
++    root.set_font_family(FontFamilyList::single("Ahem"))?;
++    root.set_font_size(LengthValue::px(16.0))?;
++    root.set_line_height(LineHeight::Number(1.0))?;
++    root.set_padding_top(LengthValue::px(20.0))?;
++    root.set_padding_right(LengthValue::px(20.0))?;
++    root.set_padding_bottom(LengthValue::px(20.0))?;
++    root.set_padding_left(LengthValue::px(20.0))?;
++    let resource = document.register_image_resource(
++        "native-green-image",
++        "image/png",
++        "d49ce16b513fa1b4fcf1431bc2915799ee8effb452820f35e9e6fba251e8cafe",
++        include_bytes!(concat!(
++            env!("CARGO_MANIFEST_DIR"),
++            "/tests/assets/green-200.png"
++        ))
++        .to_vec(),
++    )?;
++    let container = Element::create(&document, &tag)?;
++    container.set_display(Display::Block)?;
++    container.set_box_sizing(box_sizing)?;
++    container.set_width(LengthValue::Computed(Length::fit_content()))?;
++    container.set_height(LengthValue::px(100.0))?;
++    container.set_background_color(Color::RED)?;
++    let border = || Border {
++        width: 0,
++        style: BorderStyle::None,
++        color: Color::BLACK,
++    };
++    container.set_border_top(border())?;
++    container.set_border_right(border())?;
++    container.set_border_bottom(border())?;
++    container.set_border_left(border())?;
++    container.set_margin_top(LengthValue::px(0.0))?;
++    container.set_margin_right(LengthValue::px(0.0))?;
++    container.set_margin_bottom(LengthValue::px(0.0))?;
++    container.set_margin_left(LengthValue::px(0.0))?;
++    container.set_padding_top(LengthValue::px(padding))?;
++    container.set_padding_right(LengthValue::px(padding))?;
++    container.set_padding_bottom(LengthValue::px(padding))?;
++    container.set_padding_left(LengthValue::px(padding))?;
++    root.append_child(&container)?;
++    let image = Element::create(&document, "img")?;
++    image.set_display(Display::Inline)?;
++    image.set_height(LengthValue::percent(100.0))?;
++    image.set_image_resource(resource, Some((200.0, 200.0)))?;
++    container.append_child(&image)?;
++
++    let before = format!(
++        "{{\"container\":{},\"image\":{}}}",
++        bounds_json(&container)?,
++        bounds_json(&image)?
++    );
++    std::fs::create_dir_all(&output)?;
++    std::fs::write(output.join("before.png"), document.render_to_png_buffer()?)?;
++    let calls = Rc::new(Cell::new(0));
++    let observed = calls.clone();
++    let target = container.downgrade();
++    container.on("click", move |_| {
++        target
++            .upgrade()
++            .expect("native container remains attached")
++            .set_height(LengthValue::px(150.0))
++            .expect("native height mutation");
++        observed.set(observed.get() + 1);
++    })?;
++    container.click()?;
++    if calls.get() != 1 {
++        return Err("native click callback did not run once".into());
++    }
++    let after = format!(
++        "{{\"container\":{},\"image\":{}}}",
++        bounds_json(&container)?,
++        bounds_json(&image)?
++    );
++    std::fs::write(output.join("after.png"), document.render_to_png_buffer()?)?;
++    std::fs::write(
++        output.join("geometry.json"),
++        format!("{{\"before\":{before},\"after\":{after}}}\n"),
++    )?;
++    let weak = image.downgrade();
++    drop(image);
++    drop(container);
++    drop(root);
++    drop(document);
++    if weak.upgrade().is_some() {
++        return Err("native callback retained document after teardown".into());
++    }
++    Ok(())
++}
+diff --git a/bindings/rust/openui/examples/native_image_background_culling.rs b/bindings/rust/openui/examples/native_image_background_culling.rs
+new file mode 100644
+index 00000000..9a46c76a
+--- /dev/null
++++ b/bindings/rust/openui/examples/native_image_background_culling.rs
+@@ -0,0 +1,144 @@
++//! Opaque image coverage and neighboring styles through public Rust methods.
++
++use openui::prelude::*;
++use std::{cell::Cell, path::PathBuf, rc::Rc};
++
++fn bounds_json(element: &Element) -> Result<String, Box<dyn std::error::Error>> {
++    let rect = element
++        .bounding_rect()?
++        .ok_or("native image bounds required")?;
++    Ok(format!(
++        "{{\"x\":{},\"y\":{},\"width\":{},\"height\":{}}}",
++        rect.x, rect.y, rect.width, rect.height
++    ))
++}
++
++fn main() -> Result<(), Box<dyn std::error::Error>> {
++    let mut args = std::env::args().skip(1);
++    let output = PathBuf::from(args.next().ok_or("output directory required")?);
++    let scale: f64 = args.next().ok_or("device scale required")?.parse()?;
++    let display = args.next().ok_or("image display required")?;
++    let variant = args.next().ok_or("image coverage variant required")?;
++    let phase: f32 = args
++        .next()
++        .ok_or("logical origin phase required")?
++        .parse()?;
++    if args.next().is_some() || !matches!(display.as_str(), "block" | "inline") {
++        return Err("unexpected display or arguments".into());
++    }
++    if !matches!(
++        variant.as_str(),
++        "opaque" | "partial" | "opacity" | "padding" | "contain" | "offset" | "blur" | "shadow"
++    ) {
++        return Err("unknown image coverage variant".into());
++    }
++    let document = Document::with_font_collection(
++        ViewportMetrics::from_logical_size(320.0, 240.0, scale)?,
++        FontCollection::deterministic_test(),
++    )?;
++    let root = document.body();
++    root.set_background_color(Color::WHITE)?;
++    root.set_font_family(FontFamilyList::single("Ahem"))?;
++    root.set_font_size(LengthValue::px(16.0))?;
++    root.set_line_height(LineHeight::Number(1.0))?;
++    let resource = document.register_image_resource(
++        "native-opaque-image",
++        "image/png",
++        "d49ce16b513fa1b4fcf1431bc2915799ee8effb452820f35e9e6fba251e8cafe",
++        include_bytes!("../tests/assets/green-200.png").to_vec(),
++    )?;
++    let container = Element::create(&document, "div")?;
++    container.set_display(Display::Block)?;
++    container.set_position(Position::Absolute)?;
++    container.set_left(Length::px(20.0 + phase))?;
++    container.set_top(Length::px(20.0 + phase))?;
++    container.set_width(LengthValue::px(150.0))?;
++    container.set_height(LengthValue::px(100.0))?;
++    container.set_background_color(Color::RED)?;
++    if variant == "shadow" {
++        container.set_box_shadow(vec![BoxShadow {
++            offset_x: 1.0,
++            offset_y: 1.0,
++            blur_radius: 1.0,
++            spread_radius: 0.0,
++            color: Color::BLACK,
++            inset: false,
++        }])?;
++    }
++    root.append_child(&container)?;
++    let image = Element::create(&document, "img")?;
++    image.set_display(if display == "block" {
++        Display::Block
++    } else {
++        Display::Inline
++    })?;
++    image.set_width(LengthValue::px(if variant == "partial" {
++        100.0
++    } else {
++        150.0
++    }))?;
++    image.set_height(LengthValue::px(100.0))?;
++    image.set_image_resource(resource, Some((200.0, 200.0)))?;
++    match variant.as_str() {
++        "opacity" => image.set_opacity(0.5)?,
++        "padding" => image.set_padding(Edges::all(LengthValue::px(1.0)))?,
++        "contain" => image.set_object_fit(ObjectFit::Contain)?,
++        "offset" => image.set_object_position(ObjectPosition {
++            x: BackgroundPosition::start(),
++            y: BackgroundPosition::center(),
++        })?,
++        "blur" => image.set_filter_blur(1.0)?,
++        _ => {}
++    }
++    container.append_child(&image)?;
++    let before = format!(
++        "{{\"container\":{},\"image\":{}}}",
++        bounds_json(&container)?,
++        bounds_json(&image)?
++    );
++    std::fs::create_dir_all(&output)?;
++    std::fs::write(output.join("before.png"), document.render_to_png_buffer()?)?;
++    let calls = Rc::new(Cell::new(0));
++    let observed = calls.clone();
++    let container_target = container.downgrade();
++    let image_target = image.downgrade();
++    container.on("click", move |_| {
++        container_target
++            .upgrade()
++            .expect("native container remains attached")
++            .set_height(LengthValue::px(150.0))
++            .expect("native container height mutation");
++        image_target
++            .upgrade()
++            .expect("native image remains attached")
++            .set_height(LengthValue::px(150.0))
++            .expect("native image height mutation");
++        observed.set(observed.get() + 1);
++    })?;
++    container.click()?;
++    if calls.get() != 1 {
++        return Err("native Rust callback did not run exactly once".into());
++    }
++    let after = format!(
++        "{{\"container\":{},\"image\":{}}}",
++        bounds_json(&container)?,
++        bounds_json(&image)?
++    );
++    std::fs::write(output.join("after.png"), document.render_to_png_buffer()?)?;
++    std::fs::write(
++        output.join("geometry.json"),
++        format!(
++            "{{\"before\":{before},\"after\":{after},\"callback_count\":{}}}\n",
++            calls.get()
++        ),
++    )?;
++    let weak = image.downgrade();
++    drop(image);
++    drop(container);
++    drop(root);
++    drop(document);
++    if weak.upgrade().is_some() {
++        return Err("native callback retained the document after teardown".into());
++    }
++    Ok(())
++}
+diff --git a/bindings/rust/openui/tests/assets/green-200.png b/bindings/rust/openui/tests/assets/green-200.png
+new file mode 100644
+index 0000000000000000000000000000000000000000..1dcc392a6ef71e55302c40d41a547cf3f75a8f24
+GIT binary patch
+literal 275
+zcmeAS@N?(olHy`uVBq!ia0vp^CqS5y8Awi_W^)%vF$egBxH2>_%=x)=B9O~j;1OBO
+zz`!jG!i)^F=12eq*-JcqUD@xmi}ET8|5~)86DTC(>Eaj?;r{kuBap*zc)`!$_=gOk
+zj37=8n@9iy<Np^D)<BMAiEBiObAE1aYF-J0b5UwyNotBhd1gt5g1e`0KzJjcI8c!)
+zNKpz<$|@PGg2BkZ&{WsJT-U%b#L&pf$jr*XMBBi~%D_PR;Nfp58glbfGSez?YY3WC
+R?FH1p;OXk;vd$@?2>=uoN8A7a
+
+literal 0
+HcmV?d00001
+
+diff --git a/docs/renderer/generated/author-style-inventory.json b/docs/renderer/generated/author-style-inventory.json
+index db000a0c..c056a637 100644
+--- a/docs/renderer/generated/author-style-inventory.json
++++ b/docs/renderer/generated/author-style-inventory.json
+@@ -4,9 +4,9 @@
+     "bindings/rust/openui-paint/src"
+   ],
+   "counts": {
+-    "consumed": 217,
++    "consumed": 218,
+     "internal": 14,
+-    "public_typed": 203,
++    "public_typed": 204,
+     "unclassified": 0
+   },
+   "fields": [
+@@ -2571,6 +2571,18 @@
+       "property_id": 215,
+       "rust_type": "ScrollbarWidth"
+     },
++    {
++      "canonical_schema_entry": true,
++      "classification": "public-typed",
++      "consumers": [
++        "bindings/rust/openui-paint/src/painter.rs"
++      ],
++      "css_name": "shape-outside",
++      "field": "shape_outside",
++      "internal_rationale": null,
++      "property_id": 237,
++      "rust_type": "ShapeOutside"
++    },
+     {
+       "canonical_schema_entry": true,
+       "classification": "public-typed",
+diff --git a/tools/qualification/generate_renderer_contract.py b/tools/qualification/generate_renderer_contract.py
+index 7f62260c..3221cde5 100644
+--- a/tools/qualification/generate_renderer_contract.py
++++ b/tools/qualification/generate_renderer_contract.py
+@@ -417,10 +417,10 @@ def style_inventory() -> dict[str, object]:
+             }
+         )
+     public_count = sum(row["classification"] == "public-typed" for row in rows)
+-    # Native viewport controls now consume the existing typed thumb-color
+-    # field (schema property 234), in addition to the previous 202 fields.
+-    if public_count != 203:
+-        raise ValueError(f"expected 203 consumed author fields, found {public_count}")
++    # Image foreground opacity checks now consume the existing shape-outside
++    # field, in addition to the previous 203 fields. Keep the inventory exact.
++    if public_count != 204:
++        raise ValueError(f"expected 204 consumed author fields, found {public_count}")
+     return {
+         "schema_version": 1,
+         "source": str(COMPUTED.relative_to(ROOT)),

@@ -1,0 +1,47 @@
+{
+  "baseline_and_fixed_guards_pending": true,
+  "baseline_commit": "4318f606d9ed9c204ea9ee3edacbfee9b0fd5479",
+  "branch": "agent/native-table-progress-v1543",
+  "cargo_commands_run": 0,
+  "checks_receipt_sha256": "6f13862236e13c107079e3a8a91643c18d38f64c5f5e97d7acfa89367589a993",
+  "chromium_geometry_observations": 96,
+  "geometry_receipt_sha256": "02127455718d6b3afb374fab94d05cfafce197eee620ca10b4ef14f4b96dd6f8",
+  "independent_geometry_runs": 2,
+  "javascript_executed_by_openui": false,
+  "native_application_and_four_matrices_pending": true,
+  "new_release_states_admitted": 0,
+  "old_openui_pixels_are_provenance_only": true,
+  "prior_whole_owners": 27,
+  "probe_sha256": "b04dda4a2a615cce9d50f19004115a05c8e5576b175babc48638e92f922e7386",
+  "promotion_allowed": false,
+  "public_native_rust_api": true,
+  "readonly_checks": 11,
+  "reference_capture_source_sha256": "b1a480f5f49bada97d341d5cf5e7626f8f03496bc87b4ef83b40c298331d1710",
+  "release_qualification": false,
+  "required_consecutive_chromium_captures": 240,
+  "required_independent_chromium_processes": 120,
+  "required_native_images": 60,
+  "schema_version": 1,
+  "screenshots_generated": 0,
+  "scripts": {
+    "/tmp/openui-native-table-progress-build-v1547.py": "aa255f7ed0790f6c3780b797b78e771db3a457629842f826fe4e405d33b2db0a",
+    "/tmp/openui-native-table-progress-consumer-v1547.py": "79b5281872449e6cc3a289db4101563758a257ac14d56220c48196e75e84cf9b",
+    "/tmp/openui-native-table-progress-guards-v1547.py": "39f3bc844a47ca0a13f4fc7d78c42ffcb4ac65926af1e0b029376438b2346f96",
+    "/tmp/openui-native-table-progress-matrices-v1547.py": "4b92cae18560d145df44c5ad18c912f1115dd401d5a4b9446b7a240e592bf1b1",
+    "/tmp/openui-native-table-progress-pipeline-v1548.py": "1b1bb74fc37a9b7acc1c525929d8456e5a4c3b431fa014c6b2994cafa6c3bda6"
+  },
+  "source": {
+    "clean": true,
+    "commit": "4b3cb72c03c58416a736a207b97cdcc8a225cb5a",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "d8eaca6088506b473ed388a005e3f688efebbec9893768f9ca4149f64110fdb7",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "4b3cb72c03c58416a736a207b97cdcc8a225cb5a",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "d8eaca6088506b473ed388a005e3f688efebbec9893768f9ca4149f64110fdb7",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

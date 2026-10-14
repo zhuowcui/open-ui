@@ -1,0 +1,60 @@
+{
+  "all_commands_terminal": false,
+  "consumer_compile_correction_only": false,
+  "current_source_runtime_qualification_pending": true,
+  "immutable_probe_hashes": {
+    "/tmp/openui-native-intrinsic-constraints-build-v1374.py": "f994cbdd3b0d8e9c677dd7e5aa4685717d2878c2e451e29b836401e045f477d7",
+    "/tmp/openui-native-intrinsic-constraints-consumer-v1374.py": "26e4ee8b86c4ecb93306e3188b01ba62ffb8214c5f4e4d9a7951fe334d406375",
+    "/tmp/openui-native-intrinsic-constraints-guards-v1374.py": "b911d96fe2fc8c9104a84e086a0230608e8a746f67dbc46310fc674e51ad8a1b",
+    "/tmp/openui-native-intrinsic-constraints-matrices-v1374.py": "e676805426ec777f63bb80e8e94f3af88f53758ad610c8583c8db831381d80f8",
+    "/tmp/openui-native-intrinsic-constraints-sizing-v1374.py": "bad04394edf24c3476fd1bb4c33814c66be9678b060865d3b1b8aa191af82393"
+  },
+  "includes_qualified_owned_cache_implementation": true,
+  "inherits_unqualified_intrinsic_trial_source": true,
+  "javascript_executed_by_openui": false,
+  "new_release_states_admitted": 0,
+  "old_openui_pixels_are_provenance_only": true,
+  "ordered_build_and_image_stages": true,
+  "original_pixel_gate_remains_required": true,
+  "preserves_all_previous_input_bytes": true,
+  "prior_whole_pipelines": [
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-umbrella-pipeline-v1291/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-retry-pipeline-v1310/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-retry-pipeline-v1311/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-c-raster-retry-pipeline-v1312/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-pipeline-v1337/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-default-strike-pipeline-v1338/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-integration-pipeline-v1341/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-capture-forensics-pipeline-v1346/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-style-integration-pipeline-v1354/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-constraints-pipeline-v1369/receipt.json"
+  ],
+  "probe_sha256": "85634c03e0f33c0995aef80671735581a9902fd4e41833a62d30a2be86ba2714",
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "renderer_production_unchanged_from_prior_candidate": false,
+  "schema_version": 1,
+  "selection_hashes": {
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-retry-selection-v1310.json": "197050888cd8e21e7a75994605fe33be7658932a004d4321133a6cd00d46c2e2"
+  },
+  "source": {
+    "clean": true,
+    "commit": "7d723caa7541882da6f403152b1432f0d45c50a8",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "77f7d76cfc00668dc9bc9e3db52d3ef22a236a9dd593af534eadaedfb39e4bef",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "7d723caa7541882da6f403152b1432f0d45c50a8",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "77f7d76cfc00668dc9bc9e3db52d3ef22a236a9dd593af534eadaedfb39e4bef",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_and_prior_input_bytes_unchanged": true,
+  "state": "awaiting-all-nine-prior-whole-pipelines-and-terminal-retired-predecessor",
+  "steps": [],
+  "strict_chromium_capture_pairs": true,
+  "supersedes_retired_waiting_pipeline": "native-intrinsic-constraints-pipeline-v1369",
+  "workspace_cleaned_at_every_source_switch": true
+}

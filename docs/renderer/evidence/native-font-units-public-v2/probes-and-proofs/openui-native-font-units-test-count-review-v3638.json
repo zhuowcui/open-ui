@@ -1,0 +1,188 @@
+{
+  "all_features_qualified_on_new_source": false,
+  "changes": [
+    {
+      "after": [
+        [
+          2,
+          0,
+          0
+        ]
+      ],
+      "before": null,
+      "group": [
+        "tests/native_font_units.rs",
+        "native_font_units"
+      ]
+    },
+    {
+      "after": [
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "before": null,
+      "group": [
+        "unittests examples/native_font_units.rs",
+        "native_font_units"
+      ]
+    },
+    {
+      "after": [
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "before": null,
+      "group": [
+        "unittests examples/native_fragmented_fieldset.rs",
+        "native_fragmented_fieldset"
+      ]
+    },
+    {
+      "after": [
+        [
+          94,
+          0,
+          0
+        ]
+      ],
+      "before": [
+        [
+          100,
+          0,
+          0
+        ]
+      ],
+      "group": [
+        "unittests src/lib.rs",
+        "openui"
+      ]
+    },
+    {
+      "after": [
+        [
+          6,
+          0,
+          0
+        ]
+      ],
+      "before": [
+        [
+          7,
+          0,
+          0
+        ]
+      ],
+      "group": [
+        "unittests src/lib.rs",
+        "openui_compositor"
+      ]
+    },
+    {
+      "after": [
+        [
+          56,
+          0,
+          0
+        ]
+      ],
+      "before": [
+        [
+          52,
+          0,
+          0
+        ]
+      ],
+      "group": [
+        "unittests src/lib.rs",
+        "openui_engine"
+      ]
+    },
+    {
+      "after": [
+        [
+          54,
+          0,
+          0
+        ]
+      ],
+      "before": [
+        [
+          55,
+          0,
+          0
+        ]
+      ],
+      "group": [
+        "unittests src/lib.rs",
+        "openui_ffi"
+      ]
+    },
+    {
+      "after": [
+        [
+          1,
+          0,
+          0
+        ]
+      ],
+      "before": [
+        [
+          5,
+          0,
+          0
+        ]
+      ],
+      "group": [
+        "unittests src/lib.rs",
+        "openui_platform"
+      ]
+    }
+  ],
+  "current_all_targets_command": [
+    "cargo",
+    "--config",
+    "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+    "test",
+    "--locked",
+    "--offline",
+    "--workspace",
+    "--all-targets"
+  ],
+  "current_log": "/mnt/d/openui-v02-qualification-d174ea0b/native-font-units-checks-v3626/workspace-all-targets.log",
+  "difference_explained": "Previous checkpoint used --all-features; current native3626 did not. Four feature-dependent groups account for 12 additional tests. Six new tests are present in the current run.",
+  "previous_commands": {
+    "locked-all-targets-tests": [
+      "cargo",
+      "--config",
+      "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+      "test",
+      "--locked",
+      "--offline",
+      "--workspace",
+      "--all-targets",
+      "--all-features",
+      "--message-format=json"
+    ],
+    "locked-workspace-tests": [
+      "cargo",
+      "--config",
+      "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+      "test",
+      "--locked",
+      "--offline",
+      "--workspace",
+      "--all-features",
+      "--message-format=json"
+    ]
+  },
+  "previous_log": "docs/renderer/evidence/native-keyboard-public-v2/native-locked-all-targets-tests.log.gz",
+  "qualification_claim": false,
+  "read_only": true,
+  "required_followup": "Run locked all-features all-targets and workspace/doc gates after3632completed-audit and saved reaping proof; do not mutate target during the current renderer owner."
+}

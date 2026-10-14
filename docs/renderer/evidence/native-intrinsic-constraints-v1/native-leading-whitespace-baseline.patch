@@ -1,0 +1,135 @@
+diff --git a/bindings/rust/openui-engine/src/lib.rs b/bindings/rust/openui-engine/src/lib.rs
+index d322f9d0..81fd7abf 100644
+--- a/bindings/rust/openui-engine/src/lib.rs
++++ b/bindings/rust/openui-engine/src/lib.rs
+@@ -2609,6 +2609,130 @@ mod tests {
+         }
+     }
+ 
++    #[test]
++    fn native_intrinsic_collapsible_leading_spaces_preserve_width_and_indentation() {
++        use openui_geometry::Length;
++        use openui_style::{FontFamilyList, LineHeight, Position};
++
++        // Independent Chromium queries distinguish installed aliased Ahem
++        // (80px) from the same bytes supplied as a font resource (80.015625px).
++        // Collapsible leading whitespace changes neither width. Preserve the
++        // selected font's advance rather than normalizing away its remainder.
++        for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
++            for (configuration, expected) in [
++                (RasterConfiguration::default(), 80.015625),
++                (RasterConfiguration::deterministic_aliased(false), 80.0),
++            ] {
++                for context in ["absolute", "inline-block", "float", "min", "max"] {
++                    let mut engine = Engine::new_with_font_collection_and_options(
++                        ViewportMetrics::from_logical_size(320.0, 160.0, scale).unwrap(),
++                        FontCollection::deterministic_test(),
++                        EngineOptions {
++                            raster_configuration: configuration,
++                        },
++                    )
++                    .unwrap();
++                    let root = engine.root();
++                    engine
++                        .set_property(
++                            root,
++                            StyleProperty::FontFamily,
++                            StyleValue::Renderer(RendererStyleValue::FontFamily(
++                                FontFamilyList::single("Ahem"),
++                            )),
++                        )
++                        .unwrap();
++                    engine
++                        .set_property(root, StyleProperty::FontSize, LengthValue::px(16.0).into())
++                        .unwrap();
++                    engine
++                        .set_property(
++                            root,
++                            StyleProperty::LineHeight,
++                            StyleValue::Renderer(RendererStyleValue::LineHeight(
++                                LineHeight::Number(1.0),
++                            )),
++                        )
++                        .unwrap();
++                    let target = engine.create_native_element(ElementTag::Div).unwrap();
++                    match context {
++                        "absolute" => engine
++                            .set_property(
++                                target,
++                                StyleProperty::Position,
++                                Position::Absolute.into(),
++                            )
++                            .unwrap(),
++                        "inline-block" => engine
++                            .set_property(
++                                target,
++                                StyleProperty::Display,
++                                Display::InlineBlock.into(),
++                            )
++                            .unwrap(),
++                        "float" => engine
++                            .set_property(
++                                target,
++                                StyleProperty::Float,
++                                openui_style::Float::Left.into(),
++                            )
++                            .unwrap(),
++                        "min" => engine
++                            .set_property(
++                                target,
++                                StyleProperty::Width,
++                                LengthValue::Computed(Length::min_content()).into(),
++                            )
++                            .unwrap(),
++                        "max" => engine
++                            .set_property(
++                                target,
++                                StyleProperty::Width,
++                                LengthValue::Computed(Length::max_content()).into(),
++                            )
++                            .unwrap(),
++                        _ => unreachable!(),
++                    }
++                    let text = engine.create_text("XXXXX").unwrap();
++                    engine.append_child(target, text).unwrap();
++                    engine.append_child(root, target).unwrap();
++                    for value in ["XXXXX", " XXXXX", "XXXXX ", " XXXXX ", "\n XXXXX\n"] {
++                        engine.set_text(text, value).unwrap();
++                        let bounds = engine.bounds(target).unwrap().unwrap();
++                        assert_eq!(
++                            bounds.width, expected,
++                            "scale={scale} context={context} value={value:?}"
++                        );
++                        assert_eq!(bounds.height, 16.0);
++                    }
++                    engine
++                        .set_property(
++                            root,
++                            StyleProperty::TextIndent,
++                            LengthValue::px(20.0).into(),
++                        )
++                        .unwrap();
++                    assert_eq!(
++                        engine.bounds(target).unwrap().unwrap().width,
++                        expected + 20.0
++                    );
++                    engine
++                        .set_property(
++                            target,
++                            StyleProperty::WhiteSpace,
++                            StyleValue::Renderer(RendererStyleValue::WhiteSpace(
++                                openui_style::WhiteSpace::PreLine,
++                            )),
++                        )
++                        .unwrap();
++                    engine.set_text(text, "X\n XXXXX").unwrap();
++                    assert_eq!(engine.bounds(target).unwrap().unwrap().width, expected);
++                    assert_eq!(engine.bounds(target).unwrap().unwrap().height, 32.0);
++                }
++            }
++        }
++    }
++
+     #[test]
+     fn native_atomic_constraints_contribute_to_enclosing_intrinsic_size() {
+         use openui_geometry::Length;

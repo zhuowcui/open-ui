@@ -1,0 +1,51 @@
+Owned accessibility snapshots and incremental changes: OK
+Counter: 0: 2865 PNG bytes
+Open UI dashboard: 4194 PNG bytes
+native float colors: scale=1 properties=12 callback=1 owned-frames=2 passed
+native float colors: scale=1.25 properties=12 callback=1 owned-frames=2 passed
+native float colors: scale=1.5 properties=12 callback=1 owned-frames=2 passed
+native float colors: scale=2 properties=12 callback=1 owned-frames=2 passed
+native float colors: scale=3 properties=12 callback=1 owned-frames=2 passed
+geometry: native column boxes, child overflow, owned copies, bounds and lifecycle passed
+Hello from Open UI: 3690 PNG bytes
+native C primitive styles: scale=1 properties=35 callback=1 passed
+native C primitive styles: scale=1.25 properties=35 callback=1 passed
+native C primitive styles: scale=1.5 properties=35 callback=1 passed
+native C primitive styles: scale=2 properties=35 callback=1 passed
+native C primitive styles: scale=3 properties=35 callback=1 passed
+native raster options: 25 mutations, callbacks and owned frame pairs passed
+native C scroll metrics: scale=1 passed
+native C nested scroll metrics: scale=1 passed
+native C scroll metrics: scale=1.25 passed
+native C nested scroll metrics: scale=1.25 passed
+native C scroll metrics: scale=1.5 passed
+native C nested scroll metrics: scale=1.5 passed
+native C scroll metrics: scale=2 passed
+native C nested scroll metrics: scale=2 passed
+native C scroll metrics: scale=3 passed
+native C nested scroll metrics: scale=3 passed
+native SVG viewport: bounds, mutation callbacks, detach/reattach and teardown passed
+Todo: ship Open UI v0.2: 3789 PNG bytes
+native float colors: scale=1 properties=12 callback=1 owned-frames=2 passed
+native float colors: scale=1.25 properties=12 callback=1 owned-frames=2 passed
+native float colors: scale=1.5 properties=12 callback=1 owned-frames=2 passed
+native float colors: scale=2 properties=12 callback=1 owned-frames=2 passed
+native float colors: scale=3 properties=12 callback=1 owned-frames=2 passed
+native C primitive styles: scale=1 properties=35 callback=1 passed
+native C primitive styles: scale=1.25 properties=35 callback=1 passed
+native C primitive styles: scale=1.5 properties=35 callback=1 passed
+native C primitive styles: scale=2 properties=35 callback=1 passed
+native C primitive styles: scale=3 properties=35 callback=1 passed
+native raster options: 25 mutations, callbacks and owned frame pairs passed
+native C scroll metrics: scale=1 passed
+native C nested scroll metrics: scale=1 passed
+native C scroll metrics: scale=1.25 passed
+native C nested scroll metrics: scale=1.25 passed
+native C scroll metrics: scale=1.5 passed
+native C nested scroll metrics: scale=1.5 passed
+native C scroll metrics: scale=2 passed
+native C nested scroll metrics: scale=2 passed
+native C scroll metrics: scale=3 passed
+native C nested scroll metrics: scale=3 passed
+native SVG viewport: bounds, mutation callbacks, detach/reattach and teardown passed
+C ABI verified: symbols=117 C_examples=12 C++=6 ran=True library=libopenui_ffi.so

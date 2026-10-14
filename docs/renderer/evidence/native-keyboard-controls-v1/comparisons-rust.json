@@ -1,0 +1,497 @@
+[
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "plain-ArrowLeft"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "plain-ArrowUp"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "plain-ArrowRight"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "plain-ArrowDown"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "other-checked-ArrowLeft"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "other-checked-ArrowUp"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "other-checked-ArrowRight"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "other-checked-ArrowDown"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "disabled-peer-ArrowLeft"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "disabled-peer-ArrowUp"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "disabled-peer-ArrowRight"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "disabled-peer-ArrowDown"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "display-none-peer-ArrowLeft"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "display-none-peer-ArrowUp"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "display-none-peer-ArrowRight"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "display-none-peer-ArrowDown"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "visibility-hidden-peer-ArrowLeft"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "visibility-hidden-peer-ArrowUp"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "visibility-hidden-peer-ArrowRight"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "visibility-hidden-peer-ArrowDown"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "negative-tabindex-peer-ArrowLeft"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "negative-tabindex-peer-ArrowUp"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "negative-tabindex-peer-ArrowRight"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "negative-tabindex-peer-ArrowDown"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "other-form-peer-ArrowLeft"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "other-form-peer-ArrowUp"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "other-form-peer-ArrowRight"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "other-form-peer-ArrowDown"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "empty-name-ArrowLeft"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "empty-name-ArrowUp"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "empty-name-ArrowRight"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "empty-name-ArrowDown"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "sole-group-ArrowLeft"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "sole-group-ArrowUp"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "sole-group-ArrowRight"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "sole-group-ArrowDown"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "modifier-1-ArrowLeft"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "modifier-1-ArrowRight"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "modifier-2-ArrowLeft"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "modifier-2-ArrowRight"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "modifier-4-ArrowLeft"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "modifier-4-ArrowRight"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "modifier-8-ArrowLeft"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "modifier-8-ArrowRight"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "modifier-3-ArrowLeft"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "modifier-3-ArrowRight"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "modifier-5-ArrowLeft"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "modifier-5-ArrowRight"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "modifier-10-ArrowLeft"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "modifier-10-ArrowRight"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "modifier-15-ArrowLeft"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "modifier-15-ArrowRight"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "special-True-36"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "special-False-36"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "special-True-35"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "special-False-35"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "special-True-33"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "special-False-33"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "special-True-34"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "special-False-34"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "special-True-13"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "special-False-13"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "special-True-32"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "special-False-32"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "checkbox-32"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "checkbox-13"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "checkbox-39"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "button-32"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "button-13"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "button-39"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "radio-cancel-keydown"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "radio-cancel-keyup"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "radio-cancel-click"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "radio-between-space-focus"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "radio-between-space-detach"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "radio-between-space-attribute"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "radio-repeated-space-down"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "checkbox-cancel-keydown"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "checkbox-cancel-keyup"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "checkbox-cancel-click"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "checkbox-between-space-focus"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "checkbox-between-space-detach"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "checkbox-between-space-attribute"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "checkbox-repeated-space-down"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "button-cancel-keydown"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "button-cancel-keyup"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "button-cancel-click"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "button-between-space-focus"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "button-between-space-detach"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "button-between-space-attribute"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "button-repeated-space-down"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "arrow-handler-keydown-a-91"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "arrow-handler-keydown-a-92"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "arrow-handler-keydown-a-93"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "arrow-handler-click-b-94"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "arrow-handler-focus-b-95"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "arrow-handler-blur-a-96"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "arrow-handler-click-b-97"
+  },
+  {
+    "differences": [],
+    "exact": true,
+    "scenario": "arrow-handler-focus-b-98"
+  }
+]

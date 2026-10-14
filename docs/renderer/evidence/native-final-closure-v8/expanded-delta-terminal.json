@@ -1,0 +1,12 @@
+{
+  "writer_pid": 3434372,
+  "actual_session_exit_code": 0,
+  "actual_reaped_chunk": "62777c",
+  "session_id": 28086,
+  "audit_sha256": "2ea26b8f41ce80bb19c0bf190a19ca55347d56fc8597899c833857903e119dbe",
+  "owner_pid": 3434077,
+  "owner_absent": true,
+  "complete": true,
+  "qualification": false,
+  "release_qualified": false
+}

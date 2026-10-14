@@ -1,0 +1,77 @@
+{
+  "artifact_hashes": [
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/hosted-python-failure-v31.log",
+      "sha256": "f35a79d8da215941aea739756c2c10e86e6dcd6c46716d7b2dc230e67c6aaad7",
+      "size": 31118
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/hosted-conformance-failure-v31.log",
+      "sha256": "6f8925846a42b17bce9335cbcf28cb0f9f15755d30ece5201111dd691a880eb7",
+      "size": 103072
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/conformance-manifest-fixed-v32.log",
+      "sha256": "a996b9a02cb50ef0f51a218458c3fd19d38d8dd8cb546424e8dcbf949e051f3f",
+      "size": 71
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/release-source-fixed-v32.log",
+      "sha256": "d08a8af21975df89969d24c7409f282fb7fc1571df563105f44315da749acbb1",
+      "size": 616
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/packaging-tests-v32.log",
+      "sha256": "5279d1fc9a1ced44f9c96da1414ef59e4676f963fbad52e7a1a2903538819b0d",
+      "size": 101
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-qualification-python-v31.log",
+      "sha256": "b341ec432048e7035253c1e7f2f79a13d3404dfaf29461bf3d9dca16702aef1c",
+      "size": 130
+    }
+  ],
+  "failed_hosted_commit": "77dd75a64411ed7d7f7c13b9c796a407dbd45b9a",
+  "failed_jobs": [
+    {
+      "conclusion": "failure",
+      "name": "python-accountability",
+      "url": "https://github.com/zhuowcui/open-ui/actions/runs/37011965994/job/110853596491"
+    },
+    {
+      "conclusion": "failure",
+      "name": "conformance-and-platform",
+      "url": "https://github.com/zhuowcui/open-ui/actions/runs/37011965927/job/110853610226"
+    }
+  ],
+  "fix": "Append the three existing tests with scrolling/layout/events/animation domains. Keep exact manifest/test parity and all previous scenarios. Update current documentation to 58 scenarios across the same 10 domains.",
+  "local_verification": [
+    {
+      "domains": 10,
+      "exact_test_parity": true,
+      "name": "conformance manifest",
+      "process_exit_code": 0,
+      "scenarios": 58
+    },
+    {
+      "name": "release source verification",
+      "native_abi_frozen": true,
+      "process_exit_code": 0,
+      "public_crates": 11
+    },
+    {
+      "name": "packaging tests",
+      "process_exit_code": 0,
+      "tests": 3
+    },
+    {
+      "name": "qualification Python tests",
+      "process_exit_code": 0
+    }
+  ],
+  "qualification_clone_note": "The immutable 8f45444e clone still has the prior generated-style count guard and the 55-scenario manifest. Its completed pixels and Rust tests are runtime diagnostics; they do not establish that its generated-contract or manifest checks pass. Main includes both metadata repairs.",
+  "release_qualification": false,
+  "rerun_status": "pending after corrective checkpoint push; no hosted success inferred",
+  "reviewed_cause": "Three newly implemented Rust viewport conformance tests were missing from the scenario manifest. Both jobs rejected the same incomplete manifest before proceeding.",
+  "schema_version": 1
+}

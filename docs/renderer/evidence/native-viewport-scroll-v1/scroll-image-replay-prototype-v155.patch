@@ -1,0 +1,48 @@
+diff --git a/bindings/rust/openui-paint/src/painter.rs b/bindings/rust/openui-paint/src/painter.rs
+index 7c130396..417d63b8 100644
+--- a/bindings/rust/openui-paint/src/painter.rs
++++ b/bindings/rust/openui-paint/src/painter.rs
+@@ -9301,19 +9301,7 @@ fn paint_composited_scroll_contents(
+         physical_height as f32 / backing_scale,
+     );
+     let mut paint = Paint::default();
+-    let image_matrix = Matrix::scale_translate(
+-        (
+-            destination.width() / physical_width as f32,
+-            destination.height() / physical_height as f32,
+-        ),
+-        (destination.left, destination.top),
+-    );
+     paint.set_anti_alias(false);
+-    paint.set_shader(image.to_shader(
+-        (TileMode::Clamp, TileMode::Clamp),
+-        SamplingOptions::from(FilterMode::Linear),
+-        &image_matrix,
+-    ));
+     let snapping = RasterSnapping::new(style.device_scale_factor);
+     let compositor_bounds = Rect::from_ltrb(
+         destination.left,
+@@ -9325,7 +9313,22 @@ fn paint_composited_scroll_contents(
+             .bottom
+             .max(snapping.logical_coordinate(layer_rect.bottom, PhysicalSnap::Ceil)),
+     );
+-    canvas.draw_rect(compositor_bounds, &paint);
++    // SoftwareRenderer replays a texture quad with DrawImageRect and a
++    // strict source rectangle. Preserve the backing's mapping when its
++    // physical compositor bounds extend beyond the content destination.
++    let source = Rect::from_xywh(
++        0.0,
++        0.0,
++        compositor_bounds.width() * backing_scale,
++        compositor_bounds.height() * backing_scale,
++    );
++    canvas.draw_image_rect_with_sampling_options(
++        image,
++        Some((&source, SrcRectConstraint::Strict)),
++        compositor_bounds,
++        SamplingOptions::from(FilterMode::Linear),
++        &paint,
++    );
+     true
+ }
+ 

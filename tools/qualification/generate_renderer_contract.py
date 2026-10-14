@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Generate and verify the versioned renderer qualification contract.
 
-The legacy SP20 baseline is an input to this contract, never an output.  This
-is deliberate: expanding qualification profiles must not silently re-freeze
-the 800x600@1 result.
+The historical SP20 archive is immutable provenance, never a pixel target.
+Every required profile compares the current renderer with pinned Chromium.
+Archive integrity does not qualify a current renderer result.
 """
 
 from __future__ import annotations
@@ -24,7 +24,7 @@ ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "docs/renderer/generated/qualification-contract-v2.json"
 STYLE_OUT = ROOT / "docs/renderer/generated/author-style-inventory.json"
 JS_OUT = ROOT / "docs/renderer/generated/javascript-disposition.json"
-JS_AST_OUT = ROOT / "docs/renderer/generated/javascript-mutation-audit-v2.json"
+JS_AST_OUT = ROOT / "docs/renderer/generated/javascript-mutation-audit-v4.json"
 MUTATION_IDS_OUT = ROOT / "tools/qualification/manifests/mutation-candidates-v1.json"
 LEGACY = ROOT / "docs/v02/generated/baseline.json"
 LEGACY_SHA256 = "787cd40ae63d06d5933efa89a4eba65a70d6327673b8056b83cae76ef3606001"
@@ -38,7 +38,7 @@ MAPPING = ROOT / "tools/accountability/data/wpt_mapping.csv"
 FULL_MANIFEST = ROOT / "tools/qualification/manifests/complete-5731.json"
 FOCUSED_MANIFEST = ROOT / "tools/qualification/manifests/focused-raster.json"
 PRIMITIVE_MANIFEST = ROOT / "tools/qualification/manifests/primitive-raster.json"
-EXPANDED_MANIFEST = ROOT / "tools/qualification/manifests/expanded-v1.json"
+EXPANDED_MANIFEST = ROOT / "tools/qualification/manifests/expanded-v35.json"
 RESIDUAL_OWNERSHIP = ROOT / "tools/qualification/residual-ownership-v2.json"
 MEDIA_FIRST_FRAMES = ROOT / "docs/renderer/generated/media-first-frames-v1.json"
 WPT_ROOT = Path(
@@ -57,7 +57,7 @@ MUTATION_IR = ROOT / "tools/wpt/javascript_mutation_ir.mjs"
 sys.path.insert(0, str(ROOT))
 
 QUALIFICATION_PROFILES = (
-    ("legacy-800x600@1", 800.0, 600.0, 1.0, "qualified-immutable"),
+    ("legacy-800x600@1", 800.0, 600.0, 1.0, "required"),
     ("mobile-375x667@2", 375.0, 667.0, 2.0, "required"),
     ("desktop-1280x720@1.25", 1280.0, 720.0, 1.25, "required"),
     ("desktop-1920x1080@1.5", 1920.0, 1080.0, 1.5, "required"),
@@ -166,13 +166,6 @@ def qualification_contract(javascript_audit: bytes) -> dict[str, object]:
             },
             "device_scale": scale,
         }
-        if status == "qualified-immutable":
-            profile["result"] = {
-                "manifest_sha256": LEGACY_SHA256,
-                "exact": 5731,
-                "total": 5731,
-                "ordered_id_sha256": legacy["results"]["ordered_id_sha256"],
-            }
         profiles.append(profile)
 
     focused = [
@@ -191,9 +184,18 @@ def qualification_contract(javascript_audit: bytes) -> dict[str, object]:
         "schema_version": 2,
         "renderer_contract": "chromium-147-native-structure-v2",
         "chromium": {
-            "build_identity": legacy["chromium_build_identity"],
+            "build_identity": RASTER_ORACLE_BUILD,
             "raster_oracle_build_identity": RASTER_ORACLE_BUILD,
+            "source_structure_pin": CHROMIUM_VERSION.read_text().strip(),
             "pin_sha256": digest(CHROMIUM_VERSION.read_bytes()),
+        },
+        "historical_openui_archive": {
+            "manifest": str(LEGACY.relative_to(ROOT)),
+            "manifest_sha256": LEGACY_SHA256,
+            "recorded_chromium_build_identity": legacy["chromium_build_identity"],
+            "purpose": "immutable-provenance-and-archive-integrity",
+            "pixel_target": False,
+            "qualifies_current_renderer": False,
         },
         "raster": {
             "destination_color_space": "sRGB",
@@ -363,7 +365,7 @@ def computed_fields() -> dict[str, str]:
 def style_inventory() -> dict[str, object]:
     fields = computed_fields()
     consumers = {}
-    for area in ("openui-layout/src", "openui-paint/src"):
+    for area in ("openui-layout/src", "openui-paint/src", "openui-engine/src"):
         for path in sorted((ROOT / "bindings/rust" / area).rglob("*.rs")):
             text = path.read_text()
             for field in fields:
@@ -417,14 +419,20 @@ def style_inventory() -> dict[str, object]:
             }
         )
     public_count = sum(row["classification"] == "public-typed" for row in rows)
-    if public_count != 202:
-        raise ValueError(f"expected 202 consumed author fields, found {public_count}")
+    # The shared Engine owns native hit testing, scroll snap and scroll reveal.
+    # Include those consumers after moving snap resolution out of block layout;
+    # every previously inventoried author field remains consumed, with thirteen
+    # additional native interaction fields and typed text fill color now
+    # covered by the same strict gate.
+    if public_count != 217:
+        raise ValueError(f"expected 217 consumed author fields, found {public_count}")
     return {
         "schema_version": 1,
         "source": str(COMPUTED.relative_to(ROOT)),
         "consumer_roots": [
             "bindings/rust/openui-layout/src",
             "bindings/rust/openui-paint/src",
+            "bindings/rust/openui-engine/src",
         ],
         "counts": {
             "consumed": len(rows),
@@ -722,7 +730,19 @@ def javascript_disposition() -> dict[str, object]:
         "policy": {
             "ast-lowered-pending-exact": "must be applied through Engine APIs and pixel-qualified before inclusion",
             "lowered-exact": "admitted only after exact results at all four qualification profiles",
-            "behavioral-nonvisual": "excluded from renderer coverage; no browser runtime is promised",
+            "behavioral-nonvisual": (
+                "outside pixel admission, not a native application API pass; "
+                "every application-needed operation requires a fully implemented "
+                "public Rust API over the shared engine"
+            ),
+            "javascript-runtime": (
+                "Open UI never executes JavaScript, in any version; scripts may "
+                "run only in separate offline Chromium reference tooling"
+            ),
+            "native-application-api": (
+                "fixture lowering or pixel exclusion does not complete or waive "
+                "needed public Rust operations, state changes and Rust callbacks"
+            ),
         },
         "entries": entries,
     }

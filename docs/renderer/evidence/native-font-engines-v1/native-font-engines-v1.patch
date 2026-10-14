@@ -1,0 +1,373 @@
+diff --git a/bindings/rust/openui-geometry/src/raster.rs b/bindings/rust/openui-geometry/src/raster.rs
+index 3ad54425..8644d68d 100644
+--- a/bindings/rust/openui-geometry/src/raster.rs
++++ b/bindings/rust/openui-geometry/src/raster.rs
+@@ -6,6 +6,15 @@ pub enum RasterBackend {
+     Skia,
+     ChromiumLinux,
+     GaneshGl,
++    /// CPU replay with Chromium's Fontations outline path for authored text.
++    ChromiumLinuxFontations,
++}
++
++impl RasterBackend {
++    /// CPU policies that select glyph strikes in physical pixels.
++    pub const fn is_chromium_cpu(self) -> bool {
++        matches!(self, Self::ChromiumLinux | Self::ChromiumLinuxFontations)
++    }
+ }
+ 
+ #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+@@ -107,6 +116,19 @@ impl RasterConfiguration {
+         }
+     }
+ 
++    /// Explicit Fontations counterpart of the Linux FreeType LCD policy.
++    ///
++    /// Chromium supports both typeface engines. Captures that explicitly
++    /// select FreeType retain `chromium_linux_lcd`; applications comparing
++    /// Fontations authored text select this constructor. Surface and layout
++    /// settings are otherwise identical, and the engine never changes this
++    /// selection based on a font family, fixture ID or machine environment.
++    pub const fn chromium_linux_fontations_lcd() -> Self {
++        let mut configuration = Self::chromium_linux_lcd();
++        configuration.backend = RasterBackend::ChromiumLinuxFontations;
++        configuration
++    }
++
+     /// Chromium-aligned Linux text policy replayed through Ganesh OpenGL.
+     ///
+     /// Selecting this configuration never probes the environment. Callers
+diff --git a/bindings/rust/openui-paint/src/painter.rs b/bindings/rust/openui-paint/src/painter.rs
+index 86c93884..85b1962f 100644
+--- a/bindings/rust/openui-paint/src/painter.rs
++++ b/bindings/rust/openui-paint/src/painter.rs
+@@ -5377,7 +5377,7 @@ fn paint_composited_svg_edge_samples(
+     destination: Rect,
+     opacity_multiplier: f32,
+ ) {
+-    if style.raster_configuration.backend != RasterBackend::ChromiumLinux
++    if !style.raster_configuration.backend.is_chromium_cpu()
+         || opacity_multiplier < 1.0
+         || !style.background_color.is_opaque()
+     {
+@@ -20053,9 +20053,7 @@ fn paint_same_color_solid_border(
+     // maps it onto the physical raster grid. Keep edge coverage enabled so a
+     // one-sided border ending on a fractional device pixel receives the same
+     // partial physical row as other CSS box edges.
+-    paint.set_anti_alias(
+-        backend == RasterBackend::ChromiumLinux || (device_scale - 1.0).abs() > f64::EPSILON,
+-    );
++    paint.set_anti_alias(backend.is_chromium_cpu() || (device_scale - 1.0).abs() > f64::EPSILON);
+     set_paint_css_color(&mut paint, &color);
+ 
+     let fixed_inner_block_extent =
+diff --git a/bindings/rust/openui-paint/src/text_painter.rs b/bindings/rust/openui-paint/src/text_painter.rs
+index f58ca52e..f0a86819 100644
+--- a/bindings/rust/openui-paint/src/text_painter.rs
++++ b/bindings/rust/openui-paint/src/text_painter.rs
+@@ -152,7 +152,7 @@ pub fn paint_text_with_raster_policy(
+         paint.set_color4f(Color4f::new(c.r, c.g, c.b, c.a), None::<&ColorSpace>);
+ 
+         let physical_scale = style.device_scale_factor as f32;
+-        if style.raster_configuration.backend == RasterBackend::ChromiumLinux
++        if style.raster_configuration.backend.is_chromium_cpu()
+             && (physical_scale - 1.0).abs() > f32::EPSILON
+         {
+             if let Some(physical_blob) = shape_result.to_text_blob_with_raster_policy_at_scale(
+@@ -176,12 +176,12 @@ fn uses_chromium_author_lcd(style: &ComputedStyle) -> bool {
+     if style.native_control_text || style.embedded_document_text {
+         return false;
+     }
+-    if style.raster_configuration.backend == RasterBackend::ChromiumLinux
++    if style.raster_configuration.backend == RasterBackend::ChromiumLinuxFontations
+         && style.raster_configuration.author_text.edging == TextEdging::SubpixelAntiAlias
+     {
+-        // Explicit Chromium LCD selection also selects its outline policy.
+-        // Choosing LCD surface properties alone leaves author glyphs on the
+-        // portable Skia outline path instead of the compatible outline path.
++        // Fontations is an explicit authored-outline choice. The ordinary
++        // Chromium Linux LCD constructor preserves its FreeType path, as
++        // required by captures that select FontDataServiceLinux Freetype.
+         return true;
+     }
+     if style.raster_configuration.author_text.edging != TextEdging::Alias {
+@@ -228,7 +228,7 @@ pub fn paint_vertical_text(
+ 
+     let mut builder = TextBlobBuilder::new();
+     let physical_scale = style.device_scale_factor as f32;
+-    let physical_strike = style.raster_configuration.backend == RasterBackend::ChromiumLinux
++    let physical_strike = style.raster_configuration.backend.is_chromium_cpu()
+         && (physical_scale - 1.0).abs() > f32::EPSILON;
+     let (vertical_baseline_x, top_y) =
+         if style.raster_configuration.author_text.subpixel_positioning
+diff --git a/bindings/rust/openui-text/src/shaping/shape_result.rs b/bindings/rust/openui-text/src/shaping/shape_result.rs
+index cba7378e..20daf88d 100644
+--- a/bindings/rust/openui-text/src/shaping/shape_result.rs
++++ b/bindings/rust/openui-text/src/shaping/shape_result.rs
+@@ -489,14 +489,13 @@ impl ShapeResult {
+                 continue;
+             }
+             let source_font = run.font_data.sk_font();
+-            // Chromium asks FreeType/fontations for the device-size aliased
+-            // strike. Building the compatible outline at the CSS size and
+-            // scaling its already grid-fitted path widened every rotated Ahem
+-            // glyph by another device pixel (and two pixels at 1.5x/2x).
+-            // Hint at the physical size once and keep that custom outline at
+-            // its unit font size; glyph positions are converted below.
++            // Chromium builds hinted outlines at the physical strike size.
++            // Scaling an outline already fitted at CSS size changes its ink
++            // bounds. This applies to aliased and LCD outlines alike. Keep
++            // the custom outline at unit size after fitting once; glyph
++            // positions are converted to physical coordinates below.
+             let mut physical_source_font;
+-            let compatible_source_font = if raster_policy == TextRasterPolicy::ChromiumAliased
++            let compatible_source_font = if raster_policy != TextRasterPolicy::Skia
+                 && (device_scale - 1.0).abs() > f32::EPSILON
+             {
+                 physical_source_font = source_font.clone();
+@@ -512,9 +511,8 @@ impl ShapeResult {
+                 .flatten();
+             let sk_font = compatible_font.as_ref().unwrap_or(source_font);
+             let mut physical_font;
+-            let compatible_outline_is_physical = compatible_font.is_some()
+-                && raster_policy == TextRasterPolicy::ChromiumAliased
+-                && (device_scale - 1.0).abs() > f32::EPSILON;
++            let compatible_outline_is_physical =
++                compatible_font.is_some() && (device_scale - 1.0).abs() > f32::EPSILON;
+             let raster_font =
+                 if (device_scale - 1.0).abs() > f32::EPSILON && !compatible_outline_is_physical {
+                     physical_font = sk_font.clone();
+@@ -930,6 +928,56 @@ mod tests {
+     use super::{chromium_lcd_raster_x, chromium_lcd_strike_y_offset};
+     use skia_safe::{font::Edging, FontHinting};
+ 
++    #[test]
++    fn fontations_lcd_hints_at_physical_size_before_replay() {
++        use crate::font::{Font, FontCollection, FontDescription};
++        use crate::shaping::{TextDirection, TextRasterPolicy, TextShaper};
++        use openui_geometry::RasterConfiguration;
++        use openui_style::FontFamilyList;
++
++        let collection = FontCollection::deterministic_test();
++        let shaper = TextShaper::new();
++        let ink_bounds = |size, scale| {
++            let description = FontDescription {
++                family: FontFamilyList::single("Ahem"),
++                size,
++                specified_size: size,
++                device_scale_factor: f64::from(scale),
++                raster_configuration: RasterConfiguration::chromium_linux_lcd(),
++                ..FontDescription::default()
++            };
++            let font = Font::new_in_collection(description, std::sync::Arc::clone(&collection));
++            let result = shaper.shape("X", &font, TextDirection::Ltr);
++            assert_eq!(result.num_glyphs(), 1);
++            let blob = result
++                .to_text_blob_with_raster_policy_at_scale(
++                    Some(0.0),
++                    TextRasterPolicy::ChromiumAuthorLcd,
++                    scale,
++                )
++                .unwrap();
++            *blob.bounds()
++        };
++
++        // A single glyph at the same physical font size has the same hinted
++        // outline regardless of how the logical size and device scale divide
++        // that size. Hinting at CSS size and then scaling the fitted outline
++        // changes its ink bounds at fractional scales.
++        for (size, scale) in [
++            (16.0, 1.25),
++            (16.0, 1.5),
++            (16.0, 2.0),
++            (16.0, 3.0),
++            (10.0, 2.5),
++        ] {
++            assert_eq!(
++                ink_bounds(size, scale),
++                ink_bounds(size * scale, 1.0),
++                "logical size {size}, device scale {scale}"
++            );
++        }
++    }
++
+     #[test]
+     fn chromium_lcd_phase_retains_only_the_24_to_25_sixty_fourths_cell() {
+         let retained = chromium_lcd_raster_x(269.384_77, 10.0);
+diff --git a/bindings/rust/openui/examples/native_font_raster.rs b/bindings/rust/openui/examples/native_font_raster.rs
+new file mode 100644
+index 00000000..46482f25
+--- /dev/null
++++ b/bindings/rust/openui/examples/native_font_raster.rs
+@@ -0,0 +1,144 @@
++//! Explicit native font raster choices, mutation and owned geometry.
++
++use openui::prelude::*;
++use std::{cell::Cell, path::PathBuf, rc::Rc};
++
++fn bounds_json(element: &Element) -> Result<String, Box<dyn std::error::Error>> {
++    let bounds = element.bounding_rect()?.ok_or("text box required")?;
++    Ok(format!(
++        "{{\"x\":{},\"y\":{},\"width\":{},\"height\":{}}}",
++        f64::from(bounds.x),
++        f64::from(bounds.y),
++        f64::from(bounds.width),
++        f64::from(bounds.height),
++    ))
++}
++
++fn main() -> Result<(), Box<dyn std::error::Error>> {
++    let mut args = std::env::args().skip(1);
++    let output = PathBuf::from(args.next().ok_or("output directory required")?);
++    let scale: f64 = args.next().ok_or("device scale required")?.parse()?;
++    let policy = args.next().ok_or("font raster policy required")?;
++    let family = args.next().unwrap_or_else(|| "Ahem".into());
++    let size: f32 = args.next().unwrap_or_else(|| "20".into()).parse()?;
++    let phase = args.next().unwrap_or_else(|| "all".into());
++    let phases: Vec<u8> = if phase == "all" {
++        (0..64).collect()
++    } else {
++        vec![phase.parse()?]
++    };
++    let width: f64 = args.next().unwrap_or_else(|| "800".into()).parse()?;
++    let height: f64 = args.next().unwrap_or_else(|| "600".into()).parse()?;
++    if args.next().is_some()
++        || !matches!(
++            family.as_str(),
++            "Ahem" | "DejaVu Sans" | "DejaVu Serif" | "DejaVu Sans Mono"
++        )
++        || !size.is_finite()
++        || size <= 0.0
++        || phases.iter().any(|phase| *phase > 63)
++    {
++        return Err("invalid native font arguments".into());
++    }
++    let raster_configuration = match policy.as_str() {
++        "freetype" => RasterConfiguration::chromium_linux_lcd(),
++        "fontations" => RasterConfiguration::chromium_linux_fontations_lcd(),
++        _ => return Err("expected freetype or fontations".into()),
++    };
++    let document = Document::with_font_collection_and_options(
++        ViewportMetrics::from_logical_size(width, height, scale)?,
++        FontCollection::deterministic_test(),
++        EngineOptions {
++            raster_configuration,
++        },
++    )?;
++    assert_eq!(document.raster_configuration()?, raster_configuration);
++    let root = document.body();
++    root.set_background_color(Color::WHITE)?;
++    root.set_overflow(Overflow::Hidden)?;
++    let mut texts = Vec::new();
++    for (index, phase) in phases.iter().enumerate() {
++        let text = Element::create(&document, "div")?;
++        text.set_position(Position::Absolute)?;
++        text.set_left(LengthValue::px(
++            20.0 + (index % 8) as f32 * 92.0 + f32::from(*phase) / 64.0,
++        ))?;
++        text.set_top(LengthValue::px(20.0 + (index / 8) as f32 * 60.0))?;
++        text.set_font_family(FontFamilyList::single(family.clone()))?;
++        text.set_font_size(LengthValue::px(size))?;
++        text.set_line_height(LineHeight::Number(1.0))?;
++        text.set_color(Color::BLACK)?;
++        text.set_text("X")?;
++        root.append_child(&text)?;
++        texts.push(text);
++    }
++    std::fs::create_dir_all(&output)?;
++    let before = texts
++        .iter()
++        .map(bounds_json)
++        .collect::<Result<Vec<_>, _>>()?
++        .join(",");
++    let owned_before = texts
++        .iter()
++        .map(|text| -> Result<_, Box<dyn std::error::Error>> {
++            Ok(text.bounding_rect()?.ok_or("owned text bounds required")?)
++        })
++        .collect::<Result<Vec<_>, _>>()?;
++    std::fs::write(output.join("before.png"), document.render_to_png_buffer()?)?;
++
++    let calls = Rc::new(Cell::new(0));
++    let observed = Rc::clone(&calls);
++    let targets: Vec<_> = texts.iter().map(Element::downgrade).collect();
++    root.on("click", move |_| {
++        for target in &targets {
++            let text = target.upgrade().expect("mounted native text");
++            text.set_text("XX").unwrap();
++            text.set_color(Color::BLUE).unwrap();
++        }
++        observed.set(observed.get() + 1);
++    })?;
++    root.click()?;
++    if calls.get() != 1
++        || texts
++            .iter()
++            .any(|text| !matches!(text.text_content().as_deref(), Ok("XX")))
++    {
++        return Err("native font callback failed".into());
++    }
++    assert_eq!(document.raster_configuration()?, raster_configuration);
++    let after = texts
++        .iter()
++        .map(bounds_json)
++        .collect::<Result<Vec<_>, _>>()?
++        .join(",");
++    assert_eq!(
++        before,
++        owned_before
++            .iter()
++            .map(|bounds| format!(
++                "{{\"x\":{},\"y\":{},\"width\":{},\"height\":{}}}",
++                f64::from(bounds.x),
++                f64::from(bounds.y),
++                f64::from(bounds.width),
++                f64::from(bounds.height),
++            ))
++            .collect::<Vec<_>>()
++            .join(",")
++    );
++    std::fs::write(output.join("after.png"), document.render_to_png_buffer()?)?;
++    std::fs::write(
++        output.join("geometry.json"),
++        format!(
++            "{{\"before\":[{before}],\"after\":[{after}],\"callback_count\":{}}}\n",
++            calls.get()
++        ),
++    )?;
++    let weak: Vec<_> = texts.iter().map(Element::downgrade).collect();
++    drop(texts);
++    drop(root);
++    drop(document);
++    if weak.iter().any(|text| text.upgrade().is_some()) {
++        return Err("native font callback retained document".into());
++    }
++    Ok(())
++}
+diff --git a/bindings/rust/openui/examples/native_static_position.rs b/bindings/rust/openui/examples/native_static_position.rs
+index 2502e5bf..bc04b39f 100644
+--- a/bindings/rust/openui/examples/native_static_position.rs
++++ b/bindings/rust/openui/examples/native_static_position.rs
+@@ -11,6 +11,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
+     let raster_configuration = match raster_name.as_str() {
+         "default" => RasterConfiguration::default(),
+         "chromium-linux-lcd" => RasterConfiguration::chromium_linux_lcd(),
++        "chromium-linux-fontations-lcd" => RasterConfiguration::chromium_linux_fontations_lcd(),
+         _ => return Err("invalid raster configuration".into()),
+     };
+     if args.next().is_some()
+diff --git a/bindings/rust/pixel-compare/src/main.rs b/bindings/rust/pixel-compare/src/main.rs
+index 3b4ccdca..12bff566 100644
+--- a/bindings/rust/pixel-compare/src/main.rs
++++ b/bindings/rust/pixel-compare/src/main.rs
+@@ -262,6 +262,9 @@ fn parse_viewport_options(
+                         RasterConfiguration::deterministic_aliased(true)
+                     }
+                     "chromium-linux-lcd" => RasterConfiguration::chromium_linux_lcd(),
++                    "chromium-linux-fontations-lcd" => {
++                        RasterConfiguration::chromium_linux_fontations_lcd()
++                    }
+                     "legacy-deterministic-alias" => {
+                         RasterConfiguration::legacy_deterministic_aliased(false)
+                     }

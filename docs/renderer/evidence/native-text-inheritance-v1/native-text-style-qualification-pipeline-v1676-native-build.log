@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/tmp/openui-native-text-style-qualification-build-v1675.py", line 4, in <module>
+    WITNESS=RAW/'owner-interruption-witness-v1664.json'
+            ^^^
+NameError: name 'RAW' is not defined. Did you mean: 'raw'?

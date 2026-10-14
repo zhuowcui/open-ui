@@ -1,0 +1,52 @@
+{
+  "all_commands_terminal": true,
+  "all_requested_files_fetched": true,
+  "canvas_pixels_generated": 0,
+  "cargo_commands_run": 0,
+  "chromium_tag": "147.0.7727.50",
+  "files": [
+    {
+      "bytes": 16791,
+      "fetched": true,
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-image-occlusion-source-v1431/layout_image.cc",
+      "sha256": "4be59f73f18d6cc41579d1397ac09f935740c848a6a22c59652ec13230099ffd",
+      "source": "third_party/blink/renderer/core/layout/layout_image.cc",
+      "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/third_party/blink/renderer/core/layout/layout_image.cc?format=TEXT"
+    },
+    {
+      "bytes": 174293,
+      "fetched": true,
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-image-occlusion-source-v1431/layout_box.cc",
+      "sha256": "18362ffe2babf487daa253ad85988b036c4294b6ff7ce9e694f11c9f4b68e6df",
+      "source": "third_party/blink/renderer/core/layout/layout_box.cc",
+      "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/third_party/blink/renderer/core/layout/layout_box.cc?format=TEXT"
+    },
+    {
+      "bytes": 125958,
+      "fetched": true,
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-image-occlusion-source-v1431/box_fragment_painter.cc",
+      "sha256": "c0cad4a86b11e466a477c791747fc62fb6c5726dd5d53e8c5c88ca8eadd6007e",
+      "source": "third_party/blink/renderer/core/paint/box_fragment_painter.cc",
+      "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/third_party/blink/renderer/core/paint/box_fragment_painter.cc?format=TEXT"
+    },
+    {
+      "bytes": 96143,
+      "fetched": true,
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-image-occlusion-source-v1431/paint_op.cc",
+      "sha256": "35c65f0a703629b2c519ff937db2875d594c7617b4502b23bca1229f9c65b1fe",
+      "source": "cc/paint/paint_op.cc",
+      "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/cc/paint/paint_op.cc?format=TEXT"
+    },
+    {
+      "bytes": 9168,
+      "fetched": true,
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-image-occlusion-source-v1431/paint_flags.cc",
+      "sha256": "9435cb1dab2c4663c5ef248945e1186e70e57f930aa629f61960779f914a7439",
+      "source": "cc/paint/paint_flags.cc",
+      "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/cc/paint/paint_flags.cc?format=TEXT"
+    }
+  ],
+  "release_qualification": false,
+  "schema_version": 1,
+  "screenshots_generated": 0
+}

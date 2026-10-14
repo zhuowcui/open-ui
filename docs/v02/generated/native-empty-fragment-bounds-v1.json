@@ -1,0 +1,1064 @@
+{
+  "backend": "cpu-skia",
+  "binaries": {
+    "constrained_box_geometry-empty-bounds-v1": "7297ebfc138ca7b7a993dc248ff575bbcd6bc1cd8876c5253e3258a2d536f374",
+    "libopenui_ffi-empty-bounds-linux-v1.so": "3659b2fb2c3afbd0b9676bc5bbaf7c3d61e73840304a667fd56990a750b859a2"
+  },
+  "chromium_source_review": {
+    "commit": "09d377d9438dc95267369f74a073acd81bdde38f",
+    "note": "This local source review uses Chromium 147.0.7727.24. The independent geometry and pixel captures use pinned Chromium 147.0.7727.50; capture inputs and records remain unchanged.",
+    "source_file_sha256": {
+      "third_party/blink/renderer/core/dom/element.cc": "a467beee51049eae04fb0fbab559ad5e05ddb27a425dbbaa6e53a39f16daadac",
+      "ui/gfx/geometry/rect_f.cc": "d473d330e16e12c822b8704412ab250f2ad93bf53c5b15281784a67c87e728e3"
+    },
+    "version_file": [
+      "MAJOR=147",
+      "MINOR=0",
+      "BUILD=7727",
+      "PATCH=24"
+    ]
+  },
+  "empty_cases": [
+    {
+      "case": "max0",
+      "chromium_directory": "out/renderer-evidence/constrained-box-geometry-v3/chromium-1/max0",
+      "chromium_geometry": {
+        "border": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 272,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 68.65625,
+              "width": 56,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 0,
+            "width": 84,
+            "x": 216,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 0,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 0,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 0,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "native_directory": "out/renderer-evidence/native-empty-fragment-bounds-v1/native-1/max0",
+      "native_geometry": {
+        "border": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 272,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 68.65625,
+              "width": 56,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 0,
+            "width": 84,
+            "x": 216,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 0,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 0,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 0,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "native_geometry_unchanged": false,
+      "native_png_unchanged": true,
+      "preceding_geometry_exact": false,
+      "scale": "1"
+    },
+    {
+      "case": "max0",
+      "chromium_directory": "out/renderer-evidence/constrained-box-geometry-v3/chromium-1.25/max0",
+      "chromium_geometry": {
+        "border": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 272,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 68.65625,
+              "width": 56,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 0,
+            "width": 84,
+            "x": 216,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 0,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 0,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 0,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "native_directory": "out/renderer-evidence/native-empty-fragment-bounds-v1/native-1.25/max0",
+      "native_geometry": {
+        "border": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 272,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 68.65625,
+              "width": 56,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 0,
+            "width": 84,
+            "x": 216,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 0,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 0,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 0,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "native_geometry_unchanged": false,
+      "native_png_unchanged": true,
+      "preceding_geometry_exact": false,
+      "scale": "1.25"
+    },
+    {
+      "case": "max0",
+      "chromium_directory": "out/renderer-evidence/constrained-box-geometry-v3/chromium-1.5/max0",
+      "chromium_geometry": {
+        "border": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 272,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 68.65625,
+              "width": 56,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 0,
+            "width": 84,
+            "x": 216,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 0,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 0,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 0,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "native_directory": "out/renderer-evidence/native-empty-fragment-bounds-v1/native-1.5/max0",
+      "native_geometry": {
+        "border": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 272,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 68.65625,
+              "width": 56,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 0,
+            "width": 84,
+            "x": 216,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 0,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 0,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 0,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "native_geometry_unchanged": false,
+      "native_png_unchanged": true,
+      "preceding_geometry_exact": false,
+      "scale": "1.5"
+    },
+    {
+      "case": "max0",
+      "chromium_directory": "out/renderer-evidence/constrained-box-geometry-v3/chromium-2/max0",
+      "chromium_geometry": {
+        "border": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 272,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 68.65625,
+              "width": 56,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 0,
+            "width": 84,
+            "x": 216,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 0,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 0,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 0,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "native_directory": "out/renderer-evidence/native-empty-fragment-bounds-v1/native-2/max0",
+      "native_geometry": {
+        "border": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 272,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 68.65625,
+              "width": 56,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 0,
+            "width": 84,
+            "x": 216,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 0,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 0,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 0,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "native_geometry_unchanged": false,
+      "native_png_unchanged": true,
+      "preceding_geometry_exact": false,
+      "scale": "2"
+    },
+    {
+      "case": "max0",
+      "chromium_directory": "out/renderer-evidence/constrained-box-geometry-v3/chromium-3/max0",
+      "chromium_geometry": {
+        "border": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 272,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 68.65625,
+              "width": 56,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 0,
+            "width": 84,
+            "x": 216,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 0,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 0,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 0,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": true,
+      "native_directory": "out/renderer-evidence/native-empty-fragment-bounds-v1/native-3/max0",
+      "native_geometry": {
+        "border": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 272,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 68.65625,
+              "width": 56,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 0,
+            "width": 84,
+            "x": 216,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 0,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 0,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 0,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "native_geometry_unchanged": false,
+      "native_png_unchanged": true,
+      "preceding_geometry_exact": false,
+      "scale": "3"
+    }
+  ],
+  "input_reports": {
+    "out/renderer-evidence/native-empty-fragment-bounds-v1/comparison-v1.json": "ed4ed246472b4a9042fd35fd07d05cbb11b6107ca5e03ef64d4e7c1e8f07f92e"
+  },
+  "javascript_executed_by_openui": false,
+  "qualification_remaining": [
+    "complete clean renderer matrices",
+    "remaining native behavior and release gates"
+  ],
+  "release_qualification": false,
+  "results": {
+    "all_png_bytes_unchanged": 65,
+    "geometry_exact": 55,
+    "geometry_regressions": 0,
+    "native_comparisons": 65,
+    "new_empty_geometry_exact": 5,
+    "other_geometry_unchanged": 60,
+    "pixel_regressions": 0,
+    "pixels_exact": 55
+  },
+  "reviewed_cause": {
+    "cause": "The all-empty fallback retained the first fragment, while Chromium unions rectangles in layout order and replaces an empty accumulator with the next rectangle.",
+    "correction": "Select the final rectangle only when every retained fragment is empty; preserve the existing nonempty union and no-layout result.",
+    "owner": "openui-engine retained geometry collection"
+  },
+  "schema_version": 1,
+  "source": {
+    "checkpoint": "d648fbb24f0e049ccc6a7ad40517eac1153e6ec1",
+    "clean": false,
+    "code_file_sha256": {
+      "bindings/rust/openui-engine/src/lib.rs": "617e1a90e166ad0e1505349ccf121e5434aea9c555e7d77f821ada5c8981ac9a",
+      "bindings/rust/openui/src/element.rs": "1fd98e7ba9a3283e7e9df363137f3728c8b082c9b63adc774de4e5c8625eca53",
+      "bindings/rust/openui/tests/v02_conformance.rs": "5e394dd604c986e3c88abddc6d33d764e1cb24567924bf8e4a80aafad978b090",
+      "examples/c_v02/geometry.c": "10faa2316c26de4b1fda054af4043d9fc6f72634b934a412735483b1e72e6a8d"
+    }
+  },
+  "verification": {
+    "accessibility_uses_the_same_bounds": true,
+    "c_abi": {
+      "c_consumers": 6,
+      "cpp_header_consumers": 1,
+      "exports": 109,
+      "frozen_exports": 84,
+      "prior_layouts_preserved": true
+    },
+    "formatting": "pass",
+    "native_rust_linux_application": {
+      "failed": 0,
+      "passed": 55
+    },
+    "read_only_generators": "pass",
+    "rust_and_c_guards_reject_preceding_renderer": true,
+    "workspace": {
+      "failed": 0,
+      "ignored": 13,
+      "passed": 8491,
+      "suites": 147
+    }
+  },
+  "verification_log_sha256": {
+    "c_abi": "3f3b2b095b535318c9564fad62e3c1a7783f3dacdba7813a89fe48e04983a2b2",
+    "c_baseline": "6005482df27c775a959a032d772d010ddc4e2526c59213cc62b6a2332da8032d",
+    "contracts": "c98dc031fa8bc67893f59bf6c9c59f1f00e125e14cc75f82d97d7d24d5cde3a7",
+    "rust_baseline": "21d8b96c56fc2e2c8f0d43bcaebb1fc9c1aa3e9c5872d0023bcc2c658b0b9d3b",
+    "rust_positive": "3e64ac2606c39cf962a59af31b7e561e56b26e8c00a80aa6e97e181f2fa42c75",
+    "workspace": "a142d438361e2d43d227777cc17726d2bc523fa324ead932449bd1069ddd8491"
+  }
+}

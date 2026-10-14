@@ -1,0 +1,210 @@
+{
+  "after_results": {
+    "different": 1627,
+    "errors": 0,
+    "exact": 21297,
+    "profile_result_sha256": "89e0a5591eccb7318de95b4e6a6733e216ea0993d550764b9c441830c3e329ba",
+    "total": 22924
+  },
+  "after_source": {
+    "clean": false,
+    "commit": "32d2f00b9beefa8e1b590e781fb080924f49a18f",
+    "harness_sha256": "e5d5d749235aeaf5f5d8c11b9af508922e549ec96b7830874289cfe0de608014",
+    "source_tree_sha256": "1b2aa4ccaf8115f3dd51c7fa70089806ae919478ea213dc78d558310cb603b74",
+    "status_sha256": "4ae5c0437517050a9ef7ed6837003ff53217cc6c4a53f9fb1523ea477be7c5d5"
+  },
+  "all_22924_chromium_png_rgba_and_oracle_identities_unchanged": true,
+  "before_results": {
+    "different": 1616,
+    "errors": 0,
+    "exact": 21308,
+    "profile_result_sha256": "ef61568c820b73556802749bc3256b1acc56d60e2b70d78ab9ecaa0ae1da6d74",
+    "total": 22924
+  },
+  "build": {
+    "path": "out/renderer-evidence/native-opacity-clip-v1/fresh-runner-v10/build-identity.json",
+    "sha256": "d9a638599d174bd3ca9235567d9f964290bb78efe444d1b179d527d3b430b276"
+  },
+  "build_exit_code": 0,
+  "changes": {
+    "changed": 142,
+    "exact_regressions": 23,
+    "improved": 75,
+    "newly_exact": 12,
+    "worsened": 46
+  },
+  "decision": "Reject the unapplied global opacity/build-flag/clip-origin prototype: 23 formerly exact comparisons regress.",
+  "delta": {
+    "path": "out/renderer-evidence/native-opacity-clip-v1/fresh-original-delta-v10.json",
+    "sha256": "4ce1bff17bbf47fcb25ca8e296c1e7d16f161e53e0ddb29105c1cbab73cdc86b"
+  },
+  "exact_regressions": [
+    {
+      "after": 4492,
+      "before": 0,
+      "id": "wpt/css_backgrounds/background-position_background-position-bottom-right-repeat-round",
+      "profile": "legacy-800x600@1"
+    },
+    {
+      "after": 1,
+      "before": 0,
+      "id": "wpt/css_backgrounds/tiny-foreignObject-double-border-radius-crash",
+      "profile": "legacy-800x600@1"
+    },
+    {
+      "after": 20528,
+      "before": 0,
+      "id": "wpt/css_backgrounds/background-position_background-position-bottom-right-repeat-round",
+      "profile": "mobile-375x667@2"
+    },
+    {
+      "after": 1314648,
+      "before": 0,
+      "id": "wpt/css_backgrounds/background-attachment-margin-root-001",
+      "profile": "desktop-1280x720@1.25"
+    },
+    {
+      "after": 1314648,
+      "before": 0,
+      "id": "wpt/css_backgrounds/background-attachment-margin-root-001-ref",
+      "profile": "desktop-1280x720@1.25"
+    },
+    {
+      "after": 1282299,
+      "before": 0,
+      "id": "wpt/css_backgrounds/background-margin-root",
+      "profile": "desktop-1280x720@1.25"
+    },
+    {
+      "after": 1282170,
+      "before": 0,
+      "id": "wpt/css_backgrounds/background-margin-root-ref",
+      "profile": "desktop-1280x720@1.25"
+    },
+    {
+      "after": 1282170,
+      "before": 0,
+      "id": "wpt/css_backgrounds/background-margin-transformed-root-ref",
+      "profile": "desktop-1280x720@1.25"
+    },
+    {
+      "after": 1282299,
+      "before": 0,
+      "id": "wpt/css_backgrounds/background-margin-will-change-root",
+      "profile": "desktop-1280x720@1.25"
+    },
+    {
+      "after": 1282170,
+      "before": 0,
+      "id": "wpt/css_backgrounds/background-margin-will-change-root-ref",
+      "profile": "desktop-1280x720@1.25"
+    },
+    {
+      "after": 7697,
+      "before": 0,
+      "id": "wpt/css_backgrounds/background-position_background-position-bottom-right-repeat-round",
+      "profile": "desktop-1280x720@1.25"
+    },
+    {
+      "after": 7680,
+      "before": 0,
+      "id": "wpt/css_backgrounds/background-repeat-round-4",
+      "profile": "desktop-1280x720@1.25"
+    },
+    {
+      "after": 7680,
+      "before": 0,
+      "id": "wpt/css_backgrounds/background-repeat-round-4-ref",
+      "profile": "desktop-1280x720@1.25"
+    },
+    {
+      "after": 1252,
+      "before": 0,
+      "id": "wpt/css_flexbox/overflow-area-001",
+      "profile": "desktop-1280x720@1.25"
+    },
+    {
+      "after": 1253,
+      "before": 0,
+      "id": "wpt/css_flexbox/overflow-area-002",
+      "profile": "desktop-1280x720@1.25"
+    },
+    {
+      "after": 9396,
+      "before": 0,
+      "id": "wpt/css_backgrounds/background-position_background-position-bottom-right-repeat-round",
+      "profile": "desktop-1920x1080@1.5"
+    },
+    {
+      "after": 8651,
+      "before": 0,
+      "id": "wpt/css_backgrounds/background-repeat-round-1a",
+      "profile": "desktop-1920x1080@1.5"
+    },
+    {
+      "after": 8651,
+      "before": 0,
+      "id": "wpt/css_backgrounds/background-repeat-round-1b",
+      "profile": "desktop-1920x1080@1.5"
+    },
+    {
+      "after": 8651,
+      "before": 0,
+      "id": "wpt/css_backgrounds/background-repeat-round-1d",
+      "profile": "desktop-1920x1080@1.5"
+    },
+    {
+      "after": 114,
+      "before": 0,
+      "id": "wpt/css_backgrounds/background-repeat-round-4",
+      "profile": "desktop-1920x1080@1.5"
+    },
+    {
+      "after": 114,
+      "before": 0,
+      "id": "wpt/css_backgrounds/background-repeat-round-4-ref",
+      "profile": "desktop-1920x1080@1.5"
+    },
+    {
+      "after": 2992,
+      "before": 0,
+      "id": "wpt/css_flexbox/overflow-area-001",
+      "profile": "desktop-1920x1080@1.5"
+    },
+    {
+      "after": 2992,
+      "before": 0,
+      "id": "wpt/css_flexbox/overflow-area-002",
+      "profile": "desktop-1920x1080@1.5"
+    }
+  ],
+  "executable_sha256": "8cd51ab35ed4440f67297713876122da2d4b5ee76ac940bcb0e4ee07d4bebbae",
+  "focused_exact": 640,
+  "focused_primitive_delta": {
+    "path": "out/renderer-evidence/native-opacity-clip-v1/fresh-focused-primitive-delta-v10.json",
+    "sha256": "044109a47df88a1c6ba5260a4f3ae82e5dbb0f396682240224ff7efeb1ad2e84"
+  },
+  "focused_total": 640,
+  "limitations": [
+    "Dirty-source development measurement; not a clean release run.",
+    "The fresh executable predates the embedded build source guard; its explicit build snapshot and source stability were verified.",
+    "Required original, expanded, residual ownership, compositor, hardware and release gates remain open."
+  ],
+  "matrix_exit_code": 1,
+  "policy": "Pinned Chromium is the sole pixel target. Open UI executes no JavaScript. Consuming applications call public native Rust APIs and Rust callbacks. Historical Open UI images are provenance only.",
+  "primitive_exact": 960,
+  "primitive_total": 960,
+  "release_qualification": false,
+  "renderer_applied_to_main": false,
+  "reports": {
+    "after": {
+      "path": "out/renderer-evidence/native-opacity-clip-v1/wider-fresh-v10/original/full-summary.json",
+      "sha256": "f6a18ce617caf0b248c0f9c640b6f3f6ed73a774e5e489c26bae4832166a2838"
+    },
+    "before": {
+      "path": "out/renderer-evidence/native-image-clean-9b158cda-rerun-v2/original/full-summary.json",
+      "sha256": "d74a544b679a8b46d7d88ffa937113a2aa4937da25e604576503164d3a6f8877"
+    }
+  },
+  "schema_version": 1
+}

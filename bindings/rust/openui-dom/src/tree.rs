@@ -10,8 +10,8 @@ use openui_geometry::RasterConfiguration;
 use openui_style::{
     apply_to_computed, Color, ComputedStyle, ContainerCondition, Containment, CounterStyle,
     Display, FontFamily, GeneratedContentItem, GenericFontFamily, ImageResourceId, Overflow,
-    PropertyTypeError, QuotePair, RendererInternalStyleValue, ScrollMarkerGroup, Style,
-    StyleProperty, StyleValue,
+    OverflowClipBox, PropertyTypeError, QuotePair, RendererInternalStyleValue, ScrollMarkerGroup,
+    Style, StyleProperty, StyleValue,
 };
 
 /// Encoded raster or static-SVG bytes owned by a document.
@@ -244,6 +244,10 @@ pub struct NodeData {
     /// Whether the HTML control is disabled. Native appearance and text
     /// colors consume this state without a script/event runtime.
     pub form_control_disabled: bool,
+    /// Live input state; None initializes direct static documents from their
+    /// authored attributes. Native property writes do not change attributes.
+    pub form_control_checked: Option<bool>,
+    pub form_control_indeterminate: Option<bool>,
 
     /// Whether this node is an SVG `foreignObject` graphics element. Its CSS
     /// box participates in block layout, while SVG viewport clipping remains
@@ -274,9 +278,27 @@ pub struct NodeData {
 
 impl NodeData {
     fn new(tag: ElementTag) -> Self {
+        let mut style = ComputedStyle::initial();
+        if matches!(
+            tag,
+            ElementTag::Image
+                | ElementTag::Canvas
+                | ElementTag::Video
+                | ElementTag::IFrame
+                | ElementTag::Embed
+        ) {
+            // Blink's UA stylesheet clips these replaced hosts at their
+            // content box. Object fallback children still use native block
+            // flow; their host clip needs separate qualification.
+            style.update_derived(|fields| {
+                fields.overflow_x = Overflow::Clip;
+                fields.overflow_y = Overflow::Clip;
+                fields.overflow_clip_box = OverflowClipBox::ContentBox;
+            });
+        }
         Self {
             tag,
-            style: ComputedStyle::initial(),
+            style,
             pseudo_kind: None,
             pseudo_origin: NodeId::NONE,
             attributes: BTreeMap::new(),
@@ -290,6 +312,8 @@ impl NodeData {
             form_control: None,
             form_control_native_appearance: true,
             form_control_disabled: false,
+            form_control_checked: None,
+            form_control_indeterminate: None,
             is_svg_foreign_object: false,
             scroll_marker_inactive_background: None,
             container_query_rules: Vec::new(),
@@ -357,6 +381,73 @@ impl Document {
             .style
             .set_raster_context(raster_configuration, device_scale_factor);
         doc
+    }
+
+    /// Own reflected disabled state, without inheritance from a group.
+    pub fn own_form_control_disabled(&self, id: NodeId) -> bool {
+        let node = self.node(id);
+        node.form_control_disabled
+            || (matches!(
+                node.tag,
+                ElementTag::Button
+                    | ElementTag::Input
+                    | ElementTag::TextArea
+                    | ElementTag::Select
+                    | ElementTag::Fieldset
+                    | ElementTag::OptGroup
+                    | ElementTag::Option
+            ) && node.attributes.contains_key("disabled"))
+    }
+
+    /// Resolve disabled state from the retained control input and authored tree.
+    /// First-legend exceptions use DOM child order, regardless of display style.
+    /// Reflected attributes and the control's own disabled flag remain unchanged.
+    pub fn effective_form_control_disabled(&self, id: NodeId) -> bool {
+        let node = self.node(id);
+        if self.own_form_control_disabled(id) {
+            return true;
+        }
+        if !matches!(
+            node.tag,
+            ElementTag::Button
+                | ElementTag::Input
+                | ElementTag::TextArea
+                | ElementTag::Select
+                | ElementTag::Fieldset
+                | ElementTag::OptGroup
+                | ElementTag::Option
+        ) {
+            return false;
+        }
+        if node.tag == ElementTag::Option {
+            return !node.parent.is_none()
+                && self.node(node.parent).tag == ElementTag::OptGroup
+                && self.own_form_control_disabled(node.parent);
+        }
+        if node.tag == ElementTag::OptGroup {
+            return false;
+        }
+        let mut branch = id;
+        let mut parent = node.parent;
+        while !parent.is_none() {
+            let ancestor = self.node(parent);
+            if ancestor.tag == ElementTag::Fieldset && self.own_form_control_disabled(parent) {
+                let branch_node = self.node(branch);
+                if branch_node.tag != ElementTag::Legend || branch_node.pseudo_kind.is_some() {
+                    return true;
+                }
+                let first_legend = self.children(parent).find(|child| {
+                    let data = self.node(*child);
+                    data.tag == ElementTag::Legend && data.pseudo_kind.is_none()
+                });
+                if first_legend != Some(branch) {
+                    return true;
+                }
+            }
+            branch = parent;
+            parent = ancestor.parent;
+        }
+        false
     }
 
     pub fn raster_configuration(&self) -> RasterConfiguration {

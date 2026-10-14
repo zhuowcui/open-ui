@@ -1,0 +1,102 @@
+{
+  "all_commands_terminal": true,
+  "all_hosted_workflows_terminal": true,
+  "collector_observed_exit_code": 0,
+  "collector_probe_sha256": "c8cba26b535dfe54193b0b14bcb2adc9f1ee22239e8d12661da8dc1fd89e28d1",
+  "probe_sha256": "3b2726b98b5c0c6ebcec2d8a907673c071e8e849f10e49f92fa01538ea3f5834",
+  "release_qualification": false,
+  "schema_version": 1,
+  "snapshots": [
+    [
+      {
+        "conclusion": "success",
+        "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-watch-v1823/00-37407697770.json",
+        "run_id": 37407697770,
+        "sha256": "6ff994f9669df6c43e13501c6010b70f7fc727b80eae88cad83881db33ceff46",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-watch-v1823/00-37407697750.json",
+        "run_id": 37407697750,
+        "sha256": "324534d5f1543c33601fc913f2fe74983f063ca829c6f5ab07a94047b4612fc4",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-watch-v1823/00-37407697920.json",
+        "run_id": 37407697920,
+        "sha256": "4f19915440fcf36c46614d264434dc19d1d33baa7829783c85da63518100fa95",
+        "status": "completed"
+      },
+      {
+        "conclusion": "",
+        "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-watch-v1823/00-37407693299.json",
+        "run_id": 37407693299,
+        "sha256": "eaed2d586d6ddb3415551a3e6c5a5adaf5a76d793361385ad464ce95211ca5ed",
+        "status": "in_progress"
+      }
+    ],
+    [
+      {
+        "conclusion": "success",
+        "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-watch-v1823/01-37407697770.json",
+        "run_id": 37407697770,
+        "sha256": "6ff994f9669df6c43e13501c6010b70f7fc727b80eae88cad83881db33ceff46",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-watch-v1823/01-37407697750.json",
+        "run_id": 37407697750,
+        "sha256": "324534d5f1543c33601fc913f2fe74983f063ca829c6f5ab07a94047b4612fc4",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-watch-v1823/01-37407697920.json",
+        "run_id": 37407697920,
+        "sha256": "4f19915440fcf36c46614d264434dc19d1d33baa7829783c85da63518100fa95",
+        "status": "completed"
+      },
+      {
+        "conclusion": "",
+        "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-watch-v1823/01-37407693299.json",
+        "run_id": 37407693299,
+        "sha256": "eaed2d586d6ddb3415551a3e6c5a5adaf5a76d793361385ad464ce95211ca5ed",
+        "status": "in_progress"
+      }
+    ],
+    [
+      {
+        "conclusion": "success",
+        "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-watch-v1823/02-37407697770.json",
+        "run_id": 37407697770,
+        "sha256": "6ff994f9669df6c43e13501c6010b70f7fc727b80eae88cad83881db33ceff46",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-watch-v1823/02-37407697750.json",
+        "run_id": 37407697750,
+        "sha256": "324534d5f1543c33601fc913f2fe74983f063ca829c6f5ab07a94047b4612fc4",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-watch-v1823/02-37407697920.json",
+        "run_id": 37407697920,
+        "sha256": "4f19915440fcf36c46614d264434dc19d1d33baa7829783c85da63518100fa95",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-watch-v1823/02-37407693299.json",
+        "run_id": 37407693299,
+        "sha256": "592696bee98a5a047b7041b392f992e9edbc9c3094afbd68948bd0bc480df21a",
+        "status": "completed"
+      }
+    ]
+  ],
+  "source": "16187f4f54e1b62ea317a155f620c42f91a38c72"
+}

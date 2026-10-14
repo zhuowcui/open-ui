@@ -1,0 +1,140 @@
+{
+  "all_commands_terminal": true,
+  "baseline_regression_reproduced": true,
+  "probe_sha256": "49b17891a996eaaf2175c5bbd792f3cd3a8eb3b3070fdeef85e84c0cd94cc314",
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "0ccc37da4a0def755d5b7f25bb93e92b789787ce",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "43b31449b73a7c7f794d160a82b926e47095ae09a192280536e4dc374b4e6347",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "0ccc37da4a0def755d5b7f25bb93e92b789787ce",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "43b31449b73a7c7f794d160a82b926e47095ae09a192280536e4dc374b4e6347",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "state": "fixed-guard-selection-failed-native-inheritance-guards",
+  "steps": [
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "-p",
+        "openui-engine",
+        "--lib",
+        "tests::native_inherited_styles_follow_parent_mutations_and_tree_changes",
+        "--",
+        "--exact"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "08c0de9932dff6536940c449951c7a0d4d34fb7b91661d2660eaab9f66944c26",
+      "name": "baseline-native-inheritance-guard",
+      "observed_exit_code": 101,
+      "source": {
+        "clean": true,
+        "commit": "0db5c3889a8576b618e45fbb3b64cd360eb4bbb1",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "1369e932f7a1e9d0cfcecfbdd230120692a1c8285003b91b4bb1eb0ffc49b519",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "0db5c3889a8576b618e45fbb3b64cd360eb4bbb1",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "1369e932f7a1e9d0cfcecfbdd230120692a1c8285003b91b4bb1eb0ffc49b519",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "-p",
+        "openui-engine",
+        "--lib",
+        "tests::native_inherited_styles_follow_parent_mutations_and_tree_changes",
+        "--",
+        "--exact"
+      ],
+      "disk_guard_triggered": false,
+      "expected_named_tests": 1,
+      "log_sha256": "6d29e2677b72e4fba543981e4e63ae3925f9d04997048a88b8a928a1c607a02b",
+      "name": "fixed-native-inheritance-guard",
+      "observed_exit_code": 0,
+      "source": {
+        "clean": true,
+        "commit": "0ccc37da4a0def755d5b7f25bb93e92b789787ce",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "43b31449b73a7c7f794d160a82b926e47095ae09a192280536e4dc374b4e6347",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "0ccc37da4a0def755d5b7f25bb93e92b789787ce",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "43b31449b73a7c7f794d160a82b926e47095ae09a192280536e4dc374b4e6347",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "test_counts": [
+        [
+          1,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "-p",
+        "openui-engine",
+        "--lib",
+        "native_inh",
+        "--",
+        "--nocapture"
+      ],
+      "disk_guard_triggered": false,
+      "expected_named_tests": 8,
+      "log_sha256": "bcfb57dbf19501fd854f15216a6070d676069c17ec12c1fca971635440f5c80d",
+      "name": "native-inheritance-guards",
+      "observed_exit_code": 0,
+      "source": {
+        "clean": true,
+        "commit": "0ccc37da4a0def755d5b7f25bb93e92b789787ce",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "43b31449b73a7c7f794d160a82b926e47095ae09a192280536e4dc374b4e6347",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "0ccc37da4a0def755d5b7f25bb93e92b789787ce",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "43b31449b73a7c7f794d160a82b926e47095ae09a192280536e4dc374b4e6347",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "test_counts": [
+        [
+          9,
+          0,
+          0
+        ]
+      ]
+    }
+  ]
+}

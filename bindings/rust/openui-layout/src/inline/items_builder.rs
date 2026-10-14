@@ -10,6 +10,7 @@
 //! - Forced breaks (`<br>` via ElementTag convention)
 //! - Text shaping via openui-text
 
+use crate::layout_context::LayoutDocument;
 use openui_dom::{Document, ElementTag, NodeId, PseudoElementKind};
 use openui_geometry::WritingDirectionMode;
 use openui_style::{
@@ -33,7 +34,7 @@ use crate::length_resolver::{resolve_length, resolve_margin_or_padding};
 /// use the positioned ancestor's padding box, while normal-flow percentages
 /// use the parent's content box.
 fn definite_content_block_size(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     node_id: NodeId,
     depth: usize,
 ) -> Option<openui_geometry::LayoutUnit> {
@@ -165,6 +166,55 @@ pub struct FloatPlaceholder {
 }
 
 impl InlineItemsData {
+    /// Shape an immutable text stream whose CSS transformations, whitespace
+    /// processing and tab expansion have already been applied. Intrinsic
+    /// sizing uses this entry point without creating or changing DOM nodes.
+    pub(crate) fn shape_preprocessed_text(
+        text: &str,
+        style: &ComputedStyle,
+        font_collection: Arc<openui_text::FontCollection>,
+    ) -> Self {
+        let mut data = Self {
+            font_collection,
+            text: text.to_owned(),
+            items: if text.is_empty() {
+                Vec::new()
+            } else {
+                vec![InlineItem {
+                    item_type: InlineItemType::Text,
+                    text_range: 0..text.len(),
+                    node_id: NodeId::NONE,
+                    shape_result: None,
+                    style_index: 0,
+                    end_collapse_type: CollapseType::NotCollapsible,
+                    is_end_collapsible_newline: false,
+                    bidi_level: 0,
+                    intrinsic_inline_size: None,
+                }]
+            },
+            styles: vec![style.clone()],
+            oof_children: Vec::new(),
+            block_in_inline: Vec::new(),
+        };
+        data.shape_for_base_style(style);
+        data
+    }
+
+    /// Apply the same paragraph direction and shaping stages to collected
+    /// inline content and already processed, text-only intrinsic content.
+    pub(crate) fn shape_for_base_style(&mut self, style: &ComputedStyle) {
+        let base_direction = if style.unicode_bidi == UnicodeBidi::Plaintext {
+            None
+        } else if style.direction == Direction::Rtl {
+            Some(TextDirection::Rtl)
+        } else {
+            Some(TextDirection::Ltr)
+        };
+        self.apply_bidi(base_direction);
+        self.split_shaping_runs();
+        self.shape_text();
+    }
+
     /// Apply the originating block's computed `::first-line` style to a clone
     /// of this item stream. The clone is shaped and broken only for line one;
     /// subsequent lines continue with the ordinary stream.
@@ -478,10 +528,10 @@ impl InlineItemsData {
 
     /// Split text items into runs that are homogeneous for shaping and paint.
     ///
-    /// Bidi levels are resolved first. This pass then adds script, deterministic
-    /// fallback-family, grapheme-cluster, and vertical-orientation boundaries.
-    /// No `UnresolvedMixed` item may leave this pass, so paint never needs to
-    /// rediscover Unicode orientation from CSS or text contents.
+    /// Bidi levels are resolved first. The deterministic fallback profile
+    /// then adds script, fallback family, grapheme cluster and vertical
+    /// orientation boundaries. Other family lists still retain mixed items;
+    /// complete shaping and orientation support remains implementation work.
     pub fn split_shaping_runs(&mut self) {
         let old_item_count = self.items.len();
         let mut boundary_map = vec![0usize; old_item_count + 1];
@@ -498,10 +548,10 @@ impl InlineItemsData {
             if !style.font_family.families.iter().any(|family| {
                 matches!(family, FontFamily::Named(name) if name.eq_ignore_ascii_case("Droid Sans Fallback"))
             }) {
-                // The homogeneous fragment contract is enabled by the pinned
-                // deterministic fallback profile. Legacy ported builders keep
-                // their established single-run shaping until regenerated into
-                // that profile, preserving their frozen comparison evidence.
+                // Homogeneous fragments are currently enabled for the
+                // deterministic fallback chain. Other family lists still
+                // retain mixed shaping items. Full script, fallback and
+                // orientation support remains a gap against pinned Chromium.
                 new_items.push(item);
                 continue;
             }
@@ -794,7 +844,7 @@ pub fn style_to_font_description(style: &ComputedStyle) -> FontDescription {
 
 /// Builder that walks the DOM and collects inline items.
 pub struct InlineItemsBuilder<'a> {
-    doc: &'a Document,
+    doc: &'a dyn LayoutDocument,
     /// Writing direction of the inline formatting context being collected.
     inline_writing_direction: WritingDirectionMode,
     text: String,
@@ -827,6 +877,10 @@ pub struct InlineItemsBuilder<'a> {
 
 impl<'a> InlineItemsBuilder<'a> {
     pub fn new(doc: &'a Document) -> Self {
+        Self::new_with_layout(doc)
+    }
+
+    pub(crate) fn new_with_layout(doc: &'a dyn LayoutDocument) -> Self {
         Self {
             doc,
             inline_writing_direction: WritingDirectionMode::horizontal_ltr(),
@@ -848,15 +902,22 @@ impl<'a> InlineItemsBuilder<'a> {
     /// This is the main entry point. It walks all children of `block_node_id`
     /// and produces a flat `InlineItemsData`.
     pub fn collect(doc: &Document, block_node_id: NodeId) -> InlineItemsData {
+        Self::collect_with_layout(doc, block_node_id)
+    }
+
+    pub(crate) fn collect_with_layout(
+        doc: &dyn LayoutDocument,
+        block_node_id: NodeId,
+    ) -> InlineItemsData {
         Self::collect_with_floats(doc, block_node_id).0
     }
 
     /// Collect inline items and the source-order float insertion boundaries.
     pub(crate) fn collect_with_floats(
-        doc: &Document,
+        doc: &dyn LayoutDocument,
         block_node_id: NodeId,
     ) -> (InlineItemsData, Vec<FloatPlaceholder>) {
-        let mut builder = InlineItemsBuilder::new(doc);
+        let mut builder = InlineItemsBuilder::new_with_layout(doc);
         let block_style = &doc.node(block_node_id).style;
         builder.include_scroll_markers =
             doc.node(block_node_id).pseudo_kind == Some(PseudoElementKind::ScrollMarkerGroup);
@@ -888,6 +949,14 @@ impl<'a> InlineItemsBuilder<'a> {
         block_node_id: NodeId,
         children: &[NodeId],
     ) -> InlineItemsData {
+        Self::collect_for_children_with_layout(doc, block_node_id, children)
+    }
+
+    pub(crate) fn collect_for_children_with_layout(
+        doc: &dyn LayoutDocument,
+        block_node_id: NodeId,
+        children: &[NodeId],
+    ) -> InlineItemsData {
         Self::collect_for_children_with_floats(doc, block_node_id, children).0
     }
 
@@ -896,11 +965,11 @@ impl<'a> InlineItemsBuilder<'a> {
     /// those floats, while the returned items retain the interrupted inline
     /// ancestry used to position the remaining line content.
     pub(crate) fn collect_for_children_with_floats(
-        doc: &Document,
+        doc: &dyn LayoutDocument,
         block_node_id: NodeId,
         children: &[NodeId],
     ) -> (InlineItemsData, Vec<FloatPlaceholder>) {
-        let mut builder = InlineItemsBuilder::new(doc);
+        let mut builder = InlineItemsBuilder::new_with_layout(doc);
         let block_style = &doc.node(block_node_id).style;
         builder.include_scroll_markers =
             doc.node(block_node_id).pseudo_kind == Some(PseudoElementKind::ScrollMarkerGroup);
@@ -983,6 +1052,19 @@ impl<'a> InlineItemsBuilder<'a> {
                     inline_ancestor_text_offset,
                 });
             }
+            return;
+        }
+
+        // Inline replaced boxes are atomic even when their specified display
+        // is `inline`. Blink tests IsAtomicInline before LayoutInline traversal:
+        // the retained resource box occupies the line, not its fallback DOM.
+        // Use the shared layout class so ordinary inline wrappers and failed
+        // image fallback remain on their existing child-traversal path.
+        if node.style.display == Display::Inline
+            && crate::scroll_area::is_replaced_layout_box(self.doc, child_id)
+        {
+            let style = node.style.clone();
+            self.append_atomic_inline(child_id, &style);
             return;
         }
 
@@ -1336,9 +1418,6 @@ impl<'a> InlineItemsBuilder<'a> {
         let child_direction = style.direction.writing_direction(style.writing_mode);
         let is_orthogonal =
             child_direction.is_horizontal() != self.inline_writing_direction.is_horizontal();
-        let deterministic_text_profile = style.font_family.families.iter().any(|family| {
-            matches!(family, FontFamily::Named(name) if name.eq_ignore_ascii_case("Droid Sans Fallback"))
-        });
         let own_inline_edges = if child_direction.is_horizontal() {
             style.effective_border_left() as f32
                 + style.effective_border_right() as f32
@@ -1459,7 +1538,7 @@ impl<'a> InlineItemsBuilder<'a> {
                 true,
                 child_direction,
             );
-            let probe = crate::block::block_layout(self.doc, node_id, &probe_space);
+            let probe = crate::block::block_layout_with_layout(self.doc, node_id, &probe_space);
             let border_box = if self.inline_writing_direction.is_horizontal() {
                 probe.size.width
             } else {
@@ -1509,7 +1588,7 @@ impl<'a> InlineItemsBuilder<'a> {
                 raw_height + own_border.block_sum() + own_padding.block_sum()
             };
             Some(
-                crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_block_size(
+                crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_block_size_with_layout(
                     self.doc,
                     node_id,
                     border_box_height,
@@ -1518,14 +1597,6 @@ impl<'a> InlineItemsBuilder<'a> {
             )
         })
         .flatten();
-        let has_consecutive_floats = deterministic_text_profile
-            && self
-                .doc
-                .children(node_id)
-                .filter(|child_id| self.doc.node(*child_id).style.float != Float::None)
-                .take(2)
-                .count()
-                >= 2;
         let mut flex_intrinsic_min = None;
         let intrinsic_max = if specified_intrinsic.is_some() {
             specified_intrinsic
@@ -1544,7 +1615,9 @@ impl<'a> InlineItemsBuilder<'a> {
                 .any(|child_id| self.doc.node(child_id).tag == ElementTag::Break)
                 .then(|| self.compute_intrinsic_inline_size(node_id))
                 .flatten();
-            let sizes = crate::intrinsic_sizing::compute_intrinsic_block_sizes(self.doc, node_id);
+            let sizes = crate::intrinsic_sizing::compute_intrinsic_block_sizes_with_layout(
+                self.doc, node_id,
+            );
             // Flex intrinsic sizes are expressed in the flex container's own
             // logical axes.
             let min_w = if child_direction.is_horizontal()
@@ -1585,7 +1658,7 @@ impl<'a> InlineItemsBuilder<'a> {
                 true,
                 child_direction,
             );
-            let probe = crate::block::block_layout(self.doc, node_id, &probe_space);
+            let probe = crate::block::block_layout_with_layout(self.doc, node_id, &probe_space);
             let size = if self.inline_writing_direction.is_horizontal() {
                 probe.size.width
             } else {
@@ -1594,22 +1667,15 @@ impl<'a> InlineItemsBuilder<'a> {
             .to_f32();
             (size > 0.0).then_some(size)
         } else {
-            // Generated builders use the complete flattened intrinsic stream
-            // for atomic shrink-to-fit sizing. Besides accounting for floats,
-            // this trims collapsible leading/trailing indentation whitespace
-            // around inline children instead of treating it as authored width.
-            if deterministic_text_profile {
-                let sizes = crate::intrinsic_sizing::compute_logical_intrinsic_inline_sizes(
-                    self.doc, node_id,
-                );
-                // InlineItem::intrinsic_inline_size is a content-box measure;
-                // block_layout applies this atomic element's own edges.
-                let max = (sizes.max.to_f32() - own_inline_edges).max(0.0);
-                if max > 0.0 {
-                    Some(max)
-                } else {
-                    self.compute_intrinsic_inline_size(node_id)
-                }
+            // Atomic shrink-to-fit uses the shared flattened intrinsic stream,
+            // including float contributions and collapsed edge whitespace.
+            let sizes =
+                crate::intrinsic_sizing::compute_logical_intrinsic_inline_sizes(self.doc, node_id);
+            // InlineItem::intrinsic_inline_size measures content-box width;
+            // block_layout_with_layout applies this atomic element's own edges.
+            let max = (sizes.max.to_f32() - own_inline_edges).max(0.0);
+            if max > 0.0 {
+                Some(max)
             } else {
                 self.compute_intrinsic_inline_size(node_id)
             }
@@ -1625,15 +1691,7 @@ impl<'a> InlineItemsBuilder<'a> {
                 // from its items. A zero endpoint lets an unwrapped inline
                 // flex row shrink below the sum of its definite item widths.
                 flex_intrinsic_min.unwrap_or(0.0)
-            } else if !deterministic_text_profile {
-                // Builders outside the pinned fallback profile retain the
-                // legacy single intrinsic measure, which was capped directly
-                // by the available size. A zero min-content endpoint makes the
-                // tuple-based shrink-to-fit equation reproduce that behavior,
-                // while regenerated builders opt into the complete min/max
-                // algorithm below.
-                0.0
-            } else if is_orthogonal || has_consecutive_floats {
+            } else if is_orthogonal {
                 // Preserve orthogonal atomic paths' established completed-
                 // fragment measure and zero min-content fallback.
                 0.0

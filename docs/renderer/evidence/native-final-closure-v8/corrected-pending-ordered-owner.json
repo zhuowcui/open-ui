@@ -1,0 +1,34 @@
+{
+  "owner_pid": 3472386,
+  "argv": [
+    "python3",
+    "-B",
+    "/mnt/d/openui-v02-qualification-d174ea0b/native-pending-ordered-oracle-driver-source-table-border-review-v4592/run_pending_ordered_oracles_root_v2.py",
+    "--execute-after-root-global-release",
+    "--output",
+    "/mnt/d/openui-v02-qualification-d174ea0b/native-pending-ordered-oracle-runtime-v4610",
+    "--tmp-root",
+    "/tmp/oui-pending-ordered-oracle-v4610"
+  ],
+  "source": {
+    "commit": "9ad2fb264da070d484859ebc2a6a9a8cf787fb08",
+    "clean": true,
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "source_tree_sha256": "7b3b67bdf5ac6135df89ba05c76f99a92ec2f9ce8186dca25cbcd4c68a0db133",
+    "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6"
+  },
+  "complete": true,
+  "qualification": false,
+  "child_pid": 3472440,
+  "actual_exit_code": 1,
+  "terminal_reaped": true,
+  "source_after": {
+    "commit": "9ad2fb264da070d484859ebc2a6a9a8cf787fb08",
+    "clean": true,
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "source_tree_sha256": "7b3b67bdf5ac6135df89ba05c76f99a92ec2f9ce8186dca25cbcd4c68a0db133",
+    "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6"
+  },
+  "log_sha256": "381f9dc00cb30cfed1a1763d831fa720607c3046b6d94109539186cdc1159d5e",
+  "source_unchanged": true
+}

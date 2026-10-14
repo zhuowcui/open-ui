@@ -1,0 +1,102 @@
+{
+  "all_commands_terminal": true,
+  "baseline": "ee3d4134",
+  "baseline_regressions_reproduced": [
+    false,
+    true
+  ],
+  "probe_sha256": "cdace1ce6920c7f08454e93d0a220ab1bcd1b250af6543a059d7cc5d3c74d609",
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "bcb7063f5f51fd32160f3095b546c226f8e89ff9",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "2a40d6ae90d2dddfe05de318cba6a270a030428834f33482d62ac763c9b823ae",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "bcb7063f5f51fd32160f3095b546c226f8e89ff9",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "2a40d6ae90d2dddfe05de318cba6a270a030428834f33482d62ac763c9b823ae",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "state": "baseline-proof-failed",
+  "steps": [
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "-p",
+        "openui-paint",
+        "--test",
+        "text_raster_configuration_tests",
+        "lcd_phase_moves_ink_by_physical_pixels_for_each_text_role",
+        "--",
+        "--exact"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "664df01a57bc682340a9a70ef02404f7a78da0d9e7a27eeeb3985bd77ce8509b",
+      "name": "baseline-phase",
+      "named_test_failed": false,
+      "named_test_passed": false,
+      "observed_exit_code": 101,
+      "source": {
+        "clean": true,
+        "commit": "ee3d4134ccf0a3d10cab1d1c950f1bc1841a8d58",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "d8c505921b905dd4508b56e6a329578520a340a13a87029e1186374eddaaf21a",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "ee3d4134ccf0a3d10cab1d1c950f1bc1841a8d58",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "d8c505921b905dd4508b56e6a329578520a340a13a87029e1186374eddaaf21a",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "test": "lcd_phase_moves_ink_by_physical_pixels_for_each_text_role"
+    },
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "-p",
+        "openui-text",
+        "--lib",
+        "shaping::shape_result::tests::fontations_preserves_requested_mask_and_position_settings",
+        "--",
+        "--exact"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "8daee8c8d289e433a65ffb7635868030959ef7330dbda3401b6ebff97f75efb9",
+      "name": "baseline-font-settings",
+      "named_test_failed": true,
+      "named_test_passed": false,
+      "observed_exit_code": 101,
+      "source": {
+        "clean": true,
+        "commit": "ee3d4134ccf0a3d10cab1d1c950f1bc1841a8d58",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "d8c505921b905dd4508b56e6a329578520a340a13a87029e1186374eddaaf21a",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "ee3d4134ccf0a3d10cab1d1c950f1bc1841a8d58",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "d8c505921b905dd4508b56e6a329578520a340a13a87029e1186374eddaaf21a",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "test": "shaping::shape_result::tests::fontations_preserves_requested_mask_and_position_settings"
+    }
+  ]
+}

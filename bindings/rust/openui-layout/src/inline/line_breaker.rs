@@ -72,6 +72,8 @@ pub struct LineBreaker<'a> {
     preserve_leading_inline_fragment: bool,
     /// Pre-computed byte-to-char mapping for O(1) lookups.
     char_map: ByteToCharMap,
+    /// Unicode break opportunities for complete, immutable logical text groups.
+    logical_break_opportunities: std::collections::HashMap<usize, Vec<usize>>,
 }
 
 /// Internal state for line-building loop.
@@ -191,6 +193,7 @@ impl<'a> LineBreaker<'a> {
             hyphenation: None,
             preserve_leading_inline_fragment: false,
             char_map,
+            logical_break_opportunities: std::collections::HashMap::new(),
         }
     }
 
@@ -435,6 +438,8 @@ impl<'a> LineBreaker<'a> {
                 }
             }
         }
+
+        self.repair_shaping_boundary_wrap(&mut line);
 
         // Strip trailing collapsible spaces from the line
         strip_trailing_spaces(
@@ -1062,7 +1067,7 @@ impl<'a> LineBreaker<'a> {
                             // through its next Unicode break while retaining
                             // the independently shaped item results.
                             self.force_text_through_next_logical_break(
-                                item_index, text_start, text_width, line, style,
+                                item_index, text_start, text_width, line,
                             );
                             return;
                         }
@@ -1683,6 +1688,171 @@ impl<'a> LineBreaker<'a> {
         self.current_text_offset = 0;
     }
 
+    /// Contiguous shaping items still belong to one logical text node.
+    fn logical_text_item_span(&self, index: usize) -> (usize, usize) {
+        let same_text = |a: &InlineItem, b: &InlineItem| {
+            a.item_type == InlineItemType::Text
+                && b.item_type == InlineItemType::Text
+                && a.node_id == b.node_id
+                && a.style_index == b.style_index
+                && a.text_range.end == b.text_range.start
+        };
+        let mut begin = index;
+        while begin > 0
+            && same_text(
+                &self.items_data.items[begin - 1],
+                &self.items_data.items[begin],
+            )
+        {
+            begin -= 1;
+        }
+        let mut end = index;
+        while end + 1 < self.items_data.items.len()
+            && same_text(&self.items_data.items[end], &self.items_data.items[end + 1])
+        {
+            end += 1;
+        }
+        (begin, end)
+    }
+
+    /// Compute Unicode opportunities once per logical text group, including
+    /// the context on both sides of its independently shaped runs.
+    fn logical_text_breaks(&mut self, begin: usize, end: usize) -> &[usize] {
+        let data = self.items_data;
+        self.logical_break_opportunities
+            .entry(begin)
+            .or_insert_with(|| {
+                let start = data.items[begin].text_range.start;
+                let finish = data.items[end].text_range.end;
+                let style = &data.styles[data.items[begin].style_index];
+                find_break_opportunities(
+                    &data.text[start..finish],
+                    style.word_break,
+                    style.overflow_wrap,
+                    style.line_break,
+                )
+                .into_iter()
+                .map(|offset| start + offset)
+                .collect()
+            })
+    }
+
+    /// A shaping boundary does not create a CSS line-break opportunity.
+    /// Rewind to the preceding logical break when a continuation cannot fit.
+    /// An oversized first word instead continues through its next real break.
+    fn repair_shaping_boundary_wrap(&mut self, line: &mut LineInfo) {
+        if line.has_forced_break || line.has_forced_hyphen {
+            return;
+        }
+        let Some(last) = line.items.last() else {
+            return;
+        };
+        if last.item_type != InlineItemType::Text {
+            return;
+        }
+        let last_index = last.item_index;
+        let first = &self.items_data.items[last_index];
+        let Some(next) = self.items_data.items.get(self.current_item) else {
+            return;
+        };
+        let resume = self.current_text_offset.max(next.text_range.start);
+        if next.item_type != InlineItemType::Text
+            || next.node_id != first.node_id
+            || next.style_index != first.style_index
+            || resume != last.text_range.end
+        {
+            return;
+        }
+        let style = &self.items_data.styles[first.style_index];
+        if !allows_line_wrap(style.white_space) || !allows_line_wrap(self.container_white_space) {
+            return;
+        }
+        let (begin, end) = self.logical_text_item_span(last_index);
+        let logical_start = self.items_data.items[begin].text_range.start;
+        let logical_end = self.items_data.items[end].text_range.end;
+        let tail_start = line
+            .items
+            .iter()
+            .rev()
+            .take_while(|result| {
+                result.item_type == InlineItemType::Text
+                    && result.item_index >= begin
+                    && result.item_index <= end
+            })
+            .last()
+            .map_or(resume, |result| result.text_range.start);
+        let (legal, previous, following) = {
+            let breaks = self.logical_text_breaks(begin, end);
+            let insertion = breaks.partition_point(|&cut| cut < resume);
+            (
+                breaks.get(insertion) == Some(&resume),
+                insertion
+                    .checked_sub(1)
+                    .map_or(logical_start, |i| breaks[i]),
+                breaks.get(insertion).copied().unwrap_or(logical_end),
+            )
+        };
+        if legal || resume == logical_end {
+            return;
+        }
+        if matches!(
+            style.overflow_wrap,
+            OverflowWrap::BreakWord | OverflowWrap::Anywhere
+        ) || style.word_break == WordBreak::BreakWord
+        {
+            // Emergency grapheme breaking is permitted for a logical unit
+            // that cannot fit on an otherwise empty line. An item boundary
+            // cannot turn a fitting word into an emergency break.
+            let unit_end = if matches!(style.white_space, WhiteSpace::Normal | WhiteSpace::PreLine)
+            {
+                previous
+                    + self.items_data.text[previous..following]
+                        .trim_end_matches([' ', '\t'])
+                        .len()
+            } else {
+                following
+            };
+            let width = (begin..=end).fold(LayoutUnit::zero(), |width, index| {
+                let range = &self.items_data.items[index].text_range;
+                let start = range.start.max(previous);
+                let end = range.end.min(unit_end);
+                width
+                    + if start < end {
+                        self.measure_text_range(index, start, end)
+                    } else {
+                        LayoutUnit::zero()
+                    }
+            });
+            if width > line.available_width {
+                return;
+            }
+        }
+        if previous <= tail_start {
+            let width = self.measure_text_range(self.current_item, resume, next.text_range.end);
+            self.force_text_through_next_logical_break(self.current_item, resume, width, line);
+            return;
+        }
+        let cut = previous;
+        while line.items.last().is_some_and(|result| {
+            result.item_type == InlineItemType::Text && result.text_range.start >= cut
+        }) {
+            let removed = line.items.pop().unwrap();
+            line.used_width = line.used_width - removed.inline_size;
+        }
+        if let Some(last) = line.items.last_mut() {
+            if last.text_range.end > cut {
+                let width = self.measure_text_range(last.item_index, last.text_range.start, cut);
+                line.used_width = line.used_width - last.inline_size + width;
+                last.inline_size = width;
+                last.text_range.end = cut;
+            }
+        }
+        self.current_item = (begin..=end)
+            .find(|&index| self.items_data.items[index].text_range.contains(&cut))
+            .expect("soft break inside logical text");
+        self.current_text_offset = cut;
+    }
+
     /// Force an overflowing logical text unit onto an empty line.
     ///
     /// Deterministic fallback shaping represents a single DOM text node as
@@ -1695,39 +1865,15 @@ impl<'a> LineBreaker<'a> {
         text_start: usize,
         first_width: LayoutUnit,
         line: &mut LineInfo,
-        style: &ComputedStyle,
     ) {
-        let first = &self.items_data.items[item_index];
-        let mut logical_end = first.text_range.end;
-        let mut last_item = item_index;
-
-        for (candidate_index, candidate) in self.items_data.items[item_index + 1..]
+        let (begin, last_item) = self.logical_text_item_span(item_index);
+        let logical_end = self.items_data.items[last_item].text_range.end;
+        let break_end = self
+            .logical_text_breaks(begin, last_item)
             .iter()
-            .enumerate()
-            .map(|(offset, candidate)| (item_index + 1 + offset, candidate))
-        {
-            if candidate.item_type != InlineItemType::Text
-                || candidate.node_id != first.node_id
-                || candidate.style_index != first.style_index
-                || candidate.bidi_level != first.bidi_level
-                || candidate.text_range.start != logical_end
-            {
-                break;
-            }
-            logical_end = candidate.text_range.end;
-            last_item = candidate_index;
-        }
-
-        let logical_text = &self.items_data.text[text_start..logical_end];
-        let break_end = find_break_opportunities(
-            logical_text,
-            style.word_break,
-            style.overflow_wrap,
-            style.line_break,
-        )
-        .into_iter()
-        .next()
-        .map_or(logical_end, |offset| text_start + offset);
+            .copied()
+            .find(|&offset| offset > text_start)
+            .unwrap_or(logical_end);
 
         for candidate_index in item_index..=last_item {
             let candidate = &self.items_data.items[candidate_index];
@@ -1883,7 +2029,16 @@ fn strip_trailing_spaces(
         let line_text_end = line.items[target_idx].text_range.end;
         if line_text_start < line_text_end {
             let at_item_end = line_text_end == item.text_range.end;
-            if at_item_end && item.end_collapse_type == CollapseType::Collapsible {
+            if at_item_end
+                && (item.end_collapse_type == CollapseType::Collapsible
+                    || matches!(
+                        ws,
+                        WhiteSpace::Normal | WhiteSpace::Nowrap | WhiteSpace::PreLine
+                    ))
+            {
+                // An interior shaping run can end in a collapsible space
+                // without carrying the original text item's terminal metadata.
+                // The source text and white-space policy determine stripping.
                 // Trailing spaces are collapsible — measure width of
                 // ALL trailing whitespace from the line portion's end.
                 let char_count = sr.num_characters;
@@ -4745,5 +4900,179 @@ mod tests {
         assert_eq!(first.items[1].item_type, InlineItemType::OpenTag);
         assert_eq!(first.items[2].text_range, link_start..link_break);
         assert_eq!(second.items[0].text_range.start, link_break);
+    }
+    #[test]
+    fn shaping_run_boundaries_do_not_split_quoted_words_or_contractions() {
+        use openui_dom::NodeId;
+        use openui_text::{Font, FontDescription, TextDirection, TextShaper};
+        use std::sync::Arc;
+
+        for (text, ranges, first_end, second_start) in [
+            ("XX 'XX", vec![0..3, 3..4, 4..6], 2, 3),
+            ("can't tail", vec![0..3, 3..4, 4..10], 5, 6),
+        ] {
+            let shaper = TextShaper::new();
+            let font = Font::new(FontDescription::default());
+            let shapes: Vec<_> = ranges
+                .iter()
+                .map(|range| {
+                    Arc::new(shaper.shape(&text[range.clone()], &font, TextDirection::Ltr))
+                })
+                .collect();
+            let width = LayoutUnit::from_f32_ceil(shapes[0].width + shapes[1].width);
+            let data = InlineItemsData {
+                font_collection: openui_text::FontCollection::system(),
+                text: text.into(),
+                items: ranges
+                    .into_iter()
+                    .zip(shapes)
+                    .map(|(range, shape)| InlineItem {
+                        item_type: InlineItemType::Text,
+                        text_range: range,
+                        node_id: NodeId::NONE,
+                        shape_result: Some(shape),
+                        style_index: 0,
+                        end_collapse_type: CollapseType::NotCollapsible,
+                        is_end_collapsible_newline: false,
+                        bidi_level: 0,
+                        intrinsic_inline_size: None,
+                    })
+                    .collect(),
+                styles: vec![ComputedStyle::default()],
+                oof_children: Vec::new(),
+                block_in_inline: Vec::new(),
+            };
+            let mut breaker = LineBreaker::new(&data, width);
+            let first = breaker.next_line(width).expect("first logical line");
+            assert_eq!(
+                first.items.last().unwrap().text_range.end,
+                first_end,
+                "{text}"
+            );
+            let second = breaker.next_line(width).expect("second logical line");
+            assert_eq!(
+                second.items.first().unwrap().text_range.start,
+                second_start,
+                "{text}"
+            );
+            assert_eq!(
+                second.items.last().unwrap().text_range.end,
+                text.len(),
+                "{text}"
+            );
+            assert!(
+                breaker.next_line(width).is_none(),
+                "must make progress: {text}"
+            );
+        }
+    }
+
+    #[test]
+    fn shaping_boundaries_respect_emergency_breaking_and_no_wrap() {
+        use openui_dom::NodeId;
+        use openui_text::{FontDescription, TextDirection};
+
+        let text = "can't";
+        let ranges = [0..3, 3..4, 4..5];
+        let shaper = TextShaper::new();
+        let font = Font::new(FontDescription::default());
+        let shapes: Vec<_> = ranges
+            .iter()
+            .map(|range| Arc::new(shaper.shape(&text[range.clone()], &font, TextDirection::Ltr)))
+            .collect();
+        let width = LayoutUnit::from_f32_ceil(shapes[0].width + shapes[1].width);
+        let mut data = InlineItemsData {
+            font_collection: openui_text::FontCollection::system(),
+            text: text.into(),
+            items: ranges
+                .into_iter()
+                .zip(shapes)
+                .map(|(range, shape)| InlineItem {
+                    item_type: InlineItemType::Text,
+                    text_range: range,
+                    node_id: NodeId::NONE,
+                    shape_result: Some(shape),
+                    style_index: 0,
+                    end_collapse_type: CollapseType::NotCollapsible,
+                    is_end_collapsible_newline: false,
+                    bidi_level: 0,
+                    intrinsic_inline_size: None,
+                })
+                .collect(),
+            styles: vec![ComputedStyle::default()],
+            oof_children: Vec::new(),
+            block_in_inline: Vec::new(),
+        };
+        for (word_break, overflow_wrap, line_break, white_space, first_end) in [
+            (
+                WordBreak::Normal,
+                OverflowWrap::Normal,
+                LineBreak::Auto,
+                WhiteSpace::Normal,
+                5,
+            ),
+            (
+                WordBreak::BreakAll,
+                OverflowWrap::Normal,
+                LineBreak::Auto,
+                WhiteSpace::Normal,
+                4,
+            ),
+            (
+                WordBreak::Normal,
+                OverflowWrap::Anywhere,
+                LineBreak::Auto,
+                WhiteSpace::Normal,
+                4,
+            ),
+            (
+                WordBreak::Normal,
+                OverflowWrap::BreakWord,
+                LineBreak::Auto,
+                WhiteSpace::Normal,
+                4,
+            ),
+            (
+                WordBreak::Normal,
+                OverflowWrap::Normal,
+                LineBreak::Anywhere,
+                WhiteSpace::Normal,
+                4,
+            ),
+            (
+                WordBreak::Normal,
+                OverflowWrap::Normal,
+                LineBreak::Auto,
+                WhiteSpace::Nowrap,
+                5,
+            ),
+            (
+                WordBreak::Normal,
+                OverflowWrap::Normal,
+                LineBreak::Auto,
+                WhiteSpace::Pre,
+                5,
+            ),
+        ] {
+            data.styles[0] = ComputedStyle::default().derive(|style| {
+                style.word_break = word_break;
+                style.overflow_wrap = overflow_wrap;
+                style.line_break = line_break;
+                style.white_space = white_space;
+            });
+            let mut breaker = LineBreaker::new(&data, width);
+            let first = breaker.next_line(width).unwrap();
+            assert_eq!(
+                first.items.last().unwrap().text_range.end,
+                first_end,
+                "{word_break:?}/{overflow_wrap:?}/{line_break:?}/{white_space:?}"
+            );
+            if first_end < text.len() {
+                let second = breaker.next_line(width).unwrap();
+                assert_eq!(second.items.first().unwrap().text_range.start, first_end);
+                assert_eq!(second.items.last().unwrap().text_range.end, text.len());
+            }
+            assert!(breaker.next_line(width).is_none());
+        }
     }
 }

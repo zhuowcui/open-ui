@@ -1,0 +1,24 @@
+{
+  "all_commands_terminal": true,
+  "complete_tracked_source_tree_reconstructed_exactly": true,
+  "expected_candidate_tree": "b8d4e2803f344f7e48c5ed03e1f008cbf1f2e476",
+  "javascript_executed_by_openui": false,
+  "measured_candidate_commit": "b1f73e798ee953da685d6d25948b4fe759b28eae",
+  "patch": {
+    "bytes": 60537,
+    "path": "docs/renderer/evidence/native-linux-font-policy-v1/reproduction-from-16187f4f.patch",
+    "sha256": "23aa92d185226645d52d8330b7e5eeae0120fb47c1caf8644c8dd9e6a34d277e"
+  },
+  "pixel_evidence_index": {
+    "path": "docs/renderer/generated/native-linux-font-policy-v1.json",
+    "sha256": "66910a240718e4cdc37b34d6f0e22dad0ce66da79fd93a6bf4142fb8a3b656d1"
+  },
+  "preserves_all_original_source_and_reference_bytes": true,
+  "private_unintegrated_candidate": true,
+  "public_base_commit": "16187f4f54e1b62ea317a155f620c42f91a38c72",
+  "reconstructed_tree": "b8d4e2803f344f7e48c5ed03e1f008cbf1f2e476",
+  "release_qualification": false,
+  "renderer_or_native_runs_performed_by_reconstruction_check": 0,
+  "schema_version": 1,
+  "source_commit_metadata_not_relabelled": true
+}

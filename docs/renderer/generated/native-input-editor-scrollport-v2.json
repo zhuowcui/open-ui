@@ -1,0 +1,5006 @@
+{
+  "accepted_original_exact": 21334,
+  "accepted_original_total": 22924,
+  "all_archive_members_verified": true,
+  "all_commands_terminal": true,
+  "archive": "docs/renderer/evidence/native-input-editor-scrollport-v2/completed-evidence.tar.gz",
+  "archive_bytes": 1102478,
+  "archive_members": 738,
+  "archive_sha256": "85ead64820eeb5dda09068e2a94583576a18232e50ed0309181ab952a33a44f3",
+  "c_edit_command_parity_complete": false,
+  "chromium_reference_bytes_preserved": true,
+  "corrected_canvas_font_query_preserves_pixels": true,
+  "corrected_generator_checks": {
+    "all_commands_terminal": true,
+    "checks": [
+      {
+        "command": [
+          "/usr/bin/python3",
+          "tools/ffi/generate_ffi.py",
+          "--check"
+        ],
+        "log_sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821",
+        "name": "c-abi-generator",
+        "observed_exit_code": 0
+      },
+      {
+        "command": [
+          "/usr/bin/python3",
+          "tools/accountability/audit.py"
+        ],
+        "log_sha256": "3eb1bdd1433d5757ac36df64bbe7354c87eaa2c9991b6500b2209143032469e9",
+        "name": "accountability-audit",
+        "observed_exit_code": 0
+      }
+    ],
+    "observed_exit_code": 0,
+    "release_qualification": false,
+    "schema_version": 1,
+    "source": {
+      "clean": true,
+      "commit": "855a2a490152e05c57d36c2085f5075a59a556bd",
+      "harness_sha256": "1a87b0599fe6a068ed34bb6250d6ca2857d2d7293a98fb602a33825230daa1f2",
+      "source_tree_sha256": "f715d86af7ff48f305de14d09bdbb18d0710cdfffd35912370072f772d977015",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "855a2a490152e05c57d36c2085f5075a59a556bd",
+      "harness_sha256": "1a87b0599fe6a068ed34bb6250d6ca2857d2d7293a98fb602a33825230daa1f2",
+      "source_tree_sha256": "f715d86af7ff48f305de14d09bdbb18d0710cdfffd35912370072f772d977015",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_unchanged": true
+  },
+  "first_canvas_font_query_invalid": true,
+  "javascript_executed_by_openui": false,
+  "native_edit_api_checks": {
+    "all_commands_terminal": true,
+    "consumer_artifacts": [
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck_derive-3a810cf7a7c794b9.so"
+          ],
+          "fresh": true,
+          "manifest_path": "/home/nero/code/open-ui/bindings/rust/vendor/bytemuck_derive-v1/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/vendor/bytemuck_derive-v1#bytemuck_derive@1.10.2",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "proc-macro"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2018",
+            "kind": [
+              "proc-macro"
+            ],
+            "name": "bytemuck_derive",
+            "src_path": "/home/nero/code/open-ui/bindings/rust/vendor/bytemuck_derive-v1/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck_derive-3a810cf7a7c794b9.so": "5de942c813faa27dc376afb8ef9e499c716715cb08d56e74d0af8c9995f58121"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-efd9b399590a9cc0.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-efd9b399590a9cc0.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui-geometry/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui-geometry#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_geometry",
+            "src_path": "/home/nero/code/open-ui/bindings/rust/openui-geometry/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-efd9b399590a9cc0.rlib": "97526b66167a5cac23217b365f2da3493a5daebb800d44d95793f35a364a1ce3",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-efd9b399590a9cc0.rmeta": "b1a58c060e7ff5f7d7659bc40b197a194c30c6bdaa4e11a239394c422d9df747"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "bytemuck_derive",
+            "derive",
+            "min_const_generics"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-087b6a2b3a3980c7.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-087b6a2b3a3980c7.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/home/nero/code/open-ui/bindings/rust/vendor/bytemuck-v1/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/vendor/bytemuck-v1#bytemuck@1.25.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2018",
+            "kind": [
+              "lib"
+            ],
+            "name": "bytemuck",
+            "src_path": "/home/nero/code/open-ui/bindings/rust/vendor/bytemuck-v1/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-087b6a2b3a3980c7.rlib": "fa80d54270eb95861d6464aa4a0b5dc3b84b286bc1b8a6da1b15450efd17953f",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-087b6a2b3a3980c7.rmeta": "73f0e4d2f5d4e00bd51a7d609dba89fd4ce83d0248d3bbe2f7cbfdb289598767"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-834764aabb68552d.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-834764aabb68552d.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui-style/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui-style#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_style",
+            "src_path": "/home/nero/code/open-ui/bindings/rust/openui-style/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-834764aabb68552d.rlib": "1ac555a48389fbce2f6198d3625affb082a05292828609def4dde9050505b884",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-834764aabb68552d.rmeta": "c7d38b18f7e8be39ac00a0ac873326eb72aaea0109ab21bfbb6d8cfa90eba220"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "bytemuck",
+            "std"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-e33b946bf9cdb70b.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-e33b946bf9cdb70b.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/home/nero/code/open-ui/bindings/rust/vendor/font-types-v0_11/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/vendor/font-types-v0_11#font-types@0.11.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "font_types",
+            "src_path": "/home/nero/code/open-ui/bindings/rust/vendor/font-types-v0_11/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-e33b946bf9cdb70b.rlib": "8da6b957b293703154b061db7df7d82bd4ace6415ce3879faea5aa6b366069e9",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-e33b946bf9cdb70b.rmeta": "5e663b9f31b1f0e065630c6c3cf328ec7de96dadea87146c1cd60c8b7fac94e3"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "std"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-f7fc50324ff71df1.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-f7fc50324ff71df1.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/home/nero/code/open-ui/bindings/rust/vendor/read-fonts-v0_37/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/vendor/read-fonts-v0_37#read-fonts@0.37.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "read_fonts",
+            "src_path": "/home/nero/code/open-ui/bindings/rust/vendor/read-fonts-v0_37/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-f7fc50324ff71df1.rlib": "b2fabc7e8a7fe2e006945d53e22d42614d36df687a3c0237cf98d489e9ecc695",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-f7fc50324ff71df1.rmeta": "ed51410f5c665d82cc0bcc84714360c344f549269f0a9c2d786ee42c9797029e"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "autohint_shaping",
+            "default",
+            "std"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-35f5ca75a4e799ca.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-35f5ca75a4e799ca.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/home/nero/code/open-ui/bindings/rust/vendor/skrifa-v0_40/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/vendor/skrifa-v0_40#skrifa@0.40.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "skrifa",
+            "src_path": "/home/nero/code/open-ui/bindings/rust/vendor/skrifa-v0_40/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-35f5ca75a4e799ca.rlib": "fb2acc9bf295e839f2f76bb48f5df1acae40c0b208dc502d986c1bb88e772eff",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-35f5ca75a4e799ca.rmeta": "1c828881347236597f725f26e5621b62c461da6f6d69d08958578cfd424428bf"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_macros-4a2a29060d246886.so"
+          ],
+          "fresh": true,
+          "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui-macros/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui-macros#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "proc-macro"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "proc-macro"
+            ],
+            "name": "openui_macros",
+            "src_path": "/home/nero/code/open-ui/bindings/rust/openui-macros/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_macros-4a2a29060d246886.so": "c386195be6da3d83be20ad1f636ee53d7076eee77dd5113cbc8e44973a5cca60"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-685d07112f60e769.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-685d07112f60e769.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui-text/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui-text#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_text",
+            "src_path": "/home/nero/code/open-ui/bindings/rust/openui-text/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-685d07112f60e769.rlib": "2543b8930e159f6001279ac1979d2e025cf159b2ea8d2d089c4392ac43f8187f",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-685d07112f60e769.rmeta": "ff385de1b981b002d9b995f878c1f7b23a529560ac7c32bdf283ddb854a36245"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-d1c3bc152e8680f8.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-d1c3bc152e8680f8.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui-dom/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui-dom#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_dom",
+            "src_path": "/home/nero/code/open-ui/bindings/rust/openui-dom/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-d1c3bc152e8680f8.rlib": "07a5ef004916d06d59ad7010b06f3f30e32ece53eb4cdf194e8f439fb15a3300",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-d1c3bc152e8680f8.rmeta": "4c517d2a71e0f05a72f77a920be216029092442ca5626a4512caab1ff7202b15"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-2b29aafb1a34dc59.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-2b29aafb1a34dc59.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui-layout/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui-layout#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_layout",
+            "src_path": "/home/nero/code/open-ui/bindings/rust/openui-layout/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-2b29aafb1a34dc59.rlib": "5893687a2eb989de3b8d1bd5d0ae09b02800475de6f69086310d7abf90acdea9",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-2b29aafb1a34dc59.rmeta": "65e2586103b7cf4ffc223856438b3bb826e75ca244de5df5b53be710b3653672"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-3b124772dacb6746.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-3b124772dacb6746.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui-paint/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui-paint#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_paint",
+            "src_path": "/home/nero/code/open-ui/bindings/rust/openui-paint/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-3b124772dacb6746.rlib": "dc7d020ab17a15601b33a6b952884adb9173ca8e3d74596f6b74a5b8fd72ff18",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-3b124772dacb6746.rmeta": "af6450caa23eec52d68ae4b730b2610099f90983619da4cb0f74f2d6f740e1c9"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "default"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-2a790426442dcf82.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-2a790426442dcf82.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui-compositor/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui-compositor#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_compositor",
+            "src_path": "/home/nero/code/open-ui/bindings/rust/openui-compositor/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-2a790426442dcf82.rlib": "93dd09b5e61a9d396cc8f22eb756843631b121cd86f075d510703ec4b24e9fb3",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-2a790426442dcf82.rmeta": "d7020aaf4347442a7557f88090aa929c99708086c19a2e4fd223475a57801048"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-c971e3ea18717d45.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-c971e3ea18717d45.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui-engine/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui-engine#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_engine",
+            "src_path": "/home/nero/code/open-ui/bindings/rust/openui-engine/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-c971e3ea18717d45.rlib": "1ac46cef0540d88e9fec50b6c7ac866be9032aa139ca78ad74564c69a1a037a0",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-c971e3ea18717d45.rmeta": "0be4c3b4b67cb5fe963b28e6eb3e16c5fc8675bd35db1d64eac7d2b22a721380"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "default"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui-39a7fea72c83746e.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui-39a7fea72c83746e.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui",
+            "src_path": "/home/nero/code/open-ui/bindings/rust/openui/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui-39a7fea72c83746e.rlib": "80a3d153901ac4b2f0b74553279bb011135a1de4a2c369559e3dea13a3897b67",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui-39a7fea72c83746e.rmeta": "3fe28d806de7e2b89102d5f65776543b5c12cb72efa862001541f5d550225578"
+        }
+      },
+      {
+        "record": {
+          "executable": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_edit_commands",
+          "features": [
+            "default"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_edit_commands"
+          ],
+          "fresh": false,
+          "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "bin"
+            ],
+            "doc": false,
+            "doctest": false,
+            "edition": "2021",
+            "kind": [
+              "example"
+            ],
+            "name": "native_edit_commands",
+            "src_path": "/home/nero/code/open-ui/bindings/rust/openui/examples/native_edit_commands.rs",
+            "test": false
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_edit_commands": "b2178090973fe8f142c06f9a3aad9b09e1430272a6ea9160eff0adb1043e0f06"
+        }
+      }
+    ],
+    "consumer_binary_sha256": "b2178090973fe8f142c06f9a3aad9b09e1430272a6ea9160eff0adb1043e0f06",
+    "failure": "AssertionError('c-abi-generator')",
+    "native_callbacks_per_run": 6,
+    "native_consumer_repeated_output_identical": true,
+    "native_library_source_proven": true,
+    "observed_exit_code": 1,
+    "owner_pid": 782199,
+    "release_qualification": false,
+    "renderer_matrices_not_run": true,
+    "schema_version": 1,
+    "source": {
+      "clean": true,
+      "commit": "855a2a490152e05c57d36c2085f5075a59a556bd",
+      "harness_sha256": "1a87b0599fe6a068ed34bb6250d6ca2857d2d7293a98fb602a33825230daa1f2",
+      "source_tree_sha256": "f715d86af7ff48f305de14d09bdbb18d0710cdfffd35912370072f772d977015",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "855a2a490152e05c57d36c2085f5075a59a556bd",
+      "harness_sha256": "1a87b0599fe6a068ed34bb6250d6ca2857d2d7293a98fb602a33825230daa1f2",
+      "source_tree_sha256": "f715d86af7ff48f305de14d09bdbb18d0710cdfffd35912370072f772d977015",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_unchanged": true,
+    "steps": [
+      {
+        "command": [
+          "cargo",
+          "--config",
+          "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+          "metadata",
+          "--locked",
+          "--offline",
+          "--format-version",
+          "1"
+        ],
+        "log_sha256": "2175cfd18e2a63e8074003b011f61b411b6d11629087d58dae6dad96ab20c08d",
+        "name": "locked-metadata",
+        "observed_exit_code": 0
+      },
+      {
+        "command": [
+          "cargo",
+          "--config",
+          "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+          "clean",
+          "--locked",
+          "-p",
+          "path+file:///home/nero/code/open-ui/bindings/rust/vendor/bytemuck-v1#bytemuck@1.25.0",
+          "-p",
+          "path+file:///home/nero/code/open-ui/bindings/rust/vendor/bytemuck_derive-v1#bytemuck_derive@1.10.2",
+          "-p",
+          "path+file:///home/nero/code/open-ui/bindings/rust/examples/counter#0.2.0",
+          "-p",
+          "path+file:///home/nero/code/open-ui/bindings/rust/examples/dashboard#0.2.0",
+          "-p",
+          "path+file:///home/nero/code/open-ui/bindings/rust/vendor/font-types-v0_11#font-types@0.11.0",
+          "-p",
+          "path+file:///home/nero/code/open-ui/bindings/rust/examples/framework-test#0.2.0",
+          "-p",
+          "path+file:///home/nero/code/open-ui/bindings/rust/examples/hello#0.2.0",
+          "-p",
+          "path+file:///home/nero/code/open-ui/bindings/rust/openui#0.2.0",
+          "-p",
+          "path+file:///home/nero/code/open-ui/bindings/rust/openui-compositor#0.2.0",
+          "-p",
+          "path+file:///home/nero/code/open-ui/bindings/rust/openui-dom#0.2.0",
+          "-p",
+          "path+file:///home/nero/code/open-ui/bindings/rust/openui-engine#0.2.0",
+          "-p",
+          "path+file:///home/nero/code/open-ui/bindings/rust/openui-ffi#0.2.0",
+          "-p",
+          "path+file:///home/nero/code/open-ui/bindings/rust/openui-geometry#0.2.0",
+          "-p",
+          "path+file:///home/nero/code/open-ui/bindings/rust/openui-layout#0.2.0",
+          "-p",
+          "path+file:///home/nero/code/open-ui/bindings/rust/openui-macros#0.2.0",
+          "-p",
+          "path+file:///home/nero/code/open-ui/bindings/rust/openui-paint#0.2.0",
+          "-p",
+          "path+file:///home/nero/code/open-ui/bindings/rust/openui-platform#0.2.0",
+          "-p",
+          "path+file:///home/nero/code/open-ui/bindings/rust/openui-style#0.2.0",
+          "-p",
+          "path+file:///home/nero/code/open-ui/bindings/rust/openui-text#0.2.0",
+          "-p",
+          "path+file:///home/nero/code/open-ui/bindings/rust/pixel-compare#0.1.0",
+          "-p",
+          "path+file:///home/nero/code/open-ui/bindings/rust/vendor/read-fonts-v0_37#read-fonts@0.37.0",
+          "-p",
+          "path+file:///home/nero/code/open-ui/bindings/rust/vendor/skrifa-v0_40#skrifa@0.40.0",
+          "-p",
+          "path+file:///home/nero/code/open-ui/bindings/rust/examples/todo#0.2.0"
+        ],
+        "log_sha256": "13b6aaec55f889c0734c0733b71bc63e7398f311f99249b937373bbf4d8b0e7f",
+        "name": "clean-local-packages",
+        "observed_exit_code": 0
+      },
+      {
+        "command": [
+          "cargo",
+          "--config",
+          "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+          "test",
+          "--locked",
+          "--offline",
+          "-p",
+          "openui",
+          "--lib",
+          "--message-format=json"
+        ],
+        "log_sha256": "ac32ab319914df79aa470da785af3df0cee57d3bbf71ebbb258f4d0a3b7142eb",
+        "name": "rust-public-api-tests",
+        "observed_exit_code": 0
+      },
+      {
+        "command": [
+          "cargo",
+          "--config",
+          "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+          "build",
+          "--locked",
+          "--offline",
+          "-p",
+          "openui",
+          "--example",
+          "native_edit_commands",
+          "--message-format=json"
+        ],
+        "log_sha256": "080c04eaee5f5e357def37527a1a2ba280bc97a43a599aae462541d3198e8410",
+        "name": "build-native-consumer",
+        "observed_exit_code": 0
+      },
+      {
+        "command": [
+          "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-edit-command-checks-v2417/native_edit_commands"
+        ],
+        "log_sha256": "495e2764795b08de281e94730f240caf3c25e7a5544c438d3a569ee163bec05b",
+        "name": "native-consumer-first",
+        "observed_exit_code": 0
+      },
+      {
+        "command": [
+          "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-edit-command-checks-v2417/native_edit_commands"
+        ],
+        "log_sha256": "495e2764795b08de281e94730f240caf3c25e7a5544c438d3a569ee163bec05b",
+        "name": "native-consumer-second",
+        "observed_exit_code": 0
+      },
+      {
+        "command": [
+          "bash",
+          "-c",
+          "ulimit -s 262144; cargo fmt --all -- --check"
+        ],
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "name": "rust-format",
+        "observed_exit_code": 0
+      },
+      {
+        "command": [
+          "/usr/bin/python3",
+          "tools/qualification/generate_renderer_contract.py",
+          "--check"
+        ],
+        "log_sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691",
+        "name": "renderer-contract",
+        "observed_exit_code": 0
+      },
+      {
+        "command": [
+          "/usr/bin/python3",
+          "tools/ffi/generate_schema.py",
+          "--check"
+        ],
+        "log_sha256": "688bdcb0995462bdf78aa2a698f74ec6ebe578c4cfa1690588fd7f6a1cb66cd2",
+        "name": "c-abi-generator",
+        "observed_exit_code": 2
+      }
+    ],
+    "test_artifacts": [
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-efd9b399590a9cc0.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-efd9b399590a9cc0.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui-geometry/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui-geometry#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_geometry",
+            "src_path": "/home/nero/code/open-ui/bindings/rust/openui-geometry/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-efd9b399590a9cc0.rlib": "97526b66167a5cac23217b365f2da3493a5daebb800d44d95793f35a364a1ce3",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-efd9b399590a9cc0.rmeta": "b1a58c060e7ff5f7d7659bc40b197a194c30c6bdaa4e11a239394c422d9df747"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck_derive-3a810cf7a7c794b9.so"
+          ],
+          "fresh": false,
+          "manifest_path": "/home/nero/code/open-ui/bindings/rust/vendor/bytemuck_derive-v1/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/vendor/bytemuck_derive-v1#bytemuck_derive@1.10.2",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "proc-macro"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2018",
+            "kind": [
+              "proc-macro"
+            ],
+            "name": "bytemuck_derive",
+            "src_path": "/home/nero/code/open-ui/bindings/rust/vendor/bytemuck_derive-v1/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck_derive-3a810cf7a7c794b9.so": "5de942c813faa27dc376afb8ef9e499c716715cb08d56e74d0af8c9995f58121"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "bytemuck_derive",
+            "derive",
+            "min_const_generics"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-087b6a2b3a3980c7.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-087b6a2b3a3980c7.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/home/nero/code/open-ui/bindings/rust/vendor/bytemuck-v1/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/vendor/bytemuck-v1#bytemuck@1.25.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2018",
+            "kind": [
+              "lib"
+            ],
+            "name": "bytemuck",
+            "src_path": "/home/nero/code/open-ui/bindings/rust/vendor/bytemuck-v1/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-087b6a2b3a3980c7.rlib": "fa80d54270eb95861d6464aa4a0b5dc3b84b286bc1b8a6da1b15450efd17953f",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-087b6a2b3a3980c7.rmeta": "73f0e4d2f5d4e00bd51a7d609dba89fd4ce83d0248d3bbe2f7cbfdb289598767"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "bytemuck",
+            "std"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-e33b946bf9cdb70b.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-e33b946bf9cdb70b.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/home/nero/code/open-ui/bindings/rust/vendor/font-types-v0_11/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/vendor/font-types-v0_11#font-types@0.11.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "font_types",
+            "src_path": "/home/nero/code/open-ui/bindings/rust/vendor/font-types-v0_11/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-e33b946bf9cdb70b.rlib": "8da6b957b293703154b061db7df7d82bd4ace6415ce3879faea5aa6b366069e9",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-e33b946bf9cdb70b.rmeta": "5e663b9f31b1f0e065630c6c3cf328ec7de96dadea87146c1cd60c8b7fac94e3"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-834764aabb68552d.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-834764aabb68552d.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui-style/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui-style#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_style",
+            "src_path": "/home/nero/code/open-ui/bindings/rust/openui-style/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-834764aabb68552d.rlib": "1ac555a48389fbce2f6198d3625affb082a05292828609def4dde9050505b884",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-834764aabb68552d.rmeta": "c7d38b18f7e8be39ac00a0ac873326eb72aaea0109ab21bfbb6d8cfa90eba220"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_macros-4a2a29060d246886.so"
+          ],
+          "fresh": false,
+          "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui-macros/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui-macros#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "proc-macro"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "proc-macro"
+            ],
+            "name": "openui_macros",
+            "src_path": "/home/nero/code/open-ui/bindings/rust/openui-macros/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_macros-4a2a29060d246886.so": "c386195be6da3d83be20ad1f636ee53d7076eee77dd5113cbc8e44973a5cca60"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "std"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-f7fc50324ff71df1.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-f7fc50324ff71df1.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/home/nero/code/open-ui/bindings/rust/vendor/read-fonts-v0_37/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/vendor/read-fonts-v0_37#read-fonts@0.37.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "read_fonts",
+            "src_path": "/home/nero/code/open-ui/bindings/rust/vendor/read-fonts-v0_37/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-f7fc50324ff71df1.rlib": "b2fabc7e8a7fe2e006945d53e22d42614d36df687a3c0237cf98d489e9ecc695",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-f7fc50324ff71df1.rmeta": "ed51410f5c665d82cc0bcc84714360c344f549269f0a9c2d786ee42c9797029e"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "autohint_shaping",
+            "default",
+            "std"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-35f5ca75a4e799ca.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-35f5ca75a4e799ca.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/home/nero/code/open-ui/bindings/rust/vendor/skrifa-v0_40/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/vendor/skrifa-v0_40#skrifa@0.40.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "skrifa",
+            "src_path": "/home/nero/code/open-ui/bindings/rust/vendor/skrifa-v0_40/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-35f5ca75a4e799ca.rlib": "fb2acc9bf295e839f2f76bb48f5df1acae40c0b208dc502d986c1bb88e772eff",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-35f5ca75a4e799ca.rmeta": "1c828881347236597f725f26e5621b62c461da6f6d69d08958578cfd424428bf"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-d1c3bc152e8680f8.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-d1c3bc152e8680f8.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui-dom/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui-dom#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_dom",
+            "src_path": "/home/nero/code/open-ui/bindings/rust/openui-dom/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-d1c3bc152e8680f8.rlib": "07a5ef004916d06d59ad7010b06f3f30e32ece53eb4cdf194e8f439fb15a3300",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-d1c3bc152e8680f8.rmeta": "4c517d2a71e0f05a72f77a920be216029092442ca5626a4512caab1ff7202b15"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-685d07112f60e769.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-685d07112f60e769.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui-text/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui-text#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_text",
+            "src_path": "/home/nero/code/open-ui/bindings/rust/openui-text/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-685d07112f60e769.rlib": "2543b8930e159f6001279ac1979d2e025cf159b2ea8d2d089c4392ac43f8187f",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-685d07112f60e769.rmeta": "ff385de1b981b002d9b995f878c1f7b23a529560ac7c32bdf283ddb854a36245"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-2b29aafb1a34dc59.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-2b29aafb1a34dc59.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui-layout/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui-layout#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_layout",
+            "src_path": "/home/nero/code/open-ui/bindings/rust/openui-layout/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-2b29aafb1a34dc59.rlib": "5893687a2eb989de3b8d1bd5d0ae09b02800475de6f69086310d7abf90acdea9",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-2b29aafb1a34dc59.rmeta": "65e2586103b7cf4ffc223856438b3bb826e75ca244de5df5b53be710b3653672"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "default"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-2a790426442dcf82.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-2a790426442dcf82.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui-compositor/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui-compositor#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_compositor",
+            "src_path": "/home/nero/code/open-ui/bindings/rust/openui-compositor/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-2a790426442dcf82.rlib": "93dd09b5e61a9d396cc8f22eb756843631b121cd86f075d510703ec4b24e9fb3",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-2a790426442dcf82.rmeta": "d7020aaf4347442a7557f88090aa929c99708086c19a2e4fd223475a57801048"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-3b124772dacb6746.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-3b124772dacb6746.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui-paint/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui-paint#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_paint",
+            "src_path": "/home/nero/code/open-ui/bindings/rust/openui-paint/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-3b124772dacb6746.rlib": "dc7d020ab17a15601b33a6b952884adb9173ca8e3d74596f6b74a5b8fd72ff18",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-3b124772dacb6746.rmeta": "af6450caa23eec52d68ae4b730b2610099f90983619da4cb0f74f2d6f740e1c9"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-c971e3ea18717d45.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-c971e3ea18717d45.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui-engine/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui-engine#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_engine",
+            "src_path": "/home/nero/code/open-ui/bindings/rust/openui-engine/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-c971e3ea18717d45.rlib": "1ac46cef0540d88e9fec50b6c7ac866be9032aa139ca78ad74564c69a1a037a0",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-c971e3ea18717d45.rmeta": "0be4c3b4b67cb5fe963b28e6eb3e16c5fc8675bd35db1d64eac7d2b22a721380"
+        }
+      },
+      {
+        "record": {
+          "executable": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/openui-ff90b79c917555ab",
+          "features": [
+            "default"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/openui-ff90b79c917555ab"
+          ],
+          "fresh": false,
+          "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": true
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui",
+            "src_path": "/home/nero/code/open-ui/bindings/rust/openui/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/openui-ff90b79c917555ab": "a9b6e3cd5668e24ed07388d2d1fec2d9bb930071e1bcefa59361d35773ae8ce3"
+        }
+      }
+    ],
+    "tests": {
+      "failed": 0,
+      "ignored": 0,
+      "passed": 80
+    }
+  },
+  "native_pixel_root_cause_complete": false,
+  "native_pixel_runs": {
+    "native-editor-clip-only-build-v2415": {
+      "all_chromium_reference_bytes_preserved": true,
+      "all_commands_terminal": true,
+      "changes": [
+        {
+          "before_wrong_pixels": 108,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-mobile",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 108,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-mobile",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 136,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-desktop",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 68
+        },
+        {
+          "before_wrong_pixels": 136,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-desktop",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 68
+        },
+        {
+          "before_wrong_pixels": 81,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-large",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 81,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-large",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 162,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-triple",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 162,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-triple",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        }
+      ],
+      "exact_gains": 6,
+      "exact_losses": 0,
+      "native_observed_exit_code": 1,
+      "native_receipt_sha256": "f770722122f35e1b840f01f90f3453fb8dac7cec3ae757f8e63714a93d7291e9",
+      "observed_exit_code": 1,
+      "owner_pid": 778933,
+      "public_source": {
+        "clean": true,
+        "commit": "dbaf8ef083243ff6c4a2db6cf1724515d6304975",
+        "harness_sha256": "1a87b0599fe6a068ed34bb6250d6ca2857d2d7293a98fb602a33825230daa1f2",
+        "source_tree_sha256": "adc59cf8d8a3f2ad02100d079ad6b8156eab1079b1872e60320781954ffee299",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "public_source_after": {
+        "clean": true,
+        "commit": "dbaf8ef083243ff6c4a2db6cf1724515d6304975",
+        "harness_sha256": "1a87b0599fe6a068ed34bb6250d6ca2857d2d7293a98fb602a33825230daa1f2",
+        "source_tree_sha256": "adc59cf8d8a3f2ad02100d079ad6b8156eab1079b1872e60320781954ffee299",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "public_source_unchanged": true,
+      "release_qualification": false,
+      "schema_version": 1,
+      "source": {
+        "clean": true,
+        "commit": "01276d52281fd667c241a3ace23986536f790d54",
+        "harness_sha256": "1a87b0599fe6a068ed34bb6250d6ca2857d2d7293a98fb602a33825230daa1f2",
+        "source_tree_sha256": "53eedf5798962b4513fcc38953bd62f18d2b864a450fe8d9ec8777191bfe4f42",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "01276d52281fd667c241a3ace23986536f790d54",
+        "harness_sha256": "1a87b0599fe6a068ed34bb6250d6ca2857d2d7293a98fb602a33825230daa1f2",
+        "source_tree_sha256": "53eedf5798962b4513fcc38953bd62f18d2b864a450fe8d9ec8777191bfe4f42",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_unchanged": true,
+      "steps": [
+        {
+          "command": [
+            "/usr/bin/python3",
+            "/home/nero/code/open-ui/out/private-native-editor-clip-main-v2412/tools/qualification/build_renderer.py",
+            "--offline",
+            "--source-root",
+            "/home/nero/code/open-ui/out/private-native-editor-clip-main-v2412",
+            "--cargo-config",
+            "/home/nero/code/open-ui/out/private-native-editor-clip-main-v2412/bindings/rust/.cargo/config.chromium.toml",
+            "--target-dir",
+            "/mnt/e/openui-v02-cargo-c73754e2/target",
+            "--results-dir",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-editor-clip-only-build-v2415/guarded-build"
+          ],
+          "log_sha256": "697e1f0e90f04875253fd18ccd29dea93a2f71fad9274378f1cfb171b4b9e3a5",
+          "name": "guarded-renderer-build",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/usr/bin/python3",
+            "/tmp/openui-native-editor-clip-only-app-v2415.py"
+          ],
+          "log_sha256": "1758b92ba96adaae4eb0c689f46abc0ee7d57e2e7d915310d7631f0c2aa276b0",
+          "name": "verified-native-app",
+          "observed_exit_code": 1
+        }
+      ],
+      "totals": {
+        "different_images": 2,
+        "exact_geometry": 30,
+        "exact_images": 28,
+        "geometry_states": 30,
+        "image_states": 30
+      },
+      "worsened_states": 0
+    },
+    "native-editor-direct-strike-build-v2410": {
+      "all_chromium_reference_bytes_preserved": true,
+      "all_commands_terminal": true,
+      "changes": [
+        {
+          "before_wrong_pixels": 108,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-mobile",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 108,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-mobile",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 136,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-desktop",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 68
+        },
+        {
+          "before_wrong_pixels": 136,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-desktop",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 68
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": true,
+          "label": "large-text-desktop",
+          "more_wrong_pixels": true,
+          "state": "before",
+          "wrong_pixels": 1440
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": true,
+          "label": "sticky-desktop",
+          "more_wrong_pixels": true,
+          "state": "before",
+          "wrong_pixels": 1440
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": true,
+          "label": "sticky-desktop",
+          "more_wrong_pixels": true,
+          "state": "after",
+          "wrong_pixels": 361
+        },
+        {
+          "before_wrong_pixels": 81,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-large",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 81,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-large",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": true,
+          "label": "large-text-large",
+          "more_wrong_pixels": true,
+          "state": "after",
+          "wrong_pixels": 5184
+        },
+        {
+          "before_wrong_pixels": 162,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-triple",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 162,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-triple",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        }
+      ],
+      "exact_gains": 6,
+      "exact_losses": 4,
+      "native_observed_exit_code": 1,
+      "native_receipt_sha256": "77b5df2e7937d2f688e69871a61b1a3f3e42ebf4b9b27d4f07a4f95b5073f3cd",
+      "observed_exit_code": 1,
+      "owner_pid": 776240,
+      "public_source": {
+        "clean": true,
+        "commit": "dbaf8ef083243ff6c4a2db6cf1724515d6304975",
+        "harness_sha256": "1a87b0599fe6a068ed34bb6250d6ca2857d2d7293a98fb602a33825230daa1f2",
+        "source_tree_sha256": "adc59cf8d8a3f2ad02100d079ad6b8156eab1079b1872e60320781954ffee299",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "public_source_after": {
+        "clean": true,
+        "commit": "dbaf8ef083243ff6c4a2db6cf1724515d6304975",
+        "harness_sha256": "1a87b0599fe6a068ed34bb6250d6ca2857d2d7293a98fb602a33825230daa1f2",
+        "source_tree_sha256": "adc59cf8d8a3f2ad02100d079ad6b8156eab1079b1872e60320781954ffee299",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "public_source_unchanged": true,
+      "release_qualification": false,
+      "schema_version": 1,
+      "source": {
+        "clean": true,
+        "commit": "86bcc8bce392ae931e46942195ed3af081c71243",
+        "harness_sha256": "1a87b0599fe6a068ed34bb6250d6ca2857d2d7293a98fb602a33825230daa1f2",
+        "source_tree_sha256": "b9b469c738bad08e017aae462582b06b32145c83003695f747fe61cf975cdbe0",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "86bcc8bce392ae931e46942195ed3af081c71243",
+        "harness_sha256": "1a87b0599fe6a068ed34bb6250d6ca2857d2d7293a98fb602a33825230daa1f2",
+        "source_tree_sha256": "b9b469c738bad08e017aae462582b06b32145c83003695f747fe61cf975cdbe0",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_unchanged": true,
+      "steps": [
+        {
+          "command": [
+            "/usr/bin/python3",
+            "/home/nero/code/open-ui/out/private-native-editor-clip-main-v2407/tools/qualification/build_renderer.py",
+            "--offline",
+            "--source-root",
+            "/home/nero/code/open-ui/out/private-native-editor-clip-main-v2407",
+            "--cargo-config",
+            "/home/nero/code/open-ui/out/private-native-editor-clip-main-v2407/bindings/rust/.cargo/config.chromium.toml",
+            "--target-dir",
+            "/mnt/e/openui-v02-cargo-c73754e2/target",
+            "--results-dir",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-editor-direct-strike-build-v2410/guarded-build"
+          ],
+          "log_sha256": "c3bf9ed69edf01972311ca6a69794d25491b20183e4ef4728affc2b5805710b0",
+          "name": "guarded-renderer-build",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/usr/bin/python3",
+            "/tmp/openui-native-editor-direct-strike-app-v2410.py"
+          ],
+          "log_sha256": "5005b08dfb2f1877791fedbc586ab527c149e0cf0b2d70121b96aeb017ae0abc",
+          "name": "verified-native-app",
+          "observed_exit_code": 1
+        }
+      ],
+      "totals": {
+        "different_images": 6,
+        "exact_geometry": 30,
+        "exact_images": 24,
+        "geometry_states": 30,
+        "image_states": 30
+      },
+      "worsened_states": 4
+    },
+    "native-editor-fresh-parent-v2406": {
+      "all_commands_terminal": true,
+      "cases": [
+        {
+          "chromium": {
+            "dimensions": [
+              800,
+              600
+            ],
+            "png_sha256": "523c1cc64d37b5fd36ba27679f4064a77f56c8d4a91fe0e2d34f98f45a09501a",
+            "rgba_sha256": "243aa2cff6cb60e5164fff4b4b6545c92951e1f93e303becafb5c912d328aae5"
+          },
+          "chromium_bounds": {
+            "height": 30,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "difference": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "exact": true,
+          "fixture_sha256": "1f971900e25636591a4366500d2bb408db9b4170f29c61baf457b92cda024e7e",
+          "geometry_exact": true,
+          "label": "input-legacy",
+          "native": {
+            "dimensions": [
+              800,
+              600
+            ],
+            "png_sha256": "dac642e1bbb07b5d1d915f1936f5383f82a1f0cb1652c602e64a1ace6f3d0b82",
+            "rgba_sha256": "243aa2cff6cb60e5164fff4b4b6545c92951e1f93e303becafb5c912d328aae5"
+          },
+          "native_bounds": {
+            "height": 30.0,
+            "width": 100.0,
+            "x": 20.0,
+            "y": 20.0
+          },
+          "repeated_png_and_geometry_equal": true,
+          "scale": 1.0,
+          "state": "before",
+          "writing": "input"
+        },
+        {
+          "chromium": {
+            "dimensions": [
+              800,
+              600
+            ],
+            "png_sha256": "75369f940550ae9c9af472937ed0362c8a93431903c6ee227b92f1545b1dacd7",
+            "rgba_sha256": "53fb9a32d63728ae0d604a02aae1b5fc00c15f4bddecdf34c99dd26e9e70118b"
+          },
+          "chromium_bounds": {
+            "height": 30,
+            "width": 100,
+            "x": 21,
+            "y": 21
+          },
+          "difference": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "exact": true,
+          "fixture_sha256": "bcb3a8cc19ed32737d6443e74de10cdacd257aedf939438cc3549af7e1e35ef1",
+          "geometry_exact": true,
+          "label": "input-legacy",
+          "native": {
+            "dimensions": [
+              800,
+              600
+            ],
+            "png_sha256": "8cede6672095c46af1e5fe21c20748069269555e75cf9a9789a2da682cf8b9ac",
+            "rgba_sha256": "53fb9a32d63728ae0d604a02aae1b5fc00c15f4bddecdf34c99dd26e9e70118b"
+          },
+          "native_bounds": {
+            "height": 30.0,
+            "width": 100.0,
+            "x": 21.0,
+            "y": 21.0
+          },
+          "repeated_png_and_geometry_equal": true,
+          "scale": 1.0,
+          "state": "after",
+          "writing": "input"
+        },
+        {
+          "chromium": {
+            "dimensions": [
+              800,
+              600
+            ],
+            "png_sha256": "4119b3be67a84d5a1702750f616e656a5fa4f790ab6a07994f97c62b28f087ea",
+            "rgba_sha256": "2c09f8c8dd3c83d67bf99f02d77cfa84fa2afe479668fb246bcc1fde8a30586c"
+          },
+          "chromium_bounds": {
+            "height": 600,
+            "width": 800,
+            "x": 20,
+            "y": 20
+          },
+          "difference": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "exact": true,
+          "fixture_sha256": "92f739058c53bc432c1947435afe0effb1f73e747569338eeadfa293b366a9a9",
+          "geometry_exact": true,
+          "label": "large-text-legacy",
+          "native": {
+            "dimensions": [
+              800,
+              600
+            ],
+            "png_sha256": "e7b78bc5f8b0159fac4767aaa542b1af3d85e5e236e8736e1db67d175a8f0b9d",
+            "rgba_sha256": "2c09f8c8dd3c83d67bf99f02d77cfa84fa2afe479668fb246bcc1fde8a30586c"
+          },
+          "native_bounds": {
+            "height": 600.0,
+            "width": 800.0,
+            "x": 20.0,
+            "y": 20.0
+          },
+          "repeated_png_and_geometry_equal": true,
+          "scale": 1.0,
+          "state": "before",
+          "writing": "large-text"
+        },
+        {
+          "chromium": {
+            "dimensions": [
+              800,
+              600
+            ],
+            "png_sha256": "8ee978b789b425e7b47e9e08f75808bdd97a5d46d644c589b735d82fc8be5c38",
+            "rgba_sha256": "5d6acca88fa1ab599b35cf290575ec04f6733c826e10d3b49aa3a756cbe82cc3"
+          },
+          "chromium_bounds": {
+            "height": 600,
+            "width": 800,
+            "x": 21,
+            "y": 21
+          },
+          "difference": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "exact": true,
+          "fixture_sha256": "b7a1ad456d268a43185e7c350559f1ec9ab523b5ff6402191f07f1d1c3e4f3cb",
+          "geometry_exact": true,
+          "label": "large-text-legacy",
+          "native": {
+            "dimensions": [
+              800,
+              600
+            ],
+            "png_sha256": "896b6bb5bfcd3da16cb3726041e1aed1907ecd694cb36d4d8f336dd6fded55c1",
+            "rgba_sha256": "5d6acca88fa1ab599b35cf290575ec04f6733c826e10d3b49aa3a756cbe82cc3"
+          },
+          "native_bounds": {
+            "height": 600.0,
+            "width": 800.0,
+            "x": 21.0,
+            "y": 21.0
+          },
+          "repeated_png_and_geometry_equal": true,
+          "scale": 1.0,
+          "state": "after",
+          "writing": "large-text"
+        },
+        {
+          "chromium": {
+            "dimensions": [
+              800,
+              600
+            ],
+            "png_sha256": "4119b3be67a84d5a1702750f616e656a5fa4f790ab6a07994f97c62b28f087ea",
+            "rgba_sha256": "2c09f8c8dd3c83d67bf99f02d77cfa84fa2afe479668fb246bcc1fde8a30586c"
+          },
+          "chromium_bounds": {
+            "height": 600,
+            "width": 800,
+            "x": 20,
+            "y": 20
+          },
+          "difference": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "exact": true,
+          "fixture_sha256": "516e119c4454b0cb16dfbb69c897508a5fcb25df8221f8fc0a2614679e3a0ac0",
+          "geometry_exact": true,
+          "label": "sticky-legacy",
+          "native": {
+            "dimensions": [
+              800,
+              600
+            ],
+            "png_sha256": "e7b78bc5f8b0159fac4767aaa542b1af3d85e5e236e8736e1db67d175a8f0b9d",
+            "rgba_sha256": "2c09f8c8dd3c83d67bf99f02d77cfa84fa2afe479668fb246bcc1fde8a30586c"
+          },
+          "native_bounds": {
+            "height": 600.0,
+            "width": 800.0,
+            "x": 20.0,
+            "y": 20.0
+          },
+          "repeated_png_and_geometry_equal": true,
+          "scale": 1.0,
+          "state": "before",
+          "writing": "sticky"
+        },
+        {
+          "chromium": {
+            "dimensions": [
+              800,
+              600
+            ],
+            "png_sha256": "ecd48b4dc7b63728c5248667f388abd4dcb26d3260191b7333e7be9b2a164c08",
+            "rgba_sha256": "d3f132888595de901fc8d72e0cbd56145b8b52afcfa96505acfbf08c84a1621c"
+          },
+          "chromium_bounds": {
+            "height": 600,
+            "width": 800,
+            "x": 20,
+            "y": 20
+          },
+          "difference": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "exact": true,
+          "fixture_sha256": "26d79e4a54f41890f5e57415fcaab06e26d1bc2408a8477ff5ec09a560bdde22",
+          "geometry_exact": true,
+          "label": "sticky-legacy",
+          "native": {
+            "dimensions": [
+              800,
+              600
+            ],
+            "png_sha256": "2744365387fa0e44bb4e6743c80620ba79acf5ea42b9ece7aaefe19f58cc5af0",
+            "rgba_sha256": "d3f132888595de901fc8d72e0cbd56145b8b52afcfa96505acfbf08c84a1621c"
+          },
+          "native_bounds": {
+            "height": 600.0,
+            "width": 800.0,
+            "x": 20.0,
+            "y": 20.0
+          },
+          "repeated_png_and_geometry_equal": true,
+          "scale": 1.0,
+          "state": "after",
+          "writing": "sticky"
+        },
+        {
+          "chromium": {
+            "dimensions": [
+              750,
+              1334
+            ],
+            "png_sha256": "2d5d3cfa794e1e92e622e157c609ef7d76196c82f207ef25122ceabf58c633e9",
+            "rgba_sha256": "a113e3d0a101efa8327a2482174ae0acacf3ef67e3377b8eb4009ccd32ff3794"
+          },
+          "chromium_bounds": {
+            "height": 30,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "difference": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 108,
+                "maximum_absolute_delta": 255,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": -255,
+                "signed_delta_sum": -27540
+              },
+              "green": {
+                "changed_pixels": 108,
+                "maximum_absolute_delta": 255,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": -255,
+                "signed_delta_sum": -27540
+              },
+              "red": {
+                "changed_pixels": 108,
+                "maximum_absolute_delta": 255,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": -255,
+                "signed_delta_sum": -27540
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 1,
+            "connected_regions": [
+              {
+                "bounds": {
+                  "height": 1,
+                  "width": 108,
+                  "x": 62,
+                  "y": 51
+                },
+                "mismatched_pixels": 108
+              }
+            ],
+            "mismatch_bounds": {
+              "height": 1,
+              "width": 108,
+              "x": 62,
+              "y": 51
+            },
+            "mismatched_pixels": 108
+          },
+          "exact": false,
+          "fixture_sha256": "1f971900e25636591a4366500d2bb408db9b4170f29c61baf457b92cda024e7e",
+          "geometry_exact": true,
+          "label": "input-mobile",
+          "native": {
+            "dimensions": [
+              750,
+              1334
+            ],
+            "png_sha256": "d7e281ff949002e1f91122489ab442df313ca882c04b998363a4defdd712cceb",
+            "rgba_sha256": "121a432fc366755100f8088fde7aa6f6290dd995f2edf68478413d1204647604"
+          },
+          "native_bounds": {
+            "height": 30.0,
+            "width": 100.0,
+            "x": 20.0,
+            "y": 20.0
+          },
+          "repeated_png_and_geometry_equal": true,
+          "scale": 2.0,
+          "state": "before",
+          "writing": "input"
+        },
+        {
+          "chromium": {
+            "dimensions": [
+              750,
+              1334
+            ],
+            "png_sha256": "c6d6e7d0955014b4cdda6e9cc4d7f628791e28df9bc8b325304ff5035c244ab3",
+            "rgba_sha256": "2d167928ed352eb84d6a858d69db40221f0d3e0a30f2298afc038536c9a8fdfc"
+          },
+          "chromium_bounds": {
+            "height": 30,
+            "width": 100,
+            "x": 21,
+            "y": 21
+          },
+          "difference": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 108,
+                "maximum_absolute_delta": 255,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": -255,
+                "signed_delta_sum": -27540
+              },
+              "green": {
+                "changed_pixels": 108,
+                "maximum_absolute_delta": 255,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": -255,
+                "signed_delta_sum": -27540
+              },
+              "red": {
+                "changed_pixels": 108,
+                "maximum_absolute_delta": 255,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": -255,
+                "signed_delta_sum": -27540
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 1,
+            "connected_regions": [
+              {
+                "bounds": {
+                  "height": 1,
+                  "width": 108,
+                  "x": 64,
+                  "y": 53
+                },
+                "mismatched_pixels": 108
+              }
+            ],
+            "mismatch_bounds": {
+              "height": 1,
+              "width": 108,
+              "x": 64,
+              "y": 53
+            },
+            "mismatched_pixels": 108
+          },
+          "exact": false,
+          "fixture_sha256": "bcb3a8cc19ed32737d6443e74de10cdacd257aedf939438cc3549af7e1e35ef1",
+          "geometry_exact": true,
+          "label": "input-mobile",
+          "native": {
+            "dimensions": [
+              750,
+              1334
+            ],
+            "png_sha256": "342ee36f0ce93cb8a7b70d64379ea929c326ba200c24dd6a5d64d020e1482bd3",
+            "rgba_sha256": "ab0b267856ec026a168da67d178a307670647b06c099d29953ed9867a3a1786a"
+          },
+          "native_bounds": {
+            "height": 30.0,
+            "width": 100.0,
+            "x": 21.0,
+            "y": 21.0
+          },
+          "repeated_png_and_geometry_equal": true,
+          "scale": 2.0,
+          "state": "after",
+          "writing": "input"
+        },
+        {
+          "chromium": {
+            "dimensions": [
+              750,
+              1334
+            ],
+            "png_sha256": "f3137c71cd0a691201b4bfe8a4473b517fccdea80949902b9aa22490f0f3bdaf",
+            "rgba_sha256": "4a0dcd75f3a17b82904627181c7cf129c7495ffb1573fb942cfc26d665293c06"
+          },
+          "chromium_bounds": {
+            "height": 667,
+            "width": 375,
+            "x": 20,
+            "y": 20
+          },
+          "difference": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "exact": true,
+          "fixture_sha256": "c2020f1420056f1114596d1d5a4cab1eb9d697911025d85b348a155c44c132ef",
+          "geometry_exact": true,
+          "label": "large-text-mobile",
+          "native": {
+            "dimensions": [
+              750,
+              1334
+            ],
+            "png_sha256": "2a14aa410784930354556ea1f894a9333847587726839775db80901e6fc5453f",
+            "rgba_sha256": "4a0dcd75f3a17b82904627181c7cf129c7495ffb1573fb942cfc26d665293c06"
+          },
+          "native_bounds": {
+            "height": 667.0,
+            "width": 375.0,
+            "x": 20.0,
+            "y": 20.0
+          },
+          "repeated_png_and_geometry_equal": true,
+          "scale": 2.0,
+          "state": "before",
+          "writing": "large-text"
+        },
+        {
+          "chromium": {
+            "dimensions": [
+              750,
+              1334
+            ],
+            "png_sha256": "011e9576f6c6a10b3ef798932796b193ab8859146f7b3f68c35748bd4251fa9a",
+            "rgba_sha256": "9ddc34e0d27d89ac1469020950069caa32e76159511f79f64e9f0a9eb7995dcc"
+          },
+          "chromium_bounds": {
+            "height": 667,
+            "width": 375,
+            "x": 21,
+            "y": 21
+          },
+          "difference": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "exact": true,
+          "fixture_sha256": "ee03b86e59e9fa93dc5d7698178e07af3123e976e2055bbc0c5bab20f8c2e137",
+          "geometry_exact": true,
+          "label": "large-text-mobile",
+          "native": {
+            "dimensions": [
+              750,
+              1334
+            ],
+            "png_sha256": "692a2c72e28b0c6c3258b44d7b25e95bb0fc3dd11078f98eb1202001d1e2d8a2",
+            "rgba_sha256": "9ddc34e0d27d89ac1469020950069caa32e76159511f79f64e9f0a9eb7995dcc"
+          },
+          "native_bounds": {
+            "height": 667.0,
+            "width": 375.0,
+            "x": 21.0,
+            "y": 21.0
+          },
+          "repeated_png_and_geometry_equal": true,
+          "scale": 2.0,
+          "state": "after",
+          "writing": "large-text"
+        },
+        {
+          "chromium": {
+            "dimensions": [
+              750,
+              1334
+            ],
+            "png_sha256": "f3137c71cd0a691201b4bfe8a4473b517fccdea80949902b9aa22490f0f3bdaf",
+            "rgba_sha256": "4a0dcd75f3a17b82904627181c7cf129c7495ffb1573fb942cfc26d665293c06"
+          },
+          "chromium_bounds": {
+            "height": 667,
+            "width": 375,
+            "x": 20,
+            "y": 20
+          },
+          "difference": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "exact": true,
+          "fixture_sha256": "1d4118efb9b3a6a85a9aa38469b333f712c22c537bce5d41595c807caecd7738",
+          "geometry_exact": true,
+          "label": "sticky-mobile",
+          "native": {
+            "dimensions": [
+              750,
+              1334
+            ],
+            "png_sha256": "2a14aa410784930354556ea1f894a9333847587726839775db80901e6fc5453f",
+            "rgba_sha256": "4a0dcd75f3a17b82904627181c7cf129c7495ffb1573fb942cfc26d665293c06"
+          },
+          "native_bounds": {
+            "height": 667.0,
+            "width": 375.0,
+            "x": 20.0,
+            "y": 20.0
+          },
+          "repeated_png_and_geometry_equal": true,
+          "scale": 2.0,
+          "state": "before",
+          "writing": "sticky"
+        },
+        {
+          "chromium": {
+            "dimensions": [
+              750,
+              1334
+            ],
+            "png_sha256": "66bd1add7487df120d1ba586315f73040cd33b44b56e8ccc6c88658cf00ec004",
+            "rgba_sha256": "db2d013cbf365bd444522ca7032a8bc54e59323ca209fd5e85832cc7c55016e6"
+          },
+          "chromium_bounds": {
+            "height": 667,
+            "width": 375,
+            "x": 20,
+            "y": 20
+          },
+          "difference": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "exact": true,
+          "fixture_sha256": "2e56170d51976088bb439107ccb24502bc2eda7ae795646c8de213b464466322",
+          "geometry_exact": true,
+          "label": "sticky-mobile",
+          "native": {
+            "dimensions": [
+              750,
+              1334
+            ],
+            "png_sha256": "46d799ebe43ba7c02059fee8bd5a8277b7cfc2e497b6c33e24c1e2c5e7d973ae",
+            "rgba_sha256": "db2d013cbf365bd444522ca7032a8bc54e59323ca209fd5e85832cc7c55016e6"
+          },
+          "native_bounds": {
+            "height": 667.0,
+            "width": 375.0,
+            "x": 20.0,
+            "y": 20.0
+          },
+          "repeated_png_and_geometry_equal": true,
+          "scale": 2.0,
+          "state": "after",
+          "writing": "sticky"
+        },
+        {
+          "chromium": {
+            "dimensions": [
+              1600,
+              900
+            ],
+            "png_sha256": "73ef398bf6d16c1415ca0727e237cf7df52c2cfe5d1f16e389b26cd84267b784",
+            "rgba_sha256": "2bfd8bca375d3e4a00173bf94581b9d0cca5e080cbe86f5b5c135cab1e6420c8"
+          },
+          "chromium_bounds": {
+            "height": 30,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "difference": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 136,
+                "maximum_absolute_delta": 255,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": -255,
+                "signed_delta_sum": -25912
+              },
+              "green": {
+                "changed_pixels": 136,
+                "maximum_absolute_delta": 255,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": -255,
+                "signed_delta_sum": -25912
+              },
+              "red": {
+                "changed_pixels": 136,
+                "maximum_absolute_delta": 255,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": -255,
+                "signed_delta_sum": -25912
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 2,
+            "connected_regions": [
+              {
+                "bounds": {
+                  "height": 1,
+                  "width": 68,
+                  "x": 39,
+                  "y": 32
+                },
+                "mismatched_pixels": 68
+              },
+              {
+                "bounds": {
+                  "height": 1,
+                  "width": 68,
+                  "x": 39,
+                  "y": 54
+                },
+                "mismatched_pixels": 68
+              }
+            ],
+            "mismatch_bounds": {
+              "height": 23,
+              "width": 68,
+              "x": 39,
+              "y": 32
+            },
+            "mismatched_pixels": 136
+          },
+          "exact": false,
+          "fixture_sha256": "1f971900e25636591a4366500d2bb408db9b4170f29c61baf457b92cda024e7e",
+          "geometry_exact": true,
+          "label": "input-desktop",
+          "native": {
+            "dimensions": [
+              1600,
+              900
+            ],
+            "png_sha256": "eb247c95aaf9f0a70aaad0a02b0be62c5a244f5f551474d91bcc140d7773893a",
+            "rgba_sha256": "8bedab051064ae25b109a959cfc4db4aebd06601f2e5228b5e1da590086d281c"
+          },
+          "native_bounds": {
+            "height": 30.0,
+            "width": 100.0,
+            "x": 20.0,
+            "y": 20.0
+          },
+          "repeated_png_and_geometry_equal": true,
+          "scale": 1.25,
+          "state": "before",
+          "writing": "input"
+        },
+        {
+          "chromium": {
+            "dimensions": [
+              1600,
+              900
+            ],
+            "png_sha256": "9e62940ba2fc5006e91497fc0713741535f51a8359a1dce837537b178b455234",
+            "rgba_sha256": "70704ceb2dcc0593298df02b617a4115e598f694dcfdadabeb913d67be66f32a"
+          },
+          "chromium_bounds": {
+            "height": 30,
+            "width": 100,
+            "x": 21,
+            "y": 21
+          },
+          "difference": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 136,
+                "maximum_absolute_delta": 255,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": -255,
+                "signed_delta_sum": -30280
+              },
+              "green": {
+                "changed_pixels": 136,
+                "maximum_absolute_delta": 255,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": -255,
+                "signed_delta_sum": -30280
+              },
+              "red": {
+                "changed_pixels": 136,
+                "maximum_absolute_delta": 255,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": -255,
+                "signed_delta_sum": -30280
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 2,
+            "connected_regions": [
+              {
+                "bounds": {
+                  "height": 1,
+                  "width": 68,
+                  "x": 40,
+                  "y": 33
+                },
+                "mismatched_pixels": 68
+              },
+              {
+                "bounds": {
+                  "height": 1,
+                  "width": 68,
+                  "x": 40,
+                  "y": 55
+                },
+                "mismatched_pixels": 68
+              }
+            ],
+            "mismatch_bounds": {
+              "height": 23,
+              "width": 68,
+              "x": 40,
+              "y": 33
+            },
+            "mismatched_pixels": 136
+          },
+          "exact": false,
+          "fixture_sha256": "bcb3a8cc19ed32737d6443e74de10cdacd257aedf939438cc3549af7e1e35ef1",
+          "geometry_exact": true,
+          "label": "input-desktop",
+          "native": {
+            "dimensions": [
+              1600,
+              900
+            ],
+            "png_sha256": "a3aaa9454485f2b85b64b7fb5a1b070d977896b250a0cb72e81b8003c5697cb7",
+            "rgba_sha256": "18d68032332a4a6b68b093519ca82c474fa013d2b74e1f9c71f57fbef300ff1a"
+          },
+          "native_bounds": {
+            "height": 30.0,
+            "width": 100.0,
+            "x": 21.0,
+            "y": 21.0
+          },
+          "repeated_png_and_geometry_equal": true,
+          "scale": 1.25,
+          "state": "after",
+          "writing": "input"
+        },
+        {
+          "chromium": {
+            "dimensions": [
+              1600,
+              900
+            ],
+            "png_sha256": "e4d8f7a7bc0c8c863f9ebe183f26867923217ebbe9b212bcb4b36bff98a8ffbe",
+            "rgba_sha256": "fd992ff393b75fd7ba4e9e89c1deac9fc4a29d97f0f8e9b8f5d6173c471a72da"
+          },
+          "chromium_bounds": {
+            "height": 720,
+            "width": 1280,
+            "x": 20,
+            "y": 20
+          },
+          "difference": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "exact": true,
+          "fixture_sha256": "8e2df4e3cc041b1ad76ce6b275ca32e117a6940bf83f0be0734a6a65aece9e1b",
+          "geometry_exact": true,
+          "label": "large-text-desktop",
+          "native": {
+            "dimensions": [
+              1600,
+              900
+            ],
+            "png_sha256": "9144ea67506574f55daa8681a40d9cb64e734d9b75102c9e27ba15b5710d8cc4",
+            "rgba_sha256": "fd992ff393b75fd7ba4e9e89c1deac9fc4a29d97f0f8e9b8f5d6173c471a72da"
+          },
+          "native_bounds": {
+            "height": 720.0,
+            "width": 1280.0,
+            "x": 20.0,
+            "y": 20.0
+          },
+          "repeated_png_and_geometry_equal": true,
+          "scale": 1.25,
+          "state": "before",
+          "writing": "large-text"
+        },
+        {
+          "chromium": {
+            "dimensions": [
+              1600,
+              900
+            ],
+            "png_sha256": "35d3f47e384745c173aa252d83e93f05958beca2929c19b8a036557beac9423b",
+            "rgba_sha256": "0d9c90ff36225126bb66018e70dee292bdad349466ef6113898b74408b501061"
+          },
+          "chromium_bounds": {
+            "height": 720,
+            "width": 1280,
+            "x": 21,
+            "y": 21
+          },
+          "difference": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "exact": true,
+          "fixture_sha256": "a00a11bd05390bf7ce17443e0258bc498e9a832ab9428bc9d14e3c167a2b2052",
+          "geometry_exact": true,
+          "label": "large-text-desktop",
+          "native": {
+            "dimensions": [
+              1600,
+              900
+            ],
+            "png_sha256": "0870514600d13cd4afbb41eff712c4673fe89b3b40daea780da8c7b00ea6e5e2",
+            "rgba_sha256": "0d9c90ff36225126bb66018e70dee292bdad349466ef6113898b74408b501061"
+          },
+          "native_bounds": {
+            "height": 720.0,
+            "width": 1280.0,
+            "x": 21.0,
+            "y": 21.0
+          },
+          "repeated_png_and_geometry_equal": true,
+          "scale": 1.25,
+          "state": "after",
+          "writing": "large-text"
+        },
+        {
+          "chromium": {
+            "dimensions": [
+              1600,
+              900
+            ],
+            "png_sha256": "e4d8f7a7bc0c8c863f9ebe183f26867923217ebbe9b212bcb4b36bff98a8ffbe",
+            "rgba_sha256": "fd992ff393b75fd7ba4e9e89c1deac9fc4a29d97f0f8e9b8f5d6173c471a72da"
+          },
+          "chromium_bounds": {
+            "height": 720,
+            "width": 1280,
+            "x": 20,
+            "y": 20
+          },
+          "difference": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "exact": true,
+          "fixture_sha256": "07ab8f18536f914f28b090a111e30636c04fbdb86555c41e1add974a1b8b8611",
+          "geometry_exact": true,
+          "label": "sticky-desktop",
+          "native": {
+            "dimensions": [
+              1600,
+              900
+            ],
+            "png_sha256": "9144ea67506574f55daa8681a40d9cb64e734d9b75102c9e27ba15b5710d8cc4",
+            "rgba_sha256": "fd992ff393b75fd7ba4e9e89c1deac9fc4a29d97f0f8e9b8f5d6173c471a72da"
+          },
+          "native_bounds": {
+            "height": 720.0,
+            "width": 1280.0,
+            "x": 20.0,
+            "y": 20.0
+          },
+          "repeated_png_and_geometry_equal": true,
+          "scale": 1.25,
+          "state": "before",
+          "writing": "sticky"
+        },
+        {
+          "chromium": {
+            "dimensions": [
+              1600,
+              900
+            ],
+            "png_sha256": "ec583af0bbbcd4cef790ae38a9d78f4dcc9cf91f50e44a62f870883c1f36042e",
+            "rgba_sha256": "9572d3c1187076b2c6633dc6668fd6eee1085053566138300126417e6e81102d"
+          },
+          "chromium_bounds": {
+            "height": 720,
+            "width": 1280,
+            "x": 20,
+            "y": 20
+          },
+          "difference": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "exact": true,
+          "fixture_sha256": "a6b0415f47cde60c03048c7722a517e29f1f6ae1174f865ace26fd167c4344f0",
+          "geometry_exact": true,
+          "label": "sticky-desktop",
+          "native": {
+            "dimensions": [
+              1600,
+              900
+            ],
+            "png_sha256": "482138fe5e3cd62c117eb234d8d51b579d4bbcbf07158083220e934245b5ef32",
+            "rgba_sha256": "9572d3c1187076b2c6633dc6668fd6eee1085053566138300126417e6e81102d"
+          },
+          "native_bounds": {
+            "height": 720.0,
+            "width": 1280.0,
+            "x": 20.0,
+            "y": 20.0
+          },
+          "repeated_png_and_geometry_equal": true,
+          "scale": 1.25,
+          "state": "after",
+          "writing": "sticky"
+        },
+        {
+          "chromium": {
+            "dimensions": [
+              2880,
+              1620
+            ],
+            "png_sha256": "486c6455fefe26a8112017f4b43e07a4af905fce257668a53730bb2aecf732fe",
+            "rgba_sha256": "dfa0c2bb94d6d55a7cab3f4082055a884c837bfafbd8a6ed661fb5f0c49af315"
+          },
+          "chromium_bounds": {
+            "height": 30,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "difference": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 81,
+                "maximum_absolute_delta": 255,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": -255,
+                "signed_delta_sum": -20655
+              },
+              "green": {
+                "changed_pixels": 81,
+                "maximum_absolute_delta": 255,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": -255,
+                "signed_delta_sum": -20655
+              },
+              "red": {
+                "changed_pixels": 81,
+                "maximum_absolute_delta": 255,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": -255,
+                "signed_delta_sum": -20655
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 1,
+            "connected_regions": [
+              {
+                "bounds": {
+                  "height": 1,
+                  "width": 81,
+                  "x": 47,
+                  "y": 38
+                },
+                "mismatched_pixels": 81
+              }
+            ],
+            "mismatch_bounds": {
+              "height": 1,
+              "width": 81,
+              "x": 47,
+              "y": 38
+            },
+            "mismatched_pixels": 81
+          },
+          "exact": false,
+          "fixture_sha256": "1f971900e25636591a4366500d2bb408db9b4170f29c61baf457b92cda024e7e",
+          "geometry_exact": true,
+          "label": "input-large",
+          "native": {
+            "dimensions": [
+              2880,
+              1620
+            ],
+            "png_sha256": "49f5c46bd91fac17484df81cf2a2888a1a07366a6a493ec5132234deeadabedb",
+            "rgba_sha256": "ccf9d244595cad3521831319d25cba90ff7b9575fe10e619499091eeb9ccc68d"
+          },
+          "native_bounds": {
+            "height": 30.0,
+            "width": 100.0,
+            "x": 20.0,
+            "y": 20.0
+          },
+          "repeated_png_and_geometry_equal": true,
+          "scale": 1.5,
+          "state": "before",
+          "writing": "input"
+        },
+        {
+          "chromium": {
+            "dimensions": [
+              2880,
+              1620
+            ],
+            "png_sha256": "2ef31a936f0a9d023c2269d61cf6ac166ece86873af762dba38ec60703d69578",
+            "rgba_sha256": "c093306f3e63fbeece746799d970d61bcf2dd9e6f25feb1b1b17321f636a2001"
+          },
+          "chromium_bounds": {
+            "height": 30,
+            "width": 100,
+            "x": 21,
+            "y": 21
+          },
+          "difference": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 81,
+                "maximum_absolute_delta": 127,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": -127,
+                "signed_delta_sum": -10287
+              },
+              "green": {
+                "changed_pixels": 81,
+                "maximum_absolute_delta": 127,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": -127,
+                "signed_delta_sum": -10287
+              },
+              "red": {
+                "changed_pixels": 81,
+                "maximum_absolute_delta": 127,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": -127,
+                "signed_delta_sum": -10287
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 1,
+            "connected_regions": [
+              {
+                "bounds": {
+                  "height": 1,
+                  "width": 81,
+                  "x": 48,
+                  "y": 40
+                },
+                "mismatched_pixels": 81
+              }
+            ],
+            "mismatch_bounds": {
+              "height": 1,
+              "width": 81,
+              "x": 48,
+              "y": 40
+            },
+            "mismatched_pixels": 81
+          },
+          "exact": false,
+          "fixture_sha256": "bcb3a8cc19ed32737d6443e74de10cdacd257aedf939438cc3549af7e1e35ef1",
+          "geometry_exact": true,
+          "label": "input-large",
+          "native": {
+            "dimensions": [
+              2880,
+              1620
+            ],
+            "png_sha256": "1b2994051f0cc5d60a3c0314fdd908ce4e4ed7f4c3fc524874bb65ffe6fd2508",
+            "rgba_sha256": "82b969a4a5df00a68c42194722675b1a20ec8bdca67682a1ca399a3cd3e4e980"
+          },
+          "native_bounds": {
+            "height": 30.0,
+            "width": 100.0,
+            "x": 21.0,
+            "y": 21.0
+          },
+          "repeated_png_and_geometry_equal": true,
+          "scale": 1.5,
+          "state": "after",
+          "writing": "input"
+        },
+        {
+          "chromium": {
+            "dimensions": [
+              2880,
+              1620
+            ],
+            "png_sha256": "d149a928a2272556e90f4be6be8867d9d79c5cde7e2081c0b83f737c6f420d81",
+            "rgba_sha256": "b66be63ec7bb554ad037ae8880f60e75e77955a3e348c85318de42dcdb3b2d5d"
+          },
+          "chromium_bounds": {
+            "height": 1080,
+            "width": 1920,
+            "x": 20,
+            "y": 20
+          },
+          "difference": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "exact": true,
+          "fixture_sha256": "f2853cd8ec9bd7f546940ccd0f02d406ba885dfa883f36d120875968268216fe",
+          "geometry_exact": true,
+          "label": "large-text-large",
+          "native": {
+            "dimensions": [
+              2880,
+              1620
+            ],
+            "png_sha256": "c929439b5d2afdc16c6f7825159698a4b18efcb8a2f926ebcf94207a855fa584",
+            "rgba_sha256": "b66be63ec7bb554ad037ae8880f60e75e77955a3e348c85318de42dcdb3b2d5d"
+          },
+          "native_bounds": {
+            "height": 1080.0,
+            "width": 1920.0,
+            "x": 20.0,
+            "y": 20.0
+          },
+          "repeated_png_and_geometry_equal": true,
+          "scale": 1.5,
+          "state": "before",
+          "writing": "large-text"
+        },
+        {
+          "chromium": {
+            "dimensions": [
+              2880,
+              1620
+            ],
+            "png_sha256": "6e1fcdaa2ddcc51d98a2de2755f10343247fcaf6501c764fcd4446208791b943",
+            "rgba_sha256": "4fdb19dd06ad1be2db63bb39fa32025dc49af464121b680608c9c6cb02254df4"
+          },
+          "chromium_bounds": {
+            "height": 1080,
+            "width": 1920,
+            "x": 21,
+            "y": 21
+          },
+          "difference": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "exact": true,
+          "fixture_sha256": "96831e015edc2648a60e4f46300488f279f10c6ddda0029035e6f0e0bc376d1a",
+          "geometry_exact": true,
+          "label": "large-text-large",
+          "native": {
+            "dimensions": [
+              2880,
+              1620
+            ],
+            "png_sha256": "c7f2a6cb2572325fb399d6c11af567347405a83a5e7d28c0cbb6db83af602af4",
+            "rgba_sha256": "4fdb19dd06ad1be2db63bb39fa32025dc49af464121b680608c9c6cb02254df4"
+          },
+          "native_bounds": {
+            "height": 1080.0,
+            "width": 1920.0,
+            "x": 21.0,
+            "y": 21.0
+          },
+          "repeated_png_and_geometry_equal": true,
+          "scale": 1.5,
+          "state": "after",
+          "writing": "large-text"
+        },
+        {
+          "chromium": {
+            "dimensions": [
+              2880,
+              1620
+            ],
+            "png_sha256": "d149a928a2272556e90f4be6be8867d9d79c5cde7e2081c0b83f737c6f420d81",
+            "rgba_sha256": "b66be63ec7bb554ad037ae8880f60e75e77955a3e348c85318de42dcdb3b2d5d"
+          },
+          "chromium_bounds": {
+            "height": 1080,
+            "width": 1920,
+            "x": 20,
+            "y": 20
+          },
+          "difference": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "exact": true,
+          "fixture_sha256": "368062febb46cf976d4ef29bf12e8abaa47a84b540a705b5b139e84d51f385ab",
+          "geometry_exact": true,
+          "label": "sticky-large",
+          "native": {
+            "dimensions": [
+              2880,
+              1620
+            ],
+            "png_sha256": "c929439b5d2afdc16c6f7825159698a4b18efcb8a2f926ebcf94207a855fa584",
+            "rgba_sha256": "b66be63ec7bb554ad037ae8880f60e75e77955a3e348c85318de42dcdb3b2d5d"
+          },
+          "native_bounds": {
+            "height": 1080.0,
+            "width": 1920.0,
+            "x": 20.0,
+            "y": 20.0
+          },
+          "repeated_png_and_geometry_equal": true,
+          "scale": 1.5,
+          "state": "before",
+          "writing": "sticky"
+        },
+        {
+          "chromium": {
+            "dimensions": [
+              2880,
+              1620
+            ],
+            "png_sha256": "6965d4e7bd8554a86c271c8fb9819d039ef175f60700a99a07a2774ba7d737f7",
+            "rgba_sha256": "c6770c675cbf4f4725104fff0a611409e244c1fe4d870dab7a4ca94b821bd9b9"
+          },
+          "chromium_bounds": {
+            "height": 1080,
+            "width": 1920,
+            "x": 20,
+            "y": 20
+          },
+          "difference": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "exact": true,
+          "fixture_sha256": "c882bf0c61e043cb6598b9ec970701bce9a6e861f67c5f4becfc882004dd299e",
+          "geometry_exact": true,
+          "label": "sticky-large",
+          "native": {
+            "dimensions": [
+              2880,
+              1620
+            ],
+            "png_sha256": "973620d0ed6e421eb54abd98313bfad8dca6fd68f0d8c4695ec5113960539212",
+            "rgba_sha256": "c6770c675cbf4f4725104fff0a611409e244c1fe4d870dab7a4ca94b821bd9b9"
+          },
+          "native_bounds": {
+            "height": 1080.0,
+            "width": 1920.0,
+            "x": 20.0,
+            "y": 20.0
+          },
+          "repeated_png_and_geometry_equal": true,
+          "scale": 1.5,
+          "state": "after",
+          "writing": "sticky"
+        },
+        {
+          "chromium": {
+            "dimensions": [
+              2400,
+              1800
+            ],
+            "png_sha256": "7a537f846a0aaa297403ef643277eafdc4122ae07b8244d608920b9f548dbd43",
+            "rgba_sha256": "8f9e710eaa25baf4464997f92d3b2c26241505d9e509a74bdea330efc2eca73e"
+          },
+          "chromium_bounds": {
+            "height": 30,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "difference": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 162,
+                "maximum_absolute_delta": 255,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": -255,
+                "signed_delta_sum": -41310
+              },
+              "green": {
+                "changed_pixels": 162,
+                "maximum_absolute_delta": 255,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": -255,
+                "signed_delta_sum": -41310
+              },
+              "red": {
+                "changed_pixels": 162,
+                "maximum_absolute_delta": 255,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": -255,
+                "signed_delta_sum": -41310
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 1,
+            "connected_regions": [
+              {
+                "bounds": {
+                  "height": 1,
+                  "width": 162,
+                  "x": 93,
+                  "y": 77
+                },
+                "mismatched_pixels": 162
+              }
+            ],
+            "mismatch_bounds": {
+              "height": 1,
+              "width": 162,
+              "x": 93,
+              "y": 77
+            },
+            "mismatched_pixels": 162
+          },
+          "exact": false,
+          "fixture_sha256": "1f971900e25636591a4366500d2bb408db9b4170f29c61baf457b92cda024e7e",
+          "geometry_exact": true,
+          "label": "input-triple",
+          "native": {
+            "dimensions": [
+              2400,
+              1800
+            ],
+            "png_sha256": "853b52ad47e50ba1c594800a838143de57429f2339f538c8c85901bb14c59bfb",
+            "rgba_sha256": "8b9f58f367779dbf916ab1d6954efc4d8c922afdf0d712369befb6465bd1d512"
+          },
+          "native_bounds": {
+            "height": 30.0,
+            "width": 100.0,
+            "x": 20.0,
+            "y": 20.0
+          },
+          "repeated_png_and_geometry_equal": true,
+          "scale": 3.0,
+          "state": "before",
+          "writing": "input"
+        },
+        {
+          "chromium": {
+            "dimensions": [
+              2400,
+              1800
+            ],
+            "png_sha256": "bce2a18e17a46cc2f93417c14f4ad13cc014f7c1f5f9c21321f6d37451d62d70",
+            "rgba_sha256": "8dc813f702d8a34521ba73b8ef1d4a00a8f85e899a02e525b0c598e361222ac3"
+          },
+          "chromium_bounds": {
+            "height": 30,
+            "width": 100,
+            "x": 21,
+            "y": 21
+          },
+          "difference": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 162,
+                "maximum_absolute_delta": 255,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": -255,
+                "signed_delta_sum": -41310
+              },
+              "green": {
+                "changed_pixels": 162,
+                "maximum_absolute_delta": 255,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": -255,
+                "signed_delta_sum": -41310
+              },
+              "red": {
+                "changed_pixels": 162,
+                "maximum_absolute_delta": 255,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": -255,
+                "signed_delta_sum": -41310
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 1,
+            "connected_regions": [
+              {
+                "bounds": {
+                  "height": 1,
+                  "width": 162,
+                  "x": 96,
+                  "y": 80
+                },
+                "mismatched_pixels": 162
+              }
+            ],
+            "mismatch_bounds": {
+              "height": 1,
+              "width": 162,
+              "x": 96,
+              "y": 80
+            },
+            "mismatched_pixels": 162
+          },
+          "exact": false,
+          "fixture_sha256": "bcb3a8cc19ed32737d6443e74de10cdacd257aedf939438cc3549af7e1e35ef1",
+          "geometry_exact": true,
+          "label": "input-triple",
+          "native": {
+            "dimensions": [
+              2400,
+              1800
+            ],
+            "png_sha256": "d9cc68b5101587bbd05a84f5d2b58b9e9aee1fce376c83adb6661e9c2f5845b7",
+            "rgba_sha256": "c591e8b0f4302d35bc766552e1aec3b41018301c75da8c88efc8723af2c5c7d3"
+          },
+          "native_bounds": {
+            "height": 30.0,
+            "width": 100.0,
+            "x": 21.0,
+            "y": 21.0
+          },
+          "repeated_png_and_geometry_equal": true,
+          "scale": 3.0,
+          "state": "after",
+          "writing": "input"
+        },
+        {
+          "chromium": {
+            "dimensions": [
+              2400,
+              1800
+            ],
+            "png_sha256": "ad13d86c2674fdd6458a8631a1451c579799677c1a03a1a19c161d8dc802d8a4",
+            "rgba_sha256": "fa4eef630634503cb7d5dae071ed65f770e665e5f58361b787448cff87436b37"
+          },
+          "chromium_bounds": {
+            "height": 600,
+            "width": 800,
+            "x": 20,
+            "y": 20
+          },
+          "difference": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "exact": true,
+          "fixture_sha256": "92f739058c53bc432c1947435afe0effb1f73e747569338eeadfa293b366a9a9",
+          "geometry_exact": true,
+          "label": "large-text-triple",
+          "native": {
+            "dimensions": [
+              2400,
+              1800
+            ],
+            "png_sha256": "dab0074d205bb737418e6015a05d46a1e280196166d8196967b55e2194a396b4",
+            "rgba_sha256": "fa4eef630634503cb7d5dae071ed65f770e665e5f58361b787448cff87436b37"
+          },
+          "native_bounds": {
+            "height": 600.0,
+            "width": 800.0,
+            "x": 20.0,
+            "y": 20.0
+          },
+          "repeated_png_and_geometry_equal": true,
+          "scale": 3.0,
+          "state": "before",
+          "writing": "large-text"
+        },
+        {
+          "chromium": {
+            "dimensions": [
+              2400,
+              1800
+            ],
+            "png_sha256": "a769a9040eb4022d0ed9aad4a5bb52141a446ef1b408b3131d14eca5c53fdf7d",
+            "rgba_sha256": "7c6777c938dcfc6348c0e69d99f956403b5eefb7765d0c57716db37a348c1d8b"
+          },
+          "chromium_bounds": {
+            "height": 600,
+            "width": 800,
+            "x": 21,
+            "y": 21
+          },
+          "difference": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "exact": true,
+          "fixture_sha256": "b7a1ad456d268a43185e7c350559f1ec9ab523b5ff6402191f07f1d1c3e4f3cb",
+          "geometry_exact": true,
+          "label": "large-text-triple",
+          "native": {
+            "dimensions": [
+              2400,
+              1800
+            ],
+            "png_sha256": "0ff71b4f784d8d00fdb59e3a0d580e2bf5031cef27c85f52257d372382807e09",
+            "rgba_sha256": "7c6777c938dcfc6348c0e69d99f956403b5eefb7765d0c57716db37a348c1d8b"
+          },
+          "native_bounds": {
+            "height": 600.0,
+            "width": 800.0,
+            "x": 21.0,
+            "y": 21.0
+          },
+          "repeated_png_and_geometry_equal": true,
+          "scale": 3.0,
+          "state": "after",
+          "writing": "large-text"
+        },
+        {
+          "chromium": {
+            "dimensions": [
+              2400,
+              1800
+            ],
+            "png_sha256": "ad13d86c2674fdd6458a8631a1451c579799677c1a03a1a19c161d8dc802d8a4",
+            "rgba_sha256": "fa4eef630634503cb7d5dae071ed65f770e665e5f58361b787448cff87436b37"
+          },
+          "chromium_bounds": {
+            "height": 600,
+            "width": 800,
+            "x": 20,
+            "y": 20
+          },
+          "difference": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "exact": true,
+          "fixture_sha256": "516e119c4454b0cb16dfbb69c897508a5fcb25df8221f8fc0a2614679e3a0ac0",
+          "geometry_exact": true,
+          "label": "sticky-triple",
+          "native": {
+            "dimensions": [
+              2400,
+              1800
+            ],
+            "png_sha256": "dab0074d205bb737418e6015a05d46a1e280196166d8196967b55e2194a396b4",
+            "rgba_sha256": "fa4eef630634503cb7d5dae071ed65f770e665e5f58361b787448cff87436b37"
+          },
+          "native_bounds": {
+            "height": 600.0,
+            "width": 800.0,
+            "x": 20.0,
+            "y": 20.0
+          },
+          "repeated_png_and_geometry_equal": true,
+          "scale": 3.0,
+          "state": "before",
+          "writing": "sticky"
+        },
+        {
+          "chromium": {
+            "dimensions": [
+              2400,
+              1800
+            ],
+            "png_sha256": "ade9b4a62807bdaeba01d7bb736ce161d735a13db792bee389dec0f843713bf3",
+            "rgba_sha256": "1c66d7d345c5e11899f6f7ed487ad680ad6a4d46a41d59af927edec6f4d06a2e"
+          },
+          "chromium_bounds": {
+            "height": 600,
+            "width": 800,
+            "x": 20,
+            "y": 20
+          },
+          "difference": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "exact": true,
+          "fixture_sha256": "26d79e4a54f41890f5e57415fcaab06e26d1bc2408a8477ff5ec09a560bdde22",
+          "geometry_exact": true,
+          "label": "sticky-triple",
+          "native": {
+            "dimensions": [
+              2400,
+              1800
+            ],
+            "png_sha256": "abcd89a607205b44e4429805580e0a2382030c24430948c9f5777efbb6b03c4c",
+            "rgba_sha256": "1c66d7d345c5e11899f6f7ed487ad680ad6a4d46a41d59af927edec6f4d06a2e"
+          },
+          "native_bounds": {
+            "height": 600.0,
+            "width": 800.0,
+            "x": 20.0,
+            "y": 20.0
+          },
+          "repeated_png_and_geometry_equal": true,
+          "scale": 3.0,
+          "state": "after",
+          "writing": "sticky"
+        }
+      ],
+      "chromium_binary_sha256": "0ba87684df0afc11faaea40ac57bd2f1d68b67191443b38215a36b90e6f08848",
+      "chromium_captures_run": 0,
+      "complete_renderer_matrices_not_run": true,
+      "diagnostic_only": true,
+      "helper_sha256": "32c2a164fd6f52093a68c647d26e9d9324dd5e1ec8d5fe69427a26497f1bc4a7",
+      "javascript_executed_by_openui": false,
+      "native_app_source": {
+        "clean": true,
+        "commit": "e533c62f9d8f3fb7f66583dbbd6c0f32f61427ef",
+        "tree": "f5425c676940dd527fac44e166de98ec2d794bb0"
+      },
+      "native_app_source_after": {
+        "clean": true,
+        "commit": "e533c62f9d8f3fb7f66583dbbd6c0f32f61427ef",
+        "tree": "f5425c676940dd527fac44e166de98ec2d794bb0"
+      },
+      "native_app_source_unchanged": true,
+      "native_binary_sha256": "5bc2a014a9bcf47b16f7ba624b76ac756d17f5774afa5db232800ee748bad57c",
+      "native_callbacks_per_run": 15,
+      "native_geometry_outputs_repeat_byte_identically": true,
+      "native_library_source_proven": true,
+      "native_linked_local_artifacts": [
+        {
+          "record": {
+            "executable": null,
+            "features": [],
+            "filenames": [
+              "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-de8d50df9f97aa0a.rlib",
+              "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-de8d50df9f97aa0a.rmeta"
+            ],
+            "fresh": false,
+            "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui-geometry/Cargo.toml",
+            "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui-geometry#0.2.0",
+            "profile": {
+              "debug_assertions": true,
+              "debuginfo": 0,
+              "opt_level": "0",
+              "overflow_checks": true,
+              "test": false
+            },
+            "reason": "compiler-artifact",
+            "target": {
+              "crate_types": [
+                "lib"
+              ],
+              "doc": true,
+              "doctest": true,
+              "edition": "2021",
+              "kind": [
+                "lib"
+              ],
+              "name": "openui_geometry",
+              "src_path": "/home/nero/code/open-ui/bindings/rust/openui-geometry/src/lib.rs",
+              "test": true
+            }
+          },
+          "sha256": {
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-de8d50df9f97aa0a.rlib": "c707c010d9aef0aa976d4a754aa33d4ae694677a403586b3a5f69b1121ab3b32",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-de8d50df9f97aa0a.rmeta": "bcac6677e8be9a569ee652ffac915a0d8573b3ad91a4db76d266832ee11bbe06"
+          }
+        },
+        {
+          "record": {
+            "executable": null,
+            "features": [],
+            "filenames": [
+              "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck_derive-7071e4ca07e70f7a.so"
+            ],
+            "fresh": false,
+            "manifest_path": "/home/nero/code/open-ui/bindings/rust/vendor/bytemuck_derive-v1/Cargo.toml",
+            "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/vendor/bytemuck_derive-v1#bytemuck_derive@1.10.2",
+            "profile": {
+              "debug_assertions": true,
+              "debuginfo": 0,
+              "opt_level": "0",
+              "overflow_checks": true,
+              "test": false
+            },
+            "reason": "compiler-artifact",
+            "target": {
+              "crate_types": [
+                "proc-macro"
+              ],
+              "doc": true,
+              "doctest": true,
+              "edition": "2018",
+              "kind": [
+                "proc-macro"
+              ],
+              "name": "bytemuck_derive",
+              "src_path": "/home/nero/code/open-ui/bindings/rust/vendor/bytemuck_derive-v1/src/lib.rs",
+              "test": true
+            }
+          },
+          "sha256": {
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck_derive-7071e4ca07e70f7a.so": "b698c35a531560b79cce265648b10f0a35241c1a87ad2f57fc85785e44758299"
+          }
+        },
+        {
+          "record": {
+            "executable": null,
+            "features": [
+              "bytemuck_derive",
+              "derive",
+              "min_const_generics"
+            ],
+            "filenames": [
+              "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-4040486bc5cc3f2e.rlib",
+              "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-4040486bc5cc3f2e.rmeta"
+            ],
+            "fresh": false,
+            "manifest_path": "/home/nero/code/open-ui/bindings/rust/vendor/bytemuck-v1/Cargo.toml",
+            "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/vendor/bytemuck-v1#bytemuck@1.25.0",
+            "profile": {
+              "debug_assertions": true,
+              "debuginfo": 0,
+              "opt_level": "0",
+              "overflow_checks": true,
+              "test": false
+            },
+            "reason": "compiler-artifact",
+            "target": {
+              "crate_types": [
+                "lib"
+              ],
+              "doc": true,
+              "doctest": true,
+              "edition": "2018",
+              "kind": [
+                "lib"
+              ],
+              "name": "bytemuck",
+              "src_path": "/home/nero/code/open-ui/bindings/rust/vendor/bytemuck-v1/src/lib.rs",
+              "test": true
+            }
+          },
+          "sha256": {
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-4040486bc5cc3f2e.rlib": "1850d859fd37343217b875941988bfb4e862ac7226a8ebd3685747658a3ee2c2",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-4040486bc5cc3f2e.rmeta": "42ea840bff09ac125603dbeb10be031da6b8cfb4153952711c5bed49fdfcec6b"
+          }
+        },
+        {
+          "record": {
+            "executable": null,
+            "features": [],
+            "filenames": [
+              "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-cbd66da60b3a2df9.rlib",
+              "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-cbd66da60b3a2df9.rmeta"
+            ],
+            "fresh": false,
+            "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui-style/Cargo.toml",
+            "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui-style#0.2.0",
+            "profile": {
+              "debug_assertions": true,
+              "debuginfo": 0,
+              "opt_level": "0",
+              "overflow_checks": true,
+              "test": false
+            },
+            "reason": "compiler-artifact",
+            "target": {
+              "crate_types": [
+                "lib"
+              ],
+              "doc": true,
+              "doctest": true,
+              "edition": "2021",
+              "kind": [
+                "lib"
+              ],
+              "name": "openui_style",
+              "src_path": "/home/nero/code/open-ui/bindings/rust/openui-style/src/lib.rs",
+              "test": true
+            }
+          },
+          "sha256": {
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-cbd66da60b3a2df9.rlib": "525d000133ef66df3421ad49ff0947610a41e270a4bd61575fb4b7860022e060",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-cbd66da60b3a2df9.rmeta": "198b78d9bc19b0e36fdb4c209f1610f07e2af363e2a1540a5227cc10e925e5f2"
+          }
+        },
+        {
+          "record": {
+            "executable": null,
+            "features": [
+              "bytemuck",
+              "std"
+            ],
+            "filenames": [
+              "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-f4e1be663f3ca6b8.rlib",
+              "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-f4e1be663f3ca6b8.rmeta"
+            ],
+            "fresh": false,
+            "manifest_path": "/home/nero/code/open-ui/bindings/rust/vendor/font-types-v0_11/Cargo.toml",
+            "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/vendor/font-types-v0_11#font-types@0.11.0",
+            "profile": {
+              "debug_assertions": true,
+              "debuginfo": 0,
+              "opt_level": "0",
+              "overflow_checks": true,
+              "test": false
+            },
+            "reason": "compiler-artifact",
+            "target": {
+              "crate_types": [
+                "lib"
+              ],
+              "doc": true,
+              "doctest": true,
+              "edition": "2021",
+              "kind": [
+                "lib"
+              ],
+              "name": "font_types",
+              "src_path": "/home/nero/code/open-ui/bindings/rust/vendor/font-types-v0_11/src/lib.rs",
+              "test": true
+            }
+          },
+          "sha256": {
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-f4e1be663f3ca6b8.rlib": "fb3f20fcb2799daaa536be4f12fe52939e8fa52b1bcf592b7955d89c5143552f",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-f4e1be663f3ca6b8.rmeta": "28d7416f2fa5487a0bb1bdb874ae7268749e4ce4b48ba2d3afcce32e3ca6862d"
+          }
+        },
+        {
+          "record": {
+            "executable": null,
+            "features": [],
+            "filenames": [
+              "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_macros-0815bbb9c3f284d5.so"
+            ],
+            "fresh": false,
+            "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui-macros/Cargo.toml",
+            "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui-macros#0.2.0",
+            "profile": {
+              "debug_assertions": true,
+              "debuginfo": 0,
+              "opt_level": "0",
+              "overflow_checks": true,
+              "test": false
+            },
+            "reason": "compiler-artifact",
+            "target": {
+              "crate_types": [
+                "proc-macro"
+              ],
+              "doc": true,
+              "doctest": true,
+              "edition": "2021",
+              "kind": [
+                "proc-macro"
+              ],
+              "name": "openui_macros",
+              "src_path": "/home/nero/code/open-ui/bindings/rust/openui-macros/src/lib.rs",
+              "test": true
+            }
+          },
+          "sha256": {
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_macros-0815bbb9c3f284d5.so": "a16cf82a1bc7690a2211a4b0059aefb24b2ab6a32e3989c19d97b88215030034"
+          }
+        },
+        {
+          "record": {
+            "executable": null,
+            "features": [
+              "std"
+            ],
+            "filenames": [
+              "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-530dd6e2331d59da.rlib",
+              "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-530dd6e2331d59da.rmeta"
+            ],
+            "fresh": false,
+            "manifest_path": "/home/nero/code/open-ui/bindings/rust/vendor/read-fonts-v0_37/Cargo.toml",
+            "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/vendor/read-fonts-v0_37#read-fonts@0.37.0",
+            "profile": {
+              "debug_assertions": true,
+              "debuginfo": 0,
+              "opt_level": "0",
+              "overflow_checks": true,
+              "test": false
+            },
+            "reason": "compiler-artifact",
+            "target": {
+              "crate_types": [
+                "lib"
+              ],
+              "doc": true,
+              "doctest": true,
+              "edition": "2021",
+              "kind": [
+                "lib"
+              ],
+              "name": "read_fonts",
+              "src_path": "/home/nero/code/open-ui/bindings/rust/vendor/read-fonts-v0_37/src/lib.rs",
+              "test": true
+            }
+          },
+          "sha256": {
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-530dd6e2331d59da.rlib": "552c181c6e96bb04efaedc2f6478841f07927038fcd4934410c730230ed2e430",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-530dd6e2331d59da.rmeta": "091cc3a959de6d4ebb1623ea28e4beeba8b065e984d4d10e65200ae0dc22bf8e"
+          }
+        },
+        {
+          "record": {
+            "executable": null,
+            "features": [
+              "autohint_shaping",
+              "default",
+              "std"
+            ],
+            "filenames": [
+              "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-9e56828da66515c3.rlib",
+              "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-9e56828da66515c3.rmeta"
+            ],
+            "fresh": false,
+            "manifest_path": "/home/nero/code/open-ui/bindings/rust/vendor/skrifa-v0_40/Cargo.toml",
+            "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/vendor/skrifa-v0_40#skrifa@0.40.0",
+            "profile": {
+              "debug_assertions": true,
+              "debuginfo": 0,
+              "opt_level": "0",
+              "overflow_checks": true,
+              "test": false
+            },
+            "reason": "compiler-artifact",
+            "target": {
+              "crate_types": [
+                "lib"
+              ],
+              "doc": true,
+              "doctest": true,
+              "edition": "2021",
+              "kind": [
+                "lib"
+              ],
+              "name": "skrifa",
+              "src_path": "/home/nero/code/open-ui/bindings/rust/vendor/skrifa-v0_40/src/lib.rs",
+              "test": true
+            }
+          },
+          "sha256": {
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-9e56828da66515c3.rlib": "49af78d947dbb9c403669f7af9b03c7c1921a0722905439b0cae98be2868fb9d",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-9e56828da66515c3.rmeta": "bb57d800dce472bdbb952c1052f2487632b8a78a2909740ad0df1d463a9a90e9"
+          }
+        },
+        {
+          "record": {
+            "executable": null,
+            "features": [],
+            "filenames": [
+              "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-f83ad902c68320db.rlib",
+              "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-f83ad902c68320db.rmeta"
+            ],
+            "fresh": false,
+            "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui-dom/Cargo.toml",
+            "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui-dom#0.2.0",
+            "profile": {
+              "debug_assertions": true,
+              "debuginfo": 0,
+              "opt_level": "0",
+              "overflow_checks": true,
+              "test": false
+            },
+            "reason": "compiler-artifact",
+            "target": {
+              "crate_types": [
+                "lib"
+              ],
+              "doc": true,
+              "doctest": true,
+              "edition": "2021",
+              "kind": [
+                "lib"
+              ],
+              "name": "openui_dom",
+              "src_path": "/home/nero/code/open-ui/bindings/rust/openui-dom/src/lib.rs",
+              "test": true
+            }
+          },
+          "sha256": {
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-f83ad902c68320db.rlib": "f56c814cc29ca9fc61dd36bee3ac4c006f86b9d1c32c26a25aeb275e085fe28f",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-f83ad902c68320db.rmeta": "38155710ab5bf5095aeba9202b919170d973030fe4317af8de82769cdebb8cb4"
+          }
+        },
+        {
+          "record": {
+            "executable": null,
+            "features": [],
+            "filenames": [
+              "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-a75142b58a013689.rlib",
+              "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-a75142b58a013689.rmeta"
+            ],
+            "fresh": false,
+            "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui-text/Cargo.toml",
+            "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui-text#0.2.0",
+            "profile": {
+              "debug_assertions": true,
+              "debuginfo": 0,
+              "opt_level": "0",
+              "overflow_checks": true,
+              "test": false
+            },
+            "reason": "compiler-artifact",
+            "target": {
+              "crate_types": [
+                "lib"
+              ],
+              "doc": true,
+              "doctest": true,
+              "edition": "2021",
+              "kind": [
+                "lib"
+              ],
+              "name": "openui_text",
+              "src_path": "/home/nero/code/open-ui/bindings/rust/openui-text/src/lib.rs",
+              "test": true
+            }
+          },
+          "sha256": {
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-a75142b58a013689.rlib": "bb26677d5b8902124aeb33bd715aca13bfafaaf6c8a62749c07bb6931fd5c58d",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-a75142b58a013689.rmeta": "984d2e7bdab23753b9d4fa8f587c7525ba513de4af5e76ffd0c468c977270eaa"
+          }
+        },
+        {
+          "record": {
+            "executable": null,
+            "features": [],
+            "filenames": [
+              "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-31670c5ba7449c47.rlib",
+              "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-31670c5ba7449c47.rmeta"
+            ],
+            "fresh": false,
+            "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui-layout/Cargo.toml",
+            "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui-layout#0.2.0",
+            "profile": {
+              "debug_assertions": true,
+              "debuginfo": 0,
+              "opt_level": "0",
+              "overflow_checks": true,
+              "test": false
+            },
+            "reason": "compiler-artifact",
+            "target": {
+              "crate_types": [
+                "lib"
+              ],
+              "doc": true,
+              "doctest": true,
+              "edition": "2021",
+              "kind": [
+                "lib"
+              ],
+              "name": "openui_layout",
+              "src_path": "/home/nero/code/open-ui/bindings/rust/openui-layout/src/lib.rs",
+              "test": true
+            }
+          },
+          "sha256": {
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-31670c5ba7449c47.rlib": "e1f161edf44898705d31dfd474f99979a704dc1b182032b913f1dda8baf9a6df",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-31670c5ba7449c47.rmeta": "5510390dda05c7ca7d1f7b3372aca3b636e48c3cd380f64d8494dc87d5d2865d"
+          }
+        },
+        {
+          "record": {
+            "executable": null,
+            "features": [
+              "default"
+            ],
+            "filenames": [
+              "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-40ad3577e0dbeb5f.rlib",
+              "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-40ad3577e0dbeb5f.rmeta"
+            ],
+            "fresh": false,
+            "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui-compositor/Cargo.toml",
+            "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui-compositor#0.2.0",
+            "profile": {
+              "debug_assertions": true,
+              "debuginfo": 0,
+              "opt_level": "0",
+              "overflow_checks": true,
+              "test": false
+            },
+            "reason": "compiler-artifact",
+            "target": {
+              "crate_types": [
+                "lib"
+              ],
+              "doc": true,
+              "doctest": true,
+              "edition": "2021",
+              "kind": [
+                "lib"
+              ],
+              "name": "openui_compositor",
+              "src_path": "/home/nero/code/open-ui/bindings/rust/openui-compositor/src/lib.rs",
+              "test": true
+            }
+          },
+          "sha256": {
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-40ad3577e0dbeb5f.rlib": "c8b4c02e07da6d175867398d9e71e50a3197663631154ac68fe48c593956276d",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-40ad3577e0dbeb5f.rmeta": "e82e0afcaa0b60747b100ac0fca61795de3af3a0a4533d89e99e283c80fea3dc"
+          }
+        },
+        {
+          "record": {
+            "executable": null,
+            "features": [],
+            "filenames": [
+              "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-d4f02d6afab5386a.rlib",
+              "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-d4f02d6afab5386a.rmeta"
+            ],
+            "fresh": false,
+            "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui-paint/Cargo.toml",
+            "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui-paint#0.2.0",
+            "profile": {
+              "debug_assertions": true,
+              "debuginfo": 0,
+              "opt_level": "0",
+              "overflow_checks": true,
+              "test": false
+            },
+            "reason": "compiler-artifact",
+            "target": {
+              "crate_types": [
+                "lib"
+              ],
+              "doc": true,
+              "doctest": true,
+              "edition": "2021",
+              "kind": [
+                "lib"
+              ],
+              "name": "openui_paint",
+              "src_path": "/home/nero/code/open-ui/bindings/rust/openui-paint/src/lib.rs",
+              "test": true
+            }
+          },
+          "sha256": {
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-d4f02d6afab5386a.rlib": "3e9f7c7749d160c78c32528a57daf32450b5e40428fcbd38405363b418103b08",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-d4f02d6afab5386a.rmeta": "0590567c5f03f078cae4408d2f6e505e7f1949f8ad54f8aaf2f71ec437bc86f0"
+          }
+        },
+        {
+          "record": {
+            "executable": null,
+            "features": [],
+            "filenames": [
+              "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-fa84c50163374a51.rlib",
+              "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-fa84c50163374a51.rmeta"
+            ],
+            "fresh": false,
+            "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui-engine/Cargo.toml",
+            "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui-engine#0.2.0",
+            "profile": {
+              "debug_assertions": true,
+              "debuginfo": 0,
+              "opt_level": "0",
+              "overflow_checks": true,
+              "test": false
+            },
+            "reason": "compiler-artifact",
+            "target": {
+              "crate_types": [
+                "lib"
+              ],
+              "doc": true,
+              "doctest": true,
+              "edition": "2021",
+              "kind": [
+                "lib"
+              ],
+              "name": "openui_engine",
+              "src_path": "/home/nero/code/open-ui/bindings/rust/openui-engine/src/lib.rs",
+              "test": true
+            }
+          },
+          "sha256": {
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-fa84c50163374a51.rlib": "16d24e49f64b4b720d79061622a5edf350c3e31aa5a7b398ddf8b8dc4ddcf268",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-fa84c50163374a51.rmeta": "91434515f8937956de23baf34196b9b2d9008ceb6356120d989f183a3b28bbe0"
+          }
+        },
+        {
+          "record": {
+            "executable": null,
+            "features": [
+              "default"
+            ],
+            "filenames": [
+              "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui-1e2d2036a030e9bc.rlib",
+              "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui-1e2d2036a030e9bc.rmeta"
+            ],
+            "fresh": false,
+            "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui/Cargo.toml",
+            "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui#0.2.0",
+            "profile": {
+              "debug_assertions": true,
+              "debuginfo": 0,
+              "opt_level": "0",
+              "overflow_checks": true,
+              "test": false
+            },
+            "reason": "compiler-artifact",
+            "target": {
+              "crate_types": [
+                "lib"
+              ],
+              "doc": true,
+              "doctest": true,
+              "edition": "2021",
+              "kind": [
+                "lib"
+              ],
+              "name": "openui",
+              "src_path": "/home/nero/code/open-ui/bindings/rust/openui/src/lib.rs",
+              "test": true
+            }
+          },
+          "sha256": {
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui-1e2d2036a030e9bc.rlib": "1ba265095d2675bcc6753c0f16eddc23546c4021706fdf8fbd597fec7360770f",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui-1e2d2036a030e9bc.rmeta": "a7f0eb9554d6ce6f1164e1f02f1b8122e700a589b32022581c2456a58c71aa51"
+          }
+        },
+        {
+          "record": {
+            "executable": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/openui-native-glyph-regression-api",
+            "features": [],
+            "filenames": [
+              "/mnt/e/openui-v02-cargo-c73754e2/target/debug/openui-native-glyph-regression-api"
+            ],
+            "fresh": false,
+            "manifest_path": "/home/nero/code/open-ui/out/private-native-apps/native-editor-fresh-parent-v2405/Cargo.toml",
+            "package_id": "path+file:///home/nero/code/open-ui/out/private-native-apps/native-editor-fresh-parent-v2405#openui-native-glyph-regression-api@0.1.0",
+            "profile": {
+              "debug_assertions": true,
+              "debuginfo": 0,
+              "opt_level": "0",
+              "overflow_checks": true,
+              "test": false
+            },
+            "reason": "compiler-artifact",
+            "target": {
+              "crate_types": [
+                "bin"
+              ],
+              "doc": true,
+              "doctest": false,
+              "edition": "2021",
+              "kind": [
+                "bin"
+              ],
+              "name": "openui-native-glyph-regression-api",
+              "src_path": "/home/nero/code/open-ui/out/private-native-apps/native-editor-fresh-parent-v2405/src/main.rs",
+              "test": true
+            }
+          },
+          "sha256": {
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/openui-native-glyph-regression-api": "5bc2a014a9bcf47b16f7ba624b76ac756d17f5774afa5db232800ee748bad57c"
+          }
+        }
+      ],
+      "native_pngs_repeat_byte_identically": true,
+      "new_release_states_admitted": 0,
+      "observed_exit_code": 1,
+      "offline_javascript_executed_only_in_chromium": false,
+      "owner_pid": 774540,
+      "pinned_harness_sha256": "ad37344879ddda41e6570ea41c142103e58f5db05fb9c96c27c1ac62b67f92ea",
+      "pixel_tolerance": 0,
+      "probe_sha256": "198a6939c225b5a26f527222852e1c4308c8f6975b61817c9e20b578ae3e4c34",
+      "process_group_cleanup": true,
+      "promotion_allowed": false,
+      "public_source": {
+        "clean": true,
+        "commit": "dbaf8ef083243ff6c4a2db6cf1724515d6304975",
+        "harness_sha256": "1a87b0599fe6a068ed34bb6250d6ca2857d2d7293a98fb602a33825230daa1f2",
+        "source_tree_sha256": "adc59cf8d8a3f2ad02100d079ad6b8156eab1079b1872e60320781954ffee299",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "public_source_after": {
+        "clean": true,
+        "commit": "dbaf8ef083243ff6c4a2db6cf1724515d6304975",
+        "harness_sha256": "1a87b0599fe6a068ed34bb6250d6ca2857d2d7293a98fb602a33825230daa1f2",
+        "source_tree_sha256": "adc59cf8d8a3f2ad02100d079ad6b8156eab1079b1872e60320781954ffee299",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "public_source_unchanged": true,
+      "release_qualification": false,
+      "renderer_build_receipt_sha256": "315f359aa69fe60429a7c1a7a7ae641f525ac72a9ad72a79d1577ab216100866",
+      "root_cause_not_assumed_proven": true,
+      "schema_version": 1,
+      "shared_renderer_patch_applied": false,
+      "source": {
+        "clean": true,
+        "commit": "dbaf8ef083243ff6c4a2db6cf1724515d6304975",
+        "harness_sha256": "1a87b0599fe6a068ed34bb6250d6ca2857d2d7293a98fb602a33825230daa1f2",
+        "source_tree_sha256": "adc59cf8d8a3f2ad02100d079ad6b8156eab1079b1872e60320781954ffee299",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "dbaf8ef083243ff6c4a2db6cf1724515d6304975",
+        "harness_sha256": "1a87b0599fe6a068ed34bb6250d6ca2857d2d7293a98fb602a33825230daa1f2",
+        "source_tree_sha256": "adc59cf8d8a3f2ad02100d079ad6b8156eab1079b1872e60320781954ffee299",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_unchanged": true,
+      "steps": [
+        {
+          "disk_guard_triggered": false,
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "name": "native-format",
+          "observed_exit_code": 0
+        },
+        {
+          "disk_guard_triggered": false,
+          "log_sha256": "1948eb23fb7c24e200b1c40cd36d339dc85fb6df518945a9f42e355e32e2975d",
+          "name": "native-metadata",
+          "observed_exit_code": 0
+        },
+        {
+          "disk_guard_triggered": false,
+          "log_sha256": "263d839b1683954c5a830ce903787cb2e438d55909b951a82e1a974f8a975181",
+          "name": "clean-native-app-and-public-api",
+          "observed_exit_code": 0
+        },
+        {
+          "disk_guard_triggered": false,
+          "log_sha256": "45c974b18201aaf82fbe414300b7f40989f8dac76bf3487aa46f6f230a93dc18",
+          "name": "native-build",
+          "observed_exit_code": 0
+        },
+        {
+          "disk_guard_triggered": false,
+          "log_sha256": "5b6e9801f7d5a2a923c64b7ed9ed26f1ab798f3f36da5cf14fbe3b4cca4b99c7",
+          "name": "native-first",
+          "observed_exit_code": 0
+        },
+        {
+          "disk_guard_triggered": false,
+          "log_sha256": "5b6e9801f7d5a2a923c64b7ed9ed26f1ab798f3f36da5cf14fbe3b4cca4b99c7",
+          "name": "native-second",
+          "observed_exit_code": 0
+        }
+      ],
+      "totals": {
+        "different_images": 8,
+        "exact_geometry": 30,
+        "exact_images": 22,
+        "geometry_states": 30,
+        "image_states": 30
+      }
+    }
+  },
+  "new_renderer_matrices_run": false,
+  "pixel_tolerance": 0,
+  "primary_source": {
+    "all_commands_terminal": true,
+    "chromium": "147.0.7727.50",
+    "files": [
+      {
+        "path": "chromium-DEPS",
+        "sha256": "c4a31c05527cbea2f31ab177acaf7f151cd91031d9927ab0b27158e09788cb16",
+        "url": "https://chromium.googlesource.com/chromium/src/+/147.0.7727.50/DEPS?format=TEXT"
+      },
+      {
+        "path": "SkTypeface_fontations.cpp",
+        "sha256": "0507775ddd5047dd51ea2f8317f1161541fa54c61ea72d066172c47bf109789e",
+        "url": "https://skia.googlesource.com/skia/+/abbe599fb3c0ef2fa82bfadbb0ddcd321f22faf0/src/ports/SkTypeface_fontations.cpp?format=TEXT"
+      },
+      {
+        "path": "hinting.rs",
+        "sha256": "714fbd0851e097ada077616be4d52e4e81d764e64462266ee59afba523e32d34",
+        "url": "https://skia.googlesource.com/skia/+/abbe599fb3c0ef2fa82bfadbb0ddcd321f22faf0/src/ports/fontations/src/hinting.rs?format=TEXT"
+      },
+      {
+        "path": "ffi.rs",
+        "sha256": "223173aa97431b3484f8748743abb61f20c9ca84331dc9ecec03ca3e4094457a",
+        "url": "https://skia.googlesource.com/skia/+/abbe599fb3c0ef2fa82bfadbb0ddcd321f22faf0/src/ports/fontations/src/ffi.rs?format=TEXT"
+      }
+    ],
+    "skia_revision": "abbe599fb3c0ef2fa82bfadbb0ddcd321f22faf0"
+  },
+  "release_qualification": false,
+  "remaining_native_pixel_owners": [
+    "text",
+    "paint",
+    "native controls"
+  ],
+  "renderer_changes_private_and_unapplied": true,
+  "schema_version": 1
+}

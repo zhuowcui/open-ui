@@ -1,0 +1,45 @@
+{
+  "actual_source_guards_reused": true,
+  "all_guard_logs_rehashed": true,
+  "branch": "agent/native-glyph-raster-v1689",
+  "c_cpp_not_measured": true,
+  "default_native_raster_still_requires_qualification": true,
+  "explicit_fontations_only": true,
+  "guard_receipt_sha256": "68a1d693f17c70cfdebc1dd98177e3bd5386e4ff6bf76c07e85784bc15dc60e3",
+  "javascript_executed_by_openui": false,
+  "native_owner_not_started": true,
+  "originals": {
+    "/tmp/openui-native-raster-fields-retry-consumer-v1559.py": "e63e40424c1a4de418106d5500ae0e9c597c2880604a9993fdfc1c275ad39eed",
+    "/tmp/openui-native-text-style-runtime-build-v1677.py": "573f0950318a6c2ffb41c6635fce2c9d09e7efbfe27b8f4367a9e94ea625a6bd",
+    "/tmp/openui-native-text-style-runtime-guard-reuse-v1677.py": "e7e5850bc16cf16180d5e3c5cebfd46a5c2fe5bf5e7fc8f03ad6a407f0337dd8",
+    "/tmp/openui-native-text-style-runtime-matrices-v1677.py": "20bc2bc9e237c1681133f3594a832058f45bac642aaa7f870b29d19412aaf0e6",
+    "/tmp/openui-native-text-style-runtime-pipeline-v1678.py": "d1f038ab2bb63db8dd94948f7f192688f2b4727ba998111614b31e2c1964d4ce"
+  },
+  "parent_has_83_original_exact_losses": true,
+  "prior_whole_owners": 40,
+  "probe_sha256": "124265e950828036d2cb728795ee63dbae25c3c8ac2506cbca7061a7739b8e44",
+  "public_native_rust_apis_required": true,
+  "release_qualification": false,
+  "required_build_stages": 4,
+  "required_geometry_states": 12800,
+  "required_matrices": 4,
+  "required_native_images": 200,
+  "root": "/dev/shm/openui-native-glyph-raster-3b2e0d1f",
+  "rust_self_rows_not_parity_passes": true,
+  "schema_version": 1,
+  "scripts": {
+    "/tmp/openui-native-glyph-raster-build-v1689.py": "29386dbac644bfb17199dfb8c90ba333d1d67c37b370f176c4b4d0670412411d",
+    "/tmp/openui-native-glyph-raster-consumer-v1689.py": "49780cbeb0f95d09be5873265d0643f03d9b411875e1337add615342d4b565fd",
+    "/tmp/openui-native-glyph-raster-guard-reuse-v1689.py": "636ac18cf667e13c9a24bc07870bdcfdf515c847f4e7d1e8143751d7dfddc1a5",
+    "/tmp/openui-native-glyph-raster-matrices-v1689.py": "30b7ce77c89c759dfcd5c7c1d1964f76ab115af2574973e2ca5300ab532d9ae1",
+    "/tmp/openui-native-glyph-raster-pipeline-v1690.py": "95ac320c1d7879384cabf54c0eff4e3f171b0f228d92c475eab7bf3b53a18ffe"
+  },
+  "source": {
+    "clean": true,
+    "commit": "3b2e0d1f60b90813859c4c24325c7b0061dea29c",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "169eff26b00cfcc7f552dc773009087ab251db1e49ff65c6b065ff62f215f831",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_unchanged": true
+}

@@ -1,0 +1,62 @@
+diff --git a/bindings/rust/openui-text/src/shaping/shape_result.rs b/bindings/rust/openui-text/src/shaping/shape_result.rs
+index b0158109..d250e0f0 100644
+--- a/bindings/rust/openui-text/src/shaping/shape_result.rs
++++ b/bindings/rust/openui-text/src/shaping/shape_result.rs
+@@ -928,6 +928,57 @@ impl std::fmt::Debug for ShapeResultRun {
+ mod tests {
+     use skia_safe::{font::Edging, FontHinting};
+ 
++    #[test]
++    fn authored_lcd_origin_retains_shaped_advance_precision() {
++        use crate::font::{Font, FontCollection, FontDescription};
++        use crate::shaping::{TextDirection, TextRasterPolicy, TextShaper};
++        use openui_geometry::RasterConfiguration;
++        use openui_style::FontFamilyList;
++
++        let collection = FontCollection::deterministic_test();
++        let shaper = TextShaper::new();
++        for family in ["Ahem", "DejaVu Sans", "DejaVu Serif", "DejaVu Sans Mono"] {
++            for size in [10.0, 12.0, 16.0, 20.0, 24.0] {
++                let font = Font::new_in_collection(
++                    FontDescription {
++                        family: FontFamilyList::single(family),
++                        size,
++                        specified_size: size,
++                        raster_configuration: RasterConfiguration::chromium_linux_fontations_lcd(),
++                        ..FontDescription::default()
++                    },
++                    std::sync::Arc::clone(&collection),
++                );
++                let shaped = shaper.shape("XX", &font, TextDirection::Ltr);
++                assert_eq!(shaped.num_glyphs(), 2);
++                for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
++                    // Adding the container's layout origin must not quantize
++                    // advances within the run. Use the existing local builder
++                    // as the reference for the same glyphs and physical strike.
++                    let local = shaped
++                        .to_text_blob_with_raster_policy_at_scale(
++                            None,
++                            TextRasterPolicy::ChromiumAuthorLcd,
++                            scale,
++                        )
++                        .unwrap();
++                    let positioned = shaped
++                        .to_text_blob_with_raster_policy_at_scale(
++                            Some(20.125),
++                            TextRasterPolicy::ChromiumAuthorLcd,
++                            scale,
++                        )
++                        .unwrap();
++                    assert_eq!(
++                        positioned.bounds(),
++                        local.bounds(),
++                        "authored glyph origin must retain shaped advance precision: {family}, size={size}, scale={scale}"
++                    );
++                }
++            }
++        }
++    }
++
+     #[test]
+     fn fontations_preserves_requested_mask_and_position_settings() {
+         use crate::font::{Font, FontCollection, FontDescription};

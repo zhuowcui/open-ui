@@ -53,6 +53,19 @@ impl TextRasterConfiguration {
         }
     }
 
+    /// Linux Chromium's monochrome font policy: full hinting and integer advances.
+    ///
+    /// Chromium uses this policy when Fontconfig disables antialiasing.
+    pub const fn chromium_monochrome() -> Self {
+        Self {
+            edging: TextEdging::Alias,
+            hinting: TextHinting::Full,
+            subpixel_positioning: false,
+            force_autohint: false,
+            lcd_phase_64ths: 0,
+        }
+    }
+
     pub const fn chromium_lcd() -> Self {
         Self {
             edging: TextEdging::SubpixelAntiAlias,
@@ -89,6 +102,16 @@ impl RasterConfiguration {
             gamma_milli: 1200,
             contrast_milli: 200,
         }
+    }
+
+    /// Explicit Linux Chromium monochrome author-text profile.
+    ///
+    /// Platform control labels and embedded text retain their own raster policy.
+    /// Existing constructors and the selected backend are unchanged.
+    pub const fn chromium_linux_monochrome() -> Self {
+        let mut configuration = Self::deterministic_aliased(false);
+        configuration.author_text = TextRasterConfiguration::chromium_monochrome();
+        configuration
     }
 
     pub const fn chromium_linux_lcd() -> Self {

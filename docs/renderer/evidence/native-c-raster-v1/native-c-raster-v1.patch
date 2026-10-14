@@ -1,0 +1,1711 @@
+diff --git a/.github/workflows/hardening.yml b/.github/workflows/hardening.yml
+index b2766249..789874ac 100644
+--- a/.github/workflows/hardening.yml
++++ b/.github/workflows/hardening.yml
+@@ -141,6 +141,11 @@ jobs:
+       - name: Exercise opaque handle ownership under Miri
+         working-directory: bindings/rust
+         run: cargo +nightly-2026-09-01 miri test --package openui-ffi opaque_handles_reject_wrong_kind_thread_and_reuse
++      - name: Exercise versioned raster prefixes under Miri
++        working-directory: bindings/rust
++        env:
++          MIRIFLAGS: -Zmiri-strict-provenance
++        run: cargo +nightly-2026-09-01 miri test --locked --package openui-ffi --lib raster_configuration::tests::c_raster_options_reject_short_headers_bad_fields_and_preserve_outputs -- --exact
+ 
+   native-sanitizers:
+     if: github.event_name != 'pull_request'
+diff --git a/bindings/rust/openui-ffi/README.md b/bindings/rust/openui-ffi/README.md
+index 9ef3bb74..c9244ddf 100644
+--- a/bindings/rust/openui-ffi/README.md
++++ b/bindings/rust/openui-ffi/README.md
+@@ -16,7 +16,7 @@ schemas:
+ Regenerate with `python3 tools/ffi/generate_ffi.py`, or verify without writing
+ with `python3 tools/ffi/generate_ffi.py --check`. After building the crate,
+ `python3 tools/ffi/verify_abi.py` checks exact exports, compiles C and C++
+-consumers, and runs eleven headless C examples and five C++ consumers.
++consumers, and runs twelve headless C examples and six C++ consumers.
+ 
+ All opaque handles are generation-checked and thread-affine. Strings are
+ length-delimited UTF-8. Every status failure records a thread-local structured
+@@ -30,6 +30,38 @@ The owned `OuiAccessibilitySnapshot` API exposes node metadata, ordered
+ relations, focus, and changed/removed IDs without retaining engine borrows.
+ Snapshots remain readable after document destruction on their owning thread.
+ 
++## Immutable raster configuration
++
++`oui_document_create_with_raster_configuration_v1` and
++`oui_app_create_with_raster_configuration_v1` copy the same immutable
++`RasterConfiguration` used by public Rust `Document` and `EngineOptions`.
++Initialize `OuiRasterConfigurationV1.struct_size` and `abi_version`, then
++call `oui_raster_configuration_init_v1` with a named preset or provide the
++typed fields directly. `oui_document_get_raster_configuration_v1` returns an
++owned copy. The configuration needs no release operation and the input
++storage may be reused immediately after construction. Element mutations,
++callbacks and viewport changes keep the selected configuration.
++
++The configuration covers the raster backend, pixel geometry, gamma, contrast
++and separate authored, native and embedded text policies. Unknown enum values
++and flag bits, out-of-range scalar values, short headers and incompatible ABI
++versions fail without changing outputs. Larger caller structures keep their
++trailing bytes. Existing constructors still use the existing Rust default;
++all preceding 113 exports and struct layouts are unchanged.
++
++App presentation preference remains separate from document raster selection.
++Selecting Ganesh copies its policy but does not initialize a GPU context;
++CPU document rendering rejects that selection. Ganesh release qualification
++and complete C GPU operation remain open.
++
++The [C consumer](../../../examples/c_v02/raster_configuration.c) and its
++[C++ build](../../../examples/c_v02/raster_configuration.cc) exercise native
++callbacks, input ownership, resize and retained frames at five scales. Their
++optional font mode registers supplied font bytes and compares the same
++64 logical text positions used by the public Rust app against Chromium.
++This private candidate is prepared, not compiled or pixel-qualified. See the
++[configuration contract](../../../docs/v02/native-c-raster-configuration.md).
++
+ ## Native element reveal
+ 
+ `oui_element_scroll_into_view_v1` and
+diff --git a/bindings/rust/openui-ffi/openui.map b/bindings/rust/openui-ffi/openui.map
+index c95f9fe1..d57b63d0 100644
+--- a/bindings/rust/openui-ffi/openui.map
++++ b/bindings/rust/openui-ffi/openui.map
+@@ -10,6 +10,7 @@ OPENUI_0.2 {
+     oui_accessibility_snapshot_get_node;
+     oui_accessibility_snapshot_get_node_state;
+     oui_app_create;
++    oui_app_create_with_raster_configuration_v1;
+     oui_app_destroy;
+     oui_app_document;
+     oui_app_request_exit;
+@@ -31,6 +32,7 @@ OPENUI_0.2 {
+     oui_document_animation_set_playback_rate;
+     oui_document_begin_update;
+     oui_document_create;
++    oui_document_create_with_raster_configuration_v1;
+     oui_document_destroy;
+     oui_document_dispatch_event;
+     oui_document_dispatch_key_input_v1;
+@@ -38,6 +40,7 @@ OPENUI_0.2 {
+     oui_document_dispatch_text_input_v1;
+     oui_document_element_by_id;
+     oui_document_end_update;
++    oui_document_get_raster_configuration_v1;
+     oui_document_get_viewport;
+     oui_document_hit_test;
+     oui_document_is_animating;
+@@ -107,6 +110,7 @@ OPENUI_0.2 {
+     oui_font_family_create;
+     oui_gap_create;
+     oui_listener_destroy;
++    oui_raster_configuration_init_v1;
+     oui_resource_destroy;
+     oui_style_compound_destroy;
+     oui_style_value_color_f32_v1;
+diff --git a/bindings/rust/openui-ffi/src/lib.rs b/bindings/rust/openui-ffi/src/lib.rs
+index e75b935a..ccb8fd45 100644
+--- a/bindings/rust/openui-ffi/src/lib.rs
++++ b/bindings/rust/openui-ffi/src/lib.rs
+@@ -11,11 +11,16 @@ mod generated;
+ mod native_app;
+ #[cfg(test)]
+ mod native_app_tests;
++mod raster_configuration;
+ mod registry;
+ mod types;
+ mod value;
+ 
+ pub use native_app::{oui_app_request_exit, oui_app_run};
++pub use raster_configuration::{
++    oui_app_create_with_raster_configuration_v1, oui_document_create_with_raster_configuration_v1,
++    oui_document_get_raster_configuration_v1, oui_raster_configuration_init_v1,
++};
+ pub use types::*;
+ 
+ use generated::{property_from_raw, valid_event_type};
+@@ -114,13 +119,25 @@ fn element_address(state: &DocumentState, node: NodeHandle) -> Result<usize, Api
+ }
+ 
+ fn new_document(config: &OuiDocumentConfig) -> Result<Rc<DocumentState>, ApiError> {
++    new_document_with_raster_configuration(config, openui_geometry::RasterConfiguration::default())
++}
++
++fn new_document_with_raster_configuration(
++    config: &OuiDocumentConfig,
++    raster_configuration: openui_geometry::RasterConfiguration,
++) -> Result<Rc<DocumentState>, ApiError> {
+     check_header(
+         config.struct_size,
+         config.abi_version,
+         size_of::<OuiDocumentConfig>(),
+     )?;
+     let viewport = viewport_metrics(&config.viewport)?;
+-    let engine = Rc::new(RefCell::new(Engine::new(viewport)?));
++    let engine = Rc::new(RefCell::new(Engine::new_with_options(
++        viewport,
++        openui_engine::EngineOptions {
++            raster_configuration,
++        },
++    )?));
+     let state = Rc::new(DocumentState {
+         native: openui::Document::from_shared_engine(engine.clone()),
+         engine,
+@@ -676,46 +693,59 @@ pub extern "C" fn oui_app_create(
+         }
+         // SAFETY: the caller guarantees a readable `OuiAppConfig`.
+         let config = unsafe { &*config };
+-        check_header(
+-            config.struct_size,
+-            config.abi_version,
+-            size_of::<OuiAppConfig>(),
+-        )?;
+-        if config.reserved != 0 {
+-            return Err(invalid("reserved app configuration fields must be zero"));
+-        }
+-        if config.backend > 2 {
+-            return Err(invalid("unknown backend preference"));
+-        }
+-        let _title = utf8(config.title, "title")?;
+-        let document_config = OuiDocumentConfig {
+-            struct_size: size_of::<OuiDocumentConfig>() as u32,
+-            abi_version: OUI_ABI_VERSION,
+-            viewport: OuiViewportMetrics {
+-                logical_width: f64::from(config.width),
+-                logical_height: f64::from(config.height),
+-                physical_width: config.width,
+-                physical_height: config.height,
+-                device_scale_factor: 1.0,
+-                authority: 1,
+-                reserved: 0,
+-            },
+-        };
+-        let state = Rc::new(AppState {
+-            document: new_document(&document_config)?,
+-            #[cfg(all(feature = "linux", target_os = "linux"))]
+-            title: _title,
+-            #[cfg(all(feature = "linux", target_os = "linux"))]
+-            backend: config.backend,
+-            running: Cell::new(false),
+-            has_run: Cell::new(false),
+-            exit_requested: Cell::new(false),
+-            exit_handle: RefCell::new(None),
+-        });
+-        write_handle(out_app, LocalHandle::App(state))
++        write_handle(
++            out_app,
++            LocalHandle::App(new_app_with_raster_configuration(
++                config,
++                openui_geometry::RasterConfiguration::default(),
++            )?),
++        )
+     })
+ }
+ 
++fn new_app_with_raster_configuration(
++    config: &OuiAppConfig,
++    raster_configuration: openui_geometry::RasterConfiguration,
++) -> Result<Rc<AppState>, ApiError> {
++    check_header(
++        config.struct_size,
++        config.abi_version,
++        size_of::<OuiAppConfig>(),
++    )?;
++    if config.reserved != 0 {
++        return Err(invalid("reserved app configuration fields must be zero"));
++    }
++    if config.backend > 2 {
++        return Err(invalid("unknown backend preference"));
++    }
++    let _title = utf8(config.title, "title")?;
++    let document_config = OuiDocumentConfig {
++        struct_size: size_of::<OuiDocumentConfig>() as u32,
++        abi_version: OUI_ABI_VERSION,
++        viewport: OuiViewportMetrics {
++            logical_width: f64::from(config.width),
++            logical_height: f64::from(config.height),
++            physical_width: config.width,
++            physical_height: config.height,
++            device_scale_factor: 1.0,
++            authority: 1,
++            reserved: 0,
++        },
++    };
++    let state = Rc::new(AppState {
++        document: new_document_with_raster_configuration(&document_config, raster_configuration)?,
++        #[cfg(all(feature = "linux", target_os = "linux"))]
++        title: _title,
++        #[cfg(all(feature = "linux", target_os = "linux"))]
++        backend: config.backend,
++        running: Cell::new(false),
++        has_run: Cell::new(false),
++        exit_requested: Cell::new(false),
++        exit_handle: RefCell::new(None),
++    });
++    Ok(state)
++}
++
+ // SAFETY CONTRACT: `app` is either null or an Open UI app handle owned by this thread.
+ #[no_mangle]
+ pub extern "C" fn oui_app_destroy(app: *mut OuiApp) -> OuiStatus {
+@@ -3505,6 +3535,20 @@ mod tests {
+ 
+     #[test]
+     fn frozen_layout_metadata_matches_rust() {
++        assert_eq!(
++            (
++                size_of::<OuiRasterConfigurationV1>(),
++                align_of::<OuiRasterConfigurationV1>()
++            ),
++            (72, 4)
++        );
++        assert_eq!(
++            (
++                size_of::<OuiTextRasterConfigurationV1>(),
++                align_of::<OuiTextRasterConfigurationV1>()
++            ),
++            (16, 4)
++        );
+         assert_eq!((size_of::<OuiUtf8>(), align_of::<OuiUtf8>()), (16, 8));
+         assert_eq!((size_of::<OuiLength>(), align_of::<OuiLength>()), (8, 4));
+         assert_eq!((size_of::<OuiColor>(), align_of::<OuiColor>()), (4, 1));
+diff --git a/bindings/rust/openui-ffi/src/raster_configuration.rs b/bindings/rust/openui-ffi/src/raster_configuration.rs
+new file mode 100644
+index 00000000..6e2676fc
+--- /dev/null
++++ b/bindings/rust/openui-ffi/src/raster_configuration.rs
+@@ -0,0 +1,692 @@
++//! Versioned C transport over the same immutable Rust Engine options.
++
++use crate::*;
++use openui_geometry::{
++    RasterBackend, RasterConfiguration, RasterPixelGeometry, TextEdging, TextHinting,
++    TextRasterConfiguration,
++};
++
++fn checked_header<T>(value: *const T) -> Result<(u32, u32), ApiError> {
++    if value.is_null() {
++        return Err(invalid("versioned configuration pointer is null"));
++    }
++    // SAFETY: the caller guarantees a readable size word. Read only the
++    // declared prefix until its size has been validated; never borrow a full
++    // structure from an older caller's shorter allocation.
++    let size = unsafe { ptr::read_unaligned(value.cast::<u32>()) };
++    if size < 8 {
++        return Err(invalid("versioned configuration header is too small"));
++    }
++    // SAFETY: the declared prefix has room for the ABI word.
++    let abi = unsafe { ptr::read_unaligned(value.cast::<u32>().add(1)) };
++    check_header(size, abi, size_of::<T>())?;
++    Ok((size, abi))
++}
++
++fn text_from_c(raw: OuiTextRasterConfigurationV1) -> Result<TextRasterConfiguration, ApiError> {
++    if raw.flags & !3 != 0 {
++        return Err(invalid("unknown text raster flags"));
++    }
++    Ok(TextRasterConfiguration {
++        edging: match raw.edging {
++            0 => TextEdging::Alias,
++            1 => TextEdging::AntiAlias,
++            2 => TextEdging::SubpixelAntiAlias,
++            _ => return Err(invalid("unknown text edging")),
++        },
++        hinting: match raw.hinting {
++            0 => TextHinting::None,
++            1 => TextHinting::Slight,
++            2 => TextHinting::Normal,
++            3 => TextHinting::Full,
++            _ => return Err(invalid("unknown text hinting")),
++        },
++        subpixel_positioning: raw.flags & 1 != 0,
++        force_autohint: raw.flags & 2 != 0,
++        lcd_phase_64ths: raw
++            .lcd_phase_64ths
++            .try_into()
++            .map_err(|_| invalid("LCD phase exceeds i16 range"))?,
++    })
++}
++
++fn from_c(raw: &OuiRasterConfigurationV1) -> Result<RasterConfiguration, ApiError> {
++    Ok(RasterConfiguration {
++        backend: match raw.backend {
++            0 => RasterBackend::Skia,
++            1 => RasterBackend::ChromiumLinux,
++            2 => RasterBackend::GaneshGl,
++            3 => RasterBackend::ChromiumLinuxFontations,
++            _ => return Err(invalid("unknown raster backend")),
++        },
++        pixel_geometry: match raw.pixel_geometry {
++            0 => RasterPixelGeometry::Unknown,
++            1 => RasterPixelGeometry::RgbHorizontal,
++            2 => RasterPixelGeometry::BgrHorizontal,
++            3 => RasterPixelGeometry::RgbVertical,
++            4 => RasterPixelGeometry::BgrVertical,
++            _ => return Err(invalid("unknown raster pixel geometry")),
++        },
++        gamma_milli: raw
++            .gamma_milli
++            .try_into()
++            .map_err(|_| invalid("raster gamma exceeds u16 range"))?,
++        contrast_milli: raw
++            .contrast_milli
++            .try_into()
++            .map_err(|_| invalid("raster contrast exceeds u16 range"))?,
++        author_text: text_from_c(raw.author_text)?,
++        native_text: text_from_c(raw.native_text)?,
++        embedded_text: text_from_c(raw.embedded_text)?,
++    })
++}
++
++fn text_to_c(value: TextRasterConfiguration) -> OuiTextRasterConfigurationV1 {
++    OuiTextRasterConfigurationV1 {
++        edging: match value.edging {
++            TextEdging::Alias => 0,
++            TextEdging::AntiAlias => 1,
++            TextEdging::SubpixelAntiAlias => 2,
++        },
++        hinting: match value.hinting {
++            TextHinting::None => 0,
++            TextHinting::Slight => 1,
++            TextHinting::Normal => 2,
++            TextHinting::Full => 3,
++        },
++        flags: u32::from(value.subpixel_positioning) | (u32::from(value.force_autohint) << 1),
++        lcd_phase_64ths: i32::from(value.lcd_phase_64ths),
++    }
++}
++
++fn to_c(
++    value: RasterConfiguration,
++    size: u32,
++    abi: u32,
++) -> Result<OuiRasterConfigurationV1, ApiError> {
++    Ok(OuiRasterConfigurationV1 {
++        struct_size: size,
++        abi_version: abi,
++        backend: match value.backend {
++            RasterBackend::Skia => 0,
++            RasterBackend::ChromiumLinux => 1,
++            RasterBackend::GaneshGl => 2,
++            RasterBackend::ChromiumLinuxFontations => 3,
++            _ => {
++                return Err(ApiError::new(
++                    OuiStatus::InvalidState,
++                    "Rust backend has no v1 C representation",
++                ))
++            }
++        },
++        pixel_geometry: match value.pixel_geometry {
++            RasterPixelGeometry::Unknown => 0,
++            RasterPixelGeometry::RgbHorizontal => 1,
++            RasterPixelGeometry::BgrHorizontal => 2,
++            RasterPixelGeometry::RgbVertical => 3,
++            RasterPixelGeometry::BgrVertical => 4,
++        },
++        gamma_milli: u32::from(value.gamma_milli),
++        contrast_milli: u32::from(value.contrast_milli),
++        author_text: text_to_c(value.author_text),
++        native_text: text_to_c(value.native_text),
++        embedded_text: text_to_c(value.embedded_text),
++    })
++}
++
++// SAFETY CONTRACT: `out_config` has a readable initialized version header and,
++// when large enough, writable storage for the complete v1 structure. Larger
++// caller tails and all outputs on error remain untouched. This operation owns
++// no objects and can run on any thread.
++#[no_mangle]
++pub extern "C" fn oui_raster_configuration_init_v1(
++    preset: u32,
++    out_config: *mut OuiRasterConfigurationV1,
++) -> OuiStatus {
++    ffi(|| {
++        let (size, abi) = checked_header(out_config)?;
++        let configuration = match preset {
++            0 => RasterConfiguration::default(),
++            1 => RasterConfiguration::deterministic_aliased(false),
++            2 => RasterConfiguration::deterministic_aliased(true),
++            3 => RasterConfiguration::chromium_linux_lcd(),
++            4 => RasterConfiguration::chromium_linux_fontations_lcd(),
++            5 => RasterConfiguration::chromium_linux_ganesh(),
++            _ => return Err(invalid("unknown raster preset")),
++        };
++        let output = to_c(configuration, size, abi)?;
++        // SAFETY: writable complete storage is guaranteed after header validation.
++        unsafe { ptr::write_unaligned(out_config, output) };
++        Ok(())
++    })
++}
++
++// SAFETY CONTRACT: inputs have readable version headers and complete readable
++// storage when their declared sizes are sufficient. `out_document` is writable
++// for one opaque handle and remains untouched on error. All inputs are copied;
++// they may be released immediately. The document belongs to the calling thread.
++#[no_mangle]
++pub extern "C" fn oui_document_create_with_raster_configuration_v1(
++    config: *const OuiDocumentConfig,
++    raster: *const OuiRasterConfigurationV1,
++    out_document: *mut *mut OuiDocument,
++) -> OuiStatus {
++    ffi(|| {
++        if out_document.is_null() {
++            return Err(invalid("output document pointer is null"));
++        }
++        checked_header(config)?;
++        checked_header(raster)?;
++        // SAFETY: complete input sizes have been validated, and storage is readable.
++        let config = unsafe { ptr::read_unaligned(config) };
++        let raster = unsafe { ptr::read_unaligned(raster) };
++        let state = new_document_with_raster_configuration(&config, from_c(&raster)?)?;
++        write_handle(out_document, LocalHandle::Document(state))
++    })
++}
++
++// SAFETY CONTRACT: same ownership, prefix and output rules as document creation.
++// Presentation preference in `OuiAppConfig` is separate from raster selection.
++#[no_mangle]
++pub extern "C" fn oui_app_create_with_raster_configuration_v1(
++    config: *const OuiAppConfig,
++    raster: *const OuiRasterConfigurationV1,
++    out_app: *mut *mut OuiApp,
++) -> OuiStatus {
++    ffi(|| {
++        if out_app.is_null() {
++            return Err(invalid("output app pointer is null"));
++        }
++        checked_header(config)?;
++        checked_header(raster)?;
++        // SAFETY: both complete declared input objects are readable.
++        let config = unsafe { ptr::read_unaligned(config) };
++        let raster = unsafe { ptr::read_unaligned(raster) };
++        let state = new_app_with_raster_configuration(&config, from_c(&raster)?)?;
++        write_handle(out_app, LocalHandle::App(state))
++    })
++}
++
++// SAFETY CONTRACT: the document is live on its owning thread; output prefix and
++// tail rules match init. The returned fields are owned values, with no pointers
++// or engine borrows surviving the call. Viewport and tree mutations cannot
++// change the document's raster selection.
++#[no_mangle]
++pub extern "C" fn oui_document_get_raster_configuration_v1(
++    handle: *mut OuiDocument,
++    out_config: *mut OuiRasterConfigurationV1,
++) -> OuiStatus {
++    ffi(|| {
++        let (size, abi) = checked_header(out_config)?;
++        let state = document(handle as usize)?;
++        let configuration = borrow_engine(&state)?.raster_configuration();
++        let output = to_c(configuration, size, abi)?;
++        // SAFETY: the caller supplies writable complete output storage.
++        unsafe { ptr::write_unaligned(out_config, output) };
++        Ok(())
++    })
++}
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++
++    fn empty_output() -> OuiRasterConfigurationV1 {
++        OuiRasterConfigurationV1 {
++            struct_size: size_of::<OuiRasterConfigurationV1>() as u32,
++            abi_version: OUI_ABI_VERSION,
++            backend: 99,
++            pixel_geometry: 99,
++            gamma_milli: 99,
++            contrast_milli: 99,
++            author_text: OuiTextRasterConfigurationV1 {
++                edging: 99,
++                hinting: 99,
++                flags: 99,
++                lcd_phase_64ths: 99,
++            },
++            native_text: OuiTextRasterConfigurationV1 {
++                edging: 99,
++                hinting: 99,
++                flags: 99,
++                lcd_phase_64ths: 99,
++            },
++            embedded_text: OuiTextRasterConfigurationV1 {
++                edging: 99,
++                hinting: 99,
++                flags: 99,
++                lcd_phase_64ths: 99,
++            },
++        }
++    }
++
++    fn viewport(scale: f64) -> OuiDocumentConfig {
++        OuiDocumentConfig {
++            struct_size: size_of::<OuiDocumentConfig>() as u32,
++            abi_version: OUI_ABI_VERSION,
++            viewport: OuiViewportMetrics {
++                logical_width: 64.0,
++                logical_height: 48.0,
++                physical_width: 0,
++                physical_height: 0,
++                device_scale_factor: scale,
++                authority: 1,
++                reserved: 0,
++            },
++        }
++    }
++
++    #[test]
++    fn c_raster_options_share_native_engine_and_keep_owned_selection() {
++        #[repr(C)]
++        struct Extended {
++            raster: OuiRasterConfigurationV1,
++            tail: u64,
++        }
++        let configurations = [
++            RasterConfiguration::default(),
++            RasterConfiguration::deterministic_aliased(false),
++            RasterConfiguration::deterministic_aliased(true),
++            RasterConfiguration::chromium_linux_lcd(),
++            RasterConfiguration::chromium_linux_fontations_lcd(),
++            RasterConfiguration::chromium_linux_ganesh(),
++        ];
++        for (preset, expected) in configurations.into_iter().enumerate() {
++            let mut input = Extended {
++                raster: empty_output(),
++                tail: 0x1122334455667788,
++            };
++            input.raster.struct_size = size_of::<Extended>() as u32;
++            assert_eq!(
++                oui_raster_configuration_init_v1(preset as u32, &mut input.raster),
++                OuiStatus::Ok
++            );
++            assert_eq!(input.tail, 0x1122334455667788);
++            let original = input.raster;
++            let mut handle = ptr::null_mut();
++            assert_eq!(
++                oui_document_create_with_raster_configuration_v1(
++                    &viewport(1.25),
++                    &input.raster,
++                    &mut handle
++                ),
++                OuiStatus::Ok
++            );
++            // Callers may reuse/release input storage immediately after construction.
++            input.raster = empty_output();
++            let state = document(handle as usize).unwrap();
++            assert_eq!(
++                borrow_engine(&state).unwrap().raster_configuration(),
++                expected
++            );
++            let owned_scene = borrow_engine_mut(&state).unwrap().scene().unwrap();
++            // Mutation through the native Rust document reaches this C document.
++            state
++                .native
++                .body()
++                .set_background_color(Color::RED)
++                .unwrap();
++            let mut root = ptr::null_mut();
++            assert_eq!(oui_document_root(handle, &mut root), OuiStatus::Ok);
++            let output = OuiStyleValue {
++                tag: 1,
++                reserved: 0,
++                data: OuiStylePayload {
++                    length: OuiLength {
++                        value: 32.0,
++                        unit: 0,
++                    },
++                },
++            };
++            assert_eq!(
++                oui_element_set_property(root, StyleProperty::Width as i32, &output),
++                OuiStatus::Ok
++            );
++            let mut changed = viewport(2.0);
++            changed.viewport.logical_width = 80.0;
++            assert_eq!(oui_document_set_viewport(handle, &changed), OuiStatus::Ok);
++            let mut current = Extended {
++                raster: empty_output(),
++                tail: 0x9988776655443322,
++            };
++            current.raster.struct_size = size_of::<Extended>() as u32;
++            assert_eq!(
++                oui_document_get_raster_configuration_v1(handle, &mut current.raster),
++                OuiStatus::Ok
++            );
++            assert_eq!(current.raster, original);
++            assert_eq!(current.tail, 0x9988776655443322);
++            assert_eq!(owned_scene.raster_configuration(), expected);
++            assert_eq!(
++                borrow_engine_mut(&state)
++                    .unwrap()
++                    .scene()
++                    .unwrap()
++                    .raster_configuration(),
++                expected
++            );
++            drop(state);
++            assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
++            assert_eq!(oui_document_destroy(handle), OuiStatus::Ok);
++            assert_eq!(owned_scene.raster_configuration(), expected);
++        }
++    }
++
++    #[test]
++    fn c_raster_custom_fields_reach_the_shared_engine_without_narrowing() {
++        let expected = RasterConfiguration {
++            backend: RasterBackend::ChromiumLinuxFontations,
++            pixel_geometry: RasterPixelGeometry::BgrVertical,
++            gamma_milli: u16::MAX,
++            contrast_milli: 0,
++            author_text: TextRasterConfiguration {
++                edging: TextEdging::AntiAlias,
++                hinting: TextHinting::Full,
++                subpixel_positioning: false,
++                force_autohint: true,
++                lcd_phase_64ths: i16::MIN,
++            },
++            native_text: TextRasterConfiguration {
++                edging: TextEdging::Alias,
++                hinting: TextHinting::None,
++                subpixel_positioning: true,
++                force_autohint: false,
++                lcd_phase_64ths: 0,
++            },
++            embedded_text: TextRasterConfiguration {
++                edging: TextEdging::SubpixelAntiAlias,
++                hinting: TextHinting::Normal,
++                subpixel_positioning: true,
++                force_autohint: true,
++                lcd_phase_64ths: i16::MAX,
++            },
++        };
++        let raw = OuiRasterConfigurationV1 {
++            struct_size: size_of::<OuiRasterConfigurationV1>() as u32,
++            abi_version: OUI_ABI_VERSION,
++            backend: 3,
++            pixel_geometry: 4,
++            gamma_milli: 65535,
++            contrast_milli: 0,
++            author_text: OuiTextRasterConfigurationV1 {
++                edging: 1,
++                hinting: 3,
++                flags: 2,
++                lcd_phase_64ths: -32768,
++            },
++            native_text: OuiTextRasterConfigurationV1 {
++                edging: 0,
++                hinting: 0,
++                flags: 1,
++                lcd_phase_64ths: 0,
++            },
++            embedded_text: OuiTextRasterConfigurationV1 {
++                edging: 2,
++                hinting: 2,
++                flags: 3,
++                lcd_phase_64ths: 32767,
++            },
++        };
++        let mut handle = ptr::null_mut();
++        assert_eq!(
++            oui_document_create_with_raster_configuration_v1(&viewport(1.5), &raw, &mut handle),
++            OuiStatus::Ok
++        );
++        let state = document(handle as usize).unwrap();
++        assert_eq!(state.native.raster_configuration().unwrap(), expected);
++        assert_eq!(
++            borrow_engine(&state).unwrap().raster_configuration(),
++            expected
++        );
++        let mut queried = empty_output();
++        assert_eq!(
++            oui_document_get_raster_configuration_v1(handle, &mut queried),
++            OuiStatus::Ok
++        );
++        assert_eq!(queried, raw);
++        drop(state);
++        assert_eq!(oui_document_destroy(handle), OuiStatus::Ok);
++    }
++
++    #[test]
++    fn c_raster_options_reject_short_headers_bad_fields_and_preserve_outputs() {
++        // These allocations really contain only the declared prefix. Miri
++        // must catch any attempt to form a reference to the complete struct.
++        for size in [0_u32, 1, 4, 7] {
++            let mut size_word = size;
++            assert_eq!(
++                oui_raster_configuration_init_v1(0, ptr::addr_of_mut!(size_word).cast()),
++                OuiStatus::InvalidArgument
++            );
++            assert_eq!(size_word, size);
++        }
++        let mut prefix = [8_u32, OUI_ABI_VERSION];
++        assert_eq!(
++            oui_raster_configuration_init_v1(0, prefix.as_mut_ptr().cast()),
++            OuiStatus::InvalidArgument
++        );
++        assert_eq!(prefix, [8, OUI_ABI_VERSION]);
++        let mut raw = empty_output();
++        let initial = raw;
++        assert_eq!(
++            oui_raster_configuration_init_v1(99, &mut raw),
++            OuiStatus::InvalidArgument
++        );
++        assert_eq!(raw, initial);
++        raw.abi_version = 1;
++        let wrong_abi = raw;
++        assert_eq!(
++            oui_raster_configuration_init_v1(0, &mut raw),
++            OuiStatus::AbiMismatch
++        );
++        assert_eq!(raw, wrong_abi);
++        let mut storage = [0x5a_u8; size_of::<OuiRasterConfigurationV1>() + 2];
++        // SAFETY: there is complete writable storage, deliberately unaligned.
++        let unaligned = unsafe { storage.as_mut_ptr().add(1).cast() };
++        unsafe { ptr::write_unaligned(unaligned, initial) };
++        assert_eq!(
++            oui_raster_configuration_init_v1(3, unaligned),
++            OuiStatus::Ok
++        );
++        assert_eq!(storage[0], 0x5a);
++        assert_eq!(*storage.last().unwrap(), 0x5a);
++        // SAFETY: the API initialized the complete declared output.
++        let unaligned_output = unsafe { ptr::read_unaligned(unaligned) };
++        assert_eq!(
++            from_c(&unaligned_output).unwrap(),
++            RasterConfiguration::chromium_linux_lcd()
++        );
++        raw = initial;
++        assert_eq!(oui_raster_configuration_init_v1(3, &mut raw), OuiStatus::Ok);
++        let valid = raw;
++        let mut invalids = Vec::new();
++        raw.backend = 99;
++        invalids.push(raw);
++        raw = valid;
++        raw.pixel_geometry = 99;
++        invalids.push(raw);
++        raw = valid;
++        raw.gamma_milli = 65536;
++        invalids.push(raw);
++        raw = valid;
++        raw.contrast_milli = 65536;
++        invalids.push(raw);
++        raw = valid;
++        raw.author_text.edging = 3;
++        invalids.push(raw);
++        raw = valid;
++        raw.native_text.hinting = 4;
++        invalids.push(raw);
++        raw = valid;
++        raw.embedded_text.flags = 4;
++        invalids.push(raw);
++        raw = valid;
++        raw.author_text.lcd_phase_64ths = 32768;
++        invalids.push(raw);
++        raw = valid;
++        raw.native_text.lcd_phase_64ths = -32769;
++        invalids.push(raw);
++        let mut sentinel_storage = 0_u8;
++        let sentinel = ptr::addr_of_mut!(sentinel_storage).cast::<OuiDocument>();
++        let app_config = OuiAppConfig {
++            struct_size: size_of::<OuiAppConfig>() as u32,
++            abi_version: OUI_ABI_VERSION,
++            title: OuiUtf8 {
++                data: ptr::null(),
++                length: 0,
++            },
++            width: 64,
++            height: 48,
++            backend: 0,
++            reserved: 0,
++        };
++        for invalid in invalids {
++            let mut handle = sentinel;
++            assert_eq!(
++                oui_document_create_with_raster_configuration_v1(
++                    &viewport(1.0),
++                    &invalid,
++                    &mut handle
++                ),
++                OuiStatus::InvalidArgument
++            );
++            assert_eq!(handle, sentinel);
++            let mut app = sentinel.cast::<OuiApp>();
++            assert_eq!(
++                oui_app_create_with_raster_configuration_v1(&app_config, &invalid, &mut app),
++                OuiStatus::InvalidArgument
++            );
++            assert_eq!(app, sentinel.cast());
++        }
++        let mut handle = sentinel;
++        assert_eq!(
++            oui_document_create_with_raster_configuration_v1(
++                prefix.as_ptr().cast(),
++                &valid,
++                &mut handle
++            ),
++            OuiStatus::InvalidArgument
++        );
++        assert_eq!(handle, sentinel);
++        assert_eq!(
++            oui_document_create_with_raster_configuration_v1(
++                &viewport(1.0),
++                prefix.as_ptr().cast(),
++                &mut handle
++            ),
++            OuiStatus::InvalidArgument
++        );
++        assert_eq!(handle, sentinel);
++        let mut app = sentinel.cast::<OuiApp>();
++        assert_eq!(
++            oui_app_create_with_raster_configuration_v1(prefix.as_ptr().cast(), &valid, &mut app),
++            OuiStatus::InvalidArgument
++        );
++        assert_eq!(app, sentinel.cast());
++        assert_eq!(
++            oui_app_create_with_raster_configuration_v1(
++                &app_config,
++                prefix.as_ptr().cast(),
++                &mut app
++            ),
++            OuiStatus::InvalidArgument
++        );
++        assert_eq!(app, sentinel.cast());
++    }
++
++    #[test]
++    fn c_raster_query_checks_thread_lifetime_and_reentrancy() {
++        let mut input = empty_output();
++        assert_eq!(
++            oui_raster_configuration_init_v1(4, &mut input),
++            OuiStatus::Ok
++        );
++        let mut handle = ptr::null_mut();
++        assert_eq!(
++            oui_document_create_with_raster_configuration_v1(&viewport(1.0), &input, &mut handle),
++            OuiStatus::Ok
++        );
++        let state = document(handle as usize).unwrap();
++        let held = borrow_engine_mut(&state).unwrap();
++        let mut output = empty_output();
++        assert_eq!(
++            oui_document_get_raster_configuration_v1(handle, &mut output),
++            OuiStatus::Reentrant
++        );
++        assert_eq!(output, empty_output());
++        drop(held);
++        drop(state);
++        let address = handle as usize;
++        assert_eq!(
++            std::thread::spawn(move || {
++                let mut output = empty_output();
++                let result = oui_document_get_raster_configuration_v1(
++                    address as *mut OuiDocument,
++                    &mut output,
++                );
++                assert_eq!(output, empty_output());
++                result
++            })
++            .join()
++            .unwrap(),
++            OuiStatus::WrongThread
++        );
++        assert_eq!(oui_document_destroy(handle), OuiStatus::Ok);
++        assert_eq!(
++            oui_document_get_raster_configuration_v1(handle, &mut output),
++            OuiStatus::InvalidHandle
++        );
++        assert_eq!(output, empty_output());
++    }
++
++    #[test]
++    fn c_app_and_default_constructors_use_the_same_immutable_rust_options() {
++        let mut raster = empty_output();
++        assert_eq!(
++            oui_raster_configuration_init_v1(4, &mut raster),
++            OuiStatus::Ok
++        );
++        let config = OuiAppConfig {
++            struct_size: size_of::<OuiAppConfig>() as u32,
++            abi_version: OUI_ABI_VERSION,
++            title: OuiUtf8 {
++                data: b"Raster".as_ptr(),
++                length: 6,
++            },
++            width: 64,
++            height: 48,
++            backend: 0,
++            reserved: 0,
++        };
++        let mut app = ptr::null_mut();
++        assert_eq!(
++            oui_app_create_with_raster_configuration_v1(&config, &raster, &mut app),
++            OuiStatus::Ok
++        );
++        let mut handle = ptr::null_mut();
++        assert_eq!(oui_app_document(app, &mut handle), OuiStatus::Ok);
++        let mut output = empty_output();
++        assert_eq!(
++            oui_document_get_raster_configuration_v1(handle, &mut output),
++            OuiStatus::Ok
++        );
++        assert_eq!(output, raster);
++        assert_eq!(oui_app_destroy(app), OuiStatus::Ok);
++        assert_eq!(
++            oui_document_get_raster_configuration_v1(handle, &mut output),
++            OuiStatus::Ok
++        );
++        assert_eq!(output, raster);
++        assert_eq!(oui_document_destroy(handle), OuiStatus::Ok);
++        assert_eq!(
++            oui_document_create(&viewport(1.0), &mut handle),
++            OuiStatus::Ok
++        );
++        assert_eq!(
++            oui_document_get_raster_configuration_v1(handle, &mut output),
++            OuiStatus::Ok
++        );
++        assert_eq!(from_c(&output).unwrap(), RasterConfiguration::default());
++        assert_eq!(oui_document_destroy(handle), OuiStatus::Ok);
++    }
++}
+diff --git a/bindings/rust/openui-ffi/src/types.rs b/bindings/rust/openui-ffi/src/types.rs
+index 34bed682..3c4c1f73 100644
+--- a/bindings/rust/openui-ffi/src/types.rs
++++ b/bindings/rust/openui-ffi/src/types.rs
+@@ -139,6 +139,31 @@ pub struct OuiDocumentConfig {
+     pub viewport: OuiViewportMetrics,
+ }
+ 
++/// Owned nested text policy. Flags: subpixel positioning (1), autohint (2).
++#[repr(C)]
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++pub struct OuiTextRasterConfigurationV1 {
++    pub edging: u32,
++    pub hinting: u32,
++    pub flags: u32,
++    pub lcd_phase_64ths: i32,
++}
++
++/// Caller-owned immutable raster selection, copied during construction.
++#[repr(C)]
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++pub struct OuiRasterConfigurationV1 {
++    pub struct_size: u32,
++    pub abi_version: u32,
++    pub backend: u32,
++    pub pixel_geometry: u32,
++    pub gamma_milli: u32,
++    pub contrast_milli: u32,
++    pub author_text: OuiTextRasterConfigurationV1,
++    pub native_text: OuiTextRasterConfigurationV1,
++    pub embedded_text: OuiTextRasterConfigurationV1,
++}
++
+ /// Caller-owned client and content dimensions in logical CSS pixels.
+ #[repr(C)]
+ #[derive(Debug, Clone, Copy, PartialEq)]
+diff --git a/docs/v02/generated/openui-ffi-checksum.txt b/docs/v02/generated/openui-ffi-checksum.txt
+index 11e383ab..84654751 100644
+--- a/docs/v02/generated/openui-ffi-checksum.txt
++++ b/docs/v02/generated/openui-ffi-checksum.txt
+@@ -1 +1 @@
+-sha256:b1c68b9b0a576ee6f43de22817ec3b03971444df69163ca1b845c7ee420a5282
++sha256:d68324b680ef07a8fd11c6a8de3f0516d4bf5b380b505ce6003475713858d007
+diff --git a/docs/v02/generated/openui-ffi-layout.json b/docs/v02/generated/openui-ffi-layout.json
+index 73418dc1..d5cc4f4c 100644
+--- a/docs/v02/generated/openui-ffi-layout.json
++++ b/docs/v02/generated/openui-ffi-layout.json
+@@ -94,6 +94,10 @@
+       "align": 8,
+       "size": 152
+     },
++    "OuiRasterConfigurationV1": {
++      "align": 4,
++      "size": 72
++    },
+     "OuiRect": {
+       "align": 4,
+       "size": 16
+@@ -110,6 +114,10 @@
+       "align": 8,
+       "size": 16
+     },
++    "OuiTextRasterConfigurationV1": {
++      "align": 4,
++      "size": 16
++    },
+     "OuiTransformOperation": {
+       "align": 4,
+       "size": 48
+diff --git a/docs/v02/generated/openui-ffi-symbols.txt b/docs/v02/generated/openui-ffi-symbols.txt
+index d41c8005..7b8c894f 100644
+--- a/docs/v02/generated/openui-ffi-symbols.txt
++++ b/docs/v02/generated/openui-ffi-symbols.txt
+@@ -8,6 +8,7 @@ oui_accessibility_snapshot_get_info
+ oui_accessibility_snapshot_get_node
+ oui_accessibility_snapshot_get_node_state
+ oui_app_create
++oui_app_create_with_raster_configuration_v1
+ oui_app_destroy
+ oui_app_document
+ oui_app_request_exit
+@@ -29,6 +30,7 @@ oui_document_animation_seek
+ oui_document_animation_set_playback_rate
+ oui_document_begin_update
+ oui_document_create
++oui_document_create_with_raster_configuration_v1
+ oui_document_destroy
+ oui_document_dispatch_event
+ oui_document_dispatch_key_input_v1
+@@ -36,6 +38,7 @@ oui_document_dispatch_pointer_event
+ oui_document_dispatch_text_input_v1
+ oui_document_element_by_id
+ oui_document_end_update
++oui_document_get_raster_configuration_v1
+ oui_document_get_viewport
+ oui_document_hit_test
+ oui_document_is_animating
+@@ -105,6 +108,7 @@ oui_font_face_unregister
+ oui_font_family_create
+ oui_gap_create
+ oui_listener_destroy
++oui_raster_configuration_init_v1
+ oui_resource_destroy
+ oui_style_compound_destroy
+ oui_style_value_color_f32_v1
+diff --git a/docs/v02/native-c-raster-configuration.md b/docs/v02/native-c-raster-configuration.md
+new file mode 100644
+index 00000000..fff7c9e8
+--- /dev/null
++++ b/docs/v02/native-c-raster-configuration.md
+@@ -0,0 +1,68 @@
++# Native C raster configuration
++
++Open UI runs no JavaScript. Rust applications use public methods and Rust
++callbacks over the retained engine. The C ABI provides equivalent operations
++over that same engine; it does not have a separate renderer.
++
++## Prepared implementation
++
++This private candidate adds four versioned functions and two owned value
++structures. It has not yet been compiled or exercised by consuming
++applications. The umbrella branch still has 113 exports. This candidate has
++117, preserving every preceding export and all 30 existing layouts.
++
++| Operation | C API |
++|---|---|
++| Initialize an explicit raster preset | `oui_raster_configuration_init_v1` |
++| Create a retained document with an immutable policy | `oui_document_create_with_raster_configuration_v1` |
++| Create an app with that retained document | `oui_app_create_with_raster_configuration_v1` |
++| Read the selected policy as an owned value | `oui_document_get_raster_configuration_v1` |
++
++`OuiRasterConfigurationV1` is 72 bytes, aligned to four bytes. Its first two
++fields are `struct_size` and `abi_version`. It contains the backend, pixel
++geometry, gamma and contrast, plus three 16-byte text policies for authored,
++native and embedded text. The API accepts the same scalar ranges and enum
++values as the Rust configuration. Text flags select subpixel positioning and
++autohint; LCD phase uses signed 1/64 physical pixel units.
++
++Initialize a writable output's size and ABI fields before calling init or
++query. Creation copies all configuration fields into the shared Rust engine;
++the caller can immediately reuse its input. Query returns a value with no
++pointers, release operation or surviving engine borrow. Later tree mutation,
++native callbacks, viewport resize and owned scenes preserve the selection.
++Larger caller structures keep their trailing bytes. Short prefixes and
++invalid fields fail before borrowing a complete caller structure, and leave
++outputs unchanged. Callers must supply storage matching their declared size.
++
++Document and app handles retain their existing ownership and thread rules.
++Callbacks may query and mutate on the owner thread after engine borrows have
++been released. Existing constructors retain their existing Rust default.
++Application presentation preference and document raster selection are
++separate choices. Selecting Ganesh does not initialize a GPU context, and
++CPU document rendering rejects it; C GPU operation still needs implementation
++and qualification.
++
++## Required verification
++
++The C and C++ consumers each exercise five CPU presets at five scales, with
++click callbacks, reused configuration storage, viewport resize and owned RGBA
++frames that remain readable after document teardown. Optional font mode loads
++real font bytes through the public C API and creates the same 64 logical text
++positions, before and after a callback, as the public Rust consumer.
++
++The planned font matrix covers four families, five sizes, five scales and
++both explicit FreeType and Fontations policies. C and C++ must be compared
++directly with the unchanged pinned Chromium references. Equality with Rust
++alone is not a Chromium pass. Repeated native processes must be deterministic,
++and every admitted image must be exact with zero tolerance.
++
++Rust boundary tests exercise short allocations, unaligned complete storage,
++untouched tails and failure outputs, thread ownership, reentrancy, document
++lifetime and the shared native engine. The short-prefix test is also added to
++the existing Miri hardening job with strict provenance enabled.
++
++Compilation, consuming-application execution, Miri, exact font pixels,
++complete original and expanded censuses, all configuration fields' rendering
++effects, default native rendering, and release-lab operation remain open.
++Preset selection alone does not establish Chromium equality. No new release
++state is admitted by this prepared implementation.
+diff --git a/examples/c_v02/CMakeLists.txt b/examples/c_v02/CMakeLists.txt
+index 223b00f4..fe98e35d 100644
+--- a/examples/c_v02/CMakeLists.txt
++++ b/examples/c_v02/CMakeLists.txt
+@@ -3,7 +3,7 @@ project(OpenUIV02Examples LANGUAGES C CXX)
+ 
+ find_package(OpenUI 0.2 CONFIG REQUIRED)
+ 
+-foreach(example IN ITEMS hello counter todo dashboard accessibility geometry scroll_metrics scroll_into_view primitive_styles svg_viewport float_colors)
++foreach(example IN ITEMS hello counter todo dashboard accessibility geometry scroll_metrics scroll_into_view primitive_styles svg_viewport float_colors raster_configuration)
+   add_executable(openui_${example} ${example}.c)
+   target_link_libraries(openui_${example} PRIVATE OpenUI::OpenUI)
+ endforeach()
+@@ -27,6 +27,10 @@ add_executable(openui_float_colors_cpp float_colors.cc)
+ target_link_libraries(openui_float_colors_cpp PRIVATE OpenUI::OpenUI)
+ set_target_properties(openui_float_colors_cpp PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES)
+ 
++add_executable(openui_raster_configuration_cpp raster_configuration.cc)
++target_link_libraries(openui_raster_configuration_cpp PRIVATE OpenUI::OpenUI)
++set_target_properties(openui_raster_configuration_cpp PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES)
++
+ add_executable(openui_native_c native/window.c)
+ target_link_libraries(openui_native_c PRIVATE OpenUI::OpenUI)
+ add_executable(openui_native_cpp native/window.cc)
+diff --git a/examples/c_v02/raster_configuration.c b/examples/c_v02/raster_configuration.c
+new file mode 100644
+index 00000000..f1d8714e
+--- /dev/null
++++ b/examples/c_v02/raster_configuration.c
+@@ -0,0 +1,319 @@
++/* Native C application: immutable Rust options, callbacks and owned frames. */
++#ifdef NDEBUG
++#undef NDEBUG
++#endif
++#include <assert.h>
++#include <math.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++
++#include "openui.h"
++
++#ifdef __cplusplus
++static_assert(sizeof(OuiRasterConfigurationV1) == 72, "raster v1 size");
++static_assert(alignof(OuiRasterConfigurationV1) == 4, "raster v1 alignment");
++static_assert(sizeof(OuiTextRasterConfigurationV1) == 16, "text raster v1 size");
++static_assert(offsetof(OuiRasterConfigurationV1, author_text) == 24, "author prefix");
++static_assert(offsetof(OuiRasterConfigurationV1, embedded_text) == 56, "embedded prefix");
++#else
++_Static_assert(sizeof(OuiRasterConfigurationV1) == 72, "raster v1 size");
++_Static_assert(_Alignof(OuiRasterConfigurationV1) == 4, "raster v1 alignment");
++_Static_assert(sizeof(OuiTextRasterConfigurationV1) == 16, "text raster v1 size");
++_Static_assert(offsetof(OuiRasterConfigurationV1, author_text) == 24, "author prefix");
++_Static_assert(offsetof(OuiRasterConfigurationV1, embedded_text) == 56, "embedded prefix");
++#endif
++
++static OuiUtf8 text(const char* value) {
++  OuiUtf8 result = {(const uint8_t*)value, strlen(value)};
++  return result;
++}
++
++static OuiRasterConfigurationV1 empty_raster(void) {
++  OuiRasterConfigurationV1 result;
++  memset(&result, 0, sizeof(result));
++  result.struct_size = sizeof(result);
++  result.abi_version = OUI_ABI_VERSION;
++  return result;
++}
++
++static void same_policy(OuiDocument* document, const OuiRasterConfigurationV1* expected) {
++  OuiRasterConfigurationV1 actual = empty_raster();
++  assert(oui_document_get_raster_configuration_v1(document, &actual) == OUI_OK);
++  /* Every v1 field is a 32-bit scalar; there is no padding or borrowed storage. */
++  assert(memcmp(&actual, expected, sizeof(actual)) == 0);
++}
++
++static void length(OuiElement* element, OuiStyleProperty property, float pixels) {
++  OuiStyleValue value;
++  memset(&value, 0, sizeof(value));
++  value.tag = OUI_STYLE_VALUE_LENGTH;
++  value.data.length.value = pixels;
++  value.data.length.unit = OUI_LENGTH_PX;
++  assert(oui_element_set_property(element, property, &value) == OUI_OK);
++}
++
++static void color(OuiElement* element,
++                  OuiStyleProperty property,
++                  uint8_t red,
++                  uint8_t green,
++                  uint8_t blue) {
++  OuiStyleValue value;
++  memset(&value, 0, sizeof(value));
++  value.tag = OUI_STYLE_VALUE_COLOR;
++  value.data.color.red = red;
++  value.data.color.green = green;
++  value.data.color.blue = blue;
++  value.data.color.alpha = 255;
++  assert(oui_element_set_property(element, property, &value) == OUI_OK);
++}
++
++static void enumeration(OuiElement* element, OuiStyleProperty property, int32_t number) {
++  OuiStyleValue value;
++  memset(&value, 0, sizeof(value));
++  value.tag = OUI_STYLE_VALUE_ENUM;
++  value.data.enum_value = number;
++  assert(oui_element_set_property(element, property, &value) == OUI_OK);
++}
++
++typedef struct Mutation {
++  OuiDocument* document;
++  OuiElement** elements;
++  size_t count;
++  unsigned calls;
++  int glyphs;
++  OuiRasterConfigurationV1 expected;
++} Mutation;
++
++static void clicked(OuiEvent* event, void* user_data) {
++  Mutation* state = (Mutation*)user_data;
++  assert(event->event_type == OUI_EVENT_CLICK);
++  /* Query and mutation during a callback prove engine borrows were released. */
++  same_policy(state->document, &state->expected);
++  for (size_t index = 0; index < state->count; ++index) {
++    if (state->glyphs) {
++      assert(oui_element_set_text(state->elements[index], text("XX")) == OUI_OK);
++      color(state->elements[index], OUI_STYLE_PROPERTY_COLOR, 0, 0, 255);
++    } else {
++      color(state->elements[index], OUI_STYLE_PROPERTY_BACKGROUND_COLOR, 0, 0, 255);
++    }
++  }
++  ++state->calls;
++}
++
++static void click(OuiDocument* document, OuiElement* target) {
++  OuiEvent event;
++  memset(&event, 0, sizeof(event));
++  event.struct_size = sizeof(event);
++  event.abi_version = OUI_ABI_VERSION;
++  event.event_type = OUI_EVENT_CLICK;
++  assert(oui_document_dispatch_event(document, target, &event) == OUI_OK);
++}
++
++static void core_consumer(uint32_t preset, double scale, int application) {
++  OuiRasterConfigurationV1 raster = empty_raster();
++  assert(oui_raster_configuration_init_v1(preset, &raster) == OUI_OK);
++  const OuiRasterConfigurationV1 expected = raster;
++  OuiDocumentConfig viewport = {
++      sizeof(viewport), OUI_ABI_VERSION, {64, 48, 0, 0, scale, OUI_VIEWPORT_LOGICAL, 0}};
++  OuiApp* app = NULL;
++  OuiDocument* document = NULL;
++  if (application) {
++    OuiAppConfig config = {
++        sizeof(config), OUI_ABI_VERSION, text("Raster C"), 64, 48, OUI_BACKEND_SOFTWARE, 0};
++    assert(oui_app_create_with_raster_configuration_v1(&config, &raster, &app) == OUI_OK);
++    assert(oui_app_document(app, &document) == OUI_OK);
++    assert(oui_document_set_viewport(document, &viewport) == OUI_OK);
++  } else {
++    assert(oui_document_create_with_raster_configuration_v1(&viewport, &raster, &document) ==
++           OUI_OK);
++  }
++  /* The engine owns its options, independent of the caller's reused storage. */
++  memset(&raster, 0xff, sizeof(raster));
++  same_policy(document, &expected);
++  OuiElement *root = NULL, *card = NULL;
++  assert(oui_document_root(document, &root) == OUI_OK);
++  assert(oui_element_create(document, OUI_ELEMENT_DIV, &card) == OUI_OK);
++  assert(oui_element_append_child(root, card) == OUI_OK);
++  color(root, OUI_STYLE_PROPERTY_BACKGROUND_COLOR, 255, 255, 255);
++  length(card, OUI_STYLE_PROPERTY_WIDTH, 32);
++  length(card, OUI_STYLE_PROPERTY_HEIGHT, 24);
++  color(card, OUI_STYLE_PROPERTY_BACKGROUND_COLOR, 255, 0, 0);
++  OuiBitmap before = {sizeof(before), OUI_ABI_VERSION, 0, 0, 0, NULL};
++  assert(oui_document_render_rgba(document, &before) == OUI_OK);
++  OuiElement* targets[] = {card};
++  Mutation mutation = {document, targets, 1, 0, 0, expected};
++  OuiListener* listener = NULL;
++  assert(oui_element_add_event_listener(card, OUI_EVENT_CLICK, 0, clicked, &mutation, &listener) ==
++         OUI_OK);
++  click(document, card);
++  assert(mutation.calls == 1);
++  OuiBitmap after = {sizeof(after), OUI_ABI_VERSION, 0, 0, 0, NULL};
++  assert(oui_document_render_rgba(document, &after) == OUI_OK);
++  same_policy(document, &expected);
++  const size_t sample = (size_t)(8 * scale) * before.stride + (size_t)(8 * scale) * 4;
++  assert(oui_buffer_data(before.pixels)[sample] == 255);
++  assert(oui_buffer_data(before.pixels)[sample + 2] == 0);
++  assert(oui_buffer_data(after.pixels)[sample] == 0);
++  assert(oui_buffer_data(after.pixels)[sample + 2] == 255);
++  assert(before.width == (uint32_t)(64 * scale) && before.height == (uint32_t)(48 * scale));
++  viewport.viewport.logical_width = 80;
++  viewport.viewport.logical_height = 56;
++  assert(oui_document_set_viewport(document, &viewport) == OUI_OK);
++  same_policy(document, &expected);
++  OuiBitmap resized = {sizeof(resized), OUI_ABI_VERSION, 0, 0, 0, NULL};
++  assert(oui_document_render_rgba(document, &resized) == OUI_OK);
++  assert(resized.width == (uint32_t)(80 * scale) && resized.height == (uint32_t)(56 * scale));
++  const size_t resized_sample = (size_t)(8 * scale) * resized.stride + (size_t)(8 * scale) * 4;
++  assert(oui_buffer_data(resized.pixels)[resized_sample + 2] == 255);
++  assert(oui_listener_destroy(listener) == OUI_OK);
++  assert(oui_element_destroy(card) == OUI_OK);
++  assert(oui_element_destroy(root) == OUI_OK);
++  if (app)
++    assert(oui_app_destroy(app) == OUI_OK);
++  assert(oui_document_destroy(document) == OUI_OK);
++  assert(oui_buffer_data(before.pixels)[sample] == 255);
++  assert(oui_buffer_data(after.pixels)[sample + 2] == 255);
++  assert(oui_buffer_data(resized.pixels)[resized_sample + 2] == 255);
++  assert(oui_buffer_destroy(before.pixels) == OUI_OK);
++  assert(oui_buffer_destroy(after.pixels) == OUI_OK);
++  assert(oui_buffer_destroy(resized.pixels) == OUI_OK);
++}
++
++static OuiFontFace* register_font(OuiDocument* document, const char* family, const char* path) {
++  FILE* input = fopen(path, "rb");
++  assert(input != NULL && fseek(input, 0, SEEK_END) == 0);
++  const long count = ftell(input);
++  assert(count > 0 && fseek(input, 0, SEEK_SET) == 0);
++  uint8_t* bytes = (uint8_t*)malloc((size_t)count);
++  assert(bytes != NULL && fread(bytes, 1, (size_t)count, input) == (size_t)count);
++  assert(fclose(input) == 0);
++  OuiFontFaceDescriptor descriptor;
++  memset(&descriptor, 0, sizeof(descriptor));
++  descriptor.struct_size = sizeof(descriptor);
++  descriptor.abi_version = OUI_ABI_VERSION;
++  descriptor.family = text(family);
++  descriptor.weight_min = descriptor.weight_max = 400;
++  descriptor.stretch_min = descriptor.stretch_max = 100;
++  OuiFontFace* face = NULL;
++  assert(oui_document_register_font(document, bytes, (size_t)count, &descriptor, &face) == OUI_OK);
++  free(bytes);
++  return face;
++}
++
++static void save_png(OuiDocument* document, const char* folder, const char* state) {
++  char path[4096];
++  int count = snprintf(path, sizeof(path), "%s/%s.png", folder, state);
++  assert(count > 0 && (size_t)count < sizeof(path));
++  OuiBuffer* png = NULL;
++  assert(oui_document_render_png(document, &png) == OUI_OK);
++  FILE* output = fopen(path, "wb");
++  assert(output != NULL);
++  const size_t length = oui_buffer_length(png);
++  assert(fwrite(oui_buffer_data(png), 1, length, output) == length);
++  assert(fclose(output) == 0);
++  assert(oui_buffer_destroy(png) == OUI_OK);
++}
++
++static void write_bounds(FILE* output, OuiElement** nodes) {
++  fputc('[', output);
++  for (size_t phase = 0; phase < 64; ++phase) {
++    OuiRect rect;
++    uint8_t present = 0;
++    assert(oui_element_get_bounds(nodes[phase], &rect, &present) == OUI_OK && present == 1);
++    fprintf(output, "%s{\"x\":%.17g,\"y\":%.17g,\"width\":%.17g,\"height\":%.17g}",
++            phase ? "," : "", (double)rect.x, (double)rect.y, (double)rect.width,
++            (double)rect.height);
++  }
++  fputc(']', output);
++}
++
++static void font_consumer(const char* folder,
++                          double scale,
++                          uint32_t preset,
++                          const char* family,
++                          float size,
++                          const char* font_path) {
++  assert(isfinite(scale) && scale > 0 && isfinite(size) && size > 0);
++  assert(preset == OUI_RASTER_CHROMIUM_FREETYPE_LCD ||
++         preset == OUI_RASTER_CHROMIUM_FONTATIONS_LCD);
++  OuiRasterConfigurationV1 raster = empty_raster();
++  assert(oui_raster_configuration_init_v1(preset, &raster) == OUI_OK);
++  OuiDocumentConfig viewport = {
++      sizeof(viewport), OUI_ABI_VERSION, {800, 600, 0, 0, scale, OUI_VIEWPORT_LOGICAL, 0}};
++  OuiDocument* document = NULL;
++  assert(oui_document_create_with_raster_configuration_v1(&viewport, &raster, &document) == OUI_OK);
++  OuiFontFace* face = register_font(document, family, font_path);
++  OuiStyleCompound* font_family = NULL;
++  assert(oui_font_family_create(text(family), 0, &font_family) == OUI_OK);
++  OuiStyleValue font;
++  memset(&font, 0, sizeof(font));
++  font.tag = OUI_STYLE_VALUE_COMPOUND;
++  font.data.compound = font_family;
++  OuiElement* root = NULL;
++  assert(oui_document_root(document, &root) == OUI_OK);
++  color(root, OUI_STYLE_PROPERTY_BACKGROUND_COLOR, 255, 255, 255);
++  enumeration(root, OUI_STYLE_PROPERTY_OVERFLOW, OUI_OVERFLOW_HIDDEN);
++  OuiElement* nodes[64];
++  for (size_t phase = 0; phase < 64; ++phase) {
++    assert(oui_element_create(document, OUI_ELEMENT_DIV, &nodes[phase]) == OUI_OK);
++    enumeration(nodes[phase], OUI_STYLE_PROPERTY_POSITION, OUI_POSITION_ABSOLUTE);
++    length(nodes[phase], OUI_STYLE_PROPERTY_LEFT, 20 + (float)(phase % 8) * 92 + (float)phase / 64);
++    length(nodes[phase], OUI_STYLE_PROPERTY_TOP, 20 + (float)(phase / 8) * 60);
++    assert(oui_element_set_property(nodes[phase], OUI_STYLE_PROPERTY_FONT_FAMILY, &font) == OUI_OK);
++    length(nodes[phase], OUI_STYLE_PROPERTY_FONT_SIZE, size);
++    OuiStyleValue line_height;
++    assert(oui_style_value_parse(OUI_STYLE_PROPERTY_LINE_HEIGHT, text("1"), &line_height) ==
++           OUI_OK);
++    assert(oui_element_set_property(nodes[phase], OUI_STYLE_PROPERTY_LINE_HEIGHT, &line_height) ==
++           OUI_OK);
++    if (line_height.tag == OUI_STYLE_VALUE_COMPOUND)
++      assert(oui_style_compound_destroy((OuiStyleCompound*)line_height.data.compound) == OUI_OK);
++    color(nodes[phase], OUI_STYLE_PROPERTY_COLOR, 0, 0, 0);
++    assert(oui_element_set_text(nodes[phase], text("X")) == OUI_OK);
++    assert(oui_element_append_child(root, nodes[phase]) == OUI_OK);
++  }
++  assert(oui_style_compound_destroy(font_family) == OUI_OK);
++  char path[4096];
++  int count = snprintf(path, sizeof(path), "%s/geometry.json", folder);
++  assert(count > 0 && (size_t)count < sizeof(path));
++  FILE* output = fopen(path, "wb");
++  assert(output != NULL);
++  fputs("{\"before\":", output);
++  write_bounds(output, nodes);
++  save_png(document, folder, "before");
++  Mutation mutation = {document, nodes, 64, 0, 1, raster};
++  OuiListener* listener = NULL;
++  assert(oui_element_add_event_listener(root, OUI_EVENT_CLICK, 0, clicked, &mutation, &listener) ==
++         OUI_OK);
++  click(document, root);
++  assert(mutation.calls == 1);
++  fputs(",\"after\":", output);
++  write_bounds(output, nodes);
++  fprintf(output, ",\"callback_count\":%u}\n", mutation.calls);
++  assert(fclose(output) == 0);
++  save_png(document, folder, "after");
++  same_policy(document, &raster);
++  assert(oui_listener_destroy(listener) == OUI_OK);
++  for (size_t phase = 0; phase < 64; ++phase)
++    assert(oui_element_destroy(nodes[phase]) == OUI_OK);
++  assert(oui_element_destroy(root) == OUI_OK);
++  assert(oui_font_face_destroy(face) == OUI_OK);
++  assert(oui_document_destroy(document) == OUI_OK);
++}
++
++int main(int argc, char** argv) {
++  if (argc == 7) {
++    font_consumer(argv[1], strtod(argv[2], NULL), (uint32_t)strtoul(argv[3], NULL, 10), argv[4],
++                  strtof(argv[5], NULL), argv[6]);
++    return 0;
++  }
++  if (argc != 1)
++    return 2;
++  const double scales[] = {1, 1.25, 1.5, 2, 3};
++  for (uint32_t preset = OUI_RASTER_DEFAULT; preset <= OUI_RASTER_CHROMIUM_FONTATIONS_LCD; ++preset)
++    for (size_t index = 0; index < sizeof(scales) / sizeof(scales[0]); ++index)
++      core_consumer(preset, scales[index], (int)((preset + index) % 2));
++  puts("native raster options: 25 mutations, callbacks and owned frame pairs passed");
++  return 0;
++}
+diff --git a/examples/c_v02/raster_configuration.cc b/examples/c_v02/raster_configuration.cc
+new file mode 100644
+index 00000000..17ecb478
+--- /dev/null
++++ b/examples/c_v02/raster_configuration.cc
+@@ -0,0 +1,2 @@
++// Run the same native application contract through a C++ consumer.
++#include "raster_configuration.c"
+diff --git a/include/openui.h b/include/openui.h
+index a93f6b7a..0aedb1dd 100644
+--- a/include/openui.h
++++ b/include/openui.h
+@@ -444,6 +444,68 @@ typedef struct OuiDocumentConfig {
+   OuiViewportMetrics viewport;
+ } OuiDocumentConfig;
+ 
++typedef enum OuiRasterBackendV1 {
++  OUI_RASTER_BACKEND_SKIA = 0,
++  OUI_RASTER_BACKEND_CHROMIUM_CPU = 1,
++  OUI_RASTER_BACKEND_GANESH_GL = 2,
++  OUI_RASTER_BACKEND_CHROMIUM_FONTATIONS_CPU = 3
++} OuiRasterBackendV1;
++
++typedef enum OuiRasterPresetV1 {
++  OUI_RASTER_DEFAULT = 0,
++  OUI_RASTER_ALIASED = 1,
++  OUI_RASTER_ALIASED_SUBPIXEL_POSITIONING = 2,
++  OUI_RASTER_CHROMIUM_FREETYPE_LCD = 3,
++  OUI_RASTER_CHROMIUM_FONTATIONS_LCD = 4,
++  OUI_RASTER_CHROMIUM_GANESH_LCD = 5
++} OuiRasterPresetV1;
++
++typedef enum OuiTextEdgingV1 {
++  OUI_TEXT_EDGING_ALIAS = 0,
++  OUI_TEXT_EDGING_ANTI_ALIAS = 1,
++  OUI_TEXT_EDGING_SUBPIXEL_ANTI_ALIAS = 2
++} OuiTextEdgingV1;
++
++typedef enum OuiTextHintingV1 {
++  OUI_TEXT_HINTING_NONE = 0,
++  OUI_TEXT_HINTING_SLIGHT = 1,
++  OUI_TEXT_HINTING_NORMAL = 2,
++  OUI_TEXT_HINTING_FULL = 3
++} OuiTextHintingV1;
++
++typedef enum OuiRasterPixelGeometryV1 {
++  OUI_RASTER_PIXEL_UNKNOWN = 0,
++  OUI_RASTER_PIXEL_RGB_HORIZONTAL = 1,
++  OUI_RASTER_PIXEL_BGR_HORIZONTAL = 2,
++  OUI_RASTER_PIXEL_RGB_VERTICAL = 3,
++  OUI_RASTER_PIXEL_BGR_VERTICAL = 4
++} OuiRasterPixelGeometryV1;
++
++enum {
++  OUI_TEXT_RASTER_SUBPIXEL_POSITIONING = 1u << 0,
++  OUI_TEXT_RASTER_FORCE_AUTOHINT = 1u << 1
++};
++
++/* Owned nested values within the v1 raster transport. No pointers. */
++typedef struct OuiTextRasterConfigurationV1 {
++  uint32_t edging;
++  uint32_t hinting;
++  uint32_t flags;
++  int32_t lcd_phase_64ths; /* Physical pixel phase; signed 16-bit range. */
++} OuiTextRasterConfigurationV1;
++
++typedef struct OuiRasterConfigurationV1 {
++  uint32_t struct_size;
++  uint32_t abi_version;
++  uint32_t backend;
++  uint32_t pixel_geometry;
++  uint32_t gamma_milli; /* Same u16 range as Rust; 1200 means 1.2. */
++  uint32_t contrast_milli; /* Same u16 range as Rust; 200 means 0.2. */
++  OuiTextRasterConfigurationV1 author_text;
++  OuiTextRasterConfigurationV1 native_text;
++  OuiTextRasterConfigurationV1 embedded_text;
++} OuiRasterConfigurationV1;
++
+ /* Caller-owned client and content dimensions in logical CSS pixels. */
+ typedef struct OuiScrollMetricsV1 {
+   uint32_t struct_size;
+@@ -848,6 +910,23 @@ OuiStatus oui_app_run(OuiApp* app, const OuiAppRunConfig* config);
+ OuiStatus oui_app_request_exit(OuiApp* app);
+ 
+ OuiStatus oui_document_create(const OuiDocumentConfig* config, OuiDocument** out_document);
++/* Additive immutable Rust Engine options. Initialize every version header with
++ * sizeof(the structure) and OUI_ABI_VERSION. Initialization/query write only
++ * the v1 prefix, preserve larger caller tails and leave outputs untouched on
++ * error. Input configurations are copied and may be released after creation.
++ * Changes to input memory, viewport, styles or document state never change
++ * a live document's raster policy. Query returns owned fields, with no borrows.
++ * Presentation preference in OuiAppConfig is independent of raster policy.
++ * These calls do not inspect environment variables or initialize a GPU.
++ * Ganesh configuration requires an explicitly available Ganesh compositor;
++ * CPU replay rejects it. Direct Ganesh release qualification remains open.
++ * init owns no object and may run on any thread; other calls follow the normal
++ * owning-thread handle rules. Callbacks use the same retained Rust document.
++ */
++OuiStatus oui_raster_configuration_init_v1(uint32_t preset, OuiRasterConfigurationV1* out_config);
++OuiStatus oui_document_create_with_raster_configuration_v1(const OuiDocumentConfig* config, const OuiRasterConfigurationV1* raster, OuiDocument** out_document);
++OuiStatus oui_app_create_with_raster_configuration_v1(const OuiAppConfig* config, const OuiRasterConfigurationV1* raster, OuiApp** out_app);
++OuiStatus oui_document_get_raster_configuration_v1(OuiDocument* document, OuiRasterConfigurationV1* out_config);
+ OuiStatus oui_document_destroy(OuiDocument* document);
+ OuiStatus oui_document_root(OuiDocument* document, OuiElement** out_root);
+ OuiStatus oui_document_set_viewport(OuiDocument* document, const OuiDocumentConfig* viewport);
+diff --git a/tools/ffi/generate_ffi.py b/tools/ffi/generate_ffi.py
+index f89bf866..e3305b36 100644
+--- a/tools/ffi/generate_ffi.py
++++ b/tools/ffi/generate_ffi.py
+@@ -144,6 +144,8 @@ def outputs() -> dict[Path, bytes]:
+             "OuiPlatformEvent": {"size": 152, "align": 8},
+             "OuiViewportMetrics": {"size": 40, "align": 8},
+             "OuiDocumentConfig": {"size": 48, "align": 8},
++            "OuiTextRasterConfigurationV1": {"size": 16, "align": 4},
++            "OuiRasterConfigurationV1": {"size": 72, "align": 4},
+             "OuiScrollMetricsV1": {"size": 40, "align": 8},
+             "OuiFontUnicodeRange": {"size": 8, "align": 4},
+             "OuiFontFeatureDefault": {"size": 8, "align": 4},
+diff --git a/tools/ffi/openui.h.in b/tools/ffi/openui.h.in
+index eb2c4b05..1490f9d6 100644
+--- a/tools/ffi/openui.h.in
++++ b/tools/ffi/openui.h.in
+@@ -421,6 +421,68 @@ typedef struct OuiDocumentConfig {
+   OuiViewportMetrics viewport;
+ } OuiDocumentConfig;
+ 
++typedef enum OuiRasterBackendV1 {
++  OUI_RASTER_BACKEND_SKIA = 0,
++  OUI_RASTER_BACKEND_CHROMIUM_CPU = 1,
++  OUI_RASTER_BACKEND_GANESH_GL = 2,
++  OUI_RASTER_BACKEND_CHROMIUM_FONTATIONS_CPU = 3
++} OuiRasterBackendV1;
++
++typedef enum OuiRasterPresetV1 {
++  OUI_RASTER_DEFAULT = 0,
++  OUI_RASTER_ALIASED = 1,
++  OUI_RASTER_ALIASED_SUBPIXEL_POSITIONING = 2,
++  OUI_RASTER_CHROMIUM_FREETYPE_LCD = 3,
++  OUI_RASTER_CHROMIUM_FONTATIONS_LCD = 4,
++  OUI_RASTER_CHROMIUM_GANESH_LCD = 5
++} OuiRasterPresetV1;
++
++typedef enum OuiTextEdgingV1 {
++  OUI_TEXT_EDGING_ALIAS = 0,
++  OUI_TEXT_EDGING_ANTI_ALIAS = 1,
++  OUI_TEXT_EDGING_SUBPIXEL_ANTI_ALIAS = 2
++} OuiTextEdgingV1;
++
++typedef enum OuiTextHintingV1 {
++  OUI_TEXT_HINTING_NONE = 0,
++  OUI_TEXT_HINTING_SLIGHT = 1,
++  OUI_TEXT_HINTING_NORMAL = 2,
++  OUI_TEXT_HINTING_FULL = 3
++} OuiTextHintingV1;
++
++typedef enum OuiRasterPixelGeometryV1 {
++  OUI_RASTER_PIXEL_UNKNOWN = 0,
++  OUI_RASTER_PIXEL_RGB_HORIZONTAL = 1,
++  OUI_RASTER_PIXEL_BGR_HORIZONTAL = 2,
++  OUI_RASTER_PIXEL_RGB_VERTICAL = 3,
++  OUI_RASTER_PIXEL_BGR_VERTICAL = 4
++} OuiRasterPixelGeometryV1;
++
++enum {
++  OUI_TEXT_RASTER_SUBPIXEL_POSITIONING = 1u << 0,
++  OUI_TEXT_RASTER_FORCE_AUTOHINT = 1u << 1
++};
++
++/* Owned nested values within the v1 raster transport. No pointers. */
++typedef struct OuiTextRasterConfigurationV1 {
++  uint32_t edging;
++  uint32_t hinting;
++  uint32_t flags;
++  int32_t lcd_phase_64ths; /* Physical pixel phase; signed 16-bit range. */
++} OuiTextRasterConfigurationV1;
++
++typedef struct OuiRasterConfigurationV1 {
++  uint32_t struct_size;
++  uint32_t abi_version;
++  uint32_t backend;
++  uint32_t pixel_geometry;
++  uint32_t gamma_milli; /* Same u16 range as Rust; 1200 means 1.2. */
++  uint32_t contrast_milli; /* Same u16 range as Rust; 200 means 0.2. */
++  OuiTextRasterConfigurationV1 author_text;
++  OuiTextRasterConfigurationV1 native_text;
++  OuiTextRasterConfigurationV1 embedded_text;
++} OuiRasterConfigurationV1;
++
+ /* Caller-owned client and content dimensions in logical CSS pixels. */
+ typedef struct OuiScrollMetricsV1 {
+   uint32_t struct_size;
+@@ -825,6 +887,23 @@ OuiStatus oui_app_run(OuiApp* app, const OuiAppRunConfig* config);
+ OuiStatus oui_app_request_exit(OuiApp* app);
+ 
+ OuiStatus oui_document_create(const OuiDocumentConfig* config, OuiDocument** out_document);
++/* Additive immutable Rust Engine options. Initialize every version header with
++ * sizeof(the structure) and OUI_ABI_VERSION. Initialization/query write only
++ * the v1 prefix, preserve larger caller tails and leave outputs untouched on
++ * error. Input configurations are copied and may be released after creation.
++ * Changes to input memory, viewport, styles or document state never change
++ * a live document's raster policy. Query returns owned fields, with no borrows.
++ * Presentation preference in OuiAppConfig is independent of raster policy.
++ * These calls do not inspect environment variables or initialize a GPU.
++ * Ganesh configuration requires an explicitly available Ganesh compositor;
++ * CPU replay rejects it. Direct Ganesh release qualification remains open.
++ * init owns no object and may run on any thread; other calls follow the normal
++ * owning-thread handle rules. Callbacks use the same retained Rust document.
++ */
++OuiStatus oui_raster_configuration_init_v1(uint32_t preset, OuiRasterConfigurationV1* out_config);
++OuiStatus oui_document_create_with_raster_configuration_v1(const OuiDocumentConfig* config, const OuiRasterConfigurationV1* raster, OuiDocument** out_document);
++OuiStatus oui_app_create_with_raster_configuration_v1(const OuiAppConfig* config, const OuiRasterConfigurationV1* raster, OuiApp** out_app);
++OuiStatus oui_document_get_raster_configuration_v1(OuiDocument* document, OuiRasterConfigurationV1* out_config);
+ OuiStatus oui_document_destroy(OuiDocument* document);
+ OuiStatus oui_document_root(OuiDocument* document, OuiElement** out_root);
+ OuiStatus oui_document_set_viewport(OuiDocument* document, const OuiDocumentConfig* viewport);

@@ -1,0 +1,12 @@
+{
+  "owner_session": 77198,
+  "owner_actual_exit_code": 0,
+  "owner_reaped": true,
+  "owner_terminal_chunk": "6fb75a",
+  "receipt_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-chromium-capture-repeat-v4533/receipt.json",
+  "receipt_sha256": "a496bc850f55ce3183e5af42939e5a5af0c4a9b071cee96369fb8ac73a3245ad",
+  "owner_pid_absent": true,
+  "all_child_pids_absent": true,
+  "diagnostic_only": true,
+  "qualification": false
+}

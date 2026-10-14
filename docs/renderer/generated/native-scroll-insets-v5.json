@@ -1,0 +1,1170 @@
+{
+  "applied_to_umbrella": false,
+  "artifacts": [
+    {
+      "path": "docs/renderer/generated/native-scroll-insets-v4.json",
+      "sha256": "2180c7f025b34cb8081918d5f5d9dfbb5062a2c5afea1bf6787c46ce50d7a0ac"
+    },
+    {
+      "path": "docs/renderer/evidence/native-reveal-root-v1/native-reveal-root-v1.patch",
+      "sha256": "1f5688145b55cf16b571bc1511c7ef412b8a7f41e04e3d1d95c5cf6fd1cd6490"
+    },
+    {
+      "path": "docs/renderer/evidence/native-reveal-root-v1/native-reveal-root.c",
+      "sha256": "26a280f7233fe781713cbfdc8ad1011c0c8e33d2387b0d511cb66310633bae4a"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-reveal-containers-clean-focused-v721/focused-summary.json",
+      "sha256": "e188d946fb8035ffa60f244c2e69154569aed952ae7369d6ac3a2dbcdde47935"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-reveal-containers-clean-primitive-v721/primitive-summary.json",
+      "sha256": "95aafd5dabba5a26841b1c6fbb345360a82f61b4f5cac031898a07076f3c0820"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-reveal-containers-focused-exit-v721.json",
+      "sha256": "6c00a9f83d4f3821648b563b0630f345c3404daf0f41b6ad2aa433bb656bca24"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-reveal-containers-primitive-exit-v721.json",
+      "sha256": "7989185878e6309b774219fb757c354b373bc13a1c0fe340c6a6e65c64217685"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-reveal-containers-raster-audit-v727.json",
+      "sha256": "098913320ef57a74d01a8dc2740e23ba85a3c50fad80b4181b0dbdf9e582edf2"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-reveal-root-oracle-failed-attempt-v735.json",
+      "sha256": "eace7f02d91742e5de4c15b7163c7c328b358b88e01a3e2ae288fe5eaa4b790c"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-reveal-root-oracle-v736/oracle.json",
+      "sha256": "cb7212bcd8cdd06dad8227afae428fc1a2371cfb3f67341331c9589b1a2a94e4"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-reveal-root-compare-v738/comparison.json",
+      "sha256": "e1d1138ef9f311094a1cb2bc777a0b2a741a4e0f948d715842b6599532fe8e7c"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-reveal-root-prototype-v743.json",
+      "sha256": "191d6a33f6066bc35f0d259b9a87084d582ecb6f86e924048a86ac0add8b0a7f"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-reveal-root-checks-v742/receipt.json",
+      "sha256": "2a1a392fa6dd6ba644a7abe9460b95af38085eb6f4a3d25de01e9938fae7c9ed"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-docs-checks-v730/receipt.json",
+      "sha256": "26bb162efb51c14998746618ba55b02bb50d64971ae125fd463c079d8e570ab7"
+    }
+  ],
+  "clip_complete_censuses": "running; no qualifying result yet",
+  "javascript_executed_by_openui": false,
+  "native_reveal_containers_candidate": {
+    "actual_raster_exits": [
+      0,
+      0
+    ],
+    "all_1600_comparison_invariants_unchanged": true,
+    "all_510_existing_rust_states_unchanged": true,
+    "focused_exact": 640,
+    "native_c_geometry_and_pixels_exact": 60,
+    "native_rust_geometry_and_pixels_exact": 90,
+    "primitive_exact": 960,
+    "source": {
+      "clean": true,
+      "commit": "6d6768a8a23e4af6cf1b3abe6523509ccc7e2576",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "c1a85131ed5871faafd8a9d6b4c6c519b4ca4cb876dde32d66908c7f836b1eec",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "new_cases_admitted": 0,
+  "pixel_target": "immutable pinned Chromium; zero tolerance",
+  "pixel_tolerance": 0,
+  "release_qualification": false,
+  "schema_version": 1,
+  "viewport_fixed_reveal_candidate": {
+    "build_sequence": "Fresh build queued after both clip image censuses terminate; Cargo and local image sweeps remain separate",
+    "change": "Stop reveal ancestry at fixed boxes anchored to the viewport; their descendants may still scroll their own containers. Preserve root transforms and layout containment that establish fixed containing blocks.",
+    "compiled": false,
+    "pixel_verification": "not started; no repair inferred",
+    "read_only_checks_passed": 10,
+    "source": {
+      "clean": true,
+      "commit": "2cc950e064a4ffa9ddef74a99fa7db7c80e1b511",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "d6fdb1fb0a43f0d2ef97a357308533a45de1aa33554dac1a16988b9c4b2e38a7",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "viewport_fixed_reveal_failure": {
+    "all_fresh_oracle_repeats_identical": true,
+    "all_native_process_exits": 0,
+    "geometry_exact": 15,
+    "observed_comparison_exit_code": 1,
+    "owner": "openui-engine",
+    "pixels_exact": 15,
+    "remaining": [
+      {
+        "actual": {
+          "inner": {
+            "bounds": {
+              "height": 100,
+              "width": 200,
+              "x": 40,
+              "y": 950
+            },
+            "client": {
+              "height": 100,
+              "width": 200
+            },
+            "extent": {
+              "height": 400,
+              "width": 400
+            },
+            "scroll": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          "outer": {
+            "bounds": {
+              "height": 80,
+              "width": 100,
+              "x": 40,
+              "y": 750
+            },
+            "client": {
+              "height": 80,
+              "width": 100
+            },
+            "extent": {
+              "height": 300,
+              "width": 200
+            },
+            "scroll": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          "root": {
+            "client": {
+              "height": 240,
+              "width": 320
+            },
+            "extent": {
+              "height": 1110,
+              "width": 320
+            },
+            "scroll": {
+              "x": 0,
+              "y": 280
+            }
+          },
+          "target": {
+            "bounds": {
+              "height": 20,
+              "width": 20,
+              "x": 280,
+              "y": 220
+            },
+            "client": {
+              "height": 20,
+              "width": 20
+            },
+            "extent": {
+              "height": 20,
+              "width": 20
+            },
+            "scroll": {
+              "x": 0,
+              "y": 0
+            }
+          }
+        },
+        "case": "fixed-root-scrollable",
+        "difference": {
+          "channel_deltas": {
+            "alpha": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "blue": {
+              "changed_pixels": 400,
+              "maximum_absolute_delta": 255,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": -255,
+              "signed_delta_sum": -102000
+            },
+            "green": {
+              "changed_pixels": 400,
+              "maximum_absolute_delta": 127,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": -127,
+              "signed_delta_sum": -50800
+            },
+            "red": {
+              "changed_pixels": 400,
+              "maximum_absolute_delta": 255,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": -255,
+              "signed_delta_sum": -102000
+            }
+          },
+          "comparable": true,
+          "connected_region_count": 1,
+          "connected_regions": [
+            {
+              "bounds": {
+                "height": 20,
+                "width": 20,
+                "x": 280,
+                "y": 220
+              },
+              "mismatched_pixels": 400
+            }
+          ],
+          "mismatch_bounds": {
+            "height": 20,
+            "width": 20,
+            "x": 280,
+            "y": 220
+          },
+          "mismatched_pixels": 400
+        },
+        "expected": {
+          "inner": {
+            "bounds": {
+              "height": 100,
+              "width": 200,
+              "x": 40,
+              "y": 1230
+            },
+            "client": {
+              "height": 100,
+              "width": 200
+            },
+            "extent": {
+              "height": 400,
+              "width": 400
+            },
+            "scroll": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          "outer": {
+            "bounds": {
+              "height": 80,
+              "width": 100,
+              "x": 40,
+              "y": 1030
+            },
+            "client": {
+              "height": 80,
+              "width": 100
+            },
+            "extent": {
+              "height": 300,
+              "width": 200
+            },
+            "scroll": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          "root": {
+            "client": {
+              "height": 240,
+              "width": 320
+            },
+            "extent": {
+              "height": 1110,
+              "width": 320
+            },
+            "scroll": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          "target": {
+            "bounds": {
+              "height": 20,
+              "width": 20,
+              "x": 280,
+              "y": 500
+            },
+            "client": {
+              "height": 20,
+              "width": 20
+            },
+            "extent": {
+              "height": 20,
+              "width": 20
+            },
+            "scroll": {
+              "x": 0,
+              "y": 0
+            }
+          }
+        },
+        "owner": "openui-engine",
+        "scale": 1,
+        "state": "reveal"
+      },
+      {
+        "actual": {
+          "inner": {
+            "bounds": {
+              "height": 100,
+              "width": 200,
+              "x": 40,
+              "y": 950
+            },
+            "client": {
+              "height": 100,
+              "width": 200
+            },
+            "extent": {
+              "height": 400,
+              "width": 400
+            },
+            "scroll": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          "outer": {
+            "bounds": {
+              "height": 80,
+              "width": 100,
+              "x": 40,
+              "y": 750
+            },
+            "client": {
+              "height": 80,
+              "width": 100
+            },
+            "extent": {
+              "height": 300,
+              "width": 200
+            },
+            "scroll": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          "root": {
+            "client": {
+              "height": 240,
+              "width": 320
+            },
+            "extent": {
+              "height": 1110,
+              "width": 320
+            },
+            "scroll": {
+              "x": 0,
+              "y": 280
+            }
+          },
+          "target": {
+            "bounds": {
+              "height": 20,
+              "width": 20,
+              "x": 280,
+              "y": 220
+            },
+            "client": {
+              "height": 20,
+              "width": 20
+            },
+            "extent": {
+              "height": 20,
+              "width": 20
+            },
+            "scroll": {
+              "x": 0,
+              "y": 0
+            }
+          }
+        },
+        "case": "fixed-root-scrollable",
+        "difference": {
+          "channel_deltas": {
+            "alpha": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "blue": {
+              "changed_pixels": 625,
+              "maximum_absolute_delta": 255,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": -255,
+              "signed_delta_sum": -159375
+            },
+            "green": {
+              "changed_pixels": 625,
+              "maximum_absolute_delta": 127,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": -127,
+              "signed_delta_sum": -79375
+            },
+            "red": {
+              "changed_pixels": 625,
+              "maximum_absolute_delta": 255,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": -255,
+              "signed_delta_sum": -159375
+            }
+          },
+          "comparable": true,
+          "connected_region_count": 1,
+          "connected_regions": [
+            {
+              "bounds": {
+                "height": 25,
+                "width": 25,
+                "x": 350,
+                "y": 275
+              },
+              "mismatched_pixels": 625
+            }
+          ],
+          "mismatch_bounds": {
+            "height": 25,
+            "width": 25,
+            "x": 350,
+            "y": 275
+          },
+          "mismatched_pixels": 625
+        },
+        "expected": {
+          "inner": {
+            "bounds": {
+              "height": 100,
+              "width": 200,
+              "x": 40,
+              "y": 1230
+            },
+            "client": {
+              "height": 100,
+              "width": 200
+            },
+            "extent": {
+              "height": 400,
+              "width": 400
+            },
+            "scroll": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          "outer": {
+            "bounds": {
+              "height": 80,
+              "width": 100,
+              "x": 40,
+              "y": 1030
+            },
+            "client": {
+              "height": 80,
+              "width": 100
+            },
+            "extent": {
+              "height": 300,
+              "width": 200
+            },
+            "scroll": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          "root": {
+            "client": {
+              "height": 240,
+              "width": 320
+            },
+            "extent": {
+              "height": 1110,
+              "width": 320
+            },
+            "scroll": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          "target": {
+            "bounds": {
+              "height": 20,
+              "width": 20,
+              "x": 280,
+              "y": 500
+            },
+            "client": {
+              "height": 20,
+              "width": 20
+            },
+            "extent": {
+              "height": 20,
+              "width": 20
+            },
+            "scroll": {
+              "x": 0,
+              "y": 0
+            }
+          }
+        },
+        "owner": "openui-engine",
+        "scale": 1.25,
+        "state": "reveal"
+      },
+      {
+        "actual": {
+          "inner": {
+            "bounds": {
+              "height": 100,
+              "width": 200,
+              "x": 40,
+              "y": 950
+            },
+            "client": {
+              "height": 100,
+              "width": 200
+            },
+            "extent": {
+              "height": 400,
+              "width": 400
+            },
+            "scroll": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          "outer": {
+            "bounds": {
+              "height": 80,
+              "width": 100,
+              "x": 40,
+              "y": 750
+            },
+            "client": {
+              "height": 80,
+              "width": 100
+            },
+            "extent": {
+              "height": 300,
+              "width": 200
+            },
+            "scroll": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          "root": {
+            "client": {
+              "height": 240,
+              "width": 320
+            },
+            "extent": {
+              "height": 1110,
+              "width": 320
+            },
+            "scroll": {
+              "x": 0,
+              "y": 280
+            }
+          },
+          "target": {
+            "bounds": {
+              "height": 20,
+              "width": 20,
+              "x": 280,
+              "y": 220
+            },
+            "client": {
+              "height": 20,
+              "width": 20
+            },
+            "extent": {
+              "height": 20,
+              "width": 20
+            },
+            "scroll": {
+              "x": 0,
+              "y": 0
+            }
+          }
+        },
+        "case": "fixed-root-scrollable",
+        "difference": {
+          "channel_deltas": {
+            "alpha": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "blue": {
+              "changed_pixels": 900,
+              "maximum_absolute_delta": 255,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": -255,
+              "signed_delta_sum": -229500
+            },
+            "green": {
+              "changed_pixels": 900,
+              "maximum_absolute_delta": 127,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": -127,
+              "signed_delta_sum": -114300
+            },
+            "red": {
+              "changed_pixels": 900,
+              "maximum_absolute_delta": 255,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": -255,
+              "signed_delta_sum": -229500
+            }
+          },
+          "comparable": true,
+          "connected_region_count": 1,
+          "connected_regions": [
+            {
+              "bounds": {
+                "height": 30,
+                "width": 30,
+                "x": 420,
+                "y": 330
+              },
+              "mismatched_pixels": 900
+            }
+          ],
+          "mismatch_bounds": {
+            "height": 30,
+            "width": 30,
+            "x": 420,
+            "y": 330
+          },
+          "mismatched_pixels": 900
+        },
+        "expected": {
+          "inner": {
+            "bounds": {
+              "height": 100,
+              "width": 200,
+              "x": 40,
+              "y": 1230
+            },
+            "client": {
+              "height": 100,
+              "width": 200
+            },
+            "extent": {
+              "height": 400,
+              "width": 400
+            },
+            "scroll": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          "outer": {
+            "bounds": {
+              "height": 80,
+              "width": 100,
+              "x": 40,
+              "y": 1030
+            },
+            "client": {
+              "height": 80,
+              "width": 100
+            },
+            "extent": {
+              "height": 300,
+              "width": 200
+            },
+            "scroll": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          "root": {
+            "client": {
+              "height": 240,
+              "width": 320
+            },
+            "extent": {
+              "height": 1110,
+              "width": 320
+            },
+            "scroll": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          "target": {
+            "bounds": {
+              "height": 20,
+              "width": 20,
+              "x": 280,
+              "y": 500
+            },
+            "client": {
+              "height": 20,
+              "width": 20
+            },
+            "extent": {
+              "height": 20,
+              "width": 20
+            },
+            "scroll": {
+              "x": 0,
+              "y": 0
+            }
+          }
+        },
+        "owner": "openui-engine",
+        "scale": 1.5,
+        "state": "reveal"
+      },
+      {
+        "actual": {
+          "inner": {
+            "bounds": {
+              "height": 100,
+              "width": 200,
+              "x": 40,
+              "y": 950
+            },
+            "client": {
+              "height": 100,
+              "width": 200
+            },
+            "extent": {
+              "height": 400,
+              "width": 400
+            },
+            "scroll": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          "outer": {
+            "bounds": {
+              "height": 80,
+              "width": 100,
+              "x": 40,
+              "y": 750
+            },
+            "client": {
+              "height": 80,
+              "width": 100
+            },
+            "extent": {
+              "height": 300,
+              "width": 200
+            },
+            "scroll": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          "root": {
+            "client": {
+              "height": 240,
+              "width": 320
+            },
+            "extent": {
+              "height": 1110,
+              "width": 320
+            },
+            "scroll": {
+              "x": 0,
+              "y": 280
+            }
+          },
+          "target": {
+            "bounds": {
+              "height": 20,
+              "width": 20,
+              "x": 280,
+              "y": 220
+            },
+            "client": {
+              "height": 20,
+              "width": 20
+            },
+            "extent": {
+              "height": 20,
+              "width": 20
+            },
+            "scroll": {
+              "x": 0,
+              "y": 0
+            }
+          }
+        },
+        "case": "fixed-root-scrollable",
+        "difference": {
+          "channel_deltas": {
+            "alpha": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "blue": {
+              "changed_pixels": 1600,
+              "maximum_absolute_delta": 255,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": -255,
+              "signed_delta_sum": -408000
+            },
+            "green": {
+              "changed_pixels": 1600,
+              "maximum_absolute_delta": 127,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": -127,
+              "signed_delta_sum": -203200
+            },
+            "red": {
+              "changed_pixels": 1600,
+              "maximum_absolute_delta": 255,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": -255,
+              "signed_delta_sum": -408000
+            }
+          },
+          "comparable": true,
+          "connected_region_count": 1,
+          "connected_regions": [
+            {
+              "bounds": {
+                "height": 40,
+                "width": 40,
+                "x": 560,
+                "y": 440
+              },
+              "mismatched_pixels": 1600
+            }
+          ],
+          "mismatch_bounds": {
+            "height": 40,
+            "width": 40,
+            "x": 560,
+            "y": 440
+          },
+          "mismatched_pixels": 1600
+        },
+        "expected": {
+          "inner": {
+            "bounds": {
+              "height": 100,
+              "width": 200,
+              "x": 40,
+              "y": 1230
+            },
+            "client": {
+              "height": 100,
+              "width": 200
+            },
+            "extent": {
+              "height": 400,
+              "width": 400
+            },
+            "scroll": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          "outer": {
+            "bounds": {
+              "height": 80,
+              "width": 100,
+              "x": 40,
+              "y": 1030
+            },
+            "client": {
+              "height": 80,
+              "width": 100
+            },
+            "extent": {
+              "height": 300,
+              "width": 200
+            },
+            "scroll": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          "root": {
+            "client": {
+              "height": 240,
+              "width": 320
+            },
+            "extent": {
+              "height": 1110,
+              "width": 320
+            },
+            "scroll": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          "target": {
+            "bounds": {
+              "height": 20,
+              "width": 20,
+              "x": 280,
+              "y": 500
+            },
+            "client": {
+              "height": 20,
+              "width": 20
+            },
+            "extent": {
+              "height": 20,
+              "width": 20
+            },
+            "scroll": {
+              "x": 0,
+              "y": 0
+            }
+          }
+        },
+        "owner": "openui-engine",
+        "scale": 2,
+        "state": "reveal"
+      },
+      {
+        "actual": {
+          "inner": {
+            "bounds": {
+              "height": 100,
+              "width": 200,
+              "x": 40,
+              "y": 950
+            },
+            "client": {
+              "height": 100,
+              "width": 200
+            },
+            "extent": {
+              "height": 400,
+              "width": 400
+            },
+            "scroll": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          "outer": {
+            "bounds": {
+              "height": 80,
+              "width": 100,
+              "x": 40,
+              "y": 750
+            },
+            "client": {
+              "height": 80,
+              "width": 100
+            },
+            "extent": {
+              "height": 300,
+              "width": 200
+            },
+            "scroll": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          "root": {
+            "client": {
+              "height": 240,
+              "width": 320
+            },
+            "extent": {
+              "height": 1110,
+              "width": 320
+            },
+            "scroll": {
+              "x": 0,
+              "y": 280
+            }
+          },
+          "target": {
+            "bounds": {
+              "height": 20,
+              "width": 20,
+              "x": 280,
+              "y": 220
+            },
+            "client": {
+              "height": 20,
+              "width": 20
+            },
+            "extent": {
+              "height": 20,
+              "width": 20
+            },
+            "scroll": {
+              "x": 0,
+              "y": 0
+            }
+          }
+        },
+        "case": "fixed-root-scrollable",
+        "difference": {
+          "channel_deltas": {
+            "alpha": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "blue": {
+              "changed_pixels": 3600,
+              "maximum_absolute_delta": 255,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": -255,
+              "signed_delta_sum": -918000
+            },
+            "green": {
+              "changed_pixels": 3600,
+              "maximum_absolute_delta": 127,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": -127,
+              "signed_delta_sum": -457200
+            },
+            "red": {
+              "changed_pixels": 3600,
+              "maximum_absolute_delta": 255,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": -255,
+              "signed_delta_sum": -918000
+            }
+          },
+          "comparable": true,
+          "connected_region_count": 1,
+          "connected_regions": [
+            {
+              "bounds": {
+                "height": 60,
+                "width": 60,
+                "x": 840,
+                "y": 660
+              },
+              "mismatched_pixels": 3600
+            }
+          ],
+          "mismatch_bounds": {
+            "height": 60,
+            "width": 60,
+            "x": 840,
+            "y": 660
+          },
+          "mismatched_pixels": 3600
+        },
+        "expected": {
+          "inner": {
+            "bounds": {
+              "height": 100,
+              "width": 200,
+              "x": 40,
+              "y": 1230
+            },
+            "client": {
+              "height": 100,
+              "width": 200
+            },
+            "extent": {
+              "height": 400,
+              "width": 400
+            },
+            "scroll": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          "outer": {
+            "bounds": {
+              "height": 80,
+              "width": 100,
+              "x": 40,
+              "y": 1030
+            },
+            "client": {
+              "height": 80,
+              "width": 100
+            },
+            "extent": {
+              "height": 300,
+              "width": 200
+            },
+            "scroll": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          "root": {
+            "client": {
+              "height": 240,
+              "width": 320
+            },
+            "extent": {
+              "height": 1110,
+              "width": 320
+            },
+            "scroll": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          "target": {
+            "bounds": {
+              "height": 20,
+              "width": 20,
+              "x": 280,
+              "y": 500
+            },
+            "client": {
+              "height": 20,
+              "width": 20
+            },
+            "extent": {
+              "height": 20,
+              "width": 20
+            },
+            "scroll": {
+              "x": 0,
+              "y": 0
+            }
+          }
+        },
+        "owner": "openui-engine",
+        "scale": 3,
+        "state": "reveal"
+      }
+    ],
+    "root_cause": "Reveal ancestry reaches the document scrollport from a fixed box anchored to the viewport. Chromium stops at that fixed box. Native scrollIntoView moves the document by 280 CSS pixels and wrongly changes the fixed target bounds from y=500 to y=220.",
+    "source": {
+      "clean": true,
+      "commit": "6d6768a8a23e4af6cf1b3abe6523509ccc7e2576",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "c1a85131ed5871faafd8a9d6b4c6c519b4ca4cb876dde32d66908c7f836b1eec",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "total": 20
+  }
+}

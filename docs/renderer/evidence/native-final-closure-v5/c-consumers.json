@@ -1,0 +1,129 @@
+{
+  "owner_pid": 1753195,
+  "source": {
+    "commit": "539ab92deda29737e05aedbc62045e970a41dd20",
+    "clean": true,
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "source_tree_sha256": "17d3cb7f44d9c766dab7ae6a8324b149f73ce6f8a5958919b93bcd5b8e294db6",
+    "harness_sha256": "73bb1acc3025ef54a34eceea8c0ebb40c2a6ed45a3e83dcf15131517a0ac6120"
+  },
+  "checks": [
+    {
+      "name": "workspace-all-targets",
+      "argv": [
+        "cargo",
+        "+stable",
+        "--config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "--offline",
+        "--no-fail-fast",
+        "--workspace",
+        "--all-targets"
+      ],
+      "pid": 1754718,
+      "actual_exit_code": 101,
+      "terminal_reaped": true,
+      "log_sha256": "4e7daeed28e42e82583c70831b6391f11f24a80ff176504a0c1fed7d7273f3c3",
+      "reported_passed": 0,
+      "reported_failed": 0,
+      "reported_ignored": 0
+    },
+    {
+      "name": "workspace-doctests",
+      "argv": [
+        "cargo",
+        "+stable",
+        "--config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "--offline",
+        "--no-fail-fast",
+        "--workspace",
+        "--doc"
+      ],
+      "pid": 1774827,
+      "actual_exit_code": 0,
+      "terminal_reaped": true,
+      "log_sha256": "6f5cad266c08fb6e827d1ea8c40e5255321a266bc6af1e88d732f07175c24548",
+      "reported_passed": 2,
+      "reported_failed": 0,
+      "reported_ignored": 13
+    },
+    {
+      "name": "c-abi-library-build",
+      "argv": [
+        "cargo",
+        "+stable",
+        "--config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "build",
+        "--locked",
+        "--offline",
+        "-p",
+        "openui-ffi"
+      ],
+      "pid": 1780790,
+      "actual_exit_code": 0,
+      "terminal_reaped": true,
+      "log_sha256": "2d332b56800712ae03b1ea4ff8ca7e91ca7b486ae3cf90aba6c4ca86384e0a15",
+      "reported_passed": 0,
+      "reported_failed": 0,
+      "reported_ignored": 0
+    },
+    {
+      "name": "c-cpp-headless-consumers",
+      "argv": [
+        "python3",
+        "-B",
+        "/home/nero/code/open-ui/tools/ffi/verify_abi.py",
+        "--library",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-radius-scroll-removal-runtime-v4484/libopenui_ffi.so",
+        "--keep-going"
+      ],
+      "pid": 1782648,
+      "actual_exit_code": 0,
+      "terminal_reaped": true,
+      "log_sha256": "7edbbcc704ed3c58fa72c86dccea6a80deb1942a83e90e48f21e1ec04e7d922a",
+      "reported_passed": 0,
+      "reported_failed": 0,
+      "reported_ignored": 0
+    }
+  ],
+  "complete": true,
+  "renderer_qualified": false,
+  "release_qualified": false,
+  "runtime_scope": "complete locked development workspace with combined authored radius contour consumers, native absolute/displacement scroll strategy, inactive tiny-overflow timelines, canonical Rust/C property removal; doctests and all discoverable C/C++ consumers from successful current-source library build; no pixel qualification",
+  "independent_live_pixel_epoch": {
+    "source_before": {
+      "commit": "fb1b68fa8cdf8ac505f677ab31c2a00f43d105fa",
+      "clean": true,
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_tree_sha256": "4d82b3190b089e9184d5198fd5c8919a724f6b4ed496f26f7af61ceb263e9e53",
+      "harness_sha256": "abff37553c0abe146718cec361f956bfcc75bfcfeaf7feb82682f6122e920ccd"
+    },
+    "runner_sha256": "2a3b8a857fad0ec5a961bc1d0485d2de0e4bf1e8d7cb2cc1da7bff72029947e7",
+    "performance_qualification": false,
+    "shared_cargo_target_used_by_pixel_runner": false,
+    "source_unchanged": true,
+    "runner_unchanged": true
+  },
+  "boot_id": "362ae37b-d85f-4812-9f25-ef02cf732134",
+  "current_source_library": {
+    "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-radius-scroll-removal-runtime-v4484/libopenui_ffi.so",
+    "sha256": "e0e278c71fe6e2221b2cb9e9b5ec95150d20cff8db9442b8f6e5fc65c75f3da3",
+    "source_commit": "539ab92deda29737e05aedbc62045e970a41dd20",
+    "successful_build_pid": 1780790
+  },
+  "source_after": {
+    "commit": "539ab92deda29737e05aedbc62045e970a41dd20",
+    "clean": true,
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "source_tree_sha256": "17d3cb7f44d9c766dab7ae6a8324b149f73ce6f8a5958919b93bcd5b8e294db6",
+    "harness_sha256": "73bb1acc3025ef54a34eceea8c0ebb40c2a6ed45a3e83dcf15131517a0ac6120"
+  },
+  "source_unchanged": true,
+  "intended_exit_code": 1
+}

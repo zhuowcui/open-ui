@@ -1,0 +1,34 @@
+{
+  "actual_owner_exit_code": 0,
+  "actual_owner_session": 14728,
+  "all_local_commands_terminal": true,
+  "files": {
+    "observations-1.0-1.json": "f30ac3bbafe696d30ddaa6d89a8653d868f2634515cb051289aca7462eb67a03",
+    "observations-1.0-2.json": "f30ac3bbafe696d30ddaa6d89a8653d868f2634515cb051289aca7462eb67a03",
+    "observations-1.25-1.json": "dc31c633c7f535fae5f7027432bc15ab0c420cde6cbb3d478a107b4c97f2e828",
+    "observations-1.25-2.json": "dc31c633c7f535fae5f7027432bc15ab0c420cde6cbb3d478a107b4c97f2e828",
+    "observations-1.5-1.json": "ca642a688ae1d241dbca3c1245f8a0151eadfc12a2948f5d0b77d25d87366d67",
+    "observations-1.5-2.json": "ca642a688ae1d241dbca3c1245f8a0151eadfc12a2948f5d0b77d25d87366d67",
+    "observations-2.0-1.json": "229f0a064126c4d791550368051acdc22c2d5695994b43427364c20eeef2cb48",
+    "observations-2.0-2.json": "229f0a064126c4d791550368051acdc22c2d5695994b43427364c20eeef2cb48",
+    "observations-3.0-1.json": "a48732eec221119c470d157858cc724fb852179f2789e7b57dd1b7e84f049b5d",
+    "observations-3.0-2.json": "a48732eec221119c470d157858cc724fb852179f2789e7b57dd1b7e84f049b5d",
+    "receipt.json": "9c2fd892af6db94a1e2fb94f0eb89bac167bbc4d1b6a7d29ea22c136662b163b",
+    "test.html": "e6f0fb566e6949189a425d48047d3da7718616bb94c9de9a06465f5ba57a4088"
+  },
+  "native_api_qualification": false,
+  "native_application_executed": false,
+  "native_pixel_qualification": false,
+  "owner_absent": true,
+  "receipt_sha256": "9c2fd892af6db94a1e2fb94f0eb89bac167bbc4d1b6a7d29ea22c136662b163b",
+  "reference_only": true,
+  "repeated_geometry_observations": 200,
+  "source": {
+    "clean": true,
+    "commit": "e98a5a17b6c9700a641079f3137572e0dfc85dd7",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "c1ad161332023bb4c144d499f97c0c0fc0379f8577c791408bcf47d1bcd4e961",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "unique_geometry_observations": 100
+}

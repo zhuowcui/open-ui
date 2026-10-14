@@ -1,0 +1,343 @@
+diff --git a/bindings/rust/openui-layout/src/inline/items_builder.rs b/bindings/rust/openui-layout/src/inline/items_builder.rs
+index 401177b6..2713ab45 100644
+--- a/bindings/rust/openui-layout/src/inline/items_builder.rs
++++ b/bindings/rust/openui-layout/src/inline/items_builder.rs
+@@ -823,6 +823,9 @@ pub struct InlineItemsBuilder<'a> {
+     /// elements for DOM order, but an explicit marker-group collection must
+     /// admit them into that pseudo box's inline formatting context.
+     include_scroll_markers: bool,
++    /// Anonymous fieldset content has no definite available block-size when
++    /// computing intrinsic contributions, even if the fieldset has a height.
++    intrinsic_block_size_indefinite: bool,
+ }
+ 
+ impl<'a> InlineItemsBuilder<'a> {
+@@ -840,6 +843,7 @@ impl<'a> InlineItemsBuilder<'a> {
+             positioned_inline_stack: Vec::new(),
+             block_in_inline: Vec::new(),
+             include_scroll_markers: false,
++            intrinsic_block_size_indefinite: false,
+         }
+     }
+ 
+@@ -851,12 +855,29 @@ impl<'a> InlineItemsBuilder<'a> {
+         Self::collect_with_floats(doc, block_node_id).0
+     }
+ 
++    pub(crate) fn collect_for_intrinsic_sizes(
++        doc: &Document,
++        block_node_id: NodeId,
++    ) -> InlineItemsData {
++        Self::collect_with_mode(doc, block_node_id, true).0
++    }
++
+     /// Collect inline items and the source-order float insertion boundaries.
+     pub(crate) fn collect_with_floats(
+         doc: &Document,
+         block_node_id: NodeId,
++    ) -> (InlineItemsData, Vec<FloatPlaceholder>) {
++        Self::collect_with_mode(doc, block_node_id, false)
++    }
++
++    fn collect_with_mode(
++        doc: &Document,
++        block_node_id: NodeId,
++        measuring_intrinsics: bool,
+     ) -> (InlineItemsData, Vec<FloatPlaceholder>) {
+         let mut builder = InlineItemsBuilder::new(doc);
++        builder.intrinsic_block_size_indefinite =
++            measuring_intrinsics && doc.node(block_node_id).tag == ElementTag::Fieldset;
+         let block_style = &doc.node(block_node_id).style;
+         builder.include_scroll_markers =
+             doc.node(block_node_id).pseudo_kind == Some(PseudoElementKind::ScrollMarkerGroup);
+@@ -1480,6 +1501,13 @@ impl<'a> InlineItemsBuilder<'a> {
+             && child_direction.is_horizontal()
+             && (style.width.is_auto() || style.width.is_content_or_intrinsic()))
+         .then(|| {
++            if self.intrinsic_block_size_indefinite && !style.position.is_absolutely_positioned() {
++                // FieldsetLayoutAlgorithm measures its anonymous content
++                // with an indefinite available block-size. Percentage-height
++                // images therefore keep their natural intrinsic width here;
++                // normal layout still resolves the displayed image's height.
++                return None;
++            }
+             let parent_id = self.doc.node(node_id).parent;
+             if parent_id.is_none() {
+                 return None;
+diff --git a/bindings/rust/openui-layout/src/intrinsic_sizing.rs b/bindings/rust/openui-layout/src/intrinsic_sizing.rs
+index d7ea9542..e7365c35 100644
+--- a/bindings/rust/openui-layout/src/intrinsic_sizing.rs
++++ b/bindings/rust/openui-layout/src/intrinsic_sizing.rs
+@@ -348,7 +348,7 @@ fn intrinsic_close_rounding_excess(data: &InlineItemsData, close_item_index: usi
+ /// white-space processing and emitted explicit open/close decoration items.
+ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> MinMaxSizes {
+     let container_style = &doc.node(node_id).style;
+-    let mut data = InlineItemsBuilder::collect(doc, node_id);
++    let mut data = InlineItemsBuilder::collect_for_intrinsic_sizes(doc, node_id);
+     let base_direction = if container_style.unicode_bidi == openui_style::UnicodeBidi::Plaintext {
+         None
+     } else if container_style.direction == openui_style::Direction::Rtl {
+diff --git a/bindings/rust/openui/examples/native_fieldset_intrinsics.rs b/bindings/rust/openui/examples/native_fieldset_intrinsics.rs
+new file mode 100644
+index 00000000..b8af7b57
+--- /dev/null
++++ b/bindings/rust/openui/examples/native_fieldset_intrinsics.rs
+@@ -0,0 +1,131 @@
++//! Native fieldset and image sizing, including mutation from a Rust callback.
++
++use openui::prelude::*;
++use std::{cell::Cell, path::PathBuf, rc::Rc};
++
++fn bounds_json(element: &Element) -> Result<String, Box<dyn std::error::Error>> {
++    let bounds = element.bounding_rect()?.ok_or("native box required")?;
++    Ok(format!(
++        "{{\"x\":{},\"y\":{},\"width\":{},\"height\":{}}}",
++        f64::from(bounds.x),
++        f64::from(bounds.y),
++        f64::from(bounds.width),
++        f64::from(bounds.height),
++    ))
++}
++
++fn main() -> Result<(), Box<dyn std::error::Error>> {
++    let mut args = std::env::args().skip(1);
++    let output = PathBuf::from(args.next().ok_or("output directory required")?);
++    let scale: f64 = args.next().ok_or("device scale required")?.parse()?;
++    let tag = args.next().ok_or("container kind required")?;
++    let padding: f32 = args.next().unwrap_or_else(|| "0".into()).parse()?;
++    let sizing = args.next().unwrap_or_else(|| "content-box".into());
++    let width: f64 = args.next().unwrap_or_else(|| "800".into()).parse()?;
++    let height: f64 = args.next().unwrap_or_else(|| "600".into()).parse()?;
++    if args.next().is_some() || !matches!(tag.as_str(), "div" | "fieldset") {
++        return Err("unexpected container or arguments".into());
++    }
++    if !matches!(padding, 0.0 | 10.0) {
++        return Err("padding must be zero or ten logical pixels".into());
++    }
++    let box_sizing = match sizing.as_str() {
++        "content-box" => BoxSizing::ContentBox,
++        "border-box" => BoxSizing::BorderBox,
++        _ => return Err("unknown box sizing".into()),
++    };
++    let document = Document::with_font_collection(
++        ViewportMetrics::from_logical_size(width, height, scale)?,
++        FontCollection::deterministic_test(),
++    )?;
++    let root = document.body();
++    root.set_background_color(Color::WHITE)?;
++    root.set_font_family(FontFamilyList::single("Ahem"))?;
++    root.set_font_size(LengthValue::px(16.0))?;
++    root.set_line_height(LineHeight::Number(1.0))?;
++    root.set_padding_top(LengthValue::px(20.0))?;
++    root.set_padding_right(LengthValue::px(20.0))?;
++    root.set_padding_bottom(LengthValue::px(20.0))?;
++    root.set_padding_left(LengthValue::px(20.0))?;
++    let resource = document.register_image_resource(
++        "native-green-image",
++        "image/png",
++        "d49ce16b513fa1b4fcf1431bc2915799ee8effb452820f35e9e6fba251e8cafe",
++        include_bytes!(concat!(
++            env!("CARGO_MANIFEST_DIR"),
++            "/tests/assets/green-200.png"
++        ))
++        .to_vec(),
++    )?;
++    let container = Element::create(&document, &tag)?;
++    container.set_display(Display::Block)?;
++    container.set_box_sizing(box_sizing)?;
++    container.set_width(LengthValue::Computed(Length::fit_content()))?;
++    container.set_height(LengthValue::px(100.0))?;
++    container.set_background_color(Color::RED)?;
++    let border = || Border {
++        width: 0,
++        style: BorderStyle::None,
++        color: Color::BLACK,
++    };
++    container.set_border_top(border())?;
++    container.set_border_right(border())?;
++    container.set_border_bottom(border())?;
++    container.set_border_left(border())?;
++    container.set_margin_top(LengthValue::px(0.0))?;
++    container.set_margin_right(LengthValue::px(0.0))?;
++    container.set_margin_bottom(LengthValue::px(0.0))?;
++    container.set_margin_left(LengthValue::px(0.0))?;
++    container.set_padding_top(LengthValue::px(padding))?;
++    container.set_padding_right(LengthValue::px(padding))?;
++    container.set_padding_bottom(LengthValue::px(padding))?;
++    container.set_padding_left(LengthValue::px(padding))?;
++    root.append_child(&container)?;
++    let image = Element::create(&document, "img")?;
++    image.set_display(Display::Inline)?;
++    image.set_height(LengthValue::percent(100.0))?;
++    image.set_image_resource(resource, Some((200.0, 200.0)))?;
++    container.append_child(&image)?;
++
++    let before = format!(
++        "{{\"container\":{},\"image\":{}}}",
++        bounds_json(&container)?,
++        bounds_json(&image)?
++    );
++    std::fs::create_dir_all(&output)?;
++    std::fs::write(output.join("before.png"), document.render_to_png_buffer()?)?;
++    let calls = Rc::new(Cell::new(0));
++    let observed = calls.clone();
++    let target = container.downgrade();
++    container.on("click", move |_| {
++        target
++            .upgrade()
++            .expect("native container remains attached")
++            .set_height(LengthValue::px(150.0))
++            .expect("native height mutation");
++        observed.set(observed.get() + 1);
++    })?;
++    container.click()?;
++    if calls.get() != 1 {
++        return Err("native click callback did not run once".into());
++    }
++    let after = format!(
++        "{{\"container\":{},\"image\":{}}}",
++        bounds_json(&container)?,
++        bounds_json(&image)?
++    );
++    std::fs::write(output.join("after.png"), document.render_to_png_buffer()?)?;
++    std::fs::write(
++        output.join("geometry.json"),
++        format!("{{\"before\":{before},\"after\":{after}}}\n"),
++    )?;
++    let weak = image.downgrade();
++    drop(image);
++    drop(container);
++    drop(root);
++    drop(document);
++    if weak.upgrade().is_some() {
++        return Err("native callback retained document after teardown".into());
++    }
++    Ok(())
++}
+diff --git a/bindings/rust/openui/src/document.rs b/bindings/rust/openui/src/document.rs
+index a6f47d95..0b81b1e9 100644
+--- a/bindings/rust/openui/src/document.rs
++++ b/bindings/rust/openui/src/document.rs
+@@ -1291,6 +1291,108 @@ mod tests {
+         element
+     }
+ 
++    #[test]
++    fn native_fieldset_intrinsics_keep_natural_image_width_before_percentage_height() {
++        use openui_style::{Border, BorderStyle, BoxSizing, Color, Length, LineHeight};
++
++        const PNG: &[u8] = include_bytes!(concat!(
++            env!("CARGO_MANIFEST_DIR"),
++            "/tests/assets/green-200.png"
++        ));
++        for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
++            for tag in ["div", "fieldset"] {
++                let document = Document::with_font_collection(
++                    ViewportMetrics::from_logical_size(800.0, 600.0, scale).unwrap(),
++                    FontCollection::deterministic_test(),
++                )
++                .unwrap();
++                let root = document.body();
++                root.set_line_height(LineHeight::Number(1.0)).unwrap();
++                let resource = document
++                    .register_image_resource(
++                        "native-green-image",
++                        "image/png",
++                        "d49ce16b513fa1b4fcf1431bc2915799ee8effb452820f35e9e6fba251e8cafe",
++                        PNG.to_vec(),
++                    )
++                    .unwrap();
++                let container = Element::create(&document, tag).unwrap();
++                container.set_display(Display::Block).unwrap();
++                container
++                    .set_width(LengthValue::Computed(Length::fit_content()))
++                    .unwrap();
++                container.set_height(LengthValue::px(100.0)).unwrap();
++                container.set_box_sizing(BoxSizing::ContentBox).unwrap();
++                let border = || Border {
++                    width: 0,
++                    style: BorderStyle::None,
++                    color: Color::BLACK,
++                };
++                container.set_border_top(border()).unwrap();
++                container.set_border_right(border()).unwrap();
++                container.set_border_bottom(border()).unwrap();
++                container.set_border_left(border()).unwrap();
++                container.set_margin_top(LengthValue::px(0.0)).unwrap();
++                container.set_margin_right(LengthValue::px(0.0)).unwrap();
++                container.set_margin_bottom(LengthValue::px(0.0)).unwrap();
++                container.set_margin_left(LengthValue::px(0.0)).unwrap();
++                container.set_padding_top(LengthValue::px(0.0)).unwrap();
++                container.set_padding_right(LengthValue::px(0.0)).unwrap();
++                container.set_padding_bottom(LengthValue::px(0.0)).unwrap();
++                container.set_padding_left(LengthValue::px(0.0)).unwrap();
++                root.append_child(&container).unwrap();
++                let image = Element::create(&document, "img").unwrap();
++                image.set_display(Display::Inline).unwrap();
++                image.set_height(LengthValue::percent(100.0)).unwrap();
++                image
++                    .set_image_resource(resource, Some((200.0, 200.0)))
++                    .unwrap();
++                container.append_child(&image).unwrap();
++                // Pinned Chromium keeps the anonymous fieldset content's
++                // block-size indefinite during intrinsic measurement. Its
++                // natural 200px contribution differs from the div's 100px
++                // transferred contribution, while both displayed images are
++                // 100px wide after layout resolves their percentage height.
++                let before = container.bounding_rect().unwrap().unwrap();
++                let before_image = image.bounding_rect().unwrap().unwrap();
++                assert_eq!(before.width, if tag == "fieldset" { 200.0 } else { 100.0 });
++                assert_eq!(before.height, 100.0);
++                assert_eq!(before_image.width, 100.0);
++                assert_eq!(before_image.height, 100.0);
++
++                let calls = Rc::new(Cell::new(0));
++                let observed = calls.clone();
++                let target = container.downgrade();
++                container
++                    .on("click", move |_| {
++                        target
++                            .upgrade()
++                            .unwrap()
++                            .set_height(LengthValue::px(150.0))
++                            .unwrap();
++                        observed.set(observed.get() + 1);
++                    })
++                    .unwrap();
++                container.click().unwrap();
++                let after = container.bounding_rect().unwrap().unwrap();
++                let after_image = image.bounding_rect().unwrap().unwrap();
++                assert_eq!(calls.get(), 1);
++                assert_eq!(after.width, if tag == "fieldset" { 200.0 } else { 150.0 });
++                assert_eq!(after.height, 150.0);
++                assert_eq!(after_image.width, 150.0);
++                assert_eq!(after_image.height, 150.0);
++                assert_eq!(before.width, if tag == "fieldset" { 200.0 } else { 100.0 });
++                assert_eq!(before_image.width, 100.0);
++                let weak = image.downgrade();
++                drop(image);
++                drop(container);
++                drop(root);
++                drop(document);
++                assert!(weak.upgrade().is_none());
++            }
++        }
++    }
++
+     #[test]
+     fn explicit_raster_policy_survives_native_mutations_resize_and_owned_scenes() {
+         for policy in [
+diff --git a/bindings/rust/openui/tests/assets/green-200.png b/bindings/rust/openui/tests/assets/green-200.png
+new file mode 100644
+index 0000000000000000000000000000000000000000..1dcc392a6ef71e55302c40d41a547cf3f75a8f24
+GIT binary patch
+literal 275
+zcmeAS@N?(olHy`uVBq!ia0vp^CqS5y8Awi_W^)%vF$egBxH2>_%=x)=B9O~j;1OBO
+zz`!jG!i)^F=12eq*-JcqUD@xmi}ET8|5~)86DTC(>Eaj?;r{kuBap*zc)`!$_=gOk
+zj37=8n@9iy<Np^D)<BMAiEBiObAE1aYF-J0b5UwyNotBhd1gt5g1e`0KzJjcI8c!)
+zNKpz<$|@PGg2BkZ&{WsJT-U%b#L&pf$jr*XMBBi~%D_PR;Nfp58glbfGSez?YY3WC
+R?FH1p;OXk;vd$@?2>=uoN8A7a
+
+literal 0
+HcmV?d00001
+

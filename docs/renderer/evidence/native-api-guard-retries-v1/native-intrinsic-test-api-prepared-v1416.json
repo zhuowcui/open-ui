@@ -1,0 +1,22 @@
+{
+  "release_qualification": false,
+  "schema_version": 1,
+  "source_checkpoints": [
+    {
+      "branch": "agent/native-intrinsic-test-api-v1416",
+      "parent": "7d723caa7541882da6f403152b1432f0d45c50a8",
+      "production_unchanged": true,
+      "root": "/dev/shm/openui-native-intrinsic-test-api-7d723caa",
+      "source": "a6d386e48d864a5769ebdadd8bc8dea46e4eff21",
+      "test_assertions_unchanged": true
+    },
+    {
+      "branch": "agent/native-leading-test-api-v1416",
+      "parent": "3096820371973e6e17c8a94be188f1e8160e953b",
+      "production_unchanged": true,
+      "root": "/dev/shm/openui-native-leading-test-api-30968203",
+      "source": "ac1eb2a7a0426040dc5ebbd5f3ffa13194db96dc",
+      "test_assertions_unchanged": true
+    }
+  ]
+}

@@ -1,0 +1,215 @@
+{
+  "schema_version": 1,
+  "owner": "table_border_review",
+  "writer_pid": 3451787,
+  "Q2_summary": {
+    "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-chromium-matrices-v4526/expanded/expanded-summary.json",
+    "sha256": "379c2e58578a3799137deaa79a967ef0e485598943160dbb61dee2c803243b17"
+  },
+  "Q3_summary": {
+    "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-chromium-cohort-matrices-v4590/full/full-summary.json",
+    "sha256": "e65de0a65fba1e8479932c1436086044f9836d947c2b6bbc6d76ae9e27503ff2"
+  },
+  "all8_rows_identical_native_and_stock": true,
+  "Q2_actual_counts_for_these8": {
+    "exact": 3,
+    "different": 5,
+    "errors": 0
+  },
+  "Q3_actual_counts": {
+    "different": 5,
+    "errors": 0,
+    "exact": 3,
+    "profile_result_sha256": "6abced0aa484826d0b012cc84319c332e4c0a0dc051533d483d7fcd66bb6d25f",
+    "total": 8
+  },
+  "incorrect_baseline_preserved": "6/8 exact2diff belongs historical fb/4447, not Q2/5520; no new3 strict losses attributable to9ad2 column repair.",
+  "rows": [
+    {
+      "profile": "legacy-800x600@1",
+      "id": "wpt/css_break/flexbox_textarea-input-flex-items-in-multicol-crash",
+      "Q2": {
+        "status": "different",
+        "mismatched_pixels": 340,
+        "openui_rgba_sha256": "ac19e1201d4bf8e347f29922c66eea59c8e161aee503262384bab6ced5d5590c",
+        "chromium_rgba_sha256": "953124834aa96845dfa2bb510a7ab04a268bf25daafed5a368f379a2c4a08838",
+        "raster_configuration": "cpu-skia:deterministic-alias",
+        "font_profile": "registered-ahem",
+        "chromium_oracle_identity_sha256": "2db13276fc7cea94f1c6573d342e7955604dfc22c36a0417974ba946e160f015"
+      },
+      "Q3": {
+        "status": "different",
+        "mismatched_pixels": 340,
+        "openui_rgba_sha256": "ac19e1201d4bf8e347f29922c66eea59c8e161aee503262384bab6ced5d5590c",
+        "chromium_rgba_sha256": "953124834aa96845dfa2bb510a7ab04a268bf25daafed5a368f379a2c4a08838",
+        "raster_configuration": "cpu-skia:deterministic-alias",
+        "font_profile": "registered-ahem",
+        "chromium_oracle_identity_sha256": "2db13276fc7cea94f1c6573d342e7955604dfc22c36a0417974ba946e160f015"
+      },
+      "all_selected_fields_equal": true
+    },
+    {
+      "profile": "legacy-800x600@1",
+      "id": "wpt/css_multicol/multicol-span-all-children-height-007",
+      "Q2": {
+        "status": "exact",
+        "mismatched_pixels": 0,
+        "openui_rgba_sha256": "ede00ca19b4cbcd62f72e1a661bc78f9c1eda5398b20d0c58397889888b6a585",
+        "chromium_rgba_sha256": "ede00ca19b4cbcd62f72e1a661bc78f9c1eda5398b20d0c58397889888b6a585",
+        "raster_configuration": "cpu-skia:default",
+        "font_profile": "deterministic-test-collection",
+        "chromium_oracle_identity_sha256": "a0370d3c16bacfad0f2565703ece40936737f5e3b1b0617d3ddb2c87b289dc24"
+      },
+      "Q3": {
+        "status": "exact",
+        "mismatched_pixels": 0,
+        "openui_rgba_sha256": "ede00ca19b4cbcd62f72e1a661bc78f9c1eda5398b20d0c58397889888b6a585",
+        "chromium_rgba_sha256": "ede00ca19b4cbcd62f72e1a661bc78f9c1eda5398b20d0c58397889888b6a585",
+        "raster_configuration": "cpu-skia:default",
+        "font_profile": "deterministic-test-collection",
+        "chromium_oracle_identity_sha256": "a0370d3c16bacfad0f2565703ece40936737f5e3b1b0617d3ddb2c87b289dc24"
+      },
+      "all_selected_fields_equal": true
+    },
+    {
+      "profile": "mobile-375x667@2",
+      "id": "wpt/css_break/flexbox_textarea-input-flex-items-in-multicol-crash",
+      "Q2": {
+        "status": "different",
+        "mismatched_pixels": 1360,
+        "openui_rgba_sha256": "454ea8acf1bdb1df410cd8f94f54547592306fb3cd19821a6a0fdfeb8f1be259",
+        "chromium_rgba_sha256": "86a3be281bf3b76ac9de450a56674a2d15f682c5acd35b600817764d95e42f7c",
+        "raster_configuration": "cpu-skia:deterministic-alias",
+        "font_profile": "registered-ahem",
+        "chromium_oracle_identity_sha256": "e1929e2e5463227876e1a4ac1e0e0a4d5c509bc1fa786de184917bc4931d878e"
+      },
+      "Q3": {
+        "status": "different",
+        "mismatched_pixels": 1360,
+        "openui_rgba_sha256": "454ea8acf1bdb1df410cd8f94f54547592306fb3cd19821a6a0fdfeb8f1be259",
+        "chromium_rgba_sha256": "86a3be281bf3b76ac9de450a56674a2d15f682c5acd35b600817764d95e42f7c",
+        "raster_configuration": "cpu-skia:deterministic-alias",
+        "font_profile": "registered-ahem",
+        "chromium_oracle_identity_sha256": "e1929e2e5463227876e1a4ac1e0e0a4d5c509bc1fa786de184917bc4931d878e"
+      },
+      "all_selected_fields_equal": true
+    },
+    {
+      "profile": "mobile-375x667@2",
+      "id": "wpt/css_multicol/multicol-span-all-children-height-007",
+      "Q2": {
+        "status": "exact",
+        "mismatched_pixels": 0,
+        "openui_rgba_sha256": "af604fe0ce785854f2d81b5016ea05b8032192dd1be64fbbef936b86af0724bb",
+        "chromium_rgba_sha256": "af604fe0ce785854f2d81b5016ea05b8032192dd1be64fbbef936b86af0724bb",
+        "raster_configuration": "cpu-skia:default",
+        "font_profile": "deterministic-test-collection",
+        "chromium_oracle_identity_sha256": "247eddbf1417ce5702bf3103f3cd7ea0c8bbcaa33b45174fe503483d8c5c2783"
+      },
+      "Q3": {
+        "status": "exact",
+        "mismatched_pixels": 0,
+        "openui_rgba_sha256": "af604fe0ce785854f2d81b5016ea05b8032192dd1be64fbbef936b86af0724bb",
+        "chromium_rgba_sha256": "af604fe0ce785854f2d81b5016ea05b8032192dd1be64fbbef936b86af0724bb",
+        "raster_configuration": "cpu-skia:default",
+        "font_profile": "deterministic-test-collection",
+        "chromium_oracle_identity_sha256": "247eddbf1417ce5702bf3103f3cd7ea0c8bbcaa33b45174fe503483d8c5c2783"
+      },
+      "all_selected_fields_equal": true
+    },
+    {
+      "profile": "desktop-1280x720@1.25",
+      "id": "wpt/css_break/flexbox_textarea-input-flex-items-in-multicol-crash",
+      "Q2": {
+        "status": "different",
+        "mismatched_pixels": 700,
+        "openui_rgba_sha256": "0d436714ee52c067eec29392eb4b380db6e89101ba8f1dcd676965458ed6d42e",
+        "chromium_rgba_sha256": "a8942013adc0490f14767f4d0bc51efeeec0c9d887ba5b16f06a565b048875ed",
+        "raster_configuration": "cpu-skia:deterministic-alias",
+        "font_profile": "registered-ahem",
+        "chromium_oracle_identity_sha256": "926dc3f3a9dd4cd8568afe60c28a88c969891b290611a937a21c2f150b924fee"
+      },
+      "Q3": {
+        "status": "different",
+        "mismatched_pixels": 700,
+        "openui_rgba_sha256": "0d436714ee52c067eec29392eb4b380db6e89101ba8f1dcd676965458ed6d42e",
+        "chromium_rgba_sha256": "a8942013adc0490f14767f4d0bc51efeeec0c9d887ba5b16f06a565b048875ed",
+        "raster_configuration": "cpu-skia:deterministic-alias",
+        "font_profile": "registered-ahem",
+        "chromium_oracle_identity_sha256": "926dc3f3a9dd4cd8568afe60c28a88c969891b290611a937a21c2f150b924fee"
+      },
+      "all_selected_fields_equal": true
+    },
+    {
+      "profile": "desktop-1280x720@1.25",
+      "id": "wpt/css_multicol/multicol-span-all-children-height-007",
+      "Q2": {
+        "status": "different",
+        "mismatched_pixels": 216,
+        "openui_rgba_sha256": "c20f8987d73480a8158b1b8d8463759cbd125dfacb17c319eea35d2307b339fc",
+        "chromium_rgba_sha256": "6e15553b65e538bf0e1d13d896f642f7b77687e3b19090f4205d98b59ae6490b",
+        "raster_configuration": "cpu-skia:default",
+        "font_profile": "deterministic-test-collection",
+        "chromium_oracle_identity_sha256": "a94baf17122df99ad94128f958624e19a6a0060af1a408f9d3ab7e71cdc4fb20"
+      },
+      "Q3": {
+        "status": "different",
+        "mismatched_pixels": 216,
+        "openui_rgba_sha256": "c20f8987d73480a8158b1b8d8463759cbd125dfacb17c319eea35d2307b339fc",
+        "chromium_rgba_sha256": "6e15553b65e538bf0e1d13d896f642f7b77687e3b19090f4205d98b59ae6490b",
+        "raster_configuration": "cpu-skia:default",
+        "font_profile": "deterministic-test-collection",
+        "chromium_oracle_identity_sha256": "a94baf17122df99ad94128f958624e19a6a0060af1a408f9d3ab7e71cdc4fb20"
+      },
+      "all_selected_fields_equal": true
+    },
+    {
+      "profile": "desktop-1920x1080@1.5",
+      "id": "wpt/css_break/flexbox_textarea-input-flex-items-in-multicol-crash",
+      "Q2": {
+        "status": "different",
+        "mismatched_pixels": 934,
+        "openui_rgba_sha256": "02727ec0917a1ab87bcc4917a90dc9951148682cfaa720e91236e1e23b7d0def",
+        "chromium_rgba_sha256": "9a961414e894200fbea7956137c2c5a5a404306a7e4495be2ebbbd8bc633a23a",
+        "raster_configuration": "cpu-skia:deterministic-alias",
+        "font_profile": "registered-ahem",
+        "chromium_oracle_identity_sha256": "a6fee5365681b1efcca42029324833a1039d3501f1f393f3b51bd65530dd30c5"
+      },
+      "Q3": {
+        "status": "different",
+        "mismatched_pixels": 934,
+        "openui_rgba_sha256": "02727ec0917a1ab87bcc4917a90dc9951148682cfaa720e91236e1e23b7d0def",
+        "chromium_rgba_sha256": "9a961414e894200fbea7956137c2c5a5a404306a7e4495be2ebbbd8bc633a23a",
+        "raster_configuration": "cpu-skia:deterministic-alias",
+        "font_profile": "registered-ahem",
+        "chromium_oracle_identity_sha256": "a6fee5365681b1efcca42029324833a1039d3501f1f393f3b51bd65530dd30c5"
+      },
+      "all_selected_fields_equal": true
+    },
+    {
+      "profile": "desktop-1920x1080@1.5",
+      "id": "wpt/css_multicol/multicol-span-all-children-height-007",
+      "Q2": {
+        "status": "exact",
+        "mismatched_pixels": 0,
+        "openui_rgba_sha256": "8e74d534e9d69061c496235fad3ef164d4b4e36a1e66e7265fd0316354b3cd8f",
+        "chromium_rgba_sha256": "8e74d534e9d69061c496235fad3ef164d4b4e36a1e66e7265fd0316354b3cd8f",
+        "raster_configuration": "cpu-skia:default",
+        "font_profile": "deterministic-test-collection",
+        "chromium_oracle_identity_sha256": "c3ef3385209d5d6a45b097cadc41cda81ae8b74dd2a3ef5af0b4968f6e9471d5"
+      },
+      "Q3": {
+        "status": "exact",
+        "mismatched_pixels": 0,
+        "openui_rgba_sha256": "8e74d534e9d69061c496235fad3ef164d4b4e36a1e66e7265fd0316354b3cd8f",
+        "chromium_rgba_sha256": "8e74d534e9d69061c496235fad3ef164d4b4e36a1e66e7265fd0316354b3cd8f",
+        "raster_configuration": "cpu-skia:default",
+        "font_profile": "deterministic-test-collection",
+        "chromium_oracle_identity_sha256": "c3ef3385209d5d6a45b097cadc41cda81ae8b74dd2a3ef5af0b4968f6e9471d5"
+      },
+      "all_selected_fields_equal": true
+    }
+  ],
+  "qualified": false,
+  "executed_native_or_browser": false
+}

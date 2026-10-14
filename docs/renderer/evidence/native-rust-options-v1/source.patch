@@ -1,0 +1,380 @@
+diff --git a/bindings/rust/openui/examples/native_raster_options.rs b/bindings/rust/openui/examples/native_raster_options.rs
+new file mode 100644
+index 00000000..d1f482cc
+--- /dev/null
++++ b/bindings/rust/openui/examples/native_raster_options.rs
+@@ -0,0 +1,95 @@
++//! Select immutable raster options and mutate a retained native document.
++use openui::prelude::*;
++use std::{cell::Cell, path::PathBuf, rc::Rc};
++
++fn main() -> Result<(), Box<dyn std::error::Error>> {
++    let mut arguments = std::env::args().skip(1);
++    let output = arguments.next().map(PathBuf::from);
++    if arguments.next().is_some() {
++        return Err("expected at most one output directory".into());
++    }
++    for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
++        let selected = RasterConfiguration::deterministic_aliased(true);
++        let document = Document::with_font_collection_and_options(
++            ViewportMetrics::from_logical_size(64.0, 48.0, scale)?,
++            FontCollection::deterministic_test(),
++            EngineOptions {
++                raster_configuration: selected,
++            },
++        )?;
++        let root = document.body();
++        root.set_background_color(Color::WHITE)?;
++        let card = Element::create(&document, "div")?;
++        card.set_width(LengthValue::px(20.0))?;
++        card.set_height(LengthValue::px(20.0))?;
++        card.set_border(Border {
++            width: 4.0,
++            style: BorderStyle::Solid,
++            color: Color::BLACK,
++        })?;
++        card.set_background_color(Color::BLUE)?;
++        root.append_child(&card)?;
++        let saved_configuration = document.raster_configuration()?;
++        assert_eq!(saved_configuration, selected);
++        let before = card.bounding_rect()?.ok_or("native card bounds required")?;
++        assert_eq!((before.width, before.height), (28.0, 28.0));
++        let directory = output
++            .as_ref()
++            .map(|path| path.join(format!("scale-{scale}")));
++        if let Some(path) = &directory {
++            std::fs::create_dir_all(path)?;
++            std::fs::write(path.join("before.png"), document.render_to_png_buffer()?)?;
++        }
++        let calls = Rc::new(Cell::new(0));
++        let observed = Rc::clone(&calls);
++        card.on("click", move |event| {
++            let target = event.target().expect("live native event target");
++            target.set_border_top_style(BorderStyle::None).unwrap();
++            target.set_background_color(Color::RED).unwrap();
++            observed.set(observed.get() + 1);
++        })?;
++        card.click()?;
++        assert_eq!(calls.get(), 1);
++        let after = card
++            .bounding_rect()?
++            .ok_or("mutated card bounds required")?;
++        assert_eq!((after.width, after.height), (28.0, 24.0));
++        assert_eq!(document.raster_configuration()?, saved_configuration);
++        let first = document.render_to_png_buffer()?;
++        assert_eq!(first, document.clone().render_to_png_buffer()?);
++        if let Some(path) = &directory {
++            std::fs::write(path.join("after.png"), first)?;
++        }
++        let weak = card.downgrade();
++        drop(card);
++        drop(root);
++        drop(document);
++        assert!(weak.upgrade().is_none());
++        println!("native raster options: scale={scale} callback=1 configuration/bounds passed");
++    }
++    let options = EngineOptions {
++        raster_configuration: RasterConfiguration::deterministic_aliased(false),
++    };
++    let app = App::builder()
++        .engine_options(options)
++        .backend(BackendPreference::Software)
++        .build()?;
++    assert_eq!(
++        app.document().raster_configuration()?,
++        options.raster_configuration
++    );
++    let headless = HeadlessApp::with_options(
++        ViewportMetrics::from_logical_size(64.0, 48.0, 1.5)?,
++        options,
++    )?;
++    headless
++        .document()
++        .body()
++        .set_background_color(Color::WHITE)?;
++    assert_eq!(
++        headless.document().raster_configuration()?,
++        options.raster_configuration
++    );
++    assert_eq!(headless.render_at(0.0)?, headless.render_at(0.0)?);
++    Ok(())
++}
+diff --git a/bindings/rust/openui/src/app.rs b/bindings/rust/openui/src/app.rs
+index 6faebabb..5bdd7c53 100644
+--- a/bindings/rust/openui/src/app.rs
++++ b/bindings/rust/openui/src/app.rs
+@@ -5,7 +5,7 @@ use crate::scope::{create_scope, dispose_scope};
+ use crate::style::{Bitmap, Error};
+ use crate::view_node::{mount_view, IntoView};
+ use crate::{Document, ScopeId};
+-use openui_engine::ViewportMetrics;
++use openui_engine::{EngineOptions, ViewportMetrics};
+ use std::cell::Cell;
+ #[cfg(all(feature = "linux", target_os = "linux"))]
+ use std::cell::RefCell;
+@@ -51,6 +51,7 @@ impl Default for WindowOptions {
+ #[derive(Debug, Clone, Default)]
+ pub struct AppBuilder {
+     options: WindowOptions,
++    engine_options: EngineOptions,
+ }
+ 
+ /// Cloneable shutdown request for the application's owning UI thread.
+@@ -79,6 +80,12 @@ impl AppBuilder {
+         self
+     }
+ 
++    /// Select immutable engine options independently of window presentation.
++    pub fn engine_options(mut self, options: EngineOptions) -> Self {
++        self.engine_options = options;
++        self
++    }
++
+     pub fn build(self) -> Result<App, Error> {
+         let viewport = ViewportMetrics::from_logical_size(
+             self.options.size.width,
+@@ -86,7 +93,7 @@ impl AppBuilder {
+             1.0,
+         )?;
+         Ok(App {
+-            document: Document::with_viewport_metrics(viewport)?,
++            document: Document::with_options(viewport, self.engine_options)?,
+             options: self.options,
+             root_scope: None,
+             exit_requested: AppExitHandle::default(),
+@@ -465,9 +472,14 @@ pub struct HeadlessApp {
+ 
+ impl HeadlessApp {
+     pub fn new(viewport: ViewportMetrics) -> Result<Self, Error> {
++        Self::with_options(viewport, EngineOptions::default())
++    }
++
++    /// Create a headless application with explicit, immutable engine options.
++    pub fn with_options(viewport: ViewportMetrics, options: EngineOptions) -> Result<Self, Error> {
+         Ok(Self {
+             app: App {
+-                document: Document::with_viewport_metrics(viewport)?,
++                document: Document::with_options(viewport, options)?,
+                 options: WindowOptions {
+                     size: LogicalSize::new(viewport.logical_width(), viewport.logical_height()),
+                     ..WindowOptions::default()
+diff --git a/bindings/rust/openui/src/document.rs b/bindings/rust/openui/src/document.rs
+index 2b3bbdf7..4398149a 100644
+--- a/bindings/rust/openui/src/document.rs
++++ b/bindings/rust/openui/src/document.rs
+@@ -9,9 +9,9 @@ use openui_compositor::SoftwareCompositor;
+ use openui_dom::{ElementTag, FormControlRole};
+ use openui_engine::{
+     AccessibilityAction, AccessibilityTreeUpdate, AnimationEvent, AnimationEventKind, AnimationId,
+-    AnimationState, ControlAdjustment, EditCommand, Engine, EventPhase as EngineEventPhase,
+-    FocusOrigin, NodeHandle, PointerEventKind, ScrollAnimationId, TextDirection, TextUnit,
+-    ViewportMetrics,
++    AnimationState, ControlAdjustment, EditCommand, Engine, EngineOptions,
++    EventPhase as EngineEventPhase, FocusOrigin, NodeHandle, PointerEventKind, RasterConfiguration,
++    ScrollAnimationId, TextDirection, TextUnit, ViewportMetrics,
+ };
+ use openui_style::ImageResourceId;
+ use openui_text::{
+@@ -59,18 +59,34 @@ impl Document {
+     }
+ 
+     pub fn with_viewport_metrics(viewport: ViewportMetrics) -> Result<Self, Error> {
+-        Self::with_font_collection(viewport, FontCollection::system())
++        Self::with_options(viewport, EngineOptions::default())
++    }
++
++    /// Create a native document with an explicit, immutable engine configuration.
++    /// Backend selection is retained by this document; it never probes the environment.
++    pub fn with_options(viewport: ViewportMetrics, options: EngineOptions) -> Result<Self, Error> {
++        Self::with_font_collection_and_options(viewport, FontCollection::system(), options)
+     }
+ 
+     pub fn with_font_collection(
+         viewport: ViewportMetrics,
+         font_collection: std::sync::Arc<FontCollection>,
++    ) -> Result<Self, Error> {
++        Self::with_font_collection_and_options(viewport, font_collection, EngineOptions::default())
++    }
++
++    /// Create a native document with application-supplied fonts and immutable options.
++    pub fn with_font_collection_and_options(
++        viewport: ViewportMetrics,
++        font_collection: std::sync::Arc<FontCollection>,
++        options: EngineOptions,
+     ) -> Result<Self, Error> {
+         Ok(Self {
+             inner: Rc::new(DocumentInner {
+-                engine: Rc::new(RefCell::new(Engine::new_with_font_collection(
++                engine: Rc::new(RefCell::new(Engine::new_with_font_collection_and_options(
+                     viewport,
+                     font_collection,
++                    options,
+                 )?)),
+                 listeners: RefCell::new(HashMap::new()),
+                 resource_provider: RefCell::new(None),
+@@ -85,6 +101,11 @@ impl Document {
+         })
+     }
+ 
++    /// Return an owned copy of the document's immutable raster configuration.
++    pub fn raster_configuration(&self) -> Result<RasterConfiguration, Error> {
++        self.with_engine(Engine::raster_configuration)
++    }
++
+     /// Integration boundary for another native language facade over this engine.
+     /// The shared cell remains confined to its owning thread. Callers must release
+     /// every borrow before dispatching input or invoking application callbacks.
+diff --git a/bindings/rust/openui/src/prelude.rs b/bindings/rust/openui/src/prelude.rs
+index 4febd3dc..40a530f9 100644
+--- a/bindings/rust/openui/src/prelude.rs
++++ b/bindings/rust/openui/src/prelude.rs
+@@ -20,7 +20,7 @@ pub use crate::view_node::{mount_view, IntoView, ViewNode};
+ pub use crate::ElementTag;
+ pub use crate::{
+     AccessibilityAction, AccessibilityLive, AccessibilityRelation, AccessibilityRole,
+-    ScrollMetrics, ViewportAuthority, ViewportMetrics,
++    EngineOptions, RasterConfiguration, ScrollMetrics, ViewportAuthority, ViewportMetrics,
+ };
+ pub use openui_macros::{component, view};
+ pub use openui_text::{
+diff --git a/bindings/rust/openui/tests/native_raster_options.rs b/bindings/rust/openui/tests/native_raster_options.rs
+new file mode 100644
+index 00000000..e7cee8f7
+--- /dev/null
++++ b/bindings/rust/openui/tests/native_raster_options.rs
+@@ -0,0 +1,135 @@
++use openui::prelude::*;
++use std::cell::Cell;
++use std::rc::Rc;
++
++#[test]
++fn native_raster_selection_survives_callbacks_cloning_and_resize() {
++    for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
++        let selected = RasterConfiguration::deterministic_aliased(true);
++        let document = Document::with_font_collection_and_options(
++            ViewportMetrics::from_logical_size(32.0, 24.0, scale).unwrap(),
++            FontCollection::deterministic_test(),
++            EngineOptions {
++                raster_configuration: selected,
++            },
++        )
++        .unwrap();
++        let copy = document.clone();
++        let original = document.raster_configuration().unwrap();
++        let root = document.body();
++        root.set_background_color(Color::WHITE).unwrap();
++        let card = Element::create(&document, "div").unwrap();
++        card.set_width(LengthValue::px(8.0)).unwrap();
++        card.set_height(LengthValue::px(8.0)).unwrap();
++        card.set_background_color(Color::RED).unwrap();
++        root.append_child(&card).unwrap();
++        let before = card.bounding_rect().unwrap().unwrap();
++        let before_pixels = document.render_to_png_buffer().unwrap();
++        let calls = Rc::new(Cell::new(0));
++        let count = Rc::clone(&calls);
++        card.on("click", move |event| {
++            event
++                .target()
++                .unwrap()
++                .set_background_color(Color::BLUE)
++                .unwrap();
++            count.set(count.get() + 1);
++        })
++        .unwrap();
++        card.click().unwrap();
++        assert_eq!(calls.get(), 1);
++        document
++            .set_viewport(ViewportMetrics::from_logical_size(48.0, 32.0, scale).unwrap())
++            .unwrap();
++        assert_eq!(card.bounding_rect().unwrap().unwrap(), before);
++        assert_eq!(document.raster_configuration().unwrap(), selected);
++        assert_eq!(copy.raster_configuration().unwrap(), original);
++        let frame = copy.render_to_bitmap().unwrap();
++        assert_eq!(
++            (frame.width(), frame.height()),
++            ((48.0 * scale) as u32, (32.0 * scale) as u32)
++        );
++        let offset = frame.stride() + 4;
++        assert_eq!(&frame.pixels()[offset..offset + 4], &[0, 0, 255, 255]);
++        let after_pixels = document.render_to_png_buffer().unwrap();
++        assert_ne!(before_pixels, after_pixels);
++        assert_eq!(after_pixels, copy.render_to_png_buffer().unwrap());
++        let weak = card.downgrade();
++        drop(card);
++        drop(root);
++        drop(copy);
++        drop(document);
++        assert!(weak.upgrade().is_none());
++    }
++}
++
++#[test]
++fn default_native_constructors_preserve_rendering_and_configuration() {
++    let viewport = ViewportMetrics::from_logical_size(32.0, 24.0, 1.25).unwrap();
++    let fonts = FontCollection::deterministic_test();
++    let existing = Document::with_font_collection(viewport, fonts.clone()).unwrap();
++    let explicit =
++        Document::with_font_collection_and_options(viewport, fonts, EngineOptions::default())
++            .unwrap();
++    for document in [&existing, &explicit] {
++        let root = document.body();
++        root.set_background_color(Color::WHITE).unwrap();
++        root.set_font_family(FontFamilyList::single("Ahem"))
++            .unwrap();
++        root.set_font_size(LengthValue::px(16.0)).unwrap();
++        root.set_text("X").unwrap();
++        assert_eq!(
++            document.raster_configuration().unwrap(),
++            RasterConfiguration::default()
++        );
++    }
++    assert_eq!(
++        existing.render_to_png_buffer().unwrap(),
++        explicit.render_to_png_buffer().unwrap()
++    );
++}
++
++#[test]
++fn window_and_headless_apps_keep_explicit_native_raster_selection() {
++    let selected = RasterConfiguration::deterministic_aliased(false);
++    let options = EngineOptions {
++        raster_configuration: selected,
++    };
++    let app = App::builder()
++        .engine_options(options)
++        .backend(BackendPreference::Software)
++        .build()
++        .unwrap();
++    assert_eq!(app.document().raster_configuration().unwrap(), selected);
++    let headless = HeadlessApp::with_options(
++        ViewportMetrics::from_logical_size(32.0, 24.0, 1.5).unwrap(),
++        options,
++    )
++    .unwrap();
++    let root = headless.document().body();
++    root.set_background_color(Color::RED).unwrap();
++    let first = headless.render_at(0.0).unwrap();
++    let second = headless.render_at(0.0).unwrap();
++    assert_eq!(
++        headless.document().raster_configuration().unwrap(),
++        selected
++    );
++    assert_eq!((first.width(), first.height()), (48, 36));
++    assert_eq!(first.pixels(), second.pixels());
++    assert_eq!(&first.pixels()[..4], &[255, 0, 0, 255]);
++}
++
++#[test]
++fn selecting_ganesh_does_not_fall_back_to_cpu_raster() {
++    let selected = RasterConfiguration::chromium_linux_ganesh();
++    let document = Document::with_options(
++        ViewportMetrics::from_logical_size(32.0, 24.0, 1.0).unwrap(),
++        EngineOptions {
++            raster_configuration: selected,
++        },
++    )
++    .unwrap();
++    document.body().set_background_color(Color::RED).unwrap();
++    assert!(document.render_to_bitmap().is_err());
++    assert_eq!(document.raster_configuration().unwrap(), selected);
++}

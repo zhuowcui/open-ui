@@ -1,0 +1,2491 @@
+diff --git a/bindings/rust/.cargo/config.chromium.toml b/bindings/rust/.cargo/config.chromium.toml
+index 8011d0eb..5f9e5ca5 100644
+--- a/bindings/rust/.cargo/config.chromium.toml
++++ b/bindings/rust/.cargo/config.chromium.toml
+@@ -19,4 +19,4 @@ BINDGEN_EXTRA_CLANG_ARGS = "--sysroot=/home/nero/chromium/src/build/linux/debian
+ SKIA_NINJA_COMMAND = "/home/nero/chromium/src/third_party/ninja/ninja"
+ PKG_CONFIG_SYSROOT_DIR = "/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot"
+ CXXFLAGS = "--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot"
+-SKIA_GN_ARGS = 'extra_cflags += [ "-DSK_SUPPORT_LEGACY_CONIC_CHOP", "-DSK_USE_FREETYPE_EMBOLDEN", "-DSK_GAMMA_EXPONENT=1.2", "-DSK_GAMMA_CONTRAST=0.2", "-fno-strict-aliasing", "-msse3", "--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot" ]'
++SKIA_GN_ARGS = 'extra_cflags += [ "-DSK_SUPPORT_LEGACY_CONIC_CHOP", "-DSK_ENABLE_LEGACY_SHADERCONTEXT", "-DSK_USE_FREETYPE_EMBOLDEN", "-DSK_GAMMA_EXPONENT=1.2", "-DSK_GAMMA_CONTRAST=0.2", "-fno-strict-aliasing", "-msse3", "--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot" ]'
+diff --git a/bindings/rust/openui-engine/src/lib.rs b/bindings/rust/openui-engine/src/lib.rs
+index b859cef1..887fa2f6 100644
+--- a/bindings/rust/openui-engine/src/lib.rs
++++ b/bindings/rust/openui-engine/src/lib.rs
+@@ -696,6 +696,24 @@ impl Engine {
+         Ok(handle)
+     }
+ 
++    /// Create a native SVG foreignObject viewport for retained UI children.
++    /// Width and height describe the viewport, including the fragment bounds;
++    /// border and padding do not enlarge it. Authored children, style, events,
++    /// and lifecycle use the same engine as ordinary elements. Its native
++    /// container kind is [`ElementTag::Div`].
++    pub fn create_svg_foreign_object(&mut self) -> Result<NodeHandle, EngineError> {
++        let handle = self.create_element(ElementTag::Div)?;
++        let node = self.resolve(handle)?;
++        let data = self.document.node_mut(node);
++        data.is_svg_foreign_object = true;
++        data.style.update_derived(|style| {
++            style.display = Display::Block;
++            style.overflow_x = openui_style::Overflow::Hidden;
++            style.overflow_y = openui_style::Overflow::Hidden;
++        });
++        Ok(handle)
++    }
++
+     fn register_native_node(&mut self, node: NodeId) -> NodeHandle {
+         let index = if let Some(index) = self.free_slots.pop() {
+             let slot = &mut self.slots[index as usize];
+diff --git a/bindings/rust/openui-ffi/README.md b/bindings/rust/openui-ffi/README.md
+index bbe0a7e3..c28d7007 100644
+--- a/bindings/rust/openui-ffi/README.md
++++ b/bindings/rust/openui-ffi/README.md
+@@ -16,7 +16,7 @@ schemas:
+ Regenerate with `python3 tools/ffi/generate_ffi.py`, or verify without writing
+ with `python3 tools/ffi/generate_ffi.py --check`. After building the crate,
+ `python3 tools/ffi/verify_abi.py` checks exact exports, compiles C and C++
+-consumers, and runs eight headless C examples and three C++ consumers.
++consumers, and runs nine headless C examples and four C++ consumers.
+ 
+ All opaque handles are generation-checked and thread-affine. Strings are
+ length-delimited UTF-8. Every status failure records a thread-local structured
+@@ -84,6 +84,28 @@ exercise these operations directly through the public native API at five
+ scales. Nested scrolling, scrollbar pointer/keyboard input, and accessibility
+ qualification remain separate work.
+ 
++## Native SVG viewport
++
++`oui_element_create(document, OUI_ELEMENT_SVG_FOREIGN_OBJECT, &element)` calls
++the shared Rust foreignObject viewport constructor. Width and height describe
++the fixed viewport, including border and padding, regardless of box sizing.
++The native container uses ordinary element handles, styles, events and document
++ownership; place it under a native `OUI_ELEMENT_SVG` parent for SVG content.
++The new element-tag value is appended after the existing 0–38 values. All
++110 exports, struct layouts and the ABI version remain unchanged; the generated
++header checksum records the additive enum value.
++
++The [C consumer](../../../examples/c_v02/svg_viewport.c) and its
++[C++ build](../../../examples/c_v02/svg_viewport.cc) exercise viewport bounds,
++border/padding and box-sizing mutation from a native click callback,
++detach/reattach and document teardown at five scales. An ordinary native block
++also changes from content-box to border-box sizing through the same callback;
++the SVG viewport keeps its fixed dimensions. Both sizing literals use the
++shared Rust style conversion and an owned C compound value. This implementation is
++pending consuming-application verification and complete renderer qualification;
++SVG coordinate/transform APIs and release-lab operation remain open. It does
++not execute JavaScript.
++
+ ## Native keyboard and text input
+ 
+ `oui_document_dispatch_key_input_v1` sends a logical key and separately
+diff --git a/bindings/rust/openui-ffi/src/lib.rs b/bindings/rust/openui-ffi/src/lib.rs
+index a5e2330b..76da4e93 100644
+--- a/bindings/rust/openui-ffi/src/lib.rs
++++ b/bindings/rust/openui-ffi/src/lib.rs
+@@ -1217,7 +1217,14 @@ pub extern "C" fn oui_element_create(
+             return Err(invalid("out_element is null"));
+         }
+         let state = document(document_handle as usize)?;
+-        let node = borrow_engine_mut(&state)?.create_element(element_tag(tag)?)?;
++        let node = {
++            let mut engine = borrow_engine_mut(&state)?;
++            if tag == 39 {
++                engine.create_svg_foreign_object()?
++            } else {
++                engine.create_element(element_tag(tag)?)?
++            }
++        };
+         write_element_handle(out_element, &state, node)
+     })
+ }
+diff --git a/bindings/rust/openui-layout/src/block.rs b/bindings/rust/openui-layout/src/block.rs
+index fa78039a..ac805e58 100644
+--- a/bindings/rust/openui-layout/src/block.rs
++++ b/bindings/rust/openui-layout/src/block.rs
+@@ -1532,6 +1532,56 @@ pub(crate) fn block_layout_contents(
+ ) -> Fragment {
+     let physical_style = &doc.node(node_id).style;
+ 
++    // SVG foreignObject width/height describe its viewport, including the
++    // physical fragment, regardless of CSS box-sizing and border/padding.
++    // LayoutSVGForeignObject::UpdateSVGLayout supplies fixed logical sizes
++    // to BlockNode::Layout without inflating them to fit the decoration.
++    let svg_space = doc.node(node_id).is_svg_foreign_object.then(|| {
++        let (width_basis, height_basis) = if space.writing_direction.is_horizontal() {
++            (
++                space.percentage_resolution_inline_size,
++                space.percentage_resolution_block_size,
++            )
++        } else {
++            (
++                space.percentage_resolution_block_size,
++                space.percentage_resolution_inline_size,
++            )
++        };
++        let width = resolve_length(
++            &physical_style.width,
++            width_basis,
++            LayoutUnit::zero(),
++            LayoutUnit::zero(),
++        )
++        .clamp_negative_to_zero();
++        let height = resolve_length(
++            &physical_style.height,
++            height_basis,
++            LayoutUnit::zero(),
++            LayoutUnit::zero(),
++        )
++        .clamp_negative_to_zero();
++        let mut viewport_space = space.clone();
++        (
++            viewport_space.available_inline_size,
++            viewport_space.available_block_size,
++        ) = if space.writing_direction.is_horizontal() {
++            (width, height)
++        } else {
++            (height, width)
++        };
++        viewport_space.percentage_resolution_inline_size = viewport_space.available_inline_size;
++        viewport_space.percentage_resolution_block_size = viewport_space.available_block_size;
++        viewport_space.is_fixed_inline_size = true;
++        viewport_space.is_fixed_block_size = true;
++        viewport_space.is_new_formatting_context = true;
++        viewport_space.is_initial_block_size_indefinite = false;
++        viewport_space.exclusion_space = None;
++        viewport_space
++    });
++    let space = svg_space.as_ref().unwrap_or(space);
++
+     if doc.node(node_id).replaced.is_some() {
+         return replaced_layout(doc, node_id, space);
+     }
+@@ -1745,7 +1795,9 @@ pub(crate) fn block_layout_contents(
+     }
+ 
+     // The total border-box inline size
+-    let border_box_inline = if style.box_sizing == BoxSizing::BorderBox {
++    let border_box_inline = if doc.node(node_id).is_svg_foreign_object {
++        space.available_inline_size
++    } else if style.box_sizing == BoxSizing::BorderBox {
+         content_inline_size.max_of(border_padding_inline)
+     } else {
+         content_inline_size + border_padding_inline
+@@ -8329,6 +8381,9 @@ fn resolve_block_size(
+     content_inline_size: LayoutUnit,
+     is_viewport: bool,
+ ) -> LayoutUnit {
++    if doc.node(node_id).is_svg_foreign_object {
++        return space.available_block_size;
++    }
+     // When flex layout determines the exact block size, use it directly.
+     if space.is_fixed_block_size || space.stretch_block_size {
+         let available = space.available_block_size;
+diff --git a/bindings/rust/openui-paint/src/content_layer.rs b/bindings/rust/openui-paint/src/content_layer.rs
+new file mode 100644
+index 00000000..d4a0579b
+--- /dev/null
++++ b/bindings/rust/openui-paint/src/content_layer.rs
+@@ -0,0 +1,177 @@
++//! Immutable document content and the metadata used before layer raster.
++
++use openui_dom::NodeId;
++use openui_style::Color;
++use skia_safe::{BlendMode, Canvas, ClipOp, Contains, Picture, Rect};
++
++/// A retained scrolling content recording, independent of viewport controls.
++#[derive(Clone)]
++pub struct RecordedContentLayer {
++    pub node_id: NodeId,
++    pub bounds: Rect,
++    pub background_color: Color,
++    pub rect_known_to_be_opaque: Rect,
++    pub contents_opaque: bool,
++    pub scroll_translation: (f32, f32),
++    pub picture: Picture,
++    pub(crate) paint_record: crate::paint_record::LayerPaintRecord,
++}
++
++impl RecordedContentLayer {
++    pub(crate) fn replay(&self, canvas: &Canvas, scale: f64) {
++        // cc::RasterSource clears the boundary of opaque recordings before
++        // display-list playback. At non-unit raster scales a boundary texel
++        // can receive partial coverage despite the layer's opaque interior.
++        // Direct picture composition has no sampled texel outside the quad;
++        // the external texture guard must not be painted into the frame.
++        if self.contents_opaque {
++            let scale = scale as f32;
++            let physical = Rect::from_ltrb(
++                self.bounds.left * scale,
++                self.bounds.top * scale,
++                self.bounds.right * scale,
++                self.bounds.bottom * scale,
++            );
++            let left_partial = physical.left.fract() != 0.0;
++            let top_partial = physical.top.fract() != 0.0;
++            let trailing_partial = scale != 1.0;
++            let trailing_guard = if trailing_partial { 1.0 } else { 0.0 };
++            if left_partial || top_partial || trailing_partial {
++                let outer = Rect::from_ltrb(
++                    physical.left.floor(),
++                    physical.top.floor(),
++                    physical.right.ceil(),
++                    physical.bottom.ceil(),
++                );
++                let inner = Rect::from_ltrb(
++                    outer.left + if left_partial { 1.0 } else { 0.0 },
++                    outer.top + if top_partial { 1.0 } else { 0.0 },
++                    physical.right.ceil() - trailing_guard,
++                    physical.bottom.ceil() - trailing_guard,
++                );
++                let logical = |rect: Rect| {
++                    Rect::from_ltrb(
++                        rect.left / scale,
++                        rect.top / scale,
++                        rect.right / scale,
++                        rect.bottom / scale,
++                    )
++                };
++                // A picture recorder's logical clip query can discard a
++                // subpixel band which is visible after physical scaling.
++                // Select visible tiles from the parent clip before recording
++                // that band; raster playback owns its physical coverage.
++                let visible = canvas.local_clip_bounds();
++                canvas.save();
++                canvas.clip_rect(logical(outer), ClipOp::Intersect, false);
++                if !inner.is_empty() {
++                    canvas.clip_rect(logical(inner), ClipOp::Difference, false);
++                }
++                self.clear_boundary_tiles(canvas, scale, physical, inner, visible);
++                canvas.restore();
++            }
++        }
++        canvas.draw_picture(&self.picture, None, None);
++    }
++
++    fn clear_boundary_tiles(
++        &self,
++        canvas: &Canvas,
++        scale: f32,
++        physical: Rect,
++        inner: Rect,
++        visible: Option<Rect>,
++    ) {
++        let background = skia_safe::Color4f::new(
++            self.background_color.r,
++            self.background_color.g,
++            self.background_color.b,
++            self.background_color.a,
++        );
++        if !self.paint_record.supports_analysis() {
++            canvas.draw_color(background, BlendMode::Src);
++            return;
++        }
++        let Some(visible) = visible else {
++            canvas.draw_color(background, BlendMode::Src);
++            return;
++        };
++        // Pinned Linux CPU tilings use 256 texels with one border texel.
++        // cc::TilingData partitions geometry at 255, 509, ... while each
++        // tile's analysis includes its border. Solid-color tiles bypass
++        // normal raster playback and therefore its background-hint clear.
++        let axis = |length: f32, visible_lo: f32, visible_hi: f32| {
++            let size = (f64::from(length.ceil()).min(f64::from(i32::MAX))) as i64;
++            let count = (1 + (size - 3) / 254).max(1);
++            let first = (((visible_lo - 1.0) / 254.0).floor() as i64).clamp(0, count - 1);
++            let last = ((visible_hi / 254.0).ceil() as i64).clamp(first, count - 1);
++            (first..=last)
++                .map(|index| {
++                    let lo = 254 * index + i64::from(index != 0);
++                    let hi = (254 * (index + 1) + 1 + i64::from(index + 1 == count)).min(size);
++                    (
++                        lo as f32,
++                        hi as f32,
++                        (254 * index) as f32,
++                        (254 * index + 256).min(size) as f32,
++                    )
++                })
++                .collect::<Vec<_>>()
++        };
++        let columns = axis(
++            self.bounds.width() * scale,
++            visible.left * scale - physical.left,
++            visible.right * scale - physical.left,
++        );
++        let rows = axis(
++            self.bounds.height() * scale,
++            visible.top * scale - physical.top,
++            visible.bottom * scale - physical.top,
++        );
++        for &(top, bottom, analysis_top, analysis_bottom) in &rows {
++            for &(left, right, analysis_left, analysis_right) in &columns {
++                let tile = Rect::from_ltrb(
++                    physical.left + left,
++                    physical.top + top,
++                    physical.left + right,
++                    physical.top + bottom,
++                );
++                if !inner.is_empty() && inner.contains(tile) {
++                    continue;
++                }
++                let query = Rect::from_ltrb(
++                    (self.bounds.left + analysis_left / scale)
++                        .floor()
++                        .max(self.bounds.left),
++                    (self.bounds.top + analysis_top / scale)
++                        .floor()
++                        .max(self.bounds.top),
++                    (self.bounds.left + analysis_right / scale)
++                        .ceil()
++                        .min(self.bounds.right),
++                    (self.bounds.top + analysis_bottom / scale)
++                        .ceil()
++                        .min(self.bounds.bottom),
++                );
++                let color = self
++                    .paint_record
++                    .solid_color(query)
++                    .filter(|color| color.a == 1.0)
++                    .unwrap_or(background);
++                canvas.save();
++                canvas.clip_rect(
++                    Rect::from_ltrb(
++                        tile.left / scale,
++                        tile.top / scale,
++                        tile.right / scale,
++                        tile.bottom / scale,
++                    ),
++                    ClipOp::Intersect,
++                    false,
++                );
++                canvas.draw_color(color, BlendMode::Src);
++                canvas.restore();
++            }
++        }
++    }
++}
+diff --git a/bindings/rust/openui-paint/src/lib.rs b/bindings/rust/openui-paint/src/lib.rs
+index f2ca4dc2..59f0e884 100644
+--- a/bindings/rust/openui-paint/src/lib.rs
++++ b/bindings/rust/openui-paint/src/lib.rs
+@@ -6,14 +6,17 @@
+ //! This renders layout fragments to a Skia canvas using the exact same
+ //! draw calls, paint flags, and coordinate handling as Blink.
+ 
++mod content_layer;
+ pub mod decoration_painter;
+ pub mod emphasis_painter;
+ pub mod image_resource;
+ pub mod paint_order;
++mod paint_record;
+ mod painter;
+ mod render;
+ pub mod text_painter;
+ 
++pub use content_layer::RecordedContentLayer;
+ pub use painter::compute_clip_rect;
+ pub use painter::paint_fragment;
+ pub use render::{
+diff --git a/bindings/rust/openui-paint/src/paint_record.rs b/bindings/rust/openui-paint/src/paint_record.rs
+new file mode 100644
+index 00000000..ff857c45
+--- /dev/null
++++ b/bindings/rust/openui-paint/src/paint_record.rs
+@@ -0,0 +1,316 @@
++//! Paint operations retained with a content picture for analytic tile decisions.
++//!
++//! Unsupported operations keep ordinary picture raster. No output pixels are
++//! inspected to choose a color, and all calls reach the original Skia canvas.
++
++use skia_safe::{
++    surfaces, BlendMode, Canvas as SkiaCanvas, ClipOp, Color4f, Contains, Matrix, Paint,
++    PaintStyle, Rect, Vector,
++};
++use std::{cell::RefCell, ops::Deref};
++
++#[derive(Clone)]
++enum Operation {
++    Save,
++    Restore,
++    RestoreTo(usize),
++    Translate(Vector),
++    Scale((f32, f32)),
++    Concat(Matrix),
++    Clip(Rect, ClipOp, bool),
++    Rect(Rect, Paint),
++}
++
++#[derive(Clone, Default)]
++pub(crate) struct LayerPaintRecord {
++    operations: Vec<Operation>,
++    complete: bool,
++}
++
++struct Recording {
++    canvas: usize,
++    record: LayerPaintRecord,
++}
++
++thread_local! {
++    static RECORDING: RefCell<Option<Recording>> = const { RefCell::new(None) };
++}
++
++pub(crate) struct RecordingScope {
++    previous: Option<Recording>,
++}
++
++impl RecordingScope {
++    pub(crate) fn new(canvas: &SkiaCanvas) -> Self {
++        let previous = RECORDING.with(|state| {
++            state.replace(Some(Recording {
++                canvas: canvas as *const SkiaCanvas as usize,
++                record: LayerPaintRecord {
++                    operations: Vec::new(),
++                    complete: true,
++                },
++            }))
++        });
++        Self { previous }
++    }
++
++    pub(crate) fn snapshot(&self) -> LayerPaintRecord {
++        RECORDING.with(|state| {
++            state
++                .borrow()
++                .as_ref()
++                .expect("active paint recording")
++                .record
++                .clone()
++        })
++    }
++}
++
++impl Drop for RecordingScope {
++    fn drop(&mut self) {
++        RECORDING.with(|state| {
++            state.replace(self.previous.take());
++        });
++    }
++}
++
++fn capture(canvas: &SkiaCanvas, operation: impl FnOnce() -> Operation) {
++    RECORDING.with(|state| {
++        if let Some(recording) = state.borrow_mut().as_mut() {
++            if recording.canvas == canvas as *const SkiaCanvas as usize && recording.record.complete
++            {
++                recording.record.operations.push(operation());
++            }
++        }
++    });
++}
++
++fn unsupported(canvas: &SkiaCanvas) {
++    RECORDING.with(|state| {
++        if let Some(recording) = state.borrow_mut().as_mut() {
++            if recording.canvas == canvas as *const SkiaCanvas as usize {
++                recording.record.complete = false;
++            }
++        }
++    });
++}
++
++/// Internal canvas facade. Untracked Skia operations conservatively disable
++/// analytic color selection for this recording rather than guessing their effect.
++pub(crate) trait PaintCanvas {
++    fn raw_untracked(&self) -> &SkiaCanvas;
++}
++
++impl PaintCanvas for SkiaCanvas {
++    fn raw_untracked(&self) -> &SkiaCanvas {
++        self
++    }
++}
++
++impl Deref for dyn PaintCanvas + '_ {
++    type Target = SkiaCanvas;
++    fn deref(&self) -> &SkiaCanvas {
++        let canvas = self.raw_untracked();
++        unsupported(canvas);
++        canvas
++    }
++}
++
++impl dyn PaintCanvas + '_ {
++    pub(crate) fn save(&self) -> usize {
++        let c = self.raw_untracked();
++        capture(c, || Operation::Save);
++        c.save()
++    }
++    pub(crate) fn restore(&self) -> &Self {
++        let c = self.raw_untracked();
++        capture(c, || Operation::Restore);
++        c.restore();
++        self
++    }
++    pub(crate) fn restore_to_count(&self, count: usize) -> &Self {
++        let c = self.raw_untracked();
++        capture(c, || Operation::RestoreTo(count));
++        c.restore_to_count(count);
++        self
++    }
++    pub(crate) fn save_count(&self) -> usize {
++        self.raw_untracked().save_count()
++    }
++    pub(crate) fn translate(&self, offset: impl Into<Vector>) -> &Self {
++        let offset = offset.into();
++        let c = self.raw_untracked();
++        capture(c, || Operation::Translate(offset));
++        c.translate(offset);
++        self
++    }
++    pub(crate) fn scale(&self, scale: (f32, f32)) -> &Self {
++        let c = self.raw_untracked();
++        capture(c, || Operation::Scale(scale));
++        c.scale(scale);
++        self
++    }
++    pub(crate) fn concat(&self, matrix: &Matrix) -> &Self {
++        let c = self.raw_untracked();
++        capture(c, || Operation::Concat(*matrix));
++        c.concat(matrix);
++        self
++    }
++    pub(crate) fn clip_rect(
++        &self,
++        rect: impl AsRef<Rect>,
++        op: impl Into<Option<ClipOp>>,
++        aa: impl Into<Option<bool>>,
++    ) -> &Self {
++        let rect = *rect.as_ref();
++        let op = op.into().unwrap_or(ClipOp::Intersect);
++        let aa = aa.into().unwrap_or(false);
++        let c = self.raw_untracked();
++        capture(c, || Operation::Clip(rect, op, aa));
++        c.clip_rect(rect, op, aa);
++        self
++    }
++    pub(crate) fn draw_rect(&self, rect: impl AsRef<Rect>, paint: &Paint) -> &Self {
++        let rect = *rect.as_ref();
++        let c = self.raw_untracked();
++        capture(c, || Operation::Rect(rect, paint.clone()));
++        c.draw_rect(rect, paint);
++        self
++    }
++    pub(crate) fn local_clip_bounds(&self) -> Option<Rect> {
++        self.raw_untracked().local_clip_bounds()
++    }
++    pub(crate) fn local_to_device_as_3x3(&self) -> Matrix {
++        self.raw_untracked().local_to_device_as_3x3()
++    }
++    pub(crate) fn is_clip_rect(&self) -> bool {
++        self.raw_untracked().is_clip_rect()
++    }
++    pub(crate) fn device_clip_bounds(&self) -> Option<skia_safe::IRect> {
++        self.raw_untracked().device_clip_bounds()
++    }
++}
++
++impl LayerPaintRecord {
++    pub(crate) fn supports_analysis(&self) -> bool {
++        self.complete
++    }
++
++    pub(crate) fn solid_color(&self, rect: Rect) -> Option<Color4f> {
++        if !self.complete || rect.is_empty() {
++            return None;
++        }
++        // Chromium's SolidColorAnalyzer evaluates paint records with a
++        // SkNoDrawCanvas over the logical, layer-bounded tile query.
++        let mut surface = surfaces::null((rect.width() as i32, rect.height() as i32))?;
++        let canvas = surface.canvas();
++        canvas.translate((-rect.left, -rect.top));
++        canvas.clip_rect(rect, ClipOp::Intersect, false);
++        let mut color = Color4f::new(0.0, 0.0, 0.0, 0.0);
++        let mut solid = true;
++        let mut draws = 0;
++        for operation in &self.operations {
++            match operation {
++                Operation::Save => {
++                    canvas.save();
++                }
++                Operation::Restore => {
++                    canvas.restore();
++                }
++                Operation::RestoreTo(count) => {
++                    canvas.restore_to_count(*count);
++                }
++                Operation::Translate(offset) => {
++                    canvas.translate(*offset);
++                }
++                Operation::Scale(scale) => {
++                    canvas.scale(*scale);
++                }
++                Operation::Concat(matrix) => {
++                    canvas.concat(matrix);
++                }
++                Operation::Clip(rect, op, aa) => {
++                    if *op == ClipOp::Difference {
++                        return None;
++                    }
++                    canvas.clip_rect(rect, *op, *aa);
++                }
++                Operation::Rect(shape, paint) => {
++                    if paint.nothing_to_draw() {
++                        continue;
++                    }
++                    // These effects can move ink beyond the rectangle, so its
++                    // unexpanded bounds are insufficient for tile rejection.
++                    if paint.style() != PaintStyle::Fill
++                        || paint.image_filter().is_some()
++                        || paint.mask_filter().is_some()
++                        || paint.path_effect().is_some()
++                    {
++                        return None;
++                    }
++                    let matrix = canvas.local_to_device_as_3x3();
++                    let device_shape = matrix.map_rect(shape).0;
++                    let Some(clip) = canvas.device_clip_bounds() else {
++                        continue;
++                    };
++                    let clip = Rect::from(clip);
++                    if device_shape.right <= clip.left
++                        || device_shape.left >= clip.right
++                        || device_shape.bottom <= clip.top
++                        || device_shape.top >= clip.bottom
++                    {
++                        continue;
++                    }
++                    draws += 1;
++                    // cc::TileManager uses five analyzed draw operations.
++                    if draws > 5 {
++                        return None;
++                    }
++                    let full_clip = canvas.is_clip_rect()
++                        && clip.contains(Rect::from_xywh(0.0, 0.0, rect.width(), rect.height()));
++                    let covers = matrix.rect_stays_rect()
++                        && matrix
++                            .invert()
++                            .is_some_and(|inverse| shape.contains(inverse.map_rect(clip).0));
++                    let Some(mode) = paint.as_blend_mode() else {
++                        return None;
++                    };
++                    let plain = paint.style() == PaintStyle::Fill
++                        && paint.shader().is_none()
++                        && paint.color_filter().is_none()
++                        && paint.image_filter().is_none()
++                        && paint.mask_filter().is_none()
++                        && paint.path_effect().is_none();
++                    if !full_clip
++                        || !covers
++                        || !plain
++                        || !matches!(mode, BlendMode::Src | BlendMode::SrcOver)
++                    {
++                        solid = false;
++                        continue;
++                    }
++                    let source = paint.color4f();
++                    if mode == BlendMode::Src || source.a == 1.0 {
++                        color = source;
++                        solid = true;
++                    } else if solid {
++                        let alpha = source.a + color.a * (1.0 - source.a);
++                        if alpha == 0.0 {
++                            color = Color4f::new(0.0, 0.0, 0.0, 0.0);
++                        } else {
++                            let sw = source.a / alpha;
++                            let dw = color.a * (1.0 - source.a) / alpha;
++                            color = Color4f::new(
++                                source.r * sw + color.r * dw,
++                                source.g * sw + color.g * dw,
++                                source.b * sw + color.b * dw,
++                                alpha,
++                            );
++                        }
++                    }
++                }
++            }
++        }
++        solid.then_some(color)
++    }
++}
+diff --git a/bindings/rust/openui-paint/src/painter.rs b/bindings/rust/openui-paint/src/painter.rs
+index 0564a0bb..8955c4ed 100644
+--- a/bindings/rust/openui-paint/src/painter.rs
++++ b/bindings/rust/openui-paint/src/painter.rs
+@@ -36,16 +36,18 @@ use skia_safe::canvas::{SaveLayerFlags, SaveLayerRec, SrcRectConstraint};
+ use skia_safe::image::RequiredProperties;
+ use skia_safe::rrect::Corner as RRectCorner;
+ use skia_safe::{
+-    color_filters, gradient_shader, image_filters, surfaces, AlphaType, BlendMode, Canvas, ClipOp,
+-    Color4f, ColorSpace, ColorType, Data, FilterMode, IRect, Image, ImageInfo, Matrix, MipmapMode,
+-    Paint, PaintStyle, PathBuilder, PathFillType, PathMeasure, PictureRecorder, Point, RRect, Rect,
+-    SamplingOptions, TileMode,
++    color_filters, gradient_shader, image_filters, surfaces, AlphaType, BlendMode, ClipOp, Color4f,
++    ColorSpace, ColorType, Data, FilterMode, IRect, Image, ImageInfo, Matrix, MipmapMode, Paint,
++    PaintStyle, PathBuilder, PathFillType, PathMeasure, PictureRecorder, Point, RRect, Rect,
++    RoundOut, SamplingOptions, TileMode,
+ };
+ 
+ use std::cell::RefCell;
+ use std::collections::{BTreeMap, BTreeSet, HashSet};
+ use unicode_segmentation::UnicodeSegmentation;
+ 
++type Canvas = dyn crate::paint_record::PaintCanvas;
++
+ fn set_paint_css_color(paint: &mut Paint, color: &Color) {
+     set_paint_css_color_with_alpha(paint, color, 1.0);
+ }
+@@ -147,6 +149,10 @@ thread_local! {
+     static VIEWPORT_SIZE: RefCell<(f32, f32)> = const { RefCell::new((800.0, 600.0)) };
+     static RASTER_TILED_REPLAY: RefCell<bool> = const { RefCell::new(false) };
+     static DEFER_VIEWPORT_SCROLLBARS: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
++    static CONTENT_BACKGROUND_ANNOTATIONS: RefCell<Option<Vec<(Color, f32, Option<Rect>)>>> = const { RefCell::new(None) };
++    static CONTENT_BACKGROUND_DEVICE_SPACE: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
++    static CONTENT_BACKGROUND_EFFECT: std::cell::Cell<(f32, bool)> = const { std::cell::Cell::new((1.0, true)) };
++    static VIEWPORT_CONTENT_LAYER: RefCell<Option<crate::RecordedContentLayer>> = const { RefCell::new(None) };
+     static BROKEN_IMAGE: RefCell<Option<Image>> = const { RefCell::new(None) };
+     static BROKEN_IMAGE_HIGH_RES: RefCell<Option<Image>> = const { RefCell::new(None) };
+     static RASTERIZING_PROMOTED_TRANSFORM: RefCell<bool> = const { RefCell::new(false) };
+@@ -181,6 +187,194 @@ pub(crate) fn set_paint_raster_tiled(tiled: bool) {
+ pub(crate) fn reset_picture_paint_state() {
+     PAINTED_FRAGMENTED_OUTLINES.with(|painted| painted.borrow_mut().clear());
+     EXTERNALLY_DEFERRED_OUTLINES.with(|deferred| deferred.borrow_mut().clear());
++    VIEWPORT_CONTENT_LAYER.with(|layer| *layer.borrow_mut() = None);
++}
++
++pub(crate) fn take_viewport_content_layer() -> Option<crate::RecordedContentLayer> {
++    VIEWPORT_CONTENT_LAYER.with(|layer| layer.borrow_mut().take())
++}
++
++struct BackgroundEffectScope((f32, bool));
++
++impl BackgroundEffectScope {
++    fn new(fragment: &Fragment, style: &ComputedStyle) -> Self {
++        Self(CONTENT_BACKGROUND_EFFECT.with(|effect| {
++            let previous = effect.get();
++            effect.set((
++                previous.0
++                    * if can_flatten_box_opacity(fragment, style) {
++                        1.0
++                    } else {
++                        style.opacity
++                    },
++                previous.1
++                    && style.filter_blur == 0.0
++                    && style.filter_grayscale == 0.0
++                    && style.mask_layers.is_empty()
++                    && !(CONTENT_BACKGROUND_DEVICE_SPACE.with(|space| space.get())
++                        && style.has_border_radius())
++                    && style.transform == openui_style::Transform2D::IDENTITY,
++            ));
++            previous
++        }))
++    }
++}
++
++struct BackgroundRecordingScope {
++    previous_annotations: Option<Vec<(Color, f32, Option<Rect>)>>,
++    previous_effect: (f32, bool),
++    previous_device_space: bool,
++}
++
++impl BackgroundRecordingScope {
++    fn new() -> Self {
++        Self {
++            previous_annotations: CONTENT_BACKGROUND_ANNOTATIONS
++                .with(|annotations| annotations.replace(Some(Vec::new()))),
++            previous_effect: CONTENT_BACKGROUND_EFFECT.with(|effect| effect.replace((1.0, true))),
++            previous_device_space: CONTENT_BACKGROUND_DEVICE_SPACE
++                .with(|space| space.replace(false)),
++        }
++    }
++
++    fn for_raster() -> Self {
++        let scope = Self::new();
++        CONTENT_BACKGROUND_DEVICE_SPACE.with(|space| space.set(true));
++        scope
++    }
++
++    fn annotations(&self) -> Vec<(Color, f32, Option<Rect>)> {
++        CONTENT_BACKGROUND_ANNOTATIONS
++            .with(|annotations| annotations.borrow().as_ref().cloned().unwrap_or_default())
++    }
++}
++
++impl Drop for BackgroundRecordingScope {
++    fn drop(&mut self) {
++        CONTENT_BACKGROUND_ANNOTATIONS
++            .with(|annotations| annotations.replace(self.previous_annotations.take()));
++        CONTENT_BACKGROUND_EFFECT.with(|effect| effect.set(self.previous_effect));
++        CONTENT_BACKGROUND_DEVICE_SPACE.with(|space| space.set(self.previous_device_space));
++    }
++}
++
++impl Drop for BackgroundEffectScope {
++    fn drop(&mut self) {
++        CONTENT_BACKGROUND_EFFECT.with(|effect| effect.set(self.0));
++    }
++}
++
++fn annotate_content_background(
++    canvas: &Canvas,
++    mut color: Color,
++    rect: Rect,
++    opacity: f32,
++    opaque_rect: Option<Rect>,
++) {
++    let effect = CONTENT_BACKGROUND_EFFECT.with(|effect| effect.get());
++    if !effect.1 {
++        return;
++    }
++    color.a *= opacity * effect.0;
++    CONTENT_BACKGROUND_ANNOTATIONS.with(|annotations| {
++        if let Some(annotations) = annotations.borrow_mut().as_mut() {
++            annotations.push((
++                color,
++                rect.width() * rect.height(),
++                opaque_rect.filter(|_| color.is_opaque()).and_then(|rect| {
++                    let mut rect = if CONTENT_BACKGROUND_DEVICE_SPACE.with(|space| space.get()) {
++                        // In a raster backing, opacity belongs to fully covered
++                        // physical cells after the current transform and clip.
++                        // A rectangular AA clip is accepted by Skia only when
++                        // every retained sample has full coverage.
++                        let matrix = canvas.local_to_device_as_3x3();
++                        if !matrix.rect_stays_rect() || !canvas.is_clip_rect() {
++                            return None;
++                        }
++                        let mut mapped = matrix.map_rect(rect).0;
++                        let clip = Rect::from(canvas.device_clip_bounds()?);
++                        if !mapped.intersect(clip) {
++                            return None;
++                        }
++                        mapped
++                    } else {
++                        rect
++                    };
++                    rect = Rect::from_ltrb(
++                        rect.left.ceil(),
++                        rect.top.ceil(),
++                        rect.right.floor(),
++                        rect.bottom.floor(),
++                    );
++                    (!rect.is_empty() && rect.is_finite()).then_some(rect)
++                }),
++            ));
++        }
++    });
++}
++
++fn layer_background_color(annotations: &[(Color, f32, Option<Rect>)], bounds: Rect) -> Color {
++    let minimum_area = 0.5 * bounds.width() * bounds.height();
++    let mut colors = Vec::new();
++    for &(color, area, _) in annotations.iter().rev() {
++        if color.a > 0.0 && area >= minimum_area {
++            colors.push(color);
++            if color.is_opaque() {
++                break;
++            }
++        }
++    }
++    let mut result = Color::TRANSPARENT;
++    for color in colors.into_iter().rev() {
++        let alpha = color.a + result.a * (1.0 - color.a);
++        if alpha > 0.0 {
++            result = Color::from_rgba_f32(
++                (color.r * color.a + result.r * result.a * (1.0 - color.a)) / alpha,
++                (color.g * color.a + result.g * result.a * (1.0 - color.a)) / alpha,
++                (color.b * color.a + result.b * result.a * (1.0 - color.a)) / alpha,
++                alpha,
++            );
++        }
++    }
++    result
++}
++
++fn maximum_covered_rect(a: Rect, b: Rect) -> Rect {
++    let area = |rect: Rect| rect.width().max(0.0) * rect.height().max(0.0);
++    let mut maximum = if area(b) > area(a) { b } else { a };
++    let left = a.left.max(b.left);
++    let top = a.top.max(b.top);
++    let right = a.right.min(b.right);
++    let bottom = a.bottom.min(b.bottom);
++    if right >= left && bottom >= top && (right > left || bottom > top) {
++        let vertical = Rect::from_ltrb(left, a.top.min(b.top), right, a.bottom.max(b.bottom));
++        if area(vertical) > area(maximum) {
++            maximum = vertical;
++        }
++        let horizontal = Rect::from_ltrb(a.left.min(b.left), top, a.right.max(b.right), bottom);
++        if area(horizontal) > area(maximum) {
++            maximum = horizontal;
++        }
++    }
++    maximum
++}
++
++fn layer_opaque_rect(annotations: &[(Color, f32, Option<Rect>)]) -> Rect {
++    annotations
++        .iter()
++        .filter_map(|(_, _, opaque)| *opaque)
++        .fold(Rect::default(), maximum_covered_rect)
++}
++
++/// Preserve every fully covered physical cell, including disjoint regions.
++/// Choosing the largest rectangle can discard a covering background when an
++/// inset child's painted area extends farther than its parent.
++fn layer_opaque_region(annotations: &[(Color, f32, Option<Rect>)]) -> skia_safe::Region {
++    let mut region = skia_safe::Region::new();
++    for rect in annotations.iter().filter_map(|(_, _, opaque)| *opaque) {
++        region.op_rect(rect.round_in(), skia_safe::region::RegionOp::Union);
++    }
++    region
+ }
+ 
+ pub(crate) fn paint_document_fragments(
+@@ -196,7 +390,7 @@ pub(crate) fn paint_document_fragments(
+         }
+     }
+     let _phase = RestoreScrollbarPhase(DEFER_VIEWPORT_SCROLLBARS.with(|value| value.replace(true)));
+-    paint_fragment(canvas, fragment, doc, offset);
++    paint_fragment_tracked(canvas, fragment, doc, offset);
+ }
+ 
+ fn uses_deterministic_text_profile(style: &ComputedStyle) -> bool {
+@@ -519,6 +713,15 @@ fn fragment_has_overflowing_in_flow_monolithic_descendant(
+ /// This is the main entry point — paints the fragment and all its children
+ /// recursively, with correct coordinate offsets.
+ pub fn paint_fragment(
++    canvas: &skia_safe::Canvas,
++    fragment: &Fragment,
++    doc: &Document,
++    offset: PhysicalOffset,
++) {
++    paint_fragment_tracked(canvas, fragment, doc, offset);
++}
++
++fn paint_fragment_tracked(
+     canvas: &Canvas,
+     fragment: &Fragment,
+     doc: &Document,
+@@ -549,7 +752,30 @@ pub fn paint_fragment(
+             false,
+         );
+     }
+-    paint_fragment_contents(canvas, fragment, doc, offset);
++    if !fragment.node_id.is_none() && doc.node(fragment.node_id).is_svg_foreign_object {
++        // SVG root placement is pixel-snapped before the foreignObject's
++        // local CSS decoration is replayed. Keep that translation separate
++        // from its local edge snapping (SVGRootPainter and
++        // SVGForeignObjectPainter); combining them changes fractional widths.
++        let viewport_origin = PhysicalOffset::new(
++            offset.left + fragment.offset.left,
++            offset.top + fragment.offset.top,
++        );
++        canvas.save();
++        canvas.translate((
++            viewport_origin.left.round().to_f32(),
++            viewport_origin.top.round().to_f32(),
++        ));
++        paint_fragment_contents(
++            canvas,
++            fragment,
++            doc,
++            PhysicalOffset::new(-fragment.offset.left, -fragment.offset.top),
++        );
++        canvas.restore();
++    } else {
++        paint_fragment_contents(canvas, fragment, doc, offset);
++    }
+     if clips_fractional_terminal_column {
+         canvas.restore();
+     }
+@@ -934,7 +1160,7 @@ fn paint_fragment_contents(
+                 }
+             });
+             for (overflow, parent_offset) in overflowing_monolithic {
+-                paint_fragment(canvas, overflow, doc, parent_offset);
++                paint_fragment_tracked(canvas, overflow, doc, parent_offset);
+             }
+         } else {
+             paint_children_with_stacking_order(
+@@ -953,7 +1179,7 @@ fn paint_fragment_contents(
+     // anonymous boxes with no DOM node. Just recurse into children.
+     if fragment.node_id.is_none() {
+         for child in &fragment.children {
+-            paint_fragment(canvas, child, doc, abs_offset);
++            paint_fragment_tracked(canvas, child, doc, abs_offset);
+         }
+         return;
+     }
+@@ -985,6 +1211,7 @@ fn paint_fragment_contents(
+     } else {
+         canvas_adjusted_style.as_ref().unwrap_or(original_style)
+     };
++    let _background_effect = BackgroundEffectScope::new(fragment, style);
+     let promoted_transform_parent_offset = PhysicalOffset::new(
+         abs_offset.left - fragment.offset.left,
+         abs_offset.top - fragment.offset.top,
+@@ -1082,7 +1309,7 @@ fn paint_fragment_contents(
+                 LayoutUnit::from_f32(-bounds.left) - fragment.offset.left,
+                 LayoutUnit::from_f32(-bounds.top) - fragment.offset.top,
+             );
+-            paint_fragment(surface.canvas(), fragment, doc, raster_parent_offset);
++            paint_fragment_tracked(surface.canvas(), fragment, doc, raster_parent_offset);
+             RASTERIZING_PROMOTED_TRANSFORM.with(|active| *active.borrow_mut() = false);
+ 
+             let image = surface.image_snapshot();
+@@ -1346,18 +1573,55 @@ fn paint_fragment_contents(
+         // Keep the retained offset and geometry logical while preserving the
+         // unscrolled paint phase when composing the document at a new offset.
+         let snapping = RasterSnapping::new(doc.device_scale_factor());
+-        canvas.translate((
++        let scroll_translation = (
+             snapping.logical_coordinate(-node.scroll_left, PhysicalSnap::Nearest),
+             snapping.logical_coordinate(-node.scroll_top, PhysicalSnap::Nearest),
+-        ));
++        );
++        canvas.translate(scroll_translation);
++        let content = scrollport.content_rect;
++        let bounds = Rect::from_ltrb(
++            (abs_offset.left + content.x()).round().to_f32(),
++            (abs_offset.top + content.y()).round().to_f32(),
++            (abs_offset.left + content.right()).round().to_f32(),
++            (abs_offset.top + content.bottom()).round().to_f32(),
++        );
++        let mut recorder = PictureRecorder::new();
++        let layer_canvas: &Canvas = recorder.begin_recording(bounds, false);
++        let paint_recording =
++            crate::paint_record::RecordingScope::new(layer_canvas.raw_untracked());
++        let background_recording = BackgroundRecordingScope::new();
++        paint_scrolling_canvas_background(layer_canvas, doc, fragment, bounds);
+         paint_children_with_stacking_order(
+-            canvas,
++            layer_canvas,
+             &fragment.children,
+             doc,
+             abs_offset,
+             true,
+             style.display.is_flex() && fragmented_flex_has_internal_four_way_junction(fragment),
+         );
++        let annotations = background_recording.annotations();
++        let paint_record = paint_recording.snapshot();
++        drop(paint_recording);
++        drop(background_recording);
++        let picture = recorder
++            .finish_recording_as_picture(None)
++            .expect("viewport content recording must finish");
++        let rect_known_to_be_opaque = layer_opaque_rect(&annotations);
++        let layer = crate::RecordedContentLayer {
++            node_id: fragment.node_id,
++            bounds,
++            background_color: layer_background_color(&annotations, bounds),
++            rect_known_to_be_opaque,
++            paint_record,
++            contents_opaque: rect_known_to_be_opaque.left <= bounds.left
++                && rect_known_to_be_opaque.top <= bounds.top
++                && rect_known_to_be_opaque.right >= bounds.right
++                && rect_known_to_be_opaque.bottom >= bounds.bottom,
++            scroll_translation,
++            picture,
++        };
++        layer.replay(canvas, doc.device_scale_factor());
++        VIEWPORT_CONTENT_LAYER.with(|recorded| *recorded.borrow_mut() = Some(layer));
+         canvas.restore();
+         if !DEFER_VIEWPORT_SCROLLBARS.with(|deferred| deferred.get()) {
+             paint_viewport_scrollbars(canvas, fragment, doc, abs_offset);
+@@ -5175,7 +5439,7 @@ fn paint_descendant_column_rules(
+ ) {
+     for child in children {
+         if child.kind == FragmentKind::ColumnRule {
+-            paint_fragment(canvas, child, doc, parent_offset);
++            paint_fragment_tracked(canvas, child, doc, parent_offset);
+             continue;
+         }
+         let child_offset = PhysicalOffset::new(
+@@ -5443,7 +5707,7 @@ fn repaint_fragmented_inline_source_range(
+         if in_source_range && fragment.is_inline_box_fragment {
+             canvas.save();
+             canvas.clip_rect(clip, ClipOp::Intersect, false);
+-            paint_fragment(canvas, fragment, doc, parent_offset);
++            paint_fragment_tracked(canvas, fragment, doc, parent_offset);
+             canvas.restore();
+             return;
+         }
+@@ -5621,13 +5885,13 @@ fn paint_shared_inline_oof_across_column_row(
+         .iter()
+         .filter(|child| child.kind == FragmentKind::ColumnRule)
+     {
+-        paint_fragment(canvas, rule, doc, offset);
++        paint_fragment_tracked(canvas, rule, doc, offset);
+     }
+     for column in children
+         .iter()
+         .filter(|child| child.kind == FragmentKind::ColumnBox)
+     {
+-        paint_fragment(canvas, column, doc, offset);
++        paint_fragment_tracked(canvas, column, doc, offset);
+     }
+     FRAGMENTED_INLINE_SKIP_AFTER.with(|source_after| *source_after.borrow_mut() = None);
+     for (group_index, (inline_parent_id, group_ids)) in inline_groups.iter().enumerate() {
+@@ -5644,7 +5908,7 @@ fn paint_shared_inline_oof_across_column_row(
+             });
+             canvas.save();
+             canvas.clip_rect(entry.clip, ClipOp::Intersect, false);
+-            paint_fragment(canvas, entry.fragment, doc, entry.parent_offset);
++            paint_fragment_tracked(canvas, entry.fragment, doc, entry.parent_offset);
+             canvas.restore();
+         }
+         for column in children
+@@ -5905,7 +6169,7 @@ fn paint_children_with_stacking_order(
+     // cover them in the gap.
+     for &idx in &in_flow {
+         if matches!(children[idx].kind, FragmentKind::ColumnRule) {
+-            paint_fragment(canvas, &children[idx], doc, offset);
++            paint_fragment_tracked(canvas, &children[idx], doc, offset);
+         }
+     }
+ 
+@@ -6035,7 +6299,7 @@ fn paint_children_with_stacking_order(
+             continue;
+         }
+         if children[idx].kind != FragmentKind::ColumnBox {
+-            paint_fragment(canvas, &children[idx], doc, offset);
++            paint_fragment_tracked(canvas, &children[idx], doc, offset);
+             in_flow_position += 1;
+             continue;
+         }
+@@ -6075,7 +6339,7 @@ fn paint_children_with_stacking_order(
+         }
+         for &row_idx in &in_flow[in_flow_position..row_position_end] {
+             if children[row_idx].kind != FragmentKind::ColumnRule {
+-                paint_fragment(canvas, &children[row_idx], doc, offset);
++                paint_fragment_tracked(canvas, &children[row_idx], doc, offset);
+             }
+         }
+         if !prepainted.is_empty() {
+@@ -7268,9 +7532,9 @@ fn paint_stacking_entry(
+     offset: PhysicalOffset,
+ ) {
+     match entry {
+-        StackingEntry::Direct(idx) => paint_fragment(canvas, &children[*idx], doc, offset),
++        StackingEntry::Direct(idx) => paint_fragment_tracked(canvas, &children[*idx], doc, offset),
+         StackingEntry::Descendant(fragment, parent_offset) => {
+-            paint_fragment(canvas, fragment, doc, *parent_offset)
++            paint_fragment_tracked(canvas, fragment, doc, *parent_offset)
+         }
+         StackingEntry::DescendantWithClip(fragment, parent_offset, clip_rect) => {
+             canvas.save();
+@@ -7279,7 +7543,7 @@ fn paint_stacking_entry(
+                 ClipOp::Intersect,
+                 false,
+             );
+-            paint_fragment(canvas, fragment, doc, *parent_offset);
++            paint_fragment_tracked(canvas, fragment, doc, *parent_offset);
+             canvas.restore();
+         }
+     }
+@@ -7778,7 +8042,7 @@ fn paint_flex_negative_stacking_children(
+     // and inverted peers such as z-index:-2 followed by z-index:-1.
+     entries.sort_by_key(|&(z, order, _, _)| (z, order));
+     for (_, _, child, parent_offset) in entries {
+-        paint_fragment(canvas, child, doc, parent_offset);
++        paint_fragment_tracked(canvas, child, doc, parent_offset);
+     }
+ }
+ 
+@@ -8158,7 +8422,7 @@ fn repaint_later_siblings_over_fragmented_outlines(
+                     deferred.remove(pointer);
+                 }
+             });
+-            paint_fragment(canvas, child, doc, parent_offset);
++            paint_fragment_tracked(canvas, child, doc, parent_offset);
+         }
+         preceding_fragmented_outline |=
+             fragmented_outline_crosses_slice(child, doc, parent_offset, slice, block_axis_is_x);
+@@ -8994,6 +9258,52 @@ fn scroll_backing_phase_adjustment(logical_origin: f32, backing_scale: f32) -> f
+     (compositor_phase - physical_phase).rem_euclid(1.0) / backing_scale
+ }
+ 
++/// Prove opacity for the source cells reached by the visible linear-sampled
++/// quad. This uses owned paint coverage, never an inspection of raster pixels.
++fn scroll_quad_has_opaque_samples(
++    canvas: &Canvas,
++    opaque: &skia_safe::Region,
++    source: Rect,
++    destination: Rect,
++    width: i32,
++    height: i32,
++) -> bool {
++    let matrix = canvas.local_to_device_as_3x3();
++    if opaque.is_empty() || !matrix.rect_stays_rect() {
++        return false;
++    }
++    let (Some(inverse), Some(clip)) = (matrix.invert(), canvas.device_clip_bounds()) else {
++        return false;
++    };
++    let mut visible = inverse.map_rect(Rect::from(clip)).0;
++    if !visible.intersect(destination) || !visible.is_finite() {
++        return false;
++    }
++    let scale_x = source.width() / destination.width();
++    let scale_y = source.height() / destination.height();
++    // Linear filtering reaches a neighboring source center on each side.
++    // The strict source rectangle clamps outside the backing image bounds.
++    let samples = Rect::from_ltrb(
++        (source.left + (visible.left - destination.left) * scale_x - 0.5)
++            .floor()
++            .max(0.0),
++        (source.top + (visible.top - destination.top) * scale_y - 0.5)
++            .floor()
++            .max(0.0),
++        (source.left + (visible.right - destination.left) * scale_x + 0.5)
++            .ceil()
++            .min(width as f32),
++        (source.top + (visible.bottom - destination.top) * scale_y + 0.5)
++            .ceil()
++            .min(height as f32),
++    );
++    if samples.is_empty() || !samples.is_finite() {
++        return false;
++    }
++    let samples: IRect = samples.round_out();
++    opaque.contains_rect(samples)
++}
++
+ fn paint_composited_scroll_contents(
+     canvas: &Canvas,
+     fragment: &Fragment,
+@@ -9067,6 +9377,7 @@ fn paint_composited_scroll_contents(
+         adjusted.border_image = None;
+         adjusted.box_shadow.retain(|shadow| shadow.inset);
+     });
++    let background_recording = BackgroundRecordingScope::for_raster();
+     paint_box_decoration_background(
+         surface.canvas(),
+         fragment,
+@@ -9096,6 +9407,9 @@ fn paint_composited_scroll_contents(
+     );
+     surface.canvas().restore();
+ 
++    let opaque_region = layer_opaque_region(&background_recording.annotations());
++    let composition_effect = background_recording.previous_effect;
++    drop(background_recording);
+     let image = surface.image_snapshot();
+     let destination = Rect::from_xywh(
+         layer_rect.left + scroll_backing_phase_adjustment(layer_rect.left, backing_scale),
+@@ -9104,19 +9418,7 @@ fn paint_composited_scroll_contents(
+         physical_height as f32 / backing_scale,
+     );
+     let mut paint = Paint::default();
+-    let image_matrix = Matrix::scale_translate(
+-        (
+-            destination.width() / physical_width as f32,
+-            destination.height() / physical_height as f32,
+-        ),
+-        (destination.left, destination.top),
+-    );
+     paint.set_anti_alias(false);
+-    paint.set_shader(image.to_shader(
+-        (TileMode::Clamp, TileMode::Clamp),
+-        SamplingOptions::from(FilterMode::Linear),
+-        &image_matrix,
+-    ));
+     let snapping = RasterSnapping::new(style.device_scale_factor);
+     let compositor_bounds = Rect::from_ltrb(
+         destination.left,
+@@ -9128,7 +9430,38 @@ fn paint_composited_scroll_contents(
+             .bottom
+             .max(snapping.logical_coordinate(layer_rect.bottom, PhysicalSnap::Ceil)),
+     );
+-    canvas.draw_rect(compositor_bounds, &paint);
++    // SoftwareRenderer replays a texture quad with DrawImageRect and a
++    // strict source rectangle. Preserve the backing's mapping when its
++    // physical compositor bounds extend beyond the content destination.
++    let source = Rect::from_xywh(
++        0.0,
++        0.0,
++        compositor_bounds.width() * backing_scale,
++        compositor_bounds.height() * backing_scale,
++    );
++    // Chromium omits blending only for an opaque quad with full composition
++    // opacity. An opaque authored color alone cannot establish that: clipped
++    // or rounded backgrounds can leave transparent backing cells.
++    if composition_effect == (1.0, true)
++        && style.opacity == 1.0
++        && scroll_quad_has_opaque_samples(
++            canvas,
++            &opaque_region,
++            source,
++            compositor_bounds,
++            physical_width,
++            physical_height,
++        )
++    {
++        paint.set_blend_mode(skia_safe::BlendMode::Src);
++    }
++    canvas.draw_image_rect_with_sampling_options(
++        image,
++        Some((&source, SrcRectConstraint::Strict)),
++        compositor_bounds,
++        SamplingOptions::from(FilterMode::Linear),
++        &paint,
++    );
+     true
+ }
+ 
+@@ -9175,7 +9508,7 @@ fn paint_with_overflow_clip(
+         Vec::new()
+     };
+     for legend_content in &unclipped_fieldset_legend_content {
+-        paint_fragment(canvas, legend_content, doc, offset);
++        paint_fragment_tracked(canvas, legend_content, doc, offset);
+     }
+     let newly_skipped_legends: Vec<usize> = HOIST_SKIP.with(|skipped| {
+         let mut skipped = skipped.borrow_mut();
+@@ -11262,9 +11595,13 @@ pub(crate) fn paint_viewport_scrollbars(
+         && scrollport.content_rect.width().to_f32() > client_width
+         && scrollport.content_rect.height().to_f32() > client_height
+     {
++        // The adjoining corner has exterior compositor edges on both axes.
++        // Preserve their coverage when its physical origin is fractional.
++        let mut corner = track.clone();
++        corner.set_anti_alias(true);
+         canvas.draw_rect(
+             Rect::from_xywh(client_width, client_height, thickness, thickness),
+-            &track,
++            &corner,
+         );
+     }
+     canvas.restore();
+@@ -13164,8 +13501,17 @@ fn paint_css_image_tile(
+         // period alternate colors.
+         let phase_x = generated_image_raster_phase(physical_left, uses_repeated_shader);
+         let phase_y = generated_image_raster_phase(physical_top, uses_repeated_shader);
+-        let Some(mut surface) = surfaces::raster_n32_premul((width + phase_x, height + phase_y))
+-        else {
++        // SkPictureShader caches an eight-bit generated tile in RGBA8888,
++        // tagged with the destination color space (sRGB for an untagged
++        // canvas). Retain that representation for the concrete-tile path;
++        // native N32 would select a different legacy image sampler.
++        let tile_info = ImageInfo::new(
++            (width + phase_x, height + phase_y),
++            ColorType::RGBA8888,
++            AlphaType::Premul,
++            ColorSpace::new_srgb(),
++        );
++        let Some(mut surface) = surfaces::raster(&tile_info, None, None) else {
+             return;
+         };
+         surface.canvas().clear(skia_safe::Color::TRANSPARENT);
+@@ -14640,6 +14986,47 @@ pub(crate) fn paint_canvas_background(
+     );
+ }
+ 
++fn paint_scrolling_canvas_background(
++    canvas: &Canvas,
++    doc: &Document,
++    root_fragment: &Fragment,
++    bounds: Rect,
++) {
++    // ViewPainter's document background fills the pixel-snapped scrolling
++    // contents, combining the base backdrop with the propagated CSS color.
++    let source = doc.canvas_background_source();
++    let authored = source.map_or(Color::TRANSPARENT, |source| {
++        doc.node(source).style.background_color
++    });
++    let color = Color::from_rgba_f32(
++        authored.r * authored.a + 1.0 - authored.a,
++        authored.g * authored.a + 1.0 - authored.a,
++        authored.b * authored.a + 1.0 - authored.a,
++        1.0,
++    );
++    let mut paint = Paint::default();
++    paint.set_anti_alias(true);
++    set_paint_css_color(&mut paint, &color);
++    canvas.draw_rect(bounds, &paint);
++    annotate_content_background(canvas, color, bounds, 1.0, Some(bounds));
++    if let Some(source) = source {
++        let style = &doc.node(source).style;
++        let (positioning_rect, source_fragment) =
++            fragment_rect_for_node(root_fragment, source, PhysicalOffset::zero())
++                .map_or((bounds, None), |(rect, fragment)| (rect, Some(fragment)));
++        paint_background_layers(
++            canvas,
++            doc,
++            source_fragment,
++            style,
++            positioning_rect,
++            1.0,
++            Some(bounds),
++            true,
++        );
++    }
++}
++
+ fn resolve_border_image_slice(value: &BorderImageLength, source_extent: f32) -> f32 {
+     match value {
+         BorderImageLength::Number(value) => *value,
+@@ -15983,59 +16370,6 @@ fn paint_fragment_box_decoration(
+         return;
+     }
+     if fragment.decoration_clip_rects.is_empty() {
+-        let clip_svg_foreign_object = node.is_svg_foreign_object;
+-        if clip_svg_foreign_object {
+-            let x = abs_offset.left.round().to_f32();
+-            let y = abs_offset.top.round().to_f32();
+-            let border_box = Rect::from_xywh(
+-                x,
+-                y,
+-                fragment.size.width.to_f32(),
+-                fragment.size.height.to_f32(),
+-            );
+-            let viewport_width = (fragment.size.width
+-                - fragment.border.left
+-                - fragment.border.right
+-                - fragment.padding.left
+-                - fragment.padding.right)
+-                .clamp_negative_to_zero()
+-                .to_f32();
+-            let viewport_height = (fragment.size.height
+-                - fragment.border.top
+-                - fragment.border.bottom
+-                - fragment.padding.top
+-                - fragment.padding.bottom)
+-                .clamp_negative_to_zero()
+-                .to_f32();
+-            canvas.save();
+-            canvas.clip_rect(
+-                Rect::from_xywh(x, y, viewport_width, viewport_height),
+-                ClipOp::Intersect,
+-                false,
+-            );
+-            if style.has_border_radius() {
+-                let representative_border = fragment
+-                    .border
+-                    .top
+-                    .max_of(fragment.border.right)
+-                    .max_of(fragment.border.bottom)
+-                    .max_of(fragment.border.left)
+-                    .to_f32();
+-                canvas.clip_rrect(
+-                    RRect::new_rect_radii(
+-                        border_box,
+-                        &fragment_border_radii(style, fragment, &border_box, representative_border),
+-                    ),
+-                    ClipOp::Intersect,
+-                    true,
+-                );
+-            }
+-            // SVG foreignObject decoration is first rasterized into its SVG
+-            // viewport and then composited through the CSS rounded contour.
+-            // Chromium's tiny subpixel contour retains forty-nine fiftieths
+-            // of the covered source sample at the doubly-clipped corner.
+-            canvas.save_layer_alpha_f(border_box, 49.0 / 50.0);
+-        }
+         if (native_button_theme || native_scroll_button_theme || native_color_theme)
+             && fragment.size.width >= LayoutUnit::from_i32(6)
+             && fragment.size.height >= LayoutUnit::from_i32(6)
+@@ -16056,10 +16390,6 @@ fn paint_fragment_box_decoration(
+             opacity_multiplier,
+         );
+         paint_native_marker_group_scrollbar_arrows(canvas, fragment, node, style, abs_offset);
+-        if clip_svg_foreign_object {
+-            canvas.restore();
+-            canvas.restore();
+-        }
+         if clip_native_text_control_corners {
+             canvas.restore();
+         }
+@@ -16920,6 +17250,13 @@ fn paint_box_decoration_background(
+             } else {
+                 close_rect_at_physical_viewport_edge(bg_rect, style.device_scale_factor)
+             };
++            annotate_content_background(
++                canvas,
++                style.background_color,
++                bg_rect,
++                opacity_multiplier,
++                (!has_radius && !use_layer).then_some(bg_rect),
++            );
+             if has_radius {
+                 // Compute radii adjusted for background-clip box (CSS Backgrounds §5.3).
+                 // Inner corner radii = outer radii - inset on each side, clamped to 0.
+@@ -17642,6 +17979,113 @@ fn paint_native_fieldset_corner_samples(
+     }
+ }
+ 
++/// A lone opaque curved solid or double edge follows BoxBorderPainter's complex
++/// contour path: clip the outer/inner border, restrict the owning side, then
++/// fill the solid edge or clip each double stripe using inset rounded contours.
++/// The side clip retains the full corner tangents even when the edge is narrow.
++fn paint_sole_curved_border(
++    canvas: &Canvas,
++    fragment: &Fragment,
++    style: &ComputedStyle,
++    rect: Rect,
++    side: usize,
++    width: f32,
++    border_style: BorderStyle,
++) -> bool {
++    let color = match side {
++        0 => style.border_top_color,
++        1 => style.border_right_color,
++        2 => style.border_bottom_color,
++        _ => style.border_left_color,
++    }
++    .resolve(&style.color);
++    if !color.is_opaque() {
++        return false;
++    }
++    let radii = fragment_border_radii(style, fragment, &rect, width);
++    let contour = |inset: f32| {
++        let (top, right, bottom, left) = match side {
++            0 => (inset, 0.0, 0.0, 0.0),
++            1 => (0.0, inset, 0.0, 0.0),
++            2 => (0.0, 0.0, inset, 0.0),
++            _ => (0.0, 0.0, 0.0, inset),
++        };
++        let inner = Rect::from_xywh(
++            rect.left + left,
++            rect.top + top,
++            (rect.width() - left - right).max(0.0),
++            (rect.height() - top - bottom).max(0.0),
++        );
++        let inner_radii = [
++            Point::new((radii[0].x - left).max(0.0), (radii[0].y - top).max(0.0)),
++            Point::new((radii[1].x - right).max(0.0), (radii[1].y - top).max(0.0)),
++            Point::new(
++                (radii[2].x - right).max(0.0),
++                (radii[2].y - bottom).max(0.0),
++            ),
++            Point::new((radii[3].x - left).max(0.0), (radii[3].y - bottom).max(0.0)),
++        ];
++        (inner, inner_radii)
++    };
++    let (inner, inner_radii) = contour(width);
++    if inner.width() > 0.0 && inner.height() > 0.0 && radii_exceed_rect(&inner, &inner_radii) {
++        // Non-renderable inner contours require the shared adjusted-inner
++        // decomposition; keep them on that path.
++        return false;
++    }
++    let side_rect = match side {
++        0 => Rect::from_xywh(
++            rect.left,
++            rect.top,
++            rect.width(),
++            width.max(radii[0].y).max(radii[1].y),
++        ),
++        1 => {
++            let extent = width.max(radii[1].x).max(radii[2].x);
++            Rect::from_xywh(rect.right - extent, rect.top, extent, rect.height())
++        }
++        2 => {
++            let extent = width.max(radii[2].y).max(radii[3].y);
++            Rect::from_xywh(rect.left, rect.bottom - extent, rect.width(), extent)
++        }
++        _ => Rect::from_xywh(
++            rect.left,
++            rect.top,
++            width.max(radii[0].x).max(radii[3].x),
++            rect.height(),
++        ),
++    };
++    let mut paint = Paint::default();
++    paint.set_anti_alias(true);
++    set_paint_css_color(&mut paint, &color);
++    canvas.save();
++    canvas.clip_rrect(RRect::new_rect_radii(rect, &radii), ClipOp::Intersect, true);
++    if inner.width() > 0.0 && inner.height() > 0.0 {
++        canvas.clip_rrect(
++            RRect::new_rect_radii(inner, &inner_radii),
++            ClipOp::Difference,
++            true,
++        );
++    }
++    canvas.clip_rect(side_rect, ClipOp::Intersect, true);
++    if border_style == BorderStyle::Solid {
++        canvas.draw_rect(rect, &paint);
++    } else {
++        for (inset, op) in [
++            ((width * 2.0 / 3.0).round(), ClipOp::Intersect),
++            ((width / 3.0).round(), ClipOp::Difference),
++        ] {
++            let (stripe, stripe_radii) = contour(inset);
++            canvas.save();
++            canvas.clip_rrect(RRect::new_rect_radii(stripe, &stripe_radii), op, true);
++            canvas.draw_rect(rect, &paint);
++            canvas.restore();
++        }
++    }
++    canvas.restore();
++    true
++}
++
+ /// Paint borders around the border-box.
+ ///
+ /// Extracted from Blink's `BoxBorderPainter` (box_border_painter.cc).
+@@ -17668,6 +18112,85 @@ fn paint_borders(
+         return;
+     }
+ 
++    // BoxBorderPainter clamps each used edge to the snapped border-box
++    // dimension. A double edge narrower than three CSS pixels becomes
++    // solid. With an empty inner contour, a lone curved edge fills the box
++    // through its rounded outer contour and authored side rectangle.
++    let visible_sides = [
++        (bt, style.border_top_style),
++        (br, style.border_right_style),
++        (bb, style.border_bottom_style),
++        (bl, style.border_left_style),
++    ];
++    let mut visible_sides_iter =
++        visible_sides
++            .iter()
++            .enumerate()
++            .filter(|(_, (width, border_style))| {
++                *width > 0.0 && !matches!(border_style, BorderStyle::None | BorderStyle::Hidden)
++            });
++    let sole_side = visible_sides_iter
++        .next()
++        .filter(|_| visible_sides_iter.next().is_none());
++    if let Some((side, _)) = sole_side.filter(|_| has_border_radius) {
++        let (width, border_style) = visible_sides[side];
++        let box_extent = if side == 0 || side == 2 { h } else { w };
++        let used_width = width.min(box_extent);
++        let effective_solid = border_style == BorderStyle::Solid
++            || (border_style == BorderStyle::Double && used_width < 3.0);
++        if ((effective_solid && width < box_extent)
++            || (border_style == BorderStyle::Double && used_width >= 3.0))
++            && !outer_rrect_clipped
++            && paint_sole_curved_border(
++                canvas,
++                fragment,
++                style,
++                Rect::from_xywh(x, y, w, h),
++                side,
++                used_width,
++                if effective_solid {
++                    BorderStyle::Solid
++                } else {
++                    BorderStyle::Double
++                },
++            )
++        {
++            return;
++        }
++        if width >= box_extent && effective_solid {
++            let border_rect = Rect::from_xywh(x, y, w, h);
++            let outer_radii = fragment_border_radii(style, fragment, &border_rect, width);
++            let side_rect = match side {
++                0 => Rect::from_xywh(x, y, w, width),
++                1 => Rect::from_xywh(x + w - width, y, width, h),
++                2 => Rect::from_xywh(x, y + h - width, w, width),
++                _ => Rect::from_xywh(x, y, width, h),
++            };
++            let color = match side {
++                0 => style.border_top_color,
++                1 => style.border_right_color,
++                2 => style.border_bottom_color,
++                _ => style.border_left_color,
++            }
++            .resolve(&style.color);
++            let mut paint = Paint::default();
++            paint.set_anti_alias(true);
++            set_paint_css_color(&mut paint, &color);
++            canvas.save();
++            if !outer_rrect_clipped {
++                canvas.clip_rrect(
++                    RRect::new_rect_radii(border_rect, &outer_radii),
++                    ClipOp::Intersect,
++                    true,
++                );
++            }
++            canvas.clip_rect(side_rect, ClipOp::Intersect, true);
++            canvas.draw_rect(border_rect, &paint);
++            canvas.restore();
++            return;
++        }
++    }
++
+     let inherited_color = &style.color;
+     let side_specs = [
+         (
+@@ -22711,7 +23234,7 @@ mod tests {
+             surface.canvas().clear(skia_safe::Color::WHITE);
+             surface.canvas().scale((scale as f32, scale as f32));
+             let save_count = surface.canvas().save_count();
+-            paint_fragment(surface.canvas(), &fragment, &doc, PhysicalOffset::zero());
++            paint_fragment_tracked(surface.canvas(), &fragment, &doc, PhysicalOffset::zero());
+             assert_eq!(surface.canvas().save_count(), save_count);
+             let pixels = surface_bytes(&mut surface);
+             // Repeated Chromium captures of the same RGB source at opacity
+@@ -22791,7 +23314,7 @@ mod tests {
+         let mut surface = surfaces::raster_n32_premul((81, 81)).expect("surface");
+         surface.canvas().clear(skia_safe::Color::WHITE);
+         let save_count = surface.canvas().save_count();
+-        paint_fragment(surface.canvas(), &fragment, &doc, PhysicalOffset::zero());
++        paint_fragment_tracked(surface.canvas(), &fragment, &doc, PhysicalOffset::zero());
+         assert_eq!(surface.canvas().save_count(), save_count);
+ 
+         let pixels = surface_bytes(&mut surface);
+@@ -22835,7 +23358,7 @@ mod tests {
+         let mut surface = surfaces::raster_n32_premul((45, 45)).expect("surface");
+         surface.canvas().clear(skia_safe::Color::WHITE);
+         let save_count = surface.canvas().save_count();
+-        paint_fragment(
++        paint_fragment_tracked(
+             surface.canvas(),
+             &parent_fragment,
+             &doc,
+@@ -22937,7 +23460,7 @@ mod tests {
+         let mut surface = surfaces::raster_n32_premul((240, 180)).expect("surface");
+         surface.canvas().clear(skia_safe::Color::WHITE);
+         surface.canvas().scale((1.25, 1.25));
+-        paint_fragment(
++        paint_fragment_tracked(
+             surface.canvas(),
+             &button_fragment,
+             &doc,
+diff --git a/bindings/rust/openui-paint/src/render.rs b/bindings/rust/openui-paint/src/render.rs
+index 61e781cd..5287818d 100644
+--- a/bindings/rust/openui-paint/src/render.rs
++++ b/bindings/rust/openui-paint/src/render.rs
+@@ -93,6 +93,8 @@ pub struct RecordedPicture {
+     pub(crate) content_picture: Picture,
+     /// Viewport controls are compositor quads, replayed after document tiles.
+     pub(crate) viewport_overlay: Option<Picture>,
++    /// Owned viewport content bounds, background and display-list recording.
++    pub(crate) viewport_content_layer: Option<crate::RecordedContentLayer>,
+     pub viewport: ViewportMetrics,
+     pub raster_configuration: RasterConfiguration,
+     pub(crate) lcd_surface: bool,
+@@ -116,6 +118,10 @@ impl RecordedPicture {
+     pub fn viewport_overlay_picture(&self) -> Option<&Picture> {
+         self.viewport_overlay.as_ref()
+     }
++
++    pub fn viewport_content_layer(&self) -> Option<&crate::RecordedContentLayer> {
++        self.viewport_content_layer.as_ref()
++    }
+ }
+ 
+ /// Lay out and record a document without rasterizing it.
+@@ -161,19 +167,24 @@ pub fn record_fragment(
+     let mut recorder = PictureRecorder::new();
+     let recording_canvas = recorder.begin_recording(bounds, false);
+     recording_canvas.clear(SkColor::WHITE);
+-    crate::painter::paint_canvas_background(
+-        recording_canvas,
+-        doc,
+-        fragment,
+-        width as f32,
+-        height as f32,
+-    );
++    if fragment.viewport_scrollport.is_none() {
++        crate::painter::paint_canvas_background(
++            recording_canvas,
++            doc,
++            fragment,
++            width as f32,
++            height as f32,
++        );
++    } else {
++        crate::painter::set_paint_viewport_size(width as f32, height as f32);
++    }
+     paint_document_fragments(
+         recording_canvas,
+         fragment,
+         doc,
+         openui_geometry::PhysicalOffset::zero(),
+     );
++    let viewport_content_layer = crate::painter::take_viewport_content_layer();
+     let content_picture = recorder
+         .finish_recording_as_picture(None)
+         .ok_or_else(|| "Failed to record paint commands".to_string())?;
+@@ -210,6 +221,7 @@ pub fn record_fragment(
+         picture,
+         content_picture,
+         viewport_overlay,
++        viewport_content_layer,
+         viewport,
+         raster_configuration,
+         lcd_surface,
+diff --git a/bindings/rust/openui-style/src/property.rs b/bindings/rust/openui-style/src/property.rs
+index 653f967d..ee101936 100644
+--- a/bindings/rust/openui-style/src/property.rs
++++ b/bindings/rust/openui-style/src/property.rs
+@@ -1782,6 +1782,12 @@ pub fn parse_literal(property: StyleProperty, input: &str) -> Result<StyleValue,
+             _ => None,
+         }
+         .map(StyleValue::PointerEvents),
++        P::BoxSizing => match input {
++            "content-box" => Some(BoxSizing::ContentBox),
++            "border-box" => Some(BoxSizing::BorderBox),
++            _ => None,
++        }
++        .map(|value| StyleValue::Renderer(RendererStyleValue::BoxSizing(value))),
+         P::ColumnCount => {
+             if input == "auto" {
+                 Some(StyleValue::Renderer(RendererStyleValue::ColumnCount(None)))
+diff --git a/bindings/rust/openui/examples/native_scroll_layer_opacity.rs b/bindings/rust/openui/examples/native_scroll_layer_opacity.rs
+new file mode 100644
+index 00000000..173af07f
+--- /dev/null
++++ b/bindings/rust/openui/examples/native_scroll_layer_opacity.rs
+@@ -0,0 +1,124 @@
++use openui::prelude::*;
++use std::{cell::Cell, path::PathBuf, rc::Rc};
++
++fn main() -> Result<(), Box<dyn std::error::Error>> {
++    let mut args = std::env::args().skip(1);
++    let output = PathBuf::from(args.next().ok_or("output directory required")?);
++    let scale: f64 = args.next().ok_or("scale required")?.parse()?;
++    let background_alpha: f32 = args.next().ok_or("background alpha required")?.parse()?;
++    let clip = match args.next().ok_or("background clip required")?.as_str() {
++        "border-box" => BackgroundClip::BorderBox,
++        "padding-box" => BackgroundClip::PaddingBox,
++        "content-box" => BackgroundClip::ContentBox,
++        _ => return Err("unknown clip".into()),
++    };
++    let radius: f32 = args.next().ok_or("radius required")?.parse()?;
++    let opacity: f32 = args.next().ok_or("opacity required")?.parse()?;
++    let blur: f32 = args.next().ok_or("blur required")?.parse()?;
++    let child_kind = args.next().ok_or("child kind required")?;
++    let request: f64 = args.next().ok_or("scroll request required")?.parse()?;
++    let phase: f32 = args.next().ok_or("phase required")?.parse()?;
++    let document =
++        Document::with_viewport_metrics(ViewportMetrics::from_logical_size(320.0, 240.0, scale)?)?;
++    let root = document.body();
++    root.set_background_color(Color::WHITE)?;
++    root.set_scrollbar_width(ScrollbarWidth::None)?;
++    let viewport = Element::create(&document, "div")?;
++    viewport.set_position(Position::Absolute)?;
++    viewport.set_left(Length::px(44.0 + phase))?;
++    viewport.set_top(Length::px(44.0 + phase))?;
++    viewport.set_display(Display::Flex)?;
++    viewport.set_width(LengthValue::px(80.0))?;
++    viewport.set_height(LengthValue::px(80.0))?;
++    viewport.set_padding(Edges::all(LengthValue::px(10.0)))?;
++    viewport.set_border(Border {
++        width: 3.0,
++        style: BorderStyle::Solid,
++        color: Color::from_rgba8(255, 165, 0, 255),
++    })?;
++    viewport.set_overflow(Overflow::Scroll)?;
++    viewport.set_scrollbar_width(ScrollbarWidth::None)?;
++    viewport.set_background_color(Color::WHITE)?;
++    root.append_child(&viewport)?;
++    let child = Element::create(&document, "div")?;
++    child.set_flex_shrink(0.0)?;
++    child.set_width(LengthValue::px(30.0))?;
++    child.set_height(LengthValue::px(30.0))?;
++    match child_kind.as_str() {
++        "reference" => {
++            viewport.set_padding(Edges::all(LengthValue::px(0.0)))?;
++            child.set_border(Border {
++                width: 30.0,
++                style: BorderStyle::Solid,
++                color: Color::from_rgba8(0, 255, 255, 255),
++            })?;
++            child.set_background_color(Color::from_rgba8(0, 128, 128, 255))?;
++        }
++        "opaque" => {
++            child.set_border(Border {
++                width: 50.0,
++                style: BorderStyle::Solid,
++                color: Color::from_rgba8(0, 255, 255, 255),
++            })?;
++            child.set_background_color(Color::from_rgba8(0, 128, 128, 255))?;
++        }
++        "translucent" => {
++            child.set_border(Border {
++                width: 50.0,
++                style: BorderStyle::Solid,
++                color: Color::from_rgba_f32(0.0, 1.0, 1.0, 0.5),
++            })?;
++            child.set_background_color(Color::from_rgba_f32(
++                0.0,
++                128.0 / 255.0,
++                128.0 / 255.0,
++                0.5,
++            ))?;
++        }
++        "partial" => {
++            child.set_background_color(Color::from_rgba8(0, 128, 128, 255))?;
++        }
++        _ => return Err("unknown child kind".into()),
++    }
++    viewport.append_child(&child)?;
++    let initial = document.render_to_png_buffer()?;
++    let calls = Rc::new(Cell::new(0));
++    let callback_calls = calls.clone();
++    let target = viewport.downgrade();
++    child.on("click", move |_| {
++        let viewport = target.upgrade().expect("viewport remains owned");
++        viewport
++            .set_background_color(Color::from_rgba_f32(0.0, 1.0, 1.0, background_alpha))
++            .expect("background");
++        viewport.set_background_clip(clip).expect("background clip");
++        viewport
++            .set_border_radius(CornerRadii(Edges::all(LengthValue::px(radius))))
++            .expect("radius");
++        viewport.set_opacity(opacity).expect("opacity");
++        viewport.set_filter_blur(blur).expect("filter");
++        viewport.scroll_to(request, request).expect("scroll");
++        callback_calls.set(callback_calls.get() + 1);
++    })?;
++    child.click()?;
++    assert_eq!(calls.get(), 1);
++    let bounds = viewport.bounding_rect()?.ok_or("viewport bounds missing")?;
++    let child_bounds = child.bounding_rect()?.ok_or("child bounds missing")?;
++    let metrics = viewport.scroll_metrics()?.ok_or("scroll metrics missing")?;
++    std::fs::create_dir_all(&output)?;
++    std::fs::write(output.join("initial.png"), initial)?;
++    std::fs::write(output.join("openui.png"), document.render_to_png_buffer()?)?;
++    std::fs::write(output.join("geometry.json"), format!(
++        "{{\"callback_count\":{},\"scroll\":{{\"x\":{},\"y\":{}}},\"client\":{{\"width\":{},\"height\":{}}},\"extent\":{{\"width\":{},\"height\":{}}},\"nodes\":{{\"viewport\":{{\"bounds\":{{\"x\":{},\"y\":{},\"width\":{},\"height\":{}}}}},\"child\":{{\"bounds\":{{\"x\":{},\"y\":{},\"width\":{},\"height\":{}}}}}}}}}\n",
++        calls.get(), viewport.scroll_left()?, viewport.scroll_top()?,
++        metrics.client_width, metrics.client_height, metrics.scroll_width, metrics.scroll_height,
++        bounds.x, bounds.y, bounds.width, bounds.height,
++        child_bounds.x, child_bounds.y, child_bounds.width, child_bounds.height,
++    ))?;
++    let target = viewport.downgrade();
++    drop(child);
++    drop(viewport);
++    drop(root);
++    drop(document);
++    assert!(target.upgrade().is_none(), "callback retained document");
++    Ok(())
++}
+diff --git a/bindings/rust/openui/examples/native_svg_foreign_object.rs b/bindings/rust/openui/examples/native_svg_foreign_object.rs
+new file mode 100644
+index 00000000..71ced2d0
+--- /dev/null
++++ b/bindings/rust/openui/examples/native_svg_foreign_object.rs
+@@ -0,0 +1,129 @@
++//! SVG viewport decoration and native child layout through public Rust APIs.
++use openui::prelude::*;
++use std::{cell::Cell, path::PathBuf, rc::Rc};
++
++fn main() -> Result<(), Box<dyn std::error::Error>> {
++    let mut args = std::env::args().skip(1);
++    let output = PathBuf::from(args.next().ok_or("output directory required")?);
++    let scale: f64 = args.next().ok_or("scale required")?.parse()?;
++    let phase: f32 = args.next().ok_or("phase required")?.parse()?;
++    let width: f32 = args.next().ok_or("width required")?.parse()?;
++    let height: f32 = args.next().ok_or("height required")?.parse()?;
++    let border_width: f32 = args.next().ok_or("border width required")?.parse()?;
++    let border_style = match args.next().ok_or("border style required")?.as_str() {
++        "solid" => BorderStyle::Solid,
++        "double" => BorderStyle::Double,
++        _ => return Err("unknown border style".into()),
++    };
++    let radius: f32 = args.next().ok_or("radius required")?.parse()?;
++    let padding: f32 = args.next().ok_or("padding required")?.parse()?;
++    let sizing = match args.next().ok_or("box sizing required")?.as_str() {
++        "content-box" => BoxSizing::ContentBox,
++        "border-box" => BoxSizing::BorderBox,
++        _ => return Err("unknown box sizing".into()),
++    };
++    let opacity: f32 = args.next().ok_or("opacity required")?.parse()?;
++    let child_kind = args.next().ok_or("child kind required")?;
++    let writing_mode = match args.next().ok_or("writing mode required")?.as_str() {
++        "horizontal-tb" => WritingMode::HorizontalTb,
++        "vertical-rl" => WritingMode::VerticalRl,
++        _ => return Err("unknown writing mode".into()),
++    };
++    let border_side = args.next().unwrap_or_else(|| "left".into());
++    if !matches!(border_side.as_str(), "top" | "right" | "bottom" | "left") {
++        return Err("unknown border side".into());
++    }
++    let document =
++        Document::with_viewport_metrics(ViewportMetrics::from_logical_size(320.0, 240.0, scale)?)?;
++    let root = document.body();
++    root.set_background_color(Color::WHITE)?;
++    let svg = Element::create(&document, "svg")?;
++    svg.set_position(Position::Absolute)?;
++    svg.set_left(Length::px(20.0 + phase))?;
++    svg.set_top(Length::px(20.0 + phase))?;
++    svg.set_width(LengthValue::px(240.0))?;
++    svg.set_height(LengthValue::px(180.0))?;
++    svg.set_overflow(Overflow::Hidden)?;
++    svg.set_overflow_clip_box(OverflowClipBox::ContentBox)?;
++    root.append_child(&svg)?;
++    let foreign = Element::create_svg_foreign_object(&document)?;
++    foreign.set_width(LengthValue::px(width))?;
++    foreign.set_height(LengthValue::px(height))?;
++    svg.append_child(&foreign)?;
++    let child = match child_kind.as_str() {
++        "none" => None,
++        "red" => {
++            let child = Element::create(&document, "div")?;
++            child.set_width(LengthValue::percent(100.0))?;
++            child.set_height(LengthValue::percent(100.0))?;
++            child.set_background_color(Color::RED)?;
++            foreign.append_child(&child)?;
++            Some(child)
++        }
++        _ => return Err("unknown child kind".into()),
++    };
++    let initial = foreign.bounding_rect()?.ok_or("initial viewport bounds")?;
++    let calls = Rc::new(Cell::new(0));
++    let callback_calls = calls.clone();
++    let target = foreign.downgrade();
++    foreign.on("click", move |_| {
++        let foreign = target.upgrade().expect("viewport remains owned");
++        let border = Border {
++            width: border_width,
++            style: border_style,
++            color: Color::BLACK,
++        };
++        match border_side.as_str() {
++            "top" => foreign.set_border_top(border),
++            "right" => foreign.set_border_right(border),
++            "bottom" => foreign.set_border_bottom(border),
++            _ => foreign.set_border_left(border),
++        }
++        .expect("native border mutation");
++        foreign
++            .set_border_radius(CornerRadii(Edges::all(LengthValue::px(radius))))
++            .expect("native radius mutation");
++        foreign
++            .set_padding(Edges::all(LengthValue::px(padding)))
++            .expect("native padding mutation");
++        foreign.set_box_sizing(sizing).expect("native box sizing");
++        foreign.set_opacity(opacity).expect("native opacity");
++        foreign
++            .set_writing_mode(writing_mode)
++            .expect("native writing mode");
++        callback_calls.set(callback_calls.get() + 1);
++    })?;
++    foreign.click()?;
++    assert_eq!(calls.get(), 1, "native callback must run once");
++    let foreign_rect = foreign.bounding_rect()?.ok_or("viewport has no bounds")?;
++    assert_eq!(
++        foreign_rect, initial,
++        "decoration cannot enlarge SVG viewport"
++    );
++    let bounds = |r: Rect| {
++        format!(
++            "{{\"x\":{},\"y\":{},\"width\":{},\"height\":{}}}",
++            r.x, r.y, r.width, r.height
++        )
++    };
++    let mut geometry = format!(
++        "{{\"nodes\":{{\"foreign\":{{\"bounds\":{}}}",
++        bounds(foreign_rect)
++    );
++    if let Some(child) = child.as_ref() {
++        let rect = child.bounding_rect()?.ok_or("child has no bounds")?;
++        geometry.push_str(&format!(",\"content\":{{\"bounds\":{}}}", bounds(rect)));
++    }
++    geometry.push_str("}}\n");
++    std::fs::create_dir_all(&output)?;
++    std::fs::write(output.join("geometry.json"), geometry)?;
++    std::fs::write(output.join("openui.png"), document.render_to_png_buffer()?)?;
++    let target = foreign.downgrade();
++    drop(child);
++    drop(foreign);
++    drop(svg);
++    drop(root);
++    drop(document);
++    assert!(target.upgrade().is_none(), "callback retained document");
++    Ok(())
++}
+diff --git a/bindings/rust/openui/examples/native_viewport_scroll.rs b/bindings/rust/openui/examples/native_viewport_scroll.rs
+index a473db39..ef381ed1 100644
+--- a/bindings/rust/openui/examples/native_viewport_scroll.rs
++++ b/bindings/rust/openui/examples/native_viewport_scroll.rs
+@@ -34,8 +34,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
+         _ => return Err("unknown direction".into()),
+     };
+     let left: f32 = args.next().unwrap_or_else(|| "27".into()).parse()?;
+-    let document =
+-        Document::with_viewport_metrics(ViewportMetrics::from_logical_size(320.0, 240.0, scale)?)?;
++    let viewport_width: f32 = args.next().unwrap_or_else(|| "320".into()).parse()?;
++    let viewport_height: f32 = args.next().unwrap_or_else(|| "240".into()).parse()?;
++    let document = Document::with_viewport_metrics(ViewportMetrics::from_logical_size(
++        f64::from(viewport_width),
++        f64::from(viewport_height),
++        scale,
++    )?)?;
+     let root = document.body();
+     root.set_background_color(Color::WHITE)?;
+     root.set_overflow_x(overflow)?;
+diff --git a/bindings/rust/openui/src/element.rs b/bindings/rust/openui/src/element.rs
+index a4dc5dd0..407c9ee6 100644
+--- a/bindings/rust/openui/src/element.rs
++++ b/bindings/rust/openui/src/element.rs
+@@ -49,7 +49,13 @@ impl WeakElement {
+ }
+ 
+ impl Element {
++    /// Create a native retained element. `foreignObject` creates an SVG
++    /// viewport for native UI children; like `div`, it has container kind
++    /// [`ElementTag::Div`]. No document scripts execute.
+     pub fn create(document: &Document, tag: &str) -> Result<Self, Error> {
++        if tag.eq_ignore_ascii_case("foreignobject") {
++            return Self::create_svg_foreign_object(document);
++        }
+         let (tag_kind, display) = tag_definition(tag)?;
+         let handle = document.with_engine_mut(|engine| engine.create_element(tag_kind))?;
+         if let Some(display) = display {
+@@ -60,6 +66,15 @@ impl Element {
+         Ok(Self::from_handle(document.clone(), handle))
+     }
+ 
++    /// Create an SVG viewport containing native retained UI elements.
++    /// Width and height specify the viewport bounds, including decoration.
++    /// Child mutation, events and ownership use the ordinary native API.
++    /// The container's native kind is [`ElementTag::Div`].
++    pub fn create_svg_foreign_object(document: &Document) -> Result<Self, Error> {
++        let handle = document.with_engine_mut(|engine| engine.create_svg_foreign_object())?;
++        Ok(Self::from_handle(document.clone(), handle))
++    }
++
+     pub(crate) fn from_handle(document: Document, handle: NodeHandle) -> Self {
+         Self { document, handle }
+     }
+@@ -884,6 +899,49 @@ mod tests {
+         );
+     }
+ 
++    #[test]
++    fn native_svg_viewport_bounds_survive_decoration_mutation_and_cloning() {
++        let document = Document::new(100, 100).unwrap();
++        let svg = Element::create(&document, "svg").unwrap();
++        svg.set_width(crate::typed_style::LengthValue::px(80.0))
++            .unwrap();
++        svg.set_height(crate::typed_style::LengthValue::px(60.0))
++            .unwrap();
++        document.body().append_child(&svg).unwrap();
++        let foreign = Element::create(&document, "foreignObject").unwrap();
++        foreign
++            .set_width(crate::typed_style::LengthValue::px(1.0))
++            .unwrap();
++        foreign
++            .set_height(crate::typed_style::LengthValue::px(1.0))
++            .unwrap();
++        svg.append_child(&foreign).unwrap();
++        let bounds = foreign.bounding_rect().unwrap().unwrap();
++        foreign.set_border_left_width(3).unwrap();
++        foreign
++            .set_border_left_style(openui_style::BorderStyle::Double)
++            .unwrap();
++        foreign
++            .set_padding(crate::typed_style::Edges::all(
++                crate::typed_style::LengthValue::px(2.0),
++            ))
++            .unwrap();
++        assert_eq!(foreign.bounding_rect().unwrap().unwrap(), bounds);
++        foreign
++            .set_box_sizing(openui_style::BoxSizing::BorderBox)
++            .unwrap();
++        assert_eq!(foreign.bounding_rect().unwrap().unwrap(), bounds);
++        let clone = foreign.clone_subtree().unwrap();
++        foreign.detach().unwrap();
++        svg.append_child(&clone).unwrap();
++        assert_eq!(clone.bounding_rect().unwrap().unwrap(), bounds);
++        clone
++            .set_width(crate::typed_style::LengthValue::px(8.0))
++            .unwrap();
++        let changed = clone.bounding_rect().unwrap().unwrap();
++        assert_eq!((changed.width, changed.height), (8.0, 1.0));
++    }
++
+     #[test]
+     fn typed_animation_uses_manual_clock_and_dispatches_events() {
+         let document = Document::new(100, 100).unwrap();
+diff --git a/docs/renderer/generated/author-style-inventory.json b/docs/renderer/generated/author-style-inventory.json
+index f665d6dc..e3200411 100644
+--- a/docs/renderer/generated/author-style-inventory.json
++++ b/docs/renderer/generated/author-style-inventory.json
+@@ -105,6 +105,7 @@
+         "bindings/rust/openui-layout/src/block.rs",
+         "bindings/rust/openui-layout/src/inline/algorithm.rs",
+         "bindings/rust/openui-layout/src/inline/items_builder.rs",
++        "bindings/rust/openui-paint/src/content_layer.rs",
+         "bindings/rust/openui-paint/src/painter.rs",
+         "bindings/rust/openui-paint/src/render.rs"
+       ],
+@@ -484,7 +485,9 @@
+         "bindings/rust/openui-layout/src/sticky.rs",
+         "bindings/rust/openui-layout/src/table.rs",
+         "bindings/rust/openui-layout/src/viewport.rs",
++        "bindings/rust/openui-paint/src/content_layer.rs",
+         "bindings/rust/openui-paint/src/image_resource.rs",
++        "bindings/rust/openui-paint/src/paint_record.rs",
+         "bindings/rust/openui-paint/src/painter.rs",
+         "bindings/rust/openui-paint/src/text_painter.rs"
+       ],
+@@ -1525,7 +1528,9 @@
+         "bindings/rust/openui-layout/src/sticky.rs",
+         "bindings/rust/openui-layout/src/table.rs",
+         "bindings/rust/openui-layout/src/viewport.rs",
++        "bindings/rust/openui-paint/src/content_layer.rs",
+         "bindings/rust/openui-paint/src/image_resource.rs",
++        "bindings/rust/openui-paint/src/paint_record.rs",
+         "bindings/rust/openui-paint/src/painter.rs",
+         "bindings/rust/openui-paint/src/render.rs"
+       ],
+@@ -1644,7 +1649,9 @@
+         "bindings/rust/openui-layout/src/relative.rs",
+         "bindings/rust/openui-layout/src/sticky.rs",
+         "bindings/rust/openui-layout/src/table.rs",
++        "bindings/rust/openui-paint/src/content_layer.rs",
+         "bindings/rust/openui-paint/src/image_resource.rs",
++        "bindings/rust/openui-paint/src/paint_record.rs",
+         "bindings/rust/openui-paint/src/painter.rs",
+         "bindings/rust/openui-paint/src/text_painter.rs"
+       ],
+@@ -2390,8 +2397,10 @@
+         "bindings/rust/openui-layout/src/sticky.rs",
+         "bindings/rust/openui-layout/src/table.rs",
+         "bindings/rust/openui-layout/src/viewport.rs",
++        "bindings/rust/openui-paint/src/content_layer.rs",
+         "bindings/rust/openui-paint/src/emphasis_painter.rs",
+         "bindings/rust/openui-paint/src/image_resource.rs",
++        "bindings/rust/openui-paint/src/paint_record.rs",
+         "bindings/rust/openui-paint/src/painter.rs",
+         "bindings/rust/openui-paint/src/text_painter.rs"
+       ],
+@@ -2955,7 +2964,9 @@
+         "bindings/rust/openui-layout/src/relative.rs",
+         "bindings/rust/openui-layout/src/sticky.rs",
+         "bindings/rust/openui-layout/src/table.rs",
++        "bindings/rust/openui-paint/src/content_layer.rs",
+         "bindings/rust/openui-paint/src/image_resource.rs",
++        "bindings/rust/openui-paint/src/paint_record.rs",
+         "bindings/rust/openui-paint/src/painter.rs",
+         "bindings/rust/openui-paint/src/text_painter.rs"
+       ],
+@@ -3110,9 +3121,11 @@
+         "bindings/rust/openui-layout/src/sticky.rs",
+         "bindings/rust/openui-layout/src/table.rs",
+         "bindings/rust/openui-layout/src/viewport.rs",
++        "bindings/rust/openui-paint/src/content_layer.rs",
+         "bindings/rust/openui-paint/src/decoration_painter.rs",
+         "bindings/rust/openui-paint/src/emphasis_painter.rs",
+         "bindings/rust/openui-paint/src/image_resource.rs",
++        "bindings/rust/openui-paint/src/paint_record.rs",
+         "bindings/rust/openui-paint/src/painter.rs",
+         "bindings/rust/openui-paint/src/render.rs"
+       ],
+diff --git a/docs/v02/generated/openui-ffi-checksum.txt b/docs/v02/generated/openui-ffi-checksum.txt
+index d79e9467..d0ac21a7 100644
+--- a/docs/v02/generated/openui-ffi-checksum.txt
++++ b/docs/v02/generated/openui-ffi-checksum.txt
+@@ -1 +1 @@
+-sha256:d4bd0a22b1a83bcba34bb6d80148b9d917b797cc12e8f18213fe020d904a8cb5
++sha256:b328744e7d5f17980ff5d5947f83fdf7dbb692ed004d119cffc3efbba04814e3
+diff --git a/examples/c_v02/CMakeLists.txt b/examples/c_v02/CMakeLists.txt
+index 251d01cc..15c946f2 100644
+--- a/examples/c_v02/CMakeLists.txt
++++ b/examples/c_v02/CMakeLists.txt
+@@ -3,7 +3,7 @@ project(OpenUIV02Examples LANGUAGES C CXX)
+ 
+ find_package(OpenUI 0.2 CONFIG REQUIRED)
+ 
+-foreach(example IN ITEMS hello counter todo dashboard accessibility geometry scroll_metrics primitive_styles)
++foreach(example IN ITEMS hello counter todo dashboard accessibility geometry scroll_metrics primitive_styles svg_viewport)
+   add_executable(openui_${example} ${example}.c)
+   target_link_libraries(openui_${example} PRIVATE OpenUI::OpenUI)
+ endforeach()
+@@ -19,6 +19,10 @@ add_executable(openui_primitive_styles_cpp primitive_styles.cc)
+ target_link_libraries(openui_primitive_styles_cpp PRIVATE OpenUI::OpenUI)
+ set_target_properties(openui_primitive_styles_cpp PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES)
+ 
++add_executable(openui_svg_viewport_cpp svg_viewport.cc)
++target_link_libraries(openui_svg_viewport_cpp PRIVATE OpenUI::OpenUI)
++set_target_properties(openui_svg_viewport_cpp PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES)
++
+ add_executable(openui_native_c native/window.c)
+ target_link_libraries(openui_native_c PRIVATE OpenUI::OpenUI)
+ add_executable(openui_native_cpp native/window.cc)
+diff --git a/examples/c_v02/svg_viewport.c b/examples/c_v02/svg_viewport.c
+new file mode 100644
+index 00000000..da73212f
+--- /dev/null
++++ b/examples/c_v02/svg_viewport.c
+@@ -0,0 +1,140 @@
++/* Native SVG viewport mutation through the public C API and event pipeline. */
++#ifdef NDEBUG
++#undef NDEBUG
++#endif
++#include <assert.h>
++#include <stdio.h>
++#include <string.h>
++
++#include "openui.h"
++
++static OuiUtf8 svg_utf8(const char* value) {
++  OuiUtf8 result = {(const uint8_t*)value, strlen(value)};
++  return result;
++}
++
++static void svg_property(OuiElement* element, OuiStyleProperty property, const char* literal) {
++  OuiStyleValue value;
++  OuiStatus status = oui_style_value_parse(property, svg_utf8(literal), &value);
++  if (status != OUI_OK)
++    fprintf(stderr, "native SVG property %d literal '%s': %d\n", property, literal, status);
++  assert(status == OUI_OK);
++  assert(oui_element_set_property(element, property, &value) == OUI_OK);
++  if (value.tag == OUI_STYLE_VALUE_COMPOUND)
++    assert(oui_style_compound_destroy((OuiStyleCompound*)value.data.compound) == OUI_OK);
++}
++
++typedef struct SvgCallbackState {
++  OuiElement* viewport;
++  OuiElement* ordinary;
++  unsigned calls;
++} SvgCallbackState;
++
++static void svg_clicked(OuiEvent* event, void* data) {
++  SvgCallbackState* state = (SvgCallbackState*)data;
++  assert(event->event_type == OUI_EVENT_CLICK);
++  svg_property(state->viewport, OUI_STYLE_PROPERTY_BORDER_LEFT, "3px double black");
++  svg_property(state->viewport, OUI_STYLE_PROPERTY_BORDER_RADIUS, "7px");
++  svg_property(state->viewport, OUI_STYLE_PROPERTY_PADDING, "2px");
++  svg_property(state->viewport, OUI_STYLE_PROPERTY_BOX_SIZING, "border-box");
++  svg_property(state->ordinary, OUI_STYLE_PROPERTY_BOX_SIZING, "border-box");
++  ++state->calls;
++}
++
++static void svg_viewport(double scale,
++                         const char* width,
++                         const char* height,
++                         float expected_width,
++                         float expected_height) {
++  OuiDocumentConfig config = {sizeof(config),
++                              OUI_ABI_VERSION,
++                              {320.0, 240.0, (uint32_t)(320.0 * scale), (uint32_t)(240.0 * scale),
++                               scale, OUI_VIEWPORT_LOGICAL, 0}};
++  OuiDocument* document = NULL;
++  OuiElement* root = NULL;
++  OuiElement* svg = NULL;
++  OuiElement* viewport = NULL;
++  OuiElement* ordinary = NULL;
++  assert(oui_document_create(&config, &document) == OUI_OK);
++  assert(oui_document_root(document, &root) == OUI_OK);
++  assert(oui_element_create(document, OUI_ELEMENT_SVG, &svg) == OUI_OK);
++  assert(oui_element_create(document, OUI_ELEMENT_SVG_FOREIGN_OBJECT, &viewport) == OUI_OK);
++  assert(oui_element_append_child(root, svg) == OUI_OK);
++  assert(oui_element_append_child(svg, viewport) == OUI_OK);
++  assert(oui_element_create(document, OUI_ELEMENT_DIV, &ordinary) == OUI_OK);
++  assert(oui_element_append_child(root, ordinary) == OUI_OK);
++  svg_property(root, OUI_STYLE_PROPERTY_BACKGROUND_COLOR, "white");
++  svg_property(svg, OUI_STYLE_PROPERTY_POSITION, "absolute");
++  svg_property(svg, OUI_STYLE_PROPERTY_LEFT, "20px");
++  svg_property(svg, OUI_STYLE_PROPERTY_TOP, "20px");
++  svg_property(svg, OUI_STYLE_PROPERTY_WIDTH, "240px");
++  svg_property(svg, OUI_STYLE_PROPERTY_HEIGHT, "180px");
++  svg_property(svg, OUI_STYLE_PROPERTY_OVERFLOW, "hidden");
++  svg_property(viewport, OUI_STYLE_PROPERTY_WIDTH, width);
++  svg_property(viewport, OUI_STYLE_PROPERTY_HEIGHT, height);
++  svg_property(ordinary, OUI_STYLE_PROPERTY_POSITION, "absolute");
++  svg_property(ordinary, OUI_STYLE_PROPERTY_LEFT, "120px");
++  svg_property(ordinary, OUI_STYLE_PROPERTY_TOP, "20px");
++  svg_property(ordinary, OUI_STYLE_PROPERTY_WIDTH, "24px");
++  svg_property(ordinary, OUI_STYLE_PROPERTY_HEIGHT, "18px");
++  svg_property(ordinary, OUI_STYLE_PROPERTY_BORDER_LEFT, "3px solid black");
++  svg_property(ordinary, OUI_STYLE_PROPERTY_PADDING, "2px");
++  svg_property(ordinary, OUI_STYLE_PROPERTY_BOX_SIZING, "content-box");
++  OuiRect before;
++  assert(oui_element_get_bounds(viewport, &before) == OUI_OK);
++  assert(before.x == 20.0f && before.y == 20.0f);
++  assert(before.width == expected_width && before.height == expected_height);
++  OuiRect ordinary_before;
++  assert(oui_element_get_bounds(ordinary, &ordinary_before) == OUI_OK);
++  assert(ordinary_before.width == 31.0f && ordinary_before.height == 22.0f);
++
++  SvgCallbackState state = {viewport, ordinary, 0};
++  OuiListener* listener = NULL;
++  assert(oui_element_add_event_listener(viewport, OUI_EVENT_CLICK, 0, svg_clicked, &state,
++                                        &listener) == OUI_OK);
++  OuiEvent event;
++  memset(&event, 0, sizeof(event));
++  event.struct_size = sizeof(event);
++  event.abi_version = OUI_ABI_VERSION;
++  event.event_type = OUI_EVENT_CLICK;
++  assert(oui_document_dispatch_event(document, viewport, &event) == OUI_OK);
++  assert(state.calls == 1);
++  OuiRect after;
++  assert(oui_element_get_bounds(viewport, &after) == OUI_OK);
++  assert(after.x == before.x && after.y == before.y);
++  assert(after.width == expected_width && after.height == expected_height);
++  assert(before.width == expected_width && before.height == expected_height);
++  OuiRect ordinary_after;
++  assert(oui_element_get_bounds(ordinary, &ordinary_after) == OUI_OK);
++  assert(ordinary_after.x == ordinary_before.x && ordinary_after.y == ordinary_before.y);
++  assert(ordinary_after.width == 24.0f && ordinary_after.height == 18.0f);
++  assert(ordinary_before.width == 31.0f && ordinary_before.height == 22.0f);
++  OuiBuffer* png = NULL;
++  assert(oui_document_render_png(document, &png) == OUI_OK);
++  assert(oui_buffer_length(png) > 0);
++  assert(oui_buffer_destroy(png) == OUI_OK);
++
++  assert(oui_element_detach(viewport) == OUI_OK);
++  size_t count = 1;
++  assert(oui_element_get_client_rects_v1(viewport, NULL, 0, &count) == OUI_OK && count == 0);
++  assert(oui_element_append_child(svg, viewport) == OUI_OK);
++  assert(oui_element_get_bounds(viewport, &after) == OUI_OK);
++  assert(after.width == expected_width && after.height == expected_height);
++  /* Callback data remains live until the owned listener is destroyed. */
++  assert(oui_listener_destroy(listener) == OUI_OK);
++  assert(oui_element_destroy(viewport) == OUI_OK);
++  assert(oui_element_destroy(ordinary) == OUI_OK);
++  assert(oui_element_destroy(svg) == OUI_OK);
++  assert(oui_element_destroy(root) == OUI_OK);
++  assert(oui_document_destroy(document) == OUI_OK);
++}
++
++int main(void) {
++  const double scales[] = {1.0, 1.25, 1.5, 2.0, 3.0};
++  for (size_t i = 0; i < sizeof(scales) / sizeof(scales[0]); ++i) {
++    svg_viewport(scales[i], "1px", "1px", 1.0f, 1.0f);
++    svg_viewport(scales[i], "24px", "18px", 24.0f, 18.0f);
++  }
++  puts("native SVG viewport: bounds, mutation callbacks, detach/reattach and teardown passed");
++  return 0;
++}
+diff --git a/examples/c_v02/svg_viewport.cc b/examples/c_v02/svg_viewport.cc
+new file mode 100644
+index 00000000..56c493b0
+--- /dev/null
++++ b/examples/c_v02/svg_viewport.cc
+@@ -0,0 +1,2 @@
++/* Exercise the same native C API and retained state from a C++ consumer. */
++#include "svg_viewport.c"
+diff --git a/include/openui.h b/include/openui.h
+index e600b10e..9a7ef5de 100644
+--- a/include/openui.h
++++ b/include/openui.h
+@@ -83,7 +83,11 @@ typedef enum OuiElementTag {
+   OUI_ELEMENT_FORM = 35,
+   OUI_ELEMENT_EMBED = 36,
+   OUI_ELEMENT_HTML = 37,
+-  OUI_ELEMENT_BODY = 38
++  OUI_ELEMENT_BODY = 38,
++  /* Native SVG viewport for retained UI children. Width/height include border
++   * and padding. Uses the shared Rust foreignObject constructor and ordinary
++   * element handles, styles, events, and document ownership. */
++  OUI_ELEMENT_SVG_FOREIGN_OBJECT = 39
+ } OuiElementTag;
+ 
+ typedef enum OuiLengthUnit {
+diff --git a/tools/ffi/openui.h.in b/tools/ffi/openui.h.in
+index ccb63196..4c5764b7 100644
+--- a/tools/ffi/openui.h.in
++++ b/tools/ffi/openui.h.in
+@@ -83,7 +83,11 @@ typedef enum OuiElementTag {
+   OUI_ELEMENT_FORM = 35,
+   OUI_ELEMENT_EMBED = 36,
+   OUI_ELEMENT_HTML = 37,
+-  OUI_ELEMENT_BODY = 38
++  OUI_ELEMENT_BODY = 38,
++  /* Native SVG viewport for retained UI children. Width/height include border
++   * and padding. Uses the shared Rust foreignObject constructor and ordinary
++   * element handles, styles, events, and document ownership. */
++  OUI_ELEMENT_SVG_FOREIGN_OBJECT = 39
+ } OuiElementTag;
+ 
+ typedef enum OuiLengthUnit {

@@ -1,0 +1,587 @@
+{
+  "all_commands_terminal": true,
+  "all_hosted_jobs_terminal": true,
+  "all_three_workflows_success": false,
+  "job_conclusions": {
+    "cancelled": 1,
+    "skipped": 5,
+    "success": 5
+  },
+  "probe_sha256": "9ec19dddd153ee8384be8e76d9e0e52ba97d221f49e0bc4f69d54345c46eca98",
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": "95426acf51bcf789108c68671f5d875d051bd7b4",
+  "unavailable_job_logs_are_not_passes": true,
+  "workflows": [
+    {
+      "all_available_logs_preserved": true,
+      "cancelled_jobs_with_no_steps": [
+        "historical-pixel-audit"
+      ],
+      "conclusion": "failure",
+      "databaseId": 37362608916,
+      "headSha": "95426acf51bcf789108c68671f5d875d051bd7b4",
+      "jobs": [
+        {
+          "completedAt": "2026-10-05T19:26:25Z",
+          "conclusion": "success",
+          "databaseId": 111940569962,
+          "name": "rust-parity",
+          "startedAt": "2026-10-05T19:20:19Z",
+          "status": "completed",
+          "steps": [
+            {
+              "completedAt": "2026-10-05T19:20:21Z",
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "startedAt": "2026-10-05T19:20:20Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:20:27Z",
+              "conclusion": "success",
+              "name": "Run actions/checkout@v6",
+              "number": 2,
+              "startedAt": "2026-10-05T19:20:21Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:20:55Z",
+              "conclusion": "success",
+              "name": "Install Rust and Skia build dependencies",
+              "number": 3,
+              "startedAt": "2026-10-05T19:20:27Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:23:29Z",
+              "conclusion": "success",
+              "name": "Run actions/cache@v5",
+              "number": 4,
+              "startedAt": "2026-10-05T19:20:55Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:23:35Z",
+              "conclusion": "success",
+              "name": "Check Rust formatting",
+              "number": 5,
+              "startedAt": "2026-10-05T19:23:29Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:26:08Z",
+              "conclusion": "success",
+              "name": "Run parity-relevant Rust tests",
+              "number": 6,
+              "startedAt": "2026-10-05T19:23:35Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:26:21Z",
+              "conclusion": "success",
+              "name": "Build and verify the C ABI",
+              "number": 7,
+              "startedAt": "2026-10-05T19:26:08Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:26:23Z",
+              "conclusion": "success",
+              "name": "Post Run actions/cache@v5",
+              "number": 13,
+              "startedAt": "2026-10-05T19:26:21Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:26:23Z",
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v6",
+              "number": 14,
+              "startedAt": "2026-10-05T19:26:23Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:26:23Z",
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 15,
+              "startedAt": "2026-10-05T19:26:23Z",
+              "status": "completed"
+            }
+          ],
+          "url": "https://github.com/zhuowcui/open-ui/actions/runs/37362608916/job/111940569962"
+        },
+        {
+          "completedAt": "2026-10-05T19:34:44Z",
+          "conclusion": "cancelled",
+          "databaseId": 111940570004,
+          "name": "historical-pixel-audit",
+          "startedAt": "2026-10-05T19:19:43Z",
+          "status": "completed",
+          "steps": [],
+          "url": "https://github.com/zhuowcui/open-ui/actions/runs/37362608916/job/111940570004"
+        },
+        {
+          "completedAt": "2026-10-05T19:23:48Z",
+          "conclusion": "success",
+          "databaseId": 111940570035,
+          "name": "python-accountability",
+          "startedAt": "2026-10-05T19:20:20Z",
+          "status": "completed",
+          "steps": [
+            {
+              "completedAt": "2026-10-05T19:20:22Z",
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "startedAt": "2026-10-05T19:20:21Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:20:28Z",
+              "conclusion": "success",
+              "name": "Run actions/checkout@v6",
+              "number": 2,
+              "startedAt": "2026-10-05T19:20:22Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:20:28Z",
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "startedAt": "2026-10-05T19:20:28Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:20:30Z",
+              "conclusion": "success",
+              "name": "Install renderer evidence test dependency",
+              "number": 4,
+              "startedAt": "2026-10-05T19:20:28Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:20:36Z",
+              "conclusion": "success",
+              "name": "Run actions/setup-node@v4",
+              "number": 5,
+              "startedAt": "2026-10-05T19:20:30Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:20:36Z",
+              "conclusion": "success",
+              "name": "Install Chromium-locked Acorn parser",
+              "number": 6,
+              "startedAt": "2026-10-05T19:20:36Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:20:48Z",
+              "conclusion": "success",
+              "name": "Fetch pinned Chromium 147 WPT sources",
+              "number": 7,
+              "startedAt": "2026-10-05T19:20:36Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:21:34Z",
+              "conclusion": "success",
+              "name": "Run closure, porter, and renderer evidence tests",
+              "number": 8,
+              "startedAt": "2026-10-05T19:20:48Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:23:37Z",
+              "conclusion": "success",
+              "name": "Verify immutable closure ledgers",
+              "number": 9,
+              "startedAt": "2026-10-05T19:21:34Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:23:43Z",
+              "conclusion": "success",
+              "name": "Audit authoritative accountability artifacts",
+              "number": 10,
+              "startedAt": "2026-10-05T19:23:37Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:23:43Z",
+              "conclusion": "success",
+              "name": "Post Run actions/setup-node@v4",
+              "number": 18,
+              "startedAt": "2026-10-05T19:23:43Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:23:43Z",
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 19,
+              "startedAt": "2026-10-05T19:23:43Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:23:44Z",
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v6",
+              "number": 20,
+              "startedAt": "2026-10-05T19:23:43Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:23:44Z",
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 21,
+              "startedAt": "2026-10-05T19:23:44Z",
+              "status": "completed"
+            }
+          ],
+          "url": "https://github.com/zhuowcui/open-ui/actions/runs/37362608916/job/111940570035"
+        }
+      ],
+      "log_capture_actual_exit": 1,
+      "log_sha256": "f2ed8538aec6057899695c8f3ba3f2ccee0fee7e3aaf4ed2121f3bbc5d50db83",
+      "run_attempt": 1,
+      "status": "completed",
+      "url": "https://github.com/zhuowcui/open-ui/actions/runs/37362608916",
+      "workflowName": "CI"
+    },
+    {
+      "all_available_logs_preserved": true,
+      "cancelled_jobs_with_no_steps": [],
+      "conclusion": "success",
+      "databaseId": 37362608937,
+      "headSha": "95426acf51bcf789108c68671f5d875d051bd7b4",
+      "jobs": [
+        {
+          "completedAt": "2026-10-05T19:20:45Z",
+          "conclusion": "success",
+          "databaseId": 111940565538,
+          "name": "clang-format",
+          "startedAt": "2026-10-05T19:20:23Z",
+          "status": "completed",
+          "steps": [
+            {
+              "completedAt": "2026-10-05T19:20:24Z",
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "startedAt": "2026-10-05T19:20:24Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:20:30Z",
+              "conclusion": "success",
+              "name": "Run actions/checkout@v6",
+              "number": 2,
+              "startedAt": "2026-10-05T19:20:24Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:20:41Z",
+              "conclusion": "success",
+              "name": "Install clang-format",
+              "number": 3,
+              "startedAt": "2026-10-05T19:20:30Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:20:43Z",
+              "conclusion": "success",
+              "name": "Check tracked C and C++ formatting",
+              "number": 4,
+              "startedAt": "2026-10-05T19:20:41Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:20:43Z",
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v6",
+              "number": 8,
+              "startedAt": "2026-10-05T19:20:43Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:20:43Z",
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 9,
+              "startedAt": "2026-10-05T19:20:43Z",
+              "status": "completed"
+            }
+          ],
+          "url": "https://github.com/zhuowcui/open-ui/actions/runs/37362608937/job/111940565538"
+        },
+        {
+          "completedAt": "2026-10-05T19:25:55Z",
+          "conclusion": "success",
+          "databaseId": 111940565887,
+          "name": "gn-format",
+          "startedAt": "2026-10-05T19:25:28Z",
+          "status": "completed",
+          "steps": [
+            {
+              "completedAt": "2026-10-05T19:25:30Z",
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "startedAt": "2026-10-05T19:25:29Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:25:36Z",
+              "conclusion": "success",
+              "name": "Run actions/checkout@v6",
+              "number": 2,
+              "startedAt": "2026-10-05T19:25:30Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:25:53Z",
+              "conclusion": "success",
+              "name": "Install GN",
+              "number": 3,
+              "startedAt": "2026-10-05T19:25:36Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:25:53Z",
+              "conclusion": "success",
+              "name": "Check tracked GN formatting",
+              "number": 4,
+              "startedAt": "2026-10-05T19:25:53Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:25:53Z",
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v6",
+              "number": 8,
+              "startedAt": "2026-10-05T19:25:53Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:25:53Z",
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 9,
+              "startedAt": "2026-10-05T19:25:53Z",
+              "status": "completed"
+            }
+          ],
+          "url": "https://github.com/zhuowcui/open-ui/actions/runs/37362608937/job/111940565887"
+        }
+      ],
+      "log_capture_actual_exit": 0,
+      "log_sha256": "55d30866787ba2637d181f7ae741faf99af0786da51a075c5de92f3af251a104",
+      "run_attempt": 1,
+      "status": "completed",
+      "url": "https://github.com/zhuowcui/open-ui/actions/runs/37362608937",
+      "workflowName": "Format Check"
+    },
+    {
+      "all_available_logs_preserved": true,
+      "cancelled_jobs_with_no_steps": [],
+      "conclusion": "success",
+      "databaseId": 37362608859,
+      "headSha": "95426acf51bcf789108c68671f5d875d051bd7b4",
+      "jobs": [
+        {
+          "completedAt": "2026-10-05T19:23:38Z",
+          "conclusion": "success",
+          "databaseId": 111940564926,
+          "name": "conformance-and-platform",
+          "startedAt": "2026-10-05T19:19:53Z",
+          "status": "completed",
+          "steps": [
+            {
+              "completedAt": "2026-10-05T19:19:55Z",
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "startedAt": "2026-10-05T19:19:54Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:20:01Z",
+              "conclusion": "success",
+              "name": "Run actions/checkout@v6",
+              "number": 2,
+              "startedAt": "2026-10-05T19:19:55Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:21:26Z",
+              "conclusion": "success",
+              "name": "Install toolchain and Linux runtime dependencies",
+              "number": 3,
+              "startedAt": "2026-10-05T19:20:01Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:22:12Z",
+              "conclusion": "success",
+              "name": "Run actions/cache@v5",
+              "number": 4,
+              "startedAt": "2026-10-05T19:21:26Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:22:14Z",
+              "conclusion": "success",
+              "name": "Verify scenario and performance schemas",
+              "number": 5,
+              "startedAt": "2026-10-05T19:22:12Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:22:23Z",
+              "conclusion": "success",
+              "name": "Run application conformance suite",
+              "number": 6,
+              "startedAt": "2026-10-05T19:22:14Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:22:29Z",
+              "conclusion": "success",
+              "name": "Build Linux example",
+              "number": 7,
+              "startedAt": "2026-10-05T19:22:23Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:22:35Z",
+              "conclusion": "success",
+              "name": "Build and test the C Linux application surface",
+              "number": 8,
+              "startedAt": "2026-10-05T19:22:29Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:23:30Z",
+              "conclusion": "success",
+              "name": "Exercise native C and C++ windows on X11 with software and Mesa OpenGL",
+              "number": 9,
+              "startedAt": "2026-10-05T19:22:35Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:23:30Z",
+              "conclusion": "success",
+              "name": "Smoke-test X11 with Mesa OpenGL",
+              "number": 10,
+              "startedAt": "2026-10-05T19:23:30Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:23:32Z",
+              "conclusion": "success",
+              "name": "Smoke-test pure Wayland software presentation",
+              "number": 11,
+              "startedAt": "2026-10-05T19:23:30Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:23:34Z",
+              "conclusion": "success",
+              "name": "Preserve native C/C++ smoke reports",
+              "number": 12,
+              "startedAt": "2026-10-05T19:23:32Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:23:35Z",
+              "conclusion": "success",
+              "name": "Post Run actions/cache@v5",
+              "number": 23,
+              "startedAt": "2026-10-05T19:23:34Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:23:35Z",
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v6",
+              "number": 24,
+              "startedAt": "2026-10-05T19:23:35Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-05T19:23:35Z",
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 25,
+              "startedAt": "2026-10-05T19:23:35Z",
+              "status": "completed"
+            }
+          ],
+          "url": "https://github.com/zhuowcui/open-ui/actions/runs/37362608859/job/111940564926"
+        },
+        {
+          "completedAt": "2026-10-05T19:19:42Z",
+          "conclusion": "skipped",
+          "databaseId": 111940566439,
+          "name": "native-sanitizers",
+          "startedAt": "2026-10-05T19:19:42Z",
+          "status": "completed",
+          "steps": [],
+          "url": "https://github.com/zhuowcui/open-ui/actions/runs/37362608859/job/111940566439"
+        },
+        {
+          "completedAt": "2026-10-05T19:19:42Z",
+          "conclusion": "skipped",
+          "databaseId": 111940566550,
+          "name": "fuzz-smoke",
+          "startedAt": "2026-10-05T19:19:42Z",
+          "status": "completed",
+          "steps": [],
+          "url": "https://github.com/zhuowcui/open-ui/actions/runs/37362608859/job/111940566550"
+        },
+        {
+          "completedAt": "2026-10-05T19:19:42Z",
+          "conclusion": "skipped",
+          "databaseId": 111940566579,
+          "name": "miri-handles",
+          "startedAt": "2026-10-05T19:19:42Z",
+          "status": "completed",
+          "steps": [],
+          "url": "https://github.com/zhuowcui/open-ui/actions/runs/37362608859/job/111940566579"
+        },
+        {
+          "completedAt": "2026-10-05T19:19:42Z",
+          "conclusion": "skipped",
+          "databaseId": 111940566770,
+          "name": "c-undefined-sanitizer",
+          "startedAt": "2026-10-05T19:19:43Z",
+          "status": "completed",
+          "steps": [],
+          "url": "https://github.com/zhuowcui/open-ui/actions/runs/37362608859/job/111940566770"
+        },
+        {
+          "completedAt": "2026-10-05T19:19:42Z",
+          "conclusion": "skipped",
+          "databaseId": 111940566882,
+          "name": "msrv",
+          "startedAt": "2026-10-05T19:19:43Z",
+          "status": "completed",
+          "steps": [],
+          "url": "https://github.com/zhuowcui/open-ui/actions/runs/37362608859/job/111940566882"
+        }
+      ],
+      "log_capture_actual_exit": 0,
+      "log_sha256": "5595af3ae46247475b01992e26d0a2b59a88ec553369990dfa13abfcbbc6532f",
+      "run_attempt": 1,
+      "status": "completed",
+      "url": "https://github.com/zhuowcui/open-ui/actions/runs/37362608859",
+      "workflowName": "v0.2 Hardening"
+    }
+  ]
+}

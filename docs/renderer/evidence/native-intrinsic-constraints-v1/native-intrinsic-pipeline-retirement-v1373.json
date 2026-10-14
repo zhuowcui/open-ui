@@ -1,0 +1,13 @@
+{
+  "all_commands_terminal": true,
+  "observed_exit_code": 143,
+  "original_receipt_sha256": "6118118d041b2181205d8f12b1c3aeb81b9a2f0e657cae8e453af07a05075de5",
+  "owner_pid": 3183259,
+  "owner_program": "openui-native-intrinsic-constraints-pipeline-v1369.py",
+  "reason": "Fresh-build validation must clean all eighteen workspace packages when crossing source checkpoints; runner-only cleaning left compile diagnostics that do not match current geometry source. Baseline guards also need a clean workspace at each source switch.",
+  "release_qualification": false,
+  "schema_version": 1,
+  "source_and_probe_bytes_unchanged": true,
+  "stage_count": 0,
+  "state": "terminal-retired-before-any-stage"
+}

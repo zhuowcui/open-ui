@@ -1,0 +1,18 @@
+--- a/bindings/rust/openui-paint/src/painter.rs
++++ b/bindings/rust/openui-paint/src/painter.rs
+@@ -853,6 +853,15 @@
+                 &mut overflowing_max_decorations,
+             );
+             for (overflow, overflow_offset) in overflowing_max_decorations {
++                let pointer = overflow as *const Fragment as usize;
++                // A shared column decoration already owns this fragment's
++                // background and border. Replaying it compounds the same
++                // antialiased coverage at fractional device coordinates.
++                if PREPAINTED_BOX_DECORATIONS.with(|prepainted| {
++                    prepainted.borrow().contains(&pointer)
++                }) {
++                    continue;
++                }
+                 let Some(slice) = overflow.decoration_slice else {
+                     continue;
+                 };

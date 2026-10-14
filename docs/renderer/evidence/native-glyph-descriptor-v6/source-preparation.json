@@ -1,0 +1,22 @@
+{
+  "conflict_bytes_sha256": "e5f638e2aa5c4ebaeae3ca40c074e21ad494b40c77b9e587f565f5d2e692ae2f",
+  "conflict_diff_sha256": "c426b8391cfdc28f2d872dadbfdbc4e85ce321acb48ec601f83e2a4065bd2f83",
+  "conflict_limited_to_removed_private_guard_imports": true,
+  "javascript_executed_by_openui": false,
+  "pixel_tolerance": 0,
+  "preparation_conflict_resolved": true,
+  "preparation_first_actual_exit": 1,
+  "probe_sha256": "bfe307e27772d96ac8dbdff6a24016934dfeac0f59530592be87d7fde9cdf940",
+  "release_qualification": false,
+  "schema_version": 1,
+  "sources": [
+    {
+      "commit": "db03c8facca7502d42f327bae4833acac7379946",
+      "root": "/dev/shm/openui-native-glyph-baseline-16187f4f-v1825"
+    },
+    {
+      "commit": "c68d946c18ecd1bb6d2f3f84accecaa84cba3651",
+      "root": "/dev/shm/openui-native-glyph-candidate-16187f4f-v1825"
+    }
+  ]
+}

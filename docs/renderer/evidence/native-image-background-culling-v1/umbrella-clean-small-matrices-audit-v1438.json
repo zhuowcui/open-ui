@@ -1,0 +1,55 @@
+{
+  "all_commands_terminal": true,
+  "build_receipt_sha256": "d471333ab9addbe52f1f147e010b09b534ba50d9c590bb8438334d760e0d3419",
+  "cargo_commands_run": 0,
+  "full_original_and_expanded_qualification_pending": true,
+  "probe_sha256": "067ed07e72c4ce2075d89496f7122b3ebaa777af43cb0f4a83ce1be3c9277841",
+  "release_qualification": false,
+  "schema_version": 1,
+  "screenshots_generated": 0,
+  "source": {
+    "clean": true,
+    "commit": "2e443f49d49b81d65674f64bb099fed2922775b5",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "5377ee4175f9eac313c9d4c08e1e8f3c9d2aff100fa73cb8d716188e9efb1584",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "2e443f49d49b81d65674f64bb099fed2922775b5",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "5377ee4175f9eac313c9d4c08e1e8f3c9d2aff100fa73cb8d716188e9efb1584",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "suites": {
+    "focused": {
+      "actual_exit": 0,
+      "all_nine_comparison_invariants_unchanged": 640,
+      "different": 0,
+      "errors": 0,
+      "exact": 640,
+      "exit_receipt_sha256": "efe618e53ad9bcbf7e4b675529696a28414ed380666a9563ec2f4fc3a055882f",
+      "original_pixel_gate_still_required": true,
+      "prior_summary_sha256": "ce443a0d3b36272bead7bc2fc1a56a631c378791d6ed95b7556adc88f0c89f41",
+      "profile_result_sha256": "cdbbbe40a0fcba2f49b7d8c720ab6d3ab523378919fb232a7c4f9861585d9a03",
+      "source_attributed_small_matrix_pass": true,
+      "summary_sha256": "a7a4e655cdcaab3adb653430ec7245a43de033c51be93474f2a9a886c7ac16fe",
+      "total": 640
+    },
+    "primitive": {
+      "actual_exit": 0,
+      "all_nine_comparison_invariants_unchanged": 960,
+      "different": 0,
+      "errors": 0,
+      "exact": 960,
+      "exit_receipt_sha256": "d7a1d3ca249650869418e5d84658b7b176958d6e1ca2eb55eae2bb230b35cff7",
+      "original_pixel_gate_still_required": true,
+      "prior_summary_sha256": "06324c06a4ef3dcc7273181644802635993c188b0b225ed68a7dfef5f2ad744b",
+      "profile_result_sha256": "f3044cc4f8da4715d9b533b2205d7966b74152fb7e5430b3d1ff0599c6dd3bed",
+      "source_attributed_small_matrix_pass": true,
+      "summary_sha256": "ee4b449fc89de738401138aa1128eaeadcce541ed435fbcca3bed2115d99853b",
+      "total": 960
+    }
+  },
+  "workspace_and_abi_clean_source_audit": "passed, scoped to those components"
+}

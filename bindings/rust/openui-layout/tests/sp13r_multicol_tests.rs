@@ -1618,6 +1618,9 @@ fn avoided_row_flex_break_tracks_visual_and_content_consumption_separately() {
         style.update_derived(|computed| computed.flex_wrap = openui_style::FlexWrap::Wrap);
         style.update_derived(|computed| computed.height = Length::px(150.0));
         style.update_derived(|computed| {
+            computed.background_color = Color::from_rgba8(0, 128, 0, 255)
+        });
+        style.update_derived(|computed| {
             computed.align_content =
                 ContentAlignment::with_distribution(ContentDistribution::SpaceBetween)
         });
@@ -1644,6 +1647,12 @@ fn avoided_row_flex_break_tracks_visual_and_content_consumption_separately() {
     doc.update_resolved_style(static_absolute, |style| style.width = Length::px(50.0));
     doc.update_resolved_style(static_absolute, |style| style.height = Length::px(13.0));
     doc.append_child(multicol, static_absolute);
+    let bottom_absolute = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(bottom_absolute, |style| style.position = Position::Absolute);
+    doc.update_resolved_style(bottom_absolute, |style| style.bottom = Length::px(0.0));
+    doc.update_resolved_style(bottom_absolute, |style| style.width = Length::px(50.0));
+    doc.update_resolved_style(bottom_absolute, |style| style.height = Length::px(13.0));
+    doc.append_child(multicol, bottom_absolute);
 
     let fragment = block_layout(
         &doc,
@@ -1655,7 +1664,9 @@ fn avoided_row_flex_break_tracks_visual_and_content_consumption_separately() {
     let first_flex = find_node(column_fragments[0], flex).expect("first flex fragment");
     let second_flex = find_node(column_fragments[1], flex).expect("second flex fragment");
     assert_eq!(first_flex.size.height, lu(100));
-    assert_eq!(second_flex.size.height, lu(50));
+    assert_eq!(second_flex.size.height, lu(100));
+    assert_eq!(second_flex.decoration_paint_block_size, Some(lu(50)));
+    assert!(second_flex.decoration_limit_preserves_inline_coverage);
     assert!(!second_flex.has_overflow_clip);
 
     let absolute = find_node(&fragment, static_absolute).expect("static absolute fragment");
@@ -2021,6 +2032,73 @@ fn early_forced_row_flex_break_is_the_continuation_origin() {
     let third_flex = find_node(column_fragments[2], flex).expect("third flex continuation");
     assert_eq!(find_node(third_flex, items[2]).unwrap().offset.top, lu(-40));
     assert_eq!(find_node(third_flex, items[3]).unwrap().offset.top, lu(20));
+}
+
+#[test]
+fn nested_row_flex_break_propagates_only_from_its_first_line() {
+    for (forced_child, expected_top) in [(1, lu(100)), (2, lu(50))] {
+        let mut doc = Document::new();
+        let multicol = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(multicol, |style| {
+            style.display = Display::Block;
+            style.width = Length::px(100.0);
+            style.height = Length::px(100.0);
+            style.column_count = Some(2);
+            style.column_gap = Some(Length::px(0.0));
+            style.column_fill = ColumnFill::Auto;
+        });
+        doc.append_child(doc.root(), multicol);
+
+        let outer = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(outer, |style| {
+            style.display = Display::Flex;
+            style.flex_wrap = FlexWrap::Wrap;
+        });
+        doc.append_child(multicol, outer);
+        let first = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(first, |style| {
+            style.width = Length::px(50.0);
+            style.height = Length::px(50.0);
+        });
+        doc.append_child(outer, first);
+
+        let nested = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(nested, |style| {
+            style.display = Display::Flex;
+            style.flex_wrap = FlexWrap::Wrap;
+            style.width = Length::px(50.0);
+        });
+        doc.append_child(outer, nested);
+        for (index, width) in [25.0, 25.0, 50.0].into_iter().enumerate() {
+            let child = doc.create_node(ElementTag::Div);
+            doc.update_resolved_style(child, |style| {
+                style.width = Length::px(width);
+                style.height = Length::px(25.0);
+                if index == forced_child {
+                    style.break_before = BreakValue::Column;
+                }
+            });
+            doc.append_child(nested, child);
+        }
+        let last = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(last, |style| {
+            style.width = Length::px(50.0);
+            style.height = Length::px(50.0);
+        });
+        doc.append_child(outer, last);
+
+        let fragment = block_layout(
+            &doc,
+            multicol,
+            &ConstraintSpace::for_block_child(lu(100), lu(600), lu(100), lu(600), false),
+        );
+        let column_fragments = columns(&fragment);
+        let first_outer = find_node(column_fragments[0], outer).expect("first flex slice");
+        assert_eq!(
+            find_node(first_outer, nested).unwrap().offset.top,
+            expected_top
+        );
+    }
 }
 
 #[test]
@@ -4383,6 +4461,94 @@ fn nested_spanner_rows_resolve_before_ancestor_fragmentation() {
 }
 
 #[test]
+fn nested_spanner_continuation_keeps_leaf_overflow_in_its_owned_row() {
+    let mut doc = Document::new();
+    let outer = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(outer, |style| {
+        style.display = Display::Block;
+        style.width = Length::px(100.0);
+        style.height = Length::px(110.0);
+        style.column_count = Some(2);
+        style.column_fill = ColumnFill::Auto;
+        style.column_gap = Some(Length::px(0.0));
+    });
+    let prefix = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(prefix, |style| {
+        style.display = Display::Block;
+        style.height = Length::px(60.0);
+    });
+    doc.append_child(outer, prefix);
+    let inner = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(inner, |style| {
+        style.display = Display::Block;
+        style.column_count = Some(2);
+        style.column_fill = ColumnFill::Auto;
+        style.column_gap = Some(Length::px(0.0));
+    });
+    doc.append_child(outer, inner);
+    let inner_prefix = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(inner_prefix, |style| {
+        style.display = Display::Block;
+        style.height = Length::px(40.0);
+    });
+    doc.append_child(inner, inner_prefix);
+    let block = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(block, |style| {
+        style.display = Display::Block;
+        style.height = Length::px(100.0);
+    });
+    doc.append_child(inner, block);
+    let spanner = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(spanner, |style| {
+        style.display = Display::Block;
+        style.column_span = ColumnSpan::All;
+        style.height = Length::px(20.0);
+    });
+    doc.append_child(block, spanner);
+    let line = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(line, |style| {
+        style.display = Display::Block;
+        style.width = Length::percent(200.0);
+        style.line_height = LineHeight::Length(50.0);
+    });
+    doc.append_child(block, line);
+    let line_break = doc.create_node(ElementTag::Break);
+    doc.update_resolved_style(line_break, |style| {
+        style.display = Display::Inline;
+        style.line_height = LineHeight::Length(50.0);
+    });
+    doc.append_child(line, line_break);
+    let tail = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(tail, |style| {
+        style.display = Display::Block;
+        style.width = Length::percent(200.0);
+        style.height = Length::px(50.0);
+    });
+    doc.append_child(block, tail);
+    let fragment = block_layout(
+        &doc,
+        outer,
+        &ConstraintSpace::for_block_child(lu(100), lu(110), lu(100), lu(110), false),
+    );
+    fn collect<'a>(fragment: &'a Fragment, node: NodeId, out: &mut Vec<&'a Fragment>) {
+        if fragment.node_id == node {
+            out.push(fragment);
+        }
+        for child in &fragment.children {
+            collect(child, node, out);
+        }
+    }
+    let mut tail_parts = Vec::new();
+    collect(&fragment, tail, &mut tail_parts);
+    assert!(!tail_parts.is_empty());
+    assert!(tail_parts.iter().any(|part| part.offset.top < lu(0)));
+    for part in tail_parts {
+        assert_eq!(part.size.height, lu(50));
+        assert!(part.decoration_slice.is_none());
+    }
+}
+
+#[test]
 fn wrapped_authored_column_height_is_retained_before_spanners() {
     let mut doc = Document::new();
     let multicol = doc.create_node(ElementTag::Div);
@@ -4454,4 +4620,61 @@ fn wrapped_authored_column_height_is_retained_before_spanners() {
         assert_eq!(fragments.len(), 1);
         assert_eq!(fragments[0].offset.top, lu(expected_top));
     }
+}
+
+#[test]
+fn ordinary_spanner_wrapper_materializes_leaf_source_slices() {
+    let mut doc = Document::new();
+    let outer = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(outer, |style| {
+        style.display = Display::Block;
+        style.width = Length::px(400.0);
+        style.column_count = Some(2);
+    });
+    let wrapper = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(wrapper, |style| {
+        style.display = Display::Block;
+        style.height = Length::px(450.0);
+    });
+    doc.append_child(outer, wrapper);
+    let first = doc.create_node(ElementTag::Div);
+    for index in 0..3 {
+        let block = if index == 0 {
+            first
+        } else {
+            doc.create_node(ElementTag::Div)
+        };
+        doc.update_resolved_style(block, |style| {
+            style.display = Display::Block;
+            style.width = Length::px(100.0);
+            style.height = Length::px(200.0);
+        });
+        doc.append_child(wrapper, block);
+        if index < 2 {
+            let spanner = doc.create_node(ElementTag::Div);
+            doc.update_resolved_style(spanner, |style| {
+                style.display = Display::Block;
+                style.column_span = ColumnSpan::All;
+                style.height = Length::px(50.0);
+            });
+            doc.append_child(wrapper, spanner);
+        }
+    }
+    let fragment = block_layout(
+        &doc,
+        outer,
+        &ConstraintSpace::for_block_child(lu(400), lu(600), lu(400), lu(600), false),
+    );
+    let column_fragments = columns(&fragment);
+    for (index, column) in column_fragments.iter().take(2).enumerate() {
+        let leaf = find_node(column, first).expect("leaf in each pre-spanner column");
+        assert_eq!(leaf.size.height, lu(100));
+        assert_eq!(leaf.offset.top, lu(0));
+        let slice = leaf.decoration_slice.expect("owned leaf source slice");
+        assert_eq!(slice.source_block_offset, lu(index as i32 * 100));
+        assert_eq!(slice.source_block_size, lu(200));
+        assert_eq!(leaf.is_first_for_node, index == 0);
+        assert_eq!(leaf.is_last_for_node, index == 1);
+    }
+    assert!(column_fragments.len() >= 2);
 }

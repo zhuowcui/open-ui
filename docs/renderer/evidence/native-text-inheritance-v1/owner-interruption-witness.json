@@ -1,0 +1,64 @@
+{
+  "all_original_receipts_unchanged": true,
+  "all_owned_build_raster_and_app_processes_absent": true,
+  "consumer": {
+    "cross_language_images": 204,
+    "cross_language_images_matching_rust": 204,
+    "exact_geometry": 0,
+    "exact_images": 0,
+    "partial_results_are_not_qualification": true,
+    "receipt": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-loader-retry-consumer-v1655/receipt.json",
+    "recorded_geometry": 19584,
+    "recorded_images": 306,
+    "rust_self_rows_excluded": true,
+    "sha256": "86f903953229323bee500d54cd4eea082154808460005f5a09bc7a8b73418e3d"
+  },
+  "failed_or_incomplete_gates_remain_open": true,
+  "observed_at_utc": "2026-10-05T19:33:59.475029+00:00",
+  "owners": [
+    {
+      "actual_whole_exit_unknown": true,
+      "all_observed_owner_processes_absent": true,
+      "name": "native-text-loader-retry-pipeline-v1656",
+      "original_receipt_terminal": false,
+      "pids_verified_missing": [
+        3870261,
+        3888909
+      ],
+      "qualification": false,
+      "receipt": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-loader-retry-pipeline-v1656/receipt.json",
+      "receipt_sha256": "3f7bbf0ea1ca33f17f8ac8926c08458a4432a3a9ab37031dbab926bec9960c2b",
+      "source": {
+        "clean": true,
+        "commit": "90310e15b86bed558a79c8eb085d2a72092eab69",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "b041b21ae0794097c16a4faa287f99014bdb850273b87c06aed4e70796e8cd01",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "state_at_interruption": "running-native-application"
+    },
+    {
+      "actual_whole_exit_unknown": true,
+      "all_observed_owner_processes_absent": true,
+      "name": "native-glyph-guard-pipeline-v1658",
+      "original_receipt_terminal": false,
+      "pids_verified_missing": [
+        3871994
+      ],
+      "qualification": false,
+      "receipt": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-glyph-guard-pipeline-v1658/receipt.json",
+      "receipt_sha256": "f04549c079a8e10f6720c9d54befd12c433edf67d40f48c79439bcf4ef6b31b4",
+      "source": {
+        "clean": true,
+        "commit": "3b2e0d1f60b90813859c4c24325c7b0061dea29c",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "169eff26b00cfcc7f552dc773009087ab251db1e49ff65c6b065ff62f215f831",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "state_at_interruption": "awaiting-all-36-prior-whole-pipelines"
+    }
+  ],
+  "probe_sha256": "0011a4d2bfc8aa06715226050b84b7254e8d44f1e0267fbcf30a1de867fd9f78",
+  "release_qualification": false,
+  "schema_version": 1
+}

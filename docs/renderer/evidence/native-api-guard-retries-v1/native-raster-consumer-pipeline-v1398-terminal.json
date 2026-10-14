@@ -1,0 +1,96 @@
+{
+  "all_commands_terminal": true,
+  "candidate_exports": 117,
+  "consumer_compile_correction_only": true,
+  "existing_113_umbrella_exports_preserved": true,
+  "expected_stages": 12,
+  "immutable_probe_hashes": {
+    "/tmp/openui-native-raster-consumer-application-v1397.py": "683259aa7114f25749fa9a35bb0ab5701b6c2da6b7d9d34068cb12dabd58204b",
+    "/tmp/openui-native-raster-consumer-build-v1397.py": "7c6c325714c58fd8adf093a8bc6e80a0975850a437f82bcb292dc1b67b9c791f",
+    "/tmp/openui-native-raster-consumer-consumer-v1397.py": "72572d48c8eba39c67deccb8825f0727caf188d62d1c60e1c397ace475b3bacc",
+    "/tmp/openui-native-raster-consumer-controls-v1397.py": "9a59a1fb14cc2056b2104402b737e4c1b67dd69ff096d47defc086ca31de77c9",
+    "/tmp/openui-native-raster-consumer-guards-v1397.py": "22443c5bf538c58d83e1671e48f3a74cd88664a3d6d0328921fc83703ea39d2d",
+    "/tmp/openui-native-raster-consumer-matrices-v1397.py": "acbd64564c21848365d7c8a694b1e1c69a0f0fe5ecb412abd345691068a1078c",
+    "/tmp/openui-native-raster-consumer-sizing-v1397.py": "ce35761e8ffa80b471bf21fb75935106f56125c32590d9f9501740d020c4e708",
+    "/tmp/openui-native-raster-consumer-static-v1397.py": "1c3b038550530a15dd168088e632d0d8797cf18ea6ee6f3991d9801e62cf356c"
+  },
+  "inherited_unqualified_raster_production": true,
+  "javascript_executed_by_openui": false,
+  "local_miri_delegated_to_own_source_hosted_workflow": true,
+  "new_release_states_admitted": 0,
+  "old_openui_pixels_are_provenance_only": true,
+  "ordered_build_and_image_stages": true,
+  "original_pixel_gate_remains_required": true,
+  "owner_pid": 3220674,
+  "parent_commit": "0e1f12ff6bf971e4c5940f298521895cd8d933fb",
+  "preserves_both_unstable_reference_captures": true,
+  "prior_terminal_pipeline_sha256": {
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-integration-pipeline-v1341/receipt.json": "926466a0bbcc7621a0754043d40a45d52995bc3fd868a257578b451482c488ee",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-umbrella-pipeline-v1291/receipt.json": "95da859e07156b9162940ee12d3a3a437d56f1a44dd5f55ce080fc84cf19a1aa",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-c-raster-retry-pipeline-v1312/receipt.json": "078a26f62d5c704947367ff2bb1e06f8c3d0759e19093fcad405d27629f4203e",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-default-strike-pipeline-v1338/receipt.json": "ceb26919fa7ddf8b74161f2905990a9284427b3bc40df2a561d6be83b8ec494d",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-capture-forensics-pipeline-v1346/receipt.json": "115dfb1326c95cdbcd8ddfb23f80fc7990235bc059071de4be29eee4aba58a57",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-retry-pipeline-v1310/receipt.json": "be5b475d9d3aa72dc60c02ebb4ab253240d07d3186bf17b64ebdf1d6472ad367",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-retry-pipeline-v1311/receipt.json": "ae3f849b0499cb54b75321a8e599587fc907c147a63e976d2f99b92fb0585571",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-constraints-pipeline-v1375/receipt.json": "11304c8d3704024e05eef9b80f005c7fff8cd7e55f94e563120eabac78405e31",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-pipeline-v1337/receipt.json": "5527ac622b3188a170828738d18de83a113e6635b14dd3766108661c398e1d06",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-style-integration-pipeline-v1354/receipt.json": "bd6bacf2368642fdb3ca09c28ca261cefd1c1dd72c7dc451a4cfab6ff6b03305"
+  },
+  "prior_whole_pipelines": [
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-umbrella-pipeline-v1291/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-retry-pipeline-v1310/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-retry-pipeline-v1311/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-c-raster-retry-pipeline-v1312/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-pipeline-v1337/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-default-strike-pipeline-v1338/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-integration-pipeline-v1341/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-capture-forensics-pipeline-v1346/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-style-integration-pipeline-v1354/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-constraints-pipeline-v1375/receipt.json"
+  ],
+  "probe_sha256": "a547652b0dc486becc287b25b384eaf49d2169aa75b80cf50b5ffba3c3bece0b",
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "renderer_production_unchanged_from_prior_candidate": true,
+  "schema_version": 1,
+  "selection_hashes": {
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-retry-selection-v1311.json": "ca51d8b03dbff3b5c47f3f0dabf93fc631b37772947350a50e56f9e1bdbb00e2"
+  },
+  "source": {
+    "clean": true,
+    "commit": "3d4eea1184ac6703ae4b29de12ddb4cb75fe5ed3",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "b82ebc6c2753fdfefb35eda3bcf340c9b0fe798d962264761ba5e01021f6f31a",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "3d4eea1184ac6703ae4b29de12ddb4cb75fe5ed3",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "b82ebc6c2753fdfefb35eda3bcf340c9b0fe798d962264761ba5e01021f6f31a",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "state": "stopped-on-build-guard-or-harness-failure-native-build",
+  "steps": [
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-native-raster-consumer-guards-v1397.py"
+      ],
+      "log_sha256": "68e2d9d4c6ca484925df2233e2fdc96511109f203a3da6182eabfc537367a57b",
+      "name": "guards",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-native-raster-consumer-build-v1397.py"
+      ],
+      "log_sha256": "a8764eff642ebb8c8e5872b5f953371d76c9baba3293ff81e921cbafd714691d",
+      "name": "native-build",
+      "observed_exit_code": 101
+    }
+  ],
+  "strict_chromium_capture_pairs": true,
+  "workspace_cleaned_at_every_source_switch": true
+}

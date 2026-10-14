@@ -1,0 +1,98 @@
+diff --git a/bindings/rust/openui-engine/src/lib.rs b/bindings/rust/openui-engine/src/lib.rs
+index 03c9167d..d322f9d0 100644
+--- a/bindings/rust/openui-engine/src/lib.rs
++++ b/bindings/rust/openui-engine/src/lib.rs
+@@ -2609,6 +2609,93 @@ mod tests {
+         }
+     }
+ 
++    #[test]
++    fn native_atomic_constraints_contribute_to_enclosing_intrinsic_size() {
++        use openui_geometry::Length;
++        use openui_style::BoxSizing;
++
++        // A consuming app's outer inline-block must reserve the inner box's
++        // constrained size, rather than only its unconstrained 20px content
++        // and 20px padding. The corresponding Chromium border boxes measure
++        // 40px with no minimum, 200px with a border-box minimum, and 220px
++        // with a content-box minimum. A smaller maximum cannot defeat a min.
++        for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
++            for (sizing, minimum, expected) in [
++                (BoxSizing::BorderBox, 0.0, 40.0),
++                (BoxSizing::BorderBox, 200.0, 200.0),
++                (BoxSizing::ContentBox, 200.0, 220.0),
++            ] {
++                let mut engine =
++                    Engine::new(ViewportMetrics::from_logical_size(320.0, 160.0, scale).unwrap())
++                        .unwrap();
++                let root = engine.root();
++                let outer = engine.create_native_element(ElementTag::Div).unwrap();
++                let inner = engine.create_native_element(ElementTag::Div).unwrap();
++                let content = engine.create_native_element(ElementTag::Div).unwrap();
++                for node in [outer, inner] {
++                    engine
++                        .set_property(node, StyleProperty::Display, Display::InlineBlock.into())
++                        .unwrap();
++                }
++                engine
++                    .set_property(
++                        inner,
++                        StyleProperty::BoxSizing,
++                        StyleValue::Renderer(RendererStyleValue::BoxSizing(sizing)),
++                    )
++                    .unwrap();
++                engine
++                    .set_property(
++                        inner,
++                        StyleProperty::Width,
++                        LengthValue::Computed(Length::min_content()).into(),
++                    )
++                    .unwrap();
++                engine
++                    .set_property(
++                        inner,
++                        StyleProperty::MinWidth,
++                        LengthValue::px(minimum).into(),
++                    )
++                    .unwrap();
++                for property in [
++                    StyleProperty::PaddingTop,
++                    StyleProperty::PaddingRight,
++                    StyleProperty::PaddingBottom,
++                    StyleProperty::PaddingLeft,
++                ] {
++                    engine
++                        .set_property(inner, property, LengthValue::px(10.0).into())
++                        .unwrap();
++                }
++                for property in [StyleProperty::Width, StyleProperty::Height] {
++                    engine
++                        .set_property(content, property, LengthValue::px(20.0).into())
++                        .unwrap();
++                }
++                engine.append_child(inner, content).unwrap();
++                engine.append_child(outer, inner).unwrap();
++                engine.append_child(root, outer).unwrap();
++                let snapshot = engine.bounds(outer).unwrap().unwrap();
++                assert_eq!(snapshot.width, expected, "scale={scale} sizing={sizing:?}");
++                assert_eq!(engine.bounds(inner).unwrap().unwrap().width, expected);
++                engine
++                    .set_property(
++                        inner,
++                        StyleProperty::MaxWidth,
++                        LengthValue::px(100.0).into(),
++                    )
++                    .unwrap();
++                assert_eq!(engine.bounds(outer).unwrap().unwrap().width, expected);
++                engine
++                    .set_property(inner, StyleProperty::MinWidth, LengthValue::px(0.0).into())
++                    .unwrap();
++                assert_eq!(engine.bounds(outer).unwrap().unwrap().width, 40.0);
++                assert_eq!(snapshot.width, expected, "owned bounds retain their value");
++            }
++        }
++    }
++
+     #[test]
+     fn native_resolved_computed_defaults_preserve_snapshots_and_native_inheritance() {
+         let mut engine =

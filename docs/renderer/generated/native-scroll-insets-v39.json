@@ -1,0 +1,142 @@
+{
+  "accepted_pixel_totals_changed": false,
+  "actual_pixel_exits": [
+    1,
+    1
+  ],
+  "addition_cases": 201,
+  "addition_cases_quad_exact": 200,
+  "addition_comparisons_unchanged": 804,
+  "all_original_and_expanded_comparison_invariants_unchanged": 46652,
+  "applied_workspace_reported_tests": 8531,
+  "artifacts": {
+    "docs/renderer/evidence/workspace-source-attribution-v1/applied-build-v1340.json": {
+      "bytes": 4925,
+      "sha256": "2c49ae0b5373012805c12ebcfd0b6667472e766e1831535690d27fd56aeff985"
+    },
+    "docs/renderer/evidence/workspace-source-attribution-v1/applied-cache-guards-v1340.json": {
+      "bytes": 6216,
+      "sha256": "9c32b39c4d4671eff4aa5475bd1d6549475053d25a7786e2d479fb22115da701"
+    },
+    "docs/renderer/evidence/workspace-source-attribution-v1/applied-expanded-audit-v1407.json": {
+      "bytes": 2850,
+      "sha256": "edf8b3a5e10a77fb9be2b93fb830c6808db1e353a4b6a3e4b00d4a1f14b07bbc"
+    },
+    "docs/renderer/evidence/workspace-source-attribution-v1/applied-original-audit-v1405.json": {
+      "bytes": 2710,
+      "sha256": "1ec0ac297743482e93500e748a194db0f2cee6fe8b48d385b2d35da3882d9f7e"
+    },
+    "docs/renderer/evidence/workspace-source-attribution-v1/applied-pipeline-complete-v1341.json": {
+      "bytes": 5564,
+      "sha256": "926466a0bbcc7621a0754043d40a45d52995bc3fd868a257578b451482c488ee"
+    },
+    "docs/renderer/evidence/workspace-source-attribution-v1/fresh-full-clean-queue-at-observation-v1411.json": {
+      "bytes": 3768,
+      "sha256": "f7253dc525134e81c372c300120fb79a9e389f8b73f4f751559db8a3e20f4ee7"
+    },
+    "docs/renderer/evidence/workspace-source-attribution-v1/openui-cache-integration-expanded-audit-v1407.py": {
+      "bytes": 6000,
+      "sha256": "a42a0e31d121ce991cac9d0202dab1d3227140853dee6f68384255d7b9a53737"
+    },
+    "docs/renderer/evidence/workspace-source-attribution-v1/openui-cache-integration-full-audit-v1405.py": {
+      "bytes": 4677,
+      "sha256": "ec106065b988d1cf567f7c024ebbaaebecd359da7cbedb9532247589001ea45d"
+    },
+    "docs/renderer/evidence/workspace-source-attribution-v1/openui-umbrella-clean-workspace-build-v1410.py": {
+      "bytes": 4710,
+      "sha256": "b6ec53bfe71f13e716d33c3c3cebfe7006bd7872d382f952fe3745b09eb03cac"
+    },
+    "docs/renderer/evidence/workspace-source-attribution-v1/openui-umbrella-clean-workspace-guards-v1410.py": {
+      "bytes": 5997,
+      "sha256": "546d1b58a128b2602a75202d91d772dcaecf63b2b152ed6b6d4987a580bfc1d1"
+    },
+    "docs/renderer/evidence/workspace-source-attribution-v1/openui-umbrella-clean-workspace-matrices-v1410.py": {
+      "bytes": 2103,
+      "sha256": "fd851422c13287dc11eafff9157ec369d79beaddcfda5c5824c66805435d3cb5"
+    },
+    "docs/renderer/evidence/workspace-source-attribution-v1/openui-umbrella-clean-workspace-pipeline-v1411.py": {
+      "bytes": 6528,
+      "sha256": "f49d28b14d7987dd956ff73682b4ac58eb196d23f50e75778420c16c3a76d241"
+    },
+    "docs/renderer/evidence/workspace-source-attribution-v1/prior-build-v1289.json": {
+      "bytes": 4910,
+      "sha256": "e45f325b874cbb71e7691d04433d4397adcef960205b3b0f0dc9e431dd6931ee"
+    },
+    "docs/renderer/evidence/workspace-source-attribution-v1/raster-consumer-hardening-complete-v1399.json": {
+      "bytes": 18892,
+      "sha256": "349c3d329731269013f5c43d9834f57414e5d57ad0e066157dd1ed3507c1ee15"
+    },
+    "docs/renderer/evidence/workspace-source-attribution-v1/raster-consumer-own-workflow-v1399.json": {
+      "bytes": 16313,
+      "sha256": "135162e846b7e34251f6720e583be38fdf9f9325d03cf9b07a10256665a0067f"
+    },
+    "docs/renderer/evidence/workspace-source-attribution-v1/workspace-attribution-audit-v1409.json": {
+      "bytes": 43928,
+      "sha256": "b11c23ef3ed96007c0bea41ca69449fb3b1e375b3198949e214dd4dea9de8d7d"
+    }
+  },
+  "compiled_workspace_source_attribution": "unverified; full clean revalidation required",
+  "contract": "Pinned Chromium alone is the zero-tolerance pixel target. Open UI executes no JavaScript; apps call public native Rust APIs and Rust callbacks. All needed native API and pixel work remains required.",
+  "corrected_raster_consumer_own_hosted": {
+    "all_jobs_passed": true,
+    "applied_to_umbrella": false,
+    "c_ubsan_consumer_failure_repaired": true,
+    "local_pixel_qualification": "pending",
+    "run_id": 37255347853,
+    "skipped_jobs": 0,
+    "source": "3d4eea1184ac6703ae4b29de12ddb4cb75fe5ed3",
+    "strict_miri_prefix_test_passes": true,
+    "successful_jobs": 7
+  },
+  "expanded_measured": {
+    "different": 1591,
+    "errors": 0,
+    "exact": 22137,
+    "profile_result_sha256": "8f3add060c3973baa0a9ad5f93576e0bdb44655315ab54e8ffb9d13850329926",
+    "total": 23728
+  },
+  "finding": "Earlier source-attributed workspace log executes one private Fontations test absent from the declared source. All source/build input files match the later applied source, whose text test count is 341 rather than 342. The earlier recorded count is not source-qualified release proof. Counts alone do not establish source attribution of linked libraries. Existing immutable evidence and recorded pixel bytes remain unchanged.",
+  "four_profile_pixel_gate": "FAIL",
+  "new_release_states_admitted": 0,
+  "observed_at_utc": "2026-10-05T02:55:58.189603+00:00",
+  "original_measured": {
+    "different": 1590,
+    "errors": 0,
+    "exact": 21334,
+    "profile_result_sha256": "a0f38ec1ab7cba0e43c50462f34c38287b5c1c6a2a82129c7dd59590e6f4edab",
+    "total": 22924
+  },
+  "original_rows_agree": 22924,
+  "prior_workspace_reported_tests": 8532,
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "required_revalidation": {
+    "all_commands_terminal": false,
+    "executed_stages": 0,
+    "pipeline": "umbrella-clean-workspace-pipeline-v1411",
+    "prior_whole_pipelines": 11,
+    "private_root": "/dev/shm/openui-umbrella-clean-workspace-2e443f49",
+    "rejects_known_private_test_absent_from_source": true,
+    "runtime_unchanged_from_applied_source": true,
+    "source": {
+      "clean": true,
+      "commit": "2e443f49d49b81d65674f64bb099fed2922775b5",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "5377ee4175f9eac313c9d4c08e1e8f3c9d2aff100fa73cb8d716188e9efb1584",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stages": [
+      "named-baseline-and-fixed-cache-guards",
+      "full-clean-native-build-and-ABI-consumers",
+      "focused",
+      "primitive",
+      "full",
+      "expanded"
+    ],
+    "state": "awaiting-all-eleven-prior-whole-pipelines",
+    "workspace_packages_cleaned_at_each_source_switch": 18
+  },
+  "schema_version": 1,
+  "unattributed_test": "shaping::shape_result::tests::fontations_lcd_hints_at_physical_size_before_replay",
+  "whole_applied_pipeline_terminal": true
+}

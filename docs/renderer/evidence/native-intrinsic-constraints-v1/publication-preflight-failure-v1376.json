@@ -1,0 +1,10 @@
+{
+  "all_commands_terminal": true,
+  "failure": "Publication preflight compared complete query objects across scales, including scale-dependent browser metrics. All 100 element geometry rows are identical at all five scales and both independent repeats. Compare those rows explicitly.",
+  "new_probe": "openui-native-intrinsic-publication-v1377.py",
+  "observed_exit_code": 1,
+  "partial_evidence_preserved": true,
+  "probe_sha256": "19e9a69840b97846eb0fd70eba97dfe69d2086904c1113a0ce6571b65980a821",
+  "release_qualification": false,
+  "schema_version": 1
+}

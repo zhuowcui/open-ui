@@ -651,7 +651,7 @@ DEPENDENCY_DEFS = [
     ("rounded_border_paint", "Paint Quality: Rounded Borders", "Future",   has_rounded_border_paint),
     ("complex_border",     "Paint Quality: Complex Borders",  "Future",    has_complex_border_style),
     ("scrollbar_gutter",   "Future SP: Scrollbar Gutter",     "Future",    has_scrollbar_gutter),
-    ("javascript",         "Future SP: JavaScript/Test Harness", "Future",  has_javascript),
+    ("javascript",         "WPT script: native final-state review", "Test tooling", has_javascript),
     ("grid_layout",        "Future SP: CSS Grid Layout",       "Future",    has_grid_layout),
     ("table_layout",       "Future SP: Table Layout",          "Future",    has_table_layout),
     ("writing_mode",       "Future SP: Writing Modes/Bidi",    "Future",    has_writing_mode),

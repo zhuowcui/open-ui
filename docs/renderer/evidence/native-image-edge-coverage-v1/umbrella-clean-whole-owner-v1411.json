@@ -1,0 +1,129 @@
+{
+  "all_commands_terminal": true,
+  "consumer_compile_correction_only": false,
+  "immutable_probe_hashes": {
+    "/tmp/openui-umbrella-clean-workspace-build-v1410.py": "b6ec53bfe71f13e716d33c3c3cebfe7006bd7872d382f952fe3745b09eb03cac",
+    "/tmp/openui-umbrella-clean-workspace-guards-v1410.py": "546d1b58a128b2602a75202d91d772dcaecf63b2b152ed6b6d4987a580bfc1d1",
+    "/tmp/openui-umbrella-clean-workspace-matrices-v1410.py": "fd851422c13287dc11eafff9157ec369d79beaddcfda5c5824c66805435d3cb5"
+  },
+  "javascript_executed_by_openui": false,
+  "new_release_states_admitted": 0,
+  "new_source_or_pixel_passes_claimed": false,
+  "old_openui_pixels_are_provenance_only": true,
+  "ordered_build_and_image_stages": true,
+  "original_attribution_audit": "workspace-source-attribution-audit-v1409.json",
+  "original_pixel_gate_remains_required": true,
+  "original_renderer_pixel_gate_remains_fail": true,
+  "owner_pid": 3250192,
+  "prior_terminal_pipeline_sha256": {
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-integration-pipeline-v1341/receipt.json": "926466a0bbcc7621a0754043d40a45d52995bc3fd868a257578b451482c488ee",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-umbrella-pipeline-v1291/receipt.json": "95da859e07156b9162940ee12d3a3a437d56f1a44dd5f55ce080fc84cf19a1aa",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-c-raster-retry-pipeline-v1312/receipt.json": "078a26f62d5c704947367ff2bb1e06f8c3d0759e19093fcad405d27629f4203e",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-default-strike-pipeline-v1338/receipt.json": "ceb26919fa7ddf8b74161f2905990a9284427b3bc40df2a561d6be83b8ec494d",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-capture-forensics-pipeline-v1346/receipt.json": "115dfb1326c95cdbcd8ddfb23f80fc7990235bc059071de4be29eee4aba58a57",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-retry-pipeline-v1310/receipt.json": "be5b475d9d3aa72dc60c02ebb4ab253240d07d3186bf17b64ebdf1d6472ad367",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-retry-pipeline-v1311/receipt.json": "ae3f849b0499cb54b75321a8e599587fc907c147a63e976d2f99b92fb0585571",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-constraints-pipeline-v1375/receipt.json": "11304c8d3704024e05eef9b80f005c7fff8cd7e55f94e563120eabac78405e31",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-consumer-pipeline-v1398/receipt.json": "8a64d4285cd2ce57f85fdd0cc00265ee34cc3cee4cd08d33d5bd9aff82f4a261",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-pipeline-v1337/receipt.json": "5527ac622b3188a170828738d18de83a113e6635b14dd3766108661c398e1d06",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-style-integration-pipeline-v1354/receipt.json": "bd6bacf2368642fdb3ca09c28ca261cefd1c1dd72c7dc451a4cfab6ff6b03305"
+  },
+  "prior_whole_pipelines": [
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-umbrella-pipeline-v1291/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-retry-pipeline-v1310/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-retry-pipeline-v1311/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-c-raster-retry-pipeline-v1312/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-pipeline-v1337/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-default-strike-pipeline-v1338/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-integration-pipeline-v1341/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-capture-forensics-pipeline-v1346/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-style-integration-pipeline-v1354/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-constraints-pipeline-v1375/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-consumer-pipeline-v1398/receipt.json"
+  ],
+  "probe_sha256": "f49d28b14d7987dd956ff73682b4ac58eb196d23f50e75778420c16c3a76d241",
+  "production_runtime_unchanged_from_289d5516": true,
+  "promotion_allowed": false,
+  "reason": "Earlier source-attributed workspace log executes a private text test absent from that source; full clean compilation and pixel revalidation are required.",
+  "release_qualification": false,
+  "renderer_production_unchanged_from_prior_candidate": false,
+  "schema_version": 1,
+  "selection_hashes": {},
+  "source": {
+    "clean": true,
+    "commit": "2e443f49d49b81d65674f64bb099fed2922775b5",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "5377ee4175f9eac313c9d4c08e1e8f3c9d2aff100fa73cb8d716188e9efb1584",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "2e443f49d49b81d65674f64bb099fed2922775b5",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "5377ee4175f9eac313c9d4c08e1e8f3c9d2aff100fa73cb8d716188e9efb1584",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "state": "complete-requires-results-review",
+  "steps": [
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-umbrella-clean-workspace-guards-v1410.py"
+      ],
+      "log_sha256": "daffca94f876bea36a19d7d8fa1e85ad6f75c2f7f99fcd6f20486b03f76c7a35",
+      "name": "guards",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-umbrella-clean-workspace-build-v1410.py"
+      ],
+      "log_sha256": "f40f0a96576ad698edde1d75894f49bd42011f67ad75f9ff96a08e3db8bf969f",
+      "name": "native-build",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-umbrella-clean-workspace-matrices-v1410.py",
+        "focused"
+      ],
+      "log_sha256": "1d453ac68acbe9b078e2f0abd22479e214d508764b508d56da0560f8caf14d88",
+      "name": "focused",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-umbrella-clean-workspace-matrices-v1410.py",
+        "primitive"
+      ],
+      "log_sha256": "7a8d3e1796772407c837d8a423d151571850fb75483724b897554d8f082cf3b6",
+      "name": "primitive",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-umbrella-clean-workspace-matrices-v1410.py",
+        "full"
+      ],
+      "log_sha256": "dd5a8d2ca333cb5ee69cb4b50a288d13cac8b79a0e731c1c8a28c526709ce236",
+      "name": "full",
+      "observed_exit_code": 1
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-umbrella-clean-workspace-matrices-v1410.py",
+        "expanded"
+      ],
+      "log_sha256": "3f17c9a53e36dfd5323c3e4f8df4ba432721dde0c6ef663f43e8d2383ad45695",
+      "name": "expanded",
+      "observed_exit_code": 1
+    }
+  ],
+  "workspace_cleaned_at_every_source_switch": true,
+  "workspace_packages_cleaned": 18
+}

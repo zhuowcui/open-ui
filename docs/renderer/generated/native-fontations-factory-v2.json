@@ -1,0 +1,179 @@
+{
+  "all_commands_terminal": true,
+  "all_members_hash_verified": true,
+  "all_thirty_independent_chromium_metrics_matched": true,
+  "archived_members": 1623,
+  "artifacts": [
+    {
+      "bytes": 5389031,
+      "path": "docs/renderer/evidence/native-fontations-factory-v2/completed-evidence.tar.gz",
+      "sha256": "447bb128cdb0c6609cfeabc91a8fc0c9a16db5de023d369e74a432671a369504"
+    },
+    {
+      "bytes": 342986,
+      "path": "docs/renderer/evidence/native-fontations-factory-v2/archive-members.json",
+      "sha256": "2448fdf3bd22d3f01aa462658656b14807de9830f8381bc3cdb8eb33964c423b"
+    },
+    {
+      "bytes": 322044,
+      "decompressed_bytes": 1488099,
+      "decompressed_sha256": "034991de9066a893ad7c4057cd846fcda9a161692987d68d2981a97174016fda",
+      "path": "docs/renderer/evidence/native-fontations-factory-v2/reproduction-from-9f0d2211.patch.gz",
+      "sha256": "ecef34d6f70bfb74f765f40f42cf124a59646c02b21ae452f1e6b31095c5e836"
+    },
+    {
+      "bytes": 6666,
+      "path": "docs/renderer/evidence/native-fontations-factory-v2/initial-preservation-index.json",
+      "sha256": "8c4a07ef89720ece298e0b4c8cff583fc27e67cafb3663d42acd61b62284c9f1"
+    }
+  ],
+  "chromium_is_only_pixel_target": true,
+  "complete_public_source_reproduction_verified": true,
+  "custom_outline_adapter_not_used_for_new_backend": true,
+  "existing_default_and_freetype_paths_have_not_been_globally_requalified": true,
+  "explicit_fixed_hinting_guard_passed": true,
+  "failed_consumer_owner_environment_preflight_preserved": true,
+  "failed_dirty_lockfile_attempt_preserved": true,
+  "failed_windows_filemode_and_header_preflights_preserved": true,
+  "formal_original_renderer_residual_ownership_assigned": 0,
+  "full_hardening_not_run_on_412e804c": true,
+  "full_real_fontations_typeface_and_scaler_used": true,
+  "global_typeface_registry_not_mutated": true,
+  "hosted_umbrella_observation": {
+    "all_seven_native_guards_executed_and_passed_in_hosted_parity": true,
+    "failed_jobs": 0,
+    "skipped_jobs": 5,
+    "source": "412e804c6ae2d6f5756054d0f78edfde8be4508d",
+    "successful_jobs": 6
+  },
+  "inherited_twenty_nine_losses_not_ported": true,
+  "inherits_rejected_descriptor_correction": false,
+  "javascript_executed_by_openui": false,
+  "legacy_glyph_origin_compensation_not_used_for_new_backend": true,
+  "matching_stays_with_system_and_application_registry": true,
+  "native_geometry_exact": 11520,
+  "native_geometry_total": 12800,
+  "native_pixel_images_exact": 200,
+  "native_qualification_actual_exit": 1,
+  "native_totals": {
+    "all_native_pairs_deterministic": true,
+    "all_reference_bytes_unchanged": true,
+    "cases": 100,
+    "geometry_exact": 11520,
+    "images": 200,
+    "native_processes": 200,
+    "phase_exact": 12800,
+    "phase_states": 12800,
+    "pixel_exact": 200
+  },
+  "new_release_states_admitted": 0,
+  "original_expanded_focused_and_primitive_matrices_not_run": true,
+  "original_incomplete_terminal_flag_preserved_with_external_terminal_observation": true,
+  "paired_audit_totals": {
+    "actual_native_gate_exit": 1,
+    "all_reference_bytes_and_queries_unchanged": true,
+    "exact": 200,
+    "exact_gains": 38,
+    "exact_losses": 0,
+    "geometry_exact": 11520,
+    "geometry_total": 12800,
+    "images": 200,
+    "phase_exact": 12800,
+    "phase_states": 12800,
+    "prior_exact": 162,
+    "remaining_geometry_differences": 1280,
+    "repeated_native_processes": 200,
+    "unchanged_geometry_states": 12800
+  },
+  "per_scale": {
+    "1.0": {
+      "exact": 40,
+      "gains": 0,
+      "images": 40,
+      "losses": 0
+    },
+    "1.25": {
+      "exact": 40,
+      "gains": 14,
+      "images": 40,
+      "losses": 0
+    },
+    "1.5": {
+      "exact": 40,
+      "gains": 4,
+      "images": 40,
+      "losses": 0
+    },
+    "2.0": {
+      "exact": 40,
+      "gains": 2,
+      "images": 40,
+      "losses": 0
+    },
+    "3.0": {
+      "exact": 40,
+      "gains": 18,
+      "images": 40,
+      "losses": 0
+    }
+  },
+  "pixel_tolerance": 0,
+  "preserver_sha256": "b116b9a06a3183ba64d962aca9aee970c678fa655787c7c7b2e2dfb50f25511c",
+  "preserves_current_variable_font_instance_correction": true,
+  "previous_outline_trial_index": {
+    "path": "docs/renderer/generated/native-linux-font-policy-v1.json",
+    "sha256": "66910a240718e4cdc37b34d6f0e22dad0ce66da79fd93a6bf4142fb8a3b656d1"
+  },
+  "private_unintegrated_candidate": true,
+  "promotion_allowed": false,
+  "prototype_index": {
+    "path": "docs/renderer/generated/native-fontations-factory-v1.json",
+    "sha256": "7896c0f96984960f1564f0422564a4db198086e7b331b714d812a7389a2862ed"
+  },
+  "readonly_source_checks_passed": 16,
+  "real_factory_fnta_verified_in_metrics_guard": true,
+  "receipt_sha256": {
+    "native-fontations-current-audit-v1950.json": "63ca3214ccf65afa96163c8526400964358f32cd16c0ae50dac9babf1a8ee71c",
+    "native-fontations-current-checks-v1949/receipt.json": "9e23499259cc34ddb8dd64e265b777c7006b0e1a00b1b47e8ee3e66d8f95c4d4",
+    "native-fontations-current-consumer-v1948/receipt.json": "50e775eaae8a50c47d748e6f70c2fc7514f508a3a4376377d45cb5acaec3cd02",
+    "native-fontations-current-pipeline-v1948/receipt.json": "06ab1576c7065a30fd2a365005ac2f1baca978b8d1fef41be5228168c92963f6",
+    "native-fontations-current-terminal-v1947.json": "5ac232cbb9fda89317996f38d869577bed44393d411ab178828a049c9b7bcf00"
+  },
+  "release_qualification": false,
+  "remaining_native_width_differences": 1280,
+  "schema_version": 2,
+  "shaping_and_advances_use_fontations_typeface": true,
+  "shared_intrinsic_width_helper_still_discards_small_positive_fractions": true,
+  "shared_measurement_runtime_data_flow_review_still_required": true,
+  "skia_pin_unchanged": "a31b86ba3b767344d39af3b8c30043003d8fc991",
+  "source": {
+    "clean": true,
+    "commit": "9e4baa08e784b33365e03b807849dcb4804177a9",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "5ee53edb056ec97792dae3899625000fb21bb66e217c4aa4ace5cd1d7ab2b73d",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "9e4baa08e784b33365e03b807849dcb4804177a9",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "5ee53edb056ec97792dae3899625000fb21bb66e217c4aa4ace5cd1d7ab2b73d",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_base": "9f0d22112136bc8b5325d0b0619031bdd8b9adcf",
+  "source_patch_storage_representation": {
+    "gzip_decompresses_to_original_exact_bytes": true,
+    "original_patch_sha256": "034991de9066a893ad7c4057cd846fcda9a161692987d68d2981a97174016fda",
+    "reason": "Preserve nested diff context spaces without treating patch syntax as new source whitespace",
+    "source_and_reference_bytes_unchanged": true,
+    "uncompressed_patch_remains_in_verified_evidence_archive": true
+  },
+  "source_reconstructed_tree": "4db61dd5ff16f7c9d2972643d4ebe542ceb0a8f6",
+  "source_tree": "4db61dd5ff16f7c9d2972643d4ebe542ceb0a8f6",
+  "text_tests_passed": 344,
+  "unsupported_factory_data_does_not_silently_switch_to_freetype": true,
+  "variation_ttc_palette_woff_and_every_configuration_field_still_need_behavior_qualification": true,
+  "vendored_exact_pinned_header_files": 113,
+  "width_differences_only_and_all_minus_one_sixty_fourth": true,
+  "workspace_msrv_miri_c_abi_and_packaging_not_run": true
+}

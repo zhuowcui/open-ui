@@ -9,27 +9,35 @@ attestation identity.
 `.github/workflows/ci.yml` runs:
 
 - formatting and the locked Rust renderer/framework/ABI suites;
-- a fresh 5,731-ID exact pixel replay;
+- an integrity check of the 5,731-image historical Open UI archive and an
+  audit of its old comparison policy; old image replay is diagnostic only;
 - generated style, C ABI, migration, and SP13-R through SP20 closure checks;
-- versioned renderer profiles, author-style inventory, and JavaScript disposition checks;
-- 204 Python porter/closure tests and the 7/7 repository audit;
+- versioned renderer profiles, author-style inventory, and offline disposition
+  checks for Chromium WPT files that contain scripts;
+- Python porter/closure tests and the 7/7 repository audit;
 - C ABI export/layout checks plus C and C++ consumers;
 - application conformance and performance artifact validation.
 
-`.github/workflows/hardening.yml` additionally runs the 36-scenario application
-suite and starts real windows under Xvfb/Mesa OpenGL and a headless Weston pure
-Wayland session with software presentation.
+`.github/workflows/hardening.yml` additionally runs the 43-scenario application
+suite, Linux C API tests, and real Rust/C/C++ windows under Xvfb with software
+and Mesa OpenGL presentation. A headless Weston session runs the Rust and
+C/C++ consumers on pure Wayland with software presentation.
 
 ## Scheduled hardening
 
 Weekly/manual jobs use pinned `nightly-2026-09-01` for:
 
-- Miri generation/ownership tests;
+- Miri checks for C opaque-handle kind, thread, destruction, and token reuse;
 - Rust address and leak sanitizers at the C ABI boundary;
 - C/C++ undefined-behavior sanitizer consumers;
 - all five libFuzzer targets.
 
 Failures block release even when they do not run on every pull request.
+
+Pixel release qualification separately requires a complete, clean-source,
+zero-tolerance four-profile matrix against the pinned Chromium oracle. The
+historical archive check and a green pull-request workflow do not establish
+that result. See the [renderer contract](renderer/contract.md).
 
 ## Release workflow
 
@@ -39,7 +47,9 @@ architectures it:
 1. verifies source contracts and crates.io package contents;
 2. builds the SDK twice with a fixed source epoch and compares hashes;
 3. builds `.deb` and `.rpm` packages in Ubuntu/Fedora environments;
-4. installs each package and compiles/runs the packaged C example;
+4. installs each package and compiles/runs the packaged C example; Debian
+   consumers also open native C/C++ windows on X11 software/GL and Wayland
+   software;
 5. uploads checksums, SBOM, provenance, detached symbols, and artifacts;
 6. produces keyless signatures and GitHub attestations when running from the
    protected release tag.
@@ -48,7 +58,7 @@ The workflow does not publish crates.io packages automatically. Compatible
 crates must be published in the dependency order documented in
 `docs/v02/packaging.md` after every final gate is recorded.
 
-## Local release-equivalent checks
+## Local source checks
 
 ```bash
 cd bindings/rust

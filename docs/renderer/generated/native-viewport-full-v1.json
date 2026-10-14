@@ -1,0 +1,730 @@
+{
+  "against_neutral_gamma": {
+    "changed_comparisons": 30,
+    "exact_losses": 16,
+    "losses": [
+      {
+        "after": 184,
+        "before": 0,
+        "bounds": {
+          "height": 63,
+          "width": 201,
+          "x": 410,
+          "y": 537
+        },
+        "id": "wpt/css_backgrounds/background-attachment-fixed-inside-transform-1",
+        "profile": "legacy-800x600@1",
+        "status_after": "different",
+        "status_before": "exact"
+      },
+      {
+        "after": 184,
+        "before": 0,
+        "bounds": {
+          "height": 63,
+          "width": 201,
+          "x": 410,
+          "y": 537
+        },
+        "id": "wpt/css_backgrounds/background-attachment-fixed-inside-transform-1-ref",
+        "profile": "legacy-800x600@1",
+        "status_after": "different",
+        "status_before": "exact"
+      },
+      {
+        "after": 3,
+        "before": 0,
+        "bounds": {
+          "height": 16,
+          "width": 1,
+          "x": 799,
+          "y": 319
+        },
+        "id": "wpt/css_overflow/scroll-markers_targeted-column-scroll-marker-selection-001-ref",
+        "profile": "legacy-800x600@1",
+        "status_after": "different",
+        "status_before": "exact"
+      },
+      {
+        "after": 3,
+        "before": 0,
+        "bounds": {
+          "height": 16,
+          "width": 1,
+          "x": 799,
+          "y": 319
+        },
+        "id": "wpt/css_overflow/scroll-markers_targeted-column-scroll-marker-selection-002-ref",
+        "profile": "legacy-800x600@1",
+        "status_after": "different",
+        "status_before": "exact"
+      },
+      {
+        "after": 3,
+        "before": 0,
+        "bounds": {
+          "height": 16,
+          "width": 1,
+          "x": 799,
+          "y": 319
+        },
+        "id": "wpt/css_overflow/scroll-markers_targeted-column-scroll-marker-selection-003-ref",
+        "profile": "legacy-800x600@1",
+        "status_after": "different",
+        "status_before": "exact"
+      },
+      {
+        "after": 3,
+        "before": 0,
+        "bounds": {
+          "height": 16,
+          "width": 1,
+          "x": 799,
+          "y": 319
+        },
+        "id": "wpt/css_overflow/scroll-markers_targeted-column-scroll-marker-selection-004-ref",
+        "profile": "legacy-800x600@1",
+        "status_after": "different",
+        "status_before": "exact"
+      },
+      {
+        "after": 188,
+        "before": 0,
+        "bounds": {
+          "height": 63,
+          "width": 628,
+          "x": 122,
+          "y": 1271
+        },
+        "id": "wpt/css_backgrounds/background-attachment-fixed-inside-transform-1",
+        "profile": "mobile-375x667@2",
+        "status_after": "different",
+        "status_before": "exact"
+      },
+      {
+        "after": 188,
+        "before": 0,
+        "bounds": {
+          "height": 63,
+          "width": 628,
+          "x": 122,
+          "y": 1271
+        },
+        "id": "wpt/css_backgrounds/background-attachment-fixed-inside-transform-1-ref",
+        "profile": "mobile-375x667@2",
+        "status_after": "different",
+        "status_before": "exact"
+      },
+      {
+        "after": 18,
+        "before": 0,
+        "bounds": {
+          "height": 127,
+          "width": 71,
+          "x": 679,
+          "y": 345
+        },
+        "id": "wpt/css_break/transform-009",
+        "profile": "mobile-375x667@2",
+        "status_after": "different",
+        "status_before": "exact"
+      },
+      {
+        "after": 16,
+        "before": 0,
+        "bounds": {
+          "height": 404,
+          "width": 97,
+          "x": 579,
+          "y": 40
+        },
+        "id": "wpt/css_flexbox/flexbox-align-self-horiz-001-table",
+        "profile": "mobile-375x667@2",
+        "status_after": "different",
+        "status_before": "exact"
+      },
+      {
+        "after": 4,
+        "before": 0,
+        "bounds": {
+          "height": 2,
+          "width": 9,
+          "x": 51,
+          "y": 1332
+        },
+        "id": "wpt/css_flexbox/flexbox-align-self-vert-002",
+        "profile": "mobile-375x667@2",
+        "status_after": "different",
+        "status_before": "exact"
+      },
+      {
+        "after": 4,
+        "before": 0,
+        "bounds": {
+          "height": 2,
+          "width": 9,
+          "x": 51,
+          "y": 1332
+        },
+        "id": "wpt/css_flexbox/flexbox-align-self-vert-002-ref",
+        "profile": "mobile-375x667@2",
+        "status_after": "different",
+        "status_before": "exact"
+      },
+      {
+        "after": 4,
+        "before": 0,
+        "bounds": {
+          "height": 2,
+          "width": 9,
+          "x": 303,
+          "y": 1332
+        },
+        "id": "wpt/css_flexbox/flexbox-align-self-vert-rtl-002",
+        "profile": "mobile-375x667@2",
+        "status_after": "different",
+        "status_before": "exact"
+      },
+      {
+        "after": 4,
+        "before": 0,
+        "bounds": {
+          "height": 2,
+          "width": 9,
+          "x": 303,
+          "y": 1332
+        },
+        "id": "wpt/css_flexbox/flexbox-align-self-vert-rtl-002-ref",
+        "profile": "mobile-375x667@2",
+        "status_after": "different",
+        "status_before": "exact"
+      },
+      {
+        "after": 4,
+        "before": 0,
+        "bounds": {
+          "height": 2,
+          "width": 9,
+          "x": 303,
+          "y": 1332
+        },
+        "id": "wpt/css_flexbox/flexbox-align-self-vert-rtl-005",
+        "profile": "mobile-375x667@2",
+        "status_after": "different",
+        "status_before": "exact"
+      },
+      {
+        "after": 4,
+        "before": 0,
+        "bounds": {
+          "height": 2,
+          "width": 9,
+          "x": 303,
+          "y": 1332
+        },
+        "id": "wpt/css_flexbox/flexbox-align-self-vert-rtl-005-ref",
+        "profile": "mobile-375x667@2",
+        "status_after": "different",
+        "status_before": "exact"
+      }
+    ],
+    "newly_exact": 0,
+    "oracle_inputs_unchanged": true
+  },
+  "artifacts": [
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/compositor-clip-affected-v34/full-summary.json",
+      "sha256": "24133975846ef78ac23346025e85135f2518b37c5c14d9fb45c3f22c843b02dd"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/compositor-clip-affected-delta-v34.json",
+      "sha256": "b7c1a17af139b22baf91f30cdba26b16b12d7c8deba62a73b0a69de7db0fa7e9"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/compositor-clip-native-delta-v34.json",
+      "sha256": "052fd7a2666a7be45a8daaf7c2317ac09be3cb11388e1a8a72080e5f327b2589"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/compositor-clip-build-v34.log",
+      "sha256": "855463032d553c684ac8bfa88f6794d52e3e9c40224fc1321c5eb64a7c516a93"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/compositor-clip-clean-v34/renderer-build-identity.json",
+      "sha256": "d54c9b2cf2e43dfabb0ab293cbed3fdaf317147cd72d038e62b0b603ad932a11"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/compositor-clip-clean-v34/source-after-build.json",
+      "sha256": "5d7744208327554ce882424021e859ba3ad627d4cd92c135725abb623c6750e3"
+    }
+  ],
+  "complete_reports": [
+    {
+      "process_exit_code": 1,
+      "report_path": "out/renderer-evidence/native-viewport-scroll-v1/combined-clean-full-v14/full-summary.json",
+      "report_sha256": "b385628deb643ae0e3e7a361f89474409db6b8b4aba8e493c85dd4eba4ceb3c9",
+      "results": {
+        "different": 1632,
+        "errors": 0,
+        "exact": 21292,
+        "profile_result_sha256": "591c651b26eceac2b2b13ff975f725880ce3a54d859d4151019086b54d4a8b31",
+        "total": 22924
+      },
+      "source": {
+        "clean": true,
+        "commit": "574864d0355f27b0b192834d53e191655fafb4d2",
+        "harness_sha256": "66acd1462d0ca4b465f061b82c9d03aac30219a55b6a3b248ecac6e0fd132923",
+        "source_tree_sha256": "e49195e52172a354f52b9174610ea51034b9d52329f87140301dfb7ff577ce24",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "574864d0355f27b0b192834d53e191655fafb4d2",
+        "harness_sha256": "66acd1462d0ca4b465f061b82c9d03aac30219a55b6a3b248ecac6e0fd132923",
+        "source_tree_sha256": "e49195e52172a354f52b9174610ea51034b9d52329f87140301dfb7ff577ce24",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "suite": "full"
+    },
+    {
+      "process_exit_code": 1,
+      "report_path": "out/renderer-evidence/native-viewport-scroll-v1/combined-clean-expanded-v14/expanded-summary.json",
+      "report_sha256": "ef263e305aa6d4d68183b90779bc2736509b55365f2106b161f9d93d428c0f46",
+      "results": {
+        "different": 1633,
+        "errors": 0,
+        "exact": 22095,
+        "profile_result_sha256": "253deddbafae665c0e0b1321eb8263d2215169e5f56fd3154429f6720b9278e9",
+        "total": 23728
+      },
+      "source": {
+        "clean": true,
+        "commit": "574864d0355f27b0b192834d53e191655fafb4d2",
+        "harness_sha256": "66acd1462d0ca4b465f061b82c9d03aac30219a55b6a3b248ecac6e0fd132923",
+        "source_tree_sha256": "e49195e52172a354f52b9174610ea51034b9d52329f87140301dfb7ff577ce24",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "574864d0355f27b0b192834d53e191655fafb4d2",
+        "harness_sha256": "66acd1462d0ca4b465f061b82c9d03aac30219a55b6a3b248ecac6e0fd132923",
+        "source_tree_sha256": "e49195e52172a354f52b9174610ea51034b9d52329f87140301dfb7ff577ce24",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "suite": "expanded"
+    }
+  ],
+  "current_runtime_observation": "All 16 regressed PNGs already generated by the current 8f45444e census are byte-identical to the earlier failed images. Its complete full and expanded reports remain pending.",
+  "hosted_checks_before_repair": {
+    "checks": [
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37012925670/job/110856748985",
+        "name": "clang-format",
+        "state": "SUCCESS",
+        "workflow": "Format Check"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37012925754/job/110856748758",
+        "name": "conformance-and-platform",
+        "state": "SUCCESS",
+        "workflow": "v0.2 Hardening"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37012925656/job/110856748932",
+        "name": "rust-parity",
+        "state": "SUCCESS",
+        "workflow": "CI"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37012925656/job/110856748649",
+        "name": "historical-pixel-audit",
+        "state": "SUCCESS",
+        "workflow": "CI"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37012925670/job/110856749443",
+        "name": "gn-format",
+        "state": "SUCCESS",
+        "workflow": "Format Check"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37012925656/job/110856748851",
+        "name": "python-accountability",
+        "state": "SUCCESS",
+        "workflow": "CI"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37012925754/job/110856750964",
+        "name": "miri-handles",
+        "state": "SKIPPED",
+        "workflow": "v0.2 Hardening"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37012925754/job/110856750267",
+        "name": "msrv",
+        "state": "SKIPPED",
+        "workflow": "v0.2 Hardening"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37012925754/job/110856750236",
+        "name": "native-sanitizers",
+        "state": "SKIPPED",
+        "workflow": "v0.2 Hardening"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37012925754/job/110856750301",
+        "name": "c-undefined-sanitizer",
+        "state": "SKIPPED",
+        "workflow": "v0.2 Hardening"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37012925754/job/110856750375",
+        "name": "fuzz-smoke",
+        "state": "SKIPPED",
+        "workflow": "v0.2 Hardening"
+      }
+    ],
+    "hardening_skipped_not_passed": 5,
+    "head": "d5cd5f049bd9a0444b3bf230d85f76c7dcd8bf46",
+    "ordinary_successes": 6
+  },
+  "hypothesis": "An extra document-raster viewport clip changes analytic edge coverage before tile composition.",
+  "newly_completed_result_does_not_replace_release_gate": true,
+  "owner": "openui-paint",
+  "release_qualification": false,
+  "repair_candidate": {
+    "affected_results": {
+      "changed": [
+        {
+          "candidate": 0,
+          "earlier": 184,
+          "id": "wpt/css_backgrounds/background-attachment-fixed-inside-transform-1",
+          "neutral": 0,
+          "profile": "legacy-800x600@1"
+        },
+        {
+          "candidate": 0,
+          "earlier": 184,
+          "id": "wpt/css_backgrounds/background-attachment-fixed-inside-transform-1-ref",
+          "neutral": 0,
+          "profile": "legacy-800x600@1"
+        },
+        {
+          "candidate": 365,
+          "earlier": 365,
+          "id": "wpt/css_backgrounds/background-clip_clip-border-box_with_radius",
+          "neutral": 365,
+          "profile": "legacy-800x600@1"
+        },
+        {
+          "candidate": 382,
+          "earlier": 383,
+          "id": "wpt/css_backgrounds/background-clip_clip-content-box_with_radius",
+          "neutral": 382,
+          "profile": "legacy-800x600@1"
+        },
+        {
+          "candidate": 428,
+          "earlier": 429,
+          "id": "wpt/css_backgrounds/background-clip_clip-padding-box_with_radius",
+          "neutral": 428,
+          "profile": "legacy-800x600@1"
+        },
+        {
+          "candidate": 622,
+          "earlier": 628,
+          "id": "wpt/css_backgrounds/background-origin_origin-border-box_with_radius",
+          "neutral": 622,
+          "profile": "legacy-800x600@1"
+        },
+        {
+          "candidate": 622,
+          "earlier": 628,
+          "id": "wpt/css_backgrounds/background-origin_origin-content-box_with_radius",
+          "neutral": 622,
+          "profile": "legacy-800x600@1"
+        },
+        {
+          "candidate": 622,
+          "earlier": 628,
+          "id": "wpt/css_backgrounds/background-origin_origin-padding-box_with_radius",
+          "neutral": 622,
+          "profile": "legacy-800x600@1"
+        },
+        {
+          "candidate": 0,
+          "earlier": 3,
+          "id": "wpt/css_overflow/scroll-markers_targeted-column-scroll-marker-selection-001-ref",
+          "neutral": 0,
+          "profile": "legacy-800x600@1"
+        },
+        {
+          "candidate": 0,
+          "earlier": 3,
+          "id": "wpt/css_overflow/scroll-markers_targeted-column-scroll-marker-selection-002-ref",
+          "neutral": 0,
+          "profile": "legacy-800x600@1"
+        },
+        {
+          "candidate": 0,
+          "earlier": 3,
+          "id": "wpt/css_overflow/scroll-markers_targeted-column-scroll-marker-selection-003-ref",
+          "neutral": 0,
+          "profile": "legacy-800x600@1"
+        },
+        {
+          "candidate": 0,
+          "earlier": 3,
+          "id": "wpt/css_overflow/scroll-markers_targeted-column-scroll-marker-selection-004-ref",
+          "neutral": 0,
+          "profile": "legacy-800x600@1"
+        },
+        {
+          "candidate": 0,
+          "earlier": 188,
+          "id": "wpt/css_backgrounds/background-attachment-fixed-inside-transform-1",
+          "neutral": 0,
+          "profile": "mobile-375x667@2"
+        },
+        {
+          "candidate": 0,
+          "earlier": 188,
+          "id": "wpt/css_backgrounds/background-attachment-fixed-inside-transform-1-ref",
+          "neutral": 0,
+          "profile": "mobile-375x667@2"
+        },
+        {
+          "candidate": 0,
+          "earlier": 18,
+          "id": "wpt/css_break/transform-009",
+          "neutral": 0,
+          "profile": "mobile-375x667@2"
+        },
+        {
+          "candidate": 0,
+          "earlier": 16,
+          "id": "wpt/css_flexbox/flexbox-align-self-horiz-001-table",
+          "neutral": 0,
+          "profile": "mobile-375x667@2"
+        },
+        {
+          "candidate": 0,
+          "earlier": 4,
+          "id": "wpt/css_flexbox/flexbox-align-self-vert-002",
+          "neutral": 0,
+          "profile": "mobile-375x667@2"
+        },
+        {
+          "candidate": 0,
+          "earlier": 4,
+          "id": "wpt/css_flexbox/flexbox-align-self-vert-002-ref",
+          "neutral": 0,
+          "profile": "mobile-375x667@2"
+        },
+        {
+          "candidate": 0,
+          "earlier": 4,
+          "id": "wpt/css_flexbox/flexbox-align-self-vert-rtl-002",
+          "neutral": 0,
+          "profile": "mobile-375x667@2"
+        },
+        {
+          "candidate": 0,
+          "earlier": 4,
+          "id": "wpt/css_flexbox/flexbox-align-self-vert-rtl-002-ref",
+          "neutral": 0,
+          "profile": "mobile-375x667@2"
+        },
+        {
+          "candidate": 0,
+          "earlier": 4,
+          "id": "wpt/css_flexbox/flexbox-align-self-vert-rtl-005",
+          "neutral": 0,
+          "profile": "mobile-375x667@2"
+        },
+        {
+          "candidate": 0,
+          "earlier": 4,
+          "id": "wpt/css_flexbox/flexbox-align-self-vert-rtl-005-ref",
+          "neutral": 0,
+          "profile": "mobile-375x667@2"
+        },
+        {
+          "candidate": 189,
+          "earlier": 271,
+          "id": "wpt/css_overflow/overflow-replaced-element-002",
+          "neutral": 189,
+          "profile": "mobile-375x667@2"
+        },
+        {
+          "candidate": 189,
+          "earlier": 271,
+          "id": "wpt/css_overflow/overflow-replaced-element-002-ref",
+          "neutral": 189,
+          "profile": "mobile-375x667@2"
+        },
+        {
+          "candidate": 822,
+          "earlier": 832,
+          "id": "wpt/css_overflow/scroll-markers_targeted-column-scroll-marker-selection-003-ref",
+          "neutral": 822,
+          "profile": "mobile-375x667@2"
+        },
+        {
+          "candidate": 822,
+          "earlier": 832,
+          "id": "wpt/css_overflow/scroll-markers_targeted-column-scroll-marker-selection-004-ref",
+          "neutral": 822,
+          "profile": "mobile-375x667@2"
+        },
+        {
+          "candidate": 1735,
+          "earlier": 1738,
+          "id": "wpt/css_position/position-absolute-semi-replaced-stretch-other",
+          "neutral": 1735,
+          "profile": "mobile-375x667@2"
+        },
+        {
+          "candidate": 1735,
+          "earlier": 1738,
+          "id": "wpt/css_position/position-absolute-semi-replaced-stretch-other-ref",
+          "neutral": 1735,
+          "profile": "mobile-375x667@2"
+        },
+        {
+          "candidate": 1,
+          "earlier": 40,
+          "id": "wpt/css_backgrounds/background-attachment-fixed-inside-transform-1",
+          "neutral": 1,
+          "profile": "desktop-1280x720@1.25"
+        },
+        {
+          "candidate": 1,
+          "earlier": 40,
+          "id": "wpt/css_backgrounds/background-attachment-fixed-inside-transform-1-ref",
+          "neutral": 1,
+          "profile": "desktop-1280x720@1.25"
+        }
+      ],
+      "complete_contract_scope": false,
+      "exact_losses_from_neutral_in_selection": [],
+      "oracle_inputs_unchanged": true,
+      "process_exit_code": 1,
+      "remaining_exact_losses": [],
+      "report_sha256": "24133975846ef78ac23346025e85135f2518b37c5c14d9fb45c3f22c843b02dd",
+      "restored_exact": [
+        [
+          "legacy-800x600@1",
+          "wpt/css_backgrounds/background-attachment-fixed-inside-transform-1"
+        ],
+        [
+          "legacy-800x600@1",
+          "wpt/css_backgrounds/background-attachment-fixed-inside-transform-1-ref"
+        ],
+        [
+          "legacy-800x600@1",
+          "wpt/css_overflow/scroll-markers_targeted-column-scroll-marker-selection-001-ref"
+        ],
+        [
+          "legacy-800x600@1",
+          "wpt/css_overflow/scroll-markers_targeted-column-scroll-marker-selection-002-ref"
+        ],
+        [
+          "legacy-800x600@1",
+          "wpt/css_overflow/scroll-markers_targeted-column-scroll-marker-selection-003-ref"
+        ],
+        [
+          "legacy-800x600@1",
+          "wpt/css_overflow/scroll-markers_targeted-column-scroll-marker-selection-004-ref"
+        ],
+        [
+          "mobile-375x667@2",
+          "wpt/css_backgrounds/background-attachment-fixed-inside-transform-1"
+        ],
+        [
+          "mobile-375x667@2",
+          "wpt/css_backgrounds/background-attachment-fixed-inside-transform-1-ref"
+        ],
+        [
+          "mobile-375x667@2",
+          "wpt/css_break/transform-009"
+        ],
+        [
+          "mobile-375x667@2",
+          "wpt/css_flexbox/flexbox-align-self-horiz-001-table"
+        ],
+        [
+          "mobile-375x667@2",
+          "wpt/css_flexbox/flexbox-align-self-vert-002"
+        ],
+        [
+          "mobile-375x667@2",
+          "wpt/css_flexbox/flexbox-align-self-vert-002-ref"
+        ],
+        [
+          "mobile-375x667@2",
+          "wpt/css_flexbox/flexbox-align-self-vert-rtl-002"
+        ],
+        [
+          "mobile-375x667@2",
+          "wpt/css_flexbox/flexbox-align-self-vert-rtl-002-ref"
+        ],
+        [
+          "mobile-375x667@2",
+          "wpt/css_flexbox/flexbox-align-self-vert-rtl-005"
+        ],
+        [
+          "mobile-375x667@2",
+          "wpt/css_flexbox/flexbox-align-self-vert-rtl-005-ref"
+        ]
+      ],
+      "results": {
+        "different": 63,
+        "errors": 0,
+        "exact": 33,
+        "profile_result_sha256": "71f24f403c8bf5c8c061e21b3a8c21264760581a38543d429c7b14e36ac5992b",
+        "total": 96
+      },
+      "source": {
+        "clean": true,
+        "commit": "1366b72f1ce5ebc0ee8f55ce03f69458856fd0a1",
+        "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+        "source_tree_sha256": "32974b1d86729b7c9a34a5bf9ee98a4ce2418d8fe36d4b967ebcccf023cc05a3",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "applied_to_umbrella": false,
+    "native_reports": [
+      {
+        "changed_image_or_geometry_or_difference_records": [],
+        "exact": 196,
+        "process_exit_code": 0,
+        "report_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/compositor-clip-clean-v34-comparison-v1.json",
+        "report_sha256": "a285f78e26c4655179758ef7841f84d4cd272d5ea145e6a4cc804f8d80bb6bb4",
+        "total": 250
+      },
+      {
+        "changed_image_or_geometry_or_difference_records": [],
+        "exact": 488,
+        "process_exit_code": 0,
+        "report_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/direction-guards-v2/compositor-clip-clean-v34-comparison-v1.json",
+        "report_sha256": "253e08f6be4294ba410884f4522b714100d5709f69217189d95af6fa0cfdfc9e",
+        "total": 600
+      }
+    ],
+    "runtime_file": "bindings/rust/openui-paint/src/painter.rs",
+    "source_commit": "1366b72f1ce5ebc0ee8f55ce03f69458856fd0a1",
+    "status": "clean build and affected 96-comparison run complete; all 16 exact regressions restored; all 850 native images and geometry unchanged; broader qualification pending"
+  },
+  "report_validation": {
+    "complete_contract_scope": true,
+    "counts_and_canonical_result_hashes_verified": true,
+    "expanded_addition_comparisons": 804,
+    "expanded_additions": 201,
+    "expanded_additions_exact_at_all_four_profiles": 200,
+    "original_rows_identical_across_complete_runs": 22924,
+    "source_unchanged_and_clean": true
+  },
+  "reviewed_root_cause": "The additional outer viewport clip inside document raster changes Skia analytic edge coverage before final surface/tile assembly. Omitting this duplicate clip when no scrollbar gutter is reserved restores all 16 exact regressions and the other changed edge results in the affected selection. The smaller client clip remains necessary for reserved gutters.",
+  "schema_version": 1,
+  "source_scope": "Earlier viewport implementation 574864d0; excludes later recording/scroll snapping/picture controls."
+}

@@ -1,0 +1,683 @@
+{
+  "artifacts": [
+    {
+      "bytes": 3340,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-contract-v355.json",
+      "sha256": "a7ab9603e80bfe0dea5a07d8f1c568e0d30ade3241b6faabcf28eff031162e5e"
+    },
+    {
+      "bytes": 5514,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-clean-v345/build.json",
+      "sha256": "689037919094ad3b78eef03b53cef536f5ee752440a8768474949ddaef18b5c6"
+    },
+    {
+      "bytes": 6392,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-linux-workspace-v343/receipt.json",
+      "sha256": "9c8fcd579eb596ef2a71e86b60784cfd9423daf2d66fbe27b7598e3100623516"
+    },
+    {
+      "bytes": 6100,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-linux-workspace-v346/receipt.json",
+      "sha256": "5da5f4943dee5103e2cd451b7f2591ef2555523b25840902c640694a62494403"
+    },
+    {
+      "bytes": 4760,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-checks-v347.json",
+      "sha256": "459ac5407777b3e2405675a3501e007093ca9d76c442a854b44dcb1ed2cd24da"
+    },
+    {
+      "bytes": 9464839,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-recheck-v350/comparison.json",
+      "sha256": "1053d961cddde4a9e29ddf772604e6fdcaca07a2f59719659398309599e975f3"
+    },
+    {
+      "bytes": 3102258,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-viewport-v352/comparison.json",
+      "sha256": "455249c8f80bac29a27f68ca375b2438b83d994635a50c37b0334b9fec38996b"
+    },
+    {
+      "bytes": 813921,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-layer-controls-v353/comparison.json",
+      "sha256": "ac93d9a2d4a17678641258e2eb04a57a3ebd0fd10a79e5b74c48ca52250d8bbf"
+    },
+    {
+      "bytes": 2119,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-ffi-v351/receipt.json",
+      "sha256": "60f6324aec5848eb0077a0aec0611c7ed47e1e0c8574ce0e669a9396c497c357"
+    },
+    {
+      "bytes": 2760,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-raster-delta-v358.json",
+      "sha256": "c3611367dd07b2b2d15e4071b882ac2cd95b978572eaa29e4dc14893974b3278"
+    },
+    {
+      "bytes": 1646449,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-clean-focused-v354/focused-summary.json",
+      "sha256": "fe51c7b09ea3295b82e577735a8c3818669f954b29ee9783ebbafa05209c4ca3"
+    },
+    {
+      "bytes": 2455655,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-clean-primitive-v354/primitive-summary.json",
+      "sha256": "45d9f0e73e73eedeb7f3747dfb8b17049651e1125bb56e31b3f652b7b9e5f958"
+    },
+    {
+      "bytes": 896,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-focused-exit-v354.json",
+      "sha256": "abe90cd1bbb61a21ed83d364235b42f7e51f11b44ec3c313d05cee1a3ca4bad3"
+    },
+    {
+      "bytes": 902,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-primitive-exit-v354.json",
+      "sha256": "9eea17cb14ffb8cdedb11baefbbf00b993b6d0b5a07b206c7053e85f579f73e2"
+    },
+    {
+      "bytes": 10493672,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-controls-v322/comparison.json",
+      "sha256": "8e2eb588945b8c991518522117e7f12a61ae278f18624015b2ea2a65771356be"
+    },
+    {
+      "bytes": 9464839,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-recheck-v328/comparison.json",
+      "sha256": "c1f653d6104b038155c4f85b2deb93630f8f15a5bfc024c597cf56c16fad61b8"
+    },
+    {
+      "bytes": 91959,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-rounding-delta-v341.json",
+      "sha256": "22c444dcbd4870ede88cdecbd1669dd8b1de1f3ff34ffa106d9824374cb73e03"
+    },
+    {
+      "bytes": 12060,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-detach-oracle-v342/comparison.json",
+      "sha256": "ee974cee71c6f799d95559205b7092dc5c25b3b4122896a23e6bad2bf872eeb0"
+    },
+    {
+      "bytes": 5677,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-backend-trace-v349/metadata.json",
+      "sha256": "72efadfb8ee79c5b6883b7a91e990707b11022c7624d953b47aa47db138f76bc"
+    },
+    {
+      "bytes": 460,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/named-color-source-v326.json",
+      "sha256": "cc74161b43dc1340c118439bd6fa94af47e352dc274551efa980598552b3629d"
+    },
+    {
+      "bytes": 729,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-patch-stack-v340.json",
+      "sha256": "f09f66735b16324a56db5611f4246cfc22f821a87171293089fa6f8fdeaaa32e"
+    },
+    {
+      "bytes": 729,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-patch-stack-v348.json",
+      "sha256": "0c5145828e7441fc56e275ad13ea150647cdab29a661a04361eca09d943f7448"
+    },
+    {
+      "bytes": 839,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-patch-stack-v357.json",
+      "sha256": "acb9f59ff05b991ab8039c1479e7bf94622e415fbb8fda248869271337a24d44"
+    },
+    {
+      "bytes": 4760,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-element-defaults-checks-v356.json",
+      "sha256": "48650d3852d24acf3f05a3f591152d1a94f138703aee8feff4f371dd58166ef6"
+    },
+    {
+      "bytes": 4434,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-target-clean-v334/receipt.json",
+      "sha256": "04225b9e3027b5064f45e6a0d453bfd487de14de04083ad9f7e8ebc828e4f878"
+    },
+    {
+      "bytes": 1924,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-clean-v319/build.json",
+      "sha256": "f4b181cdbfff65dd7933395045fed397b0336ed3eb81462ac233f9ab0ac47114"
+    },
+    {
+      "bytes": 2119,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-ffi-v323/receipt.json",
+      "sha256": "2860d0aae4474e80ef150c1240d021a27b77ac64968c131dd4818a67641030a5"
+    },
+    {
+      "bytes": 2121,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-ffi-v329/receipt.json",
+      "sha256": "adf8e6828b7c8f51bdfe759d041614110b8fb876c25ccfbd580bcaca25ce7615"
+    },
+    {
+      "bytes": 6387,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-linux-workspace-v332/receipt.json",
+      "sha256": "e5d7c2910ffdbcdaf8906b071c37c1c378ea7f72d7a51e8b9ed45d8a1367878e"
+    },
+    {
+      "bytes": 6388,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-linux-workspace-v335/receipt.json",
+      "sha256": "bc0ee56abc4992bc4c31d10fb6c0e017559db6b1e81b090a193ada68db4bfb0f"
+    },
+    {
+      "bytes": 6390,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-linux-workspace-v337/receipt.json",
+      "sha256": "de9148d9d8dccbb74f77b14cab46df99be05320605f7c2d4e43ff923173f5d45"
+    },
+    {
+      "bytes": 4780,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-native-docs-checks-v317.json",
+      "sha256": "b1a3c1369a0994dc742254d974779dd46bc93c8591869147b4bd890718230780"
+    },
+    {
+      "bytes": 25060,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-native-docs-ci-v320.json",
+      "sha256": "4ecb4912834ff758133517a9229febbb3c820c432cebe051dc8b7b7e89413be5"
+    }
+  ],
+  "build": {
+    "debug_info": 0,
+    "disk_guard_triggered": false,
+    "steps": [
+      {
+        "binary_sha256": null,
+        "name": "clean",
+        "observed_exit_code": 0
+      },
+      {
+        "binary_sha256": "3e80f9a7180716baa067f5669ed046f9de8efd4caa17814b0a2755050471ab4a",
+        "name": "pixel-build",
+        "observed_exit_code": 0
+      },
+      {
+        "binary_sha256": "0fbaec4db097fadbbc728e3656fc2f6d9144cb329309fbdd8c96cbdae8003e53",
+        "name": "nested-build",
+        "observed_exit_code": 0
+      },
+      {
+        "binary_sha256": "5f24e99628f12a3a144da77a925d27150343d3be83abf3a51ce177a0dbbade18",
+        "name": "native-build",
+        "observed_exit_code": 0
+      },
+      {
+        "binary_sha256": "5e4aadaa1d5c635758c634b2ba2a7cac87bfb6b272ef3884cdb960c26c2eac67",
+        "name": "layer-controls-build",
+        "observed_exit_code": 0
+      },
+      {
+        "binary_sha256": "0fef2015db9084a1c39908a21ce9077dff9ac643a3ae0aef174abaed3ef8cac3",
+        "name": "ffi-build",
+        "observed_exit_code": 0
+      }
+    ]
+  },
+  "c_consumer_gate": {
+    "compiled_and_linked_c": 9,
+    "compiled_and_linked_cpp": 4,
+    "exports_checked": 110,
+    "failed_assertion": "scroll_width == 150 && scroll_height == 140",
+    "header_checksum": "sha256:b328744e7d5f17980ff5d5947f83fdf7dbb692ed004d119cffc3efbba04814e3",
+    "observed_exit_code": 1,
+    "owner": "openui-engine and native bindings",
+    "run_c_failed": 1,
+    "run_c_passed": 6,
+    "run_c_pending": 2,
+    "run_cpp_pending": 4,
+    "status": "fail; shared native constructor candidate implemented but not verified"
+  },
+  "chromium_trace": {
+    "all_traced_screenshots_match_immutable_oracles": true,
+    "cases": 6,
+    "gpu_feature_status": {
+      "2d_canvas": "disabled_software",
+      "direct_rendering_display_compositor": "disabled_off_ok",
+      "gpu_compositing": "disabled_software",
+      "multiple_raster_threads": "disabled_off",
+      "opengl": "disabled_off",
+      "rasterization": "disabled_software",
+      "raw_draw": "disabled_off_ok",
+      "skia_graphite": "disabled_off",
+      "trees_in_viz": "disabled_off",
+      "video_decode": "disabled_software",
+      "video_encode": "disabled_software",
+      "vulkan": "disabled_off",
+      "webgl": "disabled_off",
+      "webgpu": "disabled_off",
+      "webgpu_on_vk_via_gl_interop": "disabled_off",
+      "webnn": "disabled_off"
+    },
+    "layer_tree_scope": "One of six cases; snapshot protocol failures are preserved.",
+    "review": "Software compositor confirmed; transparent scroll host has no distinct scrolling contents layer in the first captured layer tree. Fractional native scroll backing and clipping remain under paint review; this evidence establishes no repaired pixel gate.",
+    "scales": [
+      1.25,
+      1.5
+    ]
+  },
+  "complete_matrices": [
+    {
+      "completed_total_claimed": false,
+      "qualification": false,
+      "source_commit": "6e255ca3fedeae1ab4a9b60edaadad412e56c10e",
+      "status": "running at this checkpoint",
+      "suite": "full"
+    },
+    {
+      "completed_total_claimed": false,
+      "qualification": false,
+      "source_commit": "6e255ca3fedeae1ab4a9b60edaadad412e56c10e",
+      "status": "running at this checkpoint",
+      "suite": "expanded"
+    }
+  ],
+  "detached_query_chromium_evidence": {
+    "all_repetitions_identical": true,
+    "fresh_repetitions_per_path": 2,
+    "observed_chromium_exit_code": 0,
+    "paths": [
+      "Detached target queries only retain parent offsets through reattachment.",
+      "An attached parent layout barrier while the target is detached clamps parent offsets before reattachment."
+    ],
+    "primary_sources": [
+      {
+        "path": "/home/nero/chromium/src/third_party/blink/renderer/core/dom/element.cc",
+        "sha256": "a467beee51049eae04fb0fbab559ad5e05ddb27a425dbbaa6e53a39f16daadac"
+      },
+      {
+        "path": "/home/nero/chromium/src/third_party/blink/renderer/core/dom/document.cc",
+        "sha256": "0550765f172f765899640a99f39e452e53bcf5a8ffc1405de832274949896246"
+      }
+    ],
+    "scales": [
+      1,
+      1.25,
+      1.5,
+      2,
+      3
+    ]
+  },
+  "implemented_native_operations": [
+    "Owned principal-box client/content metrics derived after physical layout; border exclusion, in-flow padding, reachable child overflow, 2D transforms, clips, writing direction and flex reversals.",
+    "Shared signed scroll ranges and integer element offset rounding for scroll-to, scroll-by, wheel, smooth animation and shrink/resize clamping; root precision preserved.",
+    "Disconnected geometry and metric reads return empty without updating unrelated attached layout; attached parent reads remain layout barriers.",
+    "Public Rust named colors and shared C/Rust parsing for named colors, strict hexadecimal colors, scrollbar width and gutter values.",
+    "Consuming Rust application constructs and operates the retained document using public APIs and Rust callbacks at five scales."
+  ],
+  "javascript_executed_by_openui": false,
+  "native_constructor_candidate": {
+    "abi_additions": 0,
+    "build": "pending until all pixel matrices finish",
+    "changes": "Add Engine::create_native_element with canonical native display defaults; Rust Element::create and C oui_element_create use it. Preserve raw Engine::create_element for callers with complete resolved styles.",
+    "pixel_results_inferred": false,
+    "read_only_checks": [
+      {
+        "name": "renderer",
+        "observed_exit_code": 0
+      },
+      {
+        "name": "multicol",
+        "observed_exit_code": 0
+      },
+      {
+        "name": "sp17",
+        "observed_exit_code": 0
+      },
+      {
+        "name": "sp18",
+        "observed_exit_code": 0
+      },
+      {
+        "name": "sp20",
+        "observed_exit_code": 0
+      },
+      {
+        "name": "v02",
+        "observed_exit_code": 0
+      },
+      {
+        "name": "style",
+        "observed_exit_code": 0
+      },
+      {
+        "name": "ffi",
+        "observed_exit_code": 0
+      },
+      {
+        "name": "archive",
+        "observed_exit_code": 0
+      },
+      {
+        "name": "accountability",
+        "observed_exit_code": 0
+      }
+    ],
+    "source": {
+      "clean": true,
+      "commit": "31a9f705bbf5a07b503a4632ee9869dc4287dd86",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "458d9d32f867c23fec997677ce2b8b64aa29ca37db2721968ab6be2c260c679a",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "31a9f705bbf5a07b503a4632ee9869dc4287dd86",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "458d9d32f867c23fec997677ce2b8b64aa29ca37db2721968ab6be2c260c679a",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "workspace_and_consumers": "pending"
+  },
+  "native_nested_scroll": {
+    "all_native_processes_observed_exit_zero": true,
+    "exact_image_losses": 0,
+    "geometry_exact": 2320,
+    "metrics_exact": 2320,
+    "native_callback_and_teardown_checks": 320,
+    "new_exact_images_vs_first_broad_run": 179,
+    "pixels_exact": 1763,
+    "qualification": false,
+    "total": 2560
+  },
+  "open_work": [
+    "Nested classic scrollbar gutter layout and physical placement: 240 metric failures, owned by openui-layout.",
+    "Fractional scroll coverage, backing and clip phase: owned by openui-paint; individual bounds, connected regions and channel deltas retained in raw evidence.",
+    "C consumer behavior and shared native constructor verification.",
+    "Own complete original and expanded pixel results and invariant audits.",
+    "Existing full renderer residuals and reviewed ownership, SVG differences, all required native APIs, retained compositor and 3D, hardening, physical lab, accessibility, packaging, signing and publication."
+  ],
+  "policy": {
+    "application_runtime": "Native Rust only; C calls the same Engine.",
+    "missing_browser_style_operation": "Required native API implementation and consuming-application verification; never waived because an upstream test uses JavaScript.",
+    "parallel_work": "Cargo builds and pixel matrices run separately; raw reports and pinned executables are preserved.",
+    "pixel_target": "Pinned Chromium only, zero tolerance. Historical Open UI screenshots are immutable provenance.",
+    "source_patches": "All remain unapplied to the umbrella renderer. Apply the prior SVG patch before one nested-scroll patch version."
+  },
+  "preserved_failed_attempts": [
+    {
+      "artifact": "nested-scroll-clean-v319/build.json",
+      "observed_exit_code": null,
+      "reviewed_cause": "New text fragment constructor lacked scroll-area initialization; repaired before the later clean build.",
+      "source_commit": "fdc1d079b3f550fbc39ccb33a4ef4049850c5aa0",
+      "steps": [
+        {
+          "name": "clean",
+          "observed_exit_code": 0
+        },
+        {
+          "name": "pixel-build",
+          "observed_exit_code": 101
+        }
+      ]
+    },
+    {
+      "artifact": "nested-scroll-ffi-v323/receipt.json",
+      "observed_exit_code": 1,
+      "reviewed_cause": "Shared native color parser rejected orange; repaired with fixed named-color data.",
+      "source_commit": "f10d18b9ac45ef03f1d3d50e97d0b74054df5800",
+      "steps": []
+    },
+    {
+      "artifact": "nested-scroll-ffi-v329/receipt.json",
+      "observed_exit_code": 1,
+      "reviewed_cause": "Shared native value parser rejected scrollbar-width none; repaired without changing consumer assertions.",
+      "source_commit": "543b3b1cb4e1bc611c5529c752383e926154fe21",
+      "steps": []
+    },
+    {
+      "artifact": "nested-scroll-linux-workspace-v332/receipt.json",
+      "observed_exit_code": 101,
+      "reviewed_cause": "Two existing text paint test fragment literals lacked scroll-area initialization; compilation failed before tests.",
+      "source_commit": "bffb5755699dffb07c0b9570943923fa5e527794",
+      "steps": []
+    },
+    {
+      "artifact": "nested-scroll-linux-workspace-v335/receipt.json",
+      "observed_exit_code": 101,
+      "reviewed_cause": "New Engine test setup passed a public checked handle to a raw NodeId API; compilation failed before tests.",
+      "source_commit": "10a53691f9f5e35eba059d6ecd15f8bd8c4cb5dd",
+      "steps": []
+    },
+    {
+      "artifact": "nested-scroll-linux-workspace-v337/receipt.json",
+      "observed_exit_code": 101,
+      "reviewed_cause": "Detached geometry queries unnecessarily updated attached layout and clamped parent scrolling; original test expectations retained and shared query behavior repaired.",
+      "source_commit": "20712b50e1e7e6174fb22314252fce676fcee2b4",
+      "steps": []
+    },
+    {
+      "artifact": "nested-scroll-ffi-v351/receipt.json",
+      "observed_exit_code": 1,
+      "reviewed_cause": "Rust public construction applies native block defaults while C used raw initial inline style. C child dimensions were ignored; shared native constructor candidate remains unbuilt.",
+      "source_commit": "6e255ca3fedeae1ab4a9b60edaadad412e56c10e",
+      "steps": []
+    }
+  ],
+  "prior_private_svg_source": "8d5a58a1f4a954997e0301506347c96708d84860",
+  "prior_svg_index": "docs/renderer/generated/native-svg-viewport-v11.json",
+  "prior_umbrella_hosted": {
+    "commit": "09d9d1f396da70598df3dd582a3827c40e8b406a",
+    "job_conclusions": {
+      "skipped": 5,
+      "success": 6
+    },
+    "read_only_checks": 10,
+    "skipped_jobs_are_not_passes": true
+  },
+  "raster_gates": [
+    {
+      "all_eight_row_invariants_unchanged": true,
+      "observed_exit_code": 0,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-clean-focused-v354/focused-summary.json",
+      "results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 640,
+        "profile_result_sha256": "dc001710045086d9ffa0f4d92a30769ba3a7e710f675f33111b413f98e274a8e",
+        "total": 640
+      },
+      "sha256": "fe51c7b09ea3295b82e577735a8c3818669f954b29ee9783ebbafa05209c4ca3",
+      "source": {
+        "clean": true,
+        "commit": "6e255ca3fedeae1ab4a9b60edaadad412e56c10e",
+        "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+        "source_tree_sha256": "0e82d08b737c733a030714ad869cfcfc45f075d34963a60f60b06f6566105b73",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "6e255ca3fedeae1ab4a9b60edaadad412e56c10e",
+        "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+        "source_tree_sha256": "0e82d08b737c733a030714ad869cfcfc45f075d34963a60f60b06f6566105b73",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "suite": "focused"
+    },
+    {
+      "all_eight_row_invariants_unchanged": true,
+      "observed_exit_code": 0,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-clean-primitive-v354/primitive-summary.json",
+      "results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 960,
+        "profile_result_sha256": "c612bae0332b7d7a00547d2657c8b98832678877eca5267ed1348d4f7bc171cb",
+        "total": 960
+      },
+      "sha256": "45d9f0e73e73eedeb7f3747dfb8b17049651e1125bb56e31b3f652b7b9e5f958",
+      "source": {
+        "clean": true,
+        "commit": "6e255ca3fedeae1ab4a9b60edaadad412e56c10e",
+        "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+        "source_tree_sha256": "0e82d08b737c733a030714ad869cfcfc45f075d34963a60f60b06f6566105b73",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "6e255ca3fedeae1ab4a9b60edaadad412e56c10e",
+        "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+        "source_tree_sha256": "0e82d08b737c733a030714ad869cfcfc45f075d34963a60f60b06f6566105b73",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "suite": "primitive"
+    }
+  ],
+  "read_only_checks": [
+    {
+      "log_sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691",
+      "name": "renderer",
+      "observed_exit_code": 0
+    },
+    {
+      "log_sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222",
+      "name": "multicol",
+      "observed_exit_code": 0
+    },
+    {
+      "log_sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a",
+      "name": "sp17",
+      "observed_exit_code": 0
+    },
+    {
+      "log_sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763",
+      "name": "sp18",
+      "observed_exit_code": 0
+    },
+    {
+      "log_sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d",
+      "name": "sp20",
+      "observed_exit_code": 0
+    },
+    {
+      "log_sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd",
+      "name": "v02",
+      "observed_exit_code": 0
+    },
+    {
+      "log_sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1",
+      "name": "style",
+      "observed_exit_code": 0
+    },
+    {
+      "log_sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821",
+      "name": "ffi",
+      "observed_exit_code": 0
+    },
+    {
+      "log_sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32",
+      "name": "archive",
+      "observed_exit_code": 0
+    },
+    {
+      "log_sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1",
+      "name": "accountability",
+      "observed_exit_code": 0
+    }
+  ],
+  "release_qualification": false,
+  "root_viewport_controls": {
+    "all_native_processes_observed_exit_zero": true,
+    "reports": [
+      {
+        "all_images_geometry_and_differences_unchanged": true,
+        "exact": 250,
+        "name": "viewport",
+        "total": 250
+      },
+      {
+        "all_images_geometry_and_differences_unchanged": true,
+        "exact": 600,
+        "name": "direction",
+        "total": 600
+      }
+    ]
+  },
+  "rounding_delta": {
+    "all_2560_expected_states_and_chromium_images_unchanged": true,
+    "changed_state_names": {
+      "smooth-half": 300
+    },
+    "changed_states": 300,
+    "comparison_path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-recheck-v328/comparison.json",
+    "comparison_sha256": "c1f653d6104b038155c4f85b2deb93630f8f15a5bfc024c597cf56c16fad61b8",
+    "geometry_failure_owner": "openui-layout",
+    "geometry_failure_review": "Layout does not reserve nested classic scrollbar gutters. Native clients remain 100px while Chromium reserves 15px for auto or 10px for thin. This also changes child positioning and reachable ranges. Reporting reduced dimensions without correcting layout would be invalid.",
+    "geometry_failures_by_case": {
+      "horizontal-tb-ltr-block-scroll-auto": 40,
+      "horizontal-tb-ltr-block-scroll-thin": 40,
+      "horizontal-tb-rtl-block-scroll-auto": 40,
+      "horizontal-tb-rtl-block-scroll-thin": 40,
+      "vertical-rl-ltr-block-scroll-auto": 40,
+      "vertical-rl-ltr-block-scroll-thin": 40
+    },
+    "geometry_new_exact": 270,
+    "pixel_exact_losses": 0,
+    "pixel_new_exact": 179,
+    "pixels_exact_by_scale": {
+      "1": 464,
+      "1.25": 152,
+      "1.5": 219,
+      "2": 464,
+      "3": 464
+    },
+    "prior_path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-controls-v322/comparison.json",
+    "prior_sha256": "8e2eb588945b8c991518522117e7f12a61ae278f18624015b2ea2a65771356be",
+    "release_qualification": false,
+    "remaining_pixel_failure_owner": "openui-paint",
+    "remaining_pixel_review": "Fractional-scale edge coverage and scroll backing/clip phase remain open. Every failing image retains channel deltas, bounds and connected-region evidence; no blanket qualification is claimed.",
+    "schema_version": 1
+  },
+  "schema_version": 1,
+  "scroll_layer_controls": {
+    "all_pixels_bounds_offsets_unchanged": true,
+    "bounds_offsets_client_metrics_exact": 180,
+    "exact": 95,
+    "extent_metrics_exact": 180,
+    "total": 180
+  },
+  "source": {
+    "clean": true,
+    "commit": "6e255ca3fedeae1ab4a9b60edaadad412e56c10e",
+    "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+    "source_tree_sha256": "0e82d08b737c733a030714ad869cfcfc45f075d34963a60f60b06f6566105b73",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "6e255ca3fedeae1ab4a9b60edaadad412e56c10e",
+    "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+    "source_tree_sha256": "0e82d08b737c733a030714ad869cfcfc45f075d34963a60f60b06f6566105b73",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_patches": [
+    {
+      "bytes": 57592,
+      "path": "docs/renderer/evidence/native-nested-scroll-v1/native-nested-scroll-v1.patch",
+      "sha256": "450dab531b07b1496448156cde3efa8b7649f3faf8b10ac87200a7efd1bf91fa",
+      "source_commit": "6a25a15a",
+      "status": "historical; later detached-query workspace failure preserved"
+    },
+    {
+      "bytes": 64219,
+      "path": "docs/renderer/evidence/native-nested-scroll-v1/native-nested-scroll-v2.patch",
+      "sha256": "a3967b4ce626df8d4ff2c094301bb221ec48cfe8ce01ccbadd693bce12479bff",
+      "source_commit": "6e255ca3fedeae1ab4a9b60edaadad412e56c10e",
+      "status": "measured; C consumer and full pixel gates remain open"
+    },
+    {
+      "bytes": 72361,
+      "path": "docs/renderer/evidence/native-nested-scroll-v1/native-nested-scroll-v3.patch",
+      "sha256": "7c1df888998adc765850769d991a4b3c8337d4ce0cdd9e4945899b1452999a0e",
+      "source_commit": "31a9f705bbf5a07b503a4632ee9869dc4287dd86",
+      "status": "shared native constructor implemented; build and consumer verification pending"
+    }
+  ],
+  "workspace": {
+    "command": [
+      "cargo",
+      "--config",
+      ".cargo/config.chromium.toml",
+      "test",
+      "--workspace",
+      "--locked",
+      "--features",
+      "openui-ffi/linux"
+    ],
+    "failed": 0,
+    "ignored": 13,
+    "observed_exit_code": 0,
+    "passed": 8516,
+    "production_sources_unchanged_from_completed_clean_workspace": "7cd5ffc120cc1723380aabefcfde8610679bf8fc",
+    "receipt_sha256": "5da5f4943dee5103e2cd451b7f2591ef2555523b25840902c640694a62494403",
+    "tracked_diagnostic_png_preserved_then_restored_after_terminal_exit": true
+  }
+}

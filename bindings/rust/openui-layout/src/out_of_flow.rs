@@ -7,6 +7,7 @@
 //! the constraint equations from CSS 2.1 §10.3.7 (horizontal) and §10.6.4
 //! (vertical).
 
+use crate::layout_context::LayoutDocument;
 use openui_dom::{Document, NodeId};
 use openui_geometry::{
     BoxStrut, LayoutUnit, LogicalSize, PhysicalOffset, PhysicalSize, WritingDirectionMode,
@@ -14,10 +15,10 @@ use openui_geometry::{
 };
 use openui_style::{BoxSizing, ComputedStyle, Direction, WritingMode};
 
-use crate::block::{block_layout, resolve_border, resolve_padding};
+use crate::block::{block_layout_with_layout, resolve_border, resolve_padding};
 use crate::constraint_space::ConstraintSpace;
 use crate::fragment::Fragment;
-use crate::intrinsic_sizing::compute_intrinsic_block_sizes;
+use crate::intrinsic_sizing::compute_intrinsic_block_sizes_with_layout;
 use crate::length_resolver::{resolve_length, resolve_margin_or_padding};
 
 /// The edge of an out-of-flow box represented by one static-position axis.
@@ -38,7 +39,7 @@ pub enum StaticPositionEdge {
 ///
 /// When block layout encounters an absolutely or fixed positioned child, it
 /// records this struct instead of laying out the child inline. After the
-/// in-flow pass completes, `layout_out_of_flow_children()` processes these.
+/// in-flow pass completes, `layout_out_of_flow_children_with_layout()` processes these.
 #[derive(Debug, Clone)]
 pub struct OutOfFlowCandidate {
     /// The DOM node of the out-of-flow element.
@@ -101,7 +102,7 @@ struct OutOfFlowAxisMapping {
 }
 
 impl OutOfFlowAxisMapping {
-    fn for_candidate(doc: &Document, candidate: &OutOfFlowCandidate) -> Self {
+    fn for_candidate(doc: &dyn LayoutDocument, candidate: &OutOfFlowCandidate) -> Self {
         let containing_block_mode = if candidate.containing_block_node.is_none() {
             WritingMode::HorizontalTb
         } else {
@@ -274,8 +275,8 @@ impl StaticPositionInterval {
 /// 2. Resolves vertical position and height (CSS 2.1 §10.6.4)
 /// 3. Lays out the child with a constraint space derived from the resolved size
 /// 4. Positions the resulting fragment
-pub fn layout_out_of_flow_children(
-    doc: &Document,
+pub(crate) fn layout_out_of_flow_children_with_layout(
+    doc: &dyn LayoutDocument,
     candidates: &[OutOfFlowCandidate],
 ) -> Vec<Fragment> {
     let mut fragments = Vec::with_capacity(candidates.len());
@@ -289,7 +290,7 @@ pub fn layout_out_of_flow_children(
 }
 
 /// Layout a single out-of-flow child.
-fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> Fragment {
+fn layout_out_of_flow_child(doc: &dyn LayoutDocument, candidate: &OutOfFlowCandidate) -> Fragment {
     let style = &candidate.style;
     let axes = OutOfFlowAxisMapping::for_candidate(doc, candidate);
     let cb_width = candidate.containing_block_size.width;
@@ -440,7 +441,7 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
     // Compute shrink-to-fit width from intrinsic sizes (CSS 2.1 §10.3.7).
     // shrink-to-fit = min(max-content, max(min-content, available))
     // intrinsic sizes include border+padding, so convert to content-box.
-    let mut intrinsic = compute_intrinsic_block_sizes(doc, candidate.node_id);
+    let mut intrinsic = compute_intrinsic_block_sizes_with_layout(doc, candidate.node_id);
     // A shrink-to-fit positioned box can have a definite block size before
     // its auto inline size is known (an authored height, or opposing block
     // insets). Percentage-height replaced descendants resolve against that
@@ -462,18 +463,19 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
             axes.containing_vertical_start_is_top(),
             axes.static_vertical_start_is_top(),
         );
-        let inline = crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_block_size(
-            doc,
-            candidate.node_id,
-            known_block_size,
-            cb_width,
-        );
+        let inline =
+            crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_block_size_with_layout(
+                doc,
+                candidate.node_id,
+                known_block_size,
+                cb_width,
+            );
         intrinsic.min_content_inline_size = inline.min;
         intrinsic.max_content_inline_size = inline.max;
     }
     let vertical_inline_formatting_context = !axes.child.is_horizontal()
-        && crate::inline::algorithm::has_inline_children(doc, candidate.node_id)
-        && !crate::block::has_block_children(doc, candidate.node_id);
+        && crate::inline::algorithm::has_inline_children_with_layout(doc, candidate.node_id)
+        && !crate::block::has_block_children_with_layout(doc, candidate.node_id);
     let (intrinsic_width_min, intrinsic_width_max) = if vertical_inline_formatting_context {
         // The legacy intrinsic entry point stores physical width/height for
         // block descendants, but its inline-layout probe reports line advance
@@ -909,7 +911,7 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
 
     // Create constraint space and lay out the child.
     // Pass border-box resolved_width/resolved_height as available sizes —
-    // block_layout subtracts its own border+padding to get the content area.
+    // block_layout_with_layout subtracts its own border+padding to get the content area.
     // percentage_resolution stays content-box per CSS 2.1 §10.
     // When the height is determined by constraints (top+bottom specified, height auto),
     // signal it as fixed so descendants can resolve percentage heights against it.
@@ -917,7 +919,7 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
     //
     // Exception: when height comes from AR and min-height is auto, the element
     // can grow to fit content (CSS Sizing 4 §5.1 — non-replaced elements use
-    // content height as a floor). Don't fix the block size so block_layout
+    // content height as a floor). Don't fix the block size so block_layout_with_layout
     // returns the actual content extent. block.rs already handles AR-based
     // percentage resolution for auto-height elements with AR (lines 220-257).
     let ar_content_floor = height_from_ar && style.min_height.is_auto();
@@ -940,7 +942,7 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
         fixed_block,
     );
 
-    let mut child_fragment = block_layout(doc, candidate.node_id, &child_space);
+    let mut child_fragment = block_layout_with_layout(doc, candidate.node_id, &child_space);
 
     // CSS 2.1 §10.3.7: The width is pre-determined by the constraint equation.
     // Exception: when width comes from AR and min-width is auto, content width
@@ -981,7 +983,7 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
     {
         if ar_content_floor {
             // Non-replaced element with AR and min-height:auto — content is a
-            // floor for the AR-derived height (block_layout returned the actual
+            // floor for the AR-derived height (block_layout_with_layout returned the actual
             // content extent since is_fixed_block_size was false).
             let content_h = child_fragment.size.height;
             let effective = resolved_height.max_of(content_h);
@@ -1035,7 +1037,7 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
                 true,
                 true,
             );
-            child_fragment = block_layout(doc, candidate.node_id, &relayout_space);
+            child_fragment = block_layout_with_layout(doc, candidate.node_id, &relayout_space);
         }
     }
 
@@ -1630,7 +1632,7 @@ fn resolve_vertical(
 /// resulting width is less than min-width, the rules are applied again with
 /// min-width as the computed width.
 fn apply_min_max_inline(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     node_id: NodeId,
     style: &ComputedStyle,
     cb_width: LayoutUnit,
@@ -1647,7 +1649,7 @@ fn apply_min_max_inline(
     let min_raw = if style.min_width.is_auto() {
         zero
     } else if style.min_width.is_content_or_intrinsic() {
-        let intrinsic = compute_intrinsic_block_sizes(doc, node_id);
+        let intrinsic = compute_intrinsic_block_sizes_with_layout(doc, node_id);
         let val = match style.min_width.length_type() {
             openui_geometry::LengthType::MinContent => intrinsic.min_content_inline_size,
             _ => intrinsic.max_content_inline_size,
@@ -1667,7 +1669,7 @@ fn apply_min_max_inline(
     };
 
     let max_raw = if style.max_width.is_content_or_intrinsic() {
-        let intrinsic = compute_intrinsic_block_sizes(doc, node_id);
+        let intrinsic = compute_intrinsic_block_sizes_with_layout(doc, node_id);
         let val = match style.max_width.length_type() {
             openui_geometry::LengthType::MinContent => intrinsic.min_content_inline_size,
             openui_geometry::LengthType::MaxContent | openui_geometry::LengthType::FitContent => {
@@ -1764,7 +1766,7 @@ fn apply_min_max_inline(
 ///
 /// CSS 2.1 §10.7: Same logic as §10.4 but for the block axis.
 fn apply_min_max_block(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     node_id: NodeId,
     style: &ComputedStyle,
     cb_width: LayoutUnit,
@@ -1781,7 +1783,7 @@ fn apply_min_max_block(
     let min_raw = if style.min_height.is_auto() {
         zero
     } else if style.min_height.is_content_or_intrinsic() {
-        let sizes = compute_intrinsic_block_sizes(doc, node_id);
+        let sizes = compute_intrinsic_block_sizes_with_layout(doc, node_id);
         let intrinsic_bb = match style.min_height.length_type() {
             openui_geometry::LengthType::MinContent => sizes.min_content_block_size,
             openui_geometry::LengthType::MaxContent => sizes.max_content_block_size,
@@ -1802,7 +1804,7 @@ fn apply_min_max_block(
     };
 
     let max_raw = if style.max_height.is_content_or_intrinsic() {
-        let sizes = compute_intrinsic_block_sizes(doc, node_id);
+        let sizes = compute_intrinsic_block_sizes_with_layout(doc, node_id);
         let intrinsic_bb = match style.max_height.length_type() {
             openui_geometry::LengthType::MinContent => sizes.min_content_block_size,
             openui_geometry::LengthType::MaxContent | openui_geometry::LengthType::FitContent => {
@@ -2143,8 +2145,8 @@ fn resolve_vertical_with_known_height(
 /// where preferred = max-content width, minimum = min-content width.
 ///
 /// For float layout, call this with the child's intrinsic sizes and available width.
-pub fn compute_shrink_to_fit_width(
-    doc: &Document,
+pub(crate) fn compute_shrink_to_fit_width_with_layout(
+    doc: &dyn LayoutDocument,
     node_id: NodeId,
     available: LayoutUnit,
 ) -> LayoutUnit {
@@ -2163,12 +2165,13 @@ pub fn compute_shrink_to_fit_width(
         } else {
             specified + block_edges
         };
-        let inline = crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_block_size(
-            doc,
-            node_id,
-            border_box_block_size,
-            available,
-        );
+        let inline =
+            crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_block_size_with_layout(
+                doc,
+                node_id,
+                border_box_block_size,
+                available,
+            );
         crate::intrinsic_sizing::IntrinsicSizes {
             min_content_inline_size: inline.min,
             max_content_inline_size: inline.max,
@@ -2176,7 +2179,7 @@ pub fn compute_shrink_to_fit_width(
             max_content_block_size: border_box_block_size,
         }
     } else {
-        compute_intrinsic_block_sizes(doc, node_id)
+        compute_intrinsic_block_sizes_with_layout(doc, node_id)
     };
     let preferred = if style.float != openui_style::Float::None
         && crate::multicol::ColumnLayoutAlgorithm::from_style(style).is_some()
@@ -2325,7 +2328,7 @@ mod tests {
         // An empty document node has zero intrinsic size, so shrink-to-fit = 0
         let doc = Document::new();
         let root = doc.root();
-        let result = compute_shrink_to_fit_width(&doc, root, LayoutUnit::from_i32(300));
+        let result = compute_shrink_to_fit_width_with_layout(&doc, root, LayoutUnit::from_i32(300));
         // Result is min(max_content=0, max(min_content=0, 300)) = 0
         assert_eq!(result.to_i32(), 0);
     }
@@ -2334,7 +2337,7 @@ mod tests {
     fn shrink_to_fit_negative_available_clamped() {
         let doc = Document::new();
         let root = doc.root();
-        let result = compute_shrink_to_fit_width(&doc, root, LayoutUnit::from_i32(-10));
+        let result = compute_shrink_to_fit_width_with_layout(&doc, root, LayoutUnit::from_i32(-10));
         assert_eq!(result.to_i32(), 0);
     }
 
@@ -2488,4 +2491,20 @@ mod tests {
             assert_eq!(margin_bottom.to_i32(), -10);
         }
     }
+}
+
+// Public entry points retain the original native Document signatures.
+pub fn layout_out_of_flow_children(
+    doc: &Document,
+    candidates: &[OutOfFlowCandidate],
+) -> Vec<Fragment> {
+    layout_out_of_flow_children_with_layout(doc, candidates)
+}
+
+pub fn compute_shrink_to_fit_width(
+    doc: &Document,
+    node_id: NodeId,
+    available: LayoutUnit,
+) -> LayoutUnit {
+    compute_shrink_to_fit_width_with_layout(doc, node_id, available)
 }

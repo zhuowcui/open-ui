@@ -1,0 +1,1072 @@
+{
+  "closed_native_cohorts": [
+    "inline WBR intrinsic sizing and retained inline replaced resource producer",
+    "fragmented client geometry and visual-translation-free principal source slices",
+    "shared bounded native scroll-event queue through Rust and C controls",
+    "owned user-scroll accessibility metadata and additive versioned owned C scroll-info snapshot"
+  ],
+  "current_source_full_pixel_qualification": false,
+  "dependency_security": {
+    "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-dependency-remediation-table-border-review-v4353/actual-lock-audit-terminal-summary-v2.json",
+    "result": {
+      "advisory_complete": true,
+      "all13_audit_command_children_actual0_reaped": true,
+      "all6_owner_preflight_children_actual0_reaped": true,
+      "audit_owner_receipt_sha256": "6f96a31bd77f90ad72af1e715affdc62456a7d082d0e88058404be0e9af2e6a1",
+      "audit_raw_receipt_sha256": "c743e01885e5cd8e0fff452dbb0f9aef55ebb9ef85909953e6bf4df427c47b77",
+      "boot_id": "362ae37b-d85f-4812-9f25-ef02cf732134",
+      "completed_utc": "2026-10-13T16:36:46.478312+00:00",
+      "execution_complete": true,
+      "framework_msrv": "1.85 unchanged; not compiled here",
+      "full_v02_qualification": false,
+      "independent_registry_crates": 309,
+      "independent_registry_versions": 364,
+      "lock_hashes_and_mtimes_before_after_equal": true,
+      "lock_identities": [
+        {
+          "mtime_ns": 1791848486665052500,
+          "path": "bindings/rust/Cargo.lock",
+          "sha256": "8b88371e6678e6dcf25750833d2843ed31d5faffab0a5c948514a6f787d29f64"
+        },
+        {
+          "mtime_ns": 1791843738637657700,
+          "path": "bindings/rust/fuzz/Cargo.lock",
+          "sha256": "2baa59472abf346bc73252810abf7d42b4b5cfaea03a7340b0fb2b835703a47b"
+        }
+      ],
+      "locks": [
+        {
+          "advisories": 0,
+          "database": {
+            "advisory-count": 1310,
+            "last-commit": "6aed84668c23d7f535077a9fe918bf1fa0f6a5bc",
+            "last-updated": "2026-10-13T17:07:33+02:00"
+          },
+          "packages": 353,
+          "path": "bindings/rust/Cargo.lock",
+          "raw_command_index": 4,
+          "warning_groups": {}
+        },
+        {
+          "advisories": 0,
+          "database": {
+            "advisory-count": 1310,
+            "last-commit": "6aed84668c23d7f535077a9fe918bf1fa0f6a5bc",
+            "last-updated": "2026-10-13T17:07:33+02:00"
+          },
+          "packages": 90,
+          "path": "bindings/rust/fuzz/Cargo.lock",
+          "raw_command_index": 7,
+          "warning_groups": {}
+        }
+      ],
+      "msrv_compile": false,
+      "native_compile": false,
+      "owned_owner_checker_command_pids_and_groups_absent": true,
+      "owned_pids": [
+        38446,
+        38502,
+        38453,
+        38454,
+        38488,
+        38501,
+        39185,
+        39228,
+        38503,
+        38504,
+        38537,
+        38555,
+        38556,
+        38755,
+        38756,
+        38757,
+        38870,
+        38871,
+        38897,
+        38898,
+        39168
+      ],
+      "private_tool_env": {
+        "CARGO_HOME": "/mnt/d/openui-v02-qualification-d174ea0b/native-dependency-security-source-v4313/audit-tool-cargo-home",
+        "CARGO_TARGET_DIR": "/mnt/d/openui-v02-qualification-d174ea0b/native-dependency-security-source-v4313/audit-tool-target",
+        "GIT_OPTIONAL_LOCKS": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "TMPDIR": "/mnt/d/openui-v02-qualification-d174ea0b/native-dependency-security-source-v4313/audit-tool-tmp"
+      },
+      "producer_actual_exit_code": 0,
+      "producer_reaped": true,
+      "producer_session": 72991,
+      "producer_terminal_chunk": "483c18",
+      "ps_reader_actual_exit_code": 0,
+      "ps_reader_reaped": true,
+      "registry_consumer_publication_gate": "open; local root patch does not propagate to registry consumers",
+      "registry_errors": 0,
+      "registry_yank_complete": true,
+      "schema": 2,
+      "sdk_built_or_installed": false,
+      "source_before_after_equal": true,
+      "source_commit": "2e601e763065f189b87cf3c66908ce7ac53ea8d0",
+      "source_manifest_sha256": "9c38607280cf59d5e1669c5c370438b1e7500c93cb6b8b146dfb9006d4020dc5",
+      "strict_dependency_security_passed": true,
+      "writer_pid": 42190,
+      "yanked_versions": 0
+    },
+    "sha256": "0bb7763eb80a6233b47798daab3c6c71049bb3247817c949af5245ff3b544318"
+  },
+  "development_checkpoint": "dac1db8add0ac3d775ca6229e1f9c350ab88ee78",
+  "expanded_manifest": {
+    "admitted_native_case_count": 201,
+    "case_count": 5932,
+    "original_case_count": 5731,
+    "pending_pixel_qualification_after_renderer_changes": true
+  },
+  "fresh_clean_renderer_matrices": {
+    "not_yet_measured": true,
+    "prior_native_passes_do_not_qualify_pixels": true,
+    "scheduled_suites": [
+      "focused",
+      "primitive",
+      "full",
+      "expanded"
+    ]
+  },
+  "generated_checks": {
+    "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-cohort-generated-checks-v4444/receipt.json",
+    "result": {
+      "checks": [
+        {
+          "actual_exit_code": 0,
+          "argv": [
+            "/usr/bin/python3",
+            "tools/conformance/verify_v02.py"
+          ],
+          "log_sha256": "a6df6f2e3b6fe16789bd395cf93961a24f2ac7e0e8aed939da72fa29120d622b",
+          "name": "conformance-contract",
+          "pid": 157923,
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 0,
+          "argv": [
+            "/usr/bin/python3",
+            "tools/ffi/generate_ffi.py",
+            "--check"
+          ],
+          "log_sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821",
+          "name": "ffi",
+          "pid": 157924,
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 0,
+          "argv": [
+            "/usr/bin/python3",
+            "tools/performance/verify_v02.py"
+          ],
+          "log_sha256": "31fafaa2779d95f8168ecf220b0bd06071a32df5e56de235ac65a3c2541317fc",
+          "name": "performance-contract",
+          "pid": 157927,
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 0,
+          "argv": [
+            "/usr/bin/python3",
+            "tools/release/generate_v02_contract.py",
+            "--check"
+          ],
+          "log_sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd",
+          "name": "release-contract",
+          "pid": 157928,
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 0,
+          "argv": [
+            "/usr/bin/python3",
+            "tools/wpt/generate_sp13r_multicol_closure.py",
+            "--check"
+          ],
+          "log_sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222",
+          "name": "sp13r",
+          "pid": 157932,
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 0,
+          "argv": [
+            "/usr/bin/python3",
+            "tools/ffi/generate_form_owner_cases.py",
+            "--check"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "name": "form-owner-cases",
+          "pid": 157922,
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 0,
+          "argv": [
+            "/usr/bin/python3",
+            "tools/ffi/generate_control_keyboard_cases.py",
+            "--check"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "name": "control-keyboard-cases",
+          "pid": 157921,
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 0,
+          "argv": [
+            "/usr/bin/python3",
+            "tools/wpt/generate_sp15_closure.py",
+            "--check"
+          ],
+          "log_sha256": "4eb6292054bb3379624f20e82c3769ee0f6287d6e1d8d8dca2d5708629e163c9",
+          "name": "sp15",
+          "pid": 157933,
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 0,
+          "argv": [
+            "/usr/bin/python3",
+            "tools/wpt/generate_sp16_closure.py",
+            "--check"
+          ],
+          "log_sha256": "716218e02c5717a8c25fef0f84b0bf10e0054815d2f3deb6f526cef7d4908158",
+          "name": "sp16",
+          "pid": 157934,
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 0,
+          "argv": [
+            "/usr/bin/python3",
+            "tools/wpt/generate_sp17_closure.py",
+            "--check"
+          ],
+          "log_sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a",
+          "name": "sp17",
+          "pid": 157935,
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 0,
+          "argv": [
+            "/usr/bin/python3",
+            "tools/accountability/restore_frozen_openui_archive.py",
+            "--check"
+          ],
+          "log_sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32",
+          "name": "frozen-archive",
+          "pid": 157929,
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 0,
+          "argv": [
+            "/usr/bin/python3",
+            "tools/style/generate_properties.py",
+            "--check"
+          ],
+          "log_sha256": "c37e51fbf34bf237a1dfef0e2eb4ae95c4de5633ff73bf536c357783dc8251a6",
+          "name": "style-properties",
+          "pid": 157946,
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 0,
+          "argv": [
+            "/usr/bin/python3",
+            "tools/wpt/generate_sp19_closure.py",
+            "--check"
+          ],
+          "log_sha256": "6b489d1bba2bc3f464796c78e189ce828008b3dc76528a77e9a8fed77f34c58a",
+          "name": "sp19",
+          "pid": 157945,
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 0,
+          "argv": [
+            "/usr/bin/python3",
+            "tools/wpt/generate_sp18_closure.py",
+            "--check"
+          ],
+          "log_sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763",
+          "name": "sp18",
+          "pid": 157937,
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 0,
+          "argv": [
+            "/usr/bin/python3",
+            "tools/wpt/generate_sp20_closure.py",
+            "--check"
+          ],
+          "log_sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d",
+          "name": "sp20",
+          "pid": 157947,
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 0,
+          "argv": [
+            "python3",
+            "-B",
+            "tools/release/build_v02_linux.py",
+            "--verify-source"
+          ],
+          "log_sha256": "90bab8996d8e4d8e7336124bdb073e6c708bd53cc560c5d25536c09a9e921d86",
+          "name": "release-source-metadata",
+          "pid": 157949,
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 0,
+          "argv": [
+            "/usr/bin/python3",
+            "tools/qualification/generate_renderer_contract.py",
+            "--check"
+          ],
+          "log_sha256": "ee8639a6c3b050908f3019aaebe52c74085f9365da332025a6a4ec877313e8f9",
+          "name": "renderer-contract",
+          "pid": 157936,
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 0,
+          "argv": [
+            "/usr/bin/python3",
+            "tools/accountability/audit.py",
+            "--repository-only"
+          ],
+          "log_sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1",
+          "name": "accountability",
+          "pid": 157948,
+          "terminal_reaped": true
+        }
+      ],
+      "complete": true,
+      "owner_pid": 157891,
+      "release_qualified": false,
+      "renderer_qualified": false,
+      "source": {
+        "clean": true,
+        "commit": "dac1db8add0ac3d775ca6229e1f9c350ab88ee78",
+        "harness_sha256": "abff37553c0abe146718cec361f956bfcc75bfcfeaf7feb82682f6122e920ccd",
+        "source_tree_sha256": "0debf334d56575cb66088bb215a28c2b337ea8c081f912ca472829796b93637b",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "dac1db8add0ac3d775ca6229e1f9c350ab88ee78",
+        "harness_sha256": "abff37553c0abe146718cec361f956bfcc75bfcfeaf7feb82682f6122e920ccd",
+        "source_tree_sha256": "0debf334d56575cb66088bb215a28c2b337ea8c081f912ca472829796b93637b",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_unchanged": true
+    },
+    "sha256": "4006240c432873f2c57788ed8330f308f5181f5992d2bb0d80be8f84a3b3b78a"
+  },
+  "generated_inventory_repair": {
+    "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-cohort-inventory-regeneration-v4443/receipt.json",
+    "result": {
+      "checks": [
+        {
+          "actual_exit_code": 0,
+          "argv": [
+            "python3",
+            "-B",
+            "tools/qualification/generate_renderer_contract.py"
+          ],
+          "pid": 157444,
+          "stderr": "",
+          "stdout": "renderer contract: profiles=4 focused=40 style=234 unclassified=0 javascript=393\n",
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 0,
+          "argv": [
+            "python3",
+            "-B",
+            "tools/qualification/generate_renderer_contract.py",
+            "--check"
+          ],
+          "pid": 157453,
+          "stderr": "",
+          "stdout": "renderer contract: profiles=4 focused=40 style=234 unclassified=0 javascript=393\n",
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 0,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "pid": 157461,
+          "stderr": "",
+          "stdout": "",
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 0,
+          "argv": [
+            "git",
+            "diff",
+            "--",
+            "docs/renderer/generated/author-style-inventory.json"
+          ],
+          "pid": 157502,
+          "stderr": "",
+          "stdout": "diff --git a/docs/renderer/generated/author-style-inventory.json b/docs/renderer/generated/author-style-inventory.json\nindex 96bd0192..5549c225 100644\n--- a/docs/renderer/generated/author-style-inventory.json\n+++ b/docs/renderer/generated/author-style-inventory.json\n@@ -656,7 +656,8 @@\n         \"bindings/rust/openui-paint/src/render.rs\",\n         \"bindings/rust/openui-engine/src/accessibility.rs\",\n         \"bindings/rust/openui-engine/src/interaction.rs\",\n-        \"bindings/rust/openui-engine/src/lib.rs\"\n+        \"bindings/rust/openui-engine/src/lib.rs\",\n+        \"bindings/rust/openui-engine/src/scroll_notifications.rs\"\n       ],\n       \"css_name\": \"clear\",\n       \"field\": \"clear\",\n@@ -1661,6 +1662,7 @@\n         \"bindings/rust/openui-paint/src/render.rs\",\n         \"bindings/rust/openui-engine/src/accessibility.rs\",\n         \"bindings/rust/openui-engine/src/animation_timeline.rs\",\n+        \"bindings/rust/openui-engine/src/client_geometry.rs\",\n         \"bindings/rust/openui-engine/src/control_geometry.rs\",\n         \"bindings/rust/openui-engine/src/element_dimensions.rs\",\n         \"bindings/rust/openui-engine/src/hit_geometry.rs\",\n@@ -1798,6 +1800,7 @@\n         \"bindings/rust/openui-paint/src/painter.rs\",\n         \"bindings/rust/openui-paint/src/text_painter.rs\",\n         \"bindings/rust/openui-engine/src/animation_timeline.rs\",\n+        \"bindings/rust/openui-engine/src/client_geometry.rs\",\n         \"bindings/rust/openui-engine/src/element_dimensions.rs\",\n         \"bindings/rust/openui-engine/src/lib.rs\",\n         \"bindings/rust/openui-engine/src/scroll_button.rs\",\n@@ -3395,6 +3398,7 @@\n         \"bindings/rust/openui-paint/src/painter.rs\",\n         \"bindings/rust/openui-paint/src/text_painter.rs\",\n         \"bindings/rust/openui-engine/src/animation_timeline.rs\",\n+        \"bindings/rust/openui-engine/src/client_geometry.rs\",\n         \"bindings/rust/openui-engine/src/element_dimensions.rs\",\n         \"bindings/rust/openui-engine/src/lib.rs\",\n         \"bindings/rust/openui-engine/src/scroll_button.rs\",\n@@ -3414,6 +3418,7 @@\n         \"bindings/rust/openui-paint/src/paint_order.rs\",\n         \"bindings/rust/openui-paint/src/painter.rs\",\n         \"bindings/rust/openui-paint/src/render.rs\",\n+        \"bindings/rust/openui-engine/src/client_geometry.rs\",\n         \"bindings/rust/openui-engine/src/lib.rs\"\n       ],\n       \"css_name\": \"transform\",\n@@ -3588,6 +3593,7 @@\n         \"bindings/rust/openui-paint/src/render.rs\",\n         \"bindings/rust/openui-engine/src/accessibility.rs\",\n         \"bindings/rust/openui-engine/src/animation_timeline.rs\",\n+        \"bindings/rust/openui-engine/src/client_geometry.rs\",\n         \"bindings/rust/openui-engine/src/control_geometry.rs\",\n         \"bindings/rust/openui-engine/src/element_dimensions.rs\",\n         \"bindings/rust/openui-engine/src/hit_geometry.rs\",\n",
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 0,
+          "argv": [
+            "git",
+            "diff",
+            "--name-only"
+          ],
+          "pid": 157523,
+          "stderr": "",
+          "stdout": "docs/renderer/generated/author-style-inventory.json\n",
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 0,
+          "argv": [
+            "git",
+            "ls-files",
+            "--others",
+            "--exclude-standard"
+          ],
+          "pid": 157544,
+          "stderr": "",
+          "stdout": "",
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 0,
+          "argv": [
+            "git",
+            "add",
+            "--",
+            "docs/renderer/generated/author-style-inventory.json"
+          ],
+          "pid": 157545,
+          "stderr": "",
+          "stdout": "",
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 0,
+          "argv": [
+            "git",
+            "commit",
+            "-m",
+            "chore(renderer): regenerate native style inventory from integrated source"
+          ],
+          "pid": 157566,
+          "stderr": "",
+          "stdout": "[codex/native-final-linux-v4314 dac1db8a] chore(renderer): regenerate native style inventory from integrated source\n 1 file changed, 7 insertions(+), 1 deletion(-)\n",
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 0,
+          "argv": [
+            "git",
+            "rev-parse",
+            "HEAD"
+          ],
+          "pid": 157608,
+          "stderr": "",
+          "stdout": "dac1db8add0ac3d775ca6229e1f9c350ab88ee78\n",
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 0,
+          "argv": [
+            "git",
+            "--git-dir=/home/nero/code/open-ui/.git/worktrees/openui-native-final-integration-prep-v4265",
+            "-c",
+            "core.bare=true",
+            "diff",
+            "--cached",
+            "--name-only"
+          ],
+          "pid": 157632,
+          "stderr": "",
+          "stdout": "",
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 0,
+          "argv": [
+            "git",
+            "--git-dir=/home/nero/code/open-ui/.git/worktrees/openui-native-final-integration-prep-v4265",
+            "-c",
+            "core.bare=true",
+            "read-tree",
+            "dac1db8add0ac3d775ca6229e1f9c350ab88ee78"
+          ],
+          "pid": 157633,
+          "stderr": "",
+          "stdout": "",
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 0,
+          "argv": [
+            "git",
+            "--git-dir=/home/nero/code/open-ui/.git/worktrees/openui-native-final-integration-prep-v4265",
+            "-c",
+            "core.bare=true",
+            "update-ref",
+            "refs/heads/codex/native-final-integration-prep-v4265",
+            "dac1db8add0ac3d775ca6229e1f9c350ab88ee78",
+            "08ca2d84c2dc8d7c897687f2f37578462b0ff533"
+          ],
+          "pid": 157634,
+          "stderr": "",
+          "stdout": "",
+          "terminal_reaped": true
+        }
+      ],
+      "commit": "dac1db8add0ac3d775ca6229e1f9c350ab88ee78",
+      "complete": true,
+      "generator_sha256": "ef3778b13739e31c76a5fc4e2abd06adfe60e61ec4de3457bca20ae093e00206",
+      "inventory_after_sha256": "a33002a2a737b79c56b6fed7e5bc716d96f7c103d13308a8bf5c85ae62b53cb4",
+      "inventory_before_sha256": "2e4915303e253a57bdfdd9b5ed9cb06973b7e1227dc507ad4bbd9827c581c9a1",
+      "owner_pid": 157412,
+      "patch_sha256": "3deb1c3464e5d8a9840a95fba989a5182cde73cf2af40ca143eb83e3ee199141",
+      "qualification": false,
+      "source_after": {
+        "clean": true,
+        "commit": "dac1db8add0ac3d775ca6229e1f9c350ab88ee78",
+        "harness_sha256": "abff37553c0abe146718cec361f956bfcc75bfcfeaf7feb82682f6122e920ccd",
+        "source_tree_sha256": "0debf334d56575cb66088bb215a28c2b337ea8c081f912ca472829796b93637b",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_before": {
+        "clean": true,
+        "commit": "08ca2d84c2dc8d7c897687f2f37578462b0ff533",
+        "harness_sha256": "abff37553c0abe146718cec361f956bfcc75bfcfeaf7feb82682f6122e920ccd",
+        "source_tree_sha256": "abd5f4ce82ee1efb242da1ed2f168452085786ed135718b376178141df0288e1",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_only": true
+    },
+    "sha256": "90e84ac7c046f852caca8ce3dab403efe1b3e0978c3cfbb86c25b0ac2f43ee7b"
+  },
+  "historical_openui_images_define_correctness": false,
+  "hosted_gates": {
+    "latest_dispatched_checkpoint": "7876c2f919356d9ec673369e7b7b661832d76363",
+    "new_checkpoint_dispatch_pending": true,
+    "prior_failures_preserved": {
+      "c_ubsan": "strict accessibility scroll callback count assertion failed, no sanitizer diagnostic; shared notification repair passes current Root linked consumers",
+      "clang_format": "three C consumers violated required clang-format18.1.3; repaired source whitespace only",
+      "rust_parity": "strict inline replaced-canvas sizing failed; repaired and passing in recorded current Root workspace",
+      "skipped": "downstream skipped jobs are unqualified",
+      "upstream_fetch": "several hardening jobs failed in Skia dependency download with HTTP502 before their runtime gates"
+    }
+  },
+  "integrated_dependency_input_identity": {
+    "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-dependency-remediation-table-border-review-v4353/root-integrated-audit-input-identity-v1.json",
+    "result": {
+      "files": {
+        "bindings/rust/Cargo.lock": {
+          "audit_source_sha256": "8b88371e6678e6dcf25750833d2843ed31d5faffab0a5c948514a6f787d29f64",
+          "byte_identical": true,
+          "root_sha256": "8b88371e6678e6dcf25750833d2843ed31d5faffab0a5c948514a6f787d29f64"
+        },
+        "bindings/rust/fuzz/Cargo.lock": {
+          "audit_source_sha256": "2baa59472abf346bc73252810abf7d42b4b5cfaea03a7340b0fb2b835703a47b",
+          "byte_identical": true,
+          "root_sha256": "2baa59472abf346bc73252810abf7d42b4b5cfaea03a7340b0fb2b835703a47b"
+        },
+        "tools/release/check_dependency_security.py": {
+          "audit_source_sha256": "8e7ce922fe5f3bc18ef44bce9c5f680af944e8c6553e4cf8b0f72ec08158150f",
+          "byte_identical": true,
+          "root_sha256": "8e7ce922fe5f3bc18ef44bce9c5f680af944e8c6553e4cf8b0f72ec08158150f"
+        }
+      },
+      "qualification_scope": "dependency advisory and registry audit only",
+      "same_audited_lock_and_checker_bytes": true
+    },
+    "sha256": "f11570418335fed071f486640d81c5332405c4b963d318b44b152b6ff417a01b"
+  },
+  "interrupted_matrix": {
+    "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-chromium-matrices-c48ff96-v4370/environment-restart-interruption-proof.json",
+    "result": {
+      "all_recorded_child_pids_absent": true,
+      "current_boot_id": "362ae37b-d85f-4812-9f25-ef02cf732134",
+      "focused_actual_exit_code": 0,
+      "focused_reaped": true,
+      "focused_results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 640,
+        "profile_result_sha256": "800567dcced8e05646d002773bd0e7898ddddffc6bec0bae58caac38a06311c7",
+        "total": 640
+      },
+      "focused_summary_sha256": "8e216f4fd770e46090004b19b5ca89c2ca2502c1962f0b3fff451f0f509f4460",
+      "interruption": "Environment restarted; process handles unavailable. No exit status is inferred for unfinished stages.",
+      "observed_utc": "2026-10-13T15:40:42.303859+00:00",
+      "prior_owner_absent": true,
+      "prior_owner_pid": 1502451,
+      "qualification": false,
+      "recorded_child_pids": [
+        1502483,
+        1583347
+      ],
+      "source_checkout_missing": true,
+      "unfinished_stages": [
+        "primitive",
+        "full",
+        "expanded"
+      ]
+    },
+    "sha256": "71ff3c0742ff25d56829762a0e56b4711b715fe712c887df2368044f8e76ab3c"
+  },
+  "interrupted_matrix_qualifies_development_checkpoint": false,
+  "javascript_executed_by_openui": false,
+  "last_complete_original": {
+    "complete_contract_scope": true,
+    "counts": {
+      "different": 1607,
+      "errors": 0,
+      "exact": 21317,
+      "total": 22924
+    },
+    "pixel_gate_passed": false,
+    "report_path": "/mnt/d/openui-v02-qualification-d174ea0b/ordinary-opacity-census-v4217/full/full-summary.json",
+    "report_sha256": "9abd4dc9135985be43fa9e207f0118e583c2f19cafed7da7a88d5ed887839563",
+    "source": {
+      "clean": true,
+      "commit": "fe51eab99b3195bba1177ee23077e7b086307e0c",
+      "harness_sha256": "f2248950a92a4d6bbb0feef34a01ee02dbe531c28b3e095eb80aa055210a7fbf",
+      "source_tree_sha256": "f67953e834cac56b626a01bc54db9e9dd4db1b98b7364967947533667dbfc411",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "native_api_qualified": false,
+  "native_interaction_contract": "Consuming applications call native Rust APIs and callbacks over the shared Engine; every needed element operation remains framework work.",
+  "native_runtime": {
+    "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-cohort-complete-runtime-v4441/receipt.json",
+    "result": {
+      "boot_id": "362ae37b-d85f-4812-9f25-ef02cf732134",
+      "checks": [
+        {
+          "actual_exit_code": 0,
+          "argv": [
+            "cargo",
+            "+stable",
+            "--config",
+            "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+            "test",
+            "--locked",
+            "--offline",
+            "--no-fail-fast",
+            "--workspace",
+            "--all-targets"
+          ],
+          "log_sha256": "e779e755d8f390cdddca150d78a77d49bb6d562b15a2f1305acd57f7897ffe28",
+          "name": "workspace-all-targets",
+          "pid": 129743,
+          "reported_failed": 0,
+          "reported_ignored": 0,
+          "reported_passed": 9146,
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 0,
+          "argv": [
+            "cargo",
+            "+stable",
+            "--config",
+            "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+            "test",
+            "--locked",
+            "--offline",
+            "--no-fail-fast",
+            "--workspace",
+            "--doc"
+          ],
+          "log_sha256": "35f47b8810a0f84226ae6cc569b11ed93eddc3a72c3b8d711884e78deb260e17",
+          "name": "workspace-doctests",
+          "pid": 146439,
+          "reported_failed": 0,
+          "reported_ignored": 13,
+          "reported_passed": 2,
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 0,
+          "argv": [
+            "cargo",
+            "+stable",
+            "--config",
+            "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+            "build",
+            "--locked",
+            "--offline",
+            "-p",
+            "openui-ffi"
+          ],
+          "log_sha256": "3f1fd170922e4599b9b55de75bdfe27e8bc832a1bf475d2f0eb3bc2d8b122e16",
+          "name": "c-abi-library-build",
+          "pid": 146543,
+          "reported_failed": 0,
+          "reported_ignored": 0,
+          "reported_passed": 0,
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 0,
+          "argv": [
+            "python3",
+            "-B",
+            "/home/nero/code/open-ui/tools/ffi/verify_abi.py",
+            "--library",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/libopenui_ffi.so",
+            "--keep-going"
+          ],
+          "log_sha256": "754b13565bfa8d77aa65b26993e7cad6c87475a7c41ec7dc4ab170f5ed2bf24a",
+          "name": "c-cpp-headless-consumers",
+          "pid": 146590,
+          "reported_failed": 0,
+          "reported_ignored": 0,
+          "reported_passed": 0,
+          "terminal_reaped": true
+        }
+      ],
+      "complete": true,
+      "current_source_library": {
+        "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/libopenui_ffi.so",
+        "sha256": "5bb38cf8d578a70afc522369b3c4f9e2b53f230b8d9cf8227cfc2fa7a00f2e2c",
+        "source_commit": "7b81b9e9224254bc770f058bb498c6469a63aba1",
+        "successful_build_pid": 146543
+      },
+      "intended_exit_code": 0,
+      "owner_pid": 129718,
+      "release_qualified": false,
+      "renderer_qualified": false,
+      "runtime_scope": "complete locked native workspace and doctests including WBR, retained inline replaced Canvas, fragmented client quads/principal source slices and captured native scroll notifications; every linked headless C/C++ consumer from successful current-source library build",
+      "source": {
+        "clean": true,
+        "commit": "7b81b9e9224254bc770f058bb498c6469a63aba1",
+        "harness_sha256": "abff37553c0abe146718cec361f956bfcc75bfcfeaf7feb82682f6122e920ccd",
+        "source_tree_sha256": "63fd5f094872eb571a1b33ce83abb184a7300df3785a52847af7a28818edd880",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "7b81b9e9224254bc770f058bb498c6469a63aba1",
+        "harness_sha256": "abff37553c0abe146718cec361f956bfcc75bfcfeaf7feb82682f6122e920ccd",
+        "source_tree_sha256": "63fd5f094872eb571a1b33ce83abb184a7300df3785a52847af7a28818edd880",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_unchanged": true
+    },
+    "sha256": "96fdefcd48d3578002ab2cb0cc66d4a229bee7feecc83a8d547307f7e8c8a2be"
+  },
+  "owned_c_scroll_info_runtime": {
+    "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-c-scroll-info-runtime-v4452/receipt.json",
+    "result": {
+      "boot_id": "362ae37b-d85f-4812-9f25-ef02cf732134",
+      "checks": [
+        {
+          "actual_exit_code": 0,
+          "argv": [
+            "cargo",
+            "+stable",
+            "--config",
+            "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+            "test",
+            "--locked",
+            "--offline",
+            "--no-fail-fast",
+            "-p",
+            "openui-ffi",
+            "--all-targets"
+          ],
+          "log_sha256": "01db3b84cbd15217be3c72a85cf1f7402604afbbb242b4fbd7cd7e70ba8c57e8",
+          "name": "ffi-all-targets",
+          "pid": 155235,
+          "reported_failed": 0,
+          "reported_ignored": 0,
+          "reported_passed": 124,
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 0,
+          "argv": [
+            "cargo",
+            "+stable",
+            "--config",
+            "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+            "build",
+            "--locked",
+            "--offline",
+            "-p",
+            "openui-ffi"
+          ],
+          "log_sha256": "387eef8b8d245ac12568bc4b29bec8ca0d881dbe407b3fceaa4cb7892f28980b",
+          "name": "c-abi-library-build",
+          "pid": 155540,
+          "reported_failed": 0,
+          "reported_ignored": 0,
+          "reported_passed": 0,
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 0,
+          "argv": [
+            "python3",
+            "-B",
+            "/home/nero/code/open-ui/tools/ffi/verify_abi.py",
+            "--library",
+            "/mnt/d/openui-v02-qualification-d174ea0b/native-c-scroll-info-runtime-v4452/libopenui_ffi.so",
+            "--keep-going"
+          ],
+          "log_sha256": "340115138715aa638fbdcb071c7ec427040a69b576f95b16ed6d886589254c6d",
+          "name": "c-cpp-headless-consumers",
+          "pid": 155602,
+          "reported_failed": 0,
+          "reported_ignored": 0,
+          "reported_passed": 0,
+          "terminal_reaped": true
+        }
+      ],
+      "complete": true,
+      "current_source_library": {
+        "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/libopenui_ffi.so",
+        "retained_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-c-scroll-info-runtime-v4452/libopenui_ffi.so",
+        "sha256": "ce8d439bd0a1b727c66106423b90d203faafe386e07722defc81a1733e552b01",
+        "source_commit": "08ca2d84c2dc8d7c897687f2f37578462b0ff533",
+        "successful_build_pid": 155540
+      },
+      "intended_exit_code": 0,
+      "linked_consumer_summary": {
+        "c_count": 36,
+        "cpp_count": 30,
+        "export_count": 157,
+        "ran": true
+      },
+      "owner_pid": 155210,
+      "release_qualified": false,
+      "renderer_qualified": false,
+      "runtime_scope": "complete owned C API tests and fresh-source build plus every C/C++ consumer, including new owned accessibility scroll-info; preceding whole Rust checkpoint remains explicit",
+      "source": {
+        "clean": true,
+        "commit": "08ca2d84c2dc8d7c897687f2f37578462b0ff533",
+        "harness_sha256": "abff37553c0abe146718cec361f956bfcc75bfcfeaf7feb82682f6122e920ccd",
+        "source_tree_sha256": "abd5f4ce82ee1efb242da1ed2f168452085786ed135718b376178141df0288e1",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "08ca2d84c2dc8d7c897687f2f37578462b0ff533",
+        "harness_sha256": "abff37553c0abe146718cec361f956bfcc75bfcfeaf7feb82682f6122e920ccd",
+        "source_tree_sha256": "abd5f4ce82ee1efb242da1ed2f168452085786ed135718b376178141df0288e1",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_unchanged": true
+    },
+    "sha256": "cc9db39d7d0b4d6753c97ddafc528646ca1883d7da608f7f37bd627d8bcf8f18"
+  },
+  "pixel_target": "pinned Chromium147.0.7727.50",
+  "pixel_tolerance": 0,
+  "preceding_owned_c_scroll_info_runtime": {
+    "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-c-scroll-info-runtime-v4442/receipt.json",
+    "result": {
+      "boot_id": "362ae37b-d85f-4812-9f25-ef02cf732134",
+      "checks": [
+        {
+          "actual_exit_code": 101,
+          "argv": [
+            "cargo",
+            "+stable",
+            "--config",
+            "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+            "test",
+            "--locked",
+            "--offline",
+            "--no-fail-fast",
+            "-p",
+            "openui-ffi",
+            "--all-targets"
+          ],
+          "log_sha256": "7a2ae02e9cab6d3cb2bbce855d95ae169dc595b90341cd97c83f3de870445266",
+          "name": "ffi-all-targets",
+          "pid": 153047,
+          "reported_failed": 0,
+          "reported_ignored": 0,
+          "reported_passed": 0,
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 0,
+          "argv": [
+            "cargo",
+            "+stable",
+            "--config",
+            "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+            "build",
+            "--locked",
+            "--offline",
+            "-p",
+            "openui-ffi"
+          ],
+          "log_sha256": "ea499ec02e3c3328fa1935d1a19aca6ed383ddba2d5a7346dd42193f34f63bce",
+          "name": "c-abi-library-build",
+          "pid": 153201,
+          "reported_failed": 0,
+          "reported_ignored": 0,
+          "reported_passed": 0,
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 0,
+          "argv": [
+            "python3",
+            "-B",
+            "/home/nero/code/open-ui/tools/ffi/verify_abi.py",
+            "--library",
+            "/mnt/d/openui-v02-qualification-d174ea0b/native-c-scroll-info-runtime-v4442/libopenui_ffi.so",
+            "--keep-going"
+          ],
+          "log_sha256": "340115138715aa638fbdcb071c7ec427040a69b576f95b16ed6d886589254c6d",
+          "name": "c-cpp-headless-consumers",
+          "pid": 153272,
+          "reported_failed": 0,
+          "reported_ignored": 0,
+          "reported_passed": 0,
+          "terminal_reaped": true
+        }
+      ],
+      "complete": true,
+      "current_source_library": {
+        "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/libopenui_ffi.so",
+        "retained_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-c-scroll-info-runtime-v4442/libopenui_ffi.so",
+        "sha256": "ce8d439bd0a1b727c66106423b90d203faafe386e07722defc81a1733e552b01",
+        "source_commit": "6dd175cfdd869d51d935e5dc177f5291d644ba00",
+        "successful_build_pid": 153201
+      },
+      "intended_exit_code": 1,
+      "linked_consumer_summary": {
+        "c_count": 36,
+        "cpp_count": 30,
+        "export_count": 157,
+        "ran": true
+      },
+      "owner_pid": 153023,
+      "release_qualified": false,
+      "renderer_qualified": false,
+      "runtime_scope": "complete owned C API tests and fresh-source build plus every C/C++ consumer, including new owned accessibility scroll-info; preceding whole Rust checkpoint remains explicit",
+      "source": {
+        "clean": true,
+        "commit": "6dd175cfdd869d51d935e5dc177f5291d644ba00",
+        "harness_sha256": "abff37553c0abe146718cec361f956bfcc75bfcfeaf7feb82682f6122e920ccd",
+        "source_tree_sha256": "dfa66001b0bee465934b6ef6e0c072ea735e898a0fb83030d4ad3f76c4457c5d",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "6dd175cfdd869d51d935e5dc177f5291d644ba00",
+        "harness_sha256": "abff37553c0abe146718cec361f956bfcc75bfcfeaf7feb82682f6122e920ccd",
+        "source_tree_sha256": "dfa66001b0bee465934b6ef6e0c072ea735e898a0fb83030d4ad3f76c4457c5d",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_unchanged": true
+    },
+    "sha256": "5c550703487d57c5ceb0af4950ad90b52049eed116ce29dc240885bcd48a672a"
+  },
+  "prior_status_evidence": {
+    "bytes_preserved": true,
+    "path": "/home/nero/code/open-ui/docs/renderer/generated/native-final-closure-status-v3.json",
+    "sha256": "dd58f4735966bc226f34c3384665eeb3a5b73926d6de3aa1b066dc7595979727"
+  },
+  "python_runtime": {
+    "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-cohort-python-runtime-v4436/receipt.json",
+    "result": {
+      "actual_exit_code": 0,
+      "argv": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "tools.accountability.test_audit_frozen_oracle",
+        "tools.accountability.test_chromium_capture",
+        "tools.qualification.native_collapsed_tables.test_run_matrix",
+        "tools.qualification.test_build_renderer",
+        "tools.qualification.test_renderer_matrix",
+        "tools.qualification.test_summarize_renderer_census",
+        "tools.release.test_dependency_security",
+        "tools.release.test_v02_packaging",
+        "tools.wpt.test_renderer_generality",
+        "tools.wpt.test_scroll_snap_lowering",
+        "tools.wpt.test_sp13p_paint_closure",
+        "tools.wpt.test_sp13r_multicol_closure",
+        "tools.wpt.test_sp14_text_port",
+        "tools.wpt.test_sp15_closure",
+        "tools.wpt.test_sp16_closure",
+        "tools.wpt.test_sp17_closure",
+        "tools.wpt.test_sp18_closure",
+        "tools.wpt.test_sp19_closure",
+        "tools.wpt.test_sp20_closure"
+      ],
+      "child_pid": 118557,
+      "complete": true,
+      "log_sha256": "c933ba775336221513e19a491459caaef657dbbdca710787bdb704c1dc3c4c43",
+      "owner_pid": 118527,
+      "release_qualified": false,
+      "renderer_qualified": false,
+      "source": {
+        "clean": true,
+        "commit": "8666d1858e04ca0eac8eef41ac4241852c981061",
+        "harness_sha256": "abff37553c0abe146718cec361f956bfcc75bfcfeaf7feb82682f6122e920ccd",
+        "source_tree_sha256": "3d3834e9f3e15b4c9d4c4e048659c8a184d793a220b45e00c939a95d31b684cb",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "8666d1858e04ca0eac8eef41ac4241852c981061",
+        "harness_sha256": "abff37553c0abe146718cec361f956bfcc75bfcfeaf7feb82682f6122e920ccd",
+        "source_tree_sha256": "3d3834e9f3e15b4c9d4c4e048659c8a184d793a220b45e00c939a95d31b684cb",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_unchanged": true,
+      "terminal_reaped": true
+    },
+    "sha256": "201c16a6c17746f95232ca2a81073b23c0dcfc3603a182f523f9bd9c321f3a63"
+  },
+  "release_gates_remaining": [
+    "all required Chromium original/focused/primitive/expanded pixels exact",
+    "reviewed ownership and minimized evidence for every residual",
+    "all required native APIs and retained compositor/3D behavior",
+    "real X11/Wayland window and accessibility operation",
+    "MSRV, hardening, fuzz, soak and performance gates",
+    "physical hardware and blocked-UI presentation measurements",
+    "clean reproducible SDK/Debian/RPM install and consuming applications",
+    "protected signing, final approval and publication credentials"
+  ],
+  "release_qualified": false,
+  "remaining_native_api_work": [
+    "generic lossless authored-property removal/reset and raw source recomposition",
+    "complete operation-specific native APIs for pending AST-derived cases",
+    "full directional accessibility action-step equivalence with Chromium",
+    "retained per-layer paint capture, shared immutable tracks and independent Linux presentation",
+    "complete preserve-3d, ordering, hit testing and effect damage"
+  ],
+  "renderer_qualified": false,
+  "schema_version": 4,
+  "status_date": "2026-10-13",
+  "whole_project_completion_percentage": null
+}

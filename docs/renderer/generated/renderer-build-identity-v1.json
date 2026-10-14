@@ -1,0 +1,275 @@
+{
+  "artifacts": [
+    {
+      "path": "out/renderer-evidence/native-opacity-clip-v1/build-identity-cargo-check-v1.log",
+      "sha256": "f5c17641f4df0f65cc91945ffd5356a03673a899b1a7a75a57965ad002177b18"
+    },
+    {
+      "path": "out/renderer-evidence/native-opacity-clip-v1/build-identity-python-check-v1.log",
+      "sha256": "d960674c2fc18b98d90414d72b9759a394b6bb3158d460d5d603d05a514963e3"
+    },
+    {
+      "path": "out/renderer-evidence/native-opacity-clip-v1/build-identity-python-accountability-v1.log",
+      "sha256": "569e2cbe19a3e34c4be3421462b832979703d908ec30f2e1145416c05ff6f724"
+    },
+    {
+      "path": "out/renderer-evidence/native-opacity-clip-v1/build-identity-packaging-check-v1.log",
+      "sha256": "27c4a39d34ece4cbc66cc59cb0870c7abe4cc0a5f009205bdd0ea06a93f8b3ac"
+    },
+    {
+      "path": "out/renderer-evidence/native-opacity-clip-v1/build-identity-matrix-execution-v1.log",
+      "sha256": "d164a0acb5c7e68a3567fb0bbf49a5fa7ffc674f8a6c71873b186b97d55b1fd7"
+    }
+  ],
+  "checks": {
+    "generators": [
+      {
+        "argv": [
+          "python3",
+          "tools/qualification/generate_renderer_contract.py",
+          "--check"
+        ],
+        "exit_code": 0,
+        "stderr": "",
+        "stdout": "renderer contract: profiles=4 focused=40 style=216 unclassified=0 javascript=393\n"
+      },
+      {
+        "argv": [
+          "python3",
+          "tools/wpt/generate_sp13r_multicol_closure.py",
+          "--check"
+        ],
+        "exit_code": 0,
+        "stderr": "",
+        "stdout": "SP13-R ledgers: baseline=2823, targets=351, residuals=1018\n"
+      },
+      {
+        "argv": [
+          "python3",
+          "tools/wpt/generate_sp17_closure.py",
+          "--check"
+        ],
+        "exit_code": 0,
+        "stderr": "",
+        "stdout": "SP17 ledgers: baseline=3267, inventory=842, initial=19, actionable=311, residuals=531\n"
+      },
+      {
+        "argv": [
+          "python3",
+          "tools/wpt/generate_sp18_closure.py",
+          "--check"
+        ],
+        "exit_code": 0,
+        "stderr": "",
+        "stdout": "SP18 closure: baseline=3807 inventory=552 targets=251 focused=4058 residuals=292 verified-misses=3 runnable-residuals=81\n"
+      },
+      {
+        "argv": [
+          "python3",
+          "tools/wpt/generate_sp20_closure.py",
+          "--check"
+        ],
+        "exit_code": 0,
+        "stderr": "",
+        "stdout": "SP20 closure: baseline=4962 targets=769 javascript=1912 nonvisual=30 focused=5731 projected-unported=1942 wave=w5_box_position_display_floats\n"
+      },
+      {
+        "argv": [
+          "python3",
+          "tools/release/generate_v02_contract.py",
+          "--check"
+        ],
+        "exit_code": 0,
+        "stderr": "",
+        "stdout": "v0.2 contract: historical_passes=5731/5731 generated=4 drift=0\n"
+      },
+      {
+        "argv": [
+          "python3",
+          "tools/style/generate_properties.py",
+          "--check"
+        ],
+        "exit_code": 0,
+        "stderr": "",
+        "stdout": "style schema: properties=237 drift=0\n"
+      },
+      {
+        "argv": [
+          "python3",
+          "tools/ffi/generate_ffi.py",
+          "--check"
+        ],
+        "exit_code": 0,
+        "stderr": "",
+        "stdout": "v0.2 C ABI: artifacts=6 drift=0\n"
+      },
+      {
+        "argv": [
+          "python3",
+          "tools/accountability/restore_frozen_openui_archive.py",
+          "--check"
+        ],
+        "exit_code": 0,
+        "stderr": "",
+        "stdout": "frozen OpenUI archive: 5731 byte-pinned PNGs\n"
+      },
+      {
+        "argv": [
+          "python3",
+          "tools/accountability/audit.py",
+          "--repository-only"
+        ],
+        "exit_code": 0,
+        "stderr": "",
+        "stdout": "\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n  OPEN UI WPT PIPELINE AUDIT\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n\n\u2500\u2500 Check 1: Pass claims have proof (committed result verification; image verification deferred) \u2500\u2500\n  \u2705 All 5731 historical passes have verified committed result metadata\n  Historical comparator: 186 passes report nonzero channel deltas; exact oracle pixels are audited separately\n  \u2705 Totals consistent: 5731 pass + 0 fail (incl. 0 render-error) = 5731\n\n\u2500\u2500 Check 2: Template \u2194 summary consistency \u2500\u2500\n  \u2705 5731 frozen templates + 236 audited candidates accounted\n\n\u2500\u2500 Check 3: Ported tests have Rust code \u2500\u2500\n  \u2705 All 5731 summary tests have Rust registry entries and function definitions\n\n\u2500\u2500 Check 4: WPT mapping coverage + accounting identity \u2500\u2500\n  \u2705 All failure categories are from the valid set\n  \u2705 All 1706 unported tests have explicit dependency categories\n  \u2705 All failing text ports have functional non-text ownership (3154 manifest IDs)\n  \u2705 SP14 closure: 2715 baseline exact, 111 W3 runnable, 3934 W4 reason-owned\n  \u2705 SP15 closure: 2767 baseline exact, 76 actionable, 54 residual\n  \u2705 SP16 closure: 2804 baseline exact, 226 actionable, 550 residual\n  \u2705 SP13-R closure: 2823 baseline exact, 351 exact targets, 1018 reason-owned residuals\n  \u2705 SP13-P closure: 3,889 runnable, 3,807 exact, 82 residual\n  \u2705 Accounting: 5967 ported + 1706 not_ported = 7673 total\n  \u2705 Accounting: 5731 pass + 0 fail + 236 audited candidates = 5967 ported\n  \u2705 Mapping \u2194 immutable summary and candidate audit cross-check passed\n  \u2705 Mapping covers 7673 Chromium tests (5967 ported, 1706 not ported)\n         Pass: 5731, Fail: 0\n         Categories: {'needs_javascript': 1676, 'needs_writing_mode': 281, 'needs_generated_content': 241, 'needs_inline_block': 206, 'sp13_multicol': 198, 'needs_advanced_selectors': 154, 'needs_empty_block_margin_collapse': 141, 'needs_visual_effects': 114}\n\n\u2500\u2500 Check 5: SP12.5 deferred tests consistency \u2500\u2500\n  \u2705 All 0 deferred tests exist in summary and are confirmed failing\n  \u2705 Deferred count matches SP12.5-PLAN.md (0)\n\n\u2500\u2500 Check 6: No orphan result directories \u2500\u2500\n  \u2705 No orphan result directories\n\n\u2500\u2500 Check 7: Mapping \u2194 deferred classification consistency \u2500\u2500\n  \u2705 Mapping and deferred classifications consistent for 0 tests\n\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n  AUDIT PASSED: All checks clean \u2705\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n"
+      },
+      {
+        "argv": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "exit_code": 0,
+        "stderr": "",
+        "stdout": ""
+      }
+    ],
+    "python_ci_closure_and_accountability_tests": 241,
+    "python_packaging_tests": 3,
+    "python_renderer_tests": 27,
+    "rustfmt_and_diff_check_exit_code": 0
+  },
+  "compiled_consumer": {
+    "binary_sha256": "5a8e499f9b4eb35fac8987dcaa0651a3882a149fbe34de28fd163d5f4650f054",
+    "build_exit_code": 0,
+    "embedded_identity": {
+      "schema_version": 1,
+      "skia_gn_args": "extra_cflags += [ \"-DSK_SUPPORT_LEGACY_CONIC_CHOP\", \"-DSK_USE_FREETYPE_EMBOLDEN\", \"-DSK_GAMMA_EXPONENT=1.2\", \"-DSK_GAMMA_CONTRAST=0.2\", \"-fno-strict-aliasing\", \"-msse3\", \"--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot\" ]",
+      "source": {
+        "clean": false,
+        "commit": "c6f00a70208f7017d41c89314557ed26b3afb53a",
+        "harness_sha256": "29f05af12796150f9153f90a51e299b079429dec236ead63978524e7d6705406",
+        "source_tree_sha256": "0ebd4d284ade342ad8dc6c978e83f6d81fc1c904a94c2b981556f7b0e8526544",
+        "status_sha256": "6bcb8ca0635db852e0143fe0a0046ee3c797eaae5ae5aa285cbe34601b38ae8e"
+      }
+    },
+    "embedded_identity_matches_source": true,
+    "legacy_runner_rejected": "renderer executable has no valid build source identity; rebuild pixel_compare",
+    "mismatched_source_rejected": "renderer executable source mismatch: source_tree_sha256; rebuild pixel_compare from the current source",
+    "release_qualification": false,
+    "schema_version": 1
+  },
+  "fresh_raster_development_checks": {
+    "checks": [
+      {
+        "chromium_png_and_oracle_identities_unchanged": true,
+        "count": 640,
+        "decoded_openui_and_chromium_pixels_unchanged": true,
+        "exit_code": 0,
+        "release_qualification": false,
+        "results": {
+          "different": 0,
+          "errors": 0,
+          "exact": 640,
+          "profile_result_sha256": "e8af6683b2a3fb7486f2653736fdd1b0f0f47f1976238e4990bd0121ea173a61",
+          "total": 640
+        },
+        "source": {
+          "clean": false,
+          "commit": "32d2f00b9beefa8e1b590e781fb080924f49a18f",
+          "harness_sha256": "e5d5d749235aeaf5f5d8c11b9af508922e549ec96b7830874289cfe0de608014",
+          "source_tree_sha256": "1b2aa4ccaf8115f3dd51c7fa70089806ae919478ea213dc78d558310cb603b74",
+          "status_sha256": "4ae5c0437517050a9ef7ed6837003ff53217cc6c4a53f9fb1523ea477be7c5d5"
+        },
+        "suite": "focused"
+      },
+      {
+        "chromium_png_and_oracle_identities_unchanged": true,
+        "count": 960,
+        "decoded_openui_and_chromium_pixels_unchanged": true,
+        "exit_code": 0,
+        "release_qualification": false,
+        "results": {
+          "different": 0,
+          "errors": 0,
+          "exact": 960,
+          "profile_result_sha256": "f5fbba7079b1a3286f34c5466bdd099faf7d1c593e56d958e9f60aab14feb126",
+          "total": 960
+        },
+        "source": {
+          "clean": false,
+          "commit": "32d2f00b9beefa8e1b590e781fb080924f49a18f",
+          "harness_sha256": "e5d5d749235aeaf5f5d8c11b9af508922e549ec96b7830874289cfe0de608014",
+          "source_tree_sha256": "1b2aa4ccaf8115f3dd51c7fa70089806ae919478ea213dc78d558310cb603b74",
+          "status_sha256": "4ae5c0437517050a9ef7ed6837003ff53217cc6c4a53f9fb1523ea477be7c5d5"
+        },
+        "suite": "primitive"
+      }
+    ],
+    "schema_version": 1
+  },
+  "invalid_development_run_attribution": {
+    "actual_pixel_compare_sha256": "7f839af5f6d0d1c88fe8df087d75917afbe4a8a6c1d5f0fa01254a903d71fce3",
+    "invalid_attribution": [
+      "wider-v8/original",
+      "wider-v8/cohort",
+      "wider-v8/focused",
+      "wider-v8/primitive"
+    ],
+    "native_example_evidence_separate": true,
+    "old_binary_mtime_ns": 1790893246364252452,
+    "reason": "Pinned comparison executable was built at the prior unbounded opacity prototype. Its timestamp and SHA-256 are unchanged after the legacy shader-context and clip-origin source changes; corresponding build logs only compile the native examples. These runs do not verify the V8 renderer source.",
+    "release_qualification": false,
+    "running_original_matrix_terminated_pid": 147041,
+    "schema_version": 1,
+    "source_frozen_and_preserved": true,
+    "terminated_children": [
+      186049,
+      186053,
+      186054,
+      186055,
+      186058,
+      186059,
+      186060,
+      186061
+    ],
+    "terminated_original_exit_code": 143
+  },
+  "partial_matrix_integration": {
+    "complete_contract_scope": false,
+    "evidence": {
+      "binary_unchanged": true,
+      "kind": "diagnostic-census",
+      "qualification_backend_match": true,
+      "qualified": false,
+      "source_unchanged": true,
+      "tolerance_pixels": 0
+    },
+    "exit_code": 0,
+    "results": {
+      "different": 0,
+      "errors": 0,
+      "exact": 1,
+      "profile_result_sha256": "d14b5aca55e5315e57367c90cf053d5128bf00151558a590964ca5f6d1c8dfed",
+      "total": 1
+    },
+    "source": {
+      "clean": false,
+      "commit": "c6f00a70208f7017d41c89314557ed26b3afb53a",
+      "harness_sha256": "29f05af12796150f9153f90a51e299b079429dec236ead63978524e7d6705406",
+      "source_tree_sha256": "0ebd4d284ade342ad8dc6c978e83f6d81fc1c904a94c2b981556f7b0e8526544",
+      "status_sha256": "6bcb8ca0635db852e0143fe0a0046ee3c797eaae5ae5aa285cbe34601b38ae8e"
+    },
+    "source_after": {
+      "clean": false,
+      "commit": "c6f00a70208f7017d41c89314557ed26b3afb53a",
+      "harness_sha256": "29f05af12796150f9153f90a51e299b079429dec236ead63978524e7d6705406",
+      "source_tree_sha256": "0ebd4d284ade342ad8dc6c978e83f6d81fc1c904a94c2b981556f7b0e8526544",
+      "status_sha256": "6bcb8ca0635db852e0143fe0a0046ee3c797eaae5ae5aa285cbe34601b38ae8e"
+    }
+  },
+  "purpose": "Bind renderer measurements to the compiled executable source and reject stale attribution",
+  "release_qualification": false,
+  "schema_version": 1,
+  "unchanged_accepted_renderer_measurement": "docs/renderer/generated/four-profile-census-v49.json"
+}

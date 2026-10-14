@@ -1,0 +1,408 @@
+{
+  "accepted_renderer_unchanged": true,
+  "applied_to_umbrella": false,
+  "artifact_bytes": 20282945,
+  "artifact_count": 55,
+  "artifacts": [
+    {
+      "bytes": 4367,
+      "path": "docs/renderer/evidence/native-keywords-v1/queue-prepared.json",
+      "sha256": "7c6d5d0c62a984381c9f2ac5b22fb577e9571a4f76cbd7e2b5ee52d4390430ab"
+    },
+    {
+      "bytes": 6439,
+      "path": "docs/renderer/evidence/native-keywords-v1/openui-native-keywords-build-v1587.py",
+      "sha256": "82cd468a2ca06b153cd80fce878ce30dfcf5640a7aaa99f8f1d83ace9d5be611"
+    },
+    {
+      "bytes": 7166,
+      "path": "docs/renderer/evidence/native-keywords-v1/openui-native-keywords-consumer-v1587.py",
+      "sha256": "3d8084e35dff75c5500e7f8407a42e6bbaede08709a4ea47804038f5017082b2"
+    },
+    {
+      "bytes": 8177,
+      "path": "docs/renderer/evidence/native-keywords-v1/openui-native-keywords-guards-v1587.py",
+      "sha256": "8f0addd948cbab8d6e78e32d2e4c20c5eae5866d4506982bb54f2010ff0126eb"
+    },
+    {
+      "bytes": 2058,
+      "path": "docs/renderer/evidence/native-keywords-v1/openui-native-keywords-matrices-v1587.py",
+      "sha256": "beec17f8ed3d37bf2f35622e85da62fdca3d94b0251f21555e86ec40b52a3f51"
+    },
+    {
+      "bytes": 7947,
+      "path": "docs/renderer/evidence/native-keywords-v1/openui-native-keywords-pipeline-v1588.py",
+      "sha256": "89a2d1c84a1f645b0505c195ec27e90222e9d421f4c814f205a454ea33ad7cd8"
+    },
+    {
+      "bytes": 9719,
+      "path": "docs/renderer/evidence/native-keywords-v1/openui-native-keywords-table-geometry-v1587.py",
+      "sha256": "08d863fadc18d93661a76819580741e81b7e7b412dca729f45e7862e68be5ec9"
+    },
+    {
+      "bytes": 2648,
+      "path": "docs/renderer/evidence/native-keywords-v1/openui-native-keywords-checks-v1586.py",
+      "sha256": "f8af952e732e49c5062b30b656b228985dfafac9ace32833ef4885408600ab3d"
+    },
+    {
+      "bytes": 7492,
+      "path": "docs/renderer/evidence/native-keywords-v1/openui-native-keywords-prepare-v1587.py",
+      "sha256": "713205972f23f3a304a657499a93832edcfed78336cc2db5629d3f5f64273ef2"
+    },
+    {
+      "bytes": 1526,
+      "path": "docs/renderer/evidence/native-keywords-v1/openui-native-keywords-dispatch-v1589.py",
+      "sha256": "3c73666ccf0624301cffd7c3869daa2f7e5d7c15a8f74ccf1f7f049cee406a2d"
+    },
+    {
+      "bytes": 2651,
+      "path": "docs/renderer/evidence/native-keywords-v1/openui-native-keywords-hosted-v1590.py",
+      "sha256": "b6ab4f7ce631a8875f9f7efcf6b28be47aea63d066b2b87f0175a0cfd2fc57d3"
+    },
+    {
+      "bytes": 284,
+      "path": "docs/renderer/evidence/native-keywords-v1/hosted-dispatch.json",
+      "sha256": "f60705b348793048429897b796005420e0e59b50e09b17a5e15fc343282e9e43"
+    },
+    {
+      "bytes": 5198,
+      "path": "docs/renderer/evidence/native-keywords-v1/read-only-checks.json",
+      "sha256": "740ff12be7a0f4f3c8bc04e4e2c53e78448b643f219ae4b66520f40905a5ae6f"
+    },
+    {
+      "bytes": 81,
+      "path": "docs/renderer/evidence/native-keywords-v1/check-renderer.log",
+      "sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691"
+    },
+    {
+      "bytes": 59,
+      "path": "docs/renderer/evidence/native-keywords-v1/check-multicol.log",
+      "sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222"
+    },
+    {
+      "bytes": 86,
+      "path": "docs/renderer/evidence/native-keywords-v1/check-sp17.log",
+      "sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a"
+    },
+    {
+      "bytes": 121,
+      "path": "docs/renderer/evidence/native-keywords-v1/check-sp18.log",
+      "sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763"
+    },
+    {
+      "bytes": 142,
+      "path": "docs/renderer/evidence/native-keywords-v1/check-sp20.log",
+      "sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d"
+    },
+    {
+      "bytes": 63,
+      "path": "docs/renderer/evidence/native-keywords-v1/check-v02.log",
+      "sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd"
+    },
+    {
+      "bytes": 37,
+      "path": "docs/renderer/evidence/native-keywords-v1/check-style.log",
+      "sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1"
+    },
+    {
+      "bytes": 32,
+      "path": "docs/renderer/evidence/native-keywords-v1/check-ffi.log",
+      "sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821"
+    },
+    {
+      "bytes": 45,
+      "path": "docs/renderer/evidence/native-keywords-v1/check-archive.log",
+      "sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32"
+    },
+    {
+      "bytes": 2867,
+      "path": "docs/renderer/evidence/native-keywords-v1/check-accountability.log",
+      "sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1"
+    },
+    {
+      "bytes": 0,
+      "path": "docs/renderer/evidence/native-keywords-v1/check-c-syntax.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "docs/renderer/evidence/native-keywords-v1/check-cpp-syntax.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "docs/renderer/evidence/native-keywords-v1/check-rust-format.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3831,
+      "path": "docs/renderer/evidence/native-keywords-v1/native_fragment_keywords.rs",
+      "sha256": "f7794389d096ee5d5eb89b67610fcd66b478d4f3d77824030b19065a25357ca7"
+    },
+    {
+      "bytes": 6443,
+      "path": "docs/renderer/evidence/native-keywords-v1/fragment_keywords.c",
+      "sha256": "512b0115b0338e8dc0793c6058750e1c755bf0515abbe8311f58a2dd701d23c3"
+    },
+    {
+      "bytes": 84,
+      "path": "docs/renderer/evidence/native-keywords-v1/fragment_keywords.cc",
+      "sha256": "387b3aa85437a04053b4719767c85c2baf8e423c7f351b66a3802c447150f8ca"
+    },
+    {
+      "bytes": 2108,
+      "path": "docs/renderer/evidence/native-keywords-v1/openui-ffi-layout.json",
+      "sha256": "b1d214225748db72f52e63de0376f4d5654af70ee81be85a66ee94d6d6ca851d"
+    },
+    {
+      "bytes": 27478,
+      "path": "docs/renderer/evidence/native-keywords-v1/native-api-guards.patch",
+      "sha256": "ffe3dfcd1617c15017ee988d1a83835c89235434e996ecda9af21c2c3c47613c"
+    },
+    {
+      "bytes": 16239,
+      "path": "docs/renderer/evidence/native-keywords-v1/native-keyword-construction.patch",
+      "sha256": "dd2d506b882165b58c6c1bc630781aa1ef528d0e8a5fa8b5b80489d68abf4a13"
+    },
+    {
+      "bytes": 6953,
+      "path": "docs/renderer/evidence/native-keywords-v1/owner-at-observation.json",
+      "sha256": "3303146159e4d26a6e5449ef0f4728eeed41f3d59e27dff3d31f16101d1652ed"
+    },
+    {
+      "bytes": 1304,
+      "path": "docs/renderer/evidence/native-keywords-v1/hosted-at-observation.json",
+      "sha256": "ae393c9be2c075c8db54710733cd45c74e4875094241ef0a30d12dffd9fa35aa"
+    },
+    {
+      "bytes": 7490,
+      "path": "docs/renderer/evidence/native-keywords-v1/openui-native-table-c-geometry-v1582.py",
+      "sha256": "be8409437bc0b234637dcbadf3fa1652fa19a9098b9ced505b5f08bd4cf96db8"
+    },
+    {
+      "bytes": 8706,
+      "path": "docs/renderer/evidence/native-keywords-v1/openui-native-table-c-geometry-v1583.py",
+      "sha256": "1aa04cf09669ca93d6c748cd4263b6c9ab3a49990bd87140c2b5b27519397d4e"
+    },
+    {
+      "bytes": 9506,
+      "path": "docs/renderer/evidence/native-keywords-v1/openui-native-table-c-geometry-v1584.py",
+      "sha256": "2009891a473651d56ebf10a27302aaef312af6bed241e6e497a754b438435872"
+    },
+    {
+      "bytes": 1890,
+      "path": "docs/renderer/evidence/native-keywords-v1/failed-c-geometry-v1583.json",
+      "sha256": "e53955c6e782b400693f66a29717df4e986b1307e7bbdaa02dc2834b6a167642"
+    },
+    {
+      "bytes": 2404,
+      "path": "docs/renderer/evidence/native-keywords-v1/failed-c-geometry-v1584.json",
+      "sha256": "ead7870c2660f8f42e609984540b0dd0b21797138d2c82e4a97ee62720ddd1b7"
+    },
+    {
+      "bytes": 22330,
+      "path": "docs/renderer/evidence/native-keywords-v1/umbrella-hosted.json",
+      "sha256": "f61b486358848c1ea392ac6f57aec265ab2fb721531e2accf7e2baa8531a56b6"
+    },
+    {
+      "bytes": 8994,
+      "path": "docs/renderer/evidence/native-keywords-v1/umbrella-37335624093.json",
+      "sha256": "ac96188719db663fe126a9440487ac9362a24e11667176a80cd44a046096db71"
+    },
+    {
+      "bytes": 1392540,
+      "path": "docs/renderer/evidence/native-keywords-v1/umbrella-37335624093.log",
+      "sha256": "541a0a291eb184149a6c55f4ac897387a5f2bb60640089d2fd31a41aab2a6f7b"
+    },
+    {
+      "bytes": 3932,
+      "path": "docs/renderer/evidence/native-keywords-v1/umbrella-37335624230.json",
+      "sha256": "c94ccb10db07eb3e7ffd7d92d257719505058ffd41ac9755b9218367e403049e"
+    },
+    {
+      "bytes": 58191,
+      "path": "docs/renderer/evidence/native-keywords-v1/umbrella-37335624230.log",
+      "sha256": "38b7e4256b7a7f16d66019ee0a32151f04350426bbc647ead1831ebb4bf02233"
+    },
+    {
+      "bytes": 6235,
+      "path": "docs/renderer/evidence/native-keywords-v1/umbrella-37335624045.json",
+      "sha256": "0689760e04a3ae9123c6bb97941c3b032f52b1f087efafb0f4cc82d8529c14d0"
+    },
+    {
+      "bytes": 338333,
+      "path": "docs/renderer/evidence/native-keywords-v1/umbrella-37335624045.log",
+      "sha256": "b01b163510513d7a055fa35674a0682ea43d54592e6a43d269892f797898032e"
+    },
+    {
+      "bytes": 2969,
+      "path": "docs/renderer/evidence/native-keywords-v1/openui-native-inline-fallback-umbrella-ci-v1580.py",
+      "sha256": "9aaadafba06855bc1f681c63836b1ae2461d840164dba4f069c192e65e6c070a"
+    },
+    {
+      "bytes": 1574,
+      "path": "docs/renderer/evidence/native-keywords-v1/fallback-hosted.json",
+      "sha256": "b7c4fb351fe55006fae24188d3595a7cf9917b29c83127b9e66f165acc5e5b33"
+    },
+    {
+      "bytes": 16071,
+      "path": "docs/renderer/evidence/native-keywords-v1/fallback-37334788358.json",
+      "sha256": "b5e7f9fe9417de64eba08dd33cadca1ce0f17bb4c202de7c91d44b76f74f0500"
+    },
+    {
+      "bytes": 2136138,
+      "path": "docs/renderer/evidence/native-keywords-v1/fallback-37334788358.log",
+      "sha256": "d8f2d9c7b4b7994c58957ea4a7de1c5981a0222cca580f402c695559b276cc20"
+    },
+    {
+      "bytes": 2658,
+      "path": "docs/renderer/evidence/native-keywords-v1/openui-native-inline-fallback-hosted-v1577.py",
+      "sha256": "a58775f84efbbb4c3969e84d458786b6aec30dc17061e391ca735bbe08f43163"
+    },
+    {
+      "bytes": 16077025,
+      "path": "docs/renderer/evidence/native-keywords-v1/raster-application.json",
+      "sha256": "2ebdc4512869fedb23dc30002a0e1a719992e316ac69cb3077b71245a45d0079"
+    },
+    {
+      "bytes": 14160,
+      "path": "docs/renderer/evidence/native-keywords-v1/raster-owner-at-observation.json",
+      "sha256": "db4e25e061e646230edd046b5ca6a894e08c938d1ab9138dcb1d0c8597b65371"
+    },
+    {
+      "bytes": 28239,
+      "path": "docs/renderer/evidence/native-keywords-v1/raster-application-owner.log",
+      "sha256": "06fccc017d8543858b1f8bbe2f442a8862918393f4560373ce9ed39338ce2ccd"
+    },
+    {
+      "bytes": 9915,
+      "path": "docs/renderer/evidence/native-keywords-v1/openui-native-keywords-preserve-v1591.py",
+      "sha256": "4f10756e5189591a589306fd1c4a127b5c715ceeb9c1a0f5112f7aab3848bf99"
+    }
+  ],
+  "baseline_commit": "027480369dae42ca774ee8e4865ee29e9c634af1",
+  "branch": "agent/native-keywords-v1585",
+  "c_api_gap": {
+    "completed_geometry_queries": 0,
+    "diagnostic_actual_exit": 1,
+    "observed_status": -1,
+    "operation": "oui_style_value_parse(ColumnFill, auto)",
+    "preflight_and_adapter_failures_preserved": true,
+    "source": {
+      "clean": true,
+      "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+      "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+      "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "fallback_hosted": {
+    "actual_exit": 0,
+    "local_native_and_pixel_stages_still_required": true,
+    "skipped_jobs": 0,
+    "source": "7d09f7a159b2c3f211662d20dbf7c7092d6024ed",
+    "successful_jobs": 7
+  },
+  "hosted_keyword_observation": {
+    "native_and_pixel_qualification": false,
+    "run_id": 37340082754,
+    "source": "06e1f89a4a2e7a53465bceb780675383d9748464",
+    "state": "awaiting-own-source-manual-hardening",
+    "terminal_at_observation": false
+  },
+  "javascript_executed_by_openui": false,
+  "native_keywords": {
+    "all_30_struct_layouts_unchanged": true,
+    "author_properties": 13,
+    "current_exports": 113,
+    "enum_types": 7,
+    "generated_from_shared_style_schema": true,
+    "native_and_pixel_stages_not_started": true,
+    "native_table_geometry_diagnostic_only": true,
+    "observed_state": "awaiting-all-30-prior-whole-pipelines",
+    "prior_whole_owners": 30,
+    "public_rust_c_and_cpp_consumers_prepared": true,
+    "public_rust_typed_setters_already_available": true,
+    "read_only_checks_passed": 13,
+    "required_consecutive_chromium_captures": 40,
+    "required_independent_chromium_processes": 20,
+    "required_named_fixed_guards": 3,
+    "required_native_images": 10,
+    "required_stages": 8,
+    "table_display_roles_added": 9,
+    "whole_owner": "native-keywords-pipeline-v1588"
+  },
+  "needed_native_operations_not_waived_by_pixel_exclusion": true,
+  "new_release_states_admitted": 0,
+  "observed_at_utc": "2026-10-05T16:23:51.074777+00:00",
+  "old_openui_pixels_are_provenance_only": true,
+  "pixel_tolerance": 0,
+  "promotion_allowed": false,
+  "public_native_rust_api_required": true,
+  "raster_application": {
+    "actual_exit": 1,
+    "all_failed_cases_deterministic": true,
+    "all_failed_cases_geometry_and_callback_checks_passed": true,
+    "chromium_pixel_qualification": false,
+    "failed_cases": 12,
+    "failure_groups": {
+      "edging": {
+        "alias": 10,
+        "lcd": 2
+      },
+      "family": {
+        "Ahem": 1,
+        "DejaVu Sans Mono": 6,
+        "DejaVu Serif": 5
+      },
+      "hinting": {
+        "full": 10,
+        "slight": 2
+      },
+      "policy": {
+        "freetype": 12
+      },
+      "scale": {
+        "1.0": 2,
+        "1.25": 3,
+        "1.5": 3,
+        "2.0": 2,
+        "3.0": 2
+      }
+    },
+    "source": {
+      "clean": true,
+      "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+      "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+      "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_unapplied": true,
+    "terminal": true,
+    "totals": {
+      "cases": 840,
+      "contract_exact": 828,
+      "geometry_and_callback_states": 107520,
+      "integer_phase_image_checks": 800
+    },
+    "whole_owner_state_at_observation": "running-consumer",
+    "whole_owner_terminal_at_observation": false
+  },
+  "release_qualification": false,
+  "root_cause_owner": "openui-style native keyword construction and property-bound C compound ownership",
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "06e1f89a4a2e7a53465bceb780675383d9748464",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "7eccf4ec0f4bcd0ed4f1d7d26d02ac4fd99d73a4ca938e02d69d7ea35a24b067",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "umbrella_hosted": {
+    "skipped_jobs": 5,
+    "skips_are_not_passes": true,
+    "source": "92741843283d02d6a1e7f82d84f69acc8dcee5f0",
+    "successful_jobs": 6,
+    "successful_workflows": 3
+  }
+}

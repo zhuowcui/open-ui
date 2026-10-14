@@ -1,0 +1,5407 @@
+{
+  "cases": [
+    {
+      "case": "empty-none-none-0-plain",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-none-0-plain/test.html",
+      "input_sha256": "53ac4f0af0811fd49c4e2dcc3eb5733a267af8118012108eb379581d4a9628c6",
+      "native_args": [
+        "empty",
+        "none",
+        "none",
+        "0",
+        "24",
+        "80",
+        "plain"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-none-0-tiny",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-none-0-tiny/test.html",
+      "input_sha256": "4476dc45ba5c7faec9632b7bddc2a10baa925fdf3c8344a59830acf0a7700687",
+      "native_args": [
+        "empty",
+        "none",
+        "none",
+        "0",
+        "8",
+        "8",
+        "tiny"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-none-0-padded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-none-0-padded/test.html",
+      "input_sha256": "e5e14770e705e4a56ae548c15991edd3da9763b628e2bc9c21055035bf46d1b9",
+      "native_args": [
+        "empty",
+        "none",
+        "none",
+        "0",
+        "24",
+        "80",
+        "padded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-none-0-bordered",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-none-0-bordered/test.html",
+      "input_sha256": "2d37193a10f5c0d55666e1da9eb6de0addd2d232105fb83083c587c939d8d768",
+      "native_args": [
+        "empty",
+        "none",
+        "none",
+        "0",
+        "24",
+        "80",
+        "bordered"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-none-0-rounded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-none-0-rounded/test.html",
+      "input_sha256": "5f88098904e72915e049a26827a983b1d15b0419ecf050716a993d71f0b65f2c",
+      "native_args": [
+        "empty",
+        "none",
+        "none",
+        "0",
+        "24",
+        "80",
+        "rounded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-none-0-visible",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-none-0-visible/test.html",
+      "input_sha256": "54d7e2723efc5cfecf9672fcffb2b98e32536f54cfc05658fe4ec0cf4fa0d571",
+      "native_args": [
+        "empty",
+        "none",
+        "none",
+        "0",
+        "24",
+        "80",
+        "visible"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-none-0-hidden",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-none-0-hidden/test.html",
+      "input_sha256": "19a6362e0859ff30c541d10a04e635850b5b9a88923990d69a4d59ae7037b6b3",
+      "native_args": [
+        "empty",
+        "none",
+        "none",
+        "0",
+        "24",
+        "80",
+        "hidden"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-none-0-clip",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-none-0-clip/test.html",
+      "input_sha256": "064f1602b652ca6a9705711ced7f2d5fc16c1ba2dcf0aeb132e2c1d419c49153",
+      "native_args": [
+        "empty",
+        "none",
+        "none",
+        "0",
+        "24",
+        "80",
+        "clip"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-none-0-alpha128",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-none-0-alpha128/test.html",
+      "input_sha256": "bbb77ef7583bc40502188d7eaff2bf22d5b476eb4f55e5b4b61f0d82b301ee40",
+      "native_args": [
+        "empty",
+        "none",
+        "none",
+        "0",
+        "24",
+        "80",
+        "alpha128"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-none-0-transparent",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-none-0-transparent/test.html",
+      "input_sha256": "b803f2af0b24347ca63d1275842db5d7603254dc16b210a7076be618f3267171",
+      "native_args": [
+        "empty",
+        "none",
+        "none",
+        "0",
+        "24",
+        "80",
+        "transparent"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-none-0.5-plain",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-none-0.5-plain/test.html",
+      "input_sha256": "41c40d7b0120bae368d770fbf58272f588f51bd922b351e330c0d6777ba65bbd",
+      "native_args": [
+        "empty",
+        "none",
+        "none",
+        "0.5",
+        "24",
+        "80",
+        "plain"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-none-0.5-tiny",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-none-0.5-tiny/test.html",
+      "input_sha256": "3fccba7eeba8c6e4e7048ca45ca16709f58d4f2b69150845b65064da80bf445f",
+      "native_args": [
+        "empty",
+        "none",
+        "none",
+        "0.5",
+        "8",
+        "8",
+        "tiny"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-none-0.5-padded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-none-0.5-padded/test.html",
+      "input_sha256": "b14ae8dbed4e14796023d746419d5532b78a8eae87a2b06601697903e83b48a3",
+      "native_args": [
+        "empty",
+        "none",
+        "none",
+        "0.5",
+        "24",
+        "80",
+        "padded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-none-0.5-bordered",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-none-0.5-bordered/test.html",
+      "input_sha256": "9a7408a0f0f4e51432d0e1f493b30fb513cd4060cb93104331dafad32ca732c6",
+      "native_args": [
+        "empty",
+        "none",
+        "none",
+        "0.5",
+        "24",
+        "80",
+        "bordered"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-none-0.5-rounded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-none-0.5-rounded/test.html",
+      "input_sha256": "b7d6eb0b751a1e8ea03781e916356e331091e2ab35c8e4962a4f03b6c094041c",
+      "native_args": [
+        "empty",
+        "none",
+        "none",
+        "0.5",
+        "24",
+        "80",
+        "rounded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-none-0.5-visible",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-none-0.5-visible/test.html",
+      "input_sha256": "39f810b388cf62e34b2c5a64b6304e4d1a3ec8a552237d20bf8b1b4b6cca8435",
+      "native_args": [
+        "empty",
+        "none",
+        "none",
+        "0.5",
+        "24",
+        "80",
+        "visible"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-none-0.5-hidden",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-none-0.5-hidden/test.html",
+      "input_sha256": "c60d209ab539744d1ca81c1d9fc0df506f171fd8bf723d63a757481bf1682a4f",
+      "native_args": [
+        "empty",
+        "none",
+        "none",
+        "0.5",
+        "24",
+        "80",
+        "hidden"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-none-0.5-clip",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-none-0.5-clip/test.html",
+      "input_sha256": "f97450a93e79be7ef3708b0cf45956f1bb9cc4384c28bceb91b47b95498149ac",
+      "native_args": [
+        "empty",
+        "none",
+        "none",
+        "0.5",
+        "24",
+        "80",
+        "clip"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-none-0.5-alpha128",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-none-0.5-alpha128/test.html",
+      "input_sha256": "de3de2fec07fdf8ddeb3afea7ddcf6c40d215dca0eb9e428553b347cacc38bcd",
+      "native_args": [
+        "empty",
+        "none",
+        "none",
+        "0.5",
+        "24",
+        "80",
+        "alpha128"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-none-0.5-transparent",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-none-0.5-transparent/test.html",
+      "input_sha256": "312558efe11809fabd14545e61a96a06d645f18f61537abc166dc59d60cc699a",
+      "native_args": [
+        "empty",
+        "none",
+        "none",
+        "0.5",
+        "24",
+        "80",
+        "transparent"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-self50-0-plain",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-self50-0-plain/test.html",
+      "input_sha256": "14d9689627262caebc2199e1a1186b9874a357a646fc32ab303c88b20ca2f979",
+      "native_args": [
+        "empty",
+        "none",
+        "self50",
+        "0",
+        "24",
+        "80",
+        "plain"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-self50-0-tiny",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-self50-0-tiny/test.html",
+      "input_sha256": "7c23cea1a432c7deb39c9acaa1ab34025dc89146db2e9c18aa43a2eb9348f8c8",
+      "native_args": [
+        "empty",
+        "none",
+        "self50",
+        "0",
+        "8",
+        "8",
+        "tiny"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-self50-0-padded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-self50-0-padded/test.html",
+      "input_sha256": "80401c2756b304a7733982ac227fee18b490c2ae3bd40f512de332f8309a5213",
+      "native_args": [
+        "empty",
+        "none",
+        "self50",
+        "0",
+        "24",
+        "80",
+        "padded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-self50-0-bordered",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-self50-0-bordered/test.html",
+      "input_sha256": "b2dd7943bfb64536db5e0003942e6e232c3a65d7bd1a33f72ee1f2a43fd5728b",
+      "native_args": [
+        "empty",
+        "none",
+        "self50",
+        "0",
+        "24",
+        "80",
+        "bordered"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-self50-0-rounded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-self50-0-rounded/test.html",
+      "input_sha256": "a4ac630d0ae8d161f3786a6381cc257ac801c7bca6c6262f7637ba4f44f3b4d7",
+      "native_args": [
+        "empty",
+        "none",
+        "self50",
+        "0",
+        "24",
+        "80",
+        "rounded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-self50-0-visible",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-self50-0-visible/test.html",
+      "input_sha256": "0d0c8b5c0197720d29a735485657956da3a992bcdb3d0d8f6353b17c246a1c14",
+      "native_args": [
+        "empty",
+        "none",
+        "self50",
+        "0",
+        "24",
+        "80",
+        "visible"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-self50-0-hidden",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-self50-0-hidden/test.html",
+      "input_sha256": "f7e3886e9b929b86783686e757e34b65c4b508a18f60f29be947030c10427846",
+      "native_args": [
+        "empty",
+        "none",
+        "self50",
+        "0",
+        "24",
+        "80",
+        "hidden"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-self50-0-clip",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-self50-0-clip/test.html",
+      "input_sha256": "b07f9f77b5d2c6407cd564a9bb11b2c0c2bed48e65ff01a114e19a1061bc2dd2",
+      "native_args": [
+        "empty",
+        "none",
+        "self50",
+        "0",
+        "24",
+        "80",
+        "clip"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-self50-0-alpha128",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-self50-0-alpha128/test.html",
+      "input_sha256": "6cbe62dd97c7150ec6505b863755716b9176bf968e4e6f0d49994850efdde358",
+      "native_args": [
+        "empty",
+        "none",
+        "self50",
+        "0",
+        "24",
+        "80",
+        "alpha128"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-self50-0-transparent",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-self50-0-transparent/test.html",
+      "input_sha256": "b8eb468b596a5b19a53e2f2ff9542d2ca9b4fdae05ead381acefad160face1bb",
+      "native_args": [
+        "empty",
+        "none",
+        "self50",
+        "0",
+        "24",
+        "80",
+        "transparent"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-self50-0.5-plain",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-self50-0.5-plain/test.html",
+      "input_sha256": "cfa24be9033043c50b29a532e3bc962872d0c5e7517fcec15056d21a46ad49e3",
+      "native_args": [
+        "empty",
+        "none",
+        "self50",
+        "0.5",
+        "24",
+        "80",
+        "plain"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-self50-0.5-tiny",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-self50-0.5-tiny/test.html",
+      "input_sha256": "20e96a54e202ddbe0beddeedab72208ceebbb1d8c5012830788326bff4e054f7",
+      "native_args": [
+        "empty",
+        "none",
+        "self50",
+        "0.5",
+        "8",
+        "8",
+        "tiny"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-self50-0.5-padded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-self50-0.5-padded/test.html",
+      "input_sha256": "e86c7dd4d853305af6cbeb46c5967b9332f715f999d571034189503c255b6e51",
+      "native_args": [
+        "empty",
+        "none",
+        "self50",
+        "0.5",
+        "24",
+        "80",
+        "padded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-self50-0.5-bordered",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-self50-0.5-bordered/test.html",
+      "input_sha256": "cf79518b437c38a2fac84b126173488297da68d46f5cd74660d32c957c366a94",
+      "native_args": [
+        "empty",
+        "none",
+        "self50",
+        "0.5",
+        "24",
+        "80",
+        "bordered"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-self50-0.5-rounded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-self50-0.5-rounded/test.html",
+      "input_sha256": "bd5f916f8a2296acea5dec57b67af16ffc7eb3140c6b677f0ad5e6563b15bcd2",
+      "native_args": [
+        "empty",
+        "none",
+        "self50",
+        "0.5",
+        "24",
+        "80",
+        "rounded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-self50-0.5-visible",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-self50-0.5-visible/test.html",
+      "input_sha256": "fd28077ab4863035d69cffb7526a49ef55ecd02a7b490b80157b3804866ab306",
+      "native_args": [
+        "empty",
+        "none",
+        "self50",
+        "0.5",
+        "24",
+        "80",
+        "visible"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-self50-0.5-hidden",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-self50-0.5-hidden/test.html",
+      "input_sha256": "5bd871547102b8ca9898e94cf3fa37bec2f90ab458d3e51f6cb5a6befe06188f",
+      "native_args": [
+        "empty",
+        "none",
+        "self50",
+        "0.5",
+        "24",
+        "80",
+        "hidden"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-self50-0.5-clip",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-self50-0.5-clip/test.html",
+      "input_sha256": "ad7dbeea7c29b4ca36e04cbc1a5aafaf465fe7c8926f5a4b9b9c70ebcdbf7216",
+      "native_args": [
+        "empty",
+        "none",
+        "self50",
+        "0.5",
+        "24",
+        "80",
+        "clip"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-self50-0.5-alpha128",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-self50-0.5-alpha128/test.html",
+      "input_sha256": "3cc4321f33e382134c71785ed9fe765f25eb05296bb3e21e73d4635bebffb315",
+      "native_args": [
+        "empty",
+        "none",
+        "self50",
+        "0.5",
+        "24",
+        "80",
+        "alpha128"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-self50-0.5-transparent",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-self50-0.5-transparent/test.html",
+      "input_sha256": "e3fa3301078c2e20e24a9305a8abf3b05968387938671399f51f38cb0f9b9ee5",
+      "native_args": [
+        "empty",
+        "none",
+        "self50",
+        "0.5",
+        "24",
+        "80",
+        "transparent"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-parent50-0-plain",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-parent50-0-plain/test.html",
+      "input_sha256": "9f0fad665ec32e5c02ea5fdc23f8005794840c45937ef582f8673d13b060e21e",
+      "native_args": [
+        "empty",
+        "none",
+        "parent50",
+        "0",
+        "24",
+        "80",
+        "plain"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-parent50-0-tiny",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-parent50-0-tiny/test.html",
+      "input_sha256": "d813d9ffa3e9cda05000fe3e2408b991b33c4e4fb136f5a5e940ea786aeb91ac",
+      "native_args": [
+        "empty",
+        "none",
+        "parent50",
+        "0",
+        "8",
+        "8",
+        "tiny"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-parent50-0-padded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-parent50-0-padded/test.html",
+      "input_sha256": "df5c69e5744963a117da0339c0c918ee05f621c7441b67dd14c65da35a446fcb",
+      "native_args": [
+        "empty",
+        "none",
+        "parent50",
+        "0",
+        "24",
+        "80",
+        "padded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-parent50-0-bordered",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-parent50-0-bordered/test.html",
+      "input_sha256": "b2159d33a7abd7ab9e8d582b3fadeb6b71cc835c098f00bb7e60c662168ba410",
+      "native_args": [
+        "empty",
+        "none",
+        "parent50",
+        "0",
+        "24",
+        "80",
+        "bordered"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-parent50-0-rounded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-parent50-0-rounded/test.html",
+      "input_sha256": "d9600b6bba8a242a8660fd4bf4b6ebe77889b4ee15cbda2fa754489e78ddda45",
+      "native_args": [
+        "empty",
+        "none",
+        "parent50",
+        "0",
+        "24",
+        "80",
+        "rounded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-parent50-0-visible",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-parent50-0-visible/test.html",
+      "input_sha256": "d355ed7a96fb344422a86ff0b325ee7908b05897a2b51f13d07361594bffa585",
+      "native_args": [
+        "empty",
+        "none",
+        "parent50",
+        "0",
+        "24",
+        "80",
+        "visible"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-parent50-0-hidden",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-parent50-0-hidden/test.html",
+      "input_sha256": "68c2c0a4041d04b8c55b1c70b340721e4021d6d15dae5f79ab8acd6236469085",
+      "native_args": [
+        "empty",
+        "none",
+        "parent50",
+        "0",
+        "24",
+        "80",
+        "hidden"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-parent50-0-clip",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-parent50-0-clip/test.html",
+      "input_sha256": "7485569e3aad7cbd48c8350ca2ad43bd9ffcdf7bd045438b94d69f7effdb5576",
+      "native_args": [
+        "empty",
+        "none",
+        "parent50",
+        "0",
+        "24",
+        "80",
+        "clip"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-parent50-0-alpha128",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-parent50-0-alpha128/test.html",
+      "input_sha256": "164cb2737ce2989b2753f45960581087d83d1742fb321dcc9b1838794f8904eb",
+      "native_args": [
+        "empty",
+        "none",
+        "parent50",
+        "0",
+        "24",
+        "80",
+        "alpha128"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-parent50-0-transparent",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-parent50-0-transparent/test.html",
+      "input_sha256": "7ac0249bbe9d6442f4706484fa4eade8e467135f3a39806d505a2dd037989ac2",
+      "native_args": [
+        "empty",
+        "none",
+        "parent50",
+        "0",
+        "24",
+        "80",
+        "transparent"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-parent50-0.5-plain",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-parent50-0.5-plain/test.html",
+      "input_sha256": "fad6ab0434b036746699f90e44e393c0247276d9d1b13aba73ecf6ce16e19715",
+      "native_args": [
+        "empty",
+        "none",
+        "parent50",
+        "0.5",
+        "24",
+        "80",
+        "plain"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-parent50-0.5-tiny",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-parent50-0.5-tiny/test.html",
+      "input_sha256": "7d0222e18b39710adbcb4eb137e8eac8a9fa2e31bd6475aa3a53218d457ecd31",
+      "native_args": [
+        "empty",
+        "none",
+        "parent50",
+        "0.5",
+        "8",
+        "8",
+        "tiny"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-parent50-0.5-padded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-parent50-0.5-padded/test.html",
+      "input_sha256": "2dcecd4907f9fcdb0468b6a636eab3bfd973ee1d3943fd18cd3780abd15dac3c",
+      "native_args": [
+        "empty",
+        "none",
+        "parent50",
+        "0.5",
+        "24",
+        "80",
+        "padded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-parent50-0.5-bordered",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-parent50-0.5-bordered/test.html",
+      "input_sha256": "6312c8371499d55a69cfcea1de200fc0148431653aabdf4840ce812162c32820",
+      "native_args": [
+        "empty",
+        "none",
+        "parent50",
+        "0.5",
+        "24",
+        "80",
+        "bordered"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-parent50-0.5-rounded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-parent50-0.5-rounded/test.html",
+      "input_sha256": "f84bb1d3d10a19c2dbb6a57f047936b695eabf510b316e71b772cd581e775af2",
+      "native_args": [
+        "empty",
+        "none",
+        "parent50",
+        "0.5",
+        "24",
+        "80",
+        "rounded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-parent50-0.5-visible",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-parent50-0.5-visible/test.html",
+      "input_sha256": "dd000b67197e56b077aec5bdf8637e4d458047c17252192a80485b99a6bd9800",
+      "native_args": [
+        "empty",
+        "none",
+        "parent50",
+        "0.5",
+        "24",
+        "80",
+        "visible"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-parent50-0.5-hidden",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-parent50-0.5-hidden/test.html",
+      "input_sha256": "114bcbfcfdacd1eb6c067c76094315f2de1bc484400ac6e01d65f6585742b578",
+      "native_args": [
+        "empty",
+        "none",
+        "parent50",
+        "0.5",
+        "24",
+        "80",
+        "hidden"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-parent50-0.5-clip",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-parent50-0.5-clip/test.html",
+      "input_sha256": "408ec68d902037e183809d9a9a1e195b8445853960bfb9ec13992e5848b8ccfa",
+      "native_args": [
+        "empty",
+        "none",
+        "parent50",
+        "0.5",
+        "24",
+        "80",
+        "clip"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-parent50-0.5-alpha128",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-parent50-0.5-alpha128/test.html",
+      "input_sha256": "b6f11b41e4a9c353df202d853ad949dd6d72174251124f70aa82d4e4c0d61680",
+      "native_args": [
+        "empty",
+        "none",
+        "parent50",
+        "0.5",
+        "24",
+        "80",
+        "alpha128"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-parent50-0.5-transparent",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-none-parent50-0.5-transparent/test.html",
+      "input_sha256": "ca7b26b06e09e9fea331af75c166934ce5f13b49d0d147e9d834edd7a47a500d",
+      "native_args": [
+        "empty",
+        "none",
+        "parent50",
+        "0.5",
+        "24",
+        "80",
+        "transparent"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-none-0-plain",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-none-0-plain/test.html",
+      "input_sha256": "ff2fda07ce1804c23ea3126eba86080662791e7a2205dc7d1294aa90acfc0900",
+      "native_args": [
+        "empty",
+        "parent",
+        "none",
+        "0",
+        "24",
+        "80",
+        "plain"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-none-0-tiny",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-none-0-tiny/test.html",
+      "input_sha256": "84dbc2117d91b600cb80aafb4002e2dd14190762bca00969a75b0a99f3914cf1",
+      "native_args": [
+        "empty",
+        "parent",
+        "none",
+        "0",
+        "8",
+        "8",
+        "tiny"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-none-0-padded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-none-0-padded/test.html",
+      "input_sha256": "3f871ed00872bd343f25e53e2c9a1c354830fb3137e0dbd734bb33658f754d76",
+      "native_args": [
+        "empty",
+        "parent",
+        "none",
+        "0",
+        "24",
+        "80",
+        "padded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-none-0-bordered",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-none-0-bordered/test.html",
+      "input_sha256": "ee0b9de8cc5eb67ea64dcc172b28c1c2faf611157248d71e9355edfedc693350",
+      "native_args": [
+        "empty",
+        "parent",
+        "none",
+        "0",
+        "24",
+        "80",
+        "bordered"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-none-0-rounded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-none-0-rounded/test.html",
+      "input_sha256": "03ea184b0bbf2e86d4dbbc903bd95bfc4b9187a76d5f2275470fdaad826d1a4b",
+      "native_args": [
+        "empty",
+        "parent",
+        "none",
+        "0",
+        "24",
+        "80",
+        "rounded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-none-0-visible",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-none-0-visible/test.html",
+      "input_sha256": "6e1018db1d75037ec000f69a10b69cc9abdd9234ec5064a0b8f076228b7656a6",
+      "native_args": [
+        "empty",
+        "parent",
+        "none",
+        "0",
+        "24",
+        "80",
+        "visible"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-none-0-hidden",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-none-0-hidden/test.html",
+      "input_sha256": "5af705ba3712a25036f603888fac183f4a4995644ec75362c4053d2717f4d85f",
+      "native_args": [
+        "empty",
+        "parent",
+        "none",
+        "0",
+        "24",
+        "80",
+        "hidden"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-none-0-clip",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-none-0-clip/test.html",
+      "input_sha256": "8442be7e401c099c6eff8f94e76eb85a3169dae0138c25d1c588f551269a0473",
+      "native_args": [
+        "empty",
+        "parent",
+        "none",
+        "0",
+        "24",
+        "80",
+        "clip"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-none-0-alpha128",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-none-0-alpha128/test.html",
+      "input_sha256": "12b583f0668cba49592abb71c4cc08bad850112f3fd7e3cf2e69243e83969729",
+      "native_args": [
+        "empty",
+        "parent",
+        "none",
+        "0",
+        "24",
+        "80",
+        "alpha128"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-none-0-transparent",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-none-0-transparent/test.html",
+      "input_sha256": "bf90ff67c8d56eaad8ee6718b7eb991ec470da9bc9945a215f8e5a4e2253ae20",
+      "native_args": [
+        "empty",
+        "parent",
+        "none",
+        "0",
+        "24",
+        "80",
+        "transparent"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-none-0.5-plain",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-none-0.5-plain/test.html",
+      "input_sha256": "89f4b163d3c366cb4389b1c2042b75751d6cbba50a381fcd24141df42584bde4",
+      "native_args": [
+        "empty",
+        "parent",
+        "none",
+        "0.5",
+        "24",
+        "80",
+        "plain"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-none-0.5-tiny",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-none-0.5-tiny/test.html",
+      "input_sha256": "67ab6284afd0acce332b4f7fd05d149f3f6aab5eeef686d84aacb93316dde006",
+      "native_args": [
+        "empty",
+        "parent",
+        "none",
+        "0.5",
+        "8",
+        "8",
+        "tiny"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-none-0.5-padded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-none-0.5-padded/test.html",
+      "input_sha256": "e342db317128d9830088dce2bd666de84ec77eb07080df82d732a06201c13b3f",
+      "native_args": [
+        "empty",
+        "parent",
+        "none",
+        "0.5",
+        "24",
+        "80",
+        "padded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-none-0.5-bordered",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-none-0.5-bordered/test.html",
+      "input_sha256": "93740281cb116b8b13e01827b8e40927b4597f15899bbbd9e139ce759b1e2b9c",
+      "native_args": [
+        "empty",
+        "parent",
+        "none",
+        "0.5",
+        "24",
+        "80",
+        "bordered"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-none-0.5-rounded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-none-0.5-rounded/test.html",
+      "input_sha256": "bc927b3067822f8ac23ad1ec9e1234d36546b4726768a63ef9ab79622e5b0c29",
+      "native_args": [
+        "empty",
+        "parent",
+        "none",
+        "0.5",
+        "24",
+        "80",
+        "rounded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-none-0.5-visible",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-none-0.5-visible/test.html",
+      "input_sha256": "9e3cb9a4e6eab63810d5f1491bd24f36f694d2a1f4e7a8b2b89d9b42f9683caa",
+      "native_args": [
+        "empty",
+        "parent",
+        "none",
+        "0.5",
+        "24",
+        "80",
+        "visible"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-none-0.5-hidden",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-none-0.5-hidden/test.html",
+      "input_sha256": "7c0dbe3188cbd442b60ef6dfc09a16c02bb0aad4f106adc0eb820f50e236d0b7",
+      "native_args": [
+        "empty",
+        "parent",
+        "none",
+        "0.5",
+        "24",
+        "80",
+        "hidden"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-none-0.5-clip",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-none-0.5-clip/test.html",
+      "input_sha256": "cf44438e1c6b8dfbb788e36514afb39b8e43422dfbec69ce8f04730dba8b8996",
+      "native_args": [
+        "empty",
+        "parent",
+        "none",
+        "0.5",
+        "24",
+        "80",
+        "clip"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-none-0.5-alpha128",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-none-0.5-alpha128/test.html",
+      "input_sha256": "ce46f0eb849a64759426ebd6f85559bb8dd503fda63e980d3898bfc8665bbc0a",
+      "native_args": [
+        "empty",
+        "parent",
+        "none",
+        "0.5",
+        "24",
+        "80",
+        "alpha128"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-none-0.5-transparent",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-none-0.5-transparent/test.html",
+      "input_sha256": "7d3c38bc5f03ba8cc0e59fcacc093dfa078421d4ce65dcf10820fc57ecf922c2",
+      "native_args": [
+        "empty",
+        "parent",
+        "none",
+        "0.5",
+        "24",
+        "80",
+        "transparent"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-self50-0-plain",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-self50-0-plain/test.html",
+      "input_sha256": "ff9968fc3fa4562e58091041630e37fc9918ef5edbad073c222a829bf3810d6c",
+      "native_args": [
+        "empty",
+        "parent",
+        "self50",
+        "0",
+        "24",
+        "80",
+        "plain"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-self50-0-tiny",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-self50-0-tiny/test.html",
+      "input_sha256": "7a1c958232e283ea93dbd4d5d95c655fdb924d7e9446e8343a76239ad59b622e",
+      "native_args": [
+        "empty",
+        "parent",
+        "self50",
+        "0",
+        "8",
+        "8",
+        "tiny"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-self50-0-padded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-self50-0-padded/test.html",
+      "input_sha256": "235dd62b0ebe15cfe3808eb9abbcf1b43192a9a031805ae7e31eac3bf0cd6176",
+      "native_args": [
+        "empty",
+        "parent",
+        "self50",
+        "0",
+        "24",
+        "80",
+        "padded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-self50-0-bordered",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-self50-0-bordered/test.html",
+      "input_sha256": "62436cc7d8f22d2bc708ba42762a95f75792d3542d552ee3d6b65268c0825258",
+      "native_args": [
+        "empty",
+        "parent",
+        "self50",
+        "0",
+        "24",
+        "80",
+        "bordered"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-self50-0-rounded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-self50-0-rounded/test.html",
+      "input_sha256": "f89d3c9ea78b3f330c1befc8626a7bd374de68469420484a002f2f4a3f4475d1",
+      "native_args": [
+        "empty",
+        "parent",
+        "self50",
+        "0",
+        "24",
+        "80",
+        "rounded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-self50-0-visible",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-self50-0-visible/test.html",
+      "input_sha256": "c71658e8bc196ae39a67d12ccf4bd38e82d92419de8353ccbf4eb3fb32f9b30e",
+      "native_args": [
+        "empty",
+        "parent",
+        "self50",
+        "0",
+        "24",
+        "80",
+        "visible"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-self50-0-hidden",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-self50-0-hidden/test.html",
+      "input_sha256": "99261fa4ab09ce7b24f85fb23852c4e58ff81f96d97156678dfa80cff2334df3",
+      "native_args": [
+        "empty",
+        "parent",
+        "self50",
+        "0",
+        "24",
+        "80",
+        "hidden"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-self50-0-clip",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-self50-0-clip/test.html",
+      "input_sha256": "ab8f16ce95689e707662be000090e3399e211b8e1784e0f9ca1d0824cde727ba",
+      "native_args": [
+        "empty",
+        "parent",
+        "self50",
+        "0",
+        "24",
+        "80",
+        "clip"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-self50-0-alpha128",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-self50-0-alpha128/test.html",
+      "input_sha256": "e1571792a3043ea272732704289acf02aa53390edaf580d4617c1c075b072771",
+      "native_args": [
+        "empty",
+        "parent",
+        "self50",
+        "0",
+        "24",
+        "80",
+        "alpha128"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-self50-0-transparent",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-self50-0-transparent/test.html",
+      "input_sha256": "42792110cd69b31e2c959581aab5a423bb575674e201c9bd2269f2e09fd5cc8a",
+      "native_args": [
+        "empty",
+        "parent",
+        "self50",
+        "0",
+        "24",
+        "80",
+        "transparent"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-self50-0.5-plain",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-self50-0.5-plain/test.html",
+      "input_sha256": "abc46d1103f7cdfba5c17963d87ce72ab4a672d1623fddd942963644a50e65f1",
+      "native_args": [
+        "empty",
+        "parent",
+        "self50",
+        "0.5",
+        "24",
+        "80",
+        "plain"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-self50-0.5-tiny",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-self50-0.5-tiny/test.html",
+      "input_sha256": "88e080b7d132a1a679b8966788aac197c1524d50c3d0e9e1eff1c0612455e0f2",
+      "native_args": [
+        "empty",
+        "parent",
+        "self50",
+        "0.5",
+        "8",
+        "8",
+        "tiny"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-self50-0.5-padded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-self50-0.5-padded/test.html",
+      "input_sha256": "9fc88cb1c064bc7ced4d1ff7130625327151870ef17aae75b2f12bfff58aaa2f",
+      "native_args": [
+        "empty",
+        "parent",
+        "self50",
+        "0.5",
+        "24",
+        "80",
+        "padded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-self50-0.5-bordered",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-self50-0.5-bordered/test.html",
+      "input_sha256": "233b6e0fe259357a8816df30331e533a73359220d52e129409e9a1978c208580",
+      "native_args": [
+        "empty",
+        "parent",
+        "self50",
+        "0.5",
+        "24",
+        "80",
+        "bordered"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-self50-0.5-rounded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-self50-0.5-rounded/test.html",
+      "input_sha256": "9cc4dcb4c381b0ac1724d3453ac708b489ce629ee78a0d87707da772ec8f1ac4",
+      "native_args": [
+        "empty",
+        "parent",
+        "self50",
+        "0.5",
+        "24",
+        "80",
+        "rounded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-self50-0.5-visible",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-self50-0.5-visible/test.html",
+      "input_sha256": "340191c623718154705ebb4b35ee6d3ee59a3a53e9aa75e043d2e6a3f09cfdba",
+      "native_args": [
+        "empty",
+        "parent",
+        "self50",
+        "0.5",
+        "24",
+        "80",
+        "visible"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-self50-0.5-hidden",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-self50-0.5-hidden/test.html",
+      "input_sha256": "c45e7e07fd5dbe361183c210dfb5efa1cb313be2232748e761e8d4eb57207853",
+      "native_args": [
+        "empty",
+        "parent",
+        "self50",
+        "0.5",
+        "24",
+        "80",
+        "hidden"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-self50-0.5-clip",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-self50-0.5-clip/test.html",
+      "input_sha256": "68e927857475cf137b00a32f722400f2680b647480f6455d3e7439623633d2b2",
+      "native_args": [
+        "empty",
+        "parent",
+        "self50",
+        "0.5",
+        "24",
+        "80",
+        "clip"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-self50-0.5-alpha128",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-self50-0.5-alpha128/test.html",
+      "input_sha256": "e500dafb38fb56ad94d157d6b6294b2835ae70cc7bdf249d202c8a2fda2cae47",
+      "native_args": [
+        "empty",
+        "parent",
+        "self50",
+        "0.5",
+        "24",
+        "80",
+        "alpha128"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-self50-0.5-transparent",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-self50-0.5-transparent/test.html",
+      "input_sha256": "d5279ca4c20693e339e7ecb382431593c16fc464c2202a35c564e36ff9242242",
+      "native_args": [
+        "empty",
+        "parent",
+        "self50",
+        "0.5",
+        "24",
+        "80",
+        "transparent"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-parent50-0-plain",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-parent50-0-plain/test.html",
+      "input_sha256": "81439ddc2d3ef76bf7100fc4088ca4ef23a0c5baea51f4383c8ebd2038c748cf",
+      "native_args": [
+        "empty",
+        "parent",
+        "parent50",
+        "0",
+        "24",
+        "80",
+        "plain"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-parent50-0-tiny",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-parent50-0-tiny/test.html",
+      "input_sha256": "b1fb61f32bda10827df98bb4e37b838ead75d94f21bc9f3b78f67b9b1e44d9d3",
+      "native_args": [
+        "empty",
+        "parent",
+        "parent50",
+        "0",
+        "8",
+        "8",
+        "tiny"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-parent50-0-padded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-parent50-0-padded/test.html",
+      "input_sha256": "ce3c16f2cd01fe57d6ac1489327eaa9c63bb6d4235db80a1e979e7b5cfe60782",
+      "native_args": [
+        "empty",
+        "parent",
+        "parent50",
+        "0",
+        "24",
+        "80",
+        "padded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-parent50-0-bordered",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-parent50-0-bordered/test.html",
+      "input_sha256": "3bee48af23dc93225cab9707152b8678e33b8ee434eadc5071e08973734c97a0",
+      "native_args": [
+        "empty",
+        "parent",
+        "parent50",
+        "0",
+        "24",
+        "80",
+        "bordered"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-parent50-0-rounded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-parent50-0-rounded/test.html",
+      "input_sha256": "0b675aa9bbccb320b2414cf0c248538892f8c63f05a65069425d1e683767c409",
+      "native_args": [
+        "empty",
+        "parent",
+        "parent50",
+        "0",
+        "24",
+        "80",
+        "rounded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-parent50-0-visible",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-parent50-0-visible/test.html",
+      "input_sha256": "40ac388f87ceadc03059c611bcbe057788d0ac68d4b80e06667d6d0c4b38967d",
+      "native_args": [
+        "empty",
+        "parent",
+        "parent50",
+        "0",
+        "24",
+        "80",
+        "visible"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-parent50-0-hidden",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-parent50-0-hidden/test.html",
+      "input_sha256": "8a3c809cf804ce259fda567ebb5f418eb5ace1d38e3416e898ccb31abb540d71",
+      "native_args": [
+        "empty",
+        "parent",
+        "parent50",
+        "0",
+        "24",
+        "80",
+        "hidden"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-parent50-0-clip",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-parent50-0-clip/test.html",
+      "input_sha256": "788068c56bf33fcfdc30cb61185d4dc669c9725cecd84376c9102f6e192b4c03",
+      "native_args": [
+        "empty",
+        "parent",
+        "parent50",
+        "0",
+        "24",
+        "80",
+        "clip"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-parent50-0-alpha128",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-parent50-0-alpha128/test.html",
+      "input_sha256": "4d27ca9c3cbc7337eaeea190731cb71388feec2672343d062a2d07652947f001",
+      "native_args": [
+        "empty",
+        "parent",
+        "parent50",
+        "0",
+        "24",
+        "80",
+        "alpha128"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-parent50-0-transparent",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-parent50-0-transparent/test.html",
+      "input_sha256": "36d95d52ecf3259f2120e21ef35e1c0a1af912b1542bc51e6c5c4d12fe45561d",
+      "native_args": [
+        "empty",
+        "parent",
+        "parent50",
+        "0",
+        "24",
+        "80",
+        "transparent"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-parent50-0.5-plain",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-parent50-0.5-plain/test.html",
+      "input_sha256": "1d81705d0016d927cd160bf8535dfed0bca744f00af76161751857a4694b227d",
+      "native_args": [
+        "empty",
+        "parent",
+        "parent50",
+        "0.5",
+        "24",
+        "80",
+        "plain"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-parent50-0.5-tiny",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-parent50-0.5-tiny/test.html",
+      "input_sha256": "9c7a7d2ce60fc2243f62035190f376aa2737c826ba9000eae8c301f70d9ab634",
+      "native_args": [
+        "empty",
+        "parent",
+        "parent50",
+        "0.5",
+        "8",
+        "8",
+        "tiny"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-parent50-0.5-padded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-parent50-0.5-padded/test.html",
+      "input_sha256": "6a48704af8711a9563ead701d08f6c0954624f47d2e5b65f93e1edd10326e4e8",
+      "native_args": [
+        "empty",
+        "parent",
+        "parent50",
+        "0.5",
+        "24",
+        "80",
+        "padded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-parent50-0.5-bordered",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-parent50-0.5-bordered/test.html",
+      "input_sha256": "8e45d78da124f2a21cecbda3c0bb1d296be76cc20490884b28cb82af87260753",
+      "native_args": [
+        "empty",
+        "parent",
+        "parent50",
+        "0.5",
+        "24",
+        "80",
+        "bordered"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-parent50-0.5-rounded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-parent50-0.5-rounded/test.html",
+      "input_sha256": "e6323d07d8b26b728a858f07fe94224cf67aff302dcea83fea2e551e5e22624b",
+      "native_args": [
+        "empty",
+        "parent",
+        "parent50",
+        "0.5",
+        "24",
+        "80",
+        "rounded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-parent50-0.5-visible",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-parent50-0.5-visible/test.html",
+      "input_sha256": "c7c6caa82b66296eb5234c725daf240c8c6b8ddd68cb4c2ec02086ddde65d7f5",
+      "native_args": [
+        "empty",
+        "parent",
+        "parent50",
+        "0.5",
+        "24",
+        "80",
+        "visible"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-parent50-0.5-hidden",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-parent50-0.5-hidden/test.html",
+      "input_sha256": "4a05cb5c09e18b434d5e2576da0e3466eaa987ae4038c94f4ef5609833451d97",
+      "native_args": [
+        "empty",
+        "parent",
+        "parent50",
+        "0.5",
+        "24",
+        "80",
+        "hidden"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-parent50-0.5-clip",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-parent50-0.5-clip/test.html",
+      "input_sha256": "b53feee193f863573bf3d20a6579bc6dd591beb7d7c89b9beae2f3182ef8ccf3",
+      "native_args": [
+        "empty",
+        "parent",
+        "parent50",
+        "0.5",
+        "24",
+        "80",
+        "clip"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-parent50-0.5-alpha128",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-parent50-0.5-alpha128/test.html",
+      "input_sha256": "250543e185712d4782698e3f3cb76e04219652b16e2e0d02724c3163b165f5d9",
+      "native_args": [
+        "empty",
+        "parent",
+        "parent50",
+        "0.5",
+        "24",
+        "80",
+        "alpha128"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-parent-parent50-0.5-transparent",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/empty-parent-parent50-0.5-transparent/test.html",
+      "input_sha256": "677e78d56b01be7c4d5ddebd2c9d5f828c85f991c6c2537e95cf105c52c013da",
+      "native_args": [
+        "empty",
+        "parent",
+        "parent50",
+        "0.5",
+        "24",
+        "80",
+        "transparent"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-none-0-plain",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-none-0-plain/test.html",
+      "input_sha256": "7265e0e6d1e9781b16acb2cc65ee0b31340b20ccfe2ea829a79822efe24f9dc3",
+      "native_args": [
+        "no-source",
+        "none",
+        "none",
+        "0",
+        "24",
+        "80",
+        "plain"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-none-0-tiny",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-none-0-tiny/test.html",
+      "input_sha256": "2ceef4057538940a40bb3e4b456ad23d591a2c7770dab1e78c7fed97966cedd4",
+      "native_args": [
+        "no-source",
+        "none",
+        "none",
+        "0",
+        "8",
+        "8",
+        "tiny"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-none-0-padded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-none-0-padded/test.html",
+      "input_sha256": "8ac3e62d7fcd4bcb9dd91139d25f553e93607cb681692d2ee6a54d219d111e23",
+      "native_args": [
+        "no-source",
+        "none",
+        "none",
+        "0",
+        "24",
+        "80",
+        "padded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-none-0-bordered",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-none-0-bordered/test.html",
+      "input_sha256": "3fea2fdd3f90633e0905e8110519bbeb9b30bb1fb6e4235433f6045bb2b56ba1",
+      "native_args": [
+        "no-source",
+        "none",
+        "none",
+        "0",
+        "24",
+        "80",
+        "bordered"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-none-0-rounded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-none-0-rounded/test.html",
+      "input_sha256": "4e6ac5e374555cbfd668aa9dc7bf3ab2a5c27091e902c12b91139dc65ba18a37",
+      "native_args": [
+        "no-source",
+        "none",
+        "none",
+        "0",
+        "24",
+        "80",
+        "rounded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-none-0-visible",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-none-0-visible/test.html",
+      "input_sha256": "81c2e375a92993099fdac676e6b2f3ee0d145775a6ad27a42997d81fa62097e5",
+      "native_args": [
+        "no-source",
+        "none",
+        "none",
+        "0",
+        "24",
+        "80",
+        "visible"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-none-0-hidden",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-none-0-hidden/test.html",
+      "input_sha256": "6b12076d9fb04daaef5050f8cc03c940023210ec10470585191132721c9dd8da",
+      "native_args": [
+        "no-source",
+        "none",
+        "none",
+        "0",
+        "24",
+        "80",
+        "hidden"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-none-0-clip",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-none-0-clip/test.html",
+      "input_sha256": "b99623c0947592e1a6e18a09b568c0f637b260a7969bdec0a044824880fb1f50",
+      "native_args": [
+        "no-source",
+        "none",
+        "none",
+        "0",
+        "24",
+        "80",
+        "clip"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-none-0-alpha128",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-none-0-alpha128/test.html",
+      "input_sha256": "ed7d24ef57d868d08b7dc40c5b4dc290d06c4182c13fe5bd87a9340448e649c8",
+      "native_args": [
+        "no-source",
+        "none",
+        "none",
+        "0",
+        "24",
+        "80",
+        "alpha128"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-none-0-transparent",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-none-0-transparent/test.html",
+      "input_sha256": "fa931a4760650d1651797e96f53a4e598aae26b4ab4e59cbd1d55061b5cfe1b5",
+      "native_args": [
+        "no-source",
+        "none",
+        "none",
+        "0",
+        "24",
+        "80",
+        "transparent"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-none-0.5-plain",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-none-0.5-plain/test.html",
+      "input_sha256": "28f1944b5843a53ed7e2253a56eddb915af922a501380d338703f97c87543026",
+      "native_args": [
+        "no-source",
+        "none",
+        "none",
+        "0.5",
+        "24",
+        "80",
+        "plain"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-none-0.5-tiny",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-none-0.5-tiny/test.html",
+      "input_sha256": "cdc97d0dc8dbb0c1c07fbced152b8f5beeaf76d0291c53a82bb303c8bd0eafb8",
+      "native_args": [
+        "no-source",
+        "none",
+        "none",
+        "0.5",
+        "8",
+        "8",
+        "tiny"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-none-0.5-padded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-none-0.5-padded/test.html",
+      "input_sha256": "3135e584e3e4b87fc7e4efcf44750950378cf824751804b14baa2f6439e1573d",
+      "native_args": [
+        "no-source",
+        "none",
+        "none",
+        "0.5",
+        "24",
+        "80",
+        "padded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-none-0.5-bordered",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-none-0.5-bordered/test.html",
+      "input_sha256": "e00cc9cdabfdde0e67ef5a88740f53378367ccddde1fa80d841115353b2aaa61",
+      "native_args": [
+        "no-source",
+        "none",
+        "none",
+        "0.5",
+        "24",
+        "80",
+        "bordered"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-none-0.5-rounded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-none-0.5-rounded/test.html",
+      "input_sha256": "0952cf43ce229650a875c19844369cc80d4ca6506eb7576908cce39bc6bc919a",
+      "native_args": [
+        "no-source",
+        "none",
+        "none",
+        "0.5",
+        "24",
+        "80",
+        "rounded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-none-0.5-visible",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-none-0.5-visible/test.html",
+      "input_sha256": "b242944d737f0e8556cf332b6ba1320e85dc779c1fb49b2052f6b3d6a0b720ec",
+      "native_args": [
+        "no-source",
+        "none",
+        "none",
+        "0.5",
+        "24",
+        "80",
+        "visible"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-none-0.5-hidden",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-none-0.5-hidden/test.html",
+      "input_sha256": "dfdbe2c53100b932f59712315c1cd7cb1c61e3ae36fcd94debb224cbcae92507",
+      "native_args": [
+        "no-source",
+        "none",
+        "none",
+        "0.5",
+        "24",
+        "80",
+        "hidden"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-none-0.5-clip",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-none-0.5-clip/test.html",
+      "input_sha256": "0ce75e237bf2e47eb02d7d14a652993caf96e2e98784a77ef11c863a3839fb5f",
+      "native_args": [
+        "no-source",
+        "none",
+        "none",
+        "0.5",
+        "24",
+        "80",
+        "clip"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-none-0.5-alpha128",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-none-0.5-alpha128/test.html",
+      "input_sha256": "e79d80e42b08f51a3309e01bb1aa0f734be46c4ba4e801ef5183bd3432923f08",
+      "native_args": [
+        "no-source",
+        "none",
+        "none",
+        "0.5",
+        "24",
+        "80",
+        "alpha128"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-none-0.5-transparent",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-none-0.5-transparent/test.html",
+      "input_sha256": "8aa54cb33688a8700358f87d993557edaaeb43c9ec5ef923c3aea9df50295b12",
+      "native_args": [
+        "no-source",
+        "none",
+        "none",
+        "0.5",
+        "24",
+        "80",
+        "transparent"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-self50-0-plain",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-self50-0-plain/test.html",
+      "input_sha256": "614b81e86e6c2ee3e388b42902d7c69e658d70a82db82466a71502de4f5f1c09",
+      "native_args": [
+        "no-source",
+        "none",
+        "self50",
+        "0",
+        "24",
+        "80",
+        "plain"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-self50-0-tiny",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-self50-0-tiny/test.html",
+      "input_sha256": "294b7424da5ef30595739b384c22278ea8d043f92a0649860d200487b0f96985",
+      "native_args": [
+        "no-source",
+        "none",
+        "self50",
+        "0",
+        "8",
+        "8",
+        "tiny"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-self50-0-padded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-self50-0-padded/test.html",
+      "input_sha256": "dd0f08672425f9978c4acbd5106968cde11654ce8e447461114e291d9362907b",
+      "native_args": [
+        "no-source",
+        "none",
+        "self50",
+        "0",
+        "24",
+        "80",
+        "padded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-self50-0-bordered",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-self50-0-bordered/test.html",
+      "input_sha256": "ffcacc6bc6449d942dd6b69f10d50c507e4ffe3edee037dc056b21e30bb54d56",
+      "native_args": [
+        "no-source",
+        "none",
+        "self50",
+        "0",
+        "24",
+        "80",
+        "bordered"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-self50-0-rounded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-self50-0-rounded/test.html",
+      "input_sha256": "9e04920f5bd249d0e2a6c3cdd6377134096344c5f82010efa027cf16ea9a4feb",
+      "native_args": [
+        "no-source",
+        "none",
+        "self50",
+        "0",
+        "24",
+        "80",
+        "rounded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-self50-0-visible",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-self50-0-visible/test.html",
+      "input_sha256": "a465f5ad6e5ce03b0af87df725e964d9e29df1e6b72241912c3e7a689ae07e1a",
+      "native_args": [
+        "no-source",
+        "none",
+        "self50",
+        "0",
+        "24",
+        "80",
+        "visible"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-self50-0-hidden",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-self50-0-hidden/test.html",
+      "input_sha256": "241c9d33cb94e0adbf35f14bae9463a956fc7d341e050e57668c6648d823b70c",
+      "native_args": [
+        "no-source",
+        "none",
+        "self50",
+        "0",
+        "24",
+        "80",
+        "hidden"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-self50-0-clip",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-self50-0-clip/test.html",
+      "input_sha256": "d2cd824754d1b0482431f9ac28e291f81806295a7fd068bf2f188c1e0da22041",
+      "native_args": [
+        "no-source",
+        "none",
+        "self50",
+        "0",
+        "24",
+        "80",
+        "clip"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-self50-0-alpha128",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-self50-0-alpha128/test.html",
+      "input_sha256": "d9fbf714e9867dbbf6a1023b0ef3b600f8ab8d4cd1ef1a6cc8fa6f99aa1574e3",
+      "native_args": [
+        "no-source",
+        "none",
+        "self50",
+        "0",
+        "24",
+        "80",
+        "alpha128"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-self50-0-transparent",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-self50-0-transparent/test.html",
+      "input_sha256": "49f72a33a4cd6b1b62f01979cc88fb576b0de7157e76d11ff820ffd5d082468d",
+      "native_args": [
+        "no-source",
+        "none",
+        "self50",
+        "0",
+        "24",
+        "80",
+        "transparent"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-self50-0.5-plain",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-self50-0.5-plain/test.html",
+      "input_sha256": "c8ee8107611f098687ee498eaac07a90dd2ffd73881267b92b76e94ba80824cb",
+      "native_args": [
+        "no-source",
+        "none",
+        "self50",
+        "0.5",
+        "24",
+        "80",
+        "plain"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-self50-0.5-tiny",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-self50-0.5-tiny/test.html",
+      "input_sha256": "2357945642f9212552ab1ba1fb5eaae72968b5ec6f9b15be6156ca7a38cd5333",
+      "native_args": [
+        "no-source",
+        "none",
+        "self50",
+        "0.5",
+        "8",
+        "8",
+        "tiny"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-self50-0.5-padded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-self50-0.5-padded/test.html",
+      "input_sha256": "3b16d56dd5556b3b3600846e0592e786f526655440472cbb70808c6dc72d40b6",
+      "native_args": [
+        "no-source",
+        "none",
+        "self50",
+        "0.5",
+        "24",
+        "80",
+        "padded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-self50-0.5-bordered",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-self50-0.5-bordered/test.html",
+      "input_sha256": "c01f33a2585f65517e300b9c65851b1b100c02a6de57a77b97d1e984c53fdd40",
+      "native_args": [
+        "no-source",
+        "none",
+        "self50",
+        "0.5",
+        "24",
+        "80",
+        "bordered"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-self50-0.5-rounded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-self50-0.5-rounded/test.html",
+      "input_sha256": "68b7f565f1e5c486d462e069d7a197228d881ee0ce0d32883fdb8c8d8440af39",
+      "native_args": [
+        "no-source",
+        "none",
+        "self50",
+        "0.5",
+        "24",
+        "80",
+        "rounded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-self50-0.5-visible",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-self50-0.5-visible/test.html",
+      "input_sha256": "23c27f235a4006a0aa5e75f6d3c0e4808137f2917a103e9e4bca74b1c9ca664a",
+      "native_args": [
+        "no-source",
+        "none",
+        "self50",
+        "0.5",
+        "24",
+        "80",
+        "visible"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-self50-0.5-hidden",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-self50-0.5-hidden/test.html",
+      "input_sha256": "9466d3edbd0ae557b9e0f883478f5cb13f8cae7e6e2f52a39d3a28635b4ec961",
+      "native_args": [
+        "no-source",
+        "none",
+        "self50",
+        "0.5",
+        "24",
+        "80",
+        "hidden"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-self50-0.5-clip",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-self50-0.5-clip/test.html",
+      "input_sha256": "de7d2323c77232f04820ce2e0f624dbdc5561bbeeb3be02a6b93bf1f689f13c1",
+      "native_args": [
+        "no-source",
+        "none",
+        "self50",
+        "0.5",
+        "24",
+        "80",
+        "clip"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-self50-0.5-alpha128",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-self50-0.5-alpha128/test.html",
+      "input_sha256": "e0022e832fb153b9f56fb0620ab9756496d41fd32d2c23dd117e9e92b77533ca",
+      "native_args": [
+        "no-source",
+        "none",
+        "self50",
+        "0.5",
+        "24",
+        "80",
+        "alpha128"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-self50-0.5-transparent",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-self50-0.5-transparent/test.html",
+      "input_sha256": "edebd7686781c00a3622d0e3783016f28ea35eb197160d856bb22b83fb5f11be",
+      "native_args": [
+        "no-source",
+        "none",
+        "self50",
+        "0.5",
+        "24",
+        "80",
+        "transparent"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-parent50-0-plain",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-parent50-0-plain/test.html",
+      "input_sha256": "64ae832339345380208f292c2598bf3a35be21ef8edfbc782cd05562c56f6f6d",
+      "native_args": [
+        "no-source",
+        "none",
+        "parent50",
+        "0",
+        "24",
+        "80",
+        "plain"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-parent50-0-tiny",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-parent50-0-tiny/test.html",
+      "input_sha256": "1f05376c7e56686307b9afcef838d393a78884a15032a842f84761f07fe809f1",
+      "native_args": [
+        "no-source",
+        "none",
+        "parent50",
+        "0",
+        "8",
+        "8",
+        "tiny"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-parent50-0-padded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-parent50-0-padded/test.html",
+      "input_sha256": "ff48e5b77fc84636ad256b9ecbab213b5329ae74540eb6a57ded94b7c3ae190a",
+      "native_args": [
+        "no-source",
+        "none",
+        "parent50",
+        "0",
+        "24",
+        "80",
+        "padded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-parent50-0-bordered",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-parent50-0-bordered/test.html",
+      "input_sha256": "9f48328cd16d8ad023c17caf0de0823edfb7fe4924b1af1c8d71987c035f3d4f",
+      "native_args": [
+        "no-source",
+        "none",
+        "parent50",
+        "0",
+        "24",
+        "80",
+        "bordered"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-parent50-0-rounded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-parent50-0-rounded/test.html",
+      "input_sha256": "8a9eb63533c57c5255bcca303b665031fab936ff111b871a6205c057075d95d9",
+      "native_args": [
+        "no-source",
+        "none",
+        "parent50",
+        "0",
+        "24",
+        "80",
+        "rounded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-parent50-0-visible",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-parent50-0-visible/test.html",
+      "input_sha256": "d031fe66c44a90ea3bfb3218839c0799d12527d62e50d796cd927e113d189585",
+      "native_args": [
+        "no-source",
+        "none",
+        "parent50",
+        "0",
+        "24",
+        "80",
+        "visible"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-parent50-0-hidden",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-parent50-0-hidden/test.html",
+      "input_sha256": "df4a54c19d0a6c570dba72748920d0b5b5393e423d83e4c75946ac1824a2ffb4",
+      "native_args": [
+        "no-source",
+        "none",
+        "parent50",
+        "0",
+        "24",
+        "80",
+        "hidden"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-parent50-0-clip",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-parent50-0-clip/test.html",
+      "input_sha256": "3299c99f9183a4dfde3b79e2f8067fe2fda0ba93f34205ebdfed329190f65eac",
+      "native_args": [
+        "no-source",
+        "none",
+        "parent50",
+        "0",
+        "24",
+        "80",
+        "clip"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-parent50-0-alpha128",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-parent50-0-alpha128/test.html",
+      "input_sha256": "99c0c69c1b82683b3bd73b7ba0ef27578f0c7a5b2c510285ae3e839a96e31bbc",
+      "native_args": [
+        "no-source",
+        "none",
+        "parent50",
+        "0",
+        "24",
+        "80",
+        "alpha128"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-parent50-0-transparent",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-parent50-0-transparent/test.html",
+      "input_sha256": "43cbf7cbf28a8a62e6ad2ff04f31f63326ffca2a396a1d8e0be1b5f2488a4643",
+      "native_args": [
+        "no-source",
+        "none",
+        "parent50",
+        "0",
+        "24",
+        "80",
+        "transparent"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-parent50-0.5-plain",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-parent50-0.5-plain/test.html",
+      "input_sha256": "9df2a9135671272436c99318e77445309f5c5549e81bf4ddad3bf7d260cd3fcc",
+      "native_args": [
+        "no-source",
+        "none",
+        "parent50",
+        "0.5",
+        "24",
+        "80",
+        "plain"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-parent50-0.5-tiny",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-parent50-0.5-tiny/test.html",
+      "input_sha256": "f2b661bb9bbf06b3d661d04e72166e80467b10d3f14c83ab061a9e217c2c27ae",
+      "native_args": [
+        "no-source",
+        "none",
+        "parent50",
+        "0.5",
+        "8",
+        "8",
+        "tiny"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-parent50-0.5-padded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-parent50-0.5-padded/test.html",
+      "input_sha256": "445b0b215c95dfcd91100b5f5af6a7da466b0d9346e06e86c86efe61d2053362",
+      "native_args": [
+        "no-source",
+        "none",
+        "parent50",
+        "0.5",
+        "24",
+        "80",
+        "padded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-parent50-0.5-bordered",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-parent50-0.5-bordered/test.html",
+      "input_sha256": "48648f0eef84ace2cc5c08bcdc34ef6433f968fb686f4668b907135fdbbd022c",
+      "native_args": [
+        "no-source",
+        "none",
+        "parent50",
+        "0.5",
+        "24",
+        "80",
+        "bordered"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-parent50-0.5-rounded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-parent50-0.5-rounded/test.html",
+      "input_sha256": "981ea5d472e3b4a4d25f94fc7d0b9116380a7d7e99ab88dc5242bcdec917b298",
+      "native_args": [
+        "no-source",
+        "none",
+        "parent50",
+        "0.5",
+        "24",
+        "80",
+        "rounded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-parent50-0.5-visible",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-parent50-0.5-visible/test.html",
+      "input_sha256": "efecbadcdee1c7881d168362a63d3e3f45766ecc4255285f66b1d94fc8204aed",
+      "native_args": [
+        "no-source",
+        "none",
+        "parent50",
+        "0.5",
+        "24",
+        "80",
+        "visible"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-parent50-0.5-hidden",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-parent50-0.5-hidden/test.html",
+      "input_sha256": "e85a320463aa12f4404158a0d8cd0714651c5647eec72e6ca9625ec64d993b0e",
+      "native_args": [
+        "no-source",
+        "none",
+        "parent50",
+        "0.5",
+        "24",
+        "80",
+        "hidden"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-parent50-0.5-clip",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-parent50-0.5-clip/test.html",
+      "input_sha256": "ce00acc2da09d27b26cfb16081a50769e6bbf5ac3515dbc6633e23a517a1ed23",
+      "native_args": [
+        "no-source",
+        "none",
+        "parent50",
+        "0.5",
+        "24",
+        "80",
+        "clip"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-parent50-0.5-alpha128",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-parent50-0.5-alpha128/test.html",
+      "input_sha256": "83895dba667368ffbeac21871b31f3430750f5195dcb88db68fc2e8cd13cdbe2",
+      "native_args": [
+        "no-source",
+        "none",
+        "parent50",
+        "0.5",
+        "24",
+        "80",
+        "alpha128"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-none-parent50-0.5-transparent",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-none-parent50-0.5-transparent/test.html",
+      "input_sha256": "38ffe819a7ed27e840c4330ce0c363591ac83f67ba4e8c8850fa2ce507f7d969",
+      "native_args": [
+        "no-source",
+        "none",
+        "parent50",
+        "0.5",
+        "24",
+        "80",
+        "transparent"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-none-0-plain",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-none-0-plain/test.html",
+      "input_sha256": "193fa4df0f0d44a3371ee614219be6e110206583fdc93d906ca3a2ffea5b183e",
+      "native_args": [
+        "no-source",
+        "parent",
+        "none",
+        "0",
+        "24",
+        "80",
+        "plain"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-none-0-tiny",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-none-0-tiny/test.html",
+      "input_sha256": "b281bcbda5ed591bb7b42933b2a5673c01836ec55061bf73ec0144658111d955",
+      "native_args": [
+        "no-source",
+        "parent",
+        "none",
+        "0",
+        "8",
+        "8",
+        "tiny"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-none-0-padded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-none-0-padded/test.html",
+      "input_sha256": "f6d905449e170bb5bbbfe0662f8f1f436b5af74abde156ea7a1a437c5f446f51",
+      "native_args": [
+        "no-source",
+        "parent",
+        "none",
+        "0",
+        "24",
+        "80",
+        "padded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-none-0-bordered",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-none-0-bordered/test.html",
+      "input_sha256": "4c4487ff1109a8f43b0629c77c114745dabc0c1dbd4756d280a9d97d2476d09e",
+      "native_args": [
+        "no-source",
+        "parent",
+        "none",
+        "0",
+        "24",
+        "80",
+        "bordered"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-none-0-rounded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-none-0-rounded/test.html",
+      "input_sha256": "28a6639d3a4851191fc1bdffa14c6bca3b8a40f1488315e4da0ffdc05a46f32b",
+      "native_args": [
+        "no-source",
+        "parent",
+        "none",
+        "0",
+        "24",
+        "80",
+        "rounded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-none-0-visible",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-none-0-visible/test.html",
+      "input_sha256": "020ffc77d2ae46a9335eb09108ac60491e1f04343868a36decc931b81528f178",
+      "native_args": [
+        "no-source",
+        "parent",
+        "none",
+        "0",
+        "24",
+        "80",
+        "visible"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-none-0-hidden",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-none-0-hidden/test.html",
+      "input_sha256": "d2732cf9ef4f01ac24e93cb2dac598cdf2ffb9f3023c5fc0fe538924bd7d5e9c",
+      "native_args": [
+        "no-source",
+        "parent",
+        "none",
+        "0",
+        "24",
+        "80",
+        "hidden"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-none-0-clip",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-none-0-clip/test.html",
+      "input_sha256": "f1131aa4bd639ff78af03e888b34eba44ca40c52cc6ecca9737a99da490fec49",
+      "native_args": [
+        "no-source",
+        "parent",
+        "none",
+        "0",
+        "24",
+        "80",
+        "clip"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-none-0-alpha128",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-none-0-alpha128/test.html",
+      "input_sha256": "85c62a17b5dddae15594cffc55ee31def16a7ca9fa279afb3a16710965bb09d4",
+      "native_args": [
+        "no-source",
+        "parent",
+        "none",
+        "0",
+        "24",
+        "80",
+        "alpha128"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-none-0-transparent",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-none-0-transparent/test.html",
+      "input_sha256": "cc28d57bd87320dbd349f0734df0b81979c09d579036d076b9dcf958e0eccf53",
+      "native_args": [
+        "no-source",
+        "parent",
+        "none",
+        "0",
+        "24",
+        "80",
+        "transparent"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-none-0.5-plain",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-none-0.5-plain/test.html",
+      "input_sha256": "7aace93684fb78bc665bb56a1ff74b7071de65eb17f8225dfbcd73b4689988dd",
+      "native_args": [
+        "no-source",
+        "parent",
+        "none",
+        "0.5",
+        "24",
+        "80",
+        "plain"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-none-0.5-tiny",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-none-0.5-tiny/test.html",
+      "input_sha256": "50b75addbb7aede048eb4e27f743d3a203beb0b2710522ed57debb5e3e7ef8b3",
+      "native_args": [
+        "no-source",
+        "parent",
+        "none",
+        "0.5",
+        "8",
+        "8",
+        "tiny"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-none-0.5-padded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-none-0.5-padded/test.html",
+      "input_sha256": "b206968386b9aae993cdf17a538522e88ec189de15df7a4b6c5d087adefdbc04",
+      "native_args": [
+        "no-source",
+        "parent",
+        "none",
+        "0.5",
+        "24",
+        "80",
+        "padded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-none-0.5-bordered",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-none-0.5-bordered/test.html",
+      "input_sha256": "9d592d0daccd22d98782027ca5a571ef46ac28f90b8d4a69831ae8ca09528ba3",
+      "native_args": [
+        "no-source",
+        "parent",
+        "none",
+        "0.5",
+        "24",
+        "80",
+        "bordered"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-none-0.5-rounded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-none-0.5-rounded/test.html",
+      "input_sha256": "ecfabe34478146f60f9c4d5baa4d35abc7593a3cc1429cc8c73aa52325005938",
+      "native_args": [
+        "no-source",
+        "parent",
+        "none",
+        "0.5",
+        "24",
+        "80",
+        "rounded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-none-0.5-visible",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-none-0.5-visible/test.html",
+      "input_sha256": "69fb143918086bc16fdd80b0fe423e18379b2f24d0f5897345377e3907249601",
+      "native_args": [
+        "no-source",
+        "parent",
+        "none",
+        "0.5",
+        "24",
+        "80",
+        "visible"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-none-0.5-hidden",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-none-0.5-hidden/test.html",
+      "input_sha256": "49cd45e524578596de05575468a5b7387a969cf62ede5c76339083fa178314e3",
+      "native_args": [
+        "no-source",
+        "parent",
+        "none",
+        "0.5",
+        "24",
+        "80",
+        "hidden"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-none-0.5-clip",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-none-0.5-clip/test.html",
+      "input_sha256": "b522469ed6903ab79b63dae6ac3d8ba0416d8acacc03cdb0a2e1e8285237ce42",
+      "native_args": [
+        "no-source",
+        "parent",
+        "none",
+        "0.5",
+        "24",
+        "80",
+        "clip"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-none-0.5-alpha128",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-none-0.5-alpha128/test.html",
+      "input_sha256": "b02ce66dc3318de4640d094a225694624e65b7e37f1f79633ada6216966aafd6",
+      "native_args": [
+        "no-source",
+        "parent",
+        "none",
+        "0.5",
+        "24",
+        "80",
+        "alpha128"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-none-0.5-transparent",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-none-0.5-transparent/test.html",
+      "input_sha256": "647a0f95dab281556e2b04089da377e63872f74285aa724907c7b4f180fd39fe",
+      "native_args": [
+        "no-source",
+        "parent",
+        "none",
+        "0.5",
+        "24",
+        "80",
+        "transparent"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-self50-0-plain",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-self50-0-plain/test.html",
+      "input_sha256": "798abc3645264289ca0392a2f5cf8aaf90de5cad402bcec29a06c93f3d6dbcdd",
+      "native_args": [
+        "no-source",
+        "parent",
+        "self50",
+        "0",
+        "24",
+        "80",
+        "plain"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-self50-0-tiny",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-self50-0-tiny/test.html",
+      "input_sha256": "49332b6bef678969c6736b3a259725c4ab3bad4e79c4eba6a5c9eefb99bcb45a",
+      "native_args": [
+        "no-source",
+        "parent",
+        "self50",
+        "0",
+        "8",
+        "8",
+        "tiny"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-self50-0-padded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-self50-0-padded/test.html",
+      "input_sha256": "962e7b846aff2369d93c4e66f8f6525651489d4d055c37529f1a11fc95203a23",
+      "native_args": [
+        "no-source",
+        "parent",
+        "self50",
+        "0",
+        "24",
+        "80",
+        "padded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-self50-0-bordered",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-self50-0-bordered/test.html",
+      "input_sha256": "cb0c353259cd8b81d8635e44e0867c5715ba435e8928252e418f01a2697dc165",
+      "native_args": [
+        "no-source",
+        "parent",
+        "self50",
+        "0",
+        "24",
+        "80",
+        "bordered"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-self50-0-rounded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-self50-0-rounded/test.html",
+      "input_sha256": "ad7e0ba251046961b279d2e08e116ac529eb939c46e11f4a4b161a1da8975358",
+      "native_args": [
+        "no-source",
+        "parent",
+        "self50",
+        "0",
+        "24",
+        "80",
+        "rounded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-self50-0-visible",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-self50-0-visible/test.html",
+      "input_sha256": "47fffd315259e542a7e5ad8a1a9196e047cb9d3777c0a66d8d43b60b9485f45c",
+      "native_args": [
+        "no-source",
+        "parent",
+        "self50",
+        "0",
+        "24",
+        "80",
+        "visible"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-self50-0-hidden",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-self50-0-hidden/test.html",
+      "input_sha256": "88ceeceec295fa8c39039acb751758f9d956f360e0232af3c6259a82ccb6715b",
+      "native_args": [
+        "no-source",
+        "parent",
+        "self50",
+        "0",
+        "24",
+        "80",
+        "hidden"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-self50-0-clip",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-self50-0-clip/test.html",
+      "input_sha256": "725a4ddc2157051076298adfbaca8d002fa7ee480aad69871646a22233b80df8",
+      "native_args": [
+        "no-source",
+        "parent",
+        "self50",
+        "0",
+        "24",
+        "80",
+        "clip"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-self50-0-alpha128",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-self50-0-alpha128/test.html",
+      "input_sha256": "108698bd9299f423600615217f02c34aeed20a28e739ad54168f92fcfca06cb9",
+      "native_args": [
+        "no-source",
+        "parent",
+        "self50",
+        "0",
+        "24",
+        "80",
+        "alpha128"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-self50-0-transparent",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-self50-0-transparent/test.html",
+      "input_sha256": "1068dfdd97e2ad78469b1818984dfe9754edb647f1b7227d5003af97fde2c1a7",
+      "native_args": [
+        "no-source",
+        "parent",
+        "self50",
+        "0",
+        "24",
+        "80",
+        "transparent"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-self50-0.5-plain",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-self50-0.5-plain/test.html",
+      "input_sha256": "8022d4e86131c6babb2778d78a0a1dd4f64d37a49f49da5e6578596280c2f21d",
+      "native_args": [
+        "no-source",
+        "parent",
+        "self50",
+        "0.5",
+        "24",
+        "80",
+        "plain"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-self50-0.5-tiny",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-self50-0.5-tiny/test.html",
+      "input_sha256": "a14df3ba85083f5b151be6a5c197050fa8bdfa4d4b39f91ba68050b8585ecef6",
+      "native_args": [
+        "no-source",
+        "parent",
+        "self50",
+        "0.5",
+        "8",
+        "8",
+        "tiny"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-self50-0.5-padded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-self50-0.5-padded/test.html",
+      "input_sha256": "2d70cd71b2177a6683b3b477906c22cc0917decae7cd1adadfd774785b12c3ad",
+      "native_args": [
+        "no-source",
+        "parent",
+        "self50",
+        "0.5",
+        "24",
+        "80",
+        "padded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-self50-0.5-bordered",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-self50-0.5-bordered/test.html",
+      "input_sha256": "af705369caa503a8e3b3e4456e64ca9c2ed7744498678edab9989359756202f2",
+      "native_args": [
+        "no-source",
+        "parent",
+        "self50",
+        "0.5",
+        "24",
+        "80",
+        "bordered"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-self50-0.5-rounded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-self50-0.5-rounded/test.html",
+      "input_sha256": "e1d2c773a2e9d01bcb9b115d5f52af1d8482bc9ebaf67b9f930f38739b44163c",
+      "native_args": [
+        "no-source",
+        "parent",
+        "self50",
+        "0.5",
+        "24",
+        "80",
+        "rounded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-self50-0.5-visible",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-self50-0.5-visible/test.html",
+      "input_sha256": "006a1f2635825ab55cccb84f673891ffcde3a91ab5a7d69a1f1fb74598abf7be",
+      "native_args": [
+        "no-source",
+        "parent",
+        "self50",
+        "0.5",
+        "24",
+        "80",
+        "visible"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-self50-0.5-hidden",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-self50-0.5-hidden/test.html",
+      "input_sha256": "3cfe352254bdcf3386829b85ac62862c4ef2b23b29ad3e7f8d3db05059f6c266",
+      "native_args": [
+        "no-source",
+        "parent",
+        "self50",
+        "0.5",
+        "24",
+        "80",
+        "hidden"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-self50-0.5-clip",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-self50-0.5-clip/test.html",
+      "input_sha256": "80a91876d0ebbdcfeca3e46f45dd471290fe430d449cd8394c6e025e9a13ce56",
+      "native_args": [
+        "no-source",
+        "parent",
+        "self50",
+        "0.5",
+        "24",
+        "80",
+        "clip"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-self50-0.5-alpha128",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-self50-0.5-alpha128/test.html",
+      "input_sha256": "44a66759e476e52815fb90f04cbf9b5c20c7241bdb05237319aa38369d3310dd",
+      "native_args": [
+        "no-source",
+        "parent",
+        "self50",
+        "0.5",
+        "24",
+        "80",
+        "alpha128"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-self50-0.5-transparent",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-self50-0.5-transparent/test.html",
+      "input_sha256": "e963fa168ad81345211e88c480397b2cd19516f8d8f00829b7a9aefa40837324",
+      "native_args": [
+        "no-source",
+        "parent",
+        "self50",
+        "0.5",
+        "24",
+        "80",
+        "transparent"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-parent50-0-plain",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-parent50-0-plain/test.html",
+      "input_sha256": "8cad0bee3c43a24f6dc8fe7d8e6beb6fca278090f4f21408c8c4938d105da236",
+      "native_args": [
+        "no-source",
+        "parent",
+        "parent50",
+        "0",
+        "24",
+        "80",
+        "plain"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-parent50-0-tiny",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-parent50-0-tiny/test.html",
+      "input_sha256": "e246fba403afc1afd8af2077b599e8511dd2efa44c5076e97a294821da6e92e1",
+      "native_args": [
+        "no-source",
+        "parent",
+        "parent50",
+        "0",
+        "8",
+        "8",
+        "tiny"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-parent50-0-padded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-parent50-0-padded/test.html",
+      "input_sha256": "864d389ff096e8d24087280b16489f1ad7e26a759384315c6b3caae17223ae02",
+      "native_args": [
+        "no-source",
+        "parent",
+        "parent50",
+        "0",
+        "24",
+        "80",
+        "padded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-parent50-0-bordered",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-parent50-0-bordered/test.html",
+      "input_sha256": "75e02882f246d0d8d54b5b0a237aa3396d64ab125d52bc9461fb3c6da31f00fd",
+      "native_args": [
+        "no-source",
+        "parent",
+        "parent50",
+        "0",
+        "24",
+        "80",
+        "bordered"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-parent50-0-rounded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-parent50-0-rounded/test.html",
+      "input_sha256": "fa7a2a3e8cb430cfa6aa2f909d79428b68ec7b1b9ae4cf03caab586ca752b220",
+      "native_args": [
+        "no-source",
+        "parent",
+        "parent50",
+        "0",
+        "24",
+        "80",
+        "rounded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-parent50-0-visible",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-parent50-0-visible/test.html",
+      "input_sha256": "9999a888592739198318aacc8d94962ce2b10d0ba0d9ab93f67dfd5d7efa7a9c",
+      "native_args": [
+        "no-source",
+        "parent",
+        "parent50",
+        "0",
+        "24",
+        "80",
+        "visible"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-parent50-0-hidden",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-parent50-0-hidden/test.html",
+      "input_sha256": "65336572863da3e75cf0645fc97058c213ab1913000a8c7ffbc7f6c4d663d04b",
+      "native_args": [
+        "no-source",
+        "parent",
+        "parent50",
+        "0",
+        "24",
+        "80",
+        "hidden"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-parent50-0-clip",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-parent50-0-clip/test.html",
+      "input_sha256": "9109bfa640eb6bc3a7244ad49f1494543383c107d94cbb50a2239995d4b1574f",
+      "native_args": [
+        "no-source",
+        "parent",
+        "parent50",
+        "0",
+        "24",
+        "80",
+        "clip"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-parent50-0-alpha128",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-parent50-0-alpha128/test.html",
+      "input_sha256": "3b3a479f4e18bb9430ba26f973a2806092a7a06fa5dec41ffcb9ede38584145d",
+      "native_args": [
+        "no-source",
+        "parent",
+        "parent50",
+        "0",
+        "24",
+        "80",
+        "alpha128"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-parent50-0-transparent",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-parent50-0-transparent/test.html",
+      "input_sha256": "f514b365a5976bef6ecf8d859fab2e2ff3f84186d72b29e36c5a04e8270a0825",
+      "native_args": [
+        "no-source",
+        "parent",
+        "parent50",
+        "0",
+        "24",
+        "80",
+        "transparent"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-parent50-0.5-plain",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-parent50-0.5-plain/test.html",
+      "input_sha256": "d8100e1a8248f0e68564ba0ec1bb55a0d099dfaf56f8b2d29f58092a0baed7bb",
+      "native_args": [
+        "no-source",
+        "parent",
+        "parent50",
+        "0.5",
+        "24",
+        "80",
+        "plain"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-parent50-0.5-tiny",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-parent50-0.5-tiny/test.html",
+      "input_sha256": "8227baf62cef4c78ffc167400d7f453d3a8d37f178f2a03fede35daf955079ec",
+      "native_args": [
+        "no-source",
+        "parent",
+        "parent50",
+        "0.5",
+        "8",
+        "8",
+        "tiny"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-parent50-0.5-padded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-parent50-0.5-padded/test.html",
+      "input_sha256": "1b744653cee00ae74df3155a414b480e1fac7f12818281d3804036382977352d",
+      "native_args": [
+        "no-source",
+        "parent",
+        "parent50",
+        "0.5",
+        "24",
+        "80",
+        "padded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-parent50-0.5-bordered",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-parent50-0.5-bordered/test.html",
+      "input_sha256": "cba80d755a8bacbe657d31eaf9c96277a0905765bd91288318226b51e0332170",
+      "native_args": [
+        "no-source",
+        "parent",
+        "parent50",
+        "0.5",
+        "24",
+        "80",
+        "bordered"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-parent50-0.5-rounded",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-parent50-0.5-rounded/test.html",
+      "input_sha256": "3352ee6f19a48ae918a581295bbd03a6036f58d440790ee1142be5439faeef40",
+      "native_args": [
+        "no-source",
+        "parent",
+        "parent50",
+        "0.5",
+        "24",
+        "80",
+        "rounded"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-parent50-0.5-visible",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-parent50-0.5-visible/test.html",
+      "input_sha256": "3330779e13ffd4a593f521bb248d6532ddc92e081f1d4fd416ad1a91a7ef4d8a",
+      "native_args": [
+        "no-source",
+        "parent",
+        "parent50",
+        "0.5",
+        "24",
+        "80",
+        "visible"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-parent50-0.5-hidden",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-parent50-0.5-hidden/test.html",
+      "input_sha256": "bb69d1fbab845048273bb3cf9ad1188f5272459c3ce3771280970f7404f56806",
+      "native_args": [
+        "no-source",
+        "parent",
+        "parent50",
+        "0.5",
+        "24",
+        "80",
+        "hidden"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-parent50-0.5-clip",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-parent50-0.5-clip/test.html",
+      "input_sha256": "736ba9395f7f8ae8eddf3e6c0f627cb2cf157734a506ccc2fefbb881b002088b",
+      "native_args": [
+        "no-source",
+        "parent",
+        "parent50",
+        "0.5",
+        "24",
+        "80",
+        "clip"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-parent50-0.5-alpha128",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-parent50-0.5-alpha128/test.html",
+      "input_sha256": "dbb6731f5a971670fc113b5be0e21c5ab173a2de6a20c1239dd5ca87a4a574e5",
+      "native_args": [
+        "no-source",
+        "parent",
+        "parent50",
+        "0.5",
+        "24",
+        "80",
+        "alpha128"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "no-source-parent-parent50-0.5-transparent",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/neighbors/no-source-parent-parent50-0.5-transparent/test.html",
+      "input_sha256": "fa128f331348b0a9727206dc275339a8f6471c0e50296c1450939b5c75f2f21d",
+      "native_args": [
+        "no-source",
+        "parent",
+        "parent50",
+        "0.5",
+        "24",
+        "80",
+        "transparent"
+      ],
+      "suite": "neighbors"
+    },
+    {
+      "case": "empty-none-none-0-width1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-none-none-0-width1/test.html",
+      "input_sha256": "8b4252730fa228f7ed2238170563ee293a07c3e9f10d286bc55164c328bbd8a4",
+      "native_args": [
+        "empty",
+        "none",
+        "none",
+        "0",
+        "1",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-none-none-0-width2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-none-none-0-width2/test.html",
+      "input_sha256": "ee9f1728f6000db7c4a2382ee9474d8e64d71ccb081d2e34e89ba450d6565183",
+      "native_args": [
+        "empty",
+        "none",
+        "none",
+        "0",
+        "2",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-none-none-0-height1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-none-none-0-height1/test.html",
+      "input_sha256": "891fc9302711211c0dba6ab04fb6361c978e9c100b8f4049a97a16e7b55f4c17",
+      "native_args": [
+        "empty",
+        "none",
+        "none",
+        "0",
+        "24",
+        "1",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-none-none-0-height2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-none-none-0-height2/test.html",
+      "input_sha256": "dcc314bb0fb2b00f2fd091724fbd7074c8ea451719a66386e703d22b360e3cab",
+      "native_args": [
+        "empty",
+        "none",
+        "none",
+        "0",
+        "24",
+        "2",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-none-none-0-width2half",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-none-none-0-width2half/test.html",
+      "input_sha256": "6a00af03fbc8bb2890eb0c9d932aba892bbd94da147a80cd70338fd30b574cd0",
+      "native_args": [
+        "empty",
+        "none",
+        "none",
+        "0",
+        "2.5",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-none-none-0.5-width1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-none-none-0.5-width1/test.html",
+      "input_sha256": "19c96ce16c4c661448513629b67d04e2d88cde520bb51be18b3c10186c374911",
+      "native_args": [
+        "empty",
+        "none",
+        "none",
+        "0.5",
+        "1",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-none-none-0.5-width2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-none-none-0.5-width2/test.html",
+      "input_sha256": "e8613170abf029e096c9059780fd7c82dd7e67a963541c27390146c3549be703",
+      "native_args": [
+        "empty",
+        "none",
+        "none",
+        "0.5",
+        "2",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-none-none-0.5-height1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-none-none-0.5-height1/test.html",
+      "input_sha256": "237a45795511d899ee39e0f21db17a7c2233bb3bcb99fbffc77a88c28896ef23",
+      "native_args": [
+        "empty",
+        "none",
+        "none",
+        "0.5",
+        "24",
+        "1",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-none-none-0.5-height2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-none-none-0.5-height2/test.html",
+      "input_sha256": "3bbb2ff4c219c4ce9a6d21c4afb763fcfefc54dcf858aa107a00d902a74ea5d0",
+      "native_args": [
+        "empty",
+        "none",
+        "none",
+        "0.5",
+        "24",
+        "2",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-none-none-0.5-width2half",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-none-none-0.5-width2half/test.html",
+      "input_sha256": "69cbf0e36cdbec289983cfae969940ff0bc2402186e6c55e15f203e9fed6db26",
+      "native_args": [
+        "empty",
+        "none",
+        "none",
+        "0.5",
+        "2.5",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-none-self50-0-width1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-none-self50-0-width1/test.html",
+      "input_sha256": "cbe44526588a28d23551885dc513e38a6e32e6ed8c82b6a8c22844a819c2a655",
+      "native_args": [
+        "empty",
+        "none",
+        "self50",
+        "0",
+        "1",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-none-self50-0-width2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-none-self50-0-width2/test.html",
+      "input_sha256": "48645afc4d4a3b9b88a42e6875754657ed6bcf95a8529363b049ebe3a3b22929",
+      "native_args": [
+        "empty",
+        "none",
+        "self50",
+        "0",
+        "2",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-none-self50-0-height1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-none-self50-0-height1/test.html",
+      "input_sha256": "8d6fac021b0007a13aef1c8bdb22b1f5637734bf2c923539e29e6451c46ec9a9",
+      "native_args": [
+        "empty",
+        "none",
+        "self50",
+        "0",
+        "24",
+        "1",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-none-self50-0-height2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-none-self50-0-height2/test.html",
+      "input_sha256": "3aa810eac6c7bfa7e35d629c3ecf44def74b126d365152108a07605dd33ddf69",
+      "native_args": [
+        "empty",
+        "none",
+        "self50",
+        "0",
+        "24",
+        "2",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-none-self50-0-width2half",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-none-self50-0-width2half/test.html",
+      "input_sha256": "2f0b1259e0ceb679568ba8289154a02a314e2c32516c3ad21b6ded3fdc214862",
+      "native_args": [
+        "empty",
+        "none",
+        "self50",
+        "0",
+        "2.5",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-none-self50-0.5-width1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-none-self50-0.5-width1/test.html",
+      "input_sha256": "84c111b97d0fc293fc83961f927d92ec89003de462cffc8493377577d396ea93",
+      "native_args": [
+        "empty",
+        "none",
+        "self50",
+        "0.5",
+        "1",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-none-self50-0.5-width2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-none-self50-0.5-width2/test.html",
+      "input_sha256": "a84f33f1e65250b1c3eeb95dd303adaf1085ad00652ada22385f4d0bf1376643",
+      "native_args": [
+        "empty",
+        "none",
+        "self50",
+        "0.5",
+        "2",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-none-self50-0.5-height1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-none-self50-0.5-height1/test.html",
+      "input_sha256": "5d4547bcf576953e51f35a9c41934929f4fa217a41a5184a1e455b24d2a8e70d",
+      "native_args": [
+        "empty",
+        "none",
+        "self50",
+        "0.5",
+        "24",
+        "1",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-none-self50-0.5-height2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-none-self50-0.5-height2/test.html",
+      "input_sha256": "a5364e3e6d14e45afb271d6aaaa5634f900eb63bb1e43f6ced6838c827d551be",
+      "native_args": [
+        "empty",
+        "none",
+        "self50",
+        "0.5",
+        "24",
+        "2",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-none-self50-0.5-width2half",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-none-self50-0.5-width2half/test.html",
+      "input_sha256": "f7089b01ac6a8e4aa54276698e0fd1724b6498082f4ae472cb008bd356117304",
+      "native_args": [
+        "empty",
+        "none",
+        "self50",
+        "0.5",
+        "2.5",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-none-parent50-0-width1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-none-parent50-0-width1/test.html",
+      "input_sha256": "c4bc0e0ad9bf6acc9acd6c529f4378401c9af8cccbb608a9091dc96f2e3be286",
+      "native_args": [
+        "empty",
+        "none",
+        "parent50",
+        "0",
+        "1",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-none-parent50-0-width2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-none-parent50-0-width2/test.html",
+      "input_sha256": "1c3b61d8bc7d6d1c3f5220e9e608ef84f021c2c66646c4c14f2164c8c8c7f4be",
+      "native_args": [
+        "empty",
+        "none",
+        "parent50",
+        "0",
+        "2",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-none-parent50-0-height1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-none-parent50-0-height1/test.html",
+      "input_sha256": "a678ec846b2685471d424cd9f2753208539b61b54bc76972fd3a9b05f42b58be",
+      "native_args": [
+        "empty",
+        "none",
+        "parent50",
+        "0",
+        "24",
+        "1",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-none-parent50-0-height2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-none-parent50-0-height2/test.html",
+      "input_sha256": "f4f1097b4bf253b2317137ee8e53882c59b7003b9f2499d3aa9a67efa3edf926",
+      "native_args": [
+        "empty",
+        "none",
+        "parent50",
+        "0",
+        "24",
+        "2",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-none-parent50-0-width2half",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-none-parent50-0-width2half/test.html",
+      "input_sha256": "83cc6ebf59c3251ad4af1ef7f553200363c742d3877ccb54430a63a3593c91c5",
+      "native_args": [
+        "empty",
+        "none",
+        "parent50",
+        "0",
+        "2.5",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-none-parent50-0.5-width1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-none-parent50-0.5-width1/test.html",
+      "input_sha256": "43f2ec61f3aba9a307324fdd624e2663f8389001a6712ea88d7c0d406e141c7e",
+      "native_args": [
+        "empty",
+        "none",
+        "parent50",
+        "0.5",
+        "1",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-none-parent50-0.5-width2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-none-parent50-0.5-width2/test.html",
+      "input_sha256": "78e3796f59d2fb932b5d2e9dea331c37b1c83e9105086d684179060f6f0579bf",
+      "native_args": [
+        "empty",
+        "none",
+        "parent50",
+        "0.5",
+        "2",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-none-parent50-0.5-height1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-none-parent50-0.5-height1/test.html",
+      "input_sha256": "e0259852688664f58906f989b8b0fdc90eda46802fb867ddd81803ed92fff626",
+      "native_args": [
+        "empty",
+        "none",
+        "parent50",
+        "0.5",
+        "24",
+        "1",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-none-parent50-0.5-height2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-none-parent50-0.5-height2/test.html",
+      "input_sha256": "bcf12b43eee82fb82f728c8264ac260674b9c0e37e9c32a61377d3e4425fb389",
+      "native_args": [
+        "empty",
+        "none",
+        "parent50",
+        "0.5",
+        "24",
+        "2",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-none-parent50-0.5-width2half",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-none-parent50-0.5-width2half/test.html",
+      "input_sha256": "ea36387d81ccd0fb67b66d338b4e0053d8ba46b3b9e6be93ac970467791a7f4c",
+      "native_args": [
+        "empty",
+        "none",
+        "parent50",
+        "0.5",
+        "2.5",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-parent-none-0-width1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-parent-none-0-width1/test.html",
+      "input_sha256": "d5a542d0c45432f66801000cb33a31ad2ce55ef9368624112ad36be6b6ca5950",
+      "native_args": [
+        "empty",
+        "parent",
+        "none",
+        "0",
+        "1",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-parent-none-0-width2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-parent-none-0-width2/test.html",
+      "input_sha256": "61c993c57daeeb19e96d20dbbda7ad45a96e072202758977b2c815aacc14496a",
+      "native_args": [
+        "empty",
+        "parent",
+        "none",
+        "0",
+        "2",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-parent-none-0-height1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-parent-none-0-height1/test.html",
+      "input_sha256": "fb3f81a1981a6ea6ff0b24e94a7108753b99ef663c8b953c03d0865c044061bf",
+      "native_args": [
+        "empty",
+        "parent",
+        "none",
+        "0",
+        "24",
+        "1",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-parent-none-0-height2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-parent-none-0-height2/test.html",
+      "input_sha256": "126f30adfe058c816ef2f34c33d6efc5db8aa69d68ac1ab9bcbbaaa4c3f255be",
+      "native_args": [
+        "empty",
+        "parent",
+        "none",
+        "0",
+        "24",
+        "2",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-parent-none-0-width2half",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-parent-none-0-width2half/test.html",
+      "input_sha256": "6d5836ec85fa5686a7e6ded50f8657ee2326d2ce50ba839f7815bf2bed313998",
+      "native_args": [
+        "empty",
+        "parent",
+        "none",
+        "0",
+        "2.5",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-parent-none-0.5-width1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-parent-none-0.5-width1/test.html",
+      "input_sha256": "988085f64cac95744c070e51ba66a6589cb9eb4ed392e3a21ccaacbff222b22d",
+      "native_args": [
+        "empty",
+        "parent",
+        "none",
+        "0.5",
+        "1",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-parent-none-0.5-width2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-parent-none-0.5-width2/test.html",
+      "input_sha256": "f32a3de61ce9808aaccfd4408d9c175f58ee88043b439bd3cff0cd566b95d0e1",
+      "native_args": [
+        "empty",
+        "parent",
+        "none",
+        "0.5",
+        "2",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-parent-none-0.5-height1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-parent-none-0.5-height1/test.html",
+      "input_sha256": "7c49825c6c679082c0d337867c1868fd8006910ed642c48a0410ad15495cf15d",
+      "native_args": [
+        "empty",
+        "parent",
+        "none",
+        "0.5",
+        "24",
+        "1",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-parent-none-0.5-height2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-parent-none-0.5-height2/test.html",
+      "input_sha256": "7baf1154ed8bf2d1eb8643518c5adcadfb836910167d665f79ee09ae87c6c912",
+      "native_args": [
+        "empty",
+        "parent",
+        "none",
+        "0.5",
+        "24",
+        "2",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-parent-none-0.5-width2half",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-parent-none-0.5-width2half/test.html",
+      "input_sha256": "6f19d166f7651eee8c481ca458259775463aededc75e07ca772382187aede4d3",
+      "native_args": [
+        "empty",
+        "parent",
+        "none",
+        "0.5",
+        "2.5",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-parent-self50-0-width1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-parent-self50-0-width1/test.html",
+      "input_sha256": "edf7bf46134d0a52671f9b871dc036f294810d399256b26fb342550283753696",
+      "native_args": [
+        "empty",
+        "parent",
+        "self50",
+        "0",
+        "1",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-parent-self50-0-width2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-parent-self50-0-width2/test.html",
+      "input_sha256": "9dcde7eb7a66f61adfa60607cb15dec1110471cf14468882b73997b027b5940d",
+      "native_args": [
+        "empty",
+        "parent",
+        "self50",
+        "0",
+        "2",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-parent-self50-0-height1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-parent-self50-0-height1/test.html",
+      "input_sha256": "f92d831fc5591192a65c1dbf8c01f81b5ecde864791ee1789ac97541e8a25a39",
+      "native_args": [
+        "empty",
+        "parent",
+        "self50",
+        "0",
+        "24",
+        "1",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-parent-self50-0-height2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-parent-self50-0-height2/test.html",
+      "input_sha256": "1f8ac8f551b9b93fc99c570a77f9e003db30ea004a8b8f8ca8ae084ed98a8075",
+      "native_args": [
+        "empty",
+        "parent",
+        "self50",
+        "0",
+        "24",
+        "2",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-parent-self50-0-width2half",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-parent-self50-0-width2half/test.html",
+      "input_sha256": "07b96b3e1d03e401eda5702aa8e9bc7987440da5b29a9f03fcd6fc49869c6344",
+      "native_args": [
+        "empty",
+        "parent",
+        "self50",
+        "0",
+        "2.5",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-parent-self50-0.5-width1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-parent-self50-0.5-width1/test.html",
+      "input_sha256": "3d40d1879a02878744543d633a1311fcc198801e4e3501c87dffc4063795be32",
+      "native_args": [
+        "empty",
+        "parent",
+        "self50",
+        "0.5",
+        "1",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-parent-self50-0.5-width2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-parent-self50-0.5-width2/test.html",
+      "input_sha256": "d3ec2d96ecb6adae73420d5ea0804ca4e77ba793a8827abf1e675bb6a12261bd",
+      "native_args": [
+        "empty",
+        "parent",
+        "self50",
+        "0.5",
+        "2",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-parent-self50-0.5-height1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-parent-self50-0.5-height1/test.html",
+      "input_sha256": "6e1155c502b3df97d346896f20901ccded5ec8d6b8dbc903a0d6db27557ab9fa",
+      "native_args": [
+        "empty",
+        "parent",
+        "self50",
+        "0.5",
+        "24",
+        "1",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-parent-self50-0.5-height2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-parent-self50-0.5-height2/test.html",
+      "input_sha256": "38d9c9fbc6bb28af2dcec445e0c23cf467eae18e77e9c6719deb8f2ce608a801",
+      "native_args": [
+        "empty",
+        "parent",
+        "self50",
+        "0.5",
+        "24",
+        "2",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-parent-self50-0.5-width2half",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-parent-self50-0.5-width2half/test.html",
+      "input_sha256": "671d27b55a80e97e741dba832e08ebd28040ab469815a868dacef9685f2770f0",
+      "native_args": [
+        "empty",
+        "parent",
+        "self50",
+        "0.5",
+        "2.5",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-parent-parent50-0-width1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-parent-parent50-0-width1/test.html",
+      "input_sha256": "5a65ec8f023f3d033038ac8203bbeb5f6331a4e7914256a30412e1531b76fcdf",
+      "native_args": [
+        "empty",
+        "parent",
+        "parent50",
+        "0",
+        "1",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-parent-parent50-0-width2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-parent-parent50-0-width2/test.html",
+      "input_sha256": "4d6c73c981711c77626d953ac8462546361d42364f74d8d328fc1b3fae092d65",
+      "native_args": [
+        "empty",
+        "parent",
+        "parent50",
+        "0",
+        "2",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-parent-parent50-0-height1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-parent-parent50-0-height1/test.html",
+      "input_sha256": "6723de057afeb2b89bb3a4aa3f6eaff31b3297048bf1e8a37a85a3efb8ed0031",
+      "native_args": [
+        "empty",
+        "parent",
+        "parent50",
+        "0",
+        "24",
+        "1",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-parent-parent50-0-height2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-parent-parent50-0-height2/test.html",
+      "input_sha256": "470759a3a1967c9e05ea7488734e9fb317730322d298b455b26385dd713ea260",
+      "native_args": [
+        "empty",
+        "parent",
+        "parent50",
+        "0",
+        "24",
+        "2",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-parent-parent50-0-width2half",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-parent-parent50-0-width2half/test.html",
+      "input_sha256": "5bd4f637580b6abb1d86ecd00779e381611f1819ad508a6bbecfcc38f647793d",
+      "native_args": [
+        "empty",
+        "parent",
+        "parent50",
+        "0",
+        "2.5",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-parent-parent50-0.5-width1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-parent-parent50-0.5-width1/test.html",
+      "input_sha256": "9143889a7ad04b575ff97ef0863e573430f268ee35d2f0c2ed7fe06c8ec8781e",
+      "native_args": [
+        "empty",
+        "parent",
+        "parent50",
+        "0.5",
+        "1",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-parent-parent50-0.5-width2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-parent-parent50-0.5-width2/test.html",
+      "input_sha256": "6cba091e2281ab42c2d7b947f1297e2eb1dcc2985ca8e3feed5ad1637850f5d8",
+      "native_args": [
+        "empty",
+        "parent",
+        "parent50",
+        "0.5",
+        "2",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-parent-parent50-0.5-height1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-parent-parent50-0.5-height1/test.html",
+      "input_sha256": "be911263a50a0023b6bd33cfcb48d88660cc3701fbf4ebff368298c8aaf60f8f",
+      "native_args": [
+        "empty",
+        "parent",
+        "parent50",
+        "0.5",
+        "24",
+        "1",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-parent-parent50-0.5-height2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-parent-parent50-0.5-height2/test.html",
+      "input_sha256": "1ddc2622715dbc4aba5f8cf5493c489b0d027f53c9d9f25eed5853a26c5edb73",
+      "native_args": [
+        "empty",
+        "parent",
+        "parent50",
+        "0.5",
+        "24",
+        "2",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "empty-parent-parent50-0.5-width2half",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/empty-parent-parent50-0.5-width2half/test.html",
+      "input_sha256": "057ed126551a2e19667c2a93e7cfd31faf96793205b56f495edb87d162e1c7f6",
+      "native_args": [
+        "empty",
+        "parent",
+        "parent50",
+        "0.5",
+        "2.5",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-none-none-0-width1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-none-none-0-width1/test.html",
+      "input_sha256": "5c3f04b3159f98f44525961af42849965b3edb430fc3679fcfa3c9b4af3d4855",
+      "native_args": [
+        "no-source",
+        "none",
+        "none",
+        "0",
+        "1",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-none-none-0-width2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-none-none-0-width2/test.html",
+      "input_sha256": "1217831c15f80030fc388d16a024172a45b54046b641acfffad03ff9dec4d4bd",
+      "native_args": [
+        "no-source",
+        "none",
+        "none",
+        "0",
+        "2",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-none-none-0-height1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-none-none-0-height1/test.html",
+      "input_sha256": "e7043cb07eae764572e5d8a2a26f76895e9cb3f3dd090f43ac6f2cca11ed40a1",
+      "native_args": [
+        "no-source",
+        "none",
+        "none",
+        "0",
+        "24",
+        "1",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-none-none-0-height2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-none-none-0-height2/test.html",
+      "input_sha256": "0fa1d437b671e9f0099fe1d13cb3ef5cd2d22fabc872757f0a327d8defd89f4b",
+      "native_args": [
+        "no-source",
+        "none",
+        "none",
+        "0",
+        "24",
+        "2",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-none-none-0-width2half",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-none-none-0-width2half/test.html",
+      "input_sha256": "5134a01e8229e484cae22bf4c02379439e8c1dfc258a08f507cb55068d4aca70",
+      "native_args": [
+        "no-source",
+        "none",
+        "none",
+        "0",
+        "2.5",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-none-none-0.5-width1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-none-none-0.5-width1/test.html",
+      "input_sha256": "0c973c99ba6852525023dfeafa8f77470027d6b29e3bcad5b73bf23b027c32ad",
+      "native_args": [
+        "no-source",
+        "none",
+        "none",
+        "0.5",
+        "1",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-none-none-0.5-width2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-none-none-0.5-width2/test.html",
+      "input_sha256": "be77e9cc5ddb05eb0656972be204b44e56c0bbb0ee87fddb46347bc37e56b620",
+      "native_args": [
+        "no-source",
+        "none",
+        "none",
+        "0.5",
+        "2",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-none-none-0.5-height1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-none-none-0.5-height1/test.html",
+      "input_sha256": "f309428f9fd32313930b4f236ad17079b137711ca59ca2ab5696e60a0af2fbc8",
+      "native_args": [
+        "no-source",
+        "none",
+        "none",
+        "0.5",
+        "24",
+        "1",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-none-none-0.5-height2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-none-none-0.5-height2/test.html",
+      "input_sha256": "1cfc99a4e7a766e1360c169fc434a36499aaf9d48265e73e2d7e3303ab963637",
+      "native_args": [
+        "no-source",
+        "none",
+        "none",
+        "0.5",
+        "24",
+        "2",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-none-none-0.5-width2half",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-none-none-0.5-width2half/test.html",
+      "input_sha256": "b31fdcda3626fe59522d05d6eb6b6a038c1189426f639bcb5264f262394ebc8b",
+      "native_args": [
+        "no-source",
+        "none",
+        "none",
+        "0.5",
+        "2.5",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-none-self50-0-width1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-none-self50-0-width1/test.html",
+      "input_sha256": "d3b8c8414c32e10f1311b21d6184cf974a8fed70e45079e99a927e47aa0a33a7",
+      "native_args": [
+        "no-source",
+        "none",
+        "self50",
+        "0",
+        "1",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-none-self50-0-width2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-none-self50-0-width2/test.html",
+      "input_sha256": "bce6953a6a41cb4faed6feaf55d94a2d69045442b14f4363c3caded1e8736e1f",
+      "native_args": [
+        "no-source",
+        "none",
+        "self50",
+        "0",
+        "2",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-none-self50-0-height1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-none-self50-0-height1/test.html",
+      "input_sha256": "a255304d898c5836ced0ce0aca4550bc59530062d7f39a594e7bbeeb34c28100",
+      "native_args": [
+        "no-source",
+        "none",
+        "self50",
+        "0",
+        "24",
+        "1",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-none-self50-0-height2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-none-self50-0-height2/test.html",
+      "input_sha256": "5430b416f3644841137e997aced72f32753027fa1f421796277df24a06133302",
+      "native_args": [
+        "no-source",
+        "none",
+        "self50",
+        "0",
+        "24",
+        "2",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-none-self50-0-width2half",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-none-self50-0-width2half/test.html",
+      "input_sha256": "b5849dc028b438e8f838a58e4fcb1c89de9e20d25be286f46626d6aa6a0528ad",
+      "native_args": [
+        "no-source",
+        "none",
+        "self50",
+        "0",
+        "2.5",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-none-self50-0.5-width1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-none-self50-0.5-width1/test.html",
+      "input_sha256": "fd7a21d66c505d04591cdfaef20340f35c9377d6d393e7eb86945909a9a9b61e",
+      "native_args": [
+        "no-source",
+        "none",
+        "self50",
+        "0.5",
+        "1",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-none-self50-0.5-width2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-none-self50-0.5-width2/test.html",
+      "input_sha256": "5c583f56b95c5a3116049d2534fa5edfa97a7b80519331b8e8d9440f1a0ea181",
+      "native_args": [
+        "no-source",
+        "none",
+        "self50",
+        "0.5",
+        "2",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-none-self50-0.5-height1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-none-self50-0.5-height1/test.html",
+      "input_sha256": "e7c869fcbe70e7d5f11d4fa2891155aa2059172793efc7c224d1e875aa5dac5a",
+      "native_args": [
+        "no-source",
+        "none",
+        "self50",
+        "0.5",
+        "24",
+        "1",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-none-self50-0.5-height2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-none-self50-0.5-height2/test.html",
+      "input_sha256": "eb089fb23c38db5f3aa55679cc0fdab6a30701bb15e971478c86196030e337dc",
+      "native_args": [
+        "no-source",
+        "none",
+        "self50",
+        "0.5",
+        "24",
+        "2",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-none-self50-0.5-width2half",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-none-self50-0.5-width2half/test.html",
+      "input_sha256": "5d0cd19598f92f715ba649fb4f69a883cf43ca29b305912b3d327a7ce2ef151d",
+      "native_args": [
+        "no-source",
+        "none",
+        "self50",
+        "0.5",
+        "2.5",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-none-parent50-0-width1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-none-parent50-0-width1/test.html",
+      "input_sha256": "4ed139881d01f0cc69545c77be3de07bf0f8b9fc831d74fe86d4dcc62bdcc82c",
+      "native_args": [
+        "no-source",
+        "none",
+        "parent50",
+        "0",
+        "1",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-none-parent50-0-width2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-none-parent50-0-width2/test.html",
+      "input_sha256": "258b98cb8a596e14e65186186223e92cecc6c7c3309a6aa44babd154690b1acf",
+      "native_args": [
+        "no-source",
+        "none",
+        "parent50",
+        "0",
+        "2",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-none-parent50-0-height1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-none-parent50-0-height1/test.html",
+      "input_sha256": "4e748d3f08b67fca40927cb67f0b7b192a0d53e31a2fe53948035ebb18994117",
+      "native_args": [
+        "no-source",
+        "none",
+        "parent50",
+        "0",
+        "24",
+        "1",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-none-parent50-0-height2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-none-parent50-0-height2/test.html",
+      "input_sha256": "f6135cc89aea2664f293adecf9d0a728fdb12f11872de2a864c2ffca97ed4430",
+      "native_args": [
+        "no-source",
+        "none",
+        "parent50",
+        "0",
+        "24",
+        "2",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-none-parent50-0-width2half",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-none-parent50-0-width2half/test.html",
+      "input_sha256": "b1217e7d860c39e90bedbffbc62048a78202b3bc3e8c83a831bdc7d09ac75445",
+      "native_args": [
+        "no-source",
+        "none",
+        "parent50",
+        "0",
+        "2.5",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-none-parent50-0.5-width1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-none-parent50-0.5-width1/test.html",
+      "input_sha256": "ba8bcd5af571a4ca0ceca80020540a41d631ed0869bbd35ecd9fe49c6dc7f963",
+      "native_args": [
+        "no-source",
+        "none",
+        "parent50",
+        "0.5",
+        "1",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-none-parent50-0.5-width2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-none-parent50-0.5-width2/test.html",
+      "input_sha256": "dca710c15289b73ac8d717deef61591e09a6cbcb4e3432011d7b9189785834ae",
+      "native_args": [
+        "no-source",
+        "none",
+        "parent50",
+        "0.5",
+        "2",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-none-parent50-0.5-height1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-none-parent50-0.5-height1/test.html",
+      "input_sha256": "7f172c926597e5311806e444486930b0395257ae15da4848dffc78d7b7c3dad5",
+      "native_args": [
+        "no-source",
+        "none",
+        "parent50",
+        "0.5",
+        "24",
+        "1",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-none-parent50-0.5-height2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-none-parent50-0.5-height2/test.html",
+      "input_sha256": "ebe1d27f4f4d9a4cdfbd6fbba1a31c6c61cf038f9c69ab66851390367519fc74",
+      "native_args": [
+        "no-source",
+        "none",
+        "parent50",
+        "0.5",
+        "24",
+        "2",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-none-parent50-0.5-width2half",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-none-parent50-0.5-width2half/test.html",
+      "input_sha256": "86d0a98bddce614ff016356dd2465ebe72b51493650e833e29915282f70f95d7",
+      "native_args": [
+        "no-source",
+        "none",
+        "parent50",
+        "0.5",
+        "2.5",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-parent-none-0-width1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-parent-none-0-width1/test.html",
+      "input_sha256": "3fdea8e91445fea86ac81b9587d309c359a9dcc6a883c5e5efc595bfe21ee667",
+      "native_args": [
+        "no-source",
+        "parent",
+        "none",
+        "0",
+        "1",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-parent-none-0-width2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-parent-none-0-width2/test.html",
+      "input_sha256": "7f9f615c383615d8de65ecb6c134ac0265d39facdbe23346c96afc9ad864ee0f",
+      "native_args": [
+        "no-source",
+        "parent",
+        "none",
+        "0",
+        "2",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-parent-none-0-height1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-parent-none-0-height1/test.html",
+      "input_sha256": "be50e8e3b546dd7fd8f8536eec65ed39957b42a0297f4c68a074b6a10a27c19e",
+      "native_args": [
+        "no-source",
+        "parent",
+        "none",
+        "0",
+        "24",
+        "1",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-parent-none-0-height2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-parent-none-0-height2/test.html",
+      "input_sha256": "b989919a2d16ee10423a2f8c6fbf05bf6a25e0ab76bf9af47cec568637eea3d8",
+      "native_args": [
+        "no-source",
+        "parent",
+        "none",
+        "0",
+        "24",
+        "2",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-parent-none-0-width2half",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-parent-none-0-width2half/test.html",
+      "input_sha256": "ebb5ef88b5fc665ebd8eb451f27af7239ef485eef481cb28fd252e5fc1dbd5e9",
+      "native_args": [
+        "no-source",
+        "parent",
+        "none",
+        "0",
+        "2.5",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-parent-none-0.5-width1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-parent-none-0.5-width1/test.html",
+      "input_sha256": "ed3390ce7e5a57a6ba6c70239cfba9ba72eea8145a0521e35f52f5c4c08024cb",
+      "native_args": [
+        "no-source",
+        "parent",
+        "none",
+        "0.5",
+        "1",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-parent-none-0.5-width2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-parent-none-0.5-width2/test.html",
+      "input_sha256": "ce7826612eacc8a28227736bbfe71421dfbc2efdeee10aaba28b57afeebcf0b7",
+      "native_args": [
+        "no-source",
+        "parent",
+        "none",
+        "0.5",
+        "2",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-parent-none-0.5-height1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-parent-none-0.5-height1/test.html",
+      "input_sha256": "9c4e0de6ece12a5f1767b6e08597c4799c6e54cb511a52a48f91f2e35d59b02d",
+      "native_args": [
+        "no-source",
+        "parent",
+        "none",
+        "0.5",
+        "24",
+        "1",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-parent-none-0.5-height2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-parent-none-0.5-height2/test.html",
+      "input_sha256": "1ae054446cd0d9e93fb893b5661b2cc9bb2758bb6968f26cbdf6c2dd2b67d142",
+      "native_args": [
+        "no-source",
+        "parent",
+        "none",
+        "0.5",
+        "24",
+        "2",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-parent-none-0.5-width2half",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-parent-none-0.5-width2half/test.html",
+      "input_sha256": "5a72299092e2d653698adc2e384590e3928cab77005007f367d64dd7c3457221",
+      "native_args": [
+        "no-source",
+        "parent",
+        "none",
+        "0.5",
+        "2.5",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-parent-self50-0-width1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-parent-self50-0-width1/test.html",
+      "input_sha256": "892cdcbd541ef685d350b28f04f09b09db02e7c34e4104360e6386619c1c8ba4",
+      "native_args": [
+        "no-source",
+        "parent",
+        "self50",
+        "0",
+        "1",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-parent-self50-0-width2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-parent-self50-0-width2/test.html",
+      "input_sha256": "8f9a7a3baf96f3aa6cef969842a287e31d9efbb1ba076e1bc08c1f8053516605",
+      "native_args": [
+        "no-source",
+        "parent",
+        "self50",
+        "0",
+        "2",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-parent-self50-0-height1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-parent-self50-0-height1/test.html",
+      "input_sha256": "aeeecff8780815d0b4763ae9e020d976a9c133b330501c7273fd8b8544f282ac",
+      "native_args": [
+        "no-source",
+        "parent",
+        "self50",
+        "0",
+        "24",
+        "1",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-parent-self50-0-height2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-parent-self50-0-height2/test.html",
+      "input_sha256": "ed8862dfb3600bdcebe96d8bf1c85e8f37e4f529be887e32c12b5d635136c3b5",
+      "native_args": [
+        "no-source",
+        "parent",
+        "self50",
+        "0",
+        "24",
+        "2",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-parent-self50-0-width2half",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-parent-self50-0-width2half/test.html",
+      "input_sha256": "51751f330fd9fe0db273788240c857b06aa76f7ccb4aec80b152c8dc390e9984",
+      "native_args": [
+        "no-source",
+        "parent",
+        "self50",
+        "0",
+        "2.5",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-parent-self50-0.5-width1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-parent-self50-0.5-width1/test.html",
+      "input_sha256": "3b990f7865712e5e90a83184c4cc95b1150ae561eec7e2d15e9c29fd66f8527b",
+      "native_args": [
+        "no-source",
+        "parent",
+        "self50",
+        "0.5",
+        "1",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-parent-self50-0.5-width2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-parent-self50-0.5-width2/test.html",
+      "input_sha256": "eaa6572418dc534cb6d166713a8a7ab29a0081c3aaa5bd2de2aec914a351697e",
+      "native_args": [
+        "no-source",
+        "parent",
+        "self50",
+        "0.5",
+        "2",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-parent-self50-0.5-height1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-parent-self50-0.5-height1/test.html",
+      "input_sha256": "d9ef7d74191d9309a1f42e08be8a427f6059936480c6073a781bbc5820744a6e",
+      "native_args": [
+        "no-source",
+        "parent",
+        "self50",
+        "0.5",
+        "24",
+        "1",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-parent-self50-0.5-height2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-parent-self50-0.5-height2/test.html",
+      "input_sha256": "de2d94aa8c72a90c65ed4513414d97ddfc644590f15be4fc31a0192cc6286f7d",
+      "native_args": [
+        "no-source",
+        "parent",
+        "self50",
+        "0.5",
+        "24",
+        "2",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-parent-self50-0.5-width2half",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-parent-self50-0.5-width2half/test.html",
+      "input_sha256": "3641b8e000a2033c1a0ca27d4ca90ae1a09c8e80a7a4abc16e18f379073297a0",
+      "native_args": [
+        "no-source",
+        "parent",
+        "self50",
+        "0.5",
+        "2.5",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-parent-parent50-0-width1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-parent-parent50-0-width1/test.html",
+      "input_sha256": "96178c8251df7066dfcd4eaa08beb163215612b1549ac1fc3c2bb6b20e953b8a",
+      "native_args": [
+        "no-source",
+        "parent",
+        "parent50",
+        "0",
+        "1",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-parent-parent50-0-width2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-parent-parent50-0-width2/test.html",
+      "input_sha256": "317398d93f717430c763d9f05cc24491b84d2a28832f94190cba2e9b23949708",
+      "native_args": [
+        "no-source",
+        "parent",
+        "parent50",
+        "0",
+        "2",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-parent-parent50-0-height1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-parent-parent50-0-height1/test.html",
+      "input_sha256": "0f4a7a93a2b444dad7e916d774b6dd3cd3f17a2068af0ab28f69b0cbeba15371",
+      "native_args": [
+        "no-source",
+        "parent",
+        "parent50",
+        "0",
+        "24",
+        "1",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-parent-parent50-0-height2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-parent-parent50-0-height2/test.html",
+      "input_sha256": "696e95f23c5f1a0e924eed5b92badff99d5f773f6d0d7040583fae6da5138861",
+      "native_args": [
+        "no-source",
+        "parent",
+        "parent50",
+        "0",
+        "24",
+        "2",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-parent-parent50-0-width2half",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-parent-parent50-0-width2half/test.html",
+      "input_sha256": "7336a8c454426725216f79b6d935c693c853ce79047e1d29a66374b95b8d8ae6",
+      "native_args": [
+        "no-source",
+        "parent",
+        "parent50",
+        "0",
+        "2.5",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-parent-parent50-0.5-width1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-parent-parent50-0.5-width1/test.html",
+      "input_sha256": "627ebf56b4272e828a3469d8befb48b6b36d82e180ca3c6305955f4c6a6d8de0",
+      "native_args": [
+        "no-source",
+        "parent",
+        "parent50",
+        "0.5",
+        "1",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-parent-parent50-0.5-width2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-parent-parent50-0.5-width2/test.html",
+      "input_sha256": "3ba5e65dbd27b5b789e605105c73d855ae2f37466cb6e1bc799b108b638e2d1b",
+      "native_args": [
+        "no-source",
+        "parent",
+        "parent50",
+        "0.5",
+        "2",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-parent-parent50-0.5-height1",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-parent-parent50-0.5-height1/test.html",
+      "input_sha256": "c158fa9b1b4b543500880593390ffffa3de9d9fc38d3e02f9d6333054d8b3309",
+      "native_args": [
+        "no-source",
+        "parent",
+        "parent50",
+        "0.5",
+        "24",
+        "1",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-parent-parent50-0.5-height2",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-parent-parent50-0.5-height2/test.html",
+      "input_sha256": "d5f8141290da3a6236271f1714c1c3aeec5e78ea04d1c28d6541a90289fede4c",
+      "native_args": [
+        "no-source",
+        "parent",
+        "parent50",
+        "0.5",
+        "24",
+        "2",
+        "plain"
+      ],
+      "suite": "small"
+    },
+    {
+      "case": "no-source-parent-parent50-0.5-width2half",
+      "input": "docs/renderer/evidence/native-source-less-images-v1/small/no-source-parent-parent50-0.5-width2half/test.html",
+      "input_sha256": "c09889827d55b7b88a901d26dd2269bd89dd94e110045b8e007d594825385b76",
+      "native_args": [
+        "no-source",
+        "parent",
+        "parent50",
+        "0.5",
+        "2.5",
+        "80",
+        "plain"
+      ],
+      "suite": "small"
+    }
+  ],
+  "javascript_executed_by_openui": false,
+  "release_qualification": false,
+  "schema_version": 1
+}

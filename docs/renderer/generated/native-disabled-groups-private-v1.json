@@ -1,0 +1,940 @@
+{
+  "all_native_apis_qualified": false,
+  "archived_openui_images_are_history_only": true,
+  "c_consumers": 24,
+  "c_exports": 127,
+  "c_layouts": 34,
+  "c_state_projection": "five common fields: own,property,effective,enabled,connected; kind and parent observed by Rust only",
+  "checkable_native_behavior_qualified": false,
+  "checkable_reference_cases": 110,
+  "chromium_reference_fields_unchanged": true,
+  "cpp_consumers": 18,
+  "default_disabled_control_appearance_qualified": false,
+  "evidence": [
+    {
+      "decoded_sha256": "8fde2af98449557c506c86aed71807b4b504932c02f992b7671e7aa744814851",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3231/receipt.json",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/failed-native-receipt.json.gz",
+      "sha256": "366bc8ef3df6e4421bf7aaf59acdc6b7e9eaa88e03a15572fbd8232fbd1e59f1"
+    },
+    {
+      "decoded_sha256": "a0e1117d573d997d28b63c6ad45061200896d8042b9394b97a989e5e53576868",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3231/locked-metadata.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/failed-native-locked-metadata.log.gz",
+      "sha256": "bd03bd2ae8ccf2c1b03d469797ae0e122d087392592e24741c904469a597c8c7"
+    },
+    {
+      "decoded_sha256": "42a44e0fcbb0c3e5675efeb2c368d7ad4a673c73a055a34ac11fcf6fcf18bea4",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3231/clean-local-packages.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/failed-native-clean-local-packages.log.gz",
+      "sha256": "2d4d563f5c8bd360a51e8b247eb1e44d76db4494b8002a74937865e012f2b708"
+    },
+    {
+      "decoded_sha256": "531afedcd1a9e332ebdd7eb5eee31e8e482b7076cababd20cb13f67247bb609a",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3231/control-tests.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/failed-native-control-tests.log.gz",
+      "sha256": "e12418c56f5ec0ff83ba6d5a9fa98d79ccec8c22cc65ac6b0bf7c764d77f3948"
+    },
+    {
+      "decoded_sha256": "baf5fc28059d347df01f45b2315d19c3e09569f36d8ae88abec1986877e3a59a",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/receipt.json",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-receipt.json.gz",
+      "sha256": "b0c937d6790613eaa0fc5cee3c551b4c5a11021b487ec5641f8e394962847fb4"
+    },
+    {
+      "decoded_sha256": "a0e1117d573d997d28b63c6ad45061200896d8042b9394b97a989e5e53576868",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/locked-metadata.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-locked-metadata.log.gz",
+      "sha256": "bd03bd2ae8ccf2c1b03d469797ae0e122d087392592e24741c904469a597c8c7"
+    },
+    {
+      "decoded_sha256": "2e36d30efcb9d4ca60b4d93f1f6fa8e10dc4c4afd2a6e3417d5881fd8c06a876",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/clean-local-packages.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-clean-local-packages.log.gz",
+      "sha256": "6c44d6595cc2f11dd0f205c4a087015c17449a1395d776df1f7c8f12624cbc9e"
+    },
+    {
+      "decoded_sha256": "8c08f01543a3acfd9e499600ea888b60a79d57714a7424ca015dc65d60f5ab54",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/control-tests.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-control-tests.log.gz",
+      "sha256": "88fecdd0b1c883ead6660366ff03f326d5554b970e33c75b0229aa7cf3306356"
+    },
+    {
+      "decoded_sha256": "5df0cd301d232633cde8c8fa4b2d322b4675d8dd922f4f99db115623dcc07972",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/native-focus-integration-guards.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-native-focus-integration-guards.log.gz",
+      "sha256": "39b193fd7089f57bd8405d1634e878e19e523e1726b782fddd5714199abb4f1a"
+    },
+    {
+      "decoded_sha256": "dd0d029f405e4cdc83b168c7ea23ef108f793fbac74cf242041518e2d76ead8a",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/native-app-build.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-native-app-build.log.gz",
+      "sha256": "9a54dce94b84e47b1ba44af9f128a978088891fadba721112d382862045c0393"
+    },
+    {
+      "decoded_sha256": "5e8930e3d833336820919c055d4f40041b888cd0dce6d9f22b4e3cddf1336a97",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/native_fieldset-focus-1.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-native_fieldset-focus-1.log.gz",
+      "sha256": "651bc8b33cfee4ed8e244cf03db5eb04f35e63105690ddaafead94dd31719f8b"
+    },
+    {
+      "decoded_sha256": "5e8930e3d833336820919c055d4f40041b888cd0dce6d9f22b4e3cddf1336a97",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/native_fieldset-focus-2.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-native_fieldset-focus-2.log.gz",
+      "sha256": "651bc8b33cfee4ed8e244cf03db5eb04f35e63105690ddaafead94dd31719f8b"
+    },
+    {
+      "decoded_sha256": "64c77292ea6926dea429605bd4ed72cb4cc7bbe7b9c98f62b583e9d35b26210a",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/native_fieldset-neighbors-1.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-native_fieldset-neighbors-1.log.gz",
+      "sha256": "1a08df2121e756c7c98de6adf7798c2b2ff395add6075e9de987b6c3aaff21b8"
+    },
+    {
+      "decoded_sha256": "64c77292ea6926dea429605bd4ed72cb4cc7bbe7b9c98f62b583e9d35b26210a",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/native_fieldset-neighbors-2.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-native_fieldset-neighbors-2.log.gz",
+      "sha256": "1a08df2121e756c7c98de6adf7798c2b2ff395add6075e9de987b6c3aaff21b8"
+    },
+    {
+      "decoded_sha256": "d075decaff9c3393fc00a256f81d8c2035b48c8269ae9c4d49aff9ade6714cea",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/native_fieldset-state-1.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-native_fieldset-state-1.log.gz",
+      "sha256": "0d2dc938c85a4fa2fe9fd79ba6aa9a6ea47c340b214d879361909a2cc4761911"
+    },
+    {
+      "decoded_sha256": "d075decaff9c3393fc00a256f81d8c2035b48c8269ae9c4d49aff9ade6714cea",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/native_fieldset-state-2.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-native_fieldset-state-2.log.gz",
+      "sha256": "0d2dc938c85a4fa2fe9fd79ba6aa9a6ea47c340b214d879361909a2cc4761911"
+    },
+    {
+      "decoded_sha256": "71c1dd2ff2cc4ced3a5423830f2a6dd07342f36b6a97b58653894477dac27043",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/native_input_metadata-regression-1.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-native_input_metadata-regression-1.log.gz",
+      "sha256": "4320f4c3496ee350d973ed07ec93e172facad742209eaf4cb6ad72b4f42057ab"
+    },
+    {
+      "decoded_sha256": "71c1dd2ff2cc4ced3a5423830f2a6dd07342f36b6a97b58653894477dac27043",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/native_input_metadata-regression-2.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-native_input_metadata-regression-2.log.gz",
+      "sha256": "4320f4c3496ee350d973ed07ec93e172facad742209eaf4cb6ad72b4f42057ab"
+    },
+    {
+      "decoded_sha256": "a4a9005ddfacac54cb2fd5c1d42869db51d0bbe6dbe4af0969ff24fba81815be",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/native_selection_phases-regression-1.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-native_selection_phases-regression-1.log.gz",
+      "sha256": "f5a190077c061219be185a7dc0641ad5d64e50a7c8c0c6a6baf91de8c3ecdeb5"
+    },
+    {
+      "decoded_sha256": "a4a9005ddfacac54cb2fd5c1d42869db51d0bbe6dbe4af0969ff24fba81815be",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/native_selection_phases-regression-2.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-native_selection_phases-regression-2.log.gz",
+      "sha256": "f5a190077c061219be185a7dc0641ad5d64e50a7c8c0c6a6baf91de8c3ecdeb5"
+    },
+    {
+      "decoded_sha256": "54544780982c67d3d6f6c27bcbf126769cf86a4748ee3f4e5b1253fbdc25a148",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/native_selection_values-regression-1.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-native_selection_values-regression-1.log.gz",
+      "sha256": "13c640324021041215108d9909ef8ffab50b21ab705e0e63e3103b7c6778cdbf"
+    },
+    {
+      "decoded_sha256": "54544780982c67d3d6f6c27bcbf126769cf86a4748ee3f4e5b1253fbdc25a148",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/native_selection_values-regression-2.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-native_selection_values-regression-2.log.gz",
+      "sha256": "13c640324021041215108d9909ef8ffab50b21ab705e0e63e3103b7c6778cdbf"
+    },
+    {
+      "decoded_sha256": "18bb54137a280720ea60a8420ee7765a693d08eaaa8ccb28f03a1b771f235eb7",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/native_range_scalar-regression-1.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-native_range_scalar-regression-1.log.gz",
+      "sha256": "94e5a041768fd52e36a63ce500e24e38f8c82a7f716b5123c94f6d35e74c4ddb"
+    },
+    {
+      "decoded_sha256": "18bb54137a280720ea60a8420ee7765a693d08eaaa8ccb28f03a1b771f235eb7",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/native_range_scalar-regression-2.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-native_range_scalar-regression-2.log.gz",
+      "sha256": "94e5a041768fd52e36a63ce500e24e38f8c82a7f716b5123c94f6d35e74c4ddb"
+    },
+    {
+      "decoded_sha256": "db653e9a8a700bd81cc40e70e8375f8d04558875877ee50c7dd9b87b1c753640",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/native_range_modes-regression-1.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-native_range_modes-regression-1.log.gz",
+      "sha256": "daee7d6bf7f3e167ed2b7dbd4ca3599a54e650c172aa767e3a31f9520b077bd5"
+    },
+    {
+      "decoded_sha256": "db653e9a8a700bd81cc40e70e8375f8d04558875877ee50c7dd9b87b1c753640",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/native_range_modes-regression-2.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-native_range_modes-regression-2.log.gz",
+      "sha256": "daee7d6bf7f3e167ed2b7dbd4ca3599a54e650c172aa767e3a31f9520b077bd5"
+    },
+    {
+      "decoded_sha256": "1b50c76174e789b8f692e4657a57595ca88c997b79245314fe179d153d3ae731",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/native_disabled_focus-regression-1.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-native_disabled_focus-regression-1.log.gz",
+      "sha256": "ea1f9b2200b459ba0e8c653d311de5059ebc96ef7e098103264574fa319959c3"
+    },
+    {
+      "decoded_sha256": "1b50c76174e789b8f692e4657a57595ca88c997b79245314fe179d153d3ae731",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/native_disabled_focus-regression-2.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-native_disabled_focus-regression-2.log.gz",
+      "sha256": "ea1f9b2200b459ba0e8c653d311de5059ebc96ef7e098103264574fa319959c3"
+    },
+    {
+      "decoded_sha256": "226221e73922afe44412e0ee6e10f6cdb2434d955f287598c365e0aa63837ec9",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/ffi-library-build.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-ffi-library-build.log.gz",
+      "sha256": "3af9593d2db8f03ad622e3d283b09b2621cfea5ca019f994af6afb7aabac226e"
+    },
+    {
+      "decoded_sha256": "c37a144739e156013fc283fa7fd48743e356af37cfb1b307561450670b59aa3c",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/all-c-cpp-consumers.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-all-c-cpp-consumers.log.gz",
+      "sha256": "3cc5a27fb0f95a772966c6598943001e949388c9e919bf259a94d664e4f84367"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/compile-fieldset-c.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-compile-fieldset-c.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/link-fieldset-c.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-link-fieldset-c.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "07e69b12746b4c4f81f82dd9f8a79ada9b4dc924d13521b471f378430548bb48",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/fieldset-c-focus-1.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-fieldset-c-focus-1.log.gz",
+      "sha256": "6039a738c5cc7b54c952b64ec45e8acd13deefd4697690353f06b6861d29780a"
+    },
+    {
+      "decoded_sha256": "07e69b12746b4c4f81f82dd9f8a79ada9b4dc924d13521b471f378430548bb48",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/fieldset-c-focus-2.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-fieldset-c-focus-2.log.gz",
+      "sha256": "6039a738c5cc7b54c952b64ec45e8acd13deefd4697690353f06b6861d29780a"
+    },
+    {
+      "decoded_sha256": "8fbd60991f0c2eb01d194ced970ed0bc4315103a3f178ddfd585bc1e74db1a0b",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/fieldset-c-neighbors-1.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-fieldset-c-neighbors-1.log.gz",
+      "sha256": "53ea03deaba7786996bfd7ff75539ce5b92d0c953e492dc7fcfed188c631d44f"
+    },
+    {
+      "decoded_sha256": "8fbd60991f0c2eb01d194ced970ed0bc4315103a3f178ddfd585bc1e74db1a0b",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/fieldset-c-neighbors-2.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-fieldset-c-neighbors-2.log.gz",
+      "sha256": "53ea03deaba7786996bfd7ff75539ce5b92d0c953e492dc7fcfed188c631d44f"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/compile-fieldset_state-c.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-compile-fieldset_state-c.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/link-fieldset_state-c.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-link-fieldset_state-c.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "4ef6b2d57f1d82fd4f022f6191d4861412134cb638278c44c6db9e207a96be70",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/fieldset_state-c-state-1.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-fieldset_state-c-state-1.log.gz",
+      "sha256": "369d71f35c341165f530befe7878cc55e608336840900033022ec13b72d5f06d"
+    },
+    {
+      "decoded_sha256": "4ef6b2d57f1d82fd4f022f6191d4861412134cb638278c44c6db9e207a96be70",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/fieldset_state-c-state-2.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-fieldset_state-c-state-2.log.gz",
+      "sha256": "369d71f35c341165f530befe7878cc55e608336840900033022ec13b72d5f06d"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/compile-selection_tasks-c.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-compile-selection_tasks-c.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/link-selection_tasks-c.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-link-selection_tasks-c.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "9cf2da926fe08d46fc85c85336691d22f37c0b71789ac8a31b9666afdf02d4e2",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/selection_tasks-c-regression-1.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-selection_tasks-c-regression-1.log.gz",
+      "sha256": "c13ddd352b5f52778bd471d6032b27345e52b9ff1a47d4d25c3f353b59cf81c8"
+    },
+    {
+      "decoded_sha256": "9cf2da926fe08d46fc85c85336691d22f37c0b71789ac8a31b9666afdf02d4e2",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/selection_tasks-c-regression-2.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-selection_tasks-c-regression-2.log.gz",
+      "sha256": "c13ddd352b5f52778bd471d6032b27345e52b9ff1a47d4d25c3f353b59cf81c8"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/compile-disabled_focus-c.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-compile-disabled_focus-c.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/link-disabled_focus-c.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-link-disabled_focus-c.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "55e0f88638b460d8bffb830dc5b188a40f864ae0aeabdb2a537b7394faea3bd0",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/disabled_focus-c-regression-1.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-disabled_focus-c-regression-1.log.gz",
+      "sha256": "d68c91c86fba45fc2fd9a09e3c574816a004b740a4103f1121237dedb3f1bb7c"
+    },
+    {
+      "decoded_sha256": "55e0f88638b460d8bffb830dc5b188a40f864ae0aeabdb2a537b7394faea3bd0",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/disabled_focus-c-regression-2.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-disabled_focus-c-regression-2.log.gz",
+      "sha256": "d68c91c86fba45fc2fd9a09e3c574816a004b740a4103f1121237dedb3f1bb7c"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/compile-input_metadata-c.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-compile-input_metadata-c.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/link-input_metadata-c.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-link-input_metadata-c.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "b14735c6a539f55f02491c47ca96a8fae8a8e3231d0fd7a45c096f7f1fc82c3d",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/input_metadata-c-regression-1.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-input_metadata-c-regression-1.log.gz",
+      "sha256": "29b51fdf81ac827f1c1bf907b6162dd94cacd314e7369ddeec5820cbe433bd86"
+    },
+    {
+      "decoded_sha256": "b14735c6a539f55f02491c47ca96a8fae8a8e3231d0fd7a45c096f7f1fc82c3d",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/input_metadata-c-regression-2.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-input_metadata-c-regression-2.log.gz",
+      "sha256": "29b51fdf81ac827f1c1bf907b6162dd94cacd314e7369ddeec5820cbe433bd86"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/compile-fieldset-cpp.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-compile-fieldset-cpp.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/link-fieldset-cpp.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-link-fieldset-cpp.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "07e69b12746b4c4f81f82dd9f8a79ada9b4dc924d13521b471f378430548bb48",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/fieldset-cpp-focus-1.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-fieldset-cpp-focus-1.log.gz",
+      "sha256": "6039a738c5cc7b54c952b64ec45e8acd13deefd4697690353f06b6861d29780a"
+    },
+    {
+      "decoded_sha256": "07e69b12746b4c4f81f82dd9f8a79ada9b4dc924d13521b471f378430548bb48",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/fieldset-cpp-focus-2.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-fieldset-cpp-focus-2.log.gz",
+      "sha256": "6039a738c5cc7b54c952b64ec45e8acd13deefd4697690353f06b6861d29780a"
+    },
+    {
+      "decoded_sha256": "8fbd60991f0c2eb01d194ced970ed0bc4315103a3f178ddfd585bc1e74db1a0b",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/fieldset-cpp-neighbors-1.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-fieldset-cpp-neighbors-1.log.gz",
+      "sha256": "53ea03deaba7786996bfd7ff75539ce5b92d0c953e492dc7fcfed188c631d44f"
+    },
+    {
+      "decoded_sha256": "8fbd60991f0c2eb01d194ced970ed0bc4315103a3f178ddfd585bc1e74db1a0b",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/fieldset-cpp-neighbors-2.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-fieldset-cpp-neighbors-2.log.gz",
+      "sha256": "53ea03deaba7786996bfd7ff75539ce5b92d0c953e492dc7fcfed188c631d44f"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/compile-fieldset_state-cpp.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-compile-fieldset_state-cpp.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/link-fieldset_state-cpp.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-link-fieldset_state-cpp.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "4ef6b2d57f1d82fd4f022f6191d4861412134cb638278c44c6db9e207a96be70",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/fieldset_state-cpp-state-1.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-fieldset_state-cpp-state-1.log.gz",
+      "sha256": "369d71f35c341165f530befe7878cc55e608336840900033022ec13b72d5f06d"
+    },
+    {
+      "decoded_sha256": "4ef6b2d57f1d82fd4f022f6191d4861412134cb638278c44c6db9e207a96be70",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/fieldset_state-cpp-state-2.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-fieldset_state-cpp-state-2.log.gz",
+      "sha256": "369d71f35c341165f530befe7878cc55e608336840900033022ec13b72d5f06d"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/compile-selection_tasks-cpp.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-compile-selection_tasks-cpp.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/link-selection_tasks-cpp.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-link-selection_tasks-cpp.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "9cf2da926fe08d46fc85c85336691d22f37c0b71789ac8a31b9666afdf02d4e2",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/selection_tasks-cpp-regression-1.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-selection_tasks-cpp-regression-1.log.gz",
+      "sha256": "c13ddd352b5f52778bd471d6032b27345e52b9ff1a47d4d25c3f353b59cf81c8"
+    },
+    {
+      "decoded_sha256": "9cf2da926fe08d46fc85c85336691d22f37c0b71789ac8a31b9666afdf02d4e2",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/selection_tasks-cpp-regression-2.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-selection_tasks-cpp-regression-2.log.gz",
+      "sha256": "c13ddd352b5f52778bd471d6032b27345e52b9ff1a47d4d25c3f353b59cf81c8"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/compile-disabled_focus-cpp.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-compile-disabled_focus-cpp.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/link-disabled_focus-cpp.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-link-disabled_focus-cpp.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "55e0f88638b460d8bffb830dc5b188a40f864ae0aeabdb2a537b7394faea3bd0",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/disabled_focus-cpp-regression-1.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-disabled_focus-cpp-regression-1.log.gz",
+      "sha256": "d68c91c86fba45fc2fd9a09e3c574816a004b740a4103f1121237dedb3f1bb7c"
+    },
+    {
+      "decoded_sha256": "55e0f88638b460d8bffb830dc5b188a40f864ae0aeabdb2a537b7394faea3bd0",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/disabled_focus-cpp-regression-2.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-disabled_focus-cpp-regression-2.log.gz",
+      "sha256": "d68c91c86fba45fc2fd9a09e3c574816a004b740a4103f1121237dedb3f1bb7c"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/compile-input_metadata-cpp.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-compile-input_metadata-cpp.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/link-input_metadata-cpp.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-link-input_metadata-cpp.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "b14735c6a539f55f02491c47ca96a8fae8a8e3231d0fd7a45c096f7f1fc82c3d",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/input_metadata-cpp-regression-1.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-input_metadata-cpp-regression-1.log.gz",
+      "sha256": "29b51fdf81ac827f1c1bf907b6162dd94cacd314e7369ddeec5820cbe433bd86"
+    },
+    {
+      "decoded_sha256": "b14735c6a539f55f02491c47ca96a8fae8a8e3231d0fd7a45c096f7f1fc82c3d",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-effective-disabled-v3238/input_metadata-cpp-regression-2.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-native-input_metadata-cpp-regression-2.log.gz",
+      "sha256": "29b51fdf81ac827f1c1bf907b6162dd94cacd314e7369ddeec5820cbe433bd86"
+    },
+    {
+      "decoded_sha256": "8f53b7bf032c862e4c2fdb39a1f761af85735ac0cb6720eafa3ce9b525a527aa",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-group-renderer-v3244/receipt.json",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-renderer-receipt.json.gz",
+      "sha256": "e9a13bcce2279404d3729ca272a8dabc2e81a5fff8f9bd973b838cf4e12a8ef3"
+    },
+    {
+      "decoded_sha256": "4aefb2cbf990753885b7b217ce1174d9d95a1197bbf533b763f14d34f4d6b997",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-group-renderer-v3244/trial-build.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-renderer-trial-build.log.gz",
+      "sha256": "dd717d4dd0fdf5171cfa8b48217cc09e7a2a6961b2098f23285c90cbd33dbcaf"
+    },
+    {
+      "decoded_sha256": "911615ff85c03f90f216443c642d943278e53253167924ad66edf24a4c61e216",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-group-renderer-v3244/trial-focused.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-renderer-trial-focused.log.gz",
+      "sha256": "782ef07aaf4f641cd03c6fec616639db2bf170e84a7b881da03133951747b5d5"
+    },
+    {
+      "decoded_sha256": "de8587b9e674a2ef0e30653aa30026a37326a2335448dc8883774e7d34dbf925",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-group-renderer-v3244/trial-primitive.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-renderer-trial-primitive.log.gz",
+      "sha256": "38094cdec072d5bc7f27b428669a990186cf8e7243c1d8e730bcea18ad539421"
+    },
+    {
+      "decoded_sha256": "8c43595babe875626fb67919f911efd8d544c5a0c486233ee4f6068e325afe2e",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-group-renderer-v3244/trial-full.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-renderer-trial-full.log.gz",
+      "sha256": "ff717a098cbb70bd08ada2b4b534b991938124d5049bcca2f9b5306ceb164894"
+    },
+    {
+      "decoded_sha256": "2853f506d70946f978cd519c0206f9b45e06622d42acac3e49e78dfc1a0d1b60",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-group-renderer-v3244/trial-expanded.log",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/private-renderer-trial-expanded.log.gz",
+      "sha256": "9c0f4c76bf0ae9a0fde1a7ed32d638dbfe9ad958919eec148a7a2b2e9ac1bbb0"
+    },
+    {
+      "decoded_sha256": "3b562bbd0dd6d002cb4484cc0c67ace6b22637866ab929ac7b7f04ba5614a5b4",
+      "original_path": "/tmp/openui-private-native-effective-disabled-failed-audit-v3236.json",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/openui-private-native-effective-disabled-failed-audit-v3236.json.gz",
+      "sha256": "19eaee7b9a0a8e9e38b4459315f43df814003219ddf703252eedaba6ac295b66"
+    },
+    {
+      "decoded_sha256": "ba49ea54e5e0146403ac3ba24f50e3533f55186bf5d63f96a0f1c8888a3e9663",
+      "original_path": "/tmp/openui-native-effective-disabled-completed-audit-v3241.json",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/openui-native-effective-disabled-completed-audit-v3241.json.gz",
+      "sha256": "8367b9772754cc7afaaecd7cc3fc8870c20e99dff7462e31a7f18ed2a5ff9765"
+    },
+    {
+      "decoded_sha256": "f64596bb2aa1a00f283d33715b0ce084d5a844285ca7cef42c3881c7cd144675",
+      "original_path": "/tmp/openui-private-native-group-renderer-completed-audit-v3254.json",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/openui-private-native-group-renderer-completed-audit-v3254.json.gz",
+      "sha256": "c0f526101e21c3fad4444c9f239e29da125ec269fe9bb455248c3f3c91e4f99c"
+    },
+    {
+      "decoded_sha256": "ae90fad973fa0b43bddcb7a15d05ec84595350380c7da08bd38924c8e08c8c32",
+      "original_path": "/tmp/openui-native-checkable-reference-audit-v3250.json",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/openui-native-checkable-reference-audit-v3250.json.gz",
+      "sha256": "b3ac08586b7128a08d3e01fad6db5bed88da5147a997e7837c10b7dd1d6fc98b"
+    },
+    {
+      "decoded_sha256": "0016fb3c0a78eb080dda8e4204d72c8b966810140f1ff3a1f69a149e9064d656",
+      "original_path": "/tmp/openui-native-checkable-reference-audit-v3258.json",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/openui-native-checkable-reference-audit-v3258.json.gz",
+      "sha256": "81345f56798e21e949234a728d40c2fa767ae3a08a3bb722b1cc876e3d103851"
+    },
+    {
+      "decoded_sha256": "ed9fd46cbdadc69f832709a0aa16b394009978723d264a9d5f9f9f39bfc9ff75",
+      "original_path": "/tmp/openui-native-disabled-integration-readiness-v3259.json",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/openui-native-disabled-integration-readiness-v3259.json.gz",
+      "sha256": "841b6ab5cadf0a8fd72b90856d60ed61b80241a03c550ce9d3a6d3c4e04b7820"
+    },
+    {
+      "decoded_sha256": "328c833bcc67c259088b44640aa98a806ede963986438d95ecea4622cfafc5ab",
+      "original_path": "/tmp/openui-native-disabled-integration-patch-v3259.diff",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/openui-native-disabled-integration-patch-v3259.diff.gz",
+      "sha256": "977a174a19652d4a75cfc840508f07b8fea466efaeafe06078a8b61371f927fe"
+    },
+    {
+      "decoded_sha256": "d51b384a9b6cc30a07787e5bb80fca3ac4c73670b363b322e6c4bb56f0114409",
+      "original_path": "/tmp/openui-native-checkable-investigation-v3261.json",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/openui-native-checkable-investigation-v3261.json.gz",
+      "sha256": "435e85e572db14ee244ec8a9599dd890a92d956fcff759648cf101e1365754cd"
+    },
+    {
+      "decoded_sha256": "204bbaa4977d2db4c268e2206e8c0b38a2b73193d7316af1de4a89dcd9dd187e",
+      "original_path": "/tmp/openui-public-doc-checkpoint-hosted-v3245.json",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/openui-public-doc-checkpoint-hosted-v3245.json.gz",
+      "sha256": "f2d6537236e7dcb9de2e8cf0bed07423b5aaf16dcc94e69e48711b7d8279006b"
+    },
+    {
+      "decoded_sha256": "6e26033cf796ccb2229346c19834f93ad56b9b2edabd01588c7ccf514f17b7bf",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-group-renderer-v3244/trial/focused-matrix/focused-summary.json",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/focused-summary.json.gz",
+      "sha256": "52ea0db485388562422957dc96ab1e2497bc52bdb680cc555546ce64b32caa6a"
+    },
+    {
+      "decoded_sha256": "b3b0d435788d1e5c1f40a6ffeeaefe17feb24d493a9387fde824e8ce19383d37",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-group-renderer-v3244/trial/primitive-matrix/primitive-summary.json",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/primitive-summary.json.gz",
+      "sha256": "01a90ee80e22353412b512af5fb00455a9c6e77d2d6004c0f6a2d7e7a33c0536"
+    },
+    {
+      "decoded_sha256": "6e8a74b494231df5019c5ffb0d4a4732bb78d921e3256ca1c29d2ac965fd5ee5",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-group-renderer-v3244/trial/full-matrix/full-summary.json",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/full-summary.json.gz",
+      "sha256": "0078d25a9bb3b2f5e8816ba2d014f22db81484ea7e5280160e4d0ddc1f820110"
+    },
+    {
+      "decoded_sha256": "fe7c077c19d2ce95973db0102b76f754ad64cd02b5daf78304c199e12ce7c986",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-group-renderer-v3244/trial/expanded-matrix/expanded-summary.json",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/expanded-summary.json.gz",
+      "sha256": "80cc6e5ef1bc4f72416d5d8a2388feb335782f139dc4765b1e6f400f2e790139"
+    },
+    {
+      "decoded_sha256": "de74ead8bd392d9680a0198c1604a9a5a68c1bf7089d1cff90edd3d4057aa3db",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-group-renderer-v3244/trial/guarded-build/receipt.json",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/guarded-build-receipt.json.gz",
+      "sha256": "e4ee942c67a2575c15940a93cc9efc34be66103118004d20f975d163d0016960"
+    },
+    {
+      "decoded_sha256": "46482ba0bc4db4684eb7337fd8c365e04206167dfc27706331d46819454b16a7",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-group-renderer-v3244/embedded-source-identity.json",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/embedded-source-identity.json.gz",
+      "sha256": "35089f92fb7483c015d4090cd67696bc4b3efbf3f434392c325d9d28d801582f"
+    },
+    {
+      "decoded_sha256": "a0e1117d573d997d28b63c6ad45061200896d8042b9394b97a989e5e53576868",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-group-renderer-v3244/trial/guarded-build/metadata.stdout",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/guarded-build-metadata.stdout.gz",
+      "sha256": "bd03bd2ae8ccf2c1b03d469797ae0e122d087392592e24741c904469a597c8c7"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-group-renderer-v3244/trial/guarded-build/metadata.stderr",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/guarded-build-metadata.stderr.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-group-renderer-v3244/trial/guarded-build/clean-local-packages.stdout",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/guarded-build-clean-local-packages.stdout.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "ad34e29ca60da3bce3558598be30af0f96ca4c4f26e2f35c11552dbe97c24d12",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-group-renderer-v3244/trial/guarded-build/clean-local-packages.stderr",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/guarded-build-clean-local-packages.stderr.gz",
+      "sha256": "98ecf97f6934d74bd03249ac778b1560c42c6dd7d87b8e37c4dd0df1a428b330"
+    },
+    {
+      "decoded_sha256": "eb1b6d4d908afa27316c9234068928881b7475c442eb356cf1550d38cc88eb6b",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-group-renderer-v3244/trial/guarded-build/build.stdout",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/guarded-build-build.stdout.gz",
+      "sha256": "ec5e9ddf2fc121d293fa084357a7d0454cb98e9683fca7d53cb7a6ed2a1b631e"
+    },
+    {
+      "decoded_sha256": "a7a3700c06116f3b7dba441431d934723f50693fcd442e45611b7bb4bb9e56f4",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-group-renderer-v3244/trial/guarded-build/build.stderr",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/guarded-build-build.stderr.gz",
+      "sha256": "fd442f8a5d861312f67cc4b4d3a6d5b7b42cad18f4c72dd31785a7872cad054c"
+    },
+    {
+      "decoded_sha256": "47c93d01bd090d01f4c87458d9e1133ff982df4bd13eef5b2420d16b61b8d53b",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-radio-programmatic-reference-v3242/receipt.json",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/native-radio-programmatic-reference-v3242-receipt.json.gz",
+      "sha256": "47e3419fdd45104361c2d60785e3fd5e7cddd11956e9dbecd2b1cda353f74717"
+    },
+    {
+      "decoded_sha256": "63a8fe16c3f9052ee7c3ff45613ba63644eb33df7c27c335191c17610355b451",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-radio-programmatic-reference-v3242/observations-1.json",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/native-radio-programmatic-reference-v3242-observations-1.json.gz",
+      "sha256": "251160b00983b3230729d6ba6a3548d32e604734b70e5761bc21c9074128decc"
+    },
+    {
+      "decoded_sha256": "63a8fe16c3f9052ee7c3ff45613ba63644eb33df7c27c335191c17610355b451",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-radio-programmatic-reference-v3242/observations-2.json",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/native-radio-programmatic-reference-v3242-observations-2.json.gz",
+      "sha256": "251160b00983b3230729d6ba6a3548d32e604734b70e5761bc21c9074128decc"
+    },
+    {
+      "decoded_sha256": "c39bdd7cc8cf78bd69f1171c8cf6e75409838a9eca73e7b4fc6980aee574382a",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-checkable-default-reference-v3248/receipt.json",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/native-checkable-default-reference-v3248-receipt.json.gz",
+      "sha256": "54d6de6387f5dea36aeca34496ae4da6201f252445e5297a02b63f804247c59c"
+    },
+    {
+      "decoded_sha256": "3cc1918a5682353fd0fff3659eb6ad3cd3cd07c69bf30bd2753919897a167896",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-checkable-default-reference-v3249/receipt.json",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/native-checkable-default-reference-v3249-receipt.json.gz",
+      "sha256": "bac9cc8c90a3d9c10fbdf771ae4cbb828d4a02bbbb852cb7e1c871294993dea7"
+    },
+    {
+      "decoded_sha256": "6df6a8de1dddeb9a401caa916fb912094abc99d9b962032aa9fd91cbd646473c",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-checkable-default-reference-v3249/observations-1.json",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/native-checkable-default-reference-v3249-observations-1.json.gz",
+      "sha256": "ac4920f197665317e43ce12a3c61f22e24b13bd0e8089d973829776324ec2428"
+    },
+    {
+      "decoded_sha256": "6df6a8de1dddeb9a401caa916fb912094abc99d9b962032aa9fd91cbd646473c",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-checkable-default-reference-v3249/observations-2.json",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/native-checkable-default-reference-v3249-observations-2.json.gz",
+      "sha256": "ac4920f197665317e43ce12a3c61f22e24b13bd0e8089d973829776324ec2428"
+    },
+    {
+      "decoded_sha256": "50e1600a04fc6cf229f786b9b9718ecbdef4ba578f19b15707326f00242ff119",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-checkable-activation-reference-v3257/receipt.json",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/native-checkable-activation-reference-v3257-receipt.json.gz",
+      "sha256": "f41f1b4fe418f5983d174e586000cb63550593f00938c3f4e91d71ea79bc5055"
+    },
+    {
+      "decoded_sha256": "121e123c2791fc215fd76170e4c9b98ec85c6dd989a9e671d79a0ce4b4b12105",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-checkable-activation-reference-v3257/observations-1.json",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/native-checkable-activation-reference-v3257-observations-1.json.gz",
+      "sha256": "9fb4c7e2fbd807fb5137934ee923b3b39e91f0b8332c00d626e290c6d00e0e9b"
+    },
+    {
+      "decoded_sha256": "121e123c2791fc215fd76170e4c9b98ec85c6dd989a9e671d79a0ce4b4b12105",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-checkable-activation-reference-v3257/observations-2.json",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/native-checkable-activation-reference-v3257-observations-2.json.gz",
+      "sha256": "9fb4c7e2fbd807fb5137934ee923b3b39e91f0b8332c00d626e290c6d00e0e9b"
+    },
+    {
+      "decoded_sha256": "0f4cc2ffb27b9fbbde79c3dd44ff477fa81997822d6110eb155992617d34316c",
+      "original_path": "/tmp/openui-private-native-effective-disabled-owner-v3238.py",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/openui-private-native-effective-disabled-owner-v3238.py.gz",
+      "sha256": "9a4572ba91653b912255526a60a922475c7149729679978b12380b00a155a911"
+    },
+    {
+      "decoded_sha256": "76f41fcb5a471fd455cc2f4f845899f6a82e08ddc4882f89c0040704cbba554a",
+      "original_path": "/tmp/openui-private-native-group-renderer-v3244.py",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/openui-private-native-group-renderer-v3244.py.gz",
+      "sha256": "c86d5020f09bfe39318d7e528a29922a66f3b8351804da9d95b5ca26fe5a8b62"
+    },
+    {
+      "decoded_sha256": "bf1894b9689e79c8e499cb35f575f5138714c76c1923ecc2235e5b601ecd7f96",
+      "original_path": "/tmp/openui-private-native-group-renderer-completed-audit-v3254.py",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/openui-private-native-group-renderer-completed-audit-v3254.py.gz",
+      "sha256": "6ec2f4776ddb0cc51c031ec0f043259a0a345cb5ce64d089b931a45c299d99cd"
+    },
+    {
+      "decoded_sha256": "1dac113537789a20d6b71890a31ac9360f77c2abe2b63588aba1add392b7c012",
+      "original_path": "/tmp/openui-native-checkable-activation-reference-v3257.py",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/openui-native-checkable-activation-reference-v3257.py.gz",
+      "sha256": "cfe06337a2817397a3a3cc8fc69e8817a96f218ead1d0bbdb00e174c48abd2e0"
+    },
+    {
+      "decoded_sha256": "21b2bbdd566b7f20da786aa75c938c879aba0248ea69ffa6b2182c25870d34bd",
+      "original_path": "/tmp/openui-native-checkable-reference-audit-v3258.py",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/openui-native-checkable-reference-audit-v3258.py.gz",
+      "sha256": "4b7f301e8c0c6e26f8bc81ecdb68411d282ceead8a8b56797ae83ba8df9e87cc"
+    },
+    {
+      "decoded_sha256": "7c01b2619745731c876ba00f510a8147bd452adc83bdf1693e1febb8bdc7ac03",
+      "original_path": "/tmp/openui-public-native-disabled-groups-owner-v3264.py",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/openui-public-native-disabled-groups-owner-v3264.py.gz",
+      "sha256": "da3128134b3210362c7bea338eeb27164d587805aa34fe5ff60ca0dec8344e62"
+    },
+    {
+      "decoded_sha256": "c13f7e6f4c6b4ee65380e8d1444db38e4faed9454e83c269a3ec1da03e2b2554",
+      "original_path": "/tmp/openui-public-native-disabled-groups-completed-audit-v3265.py",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/openui-public-native-disabled-groups-completed-audit-v3265.py.gz",
+      "sha256": "45f987853cfa7fb70cf453287b56077dba6564e7f633e92d7aaa38a834161566"
+    },
+    {
+      "decoded_sha256": "6b0f5249206e6f3ae683ae4981ffc1cea0b61298406da3b9d312e6a6afa5dc0e",
+      "original_path": "/tmp/openui-native-disabled-publication-failed-v3272.json",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/failed-publication-receipt.json.gz",
+      "sha256": "7b7c9c4e058a79b1425394b44f24f9e825bfe75c484daa3fe591b4b44ff0045c"
+    },
+    {
+      "decoded_sha256": "b007e8f7c340ebc6d8a6cc6a1bbed2f5fcab5f870bde6dd177789fa377e42346",
+      "original_path": "/tmp/openui-native-disabled-integration-publication-v3263.py",
+      "path": "docs/renderer/evidence/native-disabled-groups-private-v1/failed-publication-driver.py.gz",
+      "sha256": "71ecc5032c2ce1d4f0762981a7e7443068cb9c95f9afb61c5c3cdc69e27fd937"
+    }
+  ],
+  "hardware_qualified": false,
+  "implementation_present_on_public_branch": true,
+  "integration_guards": 23,
+  "javascript_executed_by_openui": false,
+  "measured_private_source": {
+    "clean": true,
+    "commit": "f677704772693922af0be96c9ffa429274ebfcd4",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "08533e562b3d28d07b6c005ff277d7bcf335a70837c0877de37752a9fb2b11dc",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "measured_renderer_results": {
+    "expanded": {
+      "actual_exit_code": 1,
+      "different": 1587,
+      "errors": 0,
+      "exact": 22141,
+      "gains": 0,
+      "losses": 0,
+      "total": 23728,
+      "worsened": 0
+    },
+    "focused": {
+      "actual_exit_code": 0,
+      "different": 0,
+      "errors": 0,
+      "exact": 640,
+      "gains": 0,
+      "losses": 0,
+      "total": 640,
+      "worsened": 0
+    },
+    "full": {
+      "actual_exit_code": 1,
+      "different": 1586,
+      "errors": 0,
+      "exact": 21338,
+      "gains": 0,
+      "losses": 0,
+      "total": 22924,
+      "worsened": 0
+    },
+    "primitive": {
+      "actual_exit_code": 0,
+      "different": 0,
+      "errors": 0,
+      "exact": 960,
+      "gains": 0,
+      "losses": 0,
+      "total": 960,
+      "worsened": 0
+    }
+  },
+  "native_counts": {
+    "c": {
+      "exact": 88,
+      "total": 88
+    },
+    "cpp": {
+      "exact": 88,
+      "total": 88
+    },
+    "rust": {
+      "exact": 88,
+      "total": 88
+    }
+  },
+  "old_125_exports_and_all_layouts_preserved": true,
+  "pixel_target": "pinned Chromium",
+  "pixel_tolerance": 0,
+  "prior_109_rust_c_cpp_scenarios_unchanged": true,
+  "private_completed_native_audit": {
+    "actual_whole_exit_code": 0,
+    "all_native_apis_qualified": false,
+    "all_old_125_exports_and_layouts_preserved": true,
+    "all_source_bytes_unchanged": true,
+    "binary_hashes_verified": 17,
+    "c_consumers": 24,
+    "c_exports": 127,
+    "c_layouts": 34,
+    "c_scenarios": 88,
+    "c_state_projection_explicit": true,
+    "cpp_consumers": 18,
+    "cpp_scenarios": 88,
+    "current_artifact_paths_verified": 46,
+    "fresh_local_artifact_records_verified": 78,
+    "implementation_integrated": false,
+    "integration_guards": 23,
+    "javascript_executed_by_openui": false,
+    "main_source": {
+      "clean": true,
+      "commit": "1d54fc50f7b225d8a39b6a8962fe7159d7651852",
+      "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+      "source_tree_sha256": "2b3009605ab3f974ad6272787f46962a3fd312027251c820e94d35978571f5af",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native_repeated_process_pairs": 21,
+    "old_109_rust_c_cpp_scenarios_unchanged": true,
+    "owner_terminal": true,
+    "receipt_sha256": "baf5fc28059d347df01f45b2315d19c3e09569f36d8ae88abec1986877e3a59a",
+    "release_qualified": false,
+    "renderer_qualified": false,
+    "rust_scenarios": 88,
+    "schema_version": 1,
+    "source": {
+      "clean": true,
+      "commit": "f677704772693922af0be96c9ffa429274ebfcd4",
+      "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+      "source_tree_sha256": "08533e562b3d28d07b6c005ff277d7bcf335a70837c0877de37752a9fb2b11dc",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "unit_guards": 197
+  },
+  "private_completed_renderer_audit": {
+    "actual_whole_exit_code": 1,
+    "all_native_apis_qualified": false,
+    "all_source_bytes_unchanged": true,
+    "chromium_reference_fields_unchanged": true,
+    "compiled_artifacts_verified": 26,
+    "extra_executor_inputs_verified": true,
+    "fresh_local_packages": 14,
+    "historical_openui_archive_is_a_pixel_target": false,
+    "implementation_integrated": false,
+    "javascript_executed_by_openui": false,
+    "logs_verified": 11,
+    "matrix_rows_verified": 48252,
+    "owner_terminal": true,
+    "pixel_target": "pinned Chromium",
+    "pixel_tolerance": 0,
+    "private_candidate_nonregression": true,
+    "private_source": {
+      "clean": true,
+      "commit": "f677704772693922af0be96c9ffa429274ebfcd4",
+      "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+      "source_tree_sha256": "08533e562b3d28d07b6c005ff277d7bcf335a70837c0877de37752a9fb2b11dc",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "public_source": {
+      "clean": true,
+      "commit": "1d54fc50f7b225d8a39b6a8962fe7159d7651852",
+      "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+      "source_tree_sha256": "2b3009605ab3f974ad6272787f46962a3fd312027251c820e94d35978571f5af",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "receipt_sha256": "8f53b7bf032c862e4c2fdb39a1f761af85735ac0cb6720eafa3ce9b525a527aa",
+    "release_qualified": false,
+    "renderer_qualified": false,
+    "results": {
+      "expanded": {
+        "actual_exit_code": 1,
+        "different": 1587,
+        "errors": 0,
+        "exact": 22141,
+        "gains": 0,
+        "losses": 0,
+        "total": 23728,
+        "worsened": 0
+      },
+      "focused": {
+        "actual_exit_code": 0,
+        "different": 0,
+        "errors": 0,
+        "exact": 640,
+        "gains": 0,
+        "losses": 0,
+        "total": 640,
+        "worsened": 0
+      },
+      "full": {
+        "actual_exit_code": 1,
+        "different": 1586,
+        "errors": 0,
+        "exact": 21338,
+        "gains": 0,
+        "losses": 0,
+        "total": 22924,
+        "worsened": 0
+      },
+      "primitive": {
+        "actual_exit_code": 0,
+        "different": 0,
+        "errors": 0,
+        "exact": 960,
+        "gains": 0,
+        "losses": 0,
+        "total": 960,
+        "worsened": 0
+      }
+    },
+    "schema_version": 1
+  },
+  "private_native_actual_whole_exit_code": 0,
+  "public_combined_source_qualified": false,
+  "public_source_before_integration": {
+    "clean": true,
+    "commit": "1d54fc50f7b225d8a39b6a8962fe7159d7651852",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "2b3009605ab3f974ad6272787f46962a3fd312027251c820e94d35978571f5af",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "release_qualified": false,
+  "renderer_qualified": false,
+  "repeated_process_pairs": 21,
+  "schema_version": 1,
+  "unit_guards": 197
+}

@@ -1,0 +1,45 @@
+{
+  "adapted_from": {
+    "/tmp/openui-native-keywords-current-retry-consumer-v1779.py": "9d864dd755e9be158fdac058f73e3c7c61e138a6266e81f5967f4a1067044958",
+    "/tmp/openui-native-keywords-current-retry-matrices-v1779.py": "9e80490e3f40514a160c410b55f24cffa6ed2b4b4403238de98382b5cd75c620",
+    "/tmp/openui-native-keywords-current-retry-pipeline-v1780.py": "b4ab5fd3d297f12927219f3b0ff4f04bfc4881fb8fbb1a80e21ddf1685fe8e91",
+    "/tmp/openui-native-keywords-current-retry-table-geometry-v1779.py": "16972bd5501652c69d49d615ab71060c9a35808d4497adb1010302c7182d16d8"
+  },
+  "all_four_pixel_matrices_required": true,
+  "all_required_modules_exist_at_declared_root": true,
+  "all_worker_source_root_assignments_ast_verified": true,
+  "cargo_commands_run": 0,
+  "completed_clean_build_receipt_sha256": "abcddbbfad58d6a136a482375c8e044dde1ac765d6d5ef77a69f7aa442d8aee8",
+  "fresh_capture_root": "/dev/shm/openui-native-keywords-pixels-7d6ffabf-v1785",
+  "javascript_executed_by_openui": false,
+  "new_release_states_admitted": 0,
+  "original_path_failure_sha256": "54531f0ae622985f834c8ce9c4148fd269638c8409b3739a9a825c84f37b88b7",
+  "pixel_tolerance": 0,
+  "probe_sha256": "53b511c82a7d998ad22f3403fb1486cdc43b7451451d05a4533d1c4bbb079a46",
+  "release_qualification": false,
+  "required_stages": 7,
+  "same_source_build_reused": true,
+  "schema_version": 1,
+  "screenshots_generated": 0,
+  "scripts": {
+    "/tmp/openui-native-keywords-capture-build-reuse-v1785.py": "4e4e97386ecb2549806455079000dbe60412b2f605c242f57f7fe573ca4a8d9c",
+    "/tmp/openui-native-keywords-capture-consumer-v1785.py": "42465fd24eac5d39e3e7fd417688ecfaeddeb1ff5a00a78516b42b3fc546311a",
+    "/tmp/openui-native-keywords-capture-matrices-v1785.py": "12f4055bd46bfd0d34796b15a598572a1244975c95f1aab346e92c9dc7554bf7",
+    "/tmp/openui-native-keywords-capture-pipeline-v1786.py": "282aba92102af19e596ba222178cb462d41778a1d4daa30661039fd62dbd51de",
+    "/tmp/openui-native-keywords-capture-table-geometry-v1785.py": "2f0aa475651326cbc00185d468f8a31ed125d602cf8daa2b334d915b02cd6311"
+  },
+  "source": {
+    "clean": true,
+    "commit": "7d6ffabfea1f72c90f97475488dba8a8058ac4c7",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "c24ab4b7c6003be5febbf60385f34286f8af2025b9d836361de70dc10281a2fe",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "7d6ffabfea1f72c90f97475488dba8a8058ac4c7",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "c24ab4b7c6003be5febbf60385f34286f8af2025b9d836361de70dc10281a2fe",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

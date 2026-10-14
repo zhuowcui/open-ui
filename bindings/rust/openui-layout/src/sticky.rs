@@ -78,13 +78,11 @@ pub fn compute_sticky_constraint_rect(
     containing_block_inline_size: LayoutUnit,
     containing_block_block_size: LayoutUnit,
 ) -> StickyConstraintRect {
-    let zero = LayoutUnit::zero();
-
     let resolve = |len: &Length, cb_size: LayoutUnit| -> Option<LayoutUnit> {
         if len.is_auto() {
             None
         } else {
-            Some(resolve_length(len, cb_size, zero, zero))
+            Some(resolve_sticky_length(len, cb_size))
         }
     };
 
@@ -96,6 +94,15 @@ pub fn compute_sticky_constraint_rect(
     }
 }
 
+/// Chromium MinimumValueForLength, shared by sticky insets and margins.
+pub(crate) fn resolve_sticky_length(length: &Length, basis: LayoutUnit) -> LayoutUnit {
+    if length.is_percent() {
+        LayoutUnit::from_f32(basis.to_f32() * length.value() / 100.0)
+    } else {
+        resolve_length(length, basis, LayoutUnit::zero(), LayoutUnit::zero())
+    }
+}
+
 // ---------------------------------------------------------------------------
 // compute_sticky_offset  — core algorithm (CSS Positioned Layout L3 §3)
 // ---------------------------------------------------------------------------
@@ -103,25 +110,10 @@ pub fn compute_sticky_constraint_rect(
 /// Compute the visual offset to apply to a sticky element given the current
 /// scroll position.
 ///
-/// # Algorithm (per axis)
-///
-/// ```text
-/// if (inset-start != auto AND inset-end != auto):
-///     offset = max(start_stick, min(0, end_stick))
-/// else if (inset-start != auto):
-///     offset = max(0, start_stick)
-/// else if (inset-end != auto):
-///     offset = min(0, end_stick)
-/// else:
-///     offset = 0
-///
-/// offset = clamp(offset, -max_negative, max_positive)
-/// ```
-///
-/// * `start_stick` is the amount the element must shift to reach its start-
-///   edge sticky threshold.
-/// * `end_stick` is the amount it must shift to reach its end-edge threshold.
-/// * The clamp ensures the element never overflows its containing block.
+/// End movement is computed and applied first, then start movement. Both
+/// requests use the same normal sticky range and are limited by the containing
+/// block. The retained layout pass supplies the writing-direction-adjusted
+/// insets and the two ancestor channels before calling this shared operation.
 pub fn compute_sticky_offset(
     normal_flow_offset: PhysicalOffset,
     scroll_offset: PhysicalOffset,
@@ -181,56 +173,34 @@ fn compute_axis_offset(
 ) -> LayoutUnit {
     let zero = LayoutUnit::zero();
 
-    // Position of the element's start edge relative to the viewport.
-    // (positive = below/right of viewport start)
-    let el_in_vp = normal_pos - scroll + vp_start;
-
-    // "start_stick": how much to shift so the element's start edge is at
-    // `viewport_start + inset_start`.
-    let start_stick = inset_start.map(|inset| (vp_start + inset) - el_in_vp);
-
-    // "end_stick": how much to shift so the element's end edge is at
-    // `viewport_end - inset_end`.
-    let end_stick =
-        inset_end.map(|inset| (vp_start + vp_extent - inset) - (el_in_vp + element_extent));
-
-    // CSS §3 decision table:
-    let raw_offset = match (start_stick, end_stick) {
-        (Some(s), Some(e)) => {
-            // Both insets specified: stick to start but don't exceed end.
-            max_lu(s, min_lu(zero, e))
+    // Blink computes both movements from the unchanged normal sticky range,
+    // after the independent ancestor shifts. Scrolling moves the constraining
+    // range, so a nonzero viewport origin remains part of the threshold.
+    let mut end = inset_end;
+    if let (Some(start), Some(maximum)) = (inset_start, end.as_mut()) {
+        let free = vp_extent - element_extent - start - *maximum;
+        if free < zero {
+            // The retained layout caller already adjusts the end corresponding
+            // to its containing block's writing direction. This default is the
+            // unflipped physical axis for standalone callers.
+            *maximum = *maximum + free;
         }
-        (Some(s), None) => {
-            // Only start inset: stick to start edge.
-            max_lu(zero, s)
-        }
-        (None, Some(e)) => {
-            // Only end inset: stick to end edge.
-            min_lu(zero, e)
-        }
-        (None, None) => zero,
-    };
-
-    // Clamp so the element stays within the containing block.
-    //
-    //   max_positive: how far toward the end the element can shift before
-    //                 its end edge hits the CB end edge.
-    //   max_negative: how far toward the start the element can shift before
-    //                 its start edge hits the CB start edge.
-    let cb_end = cb_start + cb_extent;
-    let max_positive = (cb_end - element_extent) - normal_pos;
-    let max_negative = normal_pos - cb_start;
-
-    if raw_offset > zero {
-        // A containing-block end edge may limit positive sticky movement, but
-        // it never pulls an already out-of-bounds normal position backward.
-        min_lu(raw_offset, max_lu(max_positive, zero))
-    } else if raw_offset < zero {
-        // Likewise, a start edge only limits requested negative movement.
-        max_lu(raw_offset, min_lu(-max_negative, zero))
-    } else {
-        zero
     }
+    let end_delta = end.map_or(zero, |inset| {
+        let requested = min_lu(
+            vp_start + scroll + vp_extent - inset - normal_pos - element_extent,
+            zero,
+        );
+        max_lu(requested, min_lu(cb_start - normal_pos, zero))
+    });
+    let start_delta = inset_start.map_or(zero, |inset| {
+        let requested = max_lu(vp_start + scroll + inset - normal_pos, zero);
+        min_lu(
+            requested,
+            max_lu(cb_start + cb_extent - normal_pos - element_extent, zero),
+        )
+    });
+    end_delta + start_delta
 }
 
 // ---------------------------------------------------------------------------

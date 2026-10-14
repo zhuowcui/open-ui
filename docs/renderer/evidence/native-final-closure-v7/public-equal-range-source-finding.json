@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "agent": "opacity_census_audit",
+  "producer_pid": 3375827,
+  "base": "5520ed920523164574fc80187b2702892cb5ac62",
+  "bounded_source_reasoning_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-progress-equal-range-guard-source-opacity-census-audit-v4539/finding-opacity-census-audit-v1.json",
+  "bounded_source_reasoning_sha256": "26ad983c0863aab5a48c3c21f64a58a34d2096d80c5b6796d482b9c4516abc47",
+  "source_rules": [
+    "same default attachment descriptor sets auto alignment but never calls OnRangeUpdate (.50 animation.cc2924\u20132950)",
+    "inactive percentage setter stores held50%; activation rescales it and does not replace a logically held/paused start (.50 header92\u2013101, animation.cc537\u2013541/644\u2013662/2811\u20132822/2850\u20132874)"
+  ],
+  "strict_expected_same_range": {
+    "percentage": 50.0,
+    "opacity": 0.5
+  },
+  "preserved": [
+    "original seek25/.25,play0/0,finish100/1 assertions",
+    "same original source/target/styles and strict repeated PNG equality",
+    "genuinely changed range/new-start guards remain unchanged in Engine attachment/progress suites"
+  ],
+  "production_changed": false,
+  "native_execution": false,
+  "browser_execution": false,
+  "qualification": false
+}

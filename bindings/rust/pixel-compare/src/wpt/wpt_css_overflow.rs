@@ -14034,6 +14034,7 @@ fn css_overflow_overflow_body_propagation_006(
     viewport: ViewportMetrics,
 ) -> Result<Engine, EngineError> {
     let (mut doc, html, vp) = root_doc(viewport);
+    doc.set_style(vp, RendererStyleValue::Display(Display::Block));
     doc.set_style(
         vp,
         RendererStyleValue::FontFamily(FontFamilyList {
@@ -14043,7 +14044,6 @@ fn css_overflow_overflow_body_propagation_006(
             ],
         }),
     );
-    doc.set_style(vp, RendererStyleValue::Display(Display::Block));
     doc.set_style(html, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(html, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(html, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -14053,6 +14053,14 @@ fn css_overflow_overflow_body_propagation_006(
     doc.set_style(html, RendererStyleValue::PaddingBottom(Length::px(0.0)));
     doc.set_style(html, RendererStyleValue::PaddingLeft(Length::px(0.0)));
     doc.set_style(html, RendererStyleValue::BoxSizing(BoxSizing::ContentBox));
+    doc.set_style(
+        html,
+        RendererStyleValue::ScrollSnapAxis(ScrollSnapAxis::Both),
+    );
+    doc.set_style(
+        html,
+        RendererStyleValue::ScrollSnapStrictness(ScrollSnapStrictness::Mandatory),
+    );
     doc.set_style(vp, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(vp, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(vp, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -14062,10 +14070,19 @@ fn css_overflow_overflow_body_propagation_006(
     doc.set_style(vp, RendererStyleValue::PaddingBottom(Length::px(20.0)));
     doc.set_style(vp, RendererStyleValue::PaddingLeft(Length::px(20.0)));
     doc.set_style(vp, RendererStyleValue::BoxSizing(BoxSizing::ContentBox));
-    doc.set_style(vp, RendererStyleValue::FontSize(16.0));
     doc.set_style(vp, RendererStyleValue::OverflowX(Overflow::Scroll));
     doc.set_style(vp, RendererStyleValue::OverflowY(Overflow::Scroll));
     doc.set_style(vp, RendererStyleValue::MarginTop(Length::px(100.0)));
+    doc.set_style(
+        vp,
+        RendererStyleValue::FontFamily(FontFamilyList {
+            families: vec![
+                FontFamily::Named("Ahem".to_string()),
+                FontFamily::Named("DejaVu Sans".to_string()),
+            ],
+        }),
+    );
+    doc.set_style(vp, RendererStyleValue::ListStyleType(ListStyleType::None));
     let n1 = doc.create_node(ElementTag::Text);
     doc.set_style(n1, RendererStyleValue::FontSize(16.0));
     doc.set_style(
@@ -219568,6 +219585,10 @@ fn css_overflow_scroll_markers_scroll_marker_group_keeps_active_in_view_ref(
     doc.set_style(n1, RendererStyleValue::WhiteSpace(WhiteSpace::Nowrap));
     doc.set_style(n1, RendererStyleValue::PaddingTop(Length::px(50.0)));
     doc.set_style(n1, RendererStyleValue::ScrollSnapAxis(ScrollSnapAxis::X));
+    doc.set_style(
+        n1,
+        RendererStyleValue::ScrollSnapStrictness(ScrollSnapStrictness::Mandatory),
+    );
     doc.set_style(n1, RendererStyleValue::Direction(Direction::Rtl));
     doc.set_style(
         n1,
@@ -224069,6 +224090,10 @@ fn css_overflow_scroll_markers_scroll_marker_group_snap_aligns_to_active_ref(
     doc.set_style(n1, RendererStyleValue::ScrollSnapAxis(ScrollSnapAxis::X));
     doc.set_style(
         n1,
+        RendererStyleValue::ScrollSnapStrictness(ScrollSnapStrictness::Mandatory),
+    );
+    doc.set_style(
+        n1,
         RendererStyleValue::CounterSet(vec![CounterOperation {
             name: "markeridx".to_string(),
             value: -1,
@@ -226376,6 +226401,10 @@ fn css_overflow_scroll_markers_scroll_marker_group_snap_aligns_to_active_ref(
     doc.set_style(n65, RendererStyleValue::OverflowX(Overflow::Scroll));
     doc.set_style(n65, RendererStyleValue::WhiteSpace(WhiteSpace::Nowrap));
     doc.set_style(n65, RendererStyleValue::ScrollSnapAxis(ScrollSnapAxis::X));
+    doc.set_style(
+        n65,
+        RendererStyleValue::ScrollSnapStrictness(ScrollSnapStrictness::Mandatory),
+    );
     doc.set_style(
         n65,
         RendererStyleValue::FontFamily(FontFamilyList {
@@ -230139,6 +230168,10 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_001_ref(
     doc.set_style(n2, RendererStyleValue::Height(Length::px(200.0)));
     doc.set_style(n2, RendererStyleValue::OverflowX(Overflow::Scroll));
     doc.set_style(n2, RendererStyleValue::ScrollSnapAxis(ScrollSnapAxis::X));
+    doc.set_style(
+        n2,
+        RendererStyleValue::ScrollSnapStrictness(ScrollSnapStrictness::Mandatory),
+    );
     doc.set_style(n2, RendererStyleValue::BorderTopWidth(2));
     doc.set_style(n2, RendererStyleValue::BorderTopStyle(BorderStyle::Solid));
     doc.set_style(
@@ -230311,19 +230344,28 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_001_ref(
     doc.set_style(n5, RendererStyleValue::Height(Length::px(35.0)));
     doc.set_style(
         n5,
-        RendererStyleValue::BorderTopLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopLeftRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n5,
-        RendererStyleValue::BorderTopRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n5,
-        RendererStyleValue::BorderBottomRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n5,
-        RendererStyleValue::BorderBottomLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomLeftRadius((50.0_f32, 50.0_f32)),
+    );
+    doc.set_style(
+        n5,
+        RendererStyleValue::BorderRadiusPercent([
+            (true, true),
+            (true, true),
+            (true, true),
+            (true, true),
+        ]),
     );
     doc.set_style(n5, RendererStyleValue::MarginTop(Length::px(3.0)));
     doc.set_style(n5, RendererStyleValue::MarginRight(Length::px(3.0)));
@@ -230557,19 +230599,28 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_001_ref(
     doc.set_style(n12, RendererStyleValue::Height(Length::px(35.0)));
     doc.set_style(
         n12,
-        RendererStyleValue::BorderTopLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopLeftRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n12,
-        RendererStyleValue::BorderTopRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n12,
-        RendererStyleValue::BorderBottomRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n12,
-        RendererStyleValue::BorderBottomLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomLeftRadius((50.0_f32, 50.0_f32)),
+    );
+    doc.set_style(
+        n12,
+        RendererStyleValue::BorderRadiusPercent([
+            (true, true),
+            (true, true),
+            (true, true),
+            (true, true),
+        ]),
     );
     doc.set_style(n12, RendererStyleValue::MarginTop(Length::px(3.0)));
     doc.set_style(n12, RendererStyleValue::MarginRight(Length::px(3.0)));
@@ -230809,19 +230860,28 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_001_ref(
     doc.set_style(n19, RendererStyleValue::Height(Length::px(35.0)));
     doc.set_style(
         n19,
-        RendererStyleValue::BorderTopLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopLeftRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n19,
-        RendererStyleValue::BorderTopRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n19,
-        RendererStyleValue::BorderBottomRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n19,
-        RendererStyleValue::BorderBottomLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomLeftRadius((50.0_f32, 50.0_f32)),
+    );
+    doc.set_style(
+        n19,
+        RendererStyleValue::BorderRadiusPercent([
+            (true, true),
+            (true, true),
+            (true, true),
+            (true, true),
+        ]),
     );
     doc.set_style(n19, RendererStyleValue::MarginTop(Length::px(3.0)));
     doc.set_style(n19, RendererStyleValue::MarginRight(Length::px(3.0)));
@@ -231058,19 +231118,28 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_001_ref(
     doc.set_style(n26, RendererStyleValue::Height(Length::px(35.0)));
     doc.set_style(
         n26,
-        RendererStyleValue::BorderTopLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopLeftRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n26,
-        RendererStyleValue::BorderTopRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n26,
-        RendererStyleValue::BorderBottomRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n26,
-        RendererStyleValue::BorderBottomLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomLeftRadius((50.0_f32, 50.0_f32)),
+    );
+    doc.set_style(
+        n26,
+        RendererStyleValue::BorderRadiusPercent([
+            (true, true),
+            (true, true),
+            (true, true),
+            (true, true),
+        ]),
     );
     doc.set_style(n26, RendererStyleValue::MarginTop(Length::px(3.0)));
     doc.set_style(n26, RendererStyleValue::MarginRight(Length::px(3.0)));
@@ -231307,19 +231376,28 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_001_ref(
     doc.set_style(n33, RendererStyleValue::Height(Length::px(35.0)));
     doc.set_style(
         n33,
-        RendererStyleValue::BorderTopLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopLeftRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n33,
-        RendererStyleValue::BorderTopRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n33,
-        RendererStyleValue::BorderBottomRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n33,
-        RendererStyleValue::BorderBottomLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomLeftRadius((50.0_f32, 50.0_f32)),
+    );
+    doc.set_style(
+        n33,
+        RendererStyleValue::BorderRadiusPercent([
+            (true, true),
+            (true, true),
+            (true, true),
+            (true, true),
+        ]),
     );
     doc.set_style(n33, RendererStyleValue::MarginTop(Length::px(3.0)));
     doc.set_style(n33, RendererStyleValue::MarginRight(Length::px(3.0)));
@@ -231556,19 +231634,28 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_001_ref(
     doc.set_style(n40, RendererStyleValue::Height(Length::px(35.0)));
     doc.set_style(
         n40,
-        RendererStyleValue::BorderTopLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopLeftRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n40,
-        RendererStyleValue::BorderTopRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n40,
-        RendererStyleValue::BorderBottomRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n40,
-        RendererStyleValue::BorderBottomLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomLeftRadius((50.0_f32, 50.0_f32)),
+    );
+    doc.set_style(
+        n40,
+        RendererStyleValue::BorderRadiusPercent([
+            (true, true),
+            (true, true),
+            (true, true),
+            (true, true),
+        ]),
     );
     doc.set_style(n40, RendererStyleValue::MarginTop(Length::px(3.0)));
     doc.set_style(n40, RendererStyleValue::MarginRight(Length::px(3.0)));
@@ -231805,19 +231892,28 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_001_ref(
     doc.set_style(n47, RendererStyleValue::Height(Length::px(35.0)));
     doc.set_style(
         n47,
-        RendererStyleValue::BorderTopLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopLeftRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n47,
-        RendererStyleValue::BorderTopRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n47,
-        RendererStyleValue::BorderBottomRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n47,
-        RendererStyleValue::BorderBottomLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomLeftRadius((50.0_f32, 50.0_f32)),
+    );
+    doc.set_style(
+        n47,
+        RendererStyleValue::BorderRadiusPercent([
+            (true, true),
+            (true, true),
+            (true, true),
+            (true, true),
+        ]),
     );
     doc.set_style(n47, RendererStyleValue::MarginTop(Length::px(3.0)));
     doc.set_style(n47, RendererStyleValue::MarginRight(Length::px(3.0)));
@@ -232054,19 +232150,28 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_001_ref(
     doc.set_style(n54, RendererStyleValue::Height(Length::px(35.0)));
     doc.set_style(
         n54,
-        RendererStyleValue::BorderTopLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopLeftRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n54,
-        RendererStyleValue::BorderTopRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n54,
-        RendererStyleValue::BorderBottomRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n54,
-        RendererStyleValue::BorderBottomLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomLeftRadius((50.0_f32, 50.0_f32)),
+    );
+    doc.set_style(
+        n54,
+        RendererStyleValue::BorderRadiusPercent([
+            (true, true),
+            (true, true),
+            (true, true),
+            (true, true),
+        ]),
     );
     doc.set_style(n54, RendererStyleValue::MarginTop(Length::px(3.0)));
     doc.set_style(n54, RendererStyleValue::MarginRight(Length::px(3.0)));
@@ -232236,6 +232341,19 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_001_ref(
         n58,
         RendererStyleValue::BorderBottomLeftRadius((30.0_f32, 30.0_f32)),
     );
+    doc.set_style(
+        n58,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
+    );
+    doc.set_style(
+        n58,
+        RendererStyleValue::Contain(doc.computed_style(n58).contain | Containment::LAYOUT),
+    );
     doc.materialize_generated_content();
     Ok(doc.into_engine())
 }
@@ -232350,6 +232468,10 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_002_ref(
     doc.set_style(n2, RendererStyleValue::Height(Length::px(200.0)));
     doc.set_style(n2, RendererStyleValue::OverflowX(Overflow::Scroll));
     doc.set_style(n2, RendererStyleValue::ScrollSnapAxis(ScrollSnapAxis::X));
+    doc.set_style(
+        n2,
+        RendererStyleValue::ScrollSnapStrictness(ScrollSnapStrictness::Mandatory),
+    );
     doc.set_style(n2, RendererStyleValue::BorderTopWidth(2));
     doc.set_style(n2, RendererStyleValue::BorderTopStyle(BorderStyle::Solid));
     doc.set_style(
@@ -232522,19 +232644,28 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_002_ref(
     doc.set_style(n5, RendererStyleValue::Height(Length::px(35.0)));
     doc.set_style(
         n5,
-        RendererStyleValue::BorderTopLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopLeftRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n5,
-        RendererStyleValue::BorderTopRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n5,
-        RendererStyleValue::BorderBottomRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n5,
-        RendererStyleValue::BorderBottomLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomLeftRadius((50.0_f32, 50.0_f32)),
+    );
+    doc.set_style(
+        n5,
+        RendererStyleValue::BorderRadiusPercent([
+            (true, true),
+            (true, true),
+            (true, true),
+            (true, true),
+        ]),
     );
     doc.set_style(n5, RendererStyleValue::MarginTop(Length::px(3.0)));
     doc.set_style(n5, RendererStyleValue::MarginRight(Length::px(3.0)));
@@ -232768,19 +232899,28 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_002_ref(
     doc.set_style(n12, RendererStyleValue::Height(Length::px(35.0)));
     doc.set_style(
         n12,
-        RendererStyleValue::BorderTopLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopLeftRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n12,
-        RendererStyleValue::BorderTopRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n12,
-        RendererStyleValue::BorderBottomRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n12,
-        RendererStyleValue::BorderBottomLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomLeftRadius((50.0_f32, 50.0_f32)),
+    );
+    doc.set_style(
+        n12,
+        RendererStyleValue::BorderRadiusPercent([
+            (true, true),
+            (true, true),
+            (true, true),
+            (true, true),
+        ]),
     );
     doc.set_style(n12, RendererStyleValue::MarginTop(Length::px(3.0)));
     doc.set_style(n12, RendererStyleValue::MarginRight(Length::px(3.0)));
@@ -233017,19 +233157,28 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_002_ref(
     doc.set_style(n19, RendererStyleValue::Height(Length::px(35.0)));
     doc.set_style(
         n19,
-        RendererStyleValue::BorderTopLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopLeftRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n19,
-        RendererStyleValue::BorderTopRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n19,
-        RendererStyleValue::BorderBottomRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n19,
-        RendererStyleValue::BorderBottomLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomLeftRadius((50.0_f32, 50.0_f32)),
+    );
+    doc.set_style(
+        n19,
+        RendererStyleValue::BorderRadiusPercent([
+            (true, true),
+            (true, true),
+            (true, true),
+            (true, true),
+        ]),
     );
     doc.set_style(n19, RendererStyleValue::MarginTop(Length::px(3.0)));
     doc.set_style(n19, RendererStyleValue::MarginRight(Length::px(3.0)));
@@ -233269,19 +233418,28 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_002_ref(
     doc.set_style(n26, RendererStyleValue::Height(Length::px(35.0)));
     doc.set_style(
         n26,
-        RendererStyleValue::BorderTopLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopLeftRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n26,
-        RendererStyleValue::BorderTopRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n26,
-        RendererStyleValue::BorderBottomRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n26,
-        RendererStyleValue::BorderBottomLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomLeftRadius((50.0_f32, 50.0_f32)),
+    );
+    doc.set_style(
+        n26,
+        RendererStyleValue::BorderRadiusPercent([
+            (true, true),
+            (true, true),
+            (true, true),
+            (true, true),
+        ]),
     );
     doc.set_style(n26, RendererStyleValue::MarginTop(Length::px(3.0)));
     doc.set_style(n26, RendererStyleValue::MarginRight(Length::px(3.0)));
@@ -233518,19 +233676,28 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_002_ref(
     doc.set_style(n33, RendererStyleValue::Height(Length::px(35.0)));
     doc.set_style(
         n33,
-        RendererStyleValue::BorderTopLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopLeftRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n33,
-        RendererStyleValue::BorderTopRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n33,
-        RendererStyleValue::BorderBottomRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n33,
-        RendererStyleValue::BorderBottomLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomLeftRadius((50.0_f32, 50.0_f32)),
+    );
+    doc.set_style(
+        n33,
+        RendererStyleValue::BorderRadiusPercent([
+            (true, true),
+            (true, true),
+            (true, true),
+            (true, true),
+        ]),
     );
     doc.set_style(n33, RendererStyleValue::MarginTop(Length::px(3.0)));
     doc.set_style(n33, RendererStyleValue::MarginRight(Length::px(3.0)));
@@ -233767,19 +233934,28 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_002_ref(
     doc.set_style(n40, RendererStyleValue::Height(Length::px(35.0)));
     doc.set_style(
         n40,
-        RendererStyleValue::BorderTopLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopLeftRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n40,
-        RendererStyleValue::BorderTopRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n40,
-        RendererStyleValue::BorderBottomRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n40,
-        RendererStyleValue::BorderBottomLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomLeftRadius((50.0_f32, 50.0_f32)),
+    );
+    doc.set_style(
+        n40,
+        RendererStyleValue::BorderRadiusPercent([
+            (true, true),
+            (true, true),
+            (true, true),
+            (true, true),
+        ]),
     );
     doc.set_style(n40, RendererStyleValue::MarginTop(Length::px(3.0)));
     doc.set_style(n40, RendererStyleValue::MarginRight(Length::px(3.0)));
@@ -234016,19 +234192,28 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_002_ref(
     doc.set_style(n47, RendererStyleValue::Height(Length::px(35.0)));
     doc.set_style(
         n47,
-        RendererStyleValue::BorderTopLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopLeftRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n47,
-        RendererStyleValue::BorderTopRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n47,
-        RendererStyleValue::BorderBottomRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n47,
-        RendererStyleValue::BorderBottomLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomLeftRadius((50.0_f32, 50.0_f32)),
+    );
+    doc.set_style(
+        n47,
+        RendererStyleValue::BorderRadiusPercent([
+            (true, true),
+            (true, true),
+            (true, true),
+            (true, true),
+        ]),
     );
     doc.set_style(n47, RendererStyleValue::MarginTop(Length::px(3.0)));
     doc.set_style(n47, RendererStyleValue::MarginRight(Length::px(3.0)));
@@ -234265,19 +234450,28 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_002_ref(
     doc.set_style(n54, RendererStyleValue::Height(Length::px(35.0)));
     doc.set_style(
         n54,
-        RendererStyleValue::BorderTopLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopLeftRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n54,
-        RendererStyleValue::BorderTopRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n54,
-        RendererStyleValue::BorderBottomRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n54,
-        RendererStyleValue::BorderBottomLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomLeftRadius((50.0_f32, 50.0_f32)),
+    );
+    doc.set_style(
+        n54,
+        RendererStyleValue::BorderRadiusPercent([
+            (true, true),
+            (true, true),
+            (true, true),
+            (true, true),
+        ]),
     );
     doc.set_style(n54, RendererStyleValue::MarginTop(Length::px(3.0)));
     doc.set_style(n54, RendererStyleValue::MarginRight(Length::px(3.0)));
@@ -234447,6 +234641,19 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_002_ref(
         n58,
         RendererStyleValue::BorderBottomLeftRadius((30.0_f32, 30.0_f32)),
     );
+    doc.set_style(
+        n58,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
+    );
+    doc.set_style(
+        n58,
+        RendererStyleValue::Contain(doc.computed_style(n58).contain | Containment::LAYOUT),
+    );
     doc.materialize_generated_content();
     Ok(doc.into_engine())
 }
@@ -234561,6 +234768,10 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_003_ref(
     doc.set_style(n2, RendererStyleValue::Height(Length::px(200.0)));
     doc.set_style(n2, RendererStyleValue::OverflowX(Overflow::Scroll));
     doc.set_style(n2, RendererStyleValue::ScrollSnapAxis(ScrollSnapAxis::X));
+    doc.set_style(
+        n2,
+        RendererStyleValue::ScrollSnapStrictness(ScrollSnapStrictness::Mandatory),
+    );
     doc.set_style(n2, RendererStyleValue::BorderTopWidth(2));
     doc.set_style(n2, RendererStyleValue::BorderTopStyle(BorderStyle::Solid));
     doc.set_style(
@@ -234726,19 +234937,28 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_003_ref(
     doc.set_style(n5, RendererStyleValue::Height(Length::px(35.0)));
     doc.set_style(
         n5,
-        RendererStyleValue::BorderTopLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopLeftRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n5,
-        RendererStyleValue::BorderTopRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n5,
-        RendererStyleValue::BorderBottomRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n5,
-        RendererStyleValue::BorderBottomLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomLeftRadius((50.0_f32, 50.0_f32)),
+    );
+    doc.set_style(
+        n5,
+        RendererStyleValue::BorderRadiusPercent([
+            (true, true),
+            (true, true),
+            (true, true),
+            (true, true),
+        ]),
     );
     doc.set_style(n5, RendererStyleValue::MarginTop(Length::px(3.0)));
     doc.set_style(n5, RendererStyleValue::MarginRight(Length::px(3.0)));
@@ -234869,19 +235089,28 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_003_ref(
     doc.set_style(n9, RendererStyleValue::Height(Length::px(35.0)));
     doc.set_style(
         n9,
-        RendererStyleValue::BorderTopLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopLeftRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n9,
-        RendererStyleValue::BorderTopRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n9,
-        RendererStyleValue::BorderBottomRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n9,
-        RendererStyleValue::BorderBottomLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomLeftRadius((50.0_f32, 50.0_f32)),
+    );
+    doc.set_style(
+        n9,
+        RendererStyleValue::BorderRadiusPercent([
+            (true, true),
+            (true, true),
+            (true, true),
+            (true, true),
+        ]),
     );
     doc.set_style(n9, RendererStyleValue::MarginTop(Length::px(3.0)));
     doc.set_style(n9, RendererStyleValue::MarginRight(Length::px(3.0)));
@@ -235015,19 +235244,28 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_003_ref(
     doc.set_style(n13, RendererStyleValue::Height(Length::px(35.0)));
     doc.set_style(
         n13,
-        RendererStyleValue::BorderTopLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopLeftRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n13,
-        RendererStyleValue::BorderTopRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n13,
-        RendererStyleValue::BorderBottomRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n13,
-        RendererStyleValue::BorderBottomLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomLeftRadius((50.0_f32, 50.0_f32)),
+    );
+    doc.set_style(
+        n13,
+        RendererStyleValue::BorderRadiusPercent([
+            (true, true),
+            (true, true),
+            (true, true),
+            (true, true),
+        ]),
     );
     doc.set_style(n13, RendererStyleValue::MarginTop(Length::px(3.0)));
     doc.set_style(n13, RendererStyleValue::MarginRight(Length::px(3.0)));
@@ -235161,19 +235399,28 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_003_ref(
     doc.set_style(n17, RendererStyleValue::Height(Length::px(35.0)));
     doc.set_style(
         n17,
-        RendererStyleValue::BorderTopLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopLeftRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n17,
-        RendererStyleValue::BorderTopRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n17,
-        RendererStyleValue::BorderBottomRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n17,
-        RendererStyleValue::BorderBottomLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomLeftRadius((50.0_f32, 50.0_f32)),
+    );
+    doc.set_style(
+        n17,
+        RendererStyleValue::BorderRadiusPercent([
+            (true, true),
+            (true, true),
+            (true, true),
+            (true, true),
+        ]),
     );
     doc.set_style(n17, RendererStyleValue::MarginTop(Length::px(3.0)));
     doc.set_style(n17, RendererStyleValue::MarginRight(Length::px(3.0)));
@@ -235307,19 +235554,28 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_003_ref(
     doc.set_style(n21, RendererStyleValue::Height(Length::px(35.0)));
     doc.set_style(
         n21,
-        RendererStyleValue::BorderTopLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopLeftRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n21,
-        RendererStyleValue::BorderTopRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n21,
-        RendererStyleValue::BorderBottomRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n21,
-        RendererStyleValue::BorderBottomLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomLeftRadius((50.0_f32, 50.0_f32)),
+    );
+    doc.set_style(
+        n21,
+        RendererStyleValue::BorderRadiusPercent([
+            (true, true),
+            (true, true),
+            (true, true),
+            (true, true),
+        ]),
     );
     doc.set_style(n21, RendererStyleValue::MarginTop(Length::px(3.0)));
     doc.set_style(n21, RendererStyleValue::MarginRight(Length::px(3.0)));
@@ -235553,19 +235809,28 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_003_ref(
     doc.set_style(n28, RendererStyleValue::Height(Length::px(35.0)));
     doc.set_style(
         n28,
-        RendererStyleValue::BorderTopLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopLeftRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n28,
-        RendererStyleValue::BorderTopRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n28,
-        RendererStyleValue::BorderBottomRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n28,
-        RendererStyleValue::BorderBottomLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomLeftRadius((50.0_f32, 50.0_f32)),
+    );
+    doc.set_style(
+        n28,
+        RendererStyleValue::BorderRadiusPercent([
+            (true, true),
+            (true, true),
+            (true, true),
+            (true, true),
+        ]),
     );
     doc.set_style(n28, RendererStyleValue::MarginTop(Length::px(3.0)));
     doc.set_style(n28, RendererStyleValue::MarginRight(Length::px(3.0)));
@@ -235799,19 +236064,28 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_003_ref(
     doc.set_style(n35, RendererStyleValue::Height(Length::px(35.0)));
     doc.set_style(
         n35,
-        RendererStyleValue::BorderTopLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopLeftRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n35,
-        RendererStyleValue::BorderTopRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n35,
-        RendererStyleValue::BorderBottomRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n35,
-        RendererStyleValue::BorderBottomLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomLeftRadius((50.0_f32, 50.0_f32)),
+    );
+    doc.set_style(
+        n35,
+        RendererStyleValue::BorderRadiusPercent([
+            (true, true),
+            (true, true),
+            (true, true),
+            (true, true),
+        ]),
     );
     doc.set_style(n35, RendererStyleValue::MarginTop(Length::px(3.0)));
     doc.set_style(n35, RendererStyleValue::MarginRight(Length::px(3.0)));
@@ -236045,19 +236319,28 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_003_ref(
     doc.set_style(n42, RendererStyleValue::Height(Length::px(35.0)));
     doc.set_style(
         n42,
-        RendererStyleValue::BorderTopLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopLeftRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n42,
-        RendererStyleValue::BorderTopRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n42,
-        RendererStyleValue::BorderBottomRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n42,
-        RendererStyleValue::BorderBottomLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomLeftRadius((50.0_f32, 50.0_f32)),
+    );
+    doc.set_style(
+        n42,
+        RendererStyleValue::BorderRadiusPercent([
+            (true, true),
+            (true, true),
+            (true, true),
+            (true, true),
+        ]),
     );
     doc.set_style(n42, RendererStyleValue::MarginTop(Length::px(3.0)));
     doc.set_style(n42, RendererStyleValue::MarginRight(Length::px(3.0)));
@@ -236291,19 +236574,28 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_003_ref(
     doc.set_style(n49, RendererStyleValue::Height(Length::px(35.0)));
     doc.set_style(
         n49,
-        RendererStyleValue::BorderTopLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopLeftRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n49,
-        RendererStyleValue::BorderTopRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n49,
-        RendererStyleValue::BorderBottomRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n49,
-        RendererStyleValue::BorderBottomLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomLeftRadius((50.0_f32, 50.0_f32)),
+    );
+    doc.set_style(
+        n49,
+        RendererStyleValue::BorderRadiusPercent([
+            (true, true),
+            (true, true),
+            (true, true),
+            (true, true),
+        ]),
     );
     doc.set_style(n49, RendererStyleValue::MarginTop(Length::px(3.0)));
     doc.set_style(n49, RendererStyleValue::MarginRight(Length::px(3.0)));
@@ -236537,19 +236829,28 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_003_ref(
     doc.set_style(n56, RendererStyleValue::Height(Length::px(35.0)));
     doc.set_style(
         n56,
-        RendererStyleValue::BorderTopLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopLeftRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n56,
-        RendererStyleValue::BorderTopRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n56,
-        RendererStyleValue::BorderBottomRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n56,
-        RendererStyleValue::BorderBottomLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomLeftRadius((50.0_f32, 50.0_f32)),
+    );
+    doc.set_style(
+        n56,
+        RendererStyleValue::BorderRadiusPercent([
+            (true, true),
+            (true, true),
+            (true, true),
+            (true, true),
+        ]),
     );
     doc.set_style(n56, RendererStyleValue::MarginTop(Length::px(3.0)));
     doc.set_style(n56, RendererStyleValue::MarginRight(Length::px(3.0)));
@@ -236726,6 +237027,19 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_003_ref(
         n60,
         RendererStyleValue::BorderBottomLeftRadius((30.0_f32, 30.0_f32)),
     );
+    doc.set_style(
+        n60,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
+    );
+    doc.set_style(
+        n60,
+        RendererStyleValue::Contain(doc.computed_style(n60).contain | Containment::LAYOUT),
+    );
     let n61 = doc.create_node(ElementTag::Div);
     doc.set_style(
         n61,
@@ -236879,6 +237193,10 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_004_ref(
     doc.set_style(n2, RendererStyleValue::Height(Length::px(200.0)));
     doc.set_style(n2, RendererStyleValue::OverflowX(Overflow::Scroll));
     doc.set_style(n2, RendererStyleValue::ScrollSnapAxis(ScrollSnapAxis::X));
+    doc.set_style(
+        n2,
+        RendererStyleValue::ScrollSnapStrictness(ScrollSnapStrictness::Mandatory),
+    );
     doc.set_style(n2, RendererStyleValue::BorderTopWidth(2));
     doc.set_style(n2, RendererStyleValue::BorderTopStyle(BorderStyle::Solid));
     doc.set_style(
@@ -237044,19 +237362,28 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_004_ref(
     doc.set_style(n5, RendererStyleValue::Height(Length::px(35.0)));
     doc.set_style(
         n5,
-        RendererStyleValue::BorderTopLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopLeftRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n5,
-        RendererStyleValue::BorderTopRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n5,
-        RendererStyleValue::BorderBottomRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n5,
-        RendererStyleValue::BorderBottomLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomLeftRadius((50.0_f32, 50.0_f32)),
+    );
+    doc.set_style(
+        n5,
+        RendererStyleValue::BorderRadiusPercent([
+            (true, true),
+            (true, true),
+            (true, true),
+            (true, true),
+        ]),
     );
     doc.set_style(n5, RendererStyleValue::MarginTop(Length::px(3.0)));
     doc.set_style(n5, RendererStyleValue::MarginRight(Length::px(3.0)));
@@ -237190,19 +237517,28 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_004_ref(
     doc.set_style(n9, RendererStyleValue::Height(Length::px(35.0)));
     doc.set_style(
         n9,
-        RendererStyleValue::BorderTopLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopLeftRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n9,
-        RendererStyleValue::BorderTopRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n9,
-        RendererStyleValue::BorderBottomRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n9,
-        RendererStyleValue::BorderBottomLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomLeftRadius((50.0_f32, 50.0_f32)),
+    );
+    doc.set_style(
+        n9,
+        RendererStyleValue::BorderRadiusPercent([
+            (true, true),
+            (true, true),
+            (true, true),
+            (true, true),
+        ]),
     );
     doc.set_style(n9, RendererStyleValue::MarginTop(Length::px(3.0)));
     doc.set_style(n9, RendererStyleValue::MarginRight(Length::px(3.0)));
@@ -237336,19 +237672,28 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_004_ref(
     doc.set_style(n13, RendererStyleValue::Height(Length::px(35.0)));
     doc.set_style(
         n13,
-        RendererStyleValue::BorderTopLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopLeftRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n13,
-        RendererStyleValue::BorderTopRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n13,
-        RendererStyleValue::BorderBottomRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n13,
-        RendererStyleValue::BorderBottomLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomLeftRadius((50.0_f32, 50.0_f32)),
+    );
+    doc.set_style(
+        n13,
+        RendererStyleValue::BorderRadiusPercent([
+            (true, true),
+            (true, true),
+            (true, true),
+            (true, true),
+        ]),
     );
     doc.set_style(n13, RendererStyleValue::MarginTop(Length::px(3.0)));
     doc.set_style(n13, RendererStyleValue::MarginRight(Length::px(3.0)));
@@ -237482,19 +237827,28 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_004_ref(
     doc.set_style(n17, RendererStyleValue::Height(Length::px(35.0)));
     doc.set_style(
         n17,
-        RendererStyleValue::BorderTopLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopLeftRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n17,
-        RendererStyleValue::BorderTopRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n17,
-        RendererStyleValue::BorderBottomRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n17,
-        RendererStyleValue::BorderBottomLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomLeftRadius((50.0_f32, 50.0_f32)),
+    );
+    doc.set_style(
+        n17,
+        RendererStyleValue::BorderRadiusPercent([
+            (true, true),
+            (true, true),
+            (true, true),
+            (true, true),
+        ]),
     );
     doc.set_style(n17, RendererStyleValue::MarginTop(Length::px(3.0)));
     doc.set_style(n17, RendererStyleValue::MarginRight(Length::px(3.0)));
@@ -237628,19 +237982,28 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_004_ref(
     doc.set_style(n21, RendererStyleValue::Height(Length::px(35.0)));
     doc.set_style(
         n21,
-        RendererStyleValue::BorderTopLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopLeftRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n21,
-        RendererStyleValue::BorderTopRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n21,
-        RendererStyleValue::BorderBottomRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n21,
-        RendererStyleValue::BorderBottomLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomLeftRadius((50.0_f32, 50.0_f32)),
+    );
+    doc.set_style(
+        n21,
+        RendererStyleValue::BorderRadiusPercent([
+            (true, true),
+            (true, true),
+            (true, true),
+            (true, true),
+        ]),
     );
     doc.set_style(n21, RendererStyleValue::MarginTop(Length::px(3.0)));
     doc.set_style(n21, RendererStyleValue::MarginRight(Length::px(3.0)));
@@ -237874,19 +238237,28 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_004_ref(
     doc.set_style(n28, RendererStyleValue::Height(Length::px(35.0)));
     doc.set_style(
         n28,
-        RendererStyleValue::BorderTopLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopLeftRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n28,
-        RendererStyleValue::BorderTopRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n28,
-        RendererStyleValue::BorderBottomRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n28,
-        RendererStyleValue::BorderBottomLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomLeftRadius((50.0_f32, 50.0_f32)),
+    );
+    doc.set_style(
+        n28,
+        RendererStyleValue::BorderRadiusPercent([
+            (true, true),
+            (true, true),
+            (true, true),
+            (true, true),
+        ]),
     );
     doc.set_style(n28, RendererStyleValue::MarginTop(Length::px(3.0)));
     doc.set_style(n28, RendererStyleValue::MarginRight(Length::px(3.0)));
@@ -238120,19 +238492,28 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_004_ref(
     doc.set_style(n35, RendererStyleValue::Height(Length::px(35.0)));
     doc.set_style(
         n35,
-        RendererStyleValue::BorderTopLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopLeftRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n35,
-        RendererStyleValue::BorderTopRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n35,
-        RendererStyleValue::BorderBottomRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n35,
-        RendererStyleValue::BorderBottomLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomLeftRadius((50.0_f32, 50.0_f32)),
+    );
+    doc.set_style(
+        n35,
+        RendererStyleValue::BorderRadiusPercent([
+            (true, true),
+            (true, true),
+            (true, true),
+            (true, true),
+        ]),
     );
     doc.set_style(n35, RendererStyleValue::MarginTop(Length::px(3.0)));
     doc.set_style(n35, RendererStyleValue::MarginRight(Length::px(3.0)));
@@ -238366,19 +238747,28 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_004_ref(
     doc.set_style(n42, RendererStyleValue::Height(Length::px(35.0)));
     doc.set_style(
         n42,
-        RendererStyleValue::BorderTopLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopLeftRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n42,
-        RendererStyleValue::BorderTopRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n42,
-        RendererStyleValue::BorderBottomRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n42,
-        RendererStyleValue::BorderBottomLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomLeftRadius((50.0_f32, 50.0_f32)),
+    );
+    doc.set_style(
+        n42,
+        RendererStyleValue::BorderRadiusPercent([
+            (true, true),
+            (true, true),
+            (true, true),
+            (true, true),
+        ]),
     );
     doc.set_style(n42, RendererStyleValue::MarginTop(Length::px(3.0)));
     doc.set_style(n42, RendererStyleValue::MarginRight(Length::px(3.0)));
@@ -238612,19 +239002,28 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_004_ref(
     doc.set_style(n49, RendererStyleValue::Height(Length::px(35.0)));
     doc.set_style(
         n49,
-        RendererStyleValue::BorderTopLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopLeftRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n49,
-        RendererStyleValue::BorderTopRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n49,
-        RendererStyleValue::BorderBottomRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n49,
-        RendererStyleValue::BorderBottomLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomLeftRadius((50.0_f32, 50.0_f32)),
+    );
+    doc.set_style(
+        n49,
+        RendererStyleValue::BorderRadiusPercent([
+            (true, true),
+            (true, true),
+            (true, true),
+            (true, true),
+        ]),
     );
     doc.set_style(n49, RendererStyleValue::MarginTop(Length::px(3.0)));
     doc.set_style(n49, RendererStyleValue::MarginRight(Length::px(3.0)));
@@ -238858,19 +239257,28 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_004_ref(
     doc.set_style(n56, RendererStyleValue::Height(Length::px(35.0)));
     doc.set_style(
         n56,
-        RendererStyleValue::BorderTopLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopLeftRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n56,
-        RendererStyleValue::BorderTopRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderTopRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n56,
-        RendererStyleValue::BorderBottomRightRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomRightRadius((50.0_f32, 50.0_f32)),
     );
     doc.set_style(
         n56,
-        RendererStyleValue::BorderBottomLeftRadius((17.5_f32, 17.5_f32)),
+        RendererStyleValue::BorderBottomLeftRadius((50.0_f32, 50.0_f32)),
+    );
+    doc.set_style(
+        n56,
+        RendererStyleValue::BorderRadiusPercent([
+            (true, true),
+            (true, true),
+            (true, true),
+            (true, true),
+        ]),
     );
     doc.set_style(n56, RendererStyleValue::MarginTop(Length::px(3.0)));
     doc.set_style(n56, RendererStyleValue::MarginRight(Length::px(3.0)));
@@ -239043,6 +239451,19 @@ fn css_overflow_scroll_markers_targeted_column_scroll_marker_selection_004_ref(
     doc.set_style(
         n60,
         RendererStyleValue::BorderBottomLeftRadius((30.0_f32, 30.0_f32)),
+    );
+    doc.set_style(
+        n60,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
+    );
+    doc.set_style(
+        n60,
+        RendererStyleValue::Contain(doc.computed_style(n60).contain | Containment::LAYOUT),
     );
     let n61 = doc.create_node(ElementTag::Div);
     doc.set_style(
@@ -286684,6 +287105,10 @@ fn css_overflow_scroll_markers_scroll_marker_014_crash(
     doc.set_style(n4, RendererStyleValue::OverflowX(Overflow::Scroll));
     doc.set_style(n4, RendererStyleValue::OverflowY(Overflow::Scroll));
     doc.set_style(n4, RendererStyleValue::ScrollSnapAxis(ScrollSnapAxis::X));
+    doc.set_style(
+        n4,
+        RendererStyleValue::ScrollSnapStrictness(ScrollSnapStrictness::Mandatory),
+    );
     doc.set_style(n4, RendererStyleValue::Display(Display::Block));
     doc.set_style(
         n4,
@@ -295462,7 +295887,7 @@ fn css_overflow_scroll_markers_column_scroll_marker_015_crash(
     );
     doc.append_child(n1, n2);
     doc.set_attribute(n2, "id", "child");
-    doc.set_attribute(n2, "style", "height:110px; background:cyan;");
+    doc.set_attribute(n2, "style", "height: 50px; background: cyan");
     let n3 = doc.insert_pseudo_element(n1, openui_dom::PseudoElementKind::ColumnScrollMarker);
     let n3_style = ComputedStyle::for_pseudo(doc.computed_style(n1));
     doc.install_derived_style(n3, n3_style);
@@ -295484,17 +295909,17 @@ fn css_overflow_scroll_markers_column_scroll_marker_015_crash(
     doc.install_derived_style(n4, n4_style);
     doc.set_style(n4, RendererStyleValue::OverflowX(Overflow::Scroll));
     doc.set_style(n4, RendererStyleValue::ScrollSnapAxis(ScrollSnapAxis::X));
+    doc.set_style(
+        n4,
+        RendererStyleValue::ScrollSnapStrictness(ScrollSnapStrictness::Mandatory),
+    );
     doc.set_style(n4, RendererStyleValue::Display(Display::Block));
     doc.set_style(
         n4,
         RendererStyleValue::Contain(doc.computed_style(n4).contain | Containment::LAYOUT),
     );
     doc.materialize_generated_content();
-    let mut engine = doc.into_engine();
-    // The audited layout reads do not influence later control flow.
-    // Flush the final Engine state through its geometry/scene API.
-    let _ = engine.update()?;
-    Ok(engine)
+    Ok(doc.into_engine())
 }
 
 // Source: css-overflow/scroll-markers/scroll-marker-dynamic.html

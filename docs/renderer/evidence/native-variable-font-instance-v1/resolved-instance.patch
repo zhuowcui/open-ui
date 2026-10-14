@@ -1,0 +1,34 @@
+diff --git a/bindings/rust/openui-text/src/shaping/shape_result.rs b/bindings/rust/openui-text/src/shaping/shape_result.rs
+index d1cddd0d..935b6c96 100644
+--- a/bindings/rust/openui-text/src/shaping/shape_result.rs
++++ b/bindings/rust/openui-text/src/shaping/shape_result.rs
+@@ -11,7 +11,7 @@ use skia_safe::{
+     TextBlob, TextBlobBuilder,
+ };
+ use skrifa::{
+-    instance::{LocationRef, Size},
++    instance::Size,
+     outline::{
+         DrawSettings, Engine, GlyphStyles, HintingInstance, HintingOptions, OutlinePen, SmoothMode,
+         Target,
+@@ -107,7 +107,19 @@ fn fontations_compatible_font(
+     let font_ref = FontRef::from_index(&font_data, ttc_index as u32).ok()?;
+     let outlines = font_ref.outline_glyphs();
+     let size = source_font.size();
+-    let location = LocationRef::default();
++    // The resolved typeface includes authored variation settings and derived
++    // weight, width, slant and optical size. Reading its original font bytes
++    // alone loses that instance and paints the default glyph outline.
++    let coordinates = source_font.typeface().variation_design_position()?;
++    let normalized_location = font_ref
++        .axes()
++        .location(coordinates.iter().map(|coordinate| {
++            (
++                skrifa::Tag::new(&(*coordinate.axis).to_be_bytes()),
++                coordinate.value,
++            )
++        }));
++    let location = skrifa::instance::LocationRef::from(&normalized_location);
+     let hinting = match raster_policy {
+         TextRasterPolicy::ChromiumNativeControl
+         | TextRasterPolicy::ChromiumAuthorLcd

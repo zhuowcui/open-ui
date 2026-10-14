@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
-"""Lower legacy porter Rust into immutable, Engine-backed fixtures.
+"""Lower porter Rust into Engine-backed native snapshot builders.
 
-The porter still computes already-resolved values, but emitted Rust never
-receives a mutable DOM node or ComputedStyle. This pass is deterministic and
-also provides the renderer-contract source audit used by CI.
+The porter computes already-resolved values, but emitted Rust never receives
+mutable DOM nodes or computed styles. Native builders are implementation code
+and can be regenerated from unchanged Chromium inputs. Reference pixels and
+historical archive bytes retain their identities. This deterministic pass also
+provides the renderer-contract source audit used by CI.
 """
 
 from __future__ import annotations

@@ -1,0 +1,375 @@
+{
+  "actual_combined_umbrella_source_measured": false,
+  "all_build_logs_artifacts_cache_on_external_volume": true,
+  "all_commands_terminal": true,
+  "all_native_apis_qualified": false,
+  "broader_all_targets_gate_qualified": true,
+  "candidate_nonregression_verified": true,
+  "chromium_oracle_stability_investigation_open": true,
+  "comparisons": {
+    "expanded": {
+      "baseline_summary": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-renderer-v3359/trial/expanded-matrix/expanded-summary.json",
+      "baseline_summary_sha256": "6a66c1256ceabac0103a284a8991cc3f6d6b9eccc6c51f79ebd6e1b009b97c9f",
+      "changes": [],
+      "exact_gains": 0,
+      "exact_losses": 0,
+      "fields": [
+        "openui_png_sha256",
+        "openui_rgba_sha256",
+        "chromium_png_sha256",
+        "chromium_rgba_sha256",
+        "chromium_oracle_identity_sha256",
+        "chromium_oracle_rgba_sha256",
+        "mismatched_pixels",
+        "status",
+        "diff_signature"
+      ],
+      "nine_invariants_preserved": true,
+      "rows_audited": 23728,
+      "worsened": 0
+    },
+    "focused": {
+      "baseline_summary": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-renderer-v3359/trial/focused-matrix/focused-summary.json",
+      "baseline_summary_sha256": "2ebfbe543f4dfa578ae386c8854c042e3e076b74fb5bcd856f9c9d3181e6d9a9",
+      "changes": [],
+      "exact_gains": 0,
+      "exact_losses": 0,
+      "fields": [
+        "openui_png_sha256",
+        "openui_rgba_sha256",
+        "chromium_png_sha256",
+        "chromium_rgba_sha256",
+        "chromium_oracle_identity_sha256",
+        "chromium_oracle_rgba_sha256",
+        "mismatched_pixels",
+        "status",
+        "diff_signature"
+      ],
+      "nine_invariants_preserved": true,
+      "rows_audited": 640,
+      "worsened": 0
+    },
+    "full": {
+      "baseline_summary": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-renderer-v3359/trial/full-matrix/full-summary.json",
+      "baseline_summary_sha256": "823ecd1b6c14b366d55cda6432eed7475f9aec2b6dcda86d6159345d31e584b9",
+      "changes": [],
+      "exact_gains": 0,
+      "exact_losses": 0,
+      "fields": [
+        "openui_png_sha256",
+        "openui_rgba_sha256",
+        "chromium_png_sha256",
+        "chromium_rgba_sha256",
+        "chromium_oracle_identity_sha256",
+        "chromium_oracle_rgba_sha256",
+        "mismatched_pixels",
+        "status",
+        "diff_signature"
+      ],
+      "nine_invariants_preserved": true,
+      "rows_audited": 22924,
+      "worsened": 0
+    },
+    "primitive": {
+      "baseline_summary": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-renderer-v3359/trial/primitive-matrix/primitive-summary.json",
+      "baseline_summary_sha256": "288f9bf1f7fe0c780cd572690e6b320e269824f11db5ad2507d454f0aa4c24bf",
+      "changes": [],
+      "exact_gains": 0,
+      "exact_losses": 0,
+      "fields": [
+        "openui_png_sha256",
+        "openui_rgba_sha256",
+        "chromium_png_sha256",
+        "chromium_rgba_sha256",
+        "chromium_oracle_identity_sha256",
+        "chromium_oracle_rgba_sha256",
+        "mismatched_pixels",
+        "status",
+        "diff_signature"
+      ],
+      "nine_invariants_preserved": true,
+      "rows_audited": 960,
+      "worsened": 0
+    }
+  },
+  "content_pool_alias": "/mnt/d/openui-v02-qualification-d174ea0b/renderer-cache/png",
+  "externally_interrupted_owner_receipt_sha256": "4b0fda3e9187d3fb5c89033c44d6e53152a2502a04a5f6e56ded0e3b45e94fd0",
+  "fresh_build_reused_on_identical_audited_source": true,
+  "guarded_build_receipt_sha256": "386be64f56083d17c0f936be3065d5dcc96509bae27d25094e089bd5e99f56e7",
+  "historical_openui_archive_is_a_pixel_target": false,
+  "implementation_integrated": false,
+  "inherited_fresh_build_partial_audit_sha256": "660e1ba5cbded6c8a926560a5d451fd3557314c8b4acc554ad74a4db0cc82048",
+  "inherited_guarded_build_receipt": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-form-owner-renderer-v3448/trial/guarded-build/receipt.json",
+  "javascript_executed_by_openui": false,
+  "matrices": {
+    "trial-expanded": {
+      "observed_exit_code": 1,
+      "results": {
+        "different": 1587,
+        "errors": 0,
+        "exact": 22141,
+        "profile_result_sha256": "83981af0e60e54a235609e33e6bc93fdafdb9ec603ebfc07928c40b01bfaa4fe",
+        "total": 23728
+      },
+      "summary_sha256": "50a862a1a5dd58e53911d0e458d9bacb0a6f47d468cb85d3ff9d857ef3e859ce"
+    },
+    "trial-focused": {
+      "observed_exit_code": 0,
+      "results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 640,
+        "profile_result_sha256": "7b7ba7540bb7fba9b8b01fc8108fd52cfc15d67aab0526451b4e5379164d44ed",
+        "total": 640
+      },
+      "summary_sha256": "b47d1cd8c9ed5987fdf7407146a3a8bf9343e36f7a2e2a74c82099884ce63721"
+    },
+    "trial-full": {
+      "observed_exit_code": 1,
+      "results": {
+        "different": 1586,
+        "errors": 0,
+        "exact": 21338,
+        "profile_result_sha256": "d82bfa8e5e0d9e46cf37c7050dae8dd90be890632670aa417334d80a811b3a44",
+        "total": 22924
+      },
+      "summary_sha256": "cf5f32f438de29c3e337424c429c83d51c5c0bd335bbd646a8c55f4fb3af42f9"
+    },
+    "trial-primitive": {
+      "observed_exit_code": 0,
+      "results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 960,
+        "profile_result_sha256": "d5a9f5a93096ca44e3f509ba13ad370f106fb36c1ec553b6d9f7c5d6682f2a81",
+        "total": 960
+      },
+      "summary_sha256": "ec3476d83c947fdd4a454fdc549566881a783fdee5f1dffd971e00231b0c6671"
+    }
+  },
+  "native_control_appearance_audit_sha256": "61726995cc0f6bfb501826b189849abdc66c13a4cdffd90fa78a869e628dd21b",
+  "native_control_behavior_audit_sha256": "c3e8d9c6c647d15528b6f2ef0c3d3f0e40416ccf7316b6ec603b2b68eb78b9d4",
+  "native_json_cache_fresh_at_preflight": true,
+  "native_metadata_cache_directory": "/mnt/d/openui-v02-qualification-d174ea0b/renderer-cache",
+  "new_release_comparisons_admitted": 0,
+  "observed_exit_code": 1,
+  "original_owner_whole_exit_code_not_observed": true,
+  "owner_pid": 41848,
+  "pixel_target": "pinned Chromium",
+  "pixel_tolerance": 0,
+  "preserved_content_pool": "/mnt/e/openui-v02-qualification-d174ea0b/renderer-cache/png",
+  "preserved_png_pool_readiness_sha256": "fabffc6ce50c2577631f585a57281c709c2c66719fb9ac5efcef11423b529e70",
+  "previous_native_pixels_are_regression_observations_only": true,
+  "prior_renderer_completed_audit_sha256": "2858d06da3b3b2b9afd09f98341f0f9b178bbf2590cfbc39d9d93b056447b449",
+  "private_candidate_measured": true,
+  "probe_sha256": "c6b227aec78f38fc2b5b9959a5e158c8618d1992e6c535790741da65fff88372",
+  "promotion_allowed": false,
+  "public_source": {
+    "clean": true,
+    "commit": "783e11f44b0e1cd0023018d24e667d27f0b91bb8",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "09626c257b1039fb97272f3c71a24ebf3e36fb40df431fa3f3998f02c7933e43",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "public_source_after": {
+    "clean": true,
+    "commit": "783e11f44b0e1cd0023018d24e667d27f0b91bb8",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "09626c257b1039fb97272f3c71a24ebf3e36fb40df431fa3f3998f02c7933e43",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "public_source_unchanged": true,
+  "reference_inputs": {
+    "tools/accountability/data/wpt_ported/all_wpt_templates.json": "1672d31bcc4b13a8ecb6c1b8af6a7b255052aac52293fb916181e6e0bd1d6ba6",
+    "tools/qualification/manifests/complete-5731.json": "2d68221f88c8280249b45c304338a9ab312918fd8c82d80ae1a46c0a26a8816f",
+    "tools/qualification/manifests/expanded-v35.json": "367efecaf06da167025130e1d8b746268161f6c6a22d77f78e1a5a994e7d6e03"
+  },
+  "reference_inputs_unchanged": true,
+  "release_qualification": false,
+  "release_qualified": false,
+  "remaining_full_pixel_gate_open": true,
+  "renderer_qualified": false,
+  "root_free_guard_bytes": 134217728,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "a401a8ac8c33cc5e24ed9bb19934061716cd84dd",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "ebebbc58bd6f89eb5f03af1e3eae9cb961463a3f1be749c23315206c03c735f9",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "a401a8ac8c33cc5e24ed9bb19934061716cd84dd",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "ebebbc58bd6f89eb5f03af1e3eae9cb961463a3f1be749c23315206c03c735f9",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_identity_io_executor": {
+    "all_source_bytes_read": true,
+    "embedded_serial_source_identity_sha256": "db48fb19d8e3b65c269b7f6a716f1bbeca169f78580982f1a28d4611e8294d68",
+    "hash_framing_order_preserved": true,
+    "input_sha256": {
+      "/tmp/openui-native-form-owner-source-reader-executor-v3448.py": "270817d75b4fe02a36a065e4da5d42f204b191b61959f06b16a6ab2b81cf03fb",
+      "/tmp/openui-parallel-source-identity-proof-v3048.json": "879b54784cddc35f2de5f67f25e6d0511eec77c035b251f545a8a4a5ba21bf6b",
+      "/tmp/openui-parallel-source-identity-v3047.py": "d034540153e35cad3cbfc63a13e0bcfb17df4cbdb89a6d22e1439f7bc39435ec"
+    },
+    "official_current_source_crosscheck": true,
+    "official_current_source_crosscheck_pending_guarded_build": false,
+    "pixel_and_oracle_gates_unchanged": true,
+    "unchanged_build_script_uses_serial_reader": true
+  },
+  "source_unchanged": true,
+  "stage": "terminal",
+  "steps": [
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-native-form-owner-source-reader-executor-v3448.py",
+        "--tool-path",
+        "/mnt/e/openui-v02-qualification-d174ea0b/private-native-form-owner-source-v3409/tools/qualification/build_renderer.py",
+        "--source-root",
+        "/mnt/e/openui-v02-qualification-d174ea0b/private-native-form-owner-source-v3409",
+        "--offline",
+        "--source-root",
+        "/mnt/e/openui-v02-qualification-d174ea0b/private-native-form-owner-source-v3409",
+        "--cargo-config",
+        "/mnt/e/openui-v02-qualification-d174ea0b/private-native-form-owner-source-v3409/bindings/rust/.cargo/config.chromium.toml",
+        "--target-dir",
+        "/mnt/e/openui-v02-cargo-c73754e2/target",
+        "--results-dir",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-form-owner-renderer-v3448/trial/guarded-build"
+      ],
+      "inherited_build_audit_sha256": "660e1ba5cbded6c8a926560a5d451fd3557314c8b4acc554ad74a4db0cc82048",
+      "inherited_from_interrupted_owner": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-form-owner-renderer-v3448/receipt.json",
+      "log_sha256": "1515db64b5b561d47857653c783e13e7cd7825c45575e083a14db5c3ca8b39d8",
+      "name": "trial-build",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-native-form-owner-source-reader-executor-v3448.py",
+        "--tool-path",
+        "/mnt/e/openui-v02-qualification-d174ea0b/private-native-form-owner-source-v3409/tools/qualification/run_renderer_matrix.py",
+        "--source-root",
+        "/mnt/e/openui-v02-qualification-d174ea0b/private-native-form-owner-source-v3409",
+        "--suite",
+        "focused",
+        "--results-dir",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-form-owner-renderer-v3478/trial/focused-matrix",
+        "--cache-dir",
+        "/mnt/d/openui-v02-qualification-d174ea0b/renderer-cache",
+        "--oracle-cache-dir",
+        "/home/nero/code/open-ui/out/renderer-qualification-cache/chromium-oracle",
+        "--pixel-compare",
+        "/mnt/d/openui-v02-qualification-d174ea0b/private-native-form-owner-renderer-v3448/trial/guarded-build/pixel_compare",
+        "--build-receipt",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-form-owner-renderer-v3448/trial/guarded-build/receipt.json",
+        "--chrome",
+        "/home/nero/code/open-ui/chrome/linux-147.0.7727.50/chrome-linux64/chrome",
+        "--raster-backend",
+        "cpu-skia",
+        "--jobs",
+        "2"
+      ],
+      "log_sha256": "6f1da61abf663f0a448f3e57b6b2113fab30641264a1b35b4410acfeb10ad043",
+      "name": "trial-focused",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-native-form-owner-source-reader-executor-v3448.py",
+        "--tool-path",
+        "/mnt/e/openui-v02-qualification-d174ea0b/private-native-form-owner-source-v3409/tools/qualification/run_renderer_matrix.py",
+        "--source-root",
+        "/mnt/e/openui-v02-qualification-d174ea0b/private-native-form-owner-source-v3409",
+        "--suite",
+        "primitive",
+        "--results-dir",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-form-owner-renderer-v3478/trial/primitive-matrix",
+        "--cache-dir",
+        "/mnt/d/openui-v02-qualification-d174ea0b/renderer-cache",
+        "--oracle-cache-dir",
+        "/home/nero/code/open-ui/out/renderer-qualification-cache/chromium-oracle",
+        "--pixel-compare",
+        "/mnt/d/openui-v02-qualification-d174ea0b/private-native-form-owner-renderer-v3448/trial/guarded-build/pixel_compare",
+        "--build-receipt",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-form-owner-renderer-v3448/trial/guarded-build/receipt.json",
+        "--chrome",
+        "/home/nero/code/open-ui/chrome/linux-147.0.7727.50/chrome-linux64/chrome",
+        "--raster-backend",
+        "cpu-skia",
+        "--jobs",
+        "2"
+      ],
+      "log_sha256": "c94af6ba504f65f67b54bd5ac6800ad3e12c72a8bf7101fb3923ef3041221aae",
+      "name": "trial-primitive",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-native-form-owner-source-reader-executor-v3448.py",
+        "--tool-path",
+        "/mnt/e/openui-v02-qualification-d174ea0b/private-native-form-owner-source-v3409/tools/qualification/run_renderer_matrix.py",
+        "--source-root",
+        "/mnt/e/openui-v02-qualification-d174ea0b/private-native-form-owner-source-v3409",
+        "--suite",
+        "full",
+        "--results-dir",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-form-owner-renderer-v3478/trial/full-matrix",
+        "--cache-dir",
+        "/mnt/d/openui-v02-qualification-d174ea0b/renderer-cache",
+        "--oracle-cache-dir",
+        "/home/nero/code/open-ui/out/renderer-qualification-cache/chromium-oracle",
+        "--pixel-compare",
+        "/mnt/d/openui-v02-qualification-d174ea0b/private-native-form-owner-renderer-v3448/trial/guarded-build/pixel_compare",
+        "--build-receipt",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-form-owner-renderer-v3448/trial/guarded-build/receipt.json",
+        "--chrome",
+        "/home/nero/code/open-ui/chrome/linux-147.0.7727.50/chrome-linux64/chrome",
+        "--raster-backend",
+        "cpu-skia",
+        "--jobs",
+        "8"
+      ],
+      "log_sha256": "6178e8e73d74e6e5c859e76895f459dc07a14fd675c4c3d420c9e1401e7c7278",
+      "name": "trial-full",
+      "observed_exit_code": 1
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-native-form-owner-source-reader-executor-v3448.py",
+        "--tool-path",
+        "/mnt/e/openui-v02-qualification-d174ea0b/private-native-form-owner-source-v3409/tools/qualification/run_renderer_matrix.py",
+        "--source-root",
+        "/mnt/e/openui-v02-qualification-d174ea0b/private-native-form-owner-source-v3409",
+        "--suite",
+        "expanded",
+        "--results-dir",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-form-owner-renderer-v3478/trial/expanded-matrix",
+        "--cache-dir",
+        "/mnt/d/openui-v02-qualification-d174ea0b/renderer-cache",
+        "--oracle-cache-dir",
+        "/home/nero/code/open-ui/out/renderer-qualification-cache/chromium-oracle",
+        "--pixel-compare",
+        "/mnt/d/openui-v02-qualification-d174ea0b/private-native-form-owner-renderer-v3448/trial/guarded-build/pixel_compare",
+        "--build-receipt",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-form-owner-renderer-v3448/trial/guarded-build/receipt.json",
+        "--chrome",
+        "/home/nero/code/open-ui/chrome/linux-147.0.7727.50/chrome-linux64/chrome",
+        "--raster-backend",
+        "cpu-skia",
+        "--jobs",
+        "8"
+      ],
+      "log_sha256": "35ac621f6ef3e5643ad84f59d052502aea7857d51297b5b88f2c4a91e464ce99",
+      "name": "trial-expanded",
+      "observed_exit_code": 1
+    }
+  ],
+  "whole_project_qualified": false
+}

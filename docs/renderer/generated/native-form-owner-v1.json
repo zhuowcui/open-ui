@@ -1,0 +1,268 @@
+{
+  "all_native_apis_qualified": false,
+  "all_targets_tests": {
+    "actual_exit_code": 0,
+    "failed": 0,
+    "ignored": 0,
+    "passed": 8628
+  },
+  "comparison_rows_audited": 48252,
+  "compositor_qualified": false,
+  "control_appearance": {
+    "exact": 160,
+    "png_comparisons": 640,
+    "scope": "Default light 13px controls on white, five scales, eight subpixel phases, two process repeats",
+    "total": 160
+  },
+  "current_public_hosted_qualification_complete": false,
+  "exact_measured_commit_adopted": true,
+  "files": {
+    "appearance-completed-audit.json": {
+      "bytes": 1430,
+      "origin": "/tmp/openui-native-form-owner-appearance-completed-audit-v3468.json",
+      "sha256": "61726995cc0f6bfb501826b189849abdc66c13a4cdffd90fa78a869e628dd21b"
+    },
+    "appearance-receipt.json": {
+      "bytes": 2197446,
+      "origin": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-form-owner-appearance-v3467/receipt.json",
+      "sha256": "f6798e205763b578019d14ac5405487e8ca6c6a9839076c4dc0f2c07ab9bd888"
+    },
+    "appearance-terminal-status.json": {
+      "bytes": 1662,
+      "origin": "/tmp/openui-native-form-owner-appearance-terminal-status-v3473.json",
+      "sha256": "521c7bd1868853eb17bfc1e5603c6b231876dc7ce997720b4ed2c87fb44de691"
+    },
+    "chromium-cases.json": {
+      "bytes": 15187,
+      "origin": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-form-owner-reference-v3410/cases.json",
+      "sha256": "6054a691e11f318cb95e447862a3f4d8a478660eac578156eff64664daa361ff"
+    },
+    "chromium-observations-1.json": {
+      "bytes": 459826,
+      "origin": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-form-owner-reference-v3410/observations-1.json",
+      "sha256": "0114ce7ddb8018bf239d0f3002f5f63292cc47f02165417ef45e027c45291ded"
+    },
+    "chromium-observations-2.json": {
+      "bytes": 459826,
+      "origin": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-form-owner-reference-v3410/observations-2.json",
+      "sha256": "0114ce7ddb8018bf239d0f3002f5f63292cc47f02165417ef45e027c45291ded"
+    },
+    "chromium-probe.py": {
+      "bytes": 6839,
+      "origin": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-form-owner-reference-v3410/probe.py",
+      "sha256": "27ab0b7d03f35fcbb8313d0a1a4bb768ea6e54964d9ddde24b8a38b7065feb4e"
+    },
+    "chromium-receipt.json": {
+      "bytes": 1928,
+      "origin": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-form-owner-reference-v3410/receipt.json",
+      "sha256": "b94b30af11aa03d98774bc6da1904de1b2e16225ad362de17bac9047113ecf6c"
+    },
+    "compress-reports.py": {
+      "bytes": 1497,
+      "origin": "repository evidence packaging",
+      "sha256": "0178d9a7f07d81bf7a913e88baa28a9042623e4333f5b3fea4cfedb594de21a1"
+    },
+    "evidence-builder.py": {
+      "bytes": 7230,
+      "origin": "/tmp/openui-native-form-owner-evidence-v3491.py",
+      "sha256": "737c002acf7aed99e06ebf0f08b81a8ea1bce148d7a29374403b6343c90aad06"
+    },
+    "expanded-summary.json.gz": {
+      "bytes": 4424634,
+      "compression": "gzip",
+      "origin": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-form-owner-renderer-v3478/trial/expanded-matrix/expanded-summary.json",
+      "original_bytes": 72337659,
+      "original_report_bytes_preserved": true,
+      "original_sha256": "50a862a1a5dd58e53911d0e458d9bacb0a6f47d468cb85d3ff9d857ef3e859ce",
+      "sha256": "bea144c4b45b7490d81ec423f3984a0ef269df11c14237e6d0d18805bbe4a5c6"
+    },
+    "failed-appearance-terminal-status.json": {
+      "bytes": 1821,
+      "origin": "/tmp/openui-native-form-owner-appearance-failed-terminal-status-v3469.json",
+      "sha256": "f994311001ab7c41d21f7de15b6c67f9650f70945a1e2992a07a9012970731b7"
+    },
+    "focused-summary.json": {
+      "bytes": 1646639,
+      "origin": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-form-owner-renderer-v3478/trial/focused-matrix/focused-summary.json",
+      "sha256": "b47d1cd8c9ed5987fdf7407146a3a8bf9343e36f7a2e2a74c82099884ce63721"
+    },
+    "full-summary.json.gz": {
+      "bytes": 4315371,
+      "compression": "gzip",
+      "origin": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-form-owner-renderer-v3478/trial/full-matrix/full-summary.json",
+      "original_bytes": 70300680,
+      "original_report_bytes_preserved": true,
+      "original_sha256": "cf5f32f438de29c3e337424c429c83d51c5c0bd335bbd646a8c55f4fb3af42f9",
+      "sha256": "de86f7e1ae3778fbe41f86162fe7c90d5fa97e92bdd08eeaee008a30cee2010e"
+    },
+    "integration-receipt.json": {
+      "bytes": 2826,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-form-owner-integration-v3489/receipt.json",
+      "sha256": "5e3f99763cde3a3f74d5b66b61bc1bc74580b9c67070a2ba742f3fa58c755ded"
+    },
+    "integration-terminal-status.json": {
+      "bytes": 1266,
+      "origin": "/tmp/openui-native-form-owner-public-integration-terminal-status-v3490.json",
+      "sha256": "4ce8a87762f28108b783a804f9b5d912ebdd28a3c16e6bf457bce79170fdf3a5"
+    },
+    "interrupted-renderer-build-audit.json": {
+      "bytes": 2242,
+      "origin": "/tmp/openui-private-native-form-owner-renderer-interrupted-completed-audit-v3477.json",
+      "sha256": "660e1ba5cbded6c8a926560a5d451fd3557314c8b4acc554ad74a4db0cc82048"
+    },
+    "native-completed-audit.json": {
+      "bytes": 3039,
+      "origin": "/tmp/openui-native-form-owner-layout-continuation-completed-audit-v3462.json",
+      "sha256": "c3e8d9c6c647d15528b6f2ef0c3d3f0e40416ccf7316b6ec603b2b68eb78b9d4"
+    },
+    "native-receipt.json.gz": {
+      "bytes": 396271,
+      "compression": "gzip",
+      "origin": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-form-owner-layout-continuation-v3461/receipt.json",
+      "original_bytes": 34439351,
+      "original_report_bytes_preserved": true,
+      "original_sha256": "922215d89a67866c06d259703df833ce0f58d09fbd5934195b8e3fd232825193",
+      "sha256": "1e05395c90b56dbf208be0755c74e1863d66dbc7317a4320d8a42d3e0075d3a3"
+    },
+    "native-terminal-status.json": {
+      "bytes": 1830,
+      "origin": "/tmp/openui-native-form-owner-layout-continuation-terminal-status-v3466.json",
+      "sha256": "b5707ad86d96d66788e2f39ba26a90cb5ae9fffe6023149188b0d68b08fe036a"
+    },
+    "primitive-summary.json": {
+      "bytes": 2455845,
+      "origin": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-form-owner-renderer-v3478/trial/primitive-matrix/primitive-summary.json",
+      "sha256": "ec3476d83c947fdd4a454fdc549566881a783fdee5f1dffd971e00231b0c6671"
+    },
+    "renderer-completed-audit.json": {
+      "bytes": 2619,
+      "origin": "/tmp/openui-private-native-form-owner-renderer-completed-audit-v3479.json",
+      "sha256": "ead37d7f908f76fc7bbf67f12ac071b755cfcf4eff01de81ad0f0b6ef68d4096"
+    },
+    "renderer-receipt.json": {
+      "bytes": 17364,
+      "origin": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-form-owner-renderer-v3478/receipt.json",
+      "sha256": "009a090f8c41959077446af29f6a4a996891315ef0786746388e0b8753409ae5"
+    },
+    "renderer-supervisor-receipt.json": {
+      "bytes": 2669,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/native-form-owner-renderer-supervisor-v3482/receipt.json",
+      "sha256": "27520848b59ea9c48d24f8a172cf79a9be4224979da4e730db23912c6c1e78a5"
+    },
+    "renderer-terminal-status.json": {
+      "bytes": 2898,
+      "origin": "/tmp/openui-private-native-form-owner-renderer-continuation-terminal-status-v3488.json",
+      "sha256": "bd35014d1fa7ec9fe8bd89e8ef1365b80c32f665b7c864a3e683eca6ccf42bda"
+    },
+    "storage-recovery-receipt.json": {
+      "bytes": 5884,
+      "origin": "/mnt/d/openui-v02-storage-relocation-v3470/receipt.json",
+      "sha256": "dc467967df4818521e43b683f96ed03c2f0f340bdfc5d64d754934ea479919fd"
+    }
+  },
+  "hardware_qualified": false,
+  "headless_tests": [
+    [
+      53,
+      0,
+      0
+    ]
+  ],
+  "historical_openui_archive_is_a_pixel_target": false,
+  "implementation_integrated": true,
+  "javascript_executed_by_openui": false,
+  "measured_source": {
+    "clean": true,
+    "commit": "a401a8ac8c33cc5e24ed9bb19934061716cd84dd",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "ebebbc58bd6f89eb5f03af1e3eae9cb961463a3f1be749c23315206c03c735f9",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "measurement_checkout": "private qualification clone",
+  "native_behavior_by_language": {
+    "c": {
+      "exact": 396,
+      "total": 396
+    },
+    "cpp": {
+      "exact": 396,
+      "total": 396
+    },
+    "rust": {
+      "exact": 396,
+      "total": 396
+    }
+  },
+  "new_form_owner_comparisons": 264,
+  "new_form_owner_scenarios": 88,
+  "new_public_qualification_commands_executed": false,
+  "no_renderer_regression": true,
+  "offline_chromium_reference_scripts_only": true,
+  "original_deep_nesting_benchmark_passed": true,
+  "original_stack_limit_and_command_preserved": true,
+  "pixel_target": "pinned Chromium",
+  "pixel_tolerance": 0,
+  "public_source_bytes_equal_measured_source": true,
+  "release_qualified": false,
+  "renderer_qualified": false,
+  "renderer_results": {
+    "expanded": {
+      "actual_exit_code": 1,
+      "chromium_reference_changed_rows": 0,
+      "complete": true,
+      "different": 1587,
+      "errors": 0,
+      "exact": 22141,
+      "gains": 0,
+      "losses": 0,
+      "total": 23728,
+      "worsened": 0
+    },
+    "focused": {
+      "actual_exit_code": 0,
+      "chromium_reference_changed_rows": 0,
+      "complete": true,
+      "different": 0,
+      "errors": 0,
+      "exact": 640,
+      "gains": 0,
+      "losses": 0,
+      "total": 640,
+      "worsened": 0
+    },
+    "full": {
+      "actual_exit_code": 1,
+      "chromium_reference_changed_rows": 0,
+      "complete": true,
+      "different": 1586,
+      "errors": 0,
+      "exact": 21338,
+      "gains": 0,
+      "losses": 0,
+      "total": 22924,
+      "worsened": 0
+    },
+    "primitive": {
+      "actual_exit_code": 0,
+      "chromium_reference_changed_rows": 0,
+      "complete": true,
+      "different": 0,
+      "errors": 0,
+      "exact": 960,
+      "gains": 0,
+      "losses": 0,
+      "total": 960,
+      "worsened": 0
+    }
+  },
+  "repeated_native_process_pairs": 30,
+  "schema_version": 1,
+  "scope": "Native form association, radio membership mutations, and owned C parent/form queries",
+  "total_native_behavior_comparisons": 1188,
+  "whole_renderer_actual_exit_code": 1,
+  "workspace_tests": {
+    "failed": 0,
+    "ignored": 13,
+    "passed": 8630
+  }
+}

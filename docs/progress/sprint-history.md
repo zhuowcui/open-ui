@@ -1,5 +1,11 @@
 # Open UI — Sprint Progress Record
 
+This is a historical record. References below to JavaScript or
+`needs_javascript` describe scripts in Chromium test sources and past test
+classification. Open UI executes no JavaScript. Applications use public native
+Rust APIs for element interaction; the current contract is in
+[supported platforms](../v02/supported-platforms.md#native-interaction-api).
+
 ## Sprint Overview
 
 | Sprint | Title | Tests | Review Rounds | Status |
@@ -258,7 +264,9 @@ classified as SP12-owned layout bugs. Top owners include:
 - SP13 fragmentation and multicol,
 - SP15 inline layout and root/body viewport propagation,
 - SP11 font metrics,
-- future JavaScript/test harness support,
+- Chromium WPT scripts needing native final-state assessment (historically
+  called "future JavaScript/test harness support"; no Open UI JavaScript
+  runtime is planned),
 - future advanced selectors, writing modes, table/grid layout, generated content,
   form controls, canvas/SVG, and paint-quality features.
 
@@ -774,10 +782,12 @@ See `docs/plan/10-text-rendering-parity.md` (roadmap) and `docs/SP14-PLAN.md` (f
 
 ### SP17 W1M: flex abspos alignment matrix closure
 
-- Restricted JavaScript admission to the exact inert check-layout harness and
-  stripped it from comparison templates, including quoted `>` selectors.
-  Inline mutation, unknown scripts, extra handlers, and dynamic alignment are
-  still rejected.
+- Admitted Chromium test sources containing scripts only when they used the
+  exact inert check-layout harness, and stripped that harness from comparison
+  templates, including quoted `>` selectors. Open UI executed no JavaScript.
+  Sources with inline mutation, unknown scripts, extra handlers, or dynamic
+  alignment remained excluded from that sprint's test import. Needed element
+  behavior still requires a public native Rust API.
 - Completed one-time flex abspos resolution for distribution fallbacks,
   physical/logical and flex edges, reverse/wrap reversal, writing mode,
   direction, self alignment, safe overflow, margins, and ignored

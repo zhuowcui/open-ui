@@ -10,12 +10,14 @@ For each test in the pixel_compare binary:
 """
 
 import base64
+from contextlib import ExitStack
 import html
 import hashlib
 import json
 import os
 import re
 import socket
+import signal
 import struct
 import subprocess
 import sys
@@ -682,6 +684,57 @@ def _device_metrics_match(value, logical_width, logical_height, device_scale):
     )
 
 
+def _close_chromium_client(client):
+    try:
+        client.close()
+    except Exception:
+        pass
+
+
+def _chromium_group_has_live_processes(group):
+    # Zombie children have exited and cannot write the profile. Linux's
+    # process-group identity distinguishes this browser from other captures.
+    for entry in os.scandir("/proc"):
+        if not entry.name.isdigit():
+            continue
+        try:
+            with open(os.path.join(entry.path, "stat")) as status:
+                fields = status.read().rsplit(")", 1)[1].split()
+        except (FileNotFoundError, ProcessLookupError, PermissionError):
+            continue
+        if int(fields[2]) == group and fields[0] not in ("Z", "X"):
+            return True
+    return False
+
+
+def _stop_chromium_process(process):
+    # Popen gives this browser a new session. Retire its writers as well as
+    # the parent before TemporaryDirectory attempts to remove their profile.
+    if os.name == "posix":
+        try:
+            os.killpg(process.pid, signal.SIGTERM)
+        except ProcessLookupError:
+            pass
+    else:
+        process.terminate()
+    try:
+        process.wait(timeout=5)
+    except subprocess.TimeoutExpired:
+        process.kill()
+        process.wait()
+    if os.name == "posix":
+        try:
+            os.killpg(process.pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+        if os.path.isdir("/proc"):
+            deadline = time.monotonic() + 5
+            while _chromium_group_has_live_processes(process.pid):
+                if time.monotonic() >= deadline:
+                    raise TimeoutError("Chromium profile writers did not exit")
+                time.sleep(0.01)
+
+
 def render_chrome(
     html_file, output_png, chrome_bin, chrome_dir, use_ahem_noaa=False,
     use_real_font=False, use_freetype_backend=False, use_sp18_features=False,
@@ -706,7 +759,7 @@ def render_chrome(
     process = None
     client = None
     try:
-        with tempfile.TemporaryDirectory(prefix="openui-chrome-profile-") as profile_dir:
+        with tempfile.TemporaryDirectory(prefix="openui-chrome-profile-") as profile_dir, ExitStack() as runtime:
             cmd = [
                 chrome_bin,
                 "--headless",
@@ -736,9 +789,12 @@ def render_chrome(
                 env=env,
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
+                start_new_session=True,
             )
+            runtime.callback(_stop_chromium_process, process)
             port = _wait_for_devtools_endpoint(profile_dir, process)
             client = _CdpWebSocket(_page_websocket_url(port))
+            runtime.callback(_close_chromium_client, client)
             client.command("Page.enable")
             client.command(
                 "Emulation.setDeviceMetricsOverride",
@@ -820,19 +876,6 @@ def render_chrome(
         return True
     except Exception:
         return False
-    finally:
-        if client is not None:
-            try:
-                client.close()
-            except Exception:
-                pass
-        if process is not None:
-            process.terminate()
-            try:
-                process.wait(timeout=5)
-            except subprocess.TimeoutExpired:
-                process.kill()
-                process.wait()
 
 
 def openui_environment(

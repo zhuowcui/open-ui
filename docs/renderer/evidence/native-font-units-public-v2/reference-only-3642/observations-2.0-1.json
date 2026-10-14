@@ -1,0 +1,260 @@
+{
+  "after": {
+    "metrics": {
+      "dpr": 2,
+      "height": 600,
+      "width": 800
+    },
+    "nodes": [
+      {
+        "bounds": {
+          "height": 1,
+          "width": 150,
+          "x": 0,
+          "y": 0
+        },
+        "font_size": "30.41px",
+        "id": "ch",
+        "line_height": "60px",
+        "width": "150px"
+      },
+      {
+        "bounds": {
+          "height": 1,
+          "width": 121.625,
+          "x": 0,
+          "y": 0
+        },
+        "font_size": "30.41px",
+        "id": "ex",
+        "line_height": "48.656px",
+        "width": "121.625px"
+      },
+      {
+        "bounds": {
+          "height": 1,
+          "width": 127.1875,
+          "x": 0,
+          "y": 0
+        },
+        "font_size": "30.41px",
+        "id": "lh",
+        "line_height": "50.875px",
+        "width": "127.188px"
+      },
+      {
+        "bounds": {
+          "height": 1,
+          "width": 114.03125,
+          "x": 0,
+          "y": 0
+        },
+        "font_size": "30.41px",
+        "id": "em",
+        "line_height": "45.615px",
+        "width": "114.031px"
+      },
+      {
+        "bounds": {
+          "height": 1,
+          "width": 60,
+          "x": 0,
+          "y": 0
+        },
+        "font_size": "30.41px",
+        "id": "rem",
+        "line_height": "24px",
+        "width": "60px"
+      },
+      {
+        "bounds": {
+          "height": 1,
+          "width": 96.546875,
+          "x": 0,
+          "y": 0
+        },
+        "font_size": "30.41px",
+        "id": "percentage",
+        "line_height": "38.6207px",
+        "width": "96.5469px"
+      },
+      {
+        "bounds": {
+          "height": 1,
+          "width": 91.203125,
+          "x": 0,
+          "y": 0
+        },
+        "font_size": "30.41px",
+        "id": "number",
+        "line_height": "36.492px",
+        "width": "91.2031px"
+      },
+      {
+        "bounds": {
+          "height": 1,
+          "width": 66.484375,
+          "x": 0,
+          "y": 0
+        },
+        "font_size": "30.41px",
+        "id": "mixed-ch-ex",
+        "line_height": "normal",
+        "width": "66.4844px"
+      },
+      {
+        "bounds": {
+          "height": 1,
+          "width": 67.5,
+          "x": 0,
+          "y": 0
+        },
+        "font_size": "30.41px",
+        "id": "mixed-ch-px",
+        "line_height": "normal",
+        "width": "67.5px"
+      },
+      {
+        "bounds": {
+          "height": 1,
+          "width": 75,
+          "x": 0,
+          "y": 0
+        },
+        "font_size": "30.41px",
+        "id": "same-ch",
+        "line_height": "normal",
+        "width": "75px"
+      }
+    ]
+  },
+  "before": {
+    "metrics": {
+      "dpr": 2,
+      "height": 600,
+      "width": 800
+    },
+    "nodes": [
+      {
+        "bounds": {
+          "height": 1,
+          "width": 150,
+          "x": 0,
+          "y": 0
+        },
+        "font_size": "30.41px",
+        "id": "ch",
+        "line_height": "60px",
+        "width": "150px"
+      },
+      {
+        "bounds": {
+          "height": 1,
+          "width": 121.625,
+          "x": 0,
+          "y": 0
+        },
+        "font_size": "30.41px",
+        "id": "ex",
+        "line_height": "48.656px",
+        "width": "121.625px"
+      },
+      {
+        "bounds": {
+          "height": 1,
+          "width": 116.953125,
+          "x": 0,
+          "y": 0
+        },
+        "font_size": "30.41px",
+        "id": "lh",
+        "line_height": "46.7812px",
+        "width": "116.953px"
+      },
+      {
+        "bounds": {
+          "height": 1,
+          "width": 114.03125,
+          "x": 0,
+          "y": 0
+        },
+        "font_size": "30.41px",
+        "id": "em",
+        "line_height": "45.615px",
+        "width": "114.031px"
+      },
+      {
+        "bounds": {
+          "height": 1,
+          "width": 60,
+          "x": 0,
+          "y": 0
+        },
+        "font_size": "30.41px",
+        "id": "rem",
+        "line_height": "24px",
+        "width": "60px"
+      },
+      {
+        "bounds": {
+          "height": 1,
+          "width": 96.546875,
+          "x": 0,
+          "y": 0
+        },
+        "font_size": "30.41px",
+        "id": "percentage",
+        "line_height": "38.6207px",
+        "width": "96.5469px"
+      },
+      {
+        "bounds": {
+          "height": 1,
+          "width": 91.203125,
+          "x": 0,
+          "y": 0
+        },
+        "font_size": "30.41px",
+        "id": "number",
+        "line_height": "36.492px",
+        "width": "91.2031px"
+      },
+      {
+        "bounds": {
+          "height": 1,
+          "width": 66.484375,
+          "x": 0,
+          "y": 0
+        },
+        "font_size": "30.41px",
+        "id": "mixed-ch-ex",
+        "line_height": "normal",
+        "width": "66.4844px"
+      },
+      {
+        "bounds": {
+          "height": 1,
+          "width": 67.5,
+          "x": 0,
+          "y": 0
+        },
+        "font_size": "30.41px",
+        "id": "mixed-ch-px",
+        "line_height": "normal",
+        "width": "67.5px"
+      },
+      {
+        "bounds": {
+          "height": 1,
+          "width": 75,
+          "x": 0,
+          "y": 0
+        },
+        "font_size": "30.41px",
+        "id": "same-ch",
+        "line_height": "normal",
+        "width": "75px"
+      }
+    ]
+  }
+}

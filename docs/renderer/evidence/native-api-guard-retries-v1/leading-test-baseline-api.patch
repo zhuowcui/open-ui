@@ -1,0 +1,15 @@
+diff --git a/bindings/rust/openui-engine/src/lib.rs b/bindings/rust/openui-engine/src/lib.rs
+index 81fd7abf..09296320 100644
+--- a/bindings/rust/openui-engine/src/lib.rs
++++ b/bindings/rust/openui-engine/src/lib.rs
+@@ -2674,7 +2674,9 @@ mod tests {
+                             .set_property(
+                                 target,
+                                 StyleProperty::Float,
+-                                openui_style::Float::Left.into(),
++                                StyleValue::Renderer(RendererStyleValue::Float(
++                                    openui_style::Float::Left,
++                                )),
+                             )
+                             .unwrap(),
+                         "min" => engine

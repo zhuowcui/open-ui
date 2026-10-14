@@ -1,0 +1,101 @@
+{
+  "changes": [
+    {
+      "after": "0.41",
+      "before": "0.38",
+      "file": "Cargo.toml",
+      "reason": "Use the patched quick-xml0.41 line without raising zbus_xml5.1 Rust1.85 floor.",
+      "section": "dependencies.quick-xml"
+    }
+  ],
+  "files": [
+    {
+      "modified": false,
+      "path": ".cargo_vcs_info.json",
+      "sha256": "3a0d3d0150e427f787b0f2eeb7d75ea612b6d98f49a46f84bdda79a043bef216",
+      "upstream_sha256": "3a0d3d0150e427f787b0f2eeb7d75ea612b6d98f49a46f84bdda79a043bef216"
+    },
+    {
+      "modified": false,
+      "path": "CHANGELOG.md",
+      "sha256": "dbb340b58a3ce9459b4ff1f8c93f3206804b20b0a3b0c39366cb2717c2d52d41",
+      "upstream_sha256": "dbb340b58a3ce9459b4ff1f8c93f3206804b20b0a3b0c39366cb2717c2d52d41"
+    },
+    {
+      "modified": true,
+      "path": "Cargo.toml",
+      "sha256": "40bc7b478ea7dab5ad10325b1038c8063e65e921d875c58a4634af1223f104b6",
+      "upstream_sha256": "e03070aaae7d5df532815bd860c7a61521ef86b3803e930608fa0b2094103851"
+    },
+    {
+      "modified": false,
+      "path": "Cargo.toml.orig",
+      "sha256": "ae55526b73d794525775b20d22877e2bddf2742dab2736c80f00e975b89de476",
+      "upstream_sha256": "ae55526b73d794525775b20d22877e2bddf2742dab2736c80f00e975b89de476"
+    },
+    {
+      "modified": false,
+      "path": "LICENSE",
+      "sha256": "260e4ff3fc493695880c90774283eb1e3d018f898fabe655bbd52dd2cbd2fcad",
+      "upstream_sha256": "260e4ff3fc493695880c90774283eb1e3d018f898fabe655bbd52dd2cbd2fcad"
+    },
+    {
+      "modified": false,
+      "path": "README.md",
+      "sha256": "9506f82e3059a7ad6ecfe92c550f2f7b26d85d9070731f190565b8e5f6d629a9",
+      "upstream_sha256": "9506f82e3059a7ad6ecfe92c550f2f7b26d85d9070731f190565b8e5f6d629a9"
+    },
+    {
+      "modified": false,
+      "path": "src/error.rs",
+      "sha256": "0b6c81cceb6d1f3852495b495378e2f92138e9b110978e2350e7f04db0cfa73d",
+      "upstream_sha256": "0b6c81cceb6d1f3852495b495378e2f92138e9b110978e2350e7f04db0cfa73d"
+    },
+    {
+      "modified": false,
+      "path": "src/lib.rs",
+      "sha256": "0f386b989cbebb6577d17aa28d0674f9c4d2fb096e5a313901c37a9d75ba5779",
+      "upstream_sha256": "0f386b989cbebb6577d17aa28d0674f9c4d2fb096e5a313901c37a9d75ba5779"
+    },
+    {
+      "modified": false,
+      "path": "tests/data/invalid_arg_type.xml",
+      "sha256": "7edb12a403be5e6d2702ace13eb63a95ebf0d4f393673d647967541f075ca446",
+      "upstream_sha256": "7edb12a403be5e6d2702ace13eb63a95ebf0d4f393673d647967541f075ca446"
+    },
+    {
+      "modified": false,
+      "path": "tests/data/sample_object0.xml",
+      "sha256": "6e8df5cfb8a894b53adf5a74077b27ce761eaaaf307088805576e509507c564f",
+      "upstream_sha256": "6e8df5cfb8a894b53adf5a74077b27ce761eaaaf307088805576e509507c564f"
+    },
+    {
+      "modified": false,
+      "path": "tests/tests.rs",
+      "sha256": "ec238ed91afc048f45d1f3f5534762c6280ddb7da223b823f2721a3c9556773e",
+      "upstream_sha256": "ec238ed91afc048f45d1f3f5534762c6280ddb7da223b823f2721a3c9556773e"
+    }
+  ],
+  "license_file": "LICENSE",
+  "omitted_upstream_files": [
+    {
+      "path": "Cargo.lock",
+      "reason": "Inactive standalone vendor graph; framework uses the active workspace lockfile.",
+      "sha256": "792179ecac083eb856be0fc4b3d66bb1435e5bf18ff287cad9f607c3ee38d8a0"
+    }
+  ],
+  "package": {
+    "license": "MIT",
+    "name": "zbus_xml",
+    "rust_version": "1.85",
+    "version": "5.1.0"
+  },
+  "publication_note": "Cargo patches apply only at the consuming workspace root. Published dependent crates do not propagate this patch; crates.io consumer release qualification remains required.",
+  "schema_version": 1,
+  "source_inventory_encoding": "UTF-8 compact sorted-key JSON array of path/sha256 records in lexical path order; excludes this provenance file",
+  "source_inventory_sha256": "c16fc22d85ab7e01b3b59e766bd5223627d5e6c21f9b2bdcdf347c6356998882",
+  "upstream": {
+    "archive_sha256": "441a0064125265655bccc3a6af6bef56814d9277ac83fce48b1cd7e160b80eac",
+    "archive_url": "https://static.crates.io/crates/zbus_xml/zbus_xml-5.1.0.crate"
+  }
+}

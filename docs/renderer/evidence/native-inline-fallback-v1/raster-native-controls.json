@@ -1,0 +1,2863 @@
+{
+  "all_commands_terminal": true,
+  "build_receipt_sha256": "e2d866c3607345fe91d8f89a0bcbc2b995d50b942aef5cfdfab94e0d401b8031",
+  "cases": [
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "5e03336b3bf2ba0c2475dfc1394e3432ece9a159696105ccd88ca4898a4f2908",
+          "png_sha256": "5e03336b3bf2ba0c2475dfc1394e3432ece9a159696105ccd88ca4898a4f2908",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "353894c8757fb5025b43c0fc13e03e709fc25524a64268de9b249f88c845c8dc",
+          "png_sha256": "353894c8757fb5025b43c0fc13e03e709fc25524a64268de9b249f88c845c8dc",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "none",
+      "opacity_mutation_changes_frame": true,
+      "policy": "default",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/default/none/1.0/native-1",
+            "1.0",
+            "default",
+            "none"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/default/none/1.0/native-2",
+            "1.0",
+            "default",
+            "none"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 1.0
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "fb51bb9b4378007925c2ea6b73ca7035369699e6a6bf089f073e2fc80ae8f370",
+          "png_sha256": "fb51bb9b4378007925c2ea6b73ca7035369699e6a6bf089f073e2fc80ae8f370",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "b7f5336d51dfc011dff1e59f75693ee6d161fa894a96514143dbc05f09b4339d",
+          "png_sha256": "b7f5336d51dfc011dff1e59f75693ee6d161fa894a96514143dbc05f09b4339d",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "none",
+      "opacity_mutation_changes_frame": true,
+      "policy": "default",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/default/none/1.25/native-1",
+            "1.25",
+            "default",
+            "none"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/default/none/1.25/native-2",
+            "1.25",
+            "default",
+            "none"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 1.25
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "9eea958b0d763d8a903afba8a1e1a08e25a7b599cf2085383b0edfd14b4abdac",
+          "png_sha256": "9eea958b0d763d8a903afba8a1e1a08e25a7b599cf2085383b0edfd14b4abdac",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "ee071f52b770c86904e850979baf496926d578b00c4e6193107b9a8c415222d2",
+          "png_sha256": "ee071f52b770c86904e850979baf496926d578b00c4e6193107b9a8c415222d2",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "none",
+      "opacity_mutation_changes_frame": true,
+      "policy": "default",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/default/none/1.5/native-1",
+            "1.5",
+            "default",
+            "none"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/default/none/1.5/native-2",
+            "1.5",
+            "default",
+            "none"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 1.5
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "74c8f4b3b1ec0e5f774164e6fd29021b9c8bbecaec902253cfb449005a54d1a5",
+          "png_sha256": "74c8f4b3b1ec0e5f774164e6fd29021b9c8bbecaec902253cfb449005a54d1a5",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "a9709b842638135f2e8c5506822c286e8eb31dd3268099384dfb8708de6b2954",
+          "png_sha256": "a9709b842638135f2e8c5506822c286e8eb31dd3268099384dfb8708de6b2954",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "none",
+      "opacity_mutation_changes_frame": true,
+      "policy": "default",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/default/none/2.0/native-1",
+            "2.0",
+            "default",
+            "none"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/default/none/2.0/native-2",
+            "2.0",
+            "default",
+            "none"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 2.0
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "74f3d6433544d9895a902728d92b7a53e6dcbd410ff2b4f6755c7ced775020e8",
+          "png_sha256": "74f3d6433544d9895a902728d92b7a53e6dcbd410ff2b4f6755c7ced775020e8",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "7aac8d9a44d132c561bbde0de134caad219c466c8e3b9bf15aae571eafac2553",
+          "png_sha256": "7aac8d9a44d132c561bbde0de134caad219c466c8e3b9bf15aae571eafac2553",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "none",
+      "opacity_mutation_changes_frame": true,
+      "policy": "default",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/default/none/3.0/native-1",
+            "3.0",
+            "default",
+            "none"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/default/none/3.0/native-2",
+            "3.0",
+            "default",
+            "none"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 3.0
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "ad0d89c30b390904d95c5b8730e4cd8bb42eb689961680ec47535ea1a476a678",
+          "png_sha256": "ad0d89c30b390904d95c5b8730e4cd8bb42eb689961680ec47535ea1a476a678",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "7e3a36b58014ecaa378e3084dd25004c6b635e28b9864cb2a00cfe2f84e077e4",
+          "png_sha256": "7e3a36b58014ecaa378e3084dd25004c6b635e28b9864cb2a00cfe2f84e077e4",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "slight",
+      "opacity_mutation_changes_frame": true,
+      "policy": "default",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/default/slight/1.0/native-1",
+            "1.0",
+            "default",
+            "slight"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/default/slight/1.0/native-2",
+            "1.0",
+            "default",
+            "slight"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 1.0
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "fb51bb9b4378007925c2ea6b73ca7035369699e6a6bf089f073e2fc80ae8f370",
+          "png_sha256": "fb51bb9b4378007925c2ea6b73ca7035369699e6a6bf089f073e2fc80ae8f370",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "b7f5336d51dfc011dff1e59f75693ee6d161fa894a96514143dbc05f09b4339d",
+          "png_sha256": "b7f5336d51dfc011dff1e59f75693ee6d161fa894a96514143dbc05f09b4339d",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "slight",
+      "opacity_mutation_changes_frame": true,
+      "policy": "default",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/default/slight/1.25/native-1",
+            "1.25",
+            "default",
+            "slight"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/default/slight/1.25/native-2",
+            "1.25",
+            "default",
+            "slight"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 1.25
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "9eea958b0d763d8a903afba8a1e1a08e25a7b599cf2085383b0edfd14b4abdac",
+          "png_sha256": "9eea958b0d763d8a903afba8a1e1a08e25a7b599cf2085383b0edfd14b4abdac",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "ee071f52b770c86904e850979baf496926d578b00c4e6193107b9a8c415222d2",
+          "png_sha256": "ee071f52b770c86904e850979baf496926d578b00c4e6193107b9a8c415222d2",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "slight",
+      "opacity_mutation_changes_frame": true,
+      "policy": "default",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/default/slight/1.5/native-1",
+            "1.5",
+            "default",
+            "slight"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/default/slight/1.5/native-2",
+            "1.5",
+            "default",
+            "slight"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 1.5
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "74c8f4b3b1ec0e5f774164e6fd29021b9c8bbecaec902253cfb449005a54d1a5",
+          "png_sha256": "74c8f4b3b1ec0e5f774164e6fd29021b9c8bbecaec902253cfb449005a54d1a5",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "a9709b842638135f2e8c5506822c286e8eb31dd3268099384dfb8708de6b2954",
+          "png_sha256": "a9709b842638135f2e8c5506822c286e8eb31dd3268099384dfb8708de6b2954",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "slight",
+      "opacity_mutation_changes_frame": true,
+      "policy": "default",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/default/slight/2.0/native-1",
+            "2.0",
+            "default",
+            "slight"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/default/slight/2.0/native-2",
+            "2.0",
+            "default",
+            "slight"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 2.0
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "74f3d6433544d9895a902728d92b7a53e6dcbd410ff2b4f6755c7ced775020e8",
+          "png_sha256": "74f3d6433544d9895a902728d92b7a53e6dcbd410ff2b4f6755c7ced775020e8",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "7aac8d9a44d132c561bbde0de134caad219c466c8e3b9bf15aae571eafac2553",
+          "png_sha256": "7aac8d9a44d132c561bbde0de134caad219c466c8e3b9bf15aae571eafac2553",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "slight",
+      "opacity_mutation_changes_frame": true,
+      "policy": "default",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/default/slight/3.0/native-1",
+            "3.0",
+            "default",
+            "slight"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/default/slight/3.0/native-2",
+            "3.0",
+            "default",
+            "slight"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 3.0
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "5728aa974f186b4261b2c744fe603170c13a936055682e7fd0f019512aa0f300",
+          "png_sha256": "5728aa974f186b4261b2c744fe603170c13a936055682e7fd0f019512aa0f300",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "07c588dd3109b626a721a56a8c79d3f5ec8747710b990afe94de8c54b9479220",
+          "png_sha256": "07c588dd3109b626a721a56a8c79d3f5ec8747710b990afe94de8c54b9479220",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "normal",
+      "opacity_mutation_changes_frame": true,
+      "policy": "default",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/default/normal/1.0/native-1",
+            "1.0",
+            "default",
+            "normal"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/default/normal/1.0/native-2",
+            "1.0",
+            "default",
+            "normal"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 1.0
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "3e2bb841e4ce87a4c1ed442da4543435d03c372102912f1e17135027144b1126",
+          "png_sha256": "3e2bb841e4ce87a4c1ed442da4543435d03c372102912f1e17135027144b1126",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "587dbba97e97d3f7151a6bd96ac4a0bfa0d679f7d1aca23579acfc55a711e1f8",
+          "png_sha256": "587dbba97e97d3f7151a6bd96ac4a0bfa0d679f7d1aca23579acfc55a711e1f8",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "normal",
+      "opacity_mutation_changes_frame": true,
+      "policy": "default",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/default/normal/1.25/native-1",
+            "1.25",
+            "default",
+            "normal"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/default/normal/1.25/native-2",
+            "1.25",
+            "default",
+            "normal"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 1.25
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "2c2011d1988c7b16700d2751c9b4e6c74d19e3e0b015b894bc6e6714368e08f1",
+          "png_sha256": "2c2011d1988c7b16700d2751c9b4e6c74d19e3e0b015b894bc6e6714368e08f1",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "33b122a306503309825e1c496958ce0e22087578c09d961f69b694c90fbcc542",
+          "png_sha256": "33b122a306503309825e1c496958ce0e22087578c09d961f69b694c90fbcc542",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "normal",
+      "opacity_mutation_changes_frame": true,
+      "policy": "default",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/default/normal/1.5/native-1",
+            "1.5",
+            "default",
+            "normal"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/default/normal/1.5/native-2",
+            "1.5",
+            "default",
+            "normal"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 1.5
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "e7644478ba2962919a01fadb3f3d24b47fffd07f098df90b0b3f4c257bf565d9",
+          "png_sha256": "e7644478ba2962919a01fadb3f3d24b47fffd07f098df90b0b3f4c257bf565d9",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "08bd7c2c4c4787c8dc87cf732d8f2ffc3ac705529f6e3dd2f1e72f417427791c",
+          "png_sha256": "08bd7c2c4c4787c8dc87cf732d8f2ffc3ac705529f6e3dd2f1e72f417427791c",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "normal",
+      "opacity_mutation_changes_frame": true,
+      "policy": "default",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/default/normal/2.0/native-1",
+            "2.0",
+            "default",
+            "normal"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/default/normal/2.0/native-2",
+            "2.0",
+            "default",
+            "normal"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 2.0
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "73993ec6a3c4452b24f01bd18ccfeb0eadc1d551d906f4e4ddd63acd969341bc",
+          "png_sha256": "73993ec6a3c4452b24f01bd18ccfeb0eadc1d551d906f4e4ddd63acd969341bc",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "9857a74cb8adc0ae655f83c8abfed458101d67cf57bbc83e7dc8199bdd5cd25f",
+          "png_sha256": "9857a74cb8adc0ae655f83c8abfed458101d67cf57bbc83e7dc8199bdd5cd25f",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "normal",
+      "opacity_mutation_changes_frame": true,
+      "policy": "default",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/default/normal/3.0/native-1",
+            "3.0",
+            "default",
+            "normal"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/default/normal/3.0/native-2",
+            "3.0",
+            "default",
+            "normal"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 3.0
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "5728aa974f186b4261b2c744fe603170c13a936055682e7fd0f019512aa0f300",
+          "png_sha256": "5728aa974f186b4261b2c744fe603170c13a936055682e7fd0f019512aa0f300",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "07c588dd3109b626a721a56a8c79d3f5ec8747710b990afe94de8c54b9479220",
+          "png_sha256": "07c588dd3109b626a721a56a8c79d3f5ec8747710b990afe94de8c54b9479220",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "full",
+      "opacity_mutation_changes_frame": true,
+      "policy": "default",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/default/full/1.0/native-1",
+            "1.0",
+            "default",
+            "full"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/default/full/1.0/native-2",
+            "1.0",
+            "default",
+            "full"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 1.0
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "3e2bb841e4ce87a4c1ed442da4543435d03c372102912f1e17135027144b1126",
+          "png_sha256": "3e2bb841e4ce87a4c1ed442da4543435d03c372102912f1e17135027144b1126",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "587dbba97e97d3f7151a6bd96ac4a0bfa0d679f7d1aca23579acfc55a711e1f8",
+          "png_sha256": "587dbba97e97d3f7151a6bd96ac4a0bfa0d679f7d1aca23579acfc55a711e1f8",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "full",
+      "opacity_mutation_changes_frame": true,
+      "policy": "default",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/default/full/1.25/native-1",
+            "1.25",
+            "default",
+            "full"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/default/full/1.25/native-2",
+            "1.25",
+            "default",
+            "full"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 1.25
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "2c2011d1988c7b16700d2751c9b4e6c74d19e3e0b015b894bc6e6714368e08f1",
+          "png_sha256": "2c2011d1988c7b16700d2751c9b4e6c74d19e3e0b015b894bc6e6714368e08f1",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "33b122a306503309825e1c496958ce0e22087578c09d961f69b694c90fbcc542",
+          "png_sha256": "33b122a306503309825e1c496958ce0e22087578c09d961f69b694c90fbcc542",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "full",
+      "opacity_mutation_changes_frame": true,
+      "policy": "default",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/default/full/1.5/native-1",
+            "1.5",
+            "default",
+            "full"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/default/full/1.5/native-2",
+            "1.5",
+            "default",
+            "full"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 1.5
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "e7644478ba2962919a01fadb3f3d24b47fffd07f098df90b0b3f4c257bf565d9",
+          "png_sha256": "e7644478ba2962919a01fadb3f3d24b47fffd07f098df90b0b3f4c257bf565d9",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "08bd7c2c4c4787c8dc87cf732d8f2ffc3ac705529f6e3dd2f1e72f417427791c",
+          "png_sha256": "08bd7c2c4c4787c8dc87cf732d8f2ffc3ac705529f6e3dd2f1e72f417427791c",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "full",
+      "opacity_mutation_changes_frame": true,
+      "policy": "default",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/default/full/2.0/native-1",
+            "2.0",
+            "default",
+            "full"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/default/full/2.0/native-2",
+            "2.0",
+            "default",
+            "full"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 2.0
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "73993ec6a3c4452b24f01bd18ccfeb0eadc1d551d906f4e4ddd63acd969341bc",
+          "png_sha256": "73993ec6a3c4452b24f01bd18ccfeb0eadc1d551d906f4e4ddd63acd969341bc",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "9857a74cb8adc0ae655f83c8abfed458101d67cf57bbc83e7dc8199bdd5cd25f",
+          "png_sha256": "9857a74cb8adc0ae655f83c8abfed458101d67cf57bbc83e7dc8199bdd5cd25f",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "full",
+      "opacity_mutation_changes_frame": true,
+      "policy": "default",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/default/full/3.0/native-1",
+            "3.0",
+            "default",
+            "full"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/default/full/3.0/native-2",
+            "3.0",
+            "default",
+            "full"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 3.0
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "33d8819b48bd9753eb338e9b64105a70b95f639027f70744b6ccc00954ade854",
+          "png_sha256": "33d8819b48bd9753eb338e9b64105a70b95f639027f70744b6ccc00954ade854",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "aa7111f6a4d41bb43e36eef8c89c0c0ed2388c5554e20ef28e6530843d9faf0d",
+          "png_sha256": "aa7111f6a4d41bb43e36eef8c89c0c0ed2388c5554e20ef28e6530843d9faf0d",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "none",
+      "opacity_mutation_changes_frame": true,
+      "policy": "freetype",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/freetype/none/1.0/native-1",
+            "1.0",
+            "freetype",
+            "none"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/freetype/none/1.0/native-2",
+            "1.0",
+            "freetype",
+            "none"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 1.0
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "8b8ee70a9ca6023b4d91770e86ba5812035ade2ca1df508ca01d43fac75f1706",
+          "png_sha256": "8b8ee70a9ca6023b4d91770e86ba5812035ade2ca1df508ca01d43fac75f1706",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "c1412f346930fca0a6fb904da067697062e67dc1fc531b8c2803a647b5586b5f",
+          "png_sha256": "c1412f346930fca0a6fb904da067697062e67dc1fc531b8c2803a647b5586b5f",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "none",
+      "opacity_mutation_changes_frame": true,
+      "policy": "freetype",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/freetype/none/1.25/native-1",
+            "1.25",
+            "freetype",
+            "none"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/freetype/none/1.25/native-2",
+            "1.25",
+            "freetype",
+            "none"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 1.25
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "ed3ed6c82df49ffce4d9f1123a74b0a6d59e7e417986b08f686b21f796d513fe",
+          "png_sha256": "ed3ed6c82df49ffce4d9f1123a74b0a6d59e7e417986b08f686b21f796d513fe",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "4cc56c709052ec230b91b6960987ac215c8806301c948778f32c242deec2f525",
+          "png_sha256": "4cc56c709052ec230b91b6960987ac215c8806301c948778f32c242deec2f525",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "none",
+      "opacity_mutation_changes_frame": true,
+      "policy": "freetype",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/freetype/none/1.5/native-1",
+            "1.5",
+            "freetype",
+            "none"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/freetype/none/1.5/native-2",
+            "1.5",
+            "freetype",
+            "none"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 1.5
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "06c4b4e9138d3625f2bacb9464116db21813f5fb829ac2940860098275fee0b7",
+          "png_sha256": "06c4b4e9138d3625f2bacb9464116db21813f5fb829ac2940860098275fee0b7",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "76b9060d53318ea37fcc8874666d68153c0037d2d03ee84082c395a371070c08",
+          "png_sha256": "76b9060d53318ea37fcc8874666d68153c0037d2d03ee84082c395a371070c08",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "none",
+      "opacity_mutation_changes_frame": true,
+      "policy": "freetype",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/freetype/none/2.0/native-1",
+            "2.0",
+            "freetype",
+            "none"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/freetype/none/2.0/native-2",
+            "2.0",
+            "freetype",
+            "none"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 2.0
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "28441a326975b4214e502f9d5afd67f69ef78bad5b4a0be588d9b3acb6f30e08",
+          "png_sha256": "28441a326975b4214e502f9d5afd67f69ef78bad5b4a0be588d9b3acb6f30e08",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "4a811b3e649b3d8a792f19a04f65ab4a250f48e49b5186d6879d0ad06ee32328",
+          "png_sha256": "4a811b3e649b3d8a792f19a04f65ab4a250f48e49b5186d6879d0ad06ee32328",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "none",
+      "opacity_mutation_changes_frame": true,
+      "policy": "freetype",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/freetype/none/3.0/native-1",
+            "3.0",
+            "freetype",
+            "none"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/freetype/none/3.0/native-2",
+            "3.0",
+            "freetype",
+            "none"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 3.0
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "13484170ccdad8ae6e8cd6272beb52ab9ce1f152b80126cc7b7734b53f35b879",
+          "png_sha256": "13484170ccdad8ae6e8cd6272beb52ab9ce1f152b80126cc7b7734b53f35b879",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "882cb92c946806cf3783d2c269ebfe289d6a8e8e4a5892dfeef7f946d05fdd43",
+          "png_sha256": "882cb92c946806cf3783d2c269ebfe289d6a8e8e4a5892dfeef7f946d05fdd43",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "slight",
+      "opacity_mutation_changes_frame": true,
+      "policy": "freetype",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/freetype/slight/1.0/native-1",
+            "1.0",
+            "freetype",
+            "slight"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/freetype/slight/1.0/native-2",
+            "1.0",
+            "freetype",
+            "slight"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 1.0
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "8b8ee70a9ca6023b4d91770e86ba5812035ade2ca1df508ca01d43fac75f1706",
+          "png_sha256": "8b8ee70a9ca6023b4d91770e86ba5812035ade2ca1df508ca01d43fac75f1706",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "c1412f346930fca0a6fb904da067697062e67dc1fc531b8c2803a647b5586b5f",
+          "png_sha256": "c1412f346930fca0a6fb904da067697062e67dc1fc531b8c2803a647b5586b5f",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "slight",
+      "opacity_mutation_changes_frame": true,
+      "policy": "freetype",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/freetype/slight/1.25/native-1",
+            "1.25",
+            "freetype",
+            "slight"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/freetype/slight/1.25/native-2",
+            "1.25",
+            "freetype",
+            "slight"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 1.25
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "ed3ed6c82df49ffce4d9f1123a74b0a6d59e7e417986b08f686b21f796d513fe",
+          "png_sha256": "ed3ed6c82df49ffce4d9f1123a74b0a6d59e7e417986b08f686b21f796d513fe",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "4cc56c709052ec230b91b6960987ac215c8806301c948778f32c242deec2f525",
+          "png_sha256": "4cc56c709052ec230b91b6960987ac215c8806301c948778f32c242deec2f525",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "slight",
+      "opacity_mutation_changes_frame": true,
+      "policy": "freetype",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/freetype/slight/1.5/native-1",
+            "1.5",
+            "freetype",
+            "slight"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/freetype/slight/1.5/native-2",
+            "1.5",
+            "freetype",
+            "slight"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 1.5
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "06c4b4e9138d3625f2bacb9464116db21813f5fb829ac2940860098275fee0b7",
+          "png_sha256": "06c4b4e9138d3625f2bacb9464116db21813f5fb829ac2940860098275fee0b7",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "76b9060d53318ea37fcc8874666d68153c0037d2d03ee84082c395a371070c08",
+          "png_sha256": "76b9060d53318ea37fcc8874666d68153c0037d2d03ee84082c395a371070c08",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "slight",
+      "opacity_mutation_changes_frame": true,
+      "policy": "freetype",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/freetype/slight/2.0/native-1",
+            "2.0",
+            "freetype",
+            "slight"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/freetype/slight/2.0/native-2",
+            "2.0",
+            "freetype",
+            "slight"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 2.0
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "28441a326975b4214e502f9d5afd67f69ef78bad5b4a0be588d9b3acb6f30e08",
+          "png_sha256": "28441a326975b4214e502f9d5afd67f69ef78bad5b4a0be588d9b3acb6f30e08",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "4a811b3e649b3d8a792f19a04f65ab4a250f48e49b5186d6879d0ad06ee32328",
+          "png_sha256": "4a811b3e649b3d8a792f19a04f65ab4a250f48e49b5186d6879d0ad06ee32328",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "slight",
+      "opacity_mutation_changes_frame": true,
+      "policy": "freetype",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/freetype/slight/3.0/native-1",
+            "3.0",
+            "freetype",
+            "slight"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/freetype/slight/3.0/native-2",
+            "3.0",
+            "freetype",
+            "slight"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 3.0
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "853fb09fca5087d111e5ac919d354b1bad070afacc046547da66515a6870f753",
+          "png_sha256": "853fb09fca5087d111e5ac919d354b1bad070afacc046547da66515a6870f753",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "e225e2d785005bad625ded8ef09386c9477a0a77135b76e5f132a13b5e1b83de",
+          "png_sha256": "e225e2d785005bad625ded8ef09386c9477a0a77135b76e5f132a13b5e1b83de",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "normal",
+      "opacity_mutation_changes_frame": true,
+      "policy": "freetype",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/freetype/normal/1.0/native-1",
+            "1.0",
+            "freetype",
+            "normal"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/freetype/normal/1.0/native-2",
+            "1.0",
+            "freetype",
+            "normal"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 1.0
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "c783fc16e8ba409d7e4abb4f8aa196dcee90de86fcc92b6a6c233b136774b6af",
+          "png_sha256": "c783fc16e8ba409d7e4abb4f8aa196dcee90de86fcc92b6a6c233b136774b6af",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "4b0af4559ce52ed5725c7da2b82a68c5989965f343fb7d80002d779d51966bc3",
+          "png_sha256": "4b0af4559ce52ed5725c7da2b82a68c5989965f343fb7d80002d779d51966bc3",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "normal",
+      "opacity_mutation_changes_frame": true,
+      "policy": "freetype",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/freetype/normal/1.25/native-1",
+            "1.25",
+            "freetype",
+            "normal"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/freetype/normal/1.25/native-2",
+            "1.25",
+            "freetype",
+            "normal"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 1.25
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "1fcb9aea3be6c5e27c89aa7d4351fb2b3418f350633cde248c859a61618df3e8",
+          "png_sha256": "1fcb9aea3be6c5e27c89aa7d4351fb2b3418f350633cde248c859a61618df3e8",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "3d6ccd710fa96de243ca9af36cb7b6e33457516d2dc921ca7da6e818f6acc8af",
+          "png_sha256": "3d6ccd710fa96de243ca9af36cb7b6e33457516d2dc921ca7da6e818f6acc8af",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "normal",
+      "opacity_mutation_changes_frame": true,
+      "policy": "freetype",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/freetype/normal/1.5/native-1",
+            "1.5",
+            "freetype",
+            "normal"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/freetype/normal/1.5/native-2",
+            "1.5",
+            "freetype",
+            "normal"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 1.5
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "d5a6c66dc2a3f514599aa69f0ce1ccad2298be1aa130df86e787696c2321d703",
+          "png_sha256": "d5a6c66dc2a3f514599aa69f0ce1ccad2298be1aa130df86e787696c2321d703",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "c0d2da07354a4c683807b0aae40763b2e5c4b913a0c091f901d74bcac4e7d1f5",
+          "png_sha256": "c0d2da07354a4c683807b0aae40763b2e5c4b913a0c091f901d74bcac4e7d1f5",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "normal",
+      "opacity_mutation_changes_frame": true,
+      "policy": "freetype",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/freetype/normal/2.0/native-1",
+            "2.0",
+            "freetype",
+            "normal"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/freetype/normal/2.0/native-2",
+            "2.0",
+            "freetype",
+            "normal"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 2.0
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "31b4af61978c78ad968f958cafb77bd0307548cddc77bf55de63792c882992fd",
+          "png_sha256": "31b4af61978c78ad968f958cafb77bd0307548cddc77bf55de63792c882992fd",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "2a391ac0536feed03976239e2110add129f41a476db109b82f5bef45d7b5e353",
+          "png_sha256": "2a391ac0536feed03976239e2110add129f41a476db109b82f5bef45d7b5e353",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "normal",
+      "opacity_mutation_changes_frame": true,
+      "policy": "freetype",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/freetype/normal/3.0/native-1",
+            "3.0",
+            "freetype",
+            "normal"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/freetype/normal/3.0/native-2",
+            "3.0",
+            "freetype",
+            "normal"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 3.0
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "853fb09fca5087d111e5ac919d354b1bad070afacc046547da66515a6870f753",
+          "png_sha256": "853fb09fca5087d111e5ac919d354b1bad070afacc046547da66515a6870f753",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "e225e2d785005bad625ded8ef09386c9477a0a77135b76e5f132a13b5e1b83de",
+          "png_sha256": "e225e2d785005bad625ded8ef09386c9477a0a77135b76e5f132a13b5e1b83de",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "full",
+      "opacity_mutation_changes_frame": true,
+      "policy": "freetype",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/freetype/full/1.0/native-1",
+            "1.0",
+            "freetype",
+            "full"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/freetype/full/1.0/native-2",
+            "1.0",
+            "freetype",
+            "full"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 1.0
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "c783fc16e8ba409d7e4abb4f8aa196dcee90de86fcc92b6a6c233b136774b6af",
+          "png_sha256": "c783fc16e8ba409d7e4abb4f8aa196dcee90de86fcc92b6a6c233b136774b6af",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "4b0af4559ce52ed5725c7da2b82a68c5989965f343fb7d80002d779d51966bc3",
+          "png_sha256": "4b0af4559ce52ed5725c7da2b82a68c5989965f343fb7d80002d779d51966bc3",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "full",
+      "opacity_mutation_changes_frame": true,
+      "policy": "freetype",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/freetype/full/1.25/native-1",
+            "1.25",
+            "freetype",
+            "full"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/freetype/full/1.25/native-2",
+            "1.25",
+            "freetype",
+            "full"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 1.25
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "1fcb9aea3be6c5e27c89aa7d4351fb2b3418f350633cde248c859a61618df3e8",
+          "png_sha256": "1fcb9aea3be6c5e27c89aa7d4351fb2b3418f350633cde248c859a61618df3e8",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "3d6ccd710fa96de243ca9af36cb7b6e33457516d2dc921ca7da6e818f6acc8af",
+          "png_sha256": "3d6ccd710fa96de243ca9af36cb7b6e33457516d2dc921ca7da6e818f6acc8af",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "full",
+      "opacity_mutation_changes_frame": true,
+      "policy": "freetype",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/freetype/full/1.5/native-1",
+            "1.5",
+            "freetype",
+            "full"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/freetype/full/1.5/native-2",
+            "1.5",
+            "freetype",
+            "full"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 1.5
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "d5a6c66dc2a3f514599aa69f0ce1ccad2298be1aa130df86e787696c2321d703",
+          "png_sha256": "d5a6c66dc2a3f514599aa69f0ce1ccad2298be1aa130df86e787696c2321d703",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "c0d2da07354a4c683807b0aae40763b2e5c4b913a0c091f901d74bcac4e7d1f5",
+          "png_sha256": "c0d2da07354a4c683807b0aae40763b2e5c4b913a0c091f901d74bcac4e7d1f5",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "full",
+      "opacity_mutation_changes_frame": true,
+      "policy": "freetype",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/freetype/full/2.0/native-1",
+            "2.0",
+            "freetype",
+            "full"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/freetype/full/2.0/native-2",
+            "2.0",
+            "freetype",
+            "full"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 2.0
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "31b4af61978c78ad968f958cafb77bd0307548cddc77bf55de63792c882992fd",
+          "png_sha256": "31b4af61978c78ad968f958cafb77bd0307548cddc77bf55de63792c882992fd",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "2a391ac0536feed03976239e2110add129f41a476db109b82f5bef45d7b5e353",
+          "png_sha256": "2a391ac0536feed03976239e2110add129f41a476db109b82f5bef45d7b5e353",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "full",
+      "opacity_mutation_changes_frame": true,
+      "policy": "freetype",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/freetype/full/3.0/native-1",
+            "3.0",
+            "freetype",
+            "full"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/freetype/full/3.0/native-2",
+            "3.0",
+            "freetype",
+            "full"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 3.0
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "09dcd1194817aaad5d4a65363cb6be0d8ed29564ab34be9ea6cc7f64fccf7648",
+          "png_sha256": "09dcd1194817aaad5d4a65363cb6be0d8ed29564ab34be9ea6cc7f64fccf7648",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "222e9b6f1322f167f99f923de409d1309c836d5a61ceae00ed5e03b1f2aa35b8",
+          "png_sha256": "222e9b6f1322f167f99f923de409d1309c836d5a61ceae00ed5e03b1f2aa35b8",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "none",
+      "opacity_mutation_changes_frame": true,
+      "policy": "fontations",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/fontations/none/1.0/native-1",
+            "1.0",
+            "fontations",
+            "none"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/fontations/none/1.0/native-2",
+            "1.0",
+            "fontations",
+            "none"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 1.0
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "2d23ebf30b80d62d5a94a8d3bd41cf940c2471d6972f01eceb0dbe1ebaede842",
+          "png_sha256": "2d23ebf30b80d62d5a94a8d3bd41cf940c2471d6972f01eceb0dbe1ebaede842",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "ea9fc2504bfd93b810f72b971534809dfde29e5055ec0bb0f3abc3b31cb31b2b",
+          "png_sha256": "ea9fc2504bfd93b810f72b971534809dfde29e5055ec0bb0f3abc3b31cb31b2b",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "none",
+      "opacity_mutation_changes_frame": true,
+      "policy": "fontations",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/fontations/none/1.25/native-1",
+            "1.25",
+            "fontations",
+            "none"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/fontations/none/1.25/native-2",
+            "1.25",
+            "fontations",
+            "none"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 1.25
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "8121d45c48532f2ab7610d2c5abcb0456b95389f731c84c6dbbf77265aff1b25",
+          "png_sha256": "8121d45c48532f2ab7610d2c5abcb0456b95389f731c84c6dbbf77265aff1b25",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "cef703c2fcbf43833be4a75b01082051f44d2d0bb2e14eb0503cddb87ed8ad5c",
+          "png_sha256": "cef703c2fcbf43833be4a75b01082051f44d2d0bb2e14eb0503cddb87ed8ad5c",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "none",
+      "opacity_mutation_changes_frame": true,
+      "policy": "fontations",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/fontations/none/1.5/native-1",
+            "1.5",
+            "fontations",
+            "none"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/fontations/none/1.5/native-2",
+            "1.5",
+            "fontations",
+            "none"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 1.5
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "c165c1b8c6aa48d2bd87fa827483ba1e662bd16586ce238d3bbc0eed0e39b7de",
+          "png_sha256": "c165c1b8c6aa48d2bd87fa827483ba1e662bd16586ce238d3bbc0eed0e39b7de",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "ebce3866caf5fea2e09dccaea726889b56c7d07424b185992ee0224159b94bde",
+          "png_sha256": "ebce3866caf5fea2e09dccaea726889b56c7d07424b185992ee0224159b94bde",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "none",
+      "opacity_mutation_changes_frame": true,
+      "policy": "fontations",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/fontations/none/2.0/native-1",
+            "2.0",
+            "fontations",
+            "none"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/fontations/none/2.0/native-2",
+            "2.0",
+            "fontations",
+            "none"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 2.0
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "0cc252131f0ed9bc2218a54a2ec4ed04bfdb6079ff630783d5ff8e6096bc7063",
+          "png_sha256": "0cc252131f0ed9bc2218a54a2ec4ed04bfdb6079ff630783d5ff8e6096bc7063",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "3b75dbb96181a898a7b9bf18efcdd0302d4628bcf1021794f423daf5eed6fdc2",
+          "png_sha256": "3b75dbb96181a898a7b9bf18efcdd0302d4628bcf1021794f423daf5eed6fdc2",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "none",
+      "opacity_mutation_changes_frame": true,
+      "policy": "fontations",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/fontations/none/3.0/native-1",
+            "3.0",
+            "fontations",
+            "none"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/fontations/none/3.0/native-2",
+            "3.0",
+            "fontations",
+            "none"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 3.0
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "7bfc4470fe5a30874d0d4e7857214bf3758e5616024e966b0f75bf233171f5b8",
+          "png_sha256": "7bfc4470fe5a30874d0d4e7857214bf3758e5616024e966b0f75bf233171f5b8",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "5c29ed82856b763b5aff33bda2e32a3c50188edaa54fda93488ac1578d7468b3",
+          "png_sha256": "5c29ed82856b763b5aff33bda2e32a3c50188edaa54fda93488ac1578d7468b3",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "slight",
+      "opacity_mutation_changes_frame": true,
+      "policy": "fontations",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/fontations/slight/1.0/native-1",
+            "1.0",
+            "fontations",
+            "slight"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/fontations/slight/1.0/native-2",
+            "1.0",
+            "fontations",
+            "slight"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 1.0
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "2d23ebf30b80d62d5a94a8d3bd41cf940c2471d6972f01eceb0dbe1ebaede842",
+          "png_sha256": "2d23ebf30b80d62d5a94a8d3bd41cf940c2471d6972f01eceb0dbe1ebaede842",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "ea9fc2504bfd93b810f72b971534809dfde29e5055ec0bb0f3abc3b31cb31b2b",
+          "png_sha256": "ea9fc2504bfd93b810f72b971534809dfde29e5055ec0bb0f3abc3b31cb31b2b",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "slight",
+      "opacity_mutation_changes_frame": true,
+      "policy": "fontations",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/fontations/slight/1.25/native-1",
+            "1.25",
+            "fontations",
+            "slight"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/fontations/slight/1.25/native-2",
+            "1.25",
+            "fontations",
+            "slight"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 1.25
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "8121d45c48532f2ab7610d2c5abcb0456b95389f731c84c6dbbf77265aff1b25",
+          "png_sha256": "8121d45c48532f2ab7610d2c5abcb0456b95389f731c84c6dbbf77265aff1b25",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "cef703c2fcbf43833be4a75b01082051f44d2d0bb2e14eb0503cddb87ed8ad5c",
+          "png_sha256": "cef703c2fcbf43833be4a75b01082051f44d2d0bb2e14eb0503cddb87ed8ad5c",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "slight",
+      "opacity_mutation_changes_frame": true,
+      "policy": "fontations",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/fontations/slight/1.5/native-1",
+            "1.5",
+            "fontations",
+            "slight"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/fontations/slight/1.5/native-2",
+            "1.5",
+            "fontations",
+            "slight"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 1.5
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "c165c1b8c6aa48d2bd87fa827483ba1e662bd16586ce238d3bbc0eed0e39b7de",
+          "png_sha256": "c165c1b8c6aa48d2bd87fa827483ba1e662bd16586ce238d3bbc0eed0e39b7de",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "ebce3866caf5fea2e09dccaea726889b56c7d07424b185992ee0224159b94bde",
+          "png_sha256": "ebce3866caf5fea2e09dccaea726889b56c7d07424b185992ee0224159b94bde",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "slight",
+      "opacity_mutation_changes_frame": true,
+      "policy": "fontations",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/fontations/slight/2.0/native-1",
+            "2.0",
+            "fontations",
+            "slight"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/fontations/slight/2.0/native-2",
+            "2.0",
+            "fontations",
+            "slight"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 2.0
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "0cc252131f0ed9bc2218a54a2ec4ed04bfdb6079ff630783d5ff8e6096bc7063",
+          "png_sha256": "0cc252131f0ed9bc2218a54a2ec4ed04bfdb6079ff630783d5ff8e6096bc7063",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "3b75dbb96181a898a7b9bf18efcdd0302d4628bcf1021794f423daf5eed6fdc2",
+          "png_sha256": "3b75dbb96181a898a7b9bf18efcdd0302d4628bcf1021794f423daf5eed6fdc2",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "slight",
+      "opacity_mutation_changes_frame": true,
+      "policy": "fontations",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/fontations/slight/3.0/native-1",
+            "3.0",
+            "fontations",
+            "slight"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/fontations/slight/3.0/native-2",
+            "3.0",
+            "fontations",
+            "slight"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 3.0
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "cc8f2db4e3d236a7ae9c04ee4c8c8f43d05de0a71e6e52e92ce6ae3eb6f62f49",
+          "png_sha256": "cc8f2db4e3d236a7ae9c04ee4c8c8f43d05de0a71e6e52e92ce6ae3eb6f62f49",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "f4b7f78c859813a2e0b354b558e6a5377c282b617e7a20c06884b76d299075bd",
+          "png_sha256": "f4b7f78c859813a2e0b354b558e6a5377c282b617e7a20c06884b76d299075bd",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "normal",
+      "opacity_mutation_changes_frame": true,
+      "policy": "fontations",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/fontations/normal/1.0/native-1",
+            "1.0",
+            "fontations",
+            "normal"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/fontations/normal/1.0/native-2",
+            "1.0",
+            "fontations",
+            "normal"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 1.0
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "f684383fb41399246c7459df846803a640d7a0ffb1f9ff568f584e53f2d0000e",
+          "png_sha256": "f684383fb41399246c7459df846803a640d7a0ffb1f9ff568f584e53f2d0000e",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "2c2aabc78bdd2e557cc32c203d4a886449ac16a20c930b4ea6de1692e3995f6f",
+          "png_sha256": "2c2aabc78bdd2e557cc32c203d4a886449ac16a20c930b4ea6de1692e3995f6f",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "normal",
+      "opacity_mutation_changes_frame": true,
+      "policy": "fontations",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/fontations/normal/1.25/native-1",
+            "1.25",
+            "fontations",
+            "normal"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/fontations/normal/1.25/native-2",
+            "1.25",
+            "fontations",
+            "normal"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 1.25
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "49651850c1469150c7110e96d2342e3c5aa679cd5f76a49089c746687fcc4f68",
+          "png_sha256": "49651850c1469150c7110e96d2342e3c5aa679cd5f76a49089c746687fcc4f68",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "ec14025d35b4bb6c1c9e40f9b48b650c77d9d8f18399582164b56d0c6083664f",
+          "png_sha256": "ec14025d35b4bb6c1c9e40f9b48b650c77d9d8f18399582164b56d0c6083664f",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "normal",
+      "opacity_mutation_changes_frame": true,
+      "policy": "fontations",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/fontations/normal/1.5/native-1",
+            "1.5",
+            "fontations",
+            "normal"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/fontations/normal/1.5/native-2",
+            "1.5",
+            "fontations",
+            "normal"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 1.5
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "0a68b4e2f8a2c5735a568e7e8d0af578b9f4d08589a2583e82c9d62c2bb4ebe2",
+          "png_sha256": "0a68b4e2f8a2c5735a568e7e8d0af578b9f4d08589a2583e82c9d62c2bb4ebe2",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "21077db4b71f2cf1d311d65b2c381df56133dfd0a6420fdac6d3d88e41cc2f84",
+          "png_sha256": "21077db4b71f2cf1d311d65b2c381df56133dfd0a6420fdac6d3d88e41cc2f84",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "normal",
+      "opacity_mutation_changes_frame": true,
+      "policy": "fontations",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/fontations/normal/2.0/native-1",
+            "2.0",
+            "fontations",
+            "normal"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/fontations/normal/2.0/native-2",
+            "2.0",
+            "fontations",
+            "normal"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 2.0
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "0d480f97961c09972f7c9cd72d4b11c7801253b449a55208ad52d791fc608752",
+          "png_sha256": "0d480f97961c09972f7c9cd72d4b11c7801253b449a55208ad52d791fc608752",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "37e35c16779bdf13eff6c02ec85846fbda60b1224f18eb63de9fb78ddc194ca6",
+          "png_sha256": "37e35c16779bdf13eff6c02ec85846fbda60b1224f18eb63de9fb78ddc194ca6",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "normal",
+      "opacity_mutation_changes_frame": true,
+      "policy": "fontations",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/fontations/normal/3.0/native-1",
+            "3.0",
+            "fontations",
+            "normal"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/fontations/normal/3.0/native-2",
+            "3.0",
+            "fontations",
+            "normal"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 3.0
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "cc8f2db4e3d236a7ae9c04ee4c8c8f43d05de0a71e6e52e92ce6ae3eb6f62f49",
+          "png_sha256": "cc8f2db4e3d236a7ae9c04ee4c8c8f43d05de0a71e6e52e92ce6ae3eb6f62f49",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "f4b7f78c859813a2e0b354b558e6a5377c282b617e7a20c06884b76d299075bd",
+          "png_sha256": "f4b7f78c859813a2e0b354b558e6a5377c282b617e7a20c06884b76d299075bd",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "full",
+      "opacity_mutation_changes_frame": true,
+      "policy": "fontations",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/fontations/full/1.0/native-1",
+            "1.0",
+            "fontations",
+            "full"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/fontations/full/1.0/native-2",
+            "1.0",
+            "fontations",
+            "full"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 1.0
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "f684383fb41399246c7459df846803a640d7a0ffb1f9ff568f584e53f2d0000e",
+          "png_sha256": "f684383fb41399246c7459df846803a640d7a0ffb1f9ff568f584e53f2d0000e",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "2c2aabc78bdd2e557cc32c203d4a886449ac16a20c930b4ea6de1692e3995f6f",
+          "png_sha256": "2c2aabc78bdd2e557cc32c203d4a886449ac16a20c930b4ea6de1692e3995f6f",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "full",
+      "opacity_mutation_changes_frame": true,
+      "policy": "fontations",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/fontations/full/1.25/native-1",
+            "1.25",
+            "fontations",
+            "full"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/fontations/full/1.25/native-2",
+            "1.25",
+            "fontations",
+            "full"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 1.25
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "49651850c1469150c7110e96d2342e3c5aa679cd5f76a49089c746687fcc4f68",
+          "png_sha256": "49651850c1469150c7110e96d2342e3c5aa679cd5f76a49089c746687fcc4f68",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "ec14025d35b4bb6c1c9e40f9b48b650c77d9d8f18399582164b56d0c6083664f",
+          "png_sha256": "ec14025d35b4bb6c1c9e40f9b48b650c77d9d8f18399582164b56d0c6083664f",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "full",
+      "opacity_mutation_changes_frame": true,
+      "policy": "fontations",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/fontations/full/1.5/native-1",
+            "1.5",
+            "fontations",
+            "full"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/fontations/full/1.5/native-2",
+            "1.5",
+            "fontations",
+            "full"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 1.5
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "0a68b4e2f8a2c5735a568e7e8d0af578b9f4d08589a2583e82c9d62c2bb4ebe2",
+          "png_sha256": "0a68b4e2f8a2c5735a568e7e8d0af578b9f4d08589a2583e82c9d62c2bb4ebe2",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "21077db4b71f2cf1d311d65b2c381df56133dfd0a6420fdac6d3d88e41cc2f84",
+          "png_sha256": "21077db4b71f2cf1d311d65b2c381df56133dfd0a6420fdac6d3d88e41cc2f84",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "full",
+      "opacity_mutation_changes_frame": true,
+      "policy": "fontations",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/fontations/full/2.0/native-1",
+            "2.0",
+            "fontations",
+            "full"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/fontations/full/2.0/native-2",
+            "2.0",
+            "fontations",
+            "full"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 2.0
+    },
+    {
+      "callback_and_owned_bounds_verified": true,
+      "contract_checks_passed": true,
+      "images": [
+        {
+          "independent_repeat_png_sha256": "0d480f97961c09972f7c9cd72d4b11c7801253b449a55208ad52d791fc608752",
+          "png_sha256": "0d480f97961c09972f7c9cd72d4b11c7801253b449a55208ad52d791fc608752",
+          "state": "before"
+        },
+        {
+          "independent_repeat_png_sha256": "37e35c16779bdf13eff6c02ec85846fbda60b1224f18eb63de9fb78ddc194ca6",
+          "png_sha256": "37e35c16779bdf13eff6c02ec85846fbda60b1224f18eb63de9fb78ddc194ca6",
+          "state": "after"
+        }
+      ],
+      "native_application_success": true,
+      "native_hinting": "full",
+      "opacity_mutation_changes_frame": true,
+      "policy": "fontations",
+      "repeatability_verified": true,
+      "runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/fontations/full/3.0/native-1",
+            "3.0",
+            "fontations",
+            "full"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-controls-v1559/fontations/full/3.0/native-2",
+            "3.0",
+            "fontations",
+            "full"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 3.0
+    }
+  ],
+  "chromium_pixel_qualification": false,
+  "control_count_per_state": 64,
+  "javascript_executed_by_openui": false,
+  "logical_origin_phases_64ths": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    58,
+    59,
+    60,
+    61,
+    62,
+    63
+  ],
+  "native_binary_sha256": "bb687e6f54141463929586dde834c7bce5f0c3ae8d77f0767acfcc02287bfd00",
+  "new_release_states_admitted": 0,
+  "observed_exit_code": 0,
+  "probe_sha256": "2dfeb1398480de7a5d47af035f83ed20d5d3ffa1292634cb5721b98c4bdb23b3",
+  "promotion_allowed": false,
+  "public_native_rust_api": true,
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "totals": {
+    "cases": 60,
+    "contract_checks_passed": 60,
+    "images": 120,
+    "native_control_states": 7680
+  }
+}

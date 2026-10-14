@@ -1,0 +1,77 @@
+{
+  "owner_pid": 3391144,
+  "checks": [
+    {
+      "argv": [
+        "gh",
+        "run",
+        "view",
+        "38487496408",
+        "--repo",
+        "zhuowcui/open-ui",
+        "--json",
+        "databaseId,headSha,status,conclusion,jobs,url"
+      ],
+      "pid": 3391146,
+      "actual_exit_code": 0,
+      "terminal_reaped": true,
+      "stdout_sha256": "f15b5a3b005a7f13b3ae954d3df232aec4c19257fa6eb4aa0d3fe2839115cf75",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "gh",
+        "run",
+        "view",
+        "38487496346",
+        "--repo",
+        "zhuowcui/open-ui",
+        "--json",
+        "databaseId,headSha,status,conclusion,jobs,url"
+      ],
+      "pid": 3391176,
+      "actual_exit_code": 0,
+      "terminal_reaped": true,
+      "stdout_sha256": "549dd042c6862da00162e78356c400dd4e142a4b426a5d65ef954078dc4d23f2",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "gh",
+        "run",
+        "view",
+        "38487496326",
+        "--repo",
+        "zhuowcui/open-ui",
+        "--json",
+        "databaseId,headSha,status,conclusion,jobs,url"
+      ],
+      "pid": 3391204,
+      "actual_exit_code": 0,
+      "terminal_reaped": true,
+      "stdout_sha256": "079dee970873b1bc38249df0f3d96dfa2cd9389588eee4b3af63fb84e8d9e07a",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "gh",
+        "run",
+        "view",
+        "38487702805",
+        "--repo",
+        "zhuowcui/open-ui",
+        "--json",
+        "databaseId,headSha,status,conclusion,jobs,url"
+      ],
+      "pid": 3391242,
+      "actual_exit_code": 0,
+      "terminal_reaped": true,
+      "stdout_sha256": "bccf7a155ac47f408fcd0c56f104a15c244d793bdccf02394c36e8197e83d9db",
+      "stderr": ""
+    }
+  ],
+  "source": "5520ed920523164574fc80187b2702892cb5ac62",
+  "hosted_snapshot_only": true,
+  "release_qualified": false,
+  "complete": true
+}

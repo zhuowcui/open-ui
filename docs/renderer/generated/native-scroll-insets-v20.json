@@ -1,0 +1,1505 @@
+{
+  "contract": "Open UI executes no JavaScript in any version. Consuming apps call public native Rust APIs and Rust callbacks over the shared Engine. Needed browser element behavior must be implemented in Rust and tested from a consuming app. Chromium alone supplies expected pixels with zero tolerance; old Open UI screenshots are immutable provenance.",
+  "new_release_states_admitted": 0,
+  "prior_snapshot": {
+    "path": "docs/renderer/generated/native-scroll-insets-v19.json",
+    "sha256": "c3db56d487920cf290ee5f5e27b67a0a6b09d48001d8829d3e2099b1061a0142"
+  },
+  "private_resolved_style_candidate": {
+    "affected_selection": {
+      "all_nine_invariants_restored_to_applied_baseline": true,
+      "comparisons": 48,
+      "complete_contract_scope": false,
+      "different": 26,
+      "errors": 0,
+      "exact": 22,
+      "observed_exit_code": 1,
+      "receipt": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/native-resolved-selection-audit-v1130.json",
+        "sha256": "c04fb5016bdd3e43bf08a4af64c6387d0d19dd17cf506d7855643a82b2192f93"
+      },
+      "restored_exact_losses": 22
+    },
+    "applied_to_umbrella": false,
+    "base_commit": "3f1d296f4ecb4ff4b895b3755d1fd7b3472c7b42",
+    "changes": [
+      "Honor resolved computed snapshots without reapplying parent inheritance.",
+      "Replay native overrides and inherited animation samples on resolved snapshots and their native dependents.",
+      "Remove superseded authored declarations during computed snapshot replacement.",
+      "Preserve zero-work repeated computed inputs.",
+      "Compute authored line-height percentages on both typed and generic Renderer payloads. The public typed setter already passed."
+    ],
+    "chromium_computed_style_queries": {
+      "containers_per_run": 12,
+      "descendant_text_indent_px": 0,
+      "independent_runs": 2,
+      "original_inputs_unchanged": true,
+      "receipt": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/native-resolved-oracle-v1117/receipt.json",
+        "sha256": "cc72e6e529fb6efd7b01f8a0d0730f2bbd283fc63875bb9509c0bf7493f4b44d"
+      }
+    },
+    "clean_build": {
+      "abi_exports": 113,
+      "c_consumers_passed": 11,
+      "cpp_consumers_passed": 5,
+      "receipt": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/native-resolved-clean-v1122/build.json",
+        "sha256": "47bbe3450dc413505ef55b855f8cd62eebf68e341529a4e264ede6d05b3502d1"
+      },
+      "steps_passed": 8,
+      "workspace_failed": 0,
+      "workspace_ignored": 13,
+      "workspace_passed": 8540
+    },
+    "failed_baselines": {
+      "raw_renderer_percentage_one_failure": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/native-resolved-probe-v1120/receipt.json",
+        "sha256": "8abe8b7b225ff40a1219803911c7aaf3e82bd9fadfd95ee544c9856dd195dea8"
+      },
+      "resolved_snapshot_three_failures": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/native-resolved-baseline-v1118/receipt.json",
+        "sha256": "be65a84649f09519239fea04a80502178d72285ca34376baf41c500881fc431c"
+      }
+    },
+    "failed_capture_probes": {
+      "relative_capture_returned_false": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/native-relative-capture-failure-v1126.json",
+        "sha256": "331720e6f996fe9fd4405ca843d81c62dd29f5185db681bbcc82bf19a063e5a8"
+      },
+      "static_profile_cleanup": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/native-static-oracle-failure-v1125.json",
+        "sha256": "0e8a632f1ac11657d73737176da9bc481292eff64d30bc13914a8d5d240cacdb"
+      }
+    },
+    "fixed_targeted_guards": {
+      "line_height_transport_guard_passed": 1,
+      "receipt": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/native-resolved-fixed-v1121/receipt.json",
+        "sha256": "e70f9e0368d0be25d65fba048c848d6985cc4871dc71cbdcdf0383360e3fb742"
+      },
+      "resolved_snapshot_guards_passed": 4
+    },
+    "native_relative_guards": {
+      "c_receipt": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/native-resolved-relative-c-v1127/receipt.json",
+        "sha256": "17f9a6fcd20d60ddcd3cdcef9820f8433465c88ef58689dc9470736ee2791614"
+      },
+      "native_c_bounds_exact": 8,
+      "native_c_bounds_total": 8,
+      "rust_images_exact": 50,
+      "rust_images_total": 50,
+      "rust_receipt": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/native-resolved-relative-oracle-v1133/receipt.json",
+        "sha256": "dffe3a125c2f8102d2ef5dc61f0e0101ad5d9ff8660e46420bf3c29603c5504c"
+      }
+    },
+    "new_native_static_position_consumer": {
+      "callback_and_owned_snapshot_guards_pass": true,
+      "cases": 6,
+      "chromium_independent_captures_per_state": 2,
+      "consumer_runs_passed": 30,
+      "geometry_comparisons_exact": 0,
+      "javascript_executed_by_openui": false,
+      "pixel_comparisons_exact": 0,
+      "pixel_comparisons_total": 60,
+      "receipt": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/native-static-oracle-v1129/receipt.json",
+        "sha256": "99afaf711b8e1df30ed72f3cba48471a4c40c634c89887309c281d1fa91c2fd2"
+      },
+      "residuals": [
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "inline-reset",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 80.015625,
+            "x": 123.03125,
+            "y": 23
+          },
+          "mismatched_pixels": 192,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 123.03125,
+            "y": 23
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 1.0,
+          "state": "before"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "inline-reset",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 80.015625,
+            "x": 131.03125,
+            "y": 23
+          },
+          "mismatched_pixels": 192,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 131.03125,
+            "y": 23
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 1.0,
+          "state": "after"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "inline-reset",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 80.015625,
+            "x": 123.03125,
+            "y": 23
+          },
+          "mismatched_pixels": 245,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 123.03125,
+            "y": 23
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 1.25,
+          "state": "before"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "inline-reset",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 80.015625,
+            "x": 131.03125,
+            "y": 23
+          },
+          "mismatched_pixels": 245,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 131.03125,
+            "y": 23
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 1.25,
+          "state": "after"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "inline-reset",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 80.015625,
+            "x": 123.03125,
+            "y": 23
+          },
+          "mismatched_pixels": 173,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 123.03125,
+            "y": 23
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 1.5,
+          "state": "before"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "inline-reset",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 80.015625,
+            "x": 131.03125,
+            "y": 23
+          },
+          "mismatched_pixels": 173,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 131.03125,
+            "y": 23
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 1.5,
+          "state": "after"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "inline-reset",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 80.015625,
+            "x": 123.03125,
+            "y": 23
+          },
+          "mismatched_pixels": 384,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 123.03125,
+            "y": 23
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 2.0,
+          "state": "before"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "inline-reset",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 80.015625,
+            "x": 131.03125,
+            "y": 23
+          },
+          "mismatched_pixels": 384,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 131.03125,
+            "y": 23
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 2.0,
+          "state": "after"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "inline-reset",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 80.015625,
+            "x": 123.03125,
+            "y": 23
+          },
+          "mismatched_pixels": 598,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 123.03125,
+            "y": 23
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 3.0,
+          "state": "before"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "inline-reset",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 80.015625,
+            "x": 131.03125,
+            "y": 23
+          },
+          "mismatched_pixels": 598,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 131.03125,
+            "y": 23
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 3.0,
+          "state": "after"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "block-reset",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 80.015625,
+            "x": 23,
+            "y": 39
+          },
+          "mismatched_pixels": 192,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 23,
+            "y": 39
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 1.0,
+          "state": "before"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "block-reset",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 80.015625,
+            "x": 23,
+            "y": 39
+          },
+          "mismatched_pixels": 192,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 23,
+            "y": 39
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 1.0,
+          "state": "after"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "block-reset",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 80.015625,
+            "x": 23,
+            "y": 39
+          },
+          "mismatched_pixels": 240,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 23,
+            "y": 39
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 1.25,
+          "state": "before"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "block-reset",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 80.015625,
+            "x": 23,
+            "y": 39
+          },
+          "mismatched_pixels": 240,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 23,
+            "y": 39
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 1.25,
+          "state": "after"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "block-reset",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 80.015625,
+            "x": 23,
+            "y": 39
+          },
+          "mismatched_pixels": 168,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 23,
+            "y": 39
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 1.5,
+          "state": "before"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "block-reset",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 80.015625,
+            "x": 23,
+            "y": 39
+          },
+          "mismatched_pixels": 168,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 23,
+            "y": 39
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 1.5,
+          "state": "after"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "block-reset",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 80.015625,
+            "x": 23,
+            "y": 39
+          },
+          "mismatched_pixels": 384,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 23,
+            "y": 39
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 2.0,
+          "state": "before"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "block-reset",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 80.015625,
+            "x": 23,
+            "y": 39
+          },
+          "mismatched_pixels": 384,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 23,
+            "y": 39
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 2.0,
+          "state": "after"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "block-reset",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 80.015625,
+            "x": 23,
+            "y": 39
+          },
+          "mismatched_pixels": 588,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 23,
+            "y": 39
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 3.0,
+          "state": "before"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "block-reset",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 80.015625,
+            "x": 23,
+            "y": 39
+          },
+          "mismatched_pixels": 588,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 23,
+            "y": 39
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 3.0,
+          "state": "after"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "inline-inherit",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 100.015625,
+            "x": 123.03125,
+            "y": 23
+          },
+          "mismatched_pixels": 192,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 123.03125,
+            "y": 23
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 1.0,
+          "state": "before"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "inline-inherit",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 108.015625,
+            "x": 131.03125,
+            "y": 23
+          },
+          "mismatched_pixels": 192,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 131.03125,
+            "y": 23
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 1.0,
+          "state": "after"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "inline-inherit",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 100.015625,
+            "x": 123.03125,
+            "y": 23
+          },
+          "mismatched_pixels": 248,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 123.03125,
+            "y": 23
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 1.25,
+          "state": "before"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "inline-inherit",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 108.015625,
+            "x": 131.03125,
+            "y": 23
+          },
+          "mismatched_pixels": 248,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 131.03125,
+            "y": 23
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 1.25,
+          "state": "after"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "inline-inherit",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 100.015625,
+            "x": 123.03125,
+            "y": 23
+          },
+          "mismatched_pixels": 151,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 123.03125,
+            "y": 23
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 1.5,
+          "state": "before"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "inline-inherit",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 108.015625,
+            "x": 131.03125,
+            "y": 23
+          },
+          "mismatched_pixels": 151,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 131.03125,
+            "y": 23
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 1.5,
+          "state": "after"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "inline-inherit",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 100.015625,
+            "x": 123.03125,
+            "y": 23
+          },
+          "mismatched_pixels": 384,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 123.03125,
+            "y": 23
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 2.0,
+          "state": "before"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "inline-inherit",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 108.015625,
+            "x": 131.03125,
+            "y": 23
+          },
+          "mismatched_pixels": 384,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 131.03125,
+            "y": 23
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 2.0,
+          "state": "after"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "inline-inherit",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 100.015625,
+            "x": 123.03125,
+            "y": 23
+          },
+          "mismatched_pixels": 601,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 123.03125,
+            "y": 23
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 3.0,
+          "state": "before"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "inline-inherit",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 108.015625,
+            "x": 131.03125,
+            "y": 23
+          },
+          "mismatched_pixels": 601,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 131.03125,
+            "y": 23
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 3.0,
+          "state": "after"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "block-inherit",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 100.015625,
+            "x": 23,
+            "y": 39
+          },
+          "mismatched_pixels": 192,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 23,
+            "y": 39
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 1.0,
+          "state": "before"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "block-inherit",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 108.015625,
+            "x": 23,
+            "y": 39
+          },
+          "mismatched_pixels": 192,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 23,
+            "y": 39
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 1.0,
+          "state": "after"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "block-inherit",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 100.015625,
+            "x": 23,
+            "y": 39
+          },
+          "mismatched_pixels": 243,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 23,
+            "y": 39
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 1.25,
+          "state": "before"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "block-inherit",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 108.015625,
+            "x": 23,
+            "y": 39
+          },
+          "mismatched_pixels": 243,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 23,
+            "y": 39
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 1.25,
+          "state": "after"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "block-inherit",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 100.015625,
+            "x": 23,
+            "y": 39
+          },
+          "mismatched_pixels": 146,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 23,
+            "y": 39
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 1.5,
+          "state": "before"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "block-inherit",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 108.015625,
+            "x": 23,
+            "y": 39
+          },
+          "mismatched_pixels": 146,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 23,
+            "y": 39
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 1.5,
+          "state": "after"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "block-inherit",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 100.015625,
+            "x": 23,
+            "y": 39
+          },
+          "mismatched_pixels": 384,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 23,
+            "y": 39
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 2.0,
+          "state": "before"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "block-inherit",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 108.015625,
+            "x": 23,
+            "y": 39
+          },
+          "mismatched_pixels": 384,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 23,
+            "y": 39
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 2.0,
+          "state": "after"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "block-inherit",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 100.015625,
+            "x": 23,
+            "y": 39
+          },
+          "mismatched_pixels": 591,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 23,
+            "y": 39
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 3.0,
+          "state": "before"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "block-inherit",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 108.015625,
+            "x": 23,
+            "y": 39
+          },
+          "mismatched_pixels": 591,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 23,
+            "y": 39
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 3.0,
+          "state": "after"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "inline-relative-reset",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 80.015625,
+            "x": 123.03125,
+            "y": 23
+          },
+          "mismatched_pixels": 192,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 123.03125,
+            "y": 23
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 1.0,
+          "state": "before"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "inline-relative-reset",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 80.015625,
+            "x": 131.03125,
+            "y": 23
+          },
+          "mismatched_pixels": 192,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 131.03125,
+            "y": 23
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 1.0,
+          "state": "after"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "inline-relative-reset",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 80.015625,
+            "x": 123.03125,
+            "y": 23
+          },
+          "mismatched_pixels": 245,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 123.03125,
+            "y": 23
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 1.25,
+          "state": "before"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "inline-relative-reset",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 80.015625,
+            "x": 131.03125,
+            "y": 23
+          },
+          "mismatched_pixels": 245,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 131.03125,
+            "y": 23
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 1.25,
+          "state": "after"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "inline-relative-reset",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 80.015625,
+            "x": 123.03125,
+            "y": 23
+          },
+          "mismatched_pixels": 173,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 123.03125,
+            "y": 23
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 1.5,
+          "state": "before"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "inline-relative-reset",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 80.015625,
+            "x": 131.03125,
+            "y": 23
+          },
+          "mismatched_pixels": 173,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 131.03125,
+            "y": 23
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 1.5,
+          "state": "after"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "inline-relative-reset",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 80.015625,
+            "x": 123.03125,
+            "y": 23
+          },
+          "mismatched_pixels": 384,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 123.03125,
+            "y": 23
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 2.0,
+          "state": "before"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "inline-relative-reset",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 80.015625,
+            "x": 131.03125,
+            "y": 23
+          },
+          "mismatched_pixels": 384,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 131.03125,
+            "y": 23
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 2.0,
+          "state": "after"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "inline-relative-reset",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 80.015625,
+            "x": 123.03125,
+            "y": 23
+          },
+          "mismatched_pixels": 598,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 123.03125,
+            "y": 23
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 3.0,
+          "state": "before"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "inline-relative-reset",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 80.015625,
+            "x": 131.03125,
+            "y": 23
+          },
+          "mismatched_pixels": 598,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 131.03125,
+            "y": 23
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 3.0,
+          "state": "after"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "block-relative-reset",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 80.015625,
+            "x": 23,
+            "y": 39
+          },
+          "mismatched_pixels": 192,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 23,
+            "y": 39
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 1.0,
+          "state": "before"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "block-relative-reset",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 80.015625,
+            "x": 23,
+            "y": 39
+          },
+          "mismatched_pixels": 192,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 23,
+            "y": 39
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 1.0,
+          "state": "after"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "block-relative-reset",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 80.015625,
+            "x": 23,
+            "y": 39
+          },
+          "mismatched_pixels": 240,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 23,
+            "y": 39
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 1.25,
+          "state": "before"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "block-relative-reset",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 80.015625,
+            "x": 23,
+            "y": 39
+          },
+          "mismatched_pixels": 240,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 23,
+            "y": 39
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 1.25,
+          "state": "after"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "block-relative-reset",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 80.015625,
+            "x": 23,
+            "y": 39
+          },
+          "mismatched_pixels": 168,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 23,
+            "y": 39
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 1.5,
+          "state": "before"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "block-relative-reset",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 80.015625,
+            "x": 23,
+            "y": 39
+          },
+          "mismatched_pixels": 168,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 23,
+            "y": 39
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 1.5,
+          "state": "after"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "block-relative-reset",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 80.015625,
+            "x": 23,
+            "y": 39
+          },
+          "mismatched_pixels": 384,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 23,
+            "y": 39
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 2.0,
+          "state": "before"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "block-relative-reset",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 80.015625,
+            "x": 23,
+            "y": 39
+          },
+          "mismatched_pixels": 384,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 23,
+            "y": 39
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 2.0,
+          "state": "after"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "block-relative-reset",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 80.015625,
+            "x": 23,
+            "y": 39
+          },
+          "mismatched_pixels": 588,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 23,
+            "y": 39
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 3.0,
+          "state": "before"
+        },
+        {
+          "bounds_owner": "openui-layout intrinsic width and openui-text measured advances",
+          "bounds_review": "The native absolute auto width is 80px. Chromium is 80.015625px for reset cases and 100.015625/108.015625px for inherited indentation. x, y and height match exactly. Shared intrinsic sizing omits inherited text indentation; the subpixel advance discrepancy and glyph paint causes remain under review.",
+          "case": "block-relative-reset",
+          "chromium_bounds": {
+            "height": 16,
+            "width": 80.015625,
+            "x": 23,
+            "y": 39
+          },
+          "mismatched_pixels": 588,
+          "native_bounds": {
+            "height": 16,
+            "width": 80,
+            "x": 23,
+            "y": 39
+          },
+          "paint_owner": "openui-text glyph replay and openui-paint coverage",
+          "paint_root_cause_review": "pending; per-channel deltas, connected regions and exact captures are retained in the consumer receipt",
+          "scale": 3.0,
+          "state": "after"
+        }
+      ],
+      "scales": [
+        1,
+        1.25,
+        1.5,
+        2,
+        3
+      ]
+    },
+    "own_censuses_at_snapshot": {
+      "expanded": {
+        "actual_exit_available": false,
+        "qualifying_result_claimed": false,
+        "started": false,
+        "terminal_summary_available": false
+      },
+      "full": {
+        "actual_exit_available": false,
+        "qualifying_result_claimed": false,
+        "started": false,
+        "terminal_summary_available": false
+      }
+    },
+    "patch": {
+      "path": "docs/renderer/evidence/native-inherited-styles-v1/native-resolved-styles-v1.patch",
+      "sha256": "8d771ee9cd6ff2ae6c050cadee480dc666798ee5df208e575f3c5c58c4f73395"
+    },
+    "pipeline_at_snapshot": {
+      "receipt": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/native-resolved-pipeline-v1134/receipt.json",
+        "sha256": "87747391b43dc68220c4a4406b41c0dbef06362f945faa24b4c93e408383b4c4"
+      },
+      "state": "awaiting-relative-and-focused-terminal-reports"
+    },
+    "qualification": "The reviewed style regression is repaired in the affected selection. Fresh workspace and native relative guards pass. Raster and full-census status is recorded separately; incomplete runs establish no pass. New static-position consumer bounds and pixels fail; full candidate qualification and native font/intrinsic-size/paint work remain required. Unapplied.",
+    "raster": {
+      "focused_started": true,
+      "focused_terminal_summary_available": false,
+      "own_complete_raster_audit_available": false,
+      "primitive_started": false,
+      "primitive_terminal_summary_available": false,
+      "qualification_claimed": false
+    },
+    "read_only_checks": {
+      "passed": 10,
+      "receipt": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/native-resolved-checks-v1123/receipt.json",
+        "sha256": "5ddf992358bf9caee4460229a35cdf08134a293eb7539e36a44548fba618b1b6"
+      }
+    },
+    "reviewed_owner": "openui-engine computed-style input and inheritance",
+    "reviewed_static_position_root_cause": "Generated native fixture values are resolved computed longhands with default zero fields omitted. The previous set_renderer_style routed them through authored set_property and reapplied inheritance, replacing descendant text-indent zero with container text-indent 20px. Chromium universal text-indent:initial resets every descendant to zero. The shared fix preserves resolved snapshots; native app declarations still inherit through set_property.",
+    "rust_format": {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-resolved-format-v1132.json",
+      "sha256": "9a6223c83b5e8a8addb3175858771bf7b07a24e3e8daa22d2d2bad431be32df9"
+    },
+    "source": {
+      "clean": true,
+      "commit": "5cc75147b89e74198102314657689ab6bec1f77c",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "ede290a86642a93227b44509da846fc2b22821f235129c93c8d79d54c6a0f5ff",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "probe_sha256": "aaf84e3a022dd4709a9a1139a03cc7890fb56432d264339f92e8257feada54f8",
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "required_work_still_open": [
+    "Complete original and expanded Chromium equality with reviewed residual ownership.",
+    "Fix native absolute intrinsic widths and review glyph advance and paint discrepancies.",
+    "Complete all needed public native Rust element APIs and shared C/accessibility parity.",
+    "Complete compositor/3D, blocked-UI animation, hardening, hardware, accessibility, performance, packaging, provenance and approved signed publication."
+  ],
+  "schema_version": 1
+}

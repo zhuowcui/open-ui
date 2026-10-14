@@ -377,10 +377,12 @@ impl Default for TextEmphasisStyle {
 
 /// Atomic computed value for the `font-synthesis` shorthand.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+/// The independent position longhand is not reset by the Chromium .50 shorthand.
 pub struct FontSynthesisShorthand {
     pub weight: FontSynthesis,
     pub style: FontSynthesis,
     pub small_caps: FontSynthesis,
+    /// Compatibility carrier; apply the FontSynthesisPosition property explicitly.
     pub position: FontSynthesis,
 }
 
@@ -492,9 +494,11 @@ impl Default for TextDecorationShorthand {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
+/// Chromium .50 applies style/color; position remains an independent longhand.
 pub struct TextEmphasisShorthand {
     pub style: TextEmphasisStyle,
     pub color: StyleColor,
+    /// Compatibility carrier; apply the TextEmphasisPosition property explicitly.
     pub position: TextEmphasisPosition,
 }
 

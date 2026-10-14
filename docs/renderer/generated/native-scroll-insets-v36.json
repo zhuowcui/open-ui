@@ -1,0 +1,298 @@
+{
+  "applied_to_umbrella": false,
+  "artifacts": {
+    "docs/renderer/evidence/native-style-integration-v1/hosted-hardening-at-observation-v1351.json": {
+      "bytes": 1185,
+      "sha256": "138970b14084d9df02f4e53f10c5ca3be1baeeb1aa9c81ebdc697dfc33ca92c6"
+    },
+    "docs/renderer/evidence/native-style-integration-v1/local-pipeline-at-observation-v1354.json": {
+      "bytes": 3322,
+      "sha256": "b8ce439de6ee4037f4cf3fd2532f7fd37e37756147f195da3fa01cce3df4427f"
+    },
+    "docs/renderer/evidence/native-style-integration-v1/native-inheritance-baseline.patch": {
+      "bytes": 3773,
+      "sha256": "0fa389e789450faa3733c8e496424390b5a6b8edbbafde3c7f23f9e34c37320a"
+    },
+    "docs/renderer/evidence/native-style-integration-v1/native-style-integration.patch": {
+      "bytes": 98622,
+      "sha256": "33d874d5f51aaf9fda7fec2948eff30c97f65b05c4bdec0733b33979c754db20"
+    },
+    "docs/renderer/evidence/native-style-integration-v1/native_inherited_styles.rs": {
+      "bytes": 3539,
+      "sha256": "2935700a02c8af1f4188b96ca512f017d5789877e0a049d7e9b3f27bbbfaaa2f"
+    },
+    "docs/renderer/evidence/native-style-integration-v1/native_relative_styles.rs": {
+      "bytes": 7512,
+      "sha256": "5a04f5324bfe739d6c0834d8bc410cab08ee4c6ffbfab035b3d362bddf285847"
+    },
+    "docs/renderer/evidence/native-style-integration-v1/native_static_position.rs": {
+      "bytes": 6650,
+      "sha256": "fa4fa2f9f4f5bda505c3a258d0ec915359bbaf8e9819b8cc2f20ae539cdf9aa7"
+    },
+    "docs/renderer/evidence/native-style-integration-v1/openui-native-style-integration-build-v1353.py": {
+      "bytes": 4708,
+      "sha256": "f620e655b2d9c8d1e45cfef79610302c8fb2f162657904c4f52363751bdaf797"
+    },
+    "docs/renderer/evidence/native-style-integration-v1/openui-native-style-integration-consumers-v1353.py": {
+      "bytes": 10642,
+      "sha256": "b79ddfe18933807aeecaf4af116e55b34ff903bd9e61c4e207ba4c7441bae81e"
+    },
+    "docs/renderer/evidence/native-style-integration-v1/openui-native-style-integration-guards-v1353.py": {
+      "bytes": 6330,
+      "sha256": "49b17891a996eaaf2175c5bbd792f3cd3a8eb3b3070fdeef85e84c0cd94cc314"
+    },
+    "docs/renderer/evidence/native-style-integration-v1/openui-native-style-integration-matrices-v1353.py": {
+      "bytes": 2256,
+      "sha256": "be45f278111c13ec34c7167e687ff7476141cca51c438bb0884de1c31b33c0ee"
+    },
+    "docs/renderer/evidence/native-style-integration-v1/openui-native-style-integration-pipeline-v1354.py": {
+      "bytes": 6856,
+      "sha256": "2d23eb687eab14fb931556eb933942acde4e7293c8dfd1c151d5e10dd4f91b94"
+    },
+    "docs/renderer/evidence/native-style-integration-v1/openui-native-style-integration-relative-c-v1353.py": {
+      "bytes": 4315,
+      "sha256": "7c9c26b1fdf08455efef65a0721a73963ca585ece919b741bc49e0b50dd8c04a"
+    },
+    "docs/renderer/evidence/native-style-integration-v1/read-only-checks-v1350.json": {
+      "bytes": 3524,
+      "sha256": "8b442039581e8d58842e0cd0dd57d000e279f37754266d69f93b47babaebe372"
+    },
+    "docs/renderer/evidence/native-style-integration-v1/umbrella-ci-complete-v1343.json": {
+      "bytes": 22330,
+      "sha256": "4cba8919eff9ceea9992f91c0cc8228c1360bab90ae34893a33f7a0dc3ab9ce4"
+    },
+    "docs/renderer/evidence/native-style-integration-v1/umbrella-hardening-complete-v1344.json": {
+      "bytes": 18591,
+      "sha256": "a56d02e5a6373e7660d35ddf2f753c235547ffe76a5b6bfeeb458a27ad973c9b"
+    },
+    "docs/renderer/evidence/native-style-integration-v1/umbrella-hardening-run-37244559627.json": {
+      "bytes": 16039,
+      "sha256": "56a87e8a70f51516e44df9d7894d4a5d2bd88486928e79842af6e8398a938a3c"
+    },
+    "docs/renderer/evidence/native-style-integration-v1/umbrella-local-pipeline-at-observation-v1341.json": {
+      "bytes": 2663,
+      "sha256": "e4bcbff0d0dc6422045b0e9bf4c2578de879f8bb0c5afa13b7561575508db4d2"
+    }
+  },
+  "base_umbrella_source": "287e176aa7554001c651d77c21ca7cb6a967833e",
+  "baseline_guard": {
+    "execution": "pending",
+    "required_outcome": "named baseline failure with exit 101, then named fixed pass; a compile failure is not reproduction",
+    "test": "tests::native_inherited_styles_follow_parent_mutations_and_tree_changes"
+  },
+  "baseline_source": "0db5c3889a8576b618e45fbb3b64cd360eb4bbb1",
+  "contract": "Open UI executes no JavaScript in any version. Consuming apps use public native Rust methods and Rust callbacks over the shared Engine. Every needed element behavior must have an implemented public native Rust API and consuming-application verification. Chromium alone is the pixel target with zero tolerance; old Open UI screenshots are immutable provenance.",
+  "current_umbrella_hosted": {
+    "all_commands_terminal": true,
+    "manual_jobs_skipped": 0,
+    "manual_jobs_successful": 7,
+    "manual_run_id": 37244559627,
+    "ordinary_jobs_skipped": 5,
+    "ordinary_jobs_successful": 6,
+    "ordinary_workflows_complete_success": true,
+    "skipped_jobs_are_not_passes": true,
+    "source": "287e176aa7554001c651d77c21ca7cb6a967833e"
+  },
+  "does_not_inherit_intrinsic_or_lcd_trial_source": true,
+  "existing_c_exports": 113,
+  "implementation": [
+    "Combine the previously measured native inheritance/computed-snapshot implementation with the applied owned recording cache repair.",
+    "Retain native authored declarations and declaration order; recompute inheritance after parent mutation, tree edits, viewport changes, pseudo styles and animation.",
+    "Resolve font-relative and viewport-relative values and percentage line-height across typed and generic value transports.",
+    "Preserve resolved computed snapshots instead of treating omitted default fields as native authored declarations.",
+    "Keep public native Rust consumers for inheritance, relative values and static positioning; no embedded JavaScript or new C ABI."
+  ],
+  "javascript_executed_by_openui": false,
+  "local_compile_guards_and_pixel_qualification": "pending; no own local stage executed at this observation",
+  "new_release_states_admitted": 0,
+  "observed_at_utc": "2026-10-05T00:16:37.569694+00:00",
+  "old_openui_pixels_are_provenance_only": true,
+  "original_pixel_gate": "FAIL; 21,334/22,924 exact, zero render errors",
+  "own_hosted_hardening": {
+    "all_commands_terminal": false,
+    "branch": "agent/native-style-integration-v1349",
+    "commit": "0ccc37da4a0def755d5b7f25bb93e92b789787ce",
+    "direct_cache_regression_qualification": false,
+    "last_observed_jobs": [
+      {
+        "conclusion": "success",
+        "name": "miri-handles",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "name": "native-sanitizers (address)",
+        "status": "completed"
+      },
+      {
+        "conclusion": "",
+        "name": "msrv",
+        "status": "in_progress"
+      },
+      {
+        "conclusion": "success",
+        "name": "native-sanitizers (leak)",
+        "status": "completed"
+      },
+      {
+        "conclusion": "",
+        "name": "fuzz-smoke",
+        "status": "in_progress"
+      },
+      {
+        "conclusion": "success",
+        "name": "c-undefined-sanitizer",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "name": "conformance-and-platform",
+        "status": "completed"
+      }
+    ],
+    "probe_sha256": "e9055a0ad0af90d673a17c7d0d5aa3e54f8a35687a557ff602b25b0e12177138",
+    "release_qualification": false,
+    "run_id": 37245581100,
+    "schema_version": 1,
+    "state": "running-own-source-manual-hardening"
+  },
+  "own_local_pipeline": {
+    "all_commands_terminal": false,
+    "combines_qualified_native_style_and_owned_cache_sources": true,
+    "consumer_compile_correction_only": false,
+    "immutable_probe_hashes": {
+      "/tmp/openui-native-style-integration-build-v1353.py": "f620e655b2d9c8d1e45cfef79610302c8fb2f162657904c4f52363751bdaf797",
+      "/tmp/openui-native-style-integration-consumers-v1353.py": "b79ddfe18933807aeecaf4af116e55b34ff903bd9e61c4e207ba4c7441bae81e",
+      "/tmp/openui-native-style-integration-guards-v1353.py": "49b17891a996eaaf2175c5bbd792f3cd3a8eb3b3070fdeef85e84c0cd94cc314",
+      "/tmp/openui-native-style-integration-matrices-v1353.py": "be45f278111c13ec34c7167e687ff7476141cca51c438bb0884de1c31b33c0ee",
+      "/tmp/openui-native-style-integration-relative-c-v1353.py": "7c9c26b1fdf08455efef65a0721a73963ca585ece919b741bc49e0b50dd8c04a"
+    },
+    "inherits_intrinsic_or_lcd_trial_source": false,
+    "javascript_executed_by_openui": false,
+    "new_release_states_admitted": 0,
+    "old_openui_pixels_are_provenance_only": true,
+    "ordered_build_and_image_stages": true,
+    "original_pixel_gate_remains_required": true,
+    "preserves_all_previous_input_bytes": true,
+    "prior_whole_pipelines": [
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-umbrella-pipeline-v1291/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-retry-pipeline-v1310/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-retry-pipeline-v1311/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-c-raster-retry-pipeline-v1312/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-pipeline-v1337/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-default-strike-pipeline-v1338/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-integration-pipeline-v1341/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-capture-forensics-pipeline-v1346/receipt.json"
+    ],
+    "probe_sha256": "2d23eb687eab14fb931556eb933942acde4e7293c8dfd1c151d5e10dd4f91b94",
+    "promotion_allowed": false,
+    "release_qualification": false,
+    "renderer_production_unchanged_from_prior_candidate": false,
+    "schema_version": 1,
+    "selection_hashes": {},
+    "source": {
+      "clean": true,
+      "commit": "0ccc37da4a0def755d5b7f25bb93e92b789787ce",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "43b31449b73a7c7f794d160a82b926e47095ae09a192280536e4dc374b4e6347",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "0ccc37da4a0def755d5b7f25bb93e92b789787ce",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "43b31449b73a7c7f794d160a82b926e47095ae09a192280536e4dc374b4e6347",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "state": "awaiting-all-eight-entire-prior-pipelines",
+    "steps": [],
+    "strict_chromium_capture_pairs": true
+  },
+  "own_verification_scope": {
+    "build_stages": 9,
+    "chromium_capture_policy": "Two consecutive captures per independent Chromium process, two independent processes per state. Preserve both unequal images and query evidence. No retry, tolerance or reference replacement.",
+    "expanded_comparisons": 23728,
+    "focused_comparisons": 640,
+    "input_policy": "Reuse immutable native consumer HTML inputs from the prior source-specific probes; preserve hashes.",
+    "native_inherited_images": 10,
+    "native_relative_c_geometry_observations": 8,
+    "native_relative_images": 50,
+    "native_static_position_images": 60,
+    "original_comparisons": 22924,
+    "primitive_comparisons": 960,
+    "stages": 10,
+    "whole_pipeline_sequencing": "Wait until all eight preceding whole local pipelines are terminal; local builds and image sweeps are separate."
+  },
+  "owner": [
+    "openui-engine",
+    "openui-style"
+  ],
+  "pixel_tolerance": 0,
+  "prior_evidence": {
+    "docs/renderer/generated/native-scroll-insets-v21.json": {
+      "bytes": 73873,
+      "sha256": "506f4d13482a202aab3861a0531d61857039f0f2c4d0df1fe35118487d9f0fec"
+    },
+    "docs/renderer/generated/native-scroll-insets-v22.json": {
+      "bytes": 8223,
+      "sha256": "98c3a617536203ed092e24ba2a8cc16aa190345c94d9427273346742dedf5a0b"
+    },
+    "docs/renderer/generated/native-scroll-insets-v35.json": {
+      "bytes": 10023,
+      "sha256": "1f62a7fd97f57778088d9487a463f2b43dbcd92fcf68348748e5b72caea02466"
+    },
+    "out/renderer-evidence/native-viewport-scroll-v1/native-resolved-expanded-audit-v1164.json": {
+      "bytes": 3438,
+      "sha256": "8762a88f1998788ff190566e62c972857c245d9484d20c5c3cf4310b494ba564"
+    },
+    "out/renderer-evidence/native-viewport-scroll-v1/native-resolved-full-audit-v1160.json": {
+      "bytes": 92876,
+      "sha256": "2d5ec54b21fdec39ebcffb71aae45ef77d74b491bccc23fa725e4bc3f0c145bc"
+    },
+    "out/renderer-evidence/native-viewport-scroll-v1/native-resolved-raster-audit-v1135.json": {
+      "bytes": 2152,
+      "sha256": "16bf7965ea326aee57bbfae61dc7fef3d02a23a3abb1f2c1fefcce4112b63c55"
+    }
+  },
+  "prior_measured_style_source": "5cc75147b89e74198102314657689ab6bec1f77c",
+  "prior_source_specific_evidence": {
+    "expanded_exact": 22137,
+    "expanded_required": 23728,
+    "focused_exact": 640,
+    "full_suite_actual_exits": [
+      1,
+      1
+    ],
+    "native_relative_c_geometry_exact": 8,
+    "native_relative_rust_images_exact": 50,
+    "native_static_position_bounds_exact": 0,
+    "native_static_position_bounds_required": 60,
+    "native_static_position_pixels_exact": 0,
+    "native_static_position_pixels_required": 60,
+    "original_exact": 21334,
+    "original_required": 22924,
+    "primitive_exact": 960,
+    "these_are_not_current_source_runtime_results": true,
+    "workspace_failed": 0,
+    "workspace_ignored": 13,
+    "workspace_passed": 8540
+  },
+  "read_only_checks_passed": 10,
+  "reference_inputs_changed": false,
+  "release_qualification": false,
+  "remaining_original_differences": 1590,
+  "required_work_still_open": [
+    "Current-source local native style/cache build, guards, consumers and all pixel matrices.",
+    "Native static positioning, intrinsic widths and glyph painting; do not inherit regressions from the unqualified intrinsic/font trials.",
+    "All residual Chromium differences, all needed public native Rust APIs and shared C/accessibility behavior.",
+    "Retained compositor and 3D, blocked-UI animation, lab performance/hardware/accessibility, reproducible signed artifacts and approved publication."
+  ],
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "0ccc37da4a0def755d5b7f25bb93e92b789787ce",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "43b31449b73a7c7f794d160a82b926e47095ae09a192280536e4dc374b4e6347",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

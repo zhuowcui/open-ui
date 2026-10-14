@@ -5,32 +5,44 @@
 //! fragment tree.  It intentionally consumes typed DOM/style data only; HTML
 //! parsing and CSS grammar remain porter responsibilities.
 
+use crate::layout_context::LayoutDocument;
 use openui_dom::{Document, ElementTag, NodeId};
 use openui_geometry::{
-    BoxStrut, LayoutUnit, LengthType, PhysicalOffset, PhysicalRect, PhysicalSize,
-    WritingDirectionMode, INDEFINITE_SIZE,
+    BoxStrut, LayoutUnit, LengthType, LogicalOffset, LogicalRect, LogicalSize, PhysicalOffset,
+    PhysicalRect, PhysicalSize, WritingDirectionMode, WritingModeConverter, INDEFINITE_SIZE,
 };
 use openui_style::{
-    BorderCollapse, BorderStyle, BoxSizing, CaptionSide, Display, LineHeight, TableLayout,
-    VerticalAlign,
+    BorderCollapse, BoxSizing, CaptionSide, Display, TableLayout, VerticalAlign, Visibility,
 };
 
 use crate::block::{
-    algorithm_box_from_logical_strut, block_layout, normalize_multicol_child_outer_box,
+    algorithm_box_from_logical_strut, block_layout_with_layout, normalize_multicol_child_outer_box,
     project_logical_fragment_tree_to_physical, resolve_border, resolve_margins, resolve_padding,
 };
 use crate::constraint_space::ConstraintSpace;
-use crate::fragment::{CollapsedBorderSegment, Fragment};
+use crate::fragment::{
+    Fragment, FragmentBoxOwnership, FragmentTablePart, TableColumnBackgroundPositioning,
+};
 use crate::intrinsic_sizing::{
-    compute_intrinsic_block_sizes, compute_intrinsic_inline_sizes, IntrinsicSizes,
+    compute_intrinsic_block_sizes_with_layout, compute_intrinsic_block_sizes_with_used_border,
+    compute_intrinsic_inline_sizes_with_layout, IntrinsicSizes,
 };
 use crate::length_resolver::resolve_length;
 use crate::out_of_flow::OutOfFlowCandidate;
+use crate::resolved_table_borders::{
+    canonical_cell_geometry, BorderBoxInput, BorderSourceKind, CanonicalColumnLocation,
+    CanonicalRowSize, CollapsedTableBorderData, CollapsedTableSectionData, GridRegion,
+    LogicalBorderCandidates, ResolvedCollapsedBorders,
+};
 
 #[derive(Clone)]
 struct TableRow {
     node_id: NodeId,
     group_id: Option<NodeId>,
+    // Identity of the structural section after anonymous table fixup. Direct
+    // row runs use their first source node; an intervening structural box
+    // ends that run even when both adjacent groups have group_id == None.
+    section_id: NodeId,
     cells: Vec<NodeId>,
     anonymous: bool,
 }
@@ -44,10 +56,19 @@ struct CellSlot {
     column_span: usize,
 }
 
+#[derive(Clone, Copy)]
+struct ColumnSource {
+    node_id: NodeId,
+    start: usize,
+    span: usize,
+}
+
 #[derive(Default)]
 struct TableModel {
     captions: Vec<NodeId>,
     columns: Vec<NodeId>,
+    column_sources: Vec<ColumnSource>,
+    column_group_sources: Vec<ColumnSource>,
     rows: Vec<TableRow>,
 }
 
@@ -131,6 +152,22 @@ fn logical_box_strut(strut: BoxStrut, writing_direction: WritingDirectionMode) -
     }
 }
 
+// Horizontal table descendants already store physical cell geometry. The
+// vertical algorithm is projected as a tree later, so reverse only horizontal
+// RTL positions here, from the logical inline origin of the owning box.
+fn table_part_inline_offset(
+    logical_offset: LayoutUnit,
+    part_inline_size: LayoutUnit,
+    owner_inline_size: LayoutUnit,
+    writing_direction: WritingDirectionMode,
+) -> LayoutUnit {
+    if writing_direction.is_horizontal() && writing_direction.is_rtl() {
+        owner_inline_size - logical_offset - part_inline_size
+    } else {
+        logical_offset
+    }
+}
+
 fn logical_border(
     style: &openui_style::ComputedStyle,
     writing_direction: WritingDirectionMode,
@@ -154,71 +191,21 @@ fn logical_margins(
     logical_box_strut(resolve_margins(style, base), writing_direction)
 }
 
-fn authored_borders_match(
-    first: &openui_style::ComputedStyle,
-    second: &openui_style::ComputedStyle,
-) -> bool {
-    first.border_top_width == second.border_top_width
-        && first.border_right_width == second.border_right_width
-        && first.border_bottom_width == second.border_bottom_width
-        && first.border_left_width == second.border_left_width
-        && first.border_top_style == second.border_top_style
-        && first.border_right_style == second.border_right_style
-        && first.border_bottom_style == second.border_bottom_style
-        && first.border_left_style == second.border_left_style
-        && first.border_top_color == second.border_top_color
-        && first.border_right_color == second.border_right_color
-        && first.border_bottom_color == second.border_bottom_color
-        && first.border_left_color == second.border_left_color
+fn row_owns_authored_element_box(doc: &dyn LayoutDocument, row: &TableRow) -> bool {
+    !row.anonymous
+        && doc.node(row.node_id).tag != ElementTag::Text
+        && doc.node(row.node_id).style.display == Display::TableRow
 }
 
-fn collapsed_border_style_priority(style: BorderStyle) -> u8 {
-    match style {
-        BorderStyle::Hidden => 10,
-        BorderStyle::Double => 9,
-        BorderStyle::Solid => 8,
-        BorderStyle::Dashed => 7,
-        BorderStyle::Dotted => 6,
-        BorderStyle::Ridge => 5,
-        BorderStyle::Outset => 4,
-        BorderStyle::Groove => 3,
-        BorderStyle::Inset => 2,
-        BorderStyle::None => 1,
-    }
+fn is_authored_row_group(doc: &dyn LayoutDocument, node_id: NodeId) -> bool {
+    doc.node(node_id).tag != ElementTag::Text
+        && matches!(
+            doc.node(node_id).style.display,
+            Display::TableRowGroup | Display::TableHeaderGroup | Display::TableFooterGroup
+        )
 }
 
-fn collapsed_border_wins(
-    first_width: LayoutUnit,
-    first_style: BorderStyle,
-    second_width: LayoutUnit,
-    second_style: BorderStyle,
-) -> bool {
-    first_style == BorderStyle::Hidden
-        || (second_style != BorderStyle::Hidden
-            && (first_width > second_width
-                || (first_width == second_width
-                    && collapsed_border_style_priority(first_style)
-                        >= collapsed_border_style_priority(second_style))))
-}
-
-/// Resolve a structural table border against a cell border. Width and style
-/// precedence are considered first; on an exact tie the cell wins because it
-/// has the more specific collapsed-border origin.
-fn collapsed_structural_border_wins(
-    structural_width: LayoutUnit,
-    structural_style: BorderStyle,
-    cell_width: LayoutUnit,
-    cell_style: BorderStyle,
-) -> bool {
-    structural_style == BorderStyle::Hidden
-        || (cell_style != BorderStyle::Hidden
-            && (structural_width > cell_width
-                || (structural_width == cell_width
-                    && collapsed_border_style_priority(structural_style)
-                        > collapsed_border_style_priority(cell_style))))
-}
-
-fn collect_row_cells(doc: &Document, row_id: NodeId, cells: &mut Vec<NodeId>) {
+fn collect_row_cells(doc: &dyn LayoutDocument, row_id: NodeId, cells: &mut Vec<NodeId>) {
     for child in doc.children(row_id) {
         let display = doc.node(child).style.display;
         if display == Display::None {
@@ -233,7 +220,7 @@ fn collect_row_cells(doc: &Document, row_id: NodeId, cells: &mut Vec<NodeId>) {
 }
 
 fn collect_group_rows(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     group_id: NodeId,
     rows: &mut Vec<TableRow>,
     captions: &mut Vec<NodeId>,
@@ -252,6 +239,7 @@ fn collect_group_rows(
         rows.push(TableRow {
             node_id: group_id,
             group_id: Some(group_id),
+            section_id: group_id,
             cells: vec![group_id],
             anonymous: true,
         });
@@ -269,13 +257,14 @@ fn collect_group_rows(
         rows.push(TableRow {
             node_id: group_id,
             group_id: Some(group_id),
+            section_id: group_id,
             cells: std::mem::take(anonymous_cells),
             anonymous: true,
         });
     }
 
     fn visit(
-        doc: &Document,
+        doc: &dyn LayoutDocument,
         group_id: NodeId,
         child: NodeId,
         rows: &mut Vec<TableRow>,
@@ -303,6 +292,7 @@ fn collect_group_rows(
             rows.push(TableRow {
                 node_id: child,
                 group_id: Some(group_id),
+                section_id: group_id,
                 cells,
                 anonymous: false,
             });
@@ -318,32 +308,45 @@ fn collect_group_rows(
     flush_anonymous(group_id, rows, &mut anonymous_cells);
 }
 
-fn collect_columns(doc: &Document, node_id: NodeId, columns: &mut Vec<NodeId>) {
+fn collect_columns(doc: &dyn LayoutDocument, node_id: NodeId, model: &mut TableModel) {
     let node = doc.node(node_id);
     if node.style.display == Display::None {
         return;
     }
+    let start = model.columns.len();
     if node.style.display == Display::TableColumn {
         let span = node.table_col_span.max(1) as usize;
-        columns.extend(std::iter::repeat_n(node_id, span));
+        model.columns.extend(std::iter::repeat_n(node_id, span));
+        model.column_sources.push(ColumnSource {
+            node_id,
+            start,
+            span,
+        });
         return;
     }
-    let before = columns.len();
     for child in doc.children(node_id) {
-        collect_columns(doc, child, columns);
+        collect_columns(doc, child, model);
     }
-    if before == columns.len() && node.style.display == Display::TableColumnGroup {
-        let span = node.table_col_span.max(1) as usize;
-        columns.extend(std::iter::repeat_n(node_id, span));
+    if node.style.display == Display::TableColumnGroup {
+        if start == model.columns.len() {
+            let span = node.table_col_span.max(1) as usize;
+            model.columns.extend(std::iter::repeat_n(node_id, span));
+        }
+        model.column_group_sources.push(ColumnSource {
+            node_id,
+            start,
+            span: model.columns.len() - start,
+        });
     }
 }
 
-fn collect_table_model(doc: &Document, table_id: NodeId) -> TableModel {
+fn collect_table_model(doc: &dyn LayoutDocument, table_id: NodeId) -> TableModel {
     let mut model = TableModel::default();
     let mut headers = Vec::new();
     let mut bodies = Vec::new();
     let mut footers = Vec::new();
     let mut anonymous_cells = Vec::new();
+    let mut anonymous_section = None;
     let mut saw_header = false;
     let mut saw_footer = false;
 
@@ -351,6 +354,7 @@ fn collect_table_model(doc: &Document, table_id: NodeId) -> TableModel {
         table_id: NodeId,
         bodies: &mut Vec<TableRow>,
         anonymous_cells: &mut Vec<NodeId>,
+        section_id: Option<NodeId>,
     ) {
         if anonymous_cells.is_empty() {
             return;
@@ -358,13 +362,14 @@ fn collect_table_model(doc: &Document, table_id: NodeId) -> TableModel {
         bodies.push(TableRow {
             node_id: table_id,
             group_id: None,
+            section_id: section_id.expect("anonymous cell run has a section identity"),
             cells: std::mem::take(anonymous_cells),
             anonymous: true,
         });
     }
 
     fn visit(
-        doc: &Document,
+        doc: &dyn LayoutDocument,
         table_id: NodeId,
         node_id: NodeId,
         model: &mut TableModel,
@@ -372,6 +377,7 @@ fn collect_table_model(doc: &Document, table_id: NodeId) -> TableModel {
         bodies: &mut Vec<TableRow>,
         footers: &mut Vec<TableRow>,
         anonymous_cells: &mut Vec<NodeId>,
+        anonymous_section: &mut Option<NodeId>,
         saw_header: &mut bool,
         saw_footer: &mut bool,
     ) {
@@ -391,18 +397,21 @@ fn collect_table_model(doc: &Document, table_id: NodeId) -> TableModel {
                         bodies,
                         footers,
                         anonymous_cells,
+                        anonymous_section,
                         saw_header,
                         saw_footer,
                     );
                 }
             }
             Display::TableCaption => {
-                flush_anonymous_cells(table_id, bodies, anonymous_cells);
+                flush_anonymous_cells(table_id, bodies, anonymous_cells, *anonymous_section);
+                *anonymous_section = None;
                 model.captions.push(node_id);
             }
             Display::TableColumn | Display::TableColumnGroup => {
-                flush_anonymous_cells(table_id, bodies, anonymous_cells);
-                collect_columns(doc, node_id, &mut model.columns);
+                flush_anonymous_cells(table_id, bodies, anonymous_cells, *anonymous_section);
+                *anonymous_section = None;
+                collect_columns(doc, node_id, model);
                 if display == Display::TableColumnGroup {
                     // Malformed source can make an HTML parser retain later
                     // rows/captions under a colgroup. Columns remain column
@@ -422,6 +431,7 @@ fn collect_table_model(doc: &Document, table_id: NodeId) -> TableModel {
                                 bodies,
                                 footers,
                                 anonymous_cells,
+                                anonymous_section,
                                 saw_header,
                                 saw_footer,
                             );
@@ -430,7 +440,8 @@ fn collect_table_model(doc: &Document, table_id: NodeId) -> TableModel {
                 }
             }
             Display::TableHeaderGroup => {
-                flush_anonymous_cells(table_id, bodies, anonymous_cells);
+                flush_anonymous_cells(table_id, bodies, anonymous_cells, *anonymous_section);
+                *anonymous_section = None;
                 if *saw_header {
                     collect_group_rows(doc, node_id, bodies, &mut model.captions);
                 } else {
@@ -439,7 +450,8 @@ fn collect_table_model(doc: &Document, table_id: NodeId) -> TableModel {
                 }
             }
             Display::TableFooterGroup => {
-                flush_anonymous_cells(table_id, bodies, anonymous_cells);
+                flush_anonymous_cells(table_id, bodies, anonymous_cells, *anonymous_section);
+                *anonymous_section = None;
                 if *saw_footer {
                     collect_group_rows(doc, node_id, bodies, &mut model.captions);
                 } else {
@@ -448,22 +460,27 @@ fn collect_table_model(doc: &Document, table_id: NodeId) -> TableModel {
                 }
             }
             Display::TableRowGroup => {
-                flush_anonymous_cells(table_id, bodies, anonymous_cells);
+                flush_anonymous_cells(table_id, bodies, anonymous_cells, *anonymous_section);
+                *anonymous_section = None;
                 collect_group_rows(doc, node_id, bodies, &mut model.captions)
             }
             Display::TableRow => {
-                flush_anonymous_cells(table_id, bodies, anonymous_cells);
+                flush_anonymous_cells(table_id, bodies, anonymous_cells, *anonymous_section);
+                let section_id = *anonymous_section.get_or_insert(node_id);
                 let mut cells = Vec::new();
                 collect_row_cells(doc, node_id, &mut cells);
                 bodies.push(TableRow {
                     node_id,
                     group_id: None,
+                    section_id,
                     cells,
                     anonymous: false,
                 });
             }
-            Display::TableCell => anonymous_cells.push(node_id),
-            _ => anonymous_cells.push(node_id),
+            _ => {
+                anonymous_section.get_or_insert(node_id);
+                anonymous_cells.push(node_id);
+            }
         }
     }
 
@@ -477,11 +494,17 @@ fn collect_table_model(doc: &Document, table_id: NodeId) -> TableModel {
             &mut bodies,
             &mut footers,
             &mut anonymous_cells,
+            &mut anonymous_section,
             &mut saw_header,
             &mut saw_footer,
         );
     }
-    flush_anonymous_cells(table_id, &mut bodies, &mut anonymous_cells);
+    flush_anonymous_cells(
+        table_id,
+        &mut bodies,
+        &mut anonymous_cells,
+        anonymous_section,
+    );
     model.rows.extend(headers);
     model.rows.extend(bodies);
     model.rows.extend(footers);
@@ -489,15 +512,15 @@ fn collect_table_model(doc: &Document, table_id: NodeId) -> TableModel {
 }
 
 fn group_end(rows: &[TableRow], row: usize) -> usize {
-    let group = rows[row].group_id;
+    let section = rows[row].section_id;
     let mut end = row + 1;
-    while end < rows.len() && rows[end].group_id == group {
+    while end < rows.len() && rows[end].section_id == section {
         end += 1;
     }
     end
 }
 
-fn place_cells(doc: &Document, rows: &[TableRow]) -> (Vec<CellSlot>, usize) {
+fn place_cells(doc: &dyn LayoutDocument, rows: &[TableRow]) -> (Vec<CellSlot>, usize) {
     let mut occupied_until: Vec<usize> = Vec::new();
     let mut slots = Vec::new();
     let mut column_count = 0usize;
@@ -515,7 +538,7 @@ fn place_cells(doc: &Document, rows: &[TableRow]) -> (Vec<CellSlot>, usize) {
             let row_span = if cell.table_row_span == 0 {
                 group_end(rows, row_index) - row_index
             } else {
-                (cell.table_row_span as usize).min(rows.len() - row_index)
+                (cell.table_row_span as usize).min(group_end(rows, row_index) - row_index)
             }
             .max(1);
             if occupied_until.len() < column + column_span {
@@ -539,30 +562,201 @@ fn place_cells(doc: &Document, rows: &[TableRow]) -> (Vec<CellSlot>, usize) {
     (slots, column_count)
 }
 
-fn collapsed_inline_boundary_for_cell(
-    doc: &Document,
+fn cell_region(slot: CellSlot) -> GridRegion {
+    GridRegion {
+        row: slot.row,
+        column: slot.column,
+        row_span: slot.row_span,
+        column_span: slot.column_span,
+    }
+}
+
+fn resolve_collapsed_grid(
+    doc: &dyn LayoutDocument,
+    table_id: NodeId,
+    model: &TableModel,
     slots: &[CellSlot],
-    cell: CellSlot,
-    boundary: usize,
-    writing_direction: WritingDirectionMode,
-) -> LayoutUnit {
-    slots
+    column_count: usize,
+    direction: WritingDirectionMode,
+) -> Option<ResolvedCollapsedBorders> {
+    if doc.node(table_id).style.border_collapse != BorderCollapse::Collapse {
+        return None;
+    }
+    let source = |node_id, region, kind, order| BorderBoxInput {
+        region,
+        borders: LogicalBorderCandidates::from_style(
+            node_id,
+            &doc.node(node_id).style,
+            kind,
+            order,
+            direction,
+        ),
+        source_kind: kind,
+    };
+    let mut order = 0;
+    let cells: Vec<_> = slots
         .iter()
-        .filter(|candidate| {
-            candidate.row < cell.row + cell.row_span
-                && cell.row < candidate.row + candidate.row_span
-        })
-        .fold(LayoutUnit::zero(), |winner, candidate| {
-            let border = logical_border(&doc.node(candidate.node_id).style, writing_direction);
-            let edge = if candidate.column == boundary {
-                border.left
-            } else if candidate.column + candidate.column_span == boundary {
-                border.right
+        .map(|slot| {
+            let region = cell_region(*slot);
+            let input = if doc.node(slot.node_id).tag != ElementTag::Text
+                && doc.node(slot.node_id).style.display == Display::TableCell
+            {
+                source(slot.node_id, region, BorderSourceKind::Cell, order)
             } else {
-                LayoutUnit::zero()
+                // The wrapper is the cell border source, not its authored child.
+                BorderBoxInput {
+                    region,
+                    borders: LogicalBorderCandidates::none(order),
+                    source_kind: BorderSourceKind::Cell,
+                }
             };
-            winner.max_of(edge)
+            order += 1;
+            input
         })
+        .collect();
+    let rows: Vec<_> = model
+        .rows
+        .iter()
+        .enumerate()
+        .filter_map(|(row, data)| {
+            let input = row_owns_authored_element_box(doc, data).then(|| {
+                source(
+                    data.node_id,
+                    GridRegion {
+                        row,
+                        column: 0,
+                        row_span: 1,
+                        column_span: column_count,
+                    },
+                    BorderSourceKind::Row,
+                    order,
+                )
+            });
+            order += 1;
+            input
+        })
+        .collect();
+    let mut sections = Vec::new();
+    let mut start = 0;
+    while start < model.rows.len() {
+        let end = group_end(&model.rows, start);
+        if let Some(group) = model.rows[start]
+            .group_id
+            .filter(|id| is_authored_row_group(doc, *id))
+        {
+            sections.push(source(
+                group,
+                GridRegion {
+                    row: start,
+                    column: 0,
+                    row_span: end - start,
+                    column_span: column_count,
+                },
+                BorderSourceKind::Section,
+                order,
+            ));
+        }
+        order += 1;
+        start = end;
+    }
+    let mut columns = Vec::new();
+    order += 1;
+    for column in &model.column_sources {
+        // Pinned VisitCol merges each generated column of a spanned col.
+        for index in column.start..column.start + column.span {
+            columns.push(source(
+                column.node_id,
+                GridRegion {
+                    row: 0,
+                    column: index,
+                    row_span: model.rows.len(),
+                    column_span: 1,
+                },
+                BorderSourceKind::Column,
+                order,
+            ));
+        }
+    }
+    let mut groups = Vec::new();
+    order += 1;
+    for group in &model.column_group_sources {
+        groups.push(source(
+            group.node_id,
+            GridRegion {
+                row: 0,
+                column: group.start,
+                row_span: model.rows.len(),
+                column_span: group.span,
+            },
+            BorderSourceKind::ColumnGroup,
+            order,
+        ));
+    }
+    // Pinned table_borders.cc:234-244 shares one marker order across every
+    // column group, then advances once for the table. Per-group increments
+    // would change equal-width/style perpendicular-joint paint precedence.
+    order += 1;
+    let table = source(
+        table_id,
+        GridRegion {
+            row: 0,
+            column: 0,
+            row_span: model.rows.len(),
+            column_span: column_count,
+        },
+        BorderSourceKind::Table,
+        order,
+    );
+    ResolvedCollapsedBorders::build(
+        model.rows.len(),
+        column_count,
+        &cells,
+        &rows,
+        &sections,
+        &columns,
+        &groups,
+        Some(table),
+    )
+}
+
+fn cell_used_border(
+    resolved: Option<&ResolvedCollapsedBorders>,
+    slot: CellSlot,
+    direction: WritingDirectionMode,
+) -> Option<BoxStrut> {
+    resolved.map(|grid| {
+        grid.used_cell_border(cell_region(slot))
+            .to_physical(direction)
+    })
+}
+
+fn measure_cell_intrinsic_sizes(
+    doc: &dyn LayoutDocument,
+    slot: CellSlot,
+    used_border: Option<BoxStrut>,
+) -> IntrinsicSizes {
+    let style = &doc.node(slot.node_id).style;
+    let authored_cell =
+        doc.node(slot.node_id).tag != ElementTag::Text && style.display == Display::TableCell;
+    let mut sizes = if let Some(border) = used_border.filter(|_| authored_cell) {
+        compute_intrinsic_block_sizes_with_used_border(doc, slot.node_id, border)
+    } else if used_border.is_some() && is_authored_row_group(doc, slot.node_id) {
+        compute_intrinsic_block_sizes_with_used_border(doc, slot.node_id, BoxStrut::zero())
+    } else {
+        compute_intrinsic_block_sizes_with_layout(doc, slot.node_id)
+    };
+    if doc.node(slot.node_id).tag == ElementTag::Text {
+        let inline = compute_intrinsic_inline_sizes_with_layout(doc, slot.node_id);
+        sizes.min_content_inline_size = inline.min;
+        sizes.max_content_inline_size = inline.max;
+    }
+    if let Some(border) = used_border.filter(|_| !authored_cell) {
+        sizes.min_content_inline_size = sizes.min_content_inline_size + border.inline_sum();
+        sizes.max_content_inline_size = sizes.max_content_inline_size + border.inline_sum();
+        sizes.min_content_block_size = sizes.min_content_block_size + border.block_sum();
+        sizes.max_content_block_size = sizes.max_content_block_size + border.block_sum();
+    }
+    sizes
 }
 
 fn add_spanning_contribution(
@@ -596,12 +790,13 @@ fn add_spanning_contribution(
 }
 
 fn measure_tracks(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     table_id: NodeId,
     model: &TableModel,
     slots: &[CellSlot],
     column_count: usize,
     writing_direction: WritingDirectionMode,
+    resolved: Option<&ResolvedCollapsedBorders>,
 ) -> Vec<TrackContribution> {
     let mut tracks = vec![TrackContribution::default(); column_count];
     let inline_spacing = resolved_spacing(doc, table_id, LayoutUnit::zero()).0;
@@ -628,23 +823,35 @@ fn measure_tracks(
         .filter(|slot| slot.column_span == 1)
         .chain(slots.iter().filter(|slot| slot.column_span > 1))
     {
-        let mut sizes = compute_intrinsic_block_sizes(doc, slot.node_id);
-        if doc.node(slot.node_id).tag == ElementTag::Text {
-            let inline = compute_intrinsic_inline_sizes(doc, slot.node_id);
-            sizes.min_content_inline_size = inline.min;
-            sizes.max_content_inline_size = inline.max;
-        }
+        let used_border = cell_used_border(resolved, *slot, writing_direction);
+        let sizes = measure_cell_intrinsic_sizes(doc, *slot, used_border);
         let cell_style = &doc.node(slot.node_id).style;
+        let authored_cell = doc.node(slot.node_id).tag != ElementTag::Text
+            && cell_style.display == Display::TableCell;
+        let own_border = if authored_cell {
+            used_border.map_or_else(
+                || logical_border(cell_style, writing_direction),
+                |border| logical_box_strut(border, writing_direction),
+            )
+        } else if used_border.is_some() && is_authored_row_group(doc, slot.node_id) {
+            BoxStrut::zero()
+        } else {
+            logical_border(cell_style, writing_direction)
+        };
+        let wrapper_edges = used_border
+            .filter(|_| !authored_cell)
+            .map_or(LayoutUnit::zero(), |border| {
+                logical_box_strut(border, writing_direction).inline_sum()
+            });
+        let own_edges = own_border.inline_sum()
+            + logical_padding(cell_style, LayoutUnit::zero(), writing_direction).inline_sum();
         let specified =
             authored_inline_size(doc, slot.node_id, LayoutUnit::zero(), writing_direction).map(
                 |width| {
                     if cell_style.box_sizing == BoxSizing::BorderBox {
-                        width
+                        width.max_of(own_edges) + wrapper_edges
                     } else {
-                        width
-                            + logical_border(cell_style, writing_direction).inline_sum()
-                            + logical_padding(cell_style, LayoutUnit::zero(), writing_direction)
-                                .inline_sum()
+                        width + own_edges + wrapper_edges
                     }
                 },
             );
@@ -680,39 +887,6 @@ fn measure_tracks(
             inline_spacing,
         );
     }
-    if doc.node(table_id).style.border_collapse == BorderCollapse::Collapse {
-        // Adjacent cell border boxes share one collapsed grid line. Intrinsic
-        // measurement initially includes both authored border edges, so remove
-        // the winning shared edge once, split evenly between its neighboring
-        // tracks. Conflict style/color selection remains a paint concern.
-        for boundary in 1..column_count {
-            let left = slots
-                .iter()
-                .filter(|slot| slot.column + slot.column_span == boundary)
-                .map(|slot| logical_border(&doc.node(slot.node_id).style, writing_direction).right)
-                .max()
-                .unwrap_or(LayoutUnit::zero());
-            let right = slots
-                .iter()
-                .filter(|slot| slot.column == boundary)
-                .map(|slot| logical_border(&doc.node(slot.node_id).style, writing_direction).left)
-                .max()
-                .unwrap_or(LayoutUnit::zero());
-            // Contributions contain both authored edges. Collapse removes
-            // only the duplicated portion: if one side has no border, the
-            // other side's winning edge is already counted exactly once.
-            let shared = left.min_of(right);
-            let left_share = shared / LayoutUnit::from_i32(2);
-            let right_share = shared - left_share;
-            tracks[boundary - 1].min =
-                (tracks[boundary - 1].min - left_share).clamp_negative_to_zero();
-            tracks[boundary - 1].max = tracks[boundary - 1].max.max_of(tracks[boundary - 1].min)
-                - left_share.min_of(tracks[boundary - 1].max);
-            tracks[boundary].min = (tracks[boundary].min - right_share).clamp_negative_to_zero();
-            tracks[boundary].max = tracks[boundary].max.max_of(tracks[boundary].min)
-                - right_share.min_of(tracks[boundary].max);
-        }
-    }
     tracks
 }
 
@@ -723,7 +897,7 @@ fn sum_tracks(tracks: &[TrackContribution], max_content: bool) -> LayoutUnit {
 }
 
 fn resolved_spacing(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     table_id: NodeId,
     base: LayoutUnit,
 ) -> (LayoutUnit, LayoutUnit) {
@@ -749,53 +923,16 @@ fn resolved_spacing(
     )
 }
 
-fn single_cell_collapsed_structural_perimeter(
-    doc: &Document,
+pub(crate) fn compute_table_intrinsic_sizes_with_layout(
+    doc: &dyn LayoutDocument,
     table_id: NodeId,
-    model: &TableModel,
-    slots: &[CellSlot],
-    column_count: usize,
-    writing_direction: WritingDirectionMode,
-) -> Option<BoxStrut> {
-    if doc.node(table_id).style.border_collapse != BorderCollapse::Collapse
-        || model.rows.len() != 1
-        || column_count != 1
-        || slots.len() != 1
-    {
-        return None;
-    }
-    let table_border = logical_border(&doc.node(table_id).style, writing_direction);
-    let cell_border = logical_border(&doc.node(slots[0].node_id).style, writing_direction);
-    if table_border != BoxStrut::zero() || cell_border != BoxStrut::zero() {
-        return None;
-    }
-    let mut perimeter = BoxStrut::zero();
-    let mut include = |node_id: NodeId| {
-        let border = logical_border(&doc.node(node_id).style, writing_direction);
-        perimeter.top = perimeter.top.max_of(border.top);
-        perimeter.right = perimeter.right.max_of(border.right);
-        perimeter.bottom = perimeter.bottom.max_of(border.bottom);
-        perimeter.left = perimeter.left.max_of(border.left);
-    };
-    include(model.rows[0].node_id);
-    if let Some(group_id) = model.rows[0].group_id {
-        include(group_id);
-    }
-    for &column_id in &model.columns {
-        include(column_id);
-    }
-    (perimeter != BoxStrut::zero()).then_some(perimeter)
-}
-
-/// Table min/max contributions, including captions, spacing, table edges, and
-/// cell spans. Table cells deliberately use the ordinary block intrinsic
-/// algorithm, so nested flex/multicol/replaced content contributes normally.
-pub fn compute_table_intrinsic_sizes(doc: &Document, table_id: NodeId) -> IntrinsicSizes {
+) -> IntrinsicSizes {
     let style = &doc.node(table_id).style;
     let writing_direction = style.writing_mode.to_writing_direction(style.direction);
     let model = collect_table_model(doc, table_id);
     let (slots, column_count) = place_cells(doc, &model.rows);
-    let tracks = measure_tracks(
+    let column_count = column_count.max(model.columns.len());
+    let resolved = resolve_collapsed_grid(
         doc,
         table_id,
         &model,
@@ -803,8 +940,25 @@ pub fn compute_table_intrinsic_sizes(doc: &Document, table_id: NodeId) -> Intrin
         column_count,
         writing_direction,
     );
+    let tracks = measure_tracks(
+        doc,
+        table_id,
+        &model,
+        &slots,
+        column_count,
+        writing_direction,
+        resolved.as_ref(),
+    );
     let (inline_spacing, block_spacing) = resolved_spacing(doc, table_id, LayoutUnit::zero());
-    let border = logical_border(style, writing_direction);
+    let border = resolved.as_ref().map_or_else(
+        || logical_border(style, writing_direction),
+        |grid| {
+            logical_box_strut(
+                grid.used_table_border().to_physical(writing_direction),
+                writing_direction,
+            )
+        },
+    );
     let padding = logical_padding(style, LayoutUnit::zero(), writing_direction);
     let margins = logical_margins(style, LayoutUnit::zero(), writing_direction);
     let horizontal_edges = border.inline_sum() + padding.inline_sum();
@@ -817,7 +971,7 @@ pub fn compute_table_intrinsic_sizes(doc: &Document, table_id: NodeId) -> Intrin
     let mut caption_block = LayoutUnit::zero();
     for caption in model.captions {
         let caption_style = &doc.node(caption).style;
-        let sizes = compute_intrinsic_block_sizes(doc, caption);
+        let sizes = compute_intrinsic_block_sizes_with_layout(doc, caption);
         let specified_outer =
             authored_inline_size(doc, caption, LayoutUnit::zero(), writing_direction).map(
                 |width| {
@@ -853,7 +1007,11 @@ pub fn compute_table_intrinsic_sizes(doc: &Document, table_id: NodeId) -> Intrin
     let mut row_min = vec![LayoutUnit::zero(); model.rows.len()];
     let mut row_max = vec![LayoutUnit::zero(); model.rows.len()];
     for slot in slots {
-        let sizes = compute_intrinsic_block_sizes(doc, slot.node_id);
+        let sizes = measure_cell_intrinsic_sizes(
+            doc,
+            slot,
+            cell_used_border(resolved.as_ref(), slot, writing_direction),
+        );
         let share_min =
             LayoutUnit::from_f32(sizes.min_content_block_size.to_f32() / slot.row_span as f32);
         let share_max =
@@ -881,7 +1039,7 @@ pub fn compute_table_intrinsic_sizes(doc: &Document, table_id: NodeId) -> Intrin
 }
 
 pub(crate) fn compute_table_caption_block_size(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     table_id: NodeId,
     inline_size: LayoutUnit,
     parent_space: &ConstraintSpace,
@@ -909,7 +1067,7 @@ pub(crate) fn compute_table_caption_block_size(
             caption_space.is_fixed_inline_size =
                 authored_inline_size(doc, caption_id, inline_size, parent_space.writing_direction)
                     .is_none();
-            let mut caption = block_layout(doc, caption_id, &caption_space);
+            let mut caption = block_layout_with_layout(doc, caption_id, &caption_space);
             normalize_multicol_child_outer_box(doc, &mut caption, parent_space.writing_direction);
             let margin =
                 logical_margins(caption_style, inline_size, parent_space.writing_direction);
@@ -971,7 +1129,7 @@ fn distribute_auto_tracks(tracks: &[TrackContribution], target: LayoutUnit) -> V
 }
 
 fn authored_inline_size(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     node_id: NodeId,
     base: LayoutUnit,
     writing_direction: WritingDirectionMode,
@@ -983,12 +1141,13 @@ fn authored_inline_size(
 }
 
 fn distribute_fixed_tracks(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     model: &TableModel,
     slots: &[CellSlot],
     column_count: usize,
     target: LayoutUnit,
     writing_direction: WritingDirectionMode,
+    resolved: Option<&ResolvedCollapsedBorders>,
 ) -> Vec<LayoutUnit> {
     if column_count == 0 {
         return Vec::new();
@@ -1004,7 +1163,19 @@ fn distribute_fixed_tracks(
             }
             if let Some(width) = authored_inline_size(doc, slot.node_id, target, writing_direction)
             {
-                let share = LayoutUnit::from_f32(width.to_f32() / slot.column_span as f32);
+                let cell_style = &doc.node(slot.node_id).style;
+                let border = cell_used_border(resolved, *slot, writing_direction).map_or_else(
+                    || logical_border(cell_style, writing_direction),
+                    |border| logical_box_strut(border, writing_direction),
+                );
+                let width = if cell_style.box_sizing == BoxSizing::ContentBox {
+                    width
+                        + border.inline_sum()
+                        + logical_padding(cell_style, target, writing_direction).inline_sum()
+                } else {
+                    width.max_of(border.inline_sum())
+                };
+                let share = width / LayoutUnit::from_i32(slot.column_span as i32);
                 for track in
                     &mut widths[slot.column..(slot.column + slot.column_span).min(column_count)]
                 {
@@ -1035,16 +1206,17 @@ fn distribute_fixed_tracks(
 }
 
 fn resolve_table_grid_width(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     table_id: NodeId,
     space: &ConstraintSpace,
     tracks: &[TrackContribution],
     column_count: usize,
     inline_spacing: LayoutUnit,
     writing_direction: WritingDirectionMode,
+    used_table_border: Option<BoxStrut>,
 ) -> LayoutUnit {
     let style = &doc.node(table_id).style;
-    let border = logical_border(style, writing_direction);
+    let border = used_table_border.unwrap_or_else(|| logical_border(style, writing_direction));
     let padding = logical_padding(
         style,
         space.percentage_resolution_inline_size,
@@ -1147,31 +1319,55 @@ fn table_cell_alignment_height(fragment: &Fragment) -> LayoutUnit {
 }
 
 fn layout_cell(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     slot: CellSlot,
     width: LayoutUnit,
     table_space: &ConstraintSpace,
     percentage_block_size: LayoutUnit,
+    used_border: Option<BoxStrut>,
 ) -> LaidCell {
     let style = &doc.node(slot.node_id).style;
     let direction = style.writing_mode.to_writing_direction(style.direction);
+    let authored_cell =
+        doc.node(slot.node_id).tag != ElementTag::Text && style.display == Display::TableCell;
+    let wrapper_border = used_border
+        .filter(|_| !authored_cell)
+        .map(|border| logical_box_strut(border, table_space.writing_direction))
+        .unwrap_or_else(BoxStrut::zero);
+    let content_width = (width - wrapper_border.inline_sum()).clamp_negative_to_zero();
     let mut cell_space = ConstraintSpace::for_block_child_from_parent(
         table_space,
-        width,
+        content_width,
         INDEFINITE_SIZE,
-        width,
+        content_width,
         percentage_block_size,
         true,
         direction,
     );
-    cell_space.is_fixed_inline_size = true;
-    if style.display == Display::TableCell && !percentage_block_size.is_indefinite() {
+    if direction.is_horizontal() == table_space.writing_direction.is_horizontal() {
+        cell_space.is_fixed_inline_size = true;
+    } else {
+        cell_space.is_fixed_block_size = true;
+    }
+    if let Some(border) = used_border.filter(|_| authored_cell) {
+        cell_space.element_used_border = Some((slot.node_id, border));
+    } else if used_border.is_some() && is_authored_row_group(doc, slot.node_id) {
+        // Anonymous row-group content carriers must not repeat the group's
+        // authored outer border, which belongs to the structural source.
+        cell_space.element_used_border = Some((slot.node_id, BoxStrut::zero()));
+    }
+    if authored_cell && !percentage_block_size.is_indefinite() {
         // The table's second cell pass owns the final spanned row size. Make
         // that a definite cell block constraint so percentage-sized
         // descendants resolve through the table cell even though CSS treats
         // the cell's authored `height` as a minimum during its natural pass.
-        cell_space.available_block_size = percentage_block_size;
-        cell_space.is_fixed_block_size = true;
+        if direction.is_horizontal() == table_space.writing_direction.is_horizontal() {
+            cell_space.available_block_size = percentage_block_size;
+            cell_space.is_fixed_block_size = true;
+        } else {
+            cell_space.available_inline_size = percentage_block_size;
+            cell_space.is_fixed_inline_size = true;
+        }
     }
     cell_space.needs_first_baseline = true;
     cell_space.needs_last_baseline = true;
@@ -1194,10 +1390,14 @@ fn layout_cell(
         anonymous_doc.install_resolved_style(text, style.clone());
         anonymous_doc.node_mut(text).text = doc.node(slot.node_id).text.clone();
         anonymous_doc.append_child(wrapper, text);
-        let mut fragment = block_layout(&anonymous_doc, wrapper, &cell_space);
+        if used_border.is_some() {
+            cell_space.element_used_border = Some((wrapper, BoxStrut::zero()));
+        }
+        let mut fragment = block_layout_with_layout(&anonymous_doc, wrapper, &cell_space);
         fn remap(fragment: &mut Fragment, wrapper: NodeId, text: NodeId, source: NodeId) {
             if fragment.node_id == wrapper {
                 fragment.node_id = NodeId::NONE;
+                fragment.box_ownership = FragmentBoxOwnership::LayoutHelper;
             } else if fragment.node_id == text {
                 fragment.node_id = source;
             }
@@ -1208,28 +1408,18 @@ fn layout_cell(
         remap(&mut fragment, wrapper, text, slot.node_id);
         fragment
     } else {
-        block_layout(doc, slot.node_id, &cell_space)
+        block_layout_with_layout(doc, slot.node_id, &cell_space)
     };
-    normalize_multicol_child_outer_box(doc, &mut fragment, table_space.writing_direction);
-    if style.display == Display::TableCell
-        && crate::inline::algorithm::has_inline_children(doc, slot.node_id)
-    {
-        if let LineHeight::Number(multiplier) = style.line_height {
-            let line_count = fragment.children.len().max(1) as f32;
-            let expected = LayoutUnit::from_f32(style.font_size * multiplier * line_count);
-            let excess = fragment.size.height - expected;
-            if excess > LayoutUnit::zero() && excess <= LayoutUnit::from_i32(1) {
-                shift_children(&mut fragment, -excess);
-                fragment.size.height = expected;
-                if let Some(value) = fragment.first_baseline.as_mut() {
-                    *value = *value - excess;
-                }
-                if let Some(value) = fragment.last_baseline.as_mut() {
-                    *value = *value - excess;
-                }
-            }
-        }
+    // Improper row-group contents are laid out once inside an anonymous
+    // cell. This content carrier reuses the group's style identity; the
+    // enclosing authored group owns its element box and effects.
+    if matches!(
+        style.display,
+        Display::TableRowGroup | Display::TableHeaderGroup | Display::TableFooterGroup
+    ) {
+        fragment.box_ownership = FragmentBoxOwnership::LayoutHelper;
     }
+    normalize_multicol_child_outer_box(doc, &mut fragment, table_space.writing_direction);
     let mut natural_height = fragment.size.height;
     if direction.is_horizontal() != table_space.writing_direction.is_horizontal() {
         // An orthogonal cell is measured in its own logical axes and then
@@ -1261,12 +1451,21 @@ fn layout_cell(
         // source box at its margin-box position rather than stretching its
         // own background/overflow box to the row dimensions.
         let margins = logical_margins(style, width, table_space.writing_direction);
-        fragment.offset = PhysicalOffset::new(margins.left, margins.top);
-        baseline = baseline + margins.top;
-        natural_height = margins.top + natural_height + margins.bottom;
+        fragment.offset = PhysicalOffset::new(
+            wrapper_border.left + margins.left,
+            wrapper_border.top + margins.top,
+        );
+        baseline = baseline + wrapper_border.top + margins.top;
+        natural_height = wrapper_border.top
+            + margins.top
+            + natural_height
+            + margins.bottom
+            + wrapper_border.bottom;
         alignment_height = natural_height;
         let mut anonymous =
             Fragment::new_box(NodeId::NONE, PhysicalSize::new(width, natural_height));
+        anonymous.box_ownership = FragmentBoxOwnership::LayoutHelper;
+        anonymous.border = wrapper_border;
         anonymous.first_baseline = Some(baseline);
         anonymous.last_baseline = fragment.last_baseline.map(|value| value + margins.top);
         anonymous.children.push(fragment);
@@ -1283,7 +1482,7 @@ fn layout_cell(
 }
 
 fn minimum_row_height(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     row: &TableRow,
     base: LayoutUnit,
     writing_direction: WritingDirectionMode,
@@ -1309,7 +1508,7 @@ fn minimum_row_height(
 }
 
 fn definite_table_internal_block_base(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     node_id: NodeId,
     percentage_base: LayoutUnit,
     writing_direction: WritingDirectionMode,
@@ -1328,7 +1527,7 @@ fn definite_table_internal_block_base(
 }
 
 fn subtree_uses_percentage_block_size(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     node_id: NodeId,
     writing_direction: WritingDirectionMode,
 ) -> bool {
@@ -1365,7 +1564,7 @@ fn adopt_child_oof_candidates(children: &mut [Fragment]) -> Vec<OutOfFlowCandida
     candidates
 }
 
-fn resolve_table_box_oof(doc: &Document, fragment: &mut Fragment) {
+fn resolve_table_box_oof(doc: &dyn LayoutDocument, fragment: &mut Fragment) {
     if fragment.node_id.is_none() || fragment.oof_candidates.is_empty() {
         return;
     }
@@ -1375,9 +1574,18 @@ fn resolve_table_box_oof(doc: &Document, fragment: &mut Fragment) {
         || style.establishes_transform_containing_block
         || style.opacity < 1.0;
     let captures_fixed = style.establishes_transform_containing_block;
+    let direction = style.direction.writing_direction(style.writing_mode);
+    let gutters = logical_box_strut(
+        fragment
+            .element_scrollbars
+            .map_or(BoxStrut::zero(), |bars| bars.insets),
+        direction,
+    );
     let cb_size = PhysicalSize::new(
-        (fragment.size.width - fragment.border.inline_sum()).clamp_negative_to_zero(),
-        (fragment.size.height - fragment.border.block_sum()).clamp_negative_to_zero(),
+        (fragment.size.width - fragment.border.inline_sum() - gutters.inline_sum())
+            .clamp_negative_to_zero(),
+        (fragment.size.height - fragment.border.block_sum() - gutters.block_sum())
+            .clamp_negative_to_zero(),
     );
     let mut pending = Vec::new();
     let mut deferred = Vec::new();
@@ -1392,6 +1600,7 @@ fn resolve_table_box_oof(doc: &Document, fragment: &mut Fragment) {
             if !candidate.has_inline_containing_block {
                 candidate.containing_block_size = cb_size;
                 candidate.containing_block_border = fragment.border;
+                candidate.containing_block_offset = PhysicalOffset::new(gutters.left, gutters.top);
                 candidate.containing_block_direction = style.direction;
                 candidate.containing_block_node = node_id;
             }
@@ -1402,7 +1611,7 @@ fn resolve_table_box_oof(doc: &Document, fragment: &mut Fragment) {
     }
 
     while !pending.is_empty() {
-        let laid_out = crate::out_of_flow::layout_out_of_flow_children(doc, &pending);
+        let laid_out = crate::out_of_flow::layout_out_of_flow_children_with_layout(doc, &pending);
         pending = Vec::new();
         for mut positioned in laid_out {
             let positioned_offset = positioned.offset;
@@ -1419,6 +1628,8 @@ fn resolve_table_box_oof(doc: &Document, fragment: &mut Fragment) {
                     if !nested.has_inline_containing_block {
                         nested.containing_block_size = cb_size;
                         nested.containing_block_border = fragment.border;
+                        nested.containing_block_offset =
+                            PhysicalOffset::new(gutters.left, gutters.top);
                         nested.containing_block_direction = style.direction;
                         nested.containing_block_node = node_id;
                     }
@@ -1434,94 +1645,25 @@ fn resolve_table_box_oof(doc: &Document, fragment: &mut Fragment) {
 }
 
 /// Lay out a table wrapper and its caption/table-grid contents.
-pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -> Fragment {
+pub(crate) fn table_layout_with_layout(
+    doc: &dyn LayoutDocument,
+    table_id: NodeId,
+    space: &ConstraintSpace,
+) -> Fragment {
+    crate::scrollbars::layout(doc, table_id, space)
+}
+
+pub(crate) fn table_layout_contents(
+    doc: &dyn LayoutDocument,
+    table_id: NodeId,
+    space: &ConstraintSpace,
+) -> Fragment {
     let style = &doc.node(table_id).style;
     let writing_direction = space.writing_direction;
     let model = collect_table_model(doc, table_id);
     let (slots, column_count) = place_cells(doc, &model.rows);
-    let use_per_cell_collapsed_edges = style.border_collapse == BorderCollapse::Collapse
-        && !model.captions.is_empty()
-        && slots.first().is_some_and(|first| {
-            let first_border = logical_border(&doc.node(first.node_id).style, writing_direction);
-            slots.iter().skip(1).any(|slot| {
-                let border = logical_border(&doc.node(slot.node_id).style, writing_direction);
-                border.left != first_border.left || border.right != first_border.right
-            })
-        });
-    let mut collapsed_cell_outer_edges = BoxStrut::zero();
-    let mut collapsed_structural_outer_edges = BoxStrut::zero();
-    if style.border_collapse == BorderCollapse::Collapse {
-        collapsed_structural_outer_edges = logical_border(style, writing_direction);
-        for slot in &slots {
-            let cell_border = logical_border(&doc.node(slot.node_id).style, writing_direction);
-            if slot.column == 0 {
-                collapsed_cell_outer_edges.left =
-                    collapsed_cell_outer_edges.left.max_of(cell_border.left);
-            }
-            if slot.column + slot.column_span == column_count {
-                collapsed_cell_outer_edges.right =
-                    collapsed_cell_outer_edges.right.max_of(cell_border.right);
-            }
-            if slot.row == 0 {
-                collapsed_cell_outer_edges.top =
-                    collapsed_cell_outer_edges.top.max_of(cell_border.top);
-            }
-            if slot.row + slot.row_span == model.rows.len() {
-                collapsed_cell_outer_edges.bottom =
-                    collapsed_cell_outer_edges.bottom.max_of(cell_border.bottom);
-            }
-        }
-        for (index, row) in model.rows.iter().enumerate() {
-            if !row.anonymous {
-                let row_border = logical_border(&doc.node(row.node_id).style, writing_direction);
-                collapsed_structural_outer_edges.left = collapsed_structural_outer_edges
-                    .left
-                    .max_of(row_border.left);
-                collapsed_structural_outer_edges.right = collapsed_structural_outer_edges
-                    .right
-                    .max_of(row_border.right);
-                if index == 0 {
-                    collapsed_structural_outer_edges.top =
-                        collapsed_structural_outer_edges.top.max_of(row_border.top);
-                }
-                if index + 1 == model.rows.len() {
-                    collapsed_structural_outer_edges.bottom = collapsed_structural_outer_edges
-                        .bottom
-                        .max_of(row_border.bottom);
-                }
-            }
-            if let Some(group_id) = row.group_id {
-                let group_border = logical_border(&doc.node(group_id).style, writing_direction);
-                collapsed_structural_outer_edges.left = collapsed_structural_outer_edges
-                    .left
-                    .max_of(group_border.left);
-                collapsed_structural_outer_edges.right = collapsed_structural_outer_edges
-                    .right
-                    .max_of(group_border.right);
-                if index == 0 {
-                    collapsed_structural_outer_edges.top = collapsed_structural_outer_edges
-                        .top
-                        .max_of(group_border.top);
-                }
-                if index + 1 == model.rows.len() {
-                    collapsed_structural_outer_edges.bottom = collapsed_structural_outer_edges
-                        .bottom
-                        .max_of(group_border.bottom);
-                }
-            }
-        }
-    }
-    let mut collapsed_structural_outer_excess = BoxStrut {
-        top: (collapsed_structural_outer_edges.top - collapsed_cell_outer_edges.top)
-            .clamp_negative_to_zero(),
-        right: (collapsed_structural_outer_edges.right - collapsed_cell_outer_edges.right)
-            .clamp_negative_to_zero(),
-        bottom: (collapsed_structural_outer_edges.bottom - collapsed_cell_outer_edges.bottom)
-            .clamp_negative_to_zero(),
-        left: (collapsed_structural_outer_edges.left - collapsed_cell_outer_edges.left)
-            .clamp_negative_to_zero(),
-    };
-    let structural_perimeter = single_cell_collapsed_structural_perimeter(
+    let column_count = column_count.max(model.columns.len());
+    let resolved = resolve_collapsed_grid(
         doc,
         table_id,
         &model,
@@ -1529,13 +1671,17 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
         column_count,
         writing_direction,
     );
-    if structural_perimeter.is_some() {
-        // The single-cell structural-perimeter path already projects the
-        // winning row/group/column edge into the table grid geometry.
-        collapsed_structural_outer_excess = BoxStrut::zero();
-    }
-    let collapsed_structural_inline_track_reduction =
-        collapsed_structural_outer_excess.inline_sum() / LayoutUnit::from_i32(2);
+    let used_table_border = resolved.as_ref().map(|grid| {
+        logical_box_strut(
+            grid.used_table_border().to_physical(writing_direction),
+            writing_direction,
+        )
+    });
+    // Geometry is now measured with resolved borders. No finished track or
+    // cell result is corrected by subtracting authored shared-border widths.
+    let structural_perimeter: Option<BoxStrut> = None;
+    let collapsed_structural_outer_excess = BoxStrut::zero();
+    let collapsed_structural_inline_track_reduction = LayoutUnit::zero();
     let tracks = measure_tracks(
         doc,
         table_id,
@@ -1543,6 +1689,7 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
         &slots,
         column_count,
         writing_direction,
+        resolved.as_ref(),
     );
     let (inline_spacing, block_spacing) =
         resolved_spacing(doc, table_id, space.percentage_resolution_inline_size);
@@ -1554,6 +1701,7 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
         column_count,
         inline_spacing,
         writing_direction,
+        used_table_border,
     );
     let track_grid_width =
         (grid_width - collapsed_structural_inline_track_reduction).clamp_negative_to_zero();
@@ -1576,10 +1724,30 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
             column_count,
             track_grid_width,
             writing_direction,
+            resolved.as_ref(),
         )
     } else {
         distribute_auto_tracks(&tracks, track_grid_width)
     };
+    let mut track_widths = track_widths;
+    let collapsed_columns: Vec<_> = (0..column_count)
+        .map(|index| {
+            model
+                .column_sources
+                .iter()
+                .chain(&model.column_group_sources)
+                .any(|source| {
+                    index >= source.start
+                        && index < source.start + source.span
+                        && doc.node(source.node_id).style.visibility == Visibility::Collapse
+                })
+        })
+        .collect();
+    for (width, collapsed) in track_widths.iter_mut().zip(&collapsed_columns) {
+        if *collapsed {
+            *width = LayoutUnit::zero();
+        }
+    }
     let actual_grid_width = if track_widths.is_empty() {
         grid_width
     } else {
@@ -1588,211 +1756,21 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
             .copied()
             .fold(LayoutUnit::zero(), |a, b| a + b)
     };
-    let table_inline_is_definite = space.is_fixed_inline_size
-        || space.stretch_inline_size
-        || logical_inline_length(style, writing_direction).is_stretch()
-        || authored_inline_size(
-            doc,
-            table_id,
-            space.percentage_resolution_inline_size,
-            writing_direction,
-        )
-        .is_some();
-    let mut collapsed_inline_boundaries = vec![LayoutUnit::zero(); column_count + 1];
-    if style.border_collapse == BorderCollapse::Collapse {
-        let table_border = logical_border(style, writing_direction);
-        if let Some(first) = collapsed_inline_boundaries.first_mut() {
-            *first = table_border.left;
-        }
-        if let Some(last) = collapsed_inline_boundaries.last_mut() {
-            *last = table_border.right;
-        }
-        for slot in &slots {
-            let cell_border = logical_border(&doc.node(slot.node_id).style, writing_direction);
-            collapsed_inline_boundaries[slot.column] =
-                collapsed_inline_boundaries[slot.column].max_of(cell_border.left);
-            let inline_end = slot.column + slot.column_span;
-            collapsed_inline_boundaries[inline_end] =
-                collapsed_inline_boundaries[inline_end].max_of(cell_border.right);
-        }
-    }
     let mut laid_cells = Vec::with_capacity(slots.len());
     for slot in slots.iter().copied() {
-        let mut width = track_widths[slot.column..slot.column + slot.column_span]
+        let width = track_widths[slot.column..slot.column + slot.column_span]
             .iter()
             .copied()
             .fold(LayoutUnit::zero(), |a, b| a + b)
             + inline_spacing * LayoutUnit::from_i32(slot.column_span.saturating_sub(1) as i32);
-        if style.border_collapse == BorderCollapse::Collapse && !table_inline_is_definite {
-            if slot.column > 0 {
-                width = width + collapsed_inline_boundaries[slot.column] / LayoutUnit::from_i32(2);
-            }
-            let inline_end = slot.column + slot.column_span;
-            if inline_end < column_count {
-                let boundary = collapsed_inline_boundaries[inline_end];
-                width = width + boundary - boundary / LayoutUnit::from_i32(2);
-            }
-        }
-        // Table-cell percentage block sizes are indefinite during the
-        // intrinsic/natural row-height pass. They are resolved in a second
-        // pass once a definite table grid has distributed its height.
-        laid_cells.push(layout_cell(doc, slot, width, space, INDEFINITE_SIZE));
-    }
-
-    if style.border_collapse == BorderCollapse::Collapse {
-        let table_border = logical_border(style, writing_direction);
-        for cell in &mut laid_cells {
-            let cell_style = &doc.node(cell.slot.node_id).style;
-            let cell_border = logical_border(cell_style, writing_direction);
-            if cell.slot.column == 0
-                && collapsed_structural_border_wins(
-                    table_border.left,
-                    style.border_left_style,
-                    cell_border.left,
-                    cell_style.border_left_style,
-                )
-            {
-                cell.fragment.border.left = LayoutUnit::zero();
-            }
-            if cell.slot.column + cell.slot.column_span == column_count
-                && collapsed_structural_border_wins(
-                    table_border.right,
-                    style.border_right_style,
-                    cell_border.right,
-                    cell_style.border_right_style,
-                )
-            {
-                cell.fragment.border.right = LayoutUnit::zero();
-            }
-            if cell.slot.row == 0
-                && collapsed_structural_border_wins(
-                    table_border.top,
-                    style.border_top_style,
-                    cell_border.top,
-                    cell_style.border_top_style,
-                )
-            {
-                cell.fragment.border.top = LayoutUnit::zero();
-            }
-            if cell.slot.row + cell.slot.row_span == model.rows.len()
-                && collapsed_structural_border_wins(
-                    table_border.bottom,
-                    style.border_bottom_style,
-                    cell_border.bottom,
-                    cell_style.border_bottom_style,
-                )
-            {
-                cell.fragment.border.bottom = LayoutUnit::zero();
-            }
-            let row = &model.rows[cell.slot.row];
-            if !row.anonymous {
-                let row_style = &doc.node(row.node_id).style;
-                let row_border = logical_border(row_style, writing_direction);
-                if collapsed_structural_border_wins(
-                    row_border.top,
-                    row_style.border_top_style,
-                    cell_border.top,
-                    cell_style.border_top_style,
-                ) {
-                    cell.fragment.border.top = LayoutUnit::zero();
-                }
-                if cell.slot.row_span == 1
-                    && collapsed_structural_border_wins(
-                        row_border.bottom,
-                        row_style.border_bottom_style,
-                        cell_border.bottom,
-                        cell_style.border_bottom_style,
-                    )
-                {
-                    cell.fragment.border.bottom = LayoutUnit::zero();
-                }
-            }
-        }
-
-        // Resolve shared cell-border ownership before fragments are nested in
-        // rows. Equal-strength ties belong to the cell on the logical
-        // block/inline-start side; otherwise the wider edge wins. Clearing
-        // the losing fragment edge prevents later DOM paint from covering
-        // the already-painted winning collapsed border.
-        for first in 0..laid_cells.len() {
-            for second in first + 1..laid_cells.len() {
-                let (leading, trailing) = laid_cells.split_at_mut(second);
-                let a = &mut leading[first];
-                let b = &mut trailing[0];
-                if !use_per_cell_collapsed_edges
-                    && authored_borders_match(
-                        &doc.node(a.slot.node_id).style,
-                        &doc.node(b.slot.node_id).style,
-                    )
-                {
-                    continue;
-                }
-                let columns_overlap = a.slot.column < b.slot.column + b.slot.column_span
-                    && b.slot.column < a.slot.column + a.slot.column_span;
-                if columns_overlap && a.slot.row + a.slot.row_span == b.slot.row {
-                    if a.fragment.border.bottom >= b.fragment.border.top {
-                        b.fragment.border.top = LayoutUnit::zero();
-                    } else {
-                        a.fragment.border.bottom = LayoutUnit::zero();
-                    }
-                }
-                let rows_overlap = a.slot.row < b.slot.row + b.slot.row_span
-                    && b.slot.row < a.slot.row + a.slot.row_span;
-                if rows_overlap && a.slot.column + a.slot.column_span == b.slot.column {
-                    if a.fragment.border.right >= b.fragment.border.left {
-                        b.fragment.border.left = LayoutUnit::zero();
-                    } else {
-                        a.fragment.border.right = LayoutUnit::zero();
-                    }
-                }
-            }
-        }
-    }
-
-    // Collapsed grid lines occupy one shared strip centered on their track
-    // boundary. Track intrinsic sizing already assigns half of each internal
-    // inline line to either neighboring column; keep the winning authored
-    // widths here so cell border boxes can overlap on that center line. Block
-    // tracks need the analogous half-line subtraction below.
-    let mut collapsed_block_boundaries = vec![LayoutUnit::zero(); model.rows.len() + 1];
-    let mut collapsed_block_before_present = vec![false; model.rows.len() + 1];
-    let mut collapsed_block_after_present = vec![false; model.rows.len() + 1];
-    if style.border_collapse == BorderCollapse::Collapse {
-        let table_border = logical_border(style, writing_direction);
-        if let Some(first) = collapsed_block_boundaries.first_mut() {
-            *first = table_border.top;
-        }
-        if let Some(last) = collapsed_block_boundaries.last_mut() {
-            *last = table_border.bottom;
-        }
-        for slot in &slots {
-            let cell_border = logical_border(&doc.node(slot.node_id).style, writing_direction);
-            collapsed_block_boundaries[slot.row] =
-                collapsed_block_boundaries[slot.row].max_of(cell_border.top);
-            collapsed_block_after_present[slot.row] |= cell_border.top > LayoutUnit::zero();
-            let block_end = slot.row + slot.row_span;
-            collapsed_block_boundaries[block_end] =
-                collapsed_block_boundaries[block_end].max_of(cell_border.bottom);
-            collapsed_block_before_present[block_end] |= cell_border.bottom > LayoutUnit::zero();
-        }
-        for (index, row) in model.rows.iter().enumerate() {
-            if row.anonymous {
-                continue;
-            }
-            let row_border = logical_border(&doc.node(row.node_id).style, writing_direction);
-            if let Some(first) = collapsed_inline_boundaries.first_mut() {
-                *first = first.max_of(row_border.left);
-            }
-            if let Some(last) = collapsed_inline_boundaries.last_mut() {
-                *last = last.max_of(row_border.right);
-            }
-            collapsed_block_boundaries[index] =
-                collapsed_block_boundaries[index].max_of(row_border.top);
-            collapsed_block_after_present[index] |= row_border.top > LayoutUnit::zero();
-            collapsed_block_boundaries[index + 1] =
-                collapsed_block_boundaries[index + 1].max_of(row_border.bottom);
-            collapsed_block_before_present[index + 1] |= row_border.bottom > LayoutUnit::zero();
-        }
+        laid_cells.push(layout_cell(
+            doc,
+            slot,
+            width,
+            space,
+            INDEFINITE_SIZE,
+            cell_used_border(resolved.as_ref(), slot, writing_direction),
+        ));
     }
 
     let mut row_heights: Vec<LayoutUnit> = model
@@ -1844,36 +1822,6 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
             }
         }
     }
-    if style.border_collapse == BorderCollapse::Collapse {
-        for boundary in 1..row_heights.len() {
-            let previous_size = logical_block_length(
-                &doc.node(model.rows[boundary - 1].node_id).style,
-                writing_direction,
-            );
-            let next_size = logical_block_length(
-                &doc.node(model.rows[boundary].node_id).style,
-                writing_direction,
-            );
-            // A definite row block-size is already the used collapsed-track
-            // size. Automatic rows, by contrast, were measured from cell
-            // border boxes and therefore contain both halves of their shared
-            // line until this adjustment.
-            if !previous_size.is_auto() || !next_size.is_auto() {
-                continue;
-            }
-            if !collapsed_block_before_present[boundary] || !collapsed_block_after_present[boundary]
-            {
-                continue;
-            }
-            let shared = collapsed_block_boundaries[boundary];
-            let before = shared / LayoutUnit::from_i32(2);
-            let after = shared - before;
-            row_heights[boundary - 1] =
-                (row_heights[boundary - 1] - before).clamp_negative_to_zero();
-            row_heights[boundary] = (row_heights[boundary] - after).clamp_negative_to_zero();
-        }
-    }
-
     // A definite row-group block size is a minimum for the rows it contains,
     // including rows synthesized by table fixup for improper group content.
     // Distribute any group surplus here rather than reading the table's style
@@ -1885,10 +1833,7 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
             group_start += 1;
             continue;
         };
-        let mut group_end = group_start + 1;
-        while group_end < model.rows.len() && model.rows[group_end].group_id == Some(group_id) {
-            group_end += 1;
-        }
+        let group_end = group_end(&model.rows, group_start);
         let requested = definite_table_internal_block_base(
             doc,
             group_id,
@@ -1915,12 +1860,11 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
         group_start = group_end;
     }
 
-    let border = logical_border(style, writing_direction);
-    let geometry_border = if style.border_collapse == BorderCollapse::Collapse {
-        structural_perimeter.unwrap_or_else(BoxStrut::zero)
-    } else {
-        structural_perimeter.unwrap_or(border)
-    };
+    let border = used_table_border.unwrap_or_else(|| logical_border(style, writing_direction));
+    let geometry_border = border;
+    let element_scrollbars = crate::scrollbars::for_node(space, table_id);
+    let physical_gutters = element_scrollbars.map_or(BoxStrut::zero(), |bars| bars.insets);
+    let gutters = logical_box_strut(physical_gutters, writing_direction);
     let padding = logical_padding(
         style,
         space.percentage_resolution_inline_size,
@@ -1940,7 +1884,7 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
         .copied()
         .map(|caption_id| {
             let caption_style = &doc.node(caption_id).style;
-            let intrinsic = compute_intrinsic_block_sizes(doc, caption_id);
+            let intrinsic = compute_intrinsic_block_sizes_with_layout(doc, caption_id);
             let caption_border = logical_border(caption_style, writing_direction);
             let caption_padding = logical_padding(
                 caption_style,
@@ -1980,30 +1924,8 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
                 (min_width.max_of(caption_min), max_width.max_of(caption_max))
             },
         );
-    let collapsed_inline_overhang =
-        if style.border_collapse == BorderCollapse::Collapse && table_inline_is_definite {
-            (collapsed_inline_boundaries
-                .first()
-                .copied()
-                .unwrap_or_default()
-                + collapsed_inline_boundaries
-                    .last()
-                    .copied()
-                    .unwrap_or_default())
-                / LayoutUnit::from_i32(2)
-        } else {
-            LayoutUnit::zero()
-        };
-    let collapsed_cell_inline_overhang =
-        if style.border_collapse == BorderCollapse::Collapse && table_inline_is_definite {
-            collapsed_cell_outer_edges.inline_sum() / LayoutUnit::from_i32(2)
-        } else {
-            LayoutUnit::zero()
-        };
-    let grid_border_box_width = geometry_border.inline_sum()
-        + padding.inline_sum()
-        + grid_outer_width
-        + collapsed_inline_overhang;
+    let grid_border_box_width =
+        geometry_border.inline_sum() + padding.inline_sum() + grid_outer_width;
     let border_box_width = if space.is_fixed_inline_size || space.stretch_inline_size {
         grid_border_box_width
     } else {
@@ -2037,7 +1959,7 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
         );
         caption_space.is_fixed_inline_size =
             authored_inline_size(doc, caption_id, border_box_width, writing_direction).is_none();
-        let mut caption = block_layout(doc, caption_id, &caption_space);
+        let mut caption = block_layout_with_layout(doc, caption_id, &caption_space);
         normalize_multicol_child_outer_box(doc, &mut caption, writing_direction);
         if caption_style.caption_side == CaptionSide::Bottom {
             bottom_captions.push(caption);
@@ -2214,7 +2136,27 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
         }
         natural_grid_height = requested_grid_height;
     }
-    let grid_border_box_height = natural_grid_height.max_of(requested_grid_height);
+    let collapsed_rows: Vec<_> = model
+        .rows
+        .iter()
+        .map(|row| {
+            (row_owns_authored_element_box(doc, row)
+                && doc.node(row.node_id).style.visibility == Visibility::Collapse)
+                || row
+                    .group_id
+                    .is_some_and(|id| doc.node(id).style.visibility == Visibility::Collapse)
+        })
+        .collect();
+    let mut collapsed_height = LayoutUnit::zero();
+    for (height, collapsed) in row_heights.iter_mut().zip(&collapsed_rows) {
+        if *collapsed {
+            collapsed_height = collapsed_height + *height;
+            *height = LayoutUnit::zero();
+        }
+    }
+    let grid_border_box_height = (natural_grid_height.max_of(requested_grid_height)
+        - collapsed_height)
+        .clamp_negative_to_zero();
 
     let grid_top =
         block_cursor + geometry_border.top + padding.top + collapsed_structural_outer_excess.top;
@@ -2237,9 +2179,6 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
         .copied()
         .fold(LayoutUnit::zero(), |a, b| a + b)
         + block_spacing * LayoutUnit::from_i32(model.rows.len().saturating_sub(1) as i32);
-    let clip_structural_backgrounds_to_cells = structural_perimeter.is_none()
-        && style.border_collapse == BorderCollapse::Separate
-        && (inline_spacing > LayoutUnit::zero() || block_spacing > LayoutUnit::zero());
     let grid_border_box_offset = block_cursor;
     if !model.captions.is_empty() {
         // Captions belong to the table wrapper but sit outside the table-grid
@@ -2250,6 +2189,9 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
             table_id,
             PhysicalSize::new(border_box_width, grid_border_box_height),
         );
+        grid_decoration.box_ownership = FragmentBoxOwnership::LayoutHelper;
+        grid_decoration.table_part = Some(FragmentTablePart::GridDecoration);
+        grid_decoration.collapsed_table_border_participant = resolved.is_some();
         grid_decoration.offset = PhysicalOffset::new(LayoutUnit::zero(), block_cursor);
         grid_decoration.border = if style.border_collapse == BorderCollapse::Collapse {
             BoxStrut::zero()
@@ -2257,63 +2199,115 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
             border
         };
         grid_decoration.padding = padding;
+        grid_decoration.element_scrollbars = element_scrollbars;
         children.push(grid_decoration);
     }
-    let mut column_left = geometry_border.left + padding.left + inline_spacing;
-    for (index, &column_id) in model.columns.iter().take(column_count).enumerate() {
-        let mut column = if structural_perimeter.is_some() {
-            Fragment::new_box(
-                column_id,
-                PhysicalSize::new(grid_border_box_width, grid_border_box_height),
-            )
+    // Horizontal border/padding fields remain physical; vertical fields are
+    // already algorithm logical struts. Select the real logical inline start
+    // before converting each section/column box to its stored coordinates.
+    let table_inline_start = if writing_direction.is_horizontal() && writing_direction.is_rtl() {
+        geometry_border.right + padding.right + gutters.right
+    } else {
+        geometry_border.left + padding.left + gutters.left
+    };
+    // Blink's ColumnGeometriesBuilder retains one full-span positioning box
+    // per authored column/group, with the group preceding its child columns.
+    // The cells, rather than these boxes, determine the painted area below.
+    let mut column_offsets = Vec::with_capacity(column_count);
+    let mut column_cursor = table_inline_start + inline_spacing;
+    for &width in &track_widths {
+        column_offsets.push(column_cursor);
+        column_cursor = column_cursor + width + inline_spacing;
+    }
+    let mut column_sources: Vec<_> = model
+        .column_group_sources
+        .iter()
+        .map(|source| (source, true))
+        .chain(model.column_sources.iter().map(|source| (source, false)))
+        .filter(|(source, _)| source.start < column_count && source.span > 0)
+        .collect();
+    // Groups are disjoint in the repaired table model. For the same starting
+    // track a group precedes its first child; other sources follow grid order.
+    column_sources.sort_by_key(|(source, is_group)| (source.start, !is_group));
+    for (source, is_group) in column_sources {
+        let end = source.start.saturating_add(source.span).min(column_count);
+        let span = end - source.start;
+        let last = end - 1;
+        let width = column_offsets[last] + track_widths[last] - column_offsets[source.start];
+        let mut column = Fragment::new_box(source.node_id, PhysicalSize::new(width, cells_height));
+        column.table_part = Some(if is_group {
+            FragmentTablePart::ColumnGroup {
+                start_column: source.start,
+                span,
+            }
         } else {
-            Fragment::new_box(
-                column_id,
-                PhysicalSize::new(track_widths[index], cells_height),
-            )
-        };
-        column.border = if style.border_collapse == BorderCollapse::Collapse {
-            logical_border(&doc.node(column_id).style, writing_direction)
-        } else {
-            BoxStrut::zero()
-        };
+            FragmentTablePart::Column {
+                start_column: source.start,
+                span,
+            }
+        });
+        column.table_column_background_inline_offset =
+            Some(column_offsets[source.start] - column_offsets[0]);
+        column.border = BoxStrut::zero();
+        column.collapsed_table_border_participant = resolved.is_some();
         column.padding = logical_padding(
-            &doc.node(column_id).style,
+            &doc.node(source.node_id).style,
             grid_outer_width,
             writing_direction,
         );
-        column.offset = if structural_perimeter.is_some() {
-            PhysicalOffset::new(LayoutUnit::zero(), block_cursor)
-        } else {
-            PhysicalOffset::new(column_left, cells_top)
-        };
-        if clip_structural_backgrounds_to_cells {
-            column.decoration_clip_rects = row_starts
-                .iter()
-                .copied()
-                .zip(row_heights.iter().copied())
-                .map(|(row_top, row_height)| {
-                    PhysicalRect::new(
-                        PhysicalOffset::new(LayoutUnit::zero(), row_top - cells_top),
-                        PhysicalSize::new(track_widths[index], row_height),
-                    )
-                })
-                .collect();
-        }
-        column_left = column_left + track_widths[index] + inline_spacing;
+        column.offset = PhysicalOffset::new(
+            table_part_inline_offset(
+                column_offsets[source.start],
+                width,
+                border_box_width,
+                writing_direction,
+            ),
+            cells_top,
+        );
         children.push(column);
     }
 
-    let table_content_left =
-        if structural_perimeter.is_some() || style.border_collapse == BorderCollapse::Collapse {
-            LayoutUnit::zero()
-        } else {
-            border.left + padding.left
-        };
+    // Sections exclude the two exterior spacing strips. The first cell's
+    // canonical offset already excludes one spacing; both authored row bounds
+    // and background positioning must use this same inner track extent.
+    // Blink TableLayoutAlgorithm uses BorderPadding for column constraints,
+    // ComputeRows and intrinsic sizing, then BorderScrollbarPadding for section
+    // available size and placement. Preserve the assigned cell/column tracks;
+    // the section/row box alone consumes the reserved inline gutter.
+    let section_inline_size = (actual_grid_width
+        + inline_spacing * LayoutUnit::from_i32(column_count.saturating_sub(1) as i32)
+        - gutters.inline_sum())
+    .clamp_negative_to_zero();
+    let table_content_left = table_part_inline_offset(
+        table_inline_start + inline_spacing,
+        section_inline_size,
+        border_box_width,
+        writing_direction,
+    );
+    let mut column_cursor = inline_spacing;
+    let canonical_columns: Vec<_> = track_widths
+        .iter()
+        .enumerate()
+        .map(|(index, &size)| {
+            let column = CanonicalColumnLocation {
+                offset: column_cursor,
+                size,
+                is_collapsed: collapsed_columns[index],
+            };
+            column_cursor = column_cursor + size + inline_spacing;
+            column
+        })
+        .collect();
+    let canonical_rows: Vec<_> = row_heights
+        .iter()
+        .enumerate()
+        .map(|(index, &size)| CanonicalRowSize {
+            size,
+            is_collapsed: collapsed_rows[index],
+        })
+        .collect();
     let mut row_cells: Vec<Vec<Fragment>> = vec![Vec::new(); model.rows.len()];
     for mut cell in laid_cells {
-        let collapsed_cell_border = (style.border_collapse == BorderCollapse::Collapse)
-            .then(|| logical_border(&doc.node(cell.slot.node_id).style, writing_direction));
         let span_end = cell.slot.row + cell.slot.row_span;
         let span_height = row_heights[cell.slot.row..span_end]
             .iter()
@@ -2336,6 +2330,7 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
                 cell.fragment.size.width,
                 &percentage_space,
                 span_height,
+                cell_used_border(resolved.as_ref(), cell.slot, writing_direction),
             );
         }
         let spare = (span_height - cell.alignment_height).clamp_negative_to_zero();
@@ -2349,267 +2344,41 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
         };
         shift_children(&mut cell.fragment, align_offset);
         cell.fragment.table_row_span = cell.slot.row_span;
-        let collapsed_inline_start_share =
-            if collapsed_cell_border.is_some() && !table_inline_is_definite && cell.slot.column > 0
-            {
-                collapsed_inline_boundary_for_cell(
-                    doc,
-                    &slots,
-                    cell.slot,
-                    cell.slot.column,
-                    writing_direction,
-                ) / LayoutUnit::from_i32(2)
-            } else {
-                LayoutUnit::zero()
-            };
-        let collapsed_block_start_share = if collapsed_cell_border.is_some()
-            && cell.slot.row > 0
-            && collapsed_block_before_present[cell.slot.row]
-            && collapsed_block_after_present[cell.slot.row]
-            && logical_block_length(
-                &doc.node(model.rows[cell.slot.row - 1].node_id).style,
-                writing_direction,
-            )
-            .is_auto()
-            && logical_block_length(
-                &doc.node(model.rows[cell.slot.row].node_id).style,
-                writing_direction,
-            )
-            .is_auto()
-        {
-            collapsed_block_boundaries[cell.slot.row] / LayoutUnit::from_i32(2)
-        } else {
-            LayoutUnit::zero()
-        };
-        let cell_block_end = cell.slot.row + cell.slot.row_span;
-        let collapsed_block_end_share = if collapsed_cell_border.is_some()
-            && cell_block_end < model.rows.len()
-            && collapsed_block_before_present[cell_block_end]
-            && collapsed_block_after_present[cell_block_end]
-            && logical_block_length(
-                &doc.node(model.rows[cell_block_end - 1].node_id).style,
-                writing_direction,
-            )
-            .is_auto()
-            && logical_block_length(
-                &doc.node(model.rows[cell_block_end].node_id).style,
-                writing_direction,
-            )
-            .is_auto()
-        {
-            let boundary = collapsed_block_boundaries[cell_block_end];
-            boundary - boundary / LayoutUnit::from_i32(2)
-        } else {
-            LayoutUnit::zero()
-        };
-        let legacy_definite_block_overhang =
-            collapsed_cell_border.map_or(LayoutUnit::zero(), |border| {
-                if collapsed_block_start_share == LayoutUnit::zero()
-                    && collapsed_block_end_share == LayoutUnit::zero()
-                    && span_height > cell.natural_height
-                {
-                    if !use_per_cell_collapsed_edges {
-                        (border.top + border.bottom) / LayoutUnit::from_i32(2)
-                    } else {
-                        border.bottom / LayoutUnit::from_i32(2)
-                    }
-                } else {
-                    LayoutUnit::zero()
-                }
-            });
-        cell.fragment.size.height = span_height
-            + collapsed_block_start_share
-            + collapsed_block_end_share
-            + legacy_definite_block_overhang;
-        if let Some(cell_border) = collapsed_cell_border {
-            if table_inline_is_definite {
-                // Collapsed borders are centered on this cell's grid edges.
-                // The painter draws inside a fragment border box, so project
-                // the cell's own half-edges into that box instead of applying
-                // the table-wide maximum to every row.
-                cell.fragment.size.width = cell.fragment.size.width
-                    + if !use_per_cell_collapsed_edges {
-                        collapsed_cell_inline_overhang
-                    } else {
-                        (cell_border.left + cell_border.right) / LayoutUnit::from_i32(2)
-                    };
-            }
-            let clip_left = if cell.fragment.border.left == LayoutUnit::zero()
-                && cell_border.left > LayoutUnit::zero()
-            {
-                cell_border.left
-            } else {
-                LayoutUnit::zero()
-            };
-            let clip_top = if cell.fragment.border.top == LayoutUnit::zero()
-                && cell_border.top > LayoutUnit::zero()
-            {
-                cell_border.top
-            } else {
-                LayoutUnit::zero()
-            };
-            let clip_right = if cell.fragment.border.right == LayoutUnit::zero()
-                && cell_border.right > LayoutUnit::zero()
-            {
-                cell_border.right
-            } else {
-                LayoutUnit::zero()
-            };
-            let clip_bottom = if cell.fragment.border.bottom == LayoutUnit::zero()
-                && cell_border.bottom > LayoutUnit::zero()
-            {
-                cell_border.bottom
-            } else {
-                LayoutUnit::zero()
-            };
-            if clip_left > LayoutUnit::zero()
-                || clip_top > LayoutUnit::zero()
-                || clip_right > LayoutUnit::zero()
-                || clip_bottom > LayoutUnit::zero()
-            {
-                cell.fragment.decoration_clip_rects.push(PhysicalRect::new(
-                    PhysicalOffset::new(clip_left, clip_top),
-                    PhysicalSize::new(
-                        (cell.fragment.size.width - clip_left - clip_right)
-                            .clamp_negative_to_zero(),
-                        (cell.fragment.size.height - clip_top - clip_bottom)
-                            .clamp_negative_to_zero(),
-                    ),
-                ));
-            }
-            if collapsed_inline_start_share == LayoutUnit::zero()
-                && use_per_cell_collapsed_edges
-                && (clip_top > LayoutUnit::zero() || clip_bottom > LayoutUnit::zero())
-                && (cell.fragment.border.left > LayoutUnit::zero()
-                    || cell.fragment.border.right > LayoutUnit::zero())
-            {
-                // A shared horizontal edge can be owned by the preceding
-                // cell, which clips this cell's ordinary decoration along
-                // that edge.  The clip must not suppress the perpendicular
-                // side borders: those continue through the shared strip and
-                // overlay its horizontal winner at the corner.
-                cell.fragment
-                    .collapsed_border_segments
-                    .push(CollapsedBorderSegment {
-                        rect: PhysicalRect::new(PhysicalOffset::zero(), cell.fragment.size),
-                        // `paint_border_after_children` replaces the ordinary
-                        // border pass, so carry the horizontal and inline-end
-                        // edges still owned by this cell. Cleared shared edges
-                        // remain zero. The inline-start corner is resolved in
-                        // its own segment below.
-                        border: BoxStrut {
-                            top: cell.fragment.border.top,
-                            right: cell.fragment.border.right,
-                            bottom: cell.fragment.border.bottom,
-                            left: LayoutUnit::zero(),
-                        },
-                    });
-                if cell.fragment.border.left > LayoutUnit::zero() {
-                    // At an equal-width collapsed corner the preceding
-                    // horizontal edge owns the inline-start half; a wider
-                    // inline-start edge wins and continues through it.
-                    let start_inset =
-                        if clip_top > LayoutUnit::zero() && cell.fragment.border.left <= clip_top {
-                            clip_top / LayoutUnit::from_i32(2)
-                        } else {
-                            LayoutUnit::zero()
-                        };
-                    let end_inset = if clip_bottom > LayoutUnit::zero()
-                        && cell.fragment.border.left <= clip_bottom
-                    {
-                        clip_bottom / LayoutUnit::from_i32(2)
-                    } else {
-                        LayoutUnit::zero()
-                    };
-                    cell.fragment
-                        .collapsed_border_segments
-                        .push(CollapsedBorderSegment {
-                            rect: PhysicalRect::new(
-                                PhysicalOffset::new(LayoutUnit::zero(), start_inset),
-                                PhysicalSize::new(
-                                    cell.fragment.size.width,
-                                    (cell.fragment.size.height - start_inset - end_inset)
-                                        .clamp_negative_to_zero(),
-                                ),
-                            ),
-                            border: BoxStrut {
-                                top: LayoutUnit::zero(),
-                                right: LayoutUnit::zero(),
-                                bottom: LayoutUnit::zero(),
-                                left: cell.fragment.border.left,
-                            },
-                        });
-                }
-                cell.fragment.paint_border_after_children = true;
-            }
-            if collapsed_inline_start_share > LayoutUnit::zero()
-                && (cell.fragment.border.top > LayoutUnit::zero()
-                    || cell.fragment.border.bottom > LayoutUnit::zero())
-            {
-                cell.fragment
-                    .collapsed_border_segments
-                    .push(CollapsedBorderSegment {
-                        rect: PhysicalRect::new(
-                            PhysicalOffset::zero(),
-                            PhysicalSize::new(
-                                (cell.fragment.size.width
-                                    - collapsed_inline_start_share
-                                    - clip_right)
-                                    .clamp_negative_to_zero(),
-                                cell.fragment.size.height,
-                            ),
-                        ),
-                        border: BoxStrut {
-                            top: cell.fragment.border.top,
-                            right: LayoutUnit::zero(),
-                            bottom: cell.fragment.border.bottom,
-                            left: LayoutUnit::zero(),
-                        },
-                    });
-                if cell.fragment.border.left > LayoutUnit::zero()
-                    || cell.fragment.border.right > LayoutUnit::zero()
-                {
-                    cell.fragment
-                        .collapsed_border_segments
-                        .push(CollapsedBorderSegment {
-                            rect: PhysicalRect::new(PhysicalOffset::zero(), cell.fragment.size),
-                            border: BoxStrut {
-                                top: LayoutUnit::zero(),
-                                right: cell.fragment.border.right,
-                                bottom: LayoutUnit::zero(),
-                                left: cell.fragment.border.left,
-                            },
-                        });
-                }
-                cell.fragment.paint_border_after_children = true;
-            }
-        }
-        let left = inline_spacing
-            + track_widths[..cell.slot.column]
-                .iter()
-                .copied()
-                .fold(LayoutUnit::zero(), |a, b| a + b)
-            + inline_spacing * LayoutUnit::from_i32(cell.slot.column as i32);
-        cell.fragment.offset = PhysicalOffset::new(
-            left + structural_perimeter.map_or(LayoutUnit::zero(), |edge| edge.left)
-                + collapsed_structural_outer_excess.left
-                + collapsed_cell_border.map_or(LayoutUnit::zero(), |border| {
-                    if table_inline_is_definite && use_per_cell_collapsed_edges {
-                        (collapsed_cell_outer_edges.left - border.left).clamp_negative_to_zero()
-                            / LayoutUnit::from_i32(2)
-                    } else {
-                        LayoutUnit::zero()
-                    }
-                })
-                - collapsed_inline_start_share,
-            structural_perimeter.map_or(LayoutUnit::zero(), |edge| edge.top)
-                + if cell.slot.row == 0 {
-                    collapsed_structural_outer_excess.top
-                } else {
-                    LayoutUnit::zero()
-                }
-                - collapsed_block_start_share,
+        cell.fragment.table_part = Some(FragmentTablePart::Cell {
+            column_index: cell.slot.column,
+        });
+        let geometry = canonical_cell_geometry(
+            cell_region(cell.slot),
+            &canonical_columns,
+            &canonical_rows,
+            inline_spacing,
+            block_spacing,
+        )
+        .expect("placed cell has canonical grid tracks");
+        cell.fragment.size = PhysicalSize::new(
+            geometry.rect_in_starting_row.size.inline_size,
+            geometry.rect_in_starting_row.size.block_size,
         );
+        let logical_left = geometry.rect_in_starting_row.offset.inline_offset;
+        let left = table_part_inline_offset(
+            logical_left,
+            cell.fragment.size.width,
+            section_inline_size,
+            writing_direction,
+        );
+        cell.fragment.offset = PhysicalOffset::new(left, LayoutUnit::zero());
+        cell.fragment.collapsed_table_border_participant = resolved.is_some();
+        cell.fragment.is_hidden_for_paint |=
+            geometry.hidden_for_paint || collapsed_rows[cell.slot.row];
+        if cell.fragment.principal_box_rect.is_some() {
+            // The originating cell adopts the assigned border box. Real
+            // continuation ownership remains unchanged; fragmentation must
+            // subsequently slice this box with its actual continuation.
+            cell.fragment.principal_box_rect = Some(PhysicalRect::new(
+                PhysicalOffset::zero(),
+                cell.fragment.size,
+            ));
+        }
         let internal_relative_block_base = model.rows[cell.slot.row]
             .group_id
             .map(|group_id| {
@@ -2655,11 +2424,7 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
     while row_index < model.rows.len() {
         let group_id = model.rows[row_index].group_id;
         let group_start = row_index;
-        let mut group_end_index = row_index + 1;
-        while group_end_index < model.rows.len() && model.rows[group_end_index].group_id == group_id
-        {
-            group_end_index += 1;
-        }
+        let group_end_index = group_end(&model.rows, row_index);
         let group_top = structural_perimeter.map_or(
             row_starts[group_start]
                 - if group_start == 0 {
@@ -2679,19 +2444,23 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
                 },
             |_| block_cursor + grid_border_box_height,
         );
+        let section_data = resolved.as_ref().map(|_| CollapsedTableSectionData {
+            global_start_row: group_start,
+            row_offsets: row_starts[group_start..group_end_index]
+                .iter()
+                .map(|&offset| offset - group_top)
+                .chain(std::iter::once(group_bottom - group_top))
+                .collect(),
+            is_start_row_fragmented: false,
+            is_end_row_fragmented: false,
+        });
         let mut row_fragments = Vec::new();
         for index in group_start..group_end_index {
             let row_id = model.rows[index].node_id;
             let mut row = Fragment::new_box(
                 row_id,
                 PhysicalSize::new(
-                    if structural_perimeter.is_some()
-                        || style.border_collapse == BorderCollapse::Collapse
-                    {
-                        grid_border_box_width
-                    } else {
-                        grid_outer_width
-                    },
+                    section_inline_size,
                     if structural_perimeter.is_some() {
                         grid_border_box_height
                     } else {
@@ -2709,13 +2478,12 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
                     },
                 ),
             );
-            row.border = if !model.rows[index].anonymous
-                && style.border_collapse == BorderCollapse::Collapse
-            {
-                logical_border(&doc.node(row_id).style, writing_direction)
-            } else {
-                BoxStrut::zero()
-            };
+            if !row_owns_authored_element_box(doc, &model.rows[index]) {
+                row.box_ownership = FragmentBoxOwnership::LayoutHelper;
+            }
+            row.table_part = Some(FragmentTablePart::Row);
+            row.border = BoxStrut::zero();
+            row.collapsed_table_border_participant = resolved.is_some();
             row.paint_border_after_children = false;
             row.padding = if model.rows[index].anonymous {
                 BoxStrut::zero()
@@ -2737,110 +2505,6 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
                 },
             );
             row.children = std::mem::take(&mut row_cells[index]);
-            if style.border_collapse == BorderCollapse::Collapse
-                && !model.rows[index].anonymous
-                && writing_direction.is_horizontal()
-            {
-                let row_style = &doc.node(row_id).style;
-                let inset_left = collapsed_border_wins(
-                    border.left,
-                    style.border_left_style,
-                    row.border.left,
-                    row_style.border_left_style,
-                )
-                .then_some(border.left)
-                .unwrap_or_default();
-                let inset_right = collapsed_border_wins(
-                    border.right,
-                    style.border_right_style,
-                    row.border.right,
-                    row_style.border_right_style,
-                )
-                .then_some(border.right)
-                .unwrap_or_default();
-                if inset_left > LayoutUnit::zero() || inset_right > LayoutUnit::zero() {
-                    row.offset.left = row.offset.left + inset_left;
-                    row.size.width =
-                        (row.size.width - inset_left - inset_right).clamp_negative_to_zero();
-                    row.border.left = LayoutUnit::zero();
-                    row.border.right = LayoutUnit::zero();
-                    for child in &mut row.children {
-                        child.offset.left = child.offset.left - inset_left;
-                    }
-                }
-                let used_row_border = row.border;
-                for child in &row.children {
-                    let cell_style = &doc.node(child.node_id).style;
-                    let cell_border = logical_border(cell_style, writing_direction);
-                    let left = child.offset.left.max_of(LayoutUnit::zero());
-                    let right = (child.offset.left + child.size.width).min_of(row.size.width);
-                    if right <= left {
-                        continue;
-                    }
-                    if collapsed_structural_border_wins(
-                        used_row_border.top,
-                        row_style.border_top_style,
-                        cell_border.top,
-                        cell_style.border_top_style,
-                    ) {
-                        row.collapsed_border_segments.push(CollapsedBorderSegment {
-                            rect: PhysicalRect::new(
-                                PhysicalOffset::new(left, LayoutUnit::zero()),
-                                PhysicalSize::new(right - left, row.size.height),
-                            ),
-                            border: BoxStrut {
-                                top: used_row_border.top,
-                                right: LayoutUnit::zero(),
-                                bottom: LayoutUnit::zero(),
-                                left: LayoutUnit::zero(),
-                            },
-                        });
-                    }
-                    if collapsed_structural_border_wins(
-                        used_row_border.bottom,
-                        row_style.border_bottom_style,
-                        cell_border.bottom,
-                        cell_style.border_bottom_style,
-                    ) {
-                        row.collapsed_border_segments.push(CollapsedBorderSegment {
-                            rect: PhysicalRect::new(
-                                PhysicalOffset::new(left, LayoutUnit::zero()),
-                                PhysicalSize::new(right - left, row.size.height),
-                            ),
-                            border: BoxStrut {
-                                top: LayoutUnit::zero(),
-                                right: LayoutUnit::zero(),
-                                bottom: used_row_border.bottom,
-                                left: LayoutUnit::zero(),
-                            },
-                        });
-                    }
-                }
-                if used_row_border.left > LayoutUnit::zero()
-                    || used_row_border.right > LayoutUnit::zero()
-                {
-                    row.collapsed_border_segments.push(CollapsedBorderSegment {
-                        rect: PhysicalRect::new(PhysicalOffset::zero(), row.size),
-                        border: BoxStrut {
-                            top: LayoutUnit::zero(),
-                            right: used_row_border.right,
-                            bottom: LayoutUnit::zero(),
-                            left: used_row_border.left,
-                        },
-                    });
-                }
-                row.paint_border_after_children = !row.collapsed_border_segments.is_empty();
-            }
-            if clip_structural_backgrounds_to_cells {
-                let mut track_left = inline_spacing;
-                for &track_width in &track_widths {
-                    row.decoration_clip_rects.push(PhysicalRect::new(
-                        PhysicalOffset::new(track_left, LayoutUnit::zero()),
-                        PhysicalSize::new(track_width, row_heights[index]),
-                    ));
-                    track_left = track_left + track_width + inline_spacing;
-                }
-            }
             row.oof_candidates = adopt_child_oof_candidates(&mut row.children);
             row.first_baseline =
                 (row_baselines[index] > LayoutUnit::zero()).then_some(row_baselines[index]);
@@ -2876,22 +2540,15 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
         if let Some(group_id) = group_id {
             let mut group = Fragment::new_box(
                 group_id,
-                PhysicalSize::new(
-                    if structural_perimeter.is_some()
-                        || style.border_collapse == BorderCollapse::Collapse
-                    {
-                        grid_border_box_width
-                    } else {
-                        grid_outer_width
-                    },
-                    group_bottom - group_top,
-                ),
+                PhysicalSize::new(section_inline_size, group_bottom - group_top),
             );
-            group.border = if style.border_collapse == BorderCollapse::Collapse {
-                logical_border(&doc.node(group_id).style, writing_direction)
-            } else {
-                BoxStrut::zero()
-            };
+            if !is_authored_row_group(doc, group_id) {
+                group.box_ownership = FragmentBoxOwnership::LayoutHelper;
+            }
+            group.table_part = Some(FragmentTablePart::Section);
+            group.border = BoxStrut::zero();
+            group.collapsed_table_border_participant = resolved.is_some();
+            group.collapsed_table_section = section_data;
             group.padding = logical_padding(
                 &doc.node(group_id).style,
                 grid_outer_width,
@@ -2899,19 +2556,6 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
             );
             group.offset = PhysicalOffset::new(table_content_left, group_top);
             group.children = row_fragments;
-            if clip_structural_backgrounds_to_cells {
-                for row in group_start..group_end_index {
-                    let local_top = row_starts[row] - group_top;
-                    let mut track_left = inline_spacing;
-                    for &track_width in &track_widths {
-                        group.decoration_clip_rects.push(PhysicalRect::new(
-                            PhysicalOffset::new(track_left, local_top),
-                            PhysicalSize::new(track_width, row_heights[row]),
-                        ));
-                        track_left = track_left + track_width + inline_spacing;
-                    }
-                }
-            }
             group.oof_candidates = adopt_child_oof_candidates(&mut group.children);
             crate::relative::apply_relative_offset(
                 &mut group,
@@ -2938,6 +2582,23 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
             );
             resolve_table_box_oof(doc, &mut group);
             children.push(group);
+        } else if let Some(section_data) = section_data {
+            // A repaired anonymous section owns no authored box or style.
+            // It still carries the same section projection as an authored
+            // group, so border painting and fragmentation consume real rows.
+            let mut section = Fragment::new_box(
+                NodeId::NONE,
+                PhysicalSize::new(section_inline_size, group_bottom - group_top),
+            );
+            section.box_ownership = FragmentBoxOwnership::LayoutHelper;
+            section.table_part = Some(FragmentTablePart::Section);
+            section.skip_box_decoration = true;
+            section.collapsed_table_border_participant = true;
+            section.collapsed_table_section = Some(section_data);
+            section.offset = PhysicalOffset::new(table_content_left, group_top);
+            section.children = row_fragments;
+            section.oof_candidates = adopt_child_oof_candidates(&mut section.children);
+            children.push(section);
         } else {
             for mut row in row_fragments {
                 row.offset.left = row.offset.left + table_content_left;
@@ -2985,22 +2646,20 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
         BoxStrut::zero()
     };
     table.margin = margin;
+    table.element_scrollbars = element_scrollbars;
+    table.table_part = Some(FragmentTablePart::Table);
     table.children = children;
     table.skip_box_decoration = !model.captions.is_empty();
-    if style.border_collapse == BorderCollapse::Collapse
-        && border != BoxStrut::zero()
-        && !model.captions.is_empty()
-    {
-        table.paint_border_after_children = true;
-        table
-            .collapsed_border_segments
-            .push(CollapsedBorderSegment {
-                rect: PhysicalRect::new(
-                    PhysicalOffset::new(LayoutUnit::zero(), grid_border_box_offset),
-                    PhysicalSize::new(border_box_width, grid_border_box_height),
-                ),
-                border,
-            });
+    table.collapsed_table_border_participant = resolved.is_some();
+    if let Some(borders) = resolved {
+        table.collapsed_table_border_data = Some(std::sync::Arc::new(CollapsedTableBorderData {
+            borders,
+            columns: canonical_columns,
+            rows: canonical_rows,
+            grid_offset: LogicalOffset::new(table_inline_start, grid_top),
+            grid_size: LogicalSize::new(actual_grid_width, cells_height),
+            writing_direction,
+        }));
     }
     table.oof_candidates = adopt_child_oof_candidates(&mut table.children);
     resolve_table_box_oof(doc, &mut table);
@@ -3014,10 +2673,9 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
         .copied()
         .filter(|baseline| *baseline > LayoutUnit::zero())
         .map(|baseline| row_starts.last().copied().unwrap_or(grid_top) + baseline);
-    table.has_overflow_clip = style.overflow_x != openui_style::Overflow::Visible
-        || style.overflow_y != openui_style::Overflow::Visible;
+    table.has_overflow_clip = crate::scroll_area::has_overflow_clip(doc, table_id);
     if style.border_collapse == BorderCollapse::Collapse {
-        fn suppress_collapsed_table_radii(doc: &Document, fragment: &mut Fragment) {
+        fn suppress_collapsed_table_radii(doc: &dyn LayoutDocument, fragment: &mut Fragment) {
             if fragment.node_id != NodeId::NONE
                 && matches!(
                     doc.node(fragment.node_id).style.display,
@@ -3042,11 +2700,979 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
     table
 }
 
+/// Resolve full column/group background positioning after the document's
+/// physical continuations are complete. This follows pinned .50
+/// TablePainter::ComputeColumnsRect: stitch table block sizes, unite every
+/// actual section rectangle (including empty ones and repeated sections),
+/// then express that one union relative to each table continuation.
+///
+/// The retained native tree can keep an anonymous separate-border section as
+/// direct rows. Their source-owned row rectangles are exactly that section's
+/// extent; they enter the same union without treating captions/cells as sections.
+/// Complete monolithic replays retain first+last ownership and begin independent
+/// source sequences. Real authored continuations remain in the open sequence;
+/// no rectangle/NodeId dedupe collapses a continuation into another box.
+pub(crate) fn populate_column_background_positioning(
+    doc: &dyn LayoutDocument,
+    root: &mut Fragment,
+) {
+    #[derive(Default)]
+    struct Sequence {
+        stitched_block_size: LayoutUnit,
+        columns_rect: Option<LogicalRect>,
+    }
+    struct Occurrence {
+        sequence: usize,
+        stitched_block_offset: LayoutUnit,
+        writing_direction: WritingDirectionMode,
+    }
+    fn union(a: LogicalRect, b: LogicalRect) -> LogicalRect {
+        let inline_start = a.inline_offset().min_of(b.inline_offset());
+        let block_start = a.block_offset().min_of(b.block_offset());
+        let inline_end = a.inline_end().max_of(b.inline_end());
+        let block_end = a.block_end().max_of(b.block_end());
+        LogicalRect::from_position_and_size(
+            inline_start,
+            block_start,
+            inline_end - inline_start,
+            block_end - block_start,
+        )
+    }
+    fn collect(
+        doc: &dyn LayoutDocument,
+        fragment: &Fragment,
+        sequences: &mut Vec<Sequence>,
+        open: &mut std::collections::HashMap<NodeId, usize>,
+        occurrences: &mut Vec<Occurrence>,
+    ) {
+        if fragment.table_part == Some(FragmentTablePart::Table) && fragment.owns_element_box() {
+            let writing_direction = fragment
+                .collapsed_table_border_data
+                .as_ref()
+                .map(|data| data.writing_direction)
+                .or(fragment.fragmentation_writing_direction)
+                .unwrap_or_else(|| {
+                    let style = &doc.node(fragment.node_id).style;
+                    style.direction.writing_direction(style.writing_mode)
+                });
+            let converter = WritingModeConverter::new(writing_direction, fragment.size);
+            let sequence = if fragment.is_first_for_node || !open.contains_key(&fragment.node_id) {
+                let index = sequences.len();
+                sequences.push(Sequence::default());
+                open.insert(fragment.node_id, index);
+                index
+            } else {
+                open[&fragment.node_id]
+            };
+            let block_offset = sequences[sequence].stitched_block_size;
+            for section in &fragment.children {
+                if !matches!(
+                    section.table_part,
+                    Some(FragmentTablePart::Section | FragmentTablePart::Row)
+                ) {
+                    continue;
+                }
+                let mut rect =
+                    converter.to_logical_rect(PhysicalRect::new(section.offset, section.size));
+                rect.offset.block_offset = rect.offset.block_offset + block_offset;
+                let previous = sequences[sequence].columns_rect;
+                sequences[sequence].columns_rect =
+                    Some(previous.map_or(rect, |previous| union(previous, rect)));
+            }
+            occurrences.push(Occurrence {
+                sequence,
+                stitched_block_offset: block_offset,
+                writing_direction,
+            });
+            sequences[sequence].stitched_block_size =
+                block_offset + converter.to_logical_size(fragment.size).block_size;
+            if fragment.is_last_for_node {
+                open.remove(&fragment.node_id);
+            }
+        }
+        for child in &fragment.children {
+            collect(doc, child, sequences, open, occurrences);
+        }
+    }
+    fn assign(
+        fragment: &mut Fragment,
+        sequences: &[Sequence],
+        occurrences: &[Occurrence],
+        next: &mut usize,
+    ) {
+        if fragment.table_part == Some(FragmentTablePart::Table) && fragment.owns_element_box() {
+            let occurrence = &occurrences[*next];
+            *next += 1;
+            fragment.table_column_background_positioning =
+                sequences[occurrence.sequence].columns_rect.map(|mut rect| {
+                    rect.offset.block_offset =
+                        rect.offset.block_offset - occurrence.stitched_block_offset;
+                    let converter =
+                        WritingModeConverter::new(occurrence.writing_direction, fragment.size);
+                    TableColumnBackgroundPositioning {
+                        rect: converter.to_physical_rect(rect),
+                        writing_direction: occurrence.writing_direction,
+                    }
+                });
+        }
+        for child in &mut fragment.children {
+            assign(child, sequences, occurrences, next);
+        }
+    }
+    let mut sequences = Vec::new();
+    let mut occurrences = Vec::new();
+    collect(
+        doc,
+        root,
+        &mut sequences,
+        &mut std::collections::HashMap::new(),
+        &mut occurrences,
+    );
+    assign(root, &sequences, &occurrences, &mut 0);
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use openui_dom::ElementTag;
     use openui_geometry::Length;
+    use openui_style::BorderStyle;
+
+    fn count_owned_boxes(fragment: &Fragment, node: NodeId) -> usize {
+        usize::from(fragment.node_id == node && fragment.owns_element_box())
+            + fragment
+                .children
+                .iter()
+                .map(|child| count_owned_boxes(child, node))
+                .sum::<usize>()
+    }
+
+    fn count_style_helpers(fragment: &Fragment, node: NodeId) -> usize {
+        usize::from(
+            fragment.node_id == node
+                && fragment.box_ownership == FragmentBoxOwnership::LayoutHelper,
+        ) + fragment
+            .children
+            .iter()
+            .map(|child| count_style_helpers(child, node))
+            .sum::<usize>()
+    }
+
+    #[test]
+    fn collapsed_anonymous_sections_carry_source_rows_without_authored_box_ownership() {
+        let mut doc = Document::new();
+        let table = doc.create_node(ElementTag::Table);
+        doc.append_child(doc.root(), table);
+        doc.update_resolved_style(table, |style| {
+            style.display = Display::Table;
+            style.border_collapse = BorderCollapse::Collapse;
+        });
+        let mut rows = Vec::new();
+        let mut cells = Vec::new();
+        for _ in 0..2 {
+            let row = doc.create_node(ElementTag::TableRow);
+            let cell = doc.create_node(ElementTag::TableCell);
+            doc.append_child(table, row);
+            doc.append_child(row, cell);
+            doc.update_resolved_style(row, |style| style.display = Display::TableRow);
+            doc.update_resolved_style(cell, |style| {
+                style.display = Display::TableCell;
+                style.width = Length::px(20.0);
+                style.height = Length::px(10.0);
+            });
+            rows.push(row);
+            cells.push(cell);
+        }
+        let space = ConstraintSpace::for_root(LayoutUnit::from_i32(200), LayoutUnit::from_i32(100));
+        let fragment = table_layout_with_layout(&doc, table, &space);
+        let sections: Vec<_> = fragment
+            .children
+            .iter()
+            .filter(|child| child.collapsed_table_section.is_some())
+            .collect();
+        assert_eq!(sections.len(), 1);
+        let section = sections[0];
+        assert_eq!(section.box_ownership, FragmentBoxOwnership::LayoutHelper);
+        assert!(section.node_id.is_none());
+        assert!(section.skip_box_decoration);
+        assert!(!section.owns_element_box());
+        let metadata = section.collapsed_table_section.as_ref().unwrap();
+        assert_eq!(metadata.global_start_row, 0);
+        assert_eq!(metadata.row_offsets, [0, 10, 20].map(LayoutUnit::from_i32));
+        assert_eq!(
+            section
+                .children
+                .iter()
+                .map(|row| row.node_id)
+                .collect::<Vec<_>>(),
+            rows
+        );
+        for cell in cells {
+            assert_eq!(count_owned_boxes(&fragment, cell), 1);
+        }
+        assert!(fragment.collapsed_table_border_data.is_some());
+        assert!(section.collapsed_table_border_data.is_none());
+    }
+
+    #[test]
+    fn collapsed_section_and_column_boxes_share_physical_rtl_cell_origins() {
+        use openui_style::Direction;
+
+        for rtl in [false, true] {
+            for authored_group in [false, true] {
+                for wider_caption in [false, true] {
+                    let direction = if rtl { Direction::Rtl } else { Direction::Ltr };
+                    let writing_direction = WritingDirectionMode::new(true, false, false, rtl);
+                    let mut doc = Document::new();
+                    let table = doc.create_node(ElementTag::Table);
+                    doc.append_child(doc.root(), table);
+                    doc.update_resolved_style(table, |style| {
+                        style.display = Display::Table;
+                        style.direction = direction;
+                        style.border_collapse = BorderCollapse::Collapse;
+                        style.border_left_style = BorderStyle::Solid;
+                        style.border_left_width = 2;
+                        style.border_right_style = BorderStyle::Solid;
+                        style.border_right_width = 6;
+                    });
+                    if wider_caption {
+                        let caption = doc.create_node(ElementTag::Div);
+                        doc.append_child(table, caption);
+                        doc.update_resolved_style(caption, |style| {
+                            style.display = Display::TableCaption;
+                            style.width = Length::px(200.0);
+                            style.height = Length::px(5.0);
+                        });
+                    }
+                    let mut columns = Vec::new();
+                    for width in [20.0, 30.0] {
+                        let column = doc.create_node(ElementTag::TableColumn);
+                        doc.append_child(table, column);
+                        doc.update_resolved_style(column, |style| {
+                            style.display = Display::TableColumn;
+                            style.width = Length::px(width);
+                        });
+                        columns.push(column);
+                    }
+                    let parent = if authored_group {
+                        let group = doc.create_node(ElementTag::TableBody);
+                        doc.append_child(table, group);
+                        doc.update_resolved_style(group, |style| {
+                            style.display = Display::TableRowGroup;
+                            style.direction = direction;
+                        });
+                        group
+                    } else {
+                        table
+                    };
+                    let row = doc.create_node(ElementTag::TableRow);
+                    doc.append_child(parent, row);
+                    doc.update_resolved_style(row, |style| {
+                        style.display = Display::TableRow;
+                        style.direction = direction;
+                    });
+                    let mut cells = Vec::new();
+                    for width in [20.0, 30.0] {
+                        let cell = doc.create_node(ElementTag::TableCell);
+                        doc.append_child(row, cell);
+                        doc.update_resolved_style(cell, |style| {
+                            style.display = Display::TableCell;
+                            style.direction = direction;
+                            style.width = Length::px(width);
+                            style.height = Length::px(10.0);
+                        });
+                        cells.push(cell);
+                    }
+                    let space = ConstraintSpace::for_root_with_writing_direction(
+                        LayoutUnit::from_i32(400),
+                        LayoutUnit::from_i32(100),
+                        writing_direction,
+                    );
+                    let fragment = table_layout_with_layout(&doc, table, &space);
+                    let graph = fragment.collapsed_table_border_data.as_ref().unwrap();
+                    let section = fragment
+                        .children
+                        .iter()
+                        .find(|child| child.collapsed_table_section.is_some())
+                        .unwrap();
+                    let expected_inline_start = LayoutUnit::from_i32(if rtl { 3 } else { 1 });
+                    assert_eq!(graph.grid_offset.inline_offset, expected_inline_start);
+                    if rtl {
+                        assert_eq!(
+                            section.offset.left + section.size.width,
+                            fragment.size.width - expected_inline_start,
+                        );
+                    } else {
+                        assert_eq!(section.offset.left, expected_inline_start);
+                    }
+                    let row_fragment = section
+                        .children
+                        .iter()
+                        .find(|child| child.node_id == row)
+                        .unwrap();
+                    let mut physical_positions = Vec::new();
+                    for (column, cell) in columns.iter().zip(cells.iter()) {
+                        let column_fragment = fragment
+                            .children
+                            .iter()
+                            .find(|child| child.node_id == *column)
+                            .unwrap();
+                        let cell_fragment = row_fragment
+                            .children
+                            .iter()
+                            .find(|child| child.node_id == *cell)
+                            .unwrap();
+                        assert_eq!(
+                            column_fragment.offset.left,
+                            section.offset.left
+                                + row_fragment.offset.left
+                                + cell_fragment.offset.left,
+                        );
+                        assert_eq!(column_fragment.size.width, cell_fragment.size.width);
+                        physical_positions.push(column_fragment.offset.left);
+                    }
+                    assert_eq!(physical_positions[0] > physical_positions[1], rtl);
+                    assert_eq!(section.node_id.is_none(), !authored_group);
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn collapsed_cells_use_winning_half_widths_before_track_and_content_sizing() {
+        let mut doc = Document::new();
+        let table = doc.create_node(ElementTag::Table);
+        let row = doc.create_node(ElementTag::TableRow);
+        let first = doc.create_node(ElementTag::TableCell);
+        let second = doc.create_node(ElementTag::TableCell);
+        doc.append_child(doc.root(), table);
+        doc.append_child(table, row);
+        doc.append_child(row, first);
+        doc.append_child(row, second);
+        doc.update_resolved_style(table, |style| {
+            style.display = Display::Table;
+            style.border_collapse = BorderCollapse::Collapse;
+        });
+        doc.update_resolved_style(row, |style| style.display = Display::TableRow);
+        for cell in [first, second] {
+            doc.update_resolved_style(cell, |style| {
+                style.display = Display::TableCell;
+                style.width = Length::px(20.0);
+                style.border_left_style = BorderStyle::Solid;
+                style.border_right_style = BorderStyle::Solid;
+                style.border_left_width = 1;
+                style.border_right_width = 1;
+            });
+        }
+        doc.update_resolved_style(second, |style| style.border_left_width = 7);
+        let model = collect_table_model(&doc, table);
+        let (slots, columns) = place_cells(&doc, &model.rows);
+        let direction = WritingDirectionMode::horizontal_ltr();
+        let grid = resolve_collapsed_grid(&doc, table, &model, &slots, columns, direction)
+            .expect("collapsed borders");
+        let first_used = cell_used_border(Some(&grid), slots[0], direction).unwrap();
+        assert_eq!(first_used.left, LayoutUnit::from_f32(0.5));
+        assert_eq!(first_used.right, LayoutUnit::from_f32(3.5));
+        let tracks = measure_tracks(&doc, table, &model, &slots, columns, direction, Some(&grid));
+        assert_eq!(tracks[0].min, LayoutUnit::from_i32(24));
+        assert_eq!(tracks[1].min, LayoutUnit::from_i32(24));
+        let space = ConstraintSpace::for_root(LayoutUnit::from_i32(200), LayoutUnit::from_i32(100));
+        let cell = layout_cell(
+            &doc,
+            slots[0],
+            LayoutUnit::from_i32(24),
+            &space,
+            INDEFINITE_SIZE,
+            Some(first_used),
+        );
+        assert_eq!(cell.fragment.border, first_used);
+        assert_eq!(cell.fragment.size.width, LayoutUnit::from_i32(24));
+        assert!(cell.fragment.owns_element_box());
+    }
+
+    #[test]
+    fn positive_and_zero_rowspans_stop_at_their_repaired_section() {
+        for authored_span in [0, 9] {
+            let mut doc = Document::new();
+            let table = doc.create_node(ElementTag::Table);
+            doc.update_resolved_style(table, |style| style.display = Display::Table);
+            doc.append_child(doc.root(), table);
+            let mut cells = Vec::new();
+            for row_count in [2, 1] {
+                let group = doc.create_node(ElementTag::TableBody);
+                doc.update_resolved_style(group, |style| style.display = Display::TableRowGroup);
+                doc.append_child(table, group);
+                for _ in 0..row_count {
+                    let row = doc.create_node(ElementTag::TableRow);
+                    let cell = doc.create_node(ElementTag::TableCell);
+                    doc.update_resolved_style(row, |style| style.display = Display::TableRow);
+                    doc.update_resolved_style(cell, |style| style.display = Display::TableCell);
+                    doc.append_child(group, row);
+                    doc.append_child(row, cell);
+                    cells.push(cell);
+                }
+            }
+            doc.node_mut(cells[0]).table_row_span = authored_span;
+            let model = collect_table_model(&doc, table);
+            let (slots, _) = place_cells(&doc, &model.rows);
+            assert_eq!(slots[0].row_span, 2);
+            assert_eq!((slots[2].row, slots[2].column), (2, 0));
+            assert_ne!(model.rows[1].section_id, model.rows[2].section_id);
+        }
+    }
+
+    #[test]
+    fn columns_keep_distinct_column_and_group_border_sources() {
+        let mut doc = Document::new();
+        let table = doc.create_node(ElementTag::Table);
+        let group = doc.create_node(ElementTag::TableColumnGroup);
+        let column = doc.create_node(ElementTag::TableColumn);
+        doc.append_child(table, group);
+        doc.append_child(group, column);
+        doc.update_resolved_style(table, |style| style.display = Display::Table);
+        doc.update_resolved_style(group, |style| style.display = Display::TableColumnGroup);
+        doc.update_resolved_style(column, |style| style.display = Display::TableColumn);
+        doc.node_mut(column).table_col_span = 3;
+        let model = collect_table_model(&doc, table);
+        assert_eq!(model.columns, [column, column, column]);
+        assert_eq!(model.column_sources.len(), 1);
+        assert_eq!(model.column_sources[0].span, 3);
+        assert_eq!(model.column_group_sources.len(), 1);
+        assert_eq!(model.column_group_sources[0].node_id, group);
+        assert_eq!(model.column_group_sources[0].span, 3);
+    }
+
+    #[test]
+    fn separate_spacing_is_outside_section_boxes_in_every_writing_direction() {
+        for writing_mode in [
+            openui_style::WritingMode::HorizontalTb,
+            openui_style::WritingMode::VerticalRl,
+            openui_style::WritingMode::VerticalLr,
+            openui_style::WritingMode::SidewaysRl,
+            openui_style::WritingMode::SidewaysLr,
+        ] {
+            for direction in [openui_style::Direction::Ltr, openui_style::Direction::Rtl] {
+                let writing_direction = direction.writing_direction(writing_mode);
+                let mut doc = Document::new();
+                let table = doc.create_node(ElementTag::Table);
+                let group = doc.create_node(ElementTag::TableBody);
+                let row = doc.create_node(ElementTag::TableRow);
+                doc.append_child(doc.root(), table);
+                doc.append_child(table, group);
+                doc.append_child(group, row);
+                for (node, display) in [
+                    (table, Display::Table),
+                    (group, Display::TableRowGroup),
+                    (row, Display::TableRow),
+                ] {
+                    doc.update_resolved_style(node, |style| {
+                        style.display = display;
+                        style.direction = direction;
+                        style.writing_mode = writing_mode;
+                    });
+                }
+                doc.update_resolved_style(table, |style| {
+                    style.border_collapse = BorderCollapse::Separate;
+                    style.border_spacing = (Length::px(3.0), Length::zero());
+                });
+                let mut ids = Vec::new();
+                for width in [20.0, 30.0] {
+                    let cell = doc.create_node(ElementTag::TableCell);
+                    doc.append_child(row, cell);
+                    doc.update_resolved_style(cell, |style| {
+                        style.display = Display::TableCell;
+                        style.direction = direction;
+                        style.writing_mode = writing_mode;
+                        if writing_direction.is_horizontal() {
+                            style.width = Length::px(width);
+                            style.height = Length::px(10.0);
+                        } else {
+                            style.height = Length::px(width);
+                            style.width = Length::px(10.0);
+                        }
+                    });
+                    ids.push(cell);
+                }
+                let space = ConstraintSpace::for_root_with_writing_direction(
+                    LayoutUnit::from_i32(200),
+                    LayoutUnit::from_i32(200),
+                    writing_direction,
+                );
+                let fragment = table_layout_with_layout(&doc, table, &space);
+                let group_fragment = fragment
+                    .children
+                    .iter()
+                    .find(|child| child.node_id == group)
+                    .unwrap();
+                let converter = WritingModeConverter::new(writing_direction, fragment.size);
+                let group_rect = converter.to_logical_rect(PhysicalRect::new(
+                    group_fragment.offset,
+                    group_fragment.size,
+                ));
+                assert_eq!(group_rect.inline_offset(), LayoutUnit::from_i32(3));
+                assert_eq!(group_rect.inline_size(), LayoutUnit::from_i32(53));
+                let row_fragment = group_fragment
+                    .children
+                    .iter()
+                    .find(|child| child.node_id == row)
+                    .unwrap();
+                let row_converter = WritingModeConverter::new(writing_direction, row_fragment.size);
+                assert_eq!(
+                    row_converter.to_logical_size(row_fragment.size).inline_size,
+                    LayoutUnit::from_i32(53)
+                );
+                for (id, expected) in ids.into_iter().zip([0, 23]) {
+                    let cell = row_fragment
+                        .children
+                        .iter()
+                        .find(|child| child.node_id == id)
+                        .unwrap();
+                    assert_eq!(
+                        row_converter
+                            .to_logical_offset(cell.offset, cell.size)
+                            .inline_offset,
+                        LayoutUnit::from_i32(expected)
+                    );
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn column_positioning_stitches_actual_sections_and_empty_continuations() {
+        let mut doc = Document::new();
+        let table = doc.create_node(ElementTag::Table);
+        let section = doc.create_node(ElementTag::TableBody);
+        doc.update_resolved_style(table, |style| style.display = Display::Table);
+        doc.update_resolved_style(section, |style| style.display = Display::TableRowGroup);
+        let mut root = Fragment::new_box(
+            doc.root(),
+            PhysicalSize::new(LayoutUnit::from_i32(90), LayoutUnit::from_i32(30)),
+        );
+        for (index, (table_height, section_y, section_height)) in
+            [(10, 0, 8), (12, 1, 10), (6, 5, 0)].into_iter().enumerate()
+        {
+            let mut continuation = Fragment::new_box(
+                table,
+                PhysicalSize::new(LayoutUnit::from_i32(30), LayoutUnit::from_i32(table_height)),
+            );
+            continuation.table_part = Some(FragmentTablePart::Table);
+            continuation.is_first_for_node = index == 0;
+            continuation.is_last_for_node = index == 2;
+            let mut child = Fragment::new_box(
+                section,
+                PhysicalSize::new(
+                    LayoutUnit::from_i32(20),
+                    LayoutUnit::from_i32(section_height),
+                ),
+            );
+            child.table_part = Some(FragmentTablePart::Section);
+            child.offset =
+                PhysicalOffset::new(LayoutUnit::from_i32(2), LayoutUnit::from_i32(section_y));
+            continuation.children.push(child);
+            root.children.push(continuation);
+        }
+        populate_column_background_positioning(&doc, &mut root);
+        for (continuation, y) in root.children.iter().zip([0, -10, -22]) {
+            assert_eq!(
+                continuation
+                    .table_column_background_positioning
+                    .unwrap()
+                    .rect,
+                PhysicalRect::from_xywh(
+                    LayoutUnit::from_i32(2),
+                    LayoutUnit::from_i32(y),
+                    LayoutUnit::from_i32(20),
+                    LayoutUnit::from_i32(27)
+                )
+            );
+        }
+        // A complete replay of one authored box is an independent sequence;
+        // sharing its source node never makes its positioning area twice as tall.
+        let mut replay = root.children[0].clone();
+        replay.is_first_for_node = true;
+        replay.is_last_for_node = true;
+        root.children = vec![replay.clone(), replay];
+        populate_column_background_positioning(&doc, &mut root);
+        for replay in &root.children {
+            assert_eq!(
+                replay
+                    .table_column_background_positioning
+                    .unwrap()
+                    .rect
+                    .size
+                    .height,
+                LayoutUnit::from_i32(8)
+            );
+        }
+    }
+
+    #[test]
+    fn real_multicol_tables_receive_full_column_positioning_after_root_layout() {
+        for collapse in [BorderCollapse::Collapse, BorderCollapse::Separate] {
+            for fill in [
+                openui_style::ColumnFill::Balance,
+                openui_style::ColumnFill::Auto,
+            ] {
+                for explicit_section in [false, true] {
+                    let mut doc = Document::new();
+                    let columns = doc.create_node(ElementTag::Div);
+                    let table = doc.create_node(ElementTag::Table);
+                    let column = doc.create_node(ElementTag::TableColumn);
+                    doc.append_child(doc.root(), columns);
+                    doc.append_child(columns, table);
+                    doc.append_child(table, column);
+                    doc.update_resolved_style(columns, |style| {
+                        style.display = Display::Block;
+                        style.width = Length::px(80.0);
+                        style.height = Length::px(25.0);
+                        style.column_fill = fill;
+                        style.column_count = Some(2);
+                        style.column_gap = Some(Length::zero());
+                    });
+                    doc.update_resolved_style(table, |style| {
+                        style.display = Display::Table;
+                        style.border_collapse = collapse;
+                    });
+                    doc.update_resolved_style(column, |style| style.display = Display::TableColumn);
+                    let row_parent = if explicit_section {
+                        let group = doc.create_node(ElementTag::TableBody);
+                        doc.append_child(table, group);
+                        doc.update_resolved_style(group, |style| {
+                            style.display = Display::TableRowGroup
+                        });
+                        group
+                    } else {
+                        table
+                    };
+                    for _ in 0..6 {
+                        let row = doc.create_node(ElementTag::TableRow);
+                        let cell = doc.create_node(ElementTag::TableCell);
+                        doc.append_child(row_parent, row);
+                        doc.append_child(row, cell);
+                        doc.update_resolved_style(row, |style| style.display = Display::TableRow);
+                        doc.update_resolved_style(cell, |style| {
+                            style.display = Display::TableCell;
+                            style.width = Length::px(20.0);
+                            style.height = Length::px(10.0);
+                        });
+                    }
+                    let root = block_layout_with_layout(
+                        &doc,
+                        doc.root(),
+                        &ConstraintSpace::for_root(
+                            LayoutUnit::from_i32(200),
+                            LayoutUnit::from_i32(100),
+                        ),
+                    );
+                    fn collect<'a>(
+                        fragment: &'a Fragment,
+                        node: NodeId,
+                        results: &mut Vec<&'a Fragment>,
+                    ) {
+                        if fragment.node_id == node
+                            && fragment.table_part == Some(FragmentTablePart::Table)
+                        {
+                            results.push(fragment);
+                        }
+                        for child in &fragment.children {
+                            collect(child, node, results);
+                        }
+                    }
+                    let mut continuations = Vec::new();
+                    collect(&root, table, &mut continuations);
+                    // Pinned Chromium .50 fragments both table border models into
+                    // 25/25/10px pieces, including anonymous and explicit row groups
+                    // with either balanced or automatic column filling.
+                    assert_eq!(
+                        continuations
+                            .iter()
+                            .map(|piece| piece.size.height)
+                            .collect::<Vec<_>>(),
+                        [
+                            LayoutUnit::from_i32(25),
+                            LayoutUnit::from_i32(25),
+                            LayoutUnit::from_i32(10)
+                        ]
+                    );
+                    let full_size = continuations[0]
+                        .table_column_background_positioning
+                        .unwrap()
+                        .rect
+                        .size;
+                    assert_eq!(
+                        full_size,
+                        PhysicalSize::new(LayoutUnit::from_i32(20), LayoutUnit::from_i32(60))
+                    );
+                    for (index, continuation) in continuations.into_iter().enumerate() {
+                        let positioning = continuation.table_column_background_positioning.unwrap();
+                        assert_eq!(positioning.rect.size, full_size);
+                        assert_eq!(
+                            positioning.rect.y(),
+                            LayoutUnit::from_i32(-25 * index as i32)
+                        );
+                        assert!(positioning.rect.size.height > continuation.size.height);
+                    }
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn column_background_sources_keep_full_spans_and_originating_cell_indices() {
+        for collapse in [BorderCollapse::Separate, BorderCollapse::Collapse] {
+            let mut doc = Document::new();
+            let table = doc.create_node(ElementTag::Table);
+            let group = doc.create_node(ElementTag::TableColumnGroup);
+            let column = doc.create_node(ElementTag::TableColumn);
+            let row = doc.create_node(ElementTag::TableRow);
+            let cell = doc.create_node(ElementTag::TableCell);
+            doc.append_child(doc.root(), table);
+            doc.append_child(table, group);
+            doc.append_child(group, column);
+            doc.append_child(table, row);
+            doc.append_child(row, cell);
+            doc.update_resolved_style(table, |style| {
+                style.display = Display::Table;
+                style.border_collapse = collapse;
+            });
+            doc.update_resolved_style(group, |style| style.display = Display::TableColumnGroup);
+            doc.update_resolved_style(column, |style| style.display = Display::TableColumn);
+            doc.update_resolved_style(row, |style| style.display = Display::TableRow);
+            doc.update_resolved_style(cell, |style| {
+                style.display = Display::TableCell;
+                style.width = Length::px(60.0);
+                style.height = Length::px(10.0);
+            });
+            doc.node_mut(column).table_col_span = 3;
+            doc.node_mut(cell).table_col_span = 3;
+            let fragment = table_layout_with_layout(
+                &doc,
+                table,
+                &ConstraintSpace::for_root(LayoutUnit::from_i32(200), LayoutUnit::from_i32(100)),
+            );
+            let sources: Vec<_> = fragment
+                .children
+                .iter()
+                .filter(|child| {
+                    child
+                        .table_part
+                        .is_some_and(|part| part.column_range().is_some())
+                })
+                .collect();
+            assert_eq!(
+                sources.len(),
+                2,
+                "one geometry per authored group/column, regardless of span"
+            );
+            assert_eq!(sources[0].node_id, group);
+            assert_eq!(sources[1].node_id, column);
+            for source in sources {
+                assert_eq!(source.table_part.unwrap().column_range(), Some(0..3));
+                assert_eq!(source.size.width, LayoutUnit::from_i32(60));
+                assert!(source.owns_element_box());
+            }
+            fn find_cell(fragment: &Fragment, id: NodeId) -> Option<&Fragment> {
+                if fragment.node_id == id
+                    && matches!(fragment.table_part, Some(FragmentTablePart::Cell { .. }))
+                {
+                    return Some(fragment);
+                }
+                fragment
+                    .children
+                    .iter()
+                    .find_map(|child| find_cell(child, id))
+            }
+            assert_eq!(
+                find_cell(&fragment, cell).unwrap().table_part,
+                Some(FragmentTablePart::Cell { column_index: 0 })
+            );
+        }
+    }
+
+    #[test]
+    fn collapsed_column_groups_share_marker_order_before_the_table() {
+        use crate::resolved_table_borders::ResolvedEdge;
+
+        let mut doc = Document::new();
+        let table = doc.create_node(ElementTag::Table);
+        doc.append_child(doc.root(), table);
+        doc.update_resolved_style(table, |style| {
+            style.display = Display::Table;
+            style.border_collapse = BorderCollapse::Collapse;
+            style.border_bottom_style = BorderStyle::Solid;
+            style.border_bottom_width = 4;
+        });
+        let mut groups = Vec::new();
+        let mut columns = Vec::new();
+        for _ in 0..2 {
+            let group = doc.create_node(ElementTag::TableColumnGroup);
+            let column = doc.create_node(ElementTag::TableColumn);
+            doc.append_child(table, group);
+            doc.append_child(group, column);
+            doc.update_resolved_style(group, |style| {
+                style.display = Display::TableColumnGroup;
+                style.border_top_style = BorderStyle::Solid;
+                style.border_right_style = BorderStyle::Solid;
+                style.border_bottom_style = BorderStyle::Solid;
+                style.border_left_style = BorderStyle::Solid;
+                style.border_top_width = 2;
+                style.border_right_width = 2;
+                style.border_bottom_width = 2;
+                style.border_left_width = 2;
+            });
+            doc.update_resolved_style(column, |style| {
+                style.display = Display::TableColumn;
+                style.border_left_style = BorderStyle::Solid;
+                style.border_left_width = 3;
+            });
+            groups.push(group);
+            columns.push(column);
+        }
+        let row = doc.create_node(ElementTag::TableRow);
+        doc.append_child(table, row);
+        doc.update_resolved_style(row, |style| style.display = Display::TableRow);
+        for _ in 0..2 {
+            let cell = doc.create_node(ElementTag::TableCell);
+            doc.append_child(row, cell);
+            doc.update_resolved_style(cell, |style| style.display = Display::TableCell);
+        }
+        let model = collect_table_model(&doc, table);
+        let (slots, column_count) = place_cells(&doc, &model.rows);
+        let grid = resolve_collapsed_grid(
+            &doc,
+            table,
+            &model,
+            &slots,
+            column_count,
+            WritingDirectionMode::horizontal_ltr(),
+        )
+        .expect("collapsed borders");
+        let winner = |edge| {
+            let ResolvedEdge::Winner(candidate) = edge else {
+                panic!("expected authored structural border winner");
+            };
+            candidate
+        };
+        let first_group = winner(grid.block_edge(0, 0));
+        let second_group = winner(grid.block_edge(0, 1));
+        assert_eq!(first_group.node_id, groups[0]);
+        assert_eq!(second_group.node_id, groups[1]);
+        assert_eq!(first_group.source_kind, BorderSourceKind::ColumnGroup);
+        assert_eq!(second_group.source_kind, BorderSourceKind::ColumnGroup);
+        assert_eq!(first_group.width, second_group.width);
+        assert_eq!(first_group.style, second_group.style);
+        assert_eq!(first_group.box_order, second_group.box_order);
+
+        let first_column = winner(grid.inline_edge(0, 0));
+        let second_column = winner(grid.inline_edge(0, 1));
+        assert_eq!(first_column.node_id, columns[0]);
+        assert_eq!(second_column.node_id, columns[1]);
+        assert_eq!(first_column.source_kind, BorderSourceKind::Column);
+        assert_eq!(second_column.source_kind, BorderSourceKind::Column);
+        assert_eq!(first_column.box_order, second_column.box_order);
+        assert_eq!(first_column.box_order + 1, first_group.box_order);
+
+        let table_edge = winner(grid.block_edge(1, 0));
+        assert_eq!(table_edge.node_id, table);
+        assert_eq!(table_edge.source_kind, BorderSourceKind::Table);
+        assert_eq!(table_edge.box_order, first_group.box_order + 1);
+    }
+
+    #[test]
+    fn table_grid_and_anonymous_row_helpers_do_not_own_the_table_box() {
+        let mut doc = Document::new();
+        let table = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(table, |style| style.display = Display::Table);
+        doc.append_child(doc.root(), table);
+        let caption = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(caption, |style| {
+            style.display = Display::TableCaption;
+            style.height = Length::px(2.0);
+        });
+        doc.append_child(table, caption);
+        let cell = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(cell, |style| {
+            style.display = Display::TableCell;
+            style.width = Length::px(8.0);
+            style.height = Length::px(6.0);
+        });
+        doc.append_child(table, cell);
+
+        let space = ConstraintSpace::for_root(LayoutUnit::from_i32(200), LayoutUnit::from_i32(100));
+        let fragment = table_layout_with_layout(&doc, table, &space);
+        assert_eq!(count_owned_boxes(&fragment, table), 1);
+        assert_eq!(count_style_helpers(&fragment, table), 2);
+        assert_eq!(
+            fragment
+                .children
+                .iter()
+                .filter(|child| child.table_part == Some(FragmentTablePart::GridDecoration))
+                .count(),
+            1
+        );
+        assert_eq!(count_owned_boxes(&fragment, caption), 1);
+        assert_eq!(count_owned_boxes(&fragment, cell), 1);
+    }
+
+    #[test]
+    fn anonymous_row_group_content_retains_one_authored_group_box() {
+        for display in [
+            Display::TableRowGroup,
+            Display::TableHeaderGroup,
+            Display::TableFooterGroup,
+        ] {
+            let mut doc = Document::new();
+            let table = doc.create_node(ElementTag::Div);
+            doc.update_resolved_style(table, |style| style.display = Display::Table);
+            doc.append_child(doc.root(), table);
+            let group = doc.create_node(ElementTag::Div);
+            doc.update_resolved_style(group, |style| style.display = display);
+            doc.append_child(table, group);
+            let mut authored_children = Vec::new();
+            for _ in 0..2 {
+                let child = doc.create_node(ElementTag::Div);
+                doc.update_resolved_style(child, |style| {
+                    style.display = Display::Block;
+                    style.width = Length::px(12.0);
+                    style.height = Length::px(7.0);
+                });
+                doc.append_child(group, child);
+                authored_children.push(child);
+            }
+
+            let space =
+                ConstraintSpace::for_root(LayoutUnit::from_i32(200), LayoutUnit::from_i32(100));
+            let fragment = table_layout_with_layout(&doc, table, &space);
+            assert_eq!(count_owned_boxes(&fragment, group), 1, "{display:?}");
+            assert_eq!(count_style_helpers(&fragment, group), 2, "{display:?}");
+            for child in authored_children {
+                assert_eq!(count_owned_boxes(&fragment, child), 1, "{display:?}");
+            }
+        }
+    }
+
+    #[test]
+    fn authored_table_rows_keep_ownership_when_their_tag_is_generic() {
+        let mut doc = Document::new();
+        let row_id = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(row_id, |style| style.display = Display::TableRow);
+        let row = TableRow {
+            node_id: row_id,
+            group_id: None,
+            section_id: row_id,
+            cells: Vec::new(),
+            anonymous: false,
+        };
+        assert!(row_owns_authored_element_box(&doc, &row));
+        let mut anonymous = row.clone();
+        anonymous.anonymous = true;
+        assert!(!row_owns_authored_element_box(&doc, &anonymous));
+
+        doc.update_resolved_style(row_id, |style| style.display = Display::TableRowGroup);
+        assert!(!row_owns_authored_element_box(&doc, &row));
+        assert!(is_authored_row_group(&doc, row_id));
+    }
 
     #[test]
     fn places_colspan_and_rowspan_without_overlap() {
@@ -3143,6 +3769,7 @@ mod tests {
             2,
             LayoutUnit::from_i32(100),
             WritingDirectionMode::horizontal_ltr(),
+            None,
         );
         assert_eq!(widths[0].to_i32(), 40);
         assert_eq!(widths[1].to_i32(), 60);
@@ -3234,7 +3861,16 @@ mod tests {
         doc.node_mut(text).text = Some("stretch".to_string());
         doc.append_child(cell, text);
 
-        let intrinsic = compute_table_intrinsic_sizes(&doc, table);
+        let intrinsic = compute_table_intrinsic_sizes_with_layout(&doc, table);
         assert!(intrinsic.min_content_inline_size > LayoutUnit::from_i32(40));
     }
+}
+
+// Public entry points retain the original native Document signatures.
+pub fn compute_table_intrinsic_sizes(doc: &Document, table_id: NodeId) -> IntrinsicSizes {
+    compute_table_intrinsic_sizes_with_layout(doc, table_id)
+}
+
+pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -> Fragment {
+    table_layout_with_layout(doc, table_id, space)
 }

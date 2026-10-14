@@ -1,0 +1,14 @@
+{
+  "expanded_comparisons_unchanged": 23728,
+  "focused_unchanged": 640,
+  "generated_properties_regenerated": true,
+  "javascript_executed_by_openui": false,
+  "main_commit": "6def29f8ec6e10d87b5778df9dd1ed0157cf0cb4",
+  "new_release_states_admitted": 0,
+  "original_comparisons_unchanged": 22924,
+  "primitive_unchanged": 960,
+  "production_build_examples_abi_and_workflows_identical": true,
+  "release_qualification": false,
+  "schema_version": 1,
+  "verified_source": "41b616c3be5224b074e9d06ba6aa963731a1b265"
+}

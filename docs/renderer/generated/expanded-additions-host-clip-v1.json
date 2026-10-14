@@ -1,0 +1,42 @@
+{
+  "baseline_clean_commit": "09683348f3cf1b66a7952584e0286f330b06f1fb",
+  "baseline_report_sha256": "983c3900b56391bee795df21950e199511cfaa062931759ed701f35ab2d3c1fb",
+  "chromium_oracle_identity_changes": 0,
+  "chromium_oracle_rgba_changes": 0,
+  "clean_source_commit": "b16113a3ba3939387f80df4a53450894f55329d2",
+  "comparisons": {
+    "different": 3,
+    "errors": 0,
+    "exact": 801,
+    "profile_result_sha256": "7086bab0b01213fc1c4e23dba66f8fd4ec3ab61ec1c6854bbb9bcaed765d457c",
+    "total": 804
+  },
+  "contract_sha256": "b51624ccb5b994601e3b96bca0be7442c926b5abdbc325f233524dcfe5a14e0e",
+  "openui_rgba_changes": 0,
+  "qualification": false,
+  "remaining_differences": [
+    {
+      "diff_signature_sha256": "e4d634b9e692b91a374f07a278f9526af79c45454c24a8c120e358974cbd2d33",
+      "mismatched_pixels": 1315,
+      "profile": "desktop-1280x720@1.25",
+      "test_id": "wpt/css_display/display-contents-dynamic-fieldset-legend-001"
+    },
+    {
+      "diff_signature_sha256": "fe056a0dcb76541f0f7c6885da411a9ede39240974ac573c28aaefc7f0f45000",
+      "mismatched_pixels": 125,
+      "profile": "desktop-1280x720@1.25",
+      "test_id": "wpt/css_position/containing-block-change-button"
+    },
+    {
+      "diff_signature_sha256": "b21cb984a817c1535ea7fe6f143069b3a387c8b770a1b96539cc2177f12275c4",
+      "mismatched_pixels": 64,
+      "profile": "mobile-375x667@2",
+      "test_id": "wpt/css_multicol/crashtests_table-cell-writing-mode-root"
+    }
+  ],
+  "schema_version": 1,
+  "scope": "all 201 admitted additions at four required profiles; full expanded manifest not run here",
+  "selected_cases": 201,
+  "selected_report_sha256": "9c2af23ec464f92dd69a50bafbef3b362ccb8ef51c1b72d4128148946d7d8291",
+  "status_changes": 0
+}

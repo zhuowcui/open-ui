@@ -244144,6 +244144,7 @@ fn css_sizing_max_content_input_001(viewport: ViewportMetrics) -> Result<Engine,
         n2,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextInput)),
     );
+    doc.set_node_state(n2, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n2, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
     doc.set_style(n2, RendererStyleValue::BorderTopWidth(2));
     doc.set_style(n2, RendererStyleValue::BorderTopStyle(BorderStyle::Inset));
@@ -244249,7 +244250,9 @@ fn css_sizing_max_content_input_001(viewport: ViewportMetrics) -> Result<Engine,
         n4,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n4, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n4, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n4, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n4, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n4, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n4, RendererStyleValue::BorderTopWidth(1));
@@ -244375,6 +244378,7 @@ fn css_sizing_max_content_input_001(viewport: ViewportMetrics) -> Result<Engine,
         n7,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextInput)),
     );
+    doc.set_node_state(n7, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n7, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
     doc.set_style(n7, RendererStyleValue::BorderTopWidth(2));
     doc.set_style(n7, RendererStyleValue::BorderTopStyle(BorderStyle::Inset));
@@ -244480,7 +244484,9 @@ fn css_sizing_max_content_input_001(viewport: ViewportMetrics) -> Result<Engine,
         n9,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n9, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n9, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n9, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n9, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n9, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n9, RendererStyleValue::BorderTopWidth(1));
@@ -244653,6 +244659,7 @@ fn css_sizing_max_content_input_001_ref(viewport: ViewportMetrics) -> Result<Eng
         n2,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextInput)),
     );
+    doc.set_node_state(n2, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n2, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
     doc.set_style(n2, RendererStyleValue::BorderTopWidth(2));
     doc.set_style(n2, RendererStyleValue::BorderTopStyle(BorderStyle::Inset));
@@ -244756,7 +244763,9 @@ fn css_sizing_max_content_input_001_ref(viewport: ViewportMetrics) -> Result<Eng
         n4,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n4, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n4, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n4, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n4, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n4, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n4, RendererStyleValue::BorderTopWidth(1));
@@ -244881,6 +244890,7 @@ fn css_sizing_max_content_input_001_ref(viewport: ViewportMetrics) -> Result<Eng
         n7,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextInput)),
     );
+    doc.set_node_state(n7, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n7, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
     doc.set_style(n7, RendererStyleValue::BorderTopWidth(2));
     doc.set_style(n7, RendererStyleValue::BorderTopStyle(BorderStyle::Inset));
@@ -244986,7 +244996,9 @@ fn css_sizing_max_content_input_001_ref(viewport: ViewportMetrics) -> Result<Eng
         n9,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n9, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n9, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n9, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n9, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n9, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n9, RendererStyleValue::BorderTopWidth(1));
@@ -248462,6 +248474,12 @@ fn css_sizing_stretch_stretch_quirk_001(viewport: ViewportMetrics) -> Result<Eng
     );
     doc.set_style(n6, RendererStyleValue::ListStyleType(ListStyleType::None));
     doc.set_style(n6, RendererStyleValue::Display(Display::InlineBlock));
+    doc.set_style(n6, RendererStyleValue::OverflowX(Overflow::Clip));
+    doc.set_style(n6, RendererStyleValue::OverflowY(Overflow::Clip));
+    doc.set_style(
+        n6,
+        RendererStyleValue::OverflowClipBox(OverflowClipBox::ContentBox),
+    );
     let n6_document = doc.register_image_resource(
         "about:blank",
         "text/html",
@@ -248583,6 +248601,7 @@ fn css_sizing_stretch_stretch_quirk_001(viewport: ViewportMetrics) -> Result<Eng
         n8,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::Button)),
     );
+    doc.set_node_state(n8, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n8, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n8, RendererStyleValue::MarginRight(Length::px(10.0)));
     doc.set_style(n8, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -248629,8 +248648,15 @@ fn css_sizing_stretch_stretch_quirk_001(viewport: ViewportMetrics) -> Result<Eng
     doc.set_style(n8, RendererStyleValue::BackgroundLinearGradient(None));
     doc.set_style(n8, RendererStyleValue::FontSize(13.333333));
     doc.set_style(n8, RendererStyleValue::TextAlign(TextAlign::Center));
+    doc.set_style(n8, RendererStyleValue::WhiteSpace(WhiteSpace::Pre));
+    doc.set_style(n8, RendererStyleValue::OverflowX(Overflow::Clip));
+    doc.set_style(n8, RendererStyleValue::OverflowY(Overflow::Clip));
     doc.set_style(n8, RendererStyleValue::BackgroundLayers(vec![]));
     doc.set_style(n8, RendererStyleValue::BackgroundLinearGradient(None));
+    doc.set_internal_style(
+        n8,
+        RendererInternalStyleValue::NativeButtonTextMetrics(true),
+    );
     doc.set_style(
         n8,
         RendererStyleValue::FontFamily(FontFamilyList {
@@ -248645,6 +248671,10 @@ fn css_sizing_stretch_stretch_quirk_001(viewport: ViewportMetrics) -> Result<Eng
     );
     doc.append_child(vp, n8);
     let n9 = doc.create_node(ElementTag::Text);
+    doc.set_internal_style(
+        n9,
+        RendererInternalStyleValue::NativeButtonTextMetrics(true),
+    );
     doc.set_style(n9, RendererStyleValue::FontSize(13.333333));
     doc.set_style(
         n9,
@@ -248658,6 +248688,7 @@ fn css_sizing_stretch_stretch_quirk_001(viewport: ViewportMetrics) -> Result<Eng
             ],
         }),
     );
+    doc.set_style(n9, RendererStyleValue::WhiteSpace(WhiteSpace::Pre));
     doc.set_node_state(n9, RendererNodeState::Text(Some("B".to_string())));
     doc.append_child(n8, n9);
     let n10 = doc.create_node(ElementTag::Text);
@@ -248695,6 +248726,7 @@ fn css_sizing_stretch_stretch_quirk_001(viewport: ViewportMetrics) -> Result<Eng
         n11,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextInput)),
     );
+    doc.set_node_state(n11, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n11, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
     doc.set_style(n11, RendererStyleValue::BorderTopWidth(2));
     doc.set_style(n11, RendererStyleValue::BorderTopStyle(BorderStyle::Inset));
@@ -248818,7 +248850,9 @@ fn css_sizing_stretch_stretch_quirk_001(viewport: ViewportMetrics) -> Result<Eng
         n13,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n13, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n13, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n13, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n13, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n13, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n13, RendererStyleValue::BorderTopWidth(1));
@@ -249013,6 +249047,8 @@ fn css_sizing_stretch_stretch_quirk_001_ref(
     );
     doc.set_style(n1, RendererStyleValue::BackgroundLinearGradient(None));
     doc.set_style(n1, RendererStyleValue::Display(Display::InlineBlock));
+    doc.set_style(n1, RendererStyleValue::BackgroundLayers(vec![]));
+    doc.set_style(n1, RendererStyleValue::BackgroundLinearGradient(None));
     doc.set_style(
         n1,
         RendererStyleValue::FontFamily(FontFamilyList {
@@ -249131,6 +249167,8 @@ fn css_sizing_stretch_stretch_quirk_001_ref(
         n4,
         RendererStyleValue::BackgroundColor(Color::from_rgba8(0, 255, 255, 255)),
     );
+    doc.set_style(n4, RendererStyleValue::BackgroundLinearGradient(None));
+    doc.set_style(n4, RendererStyleValue::BackgroundLayers(vec![]));
     doc.set_style(n4, RendererStyleValue::BackgroundLinearGradient(None));
     doc.set_style(
         n4,
@@ -249258,6 +249296,8 @@ fn css_sizing_stretch_stretch_quirk_001_ref(
         RendererStyleValue::BackgroundColor(Color::from_rgba8(0, 255, 255, 255)),
     );
     doc.set_style(n6, RendererStyleValue::BackgroundLinearGradient(None));
+    doc.set_style(n6, RendererStyleValue::BackgroundLayers(vec![]));
+    doc.set_style(n6, RendererStyleValue::BackgroundLinearGradient(None));
     doc.set_style(
         n6,
         RendererStyleValue::FontFamily(FontFamilyList {
@@ -249361,6 +249401,8 @@ fn css_sizing_stretch_stretch_quirk_001_ref(
     doc.set_style(n8, RendererStyleValue::WhiteSpace(WhiteSpace::Pre));
     doc.set_style(n8, RendererStyleValue::OverflowX(Overflow::Clip));
     doc.set_style(n8, RendererStyleValue::OverflowY(Overflow::Clip));
+    doc.set_style(n8, RendererStyleValue::BackgroundLayers(vec![]));
+    doc.set_style(n8, RendererStyleValue::BackgroundLinearGradient(None));
     doc.set_internal_style(
         n8,
         RendererInternalStyleValue::NativeButtonTextMetrics(true),
@@ -249512,6 +249554,8 @@ fn css_sizing_stretch_stretch_quirk_001_ref(
     );
     doc.set_style(n11, RendererStyleValue::BackgroundLinearGradient(None));
     doc.set_style(n11, RendererStyleValue::FontSize(13.333333));
+    doc.set_style(n11, RendererStyleValue::BackgroundLayers(vec![]));
+    doc.set_style(n11, RendererStyleValue::BackgroundLinearGradient(None));
     doc.set_style(
         n11,
         RendererStyleValue::FontFamily(FontFamilyList {
@@ -249563,6 +249607,7 @@ fn css_sizing_stretch_stretch_quirk_001_ref(
     );
     doc.set_node_state(n13, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n13, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n13, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n13, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n13, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n13, RendererStyleValue::BorderTopWidth(1));
@@ -249641,6 +249686,8 @@ fn css_sizing_stretch_stretch_quirk_001_ref(
     );
     doc.set_style(n13, RendererStyleValue::BackgroundLinearGradient(None));
     doc.set_style(n13, RendererStyleValue::FontSize(13.333333));
+    doc.set_style(n13, RendererStyleValue::BackgroundLayers(vec![]));
+    doc.set_style(n13, RendererStyleValue::BackgroundLinearGradient(None));
     doc.set_style(
         n13,
         RendererStyleValue::FontFamily(FontFamilyList {
