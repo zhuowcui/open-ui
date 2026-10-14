@@ -456,6 +456,32 @@ pub fn balance_columns(
     )
 }
 
+/// The source of an adjoining self-collapsing empty chain is one margin
+/// strut. Share that source between balancing, row continuation and admission;
+/// column capacity does not shorten the original strut.
+pub(crate) fn collapsed_empty_margin_source_extent(
+    raw_sizes: &[LayoutUnit],
+    margins_top: &[LayoutUnit],
+    margins_bottom: &[LayoutUnit],
+    forced_break_before: &[bool],
+    collapse_empty_margin_chain: bool,
+) -> Option<LayoutUnit> {
+    if !collapse_empty_margin_chain
+        || raw_sizes.is_empty()
+        || raw_sizes.iter().any(|size| *size != LayoutUnit::zero())
+        || forced_break_before.iter().any(|forced| *forced)
+    {
+        return None;
+    }
+    let mut largest_positive = LayoutUnit::zero();
+    let mut smallest_negative = LayoutUnit::zero();
+    for margin in margins_top.iter().chain(margins_bottom.iter()) {
+        largest_positive = largest_positive.max_of(*margin);
+        smallest_negative = smallest_negative.min_of(*margin);
+    }
+    Some((largest_positive + smallest_negative).clamp_negative_to_zero())
+}
+
 /// Margin-aware column balancing. Receives raw child block sizes and separate
 /// margin arrays. Margins at the top of non-first columns are truncated
 /// per CSS Fragmentation §3.5.
@@ -470,22 +496,17 @@ pub fn balance_columns_with_margins(
     avoid_break_after: &[bool],
     collapse_empty_margin_chain: bool,
 ) -> LayoutUnit {
-    if collapse_empty_margin_chain
-        && !raw_sizes.is_empty()
-        && raw_sizes.iter().all(|size| *size == LayoutUnit::zero())
-        && !forced_break_before.iter().any(|forced| *forced)
-    {
+    if let Some(collapsed) = collapsed_empty_margin_source_extent(
+        raw_sizes,
+        margins_top,
+        margins_bottom,
+        forced_break_before,
+        collapse_empty_margin_chain,
+    ) {
         // Consecutive self-collapsing empty blocks contribute one adjoining
         // margin strut, not one margin per child. The strut is fragmentable
         // content of the multicol formatting context and is therefore shared
         // across the balanced columns.
-        let mut largest_positive = LayoutUnit::zero();
-        let mut smallest_negative = LayoutUnit::zero();
-        for margin in margins_top.iter().chain(margins_bottom.iter()) {
-            largest_positive = largest_positive.max_of(*margin);
-            smallest_negative = smallest_negative.min_of(*margin);
-        }
-        let collapsed = (largest_positive + smallest_negative).clamp_negative_to_zero();
         let count = column_count.max(1) as i32;
         let balanced = if margins_top
             .iter()
@@ -1038,9 +1059,14 @@ pub(crate) fn balanced_outer_row_heights(
     {
         return None;
     }
-    let collapsed_empty_source = collapse_empty_margin_chain
-        && raw_sizes.iter().all(|size| *size == LayoutUnit::zero())
-        && !forced_break_before.iter().any(|forced| *forced);
+    let collapsed_source = collapsed_empty_margin_source_extent(
+        raw_sizes,
+        margins_top,
+        margins_bottom,
+        forced_break_before,
+        collapse_empty_margin_chain,
+    );
+    let collapsed_empty_source = collapsed_source.is_some();
     // The shared empty-chain balancer keeps a leading strut whole, while
     // distributing a chain with only trailing margins across the columns.
     // Keep that source distinction after normalizing the partition operands.
@@ -1048,17 +1074,7 @@ pub(crate) fn balanced_outer_row_heights(
         && margins_top
             .iter()
             .any(|margin| *margin > LayoutUnit::zero());
-    let collapsed = if collapsed_empty_source {
-        let mut positive = LayoutUnit::zero();
-        let mut negative = LayoutUnit::zero();
-        for margin in margins_top.iter().chain(margins_bottom.iter()) {
-            positive = positive.max_of(*margin);
-            negative = negative.min_of(*margin);
-        }
-        (positive + negative).clamp_negative_to_zero()
-    } else {
-        LayoutUnit::zero()
-    };
+    let collapsed = collapsed_source.unwrap_or(LayoutUnit::zero());
     // The balancing policy represents this chain as one collapsed strut.
     // Its continuation is the same normal source, not the original margins
     // counted once again for each empty child.

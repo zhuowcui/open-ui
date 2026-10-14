@@ -23118,6 +23118,17 @@ fn layout_multicol(
                 .iter()
                 .copied()
                 .fold(LayoutUnit::zero(), |sum, size| sum + size);
+            // Empty principal boxes can still own one real collapsed margin
+            // source. Its scalar balanced height has already been constrained
+            // by capacity, so use the original source to admit continuation.
+            let outer_row_source_extent = crate::multicol::collapsed_empty_margin_source_extent(
+                &col_fragmentation_sizes,
+                &col_margins_top,
+                &col_fragmentation_margins_bottom,
+                &col_forced_break_before,
+                collapse_empty_margin_chain,
+            )
+            .unwrap_or(fragmentation_content_extent);
             if !has_explicit_height
                 && resolved_max_height.is_none()
                 && resolved.count == 1
@@ -23207,7 +23218,7 @@ fn layout_multicol(
                                 || col_fragmentation_sizes[index] > outer
                         })
                     && (column_height > outer
-                        || fragmentation_content_extent
+                        || outer_row_source_extent
                             >= outer * LayoutUnit::from_i32(resolved.count.max(1) as i32))
                 });
             let positioned_uses_outer_fragmentainer =
@@ -31988,7 +31999,6 @@ fn layout_multicol(
                                 per_col_children.push(Vec::new());
                             }
                             project_collapsed_table_sections(&mut part);
-                            let owned_block_size = part.border_box_rect().height();
                             let source_block_end =
                                 child_frag.box_geometry.map_or(child_height, |geometry| {
                                     WritingModeConverter::new(
@@ -32000,6 +32010,19 @@ fn layout_multicol(
                                 });
                             let source_content_end =
                                 (source_block_end - clone_bp_block).clamp_negative_to_zero();
+                            let owned_block_size =
+                                if sequential_outer_rows && wraps_rows && !is_clone {
+                                    // A final row can keep visual capacity for a
+                                    // trailing margin after the principal ends.
+                                    // Record only the remaining owned source; keep
+                                    // its physical clip, children and ink unchanged.
+                                    part.border_box_rect().height().min_of(
+                                        (source_block_end - stitched_consumed)
+                                            .clamp_negative_to_zero(),
+                                    )
+                                } else {
+                                    part.border_box_rect().height()
+                                };
                             crate::fragment_geometry::record_piece(
                                 &mut part,
                                 space.writing_direction,
