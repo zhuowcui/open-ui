@@ -71,3 +71,10 @@ this checkpoint. Historical archives retain their integrity; known-wrong old
 native screenshots are not correctness targets. No canonical renderer, native
 API completeness, dynamic-layer or release qualification follows from this
 source checkpoint.
+
+
+## Viewport-fixed overflow ownership
+
+The pinned Chromium view overflow calculator excludes a fixed direct child. Native layout now uses the actual owned positioned containing-block metadata for this distinction, shared with immutable paint context classification. Missing metadata remains unresolved; a fixed child of a transformed containing block contributes through its ordinary ancestor. The viewport's own seed and ordinary/absolute overflow retain their existing rules.
+
+The unchanged tall-sibling control is not a form control. Its Chromium vertical scrollbar paints gray over the right end of the blue edge; the old full-blue-row premise is preserved separately. Fresh current-source metrics also exposed an extra native horizontal scrollbar before this repair. This source checkpoint does not alter pixel expectations, drawing operations, default renderer selection or qualification status. Actual runtime and full Chromium frames remain required gates.

@@ -631,7 +631,21 @@ pub(crate) fn viewport_content_rect(
         client,
         reachable(layout_box_rect, client, negative_x, negative_y),
     );
+    let root = doc.root();
+    let root_establishes_transform_containing_block =
+        doc.node(root).style.has_transform_containing_block();
     for child in &fragment.children {
+        // Chromium ScrollableOverflowCalculator::AddChild excludes a fixed
+        // direct child of the view. Resolve that ownership from the actual
+        // positioned metadata; a fixed box in a transformed CB still contributes
+        // through its ordinary ancestor, and unresolved/helper boxes remain.
+        if child.owns_element_box() {
+            let style = child.layout_style(&doc.node(child.node_id).style);
+            if child.is_fixed_to_viewport(style, root, root_establishes_transform_containing_block)
+            {
+                continue;
+            }
+        }
         let mut rect = propagated(doc, child);
         let offset = scrollable_child_offset(child);
         rect.offset.left = rect.offset.left + offset.left;
@@ -913,4 +927,35 @@ mod tests {
 // Public entry points retain the original native Document signatures.
 pub fn used_overflow_pair(doc: &Document, node: NodeId) -> (Overflow, Overflow) {
     used_overflow_pair_with_layout(doc, node)
+}
+
+#[cfg(test)]
+mod viewport_fixed_metadata_guards {
+    use super::*;
+
+    #[test]
+    fn missing_positioned_metadata_is_not_a_viewport_fixed_proof() {
+        let mut doc = Document::new();
+        let root = doc.root();
+        let fixed = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(fixed, |style| {
+            style.display = Display::Block;
+            style.position = openui_style::Position::Fixed;
+        });
+        let lu = LayoutUnit::from_i32;
+        let mut fragment = Fragment::new_box(root, PhysicalSize::new(lu(785), lu(600)));
+        let child = Fragment::new_box(fixed, PhysicalSize::new(lu(800), lu(50)));
+        assert!(child.owns_element_box());
+        assert!(child.positioned_fragmentation.is_none());
+        assert!(!child.is_fixed_to_viewport(&doc.node(fixed).style, root, false));
+        fragment.children.push(child);
+        let client = PhysicalRect::new(PhysicalOffset::zero(), fragment.size);
+        let content = viewport_content_rect(&doc, &fragment, client, client, false, false);
+        assert_eq!(content.size, PhysicalSize::new(lu(800), lu(600)));
+        // An ordinary helper may borrow the same Fixed style. It also keeps
+        // its retained extent without acquiring authored viewport ownership.
+        fragment.children[0].box_ownership = crate::FragmentBoxOwnership::LayoutHelper;
+        let content = viewport_content_rect(&doc, &fragment, client, client, false, false);
+        assert_eq!(content.size, PhysicalSize::new(lu(800), lu(600)));
+    }
 }

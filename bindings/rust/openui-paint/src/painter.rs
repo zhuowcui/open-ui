@@ -798,10 +798,12 @@ fn source_paint_context(
     use crate::source_layer_program::RawPositioningReference as Reference;
     let positioning = if fragment.owns_element_box() && style.position == Position::Fixed {
         match fragment.positioned_fragmentation {
-            Some(data)
-                if data.containing_block_node.is_none()
-                    || (data.containing_block_node == doc.root()
-                        && !doc.node(doc.root()).style.has_transform_containing_block()) =>
+            Some(_)
+                if fragment.is_fixed_to_viewport(
+                    style,
+                    doc.root(),
+                    doc.node(doc.root()).style.has_transform_containing_block(),
+                ) =>
             {
                 Reference::Viewport(doc.root())
             }

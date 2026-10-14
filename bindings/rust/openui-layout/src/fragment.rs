@@ -9,7 +9,7 @@ use openui_dom::NodeId;
 use openui_geometry::{
     BoxStrut, LayoutUnit, PhysicalOffset, PhysicalRect, PhysicalSize, WritingDirectionMode,
 };
-use openui_style::{ComputedStyle, Overflow, TextOrientation, WritingMode};
+use openui_style::{ComputedStyle, Overflow, Position, TextOrientation, WritingMode};
 use openui_text::ShapeResult;
 use std::sync::Arc;
 
@@ -719,6 +719,24 @@ pub struct Fragment {
 }
 
 impl Fragment {
+    /// True only when the actual owned fixed box was resolved against the
+    /// viewport. Missing positioned metadata cannot establish that ownership.
+    /// Keep this rule shared by viewport overflow and immutable paint context.
+    pub fn is_fixed_to_viewport(
+        &self,
+        style: &ComputedStyle,
+        root: NodeId,
+        root_establishes_transform_containing_block: bool,
+    ) -> bool {
+        self.owns_element_box()
+            && style.position == Position::Fixed
+            && self.positioned_fragmentation.is_some_and(|positioned| {
+                positioned.containing_block_node.is_none()
+                    || (positioned.containing_block_node == root
+                        && !root_establishes_transform_containing_block)
+            })
+    }
+
     /// Whether a producer retained a visual contribution, including an
     /// applied zero or independent contributions whose sum cancels.
     pub(crate) fn has_recorded_fragmentation_visual_offset(&self) -> bool {
