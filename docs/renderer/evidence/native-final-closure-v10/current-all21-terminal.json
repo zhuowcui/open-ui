@@ -1,0 +1,10 @@
+{
+  "session_id": 45619,
+  "actual_exit_code": 0,
+  "terminal_reaped": true,
+  "terminal_chunk_id": "973b5d",
+  "receipt_sha256": "79bcb11247af3be4d29b351ea61b29c6b2559f1eb59c37657bb0420f570e72c8",
+  "owner_pid": 3757664,
+  "owner_pid_absent": true,
+  "all_child_pids_absent": true
+}

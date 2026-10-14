@@ -1,0 +1,90 @@
+{
+  "observer_pid": 3578113,
+  "owner_actual_exit_code": 1,
+  "owner_terminal_reaped": true,
+  "tool_chunk": "5bb741",
+  "receipt_sha256": "2c32165772d1c440c8ba289394b0cfd6b140a3c0bafe4937c4a2d8402728a11f",
+  "known_pids_absent": [
+    3512735,
+    3512782,
+    3512898,
+    3514471,
+    3515877,
+    3576205
+  ],
+  "global_native_browser_lock_free": true,
+  "source_commit": "8bcc6dfa7240a34149d6351623a907723186f82d",
+  "source_tree_sha256": "91527a0d74a10b04afd52eac3b1a7f362a488ca29cb7c73bfce7168dd8edf5e8",
+  "runner_sha256": "2b11ee0fc5b2b1067a064f8f86d339d932cd72fd2af8d776efe9394d727bc889",
+  "source_runner_chrome_build_inputs_unchanged": true,
+  "scopes": [
+    {
+      "suite": "scoped-original",
+      "actual_exit_code": 1,
+      "reaped": true,
+      "summary_sha256": "9131e69fffd88d8164c442299fc3ff088ec276ce90768615293469c550c11c3f",
+      "counts": {
+        "different": 4,
+        "errors": 0,
+        "exact": 4,
+        "profile_result_sha256": "d87b649aa17bfbfcb59396bc4fa0e6e70dbcb605af7d4cdb83f70f04cfe885ae",
+        "total": 8
+      }
+    },
+    {
+      "suite": "focused",
+      "actual_exit_code": 0,
+      "reaped": true,
+      "summary_sha256": "04eb5f3e1341b018d7f89f44060d3c2275b9bd68b6f7d0bec08d5975d8f08518",
+      "counts": {
+        "different": 0,
+        "errors": 0,
+        "exact": 640,
+        "profile_result_sha256": "f7661a9293367ab708ee6c4a115e66c176053d5a6891a6bbcb558160b7f3c48e",
+        "total": 640
+      }
+    },
+    {
+      "suite": "primitive",
+      "actual_exit_code": 0,
+      "reaped": true,
+      "summary_sha256": "c4c0eeee71292067fcda17e9ccc4360098d1331bb064651a7b85e3648bf08611",
+      "counts": {
+        "different": 0,
+        "errors": 0,
+        "exact": 960,
+        "profile_result_sha256": "8cb40859a725c416a240211ac7947246dd3c13fd03b23b5c9c34429e9b7bf721",
+        "total": 960
+      }
+    },
+    {
+      "suite": "full",
+      "actual_exit_code": 1,
+      "reaped": true,
+      "summary_sha256": "766c34ba7c2b56b51493a7f6bd4bb877675e36d4e4ebd1f883a2ef1d4d5baf5d",
+      "counts": {
+        "different": 1917,
+        "errors": 0,
+        "exact": 21007,
+        "profile_result_sha256": "612ac7d53daf898a6240058ed57c98b75206074b3ec3d7820fa49845dfacb586",
+        "total": 22924
+      }
+    },
+    {
+      "suite": "expanded",
+      "actual_exit_code": 1,
+      "reaped": true,
+      "summary_sha256": "170f35ea450ae71b1664c3db2580558a16e20a1042dfad1245c8e6617b2a9801",
+      "counts": {
+        "different": 1993,
+        "errors": 0,
+        "exact": 21735,
+        "profile_result_sha256": "5ec4a43b9a27967f83fe9e16de5d45f92165dc8c2f6f39081b5ddf3fb026db3f",
+        "total": 23728
+      }
+    }
+  ],
+  "release_qualified": false,
+  "later_development_source_qualified": false,
+  "historical_open_ui_images_are_pixel_oracle": false
+}

@@ -20,63 +20,72 @@ product. Waves W0 through W10 are locally committed. W11 source packaging and
 documentation are implemented, but final external and hardware qualifications
 remain open.
 
-## Current closure work (13 October 2026)
+## Current closure work (14 October 2026)
 
-At clean `8bcc6dfa`, the latest complete CPU census against pinned Chromium
-147.0.7727.50 records **21,007/22,924 original comparisons exact (91.6%)**,
-with **1,917 differences and zero errors**. The expanded census records
-**21,735/23,728 exact**, with **1,993 differences and zero errors**.
-Of the 201 added fixture IDs, **182 match at all four required profiles**.
-Focused **640/640** and primitive **960/960** comparisons are exact.
-These numbers measure that renderer checkpoint. There is no measured
+The latest complete CPU census at `96934cd0` records **20,948/22,924 original
+comparisons exact**, **1,976 differences and zero errors** against Chromium
+147.0.7727.50. The expanded census records **21,676/23,728 exact**, **2,052
+differences and zero errors**. These are measured comparison counts, with no
 whole-project completion percentage.
 
-The full audit from `5520ed92` to `8bcc6dfa` finds **three gains and two
-losses**, with eight changed native images and **zero changed Chromium
-images or oracle inputs**. The balance case worsened at all four profiles.
-All 5,731 original HTML inputs, 201 added inputs, fonts, resources and
-capture identities remain unchanged. There is no contradictory pixel oracle
-in this comparison. The 957 original residual fixture IDs still require
-reviewed ownership and exact repair.
+Against the preserved Q4 census at `8bcc6dfa` (21,007 original and 21,735 expanded
+comparisons exact), both suites show **15 gains and 74 lost exact comparisons**.
+All Chromium identities and pixels remain unchanged. The paired audit verifies
+118 changed native comparisons per suite and raises original mismatched pixels
+from 7,085,848 to 7,691,358. **The current renderer fails the global regression
+gate and is not ready for promotion or release qualification.** A selected
+608-comparison source-epoch diagnostic places changes in earlier source cohorts;
+Q8 to Q9 changes no native census comparisons. It does not establish the cause
+of each loss.
 
-At later clean `3225774a`, focused and primitive comparisons remain exact.
-The three pending native final-state cases now match **9/12** comparisons:
-nested columns **4/4**, fixed positioning **3/4**, scrollbars **2/4**.
-The browser's ordered history and independent final DOM agree; native
-repeats are deterministic. The nested case is awaiting admission checks.
-Open UI executes no JavaScript. Consuming apps use native Rust APIs and
-callbacks over the shared Engine.
+Current Q9 records **13/16 scoped comparisons exact**, three differences and
+zero errors; **640/640 focused** and **960/960 primitive** comparisons are exact.
+Those narrower results do not override the complete census regression.
 
-The nested-column guard now compares the complete native frame with actual
-pinned Chromium pixels at all five scales, including fractional edges.
-That guard passes. The new retained source-layer diagnostic still has
-**five runtime failures** in its Engine and paint tests; the existing
-canonical layered replay's five test groups pass. Source-layer output is
-an explicit diagnostic and is not a qualified rendering path.
+The current shared-arrow batch records **43 passed / one failed / 44 executed**,
+with zero ignored. Original scrollbar test 138 still fails. Tiny Thin full frames
+match Chromium at all five scales; both new arrow primitive groups pass, as do
+all **20 source-layer and canonical guards**. The source-layer path remains opt-in.
 
-The balanced nested-row candidate at clean `26044df5` fixes three original
-comparisons but loses four previously exact comparisons in the scoped
-16-comparison run. One balance comparison still has a 125-pixel fractional
-edge difference. Its tests also expose vertical continuation and neighboring
-flow failures; two new guard setups accidentally used inline elements and
-are being corrected. Shared multicolumn units **16/16**, clip **1/1**,
-constraint **2/2**, and generated/format checks **21/21** pass. The candidate
-remains unqualified. A complete census on later source is still required.
+The completed 400-frame bar diagnostic preserves repeats and capture controls.
+Its separate Chromium comparison records **40/50 full frames exact**, **22 gains
+and no lost exact cases**, but also **five newly different pixels** and **61
+remaining Thin pixels outside the measured enclosure**, absent in Chromium.
+The native metadata-removed textarea versus browser empty-div scope is explicit;
+these results do not establish a general scrollbar rendering contract.
 
-At `8bcc6dfa`, the native workspace records **9,304 passed / zero failed**;
-doctests record **two passed / 13 ignored**. All **40 C and 34 C++** consumers
-pass against 163 exports. Its required hosted jobs and seven manual hardening
-jobs pass. Later native timeline reassignment passes **18 Rust/Engine/C ABI
-guards** and all **41 C and 35 C++** consumers against 164 exports. These
-source-specific checks do not qualify the current renderer or all native APIs.
+A private explicit-LCD candidate matches **30/30 paragraph comparisons** and
+passes **125 scoped guards**, preserving all 15 alias frame controls. Its broader
+focused matrix loses **40 formerly exact comparisons**, falling to **600/640**
+with unchanged Chromium inputs and pixels. It is **not integrated and is rejected
+pending a shared routing repair**. Actual resolved-run and final physical-strike
+behavior remains part of that investigation.
 
-Remaining work includes exact pixels, missing native APIs, retained layers
-and presentation tracks, 3D, physical GPU/AT-SPI/performance checks,
-reproducible packages, signing and publication. Chromium defines correct
-pixels. Historical Open UI images remain immutable history and never define
-pixel correctness or a release gate.
+Existing numerical paint and font fitting helpers remain open correctness gates.
+`shared_spanner_four_way_junctions` emits a synthetic junction with **an increment of eight to intermediate color-channel
+values and 28/255 coverage**; its general Chromium derivation is unqualified.
+A private removal experiment is not integrated or qualified. LCD size-10 phase
+and vertical-offset helpers, plus Ahem and DejaVu strike-specific hinting rules,
+also require general source and provider validation. Source comments and scoped
+matches do not close these gates or establish actual final-strike parity.
 
-[Current closure evidence](../renderer/generated/native-final-closure-status-v9.json).
+At `96934cd0`, all **21 generated, formatting and accountability checks pass**.
+CMake passes normal compiler sanity, configures **52 targets**, and builds and
+runs both timeline-reassignment C and C++ consumers. The latest complete workspace
+run remains at `59f6e575`: **9,385 Rust tests passed / one failed / zero ignored**,
+with scrollbar test 138 failing; doctests record **two passed / 13 ignored**.
+The FFI library builds, with **164 exports** and all **41 C and 35 C++ consumers
+passing**. Those historical full-workspace results do not qualify later source.
+
+Native Rust APIs and callbacks remain the interaction contract; Open UI executes
+no JavaScript. Owned timeline objects, nullable and unbound sources,
+DocumentTimeline offsets, remaining native API and presentation behavior,
+current hosted CI and release qualification remain open. Pinned Chromium is
+the sole pixel oracle; historical native archives remain preserved for integrity
+and history.
+
+The [V10 status and evidence inventory](../renderer/generated/native-final-closure-status-v10.json)
+records exact source identities, completed terminals and pending work.
 
 The sections below record earlier checkpoints. Their source-specific measurements remain historical evidence.
 
@@ -1768,13 +1777,18 @@ separate work. Documentation checkpoint `e345cf69` passes ten read-only checks
 and all three hosted workflows: six jobs succeed and five are skipped. No
 private runtime is promoted or admitted by this documentation checkpoint.
 
-## Verified repository state
+## Historical verified repository state
+
+This table preserves older checkpoint measurements. The complete clean
+`96934cd0` census and current blockers are recorded in the
+[current measured closure status](../renderer/generated/native-final-closure-status-v10.json)
+and the current closure section above.
 
 | Evidence | Result |
 |---|---:|
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
-| Latest complete clean umbrella census | [Clean strict-intrinsic census](../renderer/generated/native-strict-intrinsic-ceil-v2.json) at `d6d9dfe9`: 21,329/22,924 exact (93.04%), 1,595 different, 0 errors; expanded 22,132/23,728 exact (93.27%), 1,596 different; both actual exits 1; 890 residual original IDs. These are comparison pass rates; whole-goal completion is not measured |
+| Historical strict-intrinsic census | [Clean strict-intrinsic census](../renderer/generated/native-strict-intrinsic-ceil-v2.json) at `d6d9dfe9`: 21,329/22,924 exact (93.04%), 1,595 different, 0 errors; expanded 22,132/23,728 exact (93.27%), 1,596 different; both actual exits 1; 890 residual original IDs. These are comparison pass rates; whole-goal completion is not measured |
 | Earlier accepted renderer census | [Clean resolved-font census](../renderer/generated/native-font-families-v3.json) at `98d18982`: 21,350/22,924 exact, 1,574 different, 0 errors; expanded 22,153/23,728 exact, 1,575 different; both actual exits 1; 875 residual original IDs. Historical measurement; the later strict-intrinsic candidate fails nonregression |
 | Previous native event census | `1c8540e9`: 21,334/22,924 exact, 1,590 different, 0 errors; expanded 22,137/23,728 exact, 1,591 different, 0 errors. Historical measurement; both pixel gates failed |
 | Chromium oracle consistency audit | One older cached capture differs from six fresh captures under the same recorded identity; reconciliation open |
@@ -2958,13 +2972,18 @@ load it.
   it reached 408/640 focused and 624/960 primitive exact, below CPU Skia's
   640/640 and 960/960. It remains unpromoted; OpenGL presentation still uploads
   a CPU-rasterized frame.
-- The latest complete four-profile Chromium census fails exactness at clean
-  `d6d9dfe9`; 890 residual test IDs have no reviewed owner.
-  [Clean strict-intrinsic census](../renderer/generated/native-strict-intrinsic-ceil-v2.json).
-  Both 40-profile CPU raster matrices remain exact in the newer `f6d318e6`
-  diagnostic measurements. All 12 hosted jobs, including all seven explicitly
-  dispatched hardening jobs, pass with zero skips on the preceding `9949c65d`
-  checkpoint. Each later checkpoint needs its own hosted results.
+- The latest complete four-profile CPU Chromium census at clean `96934cd0`
+  records 20,948/22,924 original comparisons exact, 1,976 differences and zero
+  errors; expanded results are 21,676/23,728 exact, 2,052 differences and zero
+  errors. There are 964 residual original IDs; reviewed ownership remains open.
+  Against Q4, 15 comparisons gain exactness and 74 lose it, with unchanged
+  Chromium pixels. The global regression gate fails. Current focused 640/640
+  and primitive 960/960 comparisons are exact in the completed `4782` evidence;
+  these narrower scopes do not override the full census.
+  [Current measured closure status](../renderer/generated/native-final-closure-status-v10.json).
+  The older `9949c65d` hosted checkpoint reported all 12 jobs, including seven
+  explicitly dispatched hardening jobs, passing with zero skips. Those are
+  preceding-source results; current-source hosted qualification remains open.
   [Preceding-checkpoint hardening](https://github.com/zhuowcui/open-ui/actions/runs/38164856537).
 - The C ABI covers the retained engine, headless renderer, owned full
   accessibility-tree snapshots, and the shared Rust Linux event loop;

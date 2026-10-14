@@ -1,0 +1,18 @@
+{
+  "observer_pid": 3745625,
+  "session_id": 39423,
+  "actual_exit_code": 1,
+  "terminal_reaped": true,
+  "observed_tool_chunk": "253c7d",
+  "receipt_sha256": "ee2f0ed316022ca405713182a671ed5bc03df0917bbef20c583e1fc54db9cb3d",
+  "all_known_pids": [
+    3722593,
+    3722774,
+    3743484,
+    3743754,
+    3743821
+  ],
+  "all_absent": true,
+  "source_unchanged": true,
+  "qualification": false
+}

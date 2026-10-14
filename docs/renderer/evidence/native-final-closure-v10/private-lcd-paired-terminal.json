@@ -1,0 +1,9 @@
+{
+  "actual_terminal_chunk_id": "0a5bad",
+  "actual_tool_exit": 0,
+  "comparison_sha256": "867290fa2e26f1a2f1b7e85bd2e135a111941f058fc0a54a6c6001dff1631833",
+  "qualification": false,
+  "schema_version": 1,
+  "writer_absent": true,
+  "writer_pid": 3772068
+}

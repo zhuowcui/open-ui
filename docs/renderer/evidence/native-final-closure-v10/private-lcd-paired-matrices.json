@@ -1,0 +1,401 @@
+{
+  "candidate_integration_allowed": false,
+  "decision": "private candidate fails focused exact gate; preserve working source and investigate shared routing before integration",
+  "pairs": [
+    {
+      "changed_cases": [],
+      "chromium_changed": 0,
+      "count": 16,
+      "gained_exact": 0,
+      "lost_exact": 0,
+      "native_rgba_changed": 0,
+      "new_commit": "ea14908177cc01130491677293ac144fee7c201e",
+      "old_commit": "96934cd08f68faa3fcb4eb2ba73f0142b59a2c39",
+      "suite": "scoped-original/full-summary.json"
+    },
+    {
+      "changed_cases": [
+        {
+          "id": "wpt/css_multicol/multicol-block-no-clip-001",
+          "new_mismatched_pixels": 1080,
+          "new_status": "different",
+          "old_mismatched_pixels": 0,
+          "old_status": "exact",
+          "profile": "focused-320x240@1"
+        },
+        {
+          "id": "wpt/css_multicol/multicol-block-no-clip-001",
+          "new_mismatched_pixels": 1350,
+          "new_status": "different",
+          "old_mismatched_pixels": 0,
+          "old_status": "exact",
+          "profile": "focused-320x240@1.25"
+        },
+        {
+          "id": "wpt/css_multicol/multicol-block-no-clip-001",
+          "new_mismatched_pixels": 1620,
+          "new_status": "different",
+          "old_mismatched_pixels": 0,
+          "old_status": "exact",
+          "profile": "focused-320x240@1.5"
+        },
+        {
+          "id": "wpt/css_multicol/multicol-block-no-clip-001",
+          "new_mismatched_pixels": 2160,
+          "new_status": "different",
+          "old_mismatched_pixels": 0,
+          "old_status": "exact",
+          "profile": "focused-320x240@2"
+        },
+        {
+          "id": "wpt/css_multicol/multicol-block-no-clip-001",
+          "new_mismatched_pixels": 3240,
+          "new_status": "different",
+          "old_mismatched_pixels": 0,
+          "old_status": "exact",
+          "profile": "focused-320x240@3"
+        },
+        {
+          "id": "wpt/css_multicol/multicol-block-no-clip-001",
+          "new_mismatched_pixels": 1080,
+          "new_status": "different",
+          "old_mismatched_pixels": 0,
+          "old_status": "exact",
+          "profile": "focused-375x667@1"
+        },
+        {
+          "id": "wpt/css_multicol/multicol-block-no-clip-001",
+          "new_mismatched_pixels": 1350,
+          "new_status": "different",
+          "old_mismatched_pixels": 0,
+          "old_status": "exact",
+          "profile": "focused-375x667@1.25"
+        },
+        {
+          "id": "wpt/css_multicol/multicol-block-no-clip-001",
+          "new_mismatched_pixels": 1620,
+          "new_status": "different",
+          "old_mismatched_pixels": 0,
+          "old_status": "exact",
+          "profile": "focused-375x667@1.5"
+        },
+        {
+          "id": "wpt/css_multicol/multicol-block-no-clip-001",
+          "new_mismatched_pixels": 2160,
+          "new_status": "different",
+          "old_mismatched_pixels": 0,
+          "old_status": "exact",
+          "profile": "focused-375x667@2"
+        },
+        {
+          "id": "wpt/css_multicol/multicol-block-no-clip-001",
+          "new_mismatched_pixels": 3240,
+          "new_status": "different",
+          "old_mismatched_pixels": 0,
+          "old_status": "exact",
+          "profile": "focused-375x667@3"
+        },
+        {
+          "id": "wpt/css_multicol/multicol-block-no-clip-001",
+          "new_mismatched_pixels": 1080,
+          "new_status": "different",
+          "old_mismatched_pixels": 0,
+          "old_status": "exact",
+          "profile": "focused-800x600@1"
+        },
+        {
+          "id": "wpt/css_multicol/multicol-block-no-clip-001",
+          "new_mismatched_pixels": 1350,
+          "new_status": "different",
+          "old_mismatched_pixels": 0,
+          "old_status": "exact",
+          "profile": "focused-800x600@1.25"
+        },
+        {
+          "id": "wpt/css_multicol/multicol-block-no-clip-001",
+          "new_mismatched_pixels": 1620,
+          "new_status": "different",
+          "old_mismatched_pixels": 0,
+          "old_status": "exact",
+          "profile": "focused-800x600@1.5"
+        },
+        {
+          "id": "wpt/css_multicol/multicol-block-no-clip-001",
+          "new_mismatched_pixels": 2160,
+          "new_status": "different",
+          "old_mismatched_pixels": 0,
+          "old_status": "exact",
+          "profile": "focused-800x600@2"
+        },
+        {
+          "id": "wpt/css_multicol/multicol-block-no-clip-001",
+          "new_mismatched_pixels": 3240,
+          "new_status": "different",
+          "old_mismatched_pixels": 0,
+          "old_status": "exact",
+          "profile": "focused-800x600@3"
+        },
+        {
+          "id": "wpt/css_multicol/multicol-block-no-clip-001",
+          "new_mismatched_pixels": 1080,
+          "new_status": "different",
+          "old_mismatched_pixels": 0,
+          "old_status": "exact",
+          "profile": "focused-600x1200@1"
+        },
+        {
+          "id": "wpt/css_multicol/multicol-block-no-clip-001",
+          "new_mismatched_pixels": 1350,
+          "new_status": "different",
+          "old_mismatched_pixels": 0,
+          "old_status": "exact",
+          "profile": "focused-600x1200@1.25"
+        },
+        {
+          "id": "wpt/css_multicol/multicol-block-no-clip-001",
+          "new_mismatched_pixels": 1620,
+          "new_status": "different",
+          "old_mismatched_pixels": 0,
+          "old_status": "exact",
+          "profile": "focused-600x1200@1.5"
+        },
+        {
+          "id": "wpt/css_multicol/multicol-block-no-clip-001",
+          "new_mismatched_pixels": 2160,
+          "new_status": "different",
+          "old_mismatched_pixels": 0,
+          "old_status": "exact",
+          "profile": "focused-600x1200@2"
+        },
+        {
+          "id": "wpt/css_multicol/multicol-block-no-clip-001",
+          "new_mismatched_pixels": 3240,
+          "new_status": "different",
+          "old_mismatched_pixels": 0,
+          "old_status": "exact",
+          "profile": "focused-600x1200@3"
+        },
+        {
+          "id": "wpt/css_multicol/multicol-block-no-clip-001",
+          "new_mismatched_pixels": 1080,
+          "new_status": "different",
+          "old_mismatched_pixels": 0,
+          "old_status": "exact",
+          "profile": "focused-1280x720@1"
+        },
+        {
+          "id": "wpt/css_multicol/multicol-block-no-clip-001",
+          "new_mismatched_pixels": 1350,
+          "new_status": "different",
+          "old_mismatched_pixels": 0,
+          "old_status": "exact",
+          "profile": "focused-1280x720@1.25"
+        },
+        {
+          "id": "wpt/css_multicol/multicol-block-no-clip-001",
+          "new_mismatched_pixels": 1620,
+          "new_status": "different",
+          "old_mismatched_pixels": 0,
+          "old_status": "exact",
+          "profile": "focused-1280x720@1.5"
+        },
+        {
+          "id": "wpt/css_multicol/multicol-block-no-clip-001",
+          "new_mismatched_pixels": 2160,
+          "new_status": "different",
+          "old_mismatched_pixels": 0,
+          "old_status": "exact",
+          "profile": "focused-1280x720@2"
+        },
+        {
+          "id": "wpt/css_multicol/multicol-block-no-clip-001",
+          "new_mismatched_pixels": 3240,
+          "new_status": "different",
+          "old_mismatched_pixels": 0,
+          "old_status": "exact",
+          "profile": "focused-1280x720@3"
+        },
+        {
+          "id": "wpt/css_multicol/multicol-block-no-clip-001",
+          "new_mismatched_pixels": 1080,
+          "new_status": "different",
+          "old_mismatched_pixels": 0,
+          "old_status": "exact",
+          "profile": "focused-1920x1080@1"
+        },
+        {
+          "id": "wpt/css_multicol/multicol-block-no-clip-001",
+          "new_mismatched_pixels": 1350,
+          "new_status": "different",
+          "old_mismatched_pixels": 0,
+          "old_status": "exact",
+          "profile": "focused-1920x1080@1.25"
+        },
+        {
+          "id": "wpt/css_multicol/multicol-block-no-clip-001",
+          "new_mismatched_pixels": 1620,
+          "new_status": "different",
+          "old_mismatched_pixels": 0,
+          "old_status": "exact",
+          "profile": "focused-1920x1080@1.5"
+        },
+        {
+          "id": "wpt/css_multicol/multicol-block-no-clip-001",
+          "new_mismatched_pixels": 2160,
+          "new_status": "different",
+          "old_mismatched_pixels": 0,
+          "old_status": "exact",
+          "profile": "focused-1920x1080@2"
+        },
+        {
+          "id": "wpt/css_multicol/multicol-block-no-clip-001",
+          "new_mismatched_pixels": 3240,
+          "new_status": "different",
+          "old_mismatched_pixels": 0,
+          "old_status": "exact",
+          "profile": "focused-1920x1080@3"
+        },
+        {
+          "id": "wpt/css_multicol/multicol-block-no-clip-001",
+          "new_mismatched_pixels": 1080,
+          "new_status": "different",
+          "old_mismatched_pixels": 0,
+          "old_status": "exact",
+          "profile": "focused-2560x1440@1"
+        },
+        {
+          "id": "wpt/css_multicol/multicol-block-no-clip-001",
+          "new_mismatched_pixels": 1350,
+          "new_status": "different",
+          "old_mismatched_pixels": 0,
+          "old_status": "exact",
+          "profile": "focused-2560x1440@1.25"
+        },
+        {
+          "id": "wpt/css_multicol/multicol-block-no-clip-001",
+          "new_mismatched_pixels": 1620,
+          "new_status": "different",
+          "old_mismatched_pixels": 0,
+          "old_status": "exact",
+          "profile": "focused-2560x1440@1.5"
+        },
+        {
+          "id": "wpt/css_multicol/multicol-block-no-clip-001",
+          "new_mismatched_pixels": 2160,
+          "new_status": "different",
+          "old_mismatched_pixels": 0,
+          "old_status": "exact",
+          "profile": "focused-2560x1440@2"
+        },
+        {
+          "id": "wpt/css_multicol/multicol-block-no-clip-001",
+          "new_mismatched_pixels": 3240,
+          "new_status": "different",
+          "old_mismatched_pixels": 0,
+          "old_status": "exact",
+          "profile": "focused-2560x1440@3"
+        },
+        {
+          "id": "wpt/css_multicol/multicol-block-no-clip-001",
+          "new_mismatched_pixels": 1080,
+          "new_status": "different",
+          "old_mismatched_pixels": 0,
+          "old_status": "exact",
+          "profile": "focused-3440x1440@1"
+        },
+        {
+          "id": "wpt/css_multicol/multicol-block-no-clip-001",
+          "new_mismatched_pixels": 1350,
+          "new_status": "different",
+          "old_mismatched_pixels": 0,
+          "old_status": "exact",
+          "profile": "focused-3440x1440@1.25"
+        },
+        {
+          "id": "wpt/css_multicol/multicol-block-no-clip-001",
+          "new_mismatched_pixels": 1620,
+          "new_status": "different",
+          "old_mismatched_pixels": 0,
+          "old_status": "exact",
+          "profile": "focused-3440x1440@1.5"
+        },
+        {
+          "id": "wpt/css_multicol/multicol-block-no-clip-001",
+          "new_mismatched_pixels": 2160,
+          "new_status": "different",
+          "old_mismatched_pixels": 0,
+          "old_status": "exact",
+          "profile": "focused-3440x1440@2"
+        },
+        {
+          "id": "wpt/css_multicol/multicol-block-no-clip-001",
+          "new_mismatched_pixels": 3240,
+          "new_status": "different",
+          "old_mismatched_pixels": 0,
+          "old_status": "exact",
+          "profile": "focused-3440x1440@3"
+        }
+      ],
+      "chromium_changed": 0,
+      "count": 640,
+      "gained_exact": 0,
+      "lost_exact": 40,
+      "native_rgba_changed": 40,
+      "new_commit": "ea14908177cc01130491677293ac144fee7c201e",
+      "old_commit": "96934cd08f68faa3fcb4eb2ba73f0142b59a2c39",
+      "suite": "focused/focused-summary.json"
+    },
+    {
+      "changed_cases": [],
+      "chromium_changed": 0,
+      "count": 960,
+      "gained_exact": 0,
+      "lost_exact": 0,
+      "native_rgba_changed": 0,
+      "new_commit": "ea14908177cc01130491677293ac144fee7c201e",
+      "old_commit": "96934cd08f68faa3fcb4eb2ba73f0142b59a2c39",
+      "suite": "primitive/primitive-summary.json"
+    }
+  ],
+  "pins": [
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-arrow-focused-primitive-matrices-v4782/scoped-original/full-summary.json",
+      "sha256": "bc44f9a67f342aebdd474e4ac3891278f3f1469318781d6ca8f4d7b157c49476"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-explicit-lcd-private-matrices-v4789/scoped-original/full-summary.json",
+      "sha256": "589730c121dbfa11a6f4816a80a102c76d0192af5eeb15c932c1e8cb0e593f7d"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-arrow-focused-primitive-matrices-v4782/focused/focused-summary.json",
+      "sha256": "3c5e9760672f7132feb65d2ca42b5e1aadbb52c6aae81eded0746d55b26c4003"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-explicit-lcd-private-matrices-v4789/focused/focused-summary.json",
+      "sha256": "bcac5eeed324252187abc749a668b950db9cd1c1666f7844bd274e6ab1c7b29c"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-arrow-focused-primitive-matrices-v4782/primitive/primitive-summary.json",
+      "sha256": "ed2238ea90a203f8d89a750e7f85f70308d9af777fca02a113ac8d4ee8dab112"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-explicit-lcd-private-matrices-v4789/primitive/primitive-summary.json",
+      "sha256": "f40fb2077bb1a0966120c6e06ef0e1797976e7d77206e7a631b895a4f472c0d4"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-explicit-lcd-private-matrices-v4789/receipt.json",
+      "sha256": "c59f23539f7a4bd33904a55d78c6e31784689e259d4197952cdfaa4549a56421"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-explicit-lcd-private-matrices-v4789/owned-terminal-record-v1.json",
+      "sha256": "76d0edba4c1c3e95f5b4481fd040c16c70c798c40670e688789c49afefaa8c72"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-arrow-focused-primitive-matrices-v4782/receipt.json",
+      "sha256": "708f5f4cea8cfafe5fdb008faa06b6693bbbc40f5942161c8dc011455ffc8359"
+    }
+  ],
+  "qualification": false,
+  "schema_version": 1,
+  "writer_pid": 3772068
+}

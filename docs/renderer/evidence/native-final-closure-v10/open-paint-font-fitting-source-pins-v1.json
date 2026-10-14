@@ -1,0 +1,78 @@
+{
+  "schema": "open-source-fitting-gates-v1",
+  "writer_pid": 3815969,
+  "source": "96934cd08f68faa3fcb4eb2ba73f0142b59a2c39",
+  "sources": [
+    {
+      "source_revision": "96934cd08f68faa3fcb4eb2ba73f0142b59a2c39",
+      "source_path": "bindings/rust/openui-paint/src/painter.rs",
+      "whole_source_sha256": "d4d55eaae8e5bd205d76becf0e525301d2e2ff1b1f1001b45c7c337163164f70",
+      "Git_blob": "946bf88e193f9d558c7b40b89e32efd89cdb9cc6",
+      "functions": [
+        {
+          "symbol": "shared_spanner_four_way_junctions",
+          "source_line": 8014,
+          "excerpt": "fn shared_spanner_four_way_junctions(\n    column_decorations: &[Vec<SharedColumnDecoration<'_>>],\n    node_order: &[usize],\n    doc: &Document,\n) -> Vec<(Rect, Color)> {\n    const EPSILON: f32 = 1.0 / 1024.0;\n    let scale = doc.device_scale_factor();\n    let snapping = RasterSnapping::new(scale);\n    let candidates: Vec<_> = column_decorations\n        .iter()\n        .flatten()\n        .filter_map(|decoration| {\n            let node_id = decoration.fragment.node_id.index();\n            if !node_order.contains(&node_id) {\n                return None;\n            }\n            let style = &doc.node(decoration.fragment.node_id).style;\n            let belongs_to_spanner = style.column_span == openui_style::ColumnSpan::All\n                || decoration.ancestor_node_ids.iter().any(|ancestor| {\n                    doc.node(*ancestor).style.column_span == openui_style::ColumnSpan::All\n                });\n            (belongs_to_spanner && can_coalesce_identical_solid_decoration(decoration, style))\n                .then(|| {\n                    clipped_decoration_coverage_rect(decoration)\n                        .map(|rect| (rect, style.background_color))\n                })\n                .flatten()\n        })\n        .collect();\n\n    let mut junctions = Vec::new();\n    for &(top_left, color) in &candidates {\n        let x = top_left.right;\n        let y = top_left.bottom;\n        let x_phase = (f64::from(x) * scale).rem_euclid(1.0);\n        let y_phase = (f64::from(y) * scale).rem_euclid(1.0);\n        if (x_phase - 0.5).abs() > 1.0e-6 || (y_phase - 0.5).abs() > 1.0e-6 {\n            continue;\n        }\n        let has_top_right = candidates.iter().any(|(rect, peer_color)| {\n            *peer_color == color\n                && (rect.left - x).abs() <= EPSILON\n                && (rect.bottom - y).abs() <= EPSILON\n        });\n        let has_bottom_left = candidates.iter().any(|(rect, peer_color)| {\n            *peer_color == color\n                && (rect.right - x).abs() <= EPSILON\n                && (rect.top - y).abs() <= EPSILON\n        });\n        let has_bottom_right = candidates.iter().any(|(rect, peer_color)| {\n            *peer_color == color\n                && (rect.left - x).abs() <= EPSILON\n                && (rect.top - y).abs() <= EPSILON\n        });\n        if !(has_top_right && has_bottom_left && has_bottom_right) {\n            continue;\n        }\n        let physical_x = snapping.physical_coordinate(x, PhysicalSnap::Floor);\n        let physical_y = snapping.physical_coordinate(y, PhysicalSnap::Floor);\n        let cell = Rect::from_ltrb(\n            physical_x as f32 / scale as f32,\n            physical_y as f32 / scale as f32,\n            (physical_x + 1) as f32 / scale as f32,\n            (physical_y + 1) as f32 / scale as f32,\n        );\n        if !junctions.iter().any(|(existing, existing_color)| {\n            *existing_color == color && same_physical_decoration_rect(*existing, cell)\n        }) {\n            junctions.push((cell, color));\n        }\n    }\n    junctions\n}",
+          "excerpt_sha256": "ab65d6b94ff0194858f12d44fea9b54f85c1291654d5d2abcd283ec69c682a31"
+        }
+      ],
+      "call_and_synthetic_draw": {
+        "first_source_line": 8665,
+        "excerpt": "                && !doc\n                    .node(decoration.fragment.node_id)\n                    .style\n                    .has_paint_containment()\n                && decorations.iter().take(decoration_index).any(|earlier| {\n                    earlier.ancestor_node_ids.is_empty()\n                        && (doc.node(earlier.fragment.node_id).style.display.is_flex()\n                            || doc.node(earlier.fragment.node_id).style.display.is_grid())\n                });\n            if (!grouped && !precedes_grouped_decoration && !follows_atomic_container)\n                || node_order.contains(&node_id)\n            {\n                continue;\n            }\n            node_order.push(node_id);\n        }\n    }\n\n    let mut prepainted = Vec::new();\n    let mut prepainted_rules = Vec::new();\n    let spanner_junctions =\n        shared_spanner_four_way_junctions(&column_decorations, &node_order, doc);\n    for node_id in node_order {\n        let mut painted_solid_coverage = Vec::new();\n        for decorations in &column_decorations {\n            for decoration in decorations\n                .iter()\n                .filter(|decoration| decoration.fragment.node_id.index() == node_id)\n            {\n                let fragment = decoration.fragment;\n                let style = &doc.node(fragment.node_id).style;\n                let solid_coverage = can_coalesce_identical_solid_decoration(decoration, style)\n                    .then(|| clipped_decoration_coverage_rect(decoration))\n                    .flatten();\n                let duplicate_solid_coverage = solid_coverage.is_some_and(|coverage| {\n                    painted_solid_coverage\n                        .iter()\n                        .any(|painted| same_physical_decoration_rect(*painted, coverage))\n                });\n                let pointer = fragment as *const Fragment as usize;\n                if duplicate_solid_coverage {\n                    // Coordinate replay can expose the same opaque slice\n                    // through two nested fragmentainers. It is one logical\n                    // box decoration; painting it twice compounds fractional\n                    // edge coverage at their shared physical boundary.\n                    prepainted.push(pointer);\n                    continue;\n                }\n                canvas.save();\n                for clip in &decoration.clips {\n                    canvas.clip_rect(clip.rect, ClipOp::Intersect, clip.antialias);\n                }\n                paint_fragment_box_decoration(canvas, fragment, doc, style, decoration.offset, 1.0);\n                prepaint_direct_shared_column_rules(\n                    canvas,\n                    fragment,\n                    doc,\n                    decoration.offset,\n                    &mut prepainted_rules,\n                );\n                prepainted.push(pointer);\n                canvas.restore();\n                if let Some(coverage) = solid_coverage {\n                    painted_solid_coverage.push(coverage);\n                }\n            }\n        }\n    }\n    for (cell, color) in spanner_junctions {\n        // Four independently rasterized quarter-covered corners leave a\n        // symmetric junction slightly lighter on Chromium's analytic\n        // display-item path than four CPU-Skia SrcOver masks. Resolve that\n        // primitive junction while it is still vector paint, before tile\n        // assembly. The eight-bit analytic mask stores the additional\n        // midpoint sample as 28/255 coverage.\n        let mut paint = Paint::default();\n        paint.set_style(PaintStyle::Fill);\n        paint.set_anti_alias(false);\n        let channel_up = |component: f32| {\n            if component <= 0.0 || component >= 1.0 {\n                component.clamp(0.0, 1.0)\n            } else {\n                (((component * 255.0).round() + 8.0).min(255.0)) / 255.0\n            }\n        };\n        let packed_color = Color {\n            r: channel_up(color.r),\n            g: channel_up(color.g),\n            b: channel_up(color.b),\n            a: color.a,\n        };\n        set_paint_css_color_with_alpha(&mut paint, &packed_color, 28.0 / 255.0);\n        canvas.draw_rect(cell, &paint);\n    }\n    (prepainted, prepainted_rules)\n}\n\nfn paint_stacking_entry(\n    canvas: &Canvas,\n    entry: &StackingEntry,\n    children: &[Fragment],\n",
+        "excerpt_sha256": "1cd838df5e6b26079210a50a73696e7199e3fdf1925263a27b7c67ada438cf50"
+      }
+    },
+    {
+      "source_revision": "96934cd08f68faa3fcb4eb2ba73f0142b59a2c39",
+      "source_path": "bindings/rust/openui-text/src/shaping/shape_result.rs",
+      "whole_source_sha256": "8e251b4e16c6d93941acdfc733821c217b79890bed2eafee92fc356f664c73bc",
+      "Git_blob": "3a16ded713aafea68ed5ed6ad759514ff5898f38",
+      "functions": [
+        {
+          "symbol": "chromium_lcd_raster_x",
+          "source_line": 44,
+          "excerpt": "fn chromium_lcd_raster_x(device_x: f32, font_size: f32) -> f32 {\n    let phase = device_x.rem_euclid(1.0);\n    if (font_size - 10.0).abs() < f32::EPSILON && (24.0 / 64.0..25.0 / 64.0).contains(&phase) {\n        device_x - phase + 1.0 / 3.0\n    } else {\n        device_x\n    }\n}",
+          "excerpt_sha256": "fc3e7305a0a5dc8c7ed46d5e6ab428873807f00b1138b3d89b1484532f5d19ce"
+        },
+        {
+          "symbol": "chromium_lcd_strike_y_offset",
+          "source_line": 53,
+          "excerpt": "fn chromium_lcd_strike_y_offset(\n    device_scale: f32,\n    edging: Edging,\n    hinting: FontHinting,\n    font_size: f32,\n    family: &str,\n) -> f32 {\n    // Chromium's retained 10px no-hint LCD strike keeps its origin one\n    // logical pixel above Skia's direct scaled replay. Ahem is a synthetic\n    // geometric face and does not use this outline-strike origin.\n    if (device_scale - 1.0).abs() > f32::EPSILON\n        && edging == Edging::SubpixelAntiAlias\n        && hinting == FontHinting::None\n        && (font_size - 10.0).abs() < f32::EPSILON\n        && !family.eq_ignore_ascii_case(\"Ahem\")\n    {\n        1.0\n    } else {\n        0.0\n    }\n}",
+          "excerpt_sha256": "42dc8b28f735de96129245a41904339ce48d65ca8fb252d74df51156e00970c9"
+        }
+      ]
+    },
+    {
+      "source_revision": "96934cd08f68faa3fcb4eb2ba73f0142b59a2c39",
+      "source_path": "bindings/rust/openui-text/src/font/platform.rs",
+      "whole_source_sha256": "c0cd19ad33da5dadc484c146d86ad1faacc4746687e2e023b46dfbb304bc9c31",
+      "Git_blob": "e57524836402fc92304c01b3eebb0a5ad1dac584",
+      "functions": [
+        {
+          "symbol": "resolve_hinting",
+          "source_line": 118,
+          "excerpt": "fn resolve_hinting(\n    requested_hinting: TextHinting,\n    requested_edging: TextEdging,\n    family_name: &str,\n    size: f32,\n    device_scale_factor: f64,\n) -> FontHinting {\n    let is_ahem = family_name.eq_ignore_ascii_case(\"Ahem\");\n    let computed_size = size / device_scale_factor as f32;\n    // The unit-scale 20px proportional strike is light-fitted by the pinned\n    // Chromium font profile. Its unhinted outline moves the first ink row,\n    // while a 20px physical strike reached from a fractional device scale\n    // follows the unfitted policy.\n    let unit_scale_20px_strike =\n        (device_scale_factor - 1.0).abs() <= f64::EPSILON && (computed_size - 20.0).abs() <= 1.0e-4;\n    match requested_hinting {\n        // Chromium's Fontconfig `hinting=false` path still grid-fits the\n        // aliased 8px Ahem face. Skia's direct API needs slight hinting to\n        // reproduce those glyph bounds, while larger Ahem sizes remain truly\n        // unhinted. Select by face and computed size, not by test identity.\n        TextHinting::None if requested_edging == TextEdging::Alias && is_ahem && size <= 8.0 => {\n            FontHinting::Slight\n        }\n        // Chromium also grid-fits glyphs supplied by a fallback face (for\n        // example arrows absent from Ahem) before applying the same aliased\n        // coverage threshold.\n        TextHinting::None if requested_edging == TextEdging::Alias && !is_ahem => {\n            FontHinting::Slight\n        }\n        TextHinting::None => FontHinting::None,\n        // Chromium asks Fontconfig for render parameters for every resolved\n        // family and physical strike. The pinned proportional Sans/Serif\n        // faces are generally returned without outline fitting, while the\n        // exact 16px and 24px strikes remain lightly fitted. The pinned\n        // monospace face keeps light fitting at every strike. Preserve those\n        // family/strike distinctions instead of applying one global SkFont\n        // hinting mode to all document-owned fonts.\n        TextHinting::Slight\n            if requested_edging == TextEdging::SubpixelAntiAlias\n                && (family_name.eq_ignore_ascii_case(\"DejaVu Sans\")\n                    || family_name.eq_ignore_ascii_case(\"DejaVu Serif\"))\n                && (computed_size >= 16.0 || device_scale_factor > 1.0)\n                && (size - 16.0).abs() > 1.0e-4\n                && (size - 24.0).abs() > 1.0e-4\n                && !unit_scale_20px_strike =>\n        {\n            FontHinting::None\n        }\n        // At a fractional physical Ahem strike, Skia's light-fitting drops\n        // the trailing coverage cell that Chromium keeps. Integral strikes\n        // retain light fitting; removing it there regresses exact glyphs.\n        TextHinting::Slight\n            if requested_edging == TextEdging::SubpixelAntiAlias\n                && is_ahem\n                && (size - size.round()).abs() > 1.0e-4 =>\n        {\n            FontHinting::None\n        }\n        TextHinting::Slight => FontHinting::Slight,\n        TextHinting::Normal => FontHinting::Normal,\n        TextHinting::Full => FontHinting::Full,\n    }\n}",
+          "excerpt_sha256": "369cc8b57277232d5e8d01047a16db7024206e4727f7cecc5aa5d09c4ba66fef"
+        }
+      ]
+    }
+  ],
+  "source_only": true,
+  "paint_gate": {
+    "symbol": "shared_spanner_four_way_junctions",
+    "channel_addition": 8,
+    "coverage": "28/255",
+    "general_Chromium_derivation_qualified": false,
+    "private_removal_candidate_integrated": false,
+    "private_removal_candidate_qualified": false
+  },
+  "font_gates": {
+    "size10_LCD_x_phase_24_to_25_over64": false,
+    "size10_LCD_y_offset": false,
+    "Ahem_small_fractional_and_DejaVu_strike_hinting_exceptions": false,
+    "actual_final_physical_strike_and_general_provider_origin_routing": false
+  },
+  "source_comments_do_not_establish_general_correctness": true,
+  "native_browser_source_or_pixel_change": false,
+  "qualification": false
+}

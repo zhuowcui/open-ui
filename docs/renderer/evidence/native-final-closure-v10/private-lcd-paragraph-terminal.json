@@ -1,0 +1,9 @@
+{
+  "session_id": 11231,
+  "actual_exit_code": 0,
+  "terminal_reaped": true,
+  "terminal_chunk_id": "b2d1cf",
+  "comparison_sha256": "6754573e29c4043e4f190ee89ed2dee1a4a72306f1138110c89f856846906f7d",
+  "writer_pid": 3765506,
+  "writer_pid_absent": true
+}

@@ -1,0 +1,12 @@
+{
+  "actual_exit_code": 0,
+  "actual_reaping_chunk_id": "8f448b",
+  "comparison_sha256": "6dce43e9a4d7e0ee4513ee4bd6375cfca0993847e8458bde384984f25950cb99",
+  "owner_absent": true,
+  "owner_pid": 3806861,
+  "qualification": false,
+  "root_tool_session_id": 98958,
+  "schema_version": 1,
+  "writer_pid": 3808422,
+  "written_utc": "2026-10-14T13:49:04.491052+00:00"
+}
