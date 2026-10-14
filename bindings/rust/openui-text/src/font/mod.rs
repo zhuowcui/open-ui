@@ -16,6 +16,8 @@ mod font;
 mod metrics;
 mod platform;
 mod relative;
+mod render_settings;
+mod source;
 
 pub use cache::FontCache;
 #[doc(hidden)]
@@ -34,4 +36,12 @@ pub use platform::FontPlatformData;
 pub use relative::{
     used_line_height, used_line_height_metrics, FontRelativeLengthResolver, FontRelativeUnit,
     UsedLineHeightMetrics,
+};
+pub use render_settings::{
+    AppliedPlatformFontSettings, AppliedSkFontSettings, FontRenderHintStyle, FontRenderPreference,
+    FontRenderStyle,
+};
+pub use source::{
+    FontFaceSourceInfo, FontInstantiation, FontProviderConstruction, FontRenderQueryIntent,
+    FontSelectionOrigin, FontSelectionSource,
 };

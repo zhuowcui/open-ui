@@ -15,6 +15,8 @@ use skia_safe::{
 
 use super::collection::FontCacheLifetime;
 use super::metrics::FontMetrics;
+use super::render_settings::AppliedPlatformFontSettings;
+use super::source::FontSelectionSource;
 use super::{FontFeatureDefault, FontMetricOverrides};
 
 /// Face-specific values resolved by `FontCollection` before a platform font
@@ -43,6 +45,8 @@ pub struct FontPlatformData {
     /// 0.0 for normal/italic styles. CSS default oblique is 14°.
     synthetic_oblique_angle: f32,
     feature_defaults: Vec<FontFeatureDefault>,
+    source: FontSelectionSource,
+    applied_font_settings: AppliedPlatformFontSettings,
     // Resolved font data can outlive the collection that selected it. Keep the
     // strike cache lifetime active until these owned font objects are released.
     _cache_lifetime: FontCacheLifetime,
@@ -251,7 +255,7 @@ impl FontPlatformData {
     pub(crate) fn with_resolved_configuration(
         typeface: Typeface,
         size: f32,
-        mut oblique_angle: f32,
+        oblique_angle: f32,
         requested_weight: skia_safe::font_style::Weight,
         native_control_text: bool,
         embedded_document_text: bool,
@@ -260,6 +264,35 @@ impl FontPlatformData {
         device_scale_factor: f64,
         configuration: ResolvedFontConfiguration,
     ) -> Self {
+        Self::with_source_configuration(
+            typeface,
+            size,
+            oblique_angle,
+            requested_weight,
+            native_control_text,
+            embedded_document_text,
+            native_button_text_metrics,
+            raster_configuration,
+            device_scale_factor,
+            configuration,
+            FontSelectionSource::external(),
+        )
+    }
+
+    pub(crate) fn with_source_configuration(
+        typeface: Typeface,
+        size: f32,
+        mut oblique_angle: f32,
+        requested_weight: skia_safe::font_style::Weight,
+        native_control_text: bool,
+        embedded_document_text: bool,
+        native_button_text_metrics: bool,
+        raster_configuration: RasterConfiguration,
+        device_scale_factor: f64,
+        configuration: ResolvedFontConfiguration,
+        source: FontSelectionSource,
+    ) -> Self {
+        let source = source.with_external_typeface(&typeface);
         let cache_lifetime = FontCacheLifetime::new();
         // Font matching may return a regular face when a family has no bold
         // member (Ahem is the canonical example). CSS font synthesis requires
@@ -358,6 +391,16 @@ impl FontPlatformData {
         }
         metrics.line_spacing = metrics.ascent + metrics.descent + metrics.line_gap;
         let vertical_metrics = VerticalMetrics::from_typeface(&typeface);
+        let applied_font_settings = AppliedPlatformFontSettings::capture(
+            &sk_font,
+            &shaping_font,
+            raster_configuration,
+            settings,
+            device_scale_factor,
+            native_control_text,
+            embedded_document_text,
+            native_button_text_metrics,
+        );
 
         Self {
             typeface,
@@ -369,6 +412,8 @@ impl FontPlatformData {
             synthetic_bold,
             synthetic_oblique_angle: oblique_angle,
             feature_defaults: configuration.feature_defaults,
+            source,
+            applied_font_settings,
             _cache_lifetime: cache_lifetime,
         }
     }
@@ -383,6 +428,17 @@ impl FontPlatformData {
     #[inline]
     pub fn sk_font(&self) -> &SkFont {
         &self.sk_font
+    }
+
+    /// Borrow immutable selection facts without querying or retaining a registry.
+    pub fn source_info(&self) -> &FontSelectionSource {
+        &self.source
+    }
+
+    /// Borrow actual owned source/shaping settings before final device/scaler setup.
+    /// Reading this snapshot performs no selection, allocation, or platform query.
+    pub fn applied_font_settings(&self) -> &AppliedPlatformFontSettings {
+        &self.applied_font_settings
     }
 
     /// Resolved font for shared shaping metrics, independent of paint strikes.

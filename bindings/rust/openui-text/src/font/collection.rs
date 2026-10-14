@@ -15,6 +15,7 @@ use skia_safe::{
 
 use super::description::FontDescription;
 use super::platform::{FontPlatformData, ResolvedFontConfiguration};
+use super::source::{FontFaceSourceInfo, FontInstantiation, FontSelectionSource};
 use crate::hyphenation::HyphenationRegistry;
 
 const MAX_FACE_BYTES: usize = 64 * 1024 * 1024;
@@ -292,6 +293,7 @@ struct RegisteredFace {
     bytes: Arc<[u8]>,
     typeface: Typeface,
     registration_order: u64,
+    source_info: Arc<FontFaceSourceInfo>,
 }
 
 struct RegisteredPalette {
@@ -459,17 +461,24 @@ impl FontCollection {
         state.clock = state.clock.saturating_add(1);
         let registration_order = state.clock;
         state.registered_bytes += bytes.len();
+        let info = FontFaceInfo {
+            handle,
+            descriptor,
+            format,
+            byte_length: bytes.len(),
+            sha256: hash,
+        };
+        let source_info = Arc::new(FontFaceSourceInfo::registered(
+            info.clone(),
+            Arc::clone(&bytes),
+            state.generation.saturating_add(1),
+        ));
         state.faces.push(RegisteredFace {
-            info: FontFaceInfo {
-                handle,
-                descriptor,
-                format,
-                byte_length: bytes.len(),
-                sha256: hash,
-            },
+            info,
             bytes,
             typeface,
             registration_order,
+            source_info,
         });
         registry_changed(&mut state);
         Ok(handle)
@@ -576,6 +585,25 @@ impl FontCollection {
             .ok_or(FontCollectionError::UnknownFace)
     }
 
+    /// Retain immutable registration facts using the same live-handle validation.
+    /// Cloning the existing Arc performs no font selection, query, or allocation.
+    pub fn query_source_info(
+        &self,
+        handle: FontFaceHandle,
+    ) -> Result<Arc<FontFaceSourceInfo>, FontCollectionError> {
+        if handle.collection_id != self.id {
+            return Err(FontCollectionError::WrongCollection);
+        }
+        self.state
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner())
+            .faces
+            .iter()
+            .find(|face| face.info.handle == handle)
+            .map(|face| Arc::clone(&face.source_info))
+            .ok_or(FontCollectionError::UnknownFace)
+    }
+
     pub fn generation(&self) -> u64 {
         self.state
             .lock()
@@ -645,7 +673,18 @@ impl FontCollection {
             &description.style,
         );
         let selected = best_application_face(&state.faces, family_name, description)
-            .map(|face| (face.typeface.clone(), Some(face.info.descriptor.clone())))
+            .map(|face| {
+                (
+                    face.typeface.clone(),
+                    Some(face.info.descriptor.clone()),
+                    FontSelectionSource::application(
+                        Arc::clone(&face.source_info),
+                        family_name,
+                        state.generation,
+                        &face.typeface,
+                    ),
+                )
+            })
             .or_else(|| {
                 let mut family = self.system.0.match_family(family_name);
                 let count = family.count();
@@ -654,7 +693,16 @@ impl FontCollection {
                     .and_then(|index| family.new_typeface(index))
                     .or_else(|| (count == 1).then(|| family.new_typeface(0)).flatten())
                     .or_else(|| family.match_style(requested))
-                    .map(|typeface| (typeface, None))
+                    .map(|typeface| {
+                        let source = FontSelectionSource::installed(
+                            self.id,
+                            state.generation,
+                            family_name,
+                            &typeface,
+                            false,
+                        );
+                        (typeface, None, source)
+                    })
             })?;
         let palette = resolve_palette(
             &state.palettes,
@@ -667,6 +715,7 @@ impl FontCollection {
             selected.1.as_ref(),
             palette.as_ref(),
             description,
+            selected.2,
         );
         insert_instance(&mut state, key, Arc::clone(&data), clock);
         Some(data)
@@ -720,7 +769,18 @@ impl FontCollection {
             .filter(|character| glyph_required(*character))
             .collect();
         let selected = best_application_fallback(&state.faces, &painted, description)
-            .map(|face| (face.typeface.clone(), Some(face.info.descriptor.clone())))
+            .map(|face| {
+                (
+                    face.typeface.clone(),
+                    Some(face.info.descriptor.clone()),
+                    FontSelectionSource::application(
+                        Arc::clone(&face.source_info),
+                        &face.info.descriptor.family,
+                        state.generation,
+                        &face.typeface,
+                    ),
+                )
+            })
             .or_else(|| {
                 let families: &[&str] = match description.variant_emoji {
                     FontVariantEmoji::Emoji => &["emoji", ""],
@@ -742,7 +802,16 @@ impl FontCollection {
                                     typeface.unichar_to_glyph(*character as i32) != 0
                                 })
                             })
-                            .map(|typeface| (typeface, None))
+                            .map(|typeface| {
+                                let source = FontSelectionSource::installed(
+                                    self.id,
+                                    state.generation,
+                                    family,
+                                    &typeface,
+                                    true,
+                                );
+                                (typeface, None, source)
+                            })
                     })
                 })
             })?;
@@ -757,6 +826,7 @@ impl FontCollection {
             selected.1.as_ref(),
             palette.as_ref(),
             description,
+            selected.2,
         );
         insert_instance(&mut state, key, Arc::clone(&data), clock);
         Some(data)
@@ -996,8 +1066,10 @@ fn make_platform_data(
     descriptor: Option<&FontFaceDescriptor>,
     palette: Option<&ResolvedPalette>,
     description: &FontDescription,
+    source: FontSelectionSource,
 ) -> Arc<FontPlatformData> {
-    let typeface = instantiate_typeface(typeface, palette, description);
+    let (typeface, instantiation) = instantiate_typeface(typeface, palette, description);
+    let source = source.with_instance(&typeface, description, instantiation);
     let size = adjusted_font_size(&typeface, descriptor, description);
     let oblique_angle = match description.style {
         FontStyleEnum::Italic
@@ -1022,7 +1094,7 @@ fn make_platform_data(
             .map(|descriptor| descriptor.metric_overrides)
             .unwrap_or_default(),
     };
-    Arc::new(FontPlatformData::with_resolved_configuration(
+    Arc::new(FontPlatformData::with_source_configuration(
         typeface,
         size,
         oblique_angle,
@@ -1033,6 +1105,7 @@ fn make_platform_data(
         description.raster_configuration,
         description.device_scale_factor,
         configuration,
+        source,
     ))
 }
 
@@ -1083,7 +1156,7 @@ fn instantiate_typeface(
     typeface: Typeface,
     resolved_palette: Option<&ResolvedPalette>,
     description: &FontDescription,
-) -> Typeface {
+) -> (Typeface, FontInstantiation) {
     let mut axes = BTreeMap::<u32, f32>::new();
     axes.insert(u32::from_be_bytes(*b"wght"), description.weight.0);
     axes.insert(u32::from_be_bytes(*b"wdth"), description.stretch.0);
@@ -1128,9 +1201,13 @@ fn instantiate_typeface(
             FontPalette::Normal | FontPalette::Custom(_)
         )
     {
-        return typeface;
+        return (typeface, FontInstantiation::default());
     }
 
+    let retained_coordinates = axes
+        .iter()
+        .map(|(axis, value)| (axis.to_be_bytes(), *value))
+        .collect();
     let coordinates: Vec<Coordinate> = axes
         .into_iter()
         .map(|(axis, value)| Coordinate {
@@ -1154,9 +1231,21 @@ fn instantiate_typeface(
         index: palette_index,
         overrides: resolved_palette.map_or(&[], |palette| palette.overrides.as_slice()),
     });
-    typeface
-        .clone_with_arguments(&arguments)
-        .unwrap_or(typeface)
+    let cloned = typeface.clone_with_arguments(&arguments);
+    let instantiation = FontInstantiation::attempted(
+        arguments.collection_index(),
+        retained_coordinates,
+        palette_index,
+        resolved_palette.map_or_else(Vec::new, |palette| {
+            palette
+                .overrides
+                .iter()
+                .map(|entry| (entry.index, entry.color))
+                .collect()
+        }),
+        cloned.is_some(),
+    );
+    (cloned.unwrap_or(typeface), instantiation)
 }
 
 fn select_palette_index(typeface: &Typeface, palette: &FontPalette) -> i32 {
