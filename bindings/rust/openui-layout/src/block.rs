@@ -15083,6 +15083,62 @@ fn fragment_visual_block_bottom(fragment: &Fragment) -> LayoutUnit {
     )
 }
 
+/// Visual continuation below an owned nested multicol follows the actual
+/// column clips. A sliced child can retain its unfragmented overflow rect;
+/// that raw source remains valid for overflow bookkeeping, but must not cause
+/// an ancestor to repaint a column row which already owns the clipped ink.
+/// Ordinary boxes and columns without a block clip keep their raw extent.
+fn nested_multicol_visual_block_bottom(
+    fragment: &Fragment,
+    writing_direction: WritingDirectionMode,
+) -> LayoutUnit {
+    // The normalizer converts a positioned outer box to these algorithm axes,
+    // but deliberately leaves its descendants in physical coordinates. Keep
+    // their prior raw measurement; do not add logical column clips below that
+    // physical-coordinate boundary.
+    if fragment.positioned_fragmentation.is_some() {
+        return fragment_visual_block_bottom(fragment);
+    }
+    let owns_column_geometry = fragment.multicol_fragmentation.is_some()
+        && fragment
+            .children
+            .iter()
+            .any(|child| child.kind == FragmentKind::ColumnBox);
+    let overflow_bottom = if owns_column_geometry {
+        // This aggregate can still contain an already clipped descendant's
+        // unfragmented source. Current owned columns, spanners and promoted
+        // positioned slices below supply the visual continuation instead.
+        fragment.size.height
+    } else {
+        fragment
+            .overflow_rect
+            .map(|rect| rect.offset.top + rect.size.height)
+            .unwrap_or(fragment.size.height)
+    };
+    let bottom = fragment.children.iter().fold(
+        fragment.size.height.max_of(overflow_bottom),
+        |bottom, child| {
+            bottom.max_of(
+                child.offset.top + nested_multicol_visual_block_bottom(child, writing_direction),
+            )
+        },
+    );
+    if fragment.kind == FragmentKind::ColumnBox
+        && fragment.has_overflow_clip
+        && !fragment.inline_axis_clip_only
+        && fragment
+            .fragmentation_writing_direction
+            .map_or(true, |direction| direction.is_horizontal())
+            == writing_direction.is_horizontal()
+    {
+        // The retained block-end ink allowance is part of the column's paint
+        // clip. An inline-only clip does not constrain block-axis continuation.
+        bottom.min_of(fragment.size.height + fragment.column_block_end_ink_overflow)
+    } else {
+        bottom
+    }
+}
+
 /// Return the logical ink overflow of a retained text fragment that crosses
 /// the current fragmentainer's block-end edge.
 ///
@@ -15216,6 +15272,39 @@ fn multicol_positioned_flow_extent(fragment: &Fragment) -> LayoutUnit {
         LayoutUnit::zero()
     };
     direct_extent.max_of(nested_rows)
+}
+
+/// Positioned extent used by a child's current fragmentation fit decision.
+/// The child may be relaid out against a remaining outer capacity, so both
+/// the sizing pass and the final placement pass must observe the same owned
+/// fragment rather than retain the earlier full-capacity measurement.
+fn positioned_visual_flow_size(
+    fragment: &Fragment,
+    style: &ComputedStyle,
+    doc: &dyn LayoutDocument,
+    node_id: NodeId,
+) -> LayoutUnit {
+    let visual_block_size = if crate::multicol::ColumnLayoutAlgorithm::from_style(style).is_some() {
+        let column_row_extent = fragment
+            .children
+            .iter()
+            .filter(|child| child.kind == FragmentKind::ColumnBox)
+            .map(|column| column.offset.top + column.size.height)
+            .max()
+            .unwrap_or(fragment.size.height);
+        column_row_extent.max_of(multicol_positioned_flow_extent(fragment))
+    } else {
+        fragment_visual_block_bottom(fragment)
+    };
+    if style.overflow_x == Overflow::Visible
+        && style.overflow_y == Overflow::Visible
+        && subtree_has_positioned_descendant(doc, node_id)
+        && visual_block_size > fragment.size.height
+    {
+        visual_block_size
+    } else {
+        LayoutUnit::zero()
+    }
 }
 
 /// Return the inner column-row boundary that an ancestor must honor before
@@ -21651,36 +21740,12 @@ fn layout_multicol(
                     } else {
                         LayoutUnit::zero()
                     });
-                    let positioned_visual_block_size =
-                        if crate::multicol::ColumnLayoutAlgorithm::from_style(child_style).is_some()
-                        {
-                            let column_row_extent = child_frag
-                                .children
-                                .iter()
-                                .filter(|fragment| fragment.kind == FragmentKind::ColumnBox)
-                                .map(|fragment| fragment.offset.top + fragment.size.height)
-                                .max()
-                                .unwrap_or(child_frag.size.height);
-                            // A nested multicol may own the positioned slices
-                            // several fragmentation contexts below this one.
-                            // Fold each inner declared-column row back into
-                            // block flow so the ancestor emits enough
-                            // continuations to consume the complete sequence.
-                            let positioned_flow_extent =
-                                multicol_positioned_flow_extent(&child_frag);
-                            column_row_extent.max_of(positioned_flow_extent)
-                        } else {
-                            fragment_visual_block_bottom(&child_frag)
-                        };
-                    let positioned_visual_flow_size = child_style.overflow_x == Overflow::Visible
-                        && child_style.overflow_y == Overflow::Visible
-                        && subtree_has_positioned_descendant(doc, info.id)
-                        && positioned_visual_block_size > child_frag.size.height;
-                    col_positioned_visual_flow_sizes.push(if positioned_visual_flow_size {
-                        positioned_visual_block_size
-                    } else {
-                        LayoutUnit::zero()
-                    });
+                    col_positioned_visual_flow_sizes.push(positioned_visual_flow_size(
+                        &child_frag,
+                        child_style,
+                        doc,
+                        info.id,
+                    ));
                     col_positioned_balance_flow_sizes.push(
                         subtree_has_positioned_descendant(doc, info.id)
                             .then(|| positioned_parallel_local_block_extent(&child_frag))
@@ -24652,6 +24717,11 @@ fn layout_multicol(
                             .max_of(fragment_owned_multicol_in_flow_bottom(&child_frag, doc));
                     }
                     col_block_sizes[i] = child_height;
+                    // Remaining-capacity layout owns the final positioned
+                    // extent too; a stale full column would pad a short source
+                    // principal box during the later fit decision.
+                    col_positioned_visual_flow_sizes[i] =
+                        positioned_visual_flow_size(&child_frag, child_style, doc, child_node_id);
                 }
 
                 // Floats and their exclusions live in the multicol's one
@@ -26505,7 +26575,18 @@ fn layout_multicol(
                         }
                         bubbled_oof_from_columns.push(c);
                     }
-                    let child_visual_bottom = fragment_visual_block_bottom(&positioned);
+                    let child_visual_bottom = if positioned.multicol_fragmentation.is_some()
+                        && child_style.writing_mode.is_horizontal()
+                            == space.writing_direction.is_horizontal()
+                    {
+                        // The child and its owned columns were normalized to
+                        // these logical inline/block axes before distribution.
+                        // Final physical projection (including vertical X
+                        // block clips) happens after this measurement.
+                        nested_multicol_visual_block_bottom(&positioned, space.writing_direction)
+                    } else {
+                        fragment_visual_block_bottom(&positioned)
+                    };
                     let child_in_flow_bottom = fragment_in_flow_block_bottom(&positioned, doc);
                     col_block_offset = col_block_offset + child_height;
                     col_remaining = col_remaining - pos_margin - child_height;
@@ -34411,6 +34492,107 @@ mod tests {
     use openui_dom::ElementTag;
     use openui_geometry::Length;
     use openui_style::*;
+
+    #[test]
+    fn nested_visual_continuation_uses_actual_column_clip_without_rewriting_raw_overflow() {
+        let lu = LayoutUnit::from_i32;
+        let horizontal = Direction::Ltr.writing_direction(WritingMode::HorizontalTb);
+        let vertical = Direction::Ltr.writing_direction(WritingMode::VerticalRl);
+        let mut source = Fragment::new_box(NodeId::NONE, PhysicalSize::new(lu(50), lu(50)));
+        source.overflow_rect = Some(PhysicalRect::new(
+            PhysicalOffset::zero(),
+            PhysicalSize::new(lu(50), lu(200)),
+        ));
+        let mut column = Fragment::new_box(NodeId::NONE, PhysicalSize::new(lu(50), lu(100)));
+        column.kind = FragmentKind::ColumnBox;
+        column.children.push(source);
+        let original = column.children[0].overflow_rect;
+        assert_eq!(fragment_visual_block_bottom(&column), lu(200));
+        assert_eq!(
+            nested_multicol_visual_block_bottom(&column, horizontal),
+            lu(200)
+        );
+        column.has_overflow_clip = true;
+        column.block_axis_clip_only = true;
+        assert_eq!(
+            nested_multicol_visual_block_bottom(&column, horizontal),
+            lu(100)
+        );
+        assert_eq!(column.children[0].overflow_rect, original);
+        column.inline_axis_clip_only = true;
+        column.block_axis_clip_only = false;
+        assert_eq!(
+            nested_multicol_visual_block_bottom(&column, horizontal),
+            lu(200)
+        );
+        column.inline_axis_clip_only = false;
+        assert_eq!(
+            nested_multicol_visual_block_bottom(&column, horizontal),
+            lu(100)
+        );
+        column.column_block_end_ink_overflow = LayoutUnit::from_raw(32);
+        assert_eq!(
+            nested_multicol_visual_block_bottom(&column, horizontal),
+            lu(100) + LayoutUnit::from_raw(32)
+        );
+        column.column_block_end_ink_overflow = LayoutUnit::zero();
+        column.fragmentation_writing_direction = Some(vertical);
+        assert_eq!(
+            nested_multicol_visual_block_bottom(&column, horizontal),
+            lu(200)
+        );
+        assert_eq!(
+            nested_multicol_visual_block_bottom(&column, vertical),
+            lu(100)
+        );
+        column.fragmentation_writing_direction = None;
+        column.children[0].offset.top = lu(11);
+        assert_eq!(
+            nested_multicol_visual_block_bottom(&column, horizontal),
+            lu(100)
+        );
+        assert_eq!(fragment_visual_block_bottom(&column), lu(211));
+
+        let mut row = Fragment::new_box(NodeId::NONE, PhysicalSize::new(lu(100), lu(100)));
+        row.children.push(column.clone());
+        let mut positioned = Fragment::new_box(NodeId::NONE, PhysicalSize::new(lu(50), lu(90)));
+        positioned.offset = PhysicalOffset::new(lu(50), lu(10));
+        row.children.push(positioned);
+        row.multicol_fragmentation = Some(crate::fragment::MulticolFragmentationData {
+            fragmentainer_block_size: lu(100),
+            continuation_fragmentainer_block_size: lu(100),
+            column_inline_start: LayoutUnit::zero(),
+            column_block_start: LayoutUnit::zero(),
+            column_inline_stride: lu(50),
+            declared_column_count: 2,
+        });
+        row.overflow_rect = Some(PhysicalRect::new(
+            PhysicalOffset::zero(),
+            PhysicalSize::new(lu(100), lu(200)),
+        ));
+        let raw_aggregate = row.overflow_rect;
+        assert_eq!(
+            nested_multicol_visual_block_bottom(&row, horizontal),
+            lu(100)
+        );
+        assert_eq!(fragment_visual_block_bottom(&row), lu(211));
+        assert_eq!(row.overflow_rect, raw_aggregate);
+        let mut next_row = column;
+        next_row.offset.top = lu(100);
+        row.children.push(next_row);
+        assert_eq!(
+            nested_multicol_visual_block_bottom(&row, horizontal),
+            lu(200)
+        );
+        row.children.pop();
+        let mut spanner = Fragment::new_box(NodeId::NONE, PhysicalSize::new(lu(100), lu(20)));
+        spanner.offset.top = lu(100);
+        row.children.push(spanner);
+        assert_eq!(
+            nested_multicol_visual_block_bottom(&row, horizontal),
+            lu(120)
+        );
+    }
 
     #[test]
     fn transformed_materialization_keeps_the_owned_normal_flow_part_after_visual_placement() {

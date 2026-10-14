@@ -618,3 +618,60 @@ fn avoided_leading_unit_uses_a_fresh_outer_column_before_remaining_capacity_rela
         );
     }
 }
+
+#[test]
+fn vertical_owned_oof_and_actual_additional_rows_keep_distinct_source_intervals() {
+    for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
+        for mode in ["vertical-rl", "vertical-lr"] {
+            for rtl in [false, true] {
+                let mut f = direct(
+                    800.0,
+                    600.0,
+                    scale,
+                    true,
+                    mode,
+                    rtl,
+                    &[60.0, 50.0],
+                    true,
+                    0.0,
+                );
+                let s = check_capacity(&mut f, 100.0, 100.0, true);
+                let oof = collect(&s, &f.engine, "oof-source");
+                assert_eq!(
+                    oof.len(),
+                    1,
+                    "one owned mapped interval {mode}/{rtl} @{scale}"
+                );
+                assert_eq!(
+                    oof[0].positioned_fragmentation.unwrap().fragmentainer_index,
+                    Some(1)
+                );
+                let r = f.engine.bounds(f.oof.unwrap()).unwrap().unwrap();
+                assert_eq!((r.width, r.height), (90.0, 50.0));
+                let generation = s.generation();
+                let stats = f.engine.stats();
+                assert_eq!(f.engine.scene().unwrap().generation(), generation);
+                assert_eq!(f.engine.stats(), stats);
+
+                // 300px normal flow needs three 100px inner columns, hence
+                // a real second declared-column row in the outer context.
+                // The earlier OOF still belongs to its one source interval.
+                let tail = create_capture_node(&mut f.engine, ElementTag::Div).unwrap();
+                clean(&mut f.engine, tail);
+                lit(&mut f.engine, tail, StyleProperty::Width, "190px");
+                lit(&mut f.engine, tail, StyleProperty::Height, "100%");
+                f.engine.append_child(f.cb, tail).unwrap();
+                let s = f.engine.scene().unwrap();
+                let rows = collect(&s, &f.engine, "inner-source");
+                assert_eq!(rows.len(), 2, "actual additional row {mode}/{rtl} @{scale}");
+                assert!(
+                    rows.iter().any(|part| part.box_geometry.is_some_and(|g| {
+                        g.continuation_record && g.consumed_block_size.to_f64() == 100.0
+                    })),
+                    "a consumed source row, not a cloned completed row"
+                );
+                assert_eq!(collect(&s, &f.engine, "oof-source").len(), 1);
+            }
+        }
+    }
+}
