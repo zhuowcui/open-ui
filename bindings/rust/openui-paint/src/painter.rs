@@ -11727,7 +11727,15 @@ fn paint_with_overflow_clip(
     if fragment.element_scrollbars.is_none() {
         paint_scrollbars_if_needed(canvas, fragment, style, &clip_rect);
     }
-    paint_resize_handle_if_needed(canvas, style, &clip_rect);
+    // The owned textarea role paints its native grip in paint_form_control,
+    // before the contents clip, including after explicit metadata removal.
+    // Keep this generic fallback for other boxes and unowned helper scopes.
+    let textarea_owns_native_grip = fragment.owns_element_box()
+        && !fragment.node_id.is_none()
+        && doc.node(fragment.node_id).form_control == Some(FormControlRole::TextArea);
+    if !textarea_owns_native_grip {
+        paint_resize_handle_if_needed(canvas, style, &clip_rect);
+    }
 
     drop(content_clip_scope);
     paint_element_scrollbars(canvas, fragment, doc, offset);
