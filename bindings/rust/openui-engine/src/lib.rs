@@ -1485,6 +1485,11 @@ impl Engine {
                 .animations
                 .values()
                 .any(|animation| animation.target == handle)
+            // Derived presentation can equal an explicit renderer input even
+            // while its permanent source differs (for example text-area Auto
+            // overflow adjusted from Visible). Retain that input before a later
+            // metadata/context change removes the derived adjustment.
+            && openui_style::value_from_computed(slot.native_source.style(), property) == value
             && openui_style::value_from_computed(&self.document.node(node).style, property) == value
         {
             return Ok(());
