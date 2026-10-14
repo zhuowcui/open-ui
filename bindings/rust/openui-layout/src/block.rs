@@ -18626,6 +18626,49 @@ fn fragment_in_flow_fragmentation_bottom(
         })
 }
 
+/// Remaining normal source in a known-Auto continuation row. An exhausted
+/// principal box may keep a larger physical fragment for visible descendants;
+/// that capacity does not create new principal source. Its real descendant
+/// lines still contribute below the retained zero-size principal shell.
+/// Positive, unrecorded, borrowed and clone geometry keeps the existing rule.
+fn fragment_remaining_normal_source_bottom(
+    fragment: &Fragment,
+    doc: &dyn LayoutDocument,
+    writing_direction: WritingDirectionMode,
+) -> LayoutUnit {
+    let exhausted_principal = fragment.owns_element_box()
+        && fragment.box_geometry.is_some_and(|geometry| {
+            geometry.continuation_record && geometry.block_size == LayoutUnit::zero()
+        })
+        && doc.node(fragment.node_id).style.box_decoration_break != BoxDecorationBreak::Clone;
+    let own_block_size = if exhausted_principal {
+        LayoutUnit::zero()
+    } else {
+        fragment.size.height
+    };
+    fragment
+        .children
+        .iter()
+        .filter(|child| {
+            child.node_id.is_none()
+                || !doc
+                    .node(child.node_id)
+                    .style
+                    .position
+                    .is_absolutely_positioned()
+        })
+        .fold(own_block_size, |bottom, child| {
+            let child_flow_bottom = if child.node_id.is_none() && child.kind == FragmentKind::Box {
+                child.size.height
+            } else {
+                fragment_remaining_normal_source_bottom(child, doc, writing_direction)
+            };
+            let visual_offset =
+                physical_vector_to_logical(child.fragmentation_visual_offset, writing_direction);
+            bottom.max_of(child.offset.top - visual_offset.top + child_flow_bottom)
+        })
+}
+
 /// Block-end of actual in-flow descendants, excluding a parent's own used
 /// size. This distinguishes a stretched Grid item from the content that owns
 /// its continuation decoration.
@@ -32670,7 +32713,7 @@ fn layout_multicol(
                                     space.writing_direction,
                                 );
                                 let normal_end = child.offset.top - visual.top
-                                    + fragment_in_flow_fragmentation_bottom(
+                                    + fragment_remaining_normal_source_bottom(
                                         child,
                                         doc,
                                         space.writing_direction,
@@ -37694,4 +37737,126 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
 
 pub fn has_block_children(doc: &Document, node_id: NodeId) -> bool {
     has_block_children_with_layout(doc, node_id)
+}
+
+#[cfg(test)]
+mod remaining_normal_principal_source_guards {
+    use super::*;
+
+    fn fixture() -> (Document, NodeId, Fragment) {
+        let mut doc = Document::new();
+        let node = doc.create_node(openui_dom::ElementTag::Div);
+        doc.update_resolved_style(node, |style| {
+            style.display = Display::Block;
+            style.height = Length::px(50.0);
+        });
+        let lu = LayoutUnit::from_i32;
+        let mut fragment = Fragment::new_box(node, PhysicalSize::new(lu(25), lu(50)));
+        crate::fragment_geometry::capture_source(
+            &mut fragment,
+            WritingDirectionMode::horizontal_ltr(),
+        );
+        fragment.size.height = lu(200);
+        crate::fragment_geometry::record_piece(
+            &mut fragment,
+            WritingDirectionMode::horizontal_ltr(),
+            lu(50),
+            LayoutUnit::zero(),
+            false,
+        );
+        for index in 0..5 {
+            let text_node = doc.create_node(openui_dom::ElementTag::Div);
+            let mut text = Fragment::new_box(text_node, PhysicalSize::new(lu(20), lu(20)));
+            text.kind = FragmentKind::Text;
+            let mut line = Fragment::new_box(NodeId::NONE, PhysicalSize::new(lu(25), lu(20)));
+            line.offset.top = lu(index * 20);
+            line.children.push(text);
+            fragment.children.push(line);
+        }
+        (doc, node, fragment)
+    }
+
+    #[test]
+    fn exhausted_principal_keeps_real_lines_without_turning_capacity_into_source() {
+        let (doc, _, fragment) = fixture();
+        let direction = WritingDirectionMode::horizontal_ltr();
+        let lu = LayoutUnit::from_i32;
+        assert_eq!(fragment.size.height, lu(200));
+        assert_eq!(
+            fragment.box_geometry.unwrap().block_size,
+            LayoutUnit::zero()
+        );
+        assert_eq!(fragment.children.len(), 5);
+        assert_eq!(
+            fragment_in_flow_fragmentation_bottom(&fragment, &doc, direction),
+            lu(200)
+        );
+        assert_eq!(
+            fragment_remaining_normal_source_bottom(&fragment, &doc, direction),
+            lu(100)
+        );
+        // Measurement preserves physical capacity and owned source progress.
+        assert_eq!(fragment.size.height, lu(200));
+        assert_eq!(fragment.box_geometry.unwrap().consumed_block_size, lu(50));
+        assert_eq!(fragment.children[4].offset.top, lu(80));
+    }
+
+    #[test]
+    fn positive_unrecorded_borrowed_and_clone_principal_behavior_is_preserved() {
+        let (mut doc, node, fragment) = fixture();
+        let direction = WritingDirectionMode::horizontal_ltr();
+        let lu = LayoutUnit::from_i32;
+        let mut positive = fragment.clone();
+        positive.box_geometry.as_mut().unwrap().block_size = lu(50);
+        let mut unrecorded = fragment.clone();
+        unrecorded
+            .box_geometry
+            .as_mut()
+            .unwrap()
+            .continuation_record = false;
+        let mut missing = fragment.clone();
+        missing.box_geometry = None;
+        let mut borrowed = fragment.clone();
+        borrowed.box_ownership = crate::FragmentBoxOwnership::LayoutHelper;
+        for other in [&positive, &unrecorded, &missing, &borrowed] {
+            assert_eq!(
+                fragment_remaining_normal_source_bottom(other, &doc, direction),
+                lu(200)
+            );
+        }
+        doc.update_resolved_style(node, |style| {
+            style.box_decoration_break = BoxDecorationBreak::Clone
+        });
+        assert_eq!(
+            fragment_remaining_normal_source_bottom(&fragment, &doc, direction),
+            lu(200)
+        );
+    }
+
+    #[test]
+    fn relative_displacement_and_positioned_ink_keep_the_existing_flow_policy() {
+        let (mut doc, _, mut fragment) = fixture();
+        let direction = WritingDirectionMode::horizontal_ltr();
+        let lu = LayoutUnit::from_i32;
+        let normal = doc.create_node(openui_dom::ElementTag::Div);
+        doc.update_resolved_style(normal, |style| style.position = Position::Relative);
+        let mut moved = Fragment::new_box(normal, PhysicalSize::new(lu(20), lu(20)));
+        moved.offset.top = lu(91);
+        moved.fragmentation_visual_offset.top = lu(11);
+        fragment.children.push(moved);
+        let positioned = doc.create_node(openui_dom::ElementTag::Div);
+        doc.update_resolved_style(positioned, |style| style.position = Position::Absolute);
+        let mut ink = Fragment::new_box(positioned, PhysicalSize::new(lu(20), lu(900)));
+        ink.offset.top = lu(1000);
+        fragment.children.push(ink);
+        assert_eq!(
+            fragment_remaining_normal_source_bottom(&fragment, &doc, direction),
+            lu(100)
+        );
+        fragment.children.clear();
+        assert_eq!(
+            fragment_remaining_normal_source_bottom(&fragment, &doc, direction),
+            LayoutUnit::zero()
+        );
+    }
 }
