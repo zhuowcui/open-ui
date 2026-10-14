@@ -23935,7 +23935,7 @@ fn layout_multicol(
             // synthetic complete rows.
             let sequential_outer_rows = auto_wraps_outer_fragments
                 && !subtree_has_in_flow_spanner_descendant(doc, node_id)
-                && (child_count == 1
+                && (col_block_sizes.len() == 1
                     || col_parallel_fragmentation_sizes.iter().all(Option::is_none))
                 && col_fragmentation_sizes
                     .iter()
@@ -28121,7 +28121,8 @@ fn layout_multicol(
                             LayoutUnit::zero()
                         };
                         let cloned_multicol_content = if is_clone
-                            && child_is_multicol
+                            && crate::multicol::ColumnLayoutAlgorithm::from_style(child_style)
+                                .is_some()
                             && child_style.height.is_auto()
                             && !subtree_has_positioned_descendant(doc, child_node_id)
                             && !subtree_has_in_flow_spanner_descendant(doc, child_node_id)
