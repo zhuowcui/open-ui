@@ -22937,7 +22937,12 @@ fn layout_multicol(
                 let balanced = LayoutUnit::from_raw((portion_height.raw() + count - 1) / count);
                 column_height = column_height.min_of(balanced);
             }
-            if let Some(line_height) = line_aware_balance_height {
+            // A known Auto row resumes source at the enclosing capacity.
+            // Content-balancing floors belong to the unconstrained/balanced
+            // route and must not enlarge that known fragmentainer.
+            if let Some(line_height) =
+                line_aware_balance_height.filter(|_| known_auto_row_capacity.is_none())
+            {
                 column_height = column_height.max_of(line_height);
             }
             if let Some(table_row_height) = table_row_aware_balance_height {
@@ -22967,7 +22972,9 @@ fn layout_multicol(
             if let Some(flex_line_height) = leading_row_flex_balance_floor {
                 column_height = column_height.max_of(flex_line_height);
             }
-            if let Some(parallel_height) = parallel_fragmentation_balance_height {
+            if let Some(parallel_height) =
+                parallel_fragmentation_balance_height.filter(|_| known_auto_row_capacity.is_none())
+            {
                 column_height = column_height.max_of(parallel_height);
             }
             if let Some(positioned_height) = positioned_parallel_balance_height {
