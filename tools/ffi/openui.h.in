@@ -1657,7 +1657,9 @@ OuiStatus oui_document_dispatch_wheel_input_v1(OuiDocument *document,
  * objects, null/unbound timelines or independently offset Document clocks.
  * Animation IDs remain scoped to the supplied document, as existing controls.
  * Events dispatch after Engine borrows; a callback may reenter this operation.
- * A callback panic is contained but does not roll back a completed mutation. */
+ * Callbacks must return normally and must not unwind across the C ABI.
+ * Callback delivery follows the committed mutation; a later error does not roll
+ * it back. */
 OuiStatus oui_document_set_animation_timeline_source_v1(OuiDocument* document,
                                                         uint64_t animation_id,
                                                         const OuiAnimationTimelineSourceV1* source);
