@@ -249,8 +249,8 @@ fn native_explicit_view_insets_follow_subject_font_and_auto_scroll_padding() {
 }
 
 #[test]
-fn native_newest_time_control_wins_over_deferred_progress_when_source_becomes_visible() {
-    for operation in ["seek", "play", "finish", "range"] {
+fn native_newest_time_control_replaces_inactive_seek_but_equal_range_preserves_it() {
+    for operation in ["seek", "play", "finish", "same-range"] {
         let (document, source, _, target) = fixture(1.25);
         let id = target
             .animate_on_scroll_range(
@@ -276,7 +276,7 @@ fn native_newest_time_control_wins_over_deferred_progress_when_source_becomes_vi
             "seek" => document.seek_animation(id, 1.28).unwrap(),
             "play" => document.play_animation(id).unwrap(),
             "finish" => document.finish_animation(id).unwrap(),
-            "range" => document
+            "same-range" => document
                 .set_animation_attachment_range(id, AnimationAttachmentRange::default())
                 .unwrap(),
             _ => unreachable!(),
@@ -286,6 +286,10 @@ fn native_newest_time_control_wins_over_deferred_progress_when_source_becomes_vi
         let (time, value) = match operation {
             "seek" => (25.0, 0.25),
             "finish" => (100.0, 1.0),
+            // The descriptor equals the original default. It enables automatic
+            // alignment without OnRangeUpdate or replacing the deferred time.
+            // Distinct range controls keep their separate shared Engine guards.
+            "same-range" => (50.0, 0.5),
             _ => (0.0, 0.0),
         };
         assert_eq!(resolved.current_time_percentage, Some(time), "{operation}");
