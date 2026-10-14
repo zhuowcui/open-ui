@@ -13,7 +13,8 @@ static OuiUtf8 text(const char* value) {
   return result;
 }
 static void property(OuiElement* node, OuiStyleProperty id, const char* literal) {
-  OuiStyleValue value = {0};
+  OuiStyleValue value;
+  memset(&value, 0, sizeof(value));
   assert(oui_style_value_parse(id, text(literal), &value) == OUI_OK);
   assert(oui_element_set_property(node, id, &value) == OUI_OK);
   if (value.tag == 6)
@@ -60,7 +61,8 @@ static void observe(OuiEvent* event, void* user_data) {
 int main(void) {
   const double scales[] = {1, 1.25, 1.5, 1.75, 2};
   for (size_t i = 0; i < sizeof(scales) / sizeof(scales[0]); ++i) {
-    OuiDocumentConfig config = {0};
+    OuiDocumentConfig config;
+    memset(&config, 0, sizeof(config));
     config.struct_size = sizeof(config);
     config.abi_version = OUI_ABI_VERSION;
     config.viewport.logical_width = 320;
@@ -93,9 +95,11 @@ int main(void) {
            OUI_OK);
     assert(oui_element_add_event_listener(source, OUI_EVENT_SCROLL, 0, observe, &data, &scroll) ==
            OUI_OK);
-    OuiRect bounds = {0};
+    OuiRect bounds;
+    memset(&bounds, 0, sizeof(bounds));
     assert(oui_element_get_bounds(source, &bounds) == OUI_OK);
-    OuiEvent wheel = {0};
+    OuiEvent wheel;
+    memset(&wheel, 0, sizeof(wheel));
     wheel.struct_size = sizeof(wheel);
     wheel.abi_version = OUI_ABI_VERSION;
     wheel.event_type = OUI_EVENT_WHEEL;

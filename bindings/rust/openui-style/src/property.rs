@@ -898,10 +898,16 @@ fn border(input: &str) -> Option<Border> {
         return None;
     }
     let style = match parts.next()? {
-        "solid" => BorderStyle::Solid,
+        "none" => BorderStyle::None,
+        "hidden" => BorderStyle::Hidden,
         "dotted" => BorderStyle::Dotted,
         "dashed" => BorderStyle::Dashed,
+        "solid" => BorderStyle::Solid,
         "double" => BorderStyle::Double,
+        "groove" => BorderStyle::Groove,
+        "ridge" => BorderStyle::Ridge,
+        "inset" => BorderStyle::Inset,
+        "outset" => BorderStyle::Outset,
         _ => return None,
     };
     let color = color(parts.next()?)?;
@@ -3691,5 +3697,87 @@ mod tests {
         assert_eq!(style.fields.font_size, 20.0);
         assert_eq!(style.fields.font_kerning, FontKerning::Auto);
         assert!(style.fields.font_feature_settings.is_empty());
+    }
+}
+
+#[cfg(test)]
+mod border_literal_parity_tests {
+    use super::*;
+
+    #[test]
+    fn full_border_literals_preserve_every_native_style_and_typed_field() {
+        let properties = [
+            StyleProperty::Border,
+            StyleProperty::BorderTop,
+            StyleProperty::BorderRight,
+            StyleProperty::BorderBottom,
+            StyleProperty::BorderLeft,
+        ];
+        let observed = [
+            StyleProperty::BorderTopColor,
+            StyleProperty::BorderTopStyle,
+            StyleProperty::BorderTopWidth,
+            StyleProperty::BorderRightColor,
+            StyleProperty::BorderRightStyle,
+            StyleProperty::BorderRightWidth,
+            StyleProperty::BorderBottomColor,
+            StyleProperty::BorderBottomStyle,
+            StyleProperty::BorderBottomWidth,
+            StyleProperty::BorderLeftColor,
+            StyleProperty::BorderLeftStyle,
+            StyleProperty::BorderLeftWidth,
+        ];
+        for (literal, style) in [
+            ("none", BorderStyle::None),
+            ("hidden", BorderStyle::Hidden),
+            ("dotted", BorderStyle::Dotted),
+            ("dashed", BorderStyle::Dashed),
+            ("solid", BorderStyle::Solid),
+            ("double", BorderStyle::Double),
+            ("groove", BorderStyle::Groove),
+            ("ridge", BorderStyle::Ridge),
+            ("inset", BorderStyle::Inset),
+            ("outset", BorderStyle::Outset),
+        ] {
+            for property in properties {
+                let typed = StyleValue::Border(Border {
+                    width: 2.0,
+                    style,
+                    color: Color::from_rgba8(36, 104, 172, 255),
+                });
+                let parsed = parse_literal(property, &format!("2px {literal} #2468ac")).unwrap();
+                assert_eq!(parsed, typed);
+                let mut native = ComputedStyle::initial();
+                let mut from_literal = native.clone();
+                apply_to_computed(&mut native, property, &typed, (320.0, 240.0)).unwrap();
+                apply_to_computed(&mut from_literal, property, &parsed, (320.0, 240.0)).unwrap();
+                for field in observed {
+                    assert_eq!(
+                        value_from_computed(&from_literal, field),
+                        value_from_computed(&native, field)
+                    );
+                }
+            }
+        }
+        assert_eq!(
+            parse_literal(StyleProperty::Border, "0px none transparent").unwrap(),
+            StyleValue::Border(Border {
+                width: 0.0,
+                style: BorderStyle::None,
+                color: Color::TRANSPARENT
+            })
+        );
+        assert_eq!(
+            parse_literal(StyleProperty::Border, "none").unwrap(),
+            StyleValue::Border(Border::NONE)
+        );
+        for invalid in [
+            "2px unknown black",
+            "2px solid black extra",
+            "2px solid",
+            "none; display: none",
+        ] {
+            assert!(parse_literal(StyleProperty::Border, invalid).is_err());
+        }
     }
 }
