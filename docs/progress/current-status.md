@@ -20,30 +20,49 @@ product. Waves W0 through W10 are locally committed. W11 source packaging and
 documentation are implemented, but final external and hardware qualifications
 remain open.
 
-## Current closure work (12 October 2026)
+## Current closure work (13 October 2026)
 
-The latest completed original Chromium census is **21,317/22,924 exact
-(93.0%)**, with **1,607 differences and zero render errors**, at clean
-`fe51eab9`. This is a rendering measurement. Whole-project completion has no
-measured percentage. Fresh focused, primitive, original and expanded matrices
-are running on immutable `c48ff96c`, with a newly built runner and fresh
-pinned Chromium captures. Later source checkpoints require their own builds
-and qualification.
+At clean `5520ed92`, the freshly built CPU renderer matches pinned Chromium in
+**640/640 focused** and **960/960 primitive** comparisons, with zero differences
+and zero errors. The complete original census is running and the expanded
+census is queued; these focused results do not establish the overall match rate.
 
-The grid literal guards, 39 flex guards, borrowed-helper scroll guard and two
-C reveal guards pass. C11 and C++17 consumers compile and link against the
-156-export ABI. Running them still exposes the shared vertical scroll-gutter
-geometry failure. The strict dependency audit reports three advisories in
-two production-lock packages; the fuzz lock passes that audit. Patched
-dependency work is underway, with Rust 1.85 and publication compatibility
-still required.
+The last completed expanded run at `fb1b68fa` remains **21,724/23,728 exact**.
+Its original subset is **20,996/22,924 exact (91.6%)**. These are rendering
+measurements at that checkpoint, not a whole-project completion percentage.
+The earlier 340 losses with unchanged Chromium pixels and five changed browser
+captures remain preserved and require reviewed causes; repeated captures of
+those five fixtures reproduced the newer Chromium pixels in 40/40 comparisons.
 
-New font, scroll-button and retained-helper source repairs are reviewed;
-their compilation, native runtime and pixel results are pending. Compositor,
-3D, accessibility, hardware, reproducible package installation and protected
-publication gates remain open. Earlier sections below retain historical
-checkpoint measurements; they do not qualify current source.
-[Saved evidence](../renderer/generated/native-final-closure-status-v1.json).
+The full native workspace at `5520ed92` reports **9,282 passed / 1 failed**;
+doctests report **2 passed / 0 failed / 13 ignored**. The remaining failure was a
+public test expecting an unchanged attachment range to reset deferred progress.
+Pinned Chromium preserves that progress. The reviewed correction at `e52d047f`
+changes only the test; its complete affected group passes **6/6**. The prior
+transform-overflow, progress-phase and radius publication failures are repaired
+and pass their strict native guards. Later source changes still require their
+own complete workspace and Chromium qualification.
+
+All **331 Python tests in 21 modules** and **21 generated/format checks** pass at
+`5520ed92`. Its freshly built C library passes **70 C/C++ consumers** with
+**160 exports**, preserving earlier exports and layouts. Eight independent
+radius-axis APIs are implemented in Rust and C; their pixels still need
+Chromium qualification.
+
+Three pending cases replay ordered native Engine mutations and layout barriers
+without JavaScript. Their fresh four-profile measurement is **5/12 exact**, with
+seven differences and no errors; no case passes all four profiles, so none is
+admitted. The nested column trace confirms a child sized to the whole parent
+instead of its column. Fractional background edges also remain open.
+
+Hosted format and PR platform hardening pass at `5520ed92`; hosted CI fails the
+same equal-range guard, and the complete manual hardening result is pending.
+A new hosted run must verify the corrected source. Native API completion,
+transparent layer publication and presentation tracks, 3D, remaining pixels,
+physical GPU/AT-SPI/performance, reproducible packaging, signing and publication
+remain open. Open UI runs no JavaScript; apps use native Rust APIs and callbacks.
+
+[Saved evidence](../renderer/generated/native-final-closure-status-v7.json).
 
 ## Table ownership and opacity repair (full renderer gate open)
 

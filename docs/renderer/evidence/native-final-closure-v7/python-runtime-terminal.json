@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "session_id": 95097,
+  "actual_tool_exit_code": 0,
+  "actual_terminal_chunk": "eb80dc",
+  "terminal_reaped": true,
+  "receipt_sha256": "009395b272a740708b946e5ed9fada4b9020e66b337072b69078eca65c10df4d",
+  "all_recorded_pids_absent": [
+    3341533,
+    3341678,
+    3341676,
+    3341675,
+    3341686,
+    3341703,
+    3341685,
+    3341674,
+    3341738,
+    3341893,
+    3341766,
+    3341750,
+    3342081,
+    3341963,
+    3342583,
+    3342680,
+    3342337,
+    3341687,
+    3342777,
+    3342769,
+    3342929,
+    3342714
+  ],
+  "qualification": false
+}

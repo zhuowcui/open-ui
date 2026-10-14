@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "agent": "opacity_census_audit",
+  "producer_pid": 3339907,
+  "source_base": "260c211b987cf1934b3a4fbbb55808b9ff293dfa",
+  "root_authorized_bounded_successor": true,
+  "primary_pins": [
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-progress-zero-fillnone-oracle-opacity-census-audit-v4537/primary-cache-v1/scroll_snapshot_timeline.h",
+      "sha256": "c8b37562d53abaab47022f3ca31f0409854007b8061598b897f14cced4ffc627"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-animation-timing-primary-v4269/animation.cc",
+      "sha256": "2fe5b7547079a218468aa622c8635e97fc9ba364d3ff8b0226aa8503138e8fe5"
+    }
+  ],
+  "primary_rules": [
+    "ScrollSnapshotTimeline.h92\u2013101: inactive GetDuration has100-second fallback so percentage setters remain defined",
+    "animation.cc537\u2013541+644\u2013662: percentage50 stores a hold and clears start while inactive",
+    "animation.cc2924\u20132950: equal endpoints set auto alignment but do not call OnRangeUpdate",
+    "animation.cc2811\u20132822+1483\u20131499+2850\u20132874: activation rescales held50%; resolved hold/unresolved start is logically paused, so equal range does not create a new automatic start",
+    "changed legacy numeric\u2192AttachmentDefault is a native descriptor conversion and still replaces the deferred request"
+  ],
+  "exact_guard_expectations": {
+    "browser_equal_attachment": "50%, opacity0.5",
+    "legacy_numeric_conversion": "0%, opacity0",
+    "changed_other_controls": "existing strict seek/play/finish/changed-range assertions unchanged"
+  },
+  "production_changed": false,
+  "native_execution": false,
+  "stock_browser_execution": false,
+  "qualification": false
+}

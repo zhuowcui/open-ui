@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "owner_pid": 3348066,
+  "source": {
+    "commit": "5520ed920523164574fc80187b2702892cb5ac62",
+    "clean": true,
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "source_tree_sha256": "0e2c22d402f809735879222fed8bbaad849d989d3aa7c96ac61595e1d3c77336",
+    "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6"
+  },
+  "runner_sha256": "02cc432163bf1f925772405b2f60f6903824cf42f1598f84311b186215c43ad5",
+  "build_receipt_sha256": "d5b3ce3228361353e1a9480163fd5b877de089f9e99df7d798ae73f56c94a181",
+  "manifest_sha256": "9a6095ac993deefee4510780ce062e5df6fd6185f3ba0309999dc38ad7216110",
+  "templates_sha256": "1672d31bcc4b13a8ecb6c1b8af6a7b255052aac52293fb916181e6e0bd1d6ba6",
+  "driver_sha256": "06c270a15b5b53d790ba49fd1d1324572ff9062d55430c495ea61e3e62849a21",
+  "pixel_tolerance": 0,
+  "backend": "cpu-skia",
+  "diagnostic_only": true,
+  "qualification": false,
+  "admission": false,
+  "aliases": [
+    {
+      "native_id": "pending/native-mutation-v1/wpt/css_break/out-of-flow-in-multicolumn-120",
+      "original_id": "wpt/css_break/out-of-flow-in-multicolumn-120",
+      "source_html_sha256": "99cd34afa3920dc83f78fc23680e088afc30196d997053730059d7759c06f7d6",
+      "reference_sha256": "b7d98bb3f8b7b70e8f76f0b7e99566bc09ca5e5cbae1cef571d7843be87da4f0",
+      "immutable_original_template_sha256": "a02e2f94cf113cdc9f61f1e54589d0055842627d18393cacde713001e2fd3ea1"
+    },
+    {
+      "native_id": "pending/native-mutation-v1/wpt/css_position/position-fixed-dynamic-transformed-sibling",
+      "original_id": "wpt/css_position/position-fixed-dynamic-transformed-sibling",
+      "source_html_sha256": "e0b2b1f903e06f730e4579878b5367385664b781b04767fdec55da5205f42618",
+      "reference_sha256": "f758c7b5826bf35ad9acc4a043acb9a0d6411245368225b5800ec048e2048839",
+      "immutable_original_template_sha256": "f582cf5b3589be8e3281de1d7d3a84a104679e6f239b659cf811f9fe3416221c"
+    },
+    {
+      "native_id": "pending/native-mutation-v1/wpt/css_overflow/scrollbars-chrome-bug-001",
+      "original_id": "wpt/css_overflow/scrollbars-chrome-bug-001",
+      "source_html_sha256": "2b99c3e0351ac702f9018316c8a45f991c42ef5b55dec84ac1fb4a89730cac01",
+      "reference_sha256": "ab953a30e2a91ab2e68d028afd3f4cce74bca5e378c12e8736d66a6edd30cb87",
+      "immutable_original_template_sha256": "279d3ec929eb13a05b6799652070069aa616046f12bce709036ce0a4bc504fea"
+    }
+  ],
+  "complete": true,
+  "wrapper_sha256": "31039f65d8df926ff8a66c890f48a494d5ee03b93a3cc468ebd46fe0c356f149",
+  "argv": [
+    "python3",
+    "-B",
+    "/mnt/d/openui-v02-qualification-d174ea0b/native-ordered-mutation-matrix-v4536/alias_wrapper.py",
+    "--suite",
+    "full",
+    "--ids-file",
+    "/mnt/d/openui-v02-qualification-d174ea0b/native-ordered-mutation-matrix-v4536/pending-ids.json",
+    "--results-dir",
+    "/mnt/d/openui-v02-qualification-d174ea0b/native-ordered-mutation-matrix-v4536/matrix",
+    "--cache-dir",
+    "/mnt/d/openui-v02-qualification-d174ea0b/native-ordered-mutation-matrix-v4536/cache",
+    "--oracle-cache-dir",
+    "/mnt/d/openui-v02-qualification-d174ea0b/native-ordered-mutation-matrix-v4536/cache/chromium-oracle",
+    "--pixel-compare",
+    "/mnt/d/openui-v02-qualification-d174ea0b/native-fresh-renderer-build-v4525/guarded-build/pixel_compare",
+    "--build-receipt",
+    "/mnt/d/openui-v02-qualification-d174ea0b/native-fresh-renderer-build-v4525/guarded-build/receipt.json",
+    "--chrome",
+    "/home/nero/code/open-ui/chrome/linux-147.0.7727.50/chrome-linux64/chrome",
+    "--raster-backend",
+    "cpu-skia",
+    "--jobs",
+    "4"
+  ],
+  "child_pid": 3348102,
+  "actual_exit_code": 1,
+  "terminal_reaped": true,
+  "log_sha256": "e35ad27d4c7230ee81f78ba99780ee5ec68851a12149badafbfa09028ebc5239",
+  "counts": {
+    "different": 7,
+    "errors": 0,
+    "exact": 5,
+    "profile_result_sha256": "d7fd2c5af147f9319e84c0144bf360d91b0ceed8d51db7fa4ebe3dbc97429d04",
+    "total": 12
+  },
+  "matrix_evidence": {
+    "binary_unchanged": true,
+    "kind": "diagnostic-census",
+    "qualification_backend_match": true,
+    "qualification_policy_match": true,
+    "qualified": false,
+    "source_unchanged": true,
+    "tolerance_pixels": 0
+  },
+  "summary_sha256": "c2222e3d24e65c1be607782ba502bc332df7e0ebedac22c2da239f8a4d1567fe",
+  "source_after": {
+    "commit": "5520ed920523164574fc80187b2702892cb5ac62",
+    "clean": true,
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "source_tree_sha256": "0e2c22d402f809735879222fed8bbaad849d989d3aa7c96ac61595e1d3c77336",
+    "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6"
+  },
+  "source_unchanged": true,
+  "runner_unchanged": true
+}

@@ -1,0 +1,981 @@
+{
+  "chromium": {
+    "binary_sha256": "0ba87684df0afc11faaea40ac57bd2f1d68b67191443b38215a36b90e6f08848",
+    "build_identity": "147.0.7727.50",
+    "capture_harness_sha256": "bb9f1b7ec2de1f622de53e6c45758b67f341920936661712fb995a10c084e42f",
+    "oracle_cache": "/mnt/d/openui-v02-qualification-d174ea0b/native-ordered-mutation-matrix-v4536/cache/chromium-oracle"
+  },
+  "commit": "5520ed920523164574fc80187b2702892cb5ac62",
+  "complete_contract_scope": false,
+  "contract_sha256": "fa72630697db1bdb2542e5fc1b89d4171d76d4d88e1735a63e6aa1fd670f62d9",
+  "evidence": {
+    "binary_unchanged": true,
+    "kind": "diagnostic-census",
+    "qualification_backend_match": true,
+    "qualification_policy_match": true,
+    "qualified": false,
+    "source_unchanged": true,
+    "tolerance_pixels": 0
+  },
+  "font_byte_hashes": {
+    "bindings/rust/openui-text/fonts/Ahem.ttf": "b719ecb31c5b21fc573c03f6421c74ac63c271a5a3ff841e34f9705fb94b8448",
+    "bindings/rust/openui-text/fonts/DejaVuSans-Bold.ttf": "5c1247acef7f2b8522a31742c76d6adcb5569bacc0be7ceaa4dc39dd252ce895",
+    "bindings/rust/openui-text/fonts/DejaVuSans.ttf": "ae7b7855e115a5966d8b1b3f80f254ccc117ec86f9965e202ee2940453837280",
+    "bindings/rust/openui-text/fonts/DejaVuSansMono-Bold.ttf": "3a3c502eeff669a231549e80df9f7c49de109bafe303170409e905d0b31a38fe",
+    "bindings/rust/openui-text/fonts/DejaVuSansMono.ttf": "c805f9436dbc268644c1d9584f01a601a653e028e08fd74b9b949f6cf8304d88",
+    "bindings/rust/openui-text/fonts/DejaVuSerif-Bold.ttf": "847b33e13925f19ff87e4d934d6b3cf7cac35ce16424f6f670e40c2f377cf2df",
+    "bindings/rust/openui-text/fonts/DejaVuSerif.ttf": "8f2c103bfa3fd5de71f1b92b18f21906b5a26871fb7e19a9a4c9af539c3cc7ab",
+    "bindings/rust/openui-text/fonts/DroidSansFallback-reduced.ttf": "27db42b79d0846f6fd01b3d6a8233df9a8a5ece80b042299dc4174c48213ffd3",
+    "bindings/rust/openui-text/fonts/NotoColorEmoji.ttf": "72a635cb3d2f3524c51620cdde406b217204e8a6a06c6a096ff8ed4b5fd6e27b",
+    "bindings/rust/openui-text/fonts/NotoSansDevanagari-Regular.ttf": "b1dffa1fccb30dc45287111834a9db15c652b05d4d67201abe73e67717017590",
+    "bindings/rust/openui-text/fonts/certification/fixture.otc": "d646722927f94b620e35e3ed3a99ad34e856b400dd2fb191a51d3d357a97d216",
+    "bindings/rust/openui-text/fonts/certification/fixture.otf": "235f7207a202026a0a73c38c64713d58eace082bdf605f5abd2a28166fab61aa",
+    "bindings/rust/openui-text/fonts/certification/fixture.ttc": "29456016c3d05578b3702eb38258f2872e82048c811ae7e5927406ec8048dc55",
+    "bindings/rust/openui-text/fonts/certification/fixture.ttf": "b719ecb31c5b21fc573c03f6421c74ac63c271a5a3ff841e34f9705fb94b8448",
+    "bindings/rust/openui-text/fonts/certification/fixture.woff": "4e0e5135fa60f01e456e74ea50af23537d39cfc7822ab01dfa499a6efd8544e0",
+    "bindings/rust/openui-text/fonts/certification/fixture.woff2": "984e2d1e7062a65a5ac746f38520a9ce0e1058e33533bfddd243bb5cfba061d4"
+  },
+  "id_manifest": {
+    "count": 3,
+    "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-ordered-mutation-matrix-v4536/pending-ids.json",
+    "sha256": "8ab7dcfeaeba1e12f071cf46a1189b9e3ff4f4fd46ff6f9b0e871623acb8bc3d"
+  },
+  "manifest_scope": {
+    "admitted_candidate_count": 201,
+    "expanded_count": 5932,
+    "original_count": 5731,
+    "reported_suite": "full"
+  },
+  "openui": {
+    "binary_sha256": "02cc432163bf1f925772405b2f60f6903824cf42f1598f84311b186215c43ad5",
+    "build_identity": {
+      "schema_version": 1,
+      "skia_gn_args": "extra_cflags += [ \"-DSK_SUPPORT_LEGACY_CONIC_CHOP\", \"-DSK_ENABLE_LEGACY_SHADERCONTEXT\", \"-DSK_USE_FREETYPE_EMBOLDEN\", \"-DSK_GAMMA_EXPONENT=1.2\", \"-DSK_GAMMA_CONTRAST=0.2\", \"-fno-strict-aliasing\", \"-msse3\", \"--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot\" ]",
+      "source": {
+        "clean": true,
+        "commit": "5520ed920523164574fc80187b2702892cb5ac62",
+        "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6",
+        "source_tree_sha256": "0e2c22d402f809735879222fed8bbaad849d989d3aa7c96ac61595e1d3c77336",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "library_build_receipt_sha256": "d5b3ce3228361353e1a9480163fd5b877de089f9e99df7d798ae73f56c94a181",
+    "library_provenance_verified": true,
+    "raster_backend_identity": {
+      "backend": "cpu-skia",
+      "color_type": "N32-premultiplied",
+      "driver": null,
+      "gl_renderer": null,
+      "gl_version": null,
+      "sample_count": 0,
+      "surface_properties": "scene-raster-configuration-v1"
+    }
+  },
+  "profiles": [
+    {
+      "device_scale": 1.0,
+      "different": 1,
+      "errors": 0,
+      "exact": 2,
+      "logical_size_css_px": [
+        800,
+        600
+      ],
+      "ordered_id_sha256": "2c8774b4297f28f1b7763d4fe66dc922f5aee8e0f09ba5356f8f052ed9cadef0",
+      "physical_size_px": [
+        800,
+        600
+      ],
+      "profile": "legacy-800x600@1",
+      "result_sha256": "949cdae2c7378e7406e64f4cdf4b22e28bf6a42c93a12f99b77ea16897ab3cfc",
+      "tests": [
+        {
+          "cache_identity_sha256": "719803c4287b762af9103ea1d684d950592eff68d823be0cd9bfc44a0d3e6948",
+          "chromium_oracle_identity_sha256": "788545e3cb731fa3b2dea3a39472e468c1430973fa24ae723564f642faba387f",
+          "chromium_oracle_rgba_sha256": "6293287940dac47d741fff345dace20dacca71eba4986d0c3682439ded6b2df4",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/2b/2b32f1ceed52b1ca31302270f78699d5435f43a1d3e8cdb45fbc34d21c9c8919.png",
+          "chromium_png_sha256": "2b32f1ceed52b1ca31302270f78699d5435f43a1d3e8cdb45fbc34d21c9c8919",
+          "chromium_rgba_sha256": "6293287940dac47d741fff345dace20dacca71eba4986d0c3682439ded6b2df4",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 8000,
+                "maximum_absolute_delta": 255,
+                "maximum_signed_delta": 255,
+                "minimum_signed_delta": -255,
+                "signed_delta_sum": -765000
+              },
+              "green": {
+                "changed_pixels": 8000,
+                "maximum_absolute_delta": 127,
+                "maximum_signed_delta": 127,
+                "minimum_signed_delta": -127,
+                "signed_delta_sum": -381000
+              },
+              "red": {
+                "changed_pixels": 8000,
+                "maximum_absolute_delta": 255,
+                "maximum_signed_delta": 255,
+                "minimum_signed_delta": -255,
+                "signed_delta_sum": -765000
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 1,
+            "connected_regions": [
+              {
+                "bounds": {
+                  "height": 100,
+                  "width": 200,
+                  "x": 20,
+                  "y": 20
+                },
+                "mismatched_pixels": 8000
+              }
+            ],
+            "mismatch_bounds": {
+              "height": 100,
+              "width": 200,
+              "x": 20,
+              "y": 20
+            },
+            "mismatched_pixels": 8000
+          },
+          "font_profile": "deterministic-test-collection",
+          "id": "pending/native-mutation-v1/wpt/css_break/out-of-flow-in-multicolumn-120",
+          "mismatched_pixels": 8000,
+          "openui_png_cache_path": "png/15/15ad1338fec36520fed3d3181462cb4b6680d89eec9da48264c3618ac6403bbb.png",
+          "openui_png_sha256": "15ad1338fec36520fed3d3181462cb4b6680d89eec9da48264c3618ac6403bbb",
+          "openui_rgba_sha256": "800557530a1c8cf7aa916eb58a450178cfc35071e0b8334ffe9dea97b317ff40",
+          "raster_configuration": "cpu-skia:default",
+          "status": "different"
+        },
+        {
+          "cache_identity_sha256": "ffbe562dc34764f866d3e7ab220ddb5e3437712c7ceb21471fbf14a72f811ec1",
+          "chromium_oracle_identity_sha256": "bfa1b9e7512fac4207ef06f82b370b5b8e15b17a2da1a40c41a8264ff10d0a77",
+          "chromium_oracle_rgba_sha256": "0c245d40bfdb1f5c34b2850ff752e9f8579016e93140a2c2c7049982f5b990d5",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/1f/1f37bbc1d45686cb8cf260f8470460224deec69b4899f5962257fce52b739513.png",
+          "chromium_png_sha256": "1f37bbc1d45686cb8cf260f8470460224deec69b4899f5962257fce52b739513",
+          "chromium_rgba_sha256": "0c245d40bfdb1f5c34b2850ff752e9f8579016e93140a2c2c7049982f5b990d5",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "deterministic-test-collection",
+          "id": "pending/native-mutation-v1/wpt/css_overflow/scrollbars-chrome-bug-001",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/05/05f17e22c0b1fe42cdbf4aef02752d54a34f7e084525cfdbcb3270ec1af73d75.png",
+          "openui_png_sha256": "05f17e22c0b1fe42cdbf4aef02752d54a34f7e084525cfdbcb3270ec1af73d75",
+          "openui_rgba_sha256": "0c245d40bfdb1f5c34b2850ff752e9f8579016e93140a2c2c7049982f5b990d5",
+          "raster_configuration": "cpu-skia:default",
+          "status": "exact"
+        },
+        {
+          "cache_identity_sha256": "e4978a5ed73ab3d8e561551dd05eb79d145d6e6b374f998d901ac3597e4c77ee",
+          "chromium_oracle_identity_sha256": "011659e849a9487b0ec1d399384a396aae0fde27a517812ac7652b7e3bbc5fce",
+          "chromium_oracle_rgba_sha256": "dfbac632657fbafbef36853bc6bacee8a5079f5354d28c927110d0d7dd3cfa46",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/ea/ead118ec3caeb424178d85fc6cad145b94a284f0834f7664b314fc45e845a021.png",
+          "chromium_png_sha256": "ead118ec3caeb424178d85fc6cad145b94a284f0834f7664b314fc45e845a021",
+          "chromium_rgba_sha256": "dfbac632657fbafbef36853bc6bacee8a5079f5354d28c927110d0d7dd3cfa46",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "deterministic-test-collection",
+          "id": "pending/native-mutation-v1/wpt/css_position/position-fixed-dynamic-transformed-sibling",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/ce/cee026e4f4fd7457c5b568630549b7e5c0e6f17d1c711fdd5962fb68a9d75582.png",
+          "openui_png_sha256": "cee026e4f4fd7457c5b568630549b7e5c0e6f17d1c711fdd5962fb68a9d75582",
+          "openui_rgba_sha256": "dfbac632657fbafbef36853bc6bacee8a5079f5354d28c927110d0d7dd3cfa46",
+          "raster_configuration": "cpu-skia:default",
+          "status": "exact"
+        }
+      ],
+      "total": 3
+    },
+    {
+      "device_scale": 2.0,
+      "different": 1,
+      "errors": 0,
+      "exact": 2,
+      "logical_size_css_px": [
+        375,
+        667
+      ],
+      "ordered_id_sha256": "2c8774b4297f28f1b7763d4fe66dc922f5aee8e0f09ba5356f8f052ed9cadef0",
+      "physical_size_px": [
+        750,
+        1334
+      ],
+      "profile": "mobile-375x667@2",
+      "result_sha256": "c23566aacbdcfd082470d364a37fd83f5c10f0f19ec61ff3f403cb19594c43aa",
+      "tests": [
+        {
+          "cache_identity_sha256": "c6c02954eb9f75795775787fd489838a11692fbdd54cbf9e1b8ece9e18b527a4",
+          "chromium_oracle_identity_sha256": "8137772d0b9d1dedf50fa3bb728a442559ab4dbf49061bc2b796e3dc1aa7207c",
+          "chromium_oracle_rgba_sha256": "9b9b7239fd650d64a04b5ed6a3983f1f7f29926d248fffb36eef066f47563345",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/ff/ffe3cabd2951becc051fa8c0f864d8719891a8b9f369fccd5c6e228b9e651b6f.png",
+          "chromium_png_sha256": "ffe3cabd2951becc051fa8c0f864d8719891a8b9f369fccd5c6e228b9e651b6f",
+          "chromium_rgba_sha256": "9b9b7239fd650d64a04b5ed6a3983f1f7f29926d248fffb36eef066f47563345",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 32000,
+                "maximum_absolute_delta": 255,
+                "maximum_signed_delta": 255,
+                "minimum_signed_delta": -255,
+                "signed_delta_sum": -3060000
+              },
+              "green": {
+                "changed_pixels": 32000,
+                "maximum_absolute_delta": 127,
+                "maximum_signed_delta": 127,
+                "minimum_signed_delta": -127,
+                "signed_delta_sum": -1524000
+              },
+              "red": {
+                "changed_pixels": 32000,
+                "maximum_absolute_delta": 255,
+                "maximum_signed_delta": 255,
+                "minimum_signed_delta": -255,
+                "signed_delta_sum": -3060000
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 1,
+            "connected_regions": [
+              {
+                "bounds": {
+                  "height": 200,
+                  "width": 400,
+                  "x": 40,
+                  "y": 40
+                },
+                "mismatched_pixels": 32000
+              }
+            ],
+            "mismatch_bounds": {
+              "height": 200,
+              "width": 400,
+              "x": 40,
+              "y": 40
+            },
+            "mismatched_pixels": 32000
+          },
+          "font_profile": "deterministic-test-collection",
+          "id": "pending/native-mutation-v1/wpt/css_break/out-of-flow-in-multicolumn-120",
+          "mismatched_pixels": 32000,
+          "openui_png_cache_path": "png/85/8521fbf4d6c6811702cd0719457d9265a6cdee75f658252a5c2fc93fae4cc2f2.png",
+          "openui_png_sha256": "8521fbf4d6c6811702cd0719457d9265a6cdee75f658252a5c2fc93fae4cc2f2",
+          "openui_rgba_sha256": "930c3b85086ae141541ca821669fefe2ac10ea57a14dc02fa17d288840022516",
+          "raster_configuration": "cpu-skia:default",
+          "status": "different"
+        },
+        {
+          "cache_identity_sha256": "734d6e47a45c060c36f2c68714b337f9fe0f0fad5f54e944965100ce36370102",
+          "chromium_oracle_identity_sha256": "749910d83d98258267e59936f66d73214827262617425fed647ce9862d9caa76",
+          "chromium_oracle_rgba_sha256": "4c449c2b7be733e831e81fa1066ab16b5acbbae5203718c2e04b8253900f33d4",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/e0/e0ded84394f366e1132f5fba82733b93cc444efa411ee0c8f880a29dd1d7666b.png",
+          "chromium_png_sha256": "e0ded84394f366e1132f5fba82733b93cc444efa411ee0c8f880a29dd1d7666b",
+          "chromium_rgba_sha256": "4c449c2b7be733e831e81fa1066ab16b5acbbae5203718c2e04b8253900f33d4",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "deterministic-test-collection",
+          "id": "pending/native-mutation-v1/wpt/css_overflow/scrollbars-chrome-bug-001",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/a4/a4c3cbfa039cc4b6a4777b4191c944ac762df378a6c65f4a447efb72ec37e084.png",
+          "openui_png_sha256": "a4c3cbfa039cc4b6a4777b4191c944ac762df378a6c65f4a447efb72ec37e084",
+          "openui_rgba_sha256": "4c449c2b7be733e831e81fa1066ab16b5acbbae5203718c2e04b8253900f33d4",
+          "raster_configuration": "cpu-skia:default",
+          "status": "exact"
+        },
+        {
+          "cache_identity_sha256": "76dc81e04eb685326abe7beaaf2533e0eb80885a57dd0c523c40addd36c95ba7",
+          "chromium_oracle_identity_sha256": "00d0c28906f5dc38f32d549dfba5810b828a25841a7844a63c69c8eca38f578d",
+          "chromium_oracle_rgba_sha256": "bcb34f990256fe5532eb402d1dfe01927d953d052c56eec7138fa6ca4f17f1ba",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/e8/e895c6c60b7f3cd9155942d6025f0a263d6d380590567ed9f0a3ca1209fbe62e.png",
+          "chromium_png_sha256": "e895c6c60b7f3cd9155942d6025f0a263d6d380590567ed9f0a3ca1209fbe62e",
+          "chromium_rgba_sha256": "bcb34f990256fe5532eb402d1dfe01927d953d052c56eec7138fa6ca4f17f1ba",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "deterministic-test-collection",
+          "id": "pending/native-mutation-v1/wpt/css_position/position-fixed-dynamic-transformed-sibling",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/06/06f80121cdf4af81b62290f3c429c801985c115a1fef34d28ec4e4efe8b6f0bd.png",
+          "openui_png_sha256": "06f80121cdf4af81b62290f3c429c801985c115a1fef34d28ec4e4efe8b6f0bd",
+          "openui_rgba_sha256": "bcb34f990256fe5532eb402d1dfe01927d953d052c56eec7138fa6ca4f17f1ba",
+          "raster_configuration": "cpu-skia:default",
+          "status": "exact"
+        }
+      ],
+      "total": 3
+    },
+    {
+      "device_scale": 1.25,
+      "different": 3,
+      "errors": 0,
+      "exact": 0,
+      "logical_size_css_px": [
+        1280,
+        720
+      ],
+      "ordered_id_sha256": "2c8774b4297f28f1b7763d4fe66dc922f5aee8e0f09ba5356f8f052ed9cadef0",
+      "physical_size_px": [
+        1600,
+        900
+      ],
+      "profile": "desktop-1280x720@1.25",
+      "result_sha256": "695522ca47e4e3df387e456d3ece23819b42a66bdc35a99a6f652a1ece63d9de",
+      "tests": [
+        {
+          "cache_identity_sha256": "d78105bae095cd0ee9dda88f3db35fccdee04333c7c2a316a04b4de4de00de44",
+          "chromium_oracle_identity_sha256": "48a8626f4c78a8de645de1e34916c7ed863a784957cad7e10ee80f649d71dab1",
+          "chromium_oracle_rgba_sha256": "f16bb320029d5ace668a3efa3de2d49b90758c5393fb39305ff273420abb1939",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/ec/ec52b661644e74e0073db44cfa1760abe27ccaf40c46a2805c064b3f28cbbe85.png",
+          "chromium_png_sha256": "ec52b661644e74e0073db44cfa1760abe27ccaf40c46a2805c064b3f28cbbe85",
+          "chromium_rgba_sha256": "f16bb320029d5ace668a3efa3de2d49b90758c5393fb39305ff273420abb1939",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 12712,
+                "maximum_absolute_delta": 255,
+                "maximum_signed_delta": 255,
+                "minimum_signed_delta": -255,
+                "signed_delta_sum": -1234222
+              },
+              "green": {
+                "changed_pixels": 12712,
+                "maximum_absolute_delta": 127,
+                "maximum_signed_delta": 127,
+                "minimum_signed_delta": -127,
+                "signed_delta_sum": -614630
+              },
+              "red": {
+                "changed_pixels": 12712,
+                "maximum_absolute_delta": 255,
+                "maximum_signed_delta": 255,
+                "minimum_signed_delta": -255,
+                "signed_delta_sum": -1234222
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 1,
+            "connected_regions": [
+              {
+                "bounds": {
+                  "height": 125,
+                  "width": 250,
+                  "x": 25,
+                  "y": 25
+                },
+                "mismatched_pixels": 12712
+              }
+            ],
+            "mismatch_bounds": {
+              "height": 125,
+              "width": 250,
+              "x": 25,
+              "y": 25
+            },
+            "mismatched_pixels": 12712
+          },
+          "font_profile": "deterministic-test-collection",
+          "id": "pending/native-mutation-v1/wpt/css_break/out-of-flow-in-multicolumn-120",
+          "mismatched_pixels": 12712,
+          "openui_png_cache_path": "png/81/817b5d378e626d44d63e38e2da1bff4a5522ddc856e162a8d94dcc40b9fccf08.png",
+          "openui_png_sha256": "817b5d378e626d44d63e38e2da1bff4a5522ddc856e162a8d94dcc40b9fccf08",
+          "openui_rgba_sha256": "c67acd99c6e85c8fe36db823a8adc5fbbe41144fa7c05797ab688927fc7db5eb",
+          "raster_configuration": "cpu-skia:default",
+          "status": "different"
+        },
+        {
+          "cache_identity_sha256": "256566c6b6085fbf3dd165556cda7c608bdae64add77baa357d73bcbd2d066ab",
+          "chromium_oracle_identity_sha256": "0843ea2af24dc79e9fa223696784e76f07e175507f06b4a812282f2123cae09a",
+          "chromium_oracle_rgba_sha256": "96855623c5d82c2e865bca53e37a19b8a920abe9721caf5ed995c3b1f95f06d7",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/65/65ebd79c7ee3d1fe27a6415b6c4bb47225c3d1ee8ef2d845c6b289bcd2293323.png",
+          "chromium_png_sha256": "65ebd79c7ee3d1fe27a6415b6c4bb47225c3d1ee8ef2d845c6b289bcd2293323",
+          "chromium_rgba_sha256": "96855623c5d82c2e865bca53e37a19b8a920abe9721caf5ed995c3b1f95f06d7",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 563,
+                "maximum_absolute_delta": 63,
+                "maximum_signed_delta": 16,
+                "minimum_signed_delta": -63,
+                "signed_delta_sum": -16982
+              },
+              "green": {
+                "changed_pixels": 563,
+                "maximum_absolute_delta": 16,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": -16,
+                "signed_delta_sum": -8982
+              },
+              "red": {
+                "changed_pixels": 563,
+                "maximum_absolute_delta": 63,
+                "maximum_signed_delta": 16,
+                "minimum_signed_delta": -63,
+                "signed_delta_sum": -16982
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 1,
+            "connected_regions": [
+              {
+                "bounds": {
+                  "height": 157,
+                  "width": 251,
+                  "x": 26,
+                  "y": 26
+                },
+                "mismatched_pixels": 563
+              }
+            ],
+            "mismatch_bounds": {
+              "height": 157,
+              "width": 251,
+              "x": 26,
+              "y": 26
+            },
+            "mismatched_pixels": 563
+          },
+          "font_profile": "deterministic-test-collection",
+          "id": "pending/native-mutation-v1/wpt/css_overflow/scrollbars-chrome-bug-001",
+          "mismatched_pixels": 563,
+          "openui_png_cache_path": "png/89/89daf72df627368f8e45af3a851e87a0571ef5d9a8a5fbf236415d8666220a9b.png",
+          "openui_png_sha256": "89daf72df627368f8e45af3a851e87a0571ef5d9a8a5fbf236415d8666220a9b",
+          "openui_rgba_sha256": "b952b5fa9c6d937b91713c427ee505c2536eb97b029489b0191ac76945c95500",
+          "raster_configuration": "cpu-skia:default",
+          "status": "different"
+        },
+        {
+          "cache_identity_sha256": "a8b7d56e08c060307d339d34a48b6af6416901dfe755eb80268e99fc48c86d41",
+          "chromium_oracle_identity_sha256": "63d6da35b7e0dbcf2666dae25e90288520602bfe24b2c81bd96ec5a7bfae0247",
+          "chromium_oracle_rgba_sha256": "45448098d812313a655130315a063574543cabce838d2ab47ed8ae1cf7090887",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/d9/d905f62b8a7be26cfb89ce4ca7686ef9674f9a88bd82adcef41d7ab67d360160.png",
+          "chromium_png_sha256": "d905f62b8a7be26cfb89ce4ca7686ef9674f9a88bd82adcef41d7ab67d360160",
+          "chromium_rgba_sha256": "45448098d812313a655130315a063574543cabce838d2ab47ed8ae1cf7090887",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 1600,
+                "maximum_absolute_delta": 127,
+                "maximum_signed_delta": 127,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 203200
+              },
+              "red": {
+                "changed_pixels": 1600,
+                "maximum_absolute_delta": 127,
+                "maximum_signed_delta": 127,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 203200
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 1,
+            "connected_regions": [
+              {
+                "bounds": {
+                  "height": 1,
+                  "width": 1600,
+                  "x": 0,
+                  "y": 62
+                },
+                "mismatched_pixels": 1600
+              }
+            ],
+            "mismatch_bounds": {
+              "height": 1,
+              "width": 1600,
+              "x": 0,
+              "y": 62
+            },
+            "mismatched_pixels": 1600
+          },
+          "font_profile": "deterministic-test-collection",
+          "id": "pending/native-mutation-v1/wpt/css_position/position-fixed-dynamic-transformed-sibling",
+          "mismatched_pixels": 1600,
+          "openui_png_cache_path": "png/28/2843bae0b1a616284ed51dfbeeb05bda7240aea07f63915fa53341cad7e33cf1.png",
+          "openui_png_sha256": "2843bae0b1a616284ed51dfbeeb05bda7240aea07f63915fa53341cad7e33cf1",
+          "openui_rgba_sha256": "5eb5bd6f1e35b01000a1e2298d35622864910f394b90d95db86bda6423791dd7",
+          "raster_configuration": "cpu-skia:default",
+          "status": "different"
+        }
+      ],
+      "total": 3
+    },
+    {
+      "device_scale": 1.5,
+      "different": 2,
+      "errors": 0,
+      "exact": 1,
+      "logical_size_css_px": [
+        1920,
+        1080
+      ],
+      "ordered_id_sha256": "2c8774b4297f28f1b7763d4fe66dc922f5aee8e0f09ba5356f8f052ed9cadef0",
+      "physical_size_px": [
+        2880,
+        1620
+      ],
+      "profile": "desktop-1920x1080@1.5",
+      "result_sha256": "e11d60d9fc10f9380cb5896bbb607b7828ec31b1ec792194da8454b4fae13bf7",
+      "tests": [
+        {
+          "cache_identity_sha256": "15664dbb7dfeb7e6fb332f33902b3158dde4c256994860ef2d38c1ddb4ecba5c",
+          "chromium_oracle_identity_sha256": "53ac723ecae443c6b6d0defc5ae673f5590aa6284378169055ad6c21afb1ed8b",
+          "chromium_oracle_rgba_sha256": "89e88de2b13e14781207f63f8718f6d081caee6e6ef26e02003088da58abbe47",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/1d/1d340b7dde43c6d7e9937e2aaaa31e037c6d1697e05149f0e2572dc3991663bd.png",
+          "chromium_png_sha256": "1d340b7dde43c6d7e9937e2aaaa31e037c6d1697e05149f0e2572dc3991663bd",
+          "chromium_rgba_sha256": "89e88de2b13e14781207f63f8718f6d081caee6e6ef26e02003088da58abbe47",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 18000,
+                "maximum_absolute_delta": 255,
+                "maximum_signed_delta": 255,
+                "minimum_signed_delta": -255,
+                "signed_delta_sum": -1721250
+              },
+              "green": {
+                "changed_pixels": 18000,
+                "maximum_absolute_delta": 127,
+                "maximum_signed_delta": 127,
+                "minimum_signed_delta": -127,
+                "signed_delta_sum": -857250
+              },
+              "red": {
+                "changed_pixels": 18000,
+                "maximum_absolute_delta": 255,
+                "maximum_signed_delta": 255,
+                "minimum_signed_delta": -255,
+                "signed_delta_sum": -1721250
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 1,
+            "connected_regions": [
+              {
+                "bounds": {
+                  "height": 150,
+                  "width": 300,
+                  "x": 30,
+                  "y": 30
+                },
+                "mismatched_pixels": 18000
+              }
+            ],
+            "mismatch_bounds": {
+              "height": 150,
+              "width": 300,
+              "x": 30,
+              "y": 30
+            },
+            "mismatched_pixels": 18000
+          },
+          "font_profile": "deterministic-test-collection",
+          "id": "pending/native-mutation-v1/wpt/css_break/out-of-flow-in-multicolumn-120",
+          "mismatched_pixels": 18000,
+          "openui_png_cache_path": "png/1f/1f2d072bb79f25455bc33c20459d1e513857ac2c3e2399894780c6cb63e5c2a7.png",
+          "openui_png_sha256": "1f2d072bb79f25455bc33c20459d1e513857ac2c3e2399894780c6cb63e5c2a7",
+          "openui_rgba_sha256": "8377c8d0a467b8abbef4c1cec7ca1f75520dab6f2b85167ff5405d4279b6a263",
+          "raster_configuration": "cpu-skia:default",
+          "status": "different"
+        },
+        {
+          "cache_identity_sha256": "99a55c647047f6ea3be04c66007dea7575854c716ff2ccddd1fb2b00b96cc29d",
+          "chromium_oracle_identity_sha256": "64ae906eb75f5b24b6607a97a328338216d25d9f71933d250aa082bc652e7ab7",
+          "chromium_oracle_rgba_sha256": "a0dcaddd76e96a6ef505f47fcd40e7a5e253e8a40015ed86e2d74f9beafe6483",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/18/18e585298a5aee294cf1b846e341b1f9b04fa6d557a4aca69030cbc7b71687aa.png",
+          "chromium_png_sha256": "18e585298a5aee294cf1b846e341b1f9b04fa6d557a4aca69030cbc7b71687aa",
+          "chromium_rgba_sha256": "a0dcaddd76e96a6ef505f47fcd40e7a5e253e8a40015ed86e2d74f9beafe6483",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 600,
+                "maximum_absolute_delta": 64,
+                "maximum_signed_delta": 64,
+                "minimum_signed_delta": -64,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 598,
+                "maximum_absolute_delta": 32,
+                "maximum_signed_delta": 32,
+                "minimum_signed_delta": -32,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 600,
+                "maximum_absolute_delta": 64,
+                "maximum_signed_delta": 64,
+                "minimum_signed_delta": -64,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 1,
+            "connected_regions": [
+              {
+                "bounds": {
+                  "height": 2,
+                  "width": 300,
+                  "x": 32,
+                  "y": 218
+                },
+                "mismatched_pixels": 600
+              }
+            ],
+            "mismatch_bounds": {
+              "height": 2,
+              "width": 300,
+              "x": 32,
+              "y": 218
+            },
+            "mismatched_pixels": 600
+          },
+          "font_profile": "deterministic-test-collection",
+          "id": "pending/native-mutation-v1/wpt/css_overflow/scrollbars-chrome-bug-001",
+          "mismatched_pixels": 600,
+          "openui_png_cache_path": "png/f6/f625a399fb5a302982829732f0169426eec9b4a27bfdf93ecdc29905d78f524d.png",
+          "openui_png_sha256": "f625a399fb5a302982829732f0169426eec9b4a27bfdf93ecdc29905d78f524d",
+          "openui_rgba_sha256": "a745ee55c4dc75ef3e102843f495d771e5bbd86e655a831af29c5a8b552db51e",
+          "raster_configuration": "cpu-skia:default",
+          "status": "different"
+        },
+        {
+          "cache_identity_sha256": "ea6342ac116e072156c8f20bdad2e5f034863db6e43541b9ce3fb3105127eda1",
+          "chromium_oracle_identity_sha256": "d1fa01ad2a0b594ffe857ba0d2f00d8956e9b5d5e61f76b64e200df6b0d74be2",
+          "chromium_oracle_rgba_sha256": "09e5028eedbe465b21c0b5ef406e465f5d330b0bb4624ac067fea667795ddcbc",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/b7/b7ddae01cd5fa298eb5232138c2263764d132830afc7f0b33b9bff4bb8c7151b.png",
+          "chromium_png_sha256": "b7ddae01cd5fa298eb5232138c2263764d132830afc7f0b33b9bff4bb8c7151b",
+          "chromium_rgba_sha256": "09e5028eedbe465b21c0b5ef406e465f5d330b0bb4624ac067fea667795ddcbc",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "deterministic-test-collection",
+          "id": "pending/native-mutation-v1/wpt/css_position/position-fixed-dynamic-transformed-sibling",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/52/52ccebe6f5c871715a24305ff76aca2ddb833e4d5c07730167cc93d0e42b8865.png",
+          "openui_png_sha256": "52ccebe6f5c871715a24305ff76aca2ddb833e4d5c07730167cc93d0e42b8865",
+          "openui_rgba_sha256": "09e5028eedbe465b21c0b5ef406e465f5d330b0bb4624ac067fea667795ddcbc",
+          "raster_configuration": "cpu-skia:default",
+          "status": "exact"
+        }
+      ],
+      "total": 3
+    }
+  ],
+  "raster": {
+    "backend_identity_fields": [
+      "backend",
+      "gl_renderer",
+      "gl_version",
+      "driver",
+      "color_type",
+      "sample_count",
+      "surface_properties"
+    ],
+    "backend_selection": "explicit-immutable",
+    "candidate_backend": {
+      "name": "ganesh-gl",
+      "promotion_policy": "global primitive, focused, and full-census improvement only"
+    },
+    "destination_color_space": "sRGB",
+    "device_transform_before_raster": true,
+    "exact_tolerance_pixels": 0,
+    "logical_recording": true,
+    "physical_surface": true,
+    "pixel_format": "N32 premultiplied RGBA",
+    "portable_backend": "cpu-skia",
+    "qualification_backend": "cpu-skia",
+    "whole_frame_resampling": "forbidden"
+  },
+  "residual_ledger": {
+    "error": "unowned renderer residuals: pending/native-mutation-v1/wpt/css_break/out-of-flow-in-multicolumn-120, pending/native-mutation-v1/wpt/css_overflow/scrollbars-chrome-bug-001, pending/native-mutation-v1/wpt/css_position/position-fixed-dynamic-transformed-sibling",
+    "ownership_input_sha256": "ca8d04dce8056248f785e0be572827462abe44fbf7b75c459abd08de9b110f7d",
+    "qualifying": false,
+    "schema_version": 2
+  },
+  "resource_hashes": {
+    "docs/renderer/generated/media-first-frames-v1.json": "81c297a3201b04d6d28761f68312e4ad9f66856f87f87f0cf3337b411c6fb70a",
+    "tools/accountability/data/wpt_ported/sp20_resource_manifest.json": "7b6ef91b6dcfccef8751fdd25b47a0e3a9a682e8b982474fe34bdf72cf331328",
+    "tools/qualification/manifests/complete-5731.json": "2d68221f88c8280249b45c304338a9ab312918fd8c82d80ae1a46c0a26a8816f",
+    "tools/qualification/manifests/expanded-v35.json": "367efecaf06da167025130e1d8b746268161f6c6a22d77f78e1a5a994e7d6e03",
+    "tools/qualification/manifests/focused-raster.json": "215b2eee97e6eacb7984ede2e8c8e11e5d049d1ffe948589083efc3258528c98",
+    "tools/qualification/manifests/primitive-raster.json": "03a376120ce4b67a5d9580c9ed38f337795f95a0bd2b800175862ea1b966d978",
+    "tools/qualification/residual-ownership-v2.json": "ca8d04dce8056248f785e0be572827462abe44fbf7b75c459abd08de9b110f7d"
+  },
+  "results": {
+    "different": 7,
+    "errors": 0,
+    "exact": 5,
+    "profile_result_sha256": "d7fd2c5af147f9319e84c0144bf360d91b0ceed8d51db7fa4ebe3dbc97429d04",
+    "total": 12
+  },
+  "schema_version": 2,
+  "selection": {
+    "complete_id_set": false,
+    "complete_profile_set": true,
+    "monochrome_raster_config": null
+  },
+  "shard": {
+    "count": 1,
+    "index": 0
+  },
+  "source": {
+    "clean": true,
+    "commit": "5520ed920523164574fc80187b2702892cb5ac62",
+    "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6",
+    "source_tree_sha256": "0e2c22d402f809735879222fed8bbaad849d989d3aa7c96ac61595e1d3c77336",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "5520ed920523164574fc80187b2702892cb5ac62",
+    "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6",
+    "source_tree_sha256": "0e2c22d402f809735879222fed8bbaad849d989d3aa7c96ac61595e1d3c77336",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "suite": "full"
+}

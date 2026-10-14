@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "owner_pid": 3380621,
+  "source": {
+    "commit": "5520ed920523164574fc80187b2702892cb5ac62",
+    "clean": true,
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "source_tree_sha256": "0e2c22d402f809735879222fed8bbaad849d989d3aa7c96ac61595e1d3c77336",
+    "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6"
+  },
+  "runner_sha256": "02cc432163bf1f925772405b2f60f6903824cf42f1598f84311b186215c43ad5",
+  "renderer_build_receipt_sha256": "d5b3ce3228361353e1a9480163fd5b877de089f9e99df7d798ae73f56c94a181",
+  "scope": "Geometry-only debug of sealed independent Engine replay; no PNG or pixel comparison, no Chromium process, no Cargo target, no cache writes or performance qualification",
+  "independent_of_live_pixel_worker_processes": true,
+  "qualified": false,
+  "complete": true,
+  "checks": [
+    {
+      "name": "oof-ordered",
+      "argv": [
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-fresh-renderer-build-v4525/guarded-build/pixel_compare",
+        "debug",
+        "pending/native-mutation-v1/wpt/css_break/out-of-flow-in-multicolumn-120",
+        "--viewport",
+        "800x600",
+        "--scale",
+        "1",
+        "--backend",
+        "cpu-skia"
+      ],
+      "pid": 3380677,
+      "actual_exit_code": 0,
+      "terminal_reaped": true,
+      "log_sha256": "88ae9ee33985f2b3a1581043818b65130231abaccdb4f7b19be4fd55a5df7022",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "fixed-ordered",
+      "argv": [
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-fresh-renderer-build-v4525/guarded-build/pixel_compare",
+        "debug",
+        "pending/native-mutation-v1/wpt/css_position/position-fixed-dynamic-transformed-sibling",
+        "--viewport",
+        "800x600",
+        "--scale",
+        "1.25",
+        "--backend",
+        "cpu-skia"
+      ],
+      "pid": 3380688,
+      "actual_exit_code": 0,
+      "terminal_reaped": true,
+      "log_sha256": "8f18d979f972337cb742563e9d049883c86a2f1d81bee7ae04af495a066436c6",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "scrollbar-ordered",
+      "argv": [
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-fresh-renderer-build-v4525/guarded-build/pixel_compare",
+        "debug",
+        "pending/native-mutation-v1/wpt/css_overflow/scrollbars-chrome-bug-001",
+        "--viewport",
+        "800x600",
+        "--scale",
+        "1.25",
+        "--backend",
+        "cpu-skia"
+      ],
+      "pid": 3380695,
+      "actual_exit_code": 0,
+      "terminal_reaped": true,
+      "log_sha256": "e21372f6e49034b9908c56acd0759e373cf3ab69293a6e96cba0dc1aa46379e5",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "source_after": {
+    "commit": "5520ed920523164574fc80187b2702892cb5ac62",
+    "clean": true,
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "source_tree_sha256": "0e2c22d402f809735879222fed8bbaad849d989d3aa7c96ac61595e1d3c77336",
+    "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6"
+  },
+  "source_unchanged": true,
+  "runner_unchanged": true
+}

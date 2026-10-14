@@ -29,36 +29,47 @@ right picture or the Chromium test uses a script. See the
 
 ### Current closure work (13 October 2026)
 
-The latest completed expanded Chromium run at clean `fb1b68fa` is
-**21,724/23,728 exact**, with **2,004 differences and zero render errors**.
-Its original-case subset is **20,996/22,924 exact (91.6%)**, with 1,928
-differences. The 201 admitted additions are **728/804 exact**; 182 cases match
-in all four profiles and 19 need repair. These are pixel results at that
-checkpoint, not a whole-project completion percentage.
+At clean `5520ed92`, the freshly built CPU renderer matches pinned Chromium in
+**640/640 focused** and **960/960 primitive** comparisons, with zero differences
+and zero errors. The complete original census is running and the expanded
+census is queued; these focused results do not establish the overall match rate.
 
-Against the earlier complete original run at `fe51eab9` (21,317/22,924 exact),
-340 comparisons lose equality with unchanged Chromium pixels and 19 gain it.
-Five Chromium captures also change. Two fresh repeats of those five fixtures
-across all four profiles reproduce the newer Chromium pixels and match the
-native images in **40/40** comparisons. Both versions remain preserved; the
-cause of the older capture differences remains open.
+The last completed expanded run at `fb1b68fa` remains **21,724/23,728 exact**.
+Its original subset is **20,996/22,924 exact (91.6%)**. These are rendering
+measurements at that checkpoint, not a whole-project completion percentage.
+The earlier 340 losses with unchanged Chromium pixels and five changed browser
+captures remain preserved and require reviewed causes; repeated captures of
+those five fixtures reproduced the newer Chromium pixels in 40/40 comparisons.
 
-At `fb1b68fa`, focused **640/640** and primitive **960/960** comparisons are
-exact. The standalone original run stopped on a PNG-cache publication error
-and has no valid total. Its queued retry was retired before rendering began.
-The shared publisher now preserves a verified complete PNG throughout
-concurrent publication. A fresh renderer build and complete matrix remain
-required for the later source changes.
+The full native workspace at `5520ed92` reports **9,282 passed / 1 failed**;
+doctests report **2 passed / 0 failed / 13 ignored**. The remaining failure was a
+public test expecting an unchanged attachment range to reset deferred progress.
+Pinned Chromium preserves that progress. The reviewed correction at `e52d047f`
+changes only the test; its complete affected group passes **6/6**. The prior
+transform-overflow, progress-phase and radius publication failures are repaired
+and pass their strict native guards. Later source changes still require their
+own complete workspace and Chromium qualification.
 
-The complete native workspace at `a963558e` reports **9,252 passed / 2 failed / 0 ignored**. Doctests report **2 passed / 0 failed / 13 ignored**. The transform overflow failure remains strict: pinned Chromium reports 250px; native reports 200px. The second failing public guard reports an active animation phase where its end-state contract requires the after phase; its cause is being investigated. The earlier timing, continuation border and collapsed-cell clipping repairs have separate scoped evidence at `896325c0`; those pixels still require Chromium qualification.
+All **331 Python tests in 21 modules** and **21 generated/format checks** pass at
+`5520ed92`. Its freshly built C library passes **70 C/C++ consumers** with
+**160 exports**, preserving earlier exports and layouts. Eight independent
+radius-axis APIs are implemented in Rust and C; their pixels still need
+Chromium qualification.
 
-All **330 Python tests in 21 modules** and all **21 generated/format checks** pass at that checkpoint, including the pending native mutation generator and clang-format 18.1.3. Retained image shader ownership and layered resource lifetime guards pass. Three ordered native builders remain diagnostic and require exact four-profile Chromium measurements. Open UI runs no JavaScript; applications call native Rust APIs and callbacks.
+Three pending cases replay ordered native Engine mutations and layout barriers
+without JavaScript. Their fresh four-profile measurement is **5/12 exact**, with
+seven differences and no errors; no case passes all four profiles, so none is
+admitted. The nested column trace confirms a child sized to the whole parent
+instead of its column. Fractional background edges also remain open.
 
-The current source C/C++ consumer run exits **0** against its freshly built library. The existing append-only removal interface has **158 exports**, with 68 headless C/C++ consumers; this does not qualify packaged or physical-window applications.
+Hosted format and PR platform hardening pass at `5520ed92`; hosted CI fails the
+same equal-range guard, and the complete manual hardening result is pending.
+A new hosted run must verify the corrected source. Native API completion,
+transparent layer publication and presentation tracks, 3D, remaining pixels,
+physical GPU/AT-SPI/performance, reproducible packaging, signing and publication
+remain open. Open UI runs no JavaScript; apps use native Rust APIs and callbacks.
 
-Hosted format, CI and hardening gates pass at `fb1b68fa`; later changes need new hosted runs. Native API completion, transparent layer publication/compositor tracks, 3D, remaining Chromium pixels, physical GPU/AT-SPI/performance, reproducible packaging, signing and publication remain open. Earlier source identities and evidence remain explicit.
-
-[Current closure evidence](docs/renderer/generated/native-final-closure-status-v6.json).
+[Current closure evidence](docs/renderer/generated/native-final-closure-status-v7.json).
 
 ### Table ownership and opacity repair (full renderer gate open)
 
