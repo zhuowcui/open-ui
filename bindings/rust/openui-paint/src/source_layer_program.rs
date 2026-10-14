@@ -306,6 +306,7 @@ pub struct RetainedSourcePaintLayer {
     first_operation: usize,
     end_operation: usize,
     entry_matrix: Matrix,
+    owner_translation: Option<(SourcePaintPropertyIdentity, Matrix)>,
     // Own both the exact operands and all font/image/path leases.
     _program: Arc<LayeredPaintProgram>,
 }
@@ -320,9 +321,19 @@ impl RetainedSourcePaintLayer {
     pub fn strategy(&self) -> SourceLayerStrategy {
         self.strategy
     }
-    /// Paint coordinates at the retained entry, separate from its ancestor state.
+    /// Drawing coordinates before the retained owner translation, separate from
+    /// the ancestor state. The drawing rectangle is not a transformed AABB.
     pub fn bounds(&self) -> Rect {
         self.bounds
+    }
+    /// An owned property retained outside the single drawing record. Other
+    /// transforms remain in the source or on the original ancestor spine.
+    pub fn owner_translation(&self) -> Option<(SourcePaintPropertyIdentity, Matrix)> {
+        self.owner_translation
+    }
+    fn entry_bounds(&self) -> Rect {
+        self.owner_translation
+            .map_or(self.bounds, |(_, matrix)| matrix.map_rect(self.bounds).0)
     }
     pub fn rect_known_to_be_opaque(&self) -> Rect {
         self.known_opaque
@@ -882,7 +893,7 @@ impl SourceLayerProgram {
             if let Some(reason) = unavailable {
                 candidate.unavailable = Some(reason);
             } else {
-                match extract(&program, c, &items, depths[j], &states) {
+                match extract(&program, c, &items, depths[j], &states, &properties) {
                     Ok(source) => {
                         if source.strategy != SourceLayerStrategy::SolidColor
                             && program.operations()[c.first_operation..c.end_operation]
@@ -906,7 +917,9 @@ impl SourceLayerProgram {
                         }
                         let mut merged = false;
                         if let Some(home) = sources.last() {
-                            let same = home.context == c.identity
+                            let same = home.owner_translation.is_none()
+                                && source.owner_translation.is_none()
+                                && home.context == c.identity
                                 && contexts
                                     .iter()
                                     .enumerate()
@@ -923,7 +936,9 @@ impl SourceLayerProgram {
                                 [home.end_operation..c.first_operation]
                                 .iter()
                                 .all(annotation);
-                            let overlaps = !intersection(home.bounds, source.bounds).is_empty();
+                            let overlaps =
+                                !intersection(home.entry_bounds(), source.entry_bounds())
+                                    .is_empty();
                             let decision = if same && no_ops {
                                 SourceLayerOrderDecision::ContiguousSameSourceMerge
                             } else if overlaps {
@@ -941,9 +956,14 @@ impl SourceLayerProgram {
                             if same && no_ops {
                                 let mut combined = c.clone();
                                 combined.first_operation = home.first_operation;
-                                if let Ok(mut combined_source) =
-                                    extract(&program, &combined, &items, depths[j], &states)
-                                {
+                                if let Ok(mut combined_source) = extract(
+                                    &program,
+                                    &combined,
+                                    &items,
+                                    depths[j],
+                                    &states,
+                                    &properties,
+                                ) {
                                     // A real multi-item merged record cannot remain a single solid item.
                                     combined_source.solid_color = None;
                                     if combined_source.strategy == SourceLayerStrategy::SolidColor {
@@ -1065,6 +1085,9 @@ impl SourceLayerProgram {
                 {
                     tracked.legacy_helper_boundary();
                     tracked.save();
+                    if let Some((_, matrix)) = source.owner_translation {
+                        tracked.concat(&matrix);
+                    }
                     if let Some(color) = source.solid_color {
                         let mut paint = Paint::default();
                         paint.set_color4f(color, None);
@@ -1140,13 +1163,165 @@ struct PreparedProgram {
     nested: Vec<PreparedProgram>,
 }
 
+/// Retain an actual owner property separately from its one-operation drawing
+/// record. This is not a transform upcast: no draw geometry or paint flags are
+/// rewritten, and a mixed state interval keeps the ordinary picture route.
+fn extract_owner_translation(
+    program: &Arc<LayeredPaintProgram>,
+    context: &SourcePaintContextProjection,
+    items: &[SourceDisplayItemProjection],
+    states: &[State],
+    properties: &[SourcePaintPropertyProjection],
+) -> Option<RetainedSourcePaintLayer> {
+    let active = items
+        .iter()
+        .filter(|item| {
+            context.first_operation <= item.first_operation
+                && item.end_operation <= context.end_operation
+                && item.draw_count > 0
+        })
+        .collect::<Vec<_>>();
+    if active.len() != 1 {
+        return None;
+    }
+    let item = active[0];
+    if item.binding != context.binding
+        || item.context != Some(context.identity)
+        || item.role != PaintDisplayItemRole::BoxDecorationBackground
+        || item.record_operation_count != 1
+        || item.draw_count != 1
+    {
+        return None;
+    }
+    let entry = &states[context.first_operation];
+    let mut depth = 0usize;
+    let mut draw = None;
+    let mut translation = None;
+    for (operation, op) in program
+        .operations()
+        .iter()
+        .enumerate()
+        .take(context.end_operation)
+        .skip(context.first_operation)
+    {
+        match op {
+            ProgramOperation::Save if draw.is_none() => depth += 1,
+            ProgramOperation::Translate(offset) if draw.is_none() && depth > 0 => {
+                if !offset.x.is_finite() || !offset.y.is_finite() {
+                    return None;
+                }
+                let property = properties.iter().find(|property| {
+                    property.operation == operation
+                        && property.context == Some(context.identity)
+                        && property.identity.source == context.binding.id
+                        && property.identity.kind == SourcePaintPropertyKind::Transform
+                })?;
+                translation = Some(property.identity);
+            }
+            ProgramOperation::Draw(index)
+                if draw.is_none()
+                    && depth > 0
+                    && item.first_operation <= operation
+                    && operation < item.end_operation =>
+            {
+                let OwnedDraw::Rect(rect, paint) = program.owned_draw(*index) else {
+                    return None;
+                };
+                if !solid_flags(paint) || !finite_rect(*rect) {
+                    return None;
+                }
+                let state = &states[operation];
+                if state.clip != entry.clip
+                    || state.effect != entry.effect
+                    || state.scroll != entry.scroll
+                    || state.transform != translation
+                {
+                    return None;
+                }
+                draw = Some((*index, *rect, state.matrix));
+            }
+            ProgramOperation::Restore if draw.is_some() => {
+                depth = depth.checked_sub(1)?;
+            }
+            ProgramOperation::EnterOwner(..)
+            | ProgramOperation::ExitOwner
+            | ProgramOperation::Property(..) => {}
+            // Real clips, effects, scale, rotation, skew, later translations,
+            // restore-to commands and second drawing operations stay baked.
+            _ => return None,
+        }
+    }
+    if depth != 0 {
+        return None;
+    }
+    let property = translation?;
+    let (index, rect, draw_matrix) = draw?;
+    let restored = &states[context.end_operation];
+    if restored.matrix != entry.matrix
+        || restored.transform != entry.transform
+        || restored.clip != entry.clip
+        || restored.effect != entry.effect
+        || restored.scroll != entry.scroll
+    {
+        return None;
+    }
+    let matrix = Matrix::concat(&entry.matrix.invert()?, &draw_matrix);
+    if !matrix.is_finite()
+        || !matrix.is_scale_translate()
+        || matrix.scale_x() != 1.0
+        || matrix.scale_y() != 1.0
+    {
+        return None;
+    }
+    let OwnedDraw::Rect(_, paint) = program.owned_draw(index) else {
+        return None;
+    };
+    let color = paint.color4f();
+    if ![color.r, color.g, color.b, color.a]
+        .into_iter()
+        .all(f32::is_finite)
+    {
+        return None;
+    }
+    let local = Rect::from_xywh(0.0, 0.0, rect.width(), rect.height());
+    let mut recorder = PictureRecorder::new();
+    let canvas = recorder.begin_recording(local, false);
+    canvas.translate((-rect.left, -rect.top));
+    canvas.draw_rect(rect, paint);
+    let picture = recorder.finish_recording_as_picture(None)?;
+    Some(RetainedSourcePaintLayer {
+        binding: context.binding,
+        context: context.identity,
+        strategy: SourceLayerStrategy::SolidColor,
+        bounds: rect,
+        known_opaque: if color.a == 1.0 {
+            rect
+        } else {
+            Rect::default()
+        },
+        background_hint: color,
+        solid_color: Some(color),
+        solid_blend: paint.blend_mode(),
+        picture,
+        first_operation: context.first_operation,
+        end_operation: context.end_operation,
+        entry_matrix: entry.matrix,
+        owner_translation: Some((property, matrix)),
+        _program: Arc::clone(program),
+    })
+}
+
 fn extract(
     program: &Arc<LayeredPaintProgram>,
     context: &SourcePaintContextProjection,
     items: &[SourceDisplayItemProjection],
     depth: usize,
     states: &[State],
+    properties: &[SourcePaintPropertyProjection],
 ) -> Result<RetainedSourcePaintLayer, SourceLayerUnavailable> {
+    if let Some(source) = extract_owner_translation(program, context, items, states, properties) {
+        return Ok(source);
+    }
     let entry = &states[context.first_operation];
     let inverse = entry
         .matrix
@@ -1345,6 +1520,7 @@ fn extract(
         first_operation: context.first_operation,
         end_operation: context.end_operation,
         entry_matrix: entry.matrix,
+        owner_translation: None,
         _program: Arc::clone(program),
     })
 }
@@ -1573,11 +1749,24 @@ mod source_tests {
             (2, SourceLayerStrategy::OpaquePicture),
             (3, SourceLayerStrategy::TransparentPicture),
             (4, SourceLayerStrategy::TransparentPicture),
-            (5, SourceLayerStrategy::OpaquePicture),
+            (5, SourceLayerStrategy::SolidColor),
         ] {
             let (picture, program) = captured(mode);
             assert_eq!(program.sources().len(), 1, "mode {mode}");
             assert_eq!(program.sources()[0].strategy(), strategy, "mode {mode}");
+            if mode == 5 {
+                let source = &program.sources()[0];
+                assert_eq!(source.bounds(), Rect::from_xywh(0.0, 0.0, 20.0, 20.0));
+                let (property, matrix) = source.owner_translation().unwrap();
+                assert_eq!(property.source, source.binding().id);
+                assert_eq!(property.kind, SourcePaintPropertyKind::Transform);
+                assert_eq!(matrix, Matrix::translate((2.0, 1.0)));
+                assert!(program.properties().iter().any(|retained| {
+                    retained.identity == property
+                        && retained.context == Some(source.context())
+                        && retained.matrix == matrix_array(&matrix)
+                }));
+            }
             for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
                 if mode == 1 {
                     assert_promoted_rounded_chromium_frame(
@@ -1919,6 +2108,256 @@ mod source_tests {
                     pixels(&picture, None, scale)
                 );
             }
+        }
+    }
+    fn translated_owner_capture(
+        translations: &[(f32, f32)],
+        neighbor: u32,
+        repeat_context: bool,
+    ) -> (Picture, SourceLayerProgram) {
+        let mut doc = Document::new();
+        let node = doc.create_node(ElementTag::Div);
+        let fragment = Fragment::new_box(
+            node,
+            PhysicalSize::new(LayoutUnit::from_i32(20), LayoutUnit::from_i32(20)),
+        );
+        let mut recorder = PictureRecorder::new();
+        let raw = recorder.begin_recording(Rect::from_xywh(0.0, 0.0, 32.0, 32.0), false);
+        let scope = PaintProgramScope::new(raw);
+        let canvas: &dyn PaintCanvas = raw;
+        canvas.clear(Color::WHITE);
+        for pass in 0..if repeat_context { 2 } else { 1 } {
+            let _owner = PaintOwnerScope::new(raw, &fragment);
+            let _context = PaintSourceContextScope::new(
+                raw,
+                PaintSourceContextInput {
+                    owner: PaintProgramOwner {
+                        node_id: node,
+                        owns_element_box: neighbor != 7,
+                    },
+                    layout_role: PaintLayoutScopeRole::AuthoredBox,
+                    border_box: Rect::from_xywh(0.0, 0.0, 20.0, 20.0),
+                    rounded_paint_offset: (0.0, 0.0),
+                    paint_offset_residual: (0.0, 0.0),
+                    positioning: RawPositioningReference::InFlow,
+                    scroll_owner: None,
+                    is_viewport: false,
+                    will_change_transform: true,
+                    owns_transform_containing_block: false,
+                    paint_isolation: false,
+                },
+            );
+            canvas.save();
+            for offset in translations {
+                canvas.translate(*offset);
+            }
+            if pass == 1 {
+                canvas.translate((20.0, 0.0));
+            }
+            match neighbor {
+                1 => {
+                    canvas.scale((2.0, 1.0));
+                }
+                2 => {
+                    canvas.clip_rect(
+                        Rect::from_xywh(0.0, 0.0, 10.0, 20.0),
+                        ClipOp::Intersect,
+                        false,
+                    );
+                }
+                3 => {
+                    canvas.save_layer_alpha_f(None, 0.5);
+                }
+                5 => {
+                    canvas.rotate(30.0, None);
+                }
+                6 => {
+                    canvas.concat(&Matrix::new_all(
+                        1.0, 0.25, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0,
+                    ));
+                }
+                _ => {}
+            }
+            {
+                let _item = PaintDisplayItemScope::new(
+                    raw,
+                    PaintProgramOwner {
+                        node_id: node,
+                        owns_element_box: true,
+                    },
+                    PaintDisplayItemRole::BoxDecorationBackground,
+                );
+                let mut paint = Paint::default();
+                paint.set_color(Color::BLUE);
+                paint.set_anti_alias(true);
+                canvas.draw_rect(Rect::from_xywh(0.0, 0.0, 20.0, 20.0), &paint);
+                if neighbor == 4 {
+                    paint.set_color(Color::BLACK);
+                    canvas.draw_rect(Rect::from_xywh(2.0, 2.0, 5.0, 5.0), &paint);
+                }
+            }
+            if neighbor == 3 {
+                canvas.restore();
+            }
+            if neighbor == 8 {
+                // A later transform is not an enclosing owner property.
+                canvas.translate((1.0, 0.0));
+            }
+            canvas.restore();
+        }
+        let captured = scope.snapshot();
+        drop(scope);
+        let picture = recorder.finish_recording_as_picture(None).unwrap();
+        let layered = captured
+            .partition_layers(
+                PaintLayerBinding {
+                    id: PaintLayerSourceId(1),
+                    owner: None,
+                    role: PaintLayerSourceRole::DocumentContent,
+                },
+                |n| {
+                    Some(PaintLayerBinding {
+                        id: PaintLayerSourceId(n.index() as u64 + 2),
+                        owner: Some(PaintLayerNodeIdentity {
+                            document: 1,
+                            index: u32::try_from(n.index()).unwrap(),
+                            generation: 1,
+                        }),
+                        role: PaintLayerSourceRole::AuthoredBox,
+                    })
+                },
+            )
+            .unwrap();
+        let program = layered.source_layer_program().unwrap();
+        drop(doc);
+        (picture, program)
+    }
+
+    fn translated_owner_spine_pixels(program: &SourceLayerProgram, scale: f32) -> Vec<u8> {
+        let size = ((32.0 * scale) as i32, (32.0 * scale) as i32);
+        let mut surface = skia_safe::surfaces::raster_n32_premul(size).unwrap();
+        surface.canvas().scale((scale, scale));
+        program.program.replay(surface.canvas()).unwrap();
+        let mut bytes = vec![0; size.0 as usize * size.1 as usize * 4];
+        assert!(surface.read_pixels(
+            &ImageInfo::new_n32(size, AlphaType::Premul, None),
+            &mut bytes,
+            size.0 as usize * 4,
+            (0, 0),
+        ));
+        bytes
+    }
+
+    #[test]
+    fn retained_owner_translation_preserves_original_rect_and_exact_fractional_phase() {
+        for translations in [
+            vec![(2.0, 1.0)],
+            vec![(-1.25, -0.75)],
+            vec![(1.25, 2.25)],
+            vec![(1.0, 0.5), (1.0, 0.5)],
+        ] {
+            let (picture, program) = translated_owner_capture(&translations, 0, false);
+            assert_eq!(program.sources().len(), 1);
+            let source = &program.sources()[0];
+            assert_eq!(source.strategy(), SourceLayerStrategy::SolidColor);
+            assert_eq!(source.bounds(), Rect::from_xywh(0.0, 0.0, 20.0, 20.0));
+            assert_eq!(source.rect_known_to_be_opaque(), source.bounds());
+            let (property, matrix) = source.owner_translation().unwrap();
+            assert_eq!(property.source, source.binding().id);
+            assert_eq!(property.kind, SourcePaintPropertyKind::Transform);
+            let offset = translations
+                .iter()
+                .fold((0.0, 0.0), |sum, next| (sum.0 + next.0, sum.1 + next.1));
+            assert_eq!(matrix, Matrix::translate(offset));
+            assert_eq!(program.display_items()[0].record_operation_count, 1);
+            assert_eq!(program.display_items()[0].draw_count, 1);
+            for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
+                assert_eq!(
+                    pixels(&picture, Some(&program), scale),
+                    pixels(&picture, None, scale)
+                );
+                assert_eq!(
+                    translated_owner_spine_pixels(&program, scale),
+                    pixels(&picture, None, scale)
+                );
+                let mut surface = skia_safe::surfaces::raster_n32_premul((
+                    (32.0 * scale) as i32,
+                    (32.0 * scale) as i32,
+                ))
+                .unwrap();
+                surface.canvas().scale((scale, scale));
+                surface.canvas().save();
+                surface.canvas().translate((3.0, 4.0));
+                surface.canvas().clip_rect(
+                    Rect::from_xywh(0.0, 0.0, 20.0, 20.0),
+                    ClipOp::Intersect,
+                    false,
+                );
+                let count = surface.canvas().save_count();
+                let before = surface.canvas().local_to_device_as_3x3();
+                let clip = surface.canvas().device_clip_bounds();
+                program.replay_diagnostic(surface.canvas()).unwrap();
+                assert_eq!(surface.canvas().save_count(), count);
+                assert_eq!(surface.canvas().local_to_device_as_3x3(), before);
+                assert_eq!(surface.canvas().device_clip_bounds(), clip);
+                surface.canvas().restore();
+            }
+        }
+    }
+
+    #[test]
+    fn retained_owner_translation_rejects_mixed_state_and_extra_drawing_records() {
+        for neighbor in 1..=8 {
+            let (_, program) = translated_owner_capture(&[(2.0, 1.0)], neighbor, false);
+            assert!(program
+                .sources()
+                .iter()
+                .all(|source| source.owner_translation().is_none()));
+            assert!(program
+                .sources()
+                .iter()
+                .all(|source| source.strategy() != SourceLayerStrategy::SolidColor));
+            if neighbor == 7 {
+                assert!(program
+                    .candidates()
+                    .iter()
+                    .any(|candidate| candidate.unavailable
+                        == Some(SourceLayerUnavailable::BorrowedLayoutBox)));
+            }
+        }
+        let (_, invalid) = translated_owner_capture(&[(f32::INFINITY, 0.0)], 0, false);
+        assert!(invalid.sources().is_empty());
+        assert!(invalid
+            .candidates()
+            .iter()
+            .all(|candidate| candidate.source_index.is_none()));
+    }
+
+    #[test]
+    fn retained_owner_translation_is_a_direct_property_boundary_between_same_source_runs() {
+        let (picture, program) = translated_owner_capture(&[(2.0, 1.0)], 0, true);
+        assert_eq!(program.sources().len(), 2);
+        assert_eq!(
+            program.sources()[0].binding(),
+            program.sources()[1].binding()
+        );
+        assert_ne!(
+            program.sources()[0].owner_translation(),
+            program.sources()[1].owner_translation()
+        );
+        assert!(program
+            .ordering()
+            .iter()
+            .all(|order| order.decision != SourceLayerOrderDecision::ContiguousSameSourceMerge));
+        for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
+            assert_eq!(
+                pixels(&picture, Some(&program), scale),
+                pixels(&picture, None, scale)
+            );
+            assert_eq!(
+                translated_owner_spine_pixels(&program, scale),
+                pixels(&picture, None, scale)
+            );
         }
     }
 }

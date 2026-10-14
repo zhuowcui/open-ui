@@ -22,6 +22,15 @@ Siblings retain operator order and overlap barriers. Only contiguous projections
 of the same source and compatible entry state can merge; multiple items and
 transform upcasts revoke a single-record solid annotation.
 
+A balanced owner translation around exactly one eligible background `DrawRect`
+can remain a direct composition property. Its original rectangle, color and
+property identity are retained separately from the translation matrix; the
+renderer never draws a transformed bounding rectangle. The drawing item must
+still contain exactly one record operation. Internal scale, rotation, skew,
+clips, effects, queries, mixed transforms and additional draws keep the existing
+picture or unavailable route. A retained direct property prevents merging across
+that boundary, while the complete original operation spine remains available.
+
 `SolidColor` requires a single real background record operation with a supported
 covering rectangle and simple paint flags. Rounded records never become solid.
 `OpaquePicture` requires actual opaque coverage of the entire source bounds and
@@ -31,7 +40,8 @@ All three strategies remain unqualified.
 
 Each admitted local recording removes only its paint-coordinate placement and
 rebases save-depth commands. Ancestor clips and effects remain on the parent
-spine; internal clips/transforms/alpha stay in the source. Local physical raster
+spine; internal clips/transforms/alpha stay in the source, apart from the proven
+single-record owner translation described above. Local physical raster
 keeps fractional phase and the pinned `CalculateClearForOpaqueRasterRects`
 boundary preclear. External sampling texels are allocated separately and are
 not exposed as frame ink. Quad AA depends on the actual device transform and
