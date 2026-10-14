@@ -7,9 +7,10 @@ use crate::paint_program::{
 use crate::{LayeredPaintProgram, PaintCaptureStatus, PaintShaderDependency};
 use crate::{PaintLayerBinding, PaintLayoutScopeRole, PaintProgramOwner};
 use openui_dom::NodeId;
+use skia_safe::canvas::SrcRectConstraint;
 use skia_safe::{
     BlendMode, ClipOp, Color4f, Contains, IRect, Matrix, Paint, Picture, PictureRecorder,
-    SamplingOptions, SrcRectConstraint, M44,
+    SamplingOptions, M44,
 };
 use skia_safe::{Canvas, Rect};
 use std::sync::Arc;
