@@ -448,7 +448,7 @@ fn ancestor_transform_clip_scroll_and_sibling_ink_preserve_control_source_space(
         let root = e.root();
         let parent = e.create_native_element(ElementTag::Div).unwrap();
         e.append_child(root, parent).unwrap();
-        e.append_child(parent, n).unwrap();
+        e.append_or_move_child(parent, n).unwrap();
         set(&mut e, parent, RendererStyleValue::Display(Display::Block));
         e.set_property(parent, StyleProperty::Position, Position::Absolute.into())
             .unwrap();

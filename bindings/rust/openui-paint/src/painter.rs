@@ -3300,7 +3300,7 @@ mod overflow_controls_frame_guards {
         }
         raw.draw_color(skia_safe::Color::RED, None);
         let info = ImageInfo::new((64, 64), ColorType::RGBA8888, AlphaType::Premul, None);
-        let mut pixels = vec![0; 64 * 64 * 4];
+        let mut pixels = vec![0_u8; 64 * 64 * 4];
         assert!(surface.image_snapshot().read_pixels(
             &info,
             &mut pixels,
@@ -3349,7 +3349,7 @@ mod overflow_controls_frame_guards {
                     PhysicalOffset::new(LayoutUnit::from_i32(20), LayoutUnit::from_i32(20)),
                     1.0,
                 );
-                let mut pixels = vec![0; 80 * 80 * 4];
+                let mut pixels = vec![0_u8; 80 * 80 * 4];
                 let info = ImageInfo::new((80, 80), ColorType::RGBA8888, AlphaType::Premul, None);
                 assert!(surface.image_snapshot().read_pixels(
                     &info,
