@@ -39,6 +39,7 @@ OPENUI_0.2 {
     oui_document_dispatch_pending_events_v1;
     oui_document_dispatch_pointer_event;
     oui_document_dispatch_text_input_v1;
+    oui_document_dispatch_wheel_input_v1;
     oui_document_element_by_id;
     oui_document_end_update;
     oui_document_focused_element_v1;

@@ -118,3 +118,27 @@ release lab, and final Chromium rendering qualification, remain open.
 File, date, and color picker dialogs and media controls remain outside the v0.2
 interactive contract. Their passive rendering roles are retained for exact
 headless compatibility, but activating them does not invoke a native picker.
+
+
+## Normalized C wheel input (source checkpoint)
+
+`oui_document_dispatch_wheel_input_v1` delegates to the existing native
+`Document::dispatch_wheel_event`. It accepts the versioned `OuiEvent` with
+`OUI_EVENT_WHEEL`, zero flags, known modifiers and finite physical pixel deltas
+and logical hit-test coordinates. There is no line/page delta-mode conversion.
+The descriptor is copied and remains unchanged. Phase, timestamp, pointer/key
+and target fields are ignored; text is checked as UTF-8 but is not delivered as
+a wheel operand. Native callbacks use the existing Rust wheel timestamp policy.
+
+The shared route hit-tests the retained layout, dispatches capture/target/bubble
+callbacks without Engine/listener borrows, and scrolls only when those callbacks
+do not prevent the default. Exhausted or ineligible boxes continue through the
+existing target-aware ancestor chain, including anonymous fieldset membership.
+Wheel input does not change focus. Applications pump the existing pending event
+queue to deliver coalesced scroll notifications. Generic explicit wheel event
+dispatch remains a notification; its semantics are unchanged.
+
+The export preserves all preceding 162 symbols and every public layout. Its
+source guards and real C/C++ consumers remain uncompiled and unexecuted at this
+checkpoint. Complete native, callback, ABI and rendering qualification remains
+required; Open UI executes no JavaScript.

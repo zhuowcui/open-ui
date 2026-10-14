@@ -57,6 +57,9 @@ mod value;
 mod versioned_input_tests;
 #[cfg(test)]
 mod versioned_output_tests;
+mod wheel_input;
+#[cfg(test)]
+mod wheel_input_tests;
 
 pub use accessibility_snapshot::oui_accessibility_snapshot_get_scroll_info_v1;
 pub use easing_curve::{
@@ -91,6 +94,7 @@ pub use scroll_button::{
     oui_scroll_button_get_state_v1, oui_scroll_button_set_direction_v1,
 };
 pub use types::*;
+pub use wheel_input::oui_document_dispatch_wheel_input_v1;
 
 use generated::{property_from_raw, valid_event_type};
 use openui_compositor::SoftwareCompositor;

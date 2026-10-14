@@ -1636,6 +1636,18 @@ OuiStatus oui_element_settle_scroll_snap_with_easing_v1(OuiElement* element,
                                                         uint64_t* out_scroll_animation_id,
                                                         uint8_t* out_has_animation);
 
+/* Normalized pixel-delta wheel input on the document owning thread. Requires
+ * OUI_EVENT_WHEEL, zero flags, known modifiers and finite x/y/delta_x/delta_y.
+ * Hit testing supplies the target; cancelable callbacks run before the shared
+ * retained scroll default, without Engine/listener borrows. The descriptor is
+ * copied and never written or retained. Its phase, timestamp, pointer/key/text
+ * and target fields are not normalized wheel operands (text must be valid
+ * UTF-8); native callback metadata uses the existing Rust wheel Event
+ * semantics. Generic oui_document_dispatch_event remains a wheel notification
+ * only. */
+OuiStatus oui_document_dispatch_wheel_input_v1(OuiDocument *document,
+                                               const OuiEvent *wheel);
+
 #ifdef __cplusplus
 }  /* extern "C" */
 #endif
