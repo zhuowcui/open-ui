@@ -65,6 +65,149 @@ fn frame(scene: &SceneSnapshot) -> Frame {
         .unwrap()
 }
 
+#[derive(Clone, Copy, Debug)]
+enum SourceChromiumFrame {
+    Initial,
+    Alpha,
+    Fieldset,
+}
+
+// Actual pinned Chromium frames, including every opaque-white exterior pixel.
+// These fixtures have no text or external resources. The stored ink crops are
+// lossless and do not relax the complete physical frame/dimension assertion.
+fn assert_chromium_frame(frame: &Frame, kind: SourceChromiumFrame, scale: f64) {
+    let index = SCALES.iter().position(|value| *value == scale).unwrap();
+    let (width, height, ink_height, expected): (u32, u32, u32, &[u8]) = match kind {
+        SourceChromiumFrame::Initial => [
+            (
+                800,
+                600,
+                50,
+                include_bytes!("source_layer_chromium_oracles/initial-scale-1.rgba").as_slice(),
+            ),
+            (
+                1000,
+                750,
+                63,
+                include_bytes!("source_layer_chromium_oracles/initial-scale-1_25.rgba").as_slice(),
+            ),
+            (
+                1200,
+                900,
+                75,
+                include_bytes!("source_layer_chromium_oracles/initial-scale-1_5.rgba").as_slice(),
+            ),
+            (
+                1400,
+                1050,
+                88,
+                include_bytes!("source_layer_chromium_oracles/initial-scale-1_75.rgba").as_slice(),
+            ),
+            (
+                1600,
+                1200,
+                100,
+                include_bytes!("source_layer_chromium_oracles/initial-scale-2.rgba").as_slice(),
+            ),
+        ][index],
+        SourceChromiumFrame::Alpha => [
+            (
+                160,
+                96,
+                50,
+                include_bytes!("source_layer_chromium_oracles/alpha-scale-1.rgba").as_slice(),
+            ),
+            (
+                200,
+                120,
+                63,
+                include_bytes!("source_layer_chromium_oracles/alpha-scale-1_25.rgba").as_slice(),
+            ),
+            (
+                240,
+                144,
+                75,
+                include_bytes!("source_layer_chromium_oracles/alpha-scale-1_5.rgba").as_slice(),
+            ),
+            (
+                280,
+                168,
+                88,
+                include_bytes!("source_layer_chromium_oracles/alpha-scale-1_75.rgba").as_slice(),
+            ),
+            (
+                320,
+                192,
+                100,
+                include_bytes!("source_layer_chromium_oracles/alpha-scale-2.rgba").as_slice(),
+            ),
+        ][index],
+        SourceChromiumFrame::Fieldset => [
+            (
+                160,
+                96,
+                50,
+                include_bytes!("source_layer_chromium_oracles/fieldset-scale-1.rgba").as_slice(),
+            ),
+            (
+                200,
+                120,
+                63,
+                include_bytes!("source_layer_chromium_oracles/fieldset-scale-1_25.rgba").as_slice(),
+            ),
+            (
+                240,
+                144,
+                75,
+                include_bytes!("source_layer_chromium_oracles/fieldset-scale-1_5.rgba").as_slice(),
+            ),
+            (
+                280,
+                168,
+                88,
+                include_bytes!("source_layer_chromium_oracles/fieldset-scale-1_75.rgba").as_slice(),
+            ),
+            (
+                320,
+                192,
+                100,
+                include_bytes!("source_layer_chromium_oracles/fieldset-scale-2.rgba").as_slice(),
+            ),
+        ][index],
+    };
+    assert_eq!(frame.width, width, "{kind:?} scale {scale}: physical width");
+    assert_eq!(
+        frame.height, height,
+        "{kind:?} scale {scale}: physical height"
+    );
+    assert_eq!(
+        frame.stride,
+        width as usize * 4,
+        "{kind:?} scale {scale}: packed RGBA stride"
+    );
+    assert_eq!(
+        frame.pixels.len(),
+        frame.stride * height as usize,
+        "{kind:?} scale {scale}: full RGBA length"
+    );
+    assert_eq!(expected.len(), width as usize * ink_height as usize * 4);
+    for y in 0..height {
+        for x in 0..width {
+            let actual = pixel(frame, x, y);
+            let wanted: [u8; 4] = if y < ink_height {
+                let offset = (y as usize * width as usize + x as usize) * 4;
+                expected[offset..offset + 4].try_into().unwrap()
+            } else {
+                [255, 255, 255, 255]
+            };
+            assert_eq!(
+                actual, wanted,
+                "{kind:?} scale {scale}: Chromium RGBA at ({x}, {y})"
+            );
+        }
+    }
+}
+
 #[test]
 fn source_background_single_record_and_child_picture_are_real_strategies() {
     for scale in SCALES {
@@ -102,6 +245,7 @@ fn source_background_single_record_and_child_picture_are_real_strategies() {
             SourceLayerQualification::UnqualifiedStaticDiagnostic
         );
         assert!(!source.dynamic_tracks_are_admitted());
+        assert_chromium_frame(&frame(&scene), SourceChromiumFrame::Initial, scale);
         let child = box_(&mut e, n, 40.0, 20.0);
         set(&mut e, child, StyleProperty::BackgroundColor, Color::BLACK);
         let scene = e.scene().unwrap().with_source_layer_diagnostic().unwrap();
@@ -399,10 +543,7 @@ fn overlapping_alpha_and_fieldset_helper_keep_one_effect_and_structural_owner() 
             .find(|s| s.binding().owner == Some(identity(n)))
             .unwrap();
         assert_eq!(source.strategy(), SourceLayerStrategy::TransparentPicture);
-        assert_eq!(
-            frame(&scene).pixels,
-            SoftwareCompositor::default().render(&scene).unwrap().pixels
-        );
+        assert_chromium_frame(&frame(&scene), SourceChromiumFrame::Alpha, scale);
         let root = e.root();
         let field = e.create_native_element(ElementTag::Fieldset).unwrap();
         e.append_child(root, field).unwrap();
@@ -436,10 +577,7 @@ fn overlapping_alpha_and_fieldset_helper_keep_one_effect_and_structural_owner() 
             .flat_map(|p| p.candidates())
             .any(|c| c.context == helper.identity
                 && c.unavailable == Some(openui_paint::SourceLayerUnavailable::BorrowedLayoutBox)));
-        assert_eq!(
-            frame(&scene).pixels,
-            SoftwareCompositor::default().render(&scene).unwrap().pixels
-        );
+        assert_chromium_frame(&frame(&scene), SourceChromiumFrame::Fieldset, scale);
     }
 }
 
