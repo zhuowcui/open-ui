@@ -180,6 +180,120 @@ pub struct LayeredPaintCapture {
     overlay: Option<crate::LayeredPaintProgram>,
 }
 
+/// An opt-in static source plan. The canonical recording remains independently
+/// owned and no release presenter selects this renderer automatically.
+#[derive(Clone)]
+pub struct SourceLayerPaintCapture {
+    canonical: RecordedPicture,
+    content: crate::SourceLayerProgram,
+    viewport_content: Option<crate::SourceLayerProgram>,
+    overlay: Option<crate::SourceLayerProgram>,
+    unavailable_recordings: Vec<SourceRecordingUnavailable>,
+}
+
+#[derive(Clone, Debug)]
+pub struct SourceRecordingUnavailable {
+    pub role: crate::PaintLayerSourceRole,
+    pub capture_status: crate::PaintCaptureStatus,
+}
+
+impl LayeredPaintCapture {
+    pub fn source_layer_diagnostic(
+        &self,
+    ) -> Result<SourceLayerPaintCapture, crate::SourceLayerError> {
+        // A raw/incomplete child stays an opaque canonical Picture dependency.
+        // Its owner ID does not establish that it can be independently replayed.
+        let mut unavailable_recordings = Vec::new();
+        if let Some(program) = self
+            .viewport_content
+            .as_ref()
+            .filter(|p| p.capture_status() != &crate::PaintCaptureStatus::Complete)
+        {
+            unavailable_recordings.push(SourceRecordingUnavailable {
+                role: crate::PaintLayerSourceRole::ViewportScrollingContent,
+                capture_status: program.capture_status().clone(),
+            });
+        }
+        let viewport_content = self
+            .viewport_content
+            .as_ref()
+            .filter(|p| p.capture_status() == &crate::PaintCaptureStatus::Complete)
+            .map(|p| p.source_layer_program())
+            .transpose()?;
+        let content =
+            crate::SourceLayerProgram::new(self.content.clone(), viewport_content.clone())?;
+        let overlay = self
+            .overlay
+            .as_ref()
+            .map(|p| p.source_layer_program())
+            .transpose()?;
+        Ok(SourceLayerPaintCapture {
+            canonical: self.canonical.clone(),
+            content,
+            viewport_content,
+            overlay,
+            unavailable_recordings,
+        })
+    }
+}
+impl SourceLayerPaintCapture {
+    pub fn content(&self) -> &crate::SourceLayerProgram {
+        &self.content
+    }
+    pub fn viewport_scrolling_content(&self) -> Option<&crate::SourceLayerProgram> {
+        self.viewport_content.as_ref()
+    }
+    pub fn viewport_overlay(&self) -> Option<&crate::SourceLayerProgram> {
+        self.overlay.as_ref()
+    }
+    pub fn recording_programs(&self) -> impl Iterator<Item = &crate::SourceLayerProgram> {
+        std::iter::once(&self.content)
+            .chain(self.viewport_content.iter())
+            .chain(self.overlay.iter())
+    }
+    pub fn canonical(&self) -> &RecordedPicture {
+        &self.canonical
+    }
+    pub fn unavailable_recordings(&self) -> &[SourceRecordingUnavailable] {
+        &self.unavailable_recordings
+    }
+    pub fn qualification(&self) -> crate::SourceLayerQualification {
+        crate::SourceLayerQualification::UnqualifiedStaticDiagnostic
+    }
+    pub fn damage(&self) -> Rect {
+        Rect::from_xywh(
+            0.0,
+            0.0,
+            self.canonical.viewport.logical_width() as f32,
+            self.canonical.viewport.logical_height() as f32,
+        )
+    }
+    /// Standalone CPU source raster. Untiled composition is explicit here;
+    /// full canonical tiling, Chromium and hardware remain qualification gates.
+    pub fn rasterize_diagnostic(&self) -> Result<Surface, crate::SourceLayerError> {
+        let viewport = self.canonical.viewport;
+        let width = i32::try_from(viewport.physical_width())
+            .map_err(|_| crate::SourceLayerError::InvalidBounds)?;
+        let height = i32::try_from(viewport.physical_height())
+            .map_err(|_| crate::SourceLayerError::InvalidBounds)?;
+        let mut surface = create_raster_surface(
+            width,
+            height,
+            self.canonical.raster_configuration,
+            self.canonical.lcd_surface,
+        )
+        .ok_or(crate::SourceLayerError::AllocationFailure)?;
+        surface.canvas().clear(SkColor::WHITE);
+        let scale = viewport.device_scale_factor() as f32;
+        surface.canvas().scale((scale, scale));
+        self.content.replay_diagnostic(surface.canvas())?;
+        if let Some(overlay) = &self.overlay {
+            overlay.replay_diagnostic(surface.canvas())?;
+        }
+        Ok(surface)
+    }
+}
+
 impl RecordedPaintCapture {
     pub fn partition_layers(
         self,

@@ -185,6 +185,7 @@ struct DrawLocation {
 /// once, in its original order. Sources can have several interleaved runs.
 #[derive(Clone)]
 pub struct LayeredPaintProgram {
+    fallback: PaintLayerBinding,
     operations: Arc<[ProgramOperation]>,
     draws: Arc<[DrawLocation]>,
     sources: Arc<[RetainedPaintLayerSource]>,
@@ -194,6 +195,8 @@ pub struct LayeredPaintProgram {
     properties: Arc<[crate::PaintPropertyProjection]>,
     status: PaintCaptureStatus,
     coverage: PaintLayerCoverage,
+    pub(crate) source_events: Arc<[crate::source_layer_program::PaintSourceEvent]>,
+    pub(crate) source_bindings: Arc<[(NodeId, PaintLayerBinding)]>,
 }
 
 struct SourceBuilder {
@@ -418,7 +421,38 @@ impl RecordedPaintProgram {
                 _font_cache_lifetime: self.font_cache_lifetime.clone(),
             })
             .collect::<Vec<_>>();
+        // Bind every source/containing-block operand while the publishing
+        // Engine is still on its owning thread. The retained plan never calls
+        // this resolver or follows a live DOM node during replay.
+        let mut source_bindings = Vec::new();
+        for event in &self.source_events {
+            for node in crate::source_layer_program::event_nodes(&event.kind) {
+                if node.is_none() || source_bindings.iter().any(|(n, _)| *n == node) {
+                    continue;
+                }
+                if let Some(binding) = resolve(node) {
+                    if !binding.valid() {
+                        return Err(LayeredPaintError::InvalidBinding);
+                    }
+                    if sources.iter().any(|source| {
+                        source.binding().id == binding.id && source.binding() != binding
+                    }) || source_bindings.iter().any(
+                        |(_, previous): &(NodeId, PaintLayerBinding)| {
+                            previous.id == binding.id && *previous != binding
+                        },
+                    ) || scopes.iter().any(|scope| {
+                        scope.owner.node_id == node
+                            && scope.owner.owns_element_box
+                            && scope.source != binding.id
+                    }) {
+                        return Err(LayeredPaintError::ConflictingIdentity(binding.id));
+                    }
+                    source_bindings.push((node, binding));
+                }
+            }
+        }
         Ok(LayeredPaintProgram {
+            fallback,
             operations: self.operations.clone().into(),
             draws: draws.into(),
             sources: sources.into(),
@@ -428,6 +462,8 @@ impl RecordedPaintProgram {
             properties: properties.into(),
             status: self.status(),
             coverage,
+            source_events: self.source_events.clone().into(),
+            source_bindings: source_bindings.into(),
         })
     }
 }
@@ -458,6 +494,10 @@ fn state_kind(operation: &ProgramOperation) -> PaintLayerStateKind {
 }
 
 impl LayeredPaintProgram {
+    /// The validated publishing fallback is independent of draw participation.
+    pub(crate) fn fallback_binding(&self) -> PaintLayerBinding {
+        self.fallback
+    }
     pub(crate) fn operations(&self) -> &[ProgramOperation] {
         &self.operations
     }

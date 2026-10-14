@@ -72,6 +72,7 @@ pub struct SceneSnapshot {
     physical_damage: Arc<[PhysicalSceneRect]>,
     retained_scene: Option<Arc<RetainedSceneSnapshot>>,
     layered_paint: Option<Arc<LayeredPaintCapture>>,
+    source_layer_paint: Option<Arc<openui_paint::SourceLayerPaintCapture>>,
 }
 
 impl SceneSnapshot {
@@ -96,6 +97,7 @@ impl SceneSnapshot {
             physical_damage: physical_damage.into(),
             retained_scene: None,
             layered_paint: None,
+            source_layer_paint: None,
         }
     }
 
@@ -117,16 +119,42 @@ impl SceneSnapshot {
         self.layered_paint.as_ref()
     }
 
+    /// Explicit static source-layer publication, independent of canonical and
+    /// exact-spine replay selection. Failure leaves the input scene immutable.
+    pub fn with_source_layer_diagnostic(mut self) -> Result<Self, openui_paint::SourceLayerError> {
+        if self.source_layer_paint.is_some() {
+            return Ok(self);
+        }
+        let capture = self
+            .layered_paint
+            .as_ref()
+            .ok_or(openui_paint::SourceLayerError::InvalidHierarchy)?;
+        let source = Arc::new(capture.source_layer_diagnostic()?);
+        if let Some(retained) = &self.retained_scene {
+            let mut copy = (**retained).clone();
+            copy.attach_source_layer_diagnostic(Arc::clone(&source));
+            self.retained_scene = Some(Arc::new(copy));
+        }
+        self.source_layer_paint = Some(source);
+        Ok(self)
+    }
+    pub fn source_layer_paint_capture(
+        &self,
+    ) -> Option<&Arc<openui_paint::SourceLayerPaintCapture>> {
+        self.source_layer_paint.as_ref()
+    }
+
     /// Attach owned layer metadata to this exact recording. Canonical replay
     /// and the CPU raster cache continue to use the original picture.
     pub fn with_retained_scene(
         mut self,
         plan: RetainedScenePlan,
     ) -> Result<Self, RetainedSceneError> {
-        self.retained_scene = Some(Arc::new(RetainedSceneSnapshot::bind(
-            plan,
-            Arc::clone(&self.picture),
-        )?));
+        let mut retained = RetainedSceneSnapshot::bind(plan, Arc::clone(&self.picture))?;
+        if let Some(source) = &self.source_layer_paint {
+            retained.attach_source_layer_diagnostic(Arc::clone(source));
+        }
+        self.retained_scene = Some(Arc::new(retained));
         Ok(self)
     }
 
@@ -271,10 +299,39 @@ pub struct SoftwareCompositor {
     last_presented: Option<SceneGeneration>,
     last_frame: Option<CachedFrame>,
     last_layered_frame: Option<CachedLayeredFrame>,
+    last_source_frame: Option<(Arc<openui_paint::SourceLayerPaintCapture>, Frame)>,
     stats: CompositorStats,
 }
 
 impl SoftwareCompositor {
+    pub fn render_source_layer_diagnostic(
+        &mut self,
+        scene: &SceneSnapshot,
+    ) -> Result<Frame, CompositorError> {
+        if scene.raster_configuration.backend == openui_geometry::RasterBackend::GaneshGl {
+            return Err(CompositorError::Raster(
+                "source-layer diagnostic requires CPU Skia".into(),
+            ));
+        }
+        let capture = scene.source_layer_paint_capture().ok_or_else(|| {
+            CompositorError::Raster("scene has no source-layer diagnostic".into())
+        })?;
+        self.stats.submitted += 1;
+        if let Some((previous, frame)) = &self.last_source_frame {
+            if frame.scene_generation == scene.generation && Arc::ptr_eq(previous, capture) {
+                self.stats.reused += 1;
+                return Ok(frame.clone());
+            }
+        }
+        let mut surface = capture
+            .rasterize_diagnostic()
+            .map_err(|e| CompositorError::Raster(e.to_string()))?;
+        let frame = frame_from_surface(scene, &mut surface)?;
+        self.stats.rasterized += 1;
+        self.last_presented = Some(scene.generation);
+        self.last_source_frame = Some((Arc::clone(capture), frame.clone()));
+        Ok(frame)
+    }
     pub fn render(&mut self, scene: &SceneSnapshot) -> Result<Frame, CompositorError> {
         if scene.raster_configuration.backend == openui_geometry::RasterBackend::GaneshGl {
             return Err(CompositorError::Raster(

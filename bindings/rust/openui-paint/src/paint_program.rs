@@ -79,7 +79,7 @@ impl OwnedPath {
         Self(Arc::new(Mutex::new(owned)))
     }
 
-    fn with_path<T>(&self, draw: impl FnOnce(&Path) -> T) -> T {
+    pub(crate) fn with_path<T>(&self, draw: impl FnOnce(&Path) -> T) -> T {
         let path = self
             .0
             .lock()
@@ -333,6 +333,7 @@ impl PaintProgramChunk {
 pub struct RecordedPaintProgram {
     pub(crate) operations: Vec<ProgramOperation>,
     pub(crate) chunks: Vec<PaintProgramChunk>,
+    pub(crate) source_events: Vec<crate::source_layer_program::PaintSourceEvent>,
     pub(crate) reasons: Vec<PaintCaptureIncompleteReason>,
     pub(crate) canvas_queries: usize,
     pub(crate) retained_font_bytes: Arc<[Arc<[u8]>]>,
@@ -594,6 +595,24 @@ pub(crate) fn record_operation(canvas: &Canvas, operation: ProgramOperation) {
     matching(canvas, |capture| capture.program.operations.push(operation));
 }
 
+/// Side metadata uses the real capture canvas and exact operation position.
+/// It does not flush pending opacity, query a clip or issue a raster operation.
+pub(crate) fn record_source_event(
+    canvas: &Canvas,
+    kind: crate::source_layer_program::PaintSourceEventKind,
+) {
+    matching(canvas, |capture| {
+        capture
+            .program
+            .source_events
+            .push(crate::source_layer_program::PaintSourceEvent {
+                operation: capture.program.operations.len(),
+                save_depth: canvas.save_count().saturating_sub(capture.base_save_count),
+                kind,
+            });
+    });
+}
+
 pub(crate) fn record_draw(canvas: &Canvas, make_draw: impl FnOnce() -> OwnedDraw) {
     if !is_capturing(canvas) {
         return;
@@ -665,6 +684,10 @@ pub(crate) fn record_restore_to(canvas: &Canvas, count: usize) {
 
 pub(crate) fn record_query(canvas: &Canvas) {
     matching(canvas, |capture| capture.program.canvas_queries += 1);
+    record_source_event(
+        canvas,
+        crate::source_layer_program::PaintSourceEventKind::CanvasQuery,
+    );
 }
 
 /// Bound to the canonical recording canvas, with no retained pointer after drop.
@@ -681,6 +704,7 @@ impl<'a> PaintProgramScope<'a> {
                 program: RecordedPaintProgram {
                     operations: Vec::new(),
                     chunks: Vec::new(),
+                    source_events: Vec::new(),
                     reasons: Vec::new(),
                     canvas_queries: 0,
                     retained_font_bytes: Arc::from([]),

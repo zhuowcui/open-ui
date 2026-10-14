@@ -242,6 +242,7 @@ impl std::error::Error for RetainedSceneError {}
 
 /// Immutable metadata associated with one exact canonical picture. It owns
 /// actual recording resources; authored plans are explicitly unpartitioned.
+#[derive(Clone)]
 pub struct RetainedSceneSnapshot {
     recordings: Arc<[SceneLayerRecording]>,
     layers: Arc<[SceneLayerSnapshot]>,
@@ -249,6 +250,7 @@ pub struct RetainedSceneSnapshot {
     clips: Arc<[SceneClipSnapshot]>,
     scrolls: Arc<[SceneScrollSnapshot]>,
     unidentified_owned_box_paths: Arc<[Arc<[usize]>]>,
+    source_layer_paint: Option<Arc<openui_paint::SourceLayerPaintCapture>>,
 }
 
 impl RetainedSceneSnapshot {
@@ -283,10 +285,22 @@ impl RetainedSceneSnapshot {
             clips: plan.clips.into(),
             scrolls: plan.scrolls.into(),
             unidentified_owned_box_paths: plan.unidentified_owned_box_paths.into(),
+            source_layer_paint: None,
         })
     }
     pub fn recordings(&self) -> &[SceneLayerRecording] {
         &self.recordings
+    }
+    pub(crate) fn attach_source_layer_diagnostic(
+        &mut self,
+        capture: Arc<openui_paint::SourceLayerPaintCapture>,
+    ) {
+        self.source_layer_paint = Some(capture);
+    }
+    pub fn source_layer_paint_capture(
+        &self,
+    ) -> Option<&Arc<openui_paint::SourceLayerPaintCapture>> {
+        self.source_layer_paint.as_ref()
     }
     pub fn layers(&self) -> &[SceneLayerSnapshot] {
         &self.layers

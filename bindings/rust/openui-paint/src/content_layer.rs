@@ -84,6 +84,14 @@ impl RecordedContentLayer {
                 canvas.restore();
             }
         }
+        crate::paint_program::record_source_event(
+            canvas.raw_tracking_target(),
+            crate::source_layer_program::PaintSourceEventKind::NestedViewport {
+                node: self.node_id,
+                bounds: self.bounds,
+                scroll_translation: self.scroll_translation,
+            },
+        );
         canvas.draw_picture(&self.picture, None, None);
     }
 

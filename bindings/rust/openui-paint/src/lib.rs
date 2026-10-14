@@ -17,6 +17,7 @@ mod paint_program;
 mod paint_record;
 mod painter;
 mod render;
+mod source_layer_program;
 mod surface_program;
 pub mod text_painter;
 
@@ -36,6 +37,7 @@ pub use painter::{
 pub use render::{
     raster_surface_properties, rasterize_picture, record_document, record_fragment,
     record_fragment_with_program, render_to_png, render_to_surface, LayeredPaintCapture,
-    RecordedPaintCapture, RecordedPicture,
+    RecordedPaintCapture, RecordedPicture, SourceLayerPaintCapture, SourceRecordingUnavailable,
 };
+pub use source_layer_program::*;
 pub use surface_program::*;

@@ -655,6 +655,8 @@ impl dyn PaintCanvas + '_ {
     pub(crate) fn local_to_device(&self) -> M44 {
         self.legacy_helper_boundary();
         let c = self.raw_tracking_target();
+        // Source extraction must see the actual query location, separately
+        // from complete static capture, before relocating this paint interval.
         paint_program::record_query(c);
         c.local_to_device()
     }

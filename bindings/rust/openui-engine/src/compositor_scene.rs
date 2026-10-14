@@ -157,6 +157,10 @@ impl Engine {
             SceneRecordingRole::ViewportOverlay,
             PaintLayerSourceRole::ViewportOverlay,
         );
+        // The same checked resolver also binds copied source-item containing
+        // blocks and scroll owners. Those references reach presentation only
+        // as immutable generation identities; no Element/Document borrow is
+        // retained by the optional source-layer renderer.
         capture
             .partition_layers_with_viewport_content(content, viewport_content, overlay, |node| {
                 let index = *self.node_slots.get(&node)?;

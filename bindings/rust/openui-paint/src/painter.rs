@@ -789,6 +789,93 @@ fn helper_paint_style(fragment: &Fragment, style: &ComputedStyle) -> Option<Comp
     })
 }
 
+fn source_paint_context(
+    fragment: &Fragment,
+    style: &ComputedStyle,
+    doc: &Document,
+    offset: PhysicalOffset,
+) -> crate::source_layer_program::PaintSourceContextInput {
+    use crate::source_layer_program::RawPositioningReference as Reference;
+    let positioning = if fragment.owns_element_box() && style.position == Position::Fixed {
+        match fragment.positioned_fragmentation {
+            Some(data)
+                if data.containing_block_node.is_none()
+                    || (data.containing_block_node == doc.root()
+                        && !doc.node(doc.root()).style.has_transform_containing_block()) =>
+            {
+                Reference::Viewport(doc.root())
+            }
+            Some(data) => Reference::ContainingBox(data.containing_block_node),
+            None => Reference::Unresolved,
+        }
+    } else if fragment.owns_element_box() && style.position == Position::Absolute {
+        fragment
+            .positioned_fragmentation
+            .map_or(Reference::Unresolved, |data| {
+                Reference::ContainingBox(if data.containing_block_node.is_none() {
+                    doc.root()
+                } else {
+                    data.containing_block_node
+                })
+            })
+    } else {
+        Reference::InFlow
+    };
+    crate::source_layer_program::PaintSourceContextInput {
+        owner: crate::PaintProgramOwner {
+            node_id: fragment.node_id,
+            owns_element_box: fragment.owns_element_box(),
+        },
+        layout_role: if matches!(
+            fragment.anonymous_layout_box,
+            Some(openui_layout::AnonymousLayoutBox::FieldsetContent { .. })
+        ) {
+            crate::PaintLayoutScopeRole::FieldsetContent
+        } else if fragment.owns_element_box() {
+            crate::PaintLayoutScopeRole::AuthoredBox
+        } else if fragment.kind == FragmentKind::Text {
+            crate::PaintLayoutScopeRole::TextRun
+        } else if fragment.table_part.is_some() {
+            crate::PaintLayoutScopeRole::TableHelper
+        } else {
+            crate::PaintLayoutScopeRole::LayoutHelper
+        },
+        border_box: Rect::from_xywh(
+            offset.left.to_f32(),
+            offset.top.to_f32(),
+            fragment.size.width.to_f32(),
+            fragment.size.height.to_f32(),
+        ),
+        rounded_paint_offset: (offset.left.round().to_f32(), offset.top.round().to_f32()),
+        paint_offset_residual: (
+            offset.left.to_f32() - offset.left.round().to_f32(),
+            offset.top.to_f32() - offset.top.round().to_f32(),
+        ),
+        positioning,
+        scroll_owner: fragment.scroll_area.map(|_| fragment.node_id),
+        is_viewport: fragment.kind == FragmentKind::Viewport,
+        will_change_transform: fragment.owns_element_box() && style.will_change_transform,
+        owns_transform_containing_block: fragment.owns_element_box()
+            && style.has_transform_containing_block(),
+        paint_isolation: fragment.owns_element_box() && style.has_paint_containment(),
+    }
+}
+
+fn source_display_item<'a>(
+    canvas: &'a Canvas,
+    fragment: &Fragment,
+    role: crate::PaintDisplayItemRole,
+) -> crate::source_layer_program::PaintDisplayItemScope<'a> {
+    crate::source_layer_program::PaintDisplayItemScope::new(
+        canvas.raw_tracking_target(),
+        crate::PaintProgramOwner {
+            node_id: fragment.node_id,
+            owns_element_box: fragment.owns_element_box(),
+        },
+        role,
+    )
+}
+
 /// Paint a fragment tree onto a Skia canvas.
 ///
 /// This is the main entry point — paints the fragment and all its children
@@ -908,6 +995,42 @@ fn paint_fragment_contents(
         offset.left + fragment.offset.left,
         offset.top + fragment.offset.top,
     );
+    let _anonymous_source_context = fragment.node_id.is_none().then(|| {
+        crate::source_layer_program::PaintSourceContextScope::new(
+            canvas.raw_tracking_target(),
+            crate::source_layer_program::PaintSourceContextInput {
+                owner: crate::PaintProgramOwner {
+                    node_id: openui_dom::NodeId::NONE,
+                    owns_element_box: false,
+                },
+                layout_role: if fragment.kind == FragmentKind::ColumnBox {
+                    crate::PaintLayoutScopeRole::Column
+                } else {
+                    crate::PaintLayoutScopeRole::LayoutHelper
+                },
+                border_box: Rect::from_xywh(
+                    abs_offset.left.to_f32(),
+                    abs_offset.top.to_f32(),
+                    fragment.size.width.to_f32(),
+                    fragment.size.height.to_f32(),
+                ),
+                rounded_paint_offset: (
+                    abs_offset.left.round().to_f32(),
+                    abs_offset.top.round().to_f32(),
+                ),
+                paint_offset_residual: (
+                    abs_offset.left.to_f32() - abs_offset.left.round().to_f32(),
+                    abs_offset.top.to_f32() - abs_offset.top.round().to_f32(),
+                ),
+                positioning: crate::source_layer_program::RawPositioningReference::InFlow,
+                scroll_owner: None,
+                is_viewport: fragment.kind == FragmentKind::Viewport,
+                will_change_transform: false,
+                owns_transform_containing_block: false,
+                paint_isolation: false,
+            },
+        )
+    });
     // Skip fragments that have been hoisted to the nearest stacking context's
     // non_negative_z list — they will be painted in Phase 3 instead.
     if HOIST_SKIP.with(|s| s.borrow().contains(&(fragment as *const Fragment as usize))) {
@@ -1350,6 +1473,10 @@ fn paint_fragment_contents(
     let source_style = helper_style.as_ref().unwrap_or(source_style);
     let used_style = paint_style_with_used_overflow(fragment, source_style, doc);
     let style = used_style.as_ref().unwrap_or(source_style);
+    let _source_context = crate::source_layer_program::PaintSourceContextScope::new(
+        canvas.raw_tracking_target(),
+        source_paint_context(fragment, style, doc, abs_offset),
+    );
     let _background_effect = BackgroundEffectScope::new(style);
     let promoted_transform_parent_offset = PhysicalOffset::new(
         abs_offset.left - fragment.offset.left,
@@ -1780,6 +1907,12 @@ fn paint_fragment_contents(
         let scroll_translation = (
             snapping.logical_coordinate(-node.scroll_left, PhysicalSnap::Nearest),
             snapping.logical_coordinate(-node.scroll_top, PhysicalSnap::Nearest),
+        );
+        crate::paint_program::record_source_event(
+            canvas.raw_tracking_target(),
+            crate::source_layer_program::PaintSourceEventKind::ScrollTranslation {
+                node: fragment.node_id,
+            },
         );
         canvas.translate(scroll_translation);
         let content = scrollport.content_rect;
@@ -5204,6 +5337,11 @@ fn paint_replaced_content(
     abs_offset: PhysicalOffset,
     opacity_multiplier: f32,
 ) {
+    let _source_item = source_display_item(
+        canvas,
+        fragment,
+        crate::PaintDisplayItemRole::ReplacedContent,
+    );
     let Some(replaced) = doc.node(fragment.node_id).replaced else {
         return;
     };
@@ -7001,6 +7139,12 @@ fn prepaint_collapsed_table_backgrounds(
     }
     if let Some(translation) = translation {
         if !rounded || translation != (0.0, 0.0) {
+            crate::paint_program::record_source_event(
+                canvas.raw_tracking_target(),
+                crate::source_layer_program::PaintSourceEventKind::ScrollTranslation {
+                    node: fragment.node_id,
+                },
+            );
             canvas.translate(translation);
         }
     }
@@ -10851,6 +10995,12 @@ fn paint_with_overflow_clip(
             canvas.save();
         }
         if translation != (0.0, 0.0) {
+            crate::paint_program::record_source_event(
+                canvas.raw_tracking_target(),
+                crate::source_layer_program::PaintSourceEventKind::ScrollTranslation {
+                    node: fragment.node_id,
+                },
+            );
             canvas.translate(translation);
         }
         paint_children_with_stacking_order(
@@ -12830,6 +12980,8 @@ fn paint_text_fragment(
     abs_offset: PhysicalOffset,
     doc: &Document,
 ) {
+    let _source_item =
+        source_display_item(canvas, fragment, crate::PaintDisplayItemRole::Foreground);
     let shape_result = match fragment.shape_result.as_ref() {
         Some(sr) => sr,
         None => return,
@@ -15896,6 +16048,14 @@ pub(crate) fn paint_canvas_background(
     let Some(source) = doc.canvas_background_source() else {
         return;
     };
+    let _source_item = crate::source_layer_program::PaintDisplayItemScope::new(
+        canvas.raw_tracking_target(),
+        crate::PaintProgramOwner {
+            node_id: source,
+            owns_element_box: true,
+        },
+        crate::PaintDisplayItemRole::DocumentBackground,
+    );
     let style = &doc.node(source).style;
     let canvas_rect = Rect::from_xywh(0.0, 0.0, width, height);
     let (positioning_rect, source_fragment) =
@@ -18144,6 +18304,11 @@ fn paint_box_decoration_background(
     abs_offset: PhysicalOffset,
     opacity_multiplier: f32,
 ) {
+    let _source_item = source_display_item(
+        canvas,
+        fragment,
+        crate::PaintDisplayItemRole::BoxDecorationBackground,
+    );
     let node = doc.node(fragment.node_id);
     let decoded_media_frame = if node.tag == ElementTag::Video {
         match node.replaced.map(|replaced| replaced.resource) {
@@ -21459,6 +21624,7 @@ fn paint_outline(
     style: &ComputedStyle,
     abs_offset: PhysicalOffset,
 ) {
+    let _source_item = source_display_item(canvas, fragment, crate::PaintDisplayItemRole::Outline);
     if is_formatting_helper(fragment) {
         return;
     }
