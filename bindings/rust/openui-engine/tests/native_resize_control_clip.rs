@@ -568,3 +568,97 @@ fn owned_recording_survives_engine_drop_and_replay_restores_the_caller_canvas() 
         assert_eq!(LayoutUnit::from_f32(-0.5).round_i32(), 0);
     }
 }
+
+fn assert_tiny_thin_arrow_chromium_frame(
+    actual: &Frame,
+    width: usize,
+    crop: (usize, usize, usize, usize),
+    rgba: &[u8],
+) {
+    assert_eq!(
+        (actual.width as usize, actual.height as usize, actual.stride),
+        (width, width, width * 4)
+    );
+    assert_eq!(actual.pixels.len(), width * width * 4);
+    let (left, top, crop_width, crop_height) = crop;
+    assert!(left + crop_width <= width && top + crop_height <= width);
+    assert_eq!(rgba.len(), crop_width * crop_height * 4);
+    let mut expected = vec![255_u8; width * width * 4];
+    for row in 0..crop_height {
+        let source = row * crop_width * 4;
+        let destination = (top + row) * width * 4 + left * 4;
+        expected[destination..destination + crop_width * 4]
+            .copy_from_slice(&rgba[source..source + crop_width * 4]);
+    }
+    for y in 0..width {
+        for x in 0..width {
+            let i = (y * width + x) * 4;
+            assert_eq!(
+                &actual.pixels[i..i + 4],
+                &expected[i..i + 4],
+                "Tiny Thin arrow Chromium pixel ({x},{y}) at scale {}",
+                actual.viewport.device_scale_factor()
+            );
+        }
+    }
+}
+
+#[test]
+fn tiny_thin_arrow_parts_match_complete_pinned_chromium_frames() {
+    let cases: [(f64, usize, (usize, usize, usize, usize), &[u8]); 5] = [
+        (
+            1.0,
+            160,
+            (32, 32, 14, 14),
+            include_bytes!("native_scrollbar_arrow_chromium_oracles/tiny-thin14-scale-1.rgba"),
+        ),
+        (
+            1.25,
+            200,
+            (40, 40, 18, 18),
+            include_bytes!("native_scrollbar_arrow_chromium_oracles/tiny-thin14-scale-1_25.rgba"),
+        ),
+        (
+            1.5,
+            240,
+            (48, 48, 21, 21),
+            include_bytes!("native_scrollbar_arrow_chromium_oracles/tiny-thin14-scale-1_5.rgba"),
+        ),
+        (
+            1.75,
+            280,
+            (56, 56, 25, 25),
+            include_bytes!("native_scrollbar_arrow_chromium_oracles/tiny-thin14-scale-1_75.rgba"),
+        ),
+        (
+            2.0,
+            320,
+            (64, 64, 28, 28),
+            include_bytes!("native_scrollbar_arrow_chromium_oracles/tiny-thin14-scale-2.rgba"),
+        ),
+    ];
+    for (scale, width, crop, rgba) in cases {
+        let (mut e, n) = fixture(scale, 14.0, 14.0);
+        e.set_renderer_node_state(n, RendererNodeState::Replaced(None))
+            .unwrap();
+        resize(&mut e, n, Resize::None);
+        set(
+            &mut e,
+            n,
+            RendererStyleValue::ScrollbarWidth(ScrollbarWidth::Thin),
+        );
+        set(&mut e, n, RendererStyleValue::OverflowX(Overflow::Scroll));
+        set(&mut e, n, RendererStyleValue::OverflowY(Overflow::Scroll));
+        let scene = e.scene().unwrap();
+        assert_eq!(geometry(&scene, n), (32.0, 32.0, 14.0, 14.0));
+        let computed = e.computed_style(n).unwrap();
+        assert_eq!(computed.resize, Resize::None);
+        assert_eq!(computed.scrollbar_width, ScrollbarWidth::Thin);
+        assert_eq!(
+            (computed.overflow_x, computed.overflow_y),
+            (Overflow::Scroll, Overflow::Scroll)
+        );
+        let actual = SoftwareCompositor::default().render(&scene).unwrap();
+        assert_tiny_thin_arrow_chromium_frame(&actual, width, crop, rgba);
+    }
+}

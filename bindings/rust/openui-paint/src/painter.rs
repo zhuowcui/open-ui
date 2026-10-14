@@ -13481,40 +13481,55 @@ fn paint_fluent_scrollbar_arrow(
     forward: bool,
     color: &Paint,
 ) {
+    if button.is_empty() {
+        return;
+    }
+    // NativeTheme::Paint masks the individual theme part without antialiasing.
+    let _part_clip = OverflowControlsClipScope::new(canvas, Some(button));
     let scale = button.width().max(button.height()) / 18.0;
     let mut side = (9.0 * scale).ceil();
     side += (button.width().min(button.height()) - side) % 2.0;
-    let mut x = (button.left + (button.width() - side) / 2.0).floor();
-    let mut y = (button.top + (button.height() - side) / 2.0).floor();
+    // GetArrowRect independently clamps both extents before centering/flooring.
+    let arrow_width = button.width().min(side);
+    let arrow_height = button.height().min(side);
+    let mut x = (button.left + (button.width() - arrow_width) / 2.0).floor();
+    let mut y = (button.top + (button.height() - arrow_height) / 2.0).floor();
     let shift = (if forward { scale } else { -scale }).round();
     if horizontal {
         x += shift;
     } else {
         y += shift;
     }
-    let arrow_size = (side.round() as i32 / 2 + 1) as f32;
+    let arrow_size = (if horizontal {
+        arrow_width
+    } else {
+        arrow_height
+    })
+    .round() as i32
+        / 2
+        + 1;
     let mut points = if horizontal {
-        let start = x + (arrow_size as i32 / 2) as f32;
+        let start = x + (arrow_size / 2) as f32;
         [
             (start, y),
-            (start, y + side),
-            (start + arrow_size, y + side / 2.0),
+            (start, y + arrow_height),
+            (start + arrow_size as f32, y + arrow_height / 2.0),
         ]
     } else {
-        let start = y + side - (arrow_size as i32 / 2) as f32 + 1.0;
+        let start = y + arrow_height - (arrow_size / 2) as f32 + 1.0;
         [
             (x, start),
-            (x + side, start),
-            (x + side / 2.0, start - arrow_size),
+            (x + arrow_width, start),
+            (x + arrow_width / 2.0, start - arrow_size as f32),
         ]
     };
     if horizontal && !forward {
         for point in &mut points {
-            point.0 = x * 2.0 + side - point.0;
+            point.0 = x * 2.0 + arrow_width - point.0;
         }
     } else if !horizontal && forward {
         for point in &mut points {
-            point.1 = y * 2.0 + side - point.1;
+            point.1 = y * 2.0 + arrow_height - point.1;
         }
     }
     let mut path = PathBuilder::new();
@@ -26582,5 +26597,97 @@ mod tests {
             snap_tiny_aliased_ahem_ink_start(70.8125, &style, true),
             70.8125
         );
+    }
+
+    #[test]
+    fn fluent_arrow_empty_parts_paint_nothing_and_preserve_caller_state() {
+        for (width, height) in [(0.0, 10.0), (10.0, 0.0), (-1.0, 10.0), (10.0, -1.0)] {
+            for horizontal in [false, true] {
+                for forward in [false, true] {
+                    let mut surface = surfaces::raster_n32_premul((64, 64)).unwrap();
+                    let raw = surface.canvas();
+                    raw.clear(skia_safe::Color::WHITE);
+                    raw.translate((3.0, 4.0));
+                    raw.clip_rect(
+                        Rect::from_xywh(0.0, 0.0, 40.0, 40.0),
+                        ClipOp::Intersect,
+                        false,
+                    );
+                    let count = raw.save_count();
+                    let matrix = raw.local_to_device_as_3x3();
+                    let clip = raw.device_clip_bounds();
+                    let mut paint = Paint::default();
+                    paint.set_color(skia_safe::Color::BLACK);
+                    paint_fluent_scrollbar_arrow(
+                        raw,
+                        Rect::from_xywh(10.0, 10.0, width, height),
+                        horizontal,
+                        forward,
+                        &paint,
+                    );
+                    assert_eq!(raw.save_count(), count);
+                    assert_eq!(raw.local_to_device_as_3x3(), matrix);
+                    assert_eq!(raw.device_clip_bounds(), clip);
+                    assert!(surface_bytes(&mut surface)
+                        .chunks_exact(4)
+                        .all(|pixel| pixel == [255, 255, 255, 255]));
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn fluent_arrow_short_and_regular_parts_keep_their_mask_local() {
+        for (width, height) in [(10.0, 2.0), (2.0, 10.0), (18.0, 18.0)] {
+            for horizontal in [false, true] {
+                for forward in [false, true] {
+                    let mut surface = surfaces::raster_n32_premul((64, 64)).unwrap();
+                    let raw = surface.canvas();
+                    raw.clear(skia_safe::Color::WHITE);
+                    raw.translate((3.0, 4.0));
+                    raw.clip_rect(
+                        Rect::from_xywh(0.0, 0.0, 40.0, 40.0),
+                        ClipOp::Intersect,
+                        false,
+                    );
+                    let count = raw.save_count();
+                    let matrix = raw.local_to_device_as_3x3();
+                    let clip = raw.device_clip_bounds();
+                    let mut paint = Paint::default();
+                    paint.set_color(skia_safe::Color::BLACK);
+                    paint_fluent_scrollbar_arrow(
+                        raw,
+                        Rect::from_xywh(10.0, 10.0, width, height),
+                        horizontal,
+                        forward,
+                        &paint,
+                    );
+                    assert_eq!(raw.save_count(), count);
+                    assert_eq!(raw.local_to_device_as_3x3(), matrix);
+                    assert_eq!(raw.device_clip_bounds(), clip);
+                    let pixels = surface_bytes(&mut surface);
+                    let mut changed = 0;
+                    for y in 0..64 {
+                        for x in 0..64 {
+                            let pixel = &pixels[(y * 64 + x) * 4..][..4];
+                            if pixel != [255, 255, 255, 255] {
+                                changed += 1;
+                                assert!(x >= 13 && (x as f32) < 13.0 + width);
+                                assert!(y >= 14 && (y as f32) < 14.0 + height);
+                            }
+                        }
+                    }
+                    if width == 18.0 && height == 18.0 {
+                        assert!(changed > 0);
+                    }
+                    let raw = surface.canvas();
+                    let mut sibling = Paint::default();
+                    sibling.set_color(skia_safe::Color::GREEN);
+                    raw.draw_rect(Rect::from_xywh(0.0, 0.0, 2.0, 2.0), &sibling);
+                    let pixels = surface_bytes(&mut surface);
+                    assert_eq!(&pixels[(5 * 64 + 4) * 4..][..4], &[0, 255, 0, 255]);
+                }
+            }
+        }
     }
 }
