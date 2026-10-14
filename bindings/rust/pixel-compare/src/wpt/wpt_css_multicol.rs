@@ -169794,15 +169794,7 @@ fn css_multicol_multicol_dynamic_change_inside_break_inside_avoid_001_ref(
     );
     doc.set_style(n5, RendererStyleValue::BorderLeftWidth(2));
     doc.set_style(n5, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n5,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(169.0),
-            intrinsic_height: Some(20.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n5, openui_dom::FormControlRole::TextInput);
     doc.set_node_state(n5, RendererNodeState::FormControlNativeAppearance(false));
     doc.set_style(n5, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n5, RendererStyleValue::MarginRight(Length::px(0.0)));
@@ -169984,15 +169976,7 @@ fn css_multicol_multicol_dynamic_change_inside_break_inside_avoid_001_ref(
     );
     doc.set_style(n9, RendererStyleValue::BorderLeftWidth(2));
     doc.set_style(n9, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n9,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(169.0),
-            intrinsic_height: Some(20.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n9, openui_dom::FormControlRole::TextInput);
     doc.set_node_state(n9, RendererNodeState::FormControlNativeAppearance(false));
     doc.set_style(n9, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n9, RendererStyleValue::MarginRight(Length::px(0.0)));

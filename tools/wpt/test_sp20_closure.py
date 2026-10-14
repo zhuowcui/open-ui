@@ -178,7 +178,15 @@ class Sp20ClosureAndPorterTests(unittest.TestCase):
         self.assertIn("ElementTag::TextArea", rust)
         self.assertIn("FormControlRole::TextArea", rust)
         self.assertIn("FormControlRole::Checkbox", rust)
-        self.assertIn("intrinsic_width: Some(95.0)", rust)
+        self.assertIn(
+            "doc.request_native_control_geometry(n1, openui_dom::FormControlRole::TextArea);",
+            rust,
+        )
+        self.assertIn('doc.set_attribute(n1, "cols", "4");', rust)
+        self.assertIn('doc.set_attribute(n1, "rows", "3");', rust)
+        self.assertIn('RendererNodeState::Text(Some("abcdef".to_string()))', rust)
+        self.assertNotIn("doc.set_node_state(n1, RendererNodeState::Replaced", rust)
+        self.assertIn("intrinsic_width: Some(13.0)", rust)
         self.assertIn(
             "RendererStyleValue::BoxSizing(BoxSizing::BorderBox)", rust
         )

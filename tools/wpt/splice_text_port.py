@@ -16,6 +16,8 @@ Usage:
 from __future__ import annotations
 
 import csv
+import copy
+import hashlib
 import io
 import json
 import os
@@ -56,6 +58,7 @@ RUST_RAW_STRING_START = re.compile(r'r(#{0,255})"')
 
 sys.path.insert(0, SCRIPT_DIR)
 import port_wpt  # noqa: E402
+import engine_fixture_codegen  # noqa: E402
 
 
 @dataclass(frozen=True)
@@ -934,6 +937,245 @@ def commit_changes(originals: dict[str, str], changes: dict[str, str]) -> None:
                 os.unlink(staged_path)
 
 
+def _native_control_state_spans(source: str, node: str, state: str) -> list[tuple[int, int]]:
+    pattern = re.compile(
+        r"doc\.set_node_state\s*\(\s*" + re.escape(node)
+        + r"\s*,\s*RendererNodeState::" + state + r"\s*\("
+    )
+    spans = []
+    for match in pattern.finditer(source):
+        opening = source.index("(", match.start())
+        closing = engine_fixture_codegen._matching_paren(source, opening)
+        end = closing + 1
+        while end < len(source) and source[end].isspace():
+            end += 1
+        if end == len(source) or source[end] != ";":
+            raise ValueError("native control state is not a complete statement")
+        spans.append((match.start(), end + 1))
+    return spans
+
+
+def _native_control_owner_chain(source: str, node: str) -> list[tuple[str, str, str]]:
+    creations = re.findall(r"let\s+([A-Za-z_][A-Za-z0-9_]*)\s*=\s*doc\.create_node\(ElementTag::([A-Za-z]+)\);", source)
+    tags = dict(creations)
+    if len(tags) != len(creations):
+        raise ValueError("ambiguous native control node creation")
+    parents = defaultdict(list)
+    for parent, child in re.findall(r"doc\.append_child\(\s*([A-Za-z_][A-Za-z0-9_]*)\s*,\s*([A-Za-z_][A-Za-z0-9_]*)\s*,?\s*\);", source):
+        parents[child].append(parent)
+    chain, visited = [], set()
+    while node not in {"vp", "html"}:
+        if node in visited or node not in tags or len(parents[node]) != 1:
+            raise ValueError("missing/ambiguous native control ancestry")
+        visited.add(node)
+        parent = parents[node][0]
+        chain.append((node, tags[node], parent))
+        node = parent
+    chain.append((node, "constructor", ""))
+    return chain
+
+
+def project_native_control_geometry(existing: str, legacy: str, generated: str) -> tuple[str, list[dict]]:
+    """Replace solely the checksum-bound historical native UA statement.
+
+    Actual source roles, ancestry, creation identity and old metadata must
+    match before any change; unrelated function bytes remain unchanged.
+    """
+    requests = engine_fixture_codegen.native_control_geometry_requests(generated)
+    if not requests or len({node for node, _ in requests}) != len(requests):
+        raise ValueError("missing or duplicate source native control requests")
+    edits, rows = [], []
+    def canonical(statement):
+        # The validated statements contain only typed enum/numeric operands.
+        # Rustfmt may add a legal trailing argument comma in multiline calls.
+        return re.sub(r",(?=[)}])", "", re.sub(r"\s+", "", statement))
+    for node, role in requests:
+        if _native_control_owner_chain(existing, node) != _native_control_owner_chain(legacy, node) or _native_control_owner_chain(existing, node) != _native_control_owner_chain(generated, node):
+            raise ValueError(f"{node}: native control source ancestry differs")
+        tag = "Input" if role == "TextInput" else "TextArea"
+        creation = re.compile(r"let\s+" + re.escape(node) + r"\s*=\s*doc\.create_node\(ElementTag::" + tag + r"\);")
+        for body in (existing, legacy, generated):
+            if len(creation.findall(body)) != 1:
+                raise ValueError(f"{node}: native control source tag/identity differs")
+            roles = _native_control_state_spans(body, node, "FormControl")
+            expected_role = f"doc.set_node_state({node},RendererNodeState::FormControl(Some(openui_dom::FormControlRole::{role})));"
+            if len(roles) != 1 or canonical(body[slice(*roles[0])]) != expected_role:
+                raise ValueError(f"{node}: native control source role differs")
+        pattern = re.compile(
+            r"doc\.request_native_control_geometry\s*\(\s*" + re.escape(node)
+            + r"\s*,\s*openui_dom::FormControlRole::" + role + r"\s*,?\s*\)\s*;"
+        )
+        new, current = list(pattern.finditer(generated)), list(pattern.finditer(existing))
+        old = _native_control_state_spans(existing, node, "Replaced")
+        expected = _native_control_state_spans(legacy, node, "Replaced")
+        if len(new) != 1 or len(expected) != 1 or len(old) + len(current) != 1:
+            raise ValueError(f"{node}: ambiguous or missing native control metadata")
+        expected_statement = legacy[slice(*expected[0])]
+        if "ReplacedResourceKind::TransparentCanvas" not in expected_statement:
+            raise ValueError(f"{node}: source is an explicit resource")
+        if old:
+            span = old[0]
+            original = existing[slice(*span)]
+            if canonical(original) != canonical(expected_statement):
+                raise ValueError(f"{node}: old metadata differs from source UA projection")
+        else:
+            span = (current[0].start(), current[0].end())
+            original = existing[slice(*span)]
+        replacement = new[0].group()
+        if original != replacement:
+            edits.append((*span, replacement))
+        rows.append({"node": node, "role": role, "already_requested": bool(current)})
+    for start, end, replacement in sorted(edits, reverse=True):
+        existing = existing[:start] + replacement + existing[end:]
+    return existing, rows
+
+
+def load_native_control_source_inventory(path: str, expected_sha256: str) -> dict:
+    with open(path, "rb") as file:
+        raw = file.read()
+    if not re.fullmatch(r"[0-9a-f]{64}", expected_sha256) or hashlib.sha256(raw).hexdigest() != expected_sha256:
+        raise ValueError("native control source inventory checksum differs")
+    proof = json.loads(raw)
+    if proof.get("schema_version") != 1 or not proof.get("source_only"):
+        raise ValueError("unsupported native control source inventory")
+    if proof.get("node_count") != len(proof.get("nodes", [])):
+        raise ValueError("native control inventory count differs")
+    if len({row['path'] for row in proof['modules']}) != len(proof['modules']):
+        raise ValueError("duplicate native control source module")
+    return proof
+
+
+def reverse_native_control_geometry(existing: str, baseline: str, nodes: list[dict]) -> str:
+    """Restore solely owned requests for an exact whole-base-byte check."""
+    edits = []
+    for row in nodes:
+        node, role = row['node'], row['role']
+        expected = _native_control_state_spans(baseline, node, "Replaced")
+        if len(expected) != 1:
+            raise ValueError("ambiguous frozen native control statement")
+        statement = baseline[slice(*expected[0])]
+        if hashlib.sha256(statement.encode()).hexdigest() != row['statement_sha256']:
+            raise ValueError("frozen native control statement checksum differs")
+        pattern = re.compile(r"doc\.request_native_control_geometry\s*\(\s*" + re.escape(node)
+                             + r"\s*,\s*openui_dom::FormControlRole::" + role + r"\s*,?\s*\)\s*;")
+        matches = list(pattern.finditer(existing))
+        if matches:
+            if len(matches) != 1:
+                raise ValueError("duplicate current native control statement")
+            edits.append((matches[0].start(), matches[0].end(), statement))
+    for start, end, statement in sorted(edits, reverse=True):
+        existing = existing[:start] + statement + existing[end:]
+    return existing
+
+
+def prepare_native_control_geometry_changes(test_ids: list[str], mapping: dict, profile: port_wpt.PorterProfile, source_inventory: dict):
+    """Frozen-template, Rust-only projection with no corpus publication."""
+    if not test_ids or len(test_ids) != len(set(test_ids)):
+        raise ValueError("native control projection requires distinct existing IDs")
+    if set(test_ids) != set(source_inventory['test_ids']):
+        raise ValueError("native control transaction differs from its source inventory")
+    proof_modules = {}
+    for row in source_inventory['modules']:
+        with open(row['base_copy'], encoding="utf-8") as file:
+            baseline = file.read()
+        if hashlib.sha256(baseline.encode()).hexdigest() != row['sha256']:
+            raise ValueError("frozen native control module checksum differs")
+        proof_modules[row['path']] = (row, baseline)
+    proof_nodes = defaultdict(list)
+    for row in source_inventory['nodes']:
+        if row['role'] not in {'TextInput', 'TextArea'} or row['path'] not in proof_modules:
+            raise ValueError("native control inventory contains an unsupported owner")
+        proof_nodes[row['test_id']].append(row)
+    if set(proof_nodes) != set(test_ids):
+        raise ValueError("missing native control source ownership")
+    _, templates = _load_json_object(os.path.join(WPT_PORTED_DIR, "all_wpt_templates.json"))
+    real_ids = set(load_ids_file(SP16_REAL_LIST))
+    modern_ids = set(load_ids_file(SP18_TARGETS_LIST))
+    originals, changes = {}, {}
+    replacements, reversals = defaultdict(list), defaultdict(list)
+    rows = []
+    previous = (port_wpt.ACTIVE_PORTER_PROFILE, port_wpt.EMIT_TEXT_NODES,
+                port_wpt.RETAIN_TEXT, port_wpt.EMIT_PAINT_LAYERS,
+                port_wpt.MODERN_LINE_CLAMP_ENABLED, port_wpt.DETERMINISTIC_FONT_FAMILY_RUST)
+    try:
+        for test_id in sorted(test_ids):
+            parts = test_id.split("/")
+            if len(parts) != 3 or parts[0] != "wpt" or test_id not in mapping or test_id not in templates:
+                raise ValueError(f"{test_id}: missing immutable source/registry identity")
+            module, name = parts[1:]
+            if not re.fullmatch(r"[a-z0-9_]+", module) or mapping[test_id].get("sp_area") != module:
+                raise ValueError(f"{test_id}: mismatched source module")
+            path = os.path.join(RUST_WPT_DIR, f"wpt_{module}.rs")
+            relative_path = os.path.relpath(path, PROJECT_ROOT)
+            if relative_path not in proof_modules:
+                raise ValueError("native control module is outside the frozen transaction")
+            if path not in originals:
+                with open(path, encoding="utf-8") as file:
+                    originals[path] = file.read()
+            source = originals[path]
+            fn_name = f"{module}_{port_wpt.sanitize_fn_name(name)}"
+            if _function_count(source, fn_name) != 1 or _registry_identities(source, test_id) != [fn_name]:
+                raise ValueError(f"{test_id}: missing/ambiguous existing builder")
+            start, end = _rust_function_span(source, fn_name)
+            existing = source[start:end]
+            module_proof, baseline_module = proof_modules[relative_path]
+            base_start, base_end = _rust_function_span(baseline_module, fn_name)
+            baseline = baseline_module[base_start:base_end]
+            node_proof = proof_nodes[test_id]
+            if any(row['path'] != relative_path or row['fn_name'] != fn_name or
+                   row['builder_sha256'] != hashlib.sha256(baseline.encode()).hexdigest() for row in node_proof):
+                raise ValueError("native control builder source checksum differs")
+            _, module_templates = _load_json_object(os.path.join(WPT_PORTED_DIR, f"wpt_{module}_templates.json"))
+            template = templates[test_id]
+            if module_templates.get(test_id) != template:
+                raise ValueError(f"{test_id}: frozen templates disagree")
+            template_proof = [row for row in source_inventory['raw_templates'] if row['test_id'] == test_id]
+            if len(template_proof) != 1 or hashlib.sha256(template.encode()).hexdigest() != template_proof[0]['sha256']:
+                raise ValueError(f"{test_id}: immutable template checksum differs")
+            selected = port_wpt.PorterProfile.REAL_FONT if test_id in real_ids else profile
+            # Historical builders can retain real text outside the later
+            # text-port ledger. Preserve their actual construction profile;
+            # this transaction never changes that ledger or any text bytes.
+            retains_text = bool(re.search(r"doc\.create_node\(ElementTag::Text\)", baseline))
+            port_wpt.set_porter_profile(selected, retain_text=retains_text)
+            # Legacy profile's public selector intentionally strips text.
+            # This source-only transaction keeps an existing builder's actual
+            # switches without changing that selector's historical default.
+            port_wpt.EMIT_TEXT_NODES = retains_text
+            port_wpt.RETAIN_TEXT = retains_text
+            port_wpt.set_modern_line_clamp_enabled(test_id in modern_ids)
+            port_wpt.set_paint_layer_emission(False)
+            root_aware = "root_doc(viewport)" in existing
+            parser = port_wpt._parse_wpt_markup(template, os.path.dirname(os.path.join(WPT_ROOT, mapping[test_id]['chromium_test_path'])), root_aware=root_aware)
+            frozen_font = _frozen_font_family_rust(template)
+            port_wpt.DETERMINISTIC_FONT_FAMILY_RUST = frozen_font or previous[-1]
+            generated = _rustfmt_source(port_wpt.generate_rust_fn(fn_name, copy.deepcopy(parser.root), parser.html_styles, root_aware=root_aware), f"{fn_name}.rs")
+            requests = engine_fixture_codegen.native_control_geometry_requests(generated)
+            if sorted(requests) != sorted((row['node'], row['role']) for row in node_proof):
+                raise ValueError(f"{test_id}: new source has missing/extra/mismatched native controls")
+            updated, nodes = project_native_control_geometry(existing, baseline, generated)
+            replacements[path].append((start, end, updated))
+            reversals[path].append((start, end, reverse_native_control_geometry(existing, baseline, node_proof)))
+            rows.append({"test_id": test_id, "module_path": path, "requests": nodes})
+    finally:
+        (port_wpt.ACTIVE_PORTER_PROFILE, port_wpt.EMIT_TEXT_NODES,
+         port_wpt.RETAIN_TEXT, port_wpt.EMIT_PAINT_LAYERS,
+         port_wpt.MODERN_LINE_CLAMP_ENABLED, port_wpt.DETERMINISTIC_FONT_FAMILY_RUST) = previous
+    for path, edits in replacements.items():
+        restored = originals[path]
+        for start, end, replacement in sorted(reversals[path], reverse=True):
+            restored = restored[:start] + replacement + restored[end:]
+        module_proof = proof_modules[os.path.relpath(path, PROJECT_ROOT)][0]
+        if hashlib.sha256(restored.encode()).hexdigest() != module_proof['sha256']:
+            raise ValueError("native control reverse projection differs from the entire frozen module")
+        updated = originals[path]
+        for start, end, replacement in sorted(edits, reverse=True):
+            updated = updated[:start] + replacement + updated[end:]
+        if updated != originals[path]:
+            changes[path] = updated
+    return rows, originals, changes
+
+
 def main() -> int:
     args = sys.argv[1:]
     dry_run = False
@@ -942,6 +1184,10 @@ def main() -> int:
     profile = port_wpt.PorterProfile.DETERMINISTIC_AHEM
     paint_layers = False
     preserve_templates = False
+    native_control_geometry_only = False
+    check = False
+    native_control_source_inventory = None
+    native_control_source_sha256 = None
     positional = []
     index = 0
     while index < len(args):
@@ -952,6 +1198,23 @@ def main() -> int:
             paint_layers = True
         elif arg == "--preserve-templates":
             preserve_templates = True
+        elif arg == "--native-control-geometry-only":
+            native_control_geometry_only = True
+        elif arg == "--check":
+            check = True
+        elif arg in {"--native-control-source-inventory", "--native-control-source-sha256"}:
+            index += 1
+            if index >= len(args):
+                print(f"ERROR: {arg} requires a value", file=sys.stderr)
+                return 2
+            if arg == "--native-control-source-inventory":
+                if native_control_source_inventory is not None:
+                    return 2
+                native_control_source_inventory = args[index]
+            else:
+                if native_control_source_sha256 is not None:
+                    return 2
+                native_control_source_sha256 = args[index]
         elif arg == "--ids-file":
             index += 1
             if index >= len(args) or ids_path is not None:
@@ -992,12 +1255,31 @@ def main() -> int:
     if partition is not None and ids_path is None:
         print("ERROR: --partition requires --ids-file", file=sys.stderr)
         return 2
+    if check and not native_control_geometry_only:
+        print("ERROR: --check requires --native-control-geometry-only", file=sys.stderr)
+        return 2
+    if native_control_geometry_only and (not preserve_templates or paint_layers or partition is not None):
+        print("ERROR: native control projection requires only --preserve-templates and existing IDs", file=sys.stderr)
+        return 2
+    if ((native_control_geometry_only and not (native_control_source_inventory and native_control_source_sha256))
+            or (not native_control_geometry_only and (native_control_source_inventory or native_control_source_sha256))):
+        print("ERROR: native control projection requires its pinned source inventory and SHA256", file=sys.stderr)
+        return 2
 
     try:
         test_ids = load_ids_file(ids_path, partition) if ids_path else positional
         if not test_ids:
             raise ValueError("no test IDs supplied")
         mapping = load_mapping_rows()
+        if native_control_geometry_only:
+            proof = load_native_control_source_inventory(native_control_source_inventory, native_control_source_sha256)
+            rows, originals, changes = prepare_native_control_geometry_changes(test_ids, mapping, profile, proof)
+            if check or dry_run:
+                print(f"NATIVE CONTROL CHECK: {len(rows)} builders; {sum(len(row['requests']) for row in rows)} requests; {len(changes)} Rust modules differ; no files written")
+                return 1 if check and changes else 0
+            commit_changes(originals, changes)
+            print(f"NATIVE CONTROL PROJECTION: {len(rows)} builders; {sum(len(row['requests']) for row in rows)} requests; {len(changes)} Rust modules written")
+            return 0
         generated, originals, changes = prepare_changes(
             test_ids,
             mapping,

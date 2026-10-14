@@ -1491,6 +1491,7 @@ impl Engine {
             // metadata/context change removes the derived adjustment.
             && openui_style::value_from_computed(slot.native_source.style(), property) == value
             && openui_style::value_from_computed(&self.document.node(node).style, property) == value
+            && self.intrinsic_capture_width_matches(handle.index, &value)
         {
             return Ok(());
         }
@@ -1511,6 +1512,7 @@ impl Engine {
             slot.authored = previous_authored;
             return Err(error);
         }
+        self.commit_intrinsic_capture_width(handle.index, &value);
         if let Some((old_policy, old_value)) = old_transform {
             let style = self.document.node(node).style.clone();
             self.invalidate_transform_containing_block_change(node, old_policy, &style);
@@ -1552,6 +1554,7 @@ impl Engine {
         style: ComputedStyle,
     ) -> Result<(), EngineError> {
         let node = self.resolve(handle)?;
+        let source_scrollbar_width = style.scrollbar_width;
         let slot = &mut self.slots[handle.index as usize];
         let previous_source =
             std::mem::replace(&mut slot.native_source, NativeStyleSource::Snapshot(style));
@@ -1564,6 +1567,10 @@ impl Engine {
             slot.authored_pseudo = previous_pseudo;
             return Err(error);
         }
+        self.commit_intrinsic_capture_width(
+            handle.index,
+            &StyleValue::Renderer(RendererStyleValue::ScrollbarWidth(source_scrollbar_width)),
+        );
         self.dirty.hit_test = true;
         self.mark_dirty(InvalidationClass::Subtree);
         Ok(())
@@ -1991,6 +1998,7 @@ impl Engine {
                 }
                 if let Some(control) = self.controls.get_mut(&handle.index) {
                     control.native_intrinsic_sizing = false;
+                    control.intrinsic_capture_scrollbar_width = None;
                 }
                 self.document.node_mut(node).replaced = value;
             }
@@ -2006,6 +2014,11 @@ impl Engine {
                 self.document.node_mut(node).table_row_span = value;
             }
             RendererNodeState::FormControl(value) => {
+                if let Some(control) = self.controls.get_mut(&handle.index) {
+                    if value != Some(control.role) {
+                        control.intrinsic_capture_scrollbar_width = None;
+                    }
+                }
                 self.document.node_mut(node).form_control = value;
             }
             RendererNodeState::FormControlDisabled(value) => {
@@ -2162,6 +2175,7 @@ impl Engine {
             .and_then(|(width, height)| (width > 0.0 && height > 0.0).then_some((width, height)));
         if let Some(control) = self.controls.get_mut(&handle.index) {
             control.native_intrinsic_sizing = false;
+            control.intrinsic_capture_scrollbar_width = None;
         }
         self.document.node_mut(node).replaced = Some(ReplacedContent {
             resource: ReplacedResourceKind::Image(resource),

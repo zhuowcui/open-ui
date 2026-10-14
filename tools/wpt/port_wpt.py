@@ -46,11 +46,11 @@ from collections import OrderedDict
 
 try:
     # Package import used by the repository's unittest modules.
-    from tools.wpt.engine_fixture_codegen import engineify_module
+    from tools.wpt.engine_fixture_codegen import engineify_module, native_control_geometry_request
 except ModuleNotFoundError:
     # Direct-script execution puts tools/wpt, rather than the repository root,
     # on sys.path.
-    from engine_fixture_codegen import engineify_module
+    from engine_fixture_codegen import engineify_module, native_control_geometry_request
 
 
 class PorterProfile(Enum):
@@ -9801,6 +9801,7 @@ def generate_rust_fn(
     html_styles: dict | None = None,
     *,
     root_aware: bool = False,
+    _legacy_control_geometry_projection: bool = False,
 ) -> str:
     """Generate a Rust function that builds a Document matching the DOM tree."""
     global _ACTIVE_RESOURCE_BASE
@@ -11612,12 +11613,23 @@ def generate_rust_fn(
                     intrinsic_height = f"{var}_menu_height + 2.0"
                 else:
                     intrinsic_height = float(visible_rows * select_row_height)
-            lines.append(
-                f"{ws}doc.node_mut({var}).replaced = Some(openui_dom::ReplacedContent {{ "
-                "resource: openui_dom::ReplacedResourceKind::TransparentCanvas, "
-                f"intrinsic_width: Some({intrinsic_width}), "
-                f"intrinsic_height: Some({intrinsic_height}), intrinsic_ratio: None }});"
+            native_role = (
+                'TextArea' if node.tag == 'textarea'
+                else 'TextInput' if node.tag == 'input' and role.endswith('::TextInput')
+                else None
             )
+            if native_role is not None and not _legacy_control_geometry_projection:
+                lines.append(f"{ws}" + native_control_geometry_request(var, native_role))
+            else:
+                # Sole compatibility projection for the surgical transaction:
+                # compare the original UA-generated statement before replacing
+                # it. Ordinary generation always requests native text geometry.
+                lines.append(
+                    f"{ws}doc.node_mut({var}).replaced = Some(openui_dom::ReplacedContent {{ "
+                    "resource: openui_dom::ReplacedResourceKind::TransparentCanvas, "
+                    f"intrinsic_width: Some({intrinsic_width}), "
+                    f"intrinsic_height: Some({intrinsic_height}), intrinsic_ratio: None }});"
+                )
 
         # Set display:block for block-level HTML elements (our engine defaults to inline)
         block_tags = {'div', 'p', 'section', 'article', 'header', 'footer', 'nav', 'main',

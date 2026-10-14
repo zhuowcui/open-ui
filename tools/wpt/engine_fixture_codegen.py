@@ -291,7 +291,31 @@ def _builder_bodies(source: str) -> str:
         offset = end + 1
 
 
+def native_control_geometry_request(node: str, role: str) -> str:
+    """One typed, dimension-free request shared by normal and narrow generation."""
+    if not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", node):
+        raise ValueError("native control geometry requires a handle variable")
+    if role not in {"TextInput", "TextArea"}:
+        raise ValueError("native control geometry requires a text-control role")
+    return f"doc.request_native_control_geometry({node}, openui_dom::FormControlRole::{role});"
+
+
+def native_control_geometry_requests(source: str) -> list[tuple[str, str]]:
+    marker = "doc.request_native_control_geometry"
+    pattern = re.compile(
+        r"doc\.request_native_control_geometry\s*\(\s*"
+        r"([A-Za-z_][A-Za-z0-9_]*)\s*,\s*"
+        r"openui_dom::FormControlRole::(TextInput|TextArea)\s*,?\s*\)\s*;"
+    )
+    matches = list(pattern.finditer(source))
+    if source.count(marker) != len(matches):
+        raise ValueError("unsupported native control geometry directive")
+    requests = [(match.group(1), match.group(2)) for match in matches]
+    return requests
+
+
 def engineify_module(source: str) -> str:
+    native_control_geometry_requests(source)
     source = source.replace(
         "use openui_dom::{Document, ElementTag, NodeId};",
         "use openui_dom::ElementTag;\n"

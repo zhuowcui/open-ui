@@ -4,13 +4,123 @@
 //! positioning, hit testing and painting share the retained layout. Explicit
 //! resource/renderer metadata keeps its own dimensions.
 
-use crate::Engine;
+use crate::{Engine, EngineError, NodeHandle};
 use openui_dom::{ElementTag, FormControlRole, NodeId, ReplacedContent, ReplacedResourceKind};
 use openui_geometry::LayoutUnit;
-use openui_style::{ComputedStyle, Display, FontFamily, LineHeight, Overflow, ScrollbarWidth};
+use openui_style::{
+    CanonicalStyleField, ComputedStyle, Display, FontFamily, LineHeight, Overflow,
+    RendererStyleValue, ScrollbarWidth, StyleProperty, StyleValue,
+};
 use openui_text::{Font, FontDescription};
 
 impl Engine {
+    /// Request the existing native intrinsic kernel with an owned standard
+    /// scrollbar-width operand from a static capture adapter. This never
+    /// replaces explicit renderer/resource geometry or reenables its ownership.
+    #[doc(hidden)]
+    pub fn request_native_control_geometry(
+        &mut self,
+        handle: NodeHandle,
+        expected_role: FormControlRole,
+        scrollbar_width: ScrollbarWidth,
+    ) -> Result<(), EngineError> {
+        let node = self.resolve(handle)?;
+        let control = self
+            .controls
+            .get(&handle.index)
+            .ok_or(EngineError::NotAControl)?;
+        if !matches!(
+            expected_role,
+            FormControlRole::TextInput | FormControlRole::TextArea
+        ) || self.document.node(node).form_control != Some(expected_role)
+            || control.role != expected_role
+            || !control.native_intrinsic_sizing
+        {
+            return Err(EngineError::InvalidInput(
+                "native geometry requires an owned text-control role",
+            ));
+        }
+        if control.intrinsic_capture_scrollbar_width == Some(scrollbar_width) {
+            return Ok(());
+        }
+        self.controls
+            .get_mut(&handle.index)
+            .unwrap()
+            .intrinsic_capture_scrollbar_width = Some(scrollbar_width);
+        self.mark_dirty(openui_style::InvalidationClass::Intrinsic);
+        Ok(())
+    }
+
+    /// Metadata reads the standard source independently of pseudo-hidden
+    /// painting. Canonical mutation/removal and effects retain their shared
+    /// publication order; no animated computed snapshot becomes the baseline.
+    fn intrinsic_scrollbar_width(&self, node: NodeId) -> ScrollbarWidth {
+        let data = self.document.node(node);
+        let Some(index) = self.node_slots.get(&node).copied() else {
+            return data.style.scrollbar_width;
+        };
+        let Some(source) = self
+            .controls
+            .get(&index)
+            .and_then(|state| state.intrinsic_capture_scrollbar_width)
+        else {
+            return data.style.scrollbar_width;
+        };
+        let slot = &self.slots[index as usize];
+        let mut style = data.style.clone();
+        style.update_derived(|fields| fields.scrollbar_width = source);
+        let viewport = (
+            self.viewport.logical_width() as f32,
+            self.viewport.logical_height() as f32,
+        );
+        for contribution in slot.authored.contributions() {
+            if contribution
+                .fields()
+                .contains(CanonicalStyleField::ScrollbarWidth)
+            {
+                contribution
+                    .project_resolved(&mut style, contribution.value(), viewport)
+                    .expect("validated scrollbar-width contribution");
+            }
+        }
+        let parent = if data.parent.is_none() {
+            ComputedStyle::initial()
+        } else {
+            self.document.node(data.parent).style.clone()
+        };
+        let root_font = self.document.node(self.document.root()).style.font_size;
+        for (property, value) in
+            self.animation_values_for_node(index, &style, &parent, root_font, viewport, false)
+        {
+            if property == StyleProperty::ScrollbarWidth {
+                openui_style::apply_to_computed(&mut style, property, &value, viewport)
+                    .expect("validated scrollbar-width effect");
+            }
+        }
+        style.scrollbar_width
+    }
+
+    pub(crate) fn commit_intrinsic_capture_width(&mut self, index: u32, value: &StyleValue) {
+        if let StyleValue::Renderer(RendererStyleValue::ScrollbarWidth(width)) = value {
+            if let Some(control) = self.controls.get_mut(&index) {
+                if control.intrinsic_capture_scrollbar_width.is_some() {
+                    control.intrinsic_capture_scrollbar_width = Some(*width);
+                }
+            }
+        }
+    }
+
+    pub(crate) fn intrinsic_capture_width_matches(&self, index: u32, value: &StyleValue) -> bool {
+        match value {
+            StyleValue::Renderer(RendererStyleValue::ScrollbarWidth(width)) => self
+                .controls
+                .get(&index)
+                .and_then(|control| control.intrinsic_capture_scrollbar_width)
+                .is_none_or(|source| source == *width),
+            _ => true,
+        }
+    }
+
     pub(crate) fn control_attribute_changes_geometry(&self, node: NodeId, name: &str) -> bool {
         match self.document.node(node).tag {
             ElementTag::Input => matches!(name, "size" | "type"),
@@ -78,7 +188,7 @@ impl Engine {
         let metrics = font.font_metrics().copied().unwrap_or_default();
         let normal = openui_text::used_line_height(&metrics, &LineHeight::Normal, style.font_size);
         let mut line = openui_text::used_line_height(&metrics, &style.line_height, style.font_size);
-        let thickness = match style.scrollbar_width {
+        let thickness = match self.intrinsic_scrollbar_width(node) {
             ScrollbarWidth::Auto => 15.0,
             ScrollbarWidth::Thin => 10.0,
             ScrollbarWidth::None => 0.0,

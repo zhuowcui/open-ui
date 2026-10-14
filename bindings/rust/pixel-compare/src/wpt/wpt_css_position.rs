@@ -119451,15 +119451,7 @@ fn css_position_position_absolute_semi_replaced_stretch_input(
     );
     doc.set_style(n14, RendererStyleValue::BorderLeftWidth(2));
     doc.set_style(n14, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n14,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(262.0),
-            intrinsic_height: Some(14.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n14, openui_dom::FormControlRole::TextInput);
     doc.set_style(n14, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n14, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n14, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -119622,15 +119614,7 @@ fn css_position_position_absolute_semi_replaced_stretch_input(
     );
     doc.set_style(n17, RendererStyleValue::BorderLeftWidth(2));
     doc.set_style(n17, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n17,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(262.0),
-            intrinsic_height: Some(14.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n17, openui_dom::FormControlRole::TextInput);
     doc.set_style(n17, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n17, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n17, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -121293,15 +121277,7 @@ fn css_position_position_absolute_semi_replaced_stretch_input_ref(
     );
     doc.set_style(n14, RendererStyleValue::BorderLeftWidth(2));
     doc.set_style(n14, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n14,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(262.0),
-            intrinsic_height: Some(14.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n14, openui_dom::FormControlRole::TextInput);
     doc.set_style(n14, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n14, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n14, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -121468,15 +121444,7 @@ fn css_position_position_absolute_semi_replaced_stretch_input_ref(
     );
     doc.set_style(n17, RendererStyleValue::BorderLeftWidth(2));
     doc.set_style(n17, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n17,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(262.0),
-            intrinsic_height: Some(14.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n17, openui_dom::FormControlRole::TextInput);
     doc.set_style(n17, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n17, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n17, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -122910,15 +122878,7 @@ fn css_position_position_absolute_semi_replaced_stretch_other(
     );
     doc.set_style(n19, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n19, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n19,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n19, openui_dom::FormControlRole::TextArea);
     doc.set_style(n19, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n19, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n19, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -124162,15 +124122,7 @@ fn css_position_position_absolute_semi_replaced_stretch_other_ref(
     );
     doc.set_style(n19, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n19, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n19,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n19, openui_dom::FormControlRole::TextArea);
     doc.set_style(n19, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n19, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n19, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -136687,15 +136639,7 @@ fn css_position_sticky_sticky_continuation_crash(
     );
     doc.set_style(n2, RendererStyleValue::BorderLeftWidth(2));
     doc.set_style(n2, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n2,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(262.0),
-            intrinsic_height: Some(14.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n2, openui_dom::FormControlRole::TextInput);
     doc.set_style(n2, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n2, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n2, RendererStyleValue::MarginBottom(Length::px(0.0)));

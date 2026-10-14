@@ -150,6 +150,9 @@ pub struct ControlState {
     pub step: f64,
     pub password: bool,
     pub(crate) native_intrinsic_sizing: bool,
+    /// Standard author/theme operand retained before capture-only pseudo
+    /// scrollbar hiding. Ordinary native controls leave this absent.
+    pub(crate) intrinsic_capture_scrollbar_width: Option<openui_style::ScrollbarWidth>,
     composition_original: Option<(String, usize, usize, SelectionDirection)>,
     history: Vec<String>,
     future: Vec<String>,
@@ -192,6 +195,7 @@ impl ControlState {
                 role,
                 FormControlRole::TextInput | FormControlRole::TextArea
             ),
+            intrinsic_capture_scrollbar_width: None,
             composition_original: None,
             history: Vec::new(),
             future: Vec::new(),
@@ -1379,6 +1383,12 @@ impl Engine {
                     "button" | "submit" | "reset" => FormControlRole::Button,
                     _ => FormControlRole::TextInput,
                 };
+                if !matches!(
+                    control.role,
+                    FormControlRole::TextInput | FormControlRole::TextArea
+                ) {
+                    control.intrinsic_capture_scrollbar_width = None;
+                }
                 if control.role == FormControlRole::Range && control.value.is_empty() {
                     control.value =
                         format_control_number(control.min + (control.max - control.min) / 2.0);

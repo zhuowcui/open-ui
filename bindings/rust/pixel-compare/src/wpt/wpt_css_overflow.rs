@@ -259700,15 +259700,7 @@ fn css_overflow_input_scrollable_region_001(
     );
     doc.set_style(n1, RendererStyleValue::BorderLeftWidth(2));
     doc.set_style(n1, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n1,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(360.0),
-            intrinsic_height: Some(18.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n1, openui_dom::FormControlRole::TextInput);
     doc.set_style(n1, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n1, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n1, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -293030,15 +293022,7 @@ fn css_overflow_scrollable_overflow_input_001_ref(
     );
     doc.set_style(n1, RendererStyleValue::BorderLeftWidth(2));
     doc.set_style(n1, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n1,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(400.0),
-            intrinsic_height: Some(20.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n1, openui_dom::FormControlRole::TextInput);
     doc.set_style(n1, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n1, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n1, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -293152,15 +293136,7 @@ fn css_overflow_scrollable_overflow_input_002_ref(
     );
     doc.set_style(n1, RendererStyleValue::BorderLeftWidth(2));
     doc.set_style(n1, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n1,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(400.0),
-            intrinsic_height: Some(20.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n1, openui_dom::FormControlRole::TextInput);
     doc.set_style(n1, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n1, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n1, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -294580,15 +294556,7 @@ fn css_overflow_text_overflow_ellipsis_editing_input_ref(
     doc.set_style(n3, RendererStyleValue::BorderBottomStyle(BorderStyle::None));
     doc.set_style(n3, RendererStyleValue::BorderLeftWidth(0));
     doc.set_style(n3, RendererStyleValue::BorderLeftStyle(BorderStyle::None));
-    doc.set_node_state(
-        n3,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(262.0),
-            intrinsic_height: Some(16.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n3, openui_dom::FormControlRole::TextInput);
     doc.set_style(n3, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n3, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n3, RendererStyleValue::MarginBottom(Length::px(0.0)));

@@ -39,6 +39,7 @@ static ACTIVE_RASTER_CONFIGURATION: OnceLock<RasterConfiguration> = OnceLock::ne
 pub struct FixtureEngine {
     inner: Engine,
     authored_scrollbar_widths: std::collections::HashMap<NodeId, ScrollbarWidth>,
+    native_geometry_requests: std::collections::HashMap<NodeId, openui_dom::FormControlRole>,
 }
 
 impl FixtureEngine {
@@ -61,6 +62,7 @@ impl FixtureEngine {
         Ok(Self {
             inner,
             authored_scrollbar_widths: std::collections::HashMap::new(),
+            native_geometry_requests: std::collections::HashMap::new(),
         })
     }
 
@@ -126,7 +128,24 @@ impl FixtureEngine {
             self.inner
                 .set_renderer_style(node, RendererStyleValue::ScrollbarWidth(effective))
                 .expect("capture scrollbar precedence");
+            if let Some(role) = self.native_geometry_requests.get(&node).copied() {
+                self.inner
+                    .request_native_control_geometry(node, role, authored)
+                    .expect("capture native geometry source");
+            }
         }
+    }
+
+    fn request_native_control_geometry(&mut self, node: NodeId, role: openui_dom::FormControlRole) {
+        let width = self
+            .authored_scrollbar_widths
+            .get(&node)
+            .copied()
+            .unwrap_or(ScrollbarWidth::Auto);
+        self.inner
+            .request_native_control_geometry(node, role, width)
+            .expect("source-owned native text-control geometry");
+        self.native_geometry_requests.insert(node, role);
     }
 
     fn set_internal_style(&mut self, node: NodeId, value: RendererInternalStyleValue) {
@@ -4977,6 +4996,53 @@ fn sp13_inline_with_float(viewport: ViewportMetrics) -> Result<Engine, EngineErr
 #[cfg(test)]
 mod profile_tests {
     use super::*;
+
+    #[test]
+    fn native_control_metric_source_is_independent_of_capture_pseudo_scrollbars_and_colors() {
+        let viewport = ViewportMetrics::from_logical_size(640.0, 480.0, 1.0).unwrap();
+        let mut doc = FixtureEngine::new(viewport).unwrap();
+        let node = doc.create_node(ElementTag::TextArea);
+        doc.set_style(node, RendererStyleValue::Display(Display::InlineBlock));
+        doc.set_style(
+            node,
+            RendererStyleValue::FontFamily(FontFamilyList::single("Ahem")),
+        );
+        let root = doc.root();
+        doc.append_child(root, node);
+        doc.request_native_control_geometry(node, openui_dom::FormControlRole::TextArea);
+        let before = doc.inner.bounds(node).unwrap().unwrap();
+        assert_eq!(
+            doc.inner.computed_style(node).unwrap().scrollbar_width,
+            ScrollbarWidth::None
+        );
+        doc.set_style(
+            node,
+            RendererStyleValue::ScrollbarThumbColor(Some(Color::RED)),
+        );
+        assert_eq!(
+            doc.inner.computed_style(node).unwrap().scrollbar_width,
+            ScrollbarWidth::Auto
+        );
+        assert_eq!(doc.inner.bounds(node).unwrap().unwrap(), before);
+        doc.set_style(node, RendererStyleValue::ScrollbarThumbColor(None));
+        assert_eq!(
+            doc.inner.computed_style(node).unwrap().scrollbar_width,
+            ScrollbarWidth::None
+        );
+        assert_eq!(doc.inner.bounds(node).unwrap().unwrap(), before);
+        doc.set_style(
+            node,
+            RendererStyleValue::ScrollbarWidth(ScrollbarWidth::Thin),
+        );
+        let thin = doc.inner.bounds(node).unwrap().unwrap();
+        doc.set_style(
+            node,
+            RendererStyleValue::ScrollbarWidth(ScrollbarWidth::None),
+        );
+        let none = doc.inner.bounds(node).unwrap().unwrap();
+        assert!(before.width > thin.width && thin.width > none.width);
+        assert_eq!((before.height, thin.height), (none.height, none.height));
+    }
 
     #[test]
     fn adjacent_row_flex_items_keep_their_own_height_across_columns() {
