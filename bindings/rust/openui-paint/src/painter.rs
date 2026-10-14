@@ -2763,21 +2763,20 @@ fn native_scrollbar_frame(
     let thickness = scrollport.scrollbar_thickness;
     if horizontal {
         openui_geometry::PhysicalRect::new(
-            client.x(),
-            client.y() + client.height(),
-            client.width(),
-            thickness,
+            PhysicalOffset::new(client.x(), client.y() + client.height()),
+            PhysicalSize::new(client.width(), thickness),
         )
     } else {
         openui_geometry::PhysicalRect::new(
-            if vertical_on_left {
-                client.x() - thickness
-            } else {
-                client.x() + client.width()
-            },
-            client.y(),
-            thickness,
-            client.height(),
+            PhysicalOffset::new(
+                if vertical_on_left {
+                    client.x() - thickness
+                } else {
+                    client.x() + client.width()
+                },
+                client.y(),
+            ),
+            PhysicalSize::new(thickness, client.height()),
         )
     }
 }
@@ -3130,19 +3129,23 @@ mod overflow_controls_frame_guards {
             Overflow::Clip,
             Overflow::Visible,
         ] {
-            style.overflow_x = overflow;
-            style.overflow_y = overflow;
-            style.resize = openui_style::Resize::Both;
+            style.update_derived(|fields| {
+                fields.overflow_x = overflow;
+                fields.overflow_y = overflow;
+                fields.resize = openui_style::Resize::Both;
+            });
             assert_eq!(
                 native_textarea_can_resize(&style),
                 matches!(overflow, Overflow::Auto | Overflow::Hidden)
             );
-            style.resize = openui_style::Resize::None;
+            style.update_derived(|fields| fields.resize = openui_style::Resize::None);
             assert!(!native_textarea_can_resize(&style));
         }
-        style.overflow_x = Overflow::Hidden;
-        style.overflow_y = Overflow::Visible;
-        style.resize = openui_style::Resize::Both;
+        style.update_derived(|fields| {
+            fields.overflow_x = Overflow::Hidden;
+            fields.overflow_y = Overflow::Visible;
+            fields.resize = openui_style::Resize::Both;
+        });
         assert!(native_textarea_can_resize(&style));
         for width in [0.0, 1.0, 14.0, 15.0, 16.0] {
             for height in [0.0, 1.0, 14.0, 15.0, 16.0] {
@@ -3171,10 +3174,8 @@ mod overflow_controls_frame_guards {
             PhysicalSize::new(LayoutUnit::from_i32(14), LayoutUnit::from_i32(14)),
         );
         let client = openui_geometry::PhysicalRect::new(
-            LayoutUnit::zero(),
-            LayoutUnit::zero(),
-            LayoutUnit::from_i32(4),
-            LayoutUnit::from_i32(4),
+            PhysicalOffset::new(LayoutUnit::zero(), LayoutUnit::zero()),
+            PhysicalSize::new(LayoutUnit::from_i32(4), LayoutUnit::from_i32(4)),
         );
         fragment.element_scrollbars = Some(openui_layout::ElementScrollbars {
             insets: BoxStrut::new(
@@ -3239,7 +3240,7 @@ mod overflow_controls_frame_guards {
 
     #[test]
     fn contained_controls_add_no_recorded_canvas_operation_or_opacity_barrier() {
-        let surface = surfaces::raster_n32_premul((32, 32)).unwrap();
+        let mut surface = surfaces::raster_n32_premul((32, 32)).unwrap();
         let raw = surface.canvas();
         let canvas: &Canvas = raw;
         let capture = crate::paint_program::PaintProgramScope::new(raw);
