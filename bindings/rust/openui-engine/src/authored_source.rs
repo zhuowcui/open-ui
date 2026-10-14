@@ -6,7 +6,7 @@ use openui_style::{
 };
 use std::collections::{HashMap, HashSet};
 
-struct CascadeUpdate {
+pub(crate) struct CascadeUpdate {
     node: NodeId,
     index: u32,
     old_style: ComputedStyle,
@@ -46,12 +46,30 @@ impl Engine {
     /// callback runs here. A type/reservation error leaves document styles and
     /// effect caches unchanged so source mutators can roll back their input.
     pub(crate) fn publish_native_cascade(&mut self, root: NodeId) -> Result<(), EngineError> {
+        let updates = self.prepare_native_cascade(root)?;
+        self.publish_prepared_native_cascade(updates);
+        Ok(())
+    }
+
+    /// Resolve the same cascade without publishing it. Timeline controls stage
+    /// every affected root before committing an instance or any style/events.
+    pub(crate) fn prepare_native_cascade(
+        &self,
+        root: NodeId,
+    ) -> Result<Vec<CascadeUpdate>, EngineError> {
+        self.prepare_native_cascade_roots(&[root])
+    }
+
+    pub(crate) fn prepare_native_cascade_roots(
+        &self,
+        roots: &[NodeId],
+    ) -> Result<Vec<CascadeUpdate>, EngineError> {
         let initial = ComputedStyle::initial();
         let viewport = (
             self.viewport.logical_width() as f32,
             self.viewport.logical_height() as f32,
         );
-        let mut pending = vec![root];
+        let mut pending: Vec<_> = roots.iter().rev().copied().collect();
         let mut updates: Vec<CascadeUpdate> = Vec::new();
         let mut staged: HashMap<NodeId, usize> = HashMap::new();
         let mut visited = HashSet::new();
@@ -162,6 +180,10 @@ impl Engine {
             // the visited set removes their duplicate physical-tree entries.
             pending.extend(owned_buttons.into_iter().rev());
         }
+        Ok(updates)
+    }
+
+    pub(crate) fn publish_prepared_native_cascade(&mut self, updates: Vec<CascadeUpdate>) {
         for update in updates {
             self.invalidate_transform_containing_block_change(
                 update.node,
@@ -194,7 +216,6 @@ impl Engine {
             self.document
                 .install_resolved_style(update.node, update.style);
         }
-        Ok(())
     }
 
     /// This is a creation input, never an authored declaration. Alias/native

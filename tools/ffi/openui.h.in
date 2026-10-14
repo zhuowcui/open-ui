@@ -1648,6 +1648,19 @@ OuiStatus oui_element_settle_scroll_snap_with_easing_v1(OuiElement* element,
 OuiStatus oui_document_dispatch_wheel_input_v1(OuiDocument *document,
                                                const OuiEvent *wheel);
 
+/* Replace the native value-bound source of an existing owning-document
+ * animation. Uses the existing versioned source descriptor; null means the
+ * native Document clock. Inputs are copied and owner/generation validated
+ * before the operation. Equivalent descriptors are a no-op preserving ranges,
+ * holds and deferred controls. Browser attachment or native oriented ranges
+ * survive clock changes. This does not create distinct equivalent Timeline
+ * objects, null/unbound timelines or independently offset Document clocks.
+ * Animation IDs remain scoped to the supplied document, as existing controls.
+ * Events dispatch after Engine borrows; a callback may reenter this operation.
+ * A callback panic is contained but does not roll back a completed mutation. */
+OuiStatus oui_document_set_animation_timeline_source_v1(OuiDocument* document,
+                                                        uint64_t animation_id,
+                                                        const OuiAnimationTimelineSourceV1* source);
 #ifdef __cplusplus
 }  /* extern "C" */
 #endif

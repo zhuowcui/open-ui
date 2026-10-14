@@ -914,6 +914,19 @@ impl Document {
         Ok(snapshot)
     }
 
+    /// Rebind an existing animation to a checked native clock source.
+    /// Equivalent value bindings are an idle no-op; range, target and effect
+    /// identity survive. The source Element borrow is copied during this call.
+    pub fn set_animation_timeline_source(
+        &self,
+        animation: AnimationId,
+        binding: crate::AnimationTimelineBinding<'_>,
+    ) -> Result<(), Error> {
+        let source = binding.checked_source(self)?;
+        self.with_engine_mut(|engine| engine.set_animation_timeline_source(animation, source))?;
+        self.dispatch_animation_events()
+    }
+
     pub fn set_animation_attachment_range(
         &self,
         animation: AnimationId,

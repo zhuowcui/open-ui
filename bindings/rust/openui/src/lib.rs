@@ -73,6 +73,9 @@ pub mod signal;
 
 // ─── DOM wrapper modules ────────────────────────────────────
 
+mod animation_timeline;
+pub use animation_timeline::AnimationTimelineBinding;
+
 pub mod document;
 pub mod element;
 pub mod events;

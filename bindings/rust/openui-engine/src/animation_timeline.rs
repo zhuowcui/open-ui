@@ -173,51 +173,70 @@ impl ProgressTimelineSnapshot {
         self,
         specified: &AnimationOptions,
     ) -> (AnimationOptions, AnimationTimingSeconds) {
-        let mut timing = specified.clone();
-        // Default .50 AnimationTimeDelta stores double seconds. Keep that
-        // operation order here and reflect native milliseconds only at the end.
-        let duration = specified.duration_ms / 1000.0;
-        let delay = specified.delay_ms / 1000.0;
-        let count = match specified.iterations {
-            IterationCount::Number(count) => count,
-            IterationCount::Infinite => f64::INFINITY,
-        };
-        let active = if duration == 0.0 {
-            0.0
-        } else {
-            duration * count
-        };
-        let end = (delay + active).max(0.0);
-        let (delay, duration) = if end == 0.0 {
-            (0.0, 0.0)
-        } else if end.is_infinite() {
-            // animation_effect.cc:132-150 evaluates the infinite-end limit
-            // with reciprocal multiplication, including infinite iterations.
-            (0.0, (1.0 / count) * self.duration_seconds)
-        } else {
-            let mut interval = 1.0;
-            interval -= self.attachment_start_fraction;
-            interval -= 1.0 - self.attachment_end_fraction;
-            // The native API also preserves its pre-existing reversed ranges.
-            if self.legacy_oriented && self.range.end < self.range.start {
-                interval = -interval;
-            }
-            interval = interval.max(0.0);
-            let intrinsic = if count > 0.0 {
-                self.duration_seconds * interval / count
-            } else {
-                0.0
-            };
-            let range_duration = intrinsic * count;
-            (
-                delay / end * range_duration,
-                duration / end * range_duration,
-            )
-        };
-        timing.delay_ms = delay * 1000.0;
-        timing.duration_ms = duration * 1000.0;
-        (timing, AnimationTimingSeconds { delay, duration })
+        normalize_progress_timing(
+            specified,
+            self.duration_seconds,
+            self.attachment_start_fraction,
+            self.attachment_end_fraction,
+            self.legacy_oriented && self.range.end < self.range.start,
+        )
     }
+}
+
+/// One arithmetic path for active geometry and the inactive browser duration.
+/// Present offsets on an empty Blink TimelineRange resolve to zero; omitted
+/// endpoints retain their independent defaults in the caller.
+pub(crate) fn normalize_progress_timing(
+    specified: &AnimationOptions,
+    duration_seconds: f64,
+    start_fraction: f64,
+    end_fraction: f64,
+    legacy_reversed: bool,
+) -> (AnimationOptions, AnimationTimingSeconds) {
+    let mut timing = specified.clone();
+    // Default .50 AnimationTimeDelta stores double seconds. Keep that
+    // operation order here and reflect native milliseconds only at the end.
+    let duration = specified.duration_ms / 1000.0;
+    let delay = specified.delay_ms / 1000.0;
+    let count = match specified.iterations {
+        IterationCount::Number(count) => count,
+        IterationCount::Infinite => f64::INFINITY,
+    };
+    let active = if duration == 0.0 {
+        0.0
+    } else {
+        duration * count
+    };
+    let end = (delay + active).max(0.0);
+    let (delay, duration) = if end == 0.0 {
+        (0.0, 0.0)
+    } else if end.is_infinite() {
+        // animation_effect.cc:132-150 evaluates the infinite-end limit
+        // with reciprocal multiplication, including infinite iterations.
+        (0.0, (1.0 / count) * duration_seconds)
+    } else {
+        let mut interval = 1.0;
+        interval -= start_fraction;
+        interval -= 1.0 - end_fraction;
+        // The native API also preserves its pre-existing reversed ranges.
+        if legacy_reversed {
+            interval = -interval;
+        }
+        interval = interval.max(0.0);
+        let intrinsic = if count > 0.0 {
+            duration_seconds * interval / count
+        } else {
+            0.0
+        };
+        let range_duration = intrinsic * count;
+        (
+            delay / end * range_duration,
+            duration / end * range_duration,
+        )
+    };
+    timing.delay_ms = delay * 1000.0;
+    timing.duration_ms = duration * 1000.0;
+    (timing, AnimationTimingSeconds { delay, duration })
 }
 
 #[derive(Clone, Copy)]

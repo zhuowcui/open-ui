@@ -296,6 +296,22 @@ pub extern "C" fn oui_element_animate_with_attachment_range_v1(
         Ok(())
     })
 }
+// SAFETY CONTRACT: owning-thread live document and readable optional source
+// descriptor. Copy/validate it before action; callbacks run after Engine borrows.
+#[no_mangle]
+pub extern "C" fn oui_document_set_animation_timeline_source_v1(
+    handle: *mut OuiDocument,
+    id: u64,
+    input: *const OuiAnimationTimelineSourceV1,
+) -> OuiStatus {
+    ffi(|| {
+        let state = document(handle as usize)?;
+        let source = source(&state, input)?;
+        borrow_engine_mut(&state)?.set_animation_timeline_source(AnimationId(id), source)?;
+        flush_animation_events(&state)
+    })
+}
+
 // SAFETY CONTRACT: owning-thread live document and readable optional descriptor.
 #[no_mangle]
 pub extern "C" fn oui_document_set_animation_attachment_range_v1(

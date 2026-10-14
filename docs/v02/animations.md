@@ -325,3 +325,38 @@ These additions preserve the preceding 160 exports and existing C layouts. Their
 Rust/FFI guards and C11/C++17 consumers are authored source, not execution or
 rendering qualification. Root's complete-checkout native and ABI gates remain
 required. Open UI executes no JavaScript.
+
+## Reassign an existing native clock source
+
+`Document::set_animation_timeline_source` accepts an
+`AnimationTimelineBinding` borrowing the application's existing `Element`.
+The shared Engine validates the source owner and live generation, copies the
+binding, and publishes the resulting style and events before callback delivery.
+C uses `oui_document_set_animation_timeline_source_v1` with the existing
+`OuiAnimationTimelineSourceV1`; a null descriptor selects the native Document
+clock. The source descriptor is immutable during the call and is never retained.
+
+```rust,ignore
+document.set_animation_timeline_source(
+    animation_id,
+    openui::AnimationTimelineBinding::Scroll {
+        source: &scroller,
+        axis: TimelineAxis::Block,
+    },
+)?;
+```
+
+The animation ID, effect order and authored attachment descriptor survive the
+change. Equivalent checked bindings preserve manual and deferred controls as
+an idle no-op. A changed running progress source follows automatic range
+alignment; a paused hold is transferred proportionally when its effect end
+permits that conversion. Callbacks may issue newer controls after publication.
+A browser attachment snapshot remains present with unresolved geometry on a
+Document clock; its progress snapshot is absent. Legacy oriented ranges keep
+their existing attachment getter behavior.
+
+These are native value bindings. Separate equivalent browser Timeline objects,
+null/unbound timelines and independently offset Document clocks still need an
+owned timeline identity API. Animation IDs keep the existing owning-document
+namespace. This source checkpoint does not establish browser pixel parity or
+complete timeline API coverage.

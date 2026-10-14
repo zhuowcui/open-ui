@@ -50,6 +50,8 @@ mod scroll_button;
 #[cfg(test)]
 mod scroll_button_tests;
 #[cfg(test)]
+mod timeline_reassignment_tests;
+#[cfg(test)]
 mod transform_literal_tests;
 mod types;
 mod value;
@@ -78,7 +80,8 @@ pub use input_events::oui_event_input_info_v1;
 pub use named_timeline::{
     oui_document_get_animation_attachment_snapshot_v1,
     oui_document_get_animation_timeline_snapshot_v1, oui_document_seek_animation_progress_v1,
-    oui_document_set_animation_attachment_range_v1, oui_element_animate_with_attachment_range_v1,
+    oui_document_set_animation_attachment_range_v1, oui_document_set_animation_timeline_source_v1,
+    oui_element_animate_with_attachment_range_v1,
 };
 pub use native_app::{oui_app_request_exit, oui_app_run};
 pub use radius_axis::{oui_element_radius_axis_length_v1, oui_style_value_radius_axis_length_v1};
