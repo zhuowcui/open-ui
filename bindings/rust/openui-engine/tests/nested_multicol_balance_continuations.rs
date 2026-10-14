@@ -370,6 +370,7 @@ fn bordered_short_first_row_uses_fresh_content_capacity_and_each_actual_source_r
         let body = e.children(e.root()).unwrap()[0];
         let outer = e.children(body).unwrap()[0];
         let prefix = e.create_element(ElementTag::Div).unwrap();
+        authored(&mut e, prefix, StyleProperty::Display, "block");
         authored(&mut e, prefix, StyleProperty::Height, "30px");
         e.insert_before(outer, prefix, inner).unwrap();
         authored(&mut e, inner, StyleProperty::BreakBefore, "avoid");
@@ -408,7 +409,7 @@ fn exhausted_fixed_ancestor_keeps_normal_paragraph_lines_in_the_next_row() {
         ] {
             authored(&mut e, block, p, v);
         }
-        let text = e.create_text(vec!["X"; 15].join("\n")).unwrap();
+        let text = e.create_text(vec!["X"; 25].join("\n")).unwrap();
         e.append_child(block, text).unwrap();
         let fixed = e.scene().unwrap();
         assert_eq!(
@@ -422,7 +423,7 @@ fn exhausted_fixed_ancestor_keeps_normal_paragraph_lines_in_the_next_row() {
         assert_eq!(e.scene().unwrap().generation(), generation);
         assert_eq!(e.stats(), stats);
         // Removing the ancestor's short principal size does not create new
-        // glyph source. Both routes must retain the same fifteen real lines.
+        // glyph source. Both routes must retain the same 25 real lines.
         authored(&mut e, block, StyleProperty::Height, "auto");
         let normal = e.scene().unwrap();
         assert_eq!(raster(&normal).pixels, fixed_pixels);
@@ -440,6 +441,7 @@ fn repeated_empty_block_end_margins_form_one_collapsed_continuing_strut() {
         e.remove_children(inner).unwrap();
         for _ in 0..2 {
             let empty = e.create_element(ElementTag::Div).unwrap();
+            authored(&mut e, empty, StyleProperty::Display, "block");
             authored(&mut e, empty, StyleProperty::Height, "0px");
             authored(&mut e, empty, StyleProperty::MarginBottom, "600px");
             e.append_child(inner, empty).unwrap();

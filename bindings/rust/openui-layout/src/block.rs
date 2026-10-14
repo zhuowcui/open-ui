@@ -15884,6 +15884,28 @@ fn split_replayed_spanner_leaf_decorations(fragment: &mut Fragment, doc: &dyn La
     recompute_physical_overflow(fragment);
 }
 
+/// Distinct actual rows in the current multicol algorithm's logical storage.
+/// The anonymous column is the retained capacity operand, including rows whose
+/// only normal source is a collapsed margin strut.
+fn actual_multicol_rows(fragment: &Fragment) -> Vec<(LayoutUnit, LayoutUnit)> {
+    let mut rows = fragment
+        .children
+        .iter()
+        .filter(|child| child.kind == FragmentKind::ColumnBox)
+        .map(|child| (child.offset.top, child.size.height))
+        .collect::<Vec<_>>();
+    rows.sort_by_key(|row| row.0);
+    rows.dedup_by(|later, earlier| {
+        if later.0 == earlier.0 {
+            earlier.1 = earlier.1.max_of(later.1);
+            true
+        } else {
+            false
+        }
+    });
+    rows
+}
+
 /// Convert the inline overflow columns already produced by a nested multicol
 /// into the block continuation owned by one ancestor fragmentainer.  This is
 /// the fragment-tree equivalent of consuming the nested child break token:
@@ -15904,14 +15926,10 @@ fn resume_nested_multicol_overflow_column(
         return false;
     }
     let declared = geometry.declared_column_count.max(1) as usize;
-    let mut row_starts: Vec<_> = fragment
-        .children
-        .iter()
-        .filter(|column| column.kind == FragmentKind::ColumnBox)
-        .map(|column| column.offset.top)
-        .collect();
-    row_starts.sort();
-    row_starts.dedup();
+    let row_starts = actual_multicol_rows(fragment)
+        .into_iter()
+        .map(|(start, _)| start)
+        .collect::<Vec<_>>();
     let has_actual_block_rows = row_starts.len() > 1;
     // Actual materialized rows can have different first/final capacities.
     // Their retained source origins, not one scalar height, select the token.
@@ -23909,13 +23927,34 @@ fn layout_multicol(
             // Distribute children across columns (with fragmentation support).
             // CSS Multicol §3.4: overflow content creates additional columns
             // in the inline direction. col_idx may exceed positions.len().
+            // These rows consume one sequential normal source. A spanner
+            // resumes a separate group, while multiple principal/overflow
+            // streams can overlap their following siblings. Keep both on
+            // their existing fragmentation path. An oversized avoided unit
+            // also retains its indivisible overflow rather than acquiring
+            // synthetic complete rows.
+            let sequential_outer_rows = auto_wraps_outer_fragments
+                && !subtree_has_in_flow_spanner_descendant(doc, node_id)
+                && (child_count == 1
+                    || col_parallel_fragmentation_sizes.iter().all(Option::is_none))
+                && col_fragmentation_sizes
+                    .iter()
+                    .enumerate()
+                    .all(|(index, size)| {
+                        !col_avoid_break[index]
+                            || *size
+                                <= column_height.max_of(
+                                    (space.outer_fragmentainer_block_size - border_padding_block)
+                                        .clamp_negative_to_zero(),
+                                )
+                    });
             let wraps_rows = algo.column_wrap == openui_style::ColumnWrap::Wrap
                 || (algo.column_wrap == openui_style::ColumnWrap::Auto
                     && (algo.column_height.is_some()
                         // A one-column nested context has no inline row in
                         // which to place an overflow column; its continuation
                         // advances through the ancestor fragmentainers.
-                        || (auto_wraps_outer_fragments
+                        || (sequential_outer_rows
                             && (!has_spanner_after || resolved.count == 1))
                         // Positioned parallel flows retain their containing
                         // block while the nearest outer fragmentation context
@@ -23923,7 +23962,7 @@ fn layout_multicol(
                         || positioned_uses_outer_fragmentainer
                         || (auto_wraps_outer_fragments
                             && subtree_has_positioned_descendant(doc, node_id))));
-            let constrained_balanced_rows = (auto_wraps_outer_fragments
+            let constrained_balanced_rows = (sequential_outer_rows
                 && matches!(
                     algo.column_fill,
                     ColumnFill::Balance | ColumnFill::BalanceAll
@@ -23931,8 +23970,18 @@ fn layout_multicol(
                 && !has_spanner_after
                 && !subtree_has_positioned_descendant(doc, node_id))
             .then(|| {
+                let sequential_fragmentation_sizes = col_fragmentation_sizes
+                    .iter()
+                    .enumerate()
+                    .map(|(index, size)| {
+                        // One principal child has no following sibling stream
+                        // to overlap. Its visible normal source can still
+                        // extend beyond its definite border box.
+                        size.max_of(col_parallel_fragmentation_sizes[index].unwrap_or(*size))
+                    })
+                    .collect::<Vec<_>>();
                 crate::multicol::balanced_outer_row_heights(
-                    &col_fragmentation_sizes,
+                    &sequential_fragmentation_sizes,
                     &col_margins_top,
                     &col_fragmentation_margins_bottom,
                     &col_avoid_break,
@@ -23970,12 +24019,25 @@ fn layout_multicol(
             } else {
                 None
             };
+            let cloned_row_decoration = if sequential_outer_rows
+                && style.box_decoration_break == BoxDecorationBreak::Clone
+                && wrapped_auto_row_heights.is_some()
+            {
+                border_padding_block
+            } else {
+                LayoutUnit::zero()
+            };
+            let collapsed_margin_rows = collapse_empty_margin_chain
+                && col_fragmentation_sizes
+                    .iter()
+                    .all(|size| *size == LayoutUnit::zero())
+                && wrapped_auto_row_heights.is_some();
             let wrapped_auto_row_offsets = wrapped_auto_row_heights.as_ref().map(|heights| {
                 let mut offsets = Vec::with_capacity(heights.len());
                 let mut offset = LayoutUnit::zero();
                 for height in heights {
                     offsets.push(offset);
-                    offset = offset + *height + algo.row_gap;
+                    offset = offset + *height + cloned_row_decoration + algo.row_gap;
                 }
                 offsets
             });
@@ -28058,7 +28120,28 @@ fn layout_multicol(
                         } else {
                             LayoutUnit::zero()
                         };
-                        let content_height = if is_clone {
+                        let cloned_multicol_content = if is_clone
+                            && child_is_multicol
+                            && child_style.height.is_auto()
+                            && !subtree_has_positioned_descendant(doc, child_node_id)
+                            && !subtree_has_in_flow_spanner_descendant(doc, child_node_id)
+                            && !subtree_has_flex_descendant(doc, child_node_id)
+                        {
+                            let rows = actual_multicol_rows(&child_frag);
+                            (rows.len() > 1).then(|| {
+                                rows.into_iter()
+                                    .map(|(_, height)| height)
+                                    .fold(LayoutUnit::zero(), |sum, height| sum + height)
+                            })
+                        } else {
+                            None
+                        };
+                        let content_height = if let Some(content) = cloned_multicol_content {
+                            // This source already contains its own repeated
+                            // row decoration. Normal content excludes every
+                            // row's borders/padding, rather than just one set.
+                            content
+                        } else if is_clone {
                             let normal_content =
                                 (child_height - clone_bp_block).clamp_negative_to_zero();
                             if !child_style.height.is_auto()
@@ -29861,7 +29944,14 @@ fn layout_multicol(
                             {
                                 part_height.max_of(avail)
                             } else if expand_fragment_visual_height {
-                                if !space.available_block_size.is_indefinite() {
+                                if sequential_outer_rows && wraps_rows {
+                                    // `available_block_size` belongs to the
+                                    // first ancestor slice. Later owned rows
+                                    // use their selected local capacity; an
+                                    // accumulated row offset must not turn a
+                                    // real 100px continuation into a zero box.
+                                    part_height.max_of(avail)
+                                } else if !space.available_block_size.is_indefinite() {
                                     let visible_remaining = (space.available_block_size
                                         - col_extra_block_offset_for(col_idx)
                                         - col_block_offset)
@@ -30028,7 +30118,11 @@ fn layout_multicol(
                                             column.kind == FragmentKind::ColumnBox
                                                 && column.offset.top > geometry.column_block_start
                                         }) {
-                                            content_consumed
+                                            if cloned_multicol_content.is_some() {
+                                                stitched_consumed
+                                            } else {
+                                                content_consumed
+                                            }
                                         } else {
                                             geometry.fragmentainer_block_size
                                         }
@@ -31910,7 +32004,11 @@ fn layout_multicol(
                                 space.writing_direction,
                                 stitched_consumed,
                                 owned_block_size,
-                                content_consumed + content_in_part < source_content_end,
+                                if cloned_multicol_content.is_some() {
+                                    content_consumed + content_in_part < content_height
+                                } else {
+                                    content_consumed + content_in_part < source_content_end
+                                },
                             );
                             stitched_consumed = stitched_consumed + owned_block_size;
                             per_col_children[part_col_idx].push(part);
@@ -32439,7 +32537,7 @@ fn layout_multicol(
                         .iter()
                         .copied()
                         .fold(LayoutUnit::zero(), |sum, height| sum + height)
-                        + algo.row_gap
+                        + (algo.row_gap + cloned_row_decoration)
                             * LayoutUnit::from_i32(heights.len().saturating_sub(1) as i32)
                 })
                 .unwrap_or_else(|| {
@@ -32503,6 +32601,59 @@ fn layout_multicol(
                         && subtree_has_avoid_break_descendant(doc, child_id)
                         && !subtree_has_forced_break_descendant(doc, child_id)
                 };
+            let additional_normal_row_end = if sequential_outer_rows
+                && wraps_rows
+                && algo.column_fill == ColumnFill::Auto
+                && per_col_children.len() > positions.len()
+            {
+                per_col_children
+                    .iter()
+                    .enumerate()
+                    .skip(positions.len())
+                    .fold(LayoutUnit::zero(), |end, (index, children)| {
+                        let row_start =
+                            content_edge_y + total_block_offset + col_extra_block_offset_for(index);
+                        let row_end = row_start + column_capacity_for(index);
+                        children
+                            .iter()
+                            .filter(|child| {
+                                fragment_has_live_normal_source(
+                                    child,
+                                    doc,
+                                    LayoutUnit::zero(),
+                                    row_start,
+                                    row_end,
+                                    column_width,
+                                    child_percentage_block_size,
+                                    space.writing_direction,
+                                )
+                            })
+                            .fold(end, |end, child| {
+                                let visual = physical_vector_to_logical(
+                                    fragment_visual_translation(
+                                        child,
+                                        doc,
+                                        column_width,
+                                        child_percentage_block_size,
+                                    ),
+                                    space.writing_direction,
+                                );
+                                let normal_end = child.offset.top - visual.top
+                                    + fragment_in_flow_fragmentation_bottom(
+                                        child,
+                                        doc,
+                                        space.writing_direction,
+                                    );
+                                end.max_of(
+                                    normal_end.min_of(row_end)
+                                        - content_edge_y
+                                        - total_block_offset,
+                                )
+                            })
+                    })
+            } else {
+                LayoutUnit::zero()
+            };
             let actual_group_height = if empty_group_before_spanner {
                 LayoutUnit::zero()
             } else if positioned_only_empty_group {
@@ -32518,7 +32669,9 @@ fn layout_multicol(
                         // Only normal-flow progress contributes to this row's
                         // principal size. OOF ink may use the full column but
                         // must not cause the ancestor to consume the row twice.
-                        max_col_content.min_of(column_height)
+                        max_col_content
+                            .min_of(column_height)
+                            .max_of(additional_normal_row_end)
                     } else if wraps_rows {
                         max_col_content
                             .max_of(max_col_visual_content)
@@ -32798,6 +32951,16 @@ fn layout_multicol(
                 }
             }
 
+            if collapsed_margin_rows {
+                // A collapsed margin strut is normal fragmentation source,
+                // even when no DOM border box has positive area. Retain the
+                // shared plan's actual anonymous column scopes; do not clone
+                // an empty authored box to pretend it consumed the strut.
+                let row_columns =
+                    wrapped_auto_row_heights.as_ref().unwrap().len() * positions.len();
+                per_col_children.resize_with(row_columns.max(per_col_children.len()), Vec::new);
+            }
+
             // Preserve the authoritative fragment count before consuming the
             // column vectors.  Overflow bookkeeping can legitimately report
             // only the configured columns even when `column-wrap` generated
@@ -32818,7 +32981,7 @@ fn layout_multicol(
                 if principal_positioned_flow_is_nested {
                     break;
                 }
-                if col_children.is_empty() {
+                if col_children.is_empty() && !collapsed_margin_rows {
                     continue;
                 }
                 if style.height.is_auto()
