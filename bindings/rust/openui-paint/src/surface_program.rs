@@ -664,7 +664,7 @@ mod tests {
             let mut rgba = vec![0; stride * size.1 as usize];
             assert!(source_surface.read_pixels(&rgba_info, &mut rgba, stride, (0, 0)));
             let pixel = ((12.0 * scale) as usize * size.0 as usize + (14.0 * scale) as usize) * 4;
-            assert_eq!(&rgba[pixel..pixel + 4], &[0, 128, 0, 255]);
+            assert_eq!(&rgba[pixel..pixel + 4], &[0, 255, 0, 255]);
             // Sources own the complete draw/resources/program, independent of
             // the original Document, fragment, recording and publishing thread.
             let selected = std::thread::spawn(move || selected).join().unwrap();

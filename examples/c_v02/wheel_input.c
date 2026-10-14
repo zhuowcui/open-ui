@@ -26,9 +26,9 @@ static OuiElement* child(OuiDocument* document,
   OuiElement* node = NULL;
   assert(oui_element_create(document, OUI_ELEMENT_DIV, &node) == OUI_OK);
   assert(oui_element_append_child(parent, node) == OUI_OK);
-  property(node, OUI_STYLE_DISPLAY, "block");
-  property(node, OUI_STYLE_WIDTH, width);
-  property(node, OUI_STYLE_HEIGHT, height);
+  property(node, OUI_STYLE_PROPERTY_DISPLAY, "block");
+  property(node, OUI_STYLE_PROPERTY_WIDTH, width);
+  property(node, OUI_STYLE_PROPERTY_HEIGHT, height);
   return node;
 }
 typedef struct {
@@ -55,7 +55,7 @@ static void observe(OuiEvent* event, void* user_data) {
   data->before_y = y;
   assert(oui_element_set_attribute(data->source, text("data-wheel"), text("observed")) == OUI_OK);
   if (data->cancel)
-    event->flags |= OUI_EVENT_FLAG_DEFAULT_PREVENTED;
+    event->flags |= OUI_EVENT_DEFAULT_PREVENTED;
 }
 int main(void) {
   const double scales[] = {1, 1.25, 1.5, 1.75, 2};
@@ -74,14 +74,14 @@ int main(void) {
     assert(oui_document_create(&config, &document) == OUI_OK);
     assert(oui_document_root(document, &root) == OUI_OK);
     OuiElement* source = child(document, root, "100px", "80px");
-    property(source, OUI_STYLE_OVERFLOW, "auto");
-    property(source, OUI_STYLE_SCROLLBAR_WIDTH, "none");
+    property(source, OUI_STYLE_PROPERTY_OVERFLOW, "auto");
+    property(source, OUI_STYLE_PROPERTY_SCROLLBAR_WIDTH, "none");
     OuiElement* content = child(document, source, "100px", "240px");
-    property(content, OUI_STYLE_BACKGROUND_COLOR, "green");
+    property(content, OUI_STYLE_PROPERTY_BACKGROUND_COLOR, "green");
     OuiElement* focus = child(document, root, "20px", "20px");
-    property(focus, OUI_STYLE_POSITION, "absolute");
-    property(focus, OUI_STYLE_LEFT, "200px");
-    property(focus, OUI_STYLE_TOP, "0px");
+    property(focus, OUI_STYLE_PROPERTY_POSITION, "absolute");
+    property(focus, OUI_STYLE_PROPERTY_LEFT, "200px");
+    property(focus, OUI_STYLE_PROPERTY_TOP, "0px");
     assert(oui_element_set_attribute(focus, text("tabindex"), text("0")) == OUI_OK);
     assert(oui_element_focus(focus) == OUI_OK);
     assert(oui_document_update(document) == OUI_OK);

@@ -127,7 +127,7 @@ impl Fixture {
         event.delta_y = delta;
         event
     }
-    fn listen(&mut self, node: *mut OuiElement, event: u32, capture: bool, context: &Observation) {
+    fn listen(&mut self, node: *mut OuiElement, event: i32, capture: bool, context: &Observation) {
         let mut listener = ptr::null_mut();
         assert_eq!(
             oui_element_add_event_listener(
