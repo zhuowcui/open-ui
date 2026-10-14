@@ -1,0 +1,17 @@
+{
+  "actual_exit_code": 0,
+  "all_baselines_reproduced": true,
+  "all_controls_and_repeats_exact": true,
+  "baselines": 16,
+  "commands": 108,
+  "comparisons": 27,
+  "complete": true,
+  "known_pid_count": 110,
+  "known_pids_absent": true,
+  "qualified": false,
+  "reaped_chunk_id": "c9e2be",
+  "receipt_sha256": "ab40526194a7afed4ddfdf6c54d56b2a39f925193b746d4ba6275a88180bfe3f",
+  "runtime_receipt_sha256": "ad55de5bd7c1e2b5c1b1c1fa4905e43ee808423365791bcbf0862b33088a89da",
+  "schema_version": 1,
+  "session_id": 7301
+}

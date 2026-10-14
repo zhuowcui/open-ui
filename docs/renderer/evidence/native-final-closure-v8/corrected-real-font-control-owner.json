@@ -1,0 +1,39 @@
+{
+  "actual_exit_code": 0,
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "-u",
+    "/mnt/d/openui-v02-qualification-d174ea0b/native-font-real-control-source-table-border-review-v4606/run_real_font_controls_root_v1.py",
+    "--execute-after-root-global-release",
+    "--output",
+    "/mnt/d/openui-v02-qualification-d174ea0b/native-font-real-control-runtime-v4614"
+  ],
+  "child_pid": 3503114,
+  "complete": true,
+  "log_sha256": "870af1ce61b5a6158247b376e2c953b7b586715a61ecc0231d8e784183926a04",
+  "owner_pid": 3502936,
+  "pins": {
+    "driver-manifest-v1.json": "9fbdd009c1ec924d81e37f5794a19a173e3b7895e098071f3ba225f1d54d1243",
+    "run_real_font_controls_root_v1.py": "61b73130fd20924199c1361a125f683d33e536edf7e239f445af5da57d0ece7b",
+    "source-checks-v1.json": "88b52f179432c587f0500b42c2854ce812d868bc4943f7ec8f0e76b7f389bd79"
+  },
+  "qualified": false,
+  "source": {
+    "clean": true,
+    "commit": "5520ed920523164574fc80187b2702892cb5ac62",
+    "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6",
+    "source_tree_sha256": "0e2c22d402f809735879222fed8bbaad849d989d3aa7c96ac61595e1d3c77336",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "5520ed920523164574fc80187b2702892cb5ac62",
+    "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6",
+    "source_tree_sha256": "0e2c22d402f809735879222fed8bbaad849d989d3aa7c96ac61595e1d3c77336",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_review": "Root read full sealed driver and manifest; exact original real-font environment and baseline reproduction required",
+  "source_unchanged": true,
+  "terminal_reaped": true
+}

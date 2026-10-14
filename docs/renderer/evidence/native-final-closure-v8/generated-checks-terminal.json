@@ -1,0 +1,43 @@
+{
+  "writer_pid": 3451692,
+  "actual_owner_exit_code": 0,
+  "parent_terminal_reaped_chunk": "f662b0",
+  "receipt_sha256": "ddc06989f3ab332611028c0c5dcbff003ba7ca00c696b62a5806b5e0dd4a0be7",
+  "known_pids": [
+    3445933,
+    3446002,
+    3446004,
+    3446007,
+    3446008,
+    3446003,
+    3446013,
+    3446005,
+    3446014,
+    3446015,
+    3446016,
+    3446011,
+    3446022,
+    3446032,
+    3446021,
+    3446033,
+    3446017,
+    3446051,
+    3446099,
+    3446071,
+    3446034,
+    3446072
+  ],
+  "known_pids_absent": true,
+  "complete": true,
+  "source": {
+    "commit": "37442ec41cb94d602f4626c9ad3209ad2766145a",
+    "clean": true,
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "source_tree_sha256": "f633e03bc8e968c4e141679368f6cd078ee00def113a2c5002a3e812a631efd1",
+    "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6"
+  },
+  "source_unchanged": true,
+  "checks": 21,
+  "tests": null,
+  "qualified": false
+}

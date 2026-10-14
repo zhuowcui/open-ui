@@ -47,8 +47,10 @@ reported. These operands are not admitted as independently movable layers.
 Experimental intrinsic pictures retain their unqualified cull-bound status and
 are never substituted into replay. Damage remains conservatively full viewport.
 
-The new source guards are uncompiled and unexecuted at this checkpoint. Required
-next gates include same-source canonical/typed/layered CPU comparisons, complete
+The static capture, provenance, shader and transparent effect-source guards are
+compiled and executed in the complete native workspace at `890faec0`; see the
+[current checkpoint evidence](generated/native-final-closure-status-v8.json).
+Required next gates include same-source canonical/typed/layered CPU comparisons, complete
 pinned Chromium exact matrices and preservation of historical archive bytes for
 integrity. Historical Open UI screenshots are not a correctness oracle for new
 renders. Recursive offscreen capture,
@@ -81,15 +83,15 @@ source dependency; the opaque parent Picture preserves their canonical pixels.
 Owner/chunk presence does not establish complete, independent SVG operand capture.
 Actual SVG facade capture or fail-closed source extraction remains required for
 transparent source replay. The owned canonical and shader/raster operands must
-survive Engine destruction and replay from another thread. All new shader
-classification guards are source-only until Root runs the current-source gates.
+survive Engine destruction and replay from another thread. The shader classification guards run in the `890faec0` native workspace.
+Their success does not establish independent surface or Chromium qualification.
 
 PaintLayerCoverage has two additive Rust fields and PaintShaderDependency is an
 additive typed inspection API. Downstream struct literals must include these
 fields; no C layouts or exported ABI symbols change.
 
 
-## Transparent effect-source diagnostics (source candidate)
+## Transparent effect-source diagnostics (static native diagnostic)
 
 Actual painter decisions now emit immutable transform, overflow-clip, clip-path,
 filter, mask and opacity projections. A projection uses the real retained source
@@ -103,8 +105,9 @@ change the canonical canvas calls.
 `LayeredPaintProgram::transparent_surface_program` owns the actual opacity
 intervals, original draw operands, independent world-baked source programs and
 pictures, font bytes and cache lease. The selected diagnostic reason is the
-actual painter opacity interval with a will-change-transform decision. It is
-not a Chromium layer-admission assertion. Ancestor matrices and save depths
+actual painter opacity interval with the existing internal
+`will_change_transform` hint. This is not a public authored `will-change` API
+or a Chromium layer-admission assertion. Ancestor matrices and save depths
 remain in each source. Ancestor clips/effects stay on the original parent spine
 and apply once. Ordinary intervals replay unchanged; selected intervals use
 explicit transparent N32 targets and compose the owning alpha once, including

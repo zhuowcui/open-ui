@@ -29,47 +29,48 @@ right picture or the Chromium test uses a script. See the
 
 ### Current closure work (13 October 2026)
 
-At clean `5520ed92`, the freshly built CPU renderer matches pinned Chromium in
-**640/640 focused** and **960/960 primitive** comparisons, with zero differences
-and zero errors. The complete original census is running and the expanded
-census is queued; these focused results do not establish the overall match rate.
+At clean `5520ed92`, the complete CPU renderer census against pinned Chromium
+147.0.7727.50 records **21,006/22,924 original comparisons exact (91.6%)**,
+with **1,918 differences and zero errors**. The expanded census records
+**21,734/23,728 exact**, with **1,994 differences and zero errors**. Of the
+201 added fixture IDs, **182 match at all four required profiles**.
+Focused **640/640** and primitive **960/960** comparisons are exact.
+These are renderer measurements at that commit; there is no measured
+whole-project completion percentage.
 
-The last completed expanded run at `fb1b68fa` remains **21,724/23,728 exact**.
-Its original subset is **20,996/22,924 exact (91.6%)**. These are rendering
-measurements at that checkpoint, not a whole-project completion percentage.
-The earlier 340 losses with unchanged Chromium pixels and five changed browser
-captures remain preserved and require reviewed causes; repeated captures of
-those five fixtures reproduced the newer Chromium pixels in 40/40 comparisons.
+At later clean `9ad2fb26`, focused and primitive matrices are also exact.
+All eight audited original rows are unchanged from `5520ed92`; the earlier
+report of three new losses was incorrect. A complete census on later renderer
+source is still required. Historical reports and inputs remain preserved.
 
-The full native workspace at `5520ed92` reports **9,282 passed / 1 failed**;
-doctests report **2 passed / 0 failed / 13 ignored**. The remaining failure was a
-public test expecting an unchanged attachment range to reset deferred progress.
-Pinned Chromium preserves that progress. The reviewed correction at `e52d047f`
-changes only the test; its complete affected group passes **6/6**. The prior
-transform-overflow, progress-phase and radius publication failures are repaired
-and pass their strict native guards. Later source changes still require their
-own complete workspace and Chromium qualification.
+At clean `890faec0`, the native workspace records **9,301 passed / 0 failed**; doctests record **2 passed / 0 failed / 13 ignored**. The 163-export C library's 40 C and 34 C++ consumers all pass.
+All **331 Python tests in 21 modules** and **21 generated/format checks** pass. The shared border literal API now accepts all ten existing border styles; the earlier five wheel setup failures and C++ initializer failure are retained as history. These checks qualify this source checkpoint only.
 
-All **331 Python tests in 21 modules** and **21 generated/format checks** pass at
-`5520ed92`. Its freshly built C library passes **70 C/C++ consumers** with
-**160 exports**, preserving earlier exports and layouts. Eight independent
-radius-axis APIs are implemented in Rust and C; their pixels still need
-Chromium qualification.
+The three pending final-state cases replay native Engine mutations and layout
+barriers. A corrected, separate Chromium oracle now checks the unchanged
+original browser scripts against independent script-free final DOMs. All
+**12/12 oracle comparisons** and independent repeats agree. Open UI matches
+**5/12**: nested columns **0/4**, fixed positioning **3/4**, scrollbars **2/4**.
+No case matches all four profiles, so none is admitted. The previous alias
+comparison omitted the nested case's new child and cannot qualify that replay.
+Open UI executes no JavaScript; consuming apps use native Rust APIs and callbacks.
 
-Three pending cases replay ordered native Engine mutations and layout barriers
-without JavaScript. Their fresh four-profile measurement is **5/12 exact**, with
-seven differences and no errors; no case passes all four profiles, so none is
-admitted. The nested column trace confirms a child sized to the whole parent
-instead of its column. Fractional background edges also remain open.
+Chromium tracing links the fixed-background edge to the actual owning layer.
+Opaque solid-color and opaque picture layers both retain an opaque fractional
+edge; transformed and nonopaque neighbors antialias it. Final draw-material
+attribution and the shared native repair remain open. The default font policy
+is unchanged; partial font diagnostics are not qualification.
 
-Hosted format and PR platform hardening pass at `5520ed92`; hosted CI fails the
-same equal-range guard, and the complete manual hardening result is pending.
-A new hosted run must verify the corrected source. Native API completion,
-transparent layer publication and presentation tracks, 3D, remaining pixels,
-physical GPU/AT-SPI/performance, reproducible packaging, signing and publication
-remain open. Open UI runs no JavaScript; apps use native Rust APIs and callbacks.
+All seven manual hardening jobs pass at `5520ed92`. Hosted verification of
+the corrected source is pending. Native API completion, the remaining exact
+pixels, independent retained layers and presentation tracks, 3D, physical
+GPU/AT-SPI/performance, reproducible packaging, signing and publication remain
+open. Chromium defines correct pixels. Old Open UI images preserve history
+and are never a correctness target or release gate.
 
-[Current closure evidence](docs/renderer/generated/native-final-closure-status-v7.json).
+[Current closure evidence](docs/renderer/generated/native-final-closure-status-v8.json).
+
+The sections below record earlier checkpoints. Their source-specific measurements remain historical evidence.
 
 ### Table ownership and opacity repair (full renderer gate open)
 
