@@ -1506,6 +1506,65 @@ mod source_tests {
         ));
         pixels
     }
+    // Full-frame oracle from two independent pinned Chromium 147.0.7727.50 captures.
+    // This promoted rounded primitive differs from direct canonical raster at 1.75/2.0.
+    // N32 bytes are explicitly BGRA on the qualification platform; swap channels only.
+    fn assert_promoted_rounded_chromium_frame(pixels: &[u8], scale: f32) {
+        let (side, expected): (i32, &[u8]) = match scale {
+            1.0 => (
+                32,
+                include_bytes!(
+                    "../tests/fixtures/rounded-source-layer-chromium-oracle/scale-1_0.rgba"
+                ),
+            ),
+            1.25 => (
+                40,
+                include_bytes!(
+                    "../tests/fixtures/rounded-source-layer-chromium-oracle/scale-1_25.rgba"
+                ),
+            ),
+            1.5 => (
+                48,
+                include_bytes!(
+                    "../tests/fixtures/rounded-source-layer-chromium-oracle/scale-1_5.rgba"
+                ),
+            ),
+            1.75 => (
+                56,
+                include_bytes!(
+                    "../tests/fixtures/rounded-source-layer-chromium-oracle/scale-1_75.rgba"
+                ),
+            ),
+            2.0 => (
+                64,
+                include_bytes!(
+                    "../tests/fixtures/rounded-source-layer-chromium-oracle/scale-2_0.rgba"
+                ),
+            ),
+            _ => panic!("unmeasured rounded-source oracle scale {scale}"),
+        };
+        assert_eq!((32.0 * scale) as i32, side);
+        assert_eq!(
+            ImageInfo::new_n32((side, side), AlphaType::Premul, None).color_type(),
+            skia_safe::ColorType::BGRA8888
+        );
+        assert_eq!(pixels.len(), side as usize * side as usize * 4);
+        assert_eq!(expected.len(), pixels.len());
+        for (index, (bgra, oracle)) in pixels
+            .chunks_exact(4)
+            .zip(expected.chunks_exact(4))
+            .enumerate()
+        {
+            let rgba = [bgra[2], bgra[1], bgra[0], bgra[3]];
+            assert_eq!(
+                rgba.as_slice(),
+                oracle,
+                "promoted rounded at {scale} physical({}, {})",
+                index % side as usize,
+                index / side as usize
+            );
+        }
+    }
     #[test]
     fn record_size_solid_opaque_and_alpha_are_independent() {
         for (mode, strategy) in [
@@ -1520,11 +1579,18 @@ mod source_tests {
             assert_eq!(program.sources().len(), 1, "mode {mode}");
             assert_eq!(program.sources()[0].strategy(), strategy, "mode {mode}");
             for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
-                assert_eq!(
-                    pixels(&picture, Some(&program), scale),
-                    pixels(&picture, None, scale),
-                    "mode {mode} at {scale}"
-                );
+                if mode == 1 {
+                    assert_promoted_rounded_chromium_frame(
+                        &pixels(&picture, Some(&program), scale),
+                        scale,
+                    );
+                } else {
+                    assert_eq!(
+                        pixels(&picture, Some(&program), scale),
+                        pixels(&picture, None, scale),
+                        "mode {mode} at {scale}"
+                    );
+                }
             }
             if mode == 2 {
                 assert_eq!(
