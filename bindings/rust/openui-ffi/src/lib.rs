@@ -43,6 +43,9 @@ mod radius_axis_tests;
 #[cfg(test)]
 mod raw_event_tests;
 mod registry;
+mod scroll_animation;
+#[cfg(test)]
+mod scroll_animation_tests;
 mod scroll_button;
 #[cfg(test)]
 mod scroll_button_tests;
@@ -76,6 +79,9 @@ pub use named_timeline::{
 };
 pub use native_app::{oui_app_request_exit, oui_app_run};
 pub use radius_axis::{oui_element_radius_axis_length_v1, oui_style_value_radius_axis_length_v1};
+pub use scroll_animation::{
+    oui_document_cancel_smooth_scroll_v1, oui_element_settle_scroll_snap_with_easing_v1,
+};
 pub use scroll_button::{
     oui_element_create_scroll_button_v1, oui_element_get_scroll_button_v1,
     oui_element_set_native_appearance_v1, oui_element_set_scroll_snap_strictness_v1,

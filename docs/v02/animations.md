@@ -132,7 +132,9 @@ unchanged.
 percentage-time data. Inactive timelines report absent resolved fields rather
 than manufacturing a current time. `seek_animation_progress` takes percentage
 current time relative to the whole resolved timeline duration; it retains an
-inactive request until layout resolves the range. These are native Rust APIs.
+inactive request until layout resolves the range. These native operations are available to Rust and C applications. The C routes are
+`oui_document_seek_animation_progress_v1` and
+`oui_document_get_animation_timeline_snapshot_v1`.
 
 Sticky layout now resolves in one final shared stage after owned scroll geometry
 is retained. It follows used overflow for block, flex, grid, table and viewport
@@ -147,7 +149,9 @@ position reverses. These source changes and native guards are uncompiled and
 unqualified. The named range interface is now implemented in source; complete
 continuation geometry, nested sticky relationships and Chromium measurements
 still require completion. The
-new typed progress operations also require additive C transport and consumers.
+typed progress operations have additive C transport through the same Engine.
+Complete timing, geometry and rendering qualification still requires recorded
+Chromium and native evidence.
 
 Overlapping effects share a retained, unanimated base for each target and
 property. Native setters update that base. The Engine folds raw samples in
@@ -226,8 +230,8 @@ for sticky subjects. It does not reinterpret an existing numeric range. The
 `ScrollTimelineNamedRangeScrollEnabled` feature; its browser capture flag remains
 part of qualification evidence.
 
-These additions are source work, not a native API qualification result. C
-transport, complete fragmented subject/source geometry, nested sticky cases,
+These additions are source work, not a native API qualification result. The C creation, range-update and owned-snapshot transports are implemented.
+Complete fragmented subject/source geometry, nested sticky cases,
 shared effect-stack runtime verification, compilation and exact Chromium/native
 measurements remain required until their evidence is recorded.
 
@@ -294,3 +298,30 @@ elements; the native snapshot guard retains that source behavior. All
 native/Chromium geometry, hit,
 static pixel and full census gates remain required. Open UI runs no JavaScript;
 these operations belong to the retained native Engine used by applications.
+
+
+## Explicit native scroll-animation actions (source checkpoint)
+
+Rust applications use `Element::settle_scroll_snap` with physical X/Y point
+arrays, duration and easing, then `Document::cancel_smooth_scroll` with a returned
+scroll ID. The additive C routes are
+`oui_element_settle_scroll_snap_with_easing_v1` and
+`oui_document_cancel_smooth_scroll_v1`. They call the same Engine actions; there
+is no second snap-selection or easing implementation. The existing
+`oui_element_settle_scroll_snap_v1` remains the immediate retained CSS-target
+operation.
+
+C arrays and curves are copied before the action. Empty axes retain their current
+offset; finite point order, ties and clamping follow the shared Rust operation.
+No-op still validates duration and easing, then returns ID0 with
+`has_animation=0`. Other successful calls return a document-scoped numeric scroll
+ID. A zero-duration/reduced-motion action can complete immediately, so its ID is
+no longer live for cancellation. Cancellation preserves the current offset and
+unrelated tracks; completed or unknown IDs report the shared native error.
+Validation failures preserve outputs and the existing track. Scalar output
+storage must be distinct, but may alias caller inputs after the owned copy.
+
+These additions preserve the preceding 160 exports and existing C layouts. Their
+Rust/FFI guards and C11/C++17 consumers are authored source, not execution or
+rendering qualification. Root's complete-checkout native and ABI gates remain
+required. Open UI executes no JavaScript.

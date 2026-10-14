@@ -1631,6 +1631,38 @@ OuiStatus oui_style_value_radius_axis_length_v1(
 OuiStatus oui_element_radius_axis_length_v1(
     OuiElement *element, int32_t property, OuiRadiusAxisLengthV1 *output);
 
+
+/* Shared native scroll-animation actions. Returned IDs are numeric values scoped
+ * to their owning document and scroll-animation API, not global opaque handles.
+ * Cancel preserves the current offset and unrelated tracks. Completed/unknown
+ * IDs use the shared native InvalidState result.
+ */
+OuiStatus oui_document_cancel_smooth_scroll_v1(OuiDocument* document, uint64_t scroll_animation_id);
+
+/* Animated nearest-point selection from explicit physical X/Y point arrays.
+ * This differs from oui_element_settle_scroll_snap_v1's immediate CSS-target
+ * operation, which retains its existing behavior. Empty axes retain their
+ * current offsets. Finite points keep the shared Rust order/tie/clamp rules.
+ * NULL arrays are legal at count0; otherwise arrays are aligned, contiguous,
+ * initialized readable doubles. Duration is finite/nonnegative; NULL easing
+ * selects linear. Curves follow OuiEasingCurveV1 and are validated even at no-op.
+ * Caller arrays/curve storage are copied before Engine action and never retained.
+ * Outputs are writable, ID-aligned and distinct; original inputs may alias them.
+ * Errors preserve both outputs and existing scroll state. Success writes ID0 and
+ * has_animation0 for no-op; otherwise has_animation1 and the returned scroll ID.
+ * A zero-duration track completes immediately and its ID is no longer cancelable.
+ * Owning-thread live element required; no callbacks run under Engine borrows.
+ */
+OuiStatus oui_element_settle_scroll_snap_with_easing_v1(OuiElement* element,
+                                                        const double* points_x,
+                                                        size_t points_x_count,
+                                                        const double* points_y,
+                                                        size_t points_y_count,
+                                                        double duration_ms,
+                                                        const OuiEasingCurveV1* easing,
+                                                        uint64_t* out_scroll_animation_id,
+                                                        uint8_t* out_has_animation);
+
 #ifdef __cplusplus
 }  /* extern "C" */
 #endif

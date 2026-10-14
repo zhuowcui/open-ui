@@ -31,6 +31,7 @@ OPENUI_0.2 {
     oui_document_animation_seek;
     oui_document_animation_set_playback_rate;
     oui_document_begin_update;
+    oui_document_cancel_smooth_scroll_v1;
     oui_document_create;
     oui_document_destroy;
     oui_document_dispatch_event;
@@ -128,6 +129,7 @@ OPENUI_0.2 {
     oui_element_set_selection_range_v1;
     oui_element_set_text;
     oui_element_settle_scroll_snap_v1;
+    oui_element_settle_scroll_snap_with_easing_v1;
     oui_element_smooth_scroll_into_view_v1;
     oui_element_smooth_scroll_into_view_v2;
     oui_element_smooth_scroll_to_v1;
