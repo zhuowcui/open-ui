@@ -7,7 +7,7 @@ use openui_paint::{
     PaintLayoutScopeRole, PaintPropertyDecision, PaintPropertyRole, TransparentSurfaceQualification,
 };
 use openui_style::{
-    Color, Display, LengthValue, Overflow, RendererStyleValue, StyleProperty, StyleValue,
+    Color, Display, LengthValue, Overflow, RendererInternalStyleValue, StyleProperty, StyleValue,
     TransformList, TransformOperation,
 };
 fn set(e: &mut Engine, n: NodeHandle, p: StyleProperty, v: impl Into<StyleValue>) {
@@ -72,12 +72,10 @@ fn actual_owner_decisions_sources_and_same_value_frame_remain_owned_and_unqualif
         let mut cpu = SoftwareCompositor::default();
         let canonical = cpu.render(&before).unwrap();
         assert_eq!(cpu.render_layered_diagnostic(&before).unwrap(), canonical);
-        set(
-            &mut e,
-            n,
-            StyleProperty::WillChangeTransform,
-            StyleValue::Renderer(RendererStyleValue::WillChangeTransform(true)),
-        );
+        // This diagnostic selects an existing engine-owned hint. There is no
+        // public authored will-change property or Chromium admission claim here.
+        e.set_internal_style(n, RendererInternalStyleValue::WillChangeTransform(true))
+            .unwrap();
         let scene = e.scene().unwrap();
         let capture = scene.layered_paint_capture().unwrap();
         let program = capture
@@ -115,12 +113,9 @@ fn actual_owner_decisions_sources_and_same_value_frame_remain_owned_and_unqualif
         );
         assert!(!plan.dynamic_tracks_are_admitted());
         let stats = e.stats();
-        set(
-            &mut e,
-            n,
-            StyleProperty::WillChangeTransform,
-            StyleValue::Renderer(RendererStyleValue::WillChangeTransform(true)),
-        );
+        // The internal hint publisher intentionally invalidates Subtree. Keep
+        // the strict zero-work check on the real authored same-value operation.
+        set(&mut e, n, StyleProperty::Opacity, StyleValue::Number(0.2));
         assert_eq!(e.scene().unwrap().generation(), scene.generation());
         assert_eq!(e.stats(), stats);
         drop(e);
