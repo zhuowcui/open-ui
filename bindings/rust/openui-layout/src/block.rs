@@ -21178,26 +21178,6 @@ fn layout_multicol(
                     let child_column_algo =
                         crate::multicol::ColumnLayoutAlgorithm::from_style(child_style);
                     let child_is_multicol = child_column_algo.is_some();
-                    let sole_auto_nested_multicol_in_fixed_auto_fill = child_is_multicol
-                        && has_explicit_height
-                        && algo.column_fill == ColumnFill::Auto
-                        && algo.column_height.is_none()
-                        && algo.column_wrap == openui_style::ColumnWrap::Auto
-                        && style.background_color.is_transparent()
-                        && style.effective_border_top() == 0
-                        && style.effective_border_right() == 0
-                        && style.effective_border_bottom() == 0
-                        && style.effective_border_left() == 0
-                        && group_end == group_start + 1
-                        && child_style.width.is_auto()
-                        && child_style.height.is_auto()
-                        && child_style.max_height.is_none()
-                        && child_column_algo.as_ref().map_or(false, |child_algo| {
-                            child_algo.column_height.is_none()
-                                && child_algo.column_wrap == openui_style::ColumnWrap::Auto
-                        })
-                        && !subtree_has_flex_descendant(doc, info.id)
-                        && !subtree_has_in_flow_spanner_descendant(doc, info.id);
                     let preceding_float_remaining_inline = (child_style.display == Display::Grid
                         && child_is_new_fc
                         && relative_idx > 0)
@@ -21222,6 +21202,8 @@ fn layout_multicol(
                         })
                         .flatten()
                         .flatten();
+                    // A nested multicol owns an inner column set, but its auto
+                    // inline size still uses this parent column, like other blocks.
                     let child_available_inline = if child_auto_float {
                         let child_margin = resolve_margins(child_style, column_width);
                         let margin_inline = {
@@ -21244,8 +21226,6 @@ fn layout_multicol(
                         )
                     } else if let Some(remaining) = preceding_float_remaining_inline {
                         remaining
-                    } else if sole_auto_nested_multicol_in_fixed_auto_fill {
-                        child_available_inline
                     } else if inline_size_in_parent_axes(child_style, space.writing_direction)
                         .is_auto()
                         || inline_size_in_parent_axes(child_style, space.writing_direction)
@@ -21383,10 +21363,6 @@ fn layout_multicol(
                     } else {
                         child_margin_bottom
                     };
-                    if sole_auto_nested_multicol_in_fixed_auto_fill {
-                        child_frag.has_overflow_clip = true;
-                        child_frag.block_axis_clip_only = false;
-                    }
                     let auto_column_flex_in_flow_size =
                         auto_column_flex_in_flow_block_size(&child_frag, child_style, doc);
                     let flex_visual_overflow_flow_size = style.height.is_auto()
