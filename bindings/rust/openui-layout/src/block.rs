@@ -13566,6 +13566,57 @@ fn multicol_column_logical_index(
         .saturating_add(inline_slot)
 }
 
+/// Current normal source retained inside one real column interval. Exhausting
+/// an ancestor's decoration does not exhaust its visible normal descendants.
+/// Positioned source is owned by the separate OOF mapper and cannot create a
+/// normal row. Coordinates are the current multicol's logical working axes.
+fn fragment_has_live_normal_source(
+    fragment: &Fragment,
+    doc: &dyn LayoutDocument,
+    parent_top: LayoutUnit,
+    window_start: LayoutUnit,
+    window_end: LayoutUnit,
+    containing_inline_size: LayoutUnit,
+    containing_block_size: LayoutUnit,
+    writing_direction: WritingDirectionMode,
+) -> bool {
+    if fragment.positioned_fragmentation.is_some()
+        || (!fragment.node_id.is_none() && doc.node(fragment.node_id).style.is_out_of_flow())
+    {
+        return false;
+    }
+    let visual = physical_vector_to_logical(
+        fragment_visual_translation(fragment, doc, containing_inline_size, containing_block_size),
+        writing_direction,
+    );
+    let start = parent_top + fragment.offset.top - visual.top;
+    let end = start + fragment.size.height;
+    let exhausted = fragment
+        .decoration_slice
+        .is_some_and(|slice| slice.source_block_offset >= slice.source_block_size);
+    let has_normal_source_role = fragment.owns_layout_box()
+        || fragment.kind == FragmentKind::Text
+        // Actual anonymous lines use this role in the inline producer. Table
+        // parts and explicit anonymous layout contexts are different owners.
+        || (fragment.node_id.is_none() && fragment.kind == FragmentKind::Box
+            && fragment.table_part.is_none() && fragment.anonymous_layout_box.is_none());
+    if !exhausted && has_normal_source_role && start < window_end && end > window_start {
+        return true;
+    }
+    fragment.children.iter().any(|child| {
+        fragment_has_live_normal_source(
+            child,
+            doc,
+            start,
+            window_start,
+            window_end,
+            containing_inline_size,
+            containing_block_size,
+            writing_direction,
+        )
+    })
+}
+
 /// Remaining in-flow content represented by a multicol's own overflow
 /// columns.  The fragment tree stores that continuation in the inline axis,
 /// so a recursive block-bottom walk cannot observe it.  Map each overflow
@@ -15853,15 +15904,47 @@ fn resume_nested_multicol_overflow_column(
         return false;
     }
     let declared = geometry.declared_column_count.max(1) as usize;
-    let source_row =
-        (source_block_offset.raw() / geometry.fragmentainer_block_size.raw()).max(0) as usize;
+    let mut row_starts: Vec<_> = fragment
+        .children
+        .iter()
+        .filter(|column| column.kind == FragmentKind::ColumnBox)
+        .map(|column| column.offset.top)
+        .collect();
+    row_starts.sort();
+    row_starts.dedup();
+    let has_actual_block_rows = row_starts.len() > 1;
+    // Actual materialized rows can have different first/final capacities.
+    // Their retained source origins, not one scalar height, select the token.
+    let source_row = if has_actual_block_rows {
+        row_starts
+            .partition_point(|start| *start <= geometry.column_block_start + source_block_offset)
+            .saturating_sub(1)
+    } else {
+        (source_block_offset.raw() / geometry.fragmentainer_block_size.raw()).max(0) as usize
+    };
+    let source_row_start = if has_actual_block_rows {
+        row_starts[source_row] - geometry.column_block_start
+    } else {
+        geometry.fragmentainer_block_size * source_row as i32
+    };
     let source_column_index = source_row.saturating_mul(declared);
     let rows_to_take = source_slice_block_size
         .filter(|size| *size > LayoutUnit::zero())
         .map(|size| {
-            ((size.raw() + geometry.fragmentainer_block_size.raw() - 1)
-                / geometry.fragmentainer_block_size.raw())
-            .max(1) as usize
+            if has_actual_block_rows {
+                row_starts
+                    .iter()
+                    .skip(source_row)
+                    .take_while(|start| {
+                        **start < geometry.column_block_start + source_block_offset + size
+                    })
+                    .count()
+                    .max(1)
+            } else {
+                ((size.raw() + geometry.fragmentainer_block_size.raw() - 1)
+                    / geometry.fragmentainer_block_size.raw())
+                .max(1) as usize
+            }
         })
         .unwrap_or(1);
     let has_nested_repeated_table_flow = fragment
@@ -15888,6 +15971,16 @@ fn resume_nested_multicol_overflow_column(
                     // first physical column, so the stored continuation order
                     // remains authoritative for this flow.
                     index
+                } else if has_actual_block_rows {
+                    let row = row_starts.binary_search(&child.offset.top).unwrap();
+                    let inline = if geometry.column_inline_stride > LayoutUnit::zero() {
+                        ((child.offset.left - geometry.column_inline_start).raw()
+                            / geometry.column_inline_stride.raw())
+                        .max(0) as usize
+                    } else {
+                        index % declared
+                    };
+                    row.saturating_mul(declared).saturating_add(inline)
                 } else {
                     multicol_column_logical_index(child, geometry, index)
                 },
@@ -15911,8 +16004,7 @@ fn resume_nested_multicol_overflow_column(
     {
         return false;
     }
-    let consumed_in_row =
-        source_block_offset - geometry.fragmentainer_block_size * source_row as i32;
+    let consumed_in_row = source_block_offset - source_row_start;
     let source_column_inline_offset = columns
         .iter()
         .find(|(logical_index, _)| *logical_index >= source_column_index)
@@ -15960,8 +16052,12 @@ fn resume_nested_multicol_overflow_column(
             let index = logical_index - source_column_index;
             column.offset.left = geometry.column_inline_start
                 + geometry.column_inline_stride * (index % declared) as i32;
-            column.offset.top = geometry.column_block_start
-                + geometry.fragmentainer_block_size * (index / declared) as i32;
+            column.offset.top = if has_actual_block_rows {
+                column.offset.top - source_row_start
+            } else {
+                geometry.column_block_start
+                    + geometry.fragmentainer_block_size * (index / declared) as i32
+            };
             if consumed_in_row > LayoutUnit::zero() {
                 for child in &mut column.children {
                     child.offset.top = child.offset.top - consumed_in_row;
@@ -15975,7 +16071,7 @@ fn resume_nested_multicol_overflow_column(
     }
     if let Some(target_size) = target_fragmentainer_block_size
         .filter(|target| *target > LayoutUnit::zero())
-        .filter(|target| *target != geometry.fragmentainer_block_size)
+        .filter(|target| *target != geometry.fragmentainer_block_size && !has_actual_block_rows)
     {
         // The ancestor's fragmentainer is the final capacity for an
         // auto-height nested continuation. Re-slice the materialized inner
@@ -23819,14 +23915,44 @@ fn layout_multicol(
                         // A one-column nested context has no inline row in
                         // which to place an overflow column; its continuation
                         // advances through the ancestor fragmentainers.
-                        || (auto_wraps_outer_fragments && resolved.count == 1)
+                        || (auto_wraps_outer_fragments
+                            && (!has_spanner_after || resolved.count == 1))
                         // Positioned parallel flows retain their containing
                         // block while the nearest outer fragmentation context
                         // consumes complete declared column rows.
                         || positioned_uses_outer_fragmentainer
                         || (auto_wraps_outer_fragments
                             && subtree_has_positioned_descendant(doc, node_id))));
-            let wrapped_auto_row_heights = if wraps_rows
+            let constrained_balanced_rows = (auto_wraps_outer_fragments
+                && matches!(
+                    algo.column_fill,
+                    ColumnFill::Balance | ColumnFill::BalanceAll
+                )
+                && !has_spanner_after
+                && !subtree_has_positioned_descendant(doc, node_id))
+            .then(|| {
+                crate::multicol::balanced_outer_row_heights(
+                    &col_fragmentation_sizes,
+                    &col_margins_top,
+                    &col_fragmentation_margins_bottom,
+                    &col_avoid_break,
+                    &col_forced_break_before,
+                    &col_avoid_break_after,
+                    resolved.count,
+                    column_height,
+                    (space
+                        .outer_fragmentainer_block_size
+                        .max_of(space.fragmentainer_block_size)
+                        - border_padding_block)
+                        .clamp_negative_to_zero()
+                        .max_of(column_height),
+                    collapse_empty_margin_chain,
+                )
+            })
+            .flatten();
+            let wrapped_auto_row_heights = if constrained_balanced_rows.is_some() {
+                constrained_balanced_rows
+            } else if wraps_rows
                 && algo.column_height.is_none()
                 && !positions.is_empty()
                 && col_block_sizes.len() > positions.len()
@@ -23930,7 +24056,13 @@ fn layout_multicol(
                 }
             };
             let column_capacity_for = |idx: usize| -> LayoutUnit {
-                if wraps_rows && !positions.is_empty() && idx < positions.len() {
+                if let Some(height) = wrapped_auto_row_heights
+                    .as_ref()
+                    .and_then(|heights| heights.get(idx / positions.len().max(1)))
+                    .copied()
+                {
+                    height
+                } else if wraps_rows && !positions.is_empty() && idx < positions.len() {
                     leading_wrapped_row_capacity
                 } else {
                     column_height
@@ -24331,7 +24463,8 @@ fn layout_multicol(
                                 != Float::None;
                         col_idx = pending_float_flow.normal_col_idx;
                         col_block_offset = pending_float_flow.normal_block_offset;
-                        col_remaining = (column_height - col_block_offset).clamp_negative_to_zero();
+                        col_remaining = (column_capacity_for(col_idx) - col_block_offset)
+                            .clamp_negative_to_zero();
 
                         let mut inline_space =
                             ConstraintSpace::for_block_child_with_writing_direction(
@@ -24391,8 +24524,8 @@ fn layout_multicol(
                         if let Some(pending_float_flow) = pending_direct_float_inline_flow.take() {
                             col_idx = pending_float_flow.normal_col_idx;
                             col_block_offset = pending_float_flow.normal_block_offset;
-                            col_remaining =
-                                (column_height - col_block_offset).clamp_negative_to_zero();
+                            col_remaining = (column_capacity_for(col_idx) - col_block_offset)
+                                .clamp_negative_to_zero();
 
                             let mut inherited_space =
                                 crate::logical_geometry::block_child_constraint_space(
@@ -24442,8 +24575,8 @@ fn layout_multicol(
                         if let Some(pending_float_flow) = pending_direct_float_inline_flow.take() {
                             col_idx = pending_float_flow.normal_col_idx;
                             col_block_offset = pending_float_flow.normal_block_offset;
-                            col_remaining =
-                                (column_height - col_block_offset).clamp_negative_to_zero();
+                            col_remaining = (column_capacity_for(col_idx) - col_block_offset)
+                                .clamp_negative_to_zero();
                             direct_float_exclusions_for_child = pending_float_flow.exclusions;
                         }
                     }
@@ -24588,7 +24721,8 @@ fn layout_multicol(
                         col_idx = clearance_column;
                         col_block_offset = clearance
                             - column_height * LayoutUnit::from_i32(clearance_column as i32);
-                        col_remaining = (column_height - col_block_offset).clamp_negative_to_zero();
+                        col_remaining = (column_capacity_for(col_idx) - col_block_offset)
+                            .clamp_negative_to_zero();
                         prev_margin_bottom = LayoutUnit::zero();
                         prev_fixed_child_visual_overflow = false;
                         prev_fixed_child_descendant_visual_overflow = false;
@@ -25016,7 +25150,8 @@ fn layout_multicol(
                         col_idx = placed_column;
                         col_block_offset = placed_linear_start
                             - column_height * LayoutUnit::from_i32(placed_column as i32);
-                        col_remaining = (column_height - col_block_offset).clamp_negative_to_zero();
+                        col_remaining = (column_capacity_for(col_idx) - col_block_offset)
+                            .clamp_negative_to_zero();
                     }
                 }
                 let direct_float_leading_unit = if child_style.float != Float::None
@@ -26054,7 +26189,8 @@ fn layout_multicol(
                     }
                     col_idx = target_col.saturating_sub(1);
                     col_block_offset = child_height.min_of(column_height);
-                    col_remaining = (column_height - col_block_offset).clamp_negative_to_zero();
+                    col_remaining =
+                        (column_capacity_for(col_idx) - col_block_offset).clamp_negative_to_zero();
                     prev_margin_bottom = child_margin_bottom;
                     prev_fixed_child_visual_overflow = false;
                     prev_fixed_child_descendant_visual_overflow = false;
@@ -26245,7 +26381,8 @@ fn layout_multicol(
                         principal_consumed = principal_consumed + principal_block_size;
                         per_col_children[col_idx].push(part);
                         col_block_offset = part_block_offset + part_height;
-                        col_remaining = (column_height - col_block_offset).clamp_negative_to_zero();
+                        col_remaining = (column_capacity_for(col_idx) - col_block_offset)
+                            .clamp_negative_to_zero();
                         max_col_content =
                             max_col_content.max_of(col_block_offset.min_of(column_height));
                         max_wrapped_content_extent = max_wrapped_content_extent.max_of(
@@ -26504,8 +26641,8 @@ fn layout_multicol(
                                 col_idx += 1;
                                 col_block_offset =
                                     (child_height - split_top).clamp_negative_to_zero();
-                                col_remaining =
-                                    (column_height - col_block_offset).clamp_negative_to_zero();
+                                col_remaining = (column_capacity_for(col_idx) - col_block_offset)
+                                    .clamp_negative_to_zero();
                                 prev_margin_bottom = child_margin_bottom;
                                 prev_fixed_child_visual_overflow = false;
                                 prev_fixed_child_descendant_visual_overflow = false;
@@ -27113,8 +27250,9 @@ fn layout_multicol(
                             should_continue_nested_fixed_visual_overflow
                                 .then(|| {
                                     let source = per_col_children[col_idx].last().unwrap();
-                                    let capacity =
-                                        (column_height - col_block_offset).clamp_negative_to_zero();
+                                    let capacity = (column_capacity_for(col_idx)
+                                        - col_block_offset)
+                                        .clamp_negative_to_zero();
                                     let leading = leading_fragmentation_extent(doc, source);
                                     (leading > linear_first_fragment_consumed)
                                         .then_some(leading)
@@ -27601,8 +27739,8 @@ fn layout_multicol(
                             } else {
                                 col_block_offset - column_height * advance_cols as i32
                             };
-                            col_remaining =
-                                (column_height - col_block_offset).clamp_negative_to_zero();
+                            col_remaining = (column_capacity_for(col_idx) - col_block_offset)
+                                .clamp_negative_to_zero();
                         }
                     }
                     // Extract OOF candidates before fragmenting (they originate
@@ -28495,8 +28633,9 @@ fn layout_multicol(
                                     .unwrap_or(LayoutUnit::zero());
                                 if deferred_float_block_offset > LayoutUnit::zero() {
                                     col_block_offset = deferred_float_block_offset;
-                                    col_remaining =
-                                        (column_height - col_block_offset).clamp_negative_to_zero();
+                                    col_remaining = (column_capacity_for(col_idx)
+                                        - col_block_offset)
+                                        .clamp_negative_to_zero();
                                     if col_block_offset >= column_height {
                                         // A full-width float can consume an
                                         // entire intervening fragmentainer.
@@ -29882,11 +30021,19 @@ fn layout_multicol(
                             let nested_overflow_source_offset = if resumes_auto_nested_overflow
                                 && content_consumed > LayoutUnit::zero()
                             {
-                                child_frag
-                                    .multicol_fragmentation
-                                    .map_or(content_consumed, |geometry| {
-                                        geometry.fragmentainer_block_size
-                                    })
+                                child_frag.multicol_fragmentation.map_or(
+                                    content_consumed,
+                                    |geometry| {
+                                        if child_frag.children.iter().any(|column| {
+                                            column.kind == FragmentKind::ColumnBox
+                                                && column.offset.top > geometry.column_block_start
+                                        }) {
+                                            content_consumed
+                                        } else {
+                                            geometry.fragmentainer_block_size
+                                        }
+                                    },
+                                )
                             } else {
                                 content_consumed
                             };
@@ -31905,8 +32052,8 @@ fn layout_multicol(
                                 (logical_end.raw() / column_height.raw()).max(0) as usize;
                             col_idx = child_start_col_idx + column_delta;
                             col_block_offset = logical_end - column_height * column_delta as i32;
-                            col_remaining =
-                                (column_height - col_block_offset).clamp_negative_to_zero();
+                            col_remaining = (column_capacity_for(col_idx) - col_block_offset)
+                                .clamp_negative_to_zero();
                         }
                         if column_flex_break_extension > LayoutUnit::zero()
                             && !child_style.height.is_auto()
@@ -31919,8 +32066,8 @@ fn layout_multicol(
                                 (logical_end.raw() / column_height.raw()).max(0) as usize;
                             col_idx = child_start_col_idx + column_delta;
                             col_block_offset = logical_end - column_height * column_delta as i32;
-                            col_remaining =
-                                (column_height - col_block_offset).clamp_negative_to_zero();
+                            col_remaining = (column_capacity_for(col_idx) - col_block_offset)
+                                .clamp_negative_to_zero();
                         }
                         if child_style.display == Display::Flex
                             && child_style.flex_direction.is_column()
@@ -31939,8 +32086,8 @@ fn layout_multicol(
                                 (logical_end.raw() / column_height.raw()).max(0) as usize;
                             col_idx = child_start_col_idx + column_delta;
                             col_block_offset = logical_end - column_height * column_delta as i32;
-                            col_remaining =
-                                (column_height - col_block_offset).clamp_negative_to_zero();
+                            col_remaining = (column_capacity_for(col_idx) - col_block_offset)
+                                .clamp_negative_to_zero();
                             prev_fixed_child_visual_overflow = true;
                             prev_fixed_child_descendant_visual_overflow = true;
                         }
@@ -31954,8 +32101,8 @@ fn layout_multicol(
                                 (logical_end.raw() / column_height.raw()).max(0) as usize;
                             col_idx = child_start_col_idx + column_delta;
                             col_block_offset = logical_end - column_height * column_delta as i32;
-                            col_remaining =
-                                (column_height - col_block_offset).clamp_negative_to_zero();
+                            col_remaining = (column_capacity_for(col_idx) - col_block_offset)
+                                .clamp_negative_to_zero();
                             // The authored box ended at `logical_end`, but its
                             // in-flow descendants already occupied later
                             // fragmentainers. A following principal box starts
@@ -31974,8 +32121,8 @@ fn layout_multicol(
                             // exclusion ends recorded above.
                             col_idx = child_start_col_idx;
                             col_block_offset = child_start_block_offset;
-                            col_remaining =
-                                (column_height - col_block_offset).clamp_negative_to_zero();
+                            col_remaining = (column_capacity_for(col_idx) - col_block_offset)
+                                .clamp_negative_to_zero();
                         }
                         if avoid_break_inside
                             && child_height > column_height
@@ -32625,11 +32772,25 @@ fn layout_multicol(
                 // nested multicol across its own fragmentainers.
                 while per_col_children.len() > positions.len()
                     && per_col_children.last().is_some_and(|children| {
+                        let column_index = per_col_children.len() - 1;
+                        let start = content_edge_y
+                            + total_block_offset
+                            + col_extra_block_offset_for(column_index);
+                        let end = start + column_capacity_for(column_index);
                         !children.is_empty()
                             && children.iter().all(|child| {
                                 child.decoration_slice.is_some_and(|slice| {
                                     slice.source_block_offset >= slice.source_block_size
-                                })
+                                }) && !fragment_has_live_normal_source(
+                                    child,
+                                    doc,
+                                    LayoutUnit::zero(),
+                                    start,
+                                    end,
+                                    column_width,
+                                    child_percentage_block_size,
+                                    space.writing_direction,
+                                )
                             })
                     })
                 {

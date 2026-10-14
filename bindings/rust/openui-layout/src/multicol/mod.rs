@@ -775,7 +775,44 @@ pub(crate) fn columns_fit_height_with_margins(
     units_fit && needed <= column_count
 }
 
+#[derive(Clone, Copy, Debug)]
+struct ColumnSourceCursor {
+    child_index: usize,
+    consumed_block_size: LayoutUnit,
+    remaining_margin: LayoutUnit,
+}
+
+struct ColumnPartition {
+    columns: u32,
+    units_fit: bool,
+    next_source: Option<ColumnSourceCursor>,
+}
+
 fn column_partition_with_margins(
+    raw_sizes: &[LayoutUnit],
+    margins_top: &[LayoutUnit],
+    margins_bottom: &[LayoutUnit],
+    avoid_break_inside: &[bool],
+    height: LayoutUnit,
+    forced_break_before: &[bool],
+    column_count: u32,
+    avoid_break_after: &[bool],
+) -> (u32, bool) {
+    let partition = column_partition_with_margins_until(
+        raw_sizes,
+        margins_top,
+        margins_bottom,
+        avoid_break_inside,
+        height,
+        forced_break_before,
+        column_count,
+        avoid_break_after,
+        None,
+    );
+    (partition.columns, partition.units_fit)
+}
+
+fn column_partition_with_margins_until(
     raw_sizes: &[LayoutUnit],
     margins_top: &[LayoutUnit],
     margins_bottom: &[LayoutUnit],
@@ -784,9 +821,14 @@ fn column_partition_with_margins(
     forced_break_before: &[bool],
     _column_count: u32,
     avoid_break_after: &[bool],
-) -> (u32, bool) {
+    stop_after_columns: Option<u32>,
+) -> ColumnPartition {
     if height.raw() <= 0 {
-        return (u32::MAX, false);
+        return ColumnPartition {
+            columns: u32::MAX,
+            units_fit: false,
+            next_source: None,
+        };
     }
     let mut columns = 1u32;
     let mut units_fit = true;
@@ -797,6 +839,17 @@ fn column_partition_with_margins(
     for (i, &raw_size) in raw_sizes.iter().enumerate() {
         let has_forced = forced_break_before.get(i).copied().unwrap_or(false) && i > 0;
         if has_forced {
+            if stop_after_columns == Some(columns) {
+                return ColumnPartition {
+                    columns,
+                    units_fit,
+                    next_source: Some(ColumnSourceCursor {
+                        child_index: i,
+                        consumed_block_size: LayoutUnit::zero(),
+                        remaining_margin: LayoutUnit::zero(),
+                    }),
+                };
+            }
             columns += 1;
             remaining = height;
             prev_mb = LayoutUnit::zero();
@@ -837,6 +890,17 @@ fn column_partition_with_margins(
             fresh_group_total = fresh_group_total + margins_bottom[fresh_j];
 
             if group_total.raw() > remaining.raw() && fresh_group_total.raw() <= height.raw() {
+                if stop_after_columns == Some(columns) {
+                    return ColumnPartition {
+                        columns,
+                        units_fit,
+                        next_source: Some(ColumnSourceCursor {
+                            child_index: i,
+                            consumed_block_size: LayoutUnit::zero(),
+                            remaining_margin: LayoutUnit::zero(),
+                        }),
+                    };
+                }
                 columns += 1;
                 remaining = height;
                 at_column_start = true;
@@ -857,6 +921,17 @@ fn column_partition_with_margins(
             // the entire margin box must fit in the column.
             let avoid_size = child_size + margins_bottom[i];
             if avoid_size.raw() > remaining.raw() && !at_column_start && !prev_avoid_after {
+                if stop_after_columns == Some(columns) {
+                    return ColumnPartition {
+                        columns,
+                        units_fit,
+                        next_source: Some(ColumnSourceCursor {
+                            child_index: i,
+                            consumed_block_size: LayoutUnit::zero(),
+                            remaining_margin: LayoutUnit::zero(),
+                        }),
+                    };
+                }
                 columns += 1;
                 remaining = height;
                 // Re-compute margin for new column (truncated if non-first).
@@ -886,6 +961,21 @@ fn column_partition_with_margins(
             } else {
                 let mut left = child_size;
                 while left.raw() > remaining.raw() {
+                    if stop_after_columns == Some(columns) {
+                        let consumed_space = child_size - left + remaining;
+                        return ColumnPartition {
+                            columns,
+                            units_fit,
+                            next_source: Some(ColumnSourceCursor {
+                                child_index: i,
+                                consumed_block_size: (consumed_space - margin_space)
+                                    .clamp_negative_to_zero()
+                                    .min_of(raw_size),
+                                remaining_margin: (margin_space - consumed_space)
+                                    .clamp_negative_to_zero(),
+                            }),
+                        };
+                    }
                     left = left - remaining;
                     columns += 1;
                     remaining = height;
@@ -904,12 +994,173 @@ fn column_partition_with_margins(
     // space.
     let mut trailing = prev_mb;
     while trailing.raw() > remaining.raw() {
+        if stop_after_columns == Some(columns) {
+            return ColumnPartition {
+                columns,
+                units_fit,
+                next_source: Some(ColumnSourceCursor {
+                    child_index: raw_sizes.len(),
+                    consumed_block_size: LayoutUnit::zero(),
+                    remaining_margin: trailing - remaining,
+                }),
+            };
+        }
         trailing = trailing - remaining;
         columns += 1;
         remaining = height;
     }
 
-    (columns, units_fit)
+    ColumnPartition {
+        columns,
+        units_fit,
+        next_source: None,
+    }
+}
+
+/// Resolve each constrained balanced row from its remaining normal source.
+/// One partition owns forced breaks, indivisible units and margin struts for
+/// the ordinary count/fit query and this cursor. The caller excludes OOF flow.
+pub(crate) fn balanced_outer_row_heights(
+    raw_sizes: &[LayoutUnit],
+    margins_top: &[LayoutUnit],
+    margins_bottom: &[LayoutUnit],
+    avoid_break_inside: &[bool],
+    forced_break_before: &[bool],
+    avoid_break_after: &[bool],
+    column_count: u32,
+    first_height: LayoutUnit,
+    continuation_capacity: LayoutUnit,
+    collapse_empty_margin_chain: bool,
+) -> Option<Vec<LayoutUnit>> {
+    if raw_sizes.is_empty()
+        || first_height <= LayoutUnit::zero()
+        || continuation_capacity <= LayoutUnit::zero()
+    {
+        return None;
+    }
+    let collapsed_empty_source = collapse_empty_margin_chain
+        && raw_sizes.iter().all(|size| *size == LayoutUnit::zero())
+        && !forced_break_before.iter().any(|forced| *forced);
+    // The shared empty-chain balancer keeps a leading strut whole, while
+    // distributing a chain with only trailing margins across the columns.
+    // Keep that source distinction after normalizing the partition operands.
+    let collapsed_leading_source = collapsed_empty_source
+        && margins_top
+            .iter()
+            .any(|margin| *margin > LayoutUnit::zero());
+    let collapsed = if collapsed_empty_source {
+        let mut positive = LayoutUnit::zero();
+        let mut negative = LayoutUnit::zero();
+        for margin in margins_top.iter().chain(margins_bottom.iter()) {
+            positive = positive.max_of(*margin);
+            negative = negative.min_of(*margin);
+        }
+        (positive + negative).clamp_negative_to_zero()
+    } else {
+        LayoutUnit::zero()
+    };
+    // The balancing policy represents this chain as one collapsed strut.
+    // Its continuation is the same normal source, not the original margins
+    // counted once again for each empty child.
+    let mut sizes = if collapsed_empty_source {
+        vec![collapsed]
+    } else {
+        raw_sizes.to_vec()
+    };
+    let mut top = if collapsed_empty_source {
+        vec![LayoutUnit::zero()]
+    } else {
+        margins_top.to_vec()
+    };
+    let mut bottom = if collapsed_empty_source {
+        vec![LayoutUnit::zero()]
+    } else {
+        margins_bottom.to_vec()
+    };
+    let mut avoid = if collapsed_empty_source {
+        vec![false]
+    } else {
+        avoid_break_inside.to_vec()
+    };
+    let mut forced = if collapsed_empty_source {
+        vec![false]
+    } else {
+        forced_break_before.to_vec()
+    };
+    let mut after = if collapsed_empty_source {
+        vec![false]
+    } else {
+        avoid_break_after.to_vec()
+    };
+    let mut heights = Vec::new();
+    loop {
+        let height = if heights.is_empty() {
+            first_height
+        } else {
+            let empty_leading_source = [LayoutUnit::zero()];
+            let (balance_sizes, balance_top) = if collapsed_leading_source {
+                // Preserve the shared leading-strut floor using the remaining
+                // collapsed source as its block-start strut. The partition
+                // below still consumes that same source exactly once.
+                (empty_leading_source.as_slice(), sizes.as_slice())
+            } else {
+                (sizes.as_slice(), top.as_slice())
+            };
+            balance_columns_with_margins(
+                balance_sizes,
+                balance_top,
+                &bottom,
+                &avoid,
+                column_count,
+                continuation_capacity,
+                &forced,
+                &after,
+                collapse_empty_margin_chain,
+            )
+            .min_of(continuation_capacity)
+            .max_of(LayoutUnit::from_raw(1))
+        };
+        let partition = column_partition_with_margins_until(
+            &sizes,
+            &top,
+            &bottom,
+            &avoid,
+            height,
+            &forced,
+            column_count,
+            &after,
+            Some(column_count.max(1)),
+        );
+        heights.push(height);
+        let Some(cursor) = partition.next_source else {
+            return Some(heights);
+        };
+        // Keep the existing layout path if no source progress can be proved.
+        if cursor.child_index == 0
+            && cursor.consumed_block_size == LayoutUnit::zero()
+            && cursor.remaining_margin == top[0]
+        {
+            return None;
+        }
+        if cursor.child_index == sizes.len() {
+            sizes = vec![LayoutUnit::zero()];
+            top = vec![cursor.remaining_margin];
+            bottom = vec![LayoutUnit::zero()];
+            avoid = vec![false];
+            forced = vec![false];
+            after = vec![false];
+        } else {
+            sizes.drain(..cursor.child_index);
+            top.drain(..cursor.child_index);
+            bottom.drain(..cursor.child_index);
+            avoid.drain(..cursor.child_index);
+            forced.drain(..cursor.child_index);
+            after.drain(..cursor.child_index);
+            sizes[0] = (sizes[0] - cursor.consumed_block_size).clamp_negative_to_zero();
+            top[0] = cursor.remaining_margin;
+            forced[0] = false;
+        }
+    }
 }
 
 // ── Convenience: construct from ComputedStyle ───────────────────────────
@@ -1287,5 +1538,117 @@ mod tests {
             2,
             &links,
         ));
+    }
+    #[test]
+    fn constrained_rows_resume_normal_source_and_keep_break_preferences_and_margin_struts() {
+        let lu = LayoutUnit::from_i32;
+        let plan = |sizes: &[i32], top: &[i32], bottom: &[i32], avoid: &[bool], forced: &[bool]| {
+            balanced_outer_row_heights(
+                &sizes.iter().copied().map(lu).collect::<Vec<_>>(),
+                &top.iter().copied().map(lu).collect::<Vec<_>>(),
+                &bottom.iter().copied().map(lu).collect::<Vec<_>>(),
+                avoid,
+                forced,
+                &vec![false; sizes.len()],
+                2,
+                lu(200),
+                lu(200),
+                false,
+            )
+            .unwrap()
+        };
+        // A long block's first declared row consumes400 source pixels. The
+        // remaining200 is balanced independently, rather than kept in one200px column.
+        assert_eq!(
+            plan(&[600], &[0], &[0], &[false], &[false]),
+            vec![lu(200), lu(100)]
+        );
+        // The forced boundary reserves the first column for100; only200 of
+        // the next600 source fits before the real continuation row.
+        assert_eq!(
+            plan(
+                &[100, 600],
+                &[0, 0],
+                &[0, 0],
+                &[false, false],
+                &[false, true]
+            ),
+            vec![lu(200), lu(200)]
+        );
+        // Avoided150px units remain whole; the final row cannot balance below150.
+        assert_eq!(
+            plan(&[150, 150, 150], &[0; 3], &[0; 3], &[true; 3], &[false; 3]),
+            vec![lu(200), lu(150)]
+        );
+        // The first20px strut consumes capacity. The final40px strut remains
+        // content of the last row, after the remaining220px normal source.
+        assert_eq!(
+            plan(&[600], &[20], &[40], &[false], &[false]),
+            vec![lu(200), lu(130)]
+        );
+        assert_eq!(
+            plan(&[0], &[0], &[600], &[false], &[false]),
+            vec![lu(200), lu(100)]
+        );
+    }
+    #[test]
+    fn collapsed_empty_margin_chain_is_one_continuing_source_strut() {
+        let lu = LayoutUnit::from_i32;
+        assert_eq!(
+            balanced_outer_row_heights(
+                &[lu(0), lu(0)],
+                &[lu(0), lu(0)],
+                &[lu(600), lu(600)],
+                &[false, false],
+                &[false, false],
+                &[false, false],
+                2,
+                lu(200),
+                lu(200),
+                true,
+            )
+            .unwrap(),
+            vec![lu(200), lu(100)]
+        );
+        assert_eq!(
+            balanced_outer_row_heights(
+                &[lu(1000)],
+                &[lu(0)],
+                &[lu(0)],
+                &[false],
+                &[false],
+                &[false],
+                2,
+                lu(168),
+                lu(198),
+                false,
+            )
+            .unwrap(),
+            vec![lu(168), lu(198), lu(134)]
+        );
+    }
+    #[test]
+    fn collapsed_leading_and_trailing_struts_keep_the_shared_balance_discriminator() {
+        let lu = LayoutUnit::from_i32;
+        let rows = |leading, trailing| {
+            balanced_outer_row_heights(
+                &[lu(0)],
+                &[lu(leading)],
+                &[lu(trailing)],
+                &[false],
+                &[false],
+                &[false],
+                2,
+                lu(200),
+                lu(200),
+                true,
+            )
+            .unwrap()
+        };
+        // Both cases contain one600px collapsed source. Its trailing-only
+        // remainder balances to100px; a positive leading strut retains the
+        // existing whole-strut floor, constrained by the fresh200px capacity.
+        assert_eq!(rows(0, 600), vec![lu(200), lu(100)]);
+        assert_eq!(rows(600, 0), vec![lu(200), lu(200)]);
     }
 }
