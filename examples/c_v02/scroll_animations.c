@@ -69,7 +69,7 @@ static void scenario(double scale) {
   offset(source, 20.0, 40.0);
   assert(oui_document_cancel_smooth_scroll_v1(document, id) == OUI_OK);
   offset(source, 20.0, 40.0);
-  assert(oui_document_cancel_smooth_scroll_v1(document, id) == OUI_INVALID_STATE);
+  assert(oui_document_cancel_smooth_scroll_v1(document, id) == OUI_ERROR_INVALID_STATE);
   assert(oui_document_set_animation_time(document, 100.0) == OUI_OK);
   offset(source, 20.0, 40.0);
   id = UINT64_MAX;
@@ -80,7 +80,7 @@ static void scenario(double scale) {
   id = UINT64_MAX;
   found = 255;
   assert(oui_element_settle_scroll_snap_with_easing_v1(source, NULL, 0, NULL, 0, -1.0, NULL, &id,
-                                                       &found) == OUI_INVALID_ARGUMENT);
+                                                       &found) == OUI_ERROR_INVALID_ARGUMENT);
   assert(id == UINT64_MAX && found == 255);
   offset(source, 20.0, 40.0);
   assert(oui_element_destroy(content) == OUI_OK);
