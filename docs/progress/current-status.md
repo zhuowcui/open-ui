@@ -22,6 +22,63 @@ remain open.
 
 ## Current closure work (14 October 2026)
 
+The latest complete census measured clean private Grid source `9a967a38`,
+subsequently integrated as `3aa1549c`: **20,958/22,924 original comparisons
+exact**, **1,966 differences and zero errors**; expanded results are
+**21,686/23,728 exact**, **2,042 differences and zero errors**. This is the
+census of the private clean source that was integrated. Root `33639f62` has
+not been remeasured by this full census.
+
+The paired audit checks **46,652 rows and 17,385 actual PNGs**. Both suites
+contain the same **12 changed native comparisons**, with **10 exact gains,
+zero exact losses and zero worsened comparisons** against `96934cd0`;
+Chromium pixels are unchanged. Ownership remains open for **963 original
+and 982 expanded residual IDs**. The earlier Q4 global regressions remain
+open; these gains do not qualify the renderer or release.
+
+Six font-core paths are integrated at `2ec2d040` after **32 actual passing
+metadata tests** (eight new, 14 collection and ten platform). This retains
+source ownership and applied settings. Query, provider, scaler and pixel
+activation remain unqualified. The three-path primary-crate font facade was
+measured on clean private `a2cf93a2`: **six native tests passed**, comprising
+three metadata/settings/lifetime consumer tests and three existing font units.
+That facade is now integrated as `33639f62`; these observations do not qualify
+provider, query, scaler or renderer pixels.
+All **21 read-only generated, audit and format checks passed at `3aa1549c`**
+and subsequently at `2ec2d040`. These checks have not remeasured the full census.
+
+The private `4835` observation diagnostic executes **24 frames and 24 geometry
+runs** across 12 groups. Quiet and traced pixels and geometry are unchanged
+against Q9. Inline001's first pure Node5 result already has height 103 before
+the later remaining-capacity 95 relayout, so that relayout is not the first
+cause. The Q4 counterpart is a separate diagnostic, not a production rollback.
+
+Phase source `6b01a72e` is sealed with an independent peer. Its private native
+batch records **167 passed / one failed / 168 executed**, including four new
+painter units and two of three new Engine groups passing. The scoped matrix
+records **four exact / four different / zero errors**: Balance003 is exact in
+all four profiles, while OOF018 regresses in all four. Its legacy frame has
+500 green pixels below the outer box where Chromium is white. The phase
+candidate is **not integrated or qualified**; paint and clip ownership remain
+under investigation. The Height007 producer patch remains source work.
+The ordinary-DIV 160-capture CDP source is accepted; browser execution is
+pending. Existing numerical paint and font fitting, GPU, native API, hosted
+CI and release gates remain open.
+
+Chromium **147.0.7727.50 remains the sole correctness oracle**. Native archives
+preserve historical integrity. Open UI and its apps use native Rust APIs and
+callbacks, with no JavaScript execution; external qualification CDP and AST
+tools do not change that contract. No whole-project completion percentage or
+release qualification is claimed.
+
+The [V11 status and evidence inventory](../renderer/generated/native-final-closure-status-v11.json)
+records the measured and integrated source identities separately.
+
+## Historical closure status at `96934cd0`
+
+The following source-specific account is preserved from V10; its uses of
+“current” and “latest” describe that preceding checkpoint.
+
 The latest complete CPU census at `96934cd0` records **20,948/22,924 original
 comparisons exact**, **1,976 differences and zero errors** against Chromium
 147.0.7727.50. The expanded census records **21,676/23,728 exact**, **2,052
@@ -2972,15 +3029,16 @@ load it.
   it reached 408/640 focused and 624/960 primitive exact, below CPU Skia's
   640/640 and 960/960. It remains unpromoted; OpenGL presentation still uploads
   a CPU-rasterized frame.
-- The latest complete four-profile CPU Chromium census at clean `96934cd0`
-  records 20,948/22,924 original comparisons exact, 1,976 differences and zero
-  errors; expanded results are 21,676/23,728 exact, 2,052 differences and zero
-  errors. There are 964 residual original IDs; reviewed ownership remains open.
-  Against Q4, 15 comparisons gain exactness and 74 lose it, with unchanged
-  Chromium pixels. The global regression gate fails. Current focused 640/640
-  and primitive 960/960 comparisons are exact in the completed `4782` evidence;
-  these narrower scopes do not override the full census.
-  [Current measured closure status](../renderer/generated/native-final-closure-status-v10.json).
+- The latest complete census of private clean `9a967a38`, integrated as
+  `3aa1549c`, records 20,958/22,924 original comparisons exact, 1,966
+  differences and zero errors; expanded results are 21,686/23,728 exact,
+  2,042 differences and zero errors. Ownership remains open for 963 original
+  and 982 expanded residual IDs. Ten exact gains per suite, zero exact losses
+  and unchanged Chromium pixels against `96934cd0` do not close the earlier
+  Q4 global regression gate. This full census does not measure Root `33639f62`.
+  The historical 640/640 focused and 960/960 primitive scopes do not override
+  the complete census or qualify later source.
+  [Current measured closure status](../renderer/generated/native-final-closure-status-v11.json).
   The older `9949c65d` hosted checkpoint reported all 12 jobs, including seven
   explicitly dispatched hardening jobs, passing with zero skips. Those are
   preceding-source results; current-source hosted qualification remains open.
