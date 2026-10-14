@@ -16380,6 +16380,48 @@ impl LogicalPositionedFragmentRecord {
     }
 }
 
+/// Slices can remain in an orthogonal producer's physical coordinates under a
+/// horizontal owner. Never read that producer's X-axis source interval as Y.
+fn grid_source_window_has_horizontal_block_axis(
+    fragment: &Fragment,
+    style: &ComputedStyle,
+) -> bool {
+    style
+        .direction
+        .writing_direction(style.writing_mode)
+        .is_horizontal()
+        && fragment
+            .fragmentation_writing_direction
+            .is_none_or(|direction| direction.is_horizontal())
+}
+
+/// Whether real containing-block fragment windows already represent an OOF
+/// source interval. Windows may overlap when an avoid break consumed less
+/// source than the physical fragmentainer capacity; they are not column indices.
+fn source_interval_is_represented_by_windows(
+    source_start: LayoutUnit,
+    source_end: LayoutUnit,
+    windows: &[(LayoutUnit, LayoutUnit)],
+) -> bool {
+    if source_end <= source_start {
+        return false;
+    }
+    let mut covered_until = source_start;
+    for &(start, end) in windows {
+        if end <= covered_until {
+            continue;
+        }
+        if start > covered_until {
+            return false;
+        }
+        covered_until = end;
+        if covered_until >= source_end {
+            return true;
+        }
+    }
+    false
+}
+
 /// Convert out-of-flow boxes owned by this multicol into one fragment per
 /// column. Out-of-flow layout retains the logical static/containing-block
 /// inputs on the fragment; the owning multicol is the first ancestor that has
@@ -16527,6 +16569,8 @@ fn fragment_direct_positioned_children_in_multicol(
         in_nested_multicol: bool,
         writing_direction: WritingDirectionMode,
         inline_boxes: &std::collections::HashMap<NodeId, Vec<(PhysicalOffset, PhysicalSize, bool)>>,
+        first_source_offsets: &std::collections::HashMap<NodeId, PhysicalOffset>,
+        grid_source_windows: &std::collections::HashMap<NodeId, Vec<(LayoutUnit, LayoutUnit)>>,
         extracted_nodes: &mut std::collections::HashSet<NodeId>,
         extracted: &mut Vec<Fragment>,
     ) {
@@ -16718,6 +16762,29 @@ fn fragment_direct_positioned_children_in_multicol(
                         && visual_offset == PhysicalOffset::zero()
                         && positioned.containing_block_size.height > LayoutUnit::zero()
                 });
+            // Grid-area OOF geometry belongs to the actual containing-block
+            // fragments. An avoid break can consume less source than a column's
+            // physical capacity, so promoting a represented source interval to
+            // the independent nominal-column mapper changes its origin.
+            let represented_by_fragmented_grid = writing_direction.is_horizontal()
+                && resumes_with_fragmented_containing_block
+                && ancestor_promoted_transforms.is_empty()
+                && fragment.positioned_fragmentation.is_some_and(|positioned| {
+                    let containing_node = positioned.containing_block_node;
+                    let Some(windows) = grid_source_windows.get(&containing_node) else {
+                        return false;
+                    };
+                    let Some(origin) = first_source_offsets.get(&containing_node) else {
+                        return false;
+                    };
+                    let source_start =
+                        absolute_offset.top - source_space_visual_offset.top - origin.top;
+                    source_interval_is_represented_by_windows(
+                        source_start,
+                        source_start + fragment_in_flow_block_bottom(&fragment, doc),
+                        windows,
+                    )
+                });
             let has_oversized_monolithic_in_flow_overflow = fragment_has_oversized_monolithic_box(
                 &fragment,
                 doc,
@@ -16749,6 +16816,7 @@ fn fragment_direct_positioned_children_in_multicol(
                     // source that crosses the column. Select its actual source
                     // interval once before the ancestor consumes this row.
                     || (visible_in_flow_overflow_crosses_fragmentainer
+                        && !represented_by_fragmented_grid
                         && fragment.positioned_fragmentation.is_some_and(|positioned| {
                             positioned.fragmentainer_index.is_none()
                                 && positioned.split_containing_block_source_offset.is_none()
@@ -16854,6 +16922,8 @@ fn fragment_direct_positioned_children_in_multicol(
                         in_nested_multicol,
                         writing_direction,
                         inline_boxes,
+                        first_source_offsets,
+                        grid_source_windows,
                         extracted_nodes,
                         extracted,
                     );
@@ -17074,6 +17144,8 @@ fn fragment_direct_positioned_children_in_multicol(
                         && doc.node(fragment.node_id).style.opacity < 1.0),
                 writing_direction,
                 inline_boxes,
+                first_source_offsets,
+                grid_source_windows,
                 extracted_nodes,
                 extracted,
             );
@@ -17091,6 +17163,44 @@ fn fragment_direct_positioned_children_in_multicol(
             PhysicalOffset::zero(),
             &mut first_source_fragment_offsets,
         );
+    }
+    // A positive principal slice owns a full physical window, including
+    // visible overflow after its shorter remaining principal source. Exhausted
+    // decoration shells do not establish extra normal-source ownership.
+    fn collect_grid_source_windows(
+        fragment: &Fragment,
+        doc: &dyn LayoutDocument,
+        windows: &mut std::collections::HashMap<NodeId, Vec<(LayoutUnit, LayoutUnit)>>,
+    ) {
+        if fragment.owns_element_box() && fragment.positioned_fragmentation.is_none() {
+            let style = &doc.node(fragment.node_id).style;
+            if style.display.is_grid()
+                && grid_source_window_has_horizontal_block_axis(fragment, style)
+                && style.box_decoration_break != BoxDecorationBreak::Clone
+                && !style.has_transform_containing_block()
+            {
+                if let Some(slice) = fragment.decoration_slice.filter(|slice| {
+                    slice.source_block_offset < slice.source_block_size
+                        && fragment.size.height > LayoutUnit::zero()
+                }) {
+                    windows.entry(fragment.node_id).or_default().push((
+                        slice.source_block_offset,
+                        slice.source_block_offset + fragment.size.height,
+                    ));
+                }
+            }
+        }
+        for child in &fragment.children {
+            collect_grid_source_windows(child, doc, windows);
+        }
+    }
+    let mut grid_source_windows = std::collections::HashMap::new();
+    for fragment in children.iter() {
+        collect_grid_source_windows(fragment, doc, &mut grid_source_windows);
+    }
+    for windows in grid_source_windows.values_mut() {
+        windows.sort_unstable_by_key(|&(start, end)| (start.raw(), end.raw()));
+        windows.dedup();
     }
     let mut extracted = Vec::new();
     let owner_has_no_in_flow_block_size = {
@@ -17142,6 +17252,8 @@ fn fragment_direct_positioned_children_in_multicol(
         false,
         writing_direction,
         &inline_boxes,
+        &first_source_fragment_offsets,
+        &grid_source_windows,
         &mut std::collections::HashSet::new(),
         &mut extracted,
     );
@@ -37858,5 +37970,124 @@ mod remaining_normal_principal_source_guards {
             fragment_remaining_normal_source_bottom(&fragment, &doc, direction),
             LayoutUnit::zero()
         );
+    }
+}
+
+#[cfg(test)]
+mod fragmented_grid_source_window_tests {
+    use super::{
+        grid_source_window_has_horizontal_block_axis, source_interval_is_represented_by_windows,
+    };
+    use crate::Fragment;
+    use openui_dom::{Document, ElementTag};
+    use openui_geometry::{LayoutUnit, PhysicalSize};
+    use openui_style::{Display, WritingMode};
+
+    fn px(value: i32) -> LayoutUnit {
+        LayoutUnit::from_i32(value)
+    }
+
+    #[test]
+    fn real_grid_style_and_retained_slice_axis_must_agree_on_horizontal_windows() {
+        let mut doc = Document::new();
+        let grid = doc.create_node(ElementTag::Div);
+        doc.append_child(doc.root(), grid);
+        doc.update_resolved_style(grid, |style| {
+            style.display = Display::Grid;
+            style.writing_mode = WritingMode::HorizontalTb;
+        });
+        let mut fragment = Fragment::new_box(grid, PhysicalSize::new(px(50), px(100)));
+        assert!(grid_source_window_has_horizontal_block_axis(
+            &fragment,
+            &doc.node(grid).style
+        ));
+        let horizontal = doc
+            .node(grid)
+            .style
+            .direction
+            .writing_direction(WritingMode::HorizontalTb);
+        fragment.fragmentation_writing_direction = Some(horizontal);
+        assert!(grid_source_window_has_horizontal_block_axis(
+            &fragment,
+            &doc.node(grid).style
+        ));
+        doc.update_resolved_style(grid, |style| style.writing_mode = WritingMode::VerticalRl);
+        let vertical = doc
+            .node(grid)
+            .style
+            .direction
+            .writing_direction(WritingMode::VerticalRl);
+        fragment.fragmentation_writing_direction = None;
+        assert!(!grid_source_window_has_horizontal_block_axis(
+            &fragment,
+            &doc.node(grid).style
+        ));
+        fragment.fragmentation_writing_direction = Some(horizontal);
+        assert!(!grid_source_window_has_horizontal_block_axis(
+            &fragment,
+            &doc.node(grid).style
+        ));
+        doc.update_resolved_style(grid, |style| style.writing_mode = WritingMode::HorizontalTb);
+        fragment.fragmentation_writing_direction = Some(vertical);
+        assert!(!grid_source_window_has_horizontal_block_axis(
+            &fragment,
+            &doc.node(grid).style
+        ));
+    }
+
+    #[test]
+    fn positioned_source_follows_consumed_avoid_windows_and_not_the_column_capacity() {
+        let early_break = [(px(0), px(100)), (px(70), px(170))];
+        assert!(source_interval_is_represented_by_windows(
+            px(140),
+            px(170),
+            &early_break
+        ));
+        assert!(source_interval_is_represented_by_windows(
+            px(50),
+            px(120),
+            &early_break
+        ));
+        let later_break = [(px(0), px(100)), (px(90), px(190))];
+        assert!(source_interval_is_represented_by_windows(
+            px(130),
+            px(190),
+            &later_break
+        ));
+        assert!(!source_interval_is_represented_by_windows(
+            px(130),
+            px(191),
+            &later_break
+        ));
+    }
+
+    #[test]
+    fn missing_source_windows_do_not_admit_gaps_beyond_end_or_empty_source() {
+        let separated = [(px(0), px(70)), (px(100), px(170))];
+        assert!(!source_interval_is_represented_by_windows(
+            px(50),
+            px(120),
+            &separated
+        ));
+        assert!(!source_interval_is_represented_by_windows(
+            px(-1),
+            px(30),
+            &separated
+        ));
+        assert!(!source_interval_is_represented_by_windows(
+            px(170),
+            px(180),
+            &separated
+        ));
+        assert!(!source_interval_is_represented_by_windows(
+            px(30),
+            px(30),
+            &separated
+        ));
+        assert!(!source_interval_is_represented_by_windows(
+            px(0),
+            px(30),
+            &[]
+        ));
     }
 }
