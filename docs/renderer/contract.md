@@ -24,6 +24,66 @@ implementing the operation and its public Rust API, with application-level
 verification; adding JavaScript or a script binding is never the solution.
 Scripts may run only in the separate offline Chromium reference tooling.
 
+## Current qualification status (15 October 2026)
+
+The latest complete private CPU census at `ec3883b3` records
+**20,931/22,924 original** and **21,659/23,728 expanded** exact comparisons
+against Chromium 147.0.7727.50, with zero errors. Both remain 27 exact
+comparisons below the prior Grid checkpoint. The full renderer gate is open;
+focused **640/640**, primitive **960/960** and 15 selected native guards at
+that source do not override it.
+
+Later private `3de52662` (`fe25bf88` source hash) passes **17/17 selected native
+checks**, including the corrected ordinary zero-height guard V4. Its vertical
+family records **32/40 exact**, eight pre-existing differences and zero errors,
+with all **24 targeted exact comparisons restored** and no worsening. All
+80 uncached CPU renders / 40 repeat pairs preserve source/reference inputs.
+These selected results do not remeasure the full census or the runtime
+documentation parent `ec5ab327`.
+
+At separate `ab930081`, 21 native tests execute: 19 pass and two fail on
+padded principal-source continuity. Its **30/30 whole-RGBA and ordered-API**
+transform/removal audit passes 766 checks with 165 unchanged pins, ten full
+restorations and 15 repeat pairs. The combined private `21b96fe7` executes
+35 selected Native tests: **32 pass and three fail**. Two producer-continuity
+tests and one C4 test-coverage count assertion fail; its per-case ordinary
+RGBA/fallback checks and the complete-decoration Engine guard pass. The later C5 test-input probe is recorded below.
+
+The v4980 linked diagnostic build completes with nine required renderer
+packages recompiled. At the same `21b96fe7` source, v4982 records **46/56 exact**,
+ten pre-existing differences and zero errors: vertical **32/40**, complete
+decoration **6/8**, owned clip C028 **4/4**, and OOF018 **4/4**. All **34 targeted
+lost exact comparisons are restored** with zero worsening. The **112 uncached
+CPU renders / 56 repeat pairs**, source, binary and reference pins are stable.
+The driver exits 0 while preserving the failed Native gate and all qualification
+flags false; these selected results do not update the full census.
+
+At later diagnostic `3a8c9fbe`, all **five clip/prepaint
+guards and four layout projection units pass**. The three strict padded
+tests still record **one pass and two failures** (one observer ignored).
+Both diagnostic observer runs pass: **20 quiet/traced frame pairs** preserve
+complete RGBA and retained metadata; ten independent repeat pairs and eight
+full restorations pass. The test-input coverage correction passes without
+changing production paint. This trace diagnoses source continuity; it does
+not qualify native APIs or replace the full Chromium census.
+
+Eight fresh Chromium captures remain exact to their original RGBA oracles,
+but only six snapshot mappings complete; two desktop OOF053 at 1.25 mappings
+stay incomplete,
+and that observation driver exits 1 with `complete=false`. No Native pixel
+qualification follows from those browser captures. The saved-census recovery
+audit is still running with no complete result inferred. The earlier v4973 build's internal receipt survives
+the environment reset, but its outer terminal was not observed.
+
+Chromium alone defines pixel correctness. Old native images remain history.
+Open UI never executes JavaScript; complete public native Rust behaviors and
+the shared C behavior remain required. Full renderer, API, compositor/3D,
+hardware, current CI, packaging and release qualification stay open.
+
+[Current measured sources and evidence](generated/native-final-closure-status-v12.json).
+The source-specific accounts below preserve earlier checkpoints. Their uses
+of “current” and “last complete” refer to the commits named in those accounts.
+
 ## Explicit monochrome matrices (diagnostic; policy not promoted)
 
 At clean `f6d318e6`, explicit fitted monochrome text restores

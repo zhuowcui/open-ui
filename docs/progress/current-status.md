@@ -20,7 +20,108 @@ product. Waves W0 through W10 are locally committed. W11 source packaging and
 documentation are implemented, but final external and hardware qualifications
 remain open.
 
-## Current closure work (14 October 2026)
+## Current closure work (15 October 2026)
+
+The latest completed private Chromium census measures clean `ec3883b3`:
+**20,931/22,924 original comparisons exact**, **1,993 differences and zero
+errors**; expanded **21,659/23,728 exact**, **2,069 differences and zero
+errors**. Each suite is 27 exact comparisons below the Grid checkpoint.
+The full renderer regression gate remains open. The runtime documentation
+parent `ec5ab327` has not been remeasured by this census, and selected later
+gains must not be added to these totals.
+
+At that census source, **640/640 focused**, **960/960 primitive**, and **15
+selected native guards** pass. Original spanner observations match Chromium
+in **20/20 whole frames**. The scoped sweep is **99/108 exact**, nine
+different and zero errors. These narrower scopes do not qualify the census.
+
+Later clean private `3de52662`, source hash `fe25bf88`, passes **17/17 selected
+native checks**: three axis, three ordinary-spanner, six authored-projection,
+four containing-block-window and one prepaint-accounting test. The corrected
+ordinary zero-height guard V4 checks Chromium's hidden baseline, authored
+translation exposure, removal, complete RGBA/API/raw-projection restoration
+and cached no-work behavior. One ignored diagnostic observer is expected;
+this is not a complete workspace or API gate.
+
+The same source completes **80 uncached CPU renders and 40 independent
+repeat pairs** for ten vertical-family IDs at four profiles. Chromium
+comparisons are **32/40 exact**, with **eight pre-existing differences and
+zero errors**. All **24 targeted exact regressions are restored**, no known
+difference worsens, and source/reference inputs remain unchanged. This does
+not establish a new complete census or repair the global gate.
+
+The separate corrected padded follow-up `ab930081` remains **19 pass / two
+fail out of 21 executed native tests**. Both failures concern principal-source
+continuity. Its saved transform/removal audit passes **766 checks across
+30 states / 165 unchanged pins**: all whole RGBA frames and ordered span/probe
+client rectangles and bounds match Chromium at five scales and two fresh
+Engines. All ten restoration pairs, 15 repeat pairs and raw three projection
+records, each with one child, pass. The old compile failure is preserved.
+The combined producer V2 / decoration A2 / owned-clip C4 candidate, with axis
+and corrected ordinary guards, is clean private `21b96fe7`, source hash
+`bac89670`. Its v4978 selected gate executes all **35 tests: 32 pass and three
+fail**, with source and Root snapshots unchanged. Two principal-source
+continuity tests remain failed. C4's new test passes its per-case complete
+ordinary RGBA/fallback/state/raw checks, then fails the nonvacuous overlap
+count assertion because its supplied coordinates exercise zero overlaps.
+The complete-decoration Engine guard passes. C5 is a test-input correction; its later measured result is recorded below. Finite principal ownership and
+complete native API/renderer qualification remain open.
+
+The v4980 linked diagnostic build completes with exit 0, recompiling all nine
+required renderer packages and retaining the known **32-pass / three-failure**
+Native result. At that same clean `21b96fe7` source, v4982 measures **46/56
+selected comparisons exact**, with **ten pre-existing differences and zero
+errors**. Groups are vertical **32/40** (eight old differences), complete
+decoration **6/8** (two old desktop 1.25 differences), owned clip C028 **4/4**,
+and OOF018 **4/4**. All **34 targeted lost exact comparisons are restored**
+with zero worsening. All **112 uncached CPU renders / 56 repeat pairs**
+complete with source, binary and reference pins unchanged. The pixel driver
+exits 0; its narrow success does not qualify the failed Native gate or change
+the latest full/expanded census totals.
+
+At later diagnostic `3a8c9fbe`, all **five clip/prepaint
+guards and four layout projection units pass**. The three strict padded
+tests still record **one pass and two failures** (one observer ignored).
+Both diagnostic observer runs pass: **20 quiet/traced frame pairs** preserve
+complete RGBA and retained metadata; ten independent repeat pairs and eight
+full restorations pass. The test-input coverage correction passes without
+changing production paint. This trace diagnoses source continuity; it does
+not qualify native APIs or replace the full Chromium census.
+
+Eight fresh Chromium reference captures are **8/8 whole-RGBA exact** to their
+original immutable oracles. Six snapshot mappings complete; the two desktop
+OOF053 at 1.25 mappings remain incomplete. The command-observation driver exits 1 and
+`complete=false`; raw evidence and the strict mapping gate are preserved.
+This browser observation does not measure Native renderer parity.
+
+The environment reset interrupted the v4943 saved-image audit; its empty
+output is preserved. The source-reviewed saved-only recovery V4 is running
+at v4976 with durable progress and a shared evidence lease. Its complete
+actual-image result is pending. The reset recovery restored the exact
+`3de52662` Git object and source hash. The saved v4973 build receipt records
+nine rebuilt local packages, embedded identity exit 0, and unchanged source
+and Root snapshots; the outer build terminal was not observed. That receipt
+must not be described as an observed outer build success.
+
+The preserved **14 October 2026** read-only hosted audit binds failures to
+old main `1d7a4cc5`: CI has **two failed jobs out of three**, and hardening
+**five failed jobs out of seven**. No new hosted query has been made for this
+refresh. Local dependency, replay, FreeType, MSRV and Fontconfig changes do
+not establish current hosted or hardening success.
+
+Chromium remains the sole correctness oracle. Historical native images
+preserve history and never define expected pixels. Open UI executes no
+JavaScript, ever; complete public native Rust operations and callbacks are
+required, with C using the same shared behavior. Native/C API, renderer,
+compositor, 3D, hardware, accessibility, performance, packaging, CI and release
+gates remain open. No whole-project completion percentage is claimed.
+
+The [V12 evidence inventory](../renderer/generated/native-final-closure-status-v12.json)
+keeps each measured source, active run and historical failure separate.
+
+## Previous Grid closure checkpoint (14 October 2026)
+
+The following source-specific account is preserved from V11.
 
 The latest complete census measured clean private Grid source `9a967a38`,
 subsequently integrated as `3aa1549c`: **20,958/22,924 original comparisons
@@ -3029,16 +3130,15 @@ load it.
   it reached 408/640 focused and 624/960 primitive exact, below CPU Skia's
   640/640 and 960/960. It remains unpromoted; OpenGL presentation still uploads
   a CPU-rasterized frame.
-- The latest complete census of private clean `9a967a38`, integrated as
-  `3aa1549c`, records 20,958/22,924 original comparisons exact, 1,966
-  differences and zero errors; expanded results are 21,686/23,728 exact,
-  2,042 differences and zero errors. Ownership remains open for 963 original
-  and 982 expanded residual IDs. Ten exact gains per suite, zero exact losses
-  and unchanged Chromium pixels against `96934cd0` do not close the earlier
-  Q4 global regression gate. This full census does not measure Root `33639f62`.
-  The historical 640/640 focused and 960/960 primitive scopes do not override
-  the complete census or qualify later source.
-  [Current measured closure status](../renderer/generated/native-final-closure-status-v11.json).
+- The latest complete private census at `ec3883b3` records 20,931/22,924
+  original comparisons exact, 1,993 differences and zero errors; expanded
+  results are 21,659/23,728 exact, 2,069 differences and zero errors. Both
+  suites are 27 exact comparisons below Grid `9a967a38`. The global renderer
+  regression gate remains open. Later `3de52662` restores 24 targeted exact
+  vertical comparisons (32/40 exact in that family) without remeasuring these
+  full totals or runtime documentation parent `ec5ab327`. Selected 640/640
+  focused and 960/960 primitive scopes do not override the complete census.
+  [Current measured closure status](../renderer/generated/native-final-closure-status-v12.json).
   The older `9949c65d` hosted checkpoint reported all 12 jobs, including seven
   explicitly dispatched hardening jobs, passing with zero skips. Those are
   preceding-source results; current-source hosted qualification remains open.

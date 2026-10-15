@@ -1,0 +1,527 @@
+{
+  "C5_probe_4981": {
+    "actual_exit_code": 0,
+    "clip_prepaint_passed": 5,
+    "complete_result": true,
+    "projector_units_passed": 4,
+    "qualification": false,
+    "quiet_traced_frame_pairs": 20,
+    "receipt_sha256": "e7f31c104e49977aa8415dc3073e122e3f422be31d2469ae39030d17b87b6199",
+    "status": "complete diagnostic; producer gate failed",
+    "strict_padded_totals": [
+      1,
+      2,
+      1
+    ],
+    "terminal_sha256": "c30a912af273ec1a593da8db36cae2e2e9be2bd8853bdc8a00a62362a835cefd"
+  },
+  "all_needed_element_behaviors_require_complete_public_native_Rust_APIs": true,
+  "as_of": "2026-10-15",
+  "c_api_qualified": false,
+  "cohort_renderer_build_4980": {
+    "Cargo_fresh_flags_for_recompiled_packages": false,
+    "actual_exit_code": 0,
+    "all_internal_children_retired": true,
+    "binary_sha256": "6ef7c4fb4ef4e32d1651791f199d5da378a8389fb39ac33f0f45278229b0f170",
+    "diagnostic_only": true,
+    "embedded_identity_actual_exit_code": 0,
+    "native_API_qualified": false,
+    "outer_terminal_observed": true,
+    "preserved_native_pass_fail_ignored": [
+      32,
+      3,
+      1
+    ],
+    "release_qualified": false,
+    "renderer_qualified": false,
+    "required_renderer_packages_recompiled": 9,
+    "source": {
+      "clean": true,
+      "commit": "21b96fe787d45b7efb8197c774427d8c0fc8ea44",
+      "harness_sha256": "32a51e0c7438d13688bcac5a3b9a4a04c66a32219fd627d9be9e4844a052ea90",
+      "source_tree_sha256": "bac89670a63febea08bdc131bbe18fa898c5494b9f88f20124f75828778697ef",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_and_Root_unchanged": true
+  },
+  "combined_cohort_4978": {
+    "actual_exit_code": 1,
+    "all_source_and_Root_unchanged": true,
+    "complete": true,
+    "complete_decoration_Engine_passed": 1,
+    "complete_native_success": false,
+    "executed": 35,
+    "failed": 3,
+    "failed_tests": "Two producer-continuity tests; C4 new boundary test overlap-coverage count0. Per-case ordinary RGBA/fallback/state/raw checks completed before that test count failed.",
+    "ignored_diagnostic_observers": 1,
+    "note": "Source-specific failed35-test gate preserved. Later C5 diagnostic passes its five clip/prepaint tests; it does not establish a replacement complete35-test result.",
+    "passed": 32,
+    "planned_selected_tests": 35,
+    "qualification": false,
+    "runtime_output": "/mnt/d/openui-v02-qualification-d174ea0b/native-layout-paint-cohort-native-v4978-v2",
+    "scope": "Producer V2 / complete-decoration A2 / owned-clip C4 with axis and ordinary-zero V4 guards",
+    "session": 11506,
+    "source": {
+      "clean": true,
+      "commit": "21b96fe787d45b7efb8197c774427d8c0fc8ea44",
+      "harness_sha256": "32a51e0c7438d13688bcac5a3b9a4a04c66a32219fd627d9be9e4844a052ea90",
+      "source_tree_sha256": "bac89670a63febea08bdc131bbe18fa898c5494b9f88f20124f75828778697ef",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "status_at_preparation": "complete selected execution; failed gate"
+  },
+  "compositor_qualified": false,
+  "current_ci_qualified": false,
+  "current_measured_private_source": {
+    "clean": true,
+    "commit": "ec3883b35895b222482d103af6b3a294cb8c8bbd",
+    "harness_sha256": "32a51e0c7438d13688bcac5a3b9a4a04c66a32219fd627d9be9e4844a052ea90",
+    "source_tree_sha256": "9cdc5882ac45b203cc010b810f33cc2a66c597c43a8725ca532830df07c3a92f",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "current_measured_private_source_scope": "Latest completed full/expanded census source; later selected-source measurements are recorded separately.",
+  "direct_cohort_chromium_matrix_4982": {
+    "actual_exit_code": 0,
+    "all_owned_children_retired": true,
+    "comparisons": 56,
+    "complete": true,
+    "different": 10,
+    "errors": 0,
+    "exact": 46,
+    "full_census_remeasured": false,
+    "groups": {
+      "OOF018_guard": {
+        "different": 0,
+        "exact": 4,
+        "total": 4
+      },
+      "complete_overflow_A": {
+        "different": 2,
+        "exact": 6,
+        "total": 8
+      },
+      "owned_clip_C": {
+        "different": 0,
+        "exact": 4,
+        "total": 4
+      },
+      "vertical": {
+        "different": 8,
+        "exact": 32,
+        "total": 40
+      }
+    },
+    "higher_mismatch_counts_than_grid": 0,
+    "independent_repeat_pairs": 56,
+    "preexisting_differences": 10,
+    "preserved_native_pass_fail_ignored": [
+      32,
+      3,
+      1
+    ],
+    "qualification": false,
+    "source": {
+      "clean": true,
+      "commit": "21b96fe787d45b7efb8197c774427d8c0fc8ea44",
+      "harness_sha256": "32a51e0c7438d13688bcac5a3b9a4a04c66a32219fd627d9be9e4844a052ea90",
+      "source_tree_sha256": "bac89670a63febea08bdc131bbe18fa898c5494b9f88f20124f75828778697ef",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_binary_and_reference_inputs_unchanged": true,
+    "targeted_lost_exact_comparisons_restored": 34,
+    "uncached_CPU_renders": 112
+  },
+  "documentation_commit_checks": "Results are recorded separately in native-closure-documentation-runtime-v4985/receipt.json; no renderer/API/hosted or release qualification follows.",
+  "documentation_parent": "ec5ab32787273b2cfb37b57f49c493d9afb98978",
+  "documentation_source_only": true,
+  "draft": false,
+  "environment_reset_source_recovery": {
+    "actual_exit_code": 0,
+    "complete": true,
+    "original_Git_object_recovered_exact": true,
+    "receipt_sha256": "93396ec403656bbefe22ac430d3c3017259141ae519daa63138431ceba96a358",
+    "source": {
+      "clean": true,
+      "commit": "3de526621a08c6b5d5c652ccc060afe4c577751f",
+      "harness_sha256": "32a51e0c7438d13688bcac5a3b9a4a04c66a32219fd627d9be9e4844a052ea90",
+      "source_tree_sha256": "fe25bf88bf18abd634b3de532c39a69fc8979abb7cf400365151fc130d8b80c9",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "evidence": [
+    {
+      "bytes": 8777,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-authored-projection-complete-chromium-matrices-v4940/receipt.json",
+      "sha256": "1d0cac2a10ffbd0e945ddafcfddfc058dc069b69386ad1ff956242c00e7cc084"
+    },
+    {
+      "bytes": 638,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-authored-projection-complete-chromium-matrices-v4940/terminal-v1.json",
+      "sha256": "d8fff3d2e74af14871bee559b28754711442ff5fa13898f920f7e916c2f3fa30"
+    },
+    {
+      "bytes": 8308,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-authored-projection-exec-focused-primitive-v4937/receipt.json",
+      "sha256": "0011be9ac24b57112dcb191f928b12d9de679704a7d917bb117155218d94dc24"
+    },
+    {
+      "bytes": 5132,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-authored-projection-test-corrected-guards-v4935/receipt.json",
+      "sha256": "6356d73d291acc7f631690d1c68d3223b8886773e59cd06bead03c5794e5acaa"
+    },
+    {
+      "bytes": 39089,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-authored-projection-original20-paired-audit-v4923/actual-paired-20-frame-audit-v1.json",
+      "sha256": "f32514086e02d3286720434b2c3e39053031a1ce2bec4082b20e3bbb74143e69"
+    },
+    {
+      "bytes": 10155,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-authored-projection-scoped-chromium-matrices-v4929/receipt.json",
+      "sha256": "c7013032be70adba0ae62bbf3464c689f09dba9d6863eb532fde75f9b62081a3"
+    },
+    {
+      "bytes": 449432,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-zero-spanner-exposure-chromium-runtime-v4939/receipt.json",
+      "sha256": "038ebe47246cd83867e0ec93ca6fbae0e4b15d8c50f9c249eb8b1126dbfa10d4"
+    },
+    {
+      "bytes": 7623,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-padded-and-exposure-selected-native-v4955/receipt.json",
+      "sha256": "5c16e129d272a2b73f75b505d937863893ae100f96525427baa8f1e2a85b6b81"
+    },
+    {
+      "bytes": 759,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-padded-and-exposure-selected-native-v4955/terminal-v1.json",
+      "sha256": "663d6590da440af28e638d30da1275d22245fffb560978a8deeb1204e70dc34b"
+    },
+    {
+      "bytes": 53148,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-hosted-ci-attribution-control-grip-source-v4949/hosted-ci-current-source-attribution-v1.json",
+      "sha256": "f7613c936e56703f21510c676ad1459034c01f03e81dcd58c15a2c44a5ef1ac6"
+    },
+    {
+      "bytes": 8734,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-padded-and-exposure-api-corrected-selected-native-v4963/receipt.json",
+      "sha256": "3eaec396d922c0094951d5d67d368a956bde0d6c45dedf5fd6a8e643c647b83e"
+    },
+    {
+      "bytes": 1216,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-padded-and-exposure-api-corrected-selected-native-v4963/terminal-v1.json",
+      "sha256": "b60e1bdfa39224039bfcfb39e6a9bf6b3abcc1f13115baff2a954e2d946fa9dd"
+    },
+    {
+      "bytes": 330182,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-zero-spanner-native30-complete-audit-v4965/comparison.json",
+      "sha256": "b7729d8ddb7b90490190d8e75743924989ceea2beed1f8217ea21eff032b47a2"
+    },
+    {
+      "bytes": 45504,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-zero-spanner-native30-complete-audit-v4965/receipt.json",
+      "sha256": "3da2e7b72c319321a586f43cd8f12926b0d32029e3fbb261e79891beb2ba5b86"
+    },
+    {
+      "bytes": 435,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-zero-spanner-native30-complete-audit-v4965/terminal-v1.json",
+      "sha256": "0576d215893642f08bf5fdb33610c249aedd5a436ca4897973046f873abdea9a"
+    },
+    {
+      "bytes": 11122,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-zero-guard-and-vertical-native-runtime-v4971/receipt.json",
+      "sha256": "8601d58035e53c96bd2efc39ff50a992b3ae27a89610316997e283750c127574"
+    },
+    {
+      "bytes": 402,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-zero-guard-and-vertical-native-runtime-v4971/terminal-v1.json",
+      "sha256": "1957e2c1cf3e61206f5b6e11ade5e3788f18cce7a1a8a974fe9f4ecf7e734f3b"
+    },
+    {
+      "bytes": 126405,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-vertical-axis-direct-chromium-runtime-v4974/receipt.json",
+      "sha256": "6394033780d32018ea4a59f9eb6a3ddc517829e17875860d3e59c82254d8a97d"
+    },
+    {
+      "bytes": 412,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-vertical-axis-direct-chromium-runtime-v4974/terminal-v1.json",
+      "sha256": "0d32c3e36f7426e0b8cece15338b5690bb0329ed7d99d20957a2a078775f4341"
+    },
+    {
+      "bytes": 6468,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-rehydration-v4975/receipt.json",
+      "sha256": "93396ec403656bbefe22ac430d3c3017259141ae519daa63138431ceba96a358"
+    },
+    {
+      "bytes": 280,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-rehydration-v4975/terminal-v1.json",
+      "sha256": "c9600a4160d36853d68011b31f7cdd73465113f4a04b28ccde12c50c14c8bc1c"
+    },
+    {
+      "bytes": 32706,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-zero-guard-and-vertical-renderer-build-v4973/guarded-build/receipt.json",
+      "sha256": "dc1ba810fbada58819a1183b0cf0e01a527e0f5a019d13c0c6cd4dd9a42163ba"
+    },
+    {
+      "bytes": 7825,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-zero-spanner-ordinary-guard-source-scroll-v4966/formatted-source-manifest-v4.json",
+      "sha256": "8b74541d293166a7b7722ef4cb46979ddaee62684c6a29012510dee125e0c701"
+    },
+    {
+      "bytes": 4818,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-complete-saved-census-audit-recovery-v4976/source-manifest-v4.json",
+      "sha256": "dd2935d1137b9e2089abbbecc5e53bf30aeb4af1028bf36cc45aee629358ae86"
+    },
+    {
+      "bytes": 913,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-complete-saved-census-audit-recovery-v4976/Root-review-and-coordination-policy-v1.json",
+      "sha256": "2859420fed6588cf8632c49b888a8847bbeeb97a06cc5d2a698fb3f16ddc12d8"
+    },
+    {
+      "bytes": 23283,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-layout-paint-cohort-native-v4978-v2/receipt.json",
+      "sha256": "b24d2242d9d456eddcebf4f2c8d9e2aaf22c91beb266ef1d586df8e806f862a5"
+    },
+    {
+      "bytes": 756,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-layout-paint-cohort-native-v4978-v2/terminal-v1.json",
+      "sha256": "7e2dfffa236fecce4e78a1e83251710ca22a0be3969b533014ed5a1f5401d80d"
+    },
+    {
+      "bytes": 578109,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-normal-phase-chromium-command-runtime-v4976/receipt.json",
+      "sha256": "c7af369ef68e2fd21d2696b89dafd0c67fba9334adaeb3e0608167d577c6a278"
+    },
+    {
+      "bytes": 447,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-normal-phase-chromium-command-runtime-v4976/terminal-v1.json",
+      "sha256": "12286b3edd2486c66349e432da0d38b7bf442ad11ad777e66005764525386d0f"
+    },
+    {
+      "bytes": 176311,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-layout-paint-direct-chromium-runtime-v4982/receipt.json",
+      "sha256": "d61c2037a73bec4705b423ab245af6e54462cfb314043b729434bddaaf050ba5"
+    },
+    {
+      "bytes": 858,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-layout-paint-direct-chromium-runtime-v4982/terminal-v1.json",
+      "sha256": "43b606afbe5cbd0ecabe2f1d421cf84ec2a542670295c5787213a761b28570cc"
+    },
+    {
+      "bytes": 32104,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-layout-paint-cohort-diagnostic-renderer-build-v4980/guarded-build/receipt.json",
+      "sha256": "54e5eaf6353c232dcc3c5f38b6e8ea47f58ae66c468db50bbbf96f5f0a5a0df3"
+    },
+    {
+      "bytes": 525,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-layout-paint-cohort-diagnostic-renderer-build-v4980/terminal-v1.json",
+      "sha256": "1fc2b0af1598d1fd800a329b34cf1a2c13cdda47c6959ac468e306f1f2def599"
+    },
+    {
+      "bytes": 28213,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-padded-row-admission-and-clip-guard-runtime-v4981/receipt.json",
+      "sha256": "e7f31c104e49977aa8415dc3073e122e3f422be31d2469ae39030d17b87b6199"
+    },
+    {
+      "bytes": 1112,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-padded-row-admission-and-clip-guard-runtime-v4981/terminal-v1.json",
+      "sha256": "c30a912af273ec1a593da8db36cae2e2e9be2bd8853bdc8a00a62362a835cefd"
+    }
+  ],
+  "external_CDP_AST_qualification_tools_allowed": true,
+  "finite_principal_and_vertical_phase_candidates": "Finite principal/member qualification remains open. Selected21b direct matrix is46/56 exact with34 lost Grid-exact rows restored and zero worsening. Later C5 diagnostic passes its clip/projection/transport checks but retains two producer failures. Earlier3de measurements remain source-specific history, not a new full census.",
+  "focused_exact": 640,
+  "fresh_chromium_command_observation_4976": {
+    "Native_renderer_parity_inferred": false,
+    "actual_exit_code": 1,
+    "collected_captures": 8,
+    "collection_complete": true,
+    "complete": false,
+    "complete_mapping_scope": [
+      "overflow-clip-014@1.25 repeat0/1",
+      "overflow-clip-017@1.25 repeat0/1",
+      "out-of-flow-in-multicolumn-053@legacy1 repeat0/1"
+    ],
+    "incomplete_scope": "Desktop OOF053 at device scale1.25, two independent repeats; mapped-size replay RGBA mismatch remains incomplete.",
+    "pins_unchanged": true,
+    "qualification": false,
+    "snapshot_mappings_complete": 6,
+    "snapshot_mappings_incomplete": 2,
+    "strict_mapping_gate_preserved": true,
+    "whole_RGBA_exact_to_original_oracles": 8
+  },
+  "hardware_qualified": false,
+  "historical_openui_images_define_correctness": false,
+  "historical_padded_compile_failure": {
+    "cargo_compile_failures": 7,
+    "executed": 0,
+    "planned_selected_tests": 21,
+    "source": {
+      "clean": true,
+      "commit": "ebd2eda29d6a5250f2aba903b41d19a45e2ed1d5",
+      "harness_sha256": "32a51e0c7438d13688bcac5a3b9a4a04c66a32219fd627d9be9e4844a052ea90",
+      "source_tree_sha256": "84b4b60ef5ef6feaf457dcd4cdd1f968dc236a21cc1091d417cd06a826d9a672",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "transport_frames_produced": 0
+  },
+  "hosted_ci_snapshot": {
+    "audit_date": "2026-10-14",
+    "current_source_success_inferred": false,
+    "historical_snapshot_only": true,
+    "new_hosted_query_for_this_refresh": false,
+    "source_main_commit": "1d7a4cc5"
+  },
+  "independent_complete_actual_image_audit": "Old v4943 audit interrupted with empty output after environment reset; reviewed saved-only V4 recovery at v4976 is running, with no completed result inferred.",
+  "javascript_executed_by_openui": false,
+  "latest_complete_census": {
+    "expanded": {
+      "different": 2069,
+      "errors": 0,
+      "exact": 21659,
+      "profile_result_sha256": "7fc8e1a54c0507b52e45d48e4a2dafe050425f460d6d40cc1cf6b6e040e4ef90",
+      "total": 23728
+    },
+    "full": {
+      "different": 1993,
+      "errors": 0,
+      "exact": 20931,
+      "profile_result_sha256": "b65a5ebb4865d0bfb3ef8e5d2235b209afe5f697093e7052ac117bd12b2e2153",
+      "total": 22924
+    }
+  },
+  "latest_narrow_measured_private_source": {
+    "clean": true,
+    "commit": "21b96fe787d45b7efb8197c774427d8c0fc8ea44",
+    "harness_sha256": "32a51e0c7438d13688bcac5a3b9a4a04c66a32219fd627d9be9e4844a052ea90",
+    "source_tree_sha256": "bac89670a63febea08bdc131bbe18fa898c5494b9f88f20124f75828778697ef",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "native30_transform_api_audit": {
+    "checks": 766,
+    "complete": true,
+    "independent_repeat_pairs": 15,
+    "input_pins_unchanged": 165,
+    "ordered_geometry_exact": 30,
+    "qualification": false,
+    "restoration_pairs": 10,
+    "total": 30,
+    "whole_RGBA_exact": 30
+  },
+  "native_api_qualified": false,
+  "native_row_admission_probe_4981": {
+    "clip_prepaint_passed": 5,
+    "complete_RGBA_and_retained_metadata_unchanged": true,
+    "diagnostic_observers_passed": 2,
+    "diagnostic_only": true,
+    "executed_native_tests": 14,
+    "failed": 2,
+    "full_restore_pairs": 8,
+    "ignored_in_strict_default_group": 1,
+    "independent_repeat_pairs": 10,
+    "passed": 12,
+    "projector_units_passed": 4,
+    "qualification": false,
+    "quiet_traced_frame_pairs": 20,
+    "source": {
+      "clean": true,
+      "commit": "3a8c9fbe069138882747d05c0eeb754564b9f933",
+      "harness_sha256": "32a51e0c7438d13688bcac5a3b9a4a04c66a32219fd627d9be9e4844a052ea90",
+      "source_tree_sha256": "dfd8ad429aa8e10c40879376531848bcc84c7db79acea14ac26dce73d7d9658f",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_and_Root_unchanged": true,
+    "strict_padded_totals": [
+      1,
+      2,
+      1
+    ]
+  },
+  "net_exact_change_vs_grid_per_suite": -27,
+  "ordinary_zero_height_guard": {
+    "baseline_opaque_magenta": 0,
+    "exposure": "Authored translation f=-20 then remove_property; whole RGBA/raw-three-record/API restoration and cached no-work are guarded.",
+    "historical_Native30_ignored_observer_preserved": true,
+    "native_selected_group_passed": 3,
+    "qualification": false,
+    "source_commit": "3de526621a08c6b5d5c652ccc060afe4c577751f",
+    "version": "V4"
+  },
+  "original_spanner_whole_frame_observation": {
+    "exact": 20,
+    "source_scope": "Separate observer source with unchanged ec388 production",
+    "total": 20
+  },
+  "padded_followup_native": {
+    "complete_native_success": false,
+    "executed": 21,
+    "failed": 2,
+    "passed": 19,
+    "source": {
+      "clean": true,
+      "commit": "ab930081fa856daf30c6cef21d4a535d5fe1a336",
+      "harness_sha256": "32a51e0c7438d13688bcac5a3b9a4a04c66a32219fd627d9be9e4844a052ea90",
+      "source_tree_sha256": "5691e11eb5bfe8995dc791eb7ddc32c197ce741a7372433aef3a1e032a20933d",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "transport_frames_produced": 30
+  },
+  "pixel_target": "pinned Chromium 147.0.7727.50",
+  "pixel_tolerance": 0,
+  "previous_status": "native-final-closure-status-v11.json",
+  "primitive_exact": 960,
+  "publication_state": "Draft umbrella PR; no push, merge, signing or publication",
+  "release_qualified": false,
+  "renderer_qualified": false,
+  "runtime_documentation_parent": "ec5ab32787273b2cfb37b57f49c493d9afb98978",
+  "runtime_documentation_parent_full_census_remeasured": false,
+  "saved_census_audit_recovery": {
+    "complete_result": null,
+    "old_v4943_output": "interrupted; empty output preserved",
+    "qualification": false,
+    "runtime_output": "/mnt/d/openui-v02-qualification-d174ea0b/native-complete-saved-census-audit-recovery-runtime-v4976",
+    "source_review_and_coordination_policy_sha256": "2859420fed6588cf8632c49b888a8847bbeeb97a06cc5d2a698fb3f16ddc12d8",
+    "source_sha256": "255cd0f2cf0a576d2cf3c7a04cdf323956c9df1bbff003e8f998578aee6ebc98",
+    "status_at_preparation": "running"
+  },
+  "saved_renderer_build_4973": {
+    "Cargo_fresh_flags_for_rebuilt_packages": false,
+    "binary_sha256": "00b45b58d4aeb87f2d778c2e2a5034348e497e5cb7173fff9defd369b13b41d8",
+    "embedded_identity_actual_exit_code": 0,
+    "internal_commands_terminal": true,
+    "local_packages_rebuilt": 9,
+    "outer_exit_code": null,
+    "outer_terminal_observed": false,
+    "qualification": false,
+    "root_after_unchanged": true,
+    "source_after_unchanged": true
+  },
+  "schema_version": 1,
+  "selected_native_at_3de": {
+    "complete_selected_execution": true,
+    "executed": 17,
+    "failed": 0,
+    "ignored_diagnostic_observers": 1,
+    "passed": 17,
+    "scope": "Three axis + three corrected ordinary-spanner V4 + six authored-projection + four containing-block-window + one prepaint-accounting checks; no workspace/API qualification."
+  },
+  "selected_native_at_ec388": {
+    "executed": 15,
+    "failed": 0,
+    "passed": 15
+  },
+  "vertical_family_matrix": {
+    "comparisons": 40,
+    "different": 8,
+    "errors": 0,
+    "exact": 32,
+    "full_census_remeasured": false,
+    "higher_mismatch_counts_than_grid": 0,
+    "independent_repeat_pairs": 40,
+    "preexisting_differences": 8,
+    "profiles": 4,
+    "qualification": false,
+    "source_and_reference_inputs_unchanged": true,
+    "targeted_exact_comparisons_restored": 24,
+    "test_ids": 10,
+    "uncached_cpu_renders": 80
+  },
+  "whole_project_completion_percentage": null
+}

@@ -27,7 +27,73 @@ right picture or the Chromium test uses a script. See the
 
 ## Verified status
 
-### Current closure work (13 October 2026)
+### Current closure work (15 October 2026)
+
+The latest complete private CPU census at clean `ec3883b3` measures
+**20,931/22,924 original comparisons exact**, with **1,993 differences and
+zero render errors**, against Chromium 147.0.7727.50. Expanded results are
+**21,659/23,728 exact**, with **2,069 differences and zero errors**. Both
+are 27 exact comparisons below the preceding Grid checkpoint. The full
+renderer regression gate remains open; later selected repairs do not change
+these completed census totals.
+
+Later clean private `3de52662` passes **17/17 selected native checks**,
+including the corrected ordinary zero-height guard V4. Its vertical-family
+matrix records **32/40 exact**, **eight pre-existing differences and zero
+errors**, restoring all **24 targeted exact comparisons** with zero worsening.
+All **80 uncached CPU renders / 40 repeat pairs** preserve source and reference
+inputs. These are selected-source results, not a new full census.
+
+At separate private `ab930081`, **21 selected native tests execute: 19 pass
+and two fail** on padded principal-source continuity. Its 30-state saved audit
+passes **766 checks / 165 unchanged pins**: **30/30 whole RGBA frames and
+ordered geometry APIs** match Chromium, with ten full restorations and 15
+repeat pairs. The two producer failures remain open at that source. The combined private
+`21b96fe7` executes **35 selected Native tests: 32 pass and three fail**.
+Two producer-continuity tests and the C4 overlap-coverage count assertion
+fail; its per-case ordinary RGBA/fallback checks pass. The complete-decoration
+Engine guard passes. This failed selected gate does not qualify the renderer.
+
+A fresh linked diagnostic build recompiles all nine required renderer packages.
+At the same `21b96fe7` source, the selected matrix is **46/56 exact**, with
+**ten pre-existing differences and zero errors**: vertical **32/40**, complete
+decoration **6/8**, owned clip C028 **4/4**, and OOF018 **4/4**. All **34 targeted
+lost exact comparisons are restored**, with zero worsening, 112 uncached CPU
+renders and 56 exact repeat pairs. Source, binary and reference pins remain
+unchanged. The later C5 test-input probe is recorded below. These selected results do not
+change the completed full-census totals or the failed Native gate.
+
+At later diagnostic `3a8c9fbe`, all **five clip/prepaint
+guards and four layout projection units pass**. The three strict padded
+tests still record **one pass and two failures** (one observer ignored).
+Both diagnostic observer runs pass: **20 quiet/traced frame pairs** preserve
+complete RGBA and retained metadata; ten independent repeat pairs and eight
+full restorations pass. The test-input coverage correction passes without
+changing production paint. This trace diagnoses source continuity; it does
+not qualify native APIs or replace the full Chromium census.
+
+Eight fresh Chromium captures match their original whole-RGBA oracles;
+six snapshot mappings complete and the two desktop OOF053 at 1.25 mappings
+remain incomplete.
+The browser command-observation driver exits 1 with `complete=false`.
+
+The old complete-image audit was interrupted with an empty output after the
+environment reset. The reviewed saved-only V4 recovery audit is running;
+its complete result remains pending. Source rehydration restored the exact
+`3de52662` Git object and `fe25bf88` source hash. The earlier v4973 renderer-build
+receipt records nine rebuilt local packages and embedded identity exit 0;
+its outer build terminal was not observed during the reset.
+
+The runtime documentation parent is `ec5ab327`. These private measurements do
+not remeasure or qualify that runtime checkpoint. Complete native Rust APIs,
+the shared C API, full renderer and compositor/3D behavior, current hosted CI,
+hardware, accessibility, performance, packaging and release gates remain open.
+Open UI never executes JavaScript; Chromium is the sole pixel oracle. There
+is no measured whole-project completion percentage.
+
+[Current closure evidence](docs/renderer/generated/native-final-closure-status-v12.json).
+
+### Historical closure status (13 October 2026)
 
 At clean `5520ed92`, the complete CPU renderer census against pinned Chromium
 147.0.7727.50 records **21,006/22,924 original comparisons exact (91.6%)**,
