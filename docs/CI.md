@@ -6,10 +6,11 @@ attestation identity.
 
 ## Pull-request gates
 
-The CI, Format Check and v0.2 Hardening workflows accept PRs targeting `main`,
-`agent/**` and `codex/**`. A stacked PR therefore receives the normal checks
-while its review diff stays relative to its prerequisite branch. Push-only
-checks remain restricted to `main`.
+The CI, Format Check and v0.2 Hardening workflows accept PRs targeting `main`.
+Use one PR at a time and merge it before starting the next task. Push-only
+checks remain restricted to `main`. The user explicitly accepted the
+17 October experimental baseline with its documented native clipping failure;
+that integration does not turn failing checks green or waive release gates.
 
 `.github/workflows/ci.yml` runs:
 

@@ -8,8 +8,7 @@ do not add new product features to them.
 
 1. Fork and clone the repository.
 2. Install the prerequisites in [the development guide](docs/DEVELOPMENT.md).
-3. Create a focused branch from the current accepted checkpoint or `main`
-   after that checkpoint has merged.
+3. Create a focused branch from the latest `main` in the existing checkout.
 4. Build and test the locked Rust workspace.
 
 ```bash
@@ -77,13 +76,15 @@ scenarios are release blockers.
 
 ## Pull requests and commits
 
-- Keep the current task branch as the authoritative implementation. Integrate
-  and verify useful experiment changes there; do not leave implementation
-  work in side checkouts for the reviewer to merge. See [workspace
+- Keep `main` as the authoritative experimental implementation. Integrate
+  and verify useful experiment changes in the current checkout; do not leave
+  implementation work in side checkouts for the reviewer to merge. See [workspace
   instructions](AGENTS.md) and the [17 October checkpoint](docs/progress/branch-checkpoint-2026-10-17.md).
 - Keep each change logically scoped and include tests for behavior changes.
-- Give a stacked PR its actual prerequisite branch as the base, link the
-  prerequisite PR and run the same CI checks as a PR targeting `main`.
+- Use one PR at a time, targeting `main`. Merge it before starting the next
+  task; do not create PR stacks. Record failing checks honestly, including
+  any failures explicitly accepted for an experimental integration. Such an
+  integration does not waive renderer or release qualification.
 - Update API, migration, and unsupported-feature documentation together.
 - Record significant design decisions in `docs/adr/` using the template.
 - Use a concise component-oriented subject such as

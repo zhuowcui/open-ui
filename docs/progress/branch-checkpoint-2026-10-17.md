@@ -1,31 +1,40 @@
-# Open UI review checkpoint 17 October 2026
+# Open UI experimental integration checkpoint 17 October 2026
 
-Product work is paused for review on `codex/native-final-linux-v4314`. This
-branch is the authoritative accepted implementation. Future work starts from
-this checkpoint or its merged successor; the agent incorporates and verifies
-any useful experimental changes here. The user has no worktree merge backlog.
-The follow-up remains a draft: fresh native verification finds a scrollbar
-clipping guard failure, recorded below and assigned to the next focused repair.
+Product work is paused at this checkpoint. The user explicitly directed the
+latest `codex/native-final-linux-v4314` implementation and its pending history
+to merge into `main`, which is the experimental source of truth. The agent
+owns integration; the user has no worktree merge backlog. Future work starts
+from the latest `main`, with one focused PR at a time and no PR stack.
+The known native scrollbar clipping failure remains documented below and
+assigned to the next repair. The user accepts it for this experimental merge;
+the native test gate and renderer/release qualification remain open.
 
 ## Review scope
 
-The prerequisite is draft [PR 3](https://github.com/zhuowcui/open-ui/pull/3),
-whose head is `agent/v02-final-closure` at `8bcc6dfa`. The follow-up uses that
-branch as its base so review covers the 37 subsequent commits and this
-checkpoint, rather than repeating 688 commits against `main`.
+[PR 4](https://github.com/zhuowcui/open-ui/pull/4) consolidates the latest
+branch directly into `main`, preserving the pending history with a merge
+commit. It includes [PR 3](https://github.com/zhuowcui/open-ui/pull/3), whose
+head `8bcc6dfa` is already an ancestor. This replaces the initial stacked draft
+arrangement. Before this workflow correction, the latest branch at `f2346abf`
+was 689 commits ahead of `main` at `1d7a4cc5`; this final consolidation includes
+that history and the correction below.
 
-Those 37 commits improve nested column source ownership, clipping and paint
-projection; native control geometry and resize painting; animation timeline
+The 37 implementation and evidence commits following PR 3 improve nested
+column source ownership, clipping and paint projection; native control geometry
+and resize painting; animation timeline
 reassignment and its C consumers; Grid containing-block ownership; and retained
 font metadata. They also preserve Chromium observations and known failures.
 The latest pre-checkpoint commit is `d18d72f7`; the accepted runtime source is
-unchanged from its documentation parent `ec5ab327`. This checkpoint adds
-workspace instructions, portable evidence and CI coverage for stacked PRs.
+unchanged from its documentation parent `ec5ab327`. The initial checkpoint
+at `f2346abf` added workspace instructions, portable evidence and stacked PR
+CI coverage. The final correction replaces that workflow with one PR targeting
+`main`, updates the progress records and supersedes the earlier memory entry.
 
 `AGENTS.md` and `CONTRIBUTING.md` require future product changes, tests and
 progress records in the authoritative checkout. A later PR should address one
-repair or coherent feature. Neither prerequisite nor follow-up is authorized
-for automatic merge by this checkpoint request.
+repair or coherent feature and merge before another starts. The user's later
+instruction to merge the latest experimental branch supersedes the initial
+draft-only checkpoint request; it does not claim that failing checks pass.
 
 ## Historical experiments are accounted for
 
@@ -122,6 +131,10 @@ whole-project completion percentage.
 
 Fresh local verification and its source scope are recorded in
 [the check results](evidence/branch-checkpoint-2026-10-17-checks.json).
+The evidence files retain the original branch names and merge-readiness result
+as historical facts. The later experimental merge instruction changes workflow
+policy, not those measurements. The final correction changes documentation and
+workflow branch filters only; runtime code and archived evidence are unchanged.
 
 | Check | Result |
 | --- | --- |
@@ -130,7 +143,7 @@ Fresh local verification and its source scope are recorded in
 | Full accountability audit with historical PNG presence | All seven checks pass; this is not a new Chromium census |
 | Seventeen Python closure, porter, renderer, schema, packaging and security modules | 300 tests pass |
 | Eight additional archive, renderer, closure and C fixture generator checks | Pass |
-| CI, Format Check and Hardening YAML | Parsed; stacked PR bases accepted, push filters remain `main` only |
+| CI, Format Check and Hardening YAML | Initially parsed with stacked PR bases; final correction restricts PR bases to `main`, with push filters still `main` only |
 | Four archived candidate deltas | Application and target blob restoration verified |
 | Native build and ABI consumers | Pinned-sysroot build passes; 164 exports, 41 C consumers and 35 C++ consumers pass |
 | Changed C and C++ consumers | clang-format 18.1.3 passes |
@@ -153,7 +166,7 @@ or PR workflow substitutes for the open renderer and release gates.
 
 ## Next bounded task
 
-After this checkpoint is reviewed, start a focused PR from its accepted head.
+When feature work resumes, start one focused PR from the latest `main`.
 First resolve the failing native scrollbar frame clip guard, owned by the
 shared overflow-control painting path and its Engine integration test:
 

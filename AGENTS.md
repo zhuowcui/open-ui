@@ -2,10 +2,10 @@
 
 ## Authoritative implementation
 
-Work in this checkout and the current task branch. The checkpoint branch is
-`codex/native-final-linux-v4314`; its accepted implementation, tests and progress
-records are the source of truth until the reviewed changes reach `main`.
-Start subsequent work from that checkpoint or its merged successor.
+`main` is the source of truth for this experimental repository. Work in this
+checkout, starting each focused task from the latest `main`. Use one short-lived
+branch and one PR targeting `main`; merge it before starting the next task.
+Do not create PR stacks or leave integration work for the user.
 
 Do not create implementation worktrees or sibling clones by default. Keep
 temporary builds and comparison materializations under ignored `out/` paths.
@@ -34,6 +34,7 @@ Keep generated evidence reproducible and never weaken an exactness gate.
 
 Keep subsequent PRs focused on one repair or coherent feature. Stop feature
 work at a requested review checkpoint; do not grow a paused PR with unrelated
-work. Stacked PRs must identify their prerequisite and receive the normal CI
-checks. A PR or source-check pass does not establish renderer or release
-qualification.
+work. On 17 October 2026 the user explicitly directed the latest implementation
+and its pending history to merge into `main`, superseding the draft PR stack
+and its merge hold. Keep the known native clipping failure documented; this
+experimental integration does not establish renderer or release qualification.

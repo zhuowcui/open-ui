@@ -2,7 +2,7 @@ name: v0.2 Hardening
 
 on:
   pull_request:
-    branches: [main, "agent/**", "codex/**"]
+    branches: [main]
   schedule:
     - cron: "17 4 * * 1"
   workflow_dispatch:

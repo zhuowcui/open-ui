@@ -27,16 +27,17 @@ right picture or the Chromium test uses a script. See the
 
 ## Verified status
 
-### Review checkpoint 17 October 2026
+### Experimental integration checkpoint 17 October 2026
 
-Product work is paused for a review checkpoint on
-`codex/native-final-linux-v4314`. This branch contains the accepted
-implementation; the [checkpoint and handoff](docs/progress/branch-checkpoint-2026-10-17.md)
-records how historical experiments were integrated, preserves the later
-unadopted candidates and their evidence, and defines the next bounded repair.
-A fresh native scrollbar clipping guard fails at 1.25× scale and blocks this
-checkpoint's native test gate. Its Chromium comparison is the first follow-up.
-The renderer and release gates below remain open.
+`main` is the experimental source of truth. At the user's direction,
+[PR 4](https://github.com/zhuowcui/open-ui/pull/4) consolidates the latest
+implementation and the history of PR 3 directly into `main`. Future work uses
+one focused PR at a time against `main`, with no PR stack. Feature work remains
+paused at this checkpoint. The [checkpoint and handoff](docs/progress/branch-checkpoint-2026-10-17.md)
+records experiment integration, preserved candidates and the next repair.
+A native scrollbar clipping guard fails at 1.25× scale. The user accepts that
+known failure for this experimental integration; its Chromium comparison is
+the first follow-up. Native, renderer and release qualification remain open.
 
 ### Current closure work (15 October 2026)
 
