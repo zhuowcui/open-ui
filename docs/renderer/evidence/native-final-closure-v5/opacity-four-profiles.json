@@ -1,0 +1,886 @@
+{
+  "binary_sha256": "17f33c55db24bb3b75643c730a36efc3e3d8cabd47aecf4875f444b191345dbd",
+  "binary_source_commit": "96bfa0027ab28236deb88c97ad08125d92c6d247",
+  "binary_unchanged": true,
+  "build_receipt_sha256": "f41504258664ec81380b39fc51f901717646d11f5d5e55d31a4fed40873e01bc",
+  "cases": [
+    {
+      "actual_exit_code": 0,
+      "argv": [
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-combined-guards-runtime-v4493/pixel_compare",
+        "render",
+        "wpt/css_break/abspos-in-opacity-002",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-opacity-four-profile-diagnostic-v4499/legacy-800x600@1/abspos-in-opacity-002/native.png",
+        "--backend",
+        "cpu-skia",
+        "--raster-config",
+        "default",
+        "--viewport",
+        "800x600",
+        "--scale",
+        "1.0"
+      ],
+      "chromium_oracle_identity_sha256": "949a3fe2511ca431eb26c0133cc7771c65b42319e778b9313f499954dc9b56f4",
+      "chromium_png_path": "/mnt/d/openui-v02-qualification-d174ea0b/ordinary-opacity-cache-v4217/png/d8/d860e0ae39d81c772901442ff584afec83d77c18d4213dcb052cbd2bed9fb028.png",
+      "chromium_png_sha256": "d860e0ae39d81c772901442ff584afec83d77c18d4213dcb052cbd2bed9fb028",
+      "diff_signature": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "exact": true,
+      "id": "wpt/css_break/abspos-in-opacity-002",
+      "native_png_sha256": "4b4dcc7738dc982899960a4e39d5d88c76e0d34bec104ec67c1b135a4564e8c2",
+      "native_rgba_sha256": "552189db4e546740f7c47dcb20ffa38f4020583326831e9cca90a1153670074d",
+      "pid": 2239920,
+      "profile": "legacy-800x600@1",
+      "stderr": "",
+      "stdout": "OK: wpt/css_break/abspos-in-opacity-002 \u2192 /mnt/d/openui-v02-qualification-d174ea0b/native-opacity-four-profile-diagnostic-v4499/legacy-800x600@1/abspos-in-opacity-002/native.png\n",
+      "terminal_reaped": true
+    },
+    {
+      "actual_exit_code": 0,
+      "argv": [
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-combined-guards-runtime-v4493/pixel_compare",
+        "render",
+        "wpt/css_break/abspos-in-opacity-003",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-opacity-four-profile-diagnostic-v4499/legacy-800x600@1/abspos-in-opacity-003/native.png",
+        "--backend",
+        "cpu-skia",
+        "--raster-config",
+        "default",
+        "--viewport",
+        "800x600",
+        "--scale",
+        "1.0"
+      ],
+      "chromium_oracle_identity_sha256": "6c8986afc7c9033d351f18cc8fe23ec1a4419c9c6c41477a337018c49ab43c2e",
+      "chromium_png_path": "/mnt/d/openui-v02-qualification-d174ea0b/ordinary-opacity-cache-v4217/png/d8/d860e0ae39d81c772901442ff584afec83d77c18d4213dcb052cbd2bed9fb028.png",
+      "chromium_png_sha256": "d860e0ae39d81c772901442ff584afec83d77c18d4213dcb052cbd2bed9fb028",
+      "diff_signature": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "exact": true,
+      "id": "wpt/css_break/abspos-in-opacity-003",
+      "native_png_sha256": "4b4dcc7738dc982899960a4e39d5d88c76e0d34bec104ec67c1b135a4564e8c2",
+      "native_rgba_sha256": "552189db4e546740f7c47dcb20ffa38f4020583326831e9cca90a1153670074d",
+      "pid": 2240428,
+      "profile": "legacy-800x600@1",
+      "stderr": "",
+      "stdout": "OK: wpt/css_break/abspos-in-opacity-003 \u2192 /mnt/d/openui-v02-qualification-d174ea0b/native-opacity-four-profile-diagnostic-v4499/legacy-800x600@1/abspos-in-opacity-003/native.png\n",
+      "terminal_reaped": true
+    },
+    {
+      "actual_exit_code": 0,
+      "argv": [
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-combined-guards-runtime-v4493/pixel_compare",
+        "render",
+        "wpt/css_break/contain-strict-with-opacity-and-oof",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-opacity-four-profile-diagnostic-v4499/legacy-800x600@1/contain-strict-with-opacity-and-oof/native.png",
+        "--backend",
+        "cpu-skia",
+        "--raster-config",
+        "deterministic-alias",
+        "--viewport",
+        "800x600",
+        "--scale",
+        "1.0"
+      ],
+      "chromium_oracle_identity_sha256": "3a6bfc03b2f304fd57f0009b97a86383f1e7b3fd8e5f7c3b5e32605b56e01f9a",
+      "chromium_png_path": "/mnt/d/openui-v02-qualification-d174ea0b/ordinary-opacity-cache-v4217/png/a5/a5a80738868629937c17fa3685a16de7951bd87b9df725d0f8a62b1371fb0e43.png",
+      "chromium_png_sha256": "a5a80738868629937c17fa3685a16de7951bd87b9df725d0f8a62b1371fb0e43",
+      "diff_signature": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 10000,
+            "maximum_absolute_delta": 1,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": -1,
+            "signed_delta_sum": -10000
+          },
+          "green": {
+            "changed_pixels": 10000,
+            "maximum_absolute_delta": 1,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": -1,
+            "signed_delta_sum": -10000
+          },
+          "red": {
+            "changed_pixels": 10000,
+            "maximum_absolute_delta": 1,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": -1,
+            "signed_delta_sum": -10000
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 100,
+              "width": 100,
+              "x": 20,
+              "y": 52
+            },
+            "mismatched_pixels": 10000
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 100,
+          "width": 100,
+          "x": 20,
+          "y": 52
+        },
+        "mismatched_pixels": 10000
+      },
+      "exact": false,
+      "id": "wpt/css_break/contain-strict-with-opacity-and-oof",
+      "native_png_sha256": "a7e9c575d0aead1355b4000e94bb9ba86e65486489faaa8c0f13c62a1c625bda",
+      "native_rgba_sha256": "4bd374578c0009bef1ee23ce9fff0322c1c98b5704fdfcf29000b2e3a3d625ec",
+      "pid": 2240440,
+      "profile": "legacy-800x600@1",
+      "stderr": "",
+      "stdout": "OK: wpt/css_break/contain-strict-with-opacity-and-oof \u2192 /mnt/d/openui-v02-qualification-d174ea0b/native-opacity-four-profile-diagnostic-v4499/legacy-800x600@1/contain-strict-with-opacity-and-oof/native.png\n",
+      "terminal_reaped": true
+    },
+    {
+      "actual_exit_code": 0,
+      "argv": [
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-combined-guards-runtime-v4493/pixel_compare",
+        "render",
+        "wpt/css_break/abspos-in-opacity-002",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-opacity-four-profile-diagnostic-v4499/mobile-375x667@2/abspos-in-opacity-002/native.png",
+        "--backend",
+        "cpu-skia",
+        "--raster-config",
+        "default",
+        "--viewport",
+        "375x667",
+        "--scale",
+        "2.0"
+      ],
+      "chromium_oracle_identity_sha256": "b58255e895ad8e494bb335f9eb3bd6f2c794e234098ad2b5916a239a06cbf39d",
+      "chromium_png_path": "/mnt/d/openui-v02-qualification-d174ea0b/ordinary-opacity-cache-v4217/png/81/816c7076d82a799bf918216ad1ff5787c3b4f4d966a05c414d9b0836949bbffd.png",
+      "chromium_png_sha256": "816c7076d82a799bf918216ad1ff5787c3b4f4d966a05c414d9b0836949bbffd",
+      "diff_signature": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "exact": true,
+      "id": "wpt/css_break/abspos-in-opacity-002",
+      "native_png_sha256": "4ff423c36687bc2258cca24f5e80086c125a59a9601fca7b20a5899cd7d0302f",
+      "native_rgba_sha256": "75ed424b33de086ce187a3bc00c5d4a00ba5ba7846cb85511af03d843782f3a1",
+      "pid": 2240930,
+      "profile": "mobile-375x667@2",
+      "stderr": "",
+      "stdout": "OK: wpt/css_break/abspos-in-opacity-002 \u2192 /mnt/d/openui-v02-qualification-d174ea0b/native-opacity-four-profile-diagnostic-v4499/mobile-375x667@2/abspos-in-opacity-002/native.png\n",
+      "terminal_reaped": true
+    },
+    {
+      "actual_exit_code": 0,
+      "argv": [
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-combined-guards-runtime-v4493/pixel_compare",
+        "render",
+        "wpt/css_break/abspos-in-opacity-003",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-opacity-four-profile-diagnostic-v4499/mobile-375x667@2/abspos-in-opacity-003/native.png",
+        "--backend",
+        "cpu-skia",
+        "--raster-config",
+        "default",
+        "--viewport",
+        "375x667",
+        "--scale",
+        "2.0"
+      ],
+      "chromium_oracle_identity_sha256": "a4d98cc8a7a30eddccf715c8c0c89aaa9cc0eec9f805afeb8385580ea6fc9a5c",
+      "chromium_png_path": "/mnt/d/openui-v02-qualification-d174ea0b/ordinary-opacity-cache-v4217/png/81/816c7076d82a799bf918216ad1ff5787c3b4f4d966a05c414d9b0836949bbffd.png",
+      "chromium_png_sha256": "816c7076d82a799bf918216ad1ff5787c3b4f4d966a05c414d9b0836949bbffd",
+      "diff_signature": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "exact": true,
+      "id": "wpt/css_break/abspos-in-opacity-003",
+      "native_png_sha256": "4ff423c36687bc2258cca24f5e80086c125a59a9601fca7b20a5899cd7d0302f",
+      "native_rgba_sha256": "75ed424b33de086ce187a3bc00c5d4a00ba5ba7846cb85511af03d843782f3a1",
+      "pid": 2241414,
+      "profile": "mobile-375x667@2",
+      "stderr": "",
+      "stdout": "OK: wpt/css_break/abspos-in-opacity-003 \u2192 /mnt/d/openui-v02-qualification-d174ea0b/native-opacity-four-profile-diagnostic-v4499/mobile-375x667@2/abspos-in-opacity-003/native.png\n",
+      "terminal_reaped": true
+    },
+    {
+      "actual_exit_code": 0,
+      "argv": [
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-combined-guards-runtime-v4493/pixel_compare",
+        "render",
+        "wpt/css_break/contain-strict-with-opacity-and-oof",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-opacity-four-profile-diagnostic-v4499/mobile-375x667@2/contain-strict-with-opacity-and-oof/native.png",
+        "--backend",
+        "cpu-skia",
+        "--raster-config",
+        "deterministic-alias",
+        "--viewport",
+        "375x667",
+        "--scale",
+        "2.0"
+      ],
+      "chromium_oracle_identity_sha256": "163d955750c319815fd769aa9ac8ba07cd998c264bf4d1848b1dc60ee5117f4e",
+      "chromium_png_path": "/mnt/d/openui-v02-qualification-d174ea0b/ordinary-opacity-cache-v4217/png/7a/7aa637b2b51172d99769d2f3b603f6ccb9e841d68a18d08793189d6c505cb5d2.png",
+      "chromium_png_sha256": "7aa637b2b51172d99769d2f3b603f6ccb9e841d68a18d08793189d6c505cb5d2",
+      "diff_signature": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 40000,
+            "maximum_absolute_delta": 1,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": -1,
+            "signed_delta_sum": -40000
+          },
+          "green": {
+            "changed_pixels": 40000,
+            "maximum_absolute_delta": 1,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": -1,
+            "signed_delta_sum": -40000
+          },
+          "red": {
+            "changed_pixels": 40000,
+            "maximum_absolute_delta": 1,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": -1,
+            "signed_delta_sum": -40000
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 200,
+              "width": 200,
+              "x": 40,
+              "y": 168
+            },
+            "mismatched_pixels": 40000
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 200,
+          "width": 200,
+          "x": 40,
+          "y": 168
+        },
+        "mismatched_pixels": 40000
+      },
+      "exact": false,
+      "id": "wpt/css_break/contain-strict-with-opacity-and-oof",
+      "native_png_sha256": "a20bf2c348ce04aa8375cc574d70481a94fd104d2086d11efde8d0fc8ec267dd",
+      "native_rgba_sha256": "4420b32264658ae04c5b9ea40f988459b713ba8f314daf1309080fe2555d83f2",
+      "pid": 2241647,
+      "profile": "mobile-375x667@2",
+      "stderr": "",
+      "stdout": "OK: wpt/css_break/contain-strict-with-opacity-and-oof \u2192 /mnt/d/openui-v02-qualification-d174ea0b/native-opacity-four-profile-diagnostic-v4499/mobile-375x667@2/contain-strict-with-opacity-and-oof/native.png\n",
+      "terminal_reaped": true
+    },
+    {
+      "actual_exit_code": 0,
+      "argv": [
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-combined-guards-runtime-v4493/pixel_compare",
+        "render",
+        "wpt/css_break/abspos-in-opacity-002",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-opacity-four-profile-diagnostic-v4499/desktop-1280x720@1.25/abspos-in-opacity-002/native.png",
+        "--backend",
+        "cpu-skia",
+        "--raster-config",
+        "default",
+        "--viewport",
+        "1280x720",
+        "--scale",
+        "1.25"
+      ],
+      "chromium_oracle_identity_sha256": "8384c42263214e1df8cc75951fa973462315e006b383f68e2579d56f797a3f9c",
+      "chromium_png_path": "/mnt/d/openui-v02-qualification-d174ea0b/ordinary-opacity-cache-v4217/png/2d/2d07e8b3290bbf8af7aeabcef49bd2b84621124434abcb4bb5cc92180600acc3.png",
+      "chromium_png_sha256": "2d07e8b3290bbf8af7aeabcef49bd2b84621124434abcb4bb5cc92180600acc3",
+      "diff_signature": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "exact": true,
+      "id": "wpt/css_break/abspos-in-opacity-002",
+      "native_png_sha256": "f3be6d2994476888f8aeef8df411fa17144d2d6b5fcb1b207d9aab0971b747a4",
+      "native_rgba_sha256": "c49f5970b5615cd0b2e337df12b6eaf7364af6318b03dd9b2ddb653f6568e127",
+      "pid": 2241918,
+      "profile": "desktop-1280x720@1.25",
+      "stderr": "",
+      "stdout": "OK: wpt/css_break/abspos-in-opacity-002 \u2192 /mnt/d/openui-v02-qualification-d174ea0b/native-opacity-four-profile-diagnostic-v4499/desktop-1280x720@1.25/abspos-in-opacity-002/native.png\n",
+      "terminal_reaped": true
+    },
+    {
+      "actual_exit_code": 0,
+      "argv": [
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-combined-guards-runtime-v4493/pixel_compare",
+        "render",
+        "wpt/css_break/abspos-in-opacity-003",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-opacity-four-profile-diagnostic-v4499/desktop-1280x720@1.25/abspos-in-opacity-003/native.png",
+        "--backend",
+        "cpu-skia",
+        "--raster-config",
+        "default",
+        "--viewport",
+        "1280x720",
+        "--scale",
+        "1.25"
+      ],
+      "chromium_oracle_identity_sha256": "01196f64540ac264b71ba09537e136fb004bb8ae91af3f0b71dd655857e9b054",
+      "chromium_png_path": "/mnt/d/openui-v02-qualification-d174ea0b/ordinary-opacity-cache-v4217/png/2d/2d07e8b3290bbf8af7aeabcef49bd2b84621124434abcb4bb5cc92180600acc3.png",
+      "chromium_png_sha256": "2d07e8b3290bbf8af7aeabcef49bd2b84621124434abcb4bb5cc92180600acc3",
+      "diff_signature": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "exact": true,
+      "id": "wpt/css_break/abspos-in-opacity-003",
+      "native_png_sha256": "f3be6d2994476888f8aeef8df411fa17144d2d6b5fcb1b207d9aab0971b747a4",
+      "native_rgba_sha256": "c49f5970b5615cd0b2e337df12b6eaf7364af6318b03dd9b2ddb653f6568e127",
+      "pid": 2242422,
+      "profile": "desktop-1280x720@1.25",
+      "stderr": "",
+      "stdout": "OK: wpt/css_break/abspos-in-opacity-003 \u2192 /mnt/d/openui-v02-qualification-d174ea0b/native-opacity-four-profile-diagnostic-v4499/desktop-1280x720@1.25/abspos-in-opacity-003/native.png\n",
+      "terminal_reaped": true
+    },
+    {
+      "actual_exit_code": 0,
+      "argv": [
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-combined-guards-runtime-v4493/pixel_compare",
+        "render",
+        "wpt/css_break/contain-strict-with-opacity-and-oof",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-opacity-four-profile-diagnostic-v4499/desktop-1280x720@1.25/contain-strict-with-opacity-and-oof/native.png",
+        "--backend",
+        "cpu-skia",
+        "--raster-config",
+        "deterministic-alias",
+        "--viewport",
+        "1280x720",
+        "--scale",
+        "1.25"
+      ],
+      "chromium_oracle_identity_sha256": "34d11e93f51cd7862fe87c01cb56c26d77af6636825c1c2f1f61074f9899b825",
+      "chromium_png_path": "/mnt/d/openui-v02-qualification-d174ea0b/ordinary-opacity-cache-v4217/png/3d/3df9ad16e90d1adba6ec3108f6e203f746ed9af4cca9e6ea0682d146ad8c7a06.png",
+      "chromium_png_sha256": "3df9ad16e90d1adba6ec3108f6e203f746ed9af4cca9e6ea0682d146ad8c7a06",
+      "diff_signature": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 15625,
+            "maximum_absolute_delta": 1,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": -1,
+            "signed_delta_sum": -15625
+          },
+          "green": {
+            "changed_pixels": 15625,
+            "maximum_absolute_delta": 1,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": -1,
+            "signed_delta_sum": -15625
+          },
+          "red": {
+            "changed_pixels": 15625,
+            "maximum_absolute_delta": 1,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": -1,
+            "signed_delta_sum": -15625
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 125,
+              "width": 125,
+              "x": 25,
+              "y": 45
+            },
+            "mismatched_pixels": 15625
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 125,
+          "width": 125,
+          "x": 25,
+          "y": 45
+        },
+        "mismatched_pixels": 15625
+      },
+      "exact": false,
+      "id": "wpt/css_break/contain-strict-with-opacity-and-oof",
+      "native_png_sha256": "a8446664b723660ed1f054129524e721ff878d45400ad94d47f5c38b5980e8b5",
+      "native_rgba_sha256": "2254a398e8f5a4964ff71b57ef7029f6d7038dac6d5fc702b11dd740187ac74f",
+      "pid": 2242904,
+      "profile": "desktop-1280x720@1.25",
+      "stderr": "",
+      "stdout": "OK: wpt/css_break/contain-strict-with-opacity-and-oof \u2192 /mnt/d/openui-v02-qualification-d174ea0b/native-opacity-four-profile-diagnostic-v4499/desktop-1280x720@1.25/contain-strict-with-opacity-and-oof/native.png\n",
+      "terminal_reaped": true
+    },
+    {
+      "actual_exit_code": 0,
+      "argv": [
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-combined-guards-runtime-v4493/pixel_compare",
+        "render",
+        "wpt/css_break/abspos-in-opacity-002",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-opacity-four-profile-diagnostic-v4499/desktop-1920x1080@1.5/abspos-in-opacity-002/native.png",
+        "--backend",
+        "cpu-skia",
+        "--raster-config",
+        "default",
+        "--viewport",
+        "1920x1080",
+        "--scale",
+        "1.5"
+      ],
+      "chromium_oracle_identity_sha256": "34cba9b64c5ca8536a0d8f7a0b0fb54b8decce86d91e5d0cdfdcd1535499cd85",
+      "chromium_png_path": "/mnt/d/openui-v02-qualification-d174ea0b/ordinary-opacity-cache-v4217/png/b4/b48f8dac0b4f0db97012bf0eaa10dd9a80b44b57cf22c7c6ccde543fbc53e7e6.png",
+      "chromium_png_sha256": "b48f8dac0b4f0db97012bf0eaa10dd9a80b44b57cf22c7c6ccde543fbc53e7e6",
+      "diff_signature": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "exact": true,
+      "id": "wpt/css_break/abspos-in-opacity-002",
+      "native_png_sha256": "e7e9f5aea7f0bbbf48a0c477ede92d72146edd734405949a56d46dec0c5b0eec",
+      "native_rgba_sha256": "7161a02e4e0537f68dd5b4ac2fac7f2877e81e1901a2afcf62eff3add56e80b2",
+      "pid": 2243364,
+      "profile": "desktop-1920x1080@1.5",
+      "stderr": "",
+      "stdout": "OK: wpt/css_break/abspos-in-opacity-002 \u2192 /mnt/d/openui-v02-qualification-d174ea0b/native-opacity-four-profile-diagnostic-v4499/desktop-1920x1080@1.5/abspos-in-opacity-002/native.png\n",
+      "terminal_reaped": true
+    },
+    {
+      "actual_exit_code": 0,
+      "argv": [
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-combined-guards-runtime-v4493/pixel_compare",
+        "render",
+        "wpt/css_break/abspos-in-opacity-003",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-opacity-four-profile-diagnostic-v4499/desktop-1920x1080@1.5/abspos-in-opacity-003/native.png",
+        "--backend",
+        "cpu-skia",
+        "--raster-config",
+        "default",
+        "--viewport",
+        "1920x1080",
+        "--scale",
+        "1.5"
+      ],
+      "chromium_oracle_identity_sha256": "edecaf9cc5035cfbaee065b00f053d112a81ebdb68fce5ef01f0e5c4bec05d2d",
+      "chromium_png_path": "/mnt/d/openui-v02-qualification-d174ea0b/ordinary-opacity-cache-v4217/png/b4/b48f8dac0b4f0db97012bf0eaa10dd9a80b44b57cf22c7c6ccde543fbc53e7e6.png",
+      "chromium_png_sha256": "b48f8dac0b4f0db97012bf0eaa10dd9a80b44b57cf22c7c6ccde543fbc53e7e6",
+      "diff_signature": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "exact": true,
+      "id": "wpt/css_break/abspos-in-opacity-003",
+      "native_png_sha256": "e7e9f5aea7f0bbbf48a0c477ede92d72146edd734405949a56d46dec0c5b0eec",
+      "native_rgba_sha256": "7161a02e4e0537f68dd5b4ac2fac7f2877e81e1901a2afcf62eff3add56e80b2",
+      "pid": 2243852,
+      "profile": "desktop-1920x1080@1.5",
+      "stderr": "",
+      "stdout": "OK: wpt/css_break/abspos-in-opacity-003 \u2192 /mnt/d/openui-v02-qualification-d174ea0b/native-opacity-four-profile-diagnostic-v4499/desktop-1920x1080@1.5/abspos-in-opacity-003/native.png\n",
+      "terminal_reaped": true
+    },
+    {
+      "actual_exit_code": 0,
+      "argv": [
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-combined-guards-runtime-v4493/pixel_compare",
+        "render",
+        "wpt/css_break/contain-strict-with-opacity-and-oof",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-opacity-four-profile-diagnostic-v4499/desktop-1920x1080@1.5/contain-strict-with-opacity-and-oof/native.png",
+        "--backend",
+        "cpu-skia",
+        "--raster-config",
+        "deterministic-alias",
+        "--viewport",
+        "1920x1080",
+        "--scale",
+        "1.5"
+      ],
+      "chromium_oracle_identity_sha256": "f0aaca5f2781b6ec038e26c6483ae577447ee7ab22a24c42b9dda146702011c0",
+      "chromium_png_path": "/mnt/d/openui-v02-qualification-d174ea0b/ordinary-opacity-cache-v4217/png/f1/f17d39dfa617758fb895b4d8955be2fbf9972b235a8e8846019d21c8285670d4.png",
+      "chromium_png_sha256": "f17d39dfa617758fb895b4d8955be2fbf9972b235a8e8846019d21c8285670d4",
+      "diff_signature": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 22374,
+            "maximum_absolute_delta": 1,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": -1,
+            "signed_delta_sum": -22374
+          },
+          "green": {
+            "changed_pixels": 22374,
+            "maximum_absolute_delta": 1,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": -1,
+            "signed_delta_sum": -22374
+          },
+          "red": {
+            "changed_pixels": 22374,
+            "maximum_absolute_delta": 1,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": -1,
+            "signed_delta_sum": -22374
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 150,
+              "width": 150,
+              "x": 30,
+              "y": 54
+            },
+            "mismatched_pixels": 22374
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 150,
+          "width": 150,
+          "x": 30,
+          "y": 54
+        },
+        "mismatched_pixels": 22374
+      },
+      "exact": false,
+      "id": "wpt/css_break/contain-strict-with-opacity-and-oof",
+      "native_png_sha256": "8afafefacb06fa0d9bdd66a51528ba87ee5461f5cdb04ef4b1e1ba48c478a2ee",
+      "native_rgba_sha256": "166ad758816f3c17c1959e955f7c039ab5d5493bed16af8b51b3f55414cefc9d",
+      "pid": 2244302,
+      "profile": "desktop-1920x1080@1.5",
+      "stderr": "",
+      "stdout": "OK: wpt/css_break/contain-strict-with-opacity-and-oof \u2192 /mnt/d/openui-v02-qualification-d174ea0b/native-opacity-four-profile-diagnostic-v4499/desktop-1920x1080@1.5/contain-strict-with-opacity-and-oof/native.png\n",
+      "terminal_reaped": true
+    }
+  ],
+  "chromium_binary_sha256": "0ba87684df0afc11faaea40ac57bd2f1d68b67191443b38215a36b90e6f08848",
+  "chromium_capture_harness_sha256": "bb9f1b7ec2de1f622de53e6c45758b67f341920936661712fb995a10c084e42f",
+  "complete": true,
+  "diagnostic_only": true,
+  "different": 4,
+  "driver_sha256": "cae0b614e7641b1edbeb7ca50792bb9d22d8121446db714e5e734db1027f3079",
+  "exact": 8,
+  "fresh_native_library_provenance": false,
+  "immutable_chromium_summary_sha256": "9abd4dc9135985be43fa9e207f0118e583c2f19cafed7da7a88d5ed887839563",
+  "immutable_summary_unchanged": true,
+  "independent_pixel_epoch_unchanged": true,
+  "oracle_reference_bytes_modified": false,
+  "owner_pid": 2236994,
+  "pixel_tolerance": 0,
+  "release_qualified": false,
+  "renderer_qualified": false,
+  "runtime_source": {
+    "clean": true,
+    "commit": "1d98a22eb3e86bc887cd9da8575c21933d880aec",
+    "harness_sha256": "73bb1acc3025ef54a34eceea8c0ebb40c2a6ed45a3e83dcf15131517a0ac6120",
+    "source_tree_sha256": "3de84f67611c7943d55c51c204468bb84f63b57fb38cea4e1a45ad98e12c1b0a",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "runtime_source_unchanged": true,
+  "schema_version": 1,
+  "template_archive_sha256": "1672d31bcc4b13a8ecb6c1b8af6a7b255052aac52293fb916181e6e0bd1d6ba6"
+}

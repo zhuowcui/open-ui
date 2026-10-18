@@ -1,0 +1,32 @@
+{
+  "does_not_prove_every_pixel_root_cause": true,
+  "existing_frozen_roots_and_probes_unmodified": true,
+  "functions": {
+    "baseline": {
+      "paint_text": "pub fn paint_text(\n    canvas: &Canvas,\n    shape_result: &ShapeResult,\n    origin: (f32, f32),\n    style: &ComputedStyle,\n) {\n    let author_lcd = uses_chromium_author_lcd(style);\n    let raster_policy = if style.native_control_text {\n        TextRasterPolicy::ChromiumNativeControl\n    } else if style.embedded_document_text {\n        TextRasterPolicy::ChromiumEmbeddedDocument\n    } else if author_lcd {\n        TextRasterPolicy::ChromiumAuthorLcd\n    } else {\n        TextRasterPolicy::Skia\n    };\n    paint_text_with_raster_policy(canvas, shape_result, origin, style, raster_policy);\n}",
+      "uses_chromium_author_lcd": "fn uses_chromium_author_lcd(style: &ComputedStyle) -> bool {\n    if style.native_control_text\n        || style.embedded_document_text\n        || style.raster_configuration.author_text.edging != TextEdging::Alias\n    {\n        return false;\n    }\n    match style.font_family.families.first() {\n        Some(FontFamily::Named(name)) => ![\n            \"Ahem\",\n            \"Droid Sans Fallback\",\n            \"Noto Sans Devanagari\",\n            \"Noto Color Emoji\",\n            \"DejaVu Sans\",\n        ]\n        .iter()\n        .any(|family| name.eq_ignore_ascii_case(family)),\n        Some(FontFamily::Generic(family)) => !matches!(\n            family,\n            GenericFontFamily::None\n                | GenericFontFamily::SansSerif\n                | GenericFontFamily::Emoji\n                | GenericFontFamily::UiSansSerif\n        ),\n        None => false,\n    }\n}"
+    },
+    "candidate": {
+      "paint_text": "pub fn paint_text(\n    canvas: &Canvas,\n    shape_result: &ShapeResult,\n    origin: (f32, f32),\n    style: &ComputedStyle,\n) {\n    let author_lcd = uses_chromium_author_lcd(style);\n    let raster_policy = if style.native_control_text {\n        TextRasterPolicy::ChromiumNativeControl\n    } else if style.embedded_document_text {\n        TextRasterPolicy::ChromiumEmbeddedDocument\n    } else if author_lcd {\n        TextRasterPolicy::ChromiumAuthorLcd\n    } else {\n        TextRasterPolicy::Skia\n    };\n    paint_text_with_raster_policy(canvas, shape_result, origin, style, raster_policy);\n}",
+      "uses_chromium_author_lcd": "fn uses_chromium_author_lcd(style: &ComputedStyle) -> bool {\n    if style.native_control_text\n        || style.embedded_document_text\n        || style.raster_configuration.author_text.edging != TextEdging::Alias\n    {\n        return false;\n    }\n    match style.font_family.families.first() {\n        Some(FontFamily::Named(name)) => ![\n            \"Ahem\",\n            \"Droid Sans Fallback\",\n            \"Noto Sans Devanagari\",\n            \"Noto Color Emoji\",\n            \"DejaVu Sans\",\n        ]\n        .iter()\n        .any(|family| name.eq_ignore_ascii_case(family)),\n        Some(FontFamily::Generic(family)) => !matches!(\n            family,\n            GenericFontFamily::None\n                | GenericFontFamily::SansSerif\n                | GenericFontFamily::Emoji\n                | GenericFontFamily::UiSansSerif\n        ),\n        None => false,\n    }\n}"
+    }
+  },
+  "functions_identical_between_baseline_and_candidate": true,
+  "general_backend_routing_requires_fresh_candidate_and_native_pixel_verification": true,
+  "javascript_executed_by_openui": false,
+  "pixel_tolerance": 0,
+  "release_qualification": false,
+  "reviewed_predicate_inputs": {
+    "author_text_edging": "SubpixelAntiAlias",
+    "embedded_document_text": false,
+    "native_control_text": false
+  },
+  "runtime_dispatch_trace_not_captured": true,
+  "schema_version": 1,
+  "source_commits": {
+    "baseline": "db03c8facca7502d42f327bae4833acac7379946",
+    "candidate": "c68d946c18ecd1bb6d2f3f84accecaa84cba3651"
+  },
+  "source_file": "bindings/rust/openui-paint/src/text_painter.rs",
+  "source_inference": "The helper rejects non-Alias authored edging; paint_text consequently selects TextRasterPolicy::Skia for these authored LCD runs. The physical Fontations adapter correction is not selected by this path."
+}

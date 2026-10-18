@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/tmp/openui-native-text-content-viewport-guards-v1635.py", line 28, in <module>
+    from renderer_source_identity import repository_source_identity
+ModuleNotFoundError: No module named 'renderer_source_identity'

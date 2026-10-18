@@ -1,0 +1,24 @@
+{
+  "actual_native_build_exit_code": 101,
+  "actual_owner_exit_code": 1,
+  "all_local_commands_terminal": true,
+  "all_logs_verified": true,
+  "driver_preserved": true,
+  "failure": "Portable build command omitted the pinned local Chromium sysroot configuration and linker could not find CRT/system libraries; app never ran.",
+  "native_cases_completed": 0,
+  "owner_absent": true,
+  "owner_pid": 263660,
+  "owner_session": 43333,
+  "receipt_sha256": "9d0b05fff77b3400f6838e71972eb834276e1fb4cc9080d732afd657faca687a",
+  "release_qualified": false,
+  "renderer_qualified": false,
+  "retired_for_reexecution_after_source_or_target_mutation": true,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "dc8a540e6281a83dc2e71e5248f297e1c3baf83d",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "e6ac872db488e23c7d0967cb90e8bfc6848a53269549ad1f4817cc6bcb1e51f7",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

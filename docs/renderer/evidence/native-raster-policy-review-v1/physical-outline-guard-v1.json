@@ -1,0 +1,91 @@
+{
+  "all_commands_terminal": true,
+  "baseline_regression_reproduced": true,
+  "probe_sha256": "26170f7bd58ab8217ad09da2180a46f4466e48f6b16a00c16ef4f39c865c8c30",
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "0601cd30b9ba1d51d8642b164b74dea90d3e0809",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "44832bf0b1d7238a477d6b9527afaa56bbc28c0cf337fb9dffeaf1b1f7183fcc",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "0601cd30b9ba1d51d8642b164b74dea90d3e0809",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "44832bf0b1d7238a477d6b9527afaa56bbc28c0cf337fb9dffeaf1b1f7183fcc",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "state": "complete",
+  "steps": [
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "-p",
+        "openui-text",
+        "--lib",
+        "shaping::shape_result::tests::fontations_lcd_hints_at_physical_size_before_replay",
+        "--",
+        "--exact"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "c44a3b645d9b8855a16cf81856eedb26113b3df8760c360c37a18a8e0ef3b149",
+      "name": "baseline-physical-fontations-guard",
+      "observed_exit_code": 101,
+      "source": {
+        "clean": true,
+        "commit": "294d3641a474282fbf46c84ca059773f622d1a5e",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "c2b03fac0e79463538861ef6762902eb975f7cbd8157158bacc5cf51462a4270",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "294d3641a474282fbf46c84ca059773f622d1a5e",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "c2b03fac0e79463538861ef6762902eb975f7cbd8157158bacc5cf51462a4270",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "-p",
+        "openui-text",
+        "--lib",
+        "shaping::shape_result::tests::fontations_lcd_hints_at_physical_size_before_replay",
+        "--",
+        "--exact"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "a2b1c6c193a5f724ecada805695a1cc4050aca59d1213cf9e800219497e85e66",
+      "name": "fixed-physical-fontations-guard",
+      "observed_exit_code": 0,
+      "source": {
+        "clean": true,
+        "commit": "0601cd30b9ba1d51d8642b164b74dea90d3e0809",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "44832bf0b1d7238a477d6b9527afaa56bbc28c0cf337fb9dffeaf1b1f7183fcc",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "0601cd30b9ba1d51d8642b164b74dea90d3e0809",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "44832bf0b1d7238a477d6b9527afaa56bbc28c0cf337fb9dffeaf1b1f7183fcc",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ]
+}

@@ -1,0 +1,639 @@
+{
+  "actual_whole_exit_code": 0,
+  "all_native_apis_qualified": false,
+  "all_targets_tests": {
+    "actual_exit_code": 0,
+    "failed": 0,
+    "ignored": 0,
+    "passed": 8631
+  },
+  "artifact_records": 501,
+  "artifacts_replaced_by_later_recorded_compilation": [
+    {
+      "after": "4e94b06a2bb098cbc4980d2caa48328b995db82c0607b33355e2d01ffeb1307f",
+      "before": "8df3409ddf1a9e64a008fef18320389c6893c7905c1ede278fe0438ec7a6676d",
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_image_opacity",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "4e94b06a2bb098cbc4980d2caa48328b995db82c0607b33355e2d01ffeb1307f",
+      "before": "8df3409ddf1a9e64a008fef18320389c6893c7905c1ede278fe0438ec7a6676d",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_image_opacity",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_image_opacity",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "96ff013bfba62794602941905a4d0d4082eaad7b4e1e911146a3c7f26b809f0c",
+      "before": "562163d133c2ea85ed94cae5214b66e5c3d07681dca46da8d9220186cfbbb551",
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_scroll_layer_opacity",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "96ff013bfba62794602941905a4d0d4082eaad7b4e1e911146a3c7f26b809f0c",
+      "before": "562163d133c2ea85ed94cae5214b66e5c3d07681dca46da8d9220186cfbbb551",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_scroll_layer_opacity",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_scroll_layer_opacity",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "99b93191289b9456e29a9478041d73afec27d6b33577effedd16e8501ea6db0e",
+      "before": "aa66a673ce32ea31119a8ec352e99345b0d71a42a2e77fb1d5cb957ef62900f0",
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_column_paint_phases",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "99b93191289b9456e29a9478041d73afec27d6b33577effedd16e8501ea6db0e",
+      "before": "aa66a673ce32ea31119a8ec352e99345b0d71a42a2e77fb1d5cb957ef62900f0",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_column_paint_phases",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_column_paint_phases",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "ee2236e42c695245300f3b15b27fc2d3777957bed6f558e5c5ab53b67d16d7a7",
+      "before": "e7f6c05cb70af9c14e5a2154a1519a3a4a4a45bb1015f47d8a1127de3b4c2a38",
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_event_targets",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "ee2236e42c695245300f3b15b27fc2d3777957bed6f558e5c5ab53b67d16d7a7",
+      "before": "e7f6c05cb70af9c14e5a2154a1519a3a4a4a45bb1015f47d8a1127de3b4c2a38",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_event_targets",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_event_targets",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "3a93309a6c7839a4d35a33fbe0f4cb4bc392f7b2a14df91b977da539e6c6bbb9",
+      "before": "945ac057a56a1c4f43d4cfd2086a8db8fa9757b169005151940c4830399862cb",
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_selection_values",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "3a93309a6c7839a4d35a33fbe0f4cb4bc392f7b2a14df91b977da539e6c6bbb9",
+      "before": "945ac057a56a1c4f43d4cfd2086a8db8fa9757b169005151940c4830399862cb",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_selection_values",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_selection_values",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "15338b0eed6c240463610b94a2372de8c509e3a36e382a5bd2dc8ff3722c0dc3",
+      "before": "00cb5655678ee37b597662a022ffded1940f52d68879cc23cd710b38ed18308b",
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_form_owner",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "15338b0eed6c240463610b94a2372de8c509e3a36e382a5bd2dc8ff3722c0dc3",
+      "before": "00cb5655678ee37b597662a022ffded1940f52d68879cc23cd710b38ed18308b",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_form_owner",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_form_owner",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "2e1d238ca94a58107d688149336f63872265a9d8ffe99a7904a802c90b80a218",
+      "before": "e5c760029619dfb7263209ac7df4ba6490cc889525061d40c4fae8d50c0b6074",
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_raster_options",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "2e1d238ca94a58107d688149336f63872265a9d8ffe99a7904a802c90b80a218",
+      "before": "e5c760029619dfb7263209ac7df4ba6490cc889525061d40c4fae8d50c0b6074",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_raster_options",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_raster_options",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "054a3acce3169cef6ce2803a540e3aae344a4641db1527b51321579d60878c98",
+      "before": "08a655e40effb70e9da0f03e391e65bc0c33707f1b45815d4688076f43826102",
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_font_variation",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "054a3acce3169cef6ce2803a540e3aae344a4641db1527b51321579d60878c98",
+      "before": "08a655e40effb70e9da0f03e391e65bc0c33707f1b45815d4688076f43826102",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_font_variation",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_font_variation",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "cf539b849957740cd77fe7212cbeef17b01e5b91532af17927ca08a83af68e8f",
+      "before": "29bdaedc10b07f56cba1be9cb69db186d754f64d05ec424f1559053702bfdb4e",
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_range_modes",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "cf539b849957740cd77fe7212cbeef17b01e5b91532af17927ca08a83af68e8f",
+      "before": "29bdaedc10b07f56cba1be9cb69db186d754f64d05ec424f1559053702bfdb4e",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_range_modes",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_range_modes",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "d1760e0a0481ecd235e02678f8d80896959d8fbe7c037b7bd486b3ae7d9becf2",
+      "before": "e9e675fac98e855a9000dd464d9fd3c34ecfe2d77e4169a82d7f014b70667174",
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_image_coverage",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "d1760e0a0481ecd235e02678f8d80896959d8fbe7c037b7bd486b3ae7d9becf2",
+      "before": "e9e675fac98e855a9000dd464d9fd3c34ecfe2d77e4169a82d7f014b70667174",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_image_coverage",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_image_coverage",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "61fa43fa7bd42e49ef15aad3bf3e208dec8cfa84d05c44ede73f420b1bd6f3de",
+      "before": "13cb47b6a024d7831d652c24d69c803e41db06ed4be58ae3eb46ca0bd7d464c6",
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_svg_foreign_object",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "61fa43fa7bd42e49ef15aad3bf3e208dec8cfa84d05c44ede73f420b1bd6f3de",
+      "before": "13cb47b6a024d7831d652c24d69c803e41db06ed4be58ae3eb46ca0bd7d464c6",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_svg_foreign_object",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_svg_foreign_object",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "0900c3561e9a650807785fa3a60874cdd9473279ccb6b746e8cf764669484039",
+      "before": "1ca4824bab0bb4a7bdd510d5f85e303b7c0ca71cf7e1e4c1fd5472d7e2f5e465",
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_png_sampling",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "0900c3561e9a650807785fa3a60874cdd9473279ccb6b746e8cf764669484039",
+      "before": "1ca4824bab0bb4a7bdd510d5f85e303b7c0ca71cf7e1e4c1fd5472d7e2f5e465",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_png_sampling",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_png_sampling",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "18c7b1dd1b5bdfa5fc4f35e47d43a79d876c8926c93a9583408585f900dee394",
+      "before": "e6c52aadf0a22401960aa53507fb65391236e8ae9da02257ca37823b86e2c60a",
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_input_notifications",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "18c7b1dd1b5bdfa5fc4f35e47d43a79d876c8926c93a9583408585f900dee394",
+      "before": "e6c52aadf0a22401960aa53507fb65391236e8ae9da02257ca37823b86e2c60a",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_input_notifications",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_input_notifications",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "820372f129232dff723f1443a5760ec0da37d06b22fd2cd8bc8dcc4cdff9ad5c",
+      "before": "cbee6428829320ce5aa97df83b25bb4d6f7c47721c9c7ae7ead7056cae586048",
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_flow_root_geometry",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "820372f129232dff723f1443a5760ec0da37d06b22fd2cd8bc8dcc4cdff9ad5c",
+      "before": "cbee6428829320ce5aa97df83b25bb4d6f7c47721c9c7ae7ead7056cae586048",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_flow_root_geometry",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_flow_root_geometry",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "2926e352921eda4cfd79687fb165651436610e93aa034835e3e27fed76fc82ff",
+      "before": "581441c5c87ef203b07ba630786b97c11b93930868e254bd95bac235d103fec2",
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_disabled_appearance",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "2926e352921eda4cfd79687fb165651436610e93aa034835e3e27fed76fc82ff",
+      "before": "581441c5c87ef203b07ba630786b97c11b93930868e254bd95bac235d103fec2",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_disabled_appearance",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_disabled_appearance",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "097720643f3a2a37f13b6cdac0c969ce9c0dc6043d8c43cd81bb7fb476f8abac",
+      "before": "b12af0d59277851700768dffa3d4745c85c0df9f304eff24b604effe9c4a2cd4",
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_fragment_keywords",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "097720643f3a2a37f13b6cdac0c969ce9c0dc6043d8c43cd81bb7fb476f8abac",
+      "before": "b12af0d59277851700768dffa3d4745c85c0df9f304eff24b604effe9c4a2cd4",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_fragment_keywords",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_fragment_keywords",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "7999cf8a44901f6c7eec14b62be1435865e58f6f02f05cbd90e2f600c2a27719",
+      "before": "2d4eacde6e5226a66ec8008830e4e0ab647450d7a71d9e8bd6a1e23ab765dcc5",
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_control_keyboard",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "7999cf8a44901f6c7eec14b62be1435865e58f6f02f05cbd90e2f600c2a27719",
+      "before": "2d4eacde6e5226a66ec8008830e4e0ab647450d7a71d9e8bd6a1e23ab765dcc5",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_control_keyboard",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_control_keyboard",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "4dc6178367c94ff76c9b0383a831a2a78174c30f3851b6dea625f092dee30c19",
+      "before": "2a5422637a2637e205dc512819b9c280c53512ce9e475ebf560ce9036f843a92",
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_opacity_clip",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "4dc6178367c94ff76c9b0383a831a2a78174c30f3851b6dea625f092dee30c19",
+      "before": "2a5422637a2637e205dc512819b9c280c53512ce9e475ebf560ce9036f843a92",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_opacity_clip",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_opacity_clip",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "1c375746c12e449409bd9230d66d4b090dee41c4a03eb8b300cfd994b8b49066",
+      "before": "a987ed9f7fa238163a231b32caf47285e05e76a3eea49440e3385f3ab1817174",
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_column_flex_geometry",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "1c375746c12e449409bd9230d66d4b090dee41c4a03eb8b300cfd994b8b49066",
+      "before": "a987ed9f7fa238163a231b32caf47285e05e76a3eea49440e3385f3ab1817174",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_column_flex_geometry",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_column_flex_geometry",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "723aa79c24022bd8c3641012ef65684262a7b8529a8adebfddc1506a90e2d677",
+      "before": "244f5747ed278c17d1b6178968659cab20ec26b3903d4c0aef27298d03ed9130",
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_static_position",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "723aa79c24022bd8c3641012ef65684262a7b8529a8adebfddc1506a90e2d677",
+      "before": "244f5747ed278c17d1b6178968659cab20ec26b3903d4c0aef27298d03ed9130",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_static_position",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_static_position",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "dd29567ce70fabd74baca32d995640da8256bbf54e7b8c71026396f191e1aa97",
+      "before": "de07ba0034e84c9e3a4a786fea12f838c9503883326d4dd930c95abcb5d563a3",
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_range_scalar",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "dd29567ce70fabd74baca32d995640da8256bbf54e7b8c71026396f191e1aa97",
+      "before": "de07ba0034e84c9e3a4a786fea12f838c9503883326d4dd930c95abcb5d563a3",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_range_scalar",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_range_scalar",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "60a31768ee485d1226f12952e2cf6deae1a5a35ec671f45a5d7eaff641acd79f",
+      "before": "e54ee5d8c6d46d175506d5504874159c3f4cf4c96d9fefd6a1f3c70b28f6fe1c",
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_inline_scroll",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "60a31768ee485d1226f12952e2cf6deae1a5a35ec671f45a5d7eaff641acd79f",
+      "before": "e54ee5d8c6d46d175506d5504874159c3f4cf4c96d9fefd6a1f3c70b28f6fe1c",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_inline_scroll",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_inline_scroll",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "d67fea3e6af30271e028c5d5bc14d5ff95357df08de285078bf59c720426658b",
+      "before": "0adb6d5800e16c26242dfbfa97645d5262eb1c092e197e39fcf3a3de1c93b39e",
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_relative_styles",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "d67fea3e6af30271e028c5d5bc14d5ff95357df08de285078bf59c720426658b",
+      "before": "0adb6d5800e16c26242dfbfa97645d5262eb1c092e197e39fcf3a3de1c93b39e",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_relative_styles",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_relative_styles",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "acb332d847dde7ecbdbc10466c852d559c3167b12c3fbaa8ccd1a0cd01779ffe",
+      "before": "da59d63071d19b69bef4f63cad6f6c1b5f1d2ed95cc2a9502e62b6e9f58f98ba",
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_rounded_border",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "acb332d847dde7ecbdbc10466c852d559c3167b12c3fbaa8ccd1a0cd01779ffe",
+      "before": "da59d63071d19b69bef4f63cad6f6c1b5f1d2ed95cc2a9502e62b6e9f58f98ba",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_rounded_border",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_rounded_border",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "7f846738878cbced71443e73b4371fd9e780ae4edcb4a365847f7a40be60793d",
+      "before": "09763117c949720b1cc8ed9fd45f74361073b0d4d46b253191c695883a904520",
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_inherited_styles",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "7f846738878cbced71443e73b4371fd9e780ae4edcb4a365847f7a40be60793d",
+      "before": "09763117c949720b1cc8ed9fd45f74361073b0d4d46b253191c695883a904520",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_inherited_styles",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_inherited_styles",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "6cee63c1a667f52896cbf7d3de66e4be332cd01e21836e501c30d1db0c6d2dcd",
+      "before": "570dd6c7a7b5e4b62eb9ac48c6d2cc0aa1dc2426f4d79ce81b5bcf9ce8f7764f",
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_checkable",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "6cee63c1a667f52896cbf7d3de66e4be332cd01e21836e501c30d1db0c6d2dcd",
+      "before": "570dd6c7a7b5e4b62eb9ac48c6d2cc0aa1dc2426f4d79ce81b5bcf9ce8f7764f",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_checkable",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_checkable",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "6ea2740f01d1fd150c9bc556175e88afd31214d6322207c26c136e5358651c4e",
+      "before": "126d4020f5064fbbc6c39bd0cfd52899ed33cace1172d37678fb4b6ffd5fffb0",
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_nested_scroll",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "6ea2740f01d1fd150c9bc556175e88afd31214d6322207c26c136e5358651c4e",
+      "before": "126d4020f5064fbbc6c39bd0cfd52899ed33cace1172d37678fb4b6ffd5fffb0",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_nested_scroll",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_nested_scroll",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "4347c5fe0b5ae3ce03fbc0e7c4d8cb999a36850e695f94a2ef6653db1bbd5e73",
+      "before": "d793ed4dc9a4ecfd95ddb15781c11549e78f07a11fa55647c95415974e47b28c",
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_edit_commands",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "4347c5fe0b5ae3ce03fbc0e7c4d8cb999a36850e695f94a2ef6653db1bbd5e73",
+      "before": "d793ed4dc9a4ecfd95ddb15781c11549e78f07a11fa55647c95415974e47b28c",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_edit_commands",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_edit_commands",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "b243487ff6cf5f95fb63848633d5c5a007723ed4b5606df6e174990832174bb4",
+      "before": "2a37d01a7e6ef7c379cb193d5e9e6467a13f79bbcd884a6353ec30369c432121",
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_fieldset",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "b243487ff6cf5f95fb63848633d5c5a007723ed4b5606df6e174990832174bb4",
+      "before": "2a37d01a7e6ef7c379cb193d5e9e6467a13f79bbcd884a6353ec30369c432121",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_fieldset",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_fieldset",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "541dcd4880dc5f8b8b7c7fa165e430785929da8d0172bc3cd72ac7c29310b0e8",
+      "before": "c5ea80418e587b8638a8ef95cbe1fdeb9599ef2760c104f5dda9394689c75890",
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_input_metadata",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "541dcd4880dc5f8b8b7c7fa165e430785929da8d0172bc3cd72ac7c29310b0e8",
+      "before": "c5ea80418e587b8638a8ef95cbe1fdeb9599ef2760c104f5dda9394689c75890",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_input_metadata",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_input_metadata",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "31696244b9e2440ed40bf33014930af6ee271617c174999f72251ef3b7358fcf",
+      "before": "b902fa43c36dd9bb2e481ecc7ee04a029e424f0cafe50313fac13045828ffd3e",
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_float_colors",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "31696244b9e2440ed40bf33014930af6ee271617c174999f72251ef3b7358fcf",
+      "before": "b902fa43c36dd9bb2e481ecc7ee04a029e424f0cafe50313fac13045828ffd3e",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_float_colors",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_float_colors",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "17b92e94b055e71afe52ce59016f41a9e38133a680ce9ea0aca649bc2d8da265",
+      "before": "416a3bc750b6b8a0153ad7157515ed8cb7440d601e628459696d2b35870de329",
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_image_opacity_ink",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "17b92e94b055e71afe52ce59016f41a9e38133a680ce9ea0aca649bc2d8da265",
+      "before": "416a3bc750b6b8a0153ad7157515ed8cb7440d601e628459696d2b35870de329",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_image_opacity_ink",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_image_opacity_ink",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "09a98cbbc26ac87b83f47df19fb50fd5fd0fed0660c653bfdb842842d14c9c15",
+      "before": "be385096dbf7c16a4fff9977a227368116abf2a5cc39922e837b49cc1a45b2f6",
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_focus_notifications",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "09a98cbbc26ac87b83f47df19fb50fd5fd0fed0660c653bfdb842842d14c9c15",
+      "before": "be385096dbf7c16a4fff9977a227368116abf2a5cc39922e837b49cc1a45b2f6",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_focus_notifications",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_focus_notifications",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "838b66b27a0be7223af93d60350ae31462355fb5dc9ecae7cfa4dfeb919e33cc",
+      "before": "65b0a85d131a66c2e295e7109829bc6c48142ff443196d300497d2ce6823c180",
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_selection_phases",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "838b66b27a0be7223af93d60350ae31462355fb5dc9ecae7cfa4dfeb919e33cc",
+      "before": "65b0a85d131a66c2e295e7109829bc6c48142ff443196d300497d2ce6823c180",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_selection_phases",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_selection_phases",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "a3ce7e6e4b74c63832eca1485b63807ccdc1db932f71fce1372123d6f214474d",
+      "before": "a5fbab24466cab22c10c69efec540bec0f783cd3594bbb3b3e1d9565448d94ba",
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_viewport_scroll",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "a3ce7e6e4b74c63832eca1485b63807ccdc1db932f71fce1372123d6f214474d",
+      "before": "a5fbab24466cab22c10c69efec540bec0f783cd3594bbb3b3e1d9565448d94ba",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_viewport_scroll",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_viewport_scroll",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "5766c30c4edb2e136de15b4b0ba8ef60b693f6af6a140051f5464a31cc10a559",
+      "before": "013931cfa17fa676be51595155e3d0e6027cd84e8f46c2e94f4a09a5f8d5a39f",
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_text_content",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "5766c30c4edb2e136de15b4b0ba8ef60b693f6af6a140051f5464a31cc10a559",
+      "before": "013931cfa17fa676be51595155e3d0e6027cd84e8f46c2e94f4a09a5f8d5a39f",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_text_content",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_text_content",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "1fb17a5fb14231246576c07dc74f56235d6477d786a68daf970c35e9de4875a4",
+      "before": "776fdf5cb90df60d7d17fa5d422220b0113720a64615bfc3576d98b58c946171",
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_disabled_focus",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "1fb17a5fb14231246576c07dc74f56235d6477d786a68daf970c35e9de4875a4",
+      "before": "776fdf5cb90df60d7d17fa5d422220b0113720a64615bfc3576d98b58c946171",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_disabled_focus",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_disabled_focus",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "63e9af84eb90e06063fec0d2a4377f0bdfe230d73b7dbf59d19f45eb9d84ef95",
+      "before": "6a04ec5a72aeab8cabe55b343839481a003345bde9cf637079babcc126c1702c",
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_scroll_into_view",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "63e9af84eb90e06063fec0d2a4377f0bdfe230d73b7dbf59d19f45eb9d84ef95",
+      "before": "6a04ec5a72aeab8cabe55b343839481a003345bde9cf637079babcc126c1702c",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_scroll_into_view",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_scroll_into_view",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "7f63ffd3d1a01dbfc7d26fdc9b8f0ac1a07828f01119f1b510338c2bd5766fe9",
+      "before": "40a8c5a277e59633596d061df6733187a65a0c8b8aa99e77cafc29db2ee7bde5",
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_column_image_fallback",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "7f63ffd3d1a01dbfc7d26fdc9b8f0ac1a07828f01119f1b510338c2bd5766fe9",
+      "before": "40a8c5a277e59633596d061df6733187a65a0c8b8aa99e77cafc29db2ee7bde5",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_column_image_fallback",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_column_image_fallback",
+      "stage": "native-app-build"
+    },
+    {
+      "after": "e559e36bb05a50536f3917d0f7835668c5041a46bb6325f1cabea214ca98393d",
+      "before": "e29f29f07d485223fb7de857589d4fafd818bd20b23ba683b7594f3eb817ddc2",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/libopenui_ffi.a",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_ffi.a",
+      "stage": "ffi-library-build"
+    },
+    {
+      "after": "c4afc4dda4c7e4698bdeec469ae4b09d159246a44618c1d24262ee1a1f1d96f6",
+      "before": "45f7263943a4c861acf2b233831434afac4a79a64632f93e07ff9bb4cf4b6986",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/libopenui_ffi.rlib",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_ffi.rlib",
+      "stage": "ffi-library-build"
+    },
+    {
+      "after": "091fbdedf435170864d64889be304b8d0401edc3fab9c6f153f3374edb6594e7",
+      "before": "4d5e63eed2d258552a01bcfffdcba6c1aaae62d2174b43b7b53d73e2afbf7b3b",
+      "compiler_record_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/libopenui_ffi.so",
+      "current_inode_alias_verified": true,
+      "path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_ffi.so",
+      "stage": "ffi-library-build"
+    }
+  ],
+  "c_consumers": 29,
+  "chronological_artifact_order_verified": true,
+  "complete": true,
+  "cpp_consumers": 23,
+  "current_compiled_paths_verified": 310,
+  "current_inode_alias_groups_verified": 3,
+  "exports": 131,
+  "headless_tests": [
+    [
+      54,
+      0,
+      0
+    ]
+  ],
+  "implementation_integrated": true,
+  "layouts": 34,
+  "native_behavior_by_language": {
+    "c": {
+      "different": 0,
+      "exact": 495,
+      "total": 495
+    },
+    "cpp": {
+      "different": 0,
+      "exact": 495,
+      "total": 495
+    },
+    "rust": {
+      "different": 0,
+      "exact": 495,
+      "total": 495
+    }
+  },
+  "native_behavior_comparisons": 1485,
+  "original_main_stack_bytes": 8388608,
+  "owner_absent": true,
+  "owner_terminal": true,
+  "prior_failed_audit_sha256": "91f5806f56b4d861135f35eeb6ddb9b6620ba71bf2b14c6691fa2e476a43f67e",
+  "receipt_sha256": "8d82ce60a5da83f2fbb07cd5cd88e0893ae713023b606f998be4fa6e645e598b",
+  "regression_groups": 12,
+  "release_qualified": false,
+  "renderer_qualified": false,
+  "retired_for_reexecution_after_source_or_target_mutation": true,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "72f5b41e5c2d795d95ad0a198be2332f70c317d0",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "7c6711dea547053cbe16427e25fc8ad2b80385b034834c4702e99d1576d3ebb6",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "workspace_tests": {
+    "failed": 0,
+    "ignored": 13,
+    "passed": 8633
+  }
+}

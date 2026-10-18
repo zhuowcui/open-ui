@@ -1,0 +1,791 @@
+{
+  "accepted_renderer_unchanged": true,
+  "artifacts": [
+    {
+      "path": "docs/renderer/generated/native-svg-viewport-v3.json",
+      "sha256": "3e91194bcf747e65a677bce7375d64a7ad4c382633b36cb6f0853b4a3a34946d"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-curved-solid-native-v258/comparison.json",
+      "sha256": "976277a1eacd4dbf4faf319412ffb12f6c45493c99cc5a77ca9b9155fa4b2704"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-curved-solid-neighbors-v260/comparison.json",
+      "sha256": "4f6449b41f14537ec9f25d53229e49ea58b0386eb069b156a2f4cac354024ce4"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-curved-solid-native-delta-v263.json",
+      "sha256": "bd0205c25e873d19f924b8c06f6411a78ab33c95c1591cdd42f11a7941d9e8f1"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-curved-solid-selected-delta-v265.json",
+      "sha256": "b952521c6da3a107fd9b1dfefbb1fde05f004ea72727d3734cfba18dd89f4b44"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-curved-solid-selection-v261/full-summary.json",
+      "sha256": "acaa22d0d2e5c5a0ea24cca51ab3daf01f41c18bae754885994abd26d4b7ed43"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-curved-solid-selection-v261.log",
+      "sha256": "18620e3b2ea176842fe9eb1f8615fad61543082ebb152a8022a231206480f2bc"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-curved-solid-selection-exit-v261.json",
+      "sha256": "3aa427c3afd16d895d8db9caa5fcb4750c1a24ce88ef76d3b8df7564f2246482"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-native-docs-ci-v259.json",
+      "sha256": "cbbfb70b0005ca94edcfd8d762ce36a3872b2a2da5bea1ff1f8fc878802f43ad"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-curved-solid-clean-v257/build.json",
+      "sha256": "f641198421bd4e0fb75ee204eead92b367d90ff61612524f1e5a950291644e90"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-curved-solid-clean-v257/source-before.json",
+      "sha256": "ff4b4f01ac781249c0c717745f839bac5362be8befc64fd7fb271991f3eb0736"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-curved-solid-clean-v257/pixel-embedded-source-identity.json",
+      "sha256": "afd834f5717e9f684859b897702da446bf856017c7823ccc3e2d39b98673ecec"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-curved-solid-clean-v257/clean.log",
+      "sha256": "926a9a005dbd8858d3bccc3b574d2967bc0190ae8a3116790b5b636b5e364a7f"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-curved-solid-clean-v257/pixel-build.log",
+      "sha256": "76b7838aa11458d01c9e06f0085507ce24b8d7871d97d33d373bc27b0646259c"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-curved-solid-clean-v257/pixel_compare",
+      "sha256": "484e1e8b73d0adeb71a72f9af8c04c7219a865242635d2028fae56bff55bfff4"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-curved-solid-clean-v257/svg-build.log",
+      "sha256": "13d690e526235c3e41b04471184510a9bb05cd13579efb0421ba1dcec0396cc2"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-curved-solid-clean-v257/native_svg_foreign_object",
+      "sha256": "c62aafb8f2194394207647295e9cfb5b326660b4a73a08f7d33940030a4d32fc"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-region-full-exit-v246.json",
+      "sha256": "b087cbedea676667f355f38db5e7b8e34c45d340314bb7df5f3ab501400ff2f7"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-curved-double-full-exit-v248.json",
+      "sha256": "3b160dc48a6b4e2e5603300fc7ce3304aa74a2cf02daa91daa42dceca614618b"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-region-clean-full-v246.log",
+      "sha256": "15facb220f433638de211f9db6b362b99ddc486f31ec51d9c3e3bfc372916722"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-curved-double-clean-full-v248.log",
+      "sha256": "efdd0f6d69323e877803529d4ecabe3643c82ad479faf0d7cd597c94ed486f72"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-curved-solid-focused-exit-v262.json",
+      "sha256": "51cba1355d5f4684b9cac747e92115eeda1546651bfc9ba0873a105c93f07b4a"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-curved-solid-primitive-exit-v262.json",
+      "sha256": "c533408170dc1583d460b99ad3910be35dd80ddf2cf252cbb21d30fa819fae73"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-curved-solid-clean-focused-v262.log",
+      "sha256": "adf9efeb895b8f1af8632e787cc033fd5d35d85543858ad841a913a735687a93"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-curved-solid-clean-primitive-v262.log",
+      "sha256": "0a3c3244801f781621108064cac694f4722c5315201bf1018bf360cf81170b7f"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-curved-solid-workspace-v264/receipt.json",
+      "sha256": "22f0042521a3343ea6b5d41bce9eb63338f9af6dda099d23b1ea1052cafbaf14"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-curved-solid-workspace-v264/clean.log",
+      "sha256": "ac420632c6927b4c65cbad1a554c5f592cbc4e755527c6fdd55041973413dd3d"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-curved-solid-workspace-v264/workspace.log",
+      "sha256": "1177d3115a818c143b2af92f44b42868fc35f4db6ac6e7e216163e70b85ede1f"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-curved-solid-workspace-v264/before.png",
+      "sha256": "c18c847b7ab493b099217cd9a710ab5d731026ca7474a0bcfc3be7a3e0be0871"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-curved-solid-workspace-v264/produced.png",
+      "sha256": "c18c847b7ab493b099217cd9a710ab5d731026ca7474a0bcfc3be7a3e0be0871"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-disk-target-clean-v266/receipt.json",
+      "sha256": "5980fa0398dbf447cf7aefa7ae2e3720db2d2138dbc6085366e8a2ddc24a8a96"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-disk-target-clean-v266/clean.log",
+      "sha256": "bf94edebe343b53c7530032ccb787bbe979dcf004fa438791ba5732fa8abdcb4"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-disk-target-clean-v267/receipt.json",
+      "sha256": "677ab1041506146e55f023bb61e41118b0fe834de8b5313e110f2de9d353ef44"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-disk-target-clean-v267/clean.log",
+      "sha256": "f9d83dd92a5fce142fe9f91715e8994b98faf163b0a0de0b4d57d4c6af8b9b39"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/unused-diagnostic-preservation-v256/receipt.json",
+      "sha256": "0362ba31afe3df2cc79b3380267a19a3ab2c99598727825dea34c17bf7c73e9e"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/unused-diagnostic-preservation-v256/pixel_compare_clipped_descendant_candidate-4614074c1c3d978f.gz",
+      "sha256": "5194709ce2341541ee9cfd4a0dba05a01a95c8ec0e490da48690335bbb36c635"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/unused-diagnostic-preservation-v256/pixel_compare_column_decoration_diagnostic-00aea93a80cc47c8.gz",
+      "sha256": "bdef4f725e1cb1bc1133237db9e9d1ec68ba5ab16cd2ac1e8135b34c54703fa5"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/unused-diagnostic-preservation-v256/pixel_compare_column_flex_candidate-9f317f3e44d5f81e.gz",
+      "sha256": "b1ecc71a4b53510be546b98d796d68c9742a2d4a36fcb30cfd2677f821982018"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/unused-diagnostic-preservation-v256/pixel_compare_column_image_aa_candidate-3c18a9e1cefec363.gz",
+      "sha256": "41ca66ad9f243c1113cf48a9996e9b3d5d936770d2e1a9e2e3ebefac16aba4c7"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/unused-diagnostic-preservation-v256/pixel_compare_column_image_host_clip_candidate-9b3cdfca3a571985.gz",
+      "sha256": "bc03c4e0802c2a107addf4403e1538fe594bd4a18f0416b4b5d0498502ededb3"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/unused-diagnostic-preservation-v256/pixel_compare_column_image_prepaint_ownership_candidate-163975c0526ba3f6.gz",
+      "sha256": "d7cdabb813a955507e563aab75207ac4183f7628ef27934e61a05dccdab1adb6"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/unused-diagnostic-preservation-v256/pixel_compare_column_margin_diagnostic-b4a2eef51b482e15.gz",
+      "sha256": "608aba897c1b877f5de75dccac7d689dc8b808bda00b543d9d44c0075e42665b"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/unused-diagnostic-preservation-v256/pixel_compare_column_paint_hit_phase_candidate-9d9c7716ece69aff.gz",
+      "sha256": "2b253f0df8ee0e7e4d732a73d4f03fa7ff8e4e841d1665bfe18413c2e2a1c127"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/unused-diagnostic-preservation-v256/pixel_compare_column_paint_phase_candidate-ab8f035aaaeb797f.gz",
+      "sha256": "8ab45baabe7424cd65946caf4829866e545918ced9f5e54a6cba9974a28b5316"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/unused-diagnostic-preservation-v256/pixel_compare_flow_root_slice_candidate-b777b9b8bffde931.gz",
+      "sha256": "57ce8b5b57d7fa0d7674d3827788ef2d86527e7ea034d66224dc0e998cd015f6"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/unused-diagnostic-preservation-v256/pixel_compare_independent_box_flow_candidate-16a8f24747945029.gz",
+      "sha256": "12a4c256e92830558550139e64c5a143058313ad17618a2b5a172935e37422f2"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/unused-diagnostic-preservation-v256/pixel_compare_logical_max_block_candidate-f4115c7945fa765f.gz",
+      "sha256": "ce6717131f7084ea6e859993cf6d56022d3c20ce119213a0f58c05fc012df410"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/unused-diagnostic-preservation-v256/pixel_compare_monolithic_balance_candidate-0477769576ff5c13.gz",
+      "sha256": "94aabacc59ae55b80e1b4780725fd7c4046c100b104a2c8d1139c1276ad39fbd"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/unused-diagnostic-preservation-v256/pixel_compare_principal_box_diagnostic-c2973a998ff53539.gz",
+      "sha256": "480b304abf1e16acfe825cb4145c92cc64ee7696731ea3071b234415010e58ed"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/unused-diagnostic-preservation-v256/pixel_compare_spanner_boundary_diagnostic-71edd60b0464f3fc.gz",
+      "sha256": "157960d60c1c0477315d89378b1d7297244bdb92492704928f6002ae9a8ec180"
+    },
+    {
+      "path": "docs/renderer/evidence/native-svg-decoration-v1/curved-solid-border-prototype-v257.patch",
+      "sha256": "96f101b5678b62ae87398dcd2da299f97cfd7d9a7a6b76c5913f6372d70828a1"
+    }
+  ],
+  "curved_solid_source": {
+    "clean": true,
+    "commit": "d94b55f83d32ad059bc93e5c1732ae74f0994d08",
+    "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+    "source_tree_sha256": "9aa5555588fe60761f9d08785cf30ff6a0d4b5f5089bf677ee257c176c3e7bc9",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "hosted_checkpoint": {
+    "job_conclusions": {
+      "skipped": 5,
+      "success": 6
+    },
+    "skips_are_not_passes": true,
+    "source": {
+      "clean": true,
+      "commit": "3836e9de2b548b6089d8bc8cc765541f687022ab",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "f17cccd6abb3d64f532b34b16554f54380f87b938f0581f03c8a8f1b2054fef8",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "javascript_executed_by_openui": false,
+  "latest_accepted_full_results": {
+    "different": 1616,
+    "errors": 0,
+    "exact": 21308,
+    "total": 22924
+  },
+  "native_application_results": {
+    "all_changed_images_improve": true,
+    "all_native_callbacks_and_teardowns_checked": true,
+    "cases_admitted_to_release": 0,
+    "changed_images": 368,
+    "exact": 1176,
+    "exact_gains_against_double_border": 236,
+    "exact_losses": 0,
+    "owned_bounds_exact": 1920,
+    "remaining_pixel_failures": 744,
+    "total": 1920
+  },
+  "patch": {
+    "applied_to_umbrella": false,
+    "path": "docs/renderer/evidence/native-svg-decoration-v1/curved-solid-border-prototype-v257.patch",
+    "sha256": "96f101b5678b62ae87398dcd2da299f97cfd7d9a7a6b76c5913f6372d70828a1"
+  },
+  "pixel_tolerance": 0,
+  "prior_evidence": {
+    "path": "docs/renderer/generated/native-svg-viewport-v3.json",
+    "prior_artifact_hashes_reverified": 86,
+    "sha256": "3e91194bcf747e65a677bce7375d64a7ad4c382633b36cb6f0853b4a3a34946d"
+  },
+  "qualification": {
+    "accepted_renderer_full_gate": "failing: 1616 original comparisons still differ",
+    "complete_original_runs": "v246/v248 terminated with disk exhaustion; no complete summary or census count exists",
+    "earlier_svg_40_profile_gates": "complete exact results at 4daf1876 and 169fc7fe remain valid; no solid-border 40-profile qualification claimed",
+    "expanded": "not started",
+    "replacement_pixel_runs": "pending until workspace retry is terminal; Cargo builds will run separately from pixel qualification",
+    "solid_40_profile_runs": "v262 focused and primitive terminated with disk exhaustion; incomplete and unqualified",
+    "solid_workspace": "v264 exited 101 during the debug build, with no tests run; smaller debug-0 v268 retry is running in an independent clean checkout"
+  },
+  "release_qualification": false,
+  "remaining_work": [
+    "744 native SVG pixel failures: rounded child clipping, fractional coverage and group opacity remain open",
+    "full original and expanded candidate qualification; no complete counts inferred",
+    "solid-border focused/primitive and workspace qualification",
+    "native SVG coordinate/transform APIs and C parity",
+    "nested native scroll extents/ranges and remaining public native API behavior",
+    "residual ownership, compositor, required hardening, hardware, packaging and release qualification"
+  ],
+  "responsible_subsystems": [
+    "openui",
+    "openui-engine",
+    "openui-layout",
+    "openui-paint"
+  ],
+  "root_cause_examples": [
+    {
+      "args": [
+        "0",
+        "24",
+        "18",
+        "3",
+        "solid",
+        "7",
+        "2",
+        "content-box",
+        "1",
+        "none",
+        "horizontal-tb"
+      ],
+      "before_difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 16,
+            "maximum_absolute_delta": 229,
+            "maximum_signed_delta": 229,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 1490
+          },
+          "green": {
+            "changed_pixels": 16,
+            "maximum_absolute_delta": 229,
+            "maximum_signed_delta": 229,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 1490
+          },
+          "red": {
+            "changed_pixels": 16,
+            "maximum_absolute_delta": 229,
+            "maximum_signed_delta": 229,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 1490
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 3,
+              "width": 5,
+              "x": 22,
+              "y": 20
+            },
+            "mismatched_pixels": 8
+          },
+          {
+            "bounds": {
+              "height": 3,
+              "width": 5,
+              "x": 22,
+              "y": 35
+            },
+            "mismatched_pixels": 8
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 18,
+          "width": 5,
+          "x": 22,
+          "y": 20
+        },
+        "mismatched_pixels": 16
+      },
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "native_png_sha256": "2bf60707a356538a280804eb96fcd05cff1100c61c553a8b169f7997c44161b9",
+      "oracle_png_sha256": "13bb97b7d499b55a3273feff5f2e218ff6e33dea5aab21f4ea8a8dc0df3d7c11",
+      "owner": "openui-paint",
+      "reviewed_root_cause": "Lone rounded solid side clip excluded curved tangent pixels beyond the straight border width. Chromium Paint/DrawCurvedBoxSide keeps outer and inner contour clips and fills the full side including its corner tangents.",
+      "side": "left"
+    },
+    {
+      "args": [
+        "0",
+        "24",
+        "18",
+        "3",
+        "solid",
+        "7",
+        "2",
+        "content-box",
+        "1",
+        "none",
+        "horizontal-tb",
+        "top"
+      ],
+      "before_difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 16,
+            "maximum_absolute_delta": 230,
+            "maximum_signed_delta": 230,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 1540
+          },
+          "green": {
+            "changed_pixels": 16,
+            "maximum_absolute_delta": 230,
+            "maximum_signed_delta": 230,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 1540
+          },
+          "red": {
+            "changed_pixels": 16,
+            "maximum_absolute_delta": 230,
+            "maximum_signed_delta": 230,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 1540
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 5,
+              "width": 3,
+              "x": 20,
+              "y": 22
+            },
+            "mismatched_pixels": 8
+          },
+          {
+            "bounds": {
+              "height": 5,
+              "width": 3,
+              "x": 41,
+              "y": 22
+            },
+            "mismatched_pixels": 8
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 5,
+          "width": 24,
+          "x": 20,
+          "y": 22
+        },
+        "mismatched_pixels": 16
+      },
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "native_png_sha256": "a2c0e6b3c05a37b236fffc3f3baf3053efaa8c4facfe71d9e1326f7afdda9532",
+      "oracle_png_sha256": "efd7c2e8a428012b21d974e9df5a2ec65fb0b5c94d0389145362df5dc8153bc9",
+      "owner": "openui-paint",
+      "reviewed_root_cause": "Lone rounded solid side clip excluded curved tangent pixels beyond the straight border width. Chromium Paint/DrawCurvedBoxSide keeps outer and inner contour clips and fills the full side including its corner tangents.",
+      "side": "top"
+    },
+    {
+      "args": [
+        "0",
+        "24",
+        "18",
+        "3",
+        "solid",
+        "7",
+        "2",
+        "content-box",
+        "1",
+        "none",
+        "horizontal-tb",
+        "right"
+      ],
+      "before_difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 16,
+            "maximum_absolute_delta": 229,
+            "maximum_signed_delta": 229,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 1519
+          },
+          "green": {
+            "changed_pixels": 16,
+            "maximum_absolute_delta": 229,
+            "maximum_signed_delta": 229,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 1519
+          },
+          "red": {
+            "changed_pixels": 16,
+            "maximum_absolute_delta": 229,
+            "maximum_signed_delta": 229,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 1519
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 3,
+              "width": 5,
+              "x": 37,
+              "y": 20
+            },
+            "mismatched_pixels": 8
+          },
+          {
+            "bounds": {
+              "height": 3,
+              "width": 5,
+              "x": 37,
+              "y": 35
+            },
+            "mismatched_pixels": 8
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 18,
+          "width": 5,
+          "x": 37,
+          "y": 20
+        },
+        "mismatched_pixels": 16
+      },
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "native_png_sha256": "59814d38ebbfc7dc5ff9bb369c24a3cd59a6b979dfa1de54ffdd7b4d293086f4",
+      "oracle_png_sha256": "8c919749f3442283ccb2b075502b74ad05ff44feb681d2ce5eec04ec2ef8e79b",
+      "owner": "openui-paint",
+      "reviewed_root_cause": "Lone rounded solid side clip excluded curved tangent pixels beyond the straight border width. Chromium Paint/DrawCurvedBoxSide keeps outer and inner contour clips and fills the full side including its corner tangents.",
+      "side": "right"
+    },
+    {
+      "args": [
+        "0",
+        "24",
+        "18",
+        "3",
+        "solid",
+        "7",
+        "2",
+        "content-box",
+        "1",
+        "none",
+        "horizontal-tb",
+        "bottom"
+      ],
+      "before_difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 16,
+            "maximum_absolute_delta": 239,
+            "maximum_signed_delta": 239,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 1664
+          },
+          "green": {
+            "changed_pixels": 16,
+            "maximum_absolute_delta": 239,
+            "maximum_signed_delta": 239,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 1664
+          },
+          "red": {
+            "changed_pixels": 16,
+            "maximum_absolute_delta": 239,
+            "maximum_signed_delta": 239,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 1664
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 5,
+              "width": 3,
+              "x": 20,
+              "y": 31
+            },
+            "mismatched_pixels": 8
+          },
+          {
+            "bounds": {
+              "height": 5,
+              "width": 3,
+              "x": 41,
+              "y": 31
+            },
+            "mismatched_pixels": 8
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 5,
+          "width": 24,
+          "x": 20,
+          "y": 31
+        },
+        "mismatched_pixels": 16
+      },
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "native_png_sha256": "9a77c379bdb94e78e60516afe0c62e12eaa7de5c5fbd0985249643679d0f6b9a",
+      "oracle_png_sha256": "69a40ab28bd7f75c074368b0401114a8bd138ce465195383b348b7fbee13e94e",
+      "owner": "openui-paint",
+      "reviewed_root_cause": "Lone rounded solid side clip excluded curved tangent pixels beyond the straight border width. Chromium Paint/DrawCurvedBoxSide keeps outer and inner contour clips and fills the full side including its corner tangents.",
+      "side": "bottom"
+    }
+  ],
+  "schema_version": 4,
+  "selected_original": {
+    "all_304_eight_row_invariants_unchanged": true,
+    "comparison_path": "out/renderer-evidence/native-viewport-scroll-v1/svg-curved-solid-selection-v261/full-summary.json",
+    "comparison_sha256": "acaa22d0d2e5c5a0ea24cca51ab3daf01f41c18bae754885994abd26d4b7ed43",
+    "observed_exit_code": 1,
+    "prior_comparison_sha256": "f14bb4d42c2add1be917e074528977a48e54bf160aad06ed1af8ac2fee0eb743",
+    "release_qualification": false,
+    "results": {
+      "different": 128,
+      "errors": 0,
+      "exact": 176,
+      "profile_result_sha256": "ed5bf2318b12de4b200dd9c215ce85019c15cd93e33a0902ff97f7fe7f2c2aa6",
+      "total": 304
+    },
+    "schema_version": 1,
+    "source": {
+      "clean": true,
+      "commit": "d94b55f83d32ad059bc93e5c1732ae74f0994d08",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "9aa5555588fe60761f9d08785cf30ff6a0d4b5f5089bf677ee257c176c3e7bc9",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "storage_recovery": {
+    "first_package_cleanup_failed_before_deletion": true,
+    "legacy_executables_preserved_as_gzip": 15,
+    "successful_pins_unchanged": true,
+    "successful_workspace_package_cleanup": "4345 files, 12.9 GiB of reproducible build outputs reclaimed"
+  }
+}

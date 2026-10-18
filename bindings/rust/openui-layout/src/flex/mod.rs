@@ -21,5 +21,6 @@ mod line_breaker;
 mod line_flexer;
 
 pub use algorithm::flex_layout;
+pub(crate) use algorithm::flex_layout_contents;
 pub use item::{FlexItem, FlexerState};
 pub use line::FlexLine;

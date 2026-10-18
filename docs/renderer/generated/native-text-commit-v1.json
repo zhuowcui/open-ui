@@ -1,0 +1,2968 @@
+{
+  "all_commands_terminal": true,
+  "all_native_apis_qualified": false,
+  "implementation_integrated": false,
+  "javascript_executed_by_openui": false,
+  "measured_source": {
+    "clean": true,
+    "commit": "f73435f371f2499dc41ad995c70745b5161e90bd",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "871545e48ab0b8cbdb2872cc94e91be144273317f85ec1d4e698158f01d4b37b",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "metadata_reference": {
+    "all_commands_terminal": true,
+    "all_native_apis_qualified": false,
+    "chrome_sha256": "0ba87684df0afc11faaea40ac57bd2f1d68b67191443b38215a36b90e6f08848",
+    "diagnostic_only": true,
+    "javascript_executed_by_openui": false,
+    "metadata_fields": [
+      "input_type",
+      "data",
+      "is_composing"
+    ],
+    "observed_exit_code": 0,
+    "release_qualification": false,
+    "repeated_observations_identical": true,
+    "root_cause_reviewed": false,
+    "runs": [
+      {
+        "callback_rows": 42,
+        "number": 1,
+        "observations_sha256": "8ee53d647b4861b398c5a259e15ec9a8bf46170404a88cb5f2b499c132303193"
+      },
+      {
+        "callback_rows": 42,
+        "number": 2,
+        "observations_sha256": "8ee53d647b4861b398c5a259e15ec9a8bf46170404a88cb5f2b499c132303193"
+      }
+    ],
+    "schema_version": 1,
+    "script_runs_only_in_offline_chromium": true,
+    "source": {
+      "clean": true,
+      "commit": "8e8318bf39a730baf16082c41ca3c6321d5e7ab1",
+      "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+      "source_tree_sha256": "e31d91f7ea96caa31e6ee580aedb73297d33fb8d0214605e88cd13d4a500456a",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "8e8318bf39a730baf16082c41ca3c6321d5e7ab1",
+      "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+      "source_tree_sha256": "e31d91f7ea96caa31e6ee580aedb73297d33fb8d0214605e88cd13d4a500456a",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_unchanged": true
+  },
+  "native_c_cpp": {
+    "all_commands_terminal": true,
+    "all_linked_native_source_proven": true,
+    "consumer_inputs": {
+      "text_commit.c": "7e9fb73311e7ebbf5ac5f2d780efd0ca185256b724ad6e5ac908c1a8cd47cb68",
+      "text_commit.cc": "c2c887446cdff765001c49f2d51689bd5211076a839cea387f5c3258256e9793"
+    },
+    "diagnostic_only": true,
+    "ffi_artifact": {
+      "executable": null,
+      "features": [
+        "default"
+      ],
+      "filenames": [
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/libopenui_ffi.rlib",
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/libopenui_ffi.a",
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/libopenui_ffi.so"
+      ],
+      "fresh": false,
+      "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-ffi/Cargo.toml",
+      "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-ffi#0.2.0",
+      "profile": {
+        "debug_assertions": true,
+        "debuginfo": 0,
+        "opt_level": "0",
+        "overflow_checks": true,
+        "test": false
+      },
+      "reason": "compiler-artifact",
+      "target": {
+        "crate_types": [
+          "rlib",
+          "staticlib",
+          "cdylib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "rlib",
+          "staticlib",
+          "cdylib"
+        ],
+        "name": "openui_ffi",
+        "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-ffi/src/lib.rs",
+        "test": true
+      }
+    },
+    "ffi_library_sha256": "ac948000085e81bb87a48f9bccc34affc1ab0782d682de10efc6a1f447b598ab",
+    "ffi_library_source": {
+      "clean": true,
+      "commit": "f73435f371f2499dc41ad995c70745b5161e90bd",
+      "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+      "source_tree_sha256": "871545e48ab0b8cbdb2872cc94e91be144273317f85ec1d4e698158f01d4b37b",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "javascript_executed_by_openui": false,
+    "local_artifacts": [
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-efd9b399590a9cc0.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-efd9b399590a9cc0.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-geometry/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-geometry#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_geometry",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-geometry/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-efd9b399590a9cc0.rlib": "ce1b7186ff56b1f4e1593da2f6a1efa335f641130d473145c06d66955b050fd4",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-efd9b399590a9cc0.rmeta": "2397c62ff43de82d41475f63137fb25e1fea154ba2d9609486231c4ed1020bc4"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck_derive-3a810cf7a7c794b9.so"
+          ],
+          "fresh": false,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/vendor/bytemuck_derive-v1/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/vendor/bytemuck_derive-v1#bytemuck_derive@1.10.2",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "proc-macro"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2018",
+            "kind": [
+              "proc-macro"
+            ],
+            "name": "bytemuck_derive",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/vendor/bytemuck_derive-v1/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck_derive-3a810cf7a7c794b9.so": "9eaec7bd0bc86fbb4c93933031b2f2124845a060dee79f49264e4083ea5c0990"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-834764aabb68552d.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-834764aabb68552d.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-style/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-style#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_style",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-style/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-834764aabb68552d.rlib": "9ec1e8e7532dc288a75623121faaf178b63c321c6125b204718cd87d8be2fecd",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-834764aabb68552d.rmeta": "385d431adcc661359622860703b25a78f3796a168196a5ed146c7d905a6e27ec"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "bytemuck_derive",
+            "derive",
+            "min_const_generics"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-087b6a2b3a3980c7.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-087b6a2b3a3980c7.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/vendor/bytemuck-v1/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/vendor/bytemuck-v1#bytemuck@1.25.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2018",
+            "kind": [
+              "lib"
+            ],
+            "name": "bytemuck",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/vendor/bytemuck-v1/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-087b6a2b3a3980c7.rlib": "2bbcef597219774dd3d4a168abb2529ffd57ca7355eb2523d7e5b00f85e82580",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-087b6a2b3a3980c7.rmeta": "2d94ffd12bc1777828c7f4838259daa07291b9f7045b4a15188cb6854189f33c"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "bytemuck",
+            "std"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-e33b946bf9cdb70b.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-e33b946bf9cdb70b.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/vendor/font-types-v0_11/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/vendor/font-types-v0_11#font-types@0.11.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "font_types",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/vendor/font-types-v0_11/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-e33b946bf9cdb70b.rlib": "e32b66f41200e7a7132b2ed45cfb049c24bba67493b2ac5b4204128dc4b7976a",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-e33b946bf9cdb70b.rmeta": "4610ba3989a257e23acc1be32c8b8ba0a2cccb3aa5d8d1ad7f0741e9776325b7"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_macros-4a2a29060d246886.so"
+          ],
+          "fresh": false,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-macros/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-macros#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "proc-macro"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "proc-macro"
+            ],
+            "name": "openui_macros",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-macros/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_macros-4a2a29060d246886.so": "9187b8872b745019dda4a72c17434177c5a2d9670957787e38551bb423d11da2"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "std"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-f7fc50324ff71df1.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-f7fc50324ff71df1.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/vendor/read-fonts-v0_37/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/vendor/read-fonts-v0_37#read-fonts@0.37.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "read_fonts",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/vendor/read-fonts-v0_37/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-f7fc50324ff71df1.rlib": "563d7b54e78036a9168c034cb638732c58598e410578a6bfb4ad2f5d1ac0bc5b",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-f7fc50324ff71df1.rmeta": "32f7f333cc5dcabcaf0701a432c9d771d1d6c66fde5b9985da12191184728e25"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "autohint_shaping",
+            "default",
+            "std"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-35f5ca75a4e799ca.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-35f5ca75a4e799ca.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/vendor/skrifa-v0_40/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/vendor/skrifa-v0_40#skrifa@0.40.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "skrifa",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/vendor/skrifa-v0_40/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-35f5ca75a4e799ca.rlib": "55a14e088c1beddfe502571ce36c632c8bb6d9ea8d2dc837b91b476c6eebcf2f",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-35f5ca75a4e799ca.rmeta": "e5c379cbdf9c052c1149e3760286ed9bdbc4f1753bf48ef8aea474905b8659d3"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-d1c3bc152e8680f8.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-d1c3bc152e8680f8.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-dom/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-dom#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_dom",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-dom/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-d1c3bc152e8680f8.rlib": "ff0f7160dc1b7abb11e16bad3fc3b1c15d60aacc775c2341673a2c1a28e9a1e0",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-d1c3bc152e8680f8.rmeta": "14bdf49e07a180b4dff434a66cfc1e50e5ee0d00aef9d8a6b2dab0db853080f3"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-685d07112f60e769.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-685d07112f60e769.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-text/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-text#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_text",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-text/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-685d07112f60e769.rlib": "ab626520fbf1ecf9cc62a0e1f99f03f3bc33375ca0b517060a7c5545a69314ff",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-685d07112f60e769.rmeta": "9e653fd77ac8e21577c46f1ef1d60102372c6db3c857f7c96497e465c6746e83"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-2b29aafb1a34dc59.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-2b29aafb1a34dc59.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-layout/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-layout#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_layout",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-layout/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-2b29aafb1a34dc59.rlib": "f374782413c0f5fb47ce6cd75b99ad46976d1c0721e61f65d7aa0cdbdc7659b7",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-2b29aafb1a34dc59.rmeta": "be42c21284c048b32540979f5e120903467b6c39cc67427361f207d8d20230b2"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "default"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-2a790426442dcf82.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-2a790426442dcf82.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-compositor/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-compositor#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_compositor",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-compositor/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-2a790426442dcf82.rlib": "299c76d1f495bd09c51d70945e3e8ec167ec7df1e587c94d261192a5538f5fb6",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-2a790426442dcf82.rmeta": "a0d6714e59f1840f4f389816d6d99cdf12d9738dd6ca3ba378744871d6b3ac24"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-3b124772dacb6746.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-3b124772dacb6746.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-paint/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-paint#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_paint",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-paint/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-3b124772dacb6746.rlib": "8a238a458eb49552a25c9f99151a8327a5b05d1fca44b4212356517f629b5a16",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-3b124772dacb6746.rmeta": "75b780042e7087b8b9907d82f8f1adf567b530fdedaf95ec09a8d8178385b75f"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-c971e3ea18717d45.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-c971e3ea18717d45.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-engine/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-engine#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_engine",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-engine/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-c971e3ea18717d45.rlib": "a3604e22302c53a650a444bf0e00f27b87baaf0ad79de1e128a1dbaf2411273f",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-c971e3ea18717d45.rmeta": "dedf4ec31c2d3096b90d7b252cf80b06eef4f9ac8bdf960e5a62ae1919ba38e5"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "default",
+            "ffi-integration"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui-68f4b469a00b3a32.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui-68f4b469a00b3a32.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui-68f4b469a00b3a32.rlib": "912a64f95ade5299df835b339b425663508e786a73de613e0a7352b159aa9d73",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui-68f4b469a00b3a32.rmeta": "2458bd5bf2467f67776b18f9c01f36ae74c967a548e21041cea5611ce8605e0e"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "default"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/libopenui_ffi.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/libopenui_ffi.a",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/libopenui_ffi.so"
+          ],
+          "fresh": false,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-ffi/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-ffi#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "rlib",
+              "staticlib",
+              "cdylib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "rlib",
+              "staticlib",
+              "cdylib"
+            ],
+            "name": "openui_ffi",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-ffi/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/libopenui_ffi.a": "9fb11b685c5230b9f27cea8bcf0eda342d6f283b2ab3e4e1dca27842dc26d940",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/libopenui_ffi.rlib": "94f791d9fb35d4dce76f8d0e1e7d8f5d2cac35215ff62f01f1a0cd4afdaba39e",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/libopenui_ffi.so": "ac948000085e81bb87a48f9bccc34affc1ab0782d682de10efc6a1f447b598ab"
+        }
+      }
+    ],
+    "observations": {
+      "c": {
+        "binary_sha256": "9f08cb96a249f9982f75b047bcbad8a6d14a073e1dbb34e59392529575b3c4cb",
+        "callback_rows": 29,
+        "differences": [],
+        "native_matches_chromium": true,
+        "observed": [
+          {
+            "observed": {
+              "active": "body",
+              "rows": [
+                {
+                  "active": "text",
+                  "type": "beforeinput",
+                  "value": ""
+                },
+                {
+                  "active": "text",
+                  "type": "input",
+                  "value": "A"
+                },
+                {
+                  "active": "body",
+                  "type": "change",
+                  "value": "A"
+                },
+                {
+                  "active": "body",
+                  "type": "blur",
+                  "value": "A"
+                },
+                {
+                  "active": "body",
+                  "type": "focusout",
+                  "value": "A"
+                }
+              ],
+              "value": "A"
+            },
+            "scenario": "input-blur"
+          },
+          {
+            "observed": {
+              "active": "body",
+              "rows": [
+                {
+                  "active": "text",
+                  "type": "beforeinput",
+                  "value": ""
+                },
+                {
+                  "active": "text",
+                  "type": "input",
+                  "value": "A"
+                },
+                {
+                  "active": "body",
+                  "type": "change",
+                  "value": "A"
+                },
+                {
+                  "active": "body",
+                  "type": "blur",
+                  "value": "A"
+                },
+                {
+                  "active": "body",
+                  "type": "focusout",
+                  "value": "A"
+                }
+              ],
+              "value": "A"
+            },
+            "scenario": "textarea-blur"
+          },
+          {
+            "observed": {
+              "active": "body",
+              "rows": [
+                {
+                  "active": "body",
+                  "type": "blur",
+                  "value": "B"
+                },
+                {
+                  "active": "body",
+                  "type": "focusout",
+                  "value": "B"
+                }
+              ],
+              "value": "B"
+            },
+            "scenario": "programmatic-only"
+          },
+          {
+            "observed": {
+              "active": "body",
+              "rows": [
+                {
+                  "active": "text",
+                  "type": "beforeinput",
+                  "value": ""
+                },
+                {
+                  "active": "text",
+                  "type": "input",
+                  "value": "A"
+                },
+                {
+                  "active": "body",
+                  "type": "change",
+                  "value": "B"
+                },
+                {
+                  "active": "body",
+                  "type": "blur",
+                  "value": "B"
+                },
+                {
+                  "active": "body",
+                  "type": "focusout",
+                  "value": "B"
+                }
+              ],
+              "value": "B"
+            },
+            "scenario": "edited-then-programmatic"
+          },
+          {
+            "observed": {
+              "active": "body",
+              "rows": [
+                {
+                  "active": "text",
+                  "type": "beforeinput",
+                  "value": ""
+                },
+                {
+                  "active": "text",
+                  "type": "input",
+                  "value": "A"
+                },
+                {
+                  "active": "text",
+                  "type": "beforeinput",
+                  "value": "A"
+                },
+                {
+                  "active": "text",
+                  "type": "input",
+                  "value": ""
+                },
+                {
+                  "active": "body",
+                  "type": "blur",
+                  "value": ""
+                },
+                {
+                  "active": "body",
+                  "type": "focusout",
+                  "value": ""
+                }
+              ],
+              "value": ""
+            },
+            "scenario": "edit-revert"
+          },
+          {
+            "observed": {
+              "active": "body",
+              "rows": [
+                {
+                  "active": "text",
+                  "type": "beforeinput",
+                  "value": ""
+                },
+                {
+                  "active": "text",
+                  "type": "input",
+                  "value": "A"
+                },
+                {
+                  "active": "text",
+                  "type": "beforeinput",
+                  "value": "A"
+                },
+                {
+                  "active": "text",
+                  "type": "change",
+                  "value": "A"
+                },
+                {
+                  "active": "body",
+                  "type": "blur",
+                  "value": "A"
+                },
+                {
+                  "active": "body",
+                  "type": "focusout",
+                  "value": "A"
+                }
+              ],
+              "value": "A"
+            },
+            "scenario": "enter-commit"
+          }
+        ],
+        "repeated_identical": true
+      },
+      "cpp": {
+        "binary_sha256": "e97679f7c0f8fd7a5d07c87559609ed69b3706d3a5ec4ec0ef08019da3c34d88",
+        "callback_rows": 29,
+        "differences": [],
+        "native_matches_chromium": true,
+        "observed": [
+          {
+            "observed": {
+              "active": "body",
+              "rows": [
+                {
+                  "active": "text",
+                  "type": "beforeinput",
+                  "value": ""
+                },
+                {
+                  "active": "text",
+                  "type": "input",
+                  "value": "A"
+                },
+                {
+                  "active": "body",
+                  "type": "change",
+                  "value": "A"
+                },
+                {
+                  "active": "body",
+                  "type": "blur",
+                  "value": "A"
+                },
+                {
+                  "active": "body",
+                  "type": "focusout",
+                  "value": "A"
+                }
+              ],
+              "value": "A"
+            },
+            "scenario": "input-blur"
+          },
+          {
+            "observed": {
+              "active": "body",
+              "rows": [
+                {
+                  "active": "text",
+                  "type": "beforeinput",
+                  "value": ""
+                },
+                {
+                  "active": "text",
+                  "type": "input",
+                  "value": "A"
+                },
+                {
+                  "active": "body",
+                  "type": "change",
+                  "value": "A"
+                },
+                {
+                  "active": "body",
+                  "type": "blur",
+                  "value": "A"
+                },
+                {
+                  "active": "body",
+                  "type": "focusout",
+                  "value": "A"
+                }
+              ],
+              "value": "A"
+            },
+            "scenario": "textarea-blur"
+          },
+          {
+            "observed": {
+              "active": "body",
+              "rows": [
+                {
+                  "active": "body",
+                  "type": "blur",
+                  "value": "B"
+                },
+                {
+                  "active": "body",
+                  "type": "focusout",
+                  "value": "B"
+                }
+              ],
+              "value": "B"
+            },
+            "scenario": "programmatic-only"
+          },
+          {
+            "observed": {
+              "active": "body",
+              "rows": [
+                {
+                  "active": "text",
+                  "type": "beforeinput",
+                  "value": ""
+                },
+                {
+                  "active": "text",
+                  "type": "input",
+                  "value": "A"
+                },
+                {
+                  "active": "body",
+                  "type": "change",
+                  "value": "B"
+                },
+                {
+                  "active": "body",
+                  "type": "blur",
+                  "value": "B"
+                },
+                {
+                  "active": "body",
+                  "type": "focusout",
+                  "value": "B"
+                }
+              ],
+              "value": "B"
+            },
+            "scenario": "edited-then-programmatic"
+          },
+          {
+            "observed": {
+              "active": "body",
+              "rows": [
+                {
+                  "active": "text",
+                  "type": "beforeinput",
+                  "value": ""
+                },
+                {
+                  "active": "text",
+                  "type": "input",
+                  "value": "A"
+                },
+                {
+                  "active": "text",
+                  "type": "beforeinput",
+                  "value": "A"
+                },
+                {
+                  "active": "text",
+                  "type": "input",
+                  "value": ""
+                },
+                {
+                  "active": "body",
+                  "type": "blur",
+                  "value": ""
+                },
+                {
+                  "active": "body",
+                  "type": "focusout",
+                  "value": ""
+                }
+              ],
+              "value": ""
+            },
+            "scenario": "edit-revert"
+          },
+          {
+            "observed": {
+              "active": "body",
+              "rows": [
+                {
+                  "active": "text",
+                  "type": "beforeinput",
+                  "value": ""
+                },
+                {
+                  "active": "text",
+                  "type": "input",
+                  "value": "A"
+                },
+                {
+                  "active": "text",
+                  "type": "beforeinput",
+                  "value": "A"
+                },
+                {
+                  "active": "text",
+                  "type": "change",
+                  "value": "A"
+                },
+                {
+                  "active": "body",
+                  "type": "blur",
+                  "value": "A"
+                },
+                {
+                  "active": "body",
+                  "type": "focusout",
+                  "value": "A"
+                }
+              ],
+              "value": "A"
+            },
+            "scenario": "enter-commit"
+          }
+        ],
+        "repeated_identical": true
+      }
+    },
+    "observed_exit_code": 0,
+    "private_source": {
+      "clean": true,
+      "commit": "f73435f371f2499dc41ad995c70745b5161e90bd",
+      "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+      "source_tree_sha256": "871545e48ab0b8cbdb2872cc94e91be144273317f85ec1d4e698158f01d4b37b",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "private_source_after": {
+      "clean": true,
+      "commit": "f73435f371f2499dc41ad995c70745b5161e90bd",
+      "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+      "source_tree_sha256": "871545e48ab0b8cbdb2872cc94e91be144273317f85ec1d4e698158f01d4b37b",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "private_source_unchanged": true,
+    "probe_sha256": "599d6c9c5eba5ee56e50146f2dc83e545ace71dff8f97049e9cca8f44a9af74d",
+    "reference_sha256": "8710e870abaed88e297f33b86452e0d9d7dcfd95e42c725f8f838ea24b1319d3",
+    "release_qualification": false,
+    "schema_version": 1,
+    "source": {
+      "clean": true,
+      "commit": "8e8318bf39a730baf16082c41ca3c6321d5e7ab1",
+      "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+      "source_tree_sha256": "e31d91f7ea96caa31e6ee580aedb73297d33fb8d0214605e88cd13d4a500456a",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "8e8318bf39a730baf16082c41ca3c6321d5e7ab1",
+      "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+      "source_tree_sha256": "e31d91f7ea96caa31e6ee580aedb73297d33fb8d0214605e88cd13d4a500456a",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_unchanged": true,
+    "steps": [
+      {
+        "command": [
+          "cargo",
+          "--config",
+          "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/.cargo/config.chromium.toml",
+          "metadata",
+          "--locked",
+          "--offline",
+          "--format-version",
+          "1"
+        ],
+        "log_sha256": "013ad9988536164c37b1673e97420de52f455472ae3289bc0417acbf61568afb",
+        "observed_exit_code": 0,
+        "stage": "locked-private-metadata"
+      },
+      {
+        "command": [
+          "cargo",
+          "--config",
+          "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/.cargo/config.chromium.toml",
+          "clean",
+          "--locked",
+          "-p",
+          "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/vendor/bytemuck-v1#bytemuck@1.25.0",
+          "-p",
+          "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/vendor/bytemuck_derive-v1#bytemuck_derive@1.10.2",
+          "-p",
+          "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/examples/counter#0.2.0",
+          "-p",
+          "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/examples/dashboard#0.2.0",
+          "-p",
+          "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/vendor/font-types-v0_11#font-types@0.11.0",
+          "-p",
+          "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/examples/framework-test#0.2.0",
+          "-p",
+          "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/examples/hello#0.2.0",
+          "-p",
+          "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui#0.2.0",
+          "-p",
+          "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-compositor#0.2.0",
+          "-p",
+          "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-dom#0.2.0",
+          "-p",
+          "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-engine#0.2.0",
+          "-p",
+          "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-ffi#0.2.0",
+          "-p",
+          "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-geometry#0.2.0",
+          "-p",
+          "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-layout#0.2.0",
+          "-p",
+          "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-macros#0.2.0",
+          "-p",
+          "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-paint#0.2.0",
+          "-p",
+          "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-platform#0.2.0",
+          "-p",
+          "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-style#0.2.0",
+          "-p",
+          "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/openui-text#0.2.0",
+          "-p",
+          "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/pixel-compare#0.1.0",
+          "-p",
+          "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/vendor/read-fonts-v0_37#read-fonts@0.37.0",
+          "-p",
+          "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/vendor/skrifa-v0_40#skrifa@0.40.0",
+          "-p",
+          "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-text-commit-source-v2674/bindings/rust/examples/todo#0.2.0"
+        ],
+        "log_sha256": "5646636a2daaac798916cde958eea5768d0a72b223db8b6fe4b7c5eb5300d8bc",
+        "observed_exit_code": 0,
+        "stage": "clean-all-local-source-packages"
+      },
+      {
+        "command": [
+          "cargo",
+          "--config",
+          "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/.cargo/config.chromium.toml",
+          "build",
+          "--locked",
+          "--offline",
+          "-p",
+          "openui-ffi",
+          "--message-format=json"
+        ],
+        "log_sha256": "7236a6fdc0ea2135120393e4041afd0182ec13e2124cfa7698d88a0f056bf7bd",
+        "observed_exit_code": 0,
+        "stage": "fresh-candidate-ffi"
+      },
+      {
+        "command": [
+          "/home/nero/chromium/src/third_party/llvm-build/Release+Asserts/bin/clang",
+          "-std=c11",
+          "-Wall",
+          "-Wextra",
+          "-Werror",
+          "--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot",
+          "-I/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/include",
+          "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/examples/c_v02/text_commit.c",
+          "-c",
+          "-o",
+          "/mnt/e/openui-v02-qualification-d174ea0b/native-text-commit-c-candidate-v2695/c.o"
+        ],
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "observed_exit_code": 0,
+        "stage": "c-compile"
+      },
+      {
+        "command": [
+          "/home/nero/chromium/src/third_party/llvm-build/Release+Asserts/bin/clang++",
+          "--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot",
+          "-L/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot/usr/lib/x86_64-linux-gnu",
+          "-L/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot/usr/lib/gcc/x86_64-linux-gnu/10",
+          "-B/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot/usr/lib/gcc/x86_64-linux-gnu/10",
+          "-fuse-ld=lld",
+          "/mnt/e/openui-v02-qualification-d174ea0b/native-text-commit-c-candidate-v2695/c.o",
+          "/mnt/e/openui-v02-qualification-d174ea0b/native-text-commit-c-candidate-v2695/libopenui.so.0",
+          "-Wl,-rpath,/mnt/e/openui-v02-qualification-d174ea0b/native-text-commit-c-candidate-v2695",
+          "-o",
+          "/mnt/e/openui-v02-qualification-d174ea0b/native-text-commit-c-candidate-v2695/c"
+        ],
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "observed_exit_code": 0,
+        "stage": "c-link"
+      },
+      {
+        "command": [
+          "/mnt/e/openui-v02-qualification-d174ea0b/native-text-commit-c-candidate-v2695/c"
+        ],
+        "log_sha256": "6e038a93f246fbc7211242f3ed392fd20d8dd1780e2ed99cf651d24440fd6c73",
+        "observed_exit_code": 0,
+        "stage": "c-first"
+      },
+      {
+        "command": [
+          "/mnt/e/openui-v02-qualification-d174ea0b/native-text-commit-c-candidate-v2695/c"
+        ],
+        "log_sha256": "6e038a93f246fbc7211242f3ed392fd20d8dd1780e2ed99cf651d24440fd6c73",
+        "observed_exit_code": 0,
+        "stage": "c-second"
+      },
+      {
+        "command": [
+          "/home/nero/chromium/src/third_party/llvm-build/Release+Asserts/bin/clang++",
+          "-std=c++17",
+          "-Wall",
+          "-Wextra",
+          "-Werror",
+          "--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot",
+          "-I/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/include",
+          "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/examples/c_v02/text_commit.cc",
+          "-c",
+          "-o",
+          "/mnt/e/openui-v02-qualification-d174ea0b/native-text-commit-c-candidate-v2695/cpp.o"
+        ],
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "observed_exit_code": 0,
+        "stage": "cpp-compile"
+      },
+      {
+        "command": [
+          "/home/nero/chromium/src/third_party/llvm-build/Release+Asserts/bin/clang++",
+          "--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot",
+          "-L/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot/usr/lib/x86_64-linux-gnu",
+          "-L/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot/usr/lib/gcc/x86_64-linux-gnu/10",
+          "-B/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot/usr/lib/gcc/x86_64-linux-gnu/10",
+          "-fuse-ld=lld",
+          "/mnt/e/openui-v02-qualification-d174ea0b/native-text-commit-c-candidate-v2695/cpp.o",
+          "/mnt/e/openui-v02-qualification-d174ea0b/native-text-commit-c-candidate-v2695/libopenui.so.0",
+          "-Wl,-rpath,/mnt/e/openui-v02-qualification-d174ea0b/native-text-commit-c-candidate-v2695",
+          "-o",
+          "/mnt/e/openui-v02-qualification-d174ea0b/native-text-commit-c-candidate-v2695/cpp"
+        ],
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "observed_exit_code": 0,
+        "stage": "cpp-link"
+      },
+      {
+        "command": [
+          "/mnt/e/openui-v02-qualification-d174ea0b/native-text-commit-c-candidate-v2695/cpp"
+        ],
+        "log_sha256": "6e038a93f246fbc7211242f3ed392fd20d8dd1780e2ed99cf651d24440fd6c73",
+        "observed_exit_code": 0,
+        "stage": "cpp-first"
+      },
+      {
+        "command": [
+          "/mnt/e/openui-v02-qualification-d174ea0b/native-text-commit-c-candidate-v2695/cpp"
+        ],
+        "log_sha256": "6e038a93f246fbc7211242f3ed392fd20d8dd1780e2ed99cf651d24440fd6c73",
+        "observed_exit_code": 0,
+        "stage": "cpp-second"
+      }
+    ]
+  },
+  "native_metadata_behavior_measured": false,
+  "native_rust": {
+    "all_commands_terminal": true,
+    "all_linked_native_source_proven": true,
+    "app_source_unchanged": true,
+    "binary_sha256": "2b006003730bdf70a5c7f8309b3a9d4e14cf42a78634d22a69be95901b6890ff",
+    "callback_rows": 29,
+    "diagnostic_only": true,
+    "differences": [],
+    "javascript_executed_by_openui": false,
+    "local_artifacts": [
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-4b61f41a2f5cf21d.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-4b61f41a2f5cf21d.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/openui-geometry/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/openui-geometry#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_geometry",
+            "src_path": "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/openui-geometry/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-4b61f41a2f5cf21d.rlib": "28fb11ad0fbdb4ce995c70941f17f5b9504251dc989542f87cf3f7dd155e5129",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-4b61f41a2f5cf21d.rmeta": "9e8f4f035c45210db06711d08d8bab410ec8d5cc0af8ba4e13d08e9df194858d"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck_derive-c3c12624215558b1.so"
+          ],
+          "fresh": false,
+          "manifest_path": "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/vendor/bytemuck_derive-v1/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/vendor/bytemuck_derive-v1#bytemuck_derive@1.10.2",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "proc-macro"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2018",
+            "kind": [
+              "proc-macro"
+            ],
+            "name": "bytemuck_derive",
+            "src_path": "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/vendor/bytemuck_derive-v1/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck_derive-c3c12624215558b1.so": "e5baecf49f94653d1e33cbf4d319bded01c1e573452fa65e6c95bc005b6261ec"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "bytemuck_derive",
+            "derive",
+            "min_const_generics"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-9acd318248e3dd5b.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-9acd318248e3dd5b.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/vendor/bytemuck-v1/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/vendor/bytemuck-v1#bytemuck@1.25.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2018",
+            "kind": [
+              "lib"
+            ],
+            "name": "bytemuck",
+            "src_path": "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/vendor/bytemuck-v1/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-9acd318248e3dd5b.rlib": "d9d9b16ddbf19b06b693e4ceb7541f31d552b69d7648a4aaabbf58ac14a35aa4",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-9acd318248e3dd5b.rmeta": "8773f843beaaff3a9b048797773e26b796971ba84c79d6ee85215b8791c7b7cc"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "bytemuck",
+            "std"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-a3290ed97170a7aa.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-a3290ed97170a7aa.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/vendor/font-types-v0_11/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/vendor/font-types-v0_11#font-types@0.11.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "font_types",
+            "src_path": "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/vendor/font-types-v0_11/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-a3290ed97170a7aa.rlib": "b5bb375764472a8bbefd5df1b6cbd04bcf7a711c9f7db76a3573c905c53765dd",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-a3290ed97170a7aa.rmeta": "80a5aba1fabad111d35f935912cf24744f0881fce796d2b151f0fb02c3660669"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-3380e980cb342b8a.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-3380e980cb342b8a.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/openui-style/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/openui-style#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_style",
+            "src_path": "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/openui-style/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-3380e980cb342b8a.rlib": "7121b099a118340a07ef0517fa2deb7dc6227ed3c97eb2da72a2dd7dac4cb147",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-3380e980cb342b8a.rmeta": "550c5c308e4179ead0206317e718406b0197990120fd80d7a310ed82cf0c6121"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_macros-70c151bb540d6ab8.so"
+          ],
+          "fresh": false,
+          "manifest_path": "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/openui-macros/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/openui-macros#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "proc-macro"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "proc-macro"
+            ],
+            "name": "openui_macros",
+            "src_path": "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/openui-macros/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_macros-70c151bb540d6ab8.so": "d1c8d45c8731b8e7f3996d947d9b38d8d87619be9847063900cc1a98bd2abada"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "std"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-0b2531cadfa86c04.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-0b2531cadfa86c04.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/vendor/read-fonts-v0_37/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/vendor/read-fonts-v0_37#read-fonts@0.37.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "read_fonts",
+            "src_path": "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/vendor/read-fonts-v0_37/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-0b2531cadfa86c04.rlib": "761d1f3707034dc583eb56f92aefd0f14cbe2b32ac0b9a8eaaa6f633095e3969",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-0b2531cadfa86c04.rmeta": "ac9981d459b971ef314607ed66c1597952d91e2bd4fa02e197c8e2e98250472a"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-614b56eb771f301c.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-614b56eb771f301c.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/openui-dom/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/openui-dom#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_dom",
+            "src_path": "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/openui-dom/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-614b56eb771f301c.rlib": "d7ce3fdb737f0c8a7e853619d50b7e95180037097ef34b2f9efc4b539e5ed4a8",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-614b56eb771f301c.rmeta": "cdb8e0a03feb5db4d72abcf6c225955f5f4d15b82e5301edec2162f991c8560d"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "autohint_shaping",
+            "default",
+            "std"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-9e5f8648b36ae670.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-9e5f8648b36ae670.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/vendor/skrifa-v0_40/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/vendor/skrifa-v0_40#skrifa@0.40.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "skrifa",
+            "src_path": "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/vendor/skrifa-v0_40/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-9e5f8648b36ae670.rlib": "b4eaf6744300df382c4f6ca3e0f9aa0d79773b870f91fdd549b6f75476479ddf",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-9e5f8648b36ae670.rmeta": "2935f749e5c0d27f5dbfc6b868f760ca7b4467c4dab5a984320bc36482889217"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-e65c8186d8d5f241.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-e65c8186d8d5f241.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/openui-text/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/openui-text#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_text",
+            "src_path": "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/openui-text/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-e65c8186d8d5f241.rlib": "6ac56c3fc4360b0febfeb3e405053def52942a5769ee5268a87946c3f177f8d6",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-e65c8186d8d5f241.rmeta": "1f3eb88c6b9ed29d0abfd0adf16ec6b74cec48a73d69f3d9cd5dc7764d898270"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-e1f993d0975ebe2d.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-e1f993d0975ebe2d.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/openui-layout/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/openui-layout#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_layout",
+            "src_path": "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/openui-layout/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-e1f993d0975ebe2d.rlib": "02f5c0f5bc132f5f560cc2fe8d703a074367cfff013f93fb29ebe7de28575d07",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-e1f993d0975ebe2d.rmeta": "5c1b0f7b43ef37d065c0fd364f514724dfa6b7c584efe7b057b19d310a0965df"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "default"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-b10dd93f5054e3f2.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-b10dd93f5054e3f2.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/openui-compositor/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/openui-compositor#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_compositor",
+            "src_path": "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/openui-compositor/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-b10dd93f5054e3f2.rlib": "8b6e02ed9b6de54deb0e76fb81d885c4132f73fb7a1085fa1ceb49bff0614fe1",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-b10dd93f5054e3f2.rmeta": "517ec4180fd24813a837b9e8806dda41a517e68858ddf771370d8d35dfc3bb70"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-c6e07f9ca28aa819.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-c6e07f9ca28aa819.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/openui-paint/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/openui-paint#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_paint",
+            "src_path": "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/openui-paint/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-c6e07f9ca28aa819.rlib": "e3d1fdbaeec02766afc6e571fe1b48fb9d7638851a3699ef065d9d525db8091f",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-c6e07f9ca28aa819.rmeta": "5ed236c9d19b7ab5d70710cee39a9b8cb102211754d3c064c6df3da845e9f6f2"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-e02dc21787abe848.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-e02dc21787abe848.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/openui-engine/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/openui-engine#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_engine",
+            "src_path": "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/openui-engine/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-e02dc21787abe848.rlib": "5684a45a6af29d115e575f6325ea71335dd128eaeef4341754b8dae4da6ced34",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-e02dc21787abe848.rmeta": "9209c78cd745dc170f9e78ead31d0e4c6293c96e28a34373b28ee172dee98798"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "default"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui-98409a031296ead7.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui-98409a031296ead7.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/openui/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/openui#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui",
+            "src_path": "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/openui/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui-98409a031296ead7.rlib": "6473de852f8ae609600c6d0752f1a4a161d5c7f83d742621f5b8eb3bfda8fac1",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui-98409a031296ead7.rmeta": "250625d449b30682123b3b5b14a50c3995772d76fc5b1345ec1550fd02cd3b56"
+        }
+      },
+      {
+        "record": {
+          "executable": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/openui-native-text-commit-api",
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/openui-native-text-commit-api"
+          ],
+          "fresh": false,
+          "manifest_path": "/home/nero/code/open-ui/out/private-native-apps/native-text-commit-candidate-v2680/Cargo.toml",
+          "package_id": "path+file:///home/nero/code/open-ui/out/private-native-apps/native-text-commit-candidate-v2680#openui-native-text-commit-api@0.1.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "bin"
+            ],
+            "doc": true,
+            "doctest": false,
+            "edition": "2021",
+            "kind": [
+              "bin"
+            ],
+            "name": "openui-native-text-commit-api",
+            "src_path": "/home/nero/code/open-ui/out/private-native-apps/native-text-commit-candidate-v2680/src/main.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/openui-native-text-commit-api": "2b006003730bdf70a5c7f8309b3a9d4e14cf42a78634d22a69be95901b6890ff"
+        }
+      }
+    ],
+    "native_app_source": {
+      "clean": true,
+      "commit": "b1546cb6d409a7f10eb0d35bbc6cbbaa207d79c2",
+      "tree": "00f4f844230692fb2751e03c482df0f0807ad13b"
+    },
+    "native_app_source_after": {
+      "clean": true,
+      "commit": "b1546cb6d409a7f10eb0d35bbc6cbbaa207d79c2",
+      "tree": "00f4f844230692fb2751e03c482df0f0807ad13b"
+    },
+    "native_matches_chromium": true,
+    "observations": [
+      {
+        "observed": {
+          "active": "body",
+          "rows": [
+            {
+              "active": "text",
+              "bubbles": true,
+              "cancelable": true,
+              "type": "beforeinput",
+              "value": ""
+            },
+            {
+              "active": "text",
+              "bubbles": true,
+              "cancelable": false,
+              "type": "input",
+              "value": "A"
+            },
+            {
+              "active": "body",
+              "bubbles": true,
+              "cancelable": false,
+              "type": "change",
+              "value": "A"
+            },
+            {
+              "active": "body",
+              "bubbles": false,
+              "cancelable": false,
+              "type": "blur",
+              "value": "A"
+            },
+            {
+              "active": "body",
+              "bubbles": true,
+              "cancelable": false,
+              "type": "focusout",
+              "value": "A"
+            }
+          ],
+          "value": "A"
+        },
+        "scenario": "input-blur"
+      },
+      {
+        "observed": {
+          "active": "body",
+          "rows": [
+            {
+              "active": "text",
+              "bubbles": true,
+              "cancelable": true,
+              "type": "beforeinput",
+              "value": ""
+            },
+            {
+              "active": "text",
+              "bubbles": true,
+              "cancelable": false,
+              "type": "input",
+              "value": "A"
+            },
+            {
+              "active": "body",
+              "bubbles": true,
+              "cancelable": false,
+              "type": "change",
+              "value": "A"
+            },
+            {
+              "active": "body",
+              "bubbles": false,
+              "cancelable": false,
+              "type": "blur",
+              "value": "A"
+            },
+            {
+              "active": "body",
+              "bubbles": true,
+              "cancelable": false,
+              "type": "focusout",
+              "value": "A"
+            }
+          ],
+          "value": "A"
+        },
+        "scenario": "textarea-blur"
+      },
+      {
+        "observed": {
+          "active": "body",
+          "rows": [
+            {
+              "active": "body",
+              "bubbles": false,
+              "cancelable": false,
+              "type": "blur",
+              "value": "B"
+            },
+            {
+              "active": "body",
+              "bubbles": true,
+              "cancelable": false,
+              "type": "focusout",
+              "value": "B"
+            }
+          ],
+          "value": "B"
+        },
+        "scenario": "programmatic-only"
+      },
+      {
+        "observed": {
+          "active": "body",
+          "rows": [
+            {
+              "active": "text",
+              "bubbles": true,
+              "cancelable": true,
+              "type": "beforeinput",
+              "value": ""
+            },
+            {
+              "active": "text",
+              "bubbles": true,
+              "cancelable": false,
+              "type": "input",
+              "value": "A"
+            },
+            {
+              "active": "body",
+              "bubbles": true,
+              "cancelable": false,
+              "type": "change",
+              "value": "B"
+            },
+            {
+              "active": "body",
+              "bubbles": false,
+              "cancelable": false,
+              "type": "blur",
+              "value": "B"
+            },
+            {
+              "active": "body",
+              "bubbles": true,
+              "cancelable": false,
+              "type": "focusout",
+              "value": "B"
+            }
+          ],
+          "value": "B"
+        },
+        "scenario": "edited-then-programmatic"
+      },
+      {
+        "observed": {
+          "active": "body",
+          "rows": [
+            {
+              "active": "text",
+              "bubbles": true,
+              "cancelable": true,
+              "type": "beforeinput",
+              "value": ""
+            },
+            {
+              "active": "text",
+              "bubbles": true,
+              "cancelable": false,
+              "type": "input",
+              "value": "A"
+            },
+            {
+              "active": "text",
+              "bubbles": true,
+              "cancelable": true,
+              "type": "beforeinput",
+              "value": "A"
+            },
+            {
+              "active": "text",
+              "bubbles": true,
+              "cancelable": false,
+              "type": "input",
+              "value": ""
+            },
+            {
+              "active": "body",
+              "bubbles": false,
+              "cancelable": false,
+              "type": "blur",
+              "value": ""
+            },
+            {
+              "active": "body",
+              "bubbles": true,
+              "cancelable": false,
+              "type": "focusout",
+              "value": ""
+            }
+          ],
+          "value": ""
+        },
+        "scenario": "edit-revert"
+      },
+      {
+        "observed": {
+          "active": "body",
+          "rows": [
+            {
+              "active": "text",
+              "bubbles": true,
+              "cancelable": true,
+              "type": "beforeinput",
+              "value": ""
+            },
+            {
+              "active": "text",
+              "bubbles": true,
+              "cancelable": false,
+              "type": "input",
+              "value": "A"
+            },
+            {
+              "active": "text",
+              "bubbles": true,
+              "cancelable": true,
+              "type": "beforeinput",
+              "value": "A"
+            },
+            {
+              "active": "text",
+              "bubbles": true,
+              "cancelable": false,
+              "type": "change",
+              "value": "A"
+            },
+            {
+              "active": "body",
+              "bubbles": false,
+              "cancelable": false,
+              "type": "blur",
+              "value": "A"
+            },
+            {
+              "active": "body",
+              "bubbles": true,
+              "cancelable": false,
+              "type": "focusout",
+              "value": "A"
+            }
+          ],
+          "value": "A"
+        },
+        "scenario": "enter-commit"
+      }
+    ],
+    "observed_exit_code": 0,
+    "previous_goal_turn": "progress",
+    "probe_sha256": "6b0459a152ba3f96bff5d8772aab890fce85e9da112e48c3b03ce4904a77e9ca",
+    "public_source": {
+      "clean": true,
+      "commit": "8e8318bf39a730baf16082c41ca3c6321d5e7ab1",
+      "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+      "source_tree_sha256": "e31d91f7ea96caa31e6ee580aedb73297d33fb8d0214605e88cd13d4a500456a",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "public_source_after": {
+      "clean": true,
+      "commit": "8e8318bf39a730baf16082c41ca3c6321d5e7ab1",
+      "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+      "source_tree_sha256": "e31d91f7ea96caa31e6ee580aedb73297d33fb8d0214605e88cd13d4a500456a",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "public_source_unchanged": true,
+    "reference_sha256": "8710e870abaed88e297f33b86452e0d9d7dcfd95e42c725f8f838ea24b1319d3",
+    "release_qualification": false,
+    "repeated_native_outputs_identical": true,
+    "schema_version": 1,
+    "source": {
+      "clean": true,
+      "commit": "f73435f371f2499dc41ad995c70745b5161e90bd",
+      "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+      "source_tree_sha256": "871545e48ab0b8cbdb2872cc94e91be144273317f85ec1d4e698158f01d4b37b",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "f73435f371f2499dc41ad995c70745b5161e90bd",
+      "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+      "source_tree_sha256": "871545e48ab0b8cbdb2872cc94e91be144273317f85ec1d4e698158f01d4b37b",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_unchanged": true,
+    "steps": [
+      {
+        "command": [
+          "cargo",
+          "--config",
+          "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/.cargo/config.chromium.toml",
+          "metadata",
+          "--locked",
+          "--offline",
+          "--format-version",
+          "1"
+        ],
+        "log_sha256": "0113a0ed8bbb7c4439f0455a58e1320f9130dcda6995bd1c18b9082cf2a993c5",
+        "name": "locked-metadata",
+        "observed_exit_code": 0
+      },
+      {
+        "command": [
+          "cargo",
+          "--config",
+          "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/.cargo/config.chromium.toml",
+          "clean",
+          "--locked",
+          "-p",
+          "path+file:///home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/vendor/bytemuck-v1#bytemuck@1.25.0",
+          "-p",
+          "path+file:///home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/vendor/bytemuck_derive-v1#bytemuck_derive@1.10.2",
+          "-p",
+          "path+file:///home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/vendor/font-types-v0_11#font-types@0.11.0",
+          "-p",
+          "path+file:///home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/openui#0.2.0",
+          "-p",
+          "path+file:///home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/openui-compositor#0.2.0",
+          "-p",
+          "path+file:///home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/openui-dom#0.2.0",
+          "-p",
+          "path+file:///home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/openui-engine#0.2.0",
+          "-p",
+          "path+file:///home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/openui-geometry#0.2.0",
+          "-p",
+          "path+file:///home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/openui-layout#0.2.0",
+          "-p",
+          "path+file:///home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/openui-macros#0.2.0",
+          "-p",
+          "path+file:///home/nero/code/open-ui/out/private-native-apps/native-text-commit-candidate-v2680#openui-native-text-commit-api@0.1.0",
+          "-p",
+          "path+file:///home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/openui-paint#0.2.0",
+          "-p",
+          "path+file:///home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/openui-style#0.2.0",
+          "-p",
+          "path+file:///home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/openui-text#0.2.0",
+          "-p",
+          "path+file:///home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/vendor/read-fonts-v0_37#read-fonts@0.37.0",
+          "-p",
+          "path+file:///home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/vendor/skrifa-v0_40#skrifa@0.40.0"
+        ],
+        "log_sha256": "f3c07766c63ef1c382615ffd3263a8f1484621b312ef262855ceadbb0164b634",
+        "name": "clean-local-packages",
+        "observed_exit_code": 0
+      },
+      {
+        "command": [
+          "cargo",
+          "--config",
+          "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/.cargo/config.chromium.toml",
+          "build",
+          "--locked",
+          "--offline",
+          "--message-format=json"
+        ],
+        "log_sha256": "c58fb38949ca079c812fbc1bb6741e5fb4b78f11f4fb13774d23e7ae84a54707",
+        "name": "native-build",
+        "observed_exit_code": 0
+      },
+      {
+        "command": [
+          "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-candidate-v2681/native-controls"
+        ],
+        "log_sha256": "f975534e73c5a0160e5a771c8eb0f0a6a095bbb620cdbdbc34cddb12f00d63aa",
+        "name": "native-first",
+        "observed_exit_code": 0
+      },
+      {
+        "command": [
+          "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-candidate-v2681/native-controls"
+        ],
+        "log_sha256": "f975534e73c5a0160e5a771c8eb0f0a6a095bbb620cdbdbc34cddb12f00d63aa",
+        "name": "native-second",
+        "observed_exit_code": 0
+      },
+      {
+        "command": [
+          "cargo",
+          "--config",
+          "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/.cargo/config.chromium.toml",
+          "test",
+          "--locked",
+          "--offline",
+          "-p",
+          "openui",
+          "--test",
+          "native_text_commit",
+          "--",
+          "--test-threads=1"
+        ],
+        "log_sha256": "97a0bc8f1e59ac16db04f61e92d4d034b56ed949a28078dcba955bccd89e7bcc",
+        "name": "native_text_commit-guards",
+        "observed_exit_code": 0
+      },
+      {
+        "command": [
+          "cargo",
+          "--config",
+          "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/.cargo/config.chromium.toml",
+          "test",
+          "--locked",
+          "--offline",
+          "-p",
+          "openui",
+          "--test",
+          "native_focus",
+          "--",
+          "--test-threads=1"
+        ],
+        "log_sha256": "8655484fe5984cc28d86259f009d5ac78670fe65d87dab91eb5111e7dbfe8b0f",
+        "name": "native_focus-guards",
+        "observed_exit_code": 0
+      },
+      {
+        "command": [
+          "cargo",
+          "--config",
+          "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/.cargo/config.chromium.toml",
+          "test",
+          "--locked",
+          "--offline",
+          "-p",
+          "openui",
+          "--test",
+          "native_input_notifications",
+          "--",
+          "--test-threads=1"
+        ],
+        "log_sha256": "a7a0973fe7a24df41df09006a9a3ca51f7f68c4c9f7d188a09febb95cacb1391",
+        "name": "native_input_notifications-guards",
+        "observed_exit_code": 0
+      }
+    ]
+  },
+  "pixel_target": "pinned Chromium",
+  "pixel_tolerance": 0,
+  "public_baseline_source": {
+    "clean": true,
+    "commit": "8e8318bf39a730baf16082c41ca3c6321d5e7ab1",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "e31d91f7ea96caa31e6ee580aedb73297d33fb8d0214605e88cd13d4a500456a",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "reference": {
+    "all_commands_terminal": true,
+    "chrome_sha256": "0ba87684df0afc11faaea40ac57bd2f1d68b67191443b38215a36b90e6f08848",
+    "diagnostic_only": true,
+    "javascript_executed_by_openui": false,
+    "observed_exit_code": 0,
+    "release_qualification": false,
+    "repeated_observations_identical": true,
+    "root_cause_reviewed": false,
+    "runs": [
+      {
+        "callback_rows": 29,
+        "number": 1,
+        "observations_sha256": "8710e870abaed88e297f33b86452e0d9d7dcfd95e42c725f8f838ea24b1319d3"
+      },
+      {
+        "callback_rows": 29,
+        "number": 2,
+        "observations_sha256": "8710e870abaed88e297f33b86452e0d9d7dcfd95e42c725f8f838ea24b1319d3"
+      }
+    ],
+    "schema_version": 1,
+    "script_runs_only_in_offline_chromium": true,
+    "source": {
+      "clean": true,
+      "commit": "8e8318bf39a730baf16082c41ca3c6321d5e7ab1",
+      "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+      "source_tree_sha256": "e31d91f7ea96caa31e6ee580aedb73297d33fb8d0214605e88cd13d4a500456a",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "8e8318bf39a730baf16082c41ca3c6321d5e7ab1",
+      "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+      "source_tree_sha256": "e31d91f7ea96caa31e6ee580aedb73297d33fb8d0214605e88cd13d4a500456a",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_unchanged": true
+  },
+  "rejected_c_measurement": {
+    "all_commands_terminal": true,
+    "consumer_inputs": {
+      "text_commit.c": "7e9fb73311e7ebbf5ac5f2d780efd0ca185256b724ad6e5ac908c1a8cd47cb68",
+      "text_commit.cc": "c2c887446cdff765001c49f2d51689bd5211076a839cea387f5c3258256e9793"
+    },
+    "diagnostic_only": true,
+    "failure": "AssertionError('cached local artifact lacks prior source proof')",
+    "javascript_executed_by_openui": false,
+    "observations": {},
+    "observed_exit_code": 1,
+    "private_source": {
+      "clean": true,
+      "commit": "f73435f371f2499dc41ad995c70745b5161e90bd",
+      "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+      "source_tree_sha256": "871545e48ab0b8cbdb2872cc94e91be144273317f85ec1d4e698158f01d4b37b",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "private_source_after": {
+      "clean": true,
+      "commit": "f73435f371f2499dc41ad995c70745b5161e90bd",
+      "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+      "source_tree_sha256": "871545e48ab0b8cbdb2872cc94e91be144273317f85ec1d4e698158f01d4b37b",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "private_source_unchanged": true,
+    "probe_sha256": "e349898146354e7dc3680949605c5ac117d528138ab8e28f3ef85ba3714c5dd4",
+    "reference_sha256": "8710e870abaed88e297f33b86452e0d9d7dcfd95e42c725f8f838ea24b1319d3",
+    "release_qualification": false,
+    "schema_version": 1,
+    "source": {
+      "clean": true,
+      "commit": "8e8318bf39a730baf16082c41ca3c6321d5e7ab1",
+      "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+      "source_tree_sha256": "e31d91f7ea96caa31e6ee580aedb73297d33fb8d0214605e88cd13d4a500456a",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "8e8318bf39a730baf16082c41ca3c6321d5e7ab1",
+      "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+      "source_tree_sha256": "e31d91f7ea96caa31e6ee580aedb73297d33fb8d0214605e88cd13d4a500456a",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_unchanged": true,
+    "steps": [
+      {
+        "command": [
+          "cargo",
+          "--config",
+          "/home/nero/code/open-ui/out/private-native-text-commit-source-v2674/bindings/rust/.cargo/config.chromium.toml",
+          "build",
+          "--locked",
+          "--offline",
+          "-p",
+          "openui-ffi",
+          "--message-format=json"
+        ],
+        "log_sha256": "5a8603a6d0a27cf934e2b5337eff6155224b167a3126d23d29ff61efeac753bd",
+        "observed_exit_code": 0,
+        "stage": "fresh-candidate-ffi"
+      }
+    ]
+  },
+  "rejected_metadata_probe": {
+    "all_commands_terminal": true,
+    "all_native_apis_qualified": false,
+    "chrome_sha256": "0ba87684df0afc11faaea40ac57bd2f1d68b67191443b38215a36b90e6f08848",
+    "diagnostic_only": true,
+    "failure": "AssertionError()",
+    "javascript_executed_by_openui": false,
+    "metadata_fields": [
+      "input_type",
+      "data",
+      "is_composing"
+    ],
+    "observed_exit_code": 1,
+    "release_qualification": false,
+    "root_cause_reviewed": false,
+    "runs": [],
+    "schema_version": 1,
+    "script_runs_only_in_offline_chromium": true,
+    "source": {
+      "clean": true,
+      "commit": "8e8318bf39a730baf16082c41ca3c6321d5e7ab1",
+      "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+      "source_tree_sha256": "e31d91f7ea96caa31e6ee580aedb73297d33fb8d0214605e88cd13d4a500456a",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "8e8318bf39a730baf16082c41ca3c6321d5e7ab1",
+      "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+      "source_tree_sha256": "e31d91f7ea96caa31e6ee580aedb73297d33fb8d0214605e88cd13d4a500456a",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_unchanged": true
+  },
+  "release_qualification": false,
+  "remaining_gates": [
+    "broader native reentry observations",
+    "native editing intent and nullable data APIs",
+    "complete workspace and ABI checks",
+    "own-source renderer qualification",
+    "all needed native APIs",
+    "complete Chromium equality",
+    "compositor and release lab"
+  ],
+  "review_evidence": [
+    {
+      "decoded_sha256": "8762e8354444d99a693b8fc46aae730388fef0e3c8add552bd47d093ec0b9c42",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-oracle-v2657/receipt.json",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-oracle-v2657-receipt.json.gz",
+      "sha256": "0c7df12d34da8d3f9e94fd3fd334187911bb7710192a3e0ca74175d66f02572d"
+    },
+    {
+      "decoded_sha256": "8710e870abaed88e297f33b86452e0d9d7dcfd95e42c725f8f838ea24b1319d3",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-oracle-v2657/observations-1.json",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-oracle-v2657-observations-1.json.gz",
+      "sha256": "ba58dc5403739bf52cf43c7e50462a2bb399a4f4213bd118fcb6616b8a33be8b"
+    },
+    {
+      "decoded_sha256": "8710e870abaed88e297f33b86452e0d9d7dcfd95e42c725f8f838ea24b1319d3",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-oracle-v2657/observations-2.json",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-oracle-v2657-observations-2.json.gz",
+      "sha256": "ba58dc5403739bf52cf43c7e50462a2bb399a4f4213bd118fcb6616b8a33be8b"
+    },
+    {
+      "decoded_sha256": "97a9854eb727f814012496386dd5fe960451826e7650405ec1c91595266c8282",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-baseline-v2661/receipt.json",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-baseline-v2661-receipt.json.gz",
+      "sha256": "f8b3590c4f5a191bf4e27081e2e77cb272351889d36f91a7ec38dbc488928e5f"
+    },
+    {
+      "decoded_sha256": "d8bb441d873ea5f7c499ee414913d36dabc664421286ed756d0461f25c0acb9a",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-baseline-v2661/locked-metadata.log",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-baseline-v2661-locked-metadata.log.gz",
+      "sha256": "c6c7e331146f4f2d28b9acb6c8c77b571bd1b5a9de933ad8bc90c11e59f0f322"
+    },
+    {
+      "decoded_sha256": "40533cc056576d21d42a19826504e4f286a0c9b3856dd25b3751e26e41f39f21",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-baseline-v2661/clean-local-packages.log",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-baseline-v2661-clean-local-packages.log.gz",
+      "sha256": "8f854cef87d447549eca0e65693f733eefd8db8fab40133b2acaa2f0cd4d0c7e"
+    },
+    {
+      "decoded_sha256": "dc44cc5d28271f09fae89a27e11cb3a5010a2d05ca30eee115beed80952b35df",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-baseline-v2661/native-build.log",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-baseline-v2661-native-build.log.gz",
+      "sha256": "e9506932169121423154a233cd5e2b30dbec121d141c2548e61e474001923576"
+    },
+    {
+      "decoded_sha256": "66836015b7ffb899331ccf382c8bca20bbf016b552d1136fae842654b51743de",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-baseline-v2661/native-first.log",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-baseline-v2661-native-first.log.gz",
+      "sha256": "0139ba20fa3e9e9b4a063da64e48b25cc9c1ef3eea2b1926398209c121fd1887"
+    },
+    {
+      "decoded_sha256": "66836015b7ffb899331ccf382c8bca20bbf016b552d1136fae842654b51743de",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-baseline-v2661/native-second.log",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-baseline-v2661-native-second.log.gz",
+      "sha256": "0139ba20fa3e9e9b4a063da64e48b25cc9c1ef3eea2b1926398209c121fd1887"
+    },
+    {
+      "decoded_sha256": "a034a347c6b06501f85cbf7310d1ce8da942208ff1a409795ba54a9b2b1139ca",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-c-baseline-v2666/receipt.json",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-c-baseline-v2666-receipt.json.gz",
+      "sha256": "532ce1c1a2ac8aa2625099faa9b1d7fcc8c3c6824cf17b00b72563c33e049ad9"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-c-baseline-v2666/c-compile.log",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-c-baseline-v2666-c-compile.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-c-baseline-v2666/c-link.log",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-c-baseline-v2666-c-link.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "806213e1c6c929b009aaa3a16f82d03f7f13d7f886bb8048f431af22d1d370d9",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-c-baseline-v2666/c-first.log",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-c-baseline-v2666-c-first.log.gz",
+      "sha256": "70efb5c0867ddd5b92ed86cdb2c73bed95d014710a8a90440452b40d57720612"
+    },
+    {
+      "decoded_sha256": "806213e1c6c929b009aaa3a16f82d03f7f13d7f886bb8048f431af22d1d370d9",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-c-baseline-v2666/c-second.log",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-c-baseline-v2666-c-second.log.gz",
+      "sha256": "70efb5c0867ddd5b92ed86cdb2c73bed95d014710a8a90440452b40d57720612"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-c-baseline-v2666/cpp-compile.log",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-c-baseline-v2666-cpp-compile.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-c-baseline-v2666/cpp-link.log",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-c-baseline-v2666-cpp-link.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "806213e1c6c929b009aaa3a16f82d03f7f13d7f886bb8048f431af22d1d370d9",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-c-baseline-v2666/cpp-first.log",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-c-baseline-v2666-cpp-first.log.gz",
+      "sha256": "70efb5c0867ddd5b92ed86cdb2c73bed95d014710a8a90440452b40d57720612"
+    },
+    {
+      "decoded_sha256": "806213e1c6c929b009aaa3a16f82d03f7f13d7f886bb8048f431af22d1d370d9",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-c-baseline-v2666/cpp-second.log",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-c-baseline-v2666-cpp-second.log.gz",
+      "sha256": "70efb5c0867ddd5b92ed86cdb2c73bed95d014710a8a90440452b40d57720612"
+    },
+    {
+      "decoded_sha256": "bec97dd9f51860bbb85e4e3ba2cb334b91cb1867fed270609281ba1be579d5b0",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-candidate-v2681/receipt.json",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-candidate-v2681-receipt.json.gz",
+      "sha256": "2652dc8e864fa77e7c1e4afcc5a836872d78b2dfdb05d4329a67dc5633a63ead"
+    },
+    {
+      "decoded_sha256": "0113a0ed8bbb7c4439f0455a58e1320f9130dcda6995bd1c18b9082cf2a993c5",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-candidate-v2681/locked-metadata.log",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-candidate-v2681-locked-metadata.log.gz",
+      "sha256": "cebe6046a821aec5abee5f287f8638f1f4d7b03bd274753a2a63747621d80c70"
+    },
+    {
+      "decoded_sha256": "f3c07766c63ef1c382615ffd3263a8f1484621b312ef262855ceadbb0164b634",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-candidate-v2681/clean-local-packages.log",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-candidate-v2681-clean-local-packages.log.gz",
+      "sha256": "2867e36f3fe6c60a2cf0f4f92c424332de2db05b57c62bb7362f434d46bd3ecd"
+    },
+    {
+      "decoded_sha256": "c58fb38949ca079c812fbc1bb6741e5fb4b78f11f4fb13774d23e7ae84a54707",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-candidate-v2681/native-build.log",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-candidate-v2681-native-build.log.gz",
+      "sha256": "cb4653941b50959e19550439894be6727086f050d1a26cda67c27b761b2c0ea3"
+    },
+    {
+      "decoded_sha256": "f975534e73c5a0160e5a771c8eb0f0a6a095bbb620cdbdbc34cddb12f00d63aa",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-candidate-v2681/native-first.log",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-candidate-v2681-native-first.log.gz",
+      "sha256": "a78674c09af6191d58db9a3f9d03dbfa57a1154761b6187e224e6adcbbc2fcfa"
+    },
+    {
+      "decoded_sha256": "f975534e73c5a0160e5a771c8eb0f0a6a095bbb620cdbdbc34cddb12f00d63aa",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-candidate-v2681/native-second.log",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-candidate-v2681-native-second.log.gz",
+      "sha256": "a78674c09af6191d58db9a3f9d03dbfa57a1154761b6187e224e6adcbbc2fcfa"
+    },
+    {
+      "decoded_sha256": "97a0bc8f1e59ac16db04f61e92d4d034b56ed949a28078dcba955bccd89e7bcc",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-candidate-v2681/native_text_commit-guards.log",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-candidate-v2681-native_text_commit-guards.log.gz",
+      "sha256": "ceca2b6ddce667a81645f63eda0dd293a1f2542d4b9ab11d13fefb08b27e4982"
+    },
+    {
+      "decoded_sha256": "8655484fe5984cc28d86259f009d5ac78670fe65d87dab91eb5111e7dbfe8b0f",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-candidate-v2681/native_focus-guards.log",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-candidate-v2681-native_focus-guards.log.gz",
+      "sha256": "a5cb2dcfb3b7e6c7a417cb9f3033ad1002c6b65f3e8399dca63da8d65e9d0900"
+    },
+    {
+      "decoded_sha256": "a7a0973fe7a24df41df09006a9a3ca51f7f68c4c9f7d188a09febb95cacb1391",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-candidate-v2681/native_input_notifications-guards.log",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-candidate-v2681-native_input_notifications-guards.log.gz",
+      "sha256": "548a19220dd6dbbe1b746b02a49b3a0a1ef7ffc306fc0b93fe9844aed3eb29a2"
+    },
+    {
+      "decoded_sha256": "1cc65c522c186503aa9522e6be78bffebc3240fc25cf35329d6342079ab617f1",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-c-candidate-v2683/receipt.json",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-c-candidate-v2683-receipt.json.gz",
+      "sha256": "083ac1dfc8ea7f4dfd2a8274850bffc93981fb2cede49138a6256dc8eeb6938a"
+    },
+    {
+      "decoded_sha256": "5a8603a6d0a27cf934e2b5337eff6155224b167a3126d23d29ff61efeac753bd",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-c-candidate-v2683/fresh-candidate-ffi.log",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-c-candidate-v2683-fresh-candidate-ffi.log.gz",
+      "sha256": "a49ed7af4bebd8a8e736c340871e6d48b949bfd266328a2417893add1e887503"
+    },
+    {
+      "decoded_sha256": "e370a93cda5b0620a1333a73826b770d6feeb318f8aa745c54d3ea6bf00ab0ac",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-c-candidate-v2695/receipt.json",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-c-candidate-v2695-receipt.json.gz",
+      "sha256": "92d1c49e64b290b8fe9e856565dc654885f1d7e56b7060cfe42aa65b654e78e7"
+    },
+    {
+      "decoded_sha256": "013ad9988536164c37b1673e97420de52f455472ae3289bc0417acbf61568afb",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-c-candidate-v2695/locked-private-metadata.log",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-c-candidate-v2695-locked-private-metadata.log.gz",
+      "sha256": "4006b648130ee0cb4049289b603dfb6db56aac3a7b393bb05021425e8502fc9e"
+    },
+    {
+      "decoded_sha256": "5646636a2daaac798916cde958eea5768d0a72b223db8b6fe4b7c5eb5300d8bc",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-c-candidate-v2695/clean-all-local-source-packages.log",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-c-candidate-v2695-clean-all-local-source-packages.log.gz",
+      "sha256": "f1ad8860b3ec3d565c6b3efde4ae899babf7cbe0216077348d79596bae7a071a"
+    },
+    {
+      "decoded_sha256": "7236a6fdc0ea2135120393e4041afd0182ec13e2124cfa7698d88a0f056bf7bd",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-c-candidate-v2695/fresh-candidate-ffi.log",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-c-candidate-v2695-fresh-candidate-ffi.log.gz",
+      "sha256": "41f911e09a0ffaf181436b3ff322d1727208053671827c3350fa0b81cf51d99a"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-c-candidate-v2695/c-compile.log",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-c-candidate-v2695-c-compile.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-c-candidate-v2695/c-link.log",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-c-candidate-v2695-c-link.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "6e038a93f246fbc7211242f3ed392fd20d8dd1780e2ed99cf651d24440fd6c73",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-c-candidate-v2695/c-first.log",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-c-candidate-v2695-c-first.log.gz",
+      "sha256": "3604087b080f84f7449e04af959ecab034438570fa72a838fa2d1b67ee09a3ef"
+    },
+    {
+      "decoded_sha256": "6e038a93f246fbc7211242f3ed392fd20d8dd1780e2ed99cf651d24440fd6c73",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-c-candidate-v2695/c-second.log",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-c-candidate-v2695-c-second.log.gz",
+      "sha256": "3604087b080f84f7449e04af959ecab034438570fa72a838fa2d1b67ee09a3ef"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-c-candidate-v2695/cpp-compile.log",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-c-candidate-v2695-cpp-compile.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-c-candidate-v2695/cpp-link.log",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-c-candidate-v2695-cpp-link.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "6e038a93f246fbc7211242f3ed392fd20d8dd1780e2ed99cf651d24440fd6c73",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-c-candidate-v2695/cpp-first.log",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-c-candidate-v2695-cpp-first.log.gz",
+      "sha256": "3604087b080f84f7449e04af959ecab034438570fa72a838fa2d1b67ee09a3ef"
+    },
+    {
+      "decoded_sha256": "6e038a93f246fbc7211242f3ed392fd20d8dd1780e2ed99cf651d24440fd6c73",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-c-candidate-v2695/cpp-second.log",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-c-candidate-v2695-cpp-second.log.gz",
+      "sha256": "3604087b080f84f7449e04af959ecab034438570fa72a838fa2d1b67ee09a3ef"
+    },
+    {
+      "decoded_sha256": "52c1f9ab9a511c811d03f2011ff416d6b6a4b5558b473810d01bbb0b73459b80",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-reentry-oracle-v2682/receipt.json",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-reentry-oracle-v2682-receipt.json.gz",
+      "sha256": "fd4a0255545e4734147cf23e7e243a538df3ad595aaf1780d127917801075c3e"
+    },
+    {
+      "decoded_sha256": "7a80173427f3cba0a7736de9f0ffa214a76e2b6e734cbe504126f02063226d7f",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-reentry-oracle-v2682/observations-1.json",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-reentry-oracle-v2682-observations-1.json.gz",
+      "sha256": "1f740bce6813bc712e071172f4931af53da202defe73fd43d05c4f7617a28755"
+    },
+    {
+      "decoded_sha256": "7a80173427f3cba0a7736de9f0ffa214a76e2b6e734cbe504126f02063226d7f",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-commit-reentry-oracle-v2682/observations-2.json",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-text-commit-reentry-oracle-v2682-observations-2.json.gz",
+      "sha256": "1f740bce6813bc712e071172f4931af53da202defe73fd43d05c4f7617a28755"
+    },
+    {
+      "decoded_sha256": "62b2b7950d7d5f7f803a82ed28b51fe9ef8b00200f1a29d69fde79ad3097ccc5",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-editing-metadata-oracle-v2696/receipt.json",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-editing-metadata-oracle-v2696-receipt.json.gz",
+      "sha256": "c48d34e6b80fbb64caa10cc3eb30e0870b4bff9f6f87976df0868c39355a6ce3"
+    },
+    {
+      "decoded_sha256": "919eaf7029a6b2c7b86939d4c3accdfd9fa2399f06601931b29bae2c9f3ddba0",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-editing-metadata-oracle-v2697/receipt.json",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-editing-metadata-oracle-v2697-receipt.json.gz",
+      "sha256": "67180fabe44f2f2e1f02c2659e25eb58f73f56978bd4f735be0550b322857823"
+    },
+    {
+      "decoded_sha256": "8ee53d647b4861b398c5a259e15ec9a8bf46170404a88cb5f2b499c132303193",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-editing-metadata-oracle-v2697/observations-1.json",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-editing-metadata-oracle-v2697-observations-1.json.gz",
+      "sha256": "e08b4c56e4e818d1df1f59820955c8cdb5dc544c1ca59edc93c57888b8c53bb5"
+    },
+    {
+      "decoded_sha256": "8ee53d647b4861b398c5a259e15ec9a8bf46170404a88cb5f2b499c132303193",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-editing-metadata-oracle-v2697/observations-2.json",
+      "path": "docs/renderer/evidence/native-text-commit-v1/native-editing-metadata-oracle-v2697-observations-2.json.gz",
+      "sha256": "e08b4c56e4e818d1df1f59820955c8cdb5dc544c1ca59edc93c57888b8c53bb5"
+    },
+    {
+      "decoded_sha256": "3a33f71a0f3870d7ce75b4f7e675bc025dd22ec1be7aa21ff43c343ced71812b",
+      "original_path": "/tmp/openui-native-editing-metadata-audit-v2698.json",
+      "path": "docs/renderer/evidence/native-text-commit-v1/metadata-source-inspection-audit.json.gz",
+      "sha256": "5a4dd831a886697797193519067d6fd60dece4e0c8183ccf761f54c8a04658e8"
+    }
+  ],
+  "schema_version": 1
+}

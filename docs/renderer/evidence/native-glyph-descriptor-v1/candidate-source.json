@@ -1,0 +1,43 @@
+{
+  "awaiting_whole_width_pipeline_v1717": true,
+  "baseline_root": "/dev/shm/openui-native-glyph-descriptor-baseline-0733955a-v1740",
+  "baseline_source": {
+    "clean": true,
+    "commit": "54bcdeab5b021fc7899ca3e25868ab39182aee62",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "6ea58f16c0c43b653f6d871c77cbf2927c0bbd58d8ddb361e645330d49c27c62",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "changed_paths": [
+    "bindings/rust/openui-text/src/shaping/shape_result.rs",
+    "bindings/rust/openui-paint/src/text_painter.rs"
+  ],
+  "configured_hinting_edging_and_pixel_geometry_preserved": true,
+  "glyph_commands_executed": 0,
+  "guard_sha256": "7b384e4b8e299d4dfc76d6520c6fad8766c0688d2271039f8eafec53ff266ac8",
+  "javascript_executed_by_openui": false,
+  "local_build_and_raster_owner_not_started": true,
+  "new_release_states_admitted": 0,
+  "normalized_fitted_outlines": true,
+  "old_size_specific_phase_overrides_removed": true,
+  "parent": "0733955a8f6a94053f3a253c33219e84ed9702c0",
+  "patch_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-glyph-descriptor-source-v1740.patch",
+  "patch_sha256": "b675dd6454e257dbef719a6f4d9cb72842895011034164583f7e4e5979e412f5",
+  "physical_font_size_retained": true,
+  "pixel_tolerance": 0,
+  "probe_sha256": "c0fd8957cb61f05b1ea36d88ca963276e505f6f00a8fc6ca8fce1f846afe46aa",
+  "public_native_rust_and_c_apis_unchanged": true,
+  "public_native_rust_apis_required": true,
+  "raster_defaults_unchanged": true,
+  "release_qualification": false,
+  "root": "/dev/shm/openui-native-glyph-descriptor-0733955a",
+  "schema_version": 1,
+  "screenshots_generated": 0,
+  "source": {
+    "clean": true,
+    "commit": "2f53d5de2e6fce9b4c9dc2fbc94fcfc763544b23",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "49553e79b1239a0a81b13d31313e38e9ac164091f6b3a11aed1b89fb03e0d376",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

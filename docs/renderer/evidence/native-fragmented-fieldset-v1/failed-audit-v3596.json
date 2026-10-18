@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "audit_session": 11115,
+  "actual_exit_code": 1,
+  "audit_reaped": true,
+  "audit_driver_sha256": "02b7a33ada89bdc32899da663d247f160546ea5c4c5423fc897b54bea079df16",
+  "reason": "FileNotFoundError: process-name shortening also shortened owned binary filename in audit; no source, target, image or reference change",
+  "failed_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-build-v3593/native_fragmente",
+  "comparison_actual_exit_code": 0,
+  "comparison_complete_cases": 11,
+  "new_corrected_audit": "/tmp/openui-native-fragmented-fieldset-candidate-compare-audit-v3599.py"
+}

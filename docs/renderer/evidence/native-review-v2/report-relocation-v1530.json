@@ -1,0 +1,32 @@
+{
+  "all_report_bytes_preserved": true,
+  "bytes_relocated": 143459501,
+  "cargo_commands_run": 0,
+  "files": [
+    {
+      "actual_exit": 1,
+      "age_hours": 70.77907901300324,
+      "bytes": 70711261,
+      "destination": "/mnt/e/openui-v02-qualification-d174ea0b/completed-summaries-v1530/picture-clean-full-v28/full-summary.json",
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/picture-clean-full-v28/full-summary.json",
+      "sha256": "33663e55425a80d744c52498d57aca1a42d9cb1040c960596f230fa13849f836"
+    },
+    {
+      "actual_exit": 1,
+      "age_hours": 70.77935724695523,
+      "bytes": 72748240,
+      "destination": "/mnt/e/openui-v02-qualification-d174ea0b/completed-summaries-v1530/picture-clean-expanded-v28/expanded-summary.json",
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/picture-clean-expanded-v28/expanded-summary.json",
+      "sha256": "b87fa4def932631014795ee26b53d661502dbe12a2314c9eed647c5767ef03b4"
+    }
+  ],
+  "no_active_inputs_or_cache_moved": true,
+  "no_owner_roots_or_probes_changed": true,
+  "probe_sha256": "e3824b1c2326c6bc7232b26b3be6768976abf195cea9685bfc36200fc91d249b",
+  "root_free_bytes_after": 764612608,
+  "root_free_bytes_before": 621158400,
+  "schema_version": 1,
+  "screenshots_generated": 0,
+  "terminal_index_path": "/home/nero/code/open-ui/docs/renderer/generated/native-viewport-full-v4.json",
+  "terminal_index_sha256": "33ef1ba6fae4a900ab0be757a55b34a470dbe649cca32be12f96caa6f070a498"
+}

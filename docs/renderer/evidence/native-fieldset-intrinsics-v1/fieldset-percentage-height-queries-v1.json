@@ -1,0 +1,950 @@
+{
+  "ahem_sha256": "b719ecb31c5b21fc573c03f6421c74ac63c271a5a3ff841e34f9705fb94b8448",
+  "all_commands_terminal": true,
+  "canvas_pixels_generated": 0,
+  "capture_harness_sha256": "ad37344879ddda41e6570ea41c142103e58f5db05fb9c96c27c1ac62b67f92ea",
+  "chromium_binary_sha256": "0ba87684df0afc11faaea40ac57bd2f1d68b67191443b38215a36b90e6f08848",
+  "container_and_image_measurements": 80,
+  "expected_native_guard_before_after_verified": true,
+  "fontconfig_sha256": "99fd54cf2f3875bba44a2272b3dfe5adc7c08263ca0511ec2473ec5e59c09195",
+  "image_sha256": "d49ce16b513fa1b4fcf1431bc2915799ee8effb452820f35e9e6fba251e8cafe",
+  "independent_queries_identical": true,
+  "inputs": {
+    "div": {
+      "durable_input": {
+        "path": "docs/renderer/evidence/native-fieldset-intrinsics-v1/div-percentage-height.html",
+        "sha256": "5aa7ac454d93a6b9f00eca1d8c41158d6a3df642f76aa0bd850bf56ed3cc4a25"
+      },
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-queries-v1258/div.html",
+      "sha256": "5aa7ac454d93a6b9f00eca1d8c41158d6a3df642f76aa0bd850bf56ed3cc4a25"
+    },
+    "fieldset": {
+      "durable_input": {
+        "path": "docs/renderer/evidence/native-fieldset-intrinsics-v1/fieldset-percentage-height.html",
+        "sha256": "62052690d2c599e87bc2033ed25969b92c197148f11c145e529e60bd3e47841e"
+      },
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-queries-v1258/fieldset.html",
+      "sha256": "62052690d2c599e87bc2033ed25969b92c197148f11c145e529e60bd3e47841e"
+    }
+  },
+  "javascript_executed_by_openui": false,
+  "native_geometry_comparisons": 0,
+  "observed_exit_code": 0,
+  "probe_sha256": "c48f64a0666a7c9c3d953c8239e04cc19a7fc2b1c5d2be2caf1e3027f0f0774b",
+  "queries_only": true,
+  "release_qualification": false,
+  "runs": [
+    {
+      "repeat": 1,
+      "rows": [
+        {
+          "query": {
+            "after": {
+              "container": {
+                "height": 150,
+                "width": 150,
+                "x": 0,
+                "y": 0
+              },
+              "image": {
+                "height": 150,
+                "width": 150,
+                "x": 0,
+                "y": 0
+              }
+            },
+            "before": {
+              "container": {
+                "height": 100,
+                "width": 100,
+                "x": 0,
+                "y": 0
+              },
+              "image": {
+                "height": 100,
+                "width": 100,
+                "x": 0,
+                "y": 0
+              }
+            },
+            "metrics": {
+              "dpr": 1,
+              "height": 600,
+              "width": 800
+            },
+            "minWidth": "0px",
+            "natural": {
+              "height": 200,
+              "width": 200
+            },
+            "url": "file:///mnt/e/openui-v02-qualification-d174ea0b/native-fieldset-queries-v1258/div.html"
+          },
+          "scale": 1.0,
+          "tag": "div"
+        },
+        {
+          "query": {
+            "after": {
+              "container": {
+                "height": 150,
+                "width": 200,
+                "x": 0,
+                "y": 0
+              },
+              "image": {
+                "height": 150,
+                "width": 150,
+                "x": 0,
+                "y": 0
+              }
+            },
+            "before": {
+              "container": {
+                "height": 100,
+                "width": 200,
+                "x": 0,
+                "y": 0
+              },
+              "image": {
+                "height": 100,
+                "width": 100,
+                "x": 0,
+                "y": 0
+              }
+            },
+            "metrics": {
+              "dpr": 1,
+              "height": 600,
+              "width": 800
+            },
+            "minWidth": "min-content",
+            "natural": {
+              "height": 200,
+              "width": 200
+            },
+            "url": "file:///mnt/e/openui-v02-qualification-d174ea0b/native-fieldset-queries-v1258/fieldset.html"
+          },
+          "scale": 1.0,
+          "tag": "fieldset"
+        },
+        {
+          "query": {
+            "after": {
+              "container": {
+                "height": 150,
+                "width": 150,
+                "x": 0,
+                "y": 0
+              },
+              "image": {
+                "height": 150,
+                "width": 150,
+                "x": 0,
+                "y": 0
+              }
+            },
+            "before": {
+              "container": {
+                "height": 100,
+                "width": 100,
+                "x": 0,
+                "y": 0
+              },
+              "image": {
+                "height": 100,
+                "width": 100,
+                "x": 0,
+                "y": 0
+              }
+            },
+            "metrics": {
+              "dpr": 1.25,
+              "height": 600,
+              "width": 800
+            },
+            "minWidth": "0px",
+            "natural": {
+              "height": 200,
+              "width": 200
+            },
+            "url": "file:///mnt/e/openui-v02-qualification-d174ea0b/native-fieldset-queries-v1258/div.html"
+          },
+          "scale": 1.25,
+          "tag": "div"
+        },
+        {
+          "query": {
+            "after": {
+              "container": {
+                "height": 150,
+                "width": 200,
+                "x": 0,
+                "y": 0
+              },
+              "image": {
+                "height": 150,
+                "width": 150,
+                "x": 0,
+                "y": 0
+              }
+            },
+            "before": {
+              "container": {
+                "height": 100,
+                "width": 200,
+                "x": 0,
+                "y": 0
+              },
+              "image": {
+                "height": 100,
+                "width": 100,
+                "x": 0,
+                "y": 0
+              }
+            },
+            "metrics": {
+              "dpr": 1.25,
+              "height": 600,
+              "width": 800
+            },
+            "minWidth": "min-content",
+            "natural": {
+              "height": 200,
+              "width": 200
+            },
+            "url": "file:///mnt/e/openui-v02-qualification-d174ea0b/native-fieldset-queries-v1258/fieldset.html"
+          },
+          "scale": 1.25,
+          "tag": "fieldset"
+        },
+        {
+          "query": {
+            "after": {
+              "container": {
+                "height": 150,
+                "width": 150,
+                "x": 0,
+                "y": 0
+              },
+              "image": {
+                "height": 150,
+                "width": 150,
+                "x": 0,
+                "y": 0
+              }
+            },
+            "before": {
+              "container": {
+                "height": 100,
+                "width": 100,
+                "x": 0,
+                "y": 0
+              },
+              "image": {
+                "height": 100,
+                "width": 100,
+                "x": 0,
+                "y": 0
+              }
+            },
+            "metrics": {
+              "dpr": 1.5,
+              "height": 600,
+              "width": 800
+            },
+            "minWidth": "0px",
+            "natural": {
+              "height": 200,
+              "width": 200
+            },
+            "url": "file:///mnt/e/openui-v02-qualification-d174ea0b/native-fieldset-queries-v1258/div.html"
+          },
+          "scale": 1.5,
+          "tag": "div"
+        },
+        {
+          "query": {
+            "after": {
+              "container": {
+                "height": 150,
+                "width": 200,
+                "x": 0,
+                "y": 0
+              },
+              "image": {
+                "height": 150,
+                "width": 150,
+                "x": 0,
+                "y": 0
+              }
+            },
+            "before": {
+              "container": {
+                "height": 100,
+                "width": 200,
+                "x": 0,
+                "y": 0
+              },
+              "image": {
+                "height": 100,
+                "width": 100,
+                "x": 0,
+                "y": 0
+              }
+            },
+            "metrics": {
+              "dpr": 1.5,
+              "height": 600,
+              "width": 800
+            },
+            "minWidth": "min-content",
+            "natural": {
+              "height": 200,
+              "width": 200
+            },
+            "url": "file:///mnt/e/openui-v02-qualification-d174ea0b/native-fieldset-queries-v1258/fieldset.html"
+          },
+          "scale": 1.5,
+          "tag": "fieldset"
+        },
+        {
+          "query": {
+            "after": {
+              "container": {
+                "height": 150,
+                "width": 150,
+                "x": 0,
+                "y": 0
+              },
+              "image": {
+                "height": 150,
+                "width": 150,
+                "x": 0,
+                "y": 0
+              }
+            },
+            "before": {
+              "container": {
+                "height": 100,
+                "width": 100,
+                "x": 0,
+                "y": 0
+              },
+              "image": {
+                "height": 100,
+                "width": 100,
+                "x": 0,
+                "y": 0
+              }
+            },
+            "metrics": {
+              "dpr": 2,
+              "height": 600,
+              "width": 800
+            },
+            "minWidth": "0px",
+            "natural": {
+              "height": 200,
+              "width": 200
+            },
+            "url": "file:///mnt/e/openui-v02-qualification-d174ea0b/native-fieldset-queries-v1258/div.html"
+          },
+          "scale": 2.0,
+          "tag": "div"
+        },
+        {
+          "query": {
+            "after": {
+              "container": {
+                "height": 150,
+                "width": 200,
+                "x": 0,
+                "y": 0
+              },
+              "image": {
+                "height": 150,
+                "width": 150,
+                "x": 0,
+                "y": 0
+              }
+            },
+            "before": {
+              "container": {
+                "height": 100,
+                "width": 200,
+                "x": 0,
+                "y": 0
+              },
+              "image": {
+                "height": 100,
+                "width": 100,
+                "x": 0,
+                "y": 0
+              }
+            },
+            "metrics": {
+              "dpr": 2,
+              "height": 600,
+              "width": 800
+            },
+            "minWidth": "min-content",
+            "natural": {
+              "height": 200,
+              "width": 200
+            },
+            "url": "file:///mnt/e/openui-v02-qualification-d174ea0b/native-fieldset-queries-v1258/fieldset.html"
+          },
+          "scale": 2.0,
+          "tag": "fieldset"
+        },
+        {
+          "query": {
+            "after": {
+              "container": {
+                "height": 150,
+                "width": 150,
+                "x": 0,
+                "y": 0
+              },
+              "image": {
+                "height": 150,
+                "width": 150,
+                "x": 0,
+                "y": 0
+              }
+            },
+            "before": {
+              "container": {
+                "height": 100,
+                "width": 100,
+                "x": 0,
+                "y": 0
+              },
+              "image": {
+                "height": 100,
+                "width": 100,
+                "x": 0,
+                "y": 0
+              }
+            },
+            "metrics": {
+              "dpr": 3,
+              "height": 600,
+              "width": 800
+            },
+            "minWidth": "0px",
+            "natural": {
+              "height": 200,
+              "width": 200
+            },
+            "url": "file:///mnt/e/openui-v02-qualification-d174ea0b/native-fieldset-queries-v1258/div.html"
+          },
+          "scale": 3.0,
+          "tag": "div"
+        },
+        {
+          "query": {
+            "after": {
+              "container": {
+                "height": 150,
+                "width": 200,
+                "x": 0,
+                "y": 0
+              },
+              "image": {
+                "height": 150,
+                "width": 150,
+                "x": 0,
+                "y": 0
+              }
+            },
+            "before": {
+              "container": {
+                "height": 100,
+                "width": 200,
+                "x": 0,
+                "y": 0
+              },
+              "image": {
+                "height": 100,
+                "width": 100,
+                "x": 0,
+                "y": 0
+              }
+            },
+            "metrics": {
+              "dpr": 3,
+              "height": 600,
+              "width": 800
+            },
+            "minWidth": "min-content",
+            "natural": {
+              "height": 200,
+              "width": 200
+            },
+            "url": "file:///mnt/e/openui-v02-qualification-d174ea0b/native-fieldset-queries-v1258/fieldset.html"
+          },
+          "scale": 3.0,
+          "tag": "fieldset"
+        }
+      ]
+    },
+    {
+      "repeat": 2,
+      "rows": [
+        {
+          "query": {
+            "after": {
+              "container": {
+                "height": 150,
+                "width": 150,
+                "x": 0,
+                "y": 0
+              },
+              "image": {
+                "height": 150,
+                "width": 150,
+                "x": 0,
+                "y": 0
+              }
+            },
+            "before": {
+              "container": {
+                "height": 100,
+                "width": 100,
+                "x": 0,
+                "y": 0
+              },
+              "image": {
+                "height": 100,
+                "width": 100,
+                "x": 0,
+                "y": 0
+              }
+            },
+            "metrics": {
+              "dpr": 1,
+              "height": 600,
+              "width": 800
+            },
+            "minWidth": "0px",
+            "natural": {
+              "height": 200,
+              "width": 200
+            },
+            "url": "file:///mnt/e/openui-v02-qualification-d174ea0b/native-fieldset-queries-v1258/div.html"
+          },
+          "scale": 1.0,
+          "tag": "div"
+        },
+        {
+          "query": {
+            "after": {
+              "container": {
+                "height": 150,
+                "width": 200,
+                "x": 0,
+                "y": 0
+              },
+              "image": {
+                "height": 150,
+                "width": 150,
+                "x": 0,
+                "y": 0
+              }
+            },
+            "before": {
+              "container": {
+                "height": 100,
+                "width": 200,
+                "x": 0,
+                "y": 0
+              },
+              "image": {
+                "height": 100,
+                "width": 100,
+                "x": 0,
+                "y": 0
+              }
+            },
+            "metrics": {
+              "dpr": 1,
+              "height": 600,
+              "width": 800
+            },
+            "minWidth": "min-content",
+            "natural": {
+              "height": 200,
+              "width": 200
+            },
+            "url": "file:///mnt/e/openui-v02-qualification-d174ea0b/native-fieldset-queries-v1258/fieldset.html"
+          },
+          "scale": 1.0,
+          "tag": "fieldset"
+        },
+        {
+          "query": {
+            "after": {
+              "container": {
+                "height": 150,
+                "width": 150,
+                "x": 0,
+                "y": 0
+              },
+              "image": {
+                "height": 150,
+                "width": 150,
+                "x": 0,
+                "y": 0
+              }
+            },
+            "before": {
+              "container": {
+                "height": 100,
+                "width": 100,
+                "x": 0,
+                "y": 0
+              },
+              "image": {
+                "height": 100,
+                "width": 100,
+                "x": 0,
+                "y": 0
+              }
+            },
+            "metrics": {
+              "dpr": 1.25,
+              "height": 600,
+              "width": 800
+            },
+            "minWidth": "0px",
+            "natural": {
+              "height": 200,
+              "width": 200
+            },
+            "url": "file:///mnt/e/openui-v02-qualification-d174ea0b/native-fieldset-queries-v1258/div.html"
+          },
+          "scale": 1.25,
+          "tag": "div"
+        },
+        {
+          "query": {
+            "after": {
+              "container": {
+                "height": 150,
+                "width": 200,
+                "x": 0,
+                "y": 0
+              },
+              "image": {
+                "height": 150,
+                "width": 150,
+                "x": 0,
+                "y": 0
+              }
+            },
+            "before": {
+              "container": {
+                "height": 100,
+                "width": 200,
+                "x": 0,
+                "y": 0
+              },
+              "image": {
+                "height": 100,
+                "width": 100,
+                "x": 0,
+                "y": 0
+              }
+            },
+            "metrics": {
+              "dpr": 1.25,
+              "height": 600,
+              "width": 800
+            },
+            "minWidth": "min-content",
+            "natural": {
+              "height": 200,
+              "width": 200
+            },
+            "url": "file:///mnt/e/openui-v02-qualification-d174ea0b/native-fieldset-queries-v1258/fieldset.html"
+          },
+          "scale": 1.25,
+          "tag": "fieldset"
+        },
+        {
+          "query": {
+            "after": {
+              "container": {
+                "height": 150,
+                "width": 150,
+                "x": 0,
+                "y": 0
+              },
+              "image": {
+                "height": 150,
+                "width": 150,
+                "x": 0,
+                "y": 0
+              }
+            },
+            "before": {
+              "container": {
+                "height": 100,
+                "width": 100,
+                "x": 0,
+                "y": 0
+              },
+              "image": {
+                "height": 100,
+                "width": 100,
+                "x": 0,
+                "y": 0
+              }
+            },
+            "metrics": {
+              "dpr": 1.5,
+              "height": 600,
+              "width": 800
+            },
+            "minWidth": "0px",
+            "natural": {
+              "height": 200,
+              "width": 200
+            },
+            "url": "file:///mnt/e/openui-v02-qualification-d174ea0b/native-fieldset-queries-v1258/div.html"
+          },
+          "scale": 1.5,
+          "tag": "div"
+        },
+        {
+          "query": {
+            "after": {
+              "container": {
+                "height": 150,
+                "width": 200,
+                "x": 0,
+                "y": 0
+              },
+              "image": {
+                "height": 150,
+                "width": 150,
+                "x": 0,
+                "y": 0
+              }
+            },
+            "before": {
+              "container": {
+                "height": 100,
+                "width": 200,
+                "x": 0,
+                "y": 0
+              },
+              "image": {
+                "height": 100,
+                "width": 100,
+                "x": 0,
+                "y": 0
+              }
+            },
+            "metrics": {
+              "dpr": 1.5,
+              "height": 600,
+              "width": 800
+            },
+            "minWidth": "min-content",
+            "natural": {
+              "height": 200,
+              "width": 200
+            },
+            "url": "file:///mnt/e/openui-v02-qualification-d174ea0b/native-fieldset-queries-v1258/fieldset.html"
+          },
+          "scale": 1.5,
+          "tag": "fieldset"
+        },
+        {
+          "query": {
+            "after": {
+              "container": {
+                "height": 150,
+                "width": 150,
+                "x": 0,
+                "y": 0
+              },
+              "image": {
+                "height": 150,
+                "width": 150,
+                "x": 0,
+                "y": 0
+              }
+            },
+            "before": {
+              "container": {
+                "height": 100,
+                "width": 100,
+                "x": 0,
+                "y": 0
+              },
+              "image": {
+                "height": 100,
+                "width": 100,
+                "x": 0,
+                "y": 0
+              }
+            },
+            "metrics": {
+              "dpr": 2,
+              "height": 600,
+              "width": 800
+            },
+            "minWidth": "0px",
+            "natural": {
+              "height": 200,
+              "width": 200
+            },
+            "url": "file:///mnt/e/openui-v02-qualification-d174ea0b/native-fieldset-queries-v1258/div.html"
+          },
+          "scale": 2.0,
+          "tag": "div"
+        },
+        {
+          "query": {
+            "after": {
+              "container": {
+                "height": 150,
+                "width": 200,
+                "x": 0,
+                "y": 0
+              },
+              "image": {
+                "height": 150,
+                "width": 150,
+                "x": 0,
+                "y": 0
+              }
+            },
+            "before": {
+              "container": {
+                "height": 100,
+                "width": 200,
+                "x": 0,
+                "y": 0
+              },
+              "image": {
+                "height": 100,
+                "width": 100,
+                "x": 0,
+                "y": 0
+              }
+            },
+            "metrics": {
+              "dpr": 2,
+              "height": 600,
+              "width": 800
+            },
+            "minWidth": "min-content",
+            "natural": {
+              "height": 200,
+              "width": 200
+            },
+            "url": "file:///mnt/e/openui-v02-qualification-d174ea0b/native-fieldset-queries-v1258/fieldset.html"
+          },
+          "scale": 2.0,
+          "tag": "fieldset"
+        },
+        {
+          "query": {
+            "after": {
+              "container": {
+                "height": 150,
+                "width": 150,
+                "x": 0,
+                "y": 0
+              },
+              "image": {
+                "height": 150,
+                "width": 150,
+                "x": 0,
+                "y": 0
+              }
+            },
+            "before": {
+              "container": {
+                "height": 100,
+                "width": 100,
+                "x": 0,
+                "y": 0
+              },
+              "image": {
+                "height": 100,
+                "width": 100,
+                "x": 0,
+                "y": 0
+              }
+            },
+            "metrics": {
+              "dpr": 3,
+              "height": 600,
+              "width": 800
+            },
+            "minWidth": "0px",
+            "natural": {
+              "height": 200,
+              "width": 200
+            },
+            "url": "file:///mnt/e/openui-v02-qualification-d174ea0b/native-fieldset-queries-v1258/div.html"
+          },
+          "scale": 3.0,
+          "tag": "div"
+        },
+        {
+          "query": {
+            "after": {
+              "container": {
+                "height": 150,
+                "width": 200,
+                "x": 0,
+                "y": 0
+              },
+              "image": {
+                "height": 150,
+                "width": 150,
+                "x": 0,
+                "y": 0
+              }
+            },
+            "before": {
+              "container": {
+                "height": 100,
+                "width": 200,
+                "x": 0,
+                "y": 0
+              },
+              "image": {
+                "height": 100,
+                "width": 100,
+                "x": 0,
+                "y": 0
+              }
+            },
+            "metrics": {
+              "dpr": 3,
+              "height": 600,
+              "width": 800
+            },
+            "minWidth": "min-content",
+            "natural": {
+              "height": 200,
+              "width": 200
+            },
+            "url": "file:///mnt/e/openui-v02-qualification-d174ea0b/native-fieldset-queries-v1258/fieldset.html"
+          },
+          "scale": 3.0,
+          "tag": "fieldset"
+        }
+      ]
+    }
+  ],
+  "schema_version": 1,
+  "screenshots_generated": 0
+}

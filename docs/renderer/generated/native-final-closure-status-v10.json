@@ -1,0 +1,811 @@
+{
+  "current_cmake": {
+    "actual_commands_passed": 5,
+    "configured_targets": 52,
+    "real_consumers_built_and_run": [
+      "openui_timeline_reassignment",
+      "openui_timeline_reassignment_cpp"
+    ],
+    "source": "96934cd08f68faa3fcb4eb2ba73f0142b59a2c39"
+  },
+  "current_complete_census_regression": {
+    "baseline_source": "8bcc6dfa7240a34149d6351623a907723186f82d",
+    "current_source": "96934cd08f68faa3fcb4eb2ba73f0142b59a2c39",
+    "decision": "Current measured renderer fails the global regression gate; no renderer promotion or release qualification.",
+    "decoded_changed_comparisons": 236,
+    "global_regression_gate_passed": false,
+    "pairs": [
+      {
+        "chromium_changed": 0,
+        "comparisons": 22924,
+        "gained_exact": 15,
+        "lost_exact": 74,
+        "mismatched_pixels_after": 7691358,
+        "mismatched_pixels_before": 7085848,
+        "native_rgba_changed": 118,
+        "residual_ids_after": 964,
+        "residual_ids_before": 957,
+        "suite": "full"
+      },
+      {
+        "chromium_changed": 0,
+        "comparisons": 23728,
+        "gained_exact": 15,
+        "lost_exact": 74,
+        "mismatched_pixels_after": 7718389,
+        "mismatched_pixels_before": 7112879,
+        "native_rgba_changed": 118,
+        "residual_ids_after": 983,
+        "residual_ids_before": 976,
+        "suite": "expanded"
+      }
+    ],
+    "renderer_ready": false,
+    "verified_actual_png_files": 17439
+  },
+  "current_generated_checks": {
+    "failed": 0,
+    "passed": 21,
+    "source": "96934cd08f68faa3fcb4eb2ba73f0142b59a2c39"
+  },
+  "current_measured_source": "96934cd08f68faa3fcb4eb2ba73f0142b59a2c39",
+  "current_native400": {
+    "counts": {
+      "Chrome_outside_enclosure_pixels": 0,
+      "Chrome_png_decodes": 100,
+      "Chrome_repeat_pairs": 50,
+      "DOM_geometry_equal_cases": 50,
+      "capture_control_pairs": 400,
+      "corrected_pixels": 1285,
+      "independent_native_repeat_pairs": 400,
+      "logical_cases": 50,
+      "lost_full_frame_exact_cases": 0,
+      "new_different_pixels": 258,
+      "new_full_frame_exact_cases": 40,
+      "new_full_frame_exact_gains": 22,
+      "new_outside_enclosure_pixels": 61,
+      "new_raw_frames": 400,
+      "newly_different_pixels": 5,
+      "old_different_pixels": 1538,
+      "old_full_frame_exact_cases": 18,
+      "old_outside_enclosure_pixels": 61,
+      "old_raw_frames": 400
+    },
+    "diagnostic_only": true,
+    "scope_limit": "Native metadata-removed TextArea versus browser empty Div; matching geometry/pixels are not a universal role/profile/dispatch contract",
+    "source": "96934cd08f68faa3fcb4eb2ba73f0142b59a2c39"
+  },
+  "current_q9_completed_declared_scopes": {
+    "full_original_or_expanded": false,
+    "source": "96934cd08f68faa3fcb4eb2ba73f0142b59a2c39",
+    "suites": {
+      "focused": {
+        "full_original_or_expanded": false,
+        "results": {
+          "different": 0,
+          "errors": 0,
+          "exact": 640,
+          "profile_result_sha256": "81ca073987c559bf7a82c784dae839d1056cb01d74d527ffd0aec7e441302495",
+          "total": 640
+        },
+        "summary_sha256": "3c5e9760672f7132feb65d2ca42b5e1aadbb52c6aae81eded0746d55b26c4003"
+      },
+      "primitive": {
+        "full_original_or_expanded": false,
+        "results": {
+          "different": 0,
+          "errors": 0,
+          "exact": 960,
+          "profile_result_sha256": "cbe6bc5b4812e493c6f896933c77a6c2f92c4697f7eebff8276bddb87b503059",
+          "total": 960
+        },
+        "summary_sha256": "ed2238ea90a203f8d89a750e7f85f70308d9af777fca02a113ac8d4ee8dab112"
+      },
+      "scoped-original": {
+        "full_original_or_expanded": false,
+        "results": {
+          "different": 3,
+          "errors": 0,
+          "exact": 13,
+          "profile_result_sha256": "b53c174abdff2e37015e3c3357ba19e88d559d689bb0864696a8034bc9fc6840",
+          "total": 16
+        },
+        "summary_sha256": "bc44f9a67f342aebdd474e4ac3891278f3f1469318781d6ca8f4d7b157c49476"
+      }
+    }
+  },
+  "current_selected_native": {
+    "counts": {
+      "executed": 44,
+      "failed": 1,
+      "ignored": 0,
+      "passed": 43
+    },
+    "full_workspace": false,
+    "remaining_failure": "native_resize_control_clip.rs:138",
+    "source": "96934cd08f68faa3fcb4eb2ba73f0142b59a2c39",
+    "source_layer20_pass": true,
+    "tiny_thin_all_five_chromium_frames_pass": true,
+    "two_new_arrow_primitives_pass": true
+  },
+  "draft": false,
+  "evidence": [
+    {
+      "compression": null,
+      "identity": "docs/renderer/evidence/native-final-closure-v10/q4-complete-receipt.json",
+      "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-snapshot-chromium-matrices-v4622/receipt.json",
+      "original_sha256": "2c32165772d1c440c8ba289394b0cfd6b140a3c0bafe4937c4a2d8402728a11f",
+      "sha256": "2c32165772d1c440c8ba289394b0cfd6b140a3c0bafe4937c4a2d8402728a11f"
+    },
+    {
+      "compression": null,
+      "identity": "docs/renderer/evidence/native-final-closure-v10/q4-terminal.json",
+      "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-snapshot-chromium-matrices-v4622/terminal-receipt-v1.json",
+      "original_sha256": "f05e5f6c59c859132d0f6850654b693d0b244b1717251ddbc9f5c8a4d9430158",
+      "sha256": "f05e5f6c59c859132d0f6850654b693d0b244b1717251ddbc9f5c8a4d9430158"
+    },
+    {
+      "compression": "gzip",
+      "identity": "docs/renderer/evidence/native-final-closure-v10/q4-full-summary.json.gz",
+      "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-snapshot-chromium-matrices-v4622/full/full-summary.json",
+      "original_sha256": "766c34ba7c2b56b51493a7f6bd4bb877675e36d4e4ebd1f883a2ef1d4d5baf5d",
+      "sha256": "67594f01b7d4033c06f5a54b52a8b7a6e13f81454831db0de141fcbbc7974dd6"
+    },
+    {
+      "compression": "gzip",
+      "identity": "docs/renderer/evidence/native-final-closure-v10/q4-expanded-summary.json.gz",
+      "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-snapshot-chromium-matrices-v4622/expanded/expanded-summary.json",
+      "original_sha256": "170f35ea450ae71b1664c3db2580558a16e20a1042dfad1245c8e6617b2a9801",
+      "sha256": "27eb112445be50d4ec0098b62f91421e9fca4783f80f51255555161e22ed6729"
+    },
+    {
+      "compression": null,
+      "identity": "docs/renderer/evidence/native-final-closure-v10/q9-matrix-receipt.json",
+      "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-arrow-focused-primitive-matrices-v4782/receipt.json",
+      "original_sha256": "708f5f4cea8cfafe5fdb008faa06b6693bbbc40f5942161c8dc011455ffc8359",
+      "sha256": "708f5f4cea8cfafe5fdb008faa06b6693bbbc40f5942161c8dc011455ffc8359"
+    },
+    {
+      "compression": null,
+      "identity": "docs/renderer/evidence/native-final-closure-v10/q9-matrix-terminal.json",
+      "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-arrow-focused-primitive-matrices-v4782/terminal-record.json",
+      "original_sha256": "ff802f8168c3fccd0d6cae59d0920cb519484ad8306aa95fdd78a8b03a1717d2",
+      "sha256": "ff802f8168c3fccd0d6cae59d0920cb519484ad8306aa95fdd78a8b03a1717d2"
+    },
+    {
+      "compression": "gzip",
+      "identity": "docs/renderer/evidence/native-final-closure-v10/q9-scoped-original-summary.json.gz",
+      "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-arrow-focused-primitive-matrices-v4782/scoped-original/full-summary.json",
+      "original_sha256": "bc44f9a67f342aebdd474e4ac3891278f3f1469318781d6ca8f4d7b157c49476",
+      "sha256": "4fd3570cd3ccebee0142ec092d734529d5289bb82bfc3fb934339a54cf88f0d7"
+    },
+    {
+      "compression": "gzip",
+      "identity": "docs/renderer/evidence/native-final-closure-v10/q9-focused-summary.json.gz",
+      "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-arrow-focused-primitive-matrices-v4782/focused/focused-summary.json",
+      "original_sha256": "3c5e9760672f7132feb65d2ca42b5e1aadbb52c6aae81eded0746d55b26c4003",
+      "sha256": "0b394b6d820cf7fb295dd302363254ab252840b51d0fd63c235605562e526812"
+    },
+    {
+      "compression": "gzip",
+      "identity": "docs/renderer/evidence/native-final-closure-v10/q9-primitive-summary.json.gz",
+      "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-arrow-focused-primitive-matrices-v4782/primitive/primitive-summary.json",
+      "original_sha256": "ed2238ea90a203f8d89a750e7f85f70308d9af777fca02a113ac8d4ee8dab112",
+      "sha256": "8016961bebc07ecacc57824c26735dc32a70b628b51cbb1e9d26f7188bfa1ee5"
+    },
+    {
+      "compression": "gzip",
+      "identity": "docs/renderer/evidence/native-final-closure-v10/current-arrow-guards.json.gz",
+      "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-scrollbar-arrow-guards-runtime-v4775/receipt.json",
+      "original_sha256": "504ce487d424fc56a2e4b9c392ea15edd7c2f26645714767c598508b0d5605a6",
+      "sha256": "3075ec37e3310d5cf054d8010a13656d0250fd0a50e5844cfbd6dcbec8540244"
+    },
+    {
+      "compression": null,
+      "identity": "docs/renderer/evidence/native-final-closure-v10/current-arrow-guards-terminal.json",
+      "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-scrollbar-arrow-guards-runtime-v4775/terminal-record.json",
+      "original_sha256": "06ca0fb506c92d4600b41a1b8c2dc623472eb55f11cc6592fbef642dff6db219",
+      "sha256": "06ca0fb506c92d4600b41a1b8c2dc623472eb55f11cc6592fbef642dff6db219"
+    },
+    {
+      "compression": "gzip",
+      "identity": "docs/renderer/evidence/native-final-closure-v10/current-all21.json.gz",
+      "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-arrow-current-generated-checks-v4783/receipt.json",
+      "original_sha256": "79bcb11247af3be4d29b351ea61b29c6b2559f1eb59c37657bb0420f570e72c8",
+      "sha256": "c2a2d63b64d30b35f3fbee022a8582ed676246b519d38875b769b9ce3d286259"
+    },
+    {
+      "compression": null,
+      "identity": "docs/renderer/evidence/native-final-closure-v10/current-all21-terminal.json",
+      "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-arrow-current-generated-checks-v4783/terminal-record.json",
+      "original_sha256": "e8f03431831d70e1723705f2339280f5c10268cce1d85c053baba9a8cf79d11b",
+      "sha256": "e8f03431831d70e1723705f2339280f5c10268cce1d85c053baba9a8cf79d11b"
+    },
+    {
+      "compression": "gzip",
+      "identity": "docs/renderer/evidence/native-final-closure-v10/current-cmake.json.gz",
+      "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-timeline-cmake-consumers-runtime-v4778/receipt.json",
+      "original_sha256": "bff84af783bfaa965cdc76206c72dd31473ca7dc6eeccd360170461cb1c8745b",
+      "sha256": "98ce1cdc4202a34908924f54f4ea0789b90cb4254f5c16cfc897fc2fa55ddcf5"
+    },
+    {
+      "compression": null,
+      "identity": "docs/renderer/evidence/native-final-closure-v10/current-cmake-terminal.json",
+      "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-timeline-cmake-consumers-runtime-v4778/terminal-record.json",
+      "original_sha256": "e59fb8a20b561c9682458d90231b984c2c287254fab0b90fd479994d4d64d5a8",
+      "sha256": "e59fb8a20b561c9682458d90231b984c2c287254fab0b90fd479994d4d64d5a8"
+    },
+    {
+      "compression": "gzip",
+      "identity": "docs/renderer/evidence/native-final-closure-v10/current-native400.json.gz",
+      "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-control-bar-arrow-current-runtime-v4779/receipt.json",
+      "original_sha256": "311ce94dacc52f5e8a0e6e68c12d80eb5c37fea5051c57772fb780e101db2b8b",
+      "sha256": "b86ccbca27f6915aa53f84c07b5890abdaedfa03263949bab2829e81d4d46c38"
+    },
+    {
+      "compression": null,
+      "identity": "docs/renderer/evidence/native-final-closure-v10/current-native400-terminal.json",
+      "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-control-bar-arrow-current-runtime-v4779/terminal-record.json",
+      "original_sha256": "ff2aa64d8495e49dd11ce9a34d036a938225fd0da7c468683bafb5693d71dda3",
+      "sha256": "ff2aa64d8495e49dd11ce9a34d036a938225fd0da7c468683bafb5693d71dda3"
+    },
+    {
+      "compression": "gzip",
+      "identity": "docs/renderer/evidence/native-final-closure-v10/current-native400-Chrome-comparison.json.gz",
+      "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-control-bar-arrow-comparison-control-grip-source-v1/new-old-Chrome-full-frame-comparison-v3.json",
+      "original_sha256": "b9930d6f182d78f140d401c2763eba2bb0f97f86a9cb660a26519bacc9bb81cc",
+      "sha256": "aea5b6a37604443951d5bb4f028dfd8fc56df1d3b927ceba2e9d635846f253fc"
+    },
+    {
+      "compression": null,
+      "identity": "docs/renderer/evidence/native-final-closure-v10/current-native400-Chrome-terminal.json",
+      "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-control-bar-arrow-comparison-control-grip-source-v1/terminal-analysis-v3.json",
+      "original_sha256": "677a00f535ee917a4dca9042baa7bfa121df3ec2cd1406cc819e0cd030c911b9",
+      "sha256": "677a00f535ee917a4dca9042baa7bfa121df3ec2cd1406cc819e0cd030c911b9"
+    },
+    {
+      "compression": "gzip",
+      "identity": "docs/renderer/evidence/native-final-closure-v10/private-lcd-paragraph-comparison.json.gz",
+      "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-explicit-lcd-private-paragraph-audit-v4790/comparison.json",
+      "original_sha256": "6754573e29c4043e4f190ee89ed2dee1a4a72306f1138110c89f856846906f7d",
+      "sha256": "e4843277aff0e7ac25e2baf48e90b24e4bc32e207642309ece9fd5ab4e1334b8"
+    },
+    {
+      "compression": null,
+      "identity": "docs/renderer/evidence/native-final-closure-v10/private-lcd-paragraph-terminal.json",
+      "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-explicit-lcd-private-paragraph-audit-v4790/terminal-record.json",
+      "original_sha256": "7824c613099002be41bb8cda1adee3ffc4a20a51d4a2a258f75824aeffe00c6d",
+      "sha256": "7824c613099002be41bb8cda1adee3ffc4a20a51d4a2a258f75824aeffe00c6d"
+    },
+    {
+      "compression": "gzip",
+      "identity": "docs/renderer/evidence/native-final-closure-v10/private-lcd-125guards.json.gz",
+      "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-explicit-lcd-private-guards-runtime-v4787/receipt.json",
+      "original_sha256": "578674505f49f7928faa64b44eb3ee57206d8b454647541bf4bc73980a0d2fb8",
+      "sha256": "185b83be3b0112f8425aca0cd02a0af409d627fbe20158aecc973fc6f3a15bd8"
+    },
+    {
+      "compression": null,
+      "identity": "docs/renderer/evidence/native-final-closure-v10/private-lcd-125guards-terminal.json",
+      "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-explicit-lcd-private-guards-runtime-v4787/terminal-record.json",
+      "original_sha256": "44a24cfe8400ef05395a8dea0a411b0d06d6c8edbef535b1c9d2db5611abd9a7",
+      "sha256": "44a24cfe8400ef05395a8dea0a411b0d06d6c8edbef535b1c9d2db5611abd9a7"
+    },
+    {
+      "compression": null,
+      "identity": "docs/renderer/evidence/native-final-closure-v10/private-lcd-paired-matrices.json",
+      "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-explicit-lcd-private-paired-matrix-audit-v4792/comparison.json",
+      "original_sha256": "867290fa2e26f1a2f1b7e85bd2e135a111941f058fc0a54a6c6001dff1631833",
+      "sha256": "867290fa2e26f1a2f1b7e85bd2e135a111941f058fc0a54a6c6001dff1631833"
+    },
+    {
+      "compression": null,
+      "identity": "docs/renderer/evidence/native-final-closure-v10/private-lcd-paired-terminal.json",
+      "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-explicit-lcd-private-paired-matrix-audit-v4792/owned-terminal-record-v1.json",
+      "original_sha256": "0190d548add8b3ab496180e1df8871d6a70b65c10386b06aaddb3c1eedc8fcc5",
+      "sha256": "0190d548add8b3ab496180e1df8871d6a70b65c10386b06aaddb3c1eedc8fcc5"
+    },
+    {
+      "compression": "gzip",
+      "identity": "docs/renderer/evidence/native-final-closure-v10/private-lcd-independent40frames.json.gz",
+      "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-explicit-lcd-focused-regression-peer-scroll-v4792/focused-regression-source-frame-audit-v1.json",
+      "original_sha256": "835f950bca38736064ae64783ed49eab1dbc6cc37cc9115b4836ef8f5de96873",
+      "sha256": "def542869635bbc57aa018e60d8e1270c38f2a5b0d7ab482585ba8818356292e"
+    },
+    {
+      "compression": null,
+      "identity": "docs/renderer/evidence/native-final-closure-v10/private-lcd-independent-terminal.json",
+      "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-explicit-lcd-focused-regression-peer-scroll-v4792/focused-regression-owned-terminal-v1.json",
+      "original_sha256": "f7598407c59d158a70385b0bbd38d4a8b25a840266fc907e20036a3e5fa98257",
+      "sha256": "f7598407c59d158a70385b0bbd38d4a8b25a840266fc907e20036a3e5fa98257"
+    },
+    {
+      "compression": "gzip",
+      "identity": "docs/renderer/evidence/native-final-closure-v10/historical59-workspace.json.gz",
+      "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-principal-current-workspace-runtime-v4755/receipt.json",
+      "original_sha256": "ee2f0ed316022ca405713182a671ed5bc03df0917bbef20c583e1fc54db9cb3d",
+      "sha256": "e1d9da4592f1cf8cb2d0e57ef359ad2572fe7dc8e30f4f837d022ee38c40259c"
+    },
+    {
+      "compression": null,
+      "identity": "docs/renderer/evidence/native-final-closure-v10/historical59-workspace-terminal.json",
+      "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-principal-current-workspace-runtime-v4755/terminal-record.json",
+      "original_sha256": "f6e4f3ea918628c17911e482ddfaaf1cebfc59606c3c56353446b074f5a31d09",
+      "sha256": "f6e4f3ea918628c17911e482ddfaaf1cebfc59606c3c56353446b074f5a31d09"
+    },
+    {
+      "compression": "gzip",
+      "identity": "docs/renderer/evidence/native-final-closure-v10/historical59-ABI-consumers.log.gz",
+      "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-principal-current-workspace-runtime-v4755/c-cpp-headless-consumers.log",
+      "original_sha256": "5f91a962583cd184258a1b4305dd2c15d1c15a3d6a096243d9002331f0fe9d46",
+      "sha256": "bb9b675837020c2c70de76df8f6cc024cac8334ccd0d340691f436a18700880c"
+    },
+    {
+      "compression": "gzip",
+      "identity": "docs/renderer/evidence/native-final-closure-v10/current-complete-census-receipt.json.gz",
+      "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-arrow-complete-chromium-matrices-v4794/receipt.json",
+      "original_sha256": "7b3275a159ed1bb828af1116e0d6866c4c47b4b1388cd29c0d5eb7b47b66179a",
+      "sha256": "d6d27b36df02eab58e8fbae3c9c3c9d7955b82f73aba3ec64f406f6fc3fb6f9a"
+    },
+    {
+      "compression": null,
+      "identity": "docs/renderer/evidence/native-final-closure-v10/current-complete-census-terminal.json",
+      "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-arrow-complete-chromium-matrices-v4794/owned-terminal-record-v1.json",
+      "original_sha256": "54144443901c510755d31ddbb9e8476abefb87f6492bc65ea7f4839e4d882f60",
+      "sha256": "54144443901c510755d31ddbb9e8476abefb87f6492bc65ea7f4839e4d882f60"
+    },
+    {
+      "compression": "gzip",
+      "identity": "docs/renderer/evidence/native-final-closure-v10/current-full-summary.json.gz",
+      "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-arrow-complete-chromium-matrices-v4794/full/full-summary.json",
+      "original_sha256": "3a850f8447cb4fe50da864c993f2a00d35614a172664acb2ea6310d922eaa08f",
+      "sha256": "36365e1e4f9779a1260ef86d4b8a97bbb91537f25219d02200990ad6a2afd721"
+    },
+    {
+      "compression": "gzip",
+      "identity": "docs/renderer/evidence/native-final-closure-v10/current-expanded-summary.json.gz",
+      "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-arrow-complete-chromium-matrices-v4794/expanded/expanded-summary.json",
+      "original_sha256": "7f8d5692be5271229f4ca774dbc9c43b6d2ba576bdd1dc614439dfea17392436",
+      "sha256": "8d7846cdc7bc38791f81c8d55f1f75bfed29ff4a409390447520034966b60222"
+    },
+    {
+      "compression": "gzip",
+      "identity": "docs/renderer/evidence/native-final-closure-v10/current-vs-q4-paired-comparison.json.gz",
+      "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-arrow-full-expanded-paired-audit-v4800/comparison.json",
+      "original_sha256": "6dce43e9a4d7e0ee4513ee4bd6375cfca0993847e8458bde384984f25950cb99",
+      "sha256": "c4e5070345a06069aac3a579a01222c542795e9314eebefb1c9c6ffbd26ea5c5"
+    },
+    {
+      "compression": null,
+      "identity": "docs/renderer/evidence/native-final-closure-v10/current-vs-q4-paired-terminal.json",
+      "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-arrow-full-expanded-paired-audit-v4800/owned-terminal-record-v1.json",
+      "original_sha256": "2e6fa4c0d03ae9b20ef1242e6815f4c3083530680bbc7a02751e930f211abccc",
+      "sha256": "2e6fa4c0d03ae9b20ef1242e6815f4c3083530680bbc7a02751e930f211abccc"
+    },
+    {
+      "compression": "gzip",
+      "identity": "docs/renderer/evidence/native-final-closure-v10/selected-source-epochs-receipt.json.gz",
+      "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-current-full-regression-epoch-audit-v4802/receipt.json",
+      "original_sha256": "cd754e19efe97c619784c19a3e3edf660937dabe4ebb0f70b570ab27ab78f4d6",
+      "sha256": "0f593872b4c8bdb3ccf89da7c12073985ee2709a5f1825fe77ceeb163eaedbb8"
+    },
+    {
+      "compression": null,
+      "identity": "docs/renderer/evidence/native-final-closure-v10/selected-source-epochs-terminal.json",
+      "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-current-full-regression-epoch-audit-v4802/owned-terminal-record-v1.json",
+      "original_sha256": "ebf33575fe810622c221f003ce59b19c7adfe01a283ce4c3ea50d699cb6ea1be",
+      "sha256": "ebf33575fe810622c221f003ce59b19c7adfe01a283ce4c3ea50d699cb6ea1be"
+    },
+    {
+      "compression": null,
+      "identity": "docs/renderer/evidence/native-final-closure-v10/open-paint-font-fitting-source-pins-v1.json",
+      "kind": "source-only exact Git excerpts and whole-source identities",
+      "original_path": null,
+      "original_sha256": "feac3e276efee846a9fefd7a8c5b5c971bbf5a775d4303dc7ffb4b3e6aa031b0",
+      "sha256": "feac3e276efee846a9fefd7a8c5b5c971bbf5a775d4303dc7ffb4b3e6aa031b0"
+    }
+  ],
+  "evidence_revision": 8,
+  "historical_openui_images_define_correctness": false,
+  "historical_q4_original_expanded_census": {
+    "source": "8bcc6dfa7240a34149d6351623a907723186f82d",
+    "suites": {
+      "expanded": {
+        "results": {
+          "different": 1993,
+          "errors": 0,
+          "exact": 21735,
+          "profile_result_sha256": "5ec4a43b9a27967f83fe9e16de5d45f92165dc8c2f6f39081b5ddf3fb026db3f",
+          "total": 23728
+        },
+        "summary_sha256": "170f35ea450ae71b1664c3db2580558a16e20a1042dfad1245c8e6617b2a9801"
+      },
+      "full": {
+        "results": {
+          "different": 1917,
+          "errors": 0,
+          "exact": 21007,
+          "profile_result_sha256": "612ac7d53daf898a6240058ed57c98b75206074b3ec3d7820fa49845dfacb586",
+          "total": 22924
+        },
+        "summary_sha256": "766c34ba7c2b56b51493a7f6bd4bb877675e36d4e4ebd1f883a2ef1d4d5baf5d"
+      }
+    }
+  },
+  "javascript_executed_by_openui": false,
+  "last_complete_original_expanded_census": {
+    "diagnostic_census": true,
+    "qualification": false,
+    "source": "96934cd08f68faa3fcb4eb2ba73f0142b59a2c39",
+    "suites": {
+      "expanded": {
+        "results": {
+          "different": 2052,
+          "errors": 0,
+          "exact": 21676,
+          "profile_result_sha256": "d7504d9e5373e5e6867aadb6852d778acdb2da0e7ad3e7dba346f073bc54a624",
+          "total": 23728
+        },
+        "summary_sha256": "7f8d5692be5271229f4ca774dbc9c43b6d2ba576bdd1dc614439dfea17392436"
+      },
+      "full": {
+        "results": {
+          "different": 1976,
+          "errors": 0,
+          "exact": 20948,
+          "profile_result_sha256": "6713da18c9bca336a7a206946f9c977ab7f36a523e04ab1c8f54131abcbddc7b",
+          "total": 22924
+        },
+        "summary_sha256": "3a850f8447cb4fe50da864c993f2a00d35614a172664acb2ea6310d922eaa08f"
+      }
+    }
+  },
+  "latest_complete_workspace": {
+    "CPP_consumers_passed": 35,
+    "C_consumers_passed": 41,
+    "FFI_exports": 164,
+    "Rust_failed": 1,
+    "Rust_ignored": 0,
+    "Rust_passed": 9385,
+    "checks": [
+      {
+        "actual_exit_code": 101,
+        "argv": [
+          "cargo",
+          "+stable",
+          "--config",
+          "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+          "test",
+          "--locked",
+          "--offline",
+          "--no-fail-fast",
+          "--workspace",
+          "--all-targets"
+        ],
+        "log_sha256": "0737f01ef4566df84bba111624ad78ac5f473cfcd8d03a77c5efe34b90acce06",
+        "name": "workspace-all-targets",
+        "pid": 3722774,
+        "reported_failed": 1,
+        "reported_ignored": 0,
+        "reported_passed": 9385,
+        "terminal_reaped": true
+      },
+      {
+        "actual_exit_code": 0,
+        "argv": [
+          "cargo",
+          "+stable",
+          "--config",
+          "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+          "test",
+          "--locked",
+          "--offline",
+          "--no-fail-fast",
+          "--workspace",
+          "--doc"
+        ],
+        "log_sha256": "8c5bb5c4c296e5bb1bc2b8cbb4ac7a6a71b00cd9afac08a598fbe81532ae3130",
+        "name": "workspace-doctests",
+        "pid": 3743484,
+        "reported_failed": 0,
+        "reported_ignored": 13,
+        "reported_passed": 2,
+        "terminal_reaped": true
+      },
+      {
+        "actual_exit_code": 0,
+        "argv": [
+          "cargo",
+          "+stable",
+          "--config",
+          "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+          "build",
+          "--locked",
+          "--offline",
+          "-p",
+          "openui-ffi"
+        ],
+        "log_sha256": "1ff661f86ed08240efbe0288a51475549c125d59dbc9afcac4238a64db1ed7b4",
+        "name": "c-abi-library-build",
+        "pid": 3743754,
+        "reported_failed": 0,
+        "reported_ignored": 0,
+        "reported_passed": 0,
+        "terminal_reaped": true
+      },
+      {
+        "actual_exit_code": 0,
+        "argv": [
+          "python3",
+          "-B",
+          "/home/nero/code/open-ui/tools/ffi/verify_abi.py",
+          "--library",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-principal-current-workspace-runtime-v4755/libopenui_ffi.so",
+          "--keep-going"
+        ],
+        "log_sha256": "5f91a962583cd184258a1b4305dd2c15d1c15a3d6a096243d9002331f0fe9d46",
+        "name": "c-cpp-headless-consumers",
+        "pid": 3743821,
+        "reported_failed": 0,
+        "reported_ignored": 0,
+        "reported_passed": 0,
+        "terminal_reaped": true
+      }
+    ],
+    "current_source": false,
+    "doctests_ignored": 13,
+    "doctests_passed": 2,
+    "source": {
+      "clean": true,
+      "commit": "59f6e5756b6df70d9ca1d3fab19731e64708636d",
+      "harness_sha256": "32a51e0c7438d13688bcac5a3b9a4a04c66a32219fd627d9be9e4844a052ea90",
+      "source_tree_sha256": "f73e50e99bcb768d0e35f0a5611ec66b13de2f8f1eeb941bb3dea31a88503858",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "native_api_qualified": false,
+  "open_native_API_behavior": [
+    "owned timeline objects and default identity",
+    "nullable/unbound timeline source parity",
+    "DocumentTimeline offsets and numeric boundary decisions",
+    "remaining application/event and compositor presentation ownership gates"
+  ],
+  "open_paint_and_font_fitting_gates": {
+    "font_gates": {
+      "Ahem_small_fractional_and_DejaVu_strike_hinting_exceptions": false,
+      "actual_final_physical_strike_and_general_provider_origin_routing": false,
+      "size10_LCD_x_phase_24_to_25_over64": false,
+      "size10_LCD_y_offset": false
+    },
+    "native_browser_source_or_pixel_change": false,
+    "paint_gate": {
+      "channel_addition": 8,
+      "coverage": "28/255",
+      "general_Chromium_derivation_qualified": false,
+      "private_removal_candidate_integrated": false,
+      "private_removal_candidate_qualified": false,
+      "symbol": "shared_spanner_four_way_junctions"
+    },
+    "qualification": false,
+    "schema": "open-source-fitting-gates-v1",
+    "source": "96934cd08f68faa3fcb4eb2ba73f0142b59a2c39",
+    "source_comments_do_not_establish_general_correctness": true,
+    "source_only": true,
+    "sources": [
+      {
+        "Git_blob": "946bf88e193f9d558c7b40b89e32efd89cdb9cc6",
+        "call_and_synthetic_draw": {
+          "excerpt": "                && !doc\n                    .node(decoration.fragment.node_id)\n                    .style\n                    .has_paint_containment()\n                && decorations.iter().take(decoration_index).any(|earlier| {\n                    earlier.ancestor_node_ids.is_empty()\n                        && (doc.node(earlier.fragment.node_id).style.display.is_flex()\n                            || doc.node(earlier.fragment.node_id).style.display.is_grid())\n                });\n            if (!grouped && !precedes_grouped_decoration && !follows_atomic_container)\n                || node_order.contains(&node_id)\n            {\n                continue;\n            }\n            node_order.push(node_id);\n        }\n    }\n\n    let mut prepainted = Vec::new();\n    let mut prepainted_rules = Vec::new();\n    let spanner_junctions =\n        shared_spanner_four_way_junctions(&column_decorations, &node_order, doc);\n    for node_id in node_order {\n        let mut painted_solid_coverage = Vec::new();\n        for decorations in &column_decorations {\n            for decoration in decorations\n                .iter()\n                .filter(|decoration| decoration.fragment.node_id.index() == node_id)\n            {\n                let fragment = decoration.fragment;\n                let style = &doc.node(fragment.node_id).style;\n                let solid_coverage = can_coalesce_identical_solid_decoration(decoration, style)\n                    .then(|| clipped_decoration_coverage_rect(decoration))\n                    .flatten();\n                let duplicate_solid_coverage = solid_coverage.is_some_and(|coverage| {\n                    painted_solid_coverage\n                        .iter()\n                        .any(|painted| same_physical_decoration_rect(*painted, coverage))\n                });\n                let pointer = fragment as *const Fragment as usize;\n                if duplicate_solid_coverage {\n                    // Coordinate replay can expose the same opaque slice\n                    // through two nested fragmentainers. It is one logical\n                    // box decoration; painting it twice compounds fractional\n                    // edge coverage at their shared physical boundary.\n                    prepainted.push(pointer);\n                    continue;\n                }\n                canvas.save();\n                for clip in &decoration.clips {\n                    canvas.clip_rect(clip.rect, ClipOp::Intersect, clip.antialias);\n                }\n                paint_fragment_box_decoration(canvas, fragment, doc, style, decoration.offset, 1.0);\n                prepaint_direct_shared_column_rules(\n                    canvas,\n                    fragment,\n                    doc,\n                    decoration.offset,\n                    &mut prepainted_rules,\n                );\n                prepainted.push(pointer);\n                canvas.restore();\n                if let Some(coverage) = solid_coverage {\n                    painted_solid_coverage.push(coverage);\n                }\n            }\n        }\n    }\n    for (cell, color) in spanner_junctions {\n        // Four independently rasterized quarter-covered corners leave a\n        // symmetric junction slightly lighter on Chromium's analytic\n        // display-item path than four CPU-Skia SrcOver masks. Resolve that\n        // primitive junction while it is still vector paint, before tile\n        // assembly. The eight-bit analytic mask stores the additional\n        // midpoint sample as 28/255 coverage.\n        let mut paint = Paint::default();\n        paint.set_style(PaintStyle::Fill);\n        paint.set_anti_alias(false);\n        let channel_up = |component: f32| {\n            if component <= 0.0 || component >= 1.0 {\n                component.clamp(0.0, 1.0)\n            } else {\n                (((component * 255.0).round() + 8.0).min(255.0)) / 255.0\n            }\n        };\n        let packed_color = Color {\n            r: channel_up(color.r),\n            g: channel_up(color.g),\n            b: channel_up(color.b),\n            a: color.a,\n        };\n        set_paint_css_color_with_alpha(&mut paint, &packed_color, 28.0 / 255.0);\n        canvas.draw_rect(cell, &paint);\n    }\n    (prepainted, prepainted_rules)\n}\n\nfn paint_stacking_entry(\n    canvas: &Canvas,\n    entry: &StackingEntry,\n    children: &[Fragment],\n",
+          "excerpt_sha256": "1cd838df5e6b26079210a50a73696e7199e3fdf1925263a27b7c67ada438cf50",
+          "first_source_line": 8665
+        },
+        "functions": [
+          {
+            "excerpt": "fn shared_spanner_four_way_junctions(\n    column_decorations: &[Vec<SharedColumnDecoration<'_>>],\n    node_order: &[usize],\n    doc: &Document,\n) -> Vec<(Rect, Color)> {\n    const EPSILON: f32 = 1.0 / 1024.0;\n    let scale = doc.device_scale_factor();\n    let snapping = RasterSnapping::new(scale);\n    let candidates: Vec<_> = column_decorations\n        .iter()\n        .flatten()\n        .filter_map(|decoration| {\n            let node_id = decoration.fragment.node_id.index();\n            if !node_order.contains(&node_id) {\n                return None;\n            }\n            let style = &doc.node(decoration.fragment.node_id).style;\n            let belongs_to_spanner = style.column_span == openui_style::ColumnSpan::All\n                || decoration.ancestor_node_ids.iter().any(|ancestor| {\n                    doc.node(*ancestor).style.column_span == openui_style::ColumnSpan::All\n                });\n            (belongs_to_spanner && can_coalesce_identical_solid_decoration(decoration, style))\n                .then(|| {\n                    clipped_decoration_coverage_rect(decoration)\n                        .map(|rect| (rect, style.background_color))\n                })\n                .flatten()\n        })\n        .collect();\n\n    let mut junctions = Vec::new();\n    for &(top_left, color) in &candidates {\n        let x = top_left.right;\n        let y = top_left.bottom;\n        let x_phase = (f64::from(x) * scale).rem_euclid(1.0);\n        let y_phase = (f64::from(y) * scale).rem_euclid(1.0);\n        if (x_phase - 0.5).abs() > 1.0e-6 || (y_phase - 0.5).abs() > 1.0e-6 {\n            continue;\n        }\n        let has_top_right = candidates.iter().any(|(rect, peer_color)| {\n            *peer_color == color\n                && (rect.left - x).abs() <= EPSILON\n                && (rect.bottom - y).abs() <= EPSILON\n        });\n        let has_bottom_left = candidates.iter().any(|(rect, peer_color)| {\n            *peer_color == color\n                && (rect.right - x).abs() <= EPSILON\n                && (rect.top - y).abs() <= EPSILON\n        });\n        let has_bottom_right = candidates.iter().any(|(rect, peer_color)| {\n            *peer_color == color\n                && (rect.left - x).abs() <= EPSILON\n                && (rect.top - y).abs() <= EPSILON\n        });\n        if !(has_top_right && has_bottom_left && has_bottom_right) {\n            continue;\n        }\n        let physical_x = snapping.physical_coordinate(x, PhysicalSnap::Floor);\n        let physical_y = snapping.physical_coordinate(y, PhysicalSnap::Floor);\n        let cell = Rect::from_ltrb(\n            physical_x as f32 / scale as f32,\n            physical_y as f32 / scale as f32,\n            (physical_x + 1) as f32 / scale as f32,\n            (physical_y + 1) as f32 / scale as f32,\n        );\n        if !junctions.iter().any(|(existing, existing_color)| {\n            *existing_color == color && same_physical_decoration_rect(*existing, cell)\n        }) {\n            junctions.push((cell, color));\n        }\n    }\n    junctions\n}",
+            "excerpt_sha256": "ab65d6b94ff0194858f12d44fea9b54f85c1291654d5d2abcd283ec69c682a31",
+            "source_line": 8014,
+            "symbol": "shared_spanner_four_way_junctions"
+          }
+        ],
+        "source_path": "bindings/rust/openui-paint/src/painter.rs",
+        "source_revision": "96934cd08f68faa3fcb4eb2ba73f0142b59a2c39",
+        "whole_source_sha256": "d4d55eaae8e5bd205d76becf0e525301d2e2ff1b1f1001b45c7c337163164f70"
+      },
+      {
+        "Git_blob": "3a16ded713aafea68ed5ed6ad759514ff5898f38",
+        "functions": [
+          {
+            "excerpt": "fn chromium_lcd_raster_x(device_x: f32, font_size: f32) -> f32 {\n    let phase = device_x.rem_euclid(1.0);\n    if (font_size - 10.0).abs() < f32::EPSILON && (24.0 / 64.0..25.0 / 64.0).contains(&phase) {\n        device_x - phase + 1.0 / 3.0\n    } else {\n        device_x\n    }\n}",
+            "excerpt_sha256": "fc3e7305a0a5dc8c7ed46d5e6ab428873807f00b1138b3d89b1484532f5d19ce",
+            "source_line": 44,
+            "symbol": "chromium_lcd_raster_x"
+          },
+          {
+            "excerpt": "fn chromium_lcd_strike_y_offset(\n    device_scale: f32,\n    edging: Edging,\n    hinting: FontHinting,\n    font_size: f32,\n    family: &str,\n) -> f32 {\n    // Chromium's retained 10px no-hint LCD strike keeps its origin one\n    // logical pixel above Skia's direct scaled replay. Ahem is a synthetic\n    // geometric face and does not use this outline-strike origin.\n    if (device_scale - 1.0).abs() > f32::EPSILON\n        && edging == Edging::SubpixelAntiAlias\n        && hinting == FontHinting::None\n        && (font_size - 10.0).abs() < f32::EPSILON\n        && !family.eq_ignore_ascii_case(\"Ahem\")\n    {\n        1.0\n    } else {\n        0.0\n    }\n}",
+            "excerpt_sha256": "42dc8b28f735de96129245a41904339ce48d65ca8fb252d74df51156e00970c9",
+            "source_line": 53,
+            "symbol": "chromium_lcd_strike_y_offset"
+          }
+        ],
+        "source_path": "bindings/rust/openui-text/src/shaping/shape_result.rs",
+        "source_revision": "96934cd08f68faa3fcb4eb2ba73f0142b59a2c39",
+        "whole_source_sha256": "8e251b4e16c6d93941acdfc733821c217b79890bed2eafee92fc356f664c73bc"
+      },
+      {
+        "Git_blob": "e57524836402fc92304c01b3eebb0a5ad1dac584",
+        "functions": [
+          {
+            "excerpt": "fn resolve_hinting(\n    requested_hinting: TextHinting,\n    requested_edging: TextEdging,\n    family_name: &str,\n    size: f32,\n    device_scale_factor: f64,\n) -> FontHinting {\n    let is_ahem = family_name.eq_ignore_ascii_case(\"Ahem\");\n    let computed_size = size / device_scale_factor as f32;\n    // The unit-scale 20px proportional strike is light-fitted by the pinned\n    // Chromium font profile. Its unhinted outline moves the first ink row,\n    // while a 20px physical strike reached from a fractional device scale\n    // follows the unfitted policy.\n    let unit_scale_20px_strike =\n        (device_scale_factor - 1.0).abs() <= f64::EPSILON && (computed_size - 20.0).abs() <= 1.0e-4;\n    match requested_hinting {\n        // Chromium's Fontconfig `hinting=false` path still grid-fits the\n        // aliased 8px Ahem face. Skia's direct API needs slight hinting to\n        // reproduce those glyph bounds, while larger Ahem sizes remain truly\n        // unhinted. Select by face and computed size, not by test identity.\n        TextHinting::None if requested_edging == TextEdging::Alias && is_ahem && size <= 8.0 => {\n            FontHinting::Slight\n        }\n        // Chromium also grid-fits glyphs supplied by a fallback face (for\n        // example arrows absent from Ahem) before applying the same aliased\n        // coverage threshold.\n        TextHinting::None if requested_edging == TextEdging::Alias && !is_ahem => {\n            FontHinting::Slight\n        }\n        TextHinting::None => FontHinting::None,\n        // Chromium asks Fontconfig for render parameters for every resolved\n        // family and physical strike. The pinned proportional Sans/Serif\n        // faces are generally returned without outline fitting, while the\n        // exact 16px and 24px strikes remain lightly fitted. The pinned\n        // monospace face keeps light fitting at every strike. Preserve those\n        // family/strike distinctions instead of applying one global SkFont\n        // hinting mode to all document-owned fonts.\n        TextHinting::Slight\n            if requested_edging == TextEdging::SubpixelAntiAlias\n                && (family_name.eq_ignore_ascii_case(\"DejaVu Sans\")\n                    || family_name.eq_ignore_ascii_case(\"DejaVu Serif\"))\n                && (computed_size >= 16.0 || device_scale_factor > 1.0)\n                && (size - 16.0).abs() > 1.0e-4\n                && (size - 24.0).abs() > 1.0e-4\n                && !unit_scale_20px_strike =>\n        {\n            FontHinting::None\n        }\n        // At a fractional physical Ahem strike, Skia's light-fitting drops\n        // the trailing coverage cell that Chromium keeps. Integral strikes\n        // retain light fitting; removing it there regresses exact glyphs.\n        TextHinting::Slight\n            if requested_edging == TextEdging::SubpixelAntiAlias\n                && is_ahem\n                && (size - size.round()).abs() > 1.0e-4 =>\n        {\n            FontHinting::None\n        }\n        TextHinting::Slight => FontHinting::Slight,\n        TextHinting::Normal => FontHinting::Normal,\n        TextHinting::Full => FontHinting::Full,\n    }\n}",
+            "excerpt_sha256": "369cc8b57277232d5e8d01047a16db7024206e4727f7cecc5aa5d09c4ba66fef",
+            "source_line": 118,
+            "symbol": "resolve_hinting"
+          }
+        ],
+        "source_path": "bindings/rust/openui-text/src/font/platform.rs",
+        "source_revision": "96934cd08f68faa3fcb4eb2ba73f0142b59a2c39",
+        "whole_source_sha256": "c0cd19ad33da5dadc484c146d86ad1faacc4746687e2e023b46dfbb304bc9c31"
+      }
+    ],
+    "writer_pid": 3815969
+  },
+  "pending": {
+    "current969_whole_workspace": {
+      "results": null,
+      "state": "no completed current-source full workspace evidence"
+    },
+    "default_renderer_promotion": {
+      "results": null,
+      "state": "not admitted"
+    },
+    "full_API_and_release_qualification": {
+      "results": null,
+      "state": "open"
+    },
+    "global_regression_remediation": {
+      "results": null,
+      "state": "required; current complete census loses 74 previously exact comparisons"
+    },
+    "hosted_CI": {
+      "results": null,
+      "state": "pending current-source evidence"
+    }
+  },
+  "pixel_target": "Chromium 147.0.7727.50",
+  "pixel_tolerance": 0,
+  "preserved_draft_manifests": [
+    {
+      "manifest_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-final-closure-status-source-scroll-v10/draft-source-manifest-v1.json",
+      "sha256": "c5e7bf95f6c0efafe56ed677eeeb59668b5cdd2ac870c657e39a1770c6dcb8ca",
+      "version": 1
+    },
+    {
+      "manifest_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-final-closure-status-source-scroll-v10/draft-source-manifest-v2.json",
+      "sha256": "8125a39c0272fd28361f12f721e4615f25b6b1f4ba5ea8087f3ed85afc36a7b6",
+      "version": 2
+    },
+    {
+      "manifest_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-final-closure-status-source-scroll-v10/draft-source-manifest-v3.json",
+      "sha256": "2d36ed5197da08da6b2c584bea7c7696d4885d6fbeeb6be03383d5f41441cf44",
+      "version": 3
+    },
+    {
+      "manifest_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-final-closure-status-source-scroll-v10/draft-source-manifest-v4.json",
+      "sha256": "0ce3922ceb3d766d6d4e194700ec9a23991440448302e7715df440f4429cf84c",
+      "version": 4
+    },
+    {
+      "manifest_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-final-closure-status-source-scroll-v10/draft-source-manifest-v5.json",
+      "sha256": "6d539b48b23f3dfc38b5a620afbc61afdab55d6604f0f84b3d4588767ca228da",
+      "version": 5
+    },
+    {
+      "manifest_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-final-closure-status-source-scroll-v10/draft-source-manifest-v6.json",
+      "sha256": "a7b38c504588d9b6c7e15b2627b4147145315e36211595b436b6c64d435d456b",
+      "version": 6
+    },
+    {
+      "manifest_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-final-closure-status-source-scroll-v10/draft-source-manifest-v7.json",
+      "sha256": "68c941a56d7bfa881b596e778b986baf190be111918f7d588b31d313806611d5",
+      "version": 7
+    }
+  ],
+  "private_explicit_lcd": {
+    "affected_run_and_final_physical_strike_observation": null,
+    "alias15_controls_unchanged": true,
+    "decision": "rejected pending shared routing remediation",
+    "general_per_run_source_routing_fix_proved": false,
+    "independent_chromium_repeats": 2,
+    "integrated": false,
+    "paired_matrices": [
+      {
+        "chromium_changed": 0,
+        "count": 16,
+        "gained_exact": 0,
+        "lost_exact": 0,
+        "native_rgba_changed": 0,
+        "suite": "scoped-original/full-summary.json"
+      },
+      {
+        "chromium_changed": 0,
+        "count": 640,
+        "gained_exact": 0,
+        "lost_exact": 40,
+        "native_rgba_changed": 40,
+        "suite": "focused/focused-summary.json"
+      },
+      {
+        "chromium_changed": 0,
+        "count": 960,
+        "gained_exact": 0,
+        "lost_exact": 0,
+        "native_rgba_changed": 0,
+        "suite": "primitive/primitive-summary.json"
+      }
+    ],
+    "paragraph_comparisons": {
+      "alias-observed": {
+        "different": 30,
+        "errors": 0,
+        "exact": 0
+      },
+      "lcd-observed": {
+        "different": 0,
+        "errors": 0,
+        "exact": 30
+      }
+    },
+    "paragraph_native_unique_frames_per_arm": 15,
+    "qualification": false,
+    "scoped_guard_failures": 0,
+    "scoped_guards_passed": 125,
+    "source": "ea14908177cc01130491677293ac144fee7c201e"
+  },
+  "publication_state": "immutable measured status source checkpoint; runtime and release qualification remain false",
+  "release_qualified": false,
+  "renderer_qualified": false,
+  "requested_status_base": "c4a90b0f7b868a794817c503f46fcb9b6c73809b",
+  "schema_version": 10,
+  "selected_source_epoch_diagnostics": {
+    "actual_comparisons": 608,
+    "errors": 0,
+    "scope": "Selected current-original changed rows; this localizes source cohorts, not a general causal proof.",
+    "transitions": [
+      {
+        "after": "Q5",
+        "before": "Q4",
+        "gained_exact": 8,
+        "lost_exact": 38,
+        "native_rgba_changed": 64
+      },
+      {
+        "after": "Q6",
+        "before": "Q5",
+        "gained_exact": 7,
+        "lost_exact": 28,
+        "native_rgba_changed": 46
+      },
+      {
+        "after": "Q7",
+        "before": "Q6",
+        "gained_exact": 6,
+        "lost_exact": 14,
+        "native_rgba_changed": 30
+      },
+      {
+        "after": "Q8",
+        "before": "Q7",
+        "gained_exact": 4,
+        "lost_exact": 4,
+        "native_rgba_changed": 13
+      },
+      {
+        "after": "Q9",
+        "before": "Q8",
+        "gained_exact": 0,
+        "lost_exact": 0,
+        "native_rgba_changed": 0
+      }
+    ]
+  },
+  "whole_project_completion_percentage": null
+}

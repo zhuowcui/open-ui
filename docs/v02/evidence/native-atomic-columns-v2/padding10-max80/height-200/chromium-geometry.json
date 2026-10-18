@@ -1,0 +1,76 @@
+{
+  "case": "height-200",
+  "geometry": {
+    "hit": "columns",
+    "nodes": {
+      "border": {
+        "bounds": {
+          "height": 136,
+          "width": 164,
+          "x": 0,
+          "y": 0
+        },
+        "rects": [
+          {
+            "height": 70,
+            "width": 56,
+            "x": 0,
+            "y": 10
+          },
+          {
+            "height": 136,
+            "width": 56,
+            "x": 108,
+            "y": 0
+          }
+        ]
+      },
+      "columns": {
+        "bounds": {
+          "height": 80,
+          "width": 300,
+          "x": 0,
+          "y": 0
+        },
+        "rects": [
+          {
+            "height": 80,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          }
+        ]
+      },
+      "limit": {
+        "bounds": {
+          "height": 90,
+          "width": 192,
+          "x": 0,
+          "y": 0
+        },
+        "rects": [
+          {
+            "height": 80,
+            "width": 84,
+            "x": 0,
+            "y": 0
+          },
+          {
+            "height": 90,
+            "width": 84,
+            "x": 108,
+            "y": 0
+          }
+        ]
+      }
+    },
+    "viewport": {
+      "dpr": 1,
+      "height": 340,
+      "width": 320
+    }
+  },
+  "input_sha256": "e50ac5e317333741ebbaa028b45c2abafc47d96f5d6f469ffe59ce20fa3b2c00",
+  "png_sha256": "37c53d3541d4d5dfca6fa01916567d287e162cbcdfbe93b0eaf3c64a397fd234",
+  "repeated_query_equal": true
+}

@@ -2,9 +2,33 @@
   "abi_version": "0x00020000",
   "pointer_width": 64,
   "types": {
+    "OuiAccessibilityNodeInfo": {
+      "align": 8,
+      "size": 120
+    },
+    "OuiAccessibilityNodeState": {
+      "align": 8,
+      "size": 112
+    },
+    "OuiAccessibilityScrollInfoV1": {
+      "align": 8,
+      "size": 64
+    },
+    "OuiAccessibilitySnapshotInfo": {
+      "align": 8,
+      "size": 56
+    },
     "OuiAccessibilityUpdate": {
       "align": 8,
       "size": 40
+    },
+    "OuiAnimationAttachmentRangeV1": {
+      "align": 8,
+      "size": 80
+    },
+    "OuiAnimationAttachmentSnapshotV1": {
+      "align": 8,
+      "size": 248
     },
     "OuiAnimationEvent": {
       "align": 8,
@@ -14,6 +38,10 @@
       "align": 8,
       "size": 104
     },
+    "OuiAnimationOptionsV1": {
+      "align": 8,
+      "size": 64
+    },
     "OuiAnimationState": {
       "align": 8,
       "size": 48
@@ -22,9 +50,21 @@
       "align": 8,
       "size": 40
     },
+    "OuiAnimationTimelineSnapshotV1": {
+      "align": 8,
+      "size": 96
+    },
+    "OuiAnimationTimelineSourceV1": {
+      "align": 8,
+      "size": 80
+    },
     "OuiAppConfig": {
       "align": 8,
       "size": 40
+    },
+    "OuiAppRunConfig": {
+      "align": 8,
+      "size": 32
     },
     "OuiBitmap": {
       "align": 8,
@@ -42,6 +82,14 @@
       "align": 8,
       "size": 48
     },
+    "OuiEasingCurveV1": {
+      "align": 8,
+      "size": 80
+    },
+    "OuiEditCommandV1": {
+      "align": 4,
+      "size": 32
+    },
     "OuiErrorInfo": {
       "align": 8,
       "size": 24
@@ -49,6 +97,14 @@
     "OuiEvent": {
       "align": 8,
       "size": 88
+    },
+    "OuiEventPropertiesV1": {
+      "align": 4,
+      "size": 16
+    },
+    "OuiFocusEventInfoV1": {
+      "align": 8,
+      "size": 24
     },
     "OuiFontFaceDescriptor": {
       "align": 8,
@@ -66,17 +122,45 @@
       "align": 4,
       "size": 8
     },
+    "OuiInputEventInfoV1": {
+      "align": 8,
+      "size": 40
+    },
     "OuiKeyframe": {
       "align": 8,
       "size": 80
+    },
+    "OuiKeyframeV1": {
+      "align": 8,
+      "size": 40
     },
     "OuiLength": {
       "align": 4,
       "size": 8
     },
+    "OuiLinearStopV1": {
+      "align": 8,
+      "size": 16
+    },
+    "OuiPlatformEvent": {
+      "align": 8,
+      "size": 152
+    },
+    "OuiRadiusAxisLengthV1": {
+      "align": 4,
+      "size": 24
+    },
     "OuiRect": {
       "align": 4,
       "size": 16
+    },
+    "OuiScrollButtonStateV1": {
+      "align": 8,
+      "size": 56
+    },
+    "OuiScrollMetricsV1": {
+      "align": 8,
+      "size": 40
     },
     "OuiStylePayload": {
       "align": 8,
@@ -85,6 +169,18 @@
     "OuiStyleValue": {
       "align": 8,
       "size": 16
+    },
+    "OuiTimelineLengthV1": {
+      "align": 8,
+      "size": 24
+    },
+    "OuiTimelineRangeBoundsV1": {
+      "align": 8,
+      "size": 16
+    },
+    "OuiTimelineRangeOffsetV1": {
+      "align": 8,
+      "size": 32
     },
     "OuiTransformOperation": {
       "align": 4,

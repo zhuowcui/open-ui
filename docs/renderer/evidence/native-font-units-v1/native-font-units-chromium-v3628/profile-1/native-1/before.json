@@ -1,0 +1,38 @@
+[
+  {
+    "bounds": {
+      "height": 10.0,
+      "width": 47.5,
+      "x": 10.0,
+      "y": 10.0
+    },
+    "name": "ch"
+  },
+  {
+    "bounds": {
+      "height": 10.0,
+      "width": 37.40625,
+      "x": 10.0,
+      "y": 35.0
+    },
+    "name": "ex"
+  },
+  {
+    "bounds": {
+      "height": 10.0,
+      "width": 56.125,
+      "x": 10.0,
+      "y": 60.0
+    },
+    "name": "lh-number"
+  },
+  {
+    "bounds": {
+      "height": 10.0,
+      "width": 59.421875,
+      "x": 10.0,
+      "y": 85.0
+    },
+    "name": "lh-percent"
+  }
+]

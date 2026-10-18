@@ -1,0 +1,95 @@
+{
+  "all_commands_terminal": true,
+  "baseline_regression_reproduced": false,
+  "failure": "",
+  "javascript_executed_by_openui": false,
+  "observed_exit_code": 1,
+  "probe_sha256": "c671c39d4ea6920c77cf48e0e048f353b1d948f0b1bbfb3f3bbb0eb0a55c97a3",
+  "promotion_allowed": false,
+  "public_native_rust_api": true,
+  "release_qualification": false,
+  "schema_version": 1,
+  "selected_native_test_names": [
+    "tests::native_repeated_table_body_progress_survives_retained_mutations"
+  ],
+  "source": {
+    "clean": true,
+    "commit": "e389b26ab28f259544e43c3052c895501e4c8686",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "2d023f9958aa427be4203b16a15c326ee7c20ae9844e6b1548e754ac4bd577c6",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "e389b26ab28f259544e43c3052c895501e4c8686",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "2d023f9958aa427be4203b16a15c326ee7c20ae9844e6b1548e754ac4bd577c6",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "state": "failed",
+  "steps": [
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "clean",
+        "-p",
+        "openui-geometry",
+        "-p",
+        "openui-style",
+        "-p",
+        "openui-dom",
+        "-p",
+        "openui-text",
+        "-p",
+        "openui-layout",
+        "-p",
+        "openui-paint",
+        "-p",
+        "openui-compositor",
+        "-p",
+        "openui-engine",
+        "-p",
+        "openui-platform",
+        "-p",
+        "openui-ffi",
+        "-p",
+        "openui",
+        "-p",
+        "openui-macros",
+        "-p",
+        "hello",
+        "-p",
+        "counter",
+        "-p",
+        "todo",
+        "-p",
+        "dashboard",
+        "-p",
+        "framework-test",
+        "-p",
+        "pixel-compare"
+      ],
+      "disk_guard_triggered": true,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "clean-baseline",
+      "observed_exit_code": -15,
+      "source": {
+        "clean": true,
+        "commit": "cd6d80be4be16151a607cddcbad94e2f73a79e62",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "b76a17dffb647d66c7b6726bdba2af3f00d19011421a672d306c71aace49a76f",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "cd6d80be4be16151a607cddcbad94e2f73a79e62",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "b76a17dffb647d66c7b6726bdba2af3f00d19011421a672d306c71aace49a76f",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "workspace_cleaned_at_every_source_switch": true
+}

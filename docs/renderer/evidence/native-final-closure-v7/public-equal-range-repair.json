@@ -1,0 +1,64 @@
+{
+  "owner_pid": 3378472,
+  "source": {
+    "commit": "e52d047f80500bc71c01b1a22be57ea250bca5e7",
+    "clean": true,
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "source_tree_sha256": "b3fd497ebdb26fc41f18a7da3ebea38df3ed6ee15eed6191a0484e7a39a166e7",
+    "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6"
+  },
+  "checks": [
+    {
+      "name": "public-attachment-ranges",
+      "argv": [
+        "cargo",
+        "+stable",
+        "--config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "--offline",
+        "--no-fail-fast",
+        "-p",
+        "openui",
+        "--test",
+        "native_attachment_ranges"
+      ],
+      "pid": 3378563,
+      "actual_exit_code": 0,
+      "terminal_reaped": true,
+      "log_sha256": "12c9d41b2b1ee77c158f3d2c7bf9abc4973e87d3fd3921e6392820ef8cea73c6",
+      "reported_passed": 6,
+      "reported_failed": 0,
+      "reported_ignored": 0
+    }
+  ],
+  "complete": true,
+  "renderer_qualified": false,
+  "release_qualified": false,
+  "runtime_scope": "Strict public attachment controls after the independently reviewed same-default-range guard correction; no production change, complete workspace rerun or Chromium qualification",
+  "independent_live_pixel_epoch": {
+    "source_before": {
+      "commit": "5520ed920523164574fc80187b2702892cb5ac62",
+      "clean": true,
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_tree_sha256": "0e2c22d402f809735879222fed8bbaad849d989d3aa7c96ac61595e1d3c77336",
+      "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6"
+    },
+    "runner_sha256": "02cc432163bf1f925772405b2f60f6903824cf42f1598f84311b186215c43ad5",
+    "performance_qualification": false,
+    "shared_cargo_target_used_by_pixel_runner": false,
+    "source_unchanged": true,
+    "runner_unchanged": true
+  },
+  "boot_id": "362ae37b-d85f-4812-9f25-ef02cf732134",
+  "source_after": {
+    "commit": "e52d047f80500bc71c01b1a22be57ea250bca5e7",
+    "clean": true,
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "source_tree_sha256": "b3fd497ebdb26fc41f18a7da3ebea38df3ed6ee15eed6191a0484e7a39a166e7",
+    "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6"
+  },
+  "source_unchanged": true,
+  "intended_exit_code": 0
+}

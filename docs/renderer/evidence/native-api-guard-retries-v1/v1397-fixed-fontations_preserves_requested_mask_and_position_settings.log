@@ -1,0 +1,9 @@
+   Compiling openui-text v0.2.0 (/dev/shm/openui-native-raster-consumer-0e1f12ff/bindings/rust/openui-text)
+    Finished `test` profile [unoptimized] target(s) in 5.61s
+     Running unittests src/lib.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/openui_text-de4e58fa992bd64b)
+
+running 1 test
+test shaping::shape_result::tests::fontations_preserves_requested_mask_and_position_settings ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 340 filtered out; finished in 0.73s
+

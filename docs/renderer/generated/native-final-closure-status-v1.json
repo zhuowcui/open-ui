@@ -1,0 +1,309 @@
+{
+  "capture_environment_diagnosis": {
+    "ahem_and_real_font_capture": true,
+    "browser_TMPDIR_on_drvfs_capture": false,
+    "browser_TMPDIR_on_linux_capture": true,
+    "fixture_harness_and_oracle_inputs_unchanged": true,
+    "pixel_qualification": false,
+    "profile_directory_held_constant": true,
+    "receipt_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-chromium-capture-environment-v4369/receipt.json",
+    "receipt_sha256": "4053839ba6abd097ef36fec9d31f6662be12947869b32ff18699ada6a9e4c124"
+  },
+  "dependency_security": {
+    "actual_exit_code": 1,
+    "locks": [
+      {
+        "advisories": [
+          {
+            "id": "RUSTSEC-2026-0204",
+            "name": "crossbeam-epoch",
+            "patched": [
+              ">=0.9.20"
+            ],
+            "title": "Invalid pointer dereference in `fmt::Pointer` impl for `Atomic` and `Shared` when the underlying pointer is invalid",
+            "url": "https://github.com/crossbeam-rs/crossbeam/pull/1276",
+            "version": "0.9.18"
+          },
+          {
+            "id": "RUSTSEC-2026-0194",
+            "name": "quick-xml",
+            "patched": [
+              ">=0.41.0"
+            ],
+            "title": "Quadratic run time when checking a start tag for duplicate attribute names",
+            "url": "https://github.com/tafia/quick-xml/issues/969",
+            "version": "0.38.4"
+          },
+          {
+            "id": "RUSTSEC-2026-0195",
+            "name": "quick-xml",
+            "patched": [
+              ">=0.41.0"
+            ],
+            "title": "Unbounded namespace-declaration allocation in `NsReader` enables memory-exhaustion denial of service",
+            "url": "https://github.com/tafia/quick-xml/issues/970",
+            "version": "0.38.4"
+          }
+        ],
+        "audit_exit_code": 1,
+        "complete": true,
+        "database": {
+          "advisory-count": 1307,
+          "last-commit": "57dcc0f2192e025138907a495c1ac9a7e1e3e123",
+          "last-updated": "2026-10-12T20:06:48+02:00"
+        },
+        "dependency_count": 354,
+        "passed": false,
+        "path": "bindings/rust/Cargo.lock",
+        "warnings": {}
+      },
+      {
+        "advisories": [],
+        "audit_exit_code": 0,
+        "complete": true,
+        "database": {
+          "advisory-count": 1307,
+          "last-commit": "57dcc0f2192e025138907a495c1ac9a7e1e3e123",
+          "last-updated": "2026-10-12T20:06:48+02:00"
+        },
+        "dependency_count": 90,
+        "passed": true,
+        "path": "bindings/rust/fuzz/Cargo.lock",
+        "warnings": {}
+      }
+    ],
+    "locks_before_after_bytes_and_mtime_identical": true,
+    "locks_identity": [
+      {
+        "mtime_ns": 1791843738624359000,
+        "path": "bindings/rust/Cargo.lock",
+        "sha256": "878a55f5b9a01cfc23a851dfcd017989b67bc43409e24b17914826bea2a4223b"
+      },
+      {
+        "mtime_ns": 1791843738637657700,
+        "path": "bindings/rust/fuzz/Cargo.lock",
+        "sha256": "2baa59472abf346bc73252810abf7d42b4b5cfaea03a7340b0fb2b835703a47b"
+      }
+    ],
+    "passed": false,
+    "registry_completed_versions": 366,
+    "registry_consumer_backport_inheritance": false,
+    "registry_failures": [],
+    "registry_requested_versions": 366,
+    "remediation_compile_and_msrv_qualified": false,
+    "source_before_after_identical": true,
+    "source_commit": "a5efe804193314f7869522d98d6ac009c179fbe0",
+    "summary_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-dependency-security-source-v4313/actual-lock-audit-result-summary-v2.json",
+    "summary_sha256": "c7a5d703ec929f026b1fad0706dd73095b0b7db61f1e59cf8f3010a4ae6e6a5f"
+  },
+  "development_checkpoint_parent": "50b530110c6a68c4dfc293962318fea454a0cac7",
+  "failed_fresh_capture_attempt": {
+    "counts": {
+      "different": 0,
+      "errors": 640,
+      "exact": 0,
+      "total": 640
+    },
+    "larger_suites_interrupted_or_not_started": true,
+    "qualifying_pixel_score": false,
+    "report_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-chromium-matrices-c48ff96-v4365/focused/focused-summary.json",
+    "report_sha256": "88f5d7e68d20624a3cbdeddcac33be78b15f859708d24ffbd27bf11e3bf09583",
+    "source": {
+      "clean": true,
+      "commit": "c48ff96cdeb4f2e6124fecae636ff7cdcad73613",
+      "harness_sha256": "abff37553c0abe146718cec361f956bfcc75bfcfeaf7feb82682f6122e920ccd",
+      "source_tree_sha256": "46c8e9b56f87a3ebe0623853f9e12d1ce690f26b9e82ced02f86e2313470df12",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "fresh_matrix_run": {
+    "browser_TMPDIR": "/tmp/oui-c48-4370",
+    "chromium_capture_namespace": "fresh",
+    "comparison_cache_reused": false,
+    "qualifies_later_development_source": false,
+    "receipt_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-chromium-matrices-c48ff96-v4370/receipt.json",
+    "source_commit": "c48ff96cdeb4f2e6124fecae636ff7cdcad73613",
+    "state_at_status_checkpoint": "running"
+  },
+  "javascript_executed_by_openui": false,
+  "last_complete_original": {
+    "complete_contract_scope": true,
+    "counts": {
+      "different": 1607,
+      "errors": 0,
+      "exact": 21317,
+      "total": 22924
+    },
+    "pixel_gate_passed": false,
+    "report_path": "/mnt/d/openui-v02-qualification-d174ea0b/ordinary-opacity-census-v4217/full/full-summary.json",
+    "report_sha256": "9abd4dc9135985be43fa9e207f0118e583c2f19cafed7da7a88d5ed887839563",
+    "source": {
+      "clean": true,
+      "commit": "fe51eab99b3195bba1177ee23077e7b086307e0c",
+      "harness_sha256": "f2248950a92a4d6bbb0feef34a01ee02dbe531c28b3e095eb80aa055210a7fbf",
+      "source_tree_sha256": "f67953e834cac56b626a01bc54db9e9dd4db1b98b7364967947533667dbfc411",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "native_api_qualified": false,
+  "native_runtime_receipts": [
+    {
+      "checks": [
+        {
+          "actual_exit_code": 101,
+          "log_sha256": "f7c0be16b4e3a09f27648c332dad52df2ef5cbd7dfe82e4902c68421c1afb7e4",
+          "name": "retained-scene-metadata",
+          "reported_failed": 2,
+          "reported_ignored": 0,
+          "reported_passed": 6,
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 101,
+          "log_sha256": "60c63d1f0539789e4edd9cabc0b2239d748c5b2024bb79f65dc79edfeec43c6b",
+          "name": "gutter-layout-and-replaced-paint",
+          "reported_failed": 6,
+          "reported_ignored": 0,
+          "reported_passed": 8,
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 0,
+          "log_sha256": "de8c80635263ba0584039a762a402c630edec08804659a2daea9a34f3800c380",
+          "name": "core-library-regression",
+          "reported_failed": 0,
+          "reported_ignored": 0,
+          "reported_passed": 355,
+          "terminal_reaped": true
+        }
+      ],
+      "receipt_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-retained-gutter-runtime-v4348/receipt.json",
+      "receipt_sha256": "678b5d3096444062d40b5095e7d5fd683c01ae15060500d8ea9e34b141f47963",
+      "scope_is_not_whole_workspace": true,
+      "source": {
+        "clean": true,
+        "commit": "c48ff96cdeb4f2e6124fecae636ff7cdcad73613",
+        "harness_sha256": "abff37553c0abe146718cec361f956bfcc75bfcfeaf7feb82682f6122e920ccd",
+        "source_tree_sha256": "46c8e9b56f87a3ebe0623853f9e12d1ce690f26b9e82ced02f86e2313470df12",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "checks": [
+        {
+          "actual_exit_code": 0,
+          "log_sha256": "7e3fd3b858a2f650e4ce72f30618444240bb5ff138f385cbb557d2a67add31b5",
+          "name": "grid-native-values",
+          "reported_failed": 0,
+          "reported_ignored": 0,
+          "reported_passed": 2,
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 0,
+          "log_sha256": "a4fd7fc369a4b7c25547676d7eba2ecfc23d8a581a57e4040d30423183cc7fc1",
+          "name": "flex-native-owners",
+          "reported_failed": 0,
+          "reported_ignored": 0,
+          "reported_passed": 39,
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 0,
+          "log_sha256": "be8bda928fb778589571bf802f6c88499b58307f90ba4fe1e9823060d4ce9a60",
+          "name": "borrowed-helper-scroll",
+          "reported_failed": 0,
+          "reported_ignored": 0,
+          "reported_passed": 1,
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 0,
+          "log_sha256": "2cdafa1e6f8580b8d9a25104440dca604fa48cbf70d7241d72065053b83dd255",
+          "name": "ffi-scroll-reveal",
+          "reported_failed": 0,
+          "reported_ignored": 0,
+          "reported_passed": 2,
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 0,
+          "log_sha256": "ec2a93e0c73d44a1441f2f851ec8188a6354b297838902f058524e4d1cf48289",
+          "name": "c-abi-library-build",
+          "reported_failed": 0,
+          "reported_ignored": 0,
+          "reported_passed": 0,
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 1,
+          "log_sha256": "63e43703dffe7b0a58ba139f331d1768fd19a0a6873bfba4b6f4b21b870b845b",
+          "name": "c-cpp-headless-consumers",
+          "reported_failed": 0,
+          "reported_ignored": 0,
+          "reported_passed": 0,
+          "terminal_reaped": true
+        }
+      ],
+      "receipt_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-grid-helper-c-abi-runtime-v4357/receipt.json",
+      "receipt_sha256": "e090d03caceed379359dfb0a78bf7feb7242a4846bad9207de4ebc4393362e9a",
+      "scope_is_not_whole_workspace": true,
+      "source": {
+        "clean": true,
+        "commit": "18d1c582c4492ab54669b30d871f35791961e3e8",
+        "harness_sha256": "abff37553c0abe146718cec361f956bfcc75bfcfeaf7feb82682f6122e920ccd",
+        "source_tree_sha256": "681fab646931dd68622f862c94d4bdc4875784e992214e6ddaa753aa8be38f4d",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "checks": [
+        {
+          "actual_exit_code": 0,
+          "log_sha256": "b342886ff9c3c1b257b5ff97cb49912d4efe9563d64b9baf8cfc5e785c3328cd",
+          "name": "c-abi-library-build",
+          "reported_failed": 0,
+          "reported_ignored": 0,
+          "reported_passed": 0,
+          "terminal_reaped": true
+        },
+        {
+          "actual_exit_code": 1,
+          "log_sha256": "63ea3190d8aa2ad6390c576f385f73c295cc8f0a10ec1d035f805672cc85950e",
+          "name": "c-cpp-headless-consumers",
+          "reported_failed": 0,
+          "reported_ignored": 0,
+          "reported_passed": 0,
+          "terminal_reaped": true
+        }
+      ],
+      "receipt_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-cpp-consumer-runtime-v4359/receipt.json",
+      "receipt_sha256": "672670ad924d587cf520adb2cf5ae9cd6ce1c3f578b33fd33ec2d986386864ce",
+      "scope_is_not_whole_workspace": true,
+      "source": {
+        "clean": true,
+        "commit": "1b33d96837bf71db05d0dbc756577b27438751fd",
+        "harness_sha256": "abff37553c0abe146718cec361f956bfcc75bfcfeaf7feb82682f6122e920ccd",
+        "source_tree_sha256": "82193fa4cdfe30737eecc1f8c4d0848e2ee24fbaeca8fa1337684a6289049be7",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "pixel_target": "pinned Chromium147.0.7727.50",
+  "pixel_tolerance": 0,
+  "release_gates_remaining": [
+    "all required Chromium original/focused/primitive/expanded pixels exact",
+    "reviewed ownership and minimized evidence for every residual",
+    "all required native APIs and retained compositor/3D behavior",
+    "real X11/Wayland window and accessibility operation",
+    "MSRV, hardening, fuzz, soak and performance gates",
+    "physical hardware and blocked-UI presentation measurements",
+    "clean reproducible SDK/Debian/RPM install and consuming applications",
+    "protected signing, final approval and publication credentials"
+  ],
+  "release_qualified": false,
+  "renderer_qualified": false,
+  "schema_version": 1,
+  "status_date": "2026-10-12",
+  "whole_project_completion_percentage": null
+}

@@ -1,0 +1,34 @@
+{
+  "baseline": "25322be849f1f0523a6e66291a567d0758931160",
+  "branch": "agent/native-text-inheritance-queue-v1669",
+  "files": {
+    "/tmp/openui-native-text-inheritance-build-v1669.py": "6418f756d96f4e59ba6520dc5a64147defa27709345ba7dd5846f73285644b7a",
+    "/tmp/openui-native-text-inheritance-consumer-v1669.py": "134f3f2ebd6090dafb3c8663d32d08dc9e67744ceb9ff5096fc665b6a23616de",
+    "/tmp/openui-native-text-inheritance-guards-v1669.py": "9a0f5cb625f56aabb45c85691c3190c11f6a127acba2549f5d2c3d5f327439b6",
+    "/tmp/openui-native-text-inheritance-matrices-v1669.py": "62fb6e1e73b4d9f7b3242a783b3bd5ff717caec670d17703820847890cdd0f6b",
+    "/tmp/openui-native-text-inheritance-pipeline-v1670.py": "edb5f2ca4c0435e1776a7bbaa35e61ff0579ced723564ba4f45a8f84a367fe77"
+  },
+  "interrupted_owners_verified_absent": true,
+  "originals": {
+    "/tmp/openui-native-text-loader-retry-build-v1655.py": "e011da0a11dec991307591989607d801cabdf79980844a06cd212f015356a62e",
+    "/tmp/openui-native-text-loader-retry-consumer-v1655.py": "345b71d8b86226f422a96249317bb23f409ce49dc79a0281fe250db1aaa07c4c",
+    "/tmp/openui-native-text-loader-retry-guards-v1655.py": "37dadb26aff6edd85a0f4682ae676efbf0839cf16c83abf38c2a4d897b4b3c09",
+    "/tmp/openui-native-text-loader-retry-matrices-v1655.py": "3c4bf31f2cd23454badf59b41bb9e553703ac378624fee8027b031f98e6e2ca4",
+    "/tmp/openui-native-text-loader-retry-pipeline-v1656.py": "329859c7fb1989405d49b415499d16003b03a81e8e9e04df305082e97bee09dd"
+  },
+  "prior_whole_owners": 38,
+  "release_qualification": false,
+  "required_app_images": 600,
+  "required_build_stages": 13,
+  "required_geometry_states": 38400,
+  "required_matrices": 4,
+  "root": "/dev/shm/openui-native-text-inheritance-queue-41b616c3",
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "41b616c3be5224b074e9d06ba6aa963731a1b265",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "2f5e480b3a582fbc34561d02b44cabaeb658d11f8a247381c8f5e56cae253c59",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

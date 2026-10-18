@@ -1,0 +1,1197 @@
+{
+  "accepted_renderer_unchanged": true,
+  "all_1600_native_and_chromium_row_invariants_unchanged": true,
+  "artifacts": [
+    {
+      "path": "docs/renderer/generated/native-svg-viewport-v8.json",
+      "sha256": "ff18fcf7ff4937af7f101ced0b6f3b0f896c33b1fab79aa427cf37f12f6cde77"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-original-delta-v313.json",
+      "sha256": "b67fe7cf6118c5fdc3d06da62dadee5fd893bfa5a9c6680a5d7d0653905a37d1"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-expanded-delta-v315.json",
+      "sha256": "c238f28fee1a4ad42234af78fec286d150e26ccfb7804e970e6b0023d8cf3400"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-native-docs-checks-v310.json",
+      "sha256": "fee5b43b1dc17db064d0ad82301af7984968e8cf1f9b4d6a53a8b48477b527df"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-native-docs-ci-v312.json",
+      "sha256": "c22d7f6433c70bd39e09c88e39e90bc95ce0d257f78611385e6adb2a71b5b55f"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-index-drafts-preservation-v316.json",
+      "sha256": "95224c79a2de06b8ea5fc734c45313aca4f4a4a7dde9624e47ce5bafc5f90128"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-index-drafts-preserved-v316/native-svg-viewport-v9.json",
+      "sha256": "e44d2f2f198d24c7afd5b5bdec72159c0b8eb1fd653a5537fdba513b305a6713"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-index-drafts-preserved-v316/native-svg-viewport-v10.json",
+      "sha256": "d965646b8ff9a8cbeeed971fd8b53042d155fabcdd9b27f9cf55a9215204ae92"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-clean-full-v299/full-summary.json",
+      "sha256": "57351226019f55f6cfd0aed70a750a7c9f7e16d7b4e243daa9f83b50483fc385"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-clean-full-v299.log",
+      "sha256": "7858aae6b6dedd0675a36c1977a0571b7a92f1be08157e5f861922cb232dfbce"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-full-exit-v299.json",
+      "sha256": "611c2f91aff20eb45ebd8deea2cf2f3beca533094a69898c74ca494824eacf09"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-clean-expanded-v299/expanded-summary.json",
+      "sha256": "f43fb3b4e2f22ad5a360a2c7e76a056e1c39ed217da5e203401b06e9c3fc6132"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-clean-expanded-v299.log",
+      "sha256": "4f6011d505e7290e9bf4c6257345d20f1cd5a42c01c08535309a83b1007e0f6d"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-expanded-exit-v299.json",
+      "sha256": "19c19861b696b9bd195f5275386f57fc354bf2afa631e82e498120f701f38540"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-native-docs-renderer-check-v310.log",
+      "sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-native-docs-multicol-check-v310.log",
+      "sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-native-docs-sp17-check-v310.log",
+      "sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-native-docs-sp18-check-v310.log",
+      "sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-native-docs-sp20-check-v310.log",
+      "sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-native-docs-v02-check-v310.log",
+      "sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-native-docs-style-check-v310.log",
+      "sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-native-docs-ffi-check-v310.log",
+      "sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-native-docs-archive-check-v310.log",
+      "sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-native-docs-accountability-check-v310.log",
+      "sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1"
+    }
+  ],
+  "candidate_c_abi": {
+    "appended_element_tag": {
+      "OUI_ELEMENT_SVG_FOREIGN_OBJECT": 39
+    },
+    "c_consumers": 9,
+    "cpp_consumers": 4,
+    "exports": 110,
+    "header_checksum": "sha256:b328744e7d5f17980ff5d5947f83fdf7dbb692ed004d119cffc3efbba04814e3",
+    "native_sizing_callback_and_owned_bounds_verified": true,
+    "observed_exit_code": 0,
+    "previous_element_tags_unchanged": 39,
+    "shared_conversion_failure_preserved_and_repaired": true,
+    "struct_layouts_unchanged": true
+  },
+  "hosted_umbrella_jobs": {
+    "job_conclusions": {
+      "skipped": 5,
+      "success": 6
+    },
+    "jobs": [
+      {
+        "conclusion": "success",
+        "name": "clang-format",
+        "run": 37095316811,
+        "status": "completed",
+        "url": "https://github.com/zhuowcui/open-ui/actions/runs/37095316811/job/111123934527"
+      },
+      {
+        "conclusion": "success",
+        "name": "gn-format",
+        "run": 37095316811,
+        "status": "completed",
+        "url": "https://github.com/zhuowcui/open-ui/actions/runs/37095316811/job/111123934599"
+      },
+      {
+        "conclusion": "success",
+        "name": "conformance-and-platform",
+        "run": 37095316802,
+        "status": "completed",
+        "url": "https://github.com/zhuowcui/open-ui/actions/runs/37095316802/job/111123934596"
+      },
+      {
+        "conclusion": "skipped",
+        "name": "msrv",
+        "run": 37095316802,
+        "status": "completed",
+        "url": "https://github.com/zhuowcui/open-ui/actions/runs/37095316802/job/111123935113"
+      },
+      {
+        "conclusion": "skipped",
+        "name": "native-sanitizers",
+        "run": 37095316802,
+        "status": "completed",
+        "url": "https://github.com/zhuowcui/open-ui/actions/runs/37095316802/job/111123935282"
+      },
+      {
+        "conclusion": "skipped",
+        "name": "fuzz-smoke",
+        "run": 37095316802,
+        "status": "completed",
+        "url": "https://github.com/zhuowcui/open-ui/actions/runs/37095316802/job/111123935312"
+      },
+      {
+        "conclusion": "skipped",
+        "name": "c-undefined-sanitizer",
+        "run": 37095316802,
+        "status": "completed",
+        "url": "https://github.com/zhuowcui/open-ui/actions/runs/37095316802/job/111123935431"
+      },
+      {
+        "conclusion": "skipped",
+        "name": "miri-handles",
+        "run": 37095316802,
+        "status": "completed",
+        "url": "https://github.com/zhuowcui/open-ui/actions/runs/37095316802/job/111123953220"
+      },
+      {
+        "conclusion": "success",
+        "name": "rust-parity",
+        "run": 37095316779,
+        "status": "completed",
+        "url": "https://github.com/zhuowcui/open-ui/actions/runs/37095316779/job/111123934444"
+      },
+      {
+        "conclusion": "success",
+        "name": "historical-pixel-audit",
+        "run": 37095316779,
+        "status": "completed",
+        "url": "https://github.com/zhuowcui/open-ui/actions/runs/37095316779/job/111123934581"
+      },
+      {
+        "conclusion": "success",
+        "name": "python-accountability",
+        "run": 37095316779,
+        "status": "completed",
+        "url": "https://github.com/zhuowcui/open-ui/actions/runs/37095316779/job/111123934590"
+      }
+    ],
+    "probe_sha256": "38e94cf9e3fa2bb9e8be064198d3f31b36646f6dcc3c344c27da27fe16be9578",
+    "release_qualification": false,
+    "runs": [
+      {
+        "conclusion": "success",
+        "databaseId": 37095316811,
+        "headSha": "3baa26f7c552870d21b53ad1cbf4c03db114452e",
+        "jobs": [
+          {
+            "completedAt": "2026-10-03T04:04:48Z",
+            "conclusion": "success",
+            "databaseId": 111123934527,
+            "name": "clang-format",
+            "startedAt": "2026-10-03T04:04:31Z",
+            "status": "completed",
+            "steps": [
+              {
+                "completedAt": "2026-10-03T04:04:32Z",
+                "conclusion": "success",
+                "name": "Set up job",
+                "number": 1,
+                "startedAt": "2026-10-03T04:04:32Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:04:37Z",
+                "conclusion": "success",
+                "name": "Run actions/checkout@v6",
+                "number": 2,
+                "startedAt": "2026-10-03T04:04:32Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:04:45Z",
+                "conclusion": "success",
+                "name": "Install clang-format",
+                "number": 3,
+                "startedAt": "2026-10-03T04:04:37Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:04:45Z",
+                "conclusion": "success",
+                "name": "Check tracked C and C++ formatting",
+                "number": 4,
+                "startedAt": "2026-10-03T04:04:45Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:04:46Z",
+                "conclusion": "success",
+                "name": "Post Run actions/checkout@v6",
+                "number": 8,
+                "startedAt": "2026-10-03T04:04:45Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:04:46Z",
+                "conclusion": "success",
+                "name": "Complete job",
+                "number": 9,
+                "startedAt": "2026-10-03T04:04:46Z",
+                "status": "completed"
+              }
+            ],
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37095316811/job/111123934527"
+          },
+          {
+            "completedAt": "2026-10-03T04:04:51Z",
+            "conclusion": "success",
+            "databaseId": 111123934599,
+            "name": "gn-format",
+            "startedAt": "2026-10-03T04:04:31Z",
+            "status": "completed",
+            "steps": [
+              {
+                "completedAt": "2026-10-03T04:04:32Z",
+                "conclusion": "success",
+                "name": "Set up job",
+                "number": 1,
+                "startedAt": "2026-10-03T04:04:31Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:04:35Z",
+                "conclusion": "success",
+                "name": "Run actions/checkout@v6",
+                "number": 2,
+                "startedAt": "2026-10-03T04:04:32Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:04:49Z",
+                "conclusion": "success",
+                "name": "Install GN",
+                "number": 3,
+                "startedAt": "2026-10-03T04:04:35Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:04:49Z",
+                "conclusion": "success",
+                "name": "Check tracked GN formatting",
+                "number": 4,
+                "startedAt": "2026-10-03T04:04:49Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:04:49Z",
+                "conclusion": "success",
+                "name": "Post Run actions/checkout@v6",
+                "number": 8,
+                "startedAt": "2026-10-03T04:04:49Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:04:49Z",
+                "conclusion": "success",
+                "name": "Complete job",
+                "number": 9,
+                "startedAt": "2026-10-03T04:04:49Z",
+                "status": "completed"
+              }
+            ],
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37095316811/job/111123934599"
+          }
+        ],
+        "status": "completed",
+        "url": "https://github.com/zhuowcui/open-ui/actions/runs/37095316811",
+        "workflowName": "Format Check"
+      },
+      {
+        "conclusion": "success",
+        "databaseId": 37095316802,
+        "headSha": "3baa26f7c552870d21b53ad1cbf4c03db114452e",
+        "jobs": [
+          {
+            "completedAt": "2026-10-03T04:07:15Z",
+            "conclusion": "success",
+            "databaseId": 111123934596,
+            "name": "conformance-and-platform",
+            "startedAt": "2026-10-03T04:04:32Z",
+            "status": "completed",
+            "steps": [
+              {
+                "completedAt": "2026-10-03T04:04:33Z",
+                "conclusion": "success",
+                "name": "Set up job",
+                "number": 1,
+                "startedAt": "2026-10-03T04:04:32Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:04:37Z",
+                "conclusion": "success",
+                "name": "Run actions/checkout@v6",
+                "number": 2,
+                "startedAt": "2026-10-03T04:04:33Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:05:15Z",
+                "conclusion": "success",
+                "name": "Install toolchain and Linux runtime dependencies",
+                "number": 3,
+                "startedAt": "2026-10-03T04:04:37Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:06:14Z",
+                "conclusion": "success",
+                "name": "Run actions/cache@v5",
+                "number": 4,
+                "startedAt": "2026-10-03T04:05:15Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:06:14Z",
+                "conclusion": "success",
+                "name": "Verify scenario and performance schemas",
+                "number": 5,
+                "startedAt": "2026-10-03T04:06:14Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:06:30Z",
+                "conclusion": "success",
+                "name": "Run application conformance suite",
+                "number": 6,
+                "startedAt": "2026-10-03T04:06:14Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:06:44Z",
+                "conclusion": "success",
+                "name": "Build Linux example",
+                "number": 7,
+                "startedAt": "2026-10-03T04:06:30Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:06:55Z",
+                "conclusion": "success",
+                "name": "Build and test the C Linux application surface",
+                "number": 8,
+                "startedAt": "2026-10-03T04:06:44Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:07:09Z",
+                "conclusion": "success",
+                "name": "Exercise native C and C++ windows on X11 with software and Mesa OpenGL",
+                "number": 9,
+                "startedAt": "2026-10-03T04:06:55Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:07:10Z",
+                "conclusion": "success",
+                "name": "Smoke-test X11 with Mesa OpenGL",
+                "number": 10,
+                "startedAt": "2026-10-03T04:07:09Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:07:10Z",
+                "conclusion": "success",
+                "name": "Smoke-test pure Wayland software presentation",
+                "number": 11,
+                "startedAt": "2026-10-03T04:07:10Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:07:11Z",
+                "conclusion": "success",
+                "name": "Preserve native C/C++ smoke reports",
+                "number": 12,
+                "startedAt": "2026-10-03T04:07:10Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:07:12Z",
+                "conclusion": "success",
+                "name": "Post Run actions/cache@v5",
+                "number": 23,
+                "startedAt": "2026-10-03T04:07:11Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:07:12Z",
+                "conclusion": "success",
+                "name": "Post Run actions/checkout@v6",
+                "number": 24,
+                "startedAt": "2026-10-03T04:07:12Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:07:12Z",
+                "conclusion": "success",
+                "name": "Complete job",
+                "number": 25,
+                "startedAt": "2026-10-03T04:07:12Z",
+                "status": "completed"
+              }
+            ],
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37095316802/job/111123934596"
+          },
+          {
+            "completedAt": "2026-10-03T04:04:29Z",
+            "conclusion": "skipped",
+            "databaseId": 111123935113,
+            "name": "msrv",
+            "startedAt": "2026-10-03T04:04:29Z",
+            "status": "completed",
+            "steps": [],
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37095316802/job/111123935113"
+          },
+          {
+            "completedAt": "2026-10-03T04:04:29Z",
+            "conclusion": "skipped",
+            "databaseId": 111123935282,
+            "name": "native-sanitizers",
+            "startedAt": "2026-10-03T04:04:29Z",
+            "status": "completed",
+            "steps": [],
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37095316802/job/111123935282"
+          },
+          {
+            "completedAt": "2026-10-03T04:04:29Z",
+            "conclusion": "skipped",
+            "databaseId": 111123935312,
+            "name": "fuzz-smoke",
+            "startedAt": "2026-10-03T04:04:29Z",
+            "status": "completed",
+            "steps": [],
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37095316802/job/111123935312"
+          },
+          {
+            "completedAt": "2026-10-03T04:04:29Z",
+            "conclusion": "skipped",
+            "databaseId": 111123935431,
+            "name": "c-undefined-sanitizer",
+            "startedAt": "2026-10-03T04:04:30Z",
+            "status": "completed",
+            "steps": [],
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37095316802/job/111123935431"
+          },
+          {
+            "completedAt": "2026-10-03T04:04:29Z",
+            "conclusion": "skipped",
+            "databaseId": 111123953220,
+            "name": "miri-handles",
+            "startedAt": "2026-10-03T04:04:36Z",
+            "status": "completed",
+            "steps": [],
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37095316802/job/111123953220"
+          }
+        ],
+        "status": "completed",
+        "url": "https://github.com/zhuowcui/open-ui/actions/runs/37095316802",
+        "workflowName": "v0.2 Hardening"
+      },
+      {
+        "conclusion": "success",
+        "databaseId": 37095316779,
+        "headSha": "3baa26f7c552870d21b53ad1cbf4c03db114452e",
+        "jobs": [
+          {
+            "completedAt": "2026-10-03T04:09:30Z",
+            "conclusion": "success",
+            "databaseId": 111123934444,
+            "name": "rust-parity",
+            "startedAt": "2026-10-03T04:04:31Z",
+            "status": "completed",
+            "steps": [
+              {
+                "completedAt": "2026-10-03T04:04:32Z",
+                "conclusion": "success",
+                "name": "Set up job",
+                "number": 1,
+                "startedAt": "2026-10-03T04:04:31Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:04:36Z",
+                "conclusion": "success",
+                "name": "Run actions/checkout@v6",
+                "number": 2,
+                "startedAt": "2026-10-03T04:04:32Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:05:03Z",
+                "conclusion": "success",
+                "name": "Install Rust and Skia build dependencies",
+                "number": 3,
+                "startedAt": "2026-10-03T04:04:36Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:06:06Z",
+                "conclusion": "success",
+                "name": "Run actions/cache@v5",
+                "number": 4,
+                "startedAt": "2026-10-03T04:05:03Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:06:10Z",
+                "conclusion": "success",
+                "name": "Check Rust formatting",
+                "number": 5,
+                "startedAt": "2026-10-03T04:06:06Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:09:00Z",
+                "conclusion": "success",
+                "name": "Run parity-relevant Rust tests",
+                "number": 6,
+                "startedAt": "2026-10-03T04:06:10Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:09:26Z",
+                "conclusion": "success",
+                "name": "Build and verify the C ABI",
+                "number": 7,
+                "startedAt": "2026-10-03T04:09:00Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:09:29Z",
+                "conclusion": "success",
+                "name": "Post Run actions/cache@v5",
+                "number": 13,
+                "startedAt": "2026-10-03T04:09:26Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:09:29Z",
+                "conclusion": "success",
+                "name": "Post Run actions/checkout@v6",
+                "number": 14,
+                "startedAt": "2026-10-03T04:09:29Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:09:29Z",
+                "conclusion": "success",
+                "name": "Complete job",
+                "number": 15,
+                "startedAt": "2026-10-03T04:09:29Z",
+                "status": "completed"
+              }
+            ],
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37095316779/job/111123934444"
+          },
+          {
+            "completedAt": "2026-10-03T04:04:42Z",
+            "conclusion": "success",
+            "databaseId": 111123934581,
+            "name": "historical-pixel-audit",
+            "startedAt": "2026-10-03T04:04:32Z",
+            "status": "completed",
+            "steps": [
+              {
+                "completedAt": "2026-10-03T04:04:34Z",
+                "conclusion": "success",
+                "name": "Set up job",
+                "number": 1,
+                "startedAt": "2026-10-03T04:04:33Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:04:37Z",
+                "conclusion": "success",
+                "name": "Run actions/checkout@v6",
+                "number": 2,
+                "startedAt": "2026-10-03T04:04:34Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:04:39Z",
+                "conclusion": "success",
+                "name": "Verify historical archive integrity and comparator metadata",
+                "number": 3,
+                "startedAt": "2026-10-03T04:04:37Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:04:40Z",
+                "conclusion": "success",
+                "name": "Upload historical audit",
+                "number": 4,
+                "startedAt": "2026-10-03T04:04:39Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:04:40Z",
+                "conclusion": "success",
+                "name": "Post Run actions/checkout@v6",
+                "number": 8,
+                "startedAt": "2026-10-03T04:04:40Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:04:40Z",
+                "conclusion": "success",
+                "name": "Complete job",
+                "number": 9,
+                "startedAt": "2026-10-03T04:04:40Z",
+                "status": "completed"
+              }
+            ],
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37095316779/job/111123934581"
+          },
+          {
+            "completedAt": "2026-10-03T04:07:18Z",
+            "conclusion": "success",
+            "databaseId": 111123934590,
+            "name": "python-accountability",
+            "startedAt": "2026-10-03T04:04:31Z",
+            "status": "completed",
+            "steps": [
+              {
+                "completedAt": "2026-10-03T04:04:33Z",
+                "conclusion": "success",
+                "name": "Set up job",
+                "number": 1,
+                "startedAt": "2026-10-03T04:04:32Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:04:37Z",
+                "conclusion": "success",
+                "name": "Run actions/checkout@v6",
+                "number": 2,
+                "startedAt": "2026-10-03T04:04:33Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:04:38Z",
+                "conclusion": "success",
+                "name": "Run actions/setup-python@v5",
+                "number": 3,
+                "startedAt": "2026-10-03T04:04:37Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:04:39Z",
+                "conclusion": "success",
+                "name": "Install renderer evidence test dependency",
+                "number": 4,
+                "startedAt": "2026-10-03T04:04:38Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:04:45Z",
+                "conclusion": "success",
+                "name": "Run actions/setup-node@v4",
+                "number": 5,
+                "startedAt": "2026-10-03T04:04:39Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:04:46Z",
+                "conclusion": "success",
+                "name": "Install Chromium-locked Acorn parser",
+                "number": 6,
+                "startedAt": "2026-10-03T04:04:45Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:04:55Z",
+                "conclusion": "success",
+                "name": "Fetch pinned Chromium 147 WPT sources",
+                "number": 7,
+                "startedAt": "2026-10-03T04:04:46Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:05:29Z",
+                "conclusion": "success",
+                "name": "Run closure, porter, and renderer evidence tests",
+                "number": 8,
+                "startedAt": "2026-10-03T04:04:55Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:07:08Z",
+                "conclusion": "success",
+                "name": "Verify immutable closure ledgers",
+                "number": 9,
+                "startedAt": "2026-10-03T04:05:29Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:07:13Z",
+                "conclusion": "success",
+                "name": "Audit authoritative accountability artifacts",
+                "number": 10,
+                "startedAt": "2026-10-03T04:07:08Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:07:13Z",
+                "conclusion": "success",
+                "name": "Post Run actions/setup-node@v4",
+                "number": 18,
+                "startedAt": "2026-10-03T04:07:13Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:07:13Z",
+                "conclusion": "success",
+                "name": "Post Run actions/setup-python@v5",
+                "number": 19,
+                "startedAt": "2026-10-03T04:07:13Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:07:13Z",
+                "conclusion": "success",
+                "name": "Post Run actions/checkout@v6",
+                "number": 20,
+                "startedAt": "2026-10-03T04:07:13Z",
+                "status": "completed"
+              },
+              {
+                "completedAt": "2026-10-03T04:07:13Z",
+                "conclusion": "success",
+                "name": "Complete job",
+                "number": 21,
+                "startedAt": "2026-10-03T04:07:13Z",
+                "status": "completed"
+              }
+            ],
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37095316779/job/111123934590"
+          }
+        ],
+        "status": "completed",
+        "url": "https://github.com/zhuowcui/open-ui/actions/runs/37095316779",
+        "workflowName": "CI"
+      }
+    ],
+    "schema_version": 1,
+    "skips_are_not_passes": true,
+    "source": {
+      "clean": true,
+      "commit": "3baa26f7c552870d21b53ad1cbf4c03db114452e",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "3c526932f2fafc408c97447435325cb5153128d5df044a9ee89008a3bab522a8",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "3baa26f7c552870d21b53ad1cbf4c03db114452e",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "3c526932f2fafc408c97447435325cb5153128d5df044a9ee89008a3bab522a8",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "javascript_executed_by_openui": false,
+  "latest_accepted_full_results": {
+    "different": 1616,
+    "errors": 0,
+    "exact": 21308,
+    "total": 22924
+  },
+  "locked_workspace": {
+    "default_features_passed": 8505,
+    "failed": 0,
+    "features": [
+      "openui-ffi/linux"
+    ],
+    "ignored": 13,
+    "observed_exit_code": 0,
+    "passed": 8516,
+    "source": {
+      "clean": true,
+      "commit": "8d5a58a1f4a954997e0301506347c96708d84860",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "d2150b78d0aac9bf703815827e57dce27eb43ff92d302a43556ad7710eccc991",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_unchanged": true,
+    "successful_pins_unchanged": true,
+    "tracked_diagnostic_png_preserved_and_restored": true
+  },
+  "native_application_results": {
+    "all_1920_images_unchanged_against_curved_solid": true,
+    "all_native_callbacks_and_teardowns_checked": true,
+    "cases_admitted_to_release": 0,
+    "exact": 1176,
+    "existing_scroll_controls_exact": 850,
+    "owned_bounds_exact": 1920,
+    "remaining_pixel_failures": 744,
+    "scroll_layer_controls": {
+      "bounds_offsets_client_metrics_exact": 180,
+      "exact_pixels": 95,
+      "extent_metrics_exact": 0,
+      "total": 180
+    },
+    "total": 1920
+  },
+  "native_interaction_policy": {
+    "javascript_runtime": false,
+    "missing_public_operation": "unfinished native API work",
+    "required_element_operations": "shared Rust Engine behavior exposed through public native Rust APIs",
+    "runtime": "native Rust",
+    "script_bindings": false
+  },
+  "pixel_tolerance": 0,
+  "prior_evidence": {
+    "path": "docs/renderer/generated/native-svg-viewport-v8.json",
+    "sha256": "ff18fcf7ff4937af7f101ced0b6f3b0f896c33b1fab79aa427cf37f12f6cde77"
+  },
+  "qualification": {
+    "complete_release": "unqualified; original and expanded pixel failures, native API and compositor work, hardening, hardware and publication gates remain open",
+    "rebased_expanded": "complete diagnostic census; exact gate fails with 1,600 differences and zero errors",
+    "rebased_original": "complete diagnostic census; exact gate fails with 1,599 differences and zero errors"
+  },
+  "read_only_umbrella_checks": {
+    "checks": [
+      {
+        "command": [
+          "python3",
+          "tools/qualification/generate_renderer_contract.py",
+          "--check"
+        ],
+        "log_path": "out/renderer-evidence/native-viewport-scroll-v1/svg-native-docs-renderer-check-v310.log",
+        "log_sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691",
+        "name": "renderer",
+        "process_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/wpt/generate_sp13r_multicol_closure.py",
+          "--check"
+        ],
+        "log_path": "out/renderer-evidence/native-viewport-scroll-v1/svg-native-docs-multicol-check-v310.log",
+        "log_sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222",
+        "name": "multicol",
+        "process_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/wpt/generate_sp17_closure.py",
+          "--check"
+        ],
+        "log_path": "out/renderer-evidence/native-viewport-scroll-v1/svg-native-docs-sp17-check-v310.log",
+        "log_sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a",
+        "name": "sp17",
+        "process_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/wpt/generate_sp18_closure.py",
+          "--check"
+        ],
+        "log_path": "out/renderer-evidence/native-viewport-scroll-v1/svg-native-docs-sp18-check-v310.log",
+        "log_sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763",
+        "name": "sp18",
+        "process_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/wpt/generate_sp20_closure.py",
+          "--check"
+        ],
+        "log_path": "out/renderer-evidence/native-viewport-scroll-v1/svg-native-docs-sp20-check-v310.log",
+        "log_sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d",
+        "name": "sp20",
+        "process_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/release/generate_v02_contract.py",
+          "--check"
+        ],
+        "log_path": "out/renderer-evidence/native-viewport-scroll-v1/svg-native-docs-v02-check-v310.log",
+        "log_sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd",
+        "name": "v02",
+        "process_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/style/generate_properties.py",
+          "--check"
+        ],
+        "log_path": "out/renderer-evidence/native-viewport-scroll-v1/svg-native-docs-style-check-v310.log",
+        "log_sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1",
+        "name": "style",
+        "process_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/ffi/generate_ffi.py",
+          "--check"
+        ],
+        "log_path": "out/renderer-evidence/native-viewport-scroll-v1/svg-native-docs-ffi-check-v310.log",
+        "log_sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821",
+        "name": "ffi",
+        "process_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/accountability/restore_frozen_openui_archive.py",
+          "--check"
+        ],
+        "log_path": "out/renderer-evidence/native-viewport-scroll-v1/svg-native-docs-archive-check-v310.log",
+        "log_sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32",
+        "name": "archive",
+        "process_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/accountability/audit.py",
+          "--repository-only"
+        ],
+        "log_path": "out/renderer-evidence/native-viewport-scroll-v1/svg-native-docs-accountability-check-v310.log",
+        "log_sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1",
+        "name": "accountability",
+        "process_exit_code": 0
+      }
+    ],
+    "qualification_note": "Read-only generator, archive integrity and repository-accountability checks over an unchanged clean umbrella checkpoint. This is not a renderer pixel qualification run.",
+    "release_qualification": false,
+    "schema_version": 1,
+    "source": {
+      "clean": true,
+      "commit": "3baa26f7c552870d21b53ad1cbf4c03db114452e",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "3c526932f2fafc408c97447435325cb5153128d5df044a9ee89008a3bab522a8",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "3baa26f7c552870d21b53ad1cbf4c03db114452e",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "3c526932f2fafc408c97447435325cb5153128d5df044a9ee89008a3bab522a8",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "rebased_40_profile_matrices": [
+    {
+      "all_eight_row_invariants_unchanged": true,
+      "observed_exit_code": 0,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-clean-focused-v299/focused-summary.json",
+      "results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 640,
+        "profile_result_sha256": "d5584335fd0b332881b5ed3bb7faca05a21f4633e108f822e53130e6e6ca81b5",
+        "total": 640
+      },
+      "sha256": "03aa854e9768ac224e1fd306ed6c52321d6b9b792a7e8b56cca2f70d4f070334",
+      "source": {
+        "clean": true,
+        "commit": "8d5a58a1f4a954997e0301506347c96708d84860",
+        "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+        "source_tree_sha256": "d2150b78d0aac9bf703815827e57dce27eb43ff92d302a43556ad7710eccc991",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "8d5a58a1f4a954997e0301506347c96708d84860",
+        "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+        "source_tree_sha256": "d2150b78d0aac9bf703815827e57dce27eb43ff92d302a43556ad7710eccc991",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "suite": "focused"
+    },
+    {
+      "all_eight_row_invariants_unchanged": true,
+      "observed_exit_code": 0,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-clean-primitive-v299/primitive-summary.json",
+      "results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 960,
+        "profile_result_sha256": "a40aab556498e31607e4097029f0763941c0fadc5c7907baee242feb01540153",
+        "total": 960
+      },
+      "sha256": "83510e07562f0dd773ef03adc4e9b6c7fd0964fac9d811a0a404f88905daa2e1",
+      "source": {
+        "clean": true,
+        "commit": "8d5a58a1f4a954997e0301506347c96708d84860",
+        "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+        "source_tree_sha256": "d2150b78d0aac9bf703815827e57dce27eb43ff92d302a43556ad7710eccc991",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "8d5a58a1f4a954997e0301506347c96708d84860",
+        "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+        "source_tree_sha256": "d2150b78d0aac9bf703815827e57dce27eb43ff92d302a43556ad7710eccc991",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "suite": "primitive"
+    }
+  ],
+  "rebased_candidate_source": {
+    "clean": true,
+    "commit": "8d5a58a1f4a954997e0301506347c96708d84860",
+    "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+    "source_tree_sha256": "d2150b78d0aac9bf703815827e57dce27eb43ff92d302a43556ad7710eccc991",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "rebased_expanded_matrix": {
+    "addition_cases": {
+      "exact_at_all_four_profiles": 200,
+      "remaining": {
+        "wpt/css_display/display-contents-dynamic-fieldset-legend-001": [
+          {
+            "mismatched_pixels": 0,
+            "profile": "legacy-800x600@1",
+            "status": "exact"
+          },
+          {
+            "mismatched_pixels": 0,
+            "profile": "mobile-375x667@2",
+            "status": "exact"
+          },
+          {
+            "mismatched_pixels": 1315,
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "mismatched_pixels": 0,
+            "profile": "desktop-1920x1080@1.5",
+            "status": "exact"
+          }
+        ]
+      },
+      "total": 201
+    },
+    "all_22924_original_row_invariants_match_own_full_census": true,
+    "all_23728_chromium_images_and_identities_unchanged": true,
+    "all_804_addition_row_invariants_unchanged": true,
+    "baseline_path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-clean-expanded-v159/expanded-summary.json",
+    "baseline_sha256": "c8b39dcc915491ca95807913d916062348905f3d027f7f9872916484cfed2e5c",
+    "comparison_path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-clean-expanded-v299/expanded-summary.json",
+    "comparison_sha256": "f43fb3b4e2f22ad5a360a2c7e76a056e1c39ed217da5e203401b06e9c3fc6132",
+    "counts": {
+      "changed": 113,
+      "different": 1600,
+      "exact": 22128,
+      "exact_losses": 0,
+      "improved": 80,
+      "new_exact": 17,
+      "same_pixel_count": 20,
+      "worsened": 13
+    },
+    "observed_exit_code": 1,
+    "probe_sha256": "fb682e4534c703169fa34f4e02f4cd7fb201d3eb9cd11999feccf39e8fd8fec0",
+    "release_qualification": false,
+    "results": {
+      "different": 1600,
+      "errors": 0,
+      "exact": 22128,
+      "profile_result_sha256": "2a09556383b95790574ebbfd1f2287bfbf124c6039ca18f13748d7b28e6e533e",
+      "total": 23728
+    },
+    "schema_version": 1,
+    "source": {
+      "clean": true,
+      "commit": "8d5a58a1f4a954997e0301506347c96708d84860",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "d2150b78d0aac9bf703815827e57dce27eb43ff92d302a43556ad7710eccc991",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "8d5a58a1f4a954997e0301506347c96708d84860",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "d2150b78d0aac9bf703815827e57dce27eb43ff92d302a43556ad7710eccc991",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "rebased_original_matrix": {
+    "all_22924_chromium_images_and_identities_unchanged": true,
+    "all_22924_eight_row_invariants_unchanged_against_double_border": true,
+    "baseline_path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-clean-full-v159/full-summary.json",
+    "baseline_sha256": "604d9c1e3abc5df856b01a3fdc6e8b9b0ac15724f20bf7a53ba01d96745f1a3f",
+    "changed_rows": 113,
+    "comparison_path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-clean-full-v299/full-summary.json",
+    "comparison_sha256": "57351226019f55f6cfd0aed70a750a7c9f7e16d7b4e243daa9f83b50483fc385",
+    "counts": {
+      "different": 1599,
+      "exact": 21325,
+      "exact_losses": 0,
+      "improved": 80,
+      "new_exact": 17,
+      "same_pixel_count": 20,
+      "worsened": 13
+    },
+    "observed_exit_code": 1,
+    "probe_sha256": "fe58c0d3f1e89e484686a5f06539e3b3fd3648748e0612fc384ca2898935ed2e",
+    "release_qualification": false,
+    "results": {
+      "different": 1599,
+      "errors": 0,
+      "exact": 21325,
+      "profile_result_sha256": "f34b6cd97074d2e1c6b5146cc097891aef54be6a26df1826580b73079adc63ec",
+      "total": 22924
+    },
+    "schema_version": 1,
+    "source": {
+      "clean": true,
+      "commit": "8d5a58a1f4a954997e0301506347c96708d84860",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "d2150b78d0aac9bf703815827e57dce27eb43ff92d302a43556ad7710eccc991",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "release_qualification": false,
+  "remaining_work": [
+    "744 native SVG pixel failures: rounded child clipping, fractional coverage and group opacity",
+    "13 worsened original comparisons still lack reviewed root causes",
+    "native SVG coordinate/transform APIs and nested scroll ranges/extents",
+    "remaining original pixel residuals and reviewed ownership",
+    "immutable retained layers, presentation-owned animation and 3D behavior",
+    "required hardening, hardware, accessibility, packaging, signing and publication"
+  ],
+  "schema_version": 11
+}

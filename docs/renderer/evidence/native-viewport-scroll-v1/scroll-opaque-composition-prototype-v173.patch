@@ -1,0 +1,16 @@
+diff --git a/bindings/rust/openui-paint/src/painter.rs b/bindings/rust/openui-paint/src/painter.rs
+index 417d63b8..6e17b7e3 100644
+--- a/bindings/rust/openui-paint/src/painter.rs
++++ b/bindings/rust/openui-paint/src/painter.rs
+@@ -9302,6 +9302,11 @@ fn paint_composited_scroll_contents(
+     );
+     let mut paint = Paint::default();
+     paint.set_anti_alias(false);
++    // The software compositor replaces destination cells for an opaque
++    // scrolling layer. SrcOver would select a different packed sampler.
++    if style.background_color.is_opaque() {
++        paint.set_blend_mode(skia_safe::BlendMode::Src);
++    }
+     let snapping = RasterSnapping::new(style.device_scale_factor);
+     let compositor_bounds = Rect::from_ltrb(
+         destination.left,

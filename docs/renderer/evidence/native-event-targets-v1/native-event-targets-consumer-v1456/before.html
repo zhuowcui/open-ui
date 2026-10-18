@@ -1,0 +1,17 @@
+<!doctype html><meta charset="utf-8"><style>
+* {margin:0;padding:0;border:0;box-sizing:content-box}
+html,body {width:160px;height:100px;overflow:hidden;background:white}
+#container {width:160px;height:100px}
+#image {position:absolute;left:20px;top:20px;width:40px;height:40px;background:blue}
+</style><div id="container"><div id="image"></div></div><script>
+const parent=document.getElementById('container'),target=document.getElementById('image');
+window.trace=[];window.saved=[];
+const observe=(name,phase)=>event=>{
+ if(event.target!==target || event.currentTarget!==(name==='target'?target:parent) || event.eventPhase!==phase) throw new Error('event target/phase mismatch');
+ window.trace.push({name,phase:event.eventPhase});window.saved.push(event);
+ if(phase===3) event.target.style.backgroundColor='red';
+};
+parent.addEventListener('click',observe('root',1),true);
+target.addEventListener('click',observe('target',2));
+parent.addEventListener('click',observe('root',3));
+</script>

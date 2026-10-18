@@ -10,23 +10,56 @@ use openui_geometry::{
 use openui_layout::{block_layout, ConstraintSpace, Fragment};
 use skia_safe::canvas::SrcRectConstraint;
 use skia_safe::{
-    surfaces, Color as SkColor, ColorSpace, EncodedImageFormat, FilterMode, ImageInfo, Paint,
-    Picture, PictureRecorder, PixelGeometry, Rect, SamplingOptions, Surface, SurfaceProps,
+    surfaces, Canvas, Color as SkColor, ColorSpace, EncodedImageFormat, FilterMode, ImageInfo,
+    Paint, Picture, PictureRecorder, PixelGeometry, Rect, SamplingOptions, Surface, SurfaceProps,
     SurfacePropsFlags,
 };
 use std::sync::Arc;
 
-use crate::painter::paint_fragment;
+use crate::painter::paint_document_fragments;
 
 // Chromium 147's cc::LayerTreeSettings::max_untiled_layer_size.
 const MAX_UNTILED_LAYER_SIZE: i32 = 512;
+pub(crate) const RASTER_TILE_SIZE_PX: i32 = 256;
+const RASTER_TILE_STEP_PX: i32 = RASTER_TILE_SIZE_PX - 2;
 
-fn should_replay_untiled(direct_replay: bool, width: i32, height: i32) -> bool {
-    direct_replay || (width <= MAX_UNTILED_LAYER_SIZE && height <= MAX_UNTILED_LAYER_SIZE)
+fn should_replay_untiled(
+    direct_replay: bool,
+    width: i32,
+    height: i32,
+    content_requires_tiling: bool,
+) -> bool {
+    direct_replay
+        || (!content_requires_tiling
+            && width <= MAX_UNTILED_LAYER_SIZE
+            && height <= MAX_UNTILED_LAYER_SIZE)
+}
+
+/// A compositor layer can be wider than the viewport that exposes it. Decide
+/// its raster tile phase from the laid-out content footprint, including boxes
+/// extending past the viewport edge, rather than from the output surface alone.
+fn content_requires_tiling(fragment: &Fragment, scale: f64) -> bool {
+    fn include(fragment: &Fragment, parent_x: f64, parent_y: f64, bounds: &mut [f64; 4]) {
+        let openui_geometry::PhysicalOffset { left, top } = fragment.offset;
+        let x = parent_x + left.to_f64();
+        let y = parent_y + top.to_f64();
+        bounds[0] = bounds[0].min(x);
+        bounds[1] = bounds[1].min(y);
+        bounds[2] = bounds[2].max(x + fragment.size.width.to_f64());
+        bounds[3] = bounds[3].max(y + fragment.size.height.to_f64());
+        for child in &fragment.children {
+            include(child, x, y, bounds);
+        }
+    }
+
+    let mut bounds = [0.0; 4];
+    include(fragment, 0.0, 0.0, &mut bounds);
+    (bounds[2] - bounds[0]) * scale > f64::from(MAX_UNTILED_LAYER_SIZE)
+        || (bounds[3] - bounds[1]) * scale > f64::from(MAX_UNTILED_LAYER_SIZE)
 }
 
 fn has_promoted_non_axis_transform(fragment: &Fragment, doc: &Document) -> bool {
-    let is_promoted = !fragment.node_id.is_none() && {
+    let is_promoted = fragment.owns_element_box() && {
         let style = &doc.node(fragment.node_id).style;
         style.will_change_transform
             && style.transform != openui_style::Transform2D::IDENTITY
@@ -54,17 +87,39 @@ fn root_constraint_space(doc: &Document, width: f64, height: f64) -> ConstraintS
 /// Immutable paint recording consumed by both headless and window compositors.
 #[derive(Clone)]
 pub struct RecordedPicture {
+    /// Complete immutable recording, including compositor-owned viewport ink.
     pub picture: Picture,
+    /// Document content alone follows the document layer's tiling policy.
+    pub(crate) content_picture: Picture,
+    /// Viewport controls are compositor quads, replayed after document tiles.
+    pub(crate) viewport_overlay: Option<Picture>,
+    /// Owned viewport content bounds, background and display-list recording.
+    pub(crate) viewport_content_layer: Option<crate::RecordedContentLayer>,
     pub viewport: ViewportMetrics,
     pub raster_configuration: RasterConfiguration,
     pub(crate) lcd_surface: bool,
     pub(crate) direct_replay: bool,
+    pub(crate) content_requires_tiling: bool,
     /// Retains immutable registered bytes for every face referenced by a
     /// scene, even if the live document unregisters that face immediately.
     pub(crate) retained_font_bytes: Arc<[Arc<[u8]>]>,
+    // Recordings can be rasterized after their document is destroyed. Retire
+    // cached strikes only after every retained picture/font resource above.
+    pub(crate) _font_cache_lifetime: openui_text::font::FontCacheLifetime,
 }
 
 impl RecordedPicture {
+    /// The canonical document recording, including viewport controls.
+    pub fn canonical_picture(&self) -> &Picture {
+        &self.picture
+    }
+
+    /// The existing document recording before viewport controls are composed.
+    /// This is not an independently recorded arbitrary element subtree.
+    pub fn document_content_picture(&self) -> &Picture {
+        &self.content_picture
+    }
+
     pub fn retained_font_face_count(&self) -> usize {
         self.retained_font_bytes.len()
     }
@@ -72,6 +127,379 @@ impl RecordedPicture {
     pub fn uses_lcd_surface(&self) -> bool {
         self.lcd_surface
     }
+
+    /// Immutable viewport-control recording, independent of document tiling.
+    pub fn viewport_overlay_picture(&self) -> Option<&Picture> {
+        self.viewport_overlay.as_ref()
+    }
+
+    pub fn viewport_content_layer(&self) -> Option<&crate::RecordedContentLayer> {
+        self.viewport_content_layer.as_ref()
+    }
+}
+
+/// Canonical output and the static operation streams captured by the same walk.
+/// Content and viewport controls keep their separate existing raster roles.
+#[derive(Clone)]
+pub struct RecordedPaintCapture {
+    pub canonical: RecordedPicture,
+    pub content_program: crate::RecordedPaintProgram,
+    pub viewport_overlay_program: Option<crate::RecordedPaintProgram>,
+}
+
+impl RecordedPaintCapture {
+    /// Re-record the owned operands, retaining canonical tile/clear/scale flags.
+    /// This does not admit a compositor layer partition or animation worker.
+    pub fn recording_from_program(&self) -> Result<RecordedPicture, String> {
+        rebuild_owned_recording(
+            &self.canonical,
+            |canvas| {
+                self.content_program
+                    .replay(canvas)
+                    .map_err(|status| format!("incomplete content capture: {status:?}"))
+            },
+            self.viewport_overlay_program.as_ref().map(|program| {
+                move |canvas: &Canvas| {
+                    program
+                        .replay(canvas)
+                        .map_err(|status| format!("incomplete viewport capture: {status:?}"))
+                }
+            }),
+        )
+    }
+}
+
+/// Diagnostic layer sources from one canonical paint walk. The original
+/// recording retains opaque viewport/content dependencies. No independent
+/// transparent surfaces or presentation-side tracks are admitted here.
+#[derive(Clone)]
+pub struct LayeredPaintCapture {
+    canonical: RecordedPicture,
+    content: crate::LayeredPaintProgram,
+    viewport_content: Option<crate::LayeredPaintProgram>,
+    overlay: Option<crate::LayeredPaintProgram>,
+}
+
+/// An opt-in static source plan. The canonical recording remains independently
+/// owned and no release presenter selects this renderer automatically.
+#[derive(Clone)]
+pub struct SourceLayerPaintCapture {
+    canonical: RecordedPicture,
+    content: crate::SourceLayerProgram,
+    viewport_content: Option<crate::SourceLayerProgram>,
+    overlay: Option<crate::SourceLayerProgram>,
+    unavailable_recordings: Vec<SourceRecordingUnavailable>,
+}
+
+#[derive(Clone, Debug)]
+pub struct SourceRecordingUnavailable {
+    pub role: crate::PaintLayerSourceRole,
+    pub capture_status: crate::PaintCaptureStatus,
+}
+
+impl LayeredPaintCapture {
+    pub fn source_layer_diagnostic(
+        &self,
+    ) -> Result<SourceLayerPaintCapture, crate::SourceLayerError> {
+        // A raw/incomplete child stays an opaque canonical Picture dependency.
+        // Its owner ID does not establish that it can be independently replayed.
+        let mut unavailable_recordings = Vec::new();
+        if let Some(program) = self
+            .viewport_content
+            .as_ref()
+            .filter(|p| p.capture_status() != &crate::PaintCaptureStatus::Complete)
+        {
+            unavailable_recordings.push(SourceRecordingUnavailable {
+                role: crate::PaintLayerSourceRole::ViewportScrollingContent,
+                capture_status: program.capture_status().clone(),
+            });
+        }
+        let viewport_content = self
+            .viewport_content
+            .as_ref()
+            .filter(|p| p.capture_status() == &crate::PaintCaptureStatus::Complete)
+            .map(|p| p.source_layer_program())
+            .transpose()?;
+        let content =
+            crate::SourceLayerProgram::new(self.content.clone(), viewport_content.clone())?;
+        let overlay = self
+            .overlay
+            .as_ref()
+            .map(|p| p.source_layer_program())
+            .transpose()?;
+        Ok(SourceLayerPaintCapture {
+            canonical: self.canonical.clone(),
+            content,
+            viewport_content,
+            overlay,
+            unavailable_recordings,
+        })
+    }
+}
+impl SourceLayerPaintCapture {
+    pub fn content(&self) -> &crate::SourceLayerProgram {
+        &self.content
+    }
+    pub fn viewport_scrolling_content(&self) -> Option<&crate::SourceLayerProgram> {
+        self.viewport_content.as_ref()
+    }
+    pub fn viewport_overlay(&self) -> Option<&crate::SourceLayerProgram> {
+        self.overlay.as_ref()
+    }
+    pub fn recording_programs(&self) -> impl Iterator<Item = &crate::SourceLayerProgram> {
+        std::iter::once(&self.content)
+            .chain(self.viewport_content.iter())
+            .chain(self.overlay.iter())
+    }
+    pub fn canonical(&self) -> &RecordedPicture {
+        &self.canonical
+    }
+    pub fn unavailable_recordings(&self) -> &[SourceRecordingUnavailable] {
+        &self.unavailable_recordings
+    }
+    pub fn qualification(&self) -> crate::SourceLayerQualification {
+        crate::SourceLayerQualification::UnqualifiedStaticDiagnostic
+    }
+    pub fn damage(&self) -> Rect {
+        Rect::from_xywh(
+            0.0,
+            0.0,
+            self.canonical.viewport.logical_width() as f32,
+            self.canonical.viewport.logical_height() as f32,
+        )
+    }
+    /// Standalone CPU source raster. Untiled composition is explicit here;
+    /// full canonical tiling, Chromium and hardware remain qualification gates.
+    pub fn rasterize_diagnostic(&self) -> Result<Surface, crate::SourceLayerError> {
+        let viewport = self.canonical.viewport;
+        let width = i32::try_from(viewport.physical_width())
+            .map_err(|_| crate::SourceLayerError::InvalidBounds)?;
+        let height = i32::try_from(viewport.physical_height())
+            .map_err(|_| crate::SourceLayerError::InvalidBounds)?;
+        let mut surface = create_raster_surface(
+            width,
+            height,
+            self.canonical.raster_configuration,
+            self.canonical.lcd_surface,
+        )
+        .ok_or(crate::SourceLayerError::AllocationFailure)?;
+        surface.canvas().clear(SkColor::WHITE);
+        let scale = viewport.device_scale_factor() as f32;
+        surface.canvas().scale((scale, scale));
+        self.content.replay_diagnostic(surface.canvas())?;
+        if let Some(overlay) = &self.overlay {
+            overlay.replay_diagnostic(surface.canvas())?;
+        }
+        Ok(surface)
+    }
+}
+
+impl RecordedPaintCapture {
+    pub fn partition_layers(
+        self,
+        content_role: crate::PaintLayerBinding,
+        overlay_role: Option<crate::PaintLayerBinding>,
+        resolve: impl FnMut(openui_dom::NodeId) -> Option<crate::PaintLayerBinding>,
+    ) -> Result<LayeredPaintCapture, crate::LayeredPaintError> {
+        // Preserve the existing low-level signature: nested draws inherit its
+        // document fallback. Engine publication supplies the distinct existing
+        // viewport recording identity through the explicit method below.
+        self.partition_layers_with_viewport_content(content_role, None, overlay_role, resolve)
+    }
+
+    /// Bind the actual nested viewport recording without flattening it into the
+    /// parent stream. The explicit recording identity is separate from authored
+    /// element identities, which may legitimately occur in multiple recordings.
+    pub fn partition_layers_with_viewport_content(
+        self,
+        content_role: crate::PaintLayerBinding,
+        viewport_content_role: Option<crate::PaintLayerBinding>,
+        overlay_role: Option<crate::PaintLayerBinding>,
+        mut resolve: impl FnMut(openui_dom::NodeId) -> Option<crate::PaintLayerBinding>,
+    ) -> Result<LayeredPaintCapture, crate::LayeredPaintError> {
+        if content_role.role != crate::PaintLayerSourceRole::DocumentContent
+            || viewport_content_role.is_some_and(|role| {
+                role.role != crate::PaintLayerSourceRole::ViewportScrollingContent
+            })
+            || overlay_role
+                .is_some_and(|role| role.role != crate::PaintLayerSourceRole::ViewportOverlay)
+        {
+            return Err(crate::LayeredPaintError::InvalidBinding);
+        }
+        let content = self
+            .content_program
+            .partition_layers(content_role, &mut resolve)?;
+        let viewport_content = self
+            .canonical
+            .viewport_content_layer()
+            .and_then(|layer| layer.paint_program())
+            .map(|program| {
+                program
+                    .partition_layers(viewport_content_role.unwrap_or(content_role), &mut resolve)
+            })
+            .transpose()?;
+        let overlay = self
+            .viewport_overlay_program
+            .as_ref()
+            .map(|program| {
+                program.partition_layers(
+                    overlay_role.ok_or(crate::LayeredPaintError::InvalidBinding)?,
+                    &mut resolve,
+                )
+            })
+            .transpose()?;
+        // Content and viewport controls are separate operation streams within
+        // one scene. A shared authored binding is valid in both; a reused key
+        // for another owner or recording role would make the scene ambiguous.
+        let mut bindings = std::collections::HashMap::new();
+        for source in content
+            .sources()
+            .iter()
+            .chain(
+                viewport_content
+                    .iter()
+                    .flat_map(|program| program.sources()),
+            )
+            .chain(overlay.iter().flat_map(|program| program.sources()))
+        {
+            let binding = source.binding();
+            if bindings
+                .insert(binding.id, binding)
+                .is_some_and(|previous| previous != binding)
+            {
+                return Err(crate::LayeredPaintError::ConflictingIdentity(binding.id));
+            }
+        }
+        Ok(LayeredPaintCapture {
+            canonical: self.canonical,
+            content,
+            viewport_content,
+            overlay,
+        })
+    }
+}
+
+impl LayeredPaintCapture {
+    pub fn canonical(&self) -> &RecordedPicture {
+        &self.canonical
+    }
+    pub fn content(&self) -> &crate::LayeredPaintProgram {
+        &self.content
+    }
+    /// Program captured on the actual viewport content recorder canvas. The
+    /// parent continues to contain its original opaque Picture draw.
+    pub fn viewport_scrolling_content(&self) -> Option<&crate::LayeredPaintProgram> {
+        self.viewport_content.as_ref()
+    }
+    /// All actual recording streams, including the nested viewport source.
+    /// This hierarchy is diagnostic; iterating it does not flatten replay.
+    pub fn recording_programs(&self) -> impl Iterator<Item = &crate::LayeredPaintProgram> {
+        std::iter::once(&self.content)
+            .chain(self.viewport_content.iter())
+            .chain(self.overlay.iter())
+    }
+    /// Conservative counts across actual recordings. A parent Picture draw
+    /// and its recorded children both remain visible as separate dependencies.
+    pub fn recording_coverage(&self) -> crate::PaintLayerCoverage {
+        self.recording_programs().fold(
+            crate::PaintLayerCoverage::default(),
+            |mut total, program| {
+                let coverage = program.coverage();
+                total.opaque_picture_draws += coverage.opaque_picture_draws;
+                total.unclassified_image_draws += coverage.unclassified_image_draws;
+                total.unclassified_image_shader_draws += coverage.unclassified_image_shader_draws;
+                total.unclassified_other_shader_draws += coverage.unclassified_other_shader_draws;
+                total.fixed_canvas_queries += coverage.fixed_canvas_queries;
+                total
+            },
+        )
+    }
+    pub fn viewport_overlay(&self) -> Option<&crate::LayeredPaintProgram> {
+        self.overlay.as_ref()
+    }
+    pub fn has_opaque_viewport_content_source(&self) -> bool {
+        self.canonical.viewport_content_layer.is_some()
+    }
+    pub fn qualification(&self) -> crate::LayeredPaintQualification {
+        crate::LayeredPaintQualification::UnqualifiedStaticReplay
+    }
+    /// Rebuilds the same existing content/overlay recording roles. Intrinsic
+    /// draw references resolve through immutable per-layer sources, while the
+    /// single ordered state spine preserves clips/effects/scroll exactly once.
+    /// The caller must retain the existing raster policy; this does not produce
+    /// independently composited per-element pictures or admit dynamic tracks.
+    pub fn recording_from_layers(&self) -> Result<RecordedPicture, String> {
+        rebuild_owned_recording(
+            &self.canonical,
+            |canvas| {
+                self.content
+                    .replay(canvas)
+                    .map_err(|error| error.to_string())
+            },
+            self.overlay.as_ref().map(|program| {
+                move |canvas: &Canvas| program.replay(canvas).map_err(|error| error.to_string())
+            }),
+        )
+    }
+}
+
+fn rebuild_owned_recording(
+    canonical: &RecordedPicture,
+    replay_content: impl FnOnce(&Canvas) -> Result<(), String>,
+    replay_overlay: Option<impl FnOnce(&Canvas) -> Result<(), String>>,
+) -> Result<RecordedPicture, String> {
+    let bounds = Rect::from_xywh(
+        0.0,
+        0.0,
+        canonical.viewport.logical_width() as f32,
+        canonical.viewport.logical_height() as f32,
+    );
+    let mut recorder = PictureRecorder::new();
+    let canvas = recorder.begin_recording(bounds, false);
+    replay_content(canvas)?;
+    let content = recorder
+        .finish_recording_as_picture(None)
+        .ok_or_else(|| "failed to replay content program".to_owned())?;
+    let overlay = if let Some(replay) = replay_overlay {
+        let canvas = recorder.begin_recording(bounds, false);
+        replay(canvas)?;
+        Some(
+            recorder
+                .finish_recording_as_picture(None)
+                .ok_or_else(|| "failed to replay viewport program".to_owned())?,
+        )
+    } else {
+        None
+    };
+    let picture = if let Some(overlay) = &overlay {
+        let canvas = recorder.begin_recording(bounds, false);
+        canvas.draw_picture(&content, None, None);
+        canvas.draw_picture(overlay, None, None);
+        recorder
+            .finish_recording_as_picture(None)
+            .ok_or_else(|| "failed to compose replayed programs".to_owned())?
+    } else {
+        content.clone()
+    };
+    let mut result = canonical.clone();
+    result.content_picture = content;
+    result.viewport_overlay = overlay;
+    result.picture = picture;
+    Ok(result)
+}
+
+/// Observe the same phase walk while preserving the canonical output path.
+pub fn record_fragment_with_program(
+    doc: &Document,
+    fragment: &Fragment,
+    viewport: ViewportMetrics,
+) -> Result<RecordedPaintCapture, String> {
+    let (canonical, content, overlay) = record_fragment_impl(doc, fragment, viewport, true)?;
+    Ok(RecordedPaintCapture {
+        canonical,
+        content_program: content.expect("requested content capture"),
+        viewport_overlay_program: overlay,
+    })
 }
 
 /// Lay out and record a document without rasterizing it.
@@ -93,6 +521,22 @@ pub fn record_fragment(
     fragment: &Fragment,
     viewport: ViewportMetrics,
 ) -> Result<RecordedPicture, String> {
+    record_fragment_impl(doc, fragment, viewport, false).map(|(picture, _, _)| picture)
+}
+
+fn record_fragment_impl(
+    doc: &Document,
+    fragment: &Fragment,
+    viewport: ViewportMetrics,
+    capture_program: bool,
+) -> Result<
+    (
+        RecordedPicture,
+        Option<crate::RecordedPaintProgram>,
+        Option<crate::RecordedPaintProgram>,
+    ),
+    String,
+> {
     crate::painter::reset_picture_paint_state();
     let width = logical_dimension(viewport.logical_width())?;
     let height = logical_dimension(viewport.logical_height())?;
@@ -102,33 +546,99 @@ pub fn record_fragment(
         || (raster_configuration.author_text.edging == TextEdging::Alias
             && doc.uses_lcd_author_text());
     let bounds = Rect::from_xywh(0.0, 0.0, width as f32, height as f32);
+    let direct_replay = has_promoted_non_axis_transform(fragment, doc);
+    let content_requires_tiling = content_requires_tiling(fragment, viewport.device_scale_factor());
+    let physical_width = i32::try_from(viewport.physical_width())
+        .map_err(|_| "physical viewport width exceeds Skia limit".to_string())?;
+    let physical_height = i32::try_from(viewport.physical_height())
+        .map_err(|_| "physical viewport height exceeds Skia limit".to_string())?;
+    crate::painter::set_paint_raster_tiled(!should_replay_untiled(
+        direct_replay,
+        physical_width,
+        physical_height,
+        content_requires_tiling,
+    ));
     let mut recorder = PictureRecorder::new();
-    let recording_canvas = recorder.begin_recording(bounds, false);
+    let recording_canvas: &dyn crate::paint_record::PaintCanvas =
+        recorder.begin_recording(bounds, false);
+    let program_scope = capture_program.then(|| {
+        crate::paint_program::PaintProgramScope::new(recording_canvas.raw_tracking_target())
+    });
     recording_canvas.clear(SkColor::WHITE);
-    crate::painter::paint_canvas_background(
-        recording_canvas,
-        doc,
-        fragment,
-        width as f32,
-        height as f32,
-    );
-    paint_fragment(
+    if fragment.viewport_scrollport.is_none() {
+        crate::painter::paint_canvas_background(
+            recording_canvas,
+            doc,
+            fragment,
+            width as f32,
+            height as f32,
+        );
+    } else {
+        crate::painter::set_paint_viewport_size(width as f32, height as f32);
+    }
+    paint_document_fragments(
         recording_canvas,
         fragment,
         doc,
         openui_geometry::PhysicalOffset::zero(),
     );
-    let picture = recorder
+    let viewport_content_layer = crate::painter::take_viewport_content_layer();
+    let mut content_program = program_scope.as_ref().map(|scope| scope.snapshot());
+    drop(program_scope);
+    let content_picture = recorder
         .finish_recording_as_picture(None)
         .ok_or_else(|| "Failed to record paint commands".to_string())?;
-    Ok(RecordedPicture {
+    let mut overlay_program = None;
+    let viewport_overlay = if fragment
+        .viewport_scrollport
+        .is_some_and(|scrollport| scrollport.horizontal_scrollbar || scrollport.vertical_scrollbar)
+    {
+        let canvas: &dyn crate::paint_record::PaintCanvas = recorder.begin_recording(bounds, false);
+        let program_scope = capture_program
+            .then(|| crate::paint_program::PaintProgramScope::new(canvas.raw_tracking_target()));
+        crate::painter::paint_viewport_scrollbars(
+            canvas,
+            fragment,
+            doc,
+            openui_geometry::PhysicalOffset::zero(),
+        );
+        overlay_program = program_scope.as_ref().map(|scope| scope.snapshot());
+        drop(program_scope);
+        Some(
+            recorder
+                .finish_recording_as_picture(None)
+                .ok_or_else(|| "Failed to record viewport controls".to_string())?,
+        )
+    } else {
+        None
+    };
+    let picture = if let Some(overlay) = &viewport_overlay {
+        let canvas = recorder.begin_recording(bounds, false);
+        canvas.draw_picture(&content_picture, None, None);
+        canvas.draw_picture(overlay, None, None);
+        recorder
+            .finish_recording_as_picture(None)
+            .ok_or_else(|| "Failed to compose immutable paint recordings".to_string())?
+    } else {
+        content_picture.clone()
+    };
+    let recording = RecordedPicture {
         picture,
+        content_picture,
+        viewport_overlay,
+        viewport_content_layer,
         viewport,
         raster_configuration,
         lcd_surface,
-        direct_replay: has_promoted_non_axis_transform(fragment, doc),
+        direct_replay,
+        content_requires_tiling,
         retained_font_bytes: doc.font_collection().retained_face_bytes(),
-    })
+        _font_cache_lifetime: doc.font_collection().retain_cache_lifetime(),
+    };
+    for program in content_program.iter_mut().chain(overlay_program.iter_mut()) {
+        program.retain_resources(&recording);
+    }
+    Ok((recording, content_program, overlay_program))
 }
 
 /// Rasterize an immutable recording using the exact headless tiling policy.
@@ -148,23 +658,27 @@ pub fn rasterize_picture(recording: &RecordedPicture) -> Result<Surface, String>
     let canvas_color = SkColor::WHITE;
     surface.canvas().clear(canvas_color);
     // Chromium 147 keeps layers no larger than 512x512 physical pixels
-    // untiled (`LayerTreeSettings::max_untiled_layer_size`). Replaying those
-    // pictures through a synthetic 256px tile changes analytic rrect coverage
-    // near the tile clip even though the assembled pixels are copied exactly.
-    if should_replay_untiled(recording.direct_replay, width, height) {
+    // untiled (`LayerTreeSettings::max_untiled_layer_size`). A viewport can
+    // expose only part of a larger layer, so its size alone is insufficient.
+    // Replaying truly small pictures through a synthetic 256px tile changes
+    // analytic rrect coverage near the tile clip.
+    if should_replay_untiled(
+        recording.direct_replay,
+        width,
+        height,
+        recording.content_requires_tiling,
+    ) {
         surface.canvas().scale((scale, scale));
         surface
             .canvas()
             .draw_picture(&recording.picture, None, None);
         return Ok(surface);
     }
-    const TILE_SIZE: i32 = 256;
-    const TILE_STEP: i32 = TILE_SIZE - 2;
-    for tile_y in (0..height).step_by(TILE_STEP as usize) {
-        for tile_x in (0..width).step_by(TILE_STEP as usize) {
+    for tile_y in (0..height).step_by(RASTER_TILE_STEP_PX as usize) {
+        for tile_x in (0..width).step_by(RASTER_TILE_STEP_PX as usize) {
             let mut tile = create_raster_surface(
-                TILE_SIZE,
-                TILE_SIZE,
+                RASTER_TILE_SIZE_PX,
+                RASTER_TILE_SIZE_PX,
                 recording.raster_configuration,
                 recording.lcd_surface,
             )
@@ -172,15 +686,16 @@ pub fn rasterize_picture(recording: &RecordedPicture) -> Result<Surface, String>
             tile.canvas().clear(canvas_color);
             tile.canvas().translate((-tile_x as f32, -tile_y as f32));
             tile.canvas().scale((scale, scale));
-            tile.canvas().draw_picture(&recording.picture, None, None);
+            tile.canvas()
+                .draw_picture(&recording.content_picture, None, None);
 
             let image = tile.image_snapshot();
             let crop_left = if tile_x == 0 { 0 } else { 1 };
             let crop_top = if tile_y == 0 { 0 } else { 1 };
             let destination_x = tile_x + crop_left;
             let destination_y = tile_y + crop_top;
-            let visible_right = (tile_x + TILE_SIZE - 1).min(width);
-            let visible_bottom = (tile_y + TILE_SIZE - 1).min(height);
+            let visible_right = (tile_x + RASTER_TILE_SIZE_PX - 1).min(width);
+            let visible_bottom = (tile_y + RASTER_TILE_SIZE_PX - 1).min(height);
             let visible_width = visible_right - destination_x;
             let visible_height = visible_bottom - destination_y;
             if visible_width <= 0 || visible_height <= 0 {
@@ -209,6 +724,12 @@ pub fn rasterize_picture(recording: &RecordedPicture) -> Result<Surface, String>
                 &Paint::default(),
             );
         }
+    }
+    if let Some(overlay) = &recording.viewport_overlay {
+        surface.canvas().save();
+        surface.canvas().scale((scale, scale));
+        surface.canvas().draw_picture(overlay, None, None);
+        surface.canvas().restore();
     }
     let exact_physical_height = recording.viewport.logical_height() as f32 * scale;
     if height as f32 > exact_physical_height + f32::EPSILON {
@@ -317,11 +838,317 @@ mod tests {
     use openui_style::*;
 
     #[test]
+    fn viewport_control_recording_survives_document_mutation_and_drop() {
+        let mut document = Document::new();
+        let root = document.root();
+        document.update_resolved_style(root, |style| {
+            style.overflow_x = Overflow::Scroll;
+            style.overflow_y = Overflow::Scroll;
+        });
+        document.set_raster_context(document.raster_configuration(), 2.0);
+        let viewport = ViewportMetrics::from_logical_size(320.0, 240.0, 2.0).unwrap();
+        let (_, first) = record_document(&document, viewport).unwrap();
+        assert!(first.viewport_overlay_picture().is_some());
+        let png = |recording: &RecordedPicture| {
+            rasterize_picture(recording)
+                .unwrap()
+                .image_snapshot()
+                .encode(None, EncodedImageFormat::PNG, None)
+                .unwrap()
+                .as_bytes()
+                .to_vec()
+        };
+        let before = png(&first);
+        document.update_resolved_style(root, |style| {
+            style.scrollbar_track_color = Some(Color::RED);
+        });
+        let (_, second) = record_document(&document, viewport).unwrap();
+        assert_ne!(before, png(&second));
+        drop(document);
+        assert_eq!(before, png(&first));
+    }
+
+    #[test]
+    fn layered_capture_checks_identity_across_content_and_overlay_programs() {
+        use crate::{
+            LayeredPaintError, PaintLayerBinding, PaintLayerNodeIdentity, PaintLayerSourceId,
+            PaintLayerSourceRole,
+        };
+
+        let mut document = Document::new();
+        let node = document.create_node(ElementTag::Div);
+        document.update_resolved_style(node, |style| {
+            style.display = Display::Block;
+            style.background_color = Color::RED;
+        });
+        let fragment = Fragment::new_box(
+            node,
+            openui_geometry::PhysicalSize::new(LayoutUnit::from_i32(20), LayoutUnit::from_i32(20)),
+        );
+        let viewport = ViewportMetrics::from_logical_size(40.0, 40.0, 1.0).unwrap();
+        let mut capture = record_fragment_with_program(&document, &fragment, viewport).unwrap();
+        // A public capture can retain one authored source in both recording
+        // roles. Copying this actual operation stream exercises that boundary.
+        capture.viewport_overlay_program = Some(capture.content_program.clone());
+        let content_role = PaintLayerBinding {
+            id: PaintLayerSourceId(1),
+            owner: None,
+            role: PaintLayerSourceRole::DocumentContent,
+        };
+        let overlay_role = PaintLayerBinding {
+            id: PaintLayerSourceId(2),
+            owner: None,
+            role: PaintLayerSourceRole::ViewportOverlay,
+        };
+        let authored = PaintLayerBinding {
+            id: PaintLayerSourceId(3),
+            owner: Some(PaintLayerNodeIdentity {
+                document: 1,
+                index: 1,
+                generation: 1,
+            }),
+            role: PaintLayerSourceRole::AuthoredBox,
+        };
+        let resolve = |owner| {
+            assert_eq!(owner, node);
+            Some(authored)
+        };
+
+        let shared = capture
+            .clone()
+            .partition_layers(content_role, Some(overlay_role), resolve)
+            .unwrap();
+        for program in [shared.content(), shared.viewport_overlay().unwrap()] {
+            assert!(program
+                .sources()
+                .iter()
+                .any(|source| source.binding() == authored));
+        }
+        assert!(matches!(
+            capture.clone().partition_layers(
+                content_role,
+                Some(PaintLayerBinding {
+                    id: content_role.id,
+                    ..overlay_role
+                }),
+                resolve,
+            ),
+            Err(LayeredPaintError::ConflictingIdentity(PaintLayerSourceId(
+                1
+            )))
+        ));
+
+        let mut content_owner_calls = 0;
+        capture
+            .content_program
+            .partition_layers(content_role, |owner| {
+                assert_eq!(owner, node);
+                content_owner_calls += 1;
+                Some(authored)
+            })
+            .unwrap();
+        assert!(content_owner_calls > 0);
+        for conflicting_owner in [
+            PaintLayerNodeIdentity {
+                document: 2,
+                ..authored.owner.unwrap()
+            },
+            PaintLayerNodeIdentity {
+                generation: 2,
+                ..authored.owner.unwrap()
+            },
+        ] {
+            let mut calls = 0;
+            assert!(matches!(
+                capture
+                    .clone()
+                    .partition_layers(content_role, Some(overlay_role), |owner| {
+                        assert_eq!(owner, node);
+                        calls += 1;
+                        Some(if calls <= content_owner_calls {
+                            authored
+                        } else {
+                            PaintLayerBinding {
+                                owner: Some(conflicting_owner),
+                                ..authored
+                            }
+                        })
+                    },),
+                Err(LayeredPaintError::ConflictingIdentity(PaintLayerSourceId(
+                    3
+                )))
+            ));
+            assert_eq!(calls, content_owner_calls * 2);
+        }
+    }
+
+    #[test]
+    fn actual_nested_viewport_program_replays_and_validates_cross_stream_bindings() {
+        use crate::{
+            LayeredPaintError, PaintLayerBinding, PaintLayerNodeIdentity, PaintLayerSourceId,
+            PaintLayerSourceRole,
+        };
+        let mut doc = Document::new();
+        let root = doc.root();
+        doc.update_resolved_style(root, |style| {
+            style.overflow_x = Overflow::Scroll;
+            style.overflow_y = Overflow::Scroll;
+        });
+        let child = doc.create_node(ElementTag::Div);
+        doc.append_child(root, child);
+        doc.update_resolved_style(child, |style| {
+            style.display = Display::Block;
+            style.width = Length::px(80.0);
+            style.height = Length::px(80.0);
+            style.background_color = Color::RED;
+        });
+        let viewport = ViewportMetrics::from_logical_size(40.0, 40.0, 1.0).unwrap();
+        let (fragment, _) = record_document(&doc, viewport).unwrap();
+        let capture = record_fragment_with_program(&doc, &fragment, viewport).unwrap();
+        let content = PaintLayerBinding {
+            id: PaintLayerSourceId(1),
+            owner: None,
+            role: PaintLayerSourceRole::DocumentContent,
+        };
+        let nested = PaintLayerBinding {
+            id: PaintLayerSourceId(2),
+            owner: None,
+            role: PaintLayerSourceRole::ViewportScrollingContent,
+        };
+        let overlay = PaintLayerBinding {
+            id: PaintLayerSourceId(3),
+            owner: None,
+            role: PaintLayerSourceRole::ViewportOverlay,
+        };
+        let root_binding = PaintLayerBinding {
+            id: PaintLayerSourceId(4),
+            owner: Some(PaintLayerNodeIdentity {
+                document: 1,
+                index: 1,
+                generation: 1,
+            }),
+            role: PaintLayerSourceRole::AuthoredBox,
+        };
+        let child_binding = PaintLayerBinding {
+            id: PaintLayerSourceId(5),
+            owner: Some(PaintLayerNodeIdentity {
+                document: 1,
+                index: 2,
+                generation: 1,
+            }),
+            role: PaintLayerSourceRole::AuthoredBox,
+        };
+        let resolve = |node| {
+            if node == root {
+                Some(root_binding)
+            } else if node == child {
+                Some(child_binding)
+            } else {
+                None
+            }
+        };
+        let layered = capture
+            .clone()
+            .partition_layers_with_viewport_content(content, Some(nested), Some(overlay), resolve)
+            .unwrap();
+        let original = capture
+            .canonical
+            .viewport_content_layer()
+            .expect("actual viewport recorder");
+        let recorded_program = original.paint_program().expect("actual child capture");
+        let nested_program = layered
+            .viewport_scrolling_content()
+            .expect("published child capture");
+        assert!(nested_program
+            .sources()
+            .iter()
+            .any(|source| source.binding() == child_binding));
+        for scale in [1.0_f32, 1.25, 1.5, 1.75, 2.0] {
+            let size = ((80.0 * scale) as i32, (80.0 * scale) as i32);
+            let pixels = |draw: &dyn Fn(&Canvas)| {
+                let mut surface = surfaces::raster_n32_premul(size).unwrap();
+                surface.canvas().clear(skia_safe::Color::TRANSPARENT);
+                surface.canvas().scale((scale, scale));
+                draw(surface.canvas());
+                surface
+                    .image_snapshot()
+                    .encode(None, EncodedImageFormat::PNG, None)
+                    .unwrap()
+                    .as_bytes()
+                    .to_vec()
+            };
+            let canonical = pixels(&|canvas| {
+                canvas.draw_picture(&original.picture, None, None);
+            });
+            assert_eq!(
+                pixels(&|canvas| recorded_program.replay(canvas).unwrap()),
+                canonical
+            );
+            assert_eq!(
+                pixels(&|canvas| nested_program.replay(canvas).unwrap()),
+                canonical
+            );
+        }
+        assert!(matches!(
+            capture.clone().partition_layers_with_viewport_content(
+                content,
+                Some(PaintLayerBinding {
+                    id: content.id,
+                    ..nested
+                }),
+                Some(overlay),
+                resolve
+            ),
+            Err(LayeredPaintError::ConflictingIdentity(PaintLayerSourceId(
+                1
+            )))
+        ));
+        assert!(matches!(
+            capture.partition_layers_with_viewport_content(
+                content,
+                Some(PaintLayerBinding {
+                    owner: child_binding.owner,
+                    ..nested
+                }),
+                Some(overlay),
+                resolve
+            ),
+            Err(LayeredPaintError::InvalidBinding)
+        ));
+    }
+
+    #[test]
     fn chromium_sized_small_layers_replay_untiled() {
-        assert!(should_replay_untiled(false, 512, 512));
-        assert!(!should_replay_untiled(false, 513, 512));
-        assert!(!should_replay_untiled(false, 512, 513));
-        assert!(should_replay_untiled(true, 4096, 4096));
+        assert!(should_replay_untiled(false, 512, 512, false));
+        assert!(!should_replay_untiled(false, 513, 512, false));
+        assert!(!should_replay_untiled(false, 512, 513, false));
+        assert!(!should_replay_untiled(false, 320, 240, true));
+        assert!(should_replay_untiled(true, 4096, 4096, true));
+    }
+
+    #[test]
+    fn overflowing_content_uses_its_layer_size_for_tiling() {
+        let mut viewport = Fragment::new_box(
+            openui_dom::NodeId::NONE,
+            openui_geometry::PhysicalSize::new(
+                LayoutUnit::from_i32(320),
+                LayoutUnit::from_i32(240),
+            ),
+        );
+        let mut overflow = Fragment::new_box(
+            openui_dom::NodeId::NONE,
+            openui_geometry::PhysicalSize::new(
+                LayoutUnit::from_f64(396.875),
+                LayoutUnit::from_i32(57),
+            ),
+        );
+        overflow.offset =
+            openui_geometry::PhysicalOffset::new(LayoutUnit::from_i32(20), LayoutUnit::zero());
+        viewport.children.push(overflow);
+
+        assert!(!content_requires_tiling(&viewport, 1.0));
+        assert!(content_requires_tiling(&viewport, 1.25));
+        assert!(content_requires_tiling(&viewport, 1.5));
     }
 
     #[test]

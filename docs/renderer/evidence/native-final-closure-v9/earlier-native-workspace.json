@@ -1,0 +1,130 @@
+{
+  "owner_pid": 3518866,
+  "source": {
+    "commit": "8bcc6dfa7240a34149d6351623a907723186f82d",
+    "clean": true,
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "source_tree_sha256": "91527a0d74a10b04afd52eac3b1a7f362a488ca29cb7c73bfce7168dd8edf5e8",
+    "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6"
+  },
+  "checks": [
+    {
+      "name": "workspace-all-targets",
+      "argv": [
+        "cargo",
+        "+stable",
+        "--config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "--offline",
+        "--no-fail-fast",
+        "--workspace",
+        "--all-targets"
+      ],
+      "pid": 3518960,
+      "actual_exit_code": 0,
+      "terminal_reaped": true,
+      "log_sha256": "0d1fbc266aedd4156d608beeb415b799976685931c645daef7e4bcbb09cef037",
+      "reported_passed": 9304,
+      "reported_failed": 0,
+      "reported_ignored": 0
+    },
+    {
+      "name": "workspace-doctests",
+      "argv": [
+        "cargo",
+        "+stable",
+        "--config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "--offline",
+        "--no-fail-fast",
+        "--workspace",
+        "--doc"
+      ],
+      "pid": 3544514,
+      "actual_exit_code": 0,
+      "terminal_reaped": true,
+      "log_sha256": "99548f3233d14339145f47e44cd1d8e2832c8596a097cb619f93a250c41c822c",
+      "reported_passed": 2,
+      "reported_failed": 0,
+      "reported_ignored": 13
+    },
+    {
+      "name": "c-abi-library-build",
+      "argv": [
+        "cargo",
+        "+stable",
+        "--config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "build",
+        "--locked",
+        "--offline",
+        "-p",
+        "openui-ffi"
+      ],
+      "pid": 3544980,
+      "actual_exit_code": 0,
+      "terminal_reaped": true,
+      "log_sha256": "3be388ba50a3a56ff1c4ccfc686543ea42e09e570d09d20050a4a1bf4825f2e8",
+      "reported_passed": 0,
+      "reported_failed": 0,
+      "reported_ignored": 0
+    },
+    {
+      "name": "c-cpp-headless-consumers",
+      "argv": [
+        "python3",
+        "-B",
+        "/home/nero/code/open-ui/tools/ffi/verify_abi.py",
+        "--library",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-snapshot-workspace-runtime-v4625/libopenui_ffi.so",
+        "--keep-going"
+      ],
+      "pid": 3545091,
+      "actual_exit_code": 0,
+      "terminal_reaped": true,
+      "log_sha256": "ead6b33459aecf0e4569803a2e07f8c936fd005ec248485b3bfeb6f4e9a4151a",
+      "reported_passed": 0,
+      "reported_failed": 0,
+      "reported_ignored": 0
+    }
+  ],
+  "complete": true,
+  "renderer_qualified": false,
+  "release_qualified": false,
+  "runtime_scope": "complete locked native workspace all targets and doctests, current-source additive163-export FFI library and all real C/C++ headless consumers after shared permanent Snapshot source equality correction; 40 C and 34 C++ consumers scheduled; independent clean same8bcc renderer epoch measured by separate sealed runner; no Chromium pixel or release qualification",
+  "independent_live_pixel_epoch": {
+    "source_before": {
+      "commit": "8bcc6dfa7240a34149d6351623a907723186f82d",
+      "clean": true,
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_tree_sha256": "91527a0d74a10b04afd52eac3b1a7f362a488ca29cb7c73bfce7168dd8edf5e8",
+      "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6"
+    },
+    "runner_sha256": "2b11ee0fc5b2b1067a064f8f86d339d932cd72fd2af8d776efe9394d727bc889",
+    "performance_qualification": false,
+    "shared_cargo_target_used_by_pixel_runner": false,
+    "fresh_runner_build_receipt_sha256": "cee58778a313d4d2f82b1e6e83bb012933857c3879910235a5cc591f18fcf000",
+    "source_unchanged": true,
+    "runner_unchanged": true
+  },
+  "boot_id": "362ae37b-d85f-4812-9f25-ef02cf732134",
+  "current_source_library": {
+    "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-snapshot-workspace-runtime-v4625/libopenui_ffi.so",
+    "sha256": "7cbea133a0967fe79a437ece3c531d2fbe8131ba75029450d4cc26751284f654",
+    "source_commit": "8bcc6dfa7240a34149d6351623a907723186f82d",
+    "successful_build_pid": 3544980
+  },
+  "source_after": {
+    "commit": "8bcc6dfa7240a34149d6351623a907723186f82d",
+    "clean": true,
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "source_tree_sha256": "91527a0d74a10b04afd52eac3b1a7f362a488ca29cb7c73bfce7168dd8edf5e8",
+    "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6"
+  },
+  "source_unchanged": true,
+  "intended_exit_code": 0
+}

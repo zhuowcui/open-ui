@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "session_id": 89349,
+  "actual_tool_exit_code": 1,
+  "actual_terminal_chunk": "401be8",
+  "terminal_reaped": true,
+  "receipt_sha256": "ce23927c37f53e2e66323a66f5905633744356c0c1fcf445b1d93d69cf21bc17",
+  "all_recorded_pids_absent": [
+    3349856,
+    3349971,
+    3373627,
+    3374084,
+    3374214
+  ],
+  "renderer_qualified": false,
+  "release_qualified": false,
+  "observer_pid": 3378940,
+  "observed_utc": "2026-10-14T00:19:54.902973+00:00",
+  "reported_passed": 9282,
+  "reported_failed": 1
+}

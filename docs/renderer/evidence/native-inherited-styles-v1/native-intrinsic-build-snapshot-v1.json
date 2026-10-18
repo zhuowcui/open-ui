@@ -1,0 +1,46 @@
+{
+  "all_commands_terminal": false,
+  "baseline_commit": "05dc5b22af6500bbc71354e0017371d8c40d42e3",
+  "fixed_commit": "c4a74a6d9a77a6f597601370d07343f16bbe5f0a",
+  "prior_terminal_pipeline_sha256": "e7b34ca7c05f1a10efd6ef933a1a398ae2cd4e598f82c3779afbca6152c30435",
+  "probe_sha256": "9eed5d02b723bf70a863e7a0515036ee2d190ca00af5769329de3ac57545ca42",
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "schema_version": 1,
+  "state": "running-fresh-fixed-build",
+  "steps": [
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "-p",
+        "openui-engine",
+        "native_intrinsic_absolute_width_preserves_shaped_grid_and_indentation",
+        "--",
+        "--nocapture"
+      ],
+      "failed": 1,
+      "log_sha256": "bb4f92a9015f54c5e0f71e5cc49b7887960644cf8ca70008ec302e4d0bec462c",
+      "name": "baseline-engine-guard",
+      "observed_exit_code": 101,
+      "passed": 0,
+      "source": {
+        "clean": true,
+        "commit": "05dc5b22af6500bbc71354e0017371d8c40d42e3",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "981e1e94612979040bc0beb1f3ceb2b13d7ce86454ddfa5aa3c82dce7cdbe724",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "05dc5b22af6500bbc71354e0017371d8c40d42e3",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "981e1e94612979040bc0beb1f3ceb2b13d7ce86454ddfa5aa3c82dce7cdbe724",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ]
+}

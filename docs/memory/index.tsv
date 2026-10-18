@@ -1,5 +1,5 @@
 # id	status	tags	title	updated	path
-0001	active	project standard	Project north star: Chromium pixel parity under strict accountability	2026-07-08	entries/0001-project-north-star-chromium-pixel-parity-under-s.md
+0001	active	project standard policy native-api	Project north star: Chromium pixel parity under strict accountability	2026-10-02	entries/0001-project-north-star-chromium-pixel-parity-under-s.md
 0002	superseded	state accountability	Authoritative WPT state (2026-06-30): 2671 pass / 735 fail / 0 err, audit 7/7	2026-08-19	entries/0002-authoritative-wpt-state-2026-06-30-2671-pass-735.md
 0003	active	direction text sp14	Direction: layout PAUSED, pivot to text (SP14+)	2026-07-08	entries/0003-direction-layout-paused-pivot-to-text-sp14.md
 0004	active	text finding port_wpt	Text pivot is porting+parity, NOT a from-scratch engine	2026-07-08	entries/0004-text-pivot-is-porting-parity-not-a-from-scratch.md
@@ -60,3 +60,5 @@
 0059	active	sp19 grid subgrid fragmentation accountability handoff	SP19 W4 closes the Grid and subgrid partition	2026-09-01	entries/0059-sp19-w4-closes-the-grid-and-subgrid-partition.md
 0060	active	build skia pixel-compare gotcha chromium rustfmt	Build pixel_compare from bindings/rust to preserve Chromium Skia parity	2026-09-01	entries/0060-build-pixel-compare-from-bindings-rust-to-preser.md
 0061	active	sp19 containment container-queries content-visibility intrinsic-sizing fragmentation accountability handoff	SP19 W5 closes containment and container queries	2026-09-08	entries/0061-sp19-w5-closes-containment-and-container-quer.md
+0062	superseded	workflow checkpoint git handoff source-of-truth	Keep checkpoint branch authoritative and resume with focused PRs	2026-10-17	entries/0062-keep-checkpoint-branch-authoritative-and-resume.md
+0063	active	workflow git checkpoint user-preference	Use main as the experimental source of truth with one PR at a time	2026-10-17	entries/0063-use-main-as-the-experimental-source-of-truth-wit.md

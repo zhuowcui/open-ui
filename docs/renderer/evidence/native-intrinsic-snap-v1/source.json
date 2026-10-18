@@ -1,0 +1,226 @@
+{
+  "baseline": "e995e52f8650ff9286d6beb0618cdd4b75df789b",
+  "baseline_and_fixed_tests_not_yet_executed": true,
+  "baseline_root": "/dev/shm/openui-native-intrinsic-snap-baseline-41b616c3",
+  "branch": "agent/native-intrinsic-snap-v1692",
+  "chromium_binary": {
+    "binary_sha256": "0ba87684df0afc11faaea40ac57bd2f1d68b67191443b38215a36b90e6f08848",
+    "path": "/home/nero/code/open-ui/chrome/linux-147.0.7727.50/chrome-linux64/chrome",
+    "version": "Google Chrome for Testing 147.0.7727.50"
+  },
+  "chromium_source_support": {
+    "header_path": "/home/nero/chromium/src/third_party/blink/renderer/platform/fonts/shaping/shape_result.h",
+    "header_sha256": "e50c79ebfe50be5d66bec042bee4d904187bae5aadbe8ac51a72699676a4816e",
+    "source_patch_is_not_binary_provenance": true,
+    "version_path": "/home/nero/chromium/src/chrome/VERSION",
+    "version_sha256": "19c61b438190d8bc21c82e7c6de61ba51d288db1341553e1aa69c06566107c42"
+  },
+  "consumer_receipt_sha256": "e05ea78e7ed8b270c5c1f31a82f3df50c41442633368890a86985637fa64524c",
+  "javascript_executed_by_openui": false,
+  "measured_chromium_queries": [
+    {
+      "chromium_png_sha256": "1db62d536b404615aee39df2f016167df4829171ae30d05a3e4ada38079c0eeb",
+      "expected_bounds": {
+        "height": 12,
+        "width": 12.015625,
+        "x": 20,
+        "y": 20
+      },
+      "prior_native_bounds": {
+        "height": 12,
+        "width": 12,
+        "x": 20,
+        "y": 20
+      },
+      "scale": 1.0,
+      "size": 12,
+      "state": "before",
+      "text": "X"
+    },
+    {
+      "chromium_png_sha256": "44bb960244baadccf18876aa07cfe0fb7621379293d916195b88b1a4a01ebb63",
+      "expected_bounds": {
+        "height": 12,
+        "width": 12.015625,
+        "x": 20,
+        "y": 20
+      },
+      "prior_native_bounds": {
+        "height": 12,
+        "width": 12,
+        "x": 20,
+        "y": 20
+      },
+      "scale": 1.25,
+      "size": 12,
+      "state": "before",
+      "text": "X"
+    },
+    {
+      "chromium_png_sha256": "640deee468021a3aaf0775fdb8901ad93d057b0ec8e7a87da12e5da8f2ad7980",
+      "expected_bounds": {
+        "height": 12,
+        "width": 12.015625,
+        "x": 20,
+        "y": 20
+      },
+      "prior_native_bounds": {
+        "height": 12,
+        "width": 12,
+        "x": 20,
+        "y": 20
+      },
+      "scale": 1.5,
+      "size": 12,
+      "state": "before",
+      "text": "X"
+    },
+    {
+      "chromium_png_sha256": "175a16404d162a4e3792936fdc6f7b0047a66baf594a8094126463fb478682c0",
+      "expected_bounds": {
+        "height": 12,
+        "width": 12.015625,
+        "x": 20,
+        "y": 20
+      },
+      "prior_native_bounds": {
+        "height": 12,
+        "width": 12,
+        "x": 20,
+        "y": 20
+      },
+      "scale": 2.0,
+      "size": 12,
+      "state": "before",
+      "text": "X"
+    },
+    {
+      "chromium_png_sha256": "9175910ccde506f106af5ba2c769740f469c0e03496a1d881bcdbe1b34c24f1c",
+      "expected_bounds": {
+        "height": 12,
+        "width": 12.015625,
+        "x": 20,
+        "y": 20
+      },
+      "prior_native_bounds": {
+        "height": 12,
+        "width": 12,
+        "x": 20,
+        "y": 20
+      },
+      "scale": 3.0,
+      "size": 12,
+      "state": "before",
+      "text": "X"
+    },
+    {
+      "chromium_png_sha256": "e56cd556c8d55765199d655945f7d58bbe9fd447b36da77adce94e072661a5c7",
+      "expected_bounds": {
+        "height": 16,
+        "width": 32.015625,
+        "x": 20,
+        "y": 20
+      },
+      "prior_native_bounds": {
+        "height": 16,
+        "width": 32,
+        "x": 20,
+        "y": 20
+      },
+      "scale": 1.0,
+      "size": 16,
+      "state": "after",
+      "text": "XX"
+    },
+    {
+      "chromium_png_sha256": "4952dd15519235cd398702a9fde872dec3ab51d9fcd0eab56f0702e732b30001",
+      "expected_bounds": {
+        "height": 16,
+        "width": 32.015625,
+        "x": 20,
+        "y": 20
+      },
+      "prior_native_bounds": {
+        "height": 16,
+        "width": 32,
+        "x": 20,
+        "y": 20
+      },
+      "scale": 1.25,
+      "size": 16,
+      "state": "after",
+      "text": "XX"
+    },
+    {
+      "chromium_png_sha256": "3f050721edb5410773346750ad6df01e6404cb570d3bfd0c5304be6d1f16dd35",
+      "expected_bounds": {
+        "height": 16,
+        "width": 32.015625,
+        "x": 20,
+        "y": 20
+      },
+      "prior_native_bounds": {
+        "height": 16,
+        "width": 32,
+        "x": 20,
+        "y": 20
+      },
+      "scale": 1.5,
+      "size": 16,
+      "state": "after",
+      "text": "XX"
+    },
+    {
+      "chromium_png_sha256": "838afc7e56e0e23b594c81848c5daf249254a3a74cb044f778a404a2e7540219",
+      "expected_bounds": {
+        "height": 16,
+        "width": 32.015625,
+        "x": 20,
+        "y": 20
+      },
+      "prior_native_bounds": {
+        "height": 16,
+        "width": 32,
+        "x": 20,
+        "y": 20
+      },
+      "scale": 2.0,
+      "size": 16,
+      "state": "after",
+      "text": "XX"
+    },
+    {
+      "chromium_png_sha256": "5d5e3b5b7c24ab8e82e808fe2433104f13684a37a95059f15c40662d62f47a7f",
+      "expected_bounds": {
+        "height": 16,
+        "width": 32.015625,
+        "x": 20,
+        "y": 20
+      },
+      "prior_native_bounds": {
+        "height": 16,
+        "width": 32,
+        "x": 20,
+        "y": 20
+      },
+      "scale": 3.0,
+      "size": 16,
+      "state": "after",
+      "text": "XX"
+    }
+  ],
+  "native_callback_scales": 5,
+  "new_release_states_admitted": 0,
+  "old_113_exports_and_30_layouts_preserved": true,
+  "parent": "41b616c3be5224b074e9d06ba6aa963731a1b265",
+  "probe_sha256": "a1897a3805cecf652d6143ebfbb10f437c0874c18bc94557538751725fac0f1c",
+  "production_function_changes": 1,
+  "production_has_no_font_size_family_fixture_or_test_id_condition": true,
+  "public_native_rust_apis": true,
+  "reference_bytes_unchanged": true,
+  "release_qualification": false,
+  "root": "/dev/shm/openui-native-intrinsic-snap-41b616c3",
+  "schema_version": 1,
+  "source": "727da10e580c9439f5db83d36bfc3e2340168207",
+  "source_unapplied": true
+}

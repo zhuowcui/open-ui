@@ -1,0 +1,471 @@
+{
+  "all_archive_hashes_verified": true,
+  "all_commands_terminal": true,
+  "all_native_apis_qualified": false,
+  "archive": {
+    "bytes": 385341,
+    "files": 55,
+    "members": [
+      {
+        "bytes": 264,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4113/accountability.json.gz",
+        "raw_bytes": 378,
+        "raw_sha256": "506918e1b8c98cab1097daed714dcfd44154687d248ed4cbe41068e9864ad485",
+        "sha256": "f906959ecda7afbc4cdf80edec42c85da97de269a18f89dd67a5c8c100581429"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4113/accountability.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 1055,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4113/accountability.stdout.gz",
+        "raw_bytes": 2867,
+        "raw_sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1",
+        "sha256": "a7ddfb15636772a7ed177d92cd310c67cc38a082a9aae491e62d04518aa2f463"
+      },
+      {
+        "bytes": 250,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4113/ffi.json.gz",
+        "raw_bytes": 353,
+        "raw_sha256": "b3df3b91b400eaa11396a2c9c029a5c910dae60b269adbd7c52cfa6003db3e54",
+        "sha256": "e153f96ac437e0403b95395b2e574b8788a88a32c7d63e7337e8e76465ee726f"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4113/ffi.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 52,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4113/ffi.stdout.gz",
+        "raw_bytes": 32,
+        "raw_sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821",
+        "sha256": "55406c87d9571bf98d31b05240f488bb4ab3c159f8a3c2f654148ee72b439592"
+      },
+      {
+        "bytes": 270,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4113/format-example.json.gz",
+        "raw_bytes": 405,
+        "raw_sha256": "d79fc5dd0f20c27c3a462bb3cea30e948ed0e22387ecc1eef56513f4e75954f2",
+        "sha256": "fe274c5911d54a8814aceb8c8b9e60d7a3f950fd394fb7e8a0a28d581f01d734"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4113/format-example.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 2457,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4113/format-example.stdout.gz",
+        "raw_bytes": 7502,
+        "raw_sha256": "fda802f77502253b654b9dc611c049e5e6b6b6665a5b6ac5754308850f1e5a1b",
+        "sha256": "da681560223e1385b53d9f2b95f668496f21ff84ed0f5671776e3b14cba49a37"
+      },
+      {
+        "bytes": 268,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4113/format-paint.json.gz",
+        "raw_bytes": 403,
+        "raw_sha256": "4650b7b8de27fc5d7aede39a2b7554af59701c53b303c062dcab609c153c9bd5",
+        "sha256": "824450cf49fd0fabcd719126df590332bbfa5cb00ce936fdbaeec3dea0609ca5"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4113/format-paint.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 178590,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4113/format-paint.stdout.gz",
+        "raw_bytes": 951186,
+        "raw_sha256": "66d27f2215289b892547c79edf197a4611d282401cf7c0b55bab954d0f1e0ba5",
+        "sha256": "2fb0e204ca6d02a6b43ddbab0931f0bcfb9992071494368af3f46b77d1a18e64"
+      },
+      {
+        "bytes": 1032,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4113/receipt.json.gz",
+        "raw_bytes": 4440,
+        "raw_sha256": "faf171311068678946ab5736123faafdb564a81b53ad99d698cbd5372eefcec3",
+        "sha256": "0df3d373ec475053a82fdd50678eacb3400abfef53be263ad6ef303979db1216"
+      },
+      {
+        "bytes": 257,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4113/release.json.gz",
+        "raw_bytes": 370,
+        "raw_sha256": "bc36995de3d91b49a47b727e810c9cdadd226eff2f610c56bf52fb33cdf83135",
+        "sha256": "8f6d45ac2cbe2e4eaa1b6fbedf814438aacd63fa8afe187d7880d6186910481e"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4113/release.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 80,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4113/release.stdout.gz",
+        "raw_bytes": 63,
+        "raw_sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd",
+        "sha256": "ec1277c807103cfdee77b77954961b24a58ce62612d9dbf58594043db7efc478"
+      },
+      {
+        "bytes": 265,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4113/renderer.json.gz",
+        "raw_bytes": 382,
+        "raw_sha256": "2bee1ca85da77e5cf3b884599e9d4f8574d708a15f519e6e9296628de4311476",
+        "sha256": "f06abd806037c1343ca4cca5206b95ca29c2301ce05763bfd5b18e2506fcde45"
+      },
+      {
+        "bytes": 87,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4113/renderer.stderr.gz",
+        "raw_bytes": 77,
+        "raw_sha256": "6ecbbbf9047953233f1eeb773290e2a3c417efeab664319bda4ff49f80d9d8cd",
+        "sha256": "02439f644cd628b4574d05f1d3fd76b6361e209c01f0d613a75df9a3020d2fb3"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4113/renderer.stdout.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4113/style.json.gz",
+        "raw_bytes": 364,
+        "raw_sha256": "616c23f51aeab31e1cc540beca725147b9b37faa61a3320886c5f3da8c001249",
+        "sha256": "62e3a9042074b93fab998524d9044c081e2d1ee0ceddbdd559d52923afcf04ec"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4113/style.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 57,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4113/style.stdout.gz",
+        "raw_bytes": 37,
+        "raw_sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1",
+        "sha256": "1b70c8a7ba0f84375105255b165129e2f427ca1072a832c28efb9f840d539b10"
+      },
+      {
+        "bytes": 190,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4113/whitespace.json.gz",
+        "raw_bytes": 325,
+        "raw_sha256": "2a2be882f1e6bf22683bff2143d56e435eecd03646b87b0119b5ce65df849e95",
+        "sha256": "47c91735fd96dd73d703a95dbf6d11c6f2f965ec56ad0f764533b461f51baf31"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4113/whitespace.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4113/whitespace.stdout.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 6708,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-generator-refresh-v4120/author-style-inventory-after.json.gz",
+        "raw_bytes": 112394,
+        "raw_sha256": "709ffe5674de88f7b080e73d985cb8991acc81230b2b47872e0a33d82c95dba1",
+        "sha256": "ba9f70687b2788f267c0c49cfae63273643d164088a26af1b2ba09484c3934ef"
+      },
+      {
+        "bytes": 6703,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-generator-refresh-v4120/author-style-inventory-before.json.gz",
+        "raw_bytes": 112341,
+        "raw_sha256": "5dfcd81b0b4ec8a5c0c478394da01f3c924ef38b894ac6738a83d4be19b9da25",
+        "sha256": "d8e86d5224384a6b88e8cb93084ae50b90b4fa973d27ae56a9f2c3d9d79f1c97"
+      },
+      {
+        "bytes": 603,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-generator-refresh-v4120/receipt.json.gz",
+        "raw_bytes": 1714,
+        "raw_sha256": "ceb2c156ab2ff2bf95bcc4a72683119c0afbc3255b3f4d5c36ca34419cf952c2",
+        "sha256": "1954c2ffcce4c5b2eaea23069492f6f113b83900652ce9204a06b91f98c6729e"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-generator-refresh-v4120/stderr.txt.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 95,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-generator-refresh-v4120/stdout.txt.gz",
+        "raw_bytes": 81,
+        "raw_sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691",
+        "sha256": "d2b79cb72721d10fece4b15d0f646423937282376e09b24612cf252d1dfa8316"
+      },
+      {
+        "bytes": 264,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4121/accountability.json.gz",
+        "raw_bytes": 378,
+        "raw_sha256": "506918e1b8c98cab1097daed714dcfd44154687d248ed4cbe41068e9864ad485",
+        "sha256": "f906959ecda7afbc4cdf80edec42c85da97de269a18f89dd67a5c8c100581429"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4121/accountability.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 1055,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4121/accountability.stdout.gz",
+        "raw_bytes": 2867,
+        "raw_sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1",
+        "sha256": "a7ddfb15636772a7ed177d92cd310c67cc38a082a9aae491e62d04518aa2f463"
+      },
+      {
+        "bytes": 250,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4121/ffi.json.gz",
+        "raw_bytes": 353,
+        "raw_sha256": "b3df3b91b400eaa11396a2c9c029a5c910dae60b269adbd7c52cfa6003db3e54",
+        "sha256": "e153f96ac437e0403b95395b2e574b8788a88a32c7d63e7337e8e76465ee726f"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4121/ffi.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 52,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4121/ffi.stdout.gz",
+        "raw_bytes": 32,
+        "raw_sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821",
+        "sha256": "55406c87d9571bf98d31b05240f488bb4ab3c159f8a3c2f654148ee72b439592"
+      },
+      {
+        "bytes": 270,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4121/format-example.json.gz",
+        "raw_bytes": 405,
+        "raw_sha256": "d79fc5dd0f20c27c3a462bb3cea30e948ed0e22387ecc1eef56513f4e75954f2",
+        "sha256": "fe274c5911d54a8814aceb8c8b9e60d7a3f950fd394fb7e8a0a28d581f01d734"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4121/format-example.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 2457,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4121/format-example.stdout.gz",
+        "raw_bytes": 7502,
+        "raw_sha256": "fda802f77502253b654b9dc611c049e5e6b6b6665a5b6ac5754308850f1e5a1b",
+        "sha256": "da681560223e1385b53d9f2b95f668496f21ff84ed0f5671776e3b14cba49a37"
+      },
+      {
+        "bytes": 268,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4121/format-paint.json.gz",
+        "raw_bytes": 403,
+        "raw_sha256": "4650b7b8de27fc5d7aede39a2b7554af59701c53b303c062dcab609c153c9bd5",
+        "sha256": "824450cf49fd0fabcd719126df590332bbfa5cb00ce936fdbaeec3dea0609ca5"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4121/format-paint.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 178590,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4121/format-paint.stdout.gz",
+        "raw_bytes": 951186,
+        "raw_sha256": "66d27f2215289b892547c79edf197a4611d282401cf7c0b55bab954d0f1e0ba5",
+        "sha256": "2fb0e204ca6d02a6b43ddbab0931f0bcfb9992071494368af3f46b77d1a18e64"
+      },
+      {
+        "bytes": 1019,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4121/receipt.json.gz",
+        "raw_bytes": 4439,
+        "raw_sha256": "025d77426b76e1c1d578e0f72a2a3ecf37f9d8002fb7bb0d1d64aa49e922f553",
+        "sha256": "36f1aadb7860936f5a91676b657b0ace90e87380594bce78220ca28f88746ca5"
+      },
+      {
+        "bytes": 257,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4121/release.json.gz",
+        "raw_bytes": 370,
+        "raw_sha256": "bc36995de3d91b49a47b727e810c9cdadd226eff2f610c56bf52fb33cdf83135",
+        "sha256": "8f6d45ac2cbe2e4eaa1b6fbedf814438aacd63fa8afe187d7880d6186910481e"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4121/release.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 80,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4121/release.stdout.gz",
+        "raw_bytes": 63,
+        "raw_sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd",
+        "sha256": "ec1277c807103cfdee77b77954961b24a58ce62612d9dbf58594043db7efc478"
+      },
+      {
+        "bytes": 266,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4121/renderer.json.gz",
+        "raw_bytes": 382,
+        "raw_sha256": "686b0e0e5ed8e196c5783ee96d4d276556e9bd11f6217d2beb4202103e00bd29",
+        "sha256": "9e5a84913f61815ca4c41d20f41d065f3ac17dbafef754ec8ccaf32eb207fde2"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4121/renderer.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 95,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4121/renderer.stdout.gz",
+        "raw_bytes": 81,
+        "raw_sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691",
+        "sha256": "d2b79cb72721d10fece4b15d0f646423937282376e09b24612cf252d1dfa8316"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4121/style.json.gz",
+        "raw_bytes": 364,
+        "raw_sha256": "616c23f51aeab31e1cc540beca725147b9b37faa61a3320886c5f3da8c001249",
+        "sha256": "62e3a9042074b93fab998524d9044c081e2d1ee0ceddbdd559d52923afcf04ec"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4121/style.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 57,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4121/style.stdout.gz",
+        "raw_bytes": 37,
+        "raw_sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1",
+        "sha256": "1b70c8a7ba0f84375105255b165129e2f427ca1072a832c28efb9f840d539b10"
+      },
+      {
+        "bytes": 190,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4121/whitespace.json.gz",
+        "raw_bytes": 325,
+        "raw_sha256": "2a2be882f1e6bf22683bff2143d56e435eecd03646b87b0119b5ce65df849e95",
+        "sha256": "47c91735fd96dd73d703a95dbf6d11c6f2f965ec56ad0f764533b461f51baf31"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4121/whitespace.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-fitted-monochrome-checkpoint-v1/native-fitted-monochrome-checks-v4121/whitespace.stdout.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      }
+    ]
+  },
+  "failed_first_check": {
+    "actual_exit_code": 1,
+    "reason": "Generated author-style inventory needed the newly added painter consumer of an existing internal field."
+  },
+  "final_checks": {
+    "actual_exit_code": 0,
+    "failed": 0,
+    "passed": 8
+  },
+  "generated_refresh": {
+    "actual_exit_code": 0,
+    "runtime_and_reference_manifest_unchanged": true
+  },
+  "measured_renderer_evidence": {
+    "path": "docs/renderer/generated/native-fitted-monochrome-v1.json",
+    "sha256": "f707b782881c855fa60fef536ec1efd3acaebe40ddf96adde6de20aaefb347e5"
+  },
+  "release_qualified": false,
+  "renderer_qualified": false,
+  "schema_version": 1
+}

@@ -1,0 +1,276 @@
+{
+  "baseline_census": "four-profile-census-v15.json",
+  "baseline_exact": 305,
+  "baseline_source_commit": "8ca66ffddaed8581bb8b1c26cd46925330281b1a",
+  "changed_comparisons": [
+    {
+      "baseline_mismatched_pixels": 225,
+      "chromium_rgba_sha256": "ac2076bd36c1a561742c1b13be0683f4a47363d8b67f4a7a1b1973d2c2ce8767",
+      "diagnostic_mismatched_pixels": 300,
+      "diagnostic_openui_rgba_sha256": "cc860bc8651c98294e43324482bba51ca95b1e782093d8a4b5e3de8ed6490e66",
+      "profile": "desktop-1920x1080@1.5",
+      "test_id": "wpt/css_backgrounds/border-image-017"
+    },
+    {
+      "baseline_mismatched_pixels": 225,
+      "chromium_rgba_sha256": "ac2076bd36c1a561742c1b13be0683f4a47363d8b67f4a7a1b1973d2c2ce8767",
+      "diagnostic_mismatched_pixels": 300,
+      "diagnostic_openui_rgba_sha256": "cc860bc8651c98294e43324482bba51ca95b1e782093d8a4b5e3de8ed6490e66",
+      "profile": "desktop-1920x1080@1.5",
+      "test_id": "wpt/css_backgrounds/border-image-018"
+    },
+    {
+      "baseline_mismatched_pixels": 225,
+      "chromium_rgba_sha256": "ac2076bd36c1a561742c1b13be0683f4a47363d8b67f4a7a1b1973d2c2ce8767",
+      "diagnostic_mismatched_pixels": 300,
+      "diagnostic_openui_rgba_sha256": "cc860bc8651c98294e43324482bba51ca95b1e782093d8a4b5e3de8ed6490e66",
+      "profile": "desktop-1920x1080@1.5",
+      "test_id": "wpt/css_backgrounds/border-image-019"
+    },
+    {
+      "baseline_mismatched_pixels": 225,
+      "chromium_rgba_sha256": "ac2076bd36c1a561742c1b13be0683f4a47363d8b67f4a7a1b1973d2c2ce8767",
+      "diagnostic_mismatched_pixels": 300,
+      "diagnostic_openui_rgba_sha256": "cc860bc8651c98294e43324482bba51ca95b1e782093d8a4b5e3de8ed6490e66",
+      "profile": "desktop-1920x1080@1.5",
+      "test_id": "wpt/css_backgrounds/border-image-020"
+    },
+    {
+      "baseline_mismatched_pixels": 0,
+      "chromium_rgba_sha256": "2c7a7c6473a6c3eb548fe246d0ae0745a88a2d585e7ec7415a8bc370b6ae4dfb",
+      "diagnostic_mismatched_pixels": 187,
+      "diagnostic_openui_rgba_sha256": "3506fc79ae02bbc5a7723ace8d2ddf72789280fa4df168e022cd2470a62d2595",
+      "profile": "desktop-1280x720@1.25",
+      "test_id": "wpt/css_backgrounds/border-image-image-type-001"
+    },
+    {
+      "baseline_mismatched_pixels": 0,
+      "chromium_rgba_sha256": "d2da76168919c54e34d35bf79eb5ed6d9aa2c4b23fa8fa2c1aa3a38af172751a",
+      "diagnostic_mismatched_pixels": 150,
+      "diagnostic_openui_rgba_sha256": "783f71abdf144b9cb08ac3b0435a4ebcb47e8a95329f5edb72d6685d676260b1",
+      "profile": "desktop-1920x1080@1.5",
+      "test_id": "wpt/css_backgrounds/border-image-image-type-001"
+    },
+    {
+      "baseline_mismatched_pixels": 0,
+      "chromium_rgba_sha256": "21becaeca09deb5a3f4ccb4ebd9f9b374ca923f674736d56920791e2137d8e50",
+      "diagnostic_mismatched_pixels": 100,
+      "diagnostic_openui_rgba_sha256": "4d437f952b10009004af2b2886d3f6bc18c5d34f876b0fea636601f92fcfe7ad",
+      "profile": "legacy-800x600@1",
+      "test_id": "wpt/css_backgrounds/border-image-image-type-001"
+    },
+    {
+      "baseline_mismatched_pixels": 0,
+      "chromium_rgba_sha256": "2f468e71172376b01e79e89d069fda02be9095f1e2b3fa8b5c2cb438f287e964",
+      "diagnostic_mismatched_pixels": 3124,
+      "diagnostic_openui_rgba_sha256": "47eae388330117f016d3ae2382593f6995513fb4db9c6575c9173f0eb724989c",
+      "profile": "desktop-1280x720@1.25",
+      "test_id": "wpt/css_backgrounds/border-image-image-type-003"
+    },
+    {
+      "baseline_mismatched_pixels": 0,
+      "chromium_rgba_sha256": "47436e8ab008649822181d9151471b858b9903998ac3813992894fa9e1ce3570",
+      "diagnostic_mismatched_pixels": 3879,
+      "diagnostic_openui_rgba_sha256": "c5a7fe5609b1740a1d33ff952057e8567fe722759260a40aa4719ee40fa5b8e9",
+      "profile": "desktop-1920x1080@1.5",
+      "test_id": "wpt/css_backgrounds/border-image-image-type-003"
+    },
+    {
+      "baseline_mismatched_pixels": 0,
+      "chromium_rgba_sha256": "0affdc9d000ca40adc0b2bb7ca5c9f1210b725b8f77aa597fcbf44a98a36a15f",
+      "diagnostic_mismatched_pixels": 529,
+      "diagnostic_openui_rgba_sha256": "0096c79e9452556b6400389d9b27f5dc67a906565221ff535ecb35fd9c918726",
+      "profile": "legacy-800x600@1",
+      "test_id": "wpt/css_backgrounds/border-image-image-type-003"
+    },
+    {
+      "baseline_mismatched_pixels": 0,
+      "chromium_rgba_sha256": "da8ac08b372e9a04467977952c089cccad200d3f3f9d75f0ec46f0fbf1fb9757",
+      "diagnostic_mismatched_pixels": 872,
+      "diagnostic_openui_rgba_sha256": "216d0fc2d8206fdf3c8d4bc2305bb9ffdc708b2fde3d00aca2ce863efb4a3a17",
+      "profile": "mobile-375x667@2",
+      "test_id": "wpt/css_backgrounds/border-image-image-type-003"
+    },
+    {
+      "baseline_mismatched_pixels": 0,
+      "chromium_rgba_sha256": "d35358da04e060681b3026416d6e0d84951d324891a783be20be8c329fd0e731",
+      "diagnostic_mismatched_pixels": 100,
+      "diagnostic_openui_rgba_sha256": "292ed7bb5aeadb29122122ae0b96ac5f03d27704d903d58f20a524847f20f9df",
+      "profile": "legacy-800x600@1",
+      "test_id": "wpt/css_backgrounds/border-image-image-type-004"
+    },
+    {
+      "baseline_mismatched_pixels": 0,
+      "chromium_rgba_sha256": "0c6f950e0ce08f40cc1090fd336712e9b36b1b9f1ff2049183e091ebe44c0b83",
+      "diagnostic_mismatched_pixels": 200,
+      "diagnostic_openui_rgba_sha256": "2d54add66fb7abf7387568582c7c4d70d35930b828fa76215b752f3edd938696",
+      "profile": "mobile-375x667@2",
+      "test_id": "wpt/css_backgrounds/border-image-image-type-004"
+    },
+    {
+      "baseline_mismatched_pixels": 0,
+      "chromium_rgba_sha256": "d35358da04e060681b3026416d6e0d84951d324891a783be20be8c329fd0e731",
+      "diagnostic_mismatched_pixels": 100,
+      "diagnostic_openui_rgba_sha256": "292ed7bb5aeadb29122122ae0b96ac5f03d27704d903d58f20a524847f20f9df",
+      "profile": "legacy-800x600@1",
+      "test_id": "wpt/css_backgrounds/border-image-image-type-005"
+    },
+    {
+      "baseline_mismatched_pixels": 0,
+      "chromium_rgba_sha256": "0c6f950e0ce08f40cc1090fd336712e9b36b1b9f1ff2049183e091ebe44c0b83",
+      "diagnostic_mismatched_pixels": 200,
+      "diagnostic_openui_rgba_sha256": "2d54add66fb7abf7387568582c7c4d70d35930b828fa76215b752f3edd938696",
+      "profile": "mobile-375x667@2",
+      "test_id": "wpt/css_backgrounds/border-image-image-type-005"
+    },
+    {
+      "baseline_mismatched_pixels": 500,
+      "chromium_rgba_sha256": "54464532df31025f2442e5401281024238cc3adf5881773eacce9bdfbfd2c382",
+      "diagnostic_mismatched_pixels": 549,
+      "diagnostic_openui_rgba_sha256": "b430f11cccb9340b0151c22dac6efe444d75949b7fa2ebcb2c8425ff205d42d8",
+      "profile": "desktop-1280x720@1.25",
+      "test_id": "wpt/css_backgrounds/border-image-shorthand-001"
+    },
+    {
+      "baseline_mismatched_pixels": 797,
+      "chromium_rgba_sha256": "a978bcd60ca55b0f047b4616012243c74a2f6d4146250e0d604d7a1bf55b7afc",
+      "diagnostic_mismatched_pixels": 1200,
+      "diagnostic_openui_rgba_sha256": "fedc218ac1f0a39b98d231b949da52e7866486ed4af662dfd8e079eaab36c122",
+      "profile": "desktop-1280x720@1.25",
+      "test_id": "wpt/css_backgrounds/border-image-shorthand-002"
+    },
+    {
+      "baseline_mismatched_pixels": 854,
+      "chromium_rgba_sha256": "a69c17bd45170618fd5694aca4eaab83c59747cb7b38451b6d4015520720e72c",
+      "diagnostic_mismatched_pixels": 1403,
+      "diagnostic_openui_rgba_sha256": "30bec817b15e616d220ec61e499cdc920424c43955f043552c8b4d32e96c7610",
+      "profile": "desktop-1280x720@1.25",
+      "test_id": "wpt/css_backgrounds/border-image-shorthand-003"
+    },
+    {
+      "baseline_mismatched_pixels": 279,
+      "chromium_rgba_sha256": "ff5fda025569433f021f2875ef32579b792e9c52d08ca2cdac73a906c355bd94",
+      "diagnostic_mismatched_pixels": 811,
+      "diagnostic_openui_rgba_sha256": "69b0c0a070b3bfd2bc365cbd294fad109afddf714d113369b0b674790d62dab5",
+      "profile": "desktop-1920x1080@1.5",
+      "test_id": "wpt/css_backgrounds/border-image-shorthand-003"
+    },
+    {
+      "baseline_mismatched_pixels": 225,
+      "chromium_rgba_sha256": "ac2076bd36c1a561742c1b13be0683f4a47363d8b67f4a7a1b1973d2c2ce8767",
+      "diagnostic_mismatched_pixels": 300,
+      "diagnostic_openui_rgba_sha256": "cc860bc8651c98294e43324482bba51ca95b1e782093d8a4b5e3de8ed6490e66",
+      "profile": "desktop-1920x1080@1.5",
+      "test_id": "wpt/css_backgrounds/border-image-slice-001"
+    },
+    {
+      "baseline_mismatched_pixels": 225,
+      "chromium_rgba_sha256": "ac2076bd36c1a561742c1b13be0683f4a47363d8b67f4a7a1b1973d2c2ce8767",
+      "diagnostic_mismatched_pixels": 300,
+      "diagnostic_openui_rgba_sha256": "cc860bc8651c98294e43324482bba51ca95b1e782093d8a4b5e3de8ed6490e66",
+      "profile": "desktop-1920x1080@1.5",
+      "test_id": "wpt/css_backgrounds/border-image-slice-002"
+    },
+    {
+      "baseline_mismatched_pixels": 4209,
+      "chromium_rgba_sha256": "5936fcebacfc29616065444cad3a0d1bdac2aedfbbec38a3d43aabdf12c4dcf4",
+      "diagnostic_mismatched_pixels": 4210,
+      "diagnostic_openui_rgba_sha256": "a473142ce630c19fb40de0c1a6fd52768e944bdd1f4f8261a257e72baf234823",
+      "profile": "desktop-1280x720@1.25",
+      "test_id": "wpt/css_backgrounds/border-image-slice-005"
+    },
+    {
+      "baseline_mismatched_pixels": 4209,
+      "chromium_rgba_sha256": "07be5eff91b7bce2a49d1eb9780f1aeb6e36ae3bed4bf391913fdf5f7e896ad9",
+      "diagnostic_mismatched_pixels": 4210,
+      "diagnostic_openui_rgba_sha256": "2709a440387647458cb4fc6976c5258ba8557fd2ab9282e45bb2715d453cc2c2",
+      "profile": "desktop-1280x720@1.25",
+      "test_id": "wpt/css_backgrounds/border-image-slice-007"
+    },
+    {
+      "baseline_mismatched_pixels": 182,
+      "chromium_rgba_sha256": "e30ae84c6b71dfd6823f45503358ff18de62a0bffcf522e85f10983f932d1eaa",
+      "diagnostic_mismatched_pixels": 243,
+      "diagnostic_openui_rgba_sha256": "0003dd2cdb3ded8b4395194ef400ecc3b55c1bfd809f421ad71154802d8d210d",
+      "profile": "desktop-1280x720@1.25",
+      "test_id": "wpt/css_backgrounds/border-image-width-005"
+    },
+    {
+      "baseline_mismatched_pixels": 2,
+      "chromium_rgba_sha256": "6687d40f1d74fb3306c25baa7fb2c1521050f8909066552df98c1aaa2017da04",
+      "diagnostic_mismatched_pixels": 150,
+      "diagnostic_openui_rgba_sha256": "d3a9f738bcea60950b245d22c742b73c070ceadb8f5d4c71b540f4e8b6280626",
+      "profile": "desktop-1920x1080@1.5",
+      "test_id": "wpt/css_backgrounds/border-image-width-005"
+    },
+    {
+      "baseline_mismatched_pixels": 182,
+      "chromium_rgba_sha256": "e30ae84c6b71dfd6823f45503358ff18de62a0bffcf522e85f10983f932d1eaa",
+      "diagnostic_mismatched_pixels": 243,
+      "diagnostic_openui_rgba_sha256": "0003dd2cdb3ded8b4395194ef400ecc3b55c1bfd809f421ad71154802d8d210d",
+      "profile": "desktop-1280x720@1.25",
+      "test_id": "wpt/css_backgrounds/border-image-width-006"
+    },
+    {
+      "baseline_mismatched_pixels": 2,
+      "chromium_rgba_sha256": "6687d40f1d74fb3306c25baa7fb2c1521050f8909066552df98c1aaa2017da04",
+      "diagnostic_mismatched_pixels": 150,
+      "diagnostic_openui_rgba_sha256": "d3a9f738bcea60950b245d22c742b73c070ceadb8f5d4c71b540f4e8b6280626",
+      "profile": "desktop-1920x1080@1.5",
+      "test_id": "wpt/css_backgrounds/border-image-width-006"
+    },
+    {
+      "baseline_mismatched_pixels": 0,
+      "chromium_rgba_sha256": "1360b1530b6e7260bad37e7087180db086174b5390baf1efbdb85600b4e8f2f7",
+      "diagnostic_mismatched_pixels": 1255,
+      "diagnostic_openui_rgba_sha256": "580e278d1aff499355617b8dad9ead4eafd3fdf3b60546757d8c01497f2e7722",
+      "profile": "desktop-1280x720@1.25",
+      "test_id": "wpt/css_backgrounds/border-image-width-should-extend-to-padding"
+    },
+    {
+      "baseline_mismatched_pixels": 0,
+      "chromium_rgba_sha256": "7d3392cb44a932858ed9d0551ebeb6e4275cd3b5993962ac722bd487b44d34e0",
+      "diagnostic_mismatched_pixels": 576,
+      "diagnostic_openui_rgba_sha256": "c333a587efe2214fee77c25fe26fe48a0579ed135a88f94dec19b5a66a7da531",
+      "profile": "desktop-1920x1080@1.5",
+      "test_id": "wpt/css_backgrounds/border-image-width-should-extend-to-padding"
+    },
+    {
+      "baseline_mismatched_pixels": 0,
+      "chromium_rgba_sha256": "1360b1530b6e7260bad37e7087180db086174b5390baf1efbdb85600b4e8f2f7",
+      "diagnostic_mismatched_pixels": 1255,
+      "diagnostic_openui_rgba_sha256": "580e278d1aff499355617b8dad9ead4eafd3fdf3b60546757d8c01497f2e7722",
+      "profile": "desktop-1280x720@1.25",
+      "test_id": "wpt/css_backgrounds/border-image-width-should-extend-to-padding-ref"
+    },
+    {
+      "baseline_mismatched_pixels": 0,
+      "chromium_rgba_sha256": "7d3392cb44a932858ed9d0551ebeb6e4275cd3b5993962ac722bd487b44d34e0",
+      "diagnostic_mismatched_pixels": 576,
+      "diagnostic_openui_rgba_sha256": "c333a587efe2214fee77c25fe26fe48a0579ed135a88f94dec19b5a66a7da531",
+      "profile": "desktop-1920x1080@1.5",
+      "test_id": "wpt/css_backgrounds/border-image-width-should-extend-to-padding-ref"
+    }
+  ],
+  "chromium_oracle_comparisons_checked": 356,
+  "chromium_oracle_identities_and_rgba_hashes_unchanged": true,
+  "comparison_count": 356,
+  "diagnostic_binary_sha256": "0e654a250e77b30ede11539f008b30b03fd301f54ba2aef9583068102becd054",
+  "diagnostic_exact": 290,
+  "diagnostic_source": {
+    "clean": false,
+    "commit": "6ed07ff8c8c02e1aec713537c9984fbfca329d56",
+    "harness_sha256": "b2638f1e1ad8b683528946073086d01419aa5e9b71134eedd5bf259b2a76114b",
+    "source_tree_sha256": "e4699e8104089e5d5d7619014bdb18db724afd73cf78ef60e2d1bb0b96bfdfdb",
+    "status_sha256": "00b662f21a5e5b17424375fb67e5e5c2fcf039cece360bcce5b4c6df1c6f202b"
+  },
+  "different_improved": 0,
+  "different_worsened": 16,
+  "evidence_kind": "rejected-dirty-border-image-layer-diagnostic",
+  "exact_to_different": 15,
+  "full_report_sha256": "6655467640095523ac865e5d0e5ba982c0aa97f4620169527ceeef75926320ca",
+  "profile_count": 4,
+  "schema_version": 1,
+  "selection_manifest_sha256": "73bf7433b0f3316ff6b8bdbfde46fbcf76e83c26bc34037e24806d71c166519c",
+  "test_count": 89
+}

@@ -1,0 +1,2812 @@
+{
+  "scenarios": [
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "plain-ArrowLeft",
+      "pre": [],
+      "steps": [
+        {
+          "code": 37,
+          "key": "ArrowLeft",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 37,
+          "key": "ArrowLeft",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "plain-ArrowUp",
+      "pre": [],
+      "steps": [
+        {
+          "code": 38,
+          "key": "ArrowUp",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 38,
+          "key": "ArrowUp",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "plain-ArrowRight",
+      "pre": [],
+      "steps": [
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "plain-ArrowDown",
+      "pre": [],
+      "steps": [
+        {
+          "code": 40,
+          "key": "ArrowDown",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 40,
+          "key": "ArrowDown",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "other-checked-ArrowLeft",
+      "pre": [
+        {
+          "op": "checked",
+          "target": "b",
+          "value": true
+        }
+      ],
+      "steps": [
+        {
+          "code": 37,
+          "key": "ArrowLeft",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 37,
+          "key": "ArrowLeft",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "other-checked-ArrowUp",
+      "pre": [
+        {
+          "op": "checked",
+          "target": "b",
+          "value": true
+        }
+      ],
+      "steps": [
+        {
+          "code": 38,
+          "key": "ArrowUp",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 38,
+          "key": "ArrowUp",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "other-checked-ArrowRight",
+      "pre": [
+        {
+          "op": "checked",
+          "target": "b",
+          "value": true
+        }
+      ],
+      "steps": [
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "other-checked-ArrowDown",
+      "pre": [
+        {
+          "op": "checked",
+          "target": "b",
+          "value": true
+        }
+      ],
+      "steps": [
+        {
+          "code": 40,
+          "key": "ArrowDown",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 40,
+          "key": "ArrowDown",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "disabled-peer-ArrowLeft",
+      "pre": [
+        {
+          "name": "disabled",
+          "op": "attribute",
+          "target": "b",
+          "value": ""
+        }
+      ],
+      "steps": [
+        {
+          "code": 37,
+          "key": "ArrowLeft",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 37,
+          "key": "ArrowLeft",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "disabled-peer-ArrowUp",
+      "pre": [
+        {
+          "name": "disabled",
+          "op": "attribute",
+          "target": "b",
+          "value": ""
+        }
+      ],
+      "steps": [
+        {
+          "code": 38,
+          "key": "ArrowUp",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 38,
+          "key": "ArrowUp",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "disabled-peer-ArrowRight",
+      "pre": [
+        {
+          "name": "disabled",
+          "op": "attribute",
+          "target": "b",
+          "value": ""
+        }
+      ],
+      "steps": [
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "disabled-peer-ArrowDown",
+      "pre": [
+        {
+          "name": "disabled",
+          "op": "attribute",
+          "target": "b",
+          "value": ""
+        }
+      ],
+      "steps": [
+        {
+          "code": 40,
+          "key": "ArrowDown",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 40,
+          "key": "ArrowDown",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "display-none-peer-ArrowLeft",
+      "pre": [
+        {
+          "name": "display",
+          "op": "style",
+          "target": "b",
+          "value": "none"
+        }
+      ],
+      "steps": [
+        {
+          "code": 37,
+          "key": "ArrowLeft",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 37,
+          "key": "ArrowLeft",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "display-none-peer-ArrowUp",
+      "pre": [
+        {
+          "name": "display",
+          "op": "style",
+          "target": "b",
+          "value": "none"
+        }
+      ],
+      "steps": [
+        {
+          "code": 38,
+          "key": "ArrowUp",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 38,
+          "key": "ArrowUp",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "display-none-peer-ArrowRight",
+      "pre": [
+        {
+          "name": "display",
+          "op": "style",
+          "target": "b",
+          "value": "none"
+        }
+      ],
+      "steps": [
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "display-none-peer-ArrowDown",
+      "pre": [
+        {
+          "name": "display",
+          "op": "style",
+          "target": "b",
+          "value": "none"
+        }
+      ],
+      "steps": [
+        {
+          "code": 40,
+          "key": "ArrowDown",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 40,
+          "key": "ArrowDown",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "visibility-hidden-peer-ArrowLeft",
+      "pre": [
+        {
+          "name": "visibility",
+          "op": "style",
+          "target": "b",
+          "value": "hidden"
+        }
+      ],
+      "steps": [
+        {
+          "code": 37,
+          "key": "ArrowLeft",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 37,
+          "key": "ArrowLeft",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "visibility-hidden-peer-ArrowUp",
+      "pre": [
+        {
+          "name": "visibility",
+          "op": "style",
+          "target": "b",
+          "value": "hidden"
+        }
+      ],
+      "steps": [
+        {
+          "code": 38,
+          "key": "ArrowUp",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 38,
+          "key": "ArrowUp",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "visibility-hidden-peer-ArrowRight",
+      "pre": [
+        {
+          "name": "visibility",
+          "op": "style",
+          "target": "b",
+          "value": "hidden"
+        }
+      ],
+      "steps": [
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "visibility-hidden-peer-ArrowDown",
+      "pre": [
+        {
+          "name": "visibility",
+          "op": "style",
+          "target": "b",
+          "value": "hidden"
+        }
+      ],
+      "steps": [
+        {
+          "code": 40,
+          "key": "ArrowDown",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 40,
+          "key": "ArrowDown",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "negative-tabindex-peer-ArrowLeft",
+      "pre": [
+        {
+          "name": "tabindex",
+          "op": "attribute",
+          "target": "b",
+          "value": "-1"
+        }
+      ],
+      "steps": [
+        {
+          "code": 37,
+          "key": "ArrowLeft",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 37,
+          "key": "ArrowLeft",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "negative-tabindex-peer-ArrowUp",
+      "pre": [
+        {
+          "name": "tabindex",
+          "op": "attribute",
+          "target": "b",
+          "value": "-1"
+        }
+      ],
+      "steps": [
+        {
+          "code": 38,
+          "key": "ArrowUp",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 38,
+          "key": "ArrowUp",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "negative-tabindex-peer-ArrowRight",
+      "pre": [
+        {
+          "name": "tabindex",
+          "op": "attribute",
+          "target": "b",
+          "value": "-1"
+        }
+      ],
+      "steps": [
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "negative-tabindex-peer-ArrowDown",
+      "pre": [
+        {
+          "name": "tabindex",
+          "op": "attribute",
+          "target": "b",
+          "value": "-1"
+        }
+      ],
+      "steps": [
+        {
+          "code": 40,
+          "key": "ArrowDown",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 40,
+          "key": "ArrowDown",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "other-form-peer-ArrowLeft",
+      "pre": [
+        {
+          "name": "form",
+          "op": "attribute",
+          "target": "b",
+          "value": "fb"
+        }
+      ],
+      "steps": [
+        {
+          "code": 37,
+          "key": "ArrowLeft",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 37,
+          "key": "ArrowLeft",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "other-form-peer-ArrowUp",
+      "pre": [
+        {
+          "name": "form",
+          "op": "attribute",
+          "target": "b",
+          "value": "fb"
+        }
+      ],
+      "steps": [
+        {
+          "code": 38,
+          "key": "ArrowUp",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 38,
+          "key": "ArrowUp",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "other-form-peer-ArrowRight",
+      "pre": [
+        {
+          "name": "form",
+          "op": "attribute",
+          "target": "b",
+          "value": "fb"
+        }
+      ],
+      "steps": [
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "other-form-peer-ArrowDown",
+      "pre": [
+        {
+          "name": "form",
+          "op": "attribute",
+          "target": "b",
+          "value": "fb"
+        }
+      ],
+      "steps": [
+        {
+          "code": 40,
+          "key": "ArrowDown",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 40,
+          "key": "ArrowDown",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "empty-name-ArrowLeft",
+      "pre": [
+        {
+          "name": "name",
+          "op": "attribute",
+          "target": "a",
+          "value": ""
+        },
+        {
+          "name": "name",
+          "op": "attribute",
+          "target": "b",
+          "value": ""
+        },
+        {
+          "name": "name",
+          "op": "attribute",
+          "target": "c",
+          "value": ""
+        }
+      ],
+      "steps": [
+        {
+          "code": 37,
+          "key": "ArrowLeft",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 37,
+          "key": "ArrowLeft",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "empty-name-ArrowUp",
+      "pre": [
+        {
+          "name": "name",
+          "op": "attribute",
+          "target": "a",
+          "value": ""
+        },
+        {
+          "name": "name",
+          "op": "attribute",
+          "target": "b",
+          "value": ""
+        },
+        {
+          "name": "name",
+          "op": "attribute",
+          "target": "c",
+          "value": ""
+        }
+      ],
+      "steps": [
+        {
+          "code": 38,
+          "key": "ArrowUp",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 38,
+          "key": "ArrowUp",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "empty-name-ArrowRight",
+      "pre": [
+        {
+          "name": "name",
+          "op": "attribute",
+          "target": "a",
+          "value": ""
+        },
+        {
+          "name": "name",
+          "op": "attribute",
+          "target": "b",
+          "value": ""
+        },
+        {
+          "name": "name",
+          "op": "attribute",
+          "target": "c",
+          "value": ""
+        }
+      ],
+      "steps": [
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "empty-name-ArrowDown",
+      "pre": [
+        {
+          "name": "name",
+          "op": "attribute",
+          "target": "a",
+          "value": ""
+        },
+        {
+          "name": "name",
+          "op": "attribute",
+          "target": "b",
+          "value": ""
+        },
+        {
+          "name": "name",
+          "op": "attribute",
+          "target": "c",
+          "value": ""
+        }
+      ],
+      "steps": [
+        {
+          "code": 40,
+          "key": "ArrowDown",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 40,
+          "key": "ArrowDown",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "sole-group-ArrowLeft",
+      "pre": [
+        {
+          "name": "name",
+          "op": "attribute",
+          "target": "b",
+          "value": "other"
+        },
+        {
+          "name": "name",
+          "op": "attribute",
+          "target": "c",
+          "value": "other"
+        }
+      ],
+      "steps": [
+        {
+          "code": 37,
+          "key": "ArrowLeft",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 37,
+          "key": "ArrowLeft",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "sole-group-ArrowUp",
+      "pre": [
+        {
+          "name": "name",
+          "op": "attribute",
+          "target": "b",
+          "value": "other"
+        },
+        {
+          "name": "name",
+          "op": "attribute",
+          "target": "c",
+          "value": "other"
+        }
+      ],
+      "steps": [
+        {
+          "code": 38,
+          "key": "ArrowUp",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 38,
+          "key": "ArrowUp",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "sole-group-ArrowRight",
+      "pre": [
+        {
+          "name": "name",
+          "op": "attribute",
+          "target": "b",
+          "value": "other"
+        },
+        {
+          "name": "name",
+          "op": "attribute",
+          "target": "c",
+          "value": "other"
+        }
+      ],
+      "steps": [
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "sole-group-ArrowDown",
+      "pre": [
+        {
+          "name": "name",
+          "op": "attribute",
+          "target": "b",
+          "value": "other"
+        },
+        {
+          "name": "name",
+          "op": "attribute",
+          "target": "c",
+          "value": "other"
+        }
+      ],
+      "steps": [
+        {
+          "code": 40,
+          "key": "ArrowDown",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 40,
+          "key": "ArrowDown",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "modifier-1-ArrowLeft",
+      "pre": [],
+      "steps": [
+        {
+          "code": 37,
+          "key": "ArrowLeft",
+          "modifiers": 1,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 37,
+          "key": "ArrowLeft",
+          "modifiers": 1,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "modifier-1-ArrowRight",
+      "pre": [],
+      "steps": [
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 1,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 1,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "modifier-2-ArrowLeft",
+      "pre": [],
+      "steps": [
+        {
+          "code": 37,
+          "key": "ArrowLeft",
+          "modifiers": 2,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 37,
+          "key": "ArrowLeft",
+          "modifiers": 2,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "modifier-2-ArrowRight",
+      "pre": [],
+      "steps": [
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 2,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 2,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "modifier-4-ArrowLeft",
+      "pre": [],
+      "steps": [
+        {
+          "code": 37,
+          "key": "ArrowLeft",
+          "modifiers": 4,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 37,
+          "key": "ArrowLeft",
+          "modifiers": 4,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "modifier-4-ArrowRight",
+      "pre": [],
+      "steps": [
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 4,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 4,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "modifier-8-ArrowLeft",
+      "pre": [],
+      "steps": [
+        {
+          "code": 37,
+          "key": "ArrowLeft",
+          "modifiers": 8,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 37,
+          "key": "ArrowLeft",
+          "modifiers": 8,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "modifier-8-ArrowRight",
+      "pre": [],
+      "steps": [
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 8,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 8,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "modifier-3-ArrowLeft",
+      "pre": [],
+      "steps": [
+        {
+          "code": 37,
+          "key": "ArrowLeft",
+          "modifiers": 3,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 37,
+          "key": "ArrowLeft",
+          "modifiers": 3,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "modifier-3-ArrowRight",
+      "pre": [],
+      "steps": [
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 3,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 3,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "modifier-5-ArrowLeft",
+      "pre": [],
+      "steps": [
+        {
+          "code": 37,
+          "key": "ArrowLeft",
+          "modifiers": 5,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 37,
+          "key": "ArrowLeft",
+          "modifiers": 5,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "modifier-5-ArrowRight",
+      "pre": [],
+      "steps": [
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 5,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 5,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "modifier-10-ArrowLeft",
+      "pre": [],
+      "steps": [
+        {
+          "code": 37,
+          "key": "ArrowLeft",
+          "modifiers": 10,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 37,
+          "key": "ArrowLeft",
+          "modifiers": 10,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "modifier-10-ArrowRight",
+      "pre": [],
+      "steps": [
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 10,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 10,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "modifier-15-ArrowLeft",
+      "pre": [],
+      "steps": [
+        {
+          "code": 37,
+          "key": "ArrowLeft",
+          "modifiers": 15,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 37,
+          "key": "ArrowLeft",
+          "modifiers": 15,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "modifier-15-ArrowRight",
+      "pre": [],
+      "steps": [
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 15,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 15,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "special-True-36",
+      "pre": [
+        {
+          "op": "checked",
+          "target": "a",
+          "value": true
+        }
+      ],
+      "steps": [
+        {
+          "code": 36,
+          "key": "Home",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 36,
+          "key": "Home",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "special-False-36",
+      "pre": [
+        {
+          "op": "checked",
+          "target": "a",
+          "value": false
+        }
+      ],
+      "steps": [
+        {
+          "code": 36,
+          "key": "Home",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 36,
+          "key": "Home",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "special-True-35",
+      "pre": [
+        {
+          "op": "checked",
+          "target": "a",
+          "value": true
+        }
+      ],
+      "steps": [
+        {
+          "code": 35,
+          "key": "End",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 35,
+          "key": "End",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "special-False-35",
+      "pre": [
+        {
+          "op": "checked",
+          "target": "a",
+          "value": false
+        }
+      ],
+      "steps": [
+        {
+          "code": 35,
+          "key": "End",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 35,
+          "key": "End",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "special-True-33",
+      "pre": [
+        {
+          "op": "checked",
+          "target": "a",
+          "value": true
+        }
+      ],
+      "steps": [
+        {
+          "code": 33,
+          "key": "PageUp",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 33,
+          "key": "PageUp",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "special-False-33",
+      "pre": [
+        {
+          "op": "checked",
+          "target": "a",
+          "value": false
+        }
+      ],
+      "steps": [
+        {
+          "code": 33,
+          "key": "PageUp",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 33,
+          "key": "PageUp",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "special-True-34",
+      "pre": [
+        {
+          "op": "checked",
+          "target": "a",
+          "value": true
+        }
+      ],
+      "steps": [
+        {
+          "code": 34,
+          "key": "PageDown",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 34,
+          "key": "PageDown",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "special-False-34",
+      "pre": [
+        {
+          "op": "checked",
+          "target": "a",
+          "value": false
+        }
+      ],
+      "steps": [
+        {
+          "code": 34,
+          "key": "PageDown",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 34,
+          "key": "PageDown",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "special-True-13",
+      "pre": [
+        {
+          "op": "checked",
+          "target": "a",
+          "value": true
+        }
+      ],
+      "steps": [
+        {
+          "code": 13,
+          "key": "Enter",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 13,
+          "key": "Enter",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "special-False-13",
+      "pre": [
+        {
+          "op": "checked",
+          "target": "a",
+          "value": false
+        }
+      ],
+      "steps": [
+        {
+          "code": 13,
+          "key": "Enter",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 13,
+          "key": "Enter",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "special-True-32",
+      "pre": [
+        {
+          "op": "checked",
+          "target": "a",
+          "value": true
+        }
+      ],
+      "steps": [
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "special-False-32",
+      "pre": [
+        {
+          "op": "checked",
+          "target": "a",
+          "value": false
+        }
+      ],
+      "steps": [
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "checkbox",
+      "name": "checkbox-32",
+      "pre": [],
+      "steps": [
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "checkbox",
+      "name": "checkbox-13",
+      "pre": [],
+      "steps": [
+        {
+          "code": 13,
+          "key": "Enter",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 13,
+          "key": "Enter",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "checkbox",
+      "name": "checkbox-39",
+      "pre": [],
+      "steps": [
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "button",
+      "name": "button-32",
+      "pre": [],
+      "steps": [
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "button",
+      "name": "button-13",
+      "pre": [],
+      "steps": [
+        {
+          "code": 13,
+          "key": "Enter",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 13,
+          "key": "Enter",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "button",
+      "name": "button-39",
+      "pre": [],
+      "steps": [
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": {
+        "event": "keydown",
+        "operations": [],
+        "prevent": true,
+        "target": "a"
+      },
+      "kind": "radio",
+      "name": "radio-cancel-keydown",
+      "pre": [
+        {
+          "op": "checked",
+          "target": "a",
+          "value": false
+        }
+      ],
+      "steps": [
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": {
+        "event": "keyup",
+        "operations": [],
+        "prevent": true,
+        "target": "a"
+      },
+      "kind": "radio",
+      "name": "radio-cancel-keyup",
+      "pre": [
+        {
+          "op": "checked",
+          "target": "a",
+          "value": false
+        }
+      ],
+      "steps": [
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": {
+        "event": "click",
+        "operations": [],
+        "prevent": true,
+        "target": "a"
+      },
+      "kind": "radio",
+      "name": "radio-cancel-click",
+      "pre": [
+        {
+          "op": "checked",
+          "target": "a",
+          "value": false
+        }
+      ],
+      "steps": [
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "radio-between-space-focus",
+      "pre": [
+        {
+          "op": "checked",
+          "target": "a",
+          "value": false
+        }
+      ],
+      "steps": [
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "op": "focus",
+          "target": "b"
+        },
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "radio-between-space-detach",
+      "pre": [
+        {
+          "op": "checked",
+          "target": "a",
+          "value": false
+        }
+      ],
+      "steps": [
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "op": "detach",
+          "target": "a"
+        },
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "radio-between-space-attribute",
+      "pre": [
+        {
+          "op": "checked",
+          "target": "a",
+          "value": false
+        }
+      ],
+      "steps": [
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "name": "disabled",
+          "op": "attribute",
+          "target": "a",
+          "value": ""
+        },
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "radio",
+      "name": "radio-repeated-space-down",
+      "pre": [
+        {
+          "op": "checked",
+          "target": "a",
+          "value": false
+        }
+      ],
+      "steps": [
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": {
+        "event": "keydown",
+        "operations": [],
+        "prevent": true,
+        "target": "a"
+      },
+      "kind": "checkbox",
+      "name": "checkbox-cancel-keydown",
+      "pre": [
+        {
+          "op": "checked",
+          "target": "a",
+          "value": false
+        }
+      ],
+      "steps": [
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": {
+        "event": "keyup",
+        "operations": [],
+        "prevent": true,
+        "target": "a"
+      },
+      "kind": "checkbox",
+      "name": "checkbox-cancel-keyup",
+      "pre": [
+        {
+          "op": "checked",
+          "target": "a",
+          "value": false
+        }
+      ],
+      "steps": [
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": {
+        "event": "click",
+        "operations": [],
+        "prevent": true,
+        "target": "a"
+      },
+      "kind": "checkbox",
+      "name": "checkbox-cancel-click",
+      "pre": [
+        {
+          "op": "checked",
+          "target": "a",
+          "value": false
+        }
+      ],
+      "steps": [
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "checkbox",
+      "name": "checkbox-between-space-focus",
+      "pre": [
+        {
+          "op": "checked",
+          "target": "a",
+          "value": false
+        }
+      ],
+      "steps": [
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "op": "focus",
+          "target": "b"
+        },
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "checkbox",
+      "name": "checkbox-between-space-detach",
+      "pre": [
+        {
+          "op": "checked",
+          "target": "a",
+          "value": false
+        }
+      ],
+      "steps": [
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "op": "detach",
+          "target": "a"
+        },
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "checkbox",
+      "name": "checkbox-between-space-attribute",
+      "pre": [
+        {
+          "op": "checked",
+          "target": "a",
+          "value": false
+        }
+      ],
+      "steps": [
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "name": "disabled",
+          "op": "attribute",
+          "target": "a",
+          "value": ""
+        },
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "checkbox",
+      "name": "checkbox-repeated-space-down",
+      "pre": [
+        {
+          "op": "checked",
+          "target": "a",
+          "value": false
+        }
+      ],
+      "steps": [
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": {
+        "event": "keydown",
+        "operations": [],
+        "prevent": true,
+        "target": "a"
+      },
+      "kind": "button",
+      "name": "button-cancel-keydown",
+      "pre": [],
+      "steps": [
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": {
+        "event": "keyup",
+        "operations": [],
+        "prevent": true,
+        "target": "a"
+      },
+      "kind": "button",
+      "name": "button-cancel-keyup",
+      "pre": [],
+      "steps": [
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": {
+        "event": "click",
+        "operations": [],
+        "prevent": true,
+        "target": "a"
+      },
+      "kind": "button",
+      "name": "button-cancel-click",
+      "pre": [],
+      "steps": [
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "button",
+      "name": "button-between-space-focus",
+      "pre": [],
+      "steps": [
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "op": "focus",
+          "target": "b"
+        },
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "button",
+      "name": "button-between-space-detach",
+      "pre": [],
+      "steps": [
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "op": "detach",
+          "target": "a"
+        },
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "button",
+      "name": "button-between-space-attribute",
+      "pre": [],
+      "steps": [
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "name": "disabled",
+          "op": "attribute",
+          "target": "a",
+          "value": ""
+        },
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": null,
+      "kind": "button",
+      "name": "button-repeated-space-down",
+      "pre": [],
+      "steps": [
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 32,
+          "key": " ",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": {
+        "event": "keydown",
+        "operations": [
+          {
+            "op": "focus",
+            "target": "c"
+          }
+        ],
+        "prevent": false,
+        "target": "a"
+      },
+      "kind": "radio",
+      "name": "arrow-handler-keydown-a-91",
+      "pre": [],
+      "steps": [
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": {
+        "event": "keydown",
+        "operations": [
+          {
+            "op": "detach",
+            "target": "a"
+          }
+        ],
+        "prevent": false,
+        "target": "a"
+      },
+      "kind": "radio",
+      "name": "arrow-handler-keydown-a-92",
+      "pre": [],
+      "steps": [
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": {
+        "event": "keydown",
+        "operations": [],
+        "prevent": true,
+        "target": "a"
+      },
+      "kind": "radio",
+      "name": "arrow-handler-keydown-a-93",
+      "pre": [],
+      "steps": [
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": {
+        "event": "click",
+        "operations": [],
+        "prevent": true,
+        "target": "b"
+      },
+      "kind": "radio",
+      "name": "arrow-handler-click-b-94",
+      "pre": [],
+      "steps": [
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": {
+        "event": "focus",
+        "operations": [
+          {
+            "op": "focus",
+            "target": "c"
+          }
+        ],
+        "prevent": false,
+        "target": "b"
+      },
+      "kind": "radio",
+      "name": "arrow-handler-focus-b-95",
+      "pre": [],
+      "steps": [
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": {
+        "event": "blur",
+        "operations": [
+          {
+            "op": "focus",
+            "target": "c"
+          }
+        ],
+        "prevent": false,
+        "target": "a"
+      },
+      "kind": "radio",
+      "name": "arrow-handler-blur-a-96",
+      "pre": [],
+      "steps": [
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": {
+        "event": "click",
+        "operations": [
+          {
+            "name": "disabled",
+            "op": "attribute",
+            "target": "b",
+            "value": ""
+          }
+        ],
+        "prevent": false,
+        "target": "b"
+      },
+      "kind": "radio",
+      "name": "arrow-handler-click-b-97",
+      "pre": [],
+      "steps": [
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    },
+    {
+      "handler": {
+        "event": "focus",
+        "operations": [
+          {
+            "op": "detach",
+            "target": "b"
+          }
+        ],
+        "prevent": false,
+        "target": "b"
+      },
+      "kind": "radio",
+      "name": "arrow-handler-focus-b-98",
+      "pre": [],
+      "steps": [
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "down"
+        },
+        {
+          "code": 39,
+          "key": "ArrowRight",
+          "modifiers": 0,
+          "op": "key",
+          "phase": "up"
+        }
+      ]
+    }
+  ],
+  "schema_version": 1,
+  "scope": "native control keyboard navigation and activation; operation data only, no expected states"
+}

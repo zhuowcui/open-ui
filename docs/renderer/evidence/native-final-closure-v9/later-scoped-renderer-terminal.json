@@ -1,0 +1,7 @@
+{
+  "parent_actual_exit_code": 1,
+  "parent_reaped": true,
+  "receipt_sha256": "acd9214adc6cac659b0689526caf01d9a07b7d19b5c9e6ed4e39c256208e7164",
+  "all_known_pids_absent": true,
+  "qualification": false
+}

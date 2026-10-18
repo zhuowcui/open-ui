@@ -1,0 +1,36 @@
+{
+  "backend": "opengl",
+  "consumers": [
+    {
+      "binary_sha256": "18a72c93c6f321355f5c1d3f85cb7731979ee5e956703bf59af130844b72de47",
+      "compiler": "/home/nero/chromium/src/third_party/llvm-build/Release+Asserts/bin/clang",
+      "returncode": 0,
+      "source": "examples/c_v02/native/window.c",
+      "source_sha256": "1ee9dbf29e754e1e365a1920f70b459b500073f5b822daa44554145be60afb05",
+      "stderr": "",
+      "stdout": "native C: backend=1 frames=2 resized=1\n",
+      "timed_out": false
+    },
+    {
+      "binary_sha256": "e354aa478533c9b434cba58e40f3a30b1a6450b087fac3e474880835655598c4",
+      "compiler": "/home/nero/chromium/src/third_party/llvm-build/Release+Asserts/bin/clang++",
+      "returncode": 0,
+      "source": "examples/c_v02/native/window.cc",
+      "source_sha256": "44fdeb2af0108e25873e1d1d3ba7650d504e756eabf90e79b38c1b6a42289de1",
+      "stderr": "",
+      "stdout": "native C++: backend=1 frames=2\n",
+      "timed_out": false
+    }
+  ],
+  "header_sha256": "c47fcbcfe9422a15725ac696b1b016a9ff955ca7fe6f2dac04362830ad9a4cfe",
+  "kind": "native_c_cpp_window_functional_smoke",
+  "library_sha256": "0d7d70432350c706da913521108fb23c8b0b5581a11e9cbd12a7210aaaf174b8",
+  "passed": true,
+  "protocol": "x11",
+  "release_qualification": false,
+  "schema_version": 1,
+  "source_changes": [],
+  "source_clean": true,
+  "source_commit": "04394c863b4f8a8d69a5768a3fa5e9d4a2998411",
+  "tool_sha256": "54f3952a0c0d0dee2c351f193c454ac3557cd6b99b6d7a4f751955f45e4cbbf8"
+}

@@ -1,0 +1,175 @@
+{
+  "owner_pid": 3471784,
+  "source": {
+    "commit": "890faec0f1c2a3d4d3961985b362bbd6f514aad3",
+    "clean": true,
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "source_tree_sha256": "f3f9d1e6aaced9f40fa35e72eebe3d385bfd379afee0d9117c8d3a658ab6312e",
+    "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6"
+  },
+  "checks": [
+    {
+      "name": "style-literal-guards",
+      "argv": [
+        "cargo",
+        "+stable",
+        "--config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "openui-style",
+        "--lib"
+      ],
+      "pid": 3471846,
+      "actual_exit_code": 0,
+      "terminal_reaped": true,
+      "log_sha256": "90614d947b8f98a9d0f62a5b7b6215afce1bc6288ba56c9d2e25ac4086474ff8",
+      "reported_passed": 93,
+      "reported_failed": 0,
+      "reported_ignored": 0
+    },
+    {
+      "name": "wheel-input-guards",
+      "argv": [
+        "cargo",
+        "+stable",
+        "--config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "openui-ffi",
+        "--lib",
+        "wheel_input_tests"
+      ],
+      "pid": 3472023,
+      "actual_exit_code": 0,
+      "terminal_reaped": true,
+      "log_sha256": "0c5f285cf9f288f25894c1a7042b275b651f9fae1cb3d8eddff8dcd9c0429222",
+      "reported_passed": 5,
+      "reported_failed": 0,
+      "reported_ignored": 0
+    },
+    {
+      "name": "workspace-all-targets",
+      "argv": [
+        "cargo",
+        "+stable",
+        "--config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "--offline",
+        "--no-fail-fast",
+        "--workspace",
+        "--all-targets"
+      ],
+      "pid": 3472442,
+      "actual_exit_code": 0,
+      "terminal_reaped": true,
+      "log_sha256": "c8e109328be1d1898bff74e54fe9ec8fba7ed0a3cb8c622b82ce3d4b15300f53",
+      "reported_passed": 9301,
+      "reported_failed": 0,
+      "reported_ignored": 0
+    },
+    {
+      "name": "workspace-doctests",
+      "argv": [
+        "cargo",
+        "+stable",
+        "--config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "--offline",
+        "--no-fail-fast",
+        "--workspace",
+        "--doc"
+      ],
+      "pid": 3504649,
+      "actual_exit_code": 0,
+      "terminal_reaped": true,
+      "log_sha256": "74d203b4fb2c60771cacca73d84b1f97144ebfe803b6fc24f7619aa535b22064",
+      "reported_passed": 2,
+      "reported_failed": 0,
+      "reported_ignored": 13
+    },
+    {
+      "name": "c-abi-library-build",
+      "argv": [
+        "cargo",
+        "+stable",
+        "--config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "build",
+        "--locked",
+        "--offline",
+        "-p",
+        "openui-ffi"
+      ],
+      "pid": 3504829,
+      "actual_exit_code": 0,
+      "terminal_reaped": true,
+      "log_sha256": "0adaa2bed30d90ec4b8f26ae3edd90b7017adcb7435342071c072e0a0d6d66a9",
+      "reported_passed": 0,
+      "reported_failed": 0,
+      "reported_ignored": 0
+    },
+    {
+      "name": "c-cpp-headless-consumers",
+      "argv": [
+        "python3",
+        "-B",
+        "/home/nero/code/open-ui/tools/ffi/verify_abi.py",
+        "--library",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-border-wheel-workspace-runtime-v4609/libopenui_ffi.so",
+        "--keep-going"
+      ],
+      "pid": 3504891,
+      "actual_exit_code": 0,
+      "terminal_reaped": true,
+      "log_sha256": "ead6b33459aecf0e4569803a2e07f8c936fd005ec248485b3bfeb6f4e9a4151a",
+      "reported_passed": 0,
+      "reported_failed": 0,
+      "reported_ignored": 0
+    }
+  ],
+  "complete": true,
+  "renderer_qualified": false,
+  "release_qualified": false,
+  "runtime_scope": "complete locked native workspace all targets and doctests, current-source additive163-export FFI library and real C/C++ consumers after complete native border-style literal mapping and C/C++ zero-initializer repair; 40 C and 34 C++ consumers scheduled; immutable5520 pixel epoch remains independently measured; no Chromium pixel or release qualification",
+  "independent_live_pixel_epoch": {
+    "source_before": {
+      "commit": "5520ed920523164574fc80187b2702892cb5ac62",
+      "clean": true,
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_tree_sha256": "0e2c22d402f809735879222fed8bbaad849d989d3aa7c96ac61595e1d3c77336",
+      "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6"
+    },
+    "runner_sha256": "02cc432163bf1f925772405b2f60f6903824cf42f1598f84311b186215c43ad5",
+    "performance_qualification": false,
+    "shared_cargo_target_used_by_pixel_runner": false,
+    "fresh_runner_build_receipt_sha256": "80b4a2567a5b44eddddda5ae949e2ccdd14c152705c67f9cf10ebe5a1d9b249d",
+    "source_unchanged": true,
+    "runner_unchanged": true
+  },
+  "boot_id": "362ae37b-d85f-4812-9f25-ef02cf732134",
+  "current_source_library": {
+    "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-border-wheel-workspace-runtime-v4609/libopenui_ffi.so",
+    "sha256": "31258ae6ed2d69b537ced4a7df0d66ae9fd21e858e37ca6e6259169dce43aa77",
+    "source_commit": "890faec0f1c2a3d4d3961985b362bbd6f514aad3",
+    "successful_build_pid": 3504829
+  },
+  "source_after": {
+    "commit": "890faec0f1c2a3d4d3961985b362bbd6f514aad3",
+    "clean": true,
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "source_tree_sha256": "f3f9d1e6aaced9f40fa35e72eebe3d385bfd379afee0d9117c8d3a658ab6312e",
+    "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6"
+  },
+  "source_unchanged": true,
+  "intended_exit_code": 0
+}

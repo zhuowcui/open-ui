@@ -1,0 +1,48 @@
+{
+  "all_commands_terminal": false,
+  "branch": "agent/native-style-integration-v1349",
+  "commit": "0ccc37da4a0def755d5b7f25bb93e92b789787ce",
+  "direct_cache_regression_qualification": false,
+  "last_observed_jobs": [
+    {
+      "conclusion": "success",
+      "name": "miri-handles",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "native-sanitizers (address)",
+      "status": "completed"
+    },
+    {
+      "conclusion": "",
+      "name": "msrv",
+      "status": "in_progress"
+    },
+    {
+      "conclusion": "success",
+      "name": "native-sanitizers (leak)",
+      "status": "completed"
+    },
+    {
+      "conclusion": "",
+      "name": "fuzz-smoke",
+      "status": "in_progress"
+    },
+    {
+      "conclusion": "success",
+      "name": "c-undefined-sanitizer",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "conformance-and-platform",
+      "status": "completed"
+    }
+  ],
+  "probe_sha256": "e9055a0ad0af90d673a17c7d0d5aa3e54f8a35687a557ff602b25b0e12177138",
+  "release_qualification": false,
+  "run_id": 37245581100,
+  "schema_version": 1,
+  "state": "running-own-source-manual-hardening"
+}

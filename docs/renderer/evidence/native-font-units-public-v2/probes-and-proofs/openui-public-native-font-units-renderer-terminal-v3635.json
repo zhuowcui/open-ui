@@ -1,0 +1,73 @@
+{
+  "actual_audit_exit_code": 0,
+  "actual_audit_session": 43209,
+  "actual_owner_exit_code": 1,
+  "actual_owner_session": 27794,
+  "all_local_commands_terminal": true,
+  "all_native_apis_qualified": false,
+  "candidate_nonregression": true,
+  "completed_audit_sha256": "39b10028facfd6b2020c17268513f6bc4d52024b09f92e69c76cf2e7bfd96ad3",
+  "frozen_chromium_fields_unchanged": true,
+  "receipt_sha256": "c316e027fac4d1b1d6500c431b835ea4525b80e4b0e47fec8495ff629dde947b",
+  "release_qualified": false,
+  "renderer_qualified": false,
+  "results": {
+    "expanded": {
+      "actual_exit_code": 1,
+      "changed_rows": 0,
+      "chromium_reference_changed_rows": 0,
+      "different": 1583,
+      "errors": 0,
+      "exact": 22145,
+      "gains": 0,
+      "losses": 0,
+      "total": 23728,
+      "worsened": 0
+    },
+    "focused": {
+      "actual_exit_code": 0,
+      "changed_rows": 0,
+      "chromium_reference_changed_rows": 0,
+      "different": 0,
+      "errors": 0,
+      "exact": 640,
+      "gains": 0,
+      "losses": 0,
+      "total": 640,
+      "worsened": 0
+    },
+    "full": {
+      "actual_exit_code": 1,
+      "changed_rows": 0,
+      "chromium_reference_changed_rows": 0,
+      "different": 1582,
+      "errors": 0,
+      "exact": 21342,
+      "gains": 0,
+      "losses": 0,
+      "total": 22924,
+      "worsened": 0
+    },
+    "primitive": {
+      "actual_exit_code": 0,
+      "changed_rows": 0,
+      "chromium_reference_changed_rows": 0,
+      "different": 0,
+      "errors": 0,
+      "exact": 960,
+      "gains": 0,
+      "losses": 0,
+      "total": 960,
+      "worsened": 0
+    }
+  },
+  "retired_for_reexecution_after_source_or_target_mutation": true,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "e98a5a17b6c9700a641079f3137572e0dfc85dd7",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "c1ad161332023bb4c144d499f97c0c0fc0379f8577c791408bcf47d1bcd4e961",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "baseline_and_fixed_public_test_bytes_identical": true,
+  "baseline_restore_branch_preflighted": true,
+  "branch": "agent/native-intrinsic-snap-qualification-v1696",
+  "glyph_queue_requires_new_preparation_after_this_owner": true,
+  "javascript_executed_by_openui": false,
+  "native_owner_not_started": true,
+  "originals": {
+    "/tmp/openui-native-text-style-qualification-guards-v1675.py": "96610103dfdd0416e71d632b0c95fde6b7a13e433feb42d3cfefac7899022b3e",
+    "/tmp/openui-native-text-style-runtime-build-v1677.py": "573f0950318a6c2ffb41c6635fce2c9d09e7efbfe27b8f4367a9e94ea625a6bd",
+    "/tmp/openui-native-text-style-runtime-consumer-v1677.py": "c126d6071a0eb1c77362bb86b4df4e24e5e6bb8e5dc4fc7cf46f8cd554c0c6da",
+    "/tmp/openui-native-text-style-runtime-matrices-v1677.py": "20bc2bc9e237c1681133f3594a832058f45bac642aaa7f870b29d19412aaf0e6",
+    "/tmp/openui-native-text-style-runtime-pipeline-v1678.py": "d1f038ab2bb63db8dd94948f7f192688f2b4727ba998111614b31e2c1964d4ce"
+  },
+  "pixel_tolerance": 0,
+  "prepared_glyph_owner_v1690_not_started": true,
+  "prior_whole_owners": 40,
+  "probe_sha256": "9bcbd8a097d86f0f0fec555af57b52f03d5b9967d68e755bb0690e3598c62462",
+  "public_native_rust_apis_required": true,
+  "release_qualification": false,
+  "required_build_stages": 13,
+  "required_geometry_states": 38400,
+  "required_matrices": 4,
+  "required_native_images": 600,
+  "root": "/dev/shm/openui-native-intrinsic-snap-qualification-727da10e",
+  "schema_version": 1,
+  "scripts": {
+    "/tmp/openui-native-intrinsic-snap-build-v1696.py": "c84540d44879402d368e12c4a14b67244521af25fdd1935f715b9587d4ee2867",
+    "/tmp/openui-native-intrinsic-snap-consumer-v1696.py": "6717e9d0683840a2237e9eb659878fa2bcf1c0669661fb07734f3686b7adabac",
+    "/tmp/openui-native-intrinsic-snap-guards-v1696.py": "3faab1473ec4e727ff91b222e71e51a81a723f4a165f10409f93d205fa94b698",
+    "/tmp/openui-native-intrinsic-snap-matrices-v1696.py": "69474f214189a9bee65c49e468cf185717c5236eabfda1de5cb406d8b683c2f9",
+    "/tmp/openui-native-intrinsic-snap-pipeline-v1697.py": "7dc44623fa6a334c19c4f7e4bf6d53408cf655c9ea9b7ea46f8e164ef01cf90b"
+  },
+  "selected_next_owner": "openui-native-intrinsic-snap-pipeline-v1697.py",
+  "source": {
+    "clean": true,
+    "commit": "727da10e580c9439f5db83d36bfc3e2340168207",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "7a65e6a0ddd0eb28f3b8a542418b1aab409f4c4d88a6b00efaf2aece46a22ccd",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_support_not_runtime_qualification": true,
+  "source_unchanged": true,
+  "whole_owner_lock_preserves_gaps": true
+}

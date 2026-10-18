@@ -1,0 +1,10 @@
+{
+  "candidate_tests_cannot_compile_until_corrected": true,
+  "found_by_source_review": true,
+  "no_compiler_or_raster_commands_run": true,
+  "original_source_and_evidence_unchanged": true,
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": "2f53d5de2e6fce9b4c9dc2fbc94fcfc763544b23",
+  "undefined_test_method": "RasterConfiguration::chromium_linux_fontations_lcd"
+}

@@ -9,6 +9,7 @@
 //! The algorithm follows CSS 2.2 §10.6.1 (inline formatting context),
 //! §10.8 (line height calculations), and §16.2 (text alignment).
 
+use crate::layout_context::LayoutDocument;
 use openui_dom::{Document, ElementTag, NodeId, PseudoElementKind};
 use openui_geometry::{BoxStrut, LayoutUnit, PhysicalOffset, PhysicalSize, WritingModeConverter};
 use openui_style::{
@@ -70,7 +71,7 @@ fn configure_line_breaker(
 }
 
 fn effective_locale<'a>(
-    doc: &'a Document,
+    doc: &'a dyn LayoutDocument,
     node_id: NodeId,
     style: &'a ComputedStyle,
 ) -> Option<&'a str> {
@@ -170,7 +171,7 @@ fn balanced_wrap_width(
 }
 
 fn node_follows_float_with_in_flow_text(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     node_id: NodeId,
     saw_float: &mut bool,
 ) -> bool {
@@ -210,7 +211,7 @@ pub(crate) struct InlineFloatSourcePosition {
 }
 
 fn float_line_break_reservations(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     floats: &[FloatPlaceholder],
     available_inline_size: LayoutUnit,
     space: &ConstraintSpace,
@@ -225,7 +226,7 @@ fn float_line_break_reservations(
                 &style.height
             };
             let border_box = if inline_length.is_auto() {
-                crate::out_of_flow::compute_shrink_to_fit_width(
+                crate::out_of_flow::compute_shrink_to_fit_width_with_layout(
                     doc,
                     float.node_id,
                     available_inline_size,
@@ -306,7 +307,7 @@ fn consume_pending_float_line_reservation(
 }
 
 pub(crate) fn inline_float_source_positions(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     node_id: NodeId,
     items_data: &InlineItemsData,
     floats: &[FloatPlaceholder],
@@ -635,8 +636,8 @@ fn fragment_descendant_text_ink_end(fragment: &Fragment) -> Option<LayoutUnit> {
         .max()
 }
 
-fn nested_ruby_annotation_extent(doc: &Document, ruby_id: NodeId) -> LayoutUnit {
-    fn nested_extent(doc: &Document, node_id: NodeId) -> f32 {
+fn nested_ruby_annotation_extent(doc: &dyn LayoutDocument, ruby_id: NodeId) -> LayoutUnit {
+    fn nested_extent(doc: &dyn LayoutDocument, node_id: NodeId) -> f32 {
         doc.children(node_id).fold(0.0_f32, |extent, child_id| {
             if doc.node(child_id).tag == ElementTag::Ruby {
                 let annotation_size = doc
@@ -658,7 +659,7 @@ fn nested_ruby_annotation_extent(doc: &Document, ruby_id: NodeId) -> LayoutUnit 
     LayoutUnit::from_f32(extent)
 }
 
-fn fragment_contains_tag(doc: &Document, fragment: &Fragment, tag: ElementTag) -> bool {
+fn fragment_contains_tag(doc: &dyn LayoutDocument, fragment: &Fragment, tag: ElementTag) -> bool {
     (!fragment.node_id.is_none() && doc.node(fragment.node_id).tag == tag)
         || fragment
             .children
@@ -670,7 +671,10 @@ fn fragment_contains_tag(doc: &Document, fragment: &Fragment, tag: ElementTag) -
 /// child's synthesized baseline (for example a table row baseline) is useful
 /// to flex/grid alignment, but it must not turn a line-less inline-block into
 /// one with a line baseline.
-fn inline_block_last_line_baseline(doc: &Document, fragment: &Fragment) -> Option<LayoutUnit> {
+fn inline_block_last_line_baseline(
+    doc: &dyn LayoutDocument,
+    fragment: &Fragment,
+) -> Option<LayoutUnit> {
     fn contains_anonymous_line(fragment: &Fragment) -> bool {
         fragment.children.iter().any(|child| {
             (child.node_id.is_none()
@@ -681,7 +685,7 @@ fn inline_block_last_line_baseline(doc: &Document, fragment: &Fragment) -> Optio
         })
     }
 
-    fn contains_flex_baseline(doc: &Document, fragment: &Fragment) -> bool {
+    fn contains_flex_baseline(doc: &dyn LayoutDocument, fragment: &Fragment) -> bool {
         fragment.children.iter().any(|child| {
             (!child.node_id.is_none()
                 && doc.node(child.node_id).style.display.is_flex()
@@ -731,7 +735,10 @@ fn inline_block_last_line_baseline(doc: &Document, fragment: &Fragment) -> Optio
     None
 }
 
-fn form_control_atomic_baseline(doc: &Document, fragment: &Fragment) -> Option<LayoutUnit> {
+fn form_control_atomic_baseline(
+    doc: &dyn LayoutDocument,
+    fragment: &Fragment,
+) -> Option<LayoutUnit> {
     if fragment.node_id.is_none() {
         return None;
     }
@@ -744,7 +751,11 @@ fn form_control_atomic_baseline(doc: &Document, fragment: &Fragment) -> Option<L
     }
 }
 
-fn align_ruby_internal_content(doc: &Document, fragment: &mut Fragment, inline_size: LayoutUnit) {
+fn align_ruby_internal_content(
+    doc: &dyn LayoutDocument,
+    fragment: &mut Fragment,
+    inline_size: LayoutUnit,
+) {
     for line in &mut fragment.children {
         for child in &mut line.children {
             if child.node_id.is_none() || doc.node(child.node_id).tag != ElementTag::Ruby {
@@ -786,7 +797,7 @@ fn align_ruby_internal_content(doc: &Document, fragment: &mut Fragment, inline_s
 }
 
 fn layout_ruby_atomic(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     node_id: NodeId,
     inline_size: LayoutUnit,
     percentage_block_size: LayoutUnit,
@@ -813,9 +824,10 @@ fn layout_ruby_atomic(
         percentage_block_size,
         true,
     );
-    let mut base = inline_layout_for_children(doc, node_id, &base_children, &internal_space);
+    let mut base =
+        inline_layout_for_children_with_layout(doc, node_id, &base_children, &internal_space);
     let mut annotation = annotation_parent.map(|parent| {
-        inline_layout_for_children(doc, parent, &annotation_children, &internal_space)
+        inline_layout_for_children_with_layout(doc, parent, &annotation_children, &internal_space)
     });
     if compact_for_clamp
         && matches!(
@@ -1605,7 +1617,7 @@ fn is_cjk_character(ch: char) -> bool {
 /// start-relative coordinates when an owning fragmentation context will map
 /// the line through multicol geometry.
 fn needs_logical_positioned_inline_geometry(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     node_id: NodeId,
     space: &ConstraintSpace,
 ) -> bool {
@@ -1642,8 +1654,12 @@ fn needs_logical_positioned_inline_geometry(
 /// Returns a Fragment containing line box fragments as children.
 ///
 /// Blink: `InlineLayoutAlgorithm::Layout()` in `inline_layout_algorithm.cc`.
-pub fn inline_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> Fragment {
-    let mut items_data = InlineItemsBuilder::collect(doc, node_id);
+pub(crate) fn inline_layout_with_layout(
+    doc: &dyn LayoutDocument,
+    node_id: NodeId,
+    space: &ConstraintSpace,
+) -> Fragment {
+    let mut items_data = InlineItemsBuilder::collect_with_layout(doc, node_id);
     let style = &doc.node(node_id).style;
     let base_direction = if style.unicode_bidi == openui_style::UnicodeBidi::Plaintext {
         None
@@ -1655,7 +1671,14 @@ pub fn inline_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -
     items_data.apply_bidi(base_direction);
     items_data.split_shaping_runs();
     items_data.shape_text();
-    inline_layout_from_items(doc, node_id, space, &items_data, 0, items_data.items.len())
+    inline_layout_from_items_with_layout(
+        doc,
+        node_id,
+        space,
+        &items_data,
+        0,
+        items_data.items.len(),
+    )
 }
 
 /// Perform inline layout using pre-collected items over a specific item range.
@@ -1664,10 +1687,10 @@ pub fn inline_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -
 /// BlockInInline items within the range are skipped (they should have been
 /// handled by the caller via block-in-inline splitting).
 ///
-/// Used by block_layout's block-in-inline path (CSS 2.2 §9.2.1.1) to lay
+/// Used by block_layout_with_layout's block-in-inline path (CSS 2.2 §9.2.1.1) to lay
 /// out inline segments between block-level interruptions.
-pub fn inline_layout_from_items(
-    doc: &Document,
+pub(crate) fn inline_layout_from_items_with_layout(
+    doc: &dyn LayoutDocument,
     node_id: NodeId,
     space: &ConstraintSpace,
     items_data: &InlineItemsData,
@@ -1780,7 +1803,7 @@ pub fn inline_layout_from_items(
 
     // Step 4: Layout each line.
     // Line offsets are relative to the content box (0-based). The caller
-    // (block_layout) adds border+padding offsets when positioning.
+    // (block_layout_with_layout) adds border+padding offsets when positioning.
     //
     // CSS 2.1 §9.5.1: Line boxes flow alongside floats. Each line's
     // available width may differ depending on float exclusion areas at
@@ -2355,7 +2378,8 @@ pub fn inline_layout_from_items(
             space.percentage_resolution_block_size,
             false,
         );
-        let mut block_fragment = crate::block::block_layout(doc, block_info.node_id, &block_space);
+        let mut block_fragment =
+            crate::block::block_layout_with_layout(doc, block_info.node_id, &block_space);
         if block_fragment.oof_candidates.is_empty() {
             continue;
         }
@@ -2367,7 +2391,7 @@ pub fn inline_layout_from_items(
                 _ => false,
             });
         let static_block = if prefix_has_content {
-            inline_layout_from_items(
+            inline_layout_from_items_with_layout(
                 doc,
                 node_id,
                 space,
@@ -2426,7 +2450,7 @@ pub fn inline_layout_from_items(
 /// the owning block or multicol projects them to the physical public API.
 #[allow(clippy::too_many_arguments)]
 fn append_positioned_inline_candidates(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     node_id: NodeId,
     space: &ConstraintSpace,
     items_data: &InlineItemsData,
@@ -2564,7 +2588,7 @@ fn append_positioned_inline_candidates(
 
 /// Resolve the containing block formed by a positioned inline's first and
 /// last line fragments (CSS 2.1 §10.1).
-fn positioned_inline_starts_with_out_of_flow(doc: &Document, target: NodeId) -> bool {
+fn positioned_inline_starts_with_out_of_flow(doc: &dyn LayoutDocument, target: NodeId) -> bool {
     for child_id in doc.children(target) {
         let child = doc.node(child_id);
         if child.style.display == Display::None {
@@ -2757,7 +2781,7 @@ fn normalize_vertical_line_inline_axis(
 }
 
 fn normalize_fragmented_inline_containing_block(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     block_node_id: NodeId,
     space: &ConstraintSpace,
     block_size: PhysicalSize,
@@ -2787,7 +2811,7 @@ fn normalize_fragmented_inline_containing_block(
 /// line is being built because CSS 2.1 defines that containing block from the
 /// ancestor's first and last line fragments.
 fn collect_atomic_inline_oof_candidates(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     block_node_id: NodeId,
     space: &ConstraintSpace,
     block_size: PhysicalSize,
@@ -2934,7 +2958,7 @@ fn find_static_inline_for_item_index(
 }
 /// Apply inline fragmentation to a laid-out inline formatting context.
 ///
-/// Takes a fragment produced by `inline_layout` / `inline_layout_from_items`
+/// Takes a fragment produced by `inline_layout_with_layout` / `inline_layout_from_items_with_layout`
 /// and splits it at fragmentainer boundaries. Returns the fragment for the
 /// current fragmentainer, with a break token if content continues.
 ///
@@ -3257,11 +3281,11 @@ pub fn resume_inline_from_break_token(
 }
 
 ///
-/// Used by block_layout for CSS 2.2 §9.2.1.1 anonymous block boxes when
+/// Used by block_layout_with_layout for CSS 2.2 §9.2.1.1 anonymous block boxes when
 /// mixed inline+block content is present. Lays out only the given children
 /// as an inline formatting context.
-pub fn inline_layout_for_children(
-    doc: &Document,
+pub(crate) fn inline_layout_for_children_with_layout(
+    doc: &dyn LayoutDocument,
     node_id: NodeId,
     children: &[NodeId],
     space: &ConstraintSpace,
@@ -3350,7 +3374,7 @@ pub fn inline_layout_for_children(
             let checkpoint = line_breaker.checkpoint();
             let mut produced = line_breaker.next_line(line_available);
             // CSS 2.1 §9.5.1: shift unfittable float-shortened lines down
-            // (see the identical logic in inline_layout above).
+            // (see the identical logic in inline_layout_with_layout above).
             if let Some(ref li) = produced {
                 if line_avail.available_inline_size < available_inline_size
                     && li.used_width - li.hang_width > line_available
@@ -3794,7 +3818,7 @@ fn apply_text_box_trim(
 }
 
 fn create_line_box(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     space: &ConstraintSpace,
     items_data: &InlineItemsData,
     line_info: &LineInfo,
@@ -3869,7 +3893,7 @@ fn create_line_box(
     let mut inline_metrics_stack: Vec<FontMetrics> = Vec::new();
     let mut inline_font_size_stack: Vec<f32> = Vec::new();
 
-    // === PRE-STEP: Run block_layout for atomic inlines ===
+    // === PRE-STEP: Run block_layout_with_layout for atomic inlines ===
     // Per CSS 2.1 §10.6.1, inline-block/inline-flex/inline-grid establish a new
     // block formatting context. We pre-compute their layout so the result's
     // dimensions are authoritative for both line metrics and fragment creation.
@@ -3932,7 +3956,7 @@ fn create_line_box(
                             || style.line_height != LineHeight::Normal,
                     )
                 } else {
-                    crate::block::block_layout(doc, item.node_id, &child_space)
+                    crate::block::block_layout_with_layout(doc, item.node_id, &child_space)
                 };
                 // Inline layout stores coordinates as (inline, block). A child
                 // layout returns a physical fragment, so normalize the atomic
@@ -4994,7 +5018,7 @@ fn create_line_box(
                 // Reset inter-character tracking so no boundary gap is added
                 // between text items separated by an atomic inline.
                 inter_char_chars_before = 0;
-                // Use pre-computed block_layout result as authoritative source
+                // Use pre-computed block_layout_with_layout result as authoritative source
                 // for atomic inline dimensions (Issue 2 fix).
                 let item_width = item_result.inline_size;
                 let style = &items_data.styles[item.style_index];
@@ -5160,15 +5184,15 @@ fn create_line_box(
                     resolve_margin_or_padding(inline_start_margin, percentage_base);
                 let margin_right_lu = resolve_margin_or_padding(inline_end_margin, percentage_base);
 
-                // Use the pre-computed block_layout result as the atomic fragment,
+                // Use the pre-computed block_layout_with_layout result as the atomic fragment,
                 // preserving its computed size, border, padding, margin, and children.
-                // Only fall back to a new empty box when block_layout was not run.
+                // Only fall back to a new empty box when block_layout_with_layout was not run.
                 let mut atomic_fragment = if let Some(result) =
                     atomic_layout_results[step4_idx].take()
                 {
                     let mut frag = result;
-                    // Use block_layout's authoritative width; only override height
-                    // and position. block_layout already accounts for border+padding.
+                    // Use block_layout_with_layout's authoritative width; only override height
+                    // and position. block_layout_with_layout already accounts for border+padding.
                     frag.size.height = item_height;
                     frag.offset = PhysicalOffset::new(inline_offset + margin_left_lu, atomic_top);
                     frag
@@ -5178,7 +5202,7 @@ fn create_line_box(
                     frag.offset = PhysicalOffset::new(inline_offset + margin_left_lu, atomic_top);
                     frag
                 };
-                // block_layout computes atomic geometry before the line
+                // block_layout_with_layout computes atomic geometry before the line
                 // breaker assigns its final normal-flow position. Reapply the
                 // relative visual offset after that assignment; otherwise a
                 // positioned image/control loses left/top when it becomes an
@@ -6267,7 +6291,11 @@ fn remove_last_content_item_for_tall_clamp(
     true
 }
 
-fn line_has_under_ruby(doc: &Document, line: &LineInfo, items_data: &InlineItemsData) -> bool {
+fn line_has_under_ruby(
+    doc: &dyn LayoutDocument,
+    line: &LineInfo,
+    items_data: &InlineItemsData,
+) -> bool {
     line.items.iter().any(|result| {
         if result.item_type != InlineItemType::AtomicInline {
             return false;
@@ -6288,7 +6316,7 @@ fn fragment_relative_block_end(fragment: &Fragment) -> LayoutUnit {
         })
 }
 
-fn last_line_fragment_path(fragments: &[Fragment], doc: &Document) -> Option<Vec<usize>> {
+fn last_line_fragment_path(fragments: &[Fragment], doc: &dyn LayoutDocument) -> Option<Vec<usize>> {
     for (index, fragment) in fragments.iter().enumerate().rev() {
         // A clamp marker belongs to the last retained in-flow line. Positioned
         // descendants and floats may be appended after normal-flow children,
@@ -6396,7 +6424,7 @@ fn trim_last_text_fragment_for_marker(
 /// Attach a marker to the last already-formatted line when the next atomic
 /// formatting-context child cannot fit inside an ancestor clamp.
 pub(crate) fn append_clamp_marker_to_last_line(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     fragments: &mut [Fragment],
     fallback_style: &ComputedStyle,
     block_ellipsis: &openui_style::BlockEllipsis,
@@ -6480,8 +6508,8 @@ pub(crate) fn append_clamp_marker_to_last_line(
 
 /// Check if a block node has any inline children (text or inline-level elements).
 ///
-/// Used by block_layout to detect when to dispatch to inline layout.
-pub fn has_inline_children(doc: &Document, node_id: NodeId) -> bool {
+/// Used by block_layout_with_layout to detect when to dispatch to inline layout.
+pub(crate) fn has_inline_children_with_layout(doc: &dyn LayoutDocument, node_id: NodeId) -> bool {
     for child_id in doc.children(node_id) {
         let child = doc.node(child_id);
         if matches!(
@@ -6500,7 +6528,9 @@ pub fn has_inline_children(doc: &Document, node_id: NodeId) -> bool {
         ) {
             return true;
         }
-        if child.style.display == Display::Contents && has_inline_children(doc, child_id) {
+        if child.style.display == Display::Contents
+            && has_inline_children_with_layout(doc, child_id)
+        {
             return true;
         }
         if child.style.display.is_inline_level() {
@@ -7154,7 +7184,7 @@ mod tests {
         doc.node_mut(text).text = Some("hello".to_string());
         doc.append_child(block, text);
 
-        assert!(has_inline_children(&doc, block));
+        assert!(has_inline_children_with_layout(&doc, block));
     }
 
     #[test]
@@ -7169,7 +7199,7 @@ mod tests {
         doc.update_resolved_style(span, |style| style.display = Display::Inline);
         doc.append_child(block, span);
 
-        assert!(has_inline_children(&doc, block));
+        assert!(has_inline_children_with_layout(&doc, block));
     }
 
     #[test]
@@ -7184,7 +7214,7 @@ mod tests {
         doc.update_resolved_style(child, |style| style.display = Display::Block);
         doc.append_child(block, child);
 
-        assert!(!has_inline_children(&doc, block));
+        assert!(!has_inline_children_with_layout(&doc, block));
     }
 
     #[test]
@@ -7203,7 +7233,7 @@ mod tests {
         }
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(800), LayoutUnit::from_i32(600));
-        let fragment = crate::block::block_layout(&doc, root, &space);
+        let fragment = crate::block::block_layout_with_layout(&doc, root, &space);
         let block_fragment = &fragment.children[0];
         assert_eq!(block_fragment.size.height, LayoutUnit::zero());
         assert_eq!(block_fragment.children[0].size.height, LayoutUnit::zero());
@@ -7424,7 +7454,7 @@ mod tests {
         doc.append_child(div, text);
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(800), LayoutUnit::from_i32(600));
-        let fragment = crate::block::block_layout(&doc, vp, &space);
+        let fragment = crate::block::block_layout_with_layout(&doc, vp, &space);
         let div_frag = &fragment.children[0];
 
         // Line box → text fragment
@@ -7536,7 +7566,7 @@ mod tests {
         doc.append_child(outer_span, inner_text);
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(800), LayoutUnit::from_i32(600));
-        let fragment = crate::block::block_layout(&doc, vp, &space);
+        let fragment = crate::block::block_layout_with_layout(&doc, vp, &space);
         let div_frag = &fragment.children[0];
         assert!(!div_frag.children.is_empty(), "Should have line boxes");
         let line = &div_frag.children[0];
@@ -7599,14 +7629,14 @@ mod tests {
         assert!(!is_cjk_character('Z'));
     }
 
-    // ── Issue 2 (R26): atomic fragment uses block_layout width ──────────
+    // ── Issue 2 (R26): atomic fragment uses block_layout_with_layout width ──────────
 
     #[test]
     fn atomic_inline_block_layout_width_preserved() {
         // An inline-block child with width:80px inside a 400px container.
-        // The fragment width should come from block_layout (80px), not from
+        // The fragment width should come from block_layout_with_layout (80px), not from
         // the line breaker's item_result.inline_size which previously
-        // overwrote the block_layout result.
+        // overwrote the block_layout_with_layout result.
         let mut doc = Document::new();
         let vp = doc.root();
 
@@ -7629,7 +7659,7 @@ mod tests {
         doc.append_child(div, inline_block);
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(400), LayoutUnit::from_i32(600));
-        let fragment = crate::block::block_layout(&doc, vp, &space);
+        let fragment = crate::block::block_layout_with_layout(&doc, vp, &space);
         let div_frag = &fragment.children[0];
         assert!(!div_frag.children.is_empty(), "should have line boxes");
         let line = &div_frag.children[0];
@@ -7638,10 +7668,10 @@ mod tests {
             "line should have atomic inline child"
         );
         let atomic = &line.children[0];
-        // Width should be 80px from block_layout, not overridden.
+        // Width should be 80px from block_layout_with_layout, not overridden.
         assert!(
             (atomic.size.width.to_f32() - 80.0).abs() < 1.0,
-            "atomic inline width should be ~80px from block_layout, got {}",
+            "atomic inline width should be ~80px from block_layout_with_layout, got {}",
             atomic.size.width.to_f32(),
         );
     }
@@ -7649,7 +7679,7 @@ mod tests {
     #[test]
     fn atomic_inline_block_layout_width_not_overridden_with_border() {
         // An inline-block with width:60px and 5px border on each side.
-        // block_layout should produce border-box width of 70px.
+        // block_layout_with_layout should produce border-box width of 70px.
         // The fragment should preserve that, not override it.
         let mut doc = Document::new();
         let vp = doc.root();
@@ -7681,7 +7711,7 @@ mod tests {
         doc.append_child(div, inline_block);
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(400), LayoutUnit::from_i32(600));
-        let fragment = crate::block::block_layout(&doc, vp, &space);
+        let fragment = crate::block::block_layout_with_layout(&doc, vp, &space);
         let div_frag = &fragment.children[0];
         let line = &div_frag.children[0];
         let atomic = &line.children[0];
@@ -7724,7 +7754,7 @@ mod tests {
         doc.append_child(div, inline_block);
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(400), LayoutUnit::from_i32(600));
-        let fragment = crate::block::block_layout(&doc, vp, &space);
+        let fragment = crate::block::block_layout_with_layout(&doc, vp, &space);
         let div_frag = &fragment.children[0];
         assert!(!div_frag.children.is_empty(), "should have line boxes");
         let line = &div_frag.children[0];
@@ -7769,7 +7799,7 @@ mod tests {
         doc.append_child(div, inline_block);
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(400), LayoutUnit::max());
-        let fragment = crate::block::block_layout(&doc, vp, &space);
+        let fragment = crate::block::block_layout_with_layout(&doc, vp, &space);
         let div_frag = &fragment.children[0];
         assert!(!div_frag.children.is_empty(), "should have line boxes");
         // Just verify it doesn't crash/panic with indefinite containing block.
@@ -7967,7 +7997,7 @@ mod tests {
         doc.append_child(span, text);
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(800), LayoutUnit::from_i32(600));
-        let fragment = crate::block::block_layout(&doc, vp, &space);
+        let fragment = crate::block::block_layout_with_layout(&doc, vp, &space);
         let inline = &fragment.children[0].children[0].children[0];
         assert_eq!(inline.node_id, span);
         assert!(inline.is_inline_box_fragment);
@@ -7996,7 +8026,7 @@ mod tests {
         doc.append_child(span, text);
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(800), LayoutUnit::from_i32(600));
-        let fragment = crate::block::block_layout(&doc, vp, &space);
+        let fragment = crate::block::block_layout_with_layout(&doc, vp, &space);
         let mut continuations = Vec::new();
         for line in &fragment.children[0].children {
             for child in &line.children {
@@ -8064,4 +8094,33 @@ mod tests {
             ]
         );
     }
+}
+
+// Public entry points retain the original native Document signatures.
+pub fn inline_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> Fragment {
+    inline_layout_with_layout(doc, node_id, space)
+}
+
+pub fn inline_layout_from_items(
+    doc: &Document,
+    node_id: NodeId,
+    space: &ConstraintSpace,
+    items_data: &InlineItemsData,
+    item_start: usize,
+    item_end: usize,
+) -> Fragment {
+    inline_layout_from_items_with_layout(doc, node_id, space, items_data, item_start, item_end)
+}
+
+pub fn inline_layout_for_children(
+    doc: &Document,
+    node_id: NodeId,
+    children: &[NodeId],
+    space: &ConstraintSpace,
+) -> Fragment {
+    inline_layout_for_children_with_layout(doc, node_id, children, space)
+}
+
+pub fn has_inline_children(doc: &Document, node_id: NodeId) -> bool {
+    has_inline_children_with_layout(doc, node_id)
 }

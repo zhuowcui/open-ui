@@ -1,0 +1,20 @@
+clean-baseline-phase-and-settings exit 0
+baseline-lcd_phase_moves_ink_by_physical_pixels_for_each_text_role exit 101
+baseline-fontations_preserves_requested_mask_and_position_settings exit 101
+clean-baseline-default-strike exit 0
+baseline-native_outlines_fit_at_physical_size_with_default_and_explicit_backends exit 101
+Traceback (most recent call last):
+  File "/tmp/openui-native-raster-fields-public-guards-v1468.py", line 96, in <module>
+    subprocess.run(['git', 'switch', BRANCH], cwd=ROOT, check=True,
+  File "/usr/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', 'switch', 'agent/native-raster-api-v1422']' returned non-zero exit status 128.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/tmp/openui-native-raster-fields-public-guards-v1468.py", line 122, in <module>
+    subprocess.run(['git', 'switch', BRANCH], cwd=ROOT, check=True,
+  File "/usr/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', 'switch', 'agent/native-raster-api-v1422']' returned non-zero exit status 128.

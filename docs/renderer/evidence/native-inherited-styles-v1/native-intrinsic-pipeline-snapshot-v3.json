@@ -1,0 +1,29 @@
+{
+  "all_commands_terminal": false,
+  "current_process": {
+    "pid": 2813558,
+    "program": "openui-native-intrinsic-build-v1182.py"
+  },
+  "fixed_guard_receipt_sha256": "0a3923fb5a2b3cf7c012d93688d33a11ccb7364fc22a62eb86e295a9106461ea",
+  "new_release_states_admitted": 0,
+  "probe_sha256": "2dd8877851a3e0006e3f9fc392f478a2228842396a41e3bfc58b47db9b2d130e",
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "ee6167d91dda131348ae40d1abb68af94ff7b9d0",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "cbc3e5738bff1ef09a0dc18485ff7aa652a97f9794830ac7d4bd46657dff1eb8",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "ee6167d91dda131348ae40d1abb68af94ff7b9d0",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "cbc3e5738bff1ef09a0dc18485ff7aa652a97f9794830ac7d4bd46657dff1eb8",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "state": "running-fresh-native-build",
+  "steps": []
+}

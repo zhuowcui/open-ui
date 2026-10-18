@@ -1,0 +1,115 @@
+{
+  "all_commands_terminal": true,
+  "new_release_states_admitted": 0,
+  "prior_terminal_pipeline_sha256": {
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-followup-pipeline-v1208/receipt.json": "351a59344a4b40d768098029875e7ede06a3e5d35b6b7994159e224623bff782",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-lcd-pipeline-v1219/receipt.json": "f3afb2548a0d2e1d275096ac5fa8db74fa1749f9f46f250aaf0f451b392e951a"
+  },
+  "probe_sha256": "4dfeb0c3cffa3dcfc35d7d7b976c1e38fc41270bf840ae63137ae9db4b5d5476",
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "107e2e36c3a0fb57ddb85cac14d9c4fdb1dcf2da",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "ef67a5b541e9ebf2c2d9eed8d3a2406ea9a488ed514eba3563fd7a8716f8020a",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "107e2e36c3a0fb57ddb85cac14d9c4fdb1dcf2da",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "ef67a5b541e9ebf2c2d9eed8d3a2406ea9a488ed514eba3563fd7a8716f8020a",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "state": "complete-requires-results-review",
+  "steps": [
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-scene-recording-cache-guards-v1232.py"
+      ],
+      "log_sha256": "cd0ce64f27a04229ed08cb6498a598909d45ba6749b3d049912e7dbc27dc4d56",
+      "name": "regression-guards",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-scene-recording-cache-build-v1234.py"
+      ],
+      "log_sha256": "2d8fa4c60a69de3c9040d763fc5c626084536369c7e0584e0ae680ecc5e85563",
+      "name": "native-build",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-scene-recording-cache-consumer-v1235.py"
+      ],
+      "log_sha256": "d97ba269425182339aa4beea38910b72e63ccc2cf27e45467e65d731792612c2",
+      "name": "intrinsic-native",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-scene-recording-cache-static-v1236.py"
+      ],
+      "log_sha256": "28f51fa672c91842de32c97e279cd1f08de96daf8c209ba0bd5c7778dd08ea87",
+      "name": "static-native",
+      "observed_exit_code": 1
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-scene-recording-cache-matrices-v1237.py",
+        "selection"
+      ],
+      "log_sha256": "d07e716df2f5ebbc5e291780e2c70fba6cde425990621f1709b6207a44132abc",
+      "name": "selection",
+      "observed_exit_code": 1
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-scene-recording-cache-matrices-v1237.py",
+        "focused"
+      ],
+      "log_sha256": "bf49a240b3f3336bb12b8b0ac4bc3c7297090f890c23eb18f15eb4833c873185",
+      "name": "focused",
+      "observed_exit_code": 1
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-scene-recording-cache-matrices-v1237.py",
+        "primitive"
+      ],
+      "log_sha256": "9516a097551fb3cf6240a3d4a7153a078689624042be26eedd4f51ab7cbe1f5a",
+      "name": "primitive",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-scene-recording-cache-matrices-v1237.py",
+        "full"
+      ],
+      "log_sha256": "80e2de9eecead9d604fee6d0dd35b556850eeaebdef6d1eab1a75616c832a332",
+      "name": "full",
+      "observed_exit_code": 1
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-scene-recording-cache-matrices-v1237.py",
+        "expanded"
+      ],
+      "log_sha256": "a1db84402bd071da14cd825b3f933e6602c0c82d988a441d307d9648ac513860",
+      "name": "expanded",
+      "observed_exit_code": 1
+    }
+  ]
+}

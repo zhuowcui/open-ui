@@ -1,0 +1,60 @@
+{
+  "all_four_renderer_matrices_required": true,
+  "baseline_commit": "6570b65258677fff7369b336db6e55bb7645daec",
+  "cargo_commands_run": 0,
+  "fieldset_expected_images": 128,
+  "fixed_commit": "2eacae2c8aad222850af30f9cea6f8a79bbddd4a",
+  "javascript_executed_by_openui": false,
+  "owner_probe": "/tmp/openui-native-image-coverage-pipeline-v1449.py",
+  "owner_probe_sha256": "25dbe9a1e77d1aa7997f87c15c7d263a41ba39ad1a69b39a3d2e7d6b40d02e80",
+  "pixel_tolerance": 0,
+  "promotion_allowed": false,
+  "public_consumer_expected_images": 720,
+  "public_native_rust_callbacks": true,
+  "release_qualification": false,
+  "schema_version": 1,
+  "screenshots_generated": 0,
+  "scripts": {
+    "build": {
+      "path": "/tmp/openui-native-image-coverage-build-v1448.py",
+      "sha256": "66941b354ef144fbd6cd2d02736575bb4a9773eafdf05b07e71084650b5ca140"
+    },
+    "consumer": {
+      "path": "/tmp/openui-native-image-coverage-consumer-v1448.py",
+      "sha256": "e0561c724c1d0e364c68ef7a3c21469cdfe1489f2fd6ac14232520c909842d13"
+    },
+    "fieldsets": {
+      "path": "/tmp/openui-native-image-coverage-fieldsets-v1448.py",
+      "sha256": "b1a480f5f49bada97d341d5cf5e7626f8f03496bc87b4ef83b40c298331d1710"
+    },
+    "guards": {
+      "path": "/tmp/openui-native-image-coverage-guards-v1448.py",
+      "sha256": "3f61b23dec161cb017954e297cf67bcb93b570e8a219df1c02290a592dc5cf22"
+    },
+    "matrices": {
+      "path": "/tmp/openui-native-image-coverage-matrices-v1448.py",
+      "sha256": "25e0055ab0b8fac75f84bfd5ee60d9580bba78e4f5dcdbfe1ec5f73127227a92"
+    }
+  },
+  "source_root": "/dev/shm/openui-native-image-coverage-d913041d",
+  "strict_chromium_capture_pairs": true,
+  "whole_prior_pipelines": [
+    "cache-umbrella-pipeline-v1291",
+    "native-fieldset-retry-pipeline-v1310",
+    "native-font-retry-pipeline-v1311",
+    "native-c-raster-retry-pipeline-v1312",
+    "native-raster-fields-pipeline-v1337",
+    "native-default-strike-pipeline-v1338",
+    "cache-integration-pipeline-v1341",
+    "native-fieldset-capture-forensics-pipeline-v1346",
+    "native-style-integration-pipeline-v1354",
+    "native-intrinsic-constraints-pipeline-v1375",
+    "native-intrinsic-constraints-pipeline-v1369",
+    "native-raster-consumer-pipeline-v1398",
+    "umbrella-clean-workspace-pipeline-v1411",
+    "native-style-integration-retry-pipeline-v1419",
+    "native-intrinsic-constraints-retry-pipeline-v1420",
+    "native-raster-api-pipeline-v1425",
+    "native-image-occlusion-pipeline-v1437"
+  ]
+}

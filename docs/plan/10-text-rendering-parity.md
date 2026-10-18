@@ -98,8 +98,9 @@ set now contains 171 promotions. The complete atomic W1M cohort is 39/39 exact,
 including the 29 newly runnable assertion-only layouts and ten existing
 fallback/justify-self/margin test-reference failures. The W1N four-ID target
 cohort and its 19-ID guard proof are also exact. The W1O target and 15-ID
-flex-basis/break proof are exact without changing the text manifest. Keep dynamic JavaScript,
-authoritative bidi, upright CJK, mixed-script splitting,
+flex-basis/break proof are exact without changing the text manifest. Keep disposition
+of tests with dynamic JavaScript in Chromium, authoritative bidi, upright CJK,
+mixed-script splitting,
 fallback shaping, sideways modes, and 010–016 for W2.
 Follow `docs/SP17-PLAN.md`.
 

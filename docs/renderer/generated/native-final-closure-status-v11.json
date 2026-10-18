@@ -1,0 +1,664 @@
+{
+  "Root2ec_full_census_remeasured": false,
+  "Root336_full_census_remeasured": false,
+  "current_generated_checks": {
+    "failed": 0,
+    "later2ec_results": {
+      "failed": 0,
+      "passed": 21,
+      "receipt": {
+        "bytes": 13866,
+        "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-font-integrated-generated-checks-v4842/receipt.json",
+        "sha256": "ce43f99ce6b3ae70d1d62963b111d8aa794ccb8a8ea071ae3ea5e3dd06257fb6"
+      },
+      "source": {
+        "clean": true,
+        "commit": "2ec2d040722a2d8d48d9a9dfee2b270137be7c75",
+        "harness_sha256": "32a51e0c7438d13688bcac5a3b9a4a04c66a32219fd627d9be9e4844a052ea90",
+        "source_tree_sha256": "29d3b89b7b05e1257ea9c83ed013e86b546caf046328905f459189c252711cef",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "terminal": {
+        "bytes": 588,
+        "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-font-integrated-generated-checks-v4842/terminal-record-v1.json",
+        "sha256": "3be37d5de3c28cf0655c452f35125e538740968a2ae890ef359d38ae5ae63970"
+      }
+    },
+    "later2ec_state": "complete: all 21 passed, zero failures, all children terminal and reaped",
+    "passed": 21,
+    "source": "3aa1549c19cc7e26a3ab576cad42073125ff1a5c"
+  },
+  "current_integrated_source": "33639f62760a94a2cd613e87232adfeff4b80cff",
+  "current_measured_source": "9a967a383cadce590bbcdfdac1323cd33027192c",
+  "draft": false,
+  "evidence": [
+    {
+      "bytes": 8230,
+      "name": "private clean Grid complete census",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-grid-owned-source-complete-chromium-matrices-v4823/receipt.json",
+      "sha256": "1a26c4ce80b080e4964f48b86413532896d0a51a622be8f500a7841bb6f9db47"
+    },
+    {
+      "bytes": 71109456,
+      "name": "Grid original summary",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-grid-owned-source-complete-chromium-matrices-v4823/full/full-summary.json",
+      "sha256": "f1312b9cf47781dc4130c964ca884cb317ac8c5cbeb0e3f8ecf35e839d792fce"
+    },
+    {
+      "bytes": 73303413,
+      "name": "Grid expanded summary",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-grid-owned-source-complete-chromium-matrices-v4823/expanded/expanded-summary.json",
+      "sha256": "8cb4b02fbbd260ec294781d1b9032c24818c0968ec21561bf8c5cf82518265e9"
+    },
+    {
+      "bytes": 563,
+      "name": "Grid complete census terminal",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-grid-owned-source-complete-chromium-matrices-v4823/terminal-record-v1.json",
+      "sha256": "b70becdd8c44af1756b215715129bc533d5e23db72e420b925b66ef62691442c"
+    },
+    {
+      "bytes": 13362,
+      "name": "Grid global paired audit",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-grid-owned-source-global-paired-audit-v4826/comparison.json",
+      "sha256": "7f4c327d354b039fcfe92da82187764887b1659e953f9bbd9616752f0600cb8f"
+    },
+    {
+      "bytes": 376,
+      "name": "Grid global paired terminal",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-grid-owned-source-global-paired-audit-v4826/terminal-record-v1.json",
+      "sha256": "f37bc230845a96eccccf19b432204d877dd3574a7f477153448c0bfef55b4dcc"
+    },
+    {
+      "bytes": 3950,
+      "name": "Font core metadata guard runtime",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-font-source-metadata-guards-v4837/receipt.json",
+      "sha256": "a501d2fb31ddf5a4ea6c8ccb9c06ede3fd94e16aa83a09d7c75a2277c0aa5902"
+    },
+    {
+      "bytes": 384,
+      "name": "Font core metadata runtime terminal",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-font-source-metadata-guards-v4837/terminal-record-v1.json",
+      "sha256": "3fbaf2472f6f6269732dd1a19f5e7bcb35221a412599959ae24c764925f59cb4"
+    },
+    {
+      "bytes": 13866,
+      "name": "Integrated Grid generated checks",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-grid-integrated-generated-checks-v4834/receipt.json",
+      "sha256": "f6fdb540bec247d76202886e33a95167a93015251b33ba9984869228900e795c"
+    },
+    {
+      "bytes": 630,
+      "name": "Integrated Grid generated checks terminal",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-grid-integrated-generated-checks-v4834/terminal-record-v1.json",
+      "sha256": "8de4a09ea47846ae7e1b5c1e3af77cb51431d6ceba2f90f9773395f1ce4de4fd"
+    },
+    {
+      "bytes": 50846,
+      "name": "Private multicol stage diagnostic",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-multicol-source-stage-trace-runtime-v4835/receipt.json",
+      "sha256": "125985d2fddee933c828a4039b6a94db1424f83da8d3f3087fdbd1d047588aa1"
+    },
+    {
+      "bytes": 1042,
+      "name": "Private multicol stage terminal",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-multicol-source-stage-trace-runtime-v4835/terminal-record-v2.json",
+      "sha256": "a737630464f286ff39924bf43a684c1bc39e9f6ecc16873831d3e127aa5edafe"
+    },
+    {
+      "bytes": 15766,
+      "name": "Actual initial103 and remaining95 observations",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-multicol-source-stage-trace-runtime-v4835/inline-skipping-fragmentainer-001-desktop-1280x720@1.25-trace-debug.stderr",
+      "sha256": "b41805aba1ecdf512d7cba56d6bb7a9271279ec2d0294979b3ed4b36ed72e113"
+    },
+    {
+      "bytes": 29214,
+      "name": "Private phase source checkpoint",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-column-phase-ownership-source-table-border-review-v4825/sealed-source-checkpoint-v3.json",
+      "sha256": "4254de2147aa69e0384af3911fd6a50c8cb295b3d853b265ba3a2223bece9a94"
+    },
+    {
+      "bytes": 2987,
+      "name": "Private phase source terminal",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-column-phase-ownership-source-table-border-review-v4825/owned-sealed-source-terminal-v3.json",
+      "sha256": "a9584c644e878055a6de9eae1b9373ef8ad703fe917a4c499cb7b23e79532022"
+    },
+    {
+      "bytes": 215400,
+      "name": "Phase independent source peer",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-column-phase-source-peer-control-grip-source-v4833/review-column-phase-v3-complete.json",
+      "sha256": "d85f8793b6fcb2a4521426492248e2ae669b7e3e61616d581548d7e0e9603091"
+    },
+    {
+      "bytes": 404804,
+      "name": "Ordinary DIV160 source manifest",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-scrollbar-ordinary-div-cdp-source-control-grip-source-v4831/source-manifest-v2.json",
+      "sha256": "47c238143f55a9bdabaf757d3edbb781d0a748c2367184d532a2900b776e6588"
+    },
+    {
+      "bytes": 282422,
+      "name": "Ordinary DIV160 independent source peer",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-scrollbar-cdp-peer-table-border-review-v4831/review-table-ordinary-div-cdp-v2.json",
+      "sha256": "2fad40e3a85e0d28fef13dafbaa81d95cb3da7c2f6449b213a01279ce2ccec0c"
+    },
+    {
+      "bytes": 646,
+      "name": "Ordinary DIV160 source peer terminal",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-scrollbar-cdp-peer-table-border-review-v4831/review-table-ordinary-div-cdp-terminal-v2.json",
+      "sha256": "95ca1d45e6d8246bbe4134fc357f87cba5532cd6def55ab0084eb591a8b617b9"
+    },
+    {
+      "bytes": 17205,
+      "name": "Actual private phase Engine strict failure",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-column-phase-ownership-guards-v4843/new-native-phase-engine-guards.log",
+      "sha256": "1436705e1194e36c72aa9d1e9a90cb81d9864c20046b4aeaa163174101ddba33"
+    },
+    {
+      "bytes": 10055,
+      "name": "Actual private phase168 native targets",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-column-phase-ownership-guards-v4843/receipt.json",
+      "sha256": "e136272da32b1c264d826f3a29ff6f43ddb849d0c9cfeea1c688a7a92b3bc5c0"
+    },
+    {
+      "bytes": 557,
+      "name": "Actual private phase168 terminal",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-column-phase-ownership-guards-v4843/terminal-record-v1.json",
+      "sha256": "0682f1a55f053765d27ff529b2bf92b7b865cc26b9550a4a7eac7de21779dcaf"
+    },
+    {
+      "bytes": 5692,
+      "name": "Actual private phase eight scoped matrix",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-column-phase-failed-frame-matrices-v4845/receipt.json",
+      "sha256": "de3975c56ccc9d478297666bd9f2a6c330b0547250fa778be0c08ac884f49b74"
+    },
+    {
+      "bytes": 442,
+      "name": "Actual private phase eight scoped terminal",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-column-phase-failed-frame-matrices-v4845/terminal-record-v1.json",
+      "sha256": "461ce539535be2132d6a41e5248809cf5dde76cd5a407f0235312444fe3fb01f"
+    },
+    {
+      "bytes": 12072,
+      "name": "Actual private phase wrong RGBA regions",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-column-phase-failed-frame-matrices-v4845/actual-failed-frame-regions-v1.json",
+      "sha256": "93ad369a0442d992d81d58a4567c0c91789ba772355aa712a23355543885bbde"
+    },
+    {
+      "bytes": 13866,
+      "name": "Actual2ec generated21 receipt",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-font-integrated-generated-checks-v4842/receipt.json",
+      "sha256": "ce43f99ce6b3ae70d1d62963b111d8aa794ccb8a8ea071ae3ea5e3dd06257fb6"
+    },
+    {
+      "bytes": 588,
+      "name": "Actual2ec generated21 terminal",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-font-integrated-generated-checks-v4842/terminal-record-v1.json",
+      "sha256": "3be37d5de3c28cf0655c452f35125e538740968a2ae890ef359d38ae5ae63970"
+    },
+    {
+      "bytes": 3264,
+      "name": "Private facade6 native tests receipt",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-font-source-facade-guards-v4848/receipt.json",
+      "sha256": "41bca1d23ced10cb5df043ce7a632bd570875715d3f5c484b39d98e97ce25420"
+    },
+    {
+      "bytes": 371,
+      "name": "Private facade6 native tests terminal",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-font-source-facade-guards-v4848/terminal-record-v1.json",
+      "sha256": "2d169fbb88266c321bee62265132fab1ea12b5834c6bf63a0bfe807e1e855b9d"
+    },
+    {
+      "bytes": 18590,
+      "name": "Actual336 facade integration receipt",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-font-source-facade-integration-v4849/receipt.json",
+      "sha256": "cfaae7e24346ab9233895c510e91835055e5c0aa5fbb9a9634bfe5ee370c4b5f"
+    },
+    {
+      "bytes": 615,
+      "name": "Actual336 facade integration terminal",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-font-source-facade-integration-v4849/terminal-record-v1.json",
+      "sha256": "90010c5bfdfcf3f6b9eb1e35d2d9288396eb22d4416e9aa0a4341fecb10e404b"
+    }
+  ],
+  "external_CDP_AST_qualification_tools_allowed": true,
+  "font_core": {
+    "facade_integrated_source": "33639f62760a94a2cd613e87232adfeff4b80cff",
+    "facade_measured_source": {
+      "clean": true,
+      "commit": "a2cf93a2214a9a8154f5a0d8c8d92c62009c06d5",
+      "harness_sha256": "32a51e0c7438d13688bcac5a3b9a4a04c66a32219fd627d9be9e4844a052ea90",
+      "source_tree_sha256": "0b2af34410cb56609021f2f2b13d5416039d28461defff8543bacdb9e2a5b497",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "facade_native_tests": {
+      "failed": 0,
+      "groups": [
+        {
+          "executed": 3,
+          "failed": 0,
+          "ignored": 0,
+          "name": "native-font-source-facade",
+          "passed": 3
+        },
+        {
+          "executed": 3,
+          "failed": 0,
+          "ignored": 0,
+          "name": "existing-native-font-units",
+          "passed": 3
+        }
+      ],
+      "ignored": 0,
+      "passed": 6
+    },
+    "facade_path_count": 3,
+    "facade_state": "integrated metadata/settings facade; renderer provider/query/scaler activation and pixels remain unqualified",
+    "groups": [
+      {
+        "failed": 0,
+        "name": "native-font-source-provenance",
+        "passed": 8
+      },
+      {
+        "failed": 0,
+        "name": "existing-font-collection-units",
+        "passed": 14
+      },
+      {
+        "failed": 0,
+        "name": "existing-font-platform-units",
+        "passed": 10
+      }
+    ],
+    "integrated_path_count": 6,
+    "integrated_source": "2ec2d040722a2d8d48d9a9dfee2b270137be7c75",
+    "measured_metadata_guard_source": {
+      "clean": true,
+      "commit": "058f87759d958666d26ce0d0a75037c8c38c6634",
+      "harness_sha256": "32a51e0c7438d13688bcac5a3b9a4a04c66a32219fd627d9be9e4844a052ea90",
+      "source_tree_sha256": "ffe1dcbb751e2c988f78af7746619aa0dc7d37609163d2f31c5be2a0f829464b",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "metadata_settings_only": true,
+    "query_provider_scaler_pixels_activated_or_qualified": false,
+    "tests_passed": 32
+  },
+  "grid_change_vs969": {
+    "Q4_global_regressions_closed": false,
+    "compared_rows": 46652,
+    "pairs": [
+      {
+        "after": {
+          "different": 1966,
+          "errors": 0,
+          "exact": 20958,
+          "profile_result_sha256": "f5edbd1aad41ba62d5acabc62dda0c6ad30f2adb9b0be32797e56de9fa0ff732",
+          "total": 22924
+        },
+        "before": {
+          "different": 1976,
+          "errors": 0,
+          "exact": 20948,
+          "profile_result_sha256": "6713da18c9bca336a7a206946f9c977ab7f36a523e04ab1c8f54131abcbddc7b",
+          "total": 22924
+        },
+        "chromium_changed": 0,
+        "comparisons": 22924,
+        "gained_exact": 10,
+        "increased_mismatched_pixels_comparisons": 0,
+        "lost_exact": 0,
+        "native_rgba_changed": 12,
+        "residual_ids_after": 963,
+        "suite": "full"
+      },
+      {
+        "after": {
+          "different": 2042,
+          "errors": 0,
+          "exact": 21686,
+          "profile_result_sha256": "7d9fed13eef30da2a4ad50f995ed47edc5c46cd57cd16ce4c09c96b1c9107bf0",
+          "total": 23728
+        },
+        "before": {
+          "different": 2052,
+          "errors": 0,
+          "exact": 21676,
+          "profile_result_sha256": "d7504d9e5373e5e6867aadb6852d778acdb2da0e7ad3e7dba346f073bc54a624",
+          "total": 23728
+        },
+        "chromium_changed": 0,
+        "comparisons": 23728,
+        "gained_exact": 10,
+        "increased_mismatched_pixels_comparisons": 0,
+        "lost_exact": 0,
+        "native_rgba_changed": 12,
+        "residual_ids_after": 982,
+        "suite": "expanded"
+      }
+    ],
+    "unique_changed_native_comparisons": 12,
+    "verified_actual_png_files": 17385
+  },
+  "historical_complete_workspace": {
+    "CPP_consumers_passed": 35,
+    "C_consumers_passed": 41,
+    "FFI_exports": 164,
+    "Rust_failed": 1,
+    "Rust_ignored": 0,
+    "Rust_passed": 9385,
+    "checks": [
+      {
+        "actual_exit_code": 101,
+        "argv": [
+          "cargo",
+          "+stable",
+          "--config",
+          "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+          "test",
+          "--locked",
+          "--offline",
+          "--no-fail-fast",
+          "--workspace",
+          "--all-targets"
+        ],
+        "log_sha256": "0737f01ef4566df84bba111624ad78ac5f473cfcd8d03a77c5efe34b90acce06",
+        "name": "workspace-all-targets",
+        "pid": 3722774,
+        "reported_failed": 1,
+        "reported_ignored": 0,
+        "reported_passed": 9385,
+        "terminal_reaped": true
+      },
+      {
+        "actual_exit_code": 0,
+        "argv": [
+          "cargo",
+          "+stable",
+          "--config",
+          "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+          "test",
+          "--locked",
+          "--offline",
+          "--no-fail-fast",
+          "--workspace",
+          "--doc"
+        ],
+        "log_sha256": "8c5bb5c4c296e5bb1bc2b8cbb4ac7a6a71b00cd9afac08a598fbe81532ae3130",
+        "name": "workspace-doctests",
+        "pid": 3743484,
+        "reported_failed": 0,
+        "reported_ignored": 13,
+        "reported_passed": 2,
+        "terminal_reaped": true
+      },
+      {
+        "actual_exit_code": 0,
+        "argv": [
+          "cargo",
+          "+stable",
+          "--config",
+          "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+          "build",
+          "--locked",
+          "--offline",
+          "-p",
+          "openui-ffi"
+        ],
+        "log_sha256": "1ff661f86ed08240efbe0288a51475549c125d59dbc9afcac4238a64db1ed7b4",
+        "name": "c-abi-library-build",
+        "pid": 3743754,
+        "reported_failed": 0,
+        "reported_ignored": 0,
+        "reported_passed": 0,
+        "terminal_reaped": true
+      },
+      {
+        "actual_exit_code": 0,
+        "argv": [
+          "python3",
+          "-B",
+          "/home/nero/code/open-ui/tools/ffi/verify_abi.py",
+          "--library",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-principal-current-workspace-runtime-v4755/libopenui_ffi.so",
+          "--keep-going"
+        ],
+        "log_sha256": "5f91a962583cd184258a1b4305dd2c15d1c15a3d6a096243d9002331f0fe9d46",
+        "name": "c-cpp-headless-consumers",
+        "pid": 3743821,
+        "reported_failed": 0,
+        "reported_ignored": 0,
+        "reported_passed": 0,
+        "terminal_reaped": true
+      }
+    ],
+    "current_source": false,
+    "doctests_ignored": 13,
+    "doctests_passed": 2,
+    "source": {
+      "clean": true,
+      "commit": "59f6e5756b6df70d9ca1d3fab19731e64708636d",
+      "harness_sha256": "32a51e0c7438d13688bcac5a3b9a4a04c66a32219fd627d9be9e4844a052ea90",
+      "source_tree_sha256": "f73e50e99bcb768d0e35f0a5611ec66b13de2f8f1eeb941bb3dea31a88503858",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "historical_openui_images_define_correctness": false,
+  "initial_source_diagnostic": {
+    "Q4_counterpart": "separate diagnostic; no production rollback justified",
+    "actual_frames": 24,
+    "actual_geometry_runs": 24,
+    "first_pure_Node5_height_css": 103,
+    "groups": 12,
+    "later_remaining_relayout_css": 95,
+    "production_integration_allowed": false,
+    "quiet_trace_Q9_pixels_geometry_unchanged": true,
+    "remaining_relayout_is_first_cause": false,
+    "source": {
+      "clean": true,
+      "commit": "cc9f7fcbf4ee70cb32578b87eb98b9852b2dcd3e",
+      "harness_sha256": "32a51e0c7438d13688bcac5a3b9a4a04c66a32219fd627d9be9e4844a052ea90",
+      "source_tree_sha256": "8cf693c799570c843fd1feba913131cce5d73ea9e8c6fb50942bfc4a990013dc",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "javascript_executed_by_openui": false,
+  "last_complete_original_expanded_census": {
+    "Root2ec_measured": false,
+    "integrated_checkpoint": "3aa1549c19cc7e26a3ab576cad42073125ff1a5c",
+    "private_clean_census_subsequently_integrated": true,
+    "source": {
+      "clean": true,
+      "commit": "9a967a383cadce590bbcdfdac1323cd33027192c",
+      "harness_sha256": "32a51e0c7438d13688bcac5a3b9a4a04c66a32219fd627d9be9e4844a052ea90",
+      "source_tree_sha256": "c25fd297bc813d7bb753c2d3040a3603fd172f34ed51fa36b059147e934721e3",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "suites": {
+      "expanded": {
+        "different": 2042,
+        "errors": 0,
+        "exact": 21686,
+        "profile_result_sha256": "7d9fed13eef30da2a4ad50f995ed47edc5c46cd57cd16ce4c09c96b1c9107bf0",
+        "total": 23728
+      },
+      "full": {
+        "different": 1966,
+        "errors": 0,
+        "exact": 20958,
+        "profile_result_sha256": "f5edbd1aad41ba62d5acabc62dda0c6ad30f2adb9b0be32797e56de9fa0ff732",
+        "total": 22924
+      }
+    }
+  },
+  "measured_source_later_integrated_as": "3aa1549c19cc7e26a3ab576cad42073125ff1a5c",
+  "native_api_qualified": false,
+  "pending_source_work": {
+    "height007": {
+      "producer_patch": "source implementation in progress"
+    },
+    "ordinary_DIV_CDP": {
+      "browser_execution": false,
+      "expected_captures": 160,
+      "independent_source_peer_accepted": true
+    },
+    "phase": {
+      "OOF018_first_failure": {
+        "authored": false,
+        "different_pixels": 500,
+        "expected_different_pixels": 0,
+        "profile": "legacy-800x600@1",
+        "repeat": 0
+      },
+      "actual_legacy_wrong_region": {
+        "Chrome_RGBA": [
+          255,
+          255,
+          255,
+          255
+        ],
+        "Native_RGBA": [
+          0,
+          128,
+          0,
+          255
+        ],
+        "different_pixels": 500,
+        "physical_bounds_ltrb": [
+          20,
+          120,
+          70,
+          130
+        ],
+        "source_owner_unproven": true
+      },
+      "commit": "6b01a72ea1802f76ad48117e9a5e78fb0835046b",
+      "full_targeted_native": {
+        "executed": 168,
+        "failed": 1,
+        "ignored": 0,
+        "passed": 167
+      },
+      "independent_source_peer_accepted": true,
+      "integrated": false,
+      "native_Engine_groups_executed": 3,
+      "native_Engine_groups_failed": 1,
+      "native_Engine_groups_passed": 2,
+      "native_guards_matrices": "One strict Engine failure and all four OOF018 matrix regressions; candidate remains private and unqualified",
+      "native_painter_units_passed": 4,
+      "qualified": false,
+      "scoped_matrix": {
+        "Balance003_all_four_exact": true,
+        "OOF018_all_four_regress": true,
+        "OOF018_differences_by_scale": {
+          "1": 500,
+          "1.25": 894,
+          "1.5": 1125,
+          "2": 2000
+        },
+        "different": 4,
+        "errors": 0,
+        "exact": 4,
+        "total": 8
+      },
+      "sealed_paths": 12
+    }
+  },
+  "pixel_target": "Chromium 147.0.7727.50",
+  "pixel_tolerance": 0,
+  "preserved_open_paint_and_font_fitting_gates": {
+    "font_gates": {
+      "Ahem_small_fractional_and_DejaVu_strike_hinting_exceptions": false,
+      "actual_final_physical_strike_and_general_provider_origin_routing": false,
+      "size10_LCD_x_phase_24_to_25_over64": false,
+      "size10_LCD_y_offset": false
+    },
+    "native_browser_source_or_pixel_change": false,
+    "paint_gate": {
+      "channel_addition": 8,
+      "coverage": "28/255",
+      "general_Chromium_derivation_qualified": false,
+      "private_removal_candidate_integrated": false,
+      "private_removal_candidate_qualified": false,
+      "symbol": "shared_spanner_four_way_junctions"
+    },
+    "qualification": false,
+    "schema": "open-source-fitting-gates-v1",
+    "source": "96934cd08f68faa3fcb4eb2ba73f0142b59a2c39",
+    "source_comments_do_not_establish_general_correctness": true,
+    "source_only": true,
+    "sources": [
+      {
+        "Git_blob": "946bf88e193f9d558c7b40b89e32efd89cdb9cc6",
+        "call_and_synthetic_draw": {
+          "excerpt": "                && !doc\n                    .node(decoration.fragment.node_id)\n                    .style\n                    .has_paint_containment()\n                && decorations.iter().take(decoration_index).any(|earlier| {\n                    earlier.ancestor_node_ids.is_empty()\n                        && (doc.node(earlier.fragment.node_id).style.display.is_flex()\n                            || doc.node(earlier.fragment.node_id).style.display.is_grid())\n                });\n            if (!grouped && !precedes_grouped_decoration && !follows_atomic_container)\n                || node_order.contains(&node_id)\n            {\n                continue;\n            }\n            node_order.push(node_id);\n        }\n    }\n\n    let mut prepainted = Vec::new();\n    let mut prepainted_rules = Vec::new();\n    let spanner_junctions =\n        shared_spanner_four_way_junctions(&column_decorations, &node_order, doc);\n    for node_id in node_order {\n        let mut painted_solid_coverage = Vec::new();\n        for decorations in &column_decorations {\n            for decoration in decorations\n                .iter()\n                .filter(|decoration| decoration.fragment.node_id.index() == node_id)\n            {\n                let fragment = decoration.fragment;\n                let style = &doc.node(fragment.node_id).style;\n                let solid_coverage = can_coalesce_identical_solid_decoration(decoration, style)\n                    .then(|| clipped_decoration_coverage_rect(decoration))\n                    .flatten();\n                let duplicate_solid_coverage = solid_coverage.is_some_and(|coverage| {\n                    painted_solid_coverage\n                        .iter()\n                        .any(|painted| same_physical_decoration_rect(*painted, coverage))\n                });\n                let pointer = fragment as *const Fragment as usize;\n                if duplicate_solid_coverage {\n                    // Coordinate replay can expose the same opaque slice\n                    // through two nested fragmentainers. It is one logical\n                    // box decoration; painting it twice compounds fractional\n                    // edge coverage at their shared physical boundary.\n                    prepainted.push(pointer);\n                    continue;\n                }\n                canvas.save();\n                for clip in &decoration.clips {\n                    canvas.clip_rect(clip.rect, ClipOp::Intersect, clip.antialias);\n                }\n                paint_fragment_box_decoration(canvas, fragment, doc, style, decoration.offset, 1.0);\n                prepaint_direct_shared_column_rules(\n                    canvas,\n                    fragment,\n                    doc,\n                    decoration.offset,\n                    &mut prepainted_rules,\n                );\n                prepainted.push(pointer);\n                canvas.restore();\n                if let Some(coverage) = solid_coverage {\n                    painted_solid_coverage.push(coverage);\n                }\n            }\n        }\n    }\n    for (cell, color) in spanner_junctions {\n        // Four independently rasterized quarter-covered corners leave a\n        // symmetric junction slightly lighter on Chromium's analytic\n        // display-item path than four CPU-Skia SrcOver masks. Resolve that\n        // primitive junction while it is still vector paint, before tile\n        // assembly. The eight-bit analytic mask stores the additional\n        // midpoint sample as 28/255 coverage.\n        let mut paint = Paint::default();\n        paint.set_style(PaintStyle::Fill);\n        paint.set_anti_alias(false);\n        let channel_up = |component: f32| {\n            if component <= 0.0 || component >= 1.0 {\n                component.clamp(0.0, 1.0)\n            } else {\n                (((component * 255.0).round() + 8.0).min(255.0)) / 255.0\n            }\n        };\n        let packed_color = Color {\n            r: channel_up(color.r),\n            g: channel_up(color.g),\n            b: channel_up(color.b),\n            a: color.a,\n        };\n        set_paint_css_color_with_alpha(&mut paint, &packed_color, 28.0 / 255.0);\n        canvas.draw_rect(cell, &paint);\n    }\n    (prepainted, prepainted_rules)\n}\n\nfn paint_stacking_entry(\n    canvas: &Canvas,\n    entry: &StackingEntry,\n    children: &[Fragment],\n",
+          "excerpt_sha256": "1cd838df5e6b26079210a50a73696e7199e3fdf1925263a27b7c67ada438cf50",
+          "first_source_line": 8665
+        },
+        "functions": [
+          {
+            "excerpt": "fn shared_spanner_four_way_junctions(\n    column_decorations: &[Vec<SharedColumnDecoration<'_>>],\n    node_order: &[usize],\n    doc: &Document,\n) -> Vec<(Rect, Color)> {\n    const EPSILON: f32 = 1.0 / 1024.0;\n    let scale = doc.device_scale_factor();\n    let snapping = RasterSnapping::new(scale);\n    let candidates: Vec<_> = column_decorations\n        .iter()\n        .flatten()\n        .filter_map(|decoration| {\n            let node_id = decoration.fragment.node_id.index();\n            if !node_order.contains(&node_id) {\n                return None;\n            }\n            let style = &doc.node(decoration.fragment.node_id).style;\n            let belongs_to_spanner = style.column_span == openui_style::ColumnSpan::All\n                || decoration.ancestor_node_ids.iter().any(|ancestor| {\n                    doc.node(*ancestor).style.column_span == openui_style::ColumnSpan::All\n                });\n            (belongs_to_spanner && can_coalesce_identical_solid_decoration(decoration, style))\n                .then(|| {\n                    clipped_decoration_coverage_rect(decoration)\n                        .map(|rect| (rect, style.background_color))\n                })\n                .flatten()\n        })\n        .collect();\n\n    let mut junctions = Vec::new();\n    for &(top_left, color) in &candidates {\n        let x = top_left.right;\n        let y = top_left.bottom;\n        let x_phase = (f64::from(x) * scale).rem_euclid(1.0);\n        let y_phase = (f64::from(y) * scale).rem_euclid(1.0);\n        if (x_phase - 0.5).abs() > 1.0e-6 || (y_phase - 0.5).abs() > 1.0e-6 {\n            continue;\n        }\n        let has_top_right = candidates.iter().any(|(rect, peer_color)| {\n            *peer_color == color\n                && (rect.left - x).abs() <= EPSILON\n                && (rect.bottom - y).abs() <= EPSILON\n        });\n        let has_bottom_left = candidates.iter().any(|(rect, peer_color)| {\n            *peer_color == color\n                && (rect.right - x).abs() <= EPSILON\n                && (rect.top - y).abs() <= EPSILON\n        });\n        let has_bottom_right = candidates.iter().any(|(rect, peer_color)| {\n            *peer_color == color\n                && (rect.left - x).abs() <= EPSILON\n                && (rect.top - y).abs() <= EPSILON\n        });\n        if !(has_top_right && has_bottom_left && has_bottom_right) {\n            continue;\n        }\n        let physical_x = snapping.physical_coordinate(x, PhysicalSnap::Floor);\n        let physical_y = snapping.physical_coordinate(y, PhysicalSnap::Floor);\n        let cell = Rect::from_ltrb(\n            physical_x as f32 / scale as f32,\n            physical_y as f32 / scale as f32,\n            (physical_x + 1) as f32 / scale as f32,\n            (physical_y + 1) as f32 / scale as f32,\n        );\n        if !junctions.iter().any(|(existing, existing_color)| {\n            *existing_color == color && same_physical_decoration_rect(*existing, cell)\n        }) {\n            junctions.push((cell, color));\n        }\n    }\n    junctions\n}",
+            "excerpt_sha256": "ab65d6b94ff0194858f12d44fea9b54f85c1291654d5d2abcd283ec69c682a31",
+            "source_line": 8014,
+            "symbol": "shared_spanner_four_way_junctions"
+          }
+        ],
+        "source_path": "bindings/rust/openui-paint/src/painter.rs",
+        "source_revision": "96934cd08f68faa3fcb4eb2ba73f0142b59a2c39",
+        "whole_source_sha256": "d4d55eaae8e5bd205d76becf0e525301d2e2ff1b1f1001b45c7c337163164f70"
+      },
+      {
+        "Git_blob": "3a16ded713aafea68ed5ed6ad759514ff5898f38",
+        "functions": [
+          {
+            "excerpt": "fn chromium_lcd_raster_x(device_x: f32, font_size: f32) -> f32 {\n    let phase = device_x.rem_euclid(1.0);\n    if (font_size - 10.0).abs() < f32::EPSILON && (24.0 / 64.0..25.0 / 64.0).contains(&phase) {\n        device_x - phase + 1.0 / 3.0\n    } else {\n        device_x\n    }\n}",
+            "excerpt_sha256": "fc3e7305a0a5dc8c7ed46d5e6ab428873807f00b1138b3d89b1484532f5d19ce",
+            "source_line": 44,
+            "symbol": "chromium_lcd_raster_x"
+          },
+          {
+            "excerpt": "fn chromium_lcd_strike_y_offset(\n    device_scale: f32,\n    edging: Edging,\n    hinting: FontHinting,\n    font_size: f32,\n    family: &str,\n) -> f32 {\n    // Chromium's retained 10px no-hint LCD strike keeps its origin one\n    // logical pixel above Skia's direct scaled replay. Ahem is a synthetic\n    // geometric face and does not use this outline-strike origin.\n    if (device_scale - 1.0).abs() > f32::EPSILON\n        && edging == Edging::SubpixelAntiAlias\n        && hinting == FontHinting::None\n        && (font_size - 10.0).abs() < f32::EPSILON\n        && !family.eq_ignore_ascii_case(\"Ahem\")\n    {\n        1.0\n    } else {\n        0.0\n    }\n}",
+            "excerpt_sha256": "42dc8b28f735de96129245a41904339ce48d65ca8fb252d74df51156e00970c9",
+            "source_line": 53,
+            "symbol": "chromium_lcd_strike_y_offset"
+          }
+        ],
+        "source_path": "bindings/rust/openui-text/src/shaping/shape_result.rs",
+        "source_revision": "96934cd08f68faa3fcb4eb2ba73f0142b59a2c39",
+        "whole_source_sha256": "8e251b4e16c6d93941acdfc733821c217b79890bed2eafee92fc356f664c73bc"
+      },
+      {
+        "Git_blob": "e57524836402fc92304c01b3eebb0a5ad1dac584",
+        "functions": [
+          {
+            "excerpt": "fn resolve_hinting(\n    requested_hinting: TextHinting,\n    requested_edging: TextEdging,\n    family_name: &str,\n    size: f32,\n    device_scale_factor: f64,\n) -> FontHinting {\n    let is_ahem = family_name.eq_ignore_ascii_case(\"Ahem\");\n    let computed_size = size / device_scale_factor as f32;\n    // The unit-scale 20px proportional strike is light-fitted by the pinned\n    // Chromium font profile. Its unhinted outline moves the first ink row,\n    // while a 20px physical strike reached from a fractional device scale\n    // follows the unfitted policy.\n    let unit_scale_20px_strike =\n        (device_scale_factor - 1.0).abs() <= f64::EPSILON && (computed_size - 20.0).abs() <= 1.0e-4;\n    match requested_hinting {\n        // Chromium's Fontconfig `hinting=false` path still grid-fits the\n        // aliased 8px Ahem face. Skia's direct API needs slight hinting to\n        // reproduce those glyph bounds, while larger Ahem sizes remain truly\n        // unhinted. Select by face and computed size, not by test identity.\n        TextHinting::None if requested_edging == TextEdging::Alias && is_ahem && size <= 8.0 => {\n            FontHinting::Slight\n        }\n        // Chromium also grid-fits glyphs supplied by a fallback face (for\n        // example arrows absent from Ahem) before applying the same aliased\n        // coverage threshold.\n        TextHinting::None if requested_edging == TextEdging::Alias && !is_ahem => {\n            FontHinting::Slight\n        }\n        TextHinting::None => FontHinting::None,\n        // Chromium asks Fontconfig for render parameters for every resolved\n        // family and physical strike. The pinned proportional Sans/Serif\n        // faces are generally returned without outline fitting, while the\n        // exact 16px and 24px strikes remain lightly fitted. The pinned\n        // monospace face keeps light fitting at every strike. Preserve those\n        // family/strike distinctions instead of applying one global SkFont\n        // hinting mode to all document-owned fonts.\n        TextHinting::Slight\n            if requested_edging == TextEdging::SubpixelAntiAlias\n                && (family_name.eq_ignore_ascii_case(\"DejaVu Sans\")\n                    || family_name.eq_ignore_ascii_case(\"DejaVu Serif\"))\n                && (computed_size >= 16.0 || device_scale_factor > 1.0)\n                && (size - 16.0).abs() > 1.0e-4\n                && (size - 24.0).abs() > 1.0e-4\n                && !unit_scale_20px_strike =>\n        {\n            FontHinting::None\n        }\n        // At a fractional physical Ahem strike, Skia's light-fitting drops\n        // the trailing coverage cell that Chromium keeps. Integral strikes\n        // retain light fitting; removing it there regresses exact glyphs.\n        TextHinting::Slight\n            if requested_edging == TextEdging::SubpixelAntiAlias\n                && is_ahem\n                && (size - size.round()).abs() > 1.0e-4 =>\n        {\n            FontHinting::None\n        }\n        TextHinting::Slight => FontHinting::Slight,\n        TextHinting::Normal => FontHinting::Normal,\n        TextHinting::Full => FontHinting::Full,\n    }\n}",
+            "excerpt_sha256": "369cc8b57277232d5e8d01047a16db7024206e4727f7cecc5aa5d09c4ba66fef",
+            "source_line": 118,
+            "symbol": "resolve_hinting"
+          }
+        ],
+        "source_path": "bindings/rust/openui-text/src/font/platform.rs",
+        "source_revision": "96934cd08f68faa3fcb4eb2ba73f0142b59a2c39",
+        "whole_source_sha256": "c0cd19ad33da5dadc484c146d86ad1faacc4746687e2e023b46dfbb304bc9c31"
+      }
+    ],
+    "writer_pid": 3815969
+  },
+  "previous_status": {
+    "historical_source": "96934cd08f68faa3fcb4eb2ba73f0142b59a2c39",
+    "path": "docs/renderer/generated/native-final-closure-status-v10.json",
+    "sha256": "c7f5c818870fb65446cec154ec1577fd427c7351231ccb015b19791ef035ab31"
+  },
+  "publication_state": "Source documentation checkpoint; runtime and release qualification remain false.",
+  "release_qualified": false,
+  "remaining_gates": [
+    "Q4 global regression remediation",
+    "963 original and 982 expanded residual-ID ownership",
+    "numerical paint/font fitting and general provider/scaler correctness",
+    "current-source hosted/workspace qualification",
+    "native API and compositor presentation ownership",
+    "GPU and release-lab qualification"
+  ],
+  "renderer_qualified": false,
+  "requested_status_base": "33639f62760a94a2cd613e87232adfeff4b80cff",
+  "schema_version": 11,
+  "whole_project_completion_percentage": null
+}

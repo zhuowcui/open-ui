@@ -1,7 +1,7 @@
 # Open UI
 
 Open UI is a typed, reactive desktop and headless UI framework built around one
-pure-Rust renderer. Version 0.2 targets Linux on x86-64 and AArch64, with X11,
+shared Rust engine and Skia renderer. Version 0.2 targets Linux on x86-64 and AArch64, with X11,
 Wayland, OpenGL presentation, automatic software fallback, and a co-equal C ABI.
 
 ```text
@@ -13,27 +13,1387 @@ headless clock ─────────────────────�
 ```
 
 The supported application path has no Blink/Chromium runtime, resource pack,
-HTML loader, CSS text parser, JavaScript engine, or network stack. Chromium 147
-is retained only as the frozen reference used to prove renderer compatibility.
+HTML loader, stylesheet parser, JavaScript engine, or network stack. Chromium 147
+is the pinned rendering reference used to prove renderer compatibility.
+Open UI runs no JavaScript, in any version. Apps implement interaction in
+native Rust through public `Document` and `Element` methods, signals and Rust
+callbacks. Creating, finding, changing, measuring, focusing, scrolling and
+operating elements are native framework operations. Every needed browser-style
+operation must be implemented in the shared Rust engine and exposed to the
+consuming app, including its state changes and events. A missing method is
+unfinished framework work, even if a test fixture can already produce the
+right picture or the Chromium test uses a script. See the
+[native interaction contract](docs/v02/supported-platforms.md#native-interaction-api).
 
 ## Verified status
 
+### Experimental integration checkpoint 17 October 2026
+
+`main` is the experimental source of truth. At the user's direction,
+[PR 4](https://github.com/zhuowcui/open-ui/pull/4) consolidates the latest
+implementation and the history of PR 3 directly into `main`. Future work uses
+one focused PR at a time against `main`, with no PR stack. Feature work remains
+paused at this checkpoint. The [checkpoint and handoff](docs/progress/branch-checkpoint-2026-10-17.md)
+records experiment integration, preserved candidates and the next repair.
+A native scrollbar clipping guard fails at 1.25× scale. The user accepts that
+known failure for this experimental integration; its Chromium comparison is
+the first follow-up. Native, renderer and release qualification remain open.
+
+### Current closure work (15 October 2026)
+
+The latest complete private CPU census at clean `ec3883b3` measures
+**20,931/22,924 original comparisons exact**, with **1,993 differences and
+zero render errors**, against Chromium 147.0.7727.50. Expanded results are
+**21,659/23,728 exact**, with **2,069 differences and zero errors**. Both
+are 27 exact comparisons below the preceding Grid checkpoint. The full
+renderer regression gate remains open; later selected repairs do not change
+these completed census totals.
+
+Later clean private `3de52662` passes **17/17 selected native checks**,
+including the corrected ordinary zero-height guard V4. Its vertical-family
+matrix records **32/40 exact**, **eight pre-existing differences and zero
+errors**, restoring all **24 targeted exact comparisons** with zero worsening.
+All **80 uncached CPU renders / 40 repeat pairs** preserve source and reference
+inputs. These are selected-source results, not a new full census.
+
+At separate private `ab930081`, **21 selected native tests execute: 19 pass
+and two fail** on padded principal-source continuity. Its 30-state saved audit
+passes **766 checks / 165 unchanged pins**: **30/30 whole RGBA frames and
+ordered geometry APIs** match Chromium, with ten full restorations and 15
+repeat pairs. The two producer failures remain open at that source. The combined private
+`21b96fe7` executes **35 selected Native tests: 32 pass and three fail**.
+Two producer-continuity tests and the C4 overlap-coverage count assertion
+fail; its per-case ordinary RGBA/fallback checks pass. The complete-decoration
+Engine guard passes. This failed selected gate does not qualify the renderer.
+
+A fresh linked diagnostic build recompiles all nine required renderer packages.
+At the same `21b96fe7` source, the selected matrix is **46/56 exact**, with
+**ten pre-existing differences and zero errors**: vertical **32/40**, complete
+decoration **6/8**, owned clip C028 **4/4**, and OOF018 **4/4**. All **34 targeted
+lost exact comparisons are restored**, with zero worsening, 112 uncached CPU
+renders and 56 exact repeat pairs. Source, binary and reference pins remain
+unchanged. The later C5 test-input probe is recorded below. These selected results do not
+change the completed full-census totals or the failed Native gate.
+
+At later diagnostic `3a8c9fbe`, all **five clip/prepaint
+guards and four layout projection units pass**. The three strict padded
+tests still record **one pass and two failures** (one observer ignored).
+Both diagnostic observer runs pass: **20 quiet/traced frame pairs** preserve
+complete RGBA and retained metadata; ten independent repeat pairs and eight
+full restorations pass. The test-input coverage correction passes without
+changing production paint. This trace diagnoses source continuity; it does
+not qualify native APIs or replace the full Chromium census.
+
+Eight fresh Chromium captures match their original whole-RGBA oracles;
+six snapshot mappings complete and the two desktop OOF053 at 1.25 mappings
+remain incomplete.
+The browser command-observation driver exits 1 with `complete=false`.
+
+The old complete-image audit was interrupted with an empty output after the
+environment reset. The reviewed saved-only V4 recovery audit is running;
+its complete result remains pending. Source rehydration restored the exact
+`3de52662` Git object and `fe25bf88` source hash. The earlier v4973 renderer-build
+receipt records nine rebuilt local packages and embedded identity exit 0;
+its outer build terminal was not observed during the reset.
+
+The runtime documentation parent is `ec5ab327`. These private measurements do
+not remeasure or qualify that runtime checkpoint. Complete native Rust APIs,
+the shared C API, full renderer and compositor/3D behavior, current hosted CI,
+hardware, accessibility, performance, packaging and release gates remain open.
+Open UI never executes JavaScript; Chromium is the sole pixel oracle. There
+is no measured whole-project completion percentage.
+
+[Current closure evidence](docs/renderer/generated/native-final-closure-status-v12.json).
+
+### Historical closure status (13 October 2026)
+
+At clean `5520ed92`, the complete CPU renderer census against pinned Chromium
+147.0.7727.50 records **21,006/22,924 original comparisons exact (91.6%)**,
+with **1,918 differences and zero errors**. The expanded census records
+**21,734/23,728 exact**, with **1,994 differences and zero errors**. Of the
+201 added fixture IDs, **182 match at all four required profiles**.
+Focused **640/640** and primitive **960/960** comparisons are exact.
+These are renderer measurements at that commit; there is no measured
+whole-project completion percentage.
+
+At later clean `9ad2fb26`, focused and primitive matrices are also exact.
+All eight audited original rows are unchanged from `5520ed92`; the earlier
+report of three new losses was incorrect. A complete census on later renderer
+source is still required. Historical reports and inputs remain preserved.
+
+At clean `890faec0`, the native workspace records **9,301 passed / 0 failed**; doctests record **2 passed / 0 failed / 13 ignored**. The 163-export C library's 40 C and 34 C++ consumers all pass.
+All **331 Python tests in 21 modules** and **21 generated/format checks** pass. The shared border literal API now accepts all ten existing border styles; the earlier five wheel setup failures and C++ initializer failure are retained as history. These checks qualify this source checkpoint only.
+
+The three pending final-state cases replay native Engine mutations and layout
+barriers. A corrected, separate Chromium oracle now checks the unchanged
+original browser scripts against independent script-free final DOMs. All
+**12/12 oracle comparisons** and independent repeats agree. Open UI matches
+**5/12**: nested columns **0/4**, fixed positioning **3/4**, scrollbars **2/4**.
+No case matches all four profiles, so none is admitted. The previous alias
+comparison omitted the nested case's new child and cannot qualify that replay.
+Open UI executes no JavaScript; consuming apps use native Rust APIs and callbacks.
+
+Chromium tracing links the fixed-background edge to the actual owning layer.
+Opaque solid-color and opaque picture layers both retain an opaque fractional
+edge; transformed and nonopaque neighbors antialias it. Final draw-material
+attribution and the shared native repair remain open. The default font policy
+is unchanged; partial font diagnostics are not qualification.
+
+All seven manual hardening jobs pass at `5520ed92`. Hosted verification of
+the corrected source is pending. Native API completion, the remaining exact
+pixels, independent retained layers and presentation tracks, 3D, physical
+GPU/AT-SPI/performance, reproducible packaging, signing and publication remain
+open. Chromium defines correct pixels. Old Open UI images preserve history
+and are never a correctness target or release gate.
+
+[Current closure evidence](docs/renderer/generated/native-final-closure-status-v8.json).
+
+The sections below record earlier checkpoints. Their source-specific measurements remain historical evidence.
+
+### Table ownership and opacity repair (full renderer gate open)
+
+A clean public Rust table consumer at `c4e8a809` matches pinned Chromium in
+**25/25 pictures**, **275/275 geometry records** and **250/250 hit checks**.
+It covers five scales and five states: base, translated, clipped, scrolled and
+opacity. The older twenty table comparisons gain no newly wrong pixels;
+their collapsed cell geometry and glyph differences remain open.
+
+Layout now distinguishes authored element boxes from table formatting helpers.
+Geometry, hit testing and painting apply authored effects to the owning box,
+while helpers retain decoration, structural clips and child traversal. All
+opacity groups now use the destination's ordinary intermediate format.
+
+A separate diagnostic measures **720 operation cases twice** with identical
+outputs using the same compiled Skia as the preceding Engine measurement.
+For groups with multiple draws, ordinary N32 layers reproduce Chromium's
+opacity values; F16 layers reproduce the old native differences. The fresh
+Engine comparisons verify the shared repair in the public Rust app.
+
+Layout **675/675** and native conformance **59/59** pass at `c4e8a809`.
+The full paint run exposed two outline tests using boxes without an authored
+node. Their setup now creates real element identities; the exact pixel
+assertions are unchanged. Paint **170/170** passes at `0d178e2c`, whose
+production painter is identical to the measured `c4e8a809` code. The first
+failed paint run remains preserved alongside the corrected result.
+
+The original census recorded for that earlier checkpoint was **21,329/22,924 exact (93.04%)**,
+with 1,595 differences and zero render errors. Focused, primitive and complete
+censuses must be rerun on the changed renderer. Whole-project completion has
+no measured percentage; remaining native APIs, compositor and release gates
+are still required.
+
+Open UI never executes JavaScript. Apps use public native Rust methods and
+callbacks over the shared Engine. Every needed element behavior requires a
+native API. Pinned Chromium defines expected pixels and geometry.
+
+[Table ownership and opacity evidence](docs/renderer/native-table-ownership-opacity.md).
+
+### Explicit monochrome matrices (diagnostic; policy not promoted)
+
+At clean `f6d318e6`, explicit fitted monochrome text restores
+**21 exact comparisons** in the selected strict-ceil regression cohort:
+**48/84 → 69/84 exact**, with zero new exact losses. Four already failing
+table comparisons worsen, so strict nonregression still fails. These are
+21 selected original cases across four profiles, not a complete census.
+
+| Matrix, complete 40-profile selection | Automatic policy | Fitted candidate |
+|---|---:|---:|
+| Focused | 640/640 | 640/640 |
+| Primitive | 960/960 | 960/960 |
+
+All six matrix reports have zero render errors. Fresh local libraries,
+**3,368 comparison rows**, saved PNG bytes, decoded pixels and full difference
+signatures are independently audited. Chromium fixture/capture/font inputs
+and reference pixels stay unchanged. The measured source and target were kept
+frozen through owner completion, independent audit and saved reaping proof.
+
+`--monochrome-raster-config chromium-linux-monochrome` is an explicit diagnostic
+choice. It selects the existing aliased author-text cohort and preserves other
+font profiles. Native cache identities record the selected policy; sharded
+summaries reject mixed policies. The default selection and release gate remain
+unchanged. Exact candidate matrices do not establish full renderer qualification.
+
+The worsened `display-contents-table-002`/reference pictures have a one-column
+caption shift at 1.25× and narrow glyph-column changes at 1.5×. Their root cause
+and reviewed ownership remain open. The earlier reduced public Rust consumer identified geometry gaps. The new
+ownership consumer verifies its declared geometry and hit checks, while the
+original glyph regressions remain open. The last complete original census remains **21,329/22,924 exact**,
+with **1,595 differences**, zero errors. No new complete original or expanded
+census is claimed. Every needed native Rust API remains required; Open UI
+never executes JavaScript.
+
+[Immutable matrix and table evidence](docs/renderer/generated/native-monochrome-policy-matrices-v1.json).
+
+### Fitted monochrome text repair (native app exact; census open)
+
+The native Rust application at clean `1576f01a` now matches **40/40
+pictures and 1,920/1,920 bounds** across five scales, both font collections and
+both explicit CPU paths, before and after a Rust text callback. The 3× glyph
+difference is repaired: an old unhinted-mask workaround had drawn a second
+row over already fitted monochrome glyphs. The shared paint policy now respects
+the selected hint configuration. No font/test-ID/size/scale patch or reference
+change is added.
+
+This verifies the reduced native application. Complete focused and primitive
+diagnostics are recorded here; original and expanded qualification remain open.
+Every remaining rendering gap and needed public native Rust API remains open.
+Open UI executes no JavaScript; pinned Chromium supplies expected pixels.
+[Native app and evidence](docs/renderer/native-monochrome-font-policy.md).
+
+## Installed and loaded font measurements (reproduced; repair open)
+
+Fresh pinned Chromium captures of the failing flex fixture match its cached
+reference exactly at all four required profiles. There is no oracle
+contradiction for this regression.
+
+The reduced app uses the same Ahem bytes through installed and loaded font
+paths. At 16px, Chromium gives an installed space **16px** and a loaded space
+**16.015625px**; the nine-character word is **144px / 144.015625px**.
+Its platform-font API confirms the two paths. With the original no-hint profile, the native app returns
+the wider intrinsic advance through both collections. The first fixed-width
+flex child is at **5.9375px**, where installed-font Chromium places it at
+**6px**. The difference becomes visible at 1.25× scale.
+
+| Reduced native comparison | Exact pictures | Exact bounds |
+|---|---:|---:|
+| Loaded fonts, five scales and Rust mutation | 0/10 | 480/480 |
+| Installed fonts, five scales and Rust mutation | 8/10 | 140/480 |
+
+The installed-font pictures still differ by **520 / 560 pixels** at 1.25×.
+Independent processes, unchanged-frame repeats, the Rust text callback and
+weak teardown pass. The first diagnostic's empty CSS font shorthand made its
+canvas advances invalid; corrected, explicitly sized probes and all element
+and Range bounds are preserved in the new evidence.
+
+This reproduces the wrong installed-font advance and its layout effect.
+The backend and Chromium strike settings still need verification before a
+shared repair. The full strict-ceil candidate remains rejected, with 21 exact
+losses in each complete census. Every needed native API and the remaining
+renderer and release gates remain open. Open UI never runs JavaScript; apps
+use public Rust APIs and callbacks over the shared Engine.
+[Native Rust reproducer](bindings/rust/openui/examples/native_font_origin.rs) · [Immutable evidence](docs/renderer/generated/native-font-origin-v1.json).
+
+### Fractional intrinsic text widths (rejected after full verification)
+
+The strict-ceil conversion is rejected in its current form. The complete
+original and expanded censuses each lose **21 exact comparisons**, gain none,
+and worsen **23 comparisons** against the preceding applied renderer. Against
+accepted `98d18982`, each has **24 worsened comparisons**. The repair must
+preserve the required native fractional-width behavior and fix the regressions.
+A reduced comparison now reproduces the installed-font advance mismatch and
+its layout effect; the underlying backend and strike mechanism remains open.
+
+At clean `d6d9dfe9`,
+the consuming Rust app verifies **190/210 bounds**, reproducing the dirty
+trial exactly. This retains ten bounds gained from the preceding font probe,
+with no lost bounds. All **15 pictures remain byte-identical**, with **0/15**
+whole images exact. Same-byte aliases, different faces, two Rust callbacks,
+independent processes, unchanged frames and weak teardown pass. All **1,181
+layout/text/paint tests and three public Rust API tests** pass.
+
+Fresh complete CPU verification measures **21,329/22,924 original**
+and **22,132/23,728 expanded** exact, with **1,595 /
+1,596 differences**, zero errors and actual exits **1 / 1**.
+Focused **640/640** and primitive **960/960** are exact.
+All **48,252 rows**, fresh linked libraries and unchanged Chromium reference
+fields are independently audited. Owners and audits are terminal and reaped
+before later source or target changes.
+
+Against preceding applied `81381713`, the original census gains
+**0**, loses **21** and worsens **23**;
+the expanded census gains **0**, loses
+**21** and worsens **23**.
+The required comparison against accepted `98d18982` still has
+**21 exact losses and 24 worsened original differences**;
+its strict nonregression gate remains failed. Scoped checks did not detect
+these regressions and do not replace this
+global gate. There are **890 residual original IDs**,
+**890 without reviewed ownership entries**.
+
+Open UI never executes JavaScript. Every needed element operation must be
+implemented in the shared Rust Engine and callable through public native Rust
+APIs and Rust callbacks. Chromium alone defines expected pixels; old Open UI
+images preserve history. Remaining font/control behavior, every required native
+API, reviewed residual ownership, compositor/3D, hardware and release checks
+remain open. No complete renderer, native API or release pass is claimed.
+Source review also found no public `Element` operation for creating, styling
+or activating scroll buttons; internal pseudo-element insertion does not
+qualify that application API.
+[Immutable clean evidence](docs/renderer/generated/native-strict-intrinsic-ceil-v2.json). The earlier dirty trial remains unchanged.
+
+### Cleared empty boxes (clean verification; pixel gate still failed)
+
+The shared block layout calculates clearance using the complete collapsed
+margin group of an empty cleared box. The native repair is now verified at
+clean `81381713`: **8/8 images and 320/320 bounds exact** against pinned
+Chromium across all four required profiles. The consuming Rust app creates
+eight reduced cases and removes margins through a Rust click callback.
+Independent process and unchanged-frame repeats, callback counts and weak
+teardown pass. All **1,182 layout/text/paint tests** pass, with zero failures
+or ignores. This verifies these eight pictures and bounds; other native APIs
+remain unqualified.
+
+Fresh complete CPU verification at that same clean source measures
+**21,350/22,924 original** and **22,153/23,728 expanded** exact comparisons,
+with **1,574 / 1,575 differences**, zero errors and actual exits **1 / 1**.
+Focused **640/640** and primitive **960/960** are exact and unchanged. All
+**48,252 rows**, 14 fresh compiler records, 26 compiled paths and unchanged
+Chromium reference fields are independently audited. Owners and audits are
+terminal and reaped before later source or build changes.
+
+Against rejected `b21ece15`, each complete census restores **all 16 lost exact
+comparisons**, with zero losses or worsened differences. Against accepted
+`98d18982`, each census has zero exact gains or losses, but **one existing
+scroll-button comparison still worsens**. Three scroll-button images change;
+their other two differing profiles improve. The strict nonregression gate
+therefore still fails. The shared float width calculation remains in place.
+
+All **12 hosted jobs** pass on measured `81381713`, with zero skips: format,
+ordinary CI and all seven explicitly dispatched hardening jobs, including
+hosted X11/Mesa and pure Wayland native consumers.
+[Hardening run 38125591990](https://github.com/zhuowcui/open-ui/actions/runs/38125591990).
+Later checkpoints need their own hosted results; physical lab checks remain
+open.
+
+There are **875 residual original test IDs**, all without a reviewed ownership
+entry. **200/201** added cases are exact at all four profiles; the dynamic
+fieldset/legend case still differs at scale 1.25. The other **35** AST-lowered
+cases remain outside the current manifest and unqualified. Full local
+workspace/ABI, shared font/control behavior, every needed native API,
+compositor/3D, hardware and release qualification remain open.
+
+Open UI never executes JavaScript. Applications use public Rust operations and
+Rust callbacks over the shared Engine. Chromium alone defines expected pixels;
+old Open UI images preserve history. No full renderer, complete native API or
+release pass is claimed.
+[Immutable clean evidence](docs/renderer/generated/native-float-clearance-v2.json). Earlier dirty repair evidence remains
+unchanged in its versioned archive.
+
+### Shared atomic sizing (clean measurement; regression gate failed)
+
+The integrated sizing change fails the full-census regression gate and requires
+repair before acceptance. Atomic elements use the shared minimum and maximum
+content calculations across font families. Consecutive floats retain their measured minimum width. This
+removes the font-name and zero-minimum branches from atomic shrink-to-fit.
+
+A separate Rust app at clean `b21ece15` measures **0/15 whole images and
+180/210 bounds exact** against unchanged pinned Chromium. Its pixels and bounds
+reproduce the earlier sizing trial byte for byte. Same-byte font aliases retain
+pixels and bounds at all five profiles; different font bytes change pixels.
+Both Rust callbacks, independent process repeats, unchanged-frame repeats and
+weak teardown pass. All **1,181 layout/text/paint tests** pass, with zero failures
+or ignores. The **1,470 direct shaping samples** describe retained styles and
+the shared font collection; they do not establish the Engine's inline
+segmentation or Chromium's internal strike settings.
+
+Fresh CPU verification at the same clean source measures
+**21,334/22,924 original** and
+**22,137/23,728 expanded** exact comparisons, with
+**1,590 / 1,591 differences**, zero errors and
+actual exits **1 / 1**.
+Focused **640/640** and primitive **960/960** are exact. All **48,252 rows**,
+fresh linked artifacts and unchanged Chromium reference fields are audited.
+Against earlier clean `98d18982`, the original census gains **0**
+exact comparisons, loses **16**, and worsens **17** differences;
+the expanded census gains **0**, loses **16**, and worsens **17**.
+
+All **12 hosted jobs** pass on measured `b21ece15`, with zero skips: format,
+ordinary CI and all seven explicitly dispatched hardening jobs, including the
+hosted X11/Mesa and pure Wayland native consumers.
+[Hardening run 38113517188](https://github.com/zhuowcui/open-ui/actions/runs/38113517188).
+These results are attributed to the measured source; a later checkpoint needs
+its own hosted results.
+
+There are **879 residual original test IDs**, including
+**879 without a reviewed ownership entry**.
+Long-word advance precision, fallback line height and broader font/raster
+behavior remain open. Existing font-name, size, scale and phase exceptions in
+text rendering still require shared fixes; this sizing change does not remove
+them. Full local workspace/ABI, complete native API, compositor, physical lab
+and release qualification remain open. No renderer or release pass is claimed.
+
+Open UI never runs JavaScript. Applications use public native Rust APIs and
+Rust callbacks; every needed element operation remains framework work.
+Chromium alone defines expected pixels.
+[Immutable clean native and renderer evidence](docs/renderer/generated/native-font-families-v5.json).
+
+### Resolved font raster selection (clean census; remaining gates open)
+
+Ordinary author text now selects its raster policy from each resolved font
+run, replacing the rule based on the first authored family name. Aliased,
+grayscale and LCD runs retain their own edging when mixed in one text blob.
+The two-file change adds no font-name, size, scale or test-ID exception.
+
+Fresh CPU verification at clean `98d18982` measures **21,350/22,924
+original** and **22,153/23,728 expanded** exact comparisons,
+with **1,574 / 1,575 differences**, zero errors and
+actual exits **1 / 1**. Focused **640/640** and primitive
+**960/960** are exact. All **48,252 rows**, fresh linked artifacts and unchanged
+Chromium references are audited.
+The original census gains **0** exact comparisons, loses **0**, and worsens **0** differences against the previous clean source.
+The expanded census gains **0** exact comparisons, loses **0**, and worsens **0** differences against the previous clean source.
+
+All **12 hosted jobs** pass on this source, with zero skipped jobs: format,
+ordinary CI and all seven explicitly dispatched hardening jobs. The hosted
+X11 software/Mesa and pure Wayland consumers pass; physical lab qualification
+remains open.
+[Hardening run 38100438813](https://github.com/zhuowcui/open-ui/actions/runs/38100438813).
+
+Earlier dirty-source native diagnostics preserve pixels and bounds when the
+same font bytes are registered under another name, at five profiles, and
+different font bytes still change pixels. Both Rust callbacks, repeats and
+weak teardown pass, as do **1,181 layout/text/paint tests**. That application
+remains **0/15 whole images and 165/210 bounds exact**, with four images worse
+than its baseline. These are earlier diagnostics, not a clean application
+measurement at `98d18982`. Intrinsic width, consecutive floats, fallback line
+height and other raster differences remain open.
+
+There are **875 residual original test IDs**, including
+**875 without a reviewed ownership entry**.
+Clean native application, complete workspace and ABI checks remain pending.
+The full Chromium pixel, complete native API, compositor, physical lab and
+release gates remain open. Open UI never executes JavaScript; apps use public
+native Rust APIs and Rust callbacks. Chromium alone defines expected pixels.
+[Immutable clean census evidence](docs/renderer/generated/native-font-families-v3.json).
+
+### Corrected text raster policy (clean verification)
+
+Fresh CPU verification at clean `ccb2dfa9` measures **21,350/22,924
+original** and **22,153/23,728 expanded** exact comparisons,
+with **1,574 / 1,575 differences**, zero errors and
+actual exits **1**. Focused **640/640** and primitive **960/960** are exact.
+All **48,252 rows** and fresh linked artifacts are audited; every Chromium
+reference field is unchanged. Against the earlier accepted source, each full
+census gains **7 exact comparisons**, with no exact losses or worsened
+differences. The full Chromium pixel gates remain failed.
+
+The raster policy for ordinary author text respects the resolved hinting
+setting and integer glyph positions; rotated and ruby text retain their
+physical strike and fractional local positions. Complete independent
+comparisons with the rejected source confirm all **16 lost exact results
+restored**, all **7 gains retained** and all **34 worsened differences repaired**
+in each census. There is no test ID, font name, scale or output exception in
+this correction.
+
+The clean native Rust consumer matches **10/10 whole images and 70/70
+bounds** against unchanged, independently repeated pinned Chromium captures
+at the four required profiles and a 3× neighbor. Process and unchanged-frame
+repeats, the Rust callback count and weak teardown pass. All **8,642 all-targets**
+and **8,644 workspace/documentation tests** pass with all features enabled,
+zero failures and 13 existing workspace ignores. All **30 C and 24 C++
+consumers** pass, preserving **131 exports and 34 layouts**. Format checks,
+ordinary CI and all **seven explicitly dispatched hardening jobs** pass on
+this source, with zero skipped jobs:
+[hardening run 38091227950](https://github.com/zhuowcui/open-ui/actions/runs/38091227950).
+
+There are **875 residual original test IDs**, including
+**875 without a reviewed ownership entry**.
+The existing 10px LCD origin/phase exceptions, named-family shaping/paint gates,
+font-size/family hinting branches and fixed native-button width ratio still
+require shared fixes and verification of the render parameters Chromium
+resolves. Full rendering equality, remaining native APIs, compositor, physical lab and release qualification remain open. Open UI
+never executes JavaScript; native apps use public Rust APIs and Rust callbacks.
+Earlier rejected and dirty diagnostics stay unchanged in their versioned
+archives. [Complete corrected-source evidence](docs/renderer/generated/native-monochrome-strikes-v4.json).
+
+### Monochrome text regression (rejected)
+
+Fresh CPU verification at clean `40ff6178` is exact on focused **640/640**
+and primitive **960/960** comparisons. Original **21,334/22,924**
+and expanded **22,137/23,728** are exact, with zero render errors.
+The full pixel gates still exit 1 for **1,590 / 1,591 differences**.
+All **48,252 rows** and fresh compiled artifacts are audited. There are
+7 exact gains but **16 exact losses and 34 worsened comparisons**
+in each full census. Chromium reference fields are unchanged. This candidate
+is rejected for complete renderer qualification; the smaller passing suites
+did not catch its effect on existing rotated and ruby text.
+
+The [native Rust consumer](bindings/rust/openui/examples/native_shaping_wrap.rs)
+changes widths through a Rust click callback. All **10/10 whole images** and
+**70/70 bounds** match unchanged, independently repeated pinned Chromium
+captures at the four required profiles and a 3× neighbor. Separate process
+and unchanged-frame repeats, the callback count and weak teardown pass.
+Hinted author monochrome strikes use Fontations-compatible outlines;
+explicitly unhinted resolved strikes retain their original font.
+
+All **8,642 locked all-targets tests** and **8,644 workspace and documentation
+tests** pass with every feature enabled, with zero failures and 13 existing
+workspace ignores. All **30 C and 24 C++ consumers** pass, preserving **131
+exports and 34 layouts**. Format checks, ordinary CI and all seven explicitly
+dispatched hardening jobs pass on the same source:
+[hardening run 38082198110](https://github.com/zhuowcui/open-ui/actions/runs/38082198110).
+
+The earlier rejected font variants and dirty diagnostics remain preserved in
+[candidate evidence](docs/renderer/generated/native-monochrome-strikes-v1.json).
+Repairing this raster-policy regression, full Chromium equality, reviewed
+residual ownership, generic font-family
+shaping, remaining native APIs, compositor, physical lab and release
+qualification remain open. Open UI never executes JavaScript; native apps
+use public Rust APIs and Rust callbacks over the shared Engine.
+[Completed failed census and clean checks](docs/renderer/generated/native-monochrome-strikes-v2.json).
+
+### Previous wrapping checkpoint
+
+Fresh complete CPU verification at clean `87339e4d` is exact on focused
+**640/640** and primitive **960/960** comparisons. Original **21,343/22,924**
+and expanded **22,146/23,728** are exact, with zero render errors. Both full
+pixel gates still exit 1 for 1,581 and 1,582 differences. Each full census gains
+one exact comparison, with no losses or worsened differences. All **48,252
+rows** are audited and every Chromium reference field is unchanged.
+
+The shared line breaker keeps logical words together across font/script/bidi
+shaping boundaries and strips collapsed spaces at those boundaries. The mobile
+`ttwf-reftest-borderRadius` comparison improves from 45,704 wrong pixels to zero.
+Its 1.25× and 1.5× differences remain 1,876 and 2,255 pixels. The
+[native Rust consumer](bindings/rust/openui/examples/native_shaping_wrap.rs) changes widths through a
+Rust click callback. All **70/70 bounds** match preserved, independently repeated
+pinned Chromium captures at the four required profiles and a 3× neighbor.
+**0/10 whole images** are exact: 2–13 glyph raster cells still differ per image.
+Those differences remain failures. Complete text qualification remains open.
+
+All **8,642 locked all-targets tests** and **8,644 workspace and documentation
+tests** pass with every feature enabled; 13 existing workspace tests remain
+ignored. All 30 C and 24 C++ consumers pass, preserving 131 exports and 34
+layouts. Ordinary CI and all seven explicitly dispatched hardening jobs pass
+on its documentation checkpoint `365f5696`. Those hosted results do not qualify
+the new font candidate.
+Broader native APIs and font-family shaping, mixed-unit animation, residual
+ownership, compositor, physical lab and release qualification remain open.
+Open UI executes no JavaScript; consuming apps use native Rust methods and
+Rust callbacks. [Completed wrapping evidence](docs/renderer/generated/native-shaping-wrap-v1.json).
+
+Earlier clean `883ea716` implements public
+`Element::set_line_height_length(LengthValue)` and `Style::line_height_length`.
+Its ancestor-font callback matches **10/10 images and 60/60 bounds** for `ch`,
+`ex`, `lh`, `em`, `rem` and percentage in the measured rectangle cases.
+Complete text line-box and glyph qualification remains open.
+[Preserved line-height evidence](docs/renderer/generated/native-line-height-v1.json).
+
+Retained native `LengthValue::Ch`, `Ex` and `Lh` declarations are implemented at
+clean checkpoint `45d21648`. A consuming Rust app changes its font through a
+Rust callback; all **8/8 images and 32/32 bounds** match repeated pinned Chromium
+captures at the four required profiles. All **8,625 workspace all-targets
+tests**, 30 C and 24 C++ consumers pass; the ABI preserves 131 exports and 34
+layouts. Both complete pixel gates remain failed. Mixed-unit animation,
+broader font contexts and text line-box qualification remain open. The new
+relative line-height API is measured above. Open UI executes no JavaScript.
+[API and preserved evidence](docs/renderer/native-font-relative-lengths.md).
+
+A shared fieldset paint correction is integrated. Clean private verification
+is **21,342/22,924 original** and **22,145/23,728 expanded** exact, with four
+exact gains, no regressions and unchanged Chromium references. Focused and
+primitive gates pass; both full gates still fail. Fresh combined umbrella
+results are recorded above. See the
+[native Rust reproducer and evidence](docs/renderer/fragment-decoration-clip-investigation.md#native-fieldset-paint-follow-up).
+Fresh canonical Rust consumer verification at `dc8a540e` also passes all
+187 bounds and fragment-rectangle sets, repeated renders, callbacks, teardown
+and 168 paint tests. Four neighboring images still differ. Complete combined
+renderer/workspace results are recorded above.
+The preceding canonical qualification is recorded below.
+
+Fresh qualification on clean umbrella checkpoint `72f5b41e` verifies native
+keyboard controls and neighboring behavior through the shared Rust document.
+Rust, C and C++ apps each match 495 measured Chromium behavior cases, including
+99 keyboard scenarios, with repeated runs identical. All 8,631 all-targets
+tests, 8,633 workspace tests and 54 headless C tests pass; 13 workspace tests
+remain ignored. The ABI has 131 exports and 34 unchanged layouts, with 29 C
+and 23 C++ consumers passing. Six ordinary CI jobs and seven explicit
+hardening jobs pass at the same commit; five optional skips are recorded.
+
+The freshly built CPU renderer is exact on focused **640/640** and primitive
+**960/960** comparisons. Original **21,338/22,924** and expanded
+**22,141/23,728** comparisons are exact, with zero render errors. Both full
+pixel gates still fail: 1,586 original and 1,587 expanded comparisons differ.
+Every Chromium reference remains fixed; no prior exact comparison regresses
+or has more wrong pixels. Broader native APIs, keyboard appearance, reviewed
+ownership of 884 original residual test IDs, compositor, physical lab and
+release gates remain open. Chromium alone defines correct pixels.
+[Completed public evidence](docs/renderer/generated/native-keyboard-public-v2.json).
+The [earlier keyboard evidence](docs/renderer/generated/native-keyboard-controls-v1.json)
+is preserved unchanged. Earlier checkpoints follow.
+
+The [native form association APIs](docs/v02/native-form-owner.md) are integrated
+at clean code checkpoint `a401a8ac`. Rust, C and C++ apps each match all 396
+measured behavior cases against pinned Chromium, including 88 new form-owner
+scenarios. Rust exposes `Element::associated_form()`; C adds owned form and
+parent queries over the same engine. All 8,628 all-targets tests, 8,630 ordinary
+workspace tests and 53 headless C tests pass; 13 workspace tests remain ignored.
+The ABI has 130 exports and the same 34 layouts.
+
+The same clean commit matches 160/160 default-control appearance cases and all
+640 PNG comparisons. Focused 640/640 and primitive 960/960 are exact. Original
+21,338/22,924 and expanded 22,141/23,728 remain failing equality results, with
+zero errors and no pixel regressions. Qualification ran in a private clone;
+the umbrella checkout then adopted the exact commit and verified every source
+byte. New canonical-checkout qualification commands and current hosted checks
+remain open, together with complete APIs, compositor, lab and release gates.
+[Form-owner evidence](docs/renderer/generated/native-form-owner-v1.json).
+
+Earlier control qualification follows.
+
+On clean public checkpoint `54cf4b3c`, Rust, C and C++ apps each match all
+308 measured control-behavior cases against pinned Chromium, including 220
+checkbox/radio cases. The native Rust appearance app also matches 160/160
+default-control cases, with all 640 PNG comparisons exact. All 8,623 workspace
+tests and 52 headless C tests pass on that source; the workspace run is reused
+from its audited successful stage before a disk-space interruption. Seven
+hosted hardening jobs pass. These results qualify the measured controls.
+Complete native APIs, the full renderer, compositor and hardware qualification
+remain open. [Public control evidence](docs/renderer/generated/native-checkable-public-v1.json).
+
+The [native editing and rounded border follow-up](docs/renderer/native-editing-and-rounded-border.md)
+is verified on clean PR checkpoint `5b05e1b5`. The consuming Rust app matches
+35/35 unchanged Chromium images twice. Focused **640/640** and primitive
+**960/960** are exact. Original comparisons are **21,338/22,924 exact** and
+expanded comparisons are **22,141/23,728 exact**, with zero render errors.
+Both complete censuses gain eight exact comparisons with no losses or worsened
+rows. All pinned Chromium reference fields remain unchanged. The full gates
+still fail: 1,586 original and 1,587 expanded comparisons differ.
+
+All 8,597 locked workspace tests, 48 headless C tests, 16 C and 10 C++ consumers,
+and twenty verification stages pass on that same source. The existing
+116 exports and 32 layouts remain intact. Six ordinary CI jobs and seven
+explicit hardening jobs pass; five optional skips remain recorded separately.
+Hosted X11 and Wayland window checks pass on virtual displays. Physical lab,
+complete native API, compositor and release qualification remain open.
+[Completed public evidence](docs/renderer/generated/native-rounded-layer-v4.json).
+
+The [native selection and element-query APIs](docs/v02/native-selection-events.md) are implemented and verified on
+clean public checkpoint `fcabea38`. All **109 Rust scenarios** and **109
+scenarios in each of C and C++** match immutable Chromium observations; repeated
+runs stay identical. C queries actual event properties, attributes, focus and
+node identity. Scalar position normalization and declared range comparison
+fields are explicit. The ABI has **125 exports and 34 layouts**, preserving all
+previous 116 exports and 32 layouts.
+
+All **8,607 workspace tests**, 50 headless C tests, 22 C and 16 C++ consumers,
+and twenty local stages pass on that unchanged source. Six ordinary CI jobs
+and seven explicit hardening jobs pass; five optional skips remain separately
+recorded. Hosted virtual X11 software/OpenGL and pure Wayland software windows
+pass. Physical release-lab qualification remains open.
+
+Focused **640/640** and primitive **960/960** are exact. Original
+**21,338/22,924** and expanded **22,141/23,728** are exact,
+with zero errors. All Chromium reference fields stay fixed, with no exact
+losses or worsened rows against `5b05e1b5`. Both full pixel gates still exit 1.
+Composition, complete native APIs, reviewed pixel ownership, compositor and
+release qualification remain open. The earlier fieldset focus failure is
+addressed by native disabled groups, freshly verified on clean public
+`6ba3ef58`. All 88 Rust scenarios and 88 scenarios in each of C and C++ match
+pinned Chromium, with all previous 109 cases in each language unchanged.
+All 8,618 workspace tests, 51 headless C tests, 24 C and 18 C++ consumers and
+twenty local checks pass. All seven explicit hosted hardening jobs and the
+three source-verified virtual window reports pass. The ABI has 127 exports and
+34 layouts, preserving previous exports and layouts. Default control appearance
+was unqualified at that checkpoint; the follow-up below verifies its measured
+scope. Complete checkbox/radio behavior remains open. Open UI runs no
+JavaScript. See the [native disabled groups](docs/v02/native-disabled-groups.md).
+[Completed public API evidence](docs/renderer/generated/native-selection-public-v1.json).
+
+The shared checkbox/radio follow-up is integrated and its measured behavior
+and default appearance are verified on clean public `54cf4b3c`. The earlier
+private renderer trial preserves every original and expanded comparison field;
+the full pixel gates still fail. A complete fresh public renderer census,
+form-owner resets, keyboard behavior and complete native APIs remain open.
+The hosted historical-image audit verifies archive integrity, and does not
+qualify Chromium equality.
+[Earlier private renderer evidence](docs/renderer/generated/native-checkable-theme-private-v1.json).
+
+The [native text commit trial](docs/v02/native-text-commit.md) remains private and unapplied.
+Both Rust runs match all six Chromium scenarios and 29 full callback rows;
+C/C++ each match the common fields twice. All fifteen targeted Rust guards pass,
+and every final source identity is unchanged. The earlier rejected artifact
+proof is preserved. This remains historical private-trial evidence. Public
+editing intent and nullable input data have since been implemented and measured
+on `fcabea38` in the completed selection/query/metadata scope above. Composition
+and complete native event behavior remain open. [Evidence](docs/renderer/generated/native-text-commit-v1.json). Open UI executes no JavaScript.
+
+The [combined native input verification](docs/renderer/generated/native-input-combined-v1.json) measures clean umbrella
+`8e8318bf`. Rust, C and C++ apps each match all 338 focus observations in twelve
+scenarios and five input observations, twice each. All **8,597 locked workspace
+tests**, 48 headless C tests, 16 C and 10 C++ consumers, and twenty verification
+stages pass. The existing 116 exports and 32 layouts remain unchanged. All six
+ordinary CI jobs and seven manually enabled hardening jobs pass on that source;
+the five optional skips in ordinary CI remain recorded separately.
+
+Focused **640/640** and primitive **960/960** are exact. Original
+**21,330/22,924** and expanded **22,133/23,728** are exact with zero errors;
+both full pixel gates fail. All nine comparison fields remain unchanged across
+48,252 rows against the preceding current-protocol source. No pixel gain or
+complete native API qualification is claimed.
+
+Eight fresh production captures each of two text cases produce two Chromium
+variants under the same recorded inputs. The font-input audit also finds
+configuration and inherited environment inputs missing from the cache identity;
+it does not prove those inputs caused the variants. The cause remains open and
+all references stay immutable. The 1,594 original differences cover 886 test
+IDs, with none covered by the reviewed ownership ledger. Remaining pixels,
+native APIs, compositor and release-lab gates are unfinished. Open UI executes
+no JavaScript.
+
+The [combined controls and focus checkpoint](docs/renderer/generated/native-controls-focus-v2.json)
+measures clean umbrella `3ee3f9d3`. Rust, C and C++ apps each match all 338
+Chromium focus observations twice. The Rust control app matches all 90 images
+and bounds at five scales, with repeated outputs identical. All 8,595 workspace
+tests, 47 headless C tests and existing ABI consumers pass. All seven hosted
+hardening jobs pass on that same source.
+
+Focused **640/640** and primitive **960/960** are exact. Complete original and
+expanded censuses finish at **21,330/22,924** and **22,133/23,728** exact, with
+zero errors; both full pixel gates fail. Every comparison remains unchanged
+from the preceding source measured with the current capture protocol. Six fresh Chromium captures
+for two cases disagree with cached references under the same recorded input
+identities. Both sets are preserved and the cause remains open. Remaining
+pixels, native APIs, compositor and release-lab gates are unfinished.
+
+The [native input editor follow-up](docs/renderer/native-input-editor-scrollport.md) corrects the private
+single-line editor clip. Its consuming Rust app improves from **22/30 to
+28/30 exact images**, with all thirty rectangles exact. Focused **640/640**
+and primitive **960/960** pass. Complete original and expanded runs finish at
+**21,337/22,924** and **22,140/23,728** exact,
+zero errors and actual exits 1. Against the accepted census, the original has
+three exact gains, no exact losses and no worsened comparisons. A fresh
+umbrella selection compares those changes with the patch's own parent.
+The renderer implementation remains private and unapplied; two native glyph rows and
+full qualification remain open. Accepted results are unchanged.
+
+The preceding [native glyph and API trial](docs/renderer/native-glyph-mask.md) fixes the reduced native glyph app:
+all **20/20 images and rectangles** match Chromium. Focused **640/640** and
+primitive **960/960** pass. Both complete censuses finish at **21,432/22,924**
+original and **22,234/23,728** expanded exact, zero errors. The original gains
+101 exact comparisons but loses three; the expanded gains 102 but loses five.
+The correction is **private, unapplied and rejected**. Accepted original
+results remain **21,334/22,924 exact**.
+
+A separate private upright vertical `ch` correction matches **1,440/1,440
+rectangles** through the unchanged Rust app, fixing 160 geometry differences
+with no losses. It captures no native pixels. An empty outlined rectangle
+matches all twenty rectangles but only fifteen images; its corner delta runs
+opposite to the caption failure and does not reproduce that failure exactly.
+Automatic font-unit declarations, complete native APIs, compositor, hardware
+and release qualification remain open. All local trial owners are terminal;
+no production change or release state is admitted.
+
+The [shared text measurement trial](docs/renderer/native-fontations-app.md)
+at clean private `2fcdc66d` matches 200/200 Chromium images and all 12,800
+bounds; the native gate exits 0. All image bytes stay unchanged. It restores
+the earlier 21 rounding regressions: all 80 affected four-profile rows match
+the accepted renderer's nine comparison invariants. Focused 640/640 and
+primitive 960/960 pass, alongside 1,013 text/layout tests and 17 source checks.
+This source remains private; complete censuses, workspace, C and remaining
+font/API qualification are open. Umbrella `3a7f0f75` passes all three PR
+workflows: six jobs pass, five skip and none fail. Hosted branch results are
+separate from the private trial.
+
+The [private Linux font policy follow-up](docs/renderer/native-linux-font-policy.md)
+matches all 30 repeated Chromium font-metric observations. Its first consuming
+Rust app sweep improves from 62/200 to 162/200 exact images, with 100 gains and
+no exact losses; 38 images and 1,280 bounds still differ. A revised explicit
+automatic policy preserves fixed caller hinting and passes 345 text tests.
+Its complete repeated image sweep retains all 200 PNGs byte-identically.
+These sources are unapplied, inherit an older rejected descriptor correction,
+and still need complete typeface, C and renderer qualification. Umbrella
+`0c39998c` passes all hosted workflows and all seven full hardening jobs.
+
+The [native variable-font correction](docs/renderer/native-variable-font-instance.md)
+keeps the font instance selected by a consuming Rust callback when drawing
+outlines. The old callback changes no pixels at five scales; the corrected
+callback matches the font's independent reference glyph at all five. Both
+sources pass fifteen read-only checks. The correction passes 342 text tests,
+8,559 workspace tests, all eight build stages and C/C++ ABI consumers.
+Focused 640/640 and primitive 960/960 Chromium checks pass. Both complete
+censuses finish at 21,334/22,924 original and 22,137/23,728 expanded exact,
+with zero errors and actual exits 1. All 48,252 rows preserve their nine
+comparison invariants: no changed rows, gains, losses or changed Chromium
+inputs. Umbrella `e0e9382d` passes all hosted workflows and all seven full
+hardening jobs; its new native guard actually runs and passes. The native
+callback's glyph comparison is not a Chromium pixel result. Full parity
+remains unfinished. Open UI executes no JavaScript.
+
+The [native text-width follow-up](docs/renderer/native-intrinsic-snap.md)
+finds that shared sizing discards small shaped fractions which Chromium keeps.
+A narrow correction reproduces the old failure and passes its consuming Rust
+callback guard at all five scales. Thirteen source checks and the neighboring
+native guards pass. Its clean build passes 8,552 workspace tests and all
+thirteen build stages. Chromium geometry is now 38,400/38,400 exact, while
+images remain 0/600 exact. All 400 actual C/C++ images match Rust. Focused
+640/640 and primitive 960/960 image suites pass. Its complete censuses finish
+at 21,313/22,924 original and 22,116/23,728 expanded exact, zero errors.
+Each loses 21 exact comparisons and gains none. The correction is rejected
+and remains unapplied.
+
+The [native glyph audit](docs/renderer/native-glyph-descriptor.md) finds that
+Chromium uses channel-specific coverage in 184/200 existing images, while
+Open UI uses grayscale coverage in all 200. A general physical strike
+correction removes the old 10px phase and origin overrides. Fourteen read-only
+checks pass. Fresh integrated-source trial `c68d946c` passes fifteen source
+checks, the descriptor guard, all 343 text tests, 8,560 workspace tests and
+eight build stages. Its real Rust app remains 0/400 Chromium images exact;
+23,040/25,600 geometry states match. Default native images stay unchanged.
+Explicit LCD output changes 28 images, with none becoming exact and 21
+worsening. Focused 640/640 and primitive 960/960 pass. Both complete censuses
+finish at 21,305/22,924 original and 22,108/23,728 expanded exact, zero errors.
+Each loses 29 exact comparisons and gains none. All Chromium inputs remain
+unchanged. The correction is rejected and remains unapplied. The native references select
+Fontations, while the original real-font references select FreeType; the
+current native Rust configuration lacks an explicit Fontations choice.
+The private `ef8880b0` outline option now passes its clean build and 8,560
+workspace tests. Its real Rust callback app matches 62/200 unchanged Chromium
+images: 40/40 at scale 1 and 22/160 at larger scales. Default and FreeType
+remain 0/200, with all 400 prior native images unchanged. The
+[completed evidence](docs/renderer/generated/native-font-choice-v2.json)
+also records repeated Chromium baseline measurements and its Linux scale
+policy. The option still uses FreeType for matching, shaping and metrics,
+inherits the rejected descriptor change, and has no new complete census.
+It remains private and unqualified.
+
+The [shared native font-inheritance correction](docs/renderer/native-text-style-inheritance.md)
+combines Rust/C text replacement with authored style propagation. Its new
+public Rust callback regression fails before the fix and passes at all five
+scales after it. Nine named style guards, thirteen source checks and 8,551
+workspace tests pass; all thirteen clean build stages and C/C++ smokes pass.
+All 400 actual C/C++ images match Rust. Chromium matches 34,560/38,400 geometry
+states, but 0/600 images; some text widths remain 1/64 pixel short. All seven
+own-source hosted hardening jobs pass. Focused 640/640 and primitive 960/960
+suites pass. Both full matrices finish at 21,334/22,924 original and
+22,137/23,728 expanded exact, with zero errors. All 48,252 comparison rows
+preserve their nine recorded invariants. The text/style correction is now
+integrated into the umbrella branch; its clean integration build also passes
+all thirteen stages and 8,551 workspace tests. Full Chromium parity remains open.
+
+The [native text replacement review](docs/renderer/native-text-content.md)
+finds a C API bug: its setter stores text on a container, while layout reads
+Text children. All 800 C/C++ font images are blank. A shared Rust/C Engine
+correction and consuming applications are prepared; thirteen source checks
+pass. Its first hosted tests expose an inconsistent viewport in the new guard.
+A fresh test setup corrects that input and passes all seven hosted hardening
+jobs. The old C setter fails the named regression; the shared correction passes
+it, the 10,000-update storage guard and all 58 native conformance scenarios.
+The clean build passes 8,538 workspace tests and ABI consumers, then the C
+smoke stops because the harness omitted the library's required filename.
+A fresh retry installs and verifies `libopenui.so.0` and passes the complete
+build, then is interrupted after 306 app images. Its geometry still fails
+because text children do not inherit authored styles. The shared font
+correction above completes a fresh app matrix. Shared text replacement and
+style inheritance are now integrated; the strict Chromium gates remain open.
+
+The [authored glyph precision investigation](docs/renderer/native-author-glyph-precision.md)
+finds a source-supported explanation for three Ahem images: rounding shaped
+advances before Skia selects the LCD phase moves the second glyph. A private
+correction preserves those advances. Eleven source checks pass. A fresh run
+reproduces the named baseline failure, passes the fixed guard and all 342 text
+tests. Its original queued owner is interrupted before execution and preserved.
+Application pixels and full matrices have not run. No new exact result is claimed.
+
+The [table source-retention follow-up](docs/renderer/native-table-progress.md#canonical-source-retention-follow-up)
+keeps an immutable full table subtree for ancestor continuations. A geometry-only
+diagnostic finds a 60-pixel cropped row over a 100-pixel source body. Eleven
+source checks and seven own-source hosted jobs pass on the private correction;
+the local retry stops at the disk guard before tests. Native geometry, teardown
+and pixel verification still require a fresh run. It remains unapplied.
+
+The [latest native review](docs/renderer/generated/native-review-v3.json)
+rejects the inline-image candidate: its native app passes, but one expanded
+case loses pixel equality at all four profiles. The
+[repeated-table candidate](docs/renderer/native-table-progress.md) fails its
+geometry guard: both baseline and proposed correction produce four fragments
+where Chromium produces 41. Neither change is applied. The raster retry passes
+its regression guards and all 17 clean build stages. Its native application
+passes 828 of 840 contracts; twelve still fail. Its font consumer is 73/1,200
+images and 25,600/76,800 geometry states exact. The static consumer is exact
+only with explicit Fontations (60/60); default and FreeType each match 0/60.
+The selection is 648/880 exact, with zero errors. Focused 640/640 and primitive
+960/960 gates pass. The [complete trial audit](docs/renderer/generated/native-review-v4.json)
+finishes at 21,251/22,924 original and 22,050/23,728 expanded exact, zero errors.
+It loses 83 original and 87 expanded exact comparisons, gains none, and keeps
+every Chromium input unchanged. This raster change is rejected for application.
+
+The [fresh image-fallback candidate](docs/renderer/native-inline-fallback.md)
+keeps fallback children in normal flow and adds native Rust/C image clearing.
+Thirteen read-only checks pass; two Chromium runs agree on all 120 ordered
+geometry queries. Its local harness stops on a nonexistent restore branch
+before native guards or pixels execute. The candidate is unapplied; a fresh
+verified harness is required and no renderer gain is claimed.
+
+The [native keyword constructors](docs/renderer/native-keyword-values.md) and
+[public Rust raster options](docs/v02/native-rust-raster-options.md) are
+integrated at `2d338d6c`. Apps can configure the shared Engine through
+`Document`, `AppBuilder`, and `HeadlessApp` and read its immutable selection.
+The clean combined build passes all fifteen stages, 8,558 workspace tests,
+fifteen read-only checks, and Rust/C/C++ consumers. All twenty native Rust
+images and bounds match Chromium at five scales, with repeat captures stable.
+Failed capture attempts remain preserved. The keyword source's complete
+matrices retain 640/640 focused, 960/960 primitive, 21,334/22,924 original and
+22,137/23,728 expanded exact, with no changed comparison invariants. Complete
+combined-source matrices and all raster settings' behavior remain unqualified;
+no release state is admitted.
+The [completed umbrella checks](docs/renderer/generated/native-rust-options-v3.json)
+at clean `16187f4f` pass fifteen read-only checks and all four hosted workflows:
+thirteen jobs pass, five are skipped and none fails, including all seven full
+hardening jobs. All six native Rust/FFI guards execute and pass in hosted parity.
+These checks do not qualify the complete Chromium pixel gates.
+
 The current v0.2 release candidate has:
 
-- 5,731 of 5,731 frozen SP20 renders byte-identical at zero tolerance;
+- a historical archive of 5,731 Open UI renders, with 5,549 byte-identical
+  on replay and 182 changed; these old screenshots are not pixel targets;
+- a [complete clean umbrella census](docs/renderer/generated/native-scroll-insets-v42.json)
+  at `2e443f49` with 21,334 of 22,924 comparisons exact, 1,590 different, and
+  zero render errors; all Chromium images and identities remain unchanged,
+  and the full pixel gate still fails;
+- clean 40-profile raster matrices with 640/640 focused and 960/960 primitive
+  comparisons exact after clearing all 18 workspace packages and rebuilding
+  `2e443f49`; [v41](docs/renderer/generated/native-scroll-insets-v41.json)
+  audits all 1,600 unchanged comparison invariants;
+- 201 native final-state cases in the expanded contract, including one newly
+  added case; 200 of 201 meet the four-profile gate in the earlier complete
+  viewport run, and one remains a failure in the
+  [expanded evidence](docs/renderer/generated/native-viewport-full-v9.json).
+  The other 35 AST-lowered cases remain pending;
 - a 7/7 repository accountability audit over all 7,673 inventoried tests;
-- 36 application scenarios covering retained updates, controls, editing,
+- 58 application scenarios covering retained updates, controls, editing,
   accessibility, resources, scrolling, animation, bidi, and multi-document use;
 - generation-checked Rust and C handles, deterministic manual clocks, immutable
   scenes, X11/Wayland operation, software presentation, and OpenGL upload;
-- 84 frozen retained-engine/headless C exports with checked layouts and an ABI
-  checksum;
-- sanitizer, Miri, fuzz, leak, latency, idle-work, and package gates in CI.
+- 84 frozen retained-engine/headless C exports, with 114 current exports and
+  checked layouts and an ABI checksum; the [native scroll and inset consumers](docs/v02/native-scroll-metrics.md)
+  and [native style consumers](bindings/rust/openui-ffi/README.md#native-style-operations)
+  pass through public Rust, C and C++ APIs; the clean umbrella checkpoint
+  passes 8,528 workspace tests with 13 ignored at `580539c2`; its own
+  640/640 focused and 960/960 primitive pixel suites remain exact, with all
+  1,600 comparison invariants unchanged;
+- sanitizer, Miri, fuzz, leak, latency, idle-work, and package gates defined
+  in CI; several remain open or failing.
 
-This repository is not yet declaring the final v0.2 release. Physical-GPU and
-reference-machine qualification, automated AT-SPI operation, direct Skia GPU
-rendering, retained per-node layers, compositor-owned animation curves, a
-C-owned native event loop, and signed publication still remain. See
+Chromium is the sole pixel target. The archived Open UI bytes disagree with
+Chromium for some fixtures, which is why replaying old screenshots cannot be a
+release gate. A [font oracle audit](docs/renderer/scaled-lcd-hinting-oracle-investigation.md)
+also found one older cached Chromium capture that differs from six fresh
+captures under the same recorded identity; that evidence needs reconciliation.
+The latest clean umbrella census has 1,590 differences. Against the SVG
+checkpoint, nine comparisons become exact and none lose exactness, while four
+already failing comparisons worsen. Every residual still requires review.
+A fresh clean build passes 8,531 workspace tests, with zero failures and 13
+ignored, plus the native ABI consumers. Its focused and primitive matrices
+pass. Its [complete original and expanded runs](docs/renderer/generated/native-scroll-insets-v42.json)
+finish at 21,334/22,924 and 22,137/23,728 exact, zero errors, actual exits 1.
+All 46,652 comparison invariants match the preceding renderer. The
+older workspace count containing a test absent from its declared source
+remains unqualified. The private
+[opaque image background candidate](docs/renderer/native-image-background-culling.md)
+uses public Rust callbacks and shared paint logic. Ten read-only checks pass;
+its native execution and pixel verification are queued. No improvement to the
+full census is claimed for that candidate. A separate image-edge candidate
+at `2eacae2c` keeps sampled colors intact and lets Skia apply geometric coverage
+while blending. Its ten read-only checks pass; Engine assertions, 128 fieldset
+images, 720 public Rust callback images and all four matrices are queued.
+It is unapplied and unqualified.
+The separate [font engine trial](docs/renderer/native-font-engines.md) loses
+493 exact comparisons. A shared routing discrepancy selects a different
+authored text path from the explicit FreeType reference. The named physical
+outline guard now fails on its baseline and passes on the correction. After
+correcting two position types in the native Rust example, its next build stops
+on a missing geometry-member diagnostic before tests execute. That member is
+present in clean source; a complete workspace rebuild is needed to check
+artifact reuse. Compilation and pixel verification remain pending.
+The [native C raster configuration](docs/v02/native-c-raster-configuration.md)
+is also prepared on a private checkpoint. It copies the same immutable Rust
+options into the shared engine and adds C/C++ callback consumers. Ten read-only
+checks pass and ABI metadata preserves all 113 existing exports and 30 layouts.
+Its first boundary-test build also stops on geometry-member diagnostics;
+consuming-application execution, Miri and exact pixels remain pending.
+the umbrella branch still has 113 exports and admits no new release case.
+The private [raster-field correction](docs/renderer/native-raster-configuration-fields.md)
+now carries requested Fontations settings and applies LCD phase during paint.
+It removes two 10px-only adjustments and adds native application checks. Ten
+read-only checks pass; compilation and exact Chromium verification are queued.
+Default native raster and remaining font-policy overrides still require work.
+The [recording cache repair](docs/renderer/generated/native-scroll-insets-v35.json)
+is applied. Its earlier run passes the CPU/Ganesh cache guards and all seven
+hosted hardening jobs and reports 8,532 workspace tests. The
+[source-attribution audit](docs/renderer/generated/native-scroll-insets-v39.json)
+finds one executed text test absent from that declared source; the earlier
+workspace result needs full clean revalidation. The applied source reports
+8,531 tests, and both complete pixel matrices retain all 46,652 comparison
+invariants. The four-profile pixel gates still fail. A separate clean queue
+cleans all 18 workspace packages at every source switch before rebuilding
+and rerunning all matrices. All seven own umbrella
+[manual hardening jobs](https://github.com/zhuowcui/open-ui/actions/runs/37244559627)
+pass at `287e176a`, with zero skips; the full Chromium pixel gate still fails.
+The [prepared native style/cache integration](docs/renderer/generated/native-scroll-insets-v36.json)
+at private `0ccc37da` passes ten read-only checks. Its named regression check
+and all nine inheritance tests pass, but the local harness incorrectly
+expected eight. The [corrected queue](docs/renderer/generated/native-scroll-insets-v40.json)
+checks the full named inventory after clearing all workspace packages;
+native consumers and all pixel matrices remain pending. All seven own-source
+hosted hardening jobs pass, with zero skips. Prior style results are attributed to
+`5cc75147`, including the 60 failing native static-position states. This new
+integration remains unapplied and unqualified.
+The [intrinsic constraints and whitespace investigation](docs/renderer/native-intrinsic-constraints.md)
+records the completed fieldset trial's 64 original exact losses and two shared
+layout causes. The [completed review](docs/renderer/generated/native-review-v1.json)
+of private `a6d386e4` records 8,550 passing workspace tests, zero failures and
+13 ignored. Focused and primitive pixels pass, but the original census is
+21,299/22,924 exact and expanded is 22,098/23,728 exact, zero errors, exits 1.
+It loses 35 previously exact original comparisons and four addition comparisons,
+and gains none. All Chromium inputs stay fixed. The consuming-app capture gate
+is incomplete because a Chromium reference pair differs. This source remains
+unapplied; accepted renderer totals and release admission stay unchanged.
+
+The [latest native review](docs/renderer/generated/native-review-v2.json)
+records five terminal stops: a raster harness branch-restoration error, an
+inline image geometry failure, a worsened rounded-border pixel assertion,
+and two disk-guard stops. All original evidence remains preserved. The
+[isolated inline replaced correction](docs/renderer/native-inline-replaced.md)
+at private `c92e2d08` reproduces the named baseline failure and passes two fixed
+guards and thirteen read-only checks. Both pinned Chromium query runs agree
+on all 48 box observations across four profiles. Its
+[clean native verification](docs/renderer/generated/native-inline-replaced-v1.json)
+passes 8,538 tests, twelve C and six C++ consumers, and all 60 consuming Rust
+images and bounds against 240 stable Chromium captures. All four complete
+pixel matrices are running; the correction remains unapplied.
+Accepted renderer counts and release admission remain unchanged.
+
+The earlier review records native constructor candidate `893ea292`. Rust apps
+already have typed setters for these operations; the shared C constructor was
+missing column-fill, fragmentation, border-style and table-role values. The
+candidate fills those paths with owned, property-bound values and includes
+consuming Rust, C and C++ examples. All 13 read-only checks pass, including
+generator consistency and C/C++ syntax. Its baseline clean is stopped by the
+disk guard before named tests execute. Clean builds, native callbacks and exact
+Chromium comparisons require a fresh complete run.
+This is native API work; Open UI executes no JavaScript. The candidate remains
+unapplied and unqualified.
+The [v40 raster evidence](docs/renderer/generated/native-scroll-insets-v40.json)
+records all native guards and five C boundary tests passing at `3d4eea11`.
+Its workspace stops on an example's unavailable transitive-crate import,
+before pixel verification. Private `fb284c54` exposes all five raster-setting
+types through the public Rust API and makes the example use those exports.
+Renderer bodies and the C ABI stay unchanged. Ten read-only checks pass;
+the clean native and pixel queue remains pending. All seven parent-source
+hosted checks pass, with zero skips, in [v39](docs/renderer/generated/native-scroll-insets-v39.json);
+the revised source needs its own hosted checks.
+The same evidence preserves 4,500 repeatable Chromium geometry
+observations without generating images; native verification remains required.
+Earlier renderer measurements below remain attributed to their named sources. The
+[private sampling candidate](docs/renderer/generated/native-viewport-full-v14.json)
+loses 23 exact Chromium comparisons and gains 14 in its complete census;
+it remains unapplied. A subsequent
+[generated-tile format trial](docs/renderer/generated-image-sampling.md)
+repairs 18 of those regressions in the affected selection, preserving all
+850 exact native controls. A later opaque-layer composition trial restores
+four more exact comparisons in that selection, leaving one SVG pixel
+regression. A subsequent [coverage-region trial](docs/renderer/generated/native-viewport-full-v17.json)
+preserves those four matches and all 850 existing native controls while fixing
+transparent-canvas erasure in neighboring Rust consumers. The SVG decoration
+alpha, native scroll extents, remaining control pixels, and complete candidate
+qualification remain open before promotion.
+The [clean private SVG work](docs/renderer/generated/native-svg-viewport-v11.json)
+adds native viewport creation and corrects shared curved-border painting.
+Two complete original censuses finish at 21,325/22,924 exact, zero errors:
+17 comparisons become exact, none lose exactness, and 13 already failing
+comparisons worsen. The solid-border source also passes both complete
+40-profile raster suites. These private results do not replace the accepted
+renderer's census. The work is now rebased over the current native APIs.
+Its Rust consumers preserve every SVG and scrolling image; 1,176/1,920 SVG
+states and all 850 existing scrolling controls match Chromium exactly.
+All SVG owned bounds, callbacks and teardown checks pass. C/C++ consumers
+verify the shared viewport constructor and native sizing callbacks, preserving
+110 exports and existing layouts. Its Linux-enabled workspace passes 8,516
+tests with zero failures and 13 ignored. Its fresh 40-profile matrices pass
+640/640 focused and 960/960 primitive comparisons, with unchanged results.
+Its own complete original census also finishes at 21,325/22,924 exact,
+1,599 different and zero errors, with all comparison invariants unchanged
+from the double-border source. Its complete expanded run is 22,128/23,728
+exact, 1,600 different and zero errors. All original rows agree between the
+two suites, and all 804 additions stay unchanged: 200/201 cases meet all four
+profiles. Both complete pixel gates still fail.
+Complete rebased qualification, the 744
+remaining SVG pixel failures, transforms and scrolling ranges remain open.
+The [reviewable source patch](docs/renderer/evidence/native-svg-decoration-v1/native-svg-rebase-api-v293.patch)
+is applied in this umbrella checkpoint together with the reviewed scrolling
+repair and native reveal API. Its complete clean umbrella pixel gate still fails.
+Earlier disk failures are preserved.
+
+The [nested scrolling work](docs/v02/native-scroll-metrics.md#nested-scrolling-candidate)
+implements shared native dimensions, ranges, offset rounding and detached
+queries. Its earlier complete `6e255ca3` run is 21,321/22,924 original exact
+and 22,124/23,728 expanded exact, zero errors. Eight comparisons worsen and
+four lose exactness because anonymous lines omit child overflow. The next
+clean `02c0296e` repairs that shared propagation and native sticky invalidation.
+It restores all eight comparisons in the partial sticky sweep, matches all
+50 reduced Rust application states, and gains 12 exact native scroll images
+with zero loss versus `6e255ca3`: 1,775/2,560 pixels and 2,320/2,560 dimensions.
+Its shared Rust/C constructor passes nine C and four C++ consumer processes;
+8,516 Linux-enabled workspace tests and both 40-profile raster gates pass.
+Its complete original census is 21,332/22,924 exact and expanded is
+22,135/23,728 exact, zero errors, with actual exits 1. All Chromium inputs stay
+unchanged. It gains nine original exact matches but loses two flex-overflow
+matches at scale 1.25; three fragmentation comparisons also worsen. Six paint
+reviews remain open, so this source cannot be promoted. A later clean block
+scrollbar candidate at `b5a2044f` repairs all 240 missing geometry states:
+2,560/2,560 match Chromium. Pixels remain 1,775/2,560 exact, with no exact
+image lost. Its workspace, C/C++ consumers, 50 reduced Rust states and both
+40-profile raster matrices pass. Its partial sticky gate still fails in four
+states, and no complete census is inferred for that source.
+[Versioned evidence](docs/renderer/generated/native-nested-scroll-v7.json)
+and unapplied patches preserve earlier failures. These private results do not
+replace the accepted renderer's census.
+
+The complete `3f95e617` runs finish at 21,319/22,924 original and
+22,122/23,728 expanded exact, zero errors, with actual exits 1. They expose
+15 lost exact comparisons against the SVG checkpoint. The shared scrollbar
+capture precedence and clip-margin correction at `83d45e0c` restores all 15
+in the affected selection: 157/172 exact, 15 different, zero errors. Four
+already-failing comparisons still worsen against SVG; no full result is
+inferred for this correction.
+
+This umbrella checkpoint applies the reviewed SVG and scroll repairs and adds
+public Rust `scroll_into_view` and `smooth_scroll_into_view`, backed by the same
+Engine operation as accessibility and two additive C functions. The private
+API source passes 35 Engine tests and ten C/four C++ consumers; all 30 reduced
+native geometry states match Chromium, while 16/20 endpoint images are exact.
+Scroll-margin/padding support, broader alignment coverage, four scale-1.25
+pixel failures and two legacy contour calibration paths remain open.
+[Versioned evidence](docs/renderer/generated/native-nested-scroll-v9.json)
+preserves every earlier failure. Own clean umbrella runs complete at
+21,334/22,924 original and 22,137/23,728 expanded exact, zero errors, with
+observed exits 1. All original rows agree, all 804 additions stay unchanged,
+and 200/201 additions meet all four profiles. The workspace, ten C/four C++
+headless consumers, 249 Python tests and ten read-only checks pass.
+
+The font-cache lifetime fix is applied and pushed at `a41fdeb9`. Its own
+Linux-enabled workspace passes 8,526 tests, zero failures and 13 ignored;
+all ten read-only checks pass, with source unchanged. The
+[latest lifetime evidence](docs/renderer/generated/native-font-cache-lifetime-v4.json)
+records complete clean private original and expanded pixel sweeps. Every
+comparison invariant agrees with `d174ea0b`: the fix changes no rendered
+pixels and leaves the full pixel failures open. Its earlier local sanitizer,
+fuzz and ABI checks and failed attempts remain preserved.
+
+All three pull-request workflows at this checkpoint pass. The separate
+[manual hardening run](https://github.com/zhuowcui/open-ui/actions/runs/37149510887)
+passes all seven jobs: address/leak sanitizers, Miri, C UBSan, Linux windows,
+MSRV and all five fuzz targets. Skipped pull-request jobs remain open results.
+The [latest private scroll evidence](docs/renderer/generated/native-scroll-insets-v9.json)
+records complete `dac78e25` runs at 21,340/22,924 original and 22,143/23,728
+expanded exact, zero errors, with actual exits 1. Eight comparisons become exact
+but two lose exactness; the screen correction remains unapplied. The two losses
+are owned by painting and must be repaired before promotion.
+
+A separate clean `cf59ea29` combines compatible nested rectangular clips before
+rasterization. Its C matrix now matches all 175 geometry and pixel states,
+repairing the remaining ten clip differences with no exact losses. All 510 Rust
+states and all 1,600 focused/primitive comparisons stay unchanged and exact.
+Its workspace passes 8,532 tests, zero failures and 13 ignored; ten read-only
+checks pass. Complete original and expanded runs finish at 21,340/22,924 and
+22,143/23,728 exact, zero errors, actual exits 1. Every comparison invariant
+agrees with `dac78e25`, including both known exact losses.
+
+The separate `6d6768a8` fixes native reveal traversal through layout containers
+and containing-block ownership when public transforms are added or removed.
+All 90 Rust and 60 C geometry and pixel states match Chromium; the C test gains
+25 geometry matches and 15 pixel matches without losing an exact image.
+All 510 existing Rust states stay byte-identical. Its workspace passes 8,535
+tests, zero failures and 13 ignored, and ten read-only checks. Both raster gates
+pass with all 1,600 comparison invariants unchanged. The viewport cutoff at
+`2cc950e0` recovers five C geometry/image matches, preserving all 660 previous
+states and both raster gates. A wider check then finds ten failures for
+viewport-fixed controls on an already-scrolled page.
+The combined `4dd50621` repair passes all six fresh build stages, 8,538 workspace
+tests, ten read-only checks, all 935 native Rust/C geometry/image states and
+both raster gates. It preserves all 885 earlier states and recovers all ten
+fixed-control failures. Its complete censuses finish at 21,341/22,924 original
+and 22,144/23,728 expanded exact, zero errors, actual exits 1. Six comparisons
+lose exactness against `cf59ea29` and five against the applied umbrella; all
+Chromium inputs and 804 addition results remain unchanged.
+The included scroll-edge change at `c5769f2d` repairs the two earlier exact
+losses in a 144-comparison selection, but introduces three new exact losses
+against `dac78e25` at 1.5 scale. That blocks promotion; reduced results do not
+establish a complete census result.
+Reviewable source patches are retained; these private changes
+remain unapplied and unqualified, and no new release passes are admitted.
+
+The [new scroll investigation](docs/renderer/generated/native-scroll-insets-v11.json)
+records a missing native trailing-margin extent and a clip policy applied to
+an `auto` box without a scroll transform. The high-DPI candidate passes its
+native consumers and focused matrix, but fails eight primitive comparisons.
+A clean Rust follow-up passes 8,539 workspace tests, all 935 earlier native
+states and both exact raster matrices; the eight gradient regressions are
+repaired. All 105 new dimension queries match, but 14 opaque white images and
+20 wider collapsed-margin API states still fail. Complete image censuses are
+running. The [latest guards](docs/renderer/generated/native-scroll-insets-v12.json)
+retain every failure; the patch remains unapplied and unqualified.
+The [collapsed-margin follow-up](docs/renderer/generated/native-scroll-insets-v13.json)
+retains shared layout data and adds a consuming Rust app. Its ten read-only
+checks pass; its clean build and native probes are queued behind the immutable
+image sweeps. All 765 fresh Chromium metric states are reference observations,
+not native passes. No rendering or API qualification is claimed for this source.
+
+The [v14 follow-up evidence](docs/renderer/generated/native-scroll-insets-v14.json)
+completes the private `45ddeee3` censuses: 21,350/22,924 original and
+22,153/23,728 expanded exact, zero errors, actual exits 1. One multicolumn
+regression against the applied renderer remains; all Chromium inputs and 804
+addition results stay unchanged. Corrected margin source `2240ee9c` passes
+8,540 workspace tests and all 45 C mutation states, but its wider Rust probe is
+555/765 exact, with 210 vertical empty-block failures. Its pixel guards did not
+start. A separate owned float-color C API and public Rust/C/C++ consumers are
+implemented in a private checkpoint; their own runtime build and native
+consumers now pass, as recorded in the
+[v15 evidence](docs/renderer/generated/native-scroll-insets-v15.json).
+The opaque-scroll review owns 29 of 40 neighboring pixel failures. None of
+these private changes is promoted or admitted as a release pass.
+
+The float-color candidate passes 8,542 workspace tests and all public Rust,
+eleven C and five C++ consumers. It resolves the eight native process failures
+using the original float-color inputs; all 40 geometry states agree, but only
+11 images are exact. All 32 earlier native control images stay unchanged.
+A public Rust check confirms missing writing-mode inheritance on native
+attachment. The shared Engine repair passes all eight clean build stages,
+8,542 workspace tests, 765/765 Rust states and 45/45 C states. All 210 prior
+vertical failures are repaired without exact losses or changed Chromium inputs.
+Its pixel guards now pass all 935 earlier native states, 70 two-child states
+and both raster matrices unchanged. All 105 dimension queries agree, but
+14 opaque white images still differ. Other inherited properties and pixel
+qualification remain separate work; this candidate remains unapplied.
+
+The standalone float-color constructor and public Rust/C/C++ consumers are
+now applied to the umbrella branch. The existing Rust API supplies float
+colors directly; C uses the new owned `oui_style_value_color_f32_v1` operation
+over the same Engine. The [v16 evidence](docs/renderer/generated/native-scroll-insets-v16.json)
+records six fresh umbrella build stages, 8,528 workspace tests, five Rust runs,
+eleven C and five C++ consumers, and both exact raster matrices. The first
+hosted checkpoint failed C formatting; `aeed821c` corrects only C whitespace,
+passes the rebuilt C/C++ consumers and all three hosted workflows. Five
+skipped hardening jobs remain unverified on this source. The margin and
+writing-mode repairs remain separate, unapplied candidates; no new full
+census or release pass is claimed.
+
+The [native inheritance and style trials](docs/renderer/generated/native-scroll-insets-v21.json)
+remain separate from the accepted renderer. The earlier `f328ed62` complete
+censuses fail at 21,312/22,924 original and 22,115/23,728 expanded exact,
+losing 22 exact matches across twelve static-position tests. Its `3f1d296f`
+follow-up passes 8,535 workspace tests, eight native C geometry states,
+50 native Rust images and both complete 40-profile raster matrices; that
+checkpoint has no own complete census.
+
+The clean private `5cc75147` follow-up identifies and repairs the regression:
+resolved computed fixture values had been sent through the normal inheritance
+path, replacing descendant indentation zero with the parent's 20px. Two
+independent Chromium queries verify the original reset behavior. The shared
+Engine now preserves computed snapshots while native app declarations still
+inherit. All 48 selected comparison invariants return to the applied baseline,
+restoring all 22 lost exact matches. The other 26 selected failures remain.
+Chromium images, source fixtures, fonts and resources stay unchanged.
+
+Five new guards also cover snapshot replacement, inherited animations,
+unchanged work and percentage line-height transports. The public typed
+line-height setter already passed; the generic Renderer payload is repaired.
+The fresh eight-stage build passes 8,540 workspace tests, zero failures and
+13 ignored, eleven C/five C++ consumers, ten read-only checks and Rust
+formatting. All 113 exports and ABI layouts are preserved. Its own native
+relative guards retain all eight exact C geometry states and 50 exact Rust
+images against repeated Chromium captures.
+
+The new public Rust static-position example passes all 30 callback and owned
+snapshot runs. Its 60 bounds and 60 pixel comparisons all fail the exact gate.
+Absolute auto widths omit inherited indentation; subpixel text advances and
+glyph painting also require review. Layout, text and paint ownership is
+recorded, with minimized inputs, repeated Chromium captures, bounds, connected
+regions and channel deltas. Failed capture probes remain separate evidence.
+Its own complete matrices now finish at 640/640 focused, 960/960 primitive,
+21,334/22,924 original and 22,137/23,728 expanded exact. All comparison
+invariants restore the applied baseline, including all 804 additions. Both
+complete census commands exit 1; the full pixel gate still fails.
+This candidate is unapplied and unqualified; no new release state is admitted.
+Open UI runs no JavaScript in any version. Needed interaction uses public
+native Rust methods and Rust callbacks over the shared Engine.
+
+The [native event API checks](docs/renderer/generated/native-event-targets-v1.json)
+are complete at clean `1c8540e9`. Rust callbacks can call `Event::target()` and
+`current_target()` to inspect and change elements. Five guards, 8,536 workspace
+tests, native ABI consumers and seven hosted hardening jobs pass. The public
+Rust app matches Chromium in all ten images and bounds at five scales.
+Both complete renderer matrices preserve every comparison result: original
+21,334/22,924 and expanded 22,137/23,728 exact, zero errors, exits 1. The
+focused and primitive gates pass. Full pixel parity remains unfinished.
+
+The [intrinsic sizing follow-up](docs/renderer/generated/native-scroll-insets-v28.json) reviews the
+missing width behavior against 120 repeated Chromium advance observations and
+2,000 neighboring measurements at five scales. Chromium retains positive
+shaped-width remainders on its 1/64px layout grid and includes first-line
+indentation. The private source preserves both, uses shaped intrinsic text,
+and adds a consuming Rust app for 200 sizing cases. It also exposes immutable
+raster choice through native `Document`, `AppBuilder` and `HeadlessApp`
+constructors; the previous document API always used the default.
+
+The initial new Engine guard used the wrong text setup and measured an empty
+box on both sources. Its failed build is preserved, with 208 tests passed and
+one failure before the workspace stopped; the two raster API guards passed.
+The corrected guard attaches actual native text children. It now proves the
+old 80px width fails the 80.015625px Chromium result, and the fixed source
+passes at all five scales, including inherited indentation and a reset. Ten
+read-only checks pass. The complete build then stopped after 5,763 passing
+tests and one real regression: an inline canvas lost its natural width. The
+new intrinsic sequence exposed that replaced content was collected as an
+ordinary inline wrapper. The shared fix collects it as an atomic box. All 26
+existing canvas, image and positioning guards now pass, and the native width
+guard still passes. That source completed all nine build stages: 8,543 workspace tests passed,
+none failed and 13 were ignored; eleven C and five C++ consumers passed with
+113 exports. The combined 200-case native sizing app then failed in float
+layout after reaching about 43 GiB RSS. Individual cases all finished, and a
+bounded group probe isolated duplicate inherited float exclusions. The shared
+fix propagates only newly added floats. All 61 block tests pass, and the full
+native app now finishes at five scales with peak RSS below 85 MiB. It matches
+700/1,000 Chromium size measurements; 300 still differ. Correct JSON number
+formatting removes six diagnostic false differences without changing layout
+or adding tolerance. The subsequent shared inline-block, preserved-newline and wrapping fixes now
+match all 1,000 native sizing measurements exactly. That clean source passes
+all nine build stages, 8,544 workspace tests, ten read-only checks and the same
+eleven C/five C++ consumers with 113 exports. The static-position app matches
+all 120 bounds measurements at both raster settings, with repeatable output,
+but none of its 120 pixel comparisons are exact. The remaining differences
+are in glyph coverage. Explicit Chromium LCD settings still selected the
+portable author outline path; a shared policy fix is prepared and has ten
+passing read-only checks. Its pixel effect and full build are unverified.
+The sizing source now completes all 640 focused and 960 primitive comparisons
+exactly. All 1,600 native and Chromium image, oracle, status and difference
+invariants remain unchanged from the earlier clean renderer. Its complete
+original census now finishes at 21,264/22,924 exact, 1,660 different and zero
+errors, with actual exit 1. Against `5cc75147`, it loses 70 exact comparisons
+and gains none; 115 comparisons change across 33 test IDs. The expanded run
+finishes at 22,063/23,728 exact, 1,665 different and zero errors, also exit 1.
+All original rows agree with the separate census. It loses four more exact
+comparisons in the broken-image multicol addition, leaving 199/201 additions
+exact at all four profiles. All Chromium inputs remain unchanged. The changed
+causes still need minimized reproducers and review; this candidate and its
+descendants remain unapplied. The 1,000 native geometry matches and exact
+focused suites do not override those full-census failures.
+
+Source review also found a compositor cache bug: scene generations restart for
+each document, but both compositors checked only that number before reusing a
+frame. A different document can receive the previous document's pixels.
+A shared fix now requires the immutable recording's identity and keeps it owned
+while its frame is cached. It includes native document, viewport, resource
+lifetime and explicit Ganesh guards. Ten read-only checks pass at `107e2e36`;
+its local baseline regression, fixed tests, builds and pixels have not run.
+Its own hosted hardening run passes all seven jobs with none skipped, including
+native Linux consumers, MSRV, Miri, sanitizers and fuzz smoke. Those jobs do not
+execute the new direct cache and Ganesh unit guards. Its local pipeline waits
+for the LCD pipeline to terminate before Cargo; the intrinsic pipeline is now
+terminal. The inherited sizing regressions also prevent promotion.
+The candidate remains unapplied and unqualified. Full Chromium pixel parity
+and retained compositor animation remain open. No runtime
+promotion or new pixel admission is claimed. Prior snapshots and all
+reference bytes remain unchanged.
+
+This repository is not yet
+declaring the final v0.2 release. Physical-GPU
+and reference-machine qualification, automated AT-SPI operation, direct Skia
+GPU qualification, retained per-node layers, compositor-owned animation
+curves, release-lab C/C++ application qualification, and signed publication
+still remain. The C ABI now runs native Linux windows through the Rust `App`
+and retained `Document`. See
 [current status](docs/progress/current-status.md)
 and [release qualification](docs/v02/release.md).
 
@@ -117,7 +1477,7 @@ release workflow. See [packaging instructions](docs/v02/packaging.md).
 | `bindings/rust/openui-{style,layout,text,paint}` | Exact rendering pipeline |
 | `include/` | Generated v0.2 C headers |
 | `examples/c_v02/` | C examples matching the Rust examples |
-| `tools/accountability/` | Frozen exact-render inventory and audit |
+| `tools/accountability/` | Chromium comparison inventory and historical evidence audit |
 | `tools/release/` | Contract generation and reproducible packaging |
 | `docs/v02/` | Supported architecture and release contract |
 

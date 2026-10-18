@@ -1,0 +1,51 @@
+{
+  "all_commands_terminal": true,
+  "fieldset_causation_proven": false,
+  "immutable_probe_hashes": {
+    "/tmp/openui-native-fieldset-build-v1262.py": "8354d7dc5341f00e9872e849abd24478337f513d34f002bcd165e2e59bc22e4d",
+    "/tmp/openui-native-fieldset-consumer-v1263.py": "18cac0c7fff72dd6ec78fc0a29aa0242c65c77e30a308d2447ac2830dd10d4b3",
+    "/tmp/openui-native-fieldset-guards-v1261.py": "c4226b3f28fef5f077817866ba6c39c10554876bc2a2c056e9cbbc81d4365c0f",
+    "/tmp/openui-native-fieldset-matrices-v1267.py": "53baad82c48a7ae5ff12d4e83d701840af5f5436593c91989d9c8449fab7ca24",
+    "/tmp/openui-native-fieldset-sizing-v1266.py": "7f7858fc802f2fd8ed48243fda61ebaecc37f398bf9fe157af6b0db245f13900"
+  },
+  "new_release_states_admitted": 0,
+  "ordered_build_and_image_stages": true,
+  "prior_terminal_pipeline_sha256": {
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-lcd-pipeline-v1219/receipt.json": "f3afb2548a0d2e1d275096ac5fa8db74fa1749f9f46f250aaf0f451b392e951a",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/scene-recording-cache-pipeline-v1233/receipt.json": "3efbbb2a9666f9c08640f95b4b9653ae5bb6444d23f24258c6a7d0f0babe6bb6"
+  },
+  "probe_sha256": "fe08eb42d03481988f1e62555604b901605914d29f87d6ad4266f88bb4102d6a",
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "schema_version": 1,
+  "selection": {
+    "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-selection-v1267.json",
+    "sha256": "197050888cd8e21e7a75994605fe33be7658932a004d4321133a6cd00d46c2e2"
+  },
+  "source": {
+    "clean": true,
+    "commit": "2518bdcd3934d0f67ec5e0232313cf5eda8d7abc",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "c6d0b0f97b8ce392ec8f83799b1a4362d4fa387ef2833869b66d16119e54c46b",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "2518bdcd3934d0f67ec5e0232313cf5eda8d7abc",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "c6d0b0f97b8ce392ec8f83799b1a4362d4fa387ef2833869b66d16119e54c46b",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "state": "stopped-on-harness-build-or-guard-failure-regression-guards",
+  "steps": [
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-native-fieldset-guards-v1261.py"
+      ],
+      "log_sha256": "46d2f51c3f21e9fa341c76d9949655f81d0ebc8a9bbd71ad9b61a2ff745a142e",
+      "name": "regression-guards",
+      "observed_exit_code": 1
+    }
+  ]
+}

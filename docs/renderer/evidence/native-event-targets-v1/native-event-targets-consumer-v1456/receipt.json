@@ -1,0 +1,1372 @@
+{
+  "adapted_reference_function_sha256": "52d765d2b86049e18c80edebf303c8944300d969edc6216d7067c82d15c9db03",
+  "all_commands_terminal": true,
+  "build_receipt_sha256": "66cfd334ee426be802ebe4476655ff1259832be5adc8ef80faf04a3928399d44",
+  "capture_conditions_unchanged": true,
+  "capture_harness_sha256": "ad37344879ddda41e6570ea41c142103e58f5db05fb9c96c27c1ac62b67f92ea",
+  "cases": [
+    {
+      "images": [
+        {
+          "analysis": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "chromium_png_sha256": "52d7ca8ec736b02c84efd12534d19489c45b72130fc5144b6b025f1f65dd6692",
+          "geometry_exact": true,
+          "independent_reference_runs": [
+            {
+              "capture_count": 2,
+              "query": {
+                "bounds": {
+                  "height": 40,
+                  "width": 40,
+                  "x": 20,
+                  "y": 20
+                },
+                "current_target_after_dispatch": [],
+                "metrics": {
+                  "dpr": 1,
+                  "height": 100,
+                  "width": 160
+                },
+                "phase_after_dispatch": [],
+                "target_after_dispatch": [],
+                "trace": []
+              },
+              "repeated_capture_pair_identical": true
+            },
+            {
+              "capture_count": 2,
+              "query": {
+                "bounds": {
+                  "height": 40,
+                  "width": 40,
+                  "x": 20,
+                  "y": 20
+                },
+                "current_target_after_dispatch": [],
+                "metrics": {
+                  "dpr": 1,
+                  "height": 100,
+                  "width": 160
+                },
+                "phase_after_dispatch": [],
+                "target_after_dispatch": [],
+                "trace": []
+              },
+              "repeated_capture_pair_identical": true
+            }
+          ],
+          "native_png_sha256": "de884633c8f4de3382208ded7d5e83bd7638deca73a009e8ec809236557496e7",
+          "state": "before"
+        },
+        {
+          "analysis": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "chromium_png_sha256": "bdeb647b1d6ed8d79f06ae696a54fb73240e5330d6ef07f37c8f1d7d541e561c",
+          "geometry_exact": true,
+          "independent_reference_runs": [
+            {
+              "capture_count": 2,
+              "query": {
+                "bounds": {
+                  "height": 40,
+                  "width": 40,
+                  "x": 20,
+                  "y": 20
+                },
+                "current_target_after_dispatch": [
+                  true,
+                  true,
+                  true
+                ],
+                "metrics": {
+                  "dpr": 1,
+                  "height": 100,
+                  "width": 160
+                },
+                "phase_after_dispatch": [
+                  0,
+                  0,
+                  0
+                ],
+                "target_after_dispatch": [
+                  true,
+                  true,
+                  true
+                ],
+                "trace": [
+                  {
+                    "name": "root",
+                    "phase": 1
+                  },
+                  {
+                    "name": "target",
+                    "phase": 2
+                  },
+                  {
+                    "name": "root",
+                    "phase": 3
+                  }
+                ]
+              },
+              "repeated_capture_pair_identical": true
+            },
+            {
+              "capture_count": 2,
+              "query": {
+                "bounds": {
+                  "height": 40,
+                  "width": 40,
+                  "x": 20,
+                  "y": 20
+                },
+                "current_target_after_dispatch": [
+                  true,
+                  true,
+                  true
+                ],
+                "metrics": {
+                  "dpr": 1,
+                  "height": 100,
+                  "width": 160
+                },
+                "phase_after_dispatch": [
+                  0,
+                  0,
+                  0
+                ],
+                "target_after_dispatch": [
+                  true,
+                  true,
+                  true
+                ],
+                "trace": [
+                  {
+                    "name": "root",
+                    "phase": 1
+                  },
+                  {
+                    "name": "target",
+                    "phase": 2
+                  },
+                  {
+                    "name": "root",
+                    "phase": 3
+                  }
+                ]
+              },
+              "repeated_capture_pair_identical": true
+            }
+          ],
+          "native_png_sha256": "7a248cbd2353312930e1cdeca41f1c7ff94e76a19167930640831419479d9370",
+          "state": "after"
+        }
+      ],
+      "native_contract": {
+        "bounds": {
+          "height": 40,
+          "width": 40,
+          "x": 20,
+          "y": 20
+        },
+        "callbacks": 3,
+        "owned_bounds_unchanged": true,
+        "phase_cleared": true,
+        "scale": 1,
+        "targets_expired_after_teardown": true
+      },
+      "native_runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-clean-v1456/native_event_targets",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.0/native-1",
+            "1.0"
+          ],
+          "log_sha256": "2162f5149f8deb9fa6fefb8b7862d16a7f6dcb3055a59825f885534fb4586711",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-clean-v1456/native_event_targets",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.0/native-2",
+            "1.0"
+          ],
+          "log_sha256": "2162f5149f8deb9fa6fefb8b7862d16a7f6dcb3055a59825f885534fb4586711",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 1.0
+    },
+    {
+      "images": [
+        {
+          "analysis": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "chromium_png_sha256": "10c4ef0ba7d2b6a2dabc5e3210a40ab75d0f3d8656b1abb768c8cdc9a6aa4211",
+          "geometry_exact": true,
+          "independent_reference_runs": [
+            {
+              "capture_count": 2,
+              "query": {
+                "bounds": {
+                  "height": 40,
+                  "width": 40,
+                  "x": 20,
+                  "y": 20
+                },
+                "current_target_after_dispatch": [],
+                "metrics": {
+                  "dpr": 1.25,
+                  "height": 100,
+                  "width": 160
+                },
+                "phase_after_dispatch": [],
+                "target_after_dispatch": [],
+                "trace": []
+              },
+              "repeated_capture_pair_identical": true
+            },
+            {
+              "capture_count": 2,
+              "query": {
+                "bounds": {
+                  "height": 40,
+                  "width": 40,
+                  "x": 20,
+                  "y": 20
+                },
+                "current_target_after_dispatch": [],
+                "metrics": {
+                  "dpr": 1.25,
+                  "height": 100,
+                  "width": 160
+                },
+                "phase_after_dispatch": [],
+                "target_after_dispatch": [],
+                "trace": []
+              },
+              "repeated_capture_pair_identical": true
+            }
+          ],
+          "native_png_sha256": "ffe710cc05adc55e1b11e7d5082f713f61dd2de95e8f324354ba3fb490f1858d",
+          "state": "before"
+        },
+        {
+          "analysis": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "chromium_png_sha256": "5eef3d1da02172ff99eef8b124f9c6b979d6feadc5c17e2edf33af63141d2f1a",
+          "geometry_exact": true,
+          "independent_reference_runs": [
+            {
+              "capture_count": 2,
+              "query": {
+                "bounds": {
+                  "height": 40,
+                  "width": 40,
+                  "x": 20,
+                  "y": 20
+                },
+                "current_target_after_dispatch": [
+                  true,
+                  true,
+                  true
+                ],
+                "metrics": {
+                  "dpr": 1.25,
+                  "height": 100,
+                  "width": 160
+                },
+                "phase_after_dispatch": [
+                  0,
+                  0,
+                  0
+                ],
+                "target_after_dispatch": [
+                  true,
+                  true,
+                  true
+                ],
+                "trace": [
+                  {
+                    "name": "root",
+                    "phase": 1
+                  },
+                  {
+                    "name": "target",
+                    "phase": 2
+                  },
+                  {
+                    "name": "root",
+                    "phase": 3
+                  }
+                ]
+              },
+              "repeated_capture_pair_identical": true
+            },
+            {
+              "capture_count": 2,
+              "query": {
+                "bounds": {
+                  "height": 40,
+                  "width": 40,
+                  "x": 20,
+                  "y": 20
+                },
+                "current_target_after_dispatch": [
+                  true,
+                  true,
+                  true
+                ],
+                "metrics": {
+                  "dpr": 1.25,
+                  "height": 100,
+                  "width": 160
+                },
+                "phase_after_dispatch": [
+                  0,
+                  0,
+                  0
+                ],
+                "target_after_dispatch": [
+                  true,
+                  true,
+                  true
+                ],
+                "trace": [
+                  {
+                    "name": "root",
+                    "phase": 1
+                  },
+                  {
+                    "name": "target",
+                    "phase": 2
+                  },
+                  {
+                    "name": "root",
+                    "phase": 3
+                  }
+                ]
+              },
+              "repeated_capture_pair_identical": true
+            }
+          ],
+          "native_png_sha256": "6e50a143fa314a25745f7c291e2eb9ed39c57d3dca9274b188c19ddf45a8ba56",
+          "state": "after"
+        }
+      ],
+      "native_contract": {
+        "bounds": {
+          "height": 40,
+          "width": 40,
+          "x": 20,
+          "y": 20
+        },
+        "callbacks": 3,
+        "owned_bounds_unchanged": true,
+        "phase_cleared": true,
+        "scale": 1.25,
+        "targets_expired_after_teardown": true
+      },
+      "native_runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-clean-v1456/native_event_targets",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.25/native-1",
+            "1.25"
+          ],
+          "log_sha256": "2162f5149f8deb9fa6fefb8b7862d16a7f6dcb3055a59825f885534fb4586711",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-clean-v1456/native_event_targets",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.25/native-2",
+            "1.25"
+          ],
+          "log_sha256": "2162f5149f8deb9fa6fefb8b7862d16a7f6dcb3055a59825f885534fb4586711",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 1.25
+    },
+    {
+      "images": [
+        {
+          "analysis": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "chromium_png_sha256": "6f2a087d82d0bce528c0b805bb815c525c2e6f9483e9b7e89812794c7c9068c9",
+          "geometry_exact": true,
+          "independent_reference_runs": [
+            {
+              "capture_count": 2,
+              "query": {
+                "bounds": {
+                  "height": 40,
+                  "width": 40,
+                  "x": 20,
+                  "y": 20
+                },
+                "current_target_after_dispatch": [],
+                "metrics": {
+                  "dpr": 1.5,
+                  "height": 100,
+                  "width": 160
+                },
+                "phase_after_dispatch": [],
+                "target_after_dispatch": [],
+                "trace": []
+              },
+              "repeated_capture_pair_identical": true
+            },
+            {
+              "capture_count": 2,
+              "query": {
+                "bounds": {
+                  "height": 40,
+                  "width": 40,
+                  "x": 20,
+                  "y": 20
+                },
+                "current_target_after_dispatch": [],
+                "metrics": {
+                  "dpr": 1.5,
+                  "height": 100,
+                  "width": 160
+                },
+                "phase_after_dispatch": [],
+                "target_after_dispatch": [],
+                "trace": []
+              },
+              "repeated_capture_pair_identical": true
+            }
+          ],
+          "native_png_sha256": "f081bf9b9c36e521de042bbfe475d6ebe2cfb2604cfbfea57fc5b95ab7fc67d9",
+          "state": "before"
+        },
+        {
+          "analysis": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "chromium_png_sha256": "f88d9a7bbddcfb7b8df5f9b11f13c7ae5fabf8ec1005184246782f391adea559",
+          "geometry_exact": true,
+          "independent_reference_runs": [
+            {
+              "capture_count": 2,
+              "query": {
+                "bounds": {
+                  "height": 40,
+                  "width": 40,
+                  "x": 20,
+                  "y": 20
+                },
+                "current_target_after_dispatch": [
+                  true,
+                  true,
+                  true
+                ],
+                "metrics": {
+                  "dpr": 1.5,
+                  "height": 100,
+                  "width": 160
+                },
+                "phase_after_dispatch": [
+                  0,
+                  0,
+                  0
+                ],
+                "target_after_dispatch": [
+                  true,
+                  true,
+                  true
+                ],
+                "trace": [
+                  {
+                    "name": "root",
+                    "phase": 1
+                  },
+                  {
+                    "name": "target",
+                    "phase": 2
+                  },
+                  {
+                    "name": "root",
+                    "phase": 3
+                  }
+                ]
+              },
+              "repeated_capture_pair_identical": true
+            },
+            {
+              "capture_count": 2,
+              "query": {
+                "bounds": {
+                  "height": 40,
+                  "width": 40,
+                  "x": 20,
+                  "y": 20
+                },
+                "current_target_after_dispatch": [
+                  true,
+                  true,
+                  true
+                ],
+                "metrics": {
+                  "dpr": 1.5,
+                  "height": 100,
+                  "width": 160
+                },
+                "phase_after_dispatch": [
+                  0,
+                  0,
+                  0
+                ],
+                "target_after_dispatch": [
+                  true,
+                  true,
+                  true
+                ],
+                "trace": [
+                  {
+                    "name": "root",
+                    "phase": 1
+                  },
+                  {
+                    "name": "target",
+                    "phase": 2
+                  },
+                  {
+                    "name": "root",
+                    "phase": 3
+                  }
+                ]
+              },
+              "repeated_capture_pair_identical": true
+            }
+          ],
+          "native_png_sha256": "79ed7b61d3c08216e14c1e300f0593b95b693ece84e05254d64947d079a7b243",
+          "state": "after"
+        }
+      ],
+      "native_contract": {
+        "bounds": {
+          "height": 40,
+          "width": 40,
+          "x": 20,
+          "y": 20
+        },
+        "callbacks": 3,
+        "owned_bounds_unchanged": true,
+        "phase_cleared": true,
+        "scale": 1.5,
+        "targets_expired_after_teardown": true
+      },
+      "native_runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-clean-v1456/native_event_targets",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.5/native-1",
+            "1.5"
+          ],
+          "log_sha256": "2162f5149f8deb9fa6fefb8b7862d16a7f6dcb3055a59825f885534fb4586711",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-clean-v1456/native_event_targets",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.5/native-2",
+            "1.5"
+          ],
+          "log_sha256": "2162f5149f8deb9fa6fefb8b7862d16a7f6dcb3055a59825f885534fb4586711",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 1.5
+    },
+    {
+      "images": [
+        {
+          "analysis": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "chromium_png_sha256": "f7d60fdc6743f72ced4717cb231456127bc7862c96a7ad05d9c9543fcd961070",
+          "geometry_exact": true,
+          "independent_reference_runs": [
+            {
+              "capture_count": 2,
+              "query": {
+                "bounds": {
+                  "height": 40,
+                  "width": 40,
+                  "x": 20,
+                  "y": 20
+                },
+                "current_target_after_dispatch": [],
+                "metrics": {
+                  "dpr": 2,
+                  "height": 100,
+                  "width": 160
+                },
+                "phase_after_dispatch": [],
+                "target_after_dispatch": [],
+                "trace": []
+              },
+              "repeated_capture_pair_identical": true
+            },
+            {
+              "capture_count": 2,
+              "query": {
+                "bounds": {
+                  "height": 40,
+                  "width": 40,
+                  "x": 20,
+                  "y": 20
+                },
+                "current_target_after_dispatch": [],
+                "metrics": {
+                  "dpr": 2,
+                  "height": 100,
+                  "width": 160
+                },
+                "phase_after_dispatch": [],
+                "target_after_dispatch": [],
+                "trace": []
+              },
+              "repeated_capture_pair_identical": true
+            }
+          ],
+          "native_png_sha256": "3a8dd305f691444a7ef3d8d935d36702ea2f7ea31fefd7fcc8c69a9e31bca1c9",
+          "state": "before"
+        },
+        {
+          "analysis": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "chromium_png_sha256": "f85cdb3428750409b00c3d3e89f3c1fd9dba4e763227b9b0d8d302b0dc1bd677",
+          "geometry_exact": true,
+          "independent_reference_runs": [
+            {
+              "capture_count": 2,
+              "query": {
+                "bounds": {
+                  "height": 40,
+                  "width": 40,
+                  "x": 20,
+                  "y": 20
+                },
+                "current_target_after_dispatch": [
+                  true,
+                  true,
+                  true
+                ],
+                "metrics": {
+                  "dpr": 2,
+                  "height": 100,
+                  "width": 160
+                },
+                "phase_after_dispatch": [
+                  0,
+                  0,
+                  0
+                ],
+                "target_after_dispatch": [
+                  true,
+                  true,
+                  true
+                ],
+                "trace": [
+                  {
+                    "name": "root",
+                    "phase": 1
+                  },
+                  {
+                    "name": "target",
+                    "phase": 2
+                  },
+                  {
+                    "name": "root",
+                    "phase": 3
+                  }
+                ]
+              },
+              "repeated_capture_pair_identical": true
+            },
+            {
+              "capture_count": 2,
+              "query": {
+                "bounds": {
+                  "height": 40,
+                  "width": 40,
+                  "x": 20,
+                  "y": 20
+                },
+                "current_target_after_dispatch": [
+                  true,
+                  true,
+                  true
+                ],
+                "metrics": {
+                  "dpr": 2,
+                  "height": 100,
+                  "width": 160
+                },
+                "phase_after_dispatch": [
+                  0,
+                  0,
+                  0
+                ],
+                "target_after_dispatch": [
+                  true,
+                  true,
+                  true
+                ],
+                "trace": [
+                  {
+                    "name": "root",
+                    "phase": 1
+                  },
+                  {
+                    "name": "target",
+                    "phase": 2
+                  },
+                  {
+                    "name": "root",
+                    "phase": 3
+                  }
+                ]
+              },
+              "repeated_capture_pair_identical": true
+            }
+          ],
+          "native_png_sha256": "22df0586e74895a49e4a2fe9e97fe9f10f3d68b4689f4e455e4ca4b90889a601",
+          "state": "after"
+        }
+      ],
+      "native_contract": {
+        "bounds": {
+          "height": 40,
+          "width": 40,
+          "x": 20,
+          "y": 20
+        },
+        "callbacks": 3,
+        "owned_bounds_unchanged": true,
+        "phase_cleared": true,
+        "scale": 2,
+        "targets_expired_after_teardown": true
+      },
+      "native_runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-clean-v1456/native_event_targets",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/2.0/native-1",
+            "2.0"
+          ],
+          "log_sha256": "2162f5149f8deb9fa6fefb8b7862d16a7f6dcb3055a59825f885534fb4586711",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-clean-v1456/native_event_targets",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/2.0/native-2",
+            "2.0"
+          ],
+          "log_sha256": "2162f5149f8deb9fa6fefb8b7862d16a7f6dcb3055a59825f885534fb4586711",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 2.0
+    },
+    {
+      "images": [
+        {
+          "analysis": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "chromium_png_sha256": "ba53be57b641fff63824b1419e2acb9005a8468b72637c9b2c33b7c8b5aa9388",
+          "geometry_exact": true,
+          "independent_reference_runs": [
+            {
+              "capture_count": 2,
+              "query": {
+                "bounds": {
+                  "height": 40,
+                  "width": 40,
+                  "x": 20,
+                  "y": 20
+                },
+                "current_target_after_dispatch": [],
+                "metrics": {
+                  "dpr": 3,
+                  "height": 100,
+                  "width": 160
+                },
+                "phase_after_dispatch": [],
+                "target_after_dispatch": [],
+                "trace": []
+              },
+              "repeated_capture_pair_identical": true
+            },
+            {
+              "capture_count": 2,
+              "query": {
+                "bounds": {
+                  "height": 40,
+                  "width": 40,
+                  "x": 20,
+                  "y": 20
+                },
+                "current_target_after_dispatch": [],
+                "metrics": {
+                  "dpr": 3,
+                  "height": 100,
+                  "width": 160
+                },
+                "phase_after_dispatch": [],
+                "target_after_dispatch": [],
+                "trace": []
+              },
+              "repeated_capture_pair_identical": true
+            }
+          ],
+          "native_png_sha256": "abdc0517e011caef80d959844a9a078c445d46a7c0c0055deeb73a64de09184b",
+          "state": "before"
+        },
+        {
+          "analysis": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "chromium_png_sha256": "24276df289936bf2da3b21640116fb1477b063f8a9eb8f91e4202c8a20a47a1a",
+          "geometry_exact": true,
+          "independent_reference_runs": [
+            {
+              "capture_count": 2,
+              "query": {
+                "bounds": {
+                  "height": 40,
+                  "width": 40,
+                  "x": 20,
+                  "y": 20
+                },
+                "current_target_after_dispatch": [
+                  true,
+                  true,
+                  true
+                ],
+                "metrics": {
+                  "dpr": 3,
+                  "height": 100,
+                  "width": 160
+                },
+                "phase_after_dispatch": [
+                  0,
+                  0,
+                  0
+                ],
+                "target_after_dispatch": [
+                  true,
+                  true,
+                  true
+                ],
+                "trace": [
+                  {
+                    "name": "root",
+                    "phase": 1
+                  },
+                  {
+                    "name": "target",
+                    "phase": 2
+                  },
+                  {
+                    "name": "root",
+                    "phase": 3
+                  }
+                ]
+              },
+              "repeated_capture_pair_identical": true
+            },
+            {
+              "capture_count": 2,
+              "query": {
+                "bounds": {
+                  "height": 40,
+                  "width": 40,
+                  "x": 20,
+                  "y": 20
+                },
+                "current_target_after_dispatch": [
+                  true,
+                  true,
+                  true
+                ],
+                "metrics": {
+                  "dpr": 3,
+                  "height": 100,
+                  "width": 160
+                },
+                "phase_after_dispatch": [
+                  0,
+                  0,
+                  0
+                ],
+                "target_after_dispatch": [
+                  true,
+                  true,
+                  true
+                ],
+                "trace": [
+                  {
+                    "name": "root",
+                    "phase": 1
+                  },
+                  {
+                    "name": "target",
+                    "phase": 2
+                  },
+                  {
+                    "name": "root",
+                    "phase": 3
+                  }
+                ]
+              },
+              "repeated_capture_pair_identical": true
+            }
+          ],
+          "native_png_sha256": "cc6e0be428b46390551c1f0ea2780ba1e2c616ef92844c4594f74d09cd4b741d",
+          "state": "after"
+        }
+      ],
+      "native_contract": {
+        "bounds": {
+          "height": 40,
+          "width": 40,
+          "x": 20,
+          "y": 20
+        },
+        "callbacks": 3,
+        "owned_bounds_unchanged": true,
+        "phase_cleared": true,
+        "scale": 3,
+        "targets_expired_after_teardown": true
+      },
+      "native_runs": [
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-clean-v1456/native_event_targets",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/3.0/native-1",
+            "3.0"
+          ],
+          "log_sha256": "2162f5149f8deb9fa6fefb8b7862d16a7f6dcb3055a59825f885534fb4586711",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-clean-v1456/native_event_targets",
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/3.0/native-2",
+            "3.0"
+          ],
+          "log_sha256": "2162f5149f8deb9fa6fefb8b7862d16a7f6dcb3055a59825f885534fb4586711",
+          "observed_exit_code": 0
+        }
+      ],
+      "scale": 3.0
+    }
+  ],
+  "chromium_binary_sha256": "0ba87684df0afc11faaea40ac57bd2f1d68b67191443b38215a36b90e6f08848",
+  "fontconfig_sha256": "99fd54cf2f3875bba44a2272b3dfe5adc7c08263ca0511ec2473ec5e59c09195",
+  "inputs": {
+    "after": {
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/after.html",
+      "sha256": "81946c9836059c3c930cd4bf4cf2d4da5ee94d99d9033af901481a15fc370bbb"
+    },
+    "before": {
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/before.html",
+      "sha256": "625e8594b5a3288ae421c04a9dec50a79d9ff2627e6921febe93891faa3db710"
+    }
+  },
+  "javascript_executed_by_openui": false,
+  "native_binary_sha256": "d3d6248ff459eea0d6096a72140b41d9a95b270b11d03b6cab7bb1371b504392",
+  "new_release_states_admitted": 0,
+  "observed_exit_code": 0,
+  "original_reference_function_sha256": "f434cfbb9ad7746e87d7ccb0cc56e7019e2b658b29acfc72a3619d9d30f0594c",
+  "pixel_tolerance": 0,
+  "preserves_both_unstable_reference_captures": true,
+  "probe_sha256": "3bd0088590c430facba8e31e975609ea56b157e6bc3784c261c141c0eda6abd6",
+  "promotion_allowed": false,
+  "public_native_rust_api": true,
+  "reference_adaptations": [
+    "Remove only the image natural-size assertion for a div case"
+  ],
+  "reference_source_sha256": "b1a480f5f49bada97d341d5cf5e7626f8f03496bc87b4ef83b40c298331d1710",
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "1c8540e9f8c6eeb8fce10a76cb9a32c2f42f01fd",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "f9a60849daecfc54884266c3fdedca48d0de32d02066ae7c9b72881d1eef9a3e",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "1c8540e9f8c6eeb8fce10a76cb9a32c2f42f01fd",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "f9a60849daecfc54884266c3fdedca48d0de32d02066ae7c9b72881d1eef9a3e",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "strict_chromium_capture_pairs": true,
+  "totals": {
+    "consecutive_chromium_captures": 40,
+    "deterministic_native_pairs": 5,
+    "geometry_exact": 10,
+    "images": 10,
+    "independent_chromium_capture_processes": 20,
+    "native_runs": 10,
+    "pixel_exact": 10
+  },
+  "unstable_reference_captures": []
+}

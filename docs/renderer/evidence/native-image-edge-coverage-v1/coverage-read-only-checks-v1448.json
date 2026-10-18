@@ -1,0 +1,124 @@
+{
+  "all_commands_terminal": true,
+  "cargo_commands_run": 0,
+  "checks": [
+    {
+      "command": [
+        "python3",
+        "tools/qualification/generate_renderer_contract.py",
+        "--check"
+      ],
+      "log_sha256": "90abb0d1a675d399075cda5e2065a160491174ed874d3530b7ba5c064d60f81d",
+      "name": "renderer",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/wpt/generate_sp13r_multicol_closure.py",
+        "--check"
+      ],
+      "log_sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222",
+      "name": "multicol",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/wpt/generate_sp17_closure.py",
+        "--check"
+      ],
+      "log_sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a",
+      "name": "sp17",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/wpt/generate_sp18_closure.py",
+        "--check"
+      ],
+      "log_sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763",
+      "name": "sp18",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/wpt/generate_sp20_closure.py",
+        "--check"
+      ],
+      "log_sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d",
+      "name": "sp20",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/release/generate_v02_contract.py",
+        "--check"
+      ],
+      "log_sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd",
+      "name": "v02",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/style/generate_properties.py",
+        "--check"
+      ],
+      "log_sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1",
+      "name": "style",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/ffi/generate_ffi.py",
+        "--check"
+      ],
+      "log_sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821",
+      "name": "ffi",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/accountability/restore_frozen_openui_archive.py",
+        "--check"
+      ],
+      "log_sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32",
+      "name": "archive",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/accountability/audit.py",
+        "--repository-only"
+      ],
+      "log_sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1",
+      "name": "accountability",
+      "observed_exit_code": 0
+    }
+  ],
+  "probe_sha256": "618a80fa5cfd26123ed56f00b73524f93349164b199bda71101409a123ee4a0e",
+  "release_qualification": false,
+  "schema_version": 1,
+  "screenshots_generated": 0,
+  "source": {
+    "clean": true,
+    "commit": "2eacae2c8aad222850af30f9cea6f8a79bbddd4a",
+    "harness_sha256": "c1a215c4f976d653e9479b52e27bdef1a16f6fb36be07dbff6bfa29f4c835b24",
+    "source_tree_sha256": "17169cb9f52c3a7bc4741556f743d7cb04d73c20c2318a267cb2af714c3b3f17",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "2eacae2c8aad222850af30f9cea6f8a79bbddd4a",
+    "harness_sha256": "c1a215c4f976d653e9479b52e27bdef1a16f6fb36be07dbff6bfa29f4c835b24",
+    "source_tree_sha256": "17169cb9f52c3a7bc4741556f743d7cb04d73c20c2318a267cb2af714c3b3f17",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

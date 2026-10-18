@@ -1,0 +1,117 @@
+{
+  "failed_job_logs": {
+    "address": {
+      "complete_log_verified": true,
+      "path": "/tmp/openui-hardening-36823315523-address-v2.log",
+      "sha256": "64d056307767f8331ab42c6d3c7dabd9c7260791b093995b64222f410abb11ed"
+    },
+    "fuzz": {
+      "complete_log_verified": true,
+      "path": "/tmp/openui-hardening-36823315523-fuzz-v2.log",
+      "sha256": "ef7fe320c1584ecce0cf6f9ff937854f5441b51fac63b80804f93fcdc1137cf5"
+    },
+    "leak": {
+      "complete_log_verified": true,
+      "path": "/tmp/openui-hardening-36823315523-leak.log",
+      "sha256": "dd9abd7548bac3e3cd0ff8f5f45c89e398274f91de7ac6d6c668ec4f01df757c"
+    }
+  },
+  "fuzz_stopped_at": "tree_mutations",
+  "jobs": [
+    {
+      "completed_at": "2026-10-01T06:31:46Z",
+      "conclusion": "success",
+      "name": "msrv",
+      "started_at": "2026-10-01T06:09:47Z",
+      "status": "completed",
+      "url": "https://github.com/zhuowcui/open-ui/actions/runs/36823315523/job/110243406211"
+    },
+    {
+      "completed_at": "2026-10-01T06:17:33Z",
+      "conclusion": "failure",
+      "name": "native-sanitizers (leak)",
+      "started_at": "2026-10-01T06:09:48Z",
+      "status": "completed",
+      "url": "https://github.com/zhuowcui/open-ui/actions/runs/36823315523/job/110243406354"
+    },
+    {
+      "completed_at": "2026-10-01T06:24:46Z",
+      "conclusion": "failure",
+      "name": "fuzz-smoke",
+      "started_at": "2026-10-01T06:09:48Z",
+      "status": "completed",
+      "url": "https://github.com/zhuowcui/open-ui/actions/runs/36823315523/job/110243406402"
+    },
+    {
+      "completed_at": "2026-10-01T06:12:09Z",
+      "conclusion": "success",
+      "name": "conformance-and-platform",
+      "started_at": "2026-10-01T06:09:47Z",
+      "status": "completed",
+      "url": "https://github.com/zhuowcui/open-ui/actions/runs/36823315523/job/110243406405"
+    },
+    {
+      "completed_at": "2026-10-01T06:22:14Z",
+      "conclusion": "success",
+      "name": "miri-handles",
+      "started_at": "2026-10-01T06:09:47Z",
+      "status": "completed",
+      "url": "https://github.com/zhuowcui/open-ui/actions/runs/36823315523/job/110243406415"
+    },
+    {
+      "completed_at": "2026-10-01T06:22:23Z",
+      "conclusion": "failure",
+      "name": "native-sanitizers (address)",
+      "started_at": "2026-10-01T06:09:47Z",
+      "status": "completed",
+      "url": "https://github.com/zhuowcui/open-ui/actions/runs/36823315523/job/110243406454"
+    },
+    {
+      "completed_at": "2026-10-01T06:22:08Z",
+      "conclusion": "success",
+      "name": "c-undefined-sanitizer",
+      "started_at": "2026-10-01T06:09:47Z",
+      "status": "completed",
+      "url": "https://github.com/zhuowcui/open-ui/actions/runs/36823315523/job/110243406467"
+    }
+  ],
+  "raw_status_sha256": "937f3edc0f90106421d2c3296b3b9e14c2dac4f66023e70e50c6c74239fcea5f",
+  "release_qualification": false,
+  "reviewed_failures": [
+    {
+      "allocation_count": 236,
+      "allocation_library": "libfontconfig.so.1",
+      "job": "leak",
+      "leaked_bytes": 10476,
+      "owner": "openui-text system font collection and pinned Skia/Fontconfig integration",
+      "status": "open; native font-manager lifetime/root cause requires further review"
+    },
+    {
+      "allocation_count": 236,
+      "allocation_library": "libfontconfig.so.1",
+      "job": "address",
+      "leaked_bytes": 10476,
+      "owner": "openui-text system font collection and pinned Skia/Fontconfig integration",
+      "status": "open; native font-manager lifetime/root cause requires further review"
+    },
+    {
+      "allocation_count": 59,
+      "allocation_library": "libfontconfig.so.1",
+      "job": "fuzz",
+      "leaked_bytes": 2606,
+      "owner": "openui-text system font collection and pinned Skia/Fontconfig integration",
+      "status": "open; native font-manager lifetime/root cause requires further review"
+    }
+  ],
+  "run_conclusion": "failure",
+  "run_status": "completed",
+  "run_url": "https://github.com/zhuowcui/open-ui/actions/runs/36823315523",
+  "sanitizer_ffi_tests_passed_before_process_exit_leak": 25,
+  "schema_version": 1,
+  "source_commit": "056421db1fab811620648e56ec77f42b78c4a65d",
+  "unverified_later_fuzz_targets": [
+    "event_sequences",
+    "resources",
+    "animation_sampling"
+  ]
+}

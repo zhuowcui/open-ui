@@ -15,6 +15,7 @@ import shutil
 import subprocess
 import tarfile
 import tempfile
+import tomllib
 from pathlib import Path
 
 
@@ -77,6 +78,17 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def verify_dependency_security() -> Path:
+    """Every artifact build gets fresh security evidence, including local builds."""
+    evidence_root = Path(
+        os.environ.get("OPENUI_DEPENDENCY_SECURITY_EVIDENCE_ROOT", tempfile.gettempdir())
+    )
+    evidence_root.mkdir(parents=True, exist_ok=True)
+    evidence = Path(tempfile.mkdtemp(prefix="openui-dependency-security-", dir=evidence_root)) / "report"
+    run(["python3", "tools/release/check_dependency_security.py", "--output", str(evidence)])
+    return evidence
+
+
 def write_text(path: Path, value: str, mode: int = 0o644) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(value, encoding="utf-8", newline="\n")
@@ -103,7 +115,8 @@ def verify_source() -> dict:
         run(generator)
     metadata = json.loads(
         run(
-            ["cargo", "metadata", "--locked", "--format-version", "1"],
+            ["cargo", "metadata", "--locked", "--format-version", "1",
+             "--features", "openui-ffi/linux"],
             cwd=RUST,
             echo_output=False,
             combine_output=False,
@@ -158,6 +171,8 @@ def build_libraries(target: str, epoch: int) -> Path:
             target,
             "--package",
             "openui-ffi",
+            "--features",
+            "linux",
         ],
         cwd=RUST,
         env=env,
@@ -203,10 +218,197 @@ def spdx_id(name: str, version: str) -> str:
     return "SPDXRef-Package-" + re.sub(r"[^A-Za-z0-9.-]", "-", f"{name}-{version}")
 
 
+def original_backport_path(value: str | Path) -> Path:
+    """Admit absolute paths without erasing parent traversal components."""
+    path = Path(value)
+    if not path.is_absolute() or ".." in path.parts:
+        raise SystemExit("noncanonical dependency backport path: " + str(value))
+    return path
+
+
+def reject_backport_symlinks(path: Path) -> None:
+    """Check the caller's path before resolve can erase a symlink component."""
+    for component in (*reversed(path.parents), path):
+        if component.is_symlink():
+            raise SystemExit("symlink in dependency backport path: " + str(component))
+
+
+def dependency_backports(metadata: dict, rust_root: Path | None = None) -> list[dict]:
+    """Verify root-declared backports and discovered owned vendor inventories."""
+    root = original_backport_path(rust_root or RUST)
+    root_manifest = root / "Cargo.toml"
+    reject_backport_symlinks(root_manifest)
+    root_data = tomllib.loads(root_manifest.read_text(encoding="utf-8"))
+    required = root_data.get("workspace", {}).get("metadata", {}).get(
+        "openui", {}
+    ).get("dependency-backports", {})
+    if not isinstance(required, dict):
+        raise SystemExit("invalid required dependency backport declarations")
+    vendor = root / "vendor"
+    declarations = {}
+    for name, declaration in required.items():
+        if not isinstance(declaration, dict) or set(declaration) != {
+            "version", "path", "license", "provenance-sha256",
+            "source-inventory-sha256", "upstream-archive-sha256",
+        }:
+            raise SystemExit("invalid required dependency backport: " + name)
+        relative = Path(declaration["path"])
+        if (
+            relative.is_absolute() or ".." in relative.parts
+            or relative.as_posix() != declaration["path"]
+            or "\\" in declaration["path"]
+            or not relative.parts or relative.parts[0] != "vendor"
+            or any(not re.fullmatch(r"[0-9a-f]{64}", declaration[key]) for key in (
+                "provenance-sha256", "source-inventory-sha256", "upstream-archive-sha256"
+            ))
+        ):
+            raise SystemExit("invalid required dependency backport path/digest: " + name)
+        manifest = root / relative / "Cargo.toml"
+        reject_backport_symlinks(manifest)
+        provenance_path = manifest.parent / "OPENUI-BACKPORT.json"
+        reject_backport_symlinks(provenance_path)
+        if not manifest.is_file() or not provenance_path.is_file():
+            raise SystemExit("missing required dependency backport manifest/provenance: " + name)
+        matches = [package for package in metadata["packages"] if package["name"] == name]
+        selected_manifest = None
+        if len(matches) == 1 and matches[0].get("manifest_path"):
+            selected_manifest = original_backport_path(matches[0]["manifest_path"])
+            reject_backport_symlinks(selected_manifest)
+        if len(matches) != 1 or (
+            matches[0].get("source")
+            or matches[0]["version"] != declaration["version"]
+            or matches[0].get("license") != declaration["license"]
+            or not matches[0].get("manifest_path")
+            or selected_manifest != manifest
+        ):
+            raise SystemExit("required dependency backport not selected: " + name)
+        declarations[manifest] = declaration
+    backports = []
+    for package in metadata["packages"]:
+        if package.get("source") or not package.get("manifest_path"):
+            continue
+        manifest = original_backport_path(package["manifest_path"])
+        # Keep ordinary preexisting vendors supported. Any owned vendor path is
+        # checked in its original form, without resolving away linked components.
+        if not manifest.is_relative_to(vendor):
+            continue
+        reject_backport_symlinks(manifest)
+        source = manifest.parent
+        provenance_path = source / "OPENUI-BACKPORT.json"
+        declaration = declarations.get(manifest)
+        if not provenance_path.exists():
+            if declaration is not None:
+                raise SystemExit("missing required dependency backport provenance: " + str(source))
+            continue
+
+        provenance_bytes = provenance_path.read_bytes()
+        if declaration is not None and (
+            hashlib.sha256(provenance_bytes).hexdigest() != declaration["provenance-sha256"]
+        ):
+            raise SystemExit("required dependency backport provenance drift: " + str(source))
+        provenance = json.loads(provenance_bytes)
+        expected = provenance["package"]
+        if (
+            provenance["schema_version"] != 1
+            or manifest.name != "Cargo.toml"
+            or expected["name"] != package["name"]
+            or expected["version"] != package["version"]
+            or expected["license"] != package.get("license")
+            or provenance_path.is_symlink()
+        ):
+            raise SystemExit("invalid dependency backport identity: " + str(source))
+        if any(path.is_symlink() for path in source.rglob("*")):
+            raise SystemExit("symlink in dependency backport: " + str(source))
+        inventory = []
+        for entry in provenance["files"]:
+            relative = Path(entry["path"])
+            if (
+                relative.is_absolute()
+                or relative.as_posix() != entry["path"]
+                or ".." in relative.parts
+                or "\\" in entry["path"]
+                or not re.fullmatch(r"[0-9a-f]{64}", entry["sha256"])
+            ):
+                raise SystemExit("invalid dependency backport inventory: " + str(source))
+            path = source / relative
+            if any((source / Path(*relative.parts[:i])).is_symlink()
+                   for i in range(1, len(relative.parts) + 1)):
+                raise SystemExit("symlink in dependency backport: " + str(path))
+            if not path.is_file() or sha256(path) != entry["sha256"]:
+                raise SystemExit("dependency backport source drift: " + str(path))
+            inventory.append({"path": entry["path"], "sha256": entry["sha256"]})
+        paths = [entry["path"] for entry in inventory]
+        actual_paths = sorted(
+            path.relative_to(source).as_posix()
+            for path in source.rglob("*") if path.is_file()
+            and path != provenance_path
+        )
+        if paths != sorted(set(paths)) or paths != actual_paths:
+            raise SystemExit("incomplete dependency backport inventory: " + str(source))
+        digest = hashlib.sha256(
+            json.dumps(inventory, sort_keys=True, separators=(",", ":")).encode("utf-8")
+        ).hexdigest()
+        if digest != provenance["source_inventory_sha256"]:
+            raise SystemExit("dependency backport inventory digest drift: " + str(source))
+        license_file = provenance["license_file"]
+        if license_file not in paths or "Cargo.toml" not in paths:
+            raise SystemExit("missing dependency backport manifest/license: " + str(source))
+        upstream = provenance["upstream"]
+        if not re.fullmatch(r"[0-9a-f]{64}", upstream["archive_sha256"]):
+            raise SystemExit("invalid upstream backport archive digest: " + str(source))
+        if declaration is not None and (
+            digest != declaration["source-inventory-sha256"]
+            or upstream["archive_sha256"] != declaration["upstream-archive-sha256"]
+        ):
+            raise SystemExit("required dependency backport source identity drift: " + str(source))
+        backports.append({
+            "name": package["name"], "version": package["version"],
+            "directory": source,
+            "license_file": license_file,
+            "source_inventory_sha256": digest,
+            "provenance_sha256": hashlib.sha256(provenance_bytes).hexdigest(),
+            "upstream": upstream,
+            "changes": provenance["changes"],
+        })
+    return sorted(backports, key=lambda item: (item["name"], item["version"]))
+
+
+def stage_dependency_backports(share: Path, backports: list[dict]) -> None:
+    records = []
+    for backport in backports:
+        name = f"{backport['name']}-{backport['version']}"
+        destination = share / "sources/backports" / name
+        shutil.copytree(backport["directory"], destination)
+        license_path = share / "licenses" / f"{name}-LICENSE.txt"
+        license_path.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(backport["directory"] / backport["license_file"], license_path)
+        records.append({
+            key: value for key, value in backport.items()
+            if key not in {"directory", "license_file"}
+        } | {"source_path": f"sources/backports/{name}",
+             "license_path": f"licenses/{name}-LICENSE.txt"})
+    write_text(share / "DEPENDENCY-BACKPORTS.json",
+               json.dumps(records, indent=2, sort_keys=True) + "\n")
+
+
+def rust_example_backport_patches(backports: list[dict]) -> str:
+    if not backports:
+        return ""
+    return "\n[patch.crates-io]\n" + "".join(
+        f"{entry['name']} = {{ path = \"../../../sources/backports/"
+        f"{entry['name']}-{entry['version']}\" }}\n"
+        for entry in backports
+    )
+
+
 def make_sbom(metadata: dict, target: str, revision: str, epoch: int) -> dict:
     packages = []
     relationships = []
     root_id = "SPDXRef-DOCUMENT"
+    backports = {
+        (entry["name"], entry["version"]): entry
+        for entry in dependency_backports(metadata)
+    }
     for package in sorted(metadata["packages"], key=lambda item: (item["name"], item["version"])):
         package_id = spdx_id(package["name"], package["version"])
         source = package.get("source") or "NOASSERTION"
@@ -225,6 +427,19 @@ def make_sbom(metadata: dict, target: str, revision: str, epoch: int) -> dict:
             record["checksums"] = [
                 {"algorithm": "SHA256", "checksumValue": package["checksum"]}
             ]
+        if backport := backports.get((package["name"], package["version"])):
+            upstream = backport["upstream"]
+            record["sourceInfo"] = (
+                "Open UI local dependency backport. SHA256 below identifies the "
+                "canonical source inventory, not the unmodified registry archive. "
+                f"Provenance SHA256: {backport['provenance_sha256']}; "
+                f"upstream archive: {upstream['archive_url']}; "
+                f"upstream archive SHA256: {upstream['archive_sha256']}."
+            )
+            record["checksums"] = [{
+                "algorithm": "SHA256",
+                "checksumValue": backport["source_inventory_sha256"],
+            }]
         packages.append(record)
         relationships.append(
             {
@@ -263,6 +478,7 @@ def stage_sdk(
     revision: str,
 ) -> None:
     static_source, shared_source = locate_libraries(library_dir)
+    backports = dependency_backports(metadata)
     include = stage / "include/openui"
     lib = stage / "lib"
     debug = stage / "debug"
@@ -324,6 +540,7 @@ endif()
     )
 
     shutil.copytree(ROOT / "examples/c_v02", share / "examples/c", dirs_exist_ok=True)
+    stage_dependency_backports(share, backports)
     for example in ("hello", "counter", "todo", "dashboard"):
         destination = share / "examples/rust" / example
         destination.mkdir(parents=True, exist_ok=True)
@@ -341,7 +558,7 @@ linux = ["openui/linux"]
 
 [dependencies]
 openui = "={VERSION}"
-""",
+""" + rust_example_backport_patches(backports),
         )
         shutil.copytree(
             RUST / "examples" / example / "src",
@@ -422,7 +639,7 @@ Section: devel
 Priority: optional
 Architecture: {deb_arch}
 Maintainer: Open UI contributors
-Depends: libstdc++6, libfreetype6, libfontconfig1
+Depends: libstdc++6, libfreetype6, libfontconfig1, libx11-6, libxcb1, libxkbcommon0, libxkbcommon-x11-0, libwayland-client0, libwayland-cursor0, libwayland-egl1, libegl1, libglx0
 Installed-Size: {installed_size}
 Description: Open UI typed retained Linux and headless engine
  Includes the v0.2 C ABI, development headers, static library, examples,
@@ -457,7 +674,7 @@ License: Apache-2.0
 URL: https://github.com/zhuowcui/open-ui
 Source0: openui-sdk-payload.tar.gz
 BuildArch: {rpm_arch}
-Requires: libstdc++, freetype, fontconfig
+Requires: libstdc++, freetype, fontconfig, libX11.so.6()(64bit), libxcb.so.1()(64bit), libxkbcommon.so.0()(64bit), libxkbcommon-x11.so.0()(64bit), libwayland-client.so.0()(64bit), libwayland-cursor.so.0()(64bit), libwayland-egl.so.1()(64bit), libEGL.so.1()(64bit), libGLX.so.0()(64bit)
 
 %description
 Open UI v0.2 C ABI, headers, libraries, examples, and build metadata.
@@ -556,6 +773,7 @@ def main() -> None:
     metadata = verify_source()
     if args.verify_source:
         return
+    verify_dependency_security()
     dirty = bool(
         run(["git", "status", "--porcelain"], echo_output=False).strip()
     )

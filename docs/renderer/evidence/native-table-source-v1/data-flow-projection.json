@@ -1,0 +1,76 @@
+{
+  "all_debug_runs_terminal": true,
+  "cargo_commands_run": 0,
+  "chromium_pixel_qualification": false,
+  "debug_fixture_has_5_table_fragments_native_guard_has_4": true,
+  "debug_fixture_is_different_from_native_engine_guard": true,
+  "debug_receipt_sha256": "99875e691e37958f9254a937aeca22921c4fc9206538effd1f19ec7030036f23",
+  "fixed_geometry_not_executed": true,
+  "independent_debug_runs_identical": true,
+  "javascript_executed_by_openui": false,
+  "native_engine_guard_still_requires_41_fragments": true,
+  "no_cross_source_result_substitution": true,
+  "projections": [
+    {
+      "cropped_first_body_row_css_height": 60,
+      "footer_css_height": 20,
+      "header_css_height": 20,
+      "log_sha256": "d55c2ff6b5a03eb109d0b6675bd98f6c48a6a8bcc312348f4f063c107cbde627",
+      "profile": "legacy",
+      "retained_body_descendant_css_height": 100,
+      "source_body_css_height": 100,
+      "source_body_remainder_not_represented_by_cropped_row_css_height": 40,
+      "source_table_css_height": 140,
+      "table_fragments_in_this_different_source_fixture": 5
+    },
+    {
+      "cropped_first_body_row_css_height": 60,
+      "footer_css_height": 20,
+      "header_css_height": 20,
+      "log_sha256": "7cfa52f1fd6425c49c46cd13ecb218fba48a60abab6498fdbafb4a37488dfc11",
+      "profile": "mobile",
+      "retained_body_descendant_css_height": 100,
+      "source_body_css_height": 100,
+      "source_body_remainder_not_represented_by_cropped_row_css_height": 40,
+      "source_table_css_height": 140,
+      "table_fragments_in_this_different_source_fixture": 5
+    },
+    {
+      "cropped_first_body_row_css_height": 60,
+      "footer_css_height": 20,
+      "header_css_height": 20,
+      "log_sha256": "4e78bdaac2592cb2324666ab93f9cdf86fb614a8bee8f1ff7facae1398d3bec9",
+      "profile": "desktop125",
+      "retained_body_descendant_css_height": 100,
+      "source_body_css_height": 100,
+      "source_body_remainder_not_represented_by_cropped_row_css_height": 40,
+      "source_table_css_height": 140,
+      "table_fragments_in_this_different_source_fixture": 5
+    },
+    {
+      "cropped_first_body_row_css_height": 60,
+      "footer_css_height": 20,
+      "header_css_height": 20,
+      "log_sha256": "df6a9ed36a22db4ddecd5e9a9b1edac0c0288ee53ddd1cfcf222ba0dcef421c3",
+      "profile": "desktop150",
+      "retained_body_descendant_css_height": 100,
+      "source_body_css_height": 100,
+      "source_body_remainder_not_represented_by_cropped_row_css_height": 40,
+      "source_table_css_height": 140,
+      "table_fragments_in_this_different_source_fixture": 5
+    }
+  ],
+  "proposed_fix_source": "e389b26ab28f259544e43c3052c895501e4c8686",
+  "release_qualification": false,
+  "reviewed_data_flow": "repeated_table_sections takes the body extent from each visible direct row height; nested_repeated_table_flow_block_size later receives this cropped first table rather than its original source subtree.",
+  "reviewed_function_source_sha256": "6e05dc63d7e8bf135ee59f758ee748320e204232ecdcc01324e4c98d98ee492c",
+  "schema_version": 1,
+  "screenshots_generated": 0,
+  "source": {
+    "clean": true,
+    "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

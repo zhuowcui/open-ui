@@ -1,0 +1,316 @@
+{
+  "actual_exit_code": 1,
+  "admission": false,
+  "all_independent_repeats_exact": true,
+  "all_ordered_vs_static_final_exact": true,
+  "browser_captures": 72,
+  "comparisons": [
+    {
+      "browser_repeat_exact": {
+        "final": true,
+        "initial": true,
+        "ordered": true
+      },
+      "case": "pending/native-mutation-v1/wpt/css_break/out-of-flow-in-multicolumn-120",
+      "native_repeat_exact": true,
+      "native_vs_ordered": {
+        "exact": false,
+        "mismatched_pixels": 10000
+      },
+      "native_vs_static_final": {
+        "exact": false,
+        "mismatched_pixels": 10000
+      },
+      "oracle_identity_sha256": "8483c1fea60d600922fa389cb8cca7830957b9a6feede0a3dc3dcdf5076ad04e",
+      "oracle_namespace": "pending-native-ordered-oracle-v2/wpt/css_break/out-of-flow-in-multicolumn-120",
+      "ordered_vs_static_final": {
+        "exact": true,
+        "mismatched_pixels": 0
+      },
+      "profile": "legacy-800x600@1"
+    },
+    {
+      "browser_repeat_exact": {
+        "final": true,
+        "initial": true,
+        "ordered": true
+      },
+      "case": "pending/native-mutation-v1/wpt/css_break/out-of-flow-in-multicolumn-120",
+      "native_repeat_exact": true,
+      "native_vs_ordered": {
+        "exact": false,
+        "mismatched_pixels": 40000
+      },
+      "native_vs_static_final": {
+        "exact": false,
+        "mismatched_pixels": 40000
+      },
+      "oracle_identity_sha256": "32e51ead9d0069085df1c4f647c492b2f51cfce98c8aff27d85c8829be3af53c",
+      "oracle_namespace": "pending-native-ordered-oracle-v2/wpt/css_break/out-of-flow-in-multicolumn-120",
+      "ordered_vs_static_final": {
+        "exact": true,
+        "mismatched_pixels": 0
+      },
+      "profile": "mobile-375x667@2"
+    },
+    {
+      "browser_repeat_exact": {
+        "final": true,
+        "initial": true,
+        "ordered": true
+      },
+      "case": "pending/native-mutation-v1/wpt/css_break/out-of-flow-in-multicolumn-120",
+      "native_repeat_exact": true,
+      "native_vs_ordered": {
+        "exact": false,
+        "mismatched_pixels": 15688
+      },
+      "native_vs_static_final": {
+        "exact": false,
+        "mismatched_pixels": 15688
+      },
+      "oracle_identity_sha256": "679acfb7bff6107f9ed5a7449f0aafb59e43ab91551ba3f9aea9bcd79d74744d",
+      "oracle_namespace": "pending-native-ordered-oracle-v2/wpt/css_break/out-of-flow-in-multicolumn-120",
+      "ordered_vs_static_final": {
+        "exact": true,
+        "mismatched_pixels": 0
+      },
+      "profile": "desktop-1280x720@1.25"
+    },
+    {
+      "browser_repeat_exact": {
+        "final": true,
+        "initial": true,
+        "ordered": true
+      },
+      "case": "pending/native-mutation-v1/wpt/css_break/out-of-flow-in-multicolumn-120",
+      "native_repeat_exact": true,
+      "native_vs_ordered": {
+        "exact": false,
+        "mismatched_pixels": 22500
+      },
+      "native_vs_static_final": {
+        "exact": false,
+        "mismatched_pixels": 22500
+      },
+      "oracle_identity_sha256": "8d29828728525c35f5bdc9f91c7db161a9b9a5def9dfbeeffb1c058dff05b4cf",
+      "oracle_namespace": "pending-native-ordered-oracle-v2/wpt/css_break/out-of-flow-in-multicolumn-120",
+      "ordered_vs_static_final": {
+        "exact": true,
+        "mismatched_pixels": 0
+      },
+      "profile": "desktop-1920x1080@1.5"
+    },
+    {
+      "browser_repeat_exact": {
+        "final": true,
+        "initial": true,
+        "ordered": true
+      },
+      "case": "pending/native-mutation-v1/wpt/css_position/position-fixed-dynamic-transformed-sibling",
+      "native_repeat_exact": true,
+      "native_vs_ordered": {
+        "exact": true,
+        "mismatched_pixels": 0
+      },
+      "native_vs_static_final": {
+        "exact": true,
+        "mismatched_pixels": 0
+      },
+      "oracle_identity_sha256": "d7a5f233de1b770ed1068706d86df5d8414bb25f97dd2158f019281644fb80e5",
+      "oracle_namespace": "pending-native-ordered-oracle-v2/wpt/css_position/position-fixed-dynamic-transformed-sibling",
+      "ordered_vs_static_final": {
+        "exact": true,
+        "mismatched_pixels": 0
+      },
+      "profile": "legacy-800x600@1"
+    },
+    {
+      "browser_repeat_exact": {
+        "final": true,
+        "initial": true,
+        "ordered": true
+      },
+      "case": "pending/native-mutation-v1/wpt/css_position/position-fixed-dynamic-transformed-sibling",
+      "native_repeat_exact": true,
+      "native_vs_ordered": {
+        "exact": true,
+        "mismatched_pixels": 0
+      },
+      "native_vs_static_final": {
+        "exact": true,
+        "mismatched_pixels": 0
+      },
+      "oracle_identity_sha256": "26d803c7f3f4eb1be90ed808a362fe512eeb5640f7acbeecf6ca4d1588c58435",
+      "oracle_namespace": "pending-native-ordered-oracle-v2/wpt/css_position/position-fixed-dynamic-transformed-sibling",
+      "ordered_vs_static_final": {
+        "exact": true,
+        "mismatched_pixels": 0
+      },
+      "profile": "mobile-375x667@2"
+    },
+    {
+      "browser_repeat_exact": {
+        "final": true,
+        "initial": true,
+        "ordered": true
+      },
+      "case": "pending/native-mutation-v1/wpt/css_position/position-fixed-dynamic-transformed-sibling",
+      "native_repeat_exact": true,
+      "native_vs_ordered": {
+        "exact": false,
+        "mismatched_pixels": 1600
+      },
+      "native_vs_static_final": {
+        "exact": false,
+        "mismatched_pixels": 1600
+      },
+      "oracle_identity_sha256": "fc407c373365eb559eeb1433129c34576bc878956a8917f145fe9659cc820a5d",
+      "oracle_namespace": "pending-native-ordered-oracle-v2/wpt/css_position/position-fixed-dynamic-transformed-sibling",
+      "ordered_vs_static_final": {
+        "exact": true,
+        "mismatched_pixels": 0
+      },
+      "profile": "desktop-1280x720@1.25"
+    },
+    {
+      "browser_repeat_exact": {
+        "final": true,
+        "initial": true,
+        "ordered": true
+      },
+      "case": "pending/native-mutation-v1/wpt/css_position/position-fixed-dynamic-transformed-sibling",
+      "native_repeat_exact": true,
+      "native_vs_ordered": {
+        "exact": true,
+        "mismatched_pixels": 0
+      },
+      "native_vs_static_final": {
+        "exact": true,
+        "mismatched_pixels": 0
+      },
+      "oracle_identity_sha256": "ed80ba55102af509a5cc797dd6d2b6abe8464ef2cb1ec7204b0472e51628cd8c",
+      "oracle_namespace": "pending-native-ordered-oracle-v2/wpt/css_position/position-fixed-dynamic-transformed-sibling",
+      "ordered_vs_static_final": {
+        "exact": true,
+        "mismatched_pixels": 0
+      },
+      "profile": "desktop-1920x1080@1.5"
+    },
+    {
+      "browser_repeat_exact": {
+        "final": true,
+        "initial": true,
+        "ordered": true
+      },
+      "case": "pending/native-mutation-v1/wpt/css_overflow/scrollbars-chrome-bug-001",
+      "native_repeat_exact": true,
+      "native_vs_ordered": {
+        "exact": true,
+        "mismatched_pixels": 0
+      },
+      "native_vs_static_final": {
+        "exact": true,
+        "mismatched_pixels": 0
+      },
+      "oracle_identity_sha256": "2e600579ff6d1c97e40645df2b129486db82e46bfc0f5a16f4e89d890deadcee",
+      "oracle_namespace": "pending-native-ordered-oracle-v2/wpt/css_overflow/scrollbars-chrome-bug-001",
+      "ordered_vs_static_final": {
+        "exact": true,
+        "mismatched_pixels": 0
+      },
+      "profile": "legacy-800x600@1"
+    },
+    {
+      "browser_repeat_exact": {
+        "final": true,
+        "initial": true,
+        "ordered": true
+      },
+      "case": "pending/native-mutation-v1/wpt/css_overflow/scrollbars-chrome-bug-001",
+      "native_repeat_exact": true,
+      "native_vs_ordered": {
+        "exact": true,
+        "mismatched_pixels": 0
+      },
+      "native_vs_static_final": {
+        "exact": true,
+        "mismatched_pixels": 0
+      },
+      "oracle_identity_sha256": "ebcb34af6c97e55e59a7de14d8507a6f6821fb921b1c25c548e3dbb3f9f3095d",
+      "oracle_namespace": "pending-native-ordered-oracle-v2/wpt/css_overflow/scrollbars-chrome-bug-001",
+      "ordered_vs_static_final": {
+        "exact": true,
+        "mismatched_pixels": 0
+      },
+      "profile": "mobile-375x667@2"
+    },
+    {
+      "browser_repeat_exact": {
+        "final": true,
+        "initial": true,
+        "ordered": true
+      },
+      "case": "pending/native-mutation-v1/wpt/css_overflow/scrollbars-chrome-bug-001",
+      "native_repeat_exact": true,
+      "native_vs_ordered": {
+        "exact": false,
+        "mismatched_pixels": 563
+      },
+      "native_vs_static_final": {
+        "exact": false,
+        "mismatched_pixels": 563
+      },
+      "oracle_identity_sha256": "16e3c53da97f52955d80852066a3712c27322ae90dae1138208bfc7234c16ee0",
+      "oracle_namespace": "pending-native-ordered-oracle-v2/wpt/css_overflow/scrollbars-chrome-bug-001",
+      "ordered_vs_static_final": {
+        "exact": true,
+        "mismatched_pixels": 0
+      },
+      "profile": "desktop-1280x720@1.25"
+    },
+    {
+      "browser_repeat_exact": {
+        "final": true,
+        "initial": true,
+        "ordered": true
+      },
+      "case": "pending/native-mutation-v1/wpt/css_overflow/scrollbars-chrome-bug-001",
+      "native_repeat_exact": true,
+      "native_vs_ordered": {
+        "exact": false,
+        "mismatched_pixels": 600
+      },
+      "native_vs_static_final": {
+        "exact": false,
+        "mismatched_pixels": 600
+      },
+      "oracle_identity_sha256": "390fe9f16a5ae6978d9abf9821efc7617d19565a1c0917a57bb4a2050007eddb",
+      "oracle_namespace": "pending-native-ordered-oracle-v2/wpt/css_overflow/scrollbars-chrome-bug-001",
+      "ordered_vs_static_final": {
+        "exact": true,
+        "mismatched_pixels": 0
+      },
+      "profile": "desktop-1920x1080@1.5"
+    }
+  ],
+  "complete": true,
+  "driver_sha256": "4a4a62d2aad34e027a4b6773532eabeae7381ab9377c77cff3cad58498bcaaac",
+  "full_receipt_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-pending-ordered-oracle-runtime-v4610/receipt.json",
+  "full_receipt_sha256": "9b10128d5071b4d0bcc893f97c25143d59e64cf3ecf9674144ba14a4b2b847d8",
+  "inputs_unchanged": true,
+  "manifest_sha256": "8842c6d344e4ca8c5d1e05b17700d801f39ea4a2bbf26c45dbf12a643fe42570",
+  "native_commands": 24,
+  "native_topology_check": "derived source model, not independent runtime native DOM serialization",
+  "owned_children_terminal_reaped": true,
+  "release_qualified": false,
+  "renderer_qualified": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "9ad2fb264da070d484859ebc2a6a9a8cf787fb08",
+    "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6",
+    "source_tree_sha256": "7b3b67bdf5ac6135df89ba05c76f99a92ec2f9ce8186dca25cbcd4c68a0db133",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

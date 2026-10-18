@@ -1,0 +1,23 @@
+{
+  "branch": "agent/native-keywords-current-v1746",
+  "dispatched_at_utc": "2026-10-05T23:28:01.967087+00:00",
+  "native_pixel_qualification": false,
+  "probe_sha256": "708ded8f53b0007551319b5bbbfc83f0396e4a675953dfa442985a9ae9e421fb",
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": "7d6ffabfea1f72c90f97475488dba8a8058ac4c7",
+  "steps": [
+    {
+      "actual_exit": 0,
+      "log_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-dispatch-v1753-push.log",
+      "log_sha256": "ecd22b60ed8c18c6e62191a2e26308f4c27f159e439d0ec625e8e7719da8f334",
+      "name": "push"
+    },
+    {
+      "actual_exit": 0,
+      "log_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-dispatch-v1753-dispatch.log",
+      "log_sha256": "c286fe66ecc0e21d3da094f8fc3bdf60e5063e11cc5af1fac61aa393bb94fdec",
+      "name": "dispatch"
+    }
+  ]
+}

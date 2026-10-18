@@ -1,0 +1,18 @@
+{
+  "actual_exit_code": 0,
+  "actual_reaping_chunk_id": "60bfd0",
+  "all_known_owned_pids_absent": true,
+  "known_owned_pids": [
+    3806862,
+    3806942,
+    3807393,
+    3807762,
+    3808164
+  ],
+  "qualification": false,
+  "receipt_sha256": "cd754e19efe97c619784c19a3e3edf660937dabe4ebb0f70b570ab27ab78f4d6",
+  "root_tool_session_id": 46749,
+  "schema_version": 1,
+  "writer_pid": 3808898,
+  "written_utc": "2026-10-14T13:51:32.594499+00:00"
+}

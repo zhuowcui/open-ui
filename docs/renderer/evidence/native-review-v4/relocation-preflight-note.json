@@ -1,0 +1,9 @@
+{
+  "actual_exit": 1,
+  "failed_preflight_version": 1645,
+  "files_moved_by_failed_preflight": 0,
+  "fresh_probe_version": 1646,
+  "original_bytes_preserved": true,
+  "reason": "old artifacts have 3, 5, 5 and 4 declared build stages; the old template expected six",
+  "schema_version": 1
+}

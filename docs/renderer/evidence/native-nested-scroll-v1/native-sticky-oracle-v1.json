@@ -1,0 +1,6034 @@
+{
+  "binary_sha256": "055b9d48b0c104945bfa6ab117e66c69e920a3ab22127bbd18020f04dc5ca16c",
+  "build_receipt_sha256": "aa80f1da7e33d09b26c4531404fd2eb0d50866f148a6f06821dff4574c95a779",
+  "capture_harness_sha256": "ad37344879ddda41e6570ea41c142103e58f5db05fb9c96c27c1ac62b67f92ea",
+  "cases": [
+    {
+      "actual": {
+        "callback_count": 0,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "initial",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": 120,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 120,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "d951f639ede8d93f9654828c0c820b215385f503b5fa385edca37d72c1b36229",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 0,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "initial",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": 120,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 120,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "7eb9f85f1f0abe69cd701584b1b52ea543626bded7c915655e7ce89b669db478",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 1,
+      "state": "initial"
+    },
+    {
+      "actual": {
+        "callback_count": 1,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "scroll-25",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": 95,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 95,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 25,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "1c9444eaa123cfb96ed89dbb9ab03c0f347ad3496cc6bfce5bdbe2bb1206691d",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 1,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "scroll-25",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": 95,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 95,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 25,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "bbc085d791f4db0b7472262f707f6eeb9dc377d15f4edef5d6b1238d6a5f8e92",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 1,
+      "state": "scroll-25"
+    },
+    {
+      "actual": {
+        "callback_count": 2,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "scroll-100",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": 20,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 70,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 100,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "44c51c8f318a720c8aeb768e95bd0f18f5a252534c55f8f33d015262423de5cb",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 2,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "scroll-100",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": 20,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 70,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 100,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "6fa0e3caf25fbfdc90c3cd49bd38cd911d2046f062fbcb44e1433f8f54f7d08a",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 1,
+      "state": "scroll-100"
+    },
+    {
+      "actual": {
+        "callback_count": 3,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "scroll-200",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -80,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 200,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "1db27b02bb3f9404655553c86bd442c94e54a4b2aa032028756ae7e981262de5",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 3,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "scroll-200",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -80,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 200,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "cc30bc7adaddf427e980da5c6a7129fa8522e9c594b43249933f1d99a63fa82d",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 1,
+      "state": "scroll-200"
+    },
+    {
+      "actual": {
+        "callback_count": 4,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "maximum",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -130,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": -30,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 250,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "4c738910d2cc8d1fb7919eae170c3daa75de917b21c1d98efa1149084f3a5fcf",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 4,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "maximum",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -130,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": -30,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 250,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "df1e628b2021bf96f171c3f7bcce940f72258da92df3d1e6ed87217b7722eb86",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 1,
+      "state": "maximum"
+    },
+    {
+      "actual": {
+        "callback_count": 5,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "by",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -55,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 45,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 175,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "00ae0a30008410b142913d6af1a6b47ca71a632b18d3fd764e6c3b834e107c0f",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 5,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "by",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -55,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 45,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 175,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "ece1b6fa61b37504e9936d9a45a8a8d4231e5e2896c929e379874a449cbf44e8",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 1,
+      "state": "by"
+    },
+    {
+      "actual": {
+        "callback_count": 6,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "smooth-half",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -68,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 32,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 188,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "f1289daaf1ca500f0b36eea1286db688b9425229e126e1aa62015a2ef528f409",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 6,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "smooth-half",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -68,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 32,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 188,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "97324c2381abd7819100865c754696c57695fb2cd7b0805baa0b6ae6cf3bef4d",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 1,
+      "state": "smooth-half"
+    },
+    {
+      "actual": {
+        "callback_count": 6,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "smooth-end",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -80,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 200,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "1db27b02bb3f9404655553c86bd442c94e54a4b2aa032028756ae7e981262de5",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 6,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "smooth-end",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -80,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 200,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "cc30bc7adaddf427e980da5c6a7129fa8522e9c594b43249933f1d99a63fa82d",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 1,
+      "state": "smooth-end"
+    },
+    {
+      "actual": {
+        "callback_count": 7,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 250
+        },
+        "name": "shrink",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "1db27b02bb3f9404655553c86bd442c94e54a4b2aa032028756ae7e981262de5",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 7,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 250
+        },
+        "name": "shrink",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "cc30bc7adaddf427e980da5c6a7129fa8522e9c594b43249933f1d99a63fa82d",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 1,
+      "state": "shrink"
+    },
+    {
+      "actual": {
+        "callback_count": 8,
+        "client": {
+          "height": 150,
+          "width": 600
+        },
+        "extent": {
+          "height": 154,
+          "width": 600
+        },
+        "name": "resize",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 600,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "1db27b02bb3f9404655553c86bd442c94e54a4b2aa032028756ae7e981262de5",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 8,
+        "client": {
+          "height": 150,
+          "width": 600
+        },
+        "extent": {
+          "height": 154,
+          "width": 600
+        },
+        "name": "resize",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 600,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "cc30bc7adaddf427e980da5c6a7129fa8522e9c594b43249933f1d99a63fa82d",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 1,
+      "state": "resize"
+    },
+    {
+      "actual": {
+        "callback_count": 0,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "initial",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": 120,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 120,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "4c447b222365bf4834184dc14da63223cbe54c742cc7d5e37d0294c3ee327a65",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 0,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "initial",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": 120,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 120,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "c822e5c484a7b279c461eff6d6f44f54c21948d93b26bb43fead821553ab9e69",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 1.25,
+      "state": "initial"
+    },
+    {
+      "actual": {
+        "callback_count": 1,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "scroll-25",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": 95,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 95,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 25,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "1ba2c06c4679b6719c105ea430fd3126b4f1c2d16b82ff37329e7db7b55063d0",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 1,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "scroll-25",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": 95,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 95,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 25,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "e00c04c031e872d71ca7a411abdf2918b53cab082d9d5ff11ae5e3c84fcac4dd",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 1.25,
+      "state": "scroll-25"
+    },
+    {
+      "actual": {
+        "callback_count": 2,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "scroll-100",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": 20,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 70,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 100,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "b8d909b0ac69b7d776e5d486670892e365bf09ce2364dfe6eaa45fef60fa38d2",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 2,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "scroll-100",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": 20,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 70,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 100,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "5462e66de6d78a93c65237e784b539834883c086904883f22be9f8b0231290cd",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 1.25,
+      "state": "scroll-100"
+    },
+    {
+      "actual": {
+        "callback_count": 3,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "scroll-200",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -80,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 200,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "b99b9acea032e97abcc94421d5d033a8005ff3123be83a9c70bd01d9530b126c",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 3,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "scroll-200",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -80,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 200,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "459118d0b3ead1346c9a9191e70e75f7dbd5f1a6a1654cb649a0060130a9417b",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 1.25,
+      "state": "scroll-200"
+    },
+    {
+      "actual": {
+        "callback_count": 4,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "maximum",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -130,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": -30,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 250,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "27bacaf4632670138b051a9d96ded089c9400f9dfc2e367137a204a99a40e95e",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 4,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "maximum",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -130,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": -30,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 250,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "95b2482892968c699631ced9c9b756daa763edcc40e552703a14ec58ee1d382e",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 1.25,
+      "state": "maximum"
+    },
+    {
+      "actual": {
+        "callback_count": 5,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "by",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -55,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 45,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 175,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "4d1d965f6df117ca27c8dc26eaacd447e5ec1e81af93476b27ee6d85dab4d9ef",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 5,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "by",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -55,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 45,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 175,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "b511b5bf37f99e2f39cc6ce7fa71d7434f6fdf93c6129ffc201e3094f7a91daa",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 1.25,
+      "state": "by"
+    },
+    {
+      "actual": {
+        "callback_count": 6,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "smooth-half",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -68,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 32,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 188,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "b3f966032f87551f8bc9c25ea585b1fafb4fddf4d781a6e2a67f0c1276c8f57e",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 6,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "smooth-half",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -68,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 32,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 188,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "f6a7410f8d3a28fec4464f7551e418f56370260d3d59614fac7e75536b98f81e",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 1.25,
+      "state": "smooth-half"
+    },
+    {
+      "actual": {
+        "callback_count": 6,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "smooth-end",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -80,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 200,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "b99b9acea032e97abcc94421d5d033a8005ff3123be83a9c70bd01d9530b126c",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 6,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "smooth-end",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -80,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 200,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "459118d0b3ead1346c9a9191e70e75f7dbd5f1a6a1654cb649a0060130a9417b",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 1.25,
+      "state": "smooth-end"
+    },
+    {
+      "actual": {
+        "callback_count": 7,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 250
+        },
+        "name": "shrink",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "b99b9acea032e97abcc94421d5d033a8005ff3123be83a9c70bd01d9530b126c",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 7,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 250
+        },
+        "name": "shrink",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "459118d0b3ead1346c9a9191e70e75f7dbd5f1a6a1654cb649a0060130a9417b",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 1.25,
+      "state": "shrink"
+    },
+    {
+      "actual": {
+        "callback_count": 8,
+        "client": {
+          "height": 150,
+          "width": 600
+        },
+        "extent": {
+          "height": 154,
+          "width": 600
+        },
+        "name": "resize",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 600,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "b99b9acea032e97abcc94421d5d033a8005ff3123be83a9c70bd01d9530b126c",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 8,
+        "client": {
+          "height": 150,
+          "width": 600
+        },
+        "extent": {
+          "height": 154,
+          "width": 600
+        },
+        "name": "resize",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 600,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "459118d0b3ead1346c9a9191e70e75f7dbd5f1a6a1654cb649a0060130a9417b",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 1.25,
+      "state": "resize"
+    },
+    {
+      "actual": {
+        "callback_count": 0,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "initial",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": 120,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 120,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "6d2b336276ad643888a70aa1574080546d5de6397a8e88f8816753a1aaae67e0",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 0,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "initial",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": 120,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 120,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "12451fd96dfa80047a8b39d796dc77e10f5c3cd262d22a5606d449bbe2097f6a",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 1.5,
+      "state": "initial"
+    },
+    {
+      "actual": {
+        "callback_count": 1,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "scroll-25",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": 95,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 95,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 25,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "4c347d814c9151bbb738221a7362ab8227a22a773b433d6280c2e99e39fdaf8f",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 1,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "scroll-25",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": 95,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 95,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 25,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "444db0d5e873511fa33bfe43b9b90c545d18b31ccf052c2124ebfa53cf528b00",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 1.5,
+      "state": "scroll-25"
+    },
+    {
+      "actual": {
+        "callback_count": 2,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "scroll-100",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": 20,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 70,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 100,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "e228ccc1bb11bc15fd704ebc35d36520f65c6be11276666b598caede2bfd514f",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 2,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "scroll-100",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": 20,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 70,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 100,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "2ba318e37e28633cfdda9bab8f65a5fc19ab5f626754e8e636f6b2048840b246",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 1.5,
+      "state": "scroll-100"
+    },
+    {
+      "actual": {
+        "callback_count": 3,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "scroll-200",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -80,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 200,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "069a6fb2a83f3ec09add0acf705b18dfddfc3db9ced333aa0c01ea8881d9003f",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 3,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "scroll-200",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -80,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 200,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "7ce09571095bf21e5081cb0e830fac8e66e67e1c9fa9dd5be33bba716156813d",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 1.5,
+      "state": "scroll-200"
+    },
+    {
+      "actual": {
+        "callback_count": 4,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "maximum",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -130,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": -30,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 250,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "bbc838aef3814233fe60d8bb72764cfaae11068edd073fd65cb820847d36b77d",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 4,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "maximum",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -130,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": -30,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 250,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "130ae795a3809d740372e4c4f143b21b9822084b614adfad2684eca25089df06",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 1.5,
+      "state": "maximum"
+    },
+    {
+      "actual": {
+        "callback_count": 5,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "by",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -55,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 45,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 175,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "a92e17fe3c17675548a69879fe8b5d80893a4246131541b7d8310200eddaa677",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 5,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "by",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -55,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 45,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 175,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "9929ea49c8d26425e26ae29b422b157b33535d0480f2e2928fb4dde0b65a7774",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 1.5,
+      "state": "by"
+    },
+    {
+      "actual": {
+        "callback_count": 6,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "smooth-half",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -68,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 32,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 188,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "7c4551de5584c79be994563540064b6456f7213236f81162b66728b1998e48c5",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 6,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "smooth-half",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -68,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 32,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 188,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "9cad315d52a5a53e8f127670018075c76b51db8acfe054eb90f3517d8e4a58cf",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 1.5,
+      "state": "smooth-half"
+    },
+    {
+      "actual": {
+        "callback_count": 6,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "smooth-end",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -80,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 200,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "069a6fb2a83f3ec09add0acf705b18dfddfc3db9ced333aa0c01ea8881d9003f",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 6,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "smooth-end",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -80,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 200,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "7ce09571095bf21e5081cb0e830fac8e66e67e1c9fa9dd5be33bba716156813d",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 1.5,
+      "state": "smooth-end"
+    },
+    {
+      "actual": {
+        "callback_count": 7,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 250
+        },
+        "name": "shrink",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "069a6fb2a83f3ec09add0acf705b18dfddfc3db9ced333aa0c01ea8881d9003f",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 7,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 250
+        },
+        "name": "shrink",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "7ce09571095bf21e5081cb0e830fac8e66e67e1c9fa9dd5be33bba716156813d",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 1.5,
+      "state": "shrink"
+    },
+    {
+      "actual": {
+        "callback_count": 8,
+        "client": {
+          "height": 150,
+          "width": 600
+        },
+        "extent": {
+          "height": 154,
+          "width": 600
+        },
+        "name": "resize",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 600,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "069a6fb2a83f3ec09add0acf705b18dfddfc3db9ced333aa0c01ea8881d9003f",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 8,
+        "client": {
+          "height": 150,
+          "width": 600
+        },
+        "extent": {
+          "height": 154,
+          "width": 600
+        },
+        "name": "resize",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 600,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "7ce09571095bf21e5081cb0e830fac8e66e67e1c9fa9dd5be33bba716156813d",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 1.5,
+      "state": "resize"
+    },
+    {
+      "actual": {
+        "callback_count": 0,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "initial",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": 120,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 120,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "c0efec1db7c277204ac990a78df49f294c44a41cb299f705f44e8ff8003592a6",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 0,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "initial",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": 120,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 120,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "73e8a88e514e3d810d443812cecc0374a449a66569aa033789d0c925d5ab85ea",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 2,
+      "state": "initial"
+    },
+    {
+      "actual": {
+        "callback_count": 1,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "scroll-25",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": 95,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 95,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 25,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "6e28f702b778933a4337f3a08d79a468406543e07a23c2dd9e54ec7f7bf8183d",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 1,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "scroll-25",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": 95,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 95,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 25,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "e0c38e7d5b21cdfc445e31be2941a074b2a3253bdd43ad7361b0faf5a4b0aee4",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 2,
+      "state": "scroll-25"
+    },
+    {
+      "actual": {
+        "callback_count": 2,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "scroll-100",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": 20,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 70,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 100,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "ba3c09a033a6e2ee78c939e685e39a002d67b8c7dc9809dc113c54ada49c1f85",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 2,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "scroll-100",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": 20,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 70,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 100,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "4d37190e0adede123a3f2b2a70a4910ef8d45a899d0e8efac860b32315a24dba",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 2,
+      "state": "scroll-100"
+    },
+    {
+      "actual": {
+        "callback_count": 3,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "scroll-200",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -80,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 200,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "4cc1c94739a59a2b4b4bfe079ce814fecdf645740c7d47ff0f3a877f4b3a25e7",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 3,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "scroll-200",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -80,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 200,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "70179046e4470d83908c55af51d365ec5787b38659569256213c06c8fea0fdd6",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 2,
+      "state": "scroll-200"
+    },
+    {
+      "actual": {
+        "callback_count": 4,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "maximum",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -130,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": -30,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 250,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "6df780aa648d40b92f094faf94933acad22b044f937e79dbbfdd85291ba37dc0",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 4,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "maximum",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -130,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": -30,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 250,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "66d9211b477cc8df512611d54c7ab690862c0fa0e4bf5ea1073019af76451ac4",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 2,
+      "state": "maximum"
+    },
+    {
+      "actual": {
+        "callback_count": 5,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "by",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -55,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 45,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 175,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "d9499a02e74daf4c1c7d8697f42160e34f96207aa4c5c55dacec15dfa6964fdc",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 5,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "by",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -55,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 45,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 175,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "2428c54e67a347eba4965b7f98546f887be4dc46f25366d7ad8b159f70f51369",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 2,
+      "state": "by"
+    },
+    {
+      "actual": {
+        "callback_count": 6,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "smooth-half",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -68,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 32,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 188,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "f339ce42dc3aedb7cfabab94e5c5a7c50713f61393ed3302931301d0ef0ec544",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 6,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "smooth-half",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -68,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 32,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 188,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "96e75733e124423d36674d0d8a0a80cad292c43775a31722a2aa48fb04d842e1",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 2,
+      "state": "smooth-half"
+    },
+    {
+      "actual": {
+        "callback_count": 6,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "smooth-end",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -80,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 200,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "4cc1c94739a59a2b4b4bfe079ce814fecdf645740c7d47ff0f3a877f4b3a25e7",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 6,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "smooth-end",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -80,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 200,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "70179046e4470d83908c55af51d365ec5787b38659569256213c06c8fea0fdd6",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 2,
+      "state": "smooth-end"
+    },
+    {
+      "actual": {
+        "callback_count": 7,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 250
+        },
+        "name": "shrink",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "4cc1c94739a59a2b4b4bfe079ce814fecdf645740c7d47ff0f3a877f4b3a25e7",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 7,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 250
+        },
+        "name": "shrink",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "70179046e4470d83908c55af51d365ec5787b38659569256213c06c8fea0fdd6",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 2,
+      "state": "shrink"
+    },
+    {
+      "actual": {
+        "callback_count": 8,
+        "client": {
+          "height": 150,
+          "width": 600
+        },
+        "extent": {
+          "height": 154,
+          "width": 600
+        },
+        "name": "resize",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 600,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "4cc1c94739a59a2b4b4bfe079ce814fecdf645740c7d47ff0f3a877f4b3a25e7",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 8,
+        "client": {
+          "height": 150,
+          "width": 600
+        },
+        "extent": {
+          "height": 154,
+          "width": 600
+        },
+        "name": "resize",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 600,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "70179046e4470d83908c55af51d365ec5787b38659569256213c06c8fea0fdd6",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 2,
+      "state": "resize"
+    },
+    {
+      "actual": {
+        "callback_count": 0,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "initial",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": 120,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 120,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "fdc689f8c74ea6af0aea60bf1568a6418c709c0a702f2f1482833462b0ebcc5b",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 0,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "initial",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": 120,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 120,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "3bb471766b6c65e792452ecc28f3db4059055a38aba38c091aec6afb8b4cfaec",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 3,
+      "state": "initial"
+    },
+    {
+      "actual": {
+        "callback_count": 1,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "scroll-25",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": 95,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 95,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 25,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "1e1a1351601493e5c44d4178c28fe2570201153af2f9a009e2bd7aad8fff4aeb",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 1,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "scroll-25",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": 95,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 95,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 25,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "9afb9d0a8e178f26005ca96399ad8c580aabf05a50362e740232ca20d878a6f7",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 3,
+      "state": "scroll-25"
+    },
+    {
+      "actual": {
+        "callback_count": 2,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "scroll-100",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": 20,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 70,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 100,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "2331c9977caf58a43889ad9bf861cd0629893cb135d8eca38df15f1209d38392",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 2,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "scroll-100",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": 20,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 70,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 100,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "36e26aba636932414164f788ca36c9cd61f857c34ec849d3fdb3823946ac55a3",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 3,
+      "state": "scroll-100"
+    },
+    {
+      "actual": {
+        "callback_count": 3,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "scroll-200",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -80,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 200,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "84e6ffe3971cf7a5b5e39283eefb97a8e1026e4bc6e476426e9cf2d376c8cb45",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 3,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "scroll-200",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -80,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 200,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "01a78e27f3bad5f51b2c94aef7aa9283863b1d357fd9c7279064c87d74033a1d",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 3,
+      "state": "scroll-200"
+    },
+    {
+      "actual": {
+        "callback_count": 4,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "maximum",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -130,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": -30,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 250,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "2ba084780be75e7f0bb52a6c2936af589407b6fe333c2171a2cda3bf92f7fab1",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 4,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "maximum",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -130,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": -30,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 250,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "f2c04af73f9d24a3e0b768c3378508dae3ebc9a81eb5ec5b8949319d6e0124d2",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 3,
+      "state": "maximum"
+    },
+    {
+      "actual": {
+        "callback_count": 5,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "by",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -55,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 45,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 175,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "459a16f92baae37393b7f2ffc98387153317b31f967dd6ad63691da4ac317912",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 5,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "by",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -55,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 45,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 175,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "c6a1c97861873fad39b0fa92683e35382347c1a8c4a2b0ba8e9aa624a3c11a46",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 3,
+      "state": "by"
+    },
+    {
+      "actual": {
+        "callback_count": 6,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "smooth-half",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -68,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 32,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 188,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "566408ed98e7939a62515289c91cce4546055ab14088397d9bb3cbd45c27c288",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 6,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "smooth-half",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -68,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 32,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 188,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "b7d8f9286bf55bc5b50a7c89d221c3bf17aec3dad84bb64596976d87ad1aad03",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 3,
+      "state": "smooth-half"
+    },
+    {
+      "actual": {
+        "callback_count": 6,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "smooth-end",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -80,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 200,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "84e6ffe3971cf7a5b5e39283eefb97a8e1026e4bc6e476426e9cf2d376c8cb45",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 6,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 500
+        },
+        "name": "smooth-end",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 300,
+            "x": -80,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 200,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "01a78e27f3bad5f51b2c94aef7aa9283863b1d357fd9c7279064c87d74033a1d",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 3,
+      "state": "smooth-end"
+    },
+    {
+      "actual": {
+        "callback_count": 7,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 250
+        },
+        "name": "shrink",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "84e6ffe3971cf7a5b5e39283eefb97a8e1026e4bc6e476426e9cf2d376c8cb45",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 7,
+        "client": {
+          "height": 150,
+          "width": 250
+        },
+        "extent": {
+          "height": 154,
+          "width": 250
+        },
+        "name": "shrink",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 250,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "01a78e27f3bad5f51b2c94aef7aa9283863b1d357fd9c7279064c87d74033a1d",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 3,
+      "state": "shrink"
+    },
+    {
+      "actual": {
+        "callback_count": 8,
+        "client": {
+          "height": 150,
+          "width": 600
+        },
+        "extent": {
+          "height": 154,
+          "width": 600
+        },
+        "name": "resize",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 600,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "chromium_png_sha256": "84e6ffe3971cf7a5b5e39283eefb97a8e1026e4bc6e476426e9cf2d376c8cb45",
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "expected": {
+        "callback_count": 8,
+        "client": {
+          "height": 150,
+          "width": 600
+        },
+        "extent": {
+          "height": 154,
+          "width": 600
+        },
+        "name": "resize",
+        "nodes": {
+          "content": {
+            "height": 150,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "sticky": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "viewport": {
+            "height": 150,
+            "width": 600,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "geometry_exact": true,
+      "input_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+      "native_callback_and_teardown_checked": true,
+      "native_png_sha256": "01a78e27f3bad5f51b2c94aef7aa9283863b1d357fd9c7279064c87d74033a1d",
+      "oracle_fresh_repeats_identical": true,
+      "pixels_exact": true,
+      "scale": 3,
+      "state": "resize"
+    }
+  ],
+  "chromium_sha256": "0ba87684df0afc11faaea40ac57bd2f1d68b67191443b38215a36b90e6f08848",
+  "geometry_exact": 50,
+  "input_html_path": "docs/renderer/evidence/native-nested-scroll-v1/native-sticky-oracle-v1.html",
+  "input_html_sha256": "4363bc62d7b02d95f0ce1ece8e0b8fb4c1737aee458bb74bb178471686a02b54",
+  "javascript_executed_by_openui": false,
+  "pixel_tolerance": 0,
+  "pixels_exact": 50,
+  "raw_report_path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-origin-oracle-v431/comparison.json",
+  "raw_report_sha256": "bcdd9a689b8c319ee087214ebbdf29bcde08f19ec0cf22ab8bf17f573cd2805b",
+  "release_qualification": false,
+  "schema_version": 1,
+  "scope": "Reduced native Rust application: public callbacks, scroll-to/by, manual-clock smooth scrolling, shrink, resize, owned queries and teardown; external Chromium oracle repeats each sequence twice.",
+  "source": {
+    "clean": true,
+    "commit": "02c0296e27d746b9501f01d5db7434c947c1850e",
+    "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+    "source_tree_sha256": "9d11a813e06e13c249c62cdb8dc31d05f31a169f4e1c7adaeee88fc0f683eb14",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "02c0296e27d746b9501f01d5db7434c947c1850e",
+    "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+    "source_tree_sha256": "9d11a813e06e13c249c62cdb8dc31d05f31a169f4e1c7adaeee88fc0f683eb14",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "total": 50
+}

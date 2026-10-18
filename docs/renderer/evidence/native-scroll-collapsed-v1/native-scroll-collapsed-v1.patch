@@ -1,0 +1,433 @@
+diff --git a/bindings/rust/openui-engine/src/lib.rs b/bindings/rust/openui-engine/src/lib.rs
+index c89e8711..eb92dda6 100644
+--- a/bindings/rust/openui-engine/src/lib.rs
++++ b/bindings/rust/openui-engine/src/lib.rs
+@@ -2349,6 +2349,134 @@ mod tests {
+         }
+     }
+ 
++    #[test]
++    fn collapsed_end_margins_are_queryable_through_native_scroll_mutations() {
++        for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
++            for empty in [false, true] {
++                let mut engine =
++                    Engine::new(ViewportMetrics::from_logical_size(640.0, 480.0, scale).unwrap())
++                        .unwrap();
++                let scroller = engine.create_native_element(ElementTag::Div).unwrap();
++                let wrapper = engine.create_native_element(ElementTag::Div).unwrap();
++                let target = engine.create_native_element(ElementTag::Div).unwrap();
++                engine.append_child(engine.root(), scroller).unwrap();
++                engine.append_child(scroller, wrapper).unwrap();
++                engine
++                    .append_child(if empty { scroller } else { wrapper }, target)
++                    .unwrap();
++                for node in [scroller, wrapper, target] {
++                    engine
++                        .set_property(node, StyleProperty::Width, LengthValue::px(100.0).into())
++                        .unwrap();
++                }
++                engine
++                    .set_property(
++                        scroller,
++                        StyleProperty::Height,
++                        LengthValue::px(100.0).into(),
++                    )
++                    .unwrap();
++                engine
++                    .set_property(scroller, StyleProperty::Overflow, Overflow::Scroll.into())
++                    .unwrap();
++                engine
++                    .set_property(
++                        scroller,
++                        StyleProperty::ScrollbarWidth,
++                        StyleValue::Renderer(openui_style::RendererStyleValue::ScrollbarWidth(
++                            openui_style::ScrollbarWidth::None,
++                        )),
++                    )
++                    .unwrap();
++                if empty {
++                    engine
++                        .set_property(
++                            wrapper,
++                            StyleProperty::Height,
++                            LengthValue::px(100.0).into(),
++                        )
++                        .unwrap();
++                    engine
++                        .set_property(
++                            target,
++                            StyleProperty::MarginTop,
++                            LengthValue::px(20.0).into(),
++                        )
++                        .unwrap();
++                }
++                engine
++                    .set_property(
++                        target,
++                        StyleProperty::Height,
++                        LengthValue::px(if empty { 0.0 } else { 100.0 }).into(),
++                    )
++                    .unwrap();
++                engine
++                    .set_property(
++                        target,
++                        StyleProperty::MarginBottom,
++                        LengthValue::px(if empty { 30.0 } else { 20.0 }).into(),
++                    )
++                    .unwrap();
++                let original = engine.scroll_metrics(scroller).unwrap().unwrap();
++                assert_eq!(original.client_height, 100.0);
++                assert_eq!(original.scroll_height, if empty { 130.0 } else { 120.0 });
++                let scroller_y = engine.bounds(scroller).unwrap().unwrap().y;
++                let initial_y = engine.bounds(target).unwrap().unwrap().y;
++                assert_eq!(initial_y - scroller_y, if empty { 120.0 } else { 0.0 });
++                engine.scroll_to(scroller, 0.0, 1000.0).unwrap();
++                assert_eq!(
++                    engine.scroll_offset(scroller).unwrap(),
++                    (0.0, if empty { 30.0 } else { 20.0 })
++                );
++                assert_eq!(
++                    engine.bounds(target).unwrap().unwrap().y - scroller_y,
++                    if empty { 90.0 } else { -20.0 }
++                );
++                engine
++                    .set_property(
++                        target,
++                        StyleProperty::MarginBottom,
++                        LengthValue::px(0.0).into(),
++                    )
++                    .unwrap();
++                let shrunk = engine.scroll_metrics(scroller).unwrap().unwrap();
++                assert_eq!(shrunk.scroll_height, if empty { 120.0 } else { 100.0 });
++                assert_eq!(
++                    engine.scroll_offset(scroller).unwrap(),
++                    (0.0, if empty { 20.0 } else { 0.0 })
++                );
++                assert_eq!(original.scroll_height, if empty { 130.0 } else { 120.0 });
++                engine.scroll_to(scroller, 0.0, 0.0).unwrap();
++                if empty {
++                    let following = engine.create_native_element(ElementTag::Div).unwrap();
++                    engine.append_child(scroller, following).unwrap();
++                    engine
++                        .set_property(
++                            following,
++                            StyleProperty::Height,
++                            LengthValue::px(100.0).into(),
++                        )
++                        .unwrap();
++                    engine
++                        .set_property(
++                            following,
++                            StyleProperty::MarginTop,
++                            LengthValue::px(50.0).into(),
++                        )
++                        .unwrap();
++                    // A following sibling's larger margin determines its own
++                    // edge, without moving the empty predecessor's border.
++                    assert_eq!(engine.bounds(target).unwrap().unwrap().y, initial_y);
++                    assert_eq!(
++                        engine.bounds(following).unwrap().unwrap().y - scroller_y,
++                        150.0
++                    );
++                }
++            }
++        }
++    }
++
+     #[test]
+     fn stale_and_cross_document_handles_are_rejected() {
+         let mut a =
+diff --git a/bindings/rust/openui-layout/src/block.rs b/bindings/rust/openui-layout/src/block.rs
+index db1faa41..aebb0ae4 100644
+--- a/bindings/rust/openui-layout/src/block.rs
++++ b/bindings/rust/openui-layout/src/block.rs
+@@ -2093,10 +2093,9 @@ pub(crate) fn block_layout_contents(
+     // Populated inside the block-children path after the child loop.
+     let mut float_exclusions_result: Vec<ExclusionArea> = Vec::new();
+ 
+-    // CSS 2.1 §8.3.1: Self-collapsing blocks are positioned at the final
+-    // collapsed margin boundary, but that boundary is unknown until the next
+-    // non-self-collapsing sibling resolves the strut. Track their indices
+-    // in child_fragments so we can reposition them when the boundary is known.
++    // When this block's BFC offset is unresolved, a self-collapsing child's
++    // local position may change when the parent start strut resolves. Children
++    // of a resolved BFC retain their own incoming-strut position immediately.
+     let mut pending_self_collapsing: Vec<usize> = Vec::new();
+     // Chromium 147 reconstructs block-in-inline margins through anonymous
+     // block boxes, but does not apply margin-trim at that anonymous boundary.
+@@ -7098,6 +7097,9 @@ fn layout_block_child(
+     // one collapsing group.
+     let pre_resolve_strut = *margin_strut;
+     let pre_resolve_offset = *block_offset;
++    let parent_bfc_offset_resolved = *start_margin_resolved
++        || space.is_new_formatting_context
++        || content_edge > LayoutUnit::zero();
+     let mut strut_resolved_this_child = false;
+ 
+     if !*start_margin_resolved {
+@@ -7250,6 +7252,20 @@ fn layout_block_child(
+             *block_offset = pre_resolve_offset;
+             *margin_strut = pre_resolve_strut;
+         }
++        // The empty child's border edge depends on its incoming/end strut,
++        // before its own block-end margin is appended. A later sibling's
++        // margin changes the next in-flow position, not this border edge.
++        let mut incoming_end = pre_resolve_strut;
++        incoming_end.append_normal(child_fragment.end_margin_strut.positive_margin);
++        incoming_end.append_normal(child_fragment.end_margin_strut.negative_margin);
++        let mut outgoing_end = incoming_end;
++        outgoing_end.append_normal(child_margin.bottom);
++        child_fragment.block_flow_end_margin = Some(outgoing_end.sum() - incoming_end.sum());
++        if parent_bfc_offset_resolved {
++            let relative_block_offset = child_fragment.offset.top - margin_boundary_offset;
++            child_fragment.offset.top =
++                pre_resolve_offset + incoming_end.sum() + relative_block_offset;
++        }
+         if !trimming_block_start {
+             margin_strut.append_normal(child_margin.bottom);
+         }
+@@ -7260,15 +7276,15 @@ fn layout_block_child(
+                 margin_strut.append_normal(child_end.negative_margin);
+             }
+         }
+-        // Record index for deferred repositioning. The self-collapsing block's
+-        // final position is the next collapsed margin boundary, which we only
+-        // know when a non-self-collapsing sibling resolves the strut.
++        // Defer repositioning only while the parent's BFC offset is unresolved.
+         //
+         // A clearing empty wrapper whose only content is floats is different:
+         // clearance has already established the float's BFC block position, so
+         // moving the zero-height wrapper to the next sibling boundary drags its
+         // floated descendants down by one collapsed-margin row.
+-        if !(child_style.clear != Clear::None && child_fragment.float_resolved_bfc) {
++        if !parent_bfc_offset_resolved
++            && !(child_style.clear != Clear::None && child_fragment.float_resolved_bfc)
++        {
+             let idx = child_fragments.len(); // index after push below
+             pending_self_collapsing.push(idx);
+         }
+@@ -7304,6 +7320,7 @@ fn layout_block_child(
+                 margin_strut.append_normal(child_end.negative_margin);
+             }
+         }
++        child_fragment.block_flow_end_margin = Some(margin_strut.sum());
+     }
+ 
+     *intrinsic_block_size = (*intrinsic_block_size).max_of(*block_offset);
+diff --git a/bindings/rust/openui-layout/src/fragment.rs b/bindings/rust/openui-layout/src/fragment.rs
+index b63cf6d7..0d673e6a 100644
+--- a/bindings/rust/openui-layout/src/fragment.rs
++++ b/bindings/rust/openui-layout/src/fragment.rs
+@@ -420,6 +420,15 @@ pub struct Fragment {
+     /// Blink: `LayoutResult::EndMarginStrut()`.
+     pub end_margin_strut: openui_geometry::MarginStrut,
+ 
++    /// Block-end margin contributed to the parent's in-flow scroll bounds.
++    ///
++    /// Block layout resolves this from the collapsed end strut. For an empty
++    /// self-collapsing child, its incoming strut already determines its border
++    /// position, so only the additional end strut contributes here. The value
++    /// stays logical in the parent's writing mode through physical projection.
++    /// Other formatting contexts retain their authored margin behavior.
++    pub block_flow_end_margin: Option<LayoutUnit>,
++
+     /// Start margin strut — propagated upward for parent/first-child margin collapsing.
+     ///
+     /// CSS 2.1 §8.3.1: When a block's top margin is not separated from
+@@ -574,6 +583,7 @@ impl Fragment {
+             fills_fragmentainer_block_end_decoration: false,
+             oof_candidates: Vec::new(),
+             end_margin_strut: openui_geometry::MarginStrut::new(),
++            block_flow_end_margin: None,
+             start_margin_strut: openui_geometry::MarginStrut::new(),
+             first_baseline: None,
+             last_baseline: None,
+@@ -643,6 +653,7 @@ impl Fragment {
+             fills_fragmentainer_block_end_decoration: false,
+             oof_candidates: Vec::new(),
+             end_margin_strut: openui_geometry::MarginStrut::new(),
++            block_flow_end_margin: None,
+             start_margin_strut: openui_geometry::MarginStrut::new(),
+             first_baseline: None,
+             last_baseline: None,
+diff --git a/bindings/rust/openui-layout/src/scroll_area.rs b/bindings/rust/openui-layout/src/scroll_area.rs
+index 330d2eb7..bdf46242 100644
+--- a/bindings/rust/openui-layout/src/scroll_area.rs
++++ b/bindings/rust/openui-layout/src/scroll_area.rs
+@@ -342,6 +342,17 @@ fn inflow_child_bounds(
+     // Used block margins can contain the width-equation remainder. Blink's
+     // inflow bounds use authored margins, with auto resolving to zero.
+     let mut margins = crate::block::resolve_margins(child_style, inline_size);
++    // Block-flow layout retains the collapsed end contribution, including
++    // margins propagated through a child's descendants. A self-collapsing
++    // child's position already contains its incoming strut, so reconstructing
++    // this contribution from authored margins would count that strut twice.
++    if let Some(end_margin) = child.block_flow_end_margin {
++        match parent_style.writing_mode {
++            WritingMode::HorizontalTb => margins.bottom = end_margin,
++            WritingMode::VerticalRl | WritingMode::SidewaysRl => margins.left = end_margin,
++            WritingMode::VerticalLr | WritingMode::SidewaysLr => margins.right = end_margin,
++        }
++    }
+     let (left, right) = if negative_x {
+         (
+             margins.left.max_of(-child.size.width),
+diff --git a/bindings/rust/openui/examples/native_scroll_collapsed.rs b/bindings/rust/openui/examples/native_scroll_collapsed.rs
+new file mode 100644
+index 00000000..329aa715
+--- /dev/null
++++ b/bindings/rust/openui/examples/native_scroll_collapsed.rs
+@@ -0,0 +1,153 @@
++//! Native Rust consumer for collapsed-margin scroll queries and mutations.
++use openui::prelude::*;
++
++fn block(
++    document: &Document,
++    parent: &Element,
++    mode: WritingMode,
++    block_size: Option<f32>,
++) -> Result<Element, Error> {
++    let element = Element::create(document, "div")?;
++    if mode == WritingMode::HorizontalTb {
++        element.set_width(LengthValue::px(100.0))?;
++        if let Some(size) = block_size {
++            element.set_height(LengthValue::px(size))?;
++        }
++    } else {
++        element.set_height(LengthValue::px(100.0))?;
++        if let Some(size) = block_size {
++            element.set_width(LengthValue::px(size))?;
++        }
++    }
++    parent.append_child(&element)?;
++    Ok(element)
++}
++
++fn margins(element: &Element, mode: WritingMode, start: f32, end: f32) -> Result<(), Error> {
++    match mode {
++        WritingMode::HorizontalTb => {
++            element.set_margin_top(LengthValue::px(start))?;
++            element.set_margin_bottom(LengthValue::px(end))?;
++        }
++        WritingMode::VerticalRl => {
++            element.set_margin_right(LengthValue::px(start))?;
++            element.set_margin_left(LengthValue::px(end))?;
++        }
++        WritingMode::VerticalLr => {
++            element.set_margin_left(LengthValue::px(start))?;
++            element.set_margin_right(LengthValue::px(end))?;
++        }
++        _ => unreachable!(),
++    }
++    Ok(())
++}
++
++fn snapshot(scroller: &Element, target: &Element, state: &str) -> Result<String, Error> {
++    let metrics = scroller
++        .scroll_metrics()?
++        .expect("connected scroll container");
++    let rect = target.bounding_rect()?.expect("connected target");
++    Ok(format!(
++        "{{\"state\":\"{}\",\"clientWidth\":{},\"clientHeight\":{},\"scrollWidth\":{},\"scrollHeight\":{},\"scrollLeft\":{},\"scrollTop\":{},\"bounds\":{{\"x\":{},\"y\":{},\"width\":{},\"height\":{}}}}",
++        state, metrics.client_width, metrics.client_height, metrics.scroll_width,
++        metrics.scroll_height, scroller.scroll_left()?, scroller.scroll_top()?,
++        rect.x, rect.y, rect.width, rect.height,
++    ))
++}
++
++fn main() -> Result<(), Box<dyn std::error::Error>> {
++    let mut args = std::env::args().skip(1);
++    let scale: f64 = args.next().ok_or("display scale required")?.parse()?;
++    let structure = args
++        .next()
++        .ok_or("leaf, nested, empty or nested-empty required")?;
++    let mode = match args.next().as_deref().unwrap_or("horizontal-tb") {
++        "horizontal-tb" => WritingMode::HorizontalTb,
++        "vertical-rl" => WritingMode::VerticalRl,
++        "vertical-lr" => WritingMode::VerticalLr,
++        _ => return Err("unsupported writing mode".into()),
++    };
++    let empty = matches!(
++        structure.as_str(),
++        "empty" | "nested-empty" | "first-empty" | "nested-first-empty"
++    );
++    if !matches!(
++        structure.as_str(),
++        "leaf" | "nested" | "empty" | "nested-empty" | "first-empty" | "nested-first-empty"
++    ) {
++        return Err("unsupported structure".into());
++    }
++    let start: f32 = args
++        .next()
++        .map(|s| s.parse())
++        .transpose()?
++        .unwrap_or(if empty { 20.0 } else { 0.0 });
++    let end: f32 = args
++        .next()
++        .map(|s| s.parse())
++        .transpose()?
++        .unwrap_or(if empty { 30.0 } else { 20.0 });
++    let following: Option<f32> = args.next().map(|s| s.parse()).transpose()?;
++    if args.next().is_some() {
++        return Err("unexpected argument".into());
++    }
++    let document =
++        Document::with_viewport_metrics(ViewportMetrics::from_logical_size(640.0, 480.0, scale)?)?;
++    let root = document.body();
++    root.set_scrollbar_width(ScrollbarWidth::None)?;
++    let scroller = block(&document, &root, mode, Some(100.0))?;
++    scroller.set_writing_mode(mode)?;
++    scroller.set_position(Position::Absolute)?;
++    scroller.set_left(Length::px(20.0))?;
++    scroller.set_top(Length::px(20.0))?;
++    scroller.set_overflow(Overflow::Scroll)?;
++    scroller.set_scrollbar_width(ScrollbarWidth::None)?;
++    let parent = if matches!(
++        structure.as_str(),
++        "nested" | "nested-empty" | "nested-first-empty"
++    ) {
++        block(&document, &scroller, mode, None)?
++    } else {
++        scroller.clone()
++    };
++    let _leading = if matches!(structure.as_str(), "empty" | "nested-empty") {
++        Some(block(&document, &parent, mode, Some(100.0))?)
++    } else {
++        None
++    };
++    let target = block(
++        &document,
++        &parent,
++        mode,
++        Some(if empty { 0.0 } else { 100.0 }),
++    )?;
++    margins(&target, mode, start, end)?;
++    let _following = if let Some(start) = following {
++        let element = block(&document, &parent, mode, Some(100.0))?;
++        margins(&element, mode, start, 0.0)?;
++        Some(element)
++    } else {
++        None
++    };
++    let original = scroller.scroll_metrics()?.ok_or("missing scroll metrics")?;
++    let original_height = original.scroll_height;
++    let initial = snapshot(&scroller, &target, "initial")?;
++    let (x, y) = match mode {
++        WritingMode::HorizontalTb => (0.0, 1000.0),
++        WritingMode::VerticalRl => (-1000.0, 0.0),
++        _ => (1000.0, 0.0),
++    };
++    scroller.scroll_to(x, y)?;
++    let at_end = snapshot(&scroller, &target, "end")?;
++    margins(&target, mode, start, 0.0)?;
++    let shrunk = snapshot(&scroller, &target, "shrink")?;
++    println!(
++        "{{\"states\":[{initial},{at_end},{shrunk}],\"ownedSnapshotHeight\":{}}}",
++        original.scroll_height
++    );
++    assert_eq!(original.scroll_height, original_height);
++    drop((root, scroller, parent, target, _leading, _following));
++    drop(document);
++    assert_eq!(original.scroll_height, original_height);
++    Ok(())
++}

@@ -1,0 +1,43 @@
+{
+  "cases": [
+    "wpt/css_flexbox/flexbox_object",
+    "wpt/css_overflow/table-header-group-overflow-crash",
+    "wpt/css_sizing/aspect-ratio_replaced-element-005",
+    "wpt/css_sizing/aspect-ratio_replaced-element-006",
+    "wpt/css_sizing/aspect-ratio_replaced-element-020",
+    "wpt/css_sizing/aspect-ratio_replaced-element-021"
+  ],
+  "chromium_oracle_identity_changes_vs_pre_ua": 0,
+  "chromium_oracle_rgba_changes_vs_pre_ua": 0,
+  "comparisons": {
+    "different": 0,
+    "errors": 0,
+    "exact": 24,
+    "profile_result_sha256": "bd1d13225c1f18635d1ee74d5ff44b67ecf510822eae6de31b916c19a04593f6",
+    "total": 24
+  },
+  "contract_sha256": "b51624ccb5b994601e3b96bca0be7442c926b5abdbc325f233524dcfe5a14e0e",
+  "full_ua_trial_clean_commit": "d0860d3f453dfc0550e2fc43aae65a6a0a3d21c0",
+  "full_ua_trial_report_sha256": [
+    "304340ff7aeb78955a24daee857e7b7a0125d4898768c49ab65761e7c2d23f87",
+    "604c38a9b94cbe2b5c639d02730b4bbc3259b07fb4da0ab8e9b14eb610f023a0",
+    "2c2882daccb711499072fb0deb18f37e4d3be7b8585a6a6852b28e303ed5d3a3",
+    "dd74dd54f9869ce26fdbee7735e34f888dcefcdfc37e658c4b12ddb79349ca75"
+  ],
+  "openui_rgba_changes_vs_pre_ua": 0,
+  "pre_ua_clean_commit": "d70c4696e38edeee08dab189ba05cf8d2aa4c76a",
+  "pre_ua_report_sha256": "8dea896d72705dece16e1b7bca4127c4c50ec044c8148c05a4bd51b5c7fc0d47",
+  "qualification": false,
+  "restored_comparisons": [
+    {
+      "profile": "desktop-1920x1080@1.5",
+      "regressed_mismatched_pixels": 96,
+      "restored_mismatched_pixels": 0,
+      "test_id": "wpt/css_overflow/table-header-group-overflow-crash"
+    }
+  ],
+  "schema_version": 1,
+  "scope": "all six original fixture builders creating ElementTag::Object, four required profiles",
+  "scoped_clean_commit": "6676cf60cc31e426709c2f1c97ba6a4b5d2090a6",
+  "scoped_report_sha256": "12abe67bccf3935ec02a64624a7071e6828fac9c39f99ade27ff8e54fe827e34"
+}

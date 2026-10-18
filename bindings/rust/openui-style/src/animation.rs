@@ -1,9 +1,9 @@
 //! Deterministic typed animation timing and property interpolation.
 
 use crate::{
-    apply_to_computed, Color, ComputedStyle, Edges, FontSizeAdjust, FontStretch, FontWeight, Gap,
-    InitialLetterValue, InterpolationKind, LengthValue, LineHeight, StyleColor, StyleProperty,
-    StyleValue, TextDecorationThickness, TextSizeAdjust, TransformList, TransformOperation,
+    apply_to_computed, Color, CompositedStyleValue, ComputedStyle, Edges, FontSizeAdjust,
+    FontStretch, FontWeight, Gap, InitialLetterValue, InterpolationKind, LengthValue, LineHeight,
+    StyleColor, StyleProperty, StyleValue, TextDecorationThickness, TextSizeAdjust, TransformList,
     TypographyValue, VerticalAlign,
 };
 use openui_geometry::{Length, LengthType};
@@ -14,11 +14,13 @@ pub enum AnimationError {
     InvalidEasing(&'static str),
     InvalidKeyframes(&'static str),
     PropertyType { property: StyleProperty },
+    AllocationFailure,
 }
 
 impl std::fmt::Display for AnimationError {
     fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
+            Self::AllocationFailure => write!(formatter, "unable to allocate owned animation data"),
             Self::InvalidTiming(message) => {
                 write!(formatter, "invalid animation timing: {message}")
             }
@@ -45,7 +47,16 @@ pub enum StepPosition {
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct LinearStop {
+    /// A normalized input converted to percentage units by ordinary IEEE `* 100`.
+    /// Use `PercentageLinearStop` to preserve an authored CSS percentage.
     pub input: f64,
+    pub output: f64,
+}
+
+/// An authored percentage knot, preserved without a normalized round trip.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct PercentageLinearStop {
+    pub input_percent: f64,
     pub output: f64,
 }
 
@@ -64,114 +75,256 @@ pub enum Easing {
         position: StepPosition,
     },
     LinearStops(Vec<LinearStop>),
+    LinearStopsPercent(Vec<PercentageLinearStop>),
 }
 
 impl Easing {
     pub fn cubic_bezier(x1: f64, y1: f64, x2: f64, y2: f64) -> Result<Self, AnimationError> {
-        if [x1, y1, x2, y2].iter().any(|value| !value.is_finite())
-            || !(0.0..=1.0).contains(&x1)
-            || !(0.0..=1.0).contains(&x2)
-        {
-            return Err(AnimationError::InvalidEasing(
-                "cubic-bezier x coordinates must be finite and in [0, 1]",
-            ));
-        }
-        Ok(Self::CubicBezier { x1, y1, x2, y2 })
+        let easing = Self::CubicBezier { x1, y1, x2, y2 };
+        easing.validate()?;
+        Ok(easing)
     }
 
     pub fn steps(count: u32, position: StepPosition) -> Result<Self, AnimationError> {
-        if count == 0 || (position == StepPosition::JumpNone && count == 1) {
-            return Err(AnimationError::InvalidEasing(
-                "steps requires a positive interval count (at least two for jump-none)",
-            ));
-        }
-        Ok(Self::Steps { count, position })
+        let easing = Self::Steps { count, position };
+        easing.validate()?;
+        Ok(easing)
     }
 
+    /// Normalized stops spanning zero through one. Inputs convert with IEEE
+    /// `* 100`; use `linear_stops_percent` to retain authored percentages exactly.
     pub fn linear_stops(stops: Vec<LinearStop>) -> Result<Self, AnimationError> {
-        if stops.len() < 2
-            || stops
-                .iter()
-                .any(|stop| !stop.input.is_finite() || !stop.output.is_finite())
-            || stops.windows(2).any(|pair| pair[0].input > pair[1].input)
-            || stops.first().is_some_and(|stop| stop.input != 0.0)
-            || stops.last().is_some_and(|stop| stop.input != 1.0)
-        {
-            return Err(AnimationError::InvalidEasing(
-                "linear easing requires ordered finite stops spanning 0 through 1",
-            ));
+        let easing = Self::LinearStops(stops);
+        easing.validate()?;
+        Ok(easing)
+    }
+
+    /// Preserve the authored percentage arithmetic used by Chromium's `linear()`.
+    /// Inputs may extend beyond zero through one hundred percent.
+    pub fn linear_stops_percent(stops: Vec<PercentageLinearStop>) -> Result<Self, AnimationError> {
+        let easing = Self::LinearStopsPercent(stops);
+        easing.validate()?;
+        Ok(easing)
+    }
+
+    /// Validate a curve, including one built directly with the public enum.
+    /// Animation and scrolling entry points validate before retaining a curve.
+    pub fn validate(&self) -> Result<(), AnimationError> {
+        match self {
+            Self::Linear => Ok(()),
+            Self::CubicBezier { x1, y1, x2, y2 } => {
+                if [x1, y1, x2, y2].iter().any(|value| !value.is_finite())
+                    || !(0.0..=1.0).contains(x1)
+                    || !(0.0..=1.0).contains(x2)
+                {
+                    return Err(AnimationError::InvalidEasing(
+                        "cubic-bezier x coordinates must be finite and in [0, 1]",
+                    ));
+                }
+                Ok(())
+            }
+            Self::Steps { count, position } => {
+                if *count == 0 || (*position == StepPosition::JumpNone && *count == 1) {
+                    return Err(AnimationError::InvalidEasing(
+                        "steps requires a positive interval count (at least two for jump-none)",
+                    ));
+                }
+                Ok(())
+            }
+            Self::LinearStops(stops) => {
+                if stops.len() < 2
+                    || stops
+                        .iter()
+                        .any(|stop| !stop.input.is_finite() || !stop.output.is_finite())
+                    || stops.windows(2).any(|pair| pair[0].input > pair[1].input)
+                    || stops.first().is_some_and(|stop| stop.input != 0.0)
+                    || stops.last().is_some_and(|stop| stop.input != 1.0)
+                {
+                    return Err(AnimationError::InvalidEasing(
+                        "linear easing requires ordered finite stops spanning 0 through 1",
+                    ));
+                }
+                Ok(())
+            }
+            Self::LinearStopsPercent(stops) => {
+                if stops.len() < 2
+                    || stops
+                        .iter()
+                        .any(|stop| !stop.input_percent.is_finite() || !stop.output.is_finite())
+                    || stops
+                        .windows(2)
+                        .any(|pair| pair[0].input_percent > pair[1].input_percent)
+                {
+                    return Err(AnimationError::InvalidEasing(
+                        "percentage linear easing requires at least two ordered finite stops",
+                    ));
+                }
+                Ok(())
+            }
         }
-        Ok(Self::LinearStops(stops))
     }
 
     pub fn sample(&self, input: f64) -> f64 {
-        let input = input.clamp(0.0, 1.0);
+        self.sample_with_before(input, false)
+    }
+
+    /// Evaluate a curve without discarding progress from an earlier easing.
+    /// `before` selects the left limit at a discontinuous step boundary.
+    pub fn sample_with_before(&self, input: f64, before: bool) -> f64 {
         match self {
             Self::Linear => input,
             Self::CubicBezier { x1, y1, x2, y2 } => sample_cubic_bezier(input, *x1, *y1, *x2, *y2),
-            Self::Steps { count, position } => sample_steps(input, *count, *position),
+            Self::Steps { count, position } => sample_steps(input, *count, *position, before),
             Self::LinearStops(stops) => {
-                let upper = stops.partition_point(|stop| stop.input < input);
-                if upper == 0 {
-                    return stops[0].output;
-                }
-                if upper == stops.len() {
-                    return stops[stops.len() - 1].output;
-                }
-                let left = stops[upper - 1];
-                let right = stops[upper];
-                if right.input == left.input {
-                    right.output
-                } else {
-                    let progress = (input - left.input) / (right.input - left.input);
-                    left.output + (right.output - left.output) * progress
-                }
+                sample_linear_stops(input, stops, |stop| (stop.input * 100.0, stop.output))
+            }
+            Self::LinearStopsPercent(stops) => {
+                sample_linear_stops(input, stops, |stop| (stop.input_percent, stop.output))
             }
         }
     }
 }
 
-fn cubic(value: f64, a: f64, b: f64) -> f64 {
-    let inverse = 1.0 - value;
-    3.0 * inverse * inverse * value * a + 3.0 * inverse * value * value * b + value.powi(3)
+fn sample_linear_stops<T>(input: f64, stops: &[T], point: impl Fn(&T) -> (f64, f64)) -> f64 {
+    // Preserve gfx::LinearTimingFunction's percentage storage and operation
+    // order. At decimal discontinuities, (100 * input) and an authored percent
+    // can differ even when input was obtained by dividing that percent by 100.
+    // Its limit-direction argument is deliberately unused for linear curves.
+    let upper = stops.partition_point(|stop| 100.0 * input >= point(stop).0);
+    let left_index = upper.saturating_sub(1).min(stops.len() - 2);
+    let (left_input, left_output) = point(&stops[left_index]);
+    let (right_input, right_output) = point(&stops[left_index + 1]);
+    if left_input == right_input {
+        return right_output;
+    }
+    let from_left = input - left_input / 100.0;
+    let input_range = (right_input - left_input) / 100.0;
+    let progress = from_left / input_range;
+    let output_range = right_output - left_output;
+    left_output + progress * output_range
+}
+
+fn finite_curve_value(value: f64) -> f64 {
+    if value.is_infinite() {
+        if value.is_sign_positive() {
+            f64::MAX
+        } else {
+            -f64::MAX
+        }
+    } else {
+        value
+    }
 }
 
 fn sample_cubic_bezier(input: f64, x1: f64, y1: f64, x2: f64, y2: f64) -> f64 {
-    if input == 0.0 || input == 1.0 {
-        return input;
+    // Use the pinned Chromium gfx::CubicBezier arithmetic, including its
+    // endpoint gradients, eleven spline samples and four Newton iterations.
+    let start_gradient = if x1 > 0.0 {
+        y1 / x1
+    } else if y1 == 0.0 && x2 > 0.0 {
+        y2 / x2
+    } else if y1 == 0.0 && y2 == 0.0 {
+        1.0
+    } else {
+        0.0
+    };
+    let end_gradient = if x2 < 1.0 {
+        (y2 - 1.0) / (x2 - 1.0)
+    } else if y2 == 1.0 && x1 < 1.0 {
+        (y1 - 1.0) / (x1 - 1.0)
+    } else if y2 == 1.0 && y1 == 1.0 {
+        1.0
+    } else {
+        0.0
+    };
+    if input < 0.0 {
+        return finite_curve_value(0.0 + start_gradient * input);
+    }
+    if input > 1.0 {
+        return finite_curve_value(1.0 + end_gradient * (input - 1.0));
+    }
+
+    let cx = 3.0 * x1;
+    let bx = 3.0 * (x2 - x1) - cx;
+    let ax = 1.0 - cx - bx;
+    let cy = finite_curve_value(3.0 * y1);
+    let by = finite_curve_value(3.0 * (y2 - y1) - cy);
+    let ay = finite_curve_value(1.0 - cy - by);
+    let curve_x = |parameter: f64| ((ax * parameter + bx) * parameter + cx) * parameter;
+    let curve_y =
+        |parameter: f64| finite_curve_value(((ay * parameter + by) * parameter + cy) * parameter);
+    let derivative_x = |parameter: f64| (3.0 * ax * parameter + 2.0 * bx) * parameter + cx;
+    let delta = 1.0 / 10.0;
+    let mut spline = [0.0; 11];
+    for (index, value) in spline.iter_mut().enumerate() {
+        *value = curve_x(index as f64 * delta);
     }
     let mut low = 0.0;
     let mut high = 1.0;
     let mut parameter = input;
-    for _ in 0..24 {
-        let x = cubic(parameter, x1, x2);
-        if (x - input).abs() <= 1e-8 {
+    for index in 1..spline.len() {
+        if input <= spline[index] {
+            high = delta * index as f64;
+            low = high - delta;
+            parameter = low
+                + (high - low) * (input - spline[index - 1]) / (spline[index] - spline[index - 1]);
             break;
         }
-        if x < input {
+    }
+    const EPSILON: f64 = 1e-7;
+    let mut error = 0.0;
+    for _ in 0..4 {
+        error = curve_x(parameter) - input;
+        if error.abs() < EPSILON {
+            return curve_y(parameter);
+        }
+        let derivative = derivative_x(parameter);
+        if derivative.abs() < EPSILON {
+            break;
+        }
+        parameter -= error / derivative;
+    }
+    if error.abs() < EPSILON {
+        return curve_y(parameter);
+    }
+    while low < high {
+        let x = curve_x(parameter);
+        if (x - input).abs() < EPSILON {
+            return curve_y(parameter);
+        }
+        if input > x {
             low = parameter;
         } else {
             high = parameter;
         }
-        parameter = (low + high) * 0.5;
+        parameter = (high + low) * 0.5;
     }
-    cubic(parameter, y1, y2)
+    curve_y(parameter)
 }
 
-fn sample_steps(input: f64, count: u32, position: StepPosition) -> f64 {
+fn sample_steps(input: f64, count: u32, position: StepPosition, before: bool) -> f64 {
     let intervals = count as f64;
-    let value = match position {
-        StepPosition::JumpStart => (input * intervals).floor() + 1.0,
-        StepPosition::JumpEnd => (input * intervals).floor(),
-        StepPosition::JumpNone => (input * intervals).floor().min(intervals - 1.0),
-        StepPosition::JumpBoth => (input * intervals).floor() + 1.0,
+    let offset = match position {
+        StepPosition::JumpStart | StepPosition::JumpBoth => 1.0,
+        _ => 0.0,
     };
+    let scaled = intervals * input;
+    let mut value = (scaled + offset).floor();
+    if before && scaled - scaled.floor() == 0.0 {
+        value -= 1.0;
+    }
     let denominator = match position {
         StepPosition::JumpNone => intervals - 1.0,
         StepPosition::JumpBoth => intervals + 1.0,
         _ => intervals,
     };
-    (value / denominator).clamp(0.0, 1.0)
+    if input >= 0.0 && value < 0.0 {
+        value = 0.0;
+    }
+    if input <= 1.0 && value > denominator {
+        value = denominator;
+    }
+    value / denominator
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -254,6 +407,41 @@ impl Default for AnimationOptions {
     }
 }
 
+/// Seconds-backed timing used by native effect sampling. Public option fields
+/// remain milliseconds; normalized timeline timing must not round-trip through
+/// that reflected unit before phase/progress calculations.
+#[doc(hidden)]
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct AnimationTimingSeconds {
+    pub duration: f64,
+    pub delay: f64,
+}
+
+impl AnimationTimingSeconds {
+    pub fn from_options(options: &AnimationOptions) -> Self {
+        Self {
+            duration: options.duration_ms / 1000.0,
+            delay: options.delay_ms / 1000.0,
+        }
+    }
+
+    pub fn active_duration(self, iterations: IterationCount) -> f64 {
+        let count = match iterations {
+            IterationCount::Number(count) => count,
+            IterationCount::Infinite => f64::INFINITY,
+        };
+        if self.duration == 0.0 || count == 0.0 {
+            0.0
+        } else {
+            self.duration * count
+        }
+    }
+
+    pub fn effect_end(self, iterations: IterationCount) -> f64 {
+        (self.delay + self.active_duration(iterations)).max(0.0)
+    }
+}
+
 impl AnimationOptions {
     pub fn validate(&self) -> Result<(), AnimationError> {
         if !self.delay_ms.is_finite() {
@@ -264,9 +452,9 @@ impl AnimationOptions {
                 "duration must be finite and non-negative",
             ));
         }
-        if !self.playback_rate.is_finite() || self.playback_rate == 0.0 {
+        if !self.playback_rate.is_finite() {
             return Err(AnimationError::InvalidTiming(
-                "playback rate must be finite and non-zero",
+                "playback rate must be finite",
             ));
         }
         if let IterationCount::Number(iterations) = self.iterations {
@@ -276,29 +464,172 @@ impl AnimationOptions {
                 ));
             }
         }
-        match &self.easing {
-            Easing::CubicBezier { x1, y1, x2, y2 } => {
-                Self::validate_easing(Easing::cubic_bezier(*x1, *y1, *x2, *y2)?)
-            }
-            Easing::Steps { count, position } => {
-                Self::validate_easing(Easing::steps(*count, *position)?)
-            }
-            Easing::LinearStops(stops) => {
-                Self::validate_easing(Easing::linear_stops(stops.clone())?)
-            }
-            Easing::Linear => Ok(()),
-        }
-    }
-
-    fn validate_easing(_: Easing) -> Result<(), AnimationError> {
-        Ok(())
+        self.easing.validate()
     }
 
     pub fn active_duration_ms(&self) -> f64 {
+        // Blink's MultiplyZeroAlwaysGivesZero also covers infinite iterations.
+        if self.duration_ms == 0.0 {
+            return 0.0;
+        }
         match self.iterations {
             IterationCount::Number(iterations) => self.duration_ms * iterations,
             IterationCount::Infinite => f64::INFINITY,
         }
+    }
+
+    /// End of this effect in animation-local milliseconds (there is no end delay).
+    pub fn effect_end_ms(&self) -> f64 {
+        (self.delay_ms + self.active_duration_ms()).max(0.0)
+    }
+
+    /// Sample an animation-local time. Its clock has already applied playback rate.
+    /// The rate's sign only chooses which side owns an exact phase boundary.
+    /// `sample` retains its existing elapsed-time interpretation for direct callers.
+    pub fn sample_local_time(&self, local_time_ms: f64) -> AnimationSample {
+        self.sample_local_time_with_direction(local_time_ms).0
+    }
+
+    /// Shared effect-sampling context for the native animation engine.
+    /// The bool is `current_direction_is_reversed`, derived before the public
+    /// integer iteration count saturates. Blink treats an infinite iteration
+    /// as even; finite floating-point iterations retain their own parity.
+    /// An unresolved iteration outside the fill interval is not even.
+    #[doc(hidden)]
+    pub fn sample_local_time_with_direction(&self, local_time_ms: f64) -> (AnimationSample, bool) {
+        self.sample_local_time_with_direction_and_boundaries(local_time_ms, false, false)
+    }
+
+    /// Engine-only normalized progress-timeline phase context. Document and
+    /// direct callers retain exclusive endpoint defaults through the helper above.
+    #[doc(hidden)]
+    pub fn sample_local_time_with_direction_and_boundaries(
+        &self,
+        local_time_ms: f64,
+        start_boundary_aligned: bool,
+        end_boundary_aligned: bool,
+    ) -> (AnimationSample, bool) {
+        self.sample_local_time_seconds_with_direction_and_boundaries(
+            local_time_ms / 1000.0,
+            AnimationTimingSeconds::from_options(self),
+            start_boundary_aligned,
+            end_boundary_aligned,
+        )
+    }
+
+    /// Native normalized timing and local clocks are retained in seconds.
+    /// The old millisecond entry points above remain boundary adapters.
+    #[doc(hidden)]
+    pub fn sample_local_time_seconds_with_direction_and_boundaries(
+        &self,
+        local_time_seconds: f64,
+        timing: AnimationTimingSeconds,
+        start_boundary_aligned: bool,
+        end_boundary_aligned: bool,
+    ) -> (AnimationSample, bool) {
+        // Blink's default AnimationTimeDelta stores seconds. Its phase operation
+        // mutates local time, first snapping to the before boundary, then (only
+        // if not already Before) to the after boundary. Active-time/progress must
+        // consume that same mutated time. This 1us rule is timing semantics.
+        let duration_seconds = timing.duration;
+        let delay_seconds = timing.delay;
+        let count = match self.iterations {
+            IterationCount::Number(value) => value,
+            IterationCount::Infinite => f64::INFINITY,
+        };
+        let active_duration = if duration_seconds == 0.0 || count == 0.0 {
+            0.0
+        } else {
+            duration_seconds * count
+        };
+        let end = (delay_seconds + active_duration).max(0.0);
+        let before_boundary = delay_seconds.min(end).max(0.0);
+        let after_boundary = (delay_seconds + active_duration).min(end).max(0.0);
+        let backwards = self.playback_rate < 0.0;
+        let mut local_time_seconds = local_time_seconds;
+        if within_animation_time_tolerance(local_time_seconds, before_boundary) {
+            local_time_seconds = before_boundary;
+        }
+        let phase = if local_time_seconds < before_boundary
+            || (backwards && local_time_seconds == before_boundary && !start_boundary_aligned)
+        {
+            AnimationPhase::Before
+        } else {
+            if within_animation_time_tolerance(local_time_seconds, after_boundary) {
+                local_time_seconds = after_boundary;
+            }
+            if local_time_seconds > after_boundary
+                || (!backwards && local_time_seconds == after_boundary && !end_boundary_aligned)
+            {
+                AnimationPhase::After
+            } else {
+                AnimationPhase::Active
+            }
+        };
+        let in_effect = match phase {
+            AnimationPhase::Before => self.fill.fills_before(),
+            AnimationPhase::Active => true,
+            AnimationPhase::After => self.fill.fills_after(),
+        };
+        if !in_effect {
+            return (
+                AnimationSample {
+                    phase,
+                    iteration: 0,
+                    progress: None,
+                },
+                current_direction_is_reversed(self.direction, None),
+            );
+        }
+        let active_time = match phase {
+            AnimationPhase::Before => (local_time_seconds - delay_seconds).max(0.0),
+            AnimationPhase::Active => local_time_seconds - delay_seconds,
+            AnimationPhase::After => (local_time_seconds - delay_seconds)
+                .min(active_duration)
+                .max(0.0),
+        };
+        let overall = if within_animation_time_tolerance(duration_seconds, 0.0) {
+            if phase == AnimationPhase::Before {
+                0.0
+            } else {
+                count
+            }
+        } else {
+            active_time / duration_seconds
+        };
+        let mut progress = if overall.is_infinite() {
+            0.0
+        } else {
+            overall.fract()
+        };
+        if progress.abs() <= 2.0 * f64::EPSILON
+            && phase != AnimationPhase::Before
+            && within_animation_time_tolerance(active_time, active_duration)
+            && count.abs() > 2.0 * f64::EPSILON
+        {
+            progress = 1.0;
+        }
+        let current_iteration = if phase == AnimationPhase::After && count.is_infinite() {
+            f64::INFINITY
+        } else if progress == 1.0 {
+            (overall.floor() - 1.0).max(0.0)
+        } else {
+            overall.floor().max(0.0)
+        };
+        let current_direction_is_reversed =
+            current_direction_is_reversed(self.direction, Some(current_iteration));
+        (
+            AnimationSample {
+                phase,
+                iteration: current_iteration as u64,
+                progress: Some(if current_direction_is_reversed {
+                    1.0 - progress
+                } else {
+                    progress
+                }),
+            },
+            current_direction_is_reversed,
+        )
     }
 
     pub fn sample(&self, elapsed_since_start_ms: f64) -> AnimationSample {
@@ -371,6 +702,35 @@ impl AnimationOptions {
     }
 }
 
+// TimingCalculations::IsWithinAnimationTimeTolerance, in seconds. Infinity
+// compares equal only to itself; subtracting it would otherwise produce NaN.
+fn within_animation_time_tolerance(left: f64, right: f64) -> bool {
+    if left.is_infinite() || right.is_infinite() {
+        left == right
+    } else {
+        let difference = if left >= right {
+            left - right
+        } else {
+            right - left
+        };
+        difference <= 0.000001
+    }
+}
+
+fn current_direction_is_reversed(
+    direction: PlaybackDirection,
+    current_iteration: Option<f64>,
+) -> bool {
+    let current_iteration_is_even = current_iteration
+        .is_some_and(|iteration| iteration.is_infinite() || iteration % 2.0 == 0.0);
+    match direction {
+        PlaybackDirection::Normal => false,
+        PlaybackDirection::Reverse => true,
+        PlaybackDirection::Alternate => !current_iteration_is_even,
+        PlaybackDirection::AlternateReverse => current_iteration_is_even,
+    }
+}
+
 fn directed_progress(direction: PlaybackDirection, iteration: u64, progress: f64) -> f64 {
     let reversed = match direction {
         PlaybackDirection::Normal => false,
@@ -397,6 +757,35 @@ pub struct AnimationSample {
     pub phase: AnimationPhase,
     pub iteration: u64,
     pub progress: Option<f64>,
+}
+
+impl AnimationSample {
+    /// Transform whole-effect progress using its actual iteration direction.
+    /// Obtain that direction from `AnimationOptions::sample_local_time_with_direction`;
+    /// the public iteration counter may have saturated for a very large iteration.
+    pub fn eased_progress(
+        &self,
+        easing: &Easing,
+        current_direction_is_reversed: bool,
+    ) -> Option<f64> {
+        self.progress.map(|mut progress| {
+            let before = if current_direction_is_reversed {
+                self.phase == AnimationPhase::After
+            } else {
+                self.phase == AnimationPhase::Before
+            };
+            // Match pinned TimingCalculations boundary snapping before easing;
+            // this is effect arithmetic and does not relax any pixel gate.
+            if self.phase == AnimationPhase::After {
+                if !current_direction_is_reversed && (progress - 1.0).abs() <= 2.0 * f64::EPSILON {
+                    progress = 1.0;
+                } else if current_direction_is_reversed && progress.abs() <= 2.0 * f64::EPSILON {
+                    progress = 0.0;
+                }
+            }
+            easing.sample_with_before(progress, before)
+        })
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -434,13 +823,18 @@ impl<T> Keyframes<T> {
                 .any(|frame| !frame.offset.is_finite() || !(0.0..=1.0).contains(&frame.offset))
             || frames
                 .windows(2)
-                .any(|pair| pair[0].offset >= pair[1].offset)
+                .any(|pair| pair[0].offset > pair[1].offset)
             || frames.first().is_some_and(|frame| frame.offset != 0.0)
             || frames.last().is_some_and(|frame| frame.offset != 1.0)
         {
             return Err(AnimationError::InvalidKeyframes(
-                "offsets must be strictly ordered and span 0 through 1",
+                "offsets must be ordered and span 0 through 1",
             ));
+        }
+        for frame in &frames {
+            if let Some(easing) = &frame.easing {
+                easing.validate()?;
+            }
         }
         Ok(Self { frames })
     }
@@ -481,20 +875,21 @@ impl PropertyKeyframes {
     where
         T: Into<StyleValue>,
     {
-        let frames = keyframes
-            .into_frames()
-            .into_iter()
-            .map(|frame| PropertyKeyframe {
+        let owned = keyframes.into_frames();
+        let mut frames = Vec::new();
+        frames
+            .try_reserve_exact(owned.len())
+            .map_err(|_| AnimationError::AllocationFailure)?;
+        for frame in owned {
+            let value = frame.value.into();
+            if !value_matches_property(property, &value) {
+                return Err(AnimationError::PropertyType { property });
+            }
+            frames.push(PropertyKeyframe {
                 offset: frame.offset,
-                value: frame.value.into(),
+                value,
                 easing: frame.easing,
-            })
-            .collect::<Vec<_>>();
-        if frames
-            .iter()
-            .any(|frame| !value_matches_property(property, &frame.value))
-        {
-            return Err(AnimationError::PropertyType { property });
+            });
         }
         Ok(Self { property, frames })
     }
@@ -507,31 +902,285 @@ impl PropertyKeyframes {
         &self.frames
     }
 
-    pub fn sample(&self, progress: f64, default_easing: &Easing) -> StyleValue {
-        let progress = progress.clamp(0.0, 1.0);
-        let upper = self.frames.partition_point(|frame| frame.offset < progress);
-        if upper == 0 {
-            return self.frames[0].value.clone();
-        }
-        if upper == self.frames.len() {
-            return self.frames[self.frames.len() - 1].value.clone();
-        }
-        let from = &self.frames[upper - 1];
-        let to = &self.frames[upper];
-        let interval = (progress - from.offset) / (to.offset - from.offset);
-        let eased = from
-            .easing
-            .as_ref()
-            .unwrap_or(default_easing)
-            .sample(interval);
-        interpolate(self.property, &from.value, &to.value, eased).unwrap_or_else(|| {
-            if eased < 0.5 {
-                from.value.clone()
-            } else {
-                to.value.clone()
+    /// Native length shorthands participate in the same atomic component stacks
+    /// as their longhands. Lifecycle events still name the original property.
+    #[doc(hidden)]
+    pub fn effect_properties(&self) -> &[StyleProperty] {
+        use StyleProperty as P;
+        match self.property {
+            P::Margin => &[P::MarginTop, P::MarginRight, P::MarginBottom, P::MarginLeft],
+            P::Padding => &[
+                P::PaddingTop,
+                P::PaddingRight,
+                P::PaddingBottom,
+                P::PaddingLeft,
+            ],
+            P::BorderRadius => &crate::RADIUS_AXIS_PROPERTIES,
+            P::BorderTopLeftRadius => &[P::BorderTopLeftRadiusX, P::BorderTopLeftRadiusY],
+            P::BorderTopRightRadius => &[P::BorderTopRightRadiusX, P::BorderTopRightRadiusY],
+            P::BorderBottomRightRadius => {
+                &[P::BorderBottomRightRadiusX, P::BorderBottomRightRadiusY]
             }
-        })
+            P::BorderBottomLeftRadius => &[P::BorderBottomLeftRadiusX, P::BorderBottomLeftRadiusY],
+            P::Gap => &[P::RowGap, P::ColumnGap],
+            _ => std::slice::from_ref(&self.property),
+        }
     }
+
+    fn component_value(&self, property: StyleProperty, value: &StyleValue) -> Option<StyleValue> {
+        if property == self.property {
+            return Some(value.clone());
+        }
+        use StyleProperty as P;
+        if let Some((corner, axis)) = property.radius_axis_coordinates() {
+            if let StyleValue::CornerRadii(value) = value {
+                let length = [value.0.top, value.0.right, value.0.bottom, value.0.left][corner];
+                return Some(length.into());
+            }
+            if let StyleValue::Renderer(value) = value {
+                let pair = match value {
+                    crate::RendererStyleValue::BorderTopLeftRadius(value) if corner == 0 => *value,
+                    crate::RendererStyleValue::BorderTopRightRadius(value) if corner == 1 => *value,
+                    crate::RendererStyleValue::BorderBottomRightRadius(value) if corner == 2 => {
+                        *value
+                    }
+                    crate::RendererStyleValue::BorderBottomLeftRadius(value) if corner == 3 => {
+                        *value
+                    }
+                    _ => return None,
+                };
+                return Some(LengthValue::px(if axis == 0 { pair.0 } else { pair.1 }).into());
+            }
+        }
+        match (self.property, property, value) {
+            (P::Margin | P::Padding, P::MarginTop | P::PaddingTop, StyleValue::Edges(v)) => {
+                Some(v.top.into())
+            }
+            (P::Margin | P::Padding, P::MarginRight | P::PaddingRight, StyleValue::Edges(v)) => {
+                Some(v.right.into())
+            }
+            (P::Margin | P::Padding, P::MarginBottom | P::PaddingBottom, StyleValue::Edges(v)) => {
+                Some(v.bottom.into())
+            }
+            (P::Margin | P::Padding, P::MarginLeft | P::PaddingLeft, StyleValue::Edges(v)) => {
+                Some(v.left.into())
+            }
+            (P::Gap, P::RowGap, StyleValue::Gap(v)) => Some(v.row.into()),
+            (P::Gap, P::ColumnGap, StyleValue::Gap(v)) => Some(v.column.into()),
+            _ => None,
+        }
+    }
+
+    #[doc(hidden)]
+    pub fn sample_component_resolved_composited_value_with_before(
+        &self,
+        property: StyleProperty,
+        progress: f64,
+        default_easing: &Easing,
+        before: bool,
+        underlying: &CompositedStyleValue,
+        composite: CompositeOperation,
+        resolve: impl Fn(&StyleValue) -> StyleValue,
+    ) -> Option<CompositedStyleValue> {
+        if !self.effect_properties().contains(&property) {
+            return None;
+        }
+        Some(
+            self.sample_resolved_composited_value_for_property_with_before(
+                property,
+                progress,
+                default_easing,
+                before,
+                underlying,
+                // Existing renderer corner pairs are discrete compatibility
+                // inputs. Splitting their publication preserves that contract;
+                // the new axis/shorthand length routes compose numerically.
+                if self.property.metadata().interpolation == InterpolationKind::Discrete {
+                    CompositeOperation::Replace
+                } else {
+                    composite
+                },
+                |value| {
+                    let mut component = self
+                        .component_value(property, value)
+                        .expect("validated native effect component");
+                    if matches!(
+                        self.property,
+                        StyleProperty::BorderTopLeftRadius
+                            | StyleProperty::BorderTopRightRadius
+                            | StyleProperty::BorderBottomRightRadius
+                            | StyleProperty::BorderBottomLeftRadius
+                    ) && underlying.radius_percentage_flag() == Some(true)
+                    {
+                        if let StyleValue::Length(LengthValue::Computed(value)) = component {
+                            component = LengthValue::percent(value.value()).into();
+                        }
+                    }
+                    resolve(&component)
+                },
+            ),
+        )
+    }
+
+    pub fn sample(&self, progress: f64, default_easing: &Easing) -> StyleValue {
+        self.sample_with_before(progress, default_easing, false)
+    }
+
+    /// Select the outgoing interval at an exact offset and evaluate its easing.
+    /// First and last intervals also handle progress outside zero through one.
+    pub fn sample_with_before(
+        &self,
+        progress: f64,
+        default_easing: &Easing,
+        before: bool,
+    ) -> StyleValue {
+        self.sample_resolved_composited_value_with_before(
+            progress,
+            default_easing,
+            before,
+            &CompositedStyleValue::from_style_value_for_property(
+                self.property,
+                self.frames[0].value.clone(),
+            ),
+            CompositeOperation::Replace,
+            Clone::clone,
+        )
+        .into_style_value(self.property)
+    }
+
+    /// Resolve endpoint units against the current native computed environment,
+    /// then combine this effect with the current lower effect stack.
+    /// Transform composition precedes interpolation at both endpoints, as in
+    /// Blink's CSSTransformInterpolationType. Effect accumulation is independent
+    /// of iteration accumulation; this method never repeats the sampled value.
+    pub fn sample_resolved_composited_with_before(
+        &self,
+        progress: f64,
+        default_easing: &Easing,
+        before: bool,
+        underlying: &StyleValue,
+        composite: CompositeOperation,
+        resolve: impl Fn(&StyleValue) -> StyleValue,
+    ) -> StyleValue {
+        self.sample_resolved_composited_value_with_before(
+            progress,
+            default_easing,
+            before,
+            &CompositedStyleValue::from_style_value_for_property(self.property, underlying.clone()),
+            composite,
+            resolve,
+        )
+        .into_style_value(self.property)
+    }
+
+    /// Keep typed floating intermediates across the complete ordered stack.
+    /// The Engine converts the final property value only once, at publication.
+    pub fn sample_resolved_composited_value_with_before(
+        &self,
+        progress: f64,
+        default_easing: &Easing,
+        before: bool,
+        underlying: &CompositedStyleValue,
+        composite: CompositeOperation,
+        resolve: impl Fn(&StyleValue) -> StyleValue,
+    ) -> CompositedStyleValue {
+        self.sample_resolved_composited_value_for_property_with_before(
+            self.property,
+            progress,
+            default_easing,
+            before,
+            underlying,
+            composite,
+            resolve,
+        )
+    }
+
+    fn sample_resolved_composited_value_for_property_with_before(
+        &self,
+        property: StyleProperty,
+        progress: f64,
+        default_easing: &Easing,
+        before: bool,
+        underlying: &CompositedStyleValue,
+        composite: CompositeOperation,
+        resolve: impl Fn(&StyleValue) -> StyleValue,
+    ) -> CompositedStyleValue {
+        let endpoint = |value: &StyleValue| {
+            let value =
+                CompositedStyleValue::from_style_value_for_property(property, resolve(value));
+            if property == StyleProperty::Transform {
+                value.compose(property, underlying, composite)
+            } else {
+                value
+            }
+        };
+        let sampled = if progress < 0.0 && self.frames[1].offset == 0.0 {
+            endpoint(&self.frames[0].value)
+        } else if progress >= 1.0 && self.frames[self.frames.len() - 2].offset == 1.0 {
+            endpoint(&self.frames[self.frames.len() - 1].value)
+        } else {
+            let upper = self
+                .frames
+                .partition_point(|frame| frame.offset <= progress);
+            let index = upper.saturating_sub(1).min(self.frames.len() - 2);
+            let from = &self.frames[index];
+            let to = &self.frames[index + 1];
+            let interval = (progress - from.offset) / (to.offset - from.offset);
+            let eased = from
+                .easing
+                .as_ref()
+                .unwrap_or(default_easing)
+                .sample_with_before(interval, before);
+            let from = endpoint(&from.value);
+            let to = endpoint(&to.value);
+            if property.metadata().interpolation != InterpolationKind::Discrete
+                && self.property.metadata().interpolation != InterpolationKind::Discrete
+            {
+                from.interpolate(&to, eased).unwrap_or_else(|| {
+                    let from = from.into_style_value(property);
+                    let to = to.into_style_value(property);
+                    CompositedStyleValue::from_style_value_for_property(
+                        property,
+                        interpolate(property, &from, &to, eased).unwrap_or_else(|| {
+                            if eased < 0.5 {
+                                from
+                            } else {
+                                to
+                            }
+                        }),
+                    )
+                })
+            } else if eased < 0.5 {
+                from
+            } else {
+                to
+            }
+        };
+        if property == StyleProperty::Transform {
+            sampled
+        } else {
+            sampled.compose(property, underlying, composite)
+        }
+    }
+}
+
+/// Combine a typed effect with the current lower stack without applying the
+/// property's computed-value clamp between effects. Discrete values replace.
+/// Add and Accumulate coincide for ordinary numeric/length components; transform
+/// accumulation uses the identity-relative primitive rules instead of appending.
+pub fn compose_property_value(
+    property: StyleProperty,
+    underlying: &StyleValue,
+    sampled: StyleValue,
+    composite: CompositeOperation,
+) -> StyleValue {
+    CompositedStyleValue::from_style_value_for_property(property, sampled)
+        .compose(
+            property,
+            &CompositedStyleValue::from_style_value_for_property(property, underlying.clone()),
+            composite,
+        )
+        .into_style_value(property)
 }
 
 pub fn value_matches_property(property: StyleProperty, value: &StyleValue) -> bool {
@@ -550,7 +1199,6 @@ pub fn interpolate(
     to: &StyleValue,
     progress: f64,
 ) -> Option<StyleValue> {
-    let progress = progress as f32;
     if property.metadata().interpolation == InterpolationKind::Discrete {
         return Some(if progress < 0.5 {
             from.clone()
@@ -558,6 +1206,20 @@ pub fn interpolate(
             to.clone()
         });
     }
+    if let Some(value) = CompositedStyleValue::from_style_value_for_property(property, from.clone())
+        .interpolate(
+            &CompositedStyleValue::from_style_value_for_property(property, to.clone()),
+            progress,
+        )
+    {
+        return Some(value.into_style_value(property));
+    }
+    if let (StyleValue::Transform(from), StyleValue::Transform(to)) = (from, to) {
+        return Some(StyleValue::Transform(crate::interpolate_transform_lists(
+            from, to, progress,
+        )));
+    }
+    let progress = progress as f32;
     match (from, to) {
         (StyleValue::Number(from), StyleValue::Number(to)) => {
             Some(StyleValue::Number(lerp(*from, *to, progress)))
@@ -593,9 +1255,6 @@ pub fn interpolate(
                 bottom: interpolate_length(from.bottom, to.bottom, progress)?,
                 left: interpolate_length(from.left, to.left, progress)?,
             })))
-        }
-        (StyleValue::Transform(from), StyleValue::Transform(to)) => {
-            interpolate_transform(from, to, progress).map(StyleValue::Transform)
         }
         (StyleValue::Typography(from), StyleValue::Typography(to)) => {
             interpolate_typography(from, to, progress).map(StyleValue::Typography)
@@ -704,6 +1363,22 @@ fn interpolate_color(from: Color, to: Color, progress: f32) -> Color {
 }
 
 fn interpolate_length(from: LengthValue, to: LengthValue, progress: f32) -> Option<LengthValue> {
+    if let (LengthValue::Computed(a), LengthValue::Computed(b)) = (from, to) {
+        let components = |v: Length| match v.length_type() {
+            LengthType::Fixed => Some((0.0, v.value())),
+            LengthType::Percent => Some((v.value(), 0.0)),
+            LengthType::Calculated => Some((v.value(), v.calc_offset())),
+            _ => None,
+        };
+        if a.length_type() != b.length_type() {
+            if let Some(((ap, ax), (bp, bx))) = components(a).zip(components(b)) {
+                return Some(LengthValue::Computed(Length::calc_percent_px(
+                    lerp(ap, bp, progress),
+                    lerp(ax, bx, progress),
+                )));
+            }
+        }
+    }
     match (from, to) {
         (LengthValue::Computed(from), LengthValue::Computed(to))
             if from.length_type() == to.length_type() =>
@@ -726,6 +1401,15 @@ fn interpolate_length(from: LengthValue, to: LengthValue, progress: f32) -> Opti
         (LengthValue::Rem(from), LengthValue::Rem(to)) => {
             Some(LengthValue::Rem(lerp(from, to, progress)))
         }
+        (LengthValue::Ch(from), LengthValue::Ch(to)) => {
+            Some(LengthValue::Ch(lerp(from, to, progress)))
+        }
+        (LengthValue::Ex(from), LengthValue::Ex(to)) => {
+            Some(LengthValue::Ex(lerp(from, to, progress)))
+        }
+        (LengthValue::Lh(from), LengthValue::Lh(to)) => {
+            Some(LengthValue::Lh(lerp(from, to, progress)))
+        }
         (LengthValue::ViewportWidth(from), LengthValue::ViewportWidth(to)) => {
             Some(LengthValue::ViewportWidth(lerp(from, to, progress)))
         }
@@ -742,102 +1426,178 @@ fn interpolate_length(from: LengthValue, to: LengthValue, progress: f32) -> Opti
     }
 }
 
-fn interpolate_transform(
-    from: &TransformList,
-    to: &TransformList,
-    progress: f32,
-) -> Option<TransformList> {
-    if from.0.len() != to.0.len() {
-        return None;
-    }
-    let operations = from
-        .0
-        .iter()
-        .zip(&to.0)
-        .map(|(from, to)| match (from, to) {
-            (
-                TransformOperation::Translate(from_x, from_y),
-                TransformOperation::Translate(to_x, to_y),
-            ) => Some(TransformOperation::Translate(
-                interpolate_length(*from_x, *to_x, progress)?,
-                interpolate_length(*from_y, *to_y, progress)?,
-            )),
-            (
-                TransformOperation::Translate3d(from_x, from_y, from_z),
-                TransformOperation::Translate3d(to_x, to_y, to_z),
-            ) => Some(TransformOperation::Translate3d(
-                interpolate_length(*from_x, *to_x, progress)?,
-                interpolate_length(*from_y, *to_y, progress)?,
-                interpolate_length(*from_z, *to_z, progress)?,
-            )),
-            (TransformOperation::Scale(from_x, from_y), TransformOperation::Scale(to_x, to_y)) => {
-                Some(TransformOperation::Scale(
-                    lerp(*from_x, *to_x, progress),
-                    lerp(*from_y, *to_y, progress),
-                ))
-            }
-            (
-                TransformOperation::Scale3d(from_x, from_y, from_z),
-                TransformOperation::Scale3d(to_x, to_y, to_z),
-            ) => Some(TransformOperation::Scale3d(
-                lerp(*from_x, *to_x, progress),
-                lerp(*from_y, *to_y, progress),
-                lerp(*from_z, *to_z, progress),
-            )),
-            (TransformOperation::Rotate(from), TransformOperation::Rotate(to)) => {
-                Some(TransformOperation::Rotate(lerp(*from, *to, progress)))
-            }
-            (
-                TransformOperation::Rotate3d {
-                    x: from_x,
-                    y: from_y,
-                    z: from_z,
-                    degrees: from_degrees,
-                },
-                TransformOperation::Rotate3d {
-                    x: to_x,
-                    y: to_y,
-                    z: to_z,
-                    degrees: to_degrees,
-                },
-            ) => Some(TransformOperation::Rotate3d {
-                x: lerp(*from_x, *to_x, progress),
-                y: lerp(*from_y, *to_y, progress),
-                z: lerp(*from_z, *to_z, progress),
-                degrees: lerp(*from_degrees, *to_degrees, progress),
-            }),
-            (TransformOperation::Perspective(from), TransformOperation::Perspective(to)) => Some(
-                TransformOperation::Perspective(interpolate_length(*from, *to, progress)?),
-            ),
-            (TransformOperation::Matrix(from), TransformOperation::Matrix(to)) => {
-                Some(TransformOperation::Matrix(crate::Transform2D {
-                    a: lerp(from.a, to.a, progress),
-                    b: lerp(from.b, to.b, progress),
-                    c: lerp(from.c, to.c, progress),
-                    d: lerp(from.d, to.d, progress),
-                    e: lerp(from.e, to.e, progress),
-                    f: lerp(from.f, to.f, progress),
-                }))
-            }
-            (TransformOperation::Matrix3d(from), TransformOperation::Matrix3d(to)) => {
-                let mut values = [0.0; 16];
-                for (index, value) in values.iter_mut().enumerate() {
-                    *value = lerp(from.0[index], to.0[index], progress);
-                }
-                Some(TransformOperation::Matrix3d(crate::Transform3D(values)))
-            }
-            _ => None,
-        })
-        .collect::<Option<Vec<_>>>()?;
-    Some(TransformList(operations))
-}
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TimelineAxis {
     Block,
     Inline,
     X,
     Y,
+}
+
+/// A named portion of a progress timeline. `Scroll` is the full scrollport
+/// range, including for a view timeline; pinned Blink gates that name behind
+/// ScrollTimelineNamedRangeScrollEnabled. Native applications can use it directly.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum TimelineNamedRange {
+    Cover,
+    Contain,
+    Entry,
+    EntryCrossing,
+    Exit,
+    ExitCrossing,
+    Scroll,
+}
+
+/// An authored attachment endpoint. Relative lengths use the animation target's
+/// selected font and native style, percentages use the selected named range.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct TimelineRangeOffset {
+    pub name: TimelineNamedRange,
+    pub offset: LengthValue,
+}
+
+impl TimelineRangeOffset {
+    pub fn new(name: TimelineNamedRange, offset: LengthValue) -> Result<Self, AnimationError> {
+        let endpoint = Self { name, offset };
+        endpoint.validate()?;
+        Ok(endpoint)
+    }
+
+    pub fn validate(self) -> Result<(), AnimationError> {
+        let finite = match self.offset {
+            LengthValue::Computed(length) => match length.length_type() {
+                LengthType::Fixed | LengthType::Percent => length.value().is_finite(),
+                LengthType::Calculated => {
+                    length.value().is_finite() && length.calc_offset().is_finite()
+                }
+                _ => false,
+            },
+            LengthValue::Em(value)
+            | LengthValue::Rem(value)
+            | LengthValue::ViewportWidth(value)
+            | LengthValue::ViewportHeight(value)
+            | LengthValue::ViewportMin(value)
+            | LengthValue::ViewportMax(value)
+            | LengthValue::Ch(value)
+            | LengthValue::Ex(value)
+            | LengthValue::Lh(value) => value.is_finite(),
+        };
+        if finite {
+            Ok(())
+        } else {
+            Err(AnimationError::InvalidTiming(
+                "attachment offset must be a finite length or percentage",
+            ))
+        }
+    }
+}
+
+/// Logical start/end view visibility insets. An absent side uses the source's
+/// logical scroll padding; explicit relative lengths use the subject's style.
+#[derive(Debug, Clone, Copy, PartialEq, Default)]
+pub struct ViewTimelineInset {
+    pub start: Option<LengthValue>,
+    pub end: Option<LengthValue>,
+}
+
+impl ViewTimelineInset {
+    pub fn new(
+        start: Option<LengthValue>,
+        end: Option<LengthValue>,
+    ) -> Result<Self, AnimationError> {
+        let inset = Self { start, end };
+        inset.validate()?;
+        Ok(inset)
+    }
+
+    pub fn validate(self) -> Result<(), AnimationError> {
+        for offset in [self.start, self.end].into_iter().flatten() {
+            TimelineRangeOffset {
+                name: TimelineNamedRange::Cover,
+                offset,
+            }
+            .validate()?;
+        }
+        Ok(())
+    }
+}
+
+/// Browser-style attachment ranges. `None` is the normal endpoint: cover start
+/// for `start` and cover end for `end`. Reversed/equal endpoints are legal and
+/// have zero finite intrinsic active duration; they are not oriented numeric ranges.
+#[derive(Debug, Clone, Copy, PartialEq, Default)]
+pub struct AnimationAttachmentRange {
+    pub start: Option<TimelineRangeOffset>,
+    pub end: Option<TimelineRangeOffset>,
+}
+
+impl AnimationAttachmentRange {
+    pub fn new(
+        start: TimelineRangeOffset,
+        end: TimelineRangeOffset,
+    ) -> Result<Self, AnimationError> {
+        let range = Self {
+            start: Some(start),
+            end: Some(end),
+        };
+        range.validate()?;
+        Ok(range)
+    }
+
+    pub fn named(name: TimelineNamedRange) -> Self {
+        Self {
+            start: Some(TimelineRangeOffset {
+                name,
+                offset: LengthValue::percent(0.0),
+            }),
+            end: Some(TimelineRangeOffset {
+                name,
+                offset: LengthValue::percent(100.0),
+            }),
+        }
+    }
+
+    pub fn validate(self) -> Result<(), AnimationError> {
+        if let Some(start) = self.start {
+            start.validate()?;
+        }
+        if let Some(end) = self.end {
+            end.validate()?;
+        }
+        Ok(())
+    }
+}
+
+/// Owned resolved bounds; equal endpoints are meaningful for contain ranges.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct TimelineRangeBounds {
+    pub start: f64,
+    pub end: f64,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct NamedTimelineRanges {
+    pub cover: TimelineRangeBounds,
+    pub contain: TimelineRangeBounds,
+    pub entry: TimelineRangeBounds,
+    pub entry_crossing: TimelineRangeBounds,
+    pub exit: TimelineRangeBounds,
+    pub exit_crossing: TimelineRangeBounds,
+    pub scroll: TimelineRangeBounds,
+}
+
+impl NamedTimelineRanges {
+    pub fn get(self, name: TimelineNamedRange) -> TimelineRangeBounds {
+        match name {
+            TimelineNamedRange::Cover => self.cover,
+            TimelineNamedRange::Contain => self.contain,
+            TimelineNamedRange::Entry => self.entry,
+            TimelineNamedRange::EntryCrossing => self.entry_crossing,
+            TimelineNamedRange::Exit => self.exit,
+            TimelineNamedRange::ExitCrossing => self.exit_crossing,
+            TimelineNamedRange::Scroll => self.scroll,
+        }
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -848,12 +1608,23 @@ pub struct TimelineRange {
 
 impl TimelineRange {
     pub fn new(start: f64, end: f64) -> Result<Self, AnimationError> {
-        if !start.is_finite() || !end.is_finite() || start == end {
+        let range = Self { start, end };
+        range.validate()?;
+        Ok(range)
+    }
+
+    /// Validate a range, including one built directly with the public fields.
+    pub fn validate(self) -> Result<(), AnimationError> {
+        if !self.start.is_finite()
+            || !self.end.is_finite()
+            || self.start == self.end
+            || !(self.end - self.start).is_finite()
+        {
             return Err(AnimationError::InvalidTiming(
                 "timeline range must have distinct finite endpoints",
             ));
         }
-        Ok(Self { start, end })
+        Ok(())
     }
 
     pub fn progress(self, position: f64) -> f64 {
@@ -864,6 +1635,47 @@ impl TimelineRange {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::TransformOperation;
+
+    #[test]
+    fn normalized_seconds_sampling_does_not_reimport_reflected_millisecond_timing() {
+        let count = 0.5;
+        let specified_duration = 100.0_f64 / 1000.0;
+        let specified_delay = 17.0_f64 / 1000.0;
+        let specified_end = specified_delay + specified_duration * count;
+        let timeline_seconds = ((100.0_f64 * 16.0 / 1000.0) / 1000.0) as f64;
+        let timing = AnimationTimingSeconds {
+            duration: specified_duration / specified_end * timeline_seconds,
+            delay: specified_delay / specified_end * timeline_seconds,
+        };
+        let options = AnimationOptions {
+            duration_ms: timing.duration * 1000.0,
+            delay_ms: timing.delay * 1000.0,
+            iterations: IterationCount::Number(count),
+            fill: FillMode::Both,
+            ..AnimationOptions::default()
+        };
+        let local = timing.delay + timing.duration * 0.25;
+        let sample = options
+            .sample_local_time_seconds_with_direction_and_boundaries(local, timing, false, false)
+            .0;
+        assert_eq!(sample.phase, AnimationPhase::Active);
+        assert_eq!(
+            sample.progress,
+            Some((local - timing.delay) / timing.duration)
+        );
+        let reflected = AnimationTimingSeconds::from_options(&options);
+        assert_ne!(reflected.duration, timing.duration);
+        assert_ne!(
+            options
+                .sample_local_time_seconds_with_direction_and_boundaries(
+                    local, reflected, false, false
+                )
+                .0
+                .progress,
+            sample.progress
+        );
+    }
 
     fn options() -> AnimationOptions {
         AnimationOptions {
@@ -871,6 +1683,43 @@ mod tests {
             fill: FillMode::Both,
             ..AnimationOptions::default()
         }
+    }
+
+    #[test]
+    fn keyframe_overrides_keep_overshoot_and_duplicate_linear_stops() {
+        let curve = Easing::LinearStops(vec![
+            LinearStop {
+                input: 0.0,
+                output: 0.0,
+            },
+            LinearStop {
+                input: 0.5,
+                output: -1.0,
+            },
+            LinearStop {
+                input: 0.5,
+                output: 2.0,
+            },
+            LinearStop {
+                input: 1.0,
+                output: 1.0,
+            },
+        ]);
+        let frames = Keyframes::new(vec![
+            Keyframe::new(0.0, 0.0_f32).easing(curve),
+            Keyframe::new(1.0, 1.0_f32),
+        ])
+        .unwrap();
+        let property = PropertyKeyframes::typed(StyleProperty::Opacity, frames).unwrap();
+        assert_eq!(
+            property.sample(0.25, &Easing::Linear),
+            StyleValue::Number(-0.5)
+        );
+        assert_eq!(
+            property.sample(0.75, &Easing::Linear),
+            StyleValue::Number(1.5)
+        );
+        assert!(Easing::cubic_bezier(0.0, -2.0, 1.0, 3.0).is_ok());
     }
 
     #[test]
@@ -906,6 +1755,285 @@ mod tests {
         let steps = Easing::steps(4, StepPosition::JumpEnd).unwrap();
         assert_eq!(steps.sample(0.49), 0.25);
         assert_eq!(steps.sample(1.0), 1.0);
+    }
+
+    #[test]
+    fn step_limits_distinguish_fill_from_active_boundaries() {
+        for (position, zero, middle, end) in [
+            (
+                StepPosition::JumpStart,
+                [0.0, 0.25],
+                [0.5, 0.75],
+                [1.0, 1.0],
+            ),
+            (StepPosition::JumpEnd, [0.0, 0.0], [0.25, 0.5], [0.75, 1.0]),
+            (
+                StepPosition::JumpNone,
+                [0.0, 0.0],
+                [1.0 / 3.0, 2.0 / 3.0],
+                [1.0, 1.0],
+            ),
+            (StepPosition::JumpBoth, [0.0, 0.2], [0.4, 0.6], [0.8, 1.0]),
+        ] {
+            let easing = Easing::steps(4, position).unwrap();
+            for (input, limits) in [(0.0, zero), (0.5, middle), (1.0, end)] {
+                assert_eq!(easing.sample_with_before(input, true), limits[0]);
+                assert_eq!(easing.sample_with_before(input, false), limits[1]);
+            }
+        }
+        let steps = Easing::steps(4, StepPosition::JumpEnd).unwrap();
+        assert_eq!(steps.sample(-0.5), -0.5);
+        assert_eq!(steps.sample(1.5), 1.5);
+        assert_eq!(steps.sample_with_before(1.5, true), 1.25);
+    }
+
+    #[test]
+    fn linear_knots_take_the_right_value_and_preserve_extrapolation() {
+        let easing = Easing::linear_stops(vec![
+            LinearStop {
+                input: 0.0,
+                output: 0.0,
+            },
+            LinearStop {
+                input: 0.5,
+                output: 1.0,
+            },
+            LinearStop {
+                input: 0.5,
+                output: 2.0,
+            },
+            LinearStop {
+                input: 1.0,
+                output: 3.0,
+            },
+        ])
+        .unwrap();
+        assert_eq!(easing.sample(0.25), 0.5);
+        assert_eq!(easing.sample(0.5), 2.0);
+        assert_eq!(easing.sample_with_before(0.5, true), 2.0);
+        assert_eq!(easing.sample(0.75), 2.5);
+        assert_eq!(easing.sample(-0.25), -0.5);
+        assert_eq!(easing.sample(1.25), 3.5);
+
+        let endpoints = Easing::linear_stops(vec![
+            LinearStop {
+                input: 0.0,
+                output: 0.0,
+            },
+            LinearStop {
+                input: 0.0,
+                output: 2.0,
+            },
+            LinearStop {
+                input: 1.0,
+                output: 3.0,
+            },
+            LinearStop {
+                input: 1.0,
+                output: 4.0,
+            },
+        ])
+        .unwrap();
+        assert_eq!(endpoints.sample(-0.5), 2.0);
+        assert_eq!(endpoints.sample(0.0), 2.0);
+        assert_eq!(endpoints.sample(1.0), 4.0);
+        assert_eq!(endpoints.sample(1.5), 4.0);
+        assert_eq!(Easing::Linear.sample(-0.25), -0.25);
+        assert_eq!(Easing::Linear.sample(1.25), 1.25);
+    }
+
+    #[test]
+    fn cubic_extrapolation_uses_chromium_endpoint_gradients() {
+        let easing = Easing::cubic_bezier(0.25, 0.5, 0.75, 0.5).unwrap();
+        assert_eq!(easing.sample(-0.25), -0.5);
+        assert_eq!(easing.sample(1.25), 1.5);
+        assert_eq!(easing.sample(0.5), 0.5);
+        // A vertical first tangent is held constant; a coincident first
+        // control instead uses the second tangent.
+        let vertical = Easing::cubic_bezier(0.0, 1.0, 0.5, 0.0).unwrap();
+        assert_eq!(vertical.sample(-0.25), 0.0);
+        let coincident = Easing::cubic_bezier(0.0, 0.0, 0.5, 1.0).unwrap();
+        assert_eq!(coincident.sample(-0.25), -0.5);
+        for (x, y) in [(0.0, 0.0), (1.0, 1.0)] {
+            let linear = Easing::cubic_bezier(x, y, x, y).unwrap();
+            assert_eq!(linear.sample(-0.5), -0.5);
+            assert_eq!(linear.sample(1.5), 1.5);
+        }
+        // x(t)=t while y(t)=1.5t-1.5t²+t³, with exact quarter samples.
+        let interior = Easing::cubic_bezier(1.0 / 3.0, 0.5, 2.0 / 3.0, 0.5).unwrap();
+        assert_eq!(interior.sample(0.25), 0.296875);
+        assert_eq!(interior.sample(0.75), 0.703125);
+    }
+
+    #[test]
+    fn authored_percentages_preserve_decimal_discontinuities_and_outer_stops() {
+        let easing = Easing::linear_stops_percent(vec![
+            PercentageLinearStop {
+                input_percent: 0.0,
+                output: 0.0,
+            },
+            PercentageLinearStop {
+                input_percent: 29.0,
+                output: 1.0,
+            },
+            PercentageLinearStop {
+                input_percent: 29.0,
+                output: 2.0,
+            },
+            PercentageLinearStop {
+                input_percent: 100.0,
+                output: 3.0,
+            },
+        ])
+        .unwrap();
+        let progress = 29.0_f64 / 100.0;
+        // The double product is below the authored 29%, so Chromium samples
+        // the left interval. No rounding or pixel tolerance changes that.
+        assert!(100.0 * progress < 29.0);
+        assert_eq!(easing.sample(progress), 1.0);
+        assert_eq!(easing.sample_with_before(progress, true), 1.0);
+        let just_after = f64::from_bits(progress.to_bits() + 1);
+        assert!(100.0 * just_after > 29.0);
+        assert_eq!(easing.sample(just_after), 2.0);
+
+        let outer = Easing::linear_stops_percent(vec![
+            PercentageLinearStop {
+                input_percent: -100.0,
+                output: 0.0,
+            },
+            PercentageLinearStop {
+                input_percent: 200.0,
+                output: 1.0,
+            },
+        ])
+        .unwrap();
+        assert_eq!(outer.sample(-1.0), 0.0);
+        assert_eq!(outer.sample(0.0), 1.0 / 3.0);
+        assert_eq!(outer.sample(1.0), 2.0 / 3.0);
+        assert_eq!(outer.sample(2.0), 1.0);
+        let duplicate = Easing::linear_stops_percent(vec![
+            PercentageLinearStop {
+                input_percent: 29.0,
+                output: 1.0,
+            },
+            PercentageLinearStop {
+                input_percent: 29.0,
+                output: 2.0,
+            },
+        ])
+        .unwrap();
+        assert_eq!(duplicate.sample(0.0), 2.0);
+        assert_eq!(duplicate.sample(1.0), 2.0);
+        assert!(Easing::LinearStopsPercent(Vec::new()).validate().is_err());
+        assert!(Easing::linear_stops_percent(vec![
+            PercentageLinearStop {
+                input_percent: 100.0,
+                output: 0.0
+            },
+            PercentageLinearStop {
+                input_percent: 0.0,
+                output: 1.0
+            },
+        ])
+        .is_err());
+        assert!(Easing::linear_stops_percent(vec![
+            PercentageLinearStop {
+                input_percent: 0.0,
+                output: 0.0
+            },
+            PercentageLinearStop {
+                input_percent: f64::INFINITY,
+                output: 1.0
+            },
+        ])
+        .is_err());
+    }
+
+    #[test]
+    fn keyframe_boundaries_evaluate_the_outgoing_interval() {
+        let frames = PropertyKeyframes::typed(
+            StyleProperty::Width,
+            Keyframes::new(vec![
+                Keyframe::new(0.0, LengthValue::px(0.0))
+                    .easing(Easing::steps(4, StepPosition::JumpStart).unwrap()),
+                Keyframe::new(0.5, LengthValue::px(40.0))
+                    .easing(Easing::steps(4, StepPosition::JumpStart).unwrap()),
+                Keyframe::new(1.0, LengthValue::px(100.0)),
+            ])
+            .unwrap(),
+        )
+        .unwrap();
+        assert_eq!(
+            frames.sample(0.0, &Easing::Linear),
+            LengthValue::px(10.0).into()
+        );
+        assert_eq!(
+            frames.sample_with_before(0.0, &Easing::Linear, true),
+            LengthValue::px(0.0).into()
+        );
+        assert_eq!(
+            frames.sample(0.5, &Easing::Linear),
+            LengthValue::px(55.0).into()
+        );
+        assert_eq!(
+            frames.sample_with_before(0.5, &Easing::Linear, true),
+            LengthValue::px(40.0).into()
+        );
+        assert_eq!(
+            frames.sample(1.0, &Easing::Linear),
+            LengthValue::px(100.0).into()
+        );
+    }
+
+    #[test]
+    fn duplicate_keyframe_offsets_and_outer_intervals_keep_authored_values() {
+        let frames = PropertyKeyframes::typed(
+            StyleProperty::Width,
+            Keyframes::new(vec![
+                Keyframe::new(0.0, LengthValue::px(0.0)),
+                Keyframe::new(0.0, LengthValue::px(10.0)),
+                Keyframe::new(0.5, LengthValue::px(40.0)),
+                Keyframe::new(0.5, LengthValue::px(60.0)),
+                Keyframe::new(1.0, LengthValue::px(90.0)),
+                Keyframe::new(1.0, LengthValue::px(100.0)),
+            ])
+            .unwrap(),
+        )
+        .unwrap();
+        for (progress, width) in [
+            (-0.5, 0.0),
+            (0.0, 10.0),
+            (0.25, 25.0),
+            (0.5, 60.0),
+            (0.75, 75.0),
+            (1.0, 100.0),
+            (1.5, 100.0),
+        ] {
+            assert_eq!(
+                frames.sample(progress, &Easing::Linear),
+                LengthValue::px(width).into()
+            );
+        }
+        let outer = PropertyKeyframes::typed(
+            StyleProperty::Width,
+            Keyframes::from_values(LengthValue::px(10.0), LengthValue::px(20.0)),
+        )
+        .unwrap();
+        assert_eq!(
+            outer.sample(-0.5, &Easing::Linear),
+            LengthValue::px(5.0).into()
+        );
+        assert_eq!(
+            outer.sample(1.5, &Easing::Linear),
+            LengthValue::px(25.0).into()
+        );
+        assert!(Keyframes::new(vec![
+            Keyframe::new(0.0, 0.0),
+            Keyframe::new(0.75, 1.0),
+            Keyframe::new(0.5, 2.0),
+            Keyframe::new(1.0, 3.0)
+        ])
+        .is_err());
     }
 
     #[test]

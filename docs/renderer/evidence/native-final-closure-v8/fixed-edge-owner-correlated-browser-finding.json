@@ -1,0 +1,2451 @@
+{
+  "schema_version": 1,
+  "agent": "scroll_button_api_review",
+  "producer_pid": 3483236,
+  "decision": "accepted_completed_browser_evidence_with_final_material_attribution_unknown",
+  "original_finding_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-evidence-audit-scroll-v4604/finding-fixed-edge-original-scroll-v1.json",
+  "original_finding_sha256": "56967f9dffe61af12ce12ac3d4c34d84e45b7e7f9194a8d3ea1adada3b791b07",
+  "original_rows": [
+    {
+      "repeat": 0,
+      "observation_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4604-original/original-q2-pending-fixed-sibling-1280x720-scale-1.25-repeat-0-observation.json",
+      "observation_sha256": "a4e66938943fa042aebb2dd4e0a6e48b78c7c55ef838ca8c08a7ed86998089a4",
+      "trace_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4604-original/original-q2-pending-fixed-sibling-1280x720-scale-1.25-repeat-0-trace.json",
+      "trace_sha256": "43f96067a8303195ccea5d05839be6e1bbe4a8a48ed1d499fd32af09586f0912",
+      "trace_event_count": 6434,
+      "owner_backend_node_id": 7,
+      "owner_correlated_cc_snapshot_count": 9,
+      "actual_layer_class": "cc::SolidColorLayerImpl",
+      "actual_layer_bounds": [
+        1280,
+        50
+      ],
+      "actual_layer_contents_opaque": true,
+      "actual_debug_reason_ids": [
+        "Viewport",
+        "OverflowScrolling"
+      ],
+      "edge_rows": [
+        {
+          "physical_y": 61,
+          "RGBA": [
+            0,
+            0,
+            255,
+            255
+          ],
+          "count": 1600
+        },
+        {
+          "physical_y": 62,
+          "RGBA": [
+            0,
+            0,
+            255,
+            255
+          ],
+          "count": 1600
+        },
+        {
+          "physical_y": 63,
+          "RGBA": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "count": 1600
+        }
+      ],
+      "pictures": {
+        "baseline": {
+          "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4604-original/original-q2-pending-fixed-sibling-1280x720-scale-1.25-repeat-0-baseline.png",
+          "png_sha256": "d905f62b8a7be26cfb89ce4ca7686ef9674f9a88bd82adcef41d7ab67d360160",
+          "decoded_RGBA_sha256": "45448098d812313a655130315a063574543cabce838d2ab47ed8ae1cf7090887"
+        },
+        "instrumented": {
+          "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4604-original/original-q2-pending-fixed-sibling-1280x720-scale-1.25-repeat-0-instrumented.png",
+          "png_sha256": "d905f62b8a7be26cfb89ce4ca7686ef9674f9a88bd82adcef41d7ab67d360160",
+          "decoded_RGBA_sha256": "45448098d812313a655130315a063574543cabce838d2ab47ed8ae1cf7090887"
+        },
+        "after-snapshots": {
+          "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4604-original/original-q2-pending-fixed-sibling-1280x720-scale-1.25-repeat-0-after-snapshots.png",
+          "png_sha256": "d905f62b8a7be26cfb89ce4ca7686ef9674f9a88bd82adcef41d7ab67d360160",
+          "decoded_RGBA_sha256": "45448098d812313a655130315a063574543cabce838d2ab47ed8ae1cf7090887"
+        }
+      },
+      "LayerTree_domain_availability": "unknown_no_event",
+      "quad_material_objects_in_entire_trace": 0,
+      "SoftwareRenderer_DoDrawQuad_count": 117,
+      "SoftwareRenderer_DoDrawQuad_args_empty": true
+    },
+    {
+      "repeat": 1,
+      "observation_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4604-original/original-q2-pending-fixed-sibling-1280x720-scale-1.25-repeat-1-observation.json",
+      "observation_sha256": "7946cb4057a1d0fb3edcee9b96d072f82f8a52a7b92f0eac972b6b7084e87eb3",
+      "trace_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4604-original/original-q2-pending-fixed-sibling-1280x720-scale-1.25-repeat-1-trace.json",
+      "trace_sha256": "324e1970fd1a170175e025d493a76c77f2dffc7cd618eb0b7c51506909021c80",
+      "trace_event_count": 7213,
+      "owner_backend_node_id": 23,
+      "owner_correlated_cc_snapshot_count": 10,
+      "actual_layer_class": "cc::SolidColorLayerImpl",
+      "actual_layer_bounds": [
+        1280,
+        50
+      ],
+      "actual_layer_contents_opaque": true,
+      "actual_debug_reason_ids": [
+        "Viewport",
+        "OverflowScrolling"
+      ],
+      "edge_rows": [
+        {
+          "physical_y": 61,
+          "RGBA": [
+            0,
+            0,
+            255,
+            255
+          ],
+          "count": 1600
+        },
+        {
+          "physical_y": 62,
+          "RGBA": [
+            0,
+            0,
+            255,
+            255
+          ],
+          "count": 1600
+        },
+        {
+          "physical_y": 63,
+          "RGBA": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "count": 1600
+        }
+      ],
+      "pictures": {
+        "baseline": {
+          "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4604-original/original-q2-pending-fixed-sibling-1280x720-scale-1.25-repeat-1-baseline.png",
+          "png_sha256": "d905f62b8a7be26cfb89ce4ca7686ef9674f9a88bd82adcef41d7ab67d360160",
+          "decoded_RGBA_sha256": "45448098d812313a655130315a063574543cabce838d2ab47ed8ae1cf7090887"
+        },
+        "instrumented": {
+          "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4604-original/original-q2-pending-fixed-sibling-1280x720-scale-1.25-repeat-1-instrumented.png",
+          "png_sha256": "d905f62b8a7be26cfb89ce4ca7686ef9674f9a88bd82adcef41d7ab67d360160",
+          "decoded_RGBA_sha256": "45448098d812313a655130315a063574543cabce838d2ab47ed8ae1cf7090887"
+        },
+        "after-snapshots": {
+          "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4604-original/original-q2-pending-fixed-sibling-1280x720-scale-1.25-repeat-1-after-snapshots.png",
+          "png_sha256": "d905f62b8a7be26cfb89ce4ca7686ef9674f9a88bd82adcef41d7ab67d360160",
+          "decoded_RGBA_sha256": "45448098d812313a655130315a063574543cabce838d2ab47ed8ae1cf7090887"
+        }
+      },
+      "LayerTree_domain_availability": "unknown_no_event",
+      "quad_material_objects_in_entire_trace": 0,
+      "SoftwareRenderer_DoDrawQuad_count": 262,
+      "SoftwareRenderer_DoDrawQuad_args_empty": true
+    }
+  ],
+  "neighbor_browser_receipt_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/browser-receipt-v3.json",
+  "neighbor_browser_receipt_sha256": "21f48f76e1ec1c080a634d79c79b5d7c3189d66771033aded3b49f5c1bc22bdf",
+  "neighbor_Root_terminal_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-neighbor-owner-v4606/terminal-receipt-v1.json",
+  "neighbor_Root_terminal_sha256": "1fd7d6b454603f0b8b4e4eb8ab4e2a97c6ab66f22a203683f8fb06afaaef35ff",
+  "neighbor_Root_actual_exit": 0,
+  "neighbor_Root_terminal_reaped_chunk": "543ce6",
+  "neighbor_known_PIDs_currently_absent": [
+    3459342,
+    3459345,
+    3459366,
+    3459367,
+    3459375,
+    3459376,
+    3459399,
+    3459402,
+    3459410,
+    3459437,
+    3459438,
+    3459476,
+    3459489,
+    3459511
+  ],
+  "neighbor_TMP_and_profile_absent": true,
+  "neighbor_rows": [
+    {
+      "case": "fixed-no-overflow",
+      "profile": "800x600@1.25",
+      "repeats": [
+        {
+          "repeat": 0,
+          "trace_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-no-overflow-800x600-scale-1.25-repeat-0-trace.json",
+          "trace_sha256": "3365e5b02505adc35c9f64e67726503ff480a47d99d8905af3157f868b38ef39",
+          "observation_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-no-overflow-800x600-scale-1.25-repeat-0-observation.json",
+          "observation_sha256": "29a1b6cfbf227880286a8346694a7d2c6651bfac52faf985a6625600c469e617",
+          "backend_node_id": 4,
+          "owner_correlated_snapshot_count": 9,
+          "actual_owner_layer_classes": [
+            "cc::SolidColorLayerImpl"
+          ],
+          "actual_owner_contents_opaque": [
+            true
+          ],
+          "owner_not_found_is_not_proof_of_no_layer": true,
+          "actual_reason_ids": [
+            "OverflowScrolling",
+            "Viewport"
+          ],
+          "metrics": {
+            "viewport": {
+              "width": 800,
+              "height": 600,
+              "dpr": 1.25
+            },
+            "target": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 800,
+                "height": 50,
+                "left": 0,
+                "top": 0,
+                "right": 800,
+                "bottom": 50
+              },
+              "offsetWidth": 800,
+              "offsetHeight": 50,
+              "computed": {
+                "position": "fixed",
+                "width": "800px",
+                "height": "50px",
+                "top": "0px",
+                "backgroundColor": "rgb(0, 0, 255)",
+                "transform": "none",
+                "borderRadius": "0px",
+                "outline": "rgb(0, 0, 0) none 3px"
+              }
+            },
+            "containingBlockCandidate": null,
+            "root": {
+              "clientWidth": 800,
+              "clientHeight": 600,
+              "scrollWidth": 800,
+              "scrollHeight": 600,
+              "scrollLeft": 0,
+              "scrollTop": 0,
+              "overflowX": "visible",
+              "overflowY": "visible"
+            }
+          },
+          "physical_target_bottom": 62.5,
+          "edge_rows": [
+            {
+              "physical_y": 61,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    0,
+                    0,
+                    255,
+                    255
+                  ],
+                  "count": 1000
+                }
+              ]
+            },
+            {
+              "physical_y": 62,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    0,
+                    0,
+                    255,
+                    255
+                  ],
+                  "count": 1000
+                }
+              ]
+            },
+            {
+              "physical_y": 63,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    255,
+                    255,
+                    255,
+                    255
+                  ],
+                  "count": 1000
+                }
+              ]
+            }
+          ],
+          "images": {
+            "baseline": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-no-overflow-800x600-scale-1.25-repeat-0-baseline.png",
+              "png_sha256": "369d12669d0494243e6d9beaa2164d82559bf931e76ba4f6756990003f14866b"
+            },
+            "instrumented": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-no-overflow-800x600-scale-1.25-repeat-0-instrumented.png",
+              "png_sha256": "369d12669d0494243e6d9beaa2164d82559bf931e76ba4f6756990003f14866b"
+            },
+            "after-snapshots": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-no-overflow-800x600-scale-1.25-repeat-0-after-snapshots.png",
+              "png_sha256": "369d12669d0494243e6d9beaa2164d82559bf931e76ba4f6756990003f14866b"
+            }
+          },
+          "decoded_RGBA_sha256": "4066349ee1a2fd92f7b9db2fd49e4dec759f9eb6689f2f452968575eaa51e7d9",
+          "LayerTree_availability": "unknown_no_event",
+          "quad_material_objects_in_entire_trace": 0
+        },
+        {
+          "repeat": 1,
+          "trace_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-no-overflow-800x600-scale-1.25-repeat-1-trace.json",
+          "trace_sha256": "c6eaa68a09f004f7aac4139797bf7d61e3fbf9112dd10d63a5a26ce122cd7aab",
+          "observation_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-no-overflow-800x600-scale-1.25-repeat-1-observation.json",
+          "observation_sha256": "296f4875a7f88a76a926e106caf491508b27679265b9891cd74125c76d631a5a",
+          "backend_node_id": 15,
+          "owner_correlated_snapshot_count": 8,
+          "actual_owner_layer_classes": [
+            "cc::SolidColorLayerImpl"
+          ],
+          "actual_owner_contents_opaque": [
+            true
+          ],
+          "owner_not_found_is_not_proof_of_no_layer": true,
+          "actual_reason_ids": [
+            "OverflowScrolling",
+            "Viewport"
+          ],
+          "metrics": {
+            "viewport": {
+              "width": 800,
+              "height": 600,
+              "dpr": 1.25
+            },
+            "target": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 800,
+                "height": 50,
+                "left": 0,
+                "top": 0,
+                "right": 800,
+                "bottom": 50
+              },
+              "offsetWidth": 800,
+              "offsetHeight": 50,
+              "computed": {
+                "position": "fixed",
+                "width": "800px",
+                "height": "50px",
+                "top": "0px",
+                "backgroundColor": "rgb(0, 0, 255)",
+                "transform": "none",
+                "borderRadius": "0px",
+                "outline": "rgb(0, 0, 0) none 3px"
+              }
+            },
+            "containingBlockCandidate": null,
+            "root": {
+              "clientWidth": 800,
+              "clientHeight": 600,
+              "scrollWidth": 800,
+              "scrollHeight": 600,
+              "scrollLeft": 0,
+              "scrollTop": 0,
+              "overflowX": "visible",
+              "overflowY": "visible"
+            }
+          },
+          "physical_target_bottom": 62.5,
+          "edge_rows": [
+            {
+              "physical_y": 61,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    0,
+                    0,
+                    255,
+                    255
+                  ],
+                  "count": 1000
+                }
+              ]
+            },
+            {
+              "physical_y": 62,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    0,
+                    0,
+                    255,
+                    255
+                  ],
+                  "count": 1000
+                }
+              ]
+            },
+            {
+              "physical_y": 63,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    255,
+                    255,
+                    255,
+                    255
+                  ],
+                  "count": 1000
+                }
+              ]
+            }
+          ],
+          "images": {
+            "baseline": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-no-overflow-800x600-scale-1.25-repeat-1-baseline.png",
+              "png_sha256": "369d12669d0494243e6d9beaa2164d82559bf931e76ba4f6756990003f14866b"
+            },
+            "instrumented": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-no-overflow-800x600-scale-1.25-repeat-1-instrumented.png",
+              "png_sha256": "369d12669d0494243e6d9beaa2164d82559bf931e76ba4f6756990003f14866b"
+            },
+            "after-snapshots": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-no-overflow-800x600-scale-1.25-repeat-1-after-snapshots.png",
+              "png_sha256": "369d12669d0494243e6d9beaa2164d82559bf931e76ba4f6756990003f14866b"
+            }
+          },
+          "decoded_RGBA_sha256": "4066349ee1a2fd92f7b9db2fd49e4dec759f9eb6689f2f452968575eaa51e7d9",
+          "LayerTree_availability": "unknown_no_event",
+          "quad_material_objects_in_entire_trace": 0
+        }
+      ],
+      "fresh_repeat_and_all_observer_pixel_controls_exact": true
+    },
+    {
+      "case": "fixed-with-overflow",
+      "profile": "800x600@1.25",
+      "repeats": [
+        {
+          "repeat": 0,
+          "trace_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-with-overflow-800x600-scale-1.25-repeat-0-trace.json",
+          "trace_sha256": "241edeac66a4830eed6fc88862bfce06d412f4a27c5eb956bcfe970d74a802dd",
+          "observation_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-with-overflow-800x600-scale-1.25-repeat-0-observation.json",
+          "observation_sha256": "21dca33a9b557789c61690848043389e606f6ae608df8fb3d67915856a32c688",
+          "backend_node_id": 29,
+          "owner_correlated_snapshot_count": 9,
+          "actual_owner_layer_classes": [
+            "cc::SolidColorLayerImpl"
+          ],
+          "actual_owner_contents_opaque": [
+            true
+          ],
+          "owner_not_found_is_not_proof_of_no_layer": true,
+          "actual_reason_ids": [
+            "FixedPosition"
+          ],
+          "metrics": {
+            "viewport": {
+              "width": 800,
+              "height": 600,
+              "dpr": 1.25
+            },
+            "target": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 800,
+                "height": 50,
+                "left": 0,
+                "top": 0,
+                "right": 800,
+                "bottom": 50
+              },
+              "offsetWidth": 800,
+              "offsetHeight": 50,
+              "computed": {
+                "position": "fixed",
+                "width": "800px",
+                "height": "50px",
+                "top": "0px",
+                "backgroundColor": "rgb(0, 0, 255)",
+                "transform": "none",
+                "borderRadius": "0px",
+                "outline": "rgb(0, 0, 0) none 3px"
+              }
+            },
+            "containingBlockCandidate": null,
+            "root": {
+              "clientWidth": 800,
+              "clientHeight": 600,
+              "scrollWidth": 800,
+              "scrollHeight": 1200,
+              "scrollLeft": 0,
+              "scrollTop": 0,
+              "overflowX": "visible",
+              "overflowY": "visible"
+            }
+          },
+          "physical_target_bottom": 62.5,
+          "edge_rows": [
+            {
+              "physical_y": 61,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    0,
+                    0,
+                    255,
+                    255
+                  ],
+                  "count": 1000
+                }
+              ]
+            },
+            {
+              "physical_y": 62,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    0,
+                    0,
+                    255,
+                    255
+                  ],
+                  "count": 1000
+                }
+              ]
+            },
+            {
+              "physical_y": 63,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    255,
+                    255,
+                    255,
+                    255
+                  ],
+                  "count": 1000
+                }
+              ]
+            }
+          ],
+          "images": {
+            "baseline": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-with-overflow-800x600-scale-1.25-repeat-0-baseline.png",
+              "png_sha256": "369d12669d0494243e6d9beaa2164d82559bf931e76ba4f6756990003f14866b"
+            },
+            "instrumented": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-with-overflow-800x600-scale-1.25-repeat-0-instrumented.png",
+              "png_sha256": "369d12669d0494243e6d9beaa2164d82559bf931e76ba4f6756990003f14866b"
+            },
+            "after-snapshots": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-with-overflow-800x600-scale-1.25-repeat-0-after-snapshots.png",
+              "png_sha256": "369d12669d0494243e6d9beaa2164d82559bf931e76ba4f6756990003f14866b"
+            }
+          },
+          "decoded_RGBA_sha256": "4066349ee1a2fd92f7b9db2fd49e4dec759f9eb6689f2f452968575eaa51e7d9",
+          "LayerTree_availability": "unknown_no_event",
+          "quad_material_objects_in_entire_trace": 0
+        },
+        {
+          "repeat": 1,
+          "trace_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-with-overflow-800x600-scale-1.25-repeat-1-trace.json",
+          "trace_sha256": "326dc2c62d66be5fc931432a5c810bbcbe27e25db8d0e0bb0ef0e99d89449bba",
+          "observation_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-with-overflow-800x600-scale-1.25-repeat-1-observation.json",
+          "observation_sha256": "ee080e870e7ca705f21891a0baf1c70928606dc026eeb89f030223c5ff18027f",
+          "backend_node_id": 41,
+          "owner_correlated_snapshot_count": 8,
+          "actual_owner_layer_classes": [
+            "cc::SolidColorLayerImpl"
+          ],
+          "actual_owner_contents_opaque": [
+            true
+          ],
+          "owner_not_found_is_not_proof_of_no_layer": true,
+          "actual_reason_ids": [
+            "FixedPosition"
+          ],
+          "metrics": {
+            "viewport": {
+              "width": 800,
+              "height": 600,
+              "dpr": 1.25
+            },
+            "target": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 800,
+                "height": 50,
+                "left": 0,
+                "top": 0,
+                "right": 800,
+                "bottom": 50
+              },
+              "offsetWidth": 800,
+              "offsetHeight": 50,
+              "computed": {
+                "position": "fixed",
+                "width": "800px",
+                "height": "50px",
+                "top": "0px",
+                "backgroundColor": "rgb(0, 0, 255)",
+                "transform": "none",
+                "borderRadius": "0px",
+                "outline": "rgb(0, 0, 0) none 3px"
+              }
+            },
+            "containingBlockCandidate": null,
+            "root": {
+              "clientWidth": 800,
+              "clientHeight": 600,
+              "scrollWidth": 800,
+              "scrollHeight": 1200,
+              "scrollLeft": 0,
+              "scrollTop": 0,
+              "overflowX": "visible",
+              "overflowY": "visible"
+            }
+          },
+          "physical_target_bottom": 62.5,
+          "edge_rows": [
+            {
+              "physical_y": 61,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    0,
+                    0,
+                    255,
+                    255
+                  ],
+                  "count": 1000
+                }
+              ]
+            },
+            {
+              "physical_y": 62,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    0,
+                    0,
+                    255,
+                    255
+                  ],
+                  "count": 1000
+                }
+              ]
+            },
+            {
+              "physical_y": 63,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    255,
+                    255,
+                    255,
+                    255
+                  ],
+                  "count": 1000
+                }
+              ]
+            }
+          ],
+          "images": {
+            "baseline": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-with-overflow-800x600-scale-1.25-repeat-1-baseline.png",
+              "png_sha256": "369d12669d0494243e6d9beaa2164d82559bf931e76ba4f6756990003f14866b"
+            },
+            "instrumented": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-with-overflow-800x600-scale-1.25-repeat-1-instrumented.png",
+              "png_sha256": "369d12669d0494243e6d9beaa2164d82559bf931e76ba4f6756990003f14866b"
+            },
+            "after-snapshots": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-with-overflow-800x600-scale-1.25-repeat-1-after-snapshots.png",
+              "png_sha256": "369d12669d0494243e6d9beaa2164d82559bf931e76ba4f6756990003f14866b"
+            }
+          },
+          "decoded_RGBA_sha256": "4066349ee1a2fd92f7b9db2fd49e4dec759f9eb6689f2f452968575eaa51e7d9",
+          "LayerTree_availability": "unknown_no_event",
+          "quad_material_objects_in_entire_trace": 0
+        }
+      ],
+      "fresh_repeat_and_all_observer_pixel_controls_exact": true
+    },
+    {
+      "case": "transformed-cb-no-overflow",
+      "profile": "800x600@1.25",
+      "repeats": [
+        {
+          "repeat": 0,
+          "trace_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/transformed-cb-no-overflow-800x600-scale-1.25-repeat-0-trace.json",
+          "trace_sha256": "407f23c1c6b890722b96ef15e358311007ec7d913c22ad4fdeeb830d3395e2fd",
+          "observation_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/transformed-cb-no-overflow-800x600-scale-1.25-repeat-0-observation.json",
+          "observation_sha256": "39fef6f2295948041340dc15b4291a0a65a08f5a6efe14545ce22537df0278a2",
+          "backend_node_id": 53,
+          "owner_correlated_snapshot_count": 0,
+          "actual_owner_layer_classes": [],
+          "actual_owner_contents_opaque": [],
+          "owner_not_found_is_not_proof_of_no_layer": true,
+          "actual_reason_ids": [],
+          "metrics": {
+            "viewport": {
+              "width": 800,
+              "height": 600,
+              "dpr": 1.25
+            },
+            "target": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 800,
+                "height": 50,
+                "left": 0,
+                "top": 0,
+                "right": 800,
+                "bottom": 50
+              },
+              "offsetWidth": 800,
+              "offsetHeight": 50,
+              "computed": {
+                "position": "fixed",
+                "width": "800px",
+                "height": "50px",
+                "top": "0px",
+                "backgroundColor": "rgb(0, 0, 255)",
+                "transform": "none",
+                "borderRadius": "0px",
+                "outline": "rgb(0, 0, 0) none 3px"
+              }
+            },
+            "containingBlockCandidate": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 800,
+                "height": 200,
+                "left": 0,
+                "top": 0,
+                "right": 800,
+                "bottom": 200
+              },
+              "transform": "matrix(1, 0, 0, 1, 0, 0)"
+            },
+            "root": {
+              "clientWidth": 800,
+              "clientHeight": 600,
+              "scrollWidth": 800,
+              "scrollHeight": 600,
+              "scrollLeft": 0,
+              "scrollTop": 0,
+              "overflowX": "visible",
+              "overflowY": "visible"
+            }
+          },
+          "physical_target_bottom": 62.5,
+          "edge_rows": [
+            {
+              "physical_y": 61,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    0,
+                    0,
+                    255,
+                    255
+                  ],
+                  "count": 1000
+                }
+              ]
+            },
+            {
+              "physical_y": 62,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    127,
+                    127,
+                    255,
+                    255
+                  ],
+                  "count": 1000
+                }
+              ]
+            },
+            {
+              "physical_y": 63,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    255,
+                    255,
+                    255,
+                    255
+                  ],
+                  "count": 1000
+                }
+              ]
+            }
+          ],
+          "images": {
+            "baseline": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/transformed-cb-no-overflow-800x600-scale-1.25-repeat-0-baseline.png",
+              "png_sha256": "b5996c2013858a31ef2d4eb2eebd7efbdb71eb6d29dac404cd9afe73705cdc5c"
+            },
+            "instrumented": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/transformed-cb-no-overflow-800x600-scale-1.25-repeat-0-instrumented.png",
+              "png_sha256": "b5996c2013858a31ef2d4eb2eebd7efbdb71eb6d29dac404cd9afe73705cdc5c"
+            },
+            "after-snapshots": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/transformed-cb-no-overflow-800x600-scale-1.25-repeat-0-after-snapshots.png",
+              "png_sha256": "b5996c2013858a31ef2d4eb2eebd7efbdb71eb6d29dac404cd9afe73705cdc5c"
+            }
+          },
+          "decoded_RGBA_sha256": "da7e48ed4900e7295992f7b443e87deb575c6bf090e02b326e9cff9b8ea55ac4",
+          "LayerTree_availability": "unknown_no_event",
+          "quad_material_objects_in_entire_trace": 0
+        },
+        {
+          "repeat": 1,
+          "trace_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/transformed-cb-no-overflow-800x600-scale-1.25-repeat-1-trace.json",
+          "trace_sha256": "67e3af4fa1693ae6986f40feefd1cfbedef7eae1ba6c436c29156d49beddb8b9",
+          "observation_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/transformed-cb-no-overflow-800x600-scale-1.25-repeat-1-observation.json",
+          "observation_sha256": "545b3596a09e2fa05eeaf3f281190ba3782e868ceeed2ab8c8d3672b30778b80",
+          "backend_node_id": 65,
+          "owner_correlated_snapshot_count": 0,
+          "actual_owner_layer_classes": [],
+          "actual_owner_contents_opaque": [],
+          "owner_not_found_is_not_proof_of_no_layer": true,
+          "actual_reason_ids": [],
+          "metrics": {
+            "viewport": {
+              "width": 800,
+              "height": 600,
+              "dpr": 1.25
+            },
+            "target": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 800,
+                "height": 50,
+                "left": 0,
+                "top": 0,
+                "right": 800,
+                "bottom": 50
+              },
+              "offsetWidth": 800,
+              "offsetHeight": 50,
+              "computed": {
+                "position": "fixed",
+                "width": "800px",
+                "height": "50px",
+                "top": "0px",
+                "backgroundColor": "rgb(0, 0, 255)",
+                "transform": "none",
+                "borderRadius": "0px",
+                "outline": "rgb(0, 0, 0) none 3px"
+              }
+            },
+            "containingBlockCandidate": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 800,
+                "height": 200,
+                "left": 0,
+                "top": 0,
+                "right": 800,
+                "bottom": 200
+              },
+              "transform": "matrix(1, 0, 0, 1, 0, 0)"
+            },
+            "root": {
+              "clientWidth": 800,
+              "clientHeight": 600,
+              "scrollWidth": 800,
+              "scrollHeight": 600,
+              "scrollLeft": 0,
+              "scrollTop": 0,
+              "overflowX": "visible",
+              "overflowY": "visible"
+            }
+          },
+          "physical_target_bottom": 62.5,
+          "edge_rows": [
+            {
+              "physical_y": 61,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    0,
+                    0,
+                    255,
+                    255
+                  ],
+                  "count": 1000
+                }
+              ]
+            },
+            {
+              "physical_y": 62,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    127,
+                    127,
+                    255,
+                    255
+                  ],
+                  "count": 1000
+                }
+              ]
+            },
+            {
+              "physical_y": 63,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    255,
+                    255,
+                    255,
+                    255
+                  ],
+                  "count": 1000
+                }
+              ]
+            }
+          ],
+          "images": {
+            "baseline": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/transformed-cb-no-overflow-800x600-scale-1.25-repeat-1-baseline.png",
+              "png_sha256": "b5996c2013858a31ef2d4eb2eebd7efbdb71eb6d29dac404cd9afe73705cdc5c"
+            },
+            "instrumented": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/transformed-cb-no-overflow-800x600-scale-1.25-repeat-1-instrumented.png",
+              "png_sha256": "b5996c2013858a31ef2d4eb2eebd7efbdb71eb6d29dac404cd9afe73705cdc5c"
+            },
+            "after-snapshots": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/transformed-cb-no-overflow-800x600-scale-1.25-repeat-1-after-snapshots.png",
+              "png_sha256": "b5996c2013858a31ef2d4eb2eebd7efbdb71eb6d29dac404cd9afe73705cdc5c"
+            }
+          },
+          "decoded_RGBA_sha256": "da7e48ed4900e7295992f7b443e87deb575c6bf090e02b326e9cff9b8ea55ac4",
+          "LayerTree_availability": "unknown_no_event",
+          "quad_material_objects_in_entire_trace": 0
+        }
+      ],
+      "fresh_repeat_and_all_observer_pixel_controls_exact": true
+    },
+    {
+      "case": "transformed-cb-with-overflow",
+      "profile": "800x600@1.25",
+      "repeats": [
+        {
+          "repeat": 0,
+          "trace_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/transformed-cb-with-overflow-800x600-scale-1.25-repeat-0-trace.json",
+          "trace_sha256": "ac2f38ab22ca01bea59ea70a7c695ce702fdf08a1a72a413c519268d1e371510",
+          "observation_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/transformed-cb-with-overflow-800x600-scale-1.25-repeat-0-observation.json",
+          "observation_sha256": "d641ee1cf3796ec731812f9b0c1ec13afc03c3cfbe9f0e4d9c77c5a19c9948e0",
+          "backend_node_id": 78,
+          "owner_correlated_snapshot_count": 0,
+          "actual_owner_layer_classes": [],
+          "actual_owner_contents_opaque": [],
+          "owner_not_found_is_not_proof_of_no_layer": true,
+          "actual_reason_ids": [],
+          "metrics": {
+            "viewport": {
+              "width": 800,
+              "height": 600,
+              "dpr": 1.25
+            },
+            "target": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 800,
+                "height": 50,
+                "left": 0,
+                "top": 0,
+                "right": 800,
+                "bottom": 50
+              },
+              "offsetWidth": 800,
+              "offsetHeight": 50,
+              "computed": {
+                "position": "fixed",
+                "width": "800px",
+                "height": "50px",
+                "top": "0px",
+                "backgroundColor": "rgb(0, 0, 255)",
+                "transform": "none",
+                "borderRadius": "0px",
+                "outline": "rgb(0, 0, 0) none 3px"
+              }
+            },
+            "containingBlockCandidate": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 800,
+                "height": 200,
+                "left": 0,
+                "top": 0,
+                "right": 800,
+                "bottom": 200
+              },
+              "transform": "matrix(1, 0, 0, 1, 0, 0)"
+            },
+            "root": {
+              "clientWidth": 800,
+              "clientHeight": 600,
+              "scrollWidth": 800,
+              "scrollHeight": 1400,
+              "scrollLeft": 0,
+              "scrollTop": 0,
+              "overflowX": "visible",
+              "overflowY": "visible"
+            }
+          },
+          "physical_target_bottom": 62.5,
+          "edge_rows": [
+            {
+              "physical_y": 61,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    0,
+                    0,
+                    255,
+                    255
+                  ],
+                  "count": 1000
+                }
+              ]
+            },
+            {
+              "physical_y": 62,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    127,
+                    127,
+                    255,
+                    255
+                  ],
+                  "count": 1000
+                }
+              ]
+            },
+            {
+              "physical_y": 63,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    255,
+                    255,
+                    255,
+                    255
+                  ],
+                  "count": 1000
+                }
+              ]
+            }
+          ],
+          "images": {
+            "baseline": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/transformed-cb-with-overflow-800x600-scale-1.25-repeat-0-baseline.png",
+              "png_sha256": "b5996c2013858a31ef2d4eb2eebd7efbdb71eb6d29dac404cd9afe73705cdc5c"
+            },
+            "instrumented": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/transformed-cb-with-overflow-800x600-scale-1.25-repeat-0-instrumented.png",
+              "png_sha256": "b5996c2013858a31ef2d4eb2eebd7efbdb71eb6d29dac404cd9afe73705cdc5c"
+            },
+            "after-snapshots": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/transformed-cb-with-overflow-800x600-scale-1.25-repeat-0-after-snapshots.png",
+              "png_sha256": "b5996c2013858a31ef2d4eb2eebd7efbdb71eb6d29dac404cd9afe73705cdc5c"
+            }
+          },
+          "decoded_RGBA_sha256": "da7e48ed4900e7295992f7b443e87deb575c6bf090e02b326e9cff9b8ea55ac4",
+          "LayerTree_availability": "unknown_no_event",
+          "quad_material_objects_in_entire_trace": 0
+        },
+        {
+          "repeat": 1,
+          "trace_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/transformed-cb-with-overflow-800x600-scale-1.25-repeat-1-trace.json",
+          "trace_sha256": "7172983778b82a1d13732ff01b1f7efc7e6c9f192b30c0369d6b371a4e5c1412",
+          "observation_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/transformed-cb-with-overflow-800x600-scale-1.25-repeat-1-observation.json",
+          "observation_sha256": "fb64bc912aba26f458b457aec4c254a7d510ccefb5982075652aed5a86d1b9f8",
+          "backend_node_id": 91,
+          "owner_correlated_snapshot_count": 0,
+          "actual_owner_layer_classes": [],
+          "actual_owner_contents_opaque": [],
+          "owner_not_found_is_not_proof_of_no_layer": true,
+          "actual_reason_ids": [],
+          "metrics": {
+            "viewport": {
+              "width": 800,
+              "height": 600,
+              "dpr": 1.25
+            },
+            "target": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 800,
+                "height": 50,
+                "left": 0,
+                "top": 0,
+                "right": 800,
+                "bottom": 50
+              },
+              "offsetWidth": 800,
+              "offsetHeight": 50,
+              "computed": {
+                "position": "fixed",
+                "width": "800px",
+                "height": "50px",
+                "top": "0px",
+                "backgroundColor": "rgb(0, 0, 255)",
+                "transform": "none",
+                "borderRadius": "0px",
+                "outline": "rgb(0, 0, 0) none 3px"
+              }
+            },
+            "containingBlockCandidate": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 800,
+                "height": 200,
+                "left": 0,
+                "top": 0,
+                "right": 800,
+                "bottom": 200
+              },
+              "transform": "matrix(1, 0, 0, 1, 0, 0)"
+            },
+            "root": {
+              "clientWidth": 800,
+              "clientHeight": 600,
+              "scrollWidth": 800,
+              "scrollHeight": 1400,
+              "scrollLeft": 0,
+              "scrollTop": 0,
+              "overflowX": "visible",
+              "overflowY": "visible"
+            }
+          },
+          "physical_target_bottom": 62.5,
+          "edge_rows": [
+            {
+              "physical_y": 61,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    0,
+                    0,
+                    255,
+                    255
+                  ],
+                  "count": 1000
+                }
+              ]
+            },
+            {
+              "physical_y": 62,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    127,
+                    127,
+                    255,
+                    255
+                  ],
+                  "count": 1000
+                }
+              ]
+            },
+            {
+              "physical_y": 63,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    255,
+                    255,
+                    255,
+                    255
+                  ],
+                  "count": 1000
+                }
+              ]
+            }
+          ],
+          "images": {
+            "baseline": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/transformed-cb-with-overflow-800x600-scale-1.25-repeat-1-baseline.png",
+              "png_sha256": "b5996c2013858a31ef2d4eb2eebd7efbdb71eb6d29dac404cd9afe73705cdc5c"
+            },
+            "instrumented": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/transformed-cb-with-overflow-800x600-scale-1.25-repeat-1-instrumented.png",
+              "png_sha256": "b5996c2013858a31ef2d4eb2eebd7efbdb71eb6d29dac404cd9afe73705cdc5c"
+            },
+            "after-snapshots": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/transformed-cb-with-overflow-800x600-scale-1.25-repeat-1-after-snapshots.png",
+              "png_sha256": "b5996c2013858a31ef2d4eb2eebd7efbdb71eb6d29dac404cd9afe73705cdc5c"
+            }
+          },
+          "decoded_RGBA_sha256": "da7e48ed4900e7295992f7b443e87deb575c6bf090e02b326e9cff9b8ea55ac4",
+          "LayerTree_availability": "unknown_no_event",
+          "quad_material_objects_in_entire_trace": 0
+        }
+      ],
+      "fresh_repeat_and_all_observer_pixel_controls_exact": true
+    },
+    {
+      "case": "fixed-fractional-top",
+      "profile": "800x600@1.25",
+      "repeats": [
+        {
+          "repeat": 0,
+          "trace_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-fractional-top-800x600-scale-1.25-repeat-0-trace.json",
+          "trace_sha256": "06b9d1f4b0636a4989810310e223382259ddcada3844e6e85d07c817044cd159",
+          "observation_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-fractional-top-800x600-scale-1.25-repeat-0-observation.json",
+          "observation_sha256": "46e9913c0b9797aab6b86782aa7525a07f1449544b0b88b8cfd7bad3232cfb20",
+          "backend_node_id": 103,
+          "owner_correlated_snapshot_count": 9,
+          "actual_owner_layer_classes": [
+            "cc::SolidColorLayerImpl"
+          ],
+          "actual_owner_contents_opaque": [
+            true
+          ],
+          "owner_not_found_is_not_proof_of_no_layer": true,
+          "actual_reason_ids": [
+            "FixedPosition"
+          ],
+          "metrics": {
+            "viewport": {
+              "width": 800,
+              "height": 600,
+              "dpr": 1.25
+            },
+            "target": {
+              "rect": {
+                "x": 0,
+                "y": 0.25,
+                "width": 800,
+                "height": 50,
+                "left": 0,
+                "top": 0.25,
+                "right": 800,
+                "bottom": 50.25
+              },
+              "offsetWidth": 800,
+              "offsetHeight": 50,
+              "computed": {
+                "position": "fixed",
+                "width": "800px",
+                "height": "50px",
+                "top": "0.25px",
+                "backgroundColor": "rgb(0, 0, 255)",
+                "transform": "none",
+                "borderRadius": "0px",
+                "outline": "rgb(0, 0, 0) none 3px"
+              }
+            },
+            "containingBlockCandidate": null,
+            "root": {
+              "clientWidth": 800,
+              "clientHeight": 600,
+              "scrollWidth": 800,
+              "scrollHeight": 1200,
+              "scrollLeft": 0,
+              "scrollTop": 0,
+              "overflowX": "visible",
+              "overflowY": "visible"
+            }
+          },
+          "physical_target_bottom": 62.8125,
+          "edge_rows": [
+            {
+              "physical_y": 61,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    0,
+                    0,
+                    255,
+                    255
+                  ],
+                  "count": 1000
+                }
+              ]
+            },
+            {
+              "physical_y": 62,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    0,
+                    0,
+                    255,
+                    255
+                  ],
+                  "count": 1000
+                }
+              ]
+            },
+            {
+              "physical_y": 63,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    255,
+                    255,
+                    255,
+                    255
+                  ],
+                  "count": 1000
+                }
+              ]
+            }
+          ],
+          "images": {
+            "baseline": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-fractional-top-800x600-scale-1.25-repeat-0-baseline.png",
+              "png_sha256": "369d12669d0494243e6d9beaa2164d82559bf931e76ba4f6756990003f14866b"
+            },
+            "instrumented": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-fractional-top-800x600-scale-1.25-repeat-0-instrumented.png",
+              "png_sha256": "369d12669d0494243e6d9beaa2164d82559bf931e76ba4f6756990003f14866b"
+            },
+            "after-snapshots": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-fractional-top-800x600-scale-1.25-repeat-0-after-snapshots.png",
+              "png_sha256": "369d12669d0494243e6d9beaa2164d82559bf931e76ba4f6756990003f14866b"
+            }
+          },
+          "decoded_RGBA_sha256": "4066349ee1a2fd92f7b9db2fd49e4dec759f9eb6689f2f452968575eaa51e7d9",
+          "LayerTree_availability": "unknown_no_event",
+          "quad_material_objects_in_entire_trace": 0
+        },
+        {
+          "repeat": 1,
+          "trace_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-fractional-top-800x600-scale-1.25-repeat-1-trace.json",
+          "trace_sha256": "9ac80d09383456cfb6239c8b24d030d7faa618dbfbd4e5bbcef9ca23b66d4ab7",
+          "observation_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-fractional-top-800x600-scale-1.25-repeat-1-observation.json",
+          "observation_sha256": "96123f1a6abbb18768a741f3cf6205abd7124071a3087a5bdcd01c1668682a12",
+          "backend_node_id": 115,
+          "owner_correlated_snapshot_count": 9,
+          "actual_owner_layer_classes": [
+            "cc::SolidColorLayerImpl"
+          ],
+          "actual_owner_contents_opaque": [
+            true
+          ],
+          "owner_not_found_is_not_proof_of_no_layer": true,
+          "actual_reason_ids": [
+            "FixedPosition"
+          ],
+          "metrics": {
+            "viewport": {
+              "width": 800,
+              "height": 600,
+              "dpr": 1.25
+            },
+            "target": {
+              "rect": {
+                "x": 0,
+                "y": 0.25,
+                "width": 800,
+                "height": 50,
+                "left": 0,
+                "top": 0.25,
+                "right": 800,
+                "bottom": 50.25
+              },
+              "offsetWidth": 800,
+              "offsetHeight": 50,
+              "computed": {
+                "position": "fixed",
+                "width": "800px",
+                "height": "50px",
+                "top": "0.25px",
+                "backgroundColor": "rgb(0, 0, 255)",
+                "transform": "none",
+                "borderRadius": "0px",
+                "outline": "rgb(0, 0, 0) none 3px"
+              }
+            },
+            "containingBlockCandidate": null,
+            "root": {
+              "clientWidth": 800,
+              "clientHeight": 600,
+              "scrollWidth": 800,
+              "scrollHeight": 1200,
+              "scrollLeft": 0,
+              "scrollTop": 0,
+              "overflowX": "visible",
+              "overflowY": "visible"
+            }
+          },
+          "physical_target_bottom": 62.8125,
+          "edge_rows": [
+            {
+              "physical_y": 61,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    0,
+                    0,
+                    255,
+                    255
+                  ],
+                  "count": 1000
+                }
+              ]
+            },
+            {
+              "physical_y": 62,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    0,
+                    0,
+                    255,
+                    255
+                  ],
+                  "count": 1000
+                }
+              ]
+            },
+            {
+              "physical_y": 63,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    255,
+                    255,
+                    255,
+                    255
+                  ],
+                  "count": 1000
+                }
+              ]
+            }
+          ],
+          "images": {
+            "baseline": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-fractional-top-800x600-scale-1.25-repeat-1-baseline.png",
+              "png_sha256": "369d12669d0494243e6d9beaa2164d82559bf931e76ba4f6756990003f14866b"
+            },
+            "instrumented": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-fractional-top-800x600-scale-1.25-repeat-1-instrumented.png",
+              "png_sha256": "369d12669d0494243e6d9beaa2164d82559bf931e76ba4f6756990003f14866b"
+            },
+            "after-snapshots": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-fractional-top-800x600-scale-1.25-repeat-1-after-snapshots.png",
+              "png_sha256": "369d12669d0494243e6d9beaa2164d82559bf931e76ba4f6756990003f14866b"
+            }
+          },
+          "decoded_RGBA_sha256": "4066349ee1a2fd92f7b9db2fd49e4dec759f9eb6689f2f452968575eaa51e7d9",
+          "LayerTree_availability": "unknown_no_event",
+          "quad_material_objects_in_entire_trace": 0
+        }
+      ],
+      "fresh_repeat_and_all_observer_pixel_controls_exact": true
+    },
+    {
+      "case": "fixed-rounded",
+      "profile": "800x600@1.25",
+      "repeats": [
+        {
+          "repeat": 0,
+          "trace_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-rounded-800x600-scale-1.25-repeat-0-trace.json",
+          "trace_sha256": "edfe7b150c887b08d900041f59af4cd680a18e5e04bc35c0be12a8e4b6a3b8d6",
+          "observation_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-rounded-800x600-scale-1.25-repeat-0-observation.json",
+          "observation_sha256": "b2ac6181091f19fb88faff0aefc796a6e3da0a114903f5ab91ec23fa0370df6b",
+          "backend_node_id": 127,
+          "owner_correlated_snapshot_count": 10,
+          "actual_owner_layer_classes": [
+            "cc::PictureLayerImpl"
+          ],
+          "actual_owner_contents_opaque": [
+            false
+          ],
+          "owner_not_found_is_not_proof_of_no_layer": true,
+          "actual_reason_ids": [
+            "FixedPosition"
+          ],
+          "metrics": {
+            "viewport": {
+              "width": 800,
+              "height": 600,
+              "dpr": 1.25
+            },
+            "target": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 800,
+                "height": 50,
+                "left": 0,
+                "top": 0,
+                "right": 800,
+                "bottom": 50
+              },
+              "offsetWidth": 800,
+              "offsetHeight": 50,
+              "computed": {
+                "position": "fixed",
+                "width": "800px",
+                "height": "50px",
+                "top": "0px",
+                "backgroundColor": "rgb(0, 0, 255)",
+                "transform": "none",
+                "borderRadius": "8px",
+                "outline": "rgb(0, 0, 0) none 3px"
+              }
+            },
+            "containingBlockCandidate": null,
+            "root": {
+              "clientWidth": 800,
+              "clientHeight": 600,
+              "scrollWidth": 800,
+              "scrollHeight": 1200,
+              "scrollLeft": 0,
+              "scrollTop": 0,
+              "overflowX": "visible",
+              "overflowY": "visible"
+            }
+          },
+          "physical_target_bottom": 62.5,
+          "edge_rows": [
+            {
+              "physical_y": 61,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    0,
+                    0,
+                    255,
+                    255
+                  ],
+                  "count": 986
+                },
+                {
+                  "rgba": [
+                    32,
+                    32,
+                    255,
+                    255
+                  ],
+                  "count": 2
+                },
+                {
+                  "rgba": [
+                    191,
+                    191,
+                    255,
+                    255
+                  ],
+                  "count": 2
+                },
+                {
+                  "rgba": [
+                    255,
+                    255,
+                    255,
+                    255
+                  ],
+                  "count": 10
+                }
+              ]
+            },
+            {
+              "physical_y": 62,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    127,
+                    127,
+                    255,
+                    255
+                  ],
+                  "count": 980
+                },
+                {
+                  "rgba": [
+                    145,
+                    145,
+                    255,
+                    255
+                  ],
+                  "count": 2
+                },
+                {
+                  "rgba": [
+                    183,
+                    183,
+                    255,
+                    255
+                  ],
+                  "count": 2
+                },
+                {
+                  "rgba": [
+                    221,
+                    221,
+                    255,
+                    255
+                  ],
+                  "count": 2
+                },
+                {
+                  "rgba": [
+                    255,
+                    255,
+                    255,
+                    255
+                  ],
+                  "count": 14
+                }
+              ]
+            },
+            {
+              "physical_y": 63,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    255,
+                    255,
+                    255,
+                    255
+                  ],
+                  "count": 1000
+                }
+              ]
+            }
+          ],
+          "images": {
+            "baseline": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-rounded-800x600-scale-1.25-repeat-0-baseline.png",
+              "png_sha256": "172897e9999d445397f7e2b1ce74f7d14edf25ebb5b23227c1266d5ff6571ddc"
+            },
+            "instrumented": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-rounded-800x600-scale-1.25-repeat-0-instrumented.png",
+              "png_sha256": "172897e9999d445397f7e2b1ce74f7d14edf25ebb5b23227c1266d5ff6571ddc"
+            },
+            "after-snapshots": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-rounded-800x600-scale-1.25-repeat-0-after-snapshots.png",
+              "png_sha256": "172897e9999d445397f7e2b1ce74f7d14edf25ebb5b23227c1266d5ff6571ddc"
+            }
+          },
+          "decoded_RGBA_sha256": "b8d1c9f2bf0b24e06b1564e5ab2321614730c12c335da8e9140826ccd37aefa8",
+          "LayerTree_availability": "unknown_no_event",
+          "quad_material_objects_in_entire_trace": 0
+        },
+        {
+          "repeat": 1,
+          "trace_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-rounded-800x600-scale-1.25-repeat-1-trace.json",
+          "trace_sha256": "71bd89a966758dbd91939b875f72b7fdb122c340bce4894913521a8ba0561c20",
+          "observation_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-rounded-800x600-scale-1.25-repeat-1-observation.json",
+          "observation_sha256": "380f4883be24996ee2ca7509058c0818d3ce5d651b77d22d03baf037f7626923",
+          "backend_node_id": 139,
+          "owner_correlated_snapshot_count": 11,
+          "actual_owner_layer_classes": [
+            "cc::PictureLayerImpl"
+          ],
+          "actual_owner_contents_opaque": [
+            false
+          ],
+          "owner_not_found_is_not_proof_of_no_layer": true,
+          "actual_reason_ids": [
+            "FixedPosition"
+          ],
+          "metrics": {
+            "viewport": {
+              "width": 800,
+              "height": 600,
+              "dpr": 1.25
+            },
+            "target": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 800,
+                "height": 50,
+                "left": 0,
+                "top": 0,
+                "right": 800,
+                "bottom": 50
+              },
+              "offsetWidth": 800,
+              "offsetHeight": 50,
+              "computed": {
+                "position": "fixed",
+                "width": "800px",
+                "height": "50px",
+                "top": "0px",
+                "backgroundColor": "rgb(0, 0, 255)",
+                "transform": "none",
+                "borderRadius": "8px",
+                "outline": "rgb(0, 0, 0) none 3px"
+              }
+            },
+            "containingBlockCandidate": null,
+            "root": {
+              "clientWidth": 800,
+              "clientHeight": 600,
+              "scrollWidth": 800,
+              "scrollHeight": 1200,
+              "scrollLeft": 0,
+              "scrollTop": 0,
+              "overflowX": "visible",
+              "overflowY": "visible"
+            }
+          },
+          "physical_target_bottom": 62.5,
+          "edge_rows": [
+            {
+              "physical_y": 61,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    0,
+                    0,
+                    255,
+                    255
+                  ],
+                  "count": 986
+                },
+                {
+                  "rgba": [
+                    32,
+                    32,
+                    255,
+                    255
+                  ],
+                  "count": 2
+                },
+                {
+                  "rgba": [
+                    191,
+                    191,
+                    255,
+                    255
+                  ],
+                  "count": 2
+                },
+                {
+                  "rgba": [
+                    255,
+                    255,
+                    255,
+                    255
+                  ],
+                  "count": 10
+                }
+              ]
+            },
+            {
+              "physical_y": 62,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    127,
+                    127,
+                    255,
+                    255
+                  ],
+                  "count": 980
+                },
+                {
+                  "rgba": [
+                    145,
+                    145,
+                    255,
+                    255
+                  ],
+                  "count": 2
+                },
+                {
+                  "rgba": [
+                    183,
+                    183,
+                    255,
+                    255
+                  ],
+                  "count": 2
+                },
+                {
+                  "rgba": [
+                    221,
+                    221,
+                    255,
+                    255
+                  ],
+                  "count": 2
+                },
+                {
+                  "rgba": [
+                    255,
+                    255,
+                    255,
+                    255
+                  ],
+                  "count": 14
+                }
+              ]
+            },
+            {
+              "physical_y": 63,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    255,
+                    255,
+                    255,
+                    255
+                  ],
+                  "count": 1000
+                }
+              ]
+            }
+          ],
+          "images": {
+            "baseline": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-rounded-800x600-scale-1.25-repeat-1-baseline.png",
+              "png_sha256": "172897e9999d445397f7e2b1ce74f7d14edf25ebb5b23227c1266d5ff6571ddc"
+            },
+            "instrumented": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-rounded-800x600-scale-1.25-repeat-1-instrumented.png",
+              "png_sha256": "172897e9999d445397f7e2b1ce74f7d14edf25ebb5b23227c1266d5ff6571ddc"
+            },
+            "after-snapshots": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-rounded-800x600-scale-1.25-repeat-1-after-snapshots.png",
+              "png_sha256": "172897e9999d445397f7e2b1ce74f7d14edf25ebb5b23227c1266d5ff6571ddc"
+            }
+          },
+          "decoded_RGBA_sha256": "b8d1c9f2bf0b24e06b1564e5ab2321614730c12c335da8e9140826ccd37aefa8",
+          "LayerTree_availability": "unknown_no_event",
+          "quad_material_objects_in_entire_trace": 0
+        }
+      ],
+      "fresh_repeat_and_all_observer_pixel_controls_exact": true
+    },
+    {
+      "case": "fixed-outline",
+      "profile": "800x600@1.25",
+      "repeats": [
+        {
+          "repeat": 0,
+          "trace_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-outline-800x600-scale-1.25-repeat-0-trace.json",
+          "trace_sha256": "1f9a3ea3c1463b576a2b8f740025ae3ae4d3aeb8cef5325e92cc6ab8317f065b",
+          "observation_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-outline-800x600-scale-1.25-repeat-0-observation.json",
+          "observation_sha256": "4f74997c5cf117571bed2244c3d3f4b5dc1cb09d43f0dec51c0cd0db1db4cfa5",
+          "backend_node_id": 151,
+          "owner_correlated_snapshot_count": 10,
+          "actual_owner_layer_classes": [
+            "cc::PictureLayerImpl"
+          ],
+          "actual_owner_contents_opaque": [
+            false
+          ],
+          "owner_not_found_is_not_proof_of_no_layer": true,
+          "actual_reason_ids": [
+            "FixedPosition"
+          ],
+          "metrics": {
+            "viewport": {
+              "width": 800,
+              "height": 600,
+              "dpr": 1.25
+            },
+            "target": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 800,
+                "height": 50,
+                "left": 0,
+                "top": 0,
+                "right": 800,
+                "bottom": 50
+              },
+              "offsetWidth": 800,
+              "offsetHeight": 50,
+              "computed": {
+                "position": "fixed",
+                "width": "800px",
+                "height": "50px",
+                "top": "0px",
+                "backgroundColor": "rgb(0, 0, 255)",
+                "transform": "none",
+                "borderRadius": "0px",
+                "outline": "rgb(0, 0, 0) solid 1px"
+              }
+            },
+            "containingBlockCandidate": null,
+            "root": {
+              "clientWidth": 800,
+              "clientHeight": 600,
+              "scrollWidth": 800,
+              "scrollHeight": 1200,
+              "scrollLeft": 0,
+              "scrollTop": 0,
+              "overflowX": "visible",
+              "overflowY": "visible"
+            }
+          },
+          "physical_target_bottom": 62.5,
+          "edge_rows": [
+            {
+              "physical_y": 61,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    12,
+                    12,
+                    239,
+                    255
+                  ],
+                  "count": 998
+                },
+                {
+                  "rgba": [
+                    21,
+                    21,
+                    195,
+                    255
+                  ],
+                  "count": 1
+                },
+                {
+                  "rgba": [
+                    42,
+                    42,
+                    195,
+                    255
+                  ],
+                  "count": 1
+                }
+              ]
+            },
+            {
+              "physical_y": 62,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    35,
+                    35,
+                    117,
+                    255
+                  ],
+                  "count": 1
+                },
+                {
+                  "rgba": [
+                    36,
+                    36,
+                    144,
+                    255
+                  ],
+                  "count": 998
+                },
+                {
+                  "rgba": [
+                    45,
+                    45,
+                    117,
+                    255
+                  ],
+                  "count": 1
+                }
+              ]
+            },
+            {
+              "physical_y": 63,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    0,
+                    0,
+                    0,
+                    255
+                  ],
+                  "count": 1000
+                }
+              ]
+            }
+          ],
+          "images": {
+            "baseline": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-outline-800x600-scale-1.25-repeat-0-baseline.png",
+              "png_sha256": "9a441d98aea1a453f22b2398d974b7d123a3d7659c4ef84548aaacff32a2c8e7"
+            },
+            "instrumented": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-outline-800x600-scale-1.25-repeat-0-instrumented.png",
+              "png_sha256": "9a441d98aea1a453f22b2398d974b7d123a3d7659c4ef84548aaacff32a2c8e7"
+            },
+            "after-snapshots": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-outline-800x600-scale-1.25-repeat-0-after-snapshots.png",
+              "png_sha256": "9a441d98aea1a453f22b2398d974b7d123a3d7659c4ef84548aaacff32a2c8e7"
+            }
+          },
+          "decoded_RGBA_sha256": "93ab5fac201e66e82cfd6775245a969e79e7053bed7270edd3618fa8eb680fcc",
+          "LayerTree_availability": "unknown_no_event",
+          "quad_material_objects_in_entire_trace": 0
+        },
+        {
+          "repeat": 1,
+          "trace_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-outline-800x600-scale-1.25-repeat-1-trace.json",
+          "trace_sha256": "b962aa6220a54bc0ca54329dd75b3d8022d25aa4888aa6c4bb0a09eff7ff3f07",
+          "observation_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-outline-800x600-scale-1.25-repeat-1-observation.json",
+          "observation_sha256": "439a3386091410f9b7791575b71f68ead1c7605caca5263f5c5866ad2f92159a",
+          "backend_node_id": 163,
+          "owner_correlated_snapshot_count": 9,
+          "actual_owner_layer_classes": [
+            "cc::PictureLayerImpl"
+          ],
+          "actual_owner_contents_opaque": [
+            false
+          ],
+          "owner_not_found_is_not_proof_of_no_layer": true,
+          "actual_reason_ids": [
+            "FixedPosition"
+          ],
+          "metrics": {
+            "viewport": {
+              "width": 800,
+              "height": 600,
+              "dpr": 1.25
+            },
+            "target": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 800,
+                "height": 50,
+                "left": 0,
+                "top": 0,
+                "right": 800,
+                "bottom": 50
+              },
+              "offsetWidth": 800,
+              "offsetHeight": 50,
+              "computed": {
+                "position": "fixed",
+                "width": "800px",
+                "height": "50px",
+                "top": "0px",
+                "backgroundColor": "rgb(0, 0, 255)",
+                "transform": "none",
+                "borderRadius": "0px",
+                "outline": "rgb(0, 0, 0) solid 1px"
+              }
+            },
+            "containingBlockCandidate": null,
+            "root": {
+              "clientWidth": 800,
+              "clientHeight": 600,
+              "scrollWidth": 800,
+              "scrollHeight": 1200,
+              "scrollLeft": 0,
+              "scrollTop": 0,
+              "overflowX": "visible",
+              "overflowY": "visible"
+            }
+          },
+          "physical_target_bottom": 62.5,
+          "edge_rows": [
+            {
+              "physical_y": 61,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    12,
+                    12,
+                    239,
+                    255
+                  ],
+                  "count": 998
+                },
+                {
+                  "rgba": [
+                    21,
+                    21,
+                    195,
+                    255
+                  ],
+                  "count": 1
+                },
+                {
+                  "rgba": [
+                    42,
+                    42,
+                    195,
+                    255
+                  ],
+                  "count": 1
+                }
+              ]
+            },
+            {
+              "physical_y": 62,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    35,
+                    35,
+                    117,
+                    255
+                  ],
+                  "count": 1
+                },
+                {
+                  "rgba": [
+                    36,
+                    36,
+                    144,
+                    255
+                  ],
+                  "count": 998
+                },
+                {
+                  "rgba": [
+                    45,
+                    45,
+                    117,
+                    255
+                  ],
+                  "count": 1
+                }
+              ]
+            },
+            {
+              "physical_y": 63,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    0,
+                    0,
+                    0,
+                    255
+                  ],
+                  "count": 1000
+                }
+              ]
+            }
+          ],
+          "images": {
+            "baseline": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-outline-800x600-scale-1.25-repeat-1-baseline.png",
+              "png_sha256": "9a441d98aea1a453f22b2398d974b7d123a3d7659c4ef84548aaacff32a2c8e7"
+            },
+            "instrumented": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-outline-800x600-scale-1.25-repeat-1-instrumented.png",
+              "png_sha256": "9a441d98aea1a453f22b2398d974b7d123a3d7659c4ef84548aaacff32a2c8e7"
+            },
+            "after-snapshots": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-outline-800x600-scale-1.25-repeat-1-after-snapshots.png",
+              "png_sha256": "9a441d98aea1a453f22b2398d974b7d123a3d7659c4ef84548aaacff32a2c8e7"
+            }
+          },
+          "decoded_RGBA_sha256": "93ab5fac201e66e82cfd6775245a969e79e7053bed7270edd3618fa8eb680fcc",
+          "LayerTree_availability": "unknown_no_event",
+          "quad_material_objects_in_entire_trace": 0
+        }
+      ],
+      "fresh_repeat_and_all_observer_pixel_controls_exact": true
+    },
+    {
+      "case": "fixed-child-draw",
+      "profile": "800x600@1.25",
+      "repeats": [
+        {
+          "repeat": 0,
+          "trace_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-child-draw-800x600-scale-1.25-repeat-0-trace.json",
+          "trace_sha256": "90592623d7f9999d3f5cca503aba08545b6da78635c2ccf9b8dd46a704705bb6",
+          "observation_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-child-draw-800x600-scale-1.25-repeat-0-observation.json",
+          "observation_sha256": "0eacf39984e3cbfd284a8bb3305f838760722abb9df2703351ae0be23098006d",
+          "backend_node_id": 176,
+          "owner_correlated_snapshot_count": 10,
+          "actual_owner_layer_classes": [
+            "cc::PictureLayerImpl"
+          ],
+          "actual_owner_contents_opaque": [
+            true
+          ],
+          "owner_not_found_is_not_proof_of_no_layer": true,
+          "actual_reason_ids": [
+            "FixedPosition"
+          ],
+          "metrics": {
+            "viewport": {
+              "width": 800,
+              "height": 600,
+              "dpr": 1.25
+            },
+            "target": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 800,
+                "height": 50,
+                "left": 0,
+                "top": 0,
+                "right": 800,
+                "bottom": 50
+              },
+              "offsetWidth": 800,
+              "offsetHeight": 50,
+              "computed": {
+                "position": "fixed",
+                "width": "800px",
+                "height": "50px",
+                "top": "0px",
+                "backgroundColor": "rgb(0, 0, 255)",
+                "transform": "none",
+                "borderRadius": "0px",
+                "outline": "rgb(0, 0, 0) none 3px"
+              }
+            },
+            "containingBlockCandidate": null,
+            "root": {
+              "clientWidth": 800,
+              "clientHeight": 600,
+              "scrollWidth": 800,
+              "scrollHeight": 1200,
+              "scrollLeft": 0,
+              "scrollTop": 0,
+              "overflowX": "visible",
+              "overflowY": "visible"
+            }
+          },
+          "physical_target_bottom": 62.5,
+          "edge_rows": [
+            {
+              "physical_y": 61,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    0,
+                    0,
+                    255,
+                    255
+                  ],
+                  "count": 1000
+                }
+              ]
+            },
+            {
+              "physical_y": 62,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    0,
+                    0,
+                    255,
+                    255
+                  ],
+                  "count": 1000
+                }
+              ]
+            },
+            {
+              "physical_y": 63,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    255,
+                    255,
+                    255,
+                    255
+                  ],
+                  "count": 1000
+                }
+              ]
+            }
+          ],
+          "images": {
+            "baseline": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-child-draw-800x600-scale-1.25-repeat-0-baseline.png",
+              "png_sha256": "3e20c685a0386462fa00d0dbcd33020339e80fbd351f2046bdd7974913a18f31"
+            },
+            "instrumented": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-child-draw-800x600-scale-1.25-repeat-0-instrumented.png",
+              "png_sha256": "3e20c685a0386462fa00d0dbcd33020339e80fbd351f2046bdd7974913a18f31"
+            },
+            "after-snapshots": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-child-draw-800x600-scale-1.25-repeat-0-after-snapshots.png",
+              "png_sha256": "3e20c685a0386462fa00d0dbcd33020339e80fbd351f2046bdd7974913a18f31"
+            }
+          },
+          "decoded_RGBA_sha256": "de64940e6b15bfc15575a052b7ac7a759abf0df73997e49cc3ab3bf2350cfef1",
+          "LayerTree_availability": "unknown_no_event",
+          "quad_material_objects_in_entire_trace": 0
+        },
+        {
+          "repeat": 1,
+          "trace_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-child-draw-800x600-scale-1.25-repeat-1-trace.json",
+          "trace_sha256": "75f9312fedef9da877f488285b29551fe0677a778ab5c9111b494be3792087f2",
+          "observation_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-child-draw-800x600-scale-1.25-repeat-1-observation.json",
+          "observation_sha256": "945dcf66555b4dd960fbab9b19beed50feb15e673a73de296bacc672459c6e6f",
+          "backend_node_id": 190,
+          "owner_correlated_snapshot_count": 10,
+          "actual_owner_layer_classes": [
+            "cc::PictureLayerImpl"
+          ],
+          "actual_owner_contents_opaque": [
+            true
+          ],
+          "owner_not_found_is_not_proof_of_no_layer": true,
+          "actual_reason_ids": [
+            "FixedPosition"
+          ],
+          "metrics": {
+            "viewport": {
+              "width": 800,
+              "height": 600,
+              "dpr": 1.25
+            },
+            "target": {
+              "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 800,
+                "height": 50,
+                "left": 0,
+                "top": 0,
+                "right": 800,
+                "bottom": 50
+              },
+              "offsetWidth": 800,
+              "offsetHeight": 50,
+              "computed": {
+                "position": "fixed",
+                "width": "800px",
+                "height": "50px",
+                "top": "0px",
+                "backgroundColor": "rgb(0, 0, 255)",
+                "transform": "none",
+                "borderRadius": "0px",
+                "outline": "rgb(0, 0, 0) none 3px"
+              }
+            },
+            "containingBlockCandidate": null,
+            "root": {
+              "clientWidth": 800,
+              "clientHeight": 600,
+              "scrollWidth": 800,
+              "scrollHeight": 1200,
+              "scrollLeft": 0,
+              "scrollTop": 0,
+              "overflowX": "visible",
+              "overflowY": "visible"
+            }
+          },
+          "physical_target_bottom": 62.5,
+          "edge_rows": [
+            {
+              "physical_y": 61,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    0,
+                    0,
+                    255,
+                    255
+                  ],
+                  "count": 1000
+                }
+              ]
+            },
+            {
+              "physical_y": 62,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    0,
+                    0,
+                    255,
+                    255
+                  ],
+                  "count": 1000
+                }
+              ]
+            },
+            {
+              "physical_y": 63,
+              "rgba_counts": [
+                {
+                  "rgba": [
+                    255,
+                    255,
+                    255,
+                    255
+                  ],
+                  "count": 1000
+                }
+              ]
+            }
+          ],
+          "images": {
+            "baseline": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-child-draw-800x600-scale-1.25-repeat-1-baseline.png",
+              "png_sha256": "3e20c685a0386462fa00d0dbcd33020339e80fbd351f2046bdd7974913a18f31"
+            },
+            "instrumented": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-child-draw-800x600-scale-1.25-repeat-1-instrumented.png",
+              "png_sha256": "3e20c685a0386462fa00d0dbcd33020339e80fbd351f2046bdd7974913a18f31"
+            },
+            "after-snapshots": {
+              "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-cdp-runtime-root-v4606-neighbors125/fixed-child-draw-800x600-scale-1.25-repeat-1-after-snapshots.png",
+              "png_sha256": "3e20c685a0386462fa00d0dbcd33020339e80fbd351f2046bdd7974913a18f31"
+            }
+          },
+          "decoded_RGBA_sha256": "de64940e6b15bfc15575a052b7ac7a759abf0df73997e49cc3ab3bf2350cfef1",
+          "LayerTree_availability": "unknown_no_event",
+          "quad_material_objects_in_entire_trace": 0
+        }
+      ],
+      "fresh_repeat_and_all_observer_pixel_controls_exact": true
+    }
+  ],
+  "neighbor_layer_extraction_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fixed-edge-evidence-audit-scroll-v4604/owner-correlated-cc-layers-neighbors125-v1.json",
+  "neighbor_layer_extraction_sha256": "8aa4b30c4c24c62cc9acfc31978ff444cca561a70595386698c53ba92c9088dd",
+  "raw_trace_count": 18,
+  "fresh_browser_repeats": 18,
+  "input_states": 9,
+  "stock_version": "147.0.7727.50",
+  "observed_distinctions": [
+    "Original and plain fixed/no-overflow/with-overflow/fractional-top have backend-owner-correlated SolidColorLayerImpl and opaque blue edge.",
+    "Rounded and outlined controls have backend-owner-correlated nonopaque PictureLayerImpl with original AA/outline edge values.",
+    "Child-draw has backend-owner-correlated opaque PictureLayerImpl while edge remains fullyblue; SolidColor-only selection is insufficient.",
+    "Transformed-CB controls show halfblue edge, and no target-owner layer is found in these snapshots; that absence does not prove there was no other owning layer."
+  ],
+  "not_established": [
+    "Final Viz quad material/force-AA execution and actual tile-clear/raster path.",
+    "Other scales or current Native renderer parity.",
+    "Any admission by fixed tag/fixture/source-debug label alone."
+  ],
+  "source_mutation": false,
+  "index_mutation": false,
+  "native_execution_by_reviewer": false,
+  "browser_execution_by_reviewer": false,
+  "qualification": false
+}

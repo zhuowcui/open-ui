@@ -312,9 +312,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "openui"
+version = "0.2.0"
+dependencies = [
+ "openui-compositor",
+ "openui-dom",
+ "openui-engine",
+ "openui-macros",
+ "openui-style",
+ "openui-text",
+]
+
+[[package]]
 name = "openui-compositor"
 version = "0.2.0"
 dependencies = [
+ "openui-geometry",
  "openui-layout",
  "openui-paint",
  "skia-safe",
@@ -322,10 +335,11 @@ dependencies = [
 
 [[package]]
 name = "openui-dom"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "openui-geometry",
  "openui-style",
+ "openui-text",
 ]
 
 [[package]]
@@ -339,6 +353,7 @@ dependencies = [
  "openui-layout",
  "openui-paint",
  "openui-style",
+ "openui-text",
  "unicode-segmentation",
 ]
 
@@ -346,6 +361,7 @@ dependencies = [
 name = "openui-ffi"
 version = "0.2.0"
 dependencies = [
+ "openui",
  "openui-compositor",
  "openui-dom",
  "openui-engine",
@@ -366,11 +382,11 @@ dependencies = [
 
 [[package]]
 name = "openui-geometry"
-version = "0.1.0"
+version = "0.2.0"
 
 [[package]]
 name = "openui-layout"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "openui-dom",
  "openui-geometry",
@@ -381,8 +397,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "openui-macros"
+version = "0.2.0"
+dependencies = [
+ "openui-style",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.119",
+]
+
+[[package]]
 name = "openui-paint"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "openui-dom",
  "openui-geometry",
@@ -395,14 +421,14 @@ dependencies = [
 
 [[package]]
 name = "openui-style"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "openui-geometry",
 ]
 
 [[package]]
 name = "openui-text"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "openui-geometry",
  "openui-style",
@@ -581,7 +607,7 @@ checksum = "3a219298ac11a56ea9a6d2120044824d6f01aeb034955e7af7bc16858527deea"
 [[package]]
 name = "skia-bindings"
 version = "0.94.0"
-source = "git+https://github.com/rust-skia/rust-skia.git?rev=c19a70ee1e5ea5a7790ee05a9b6f5fa3c05fae09#c19a70ee1e5ea5a7790ee05a9b6f5fa3c05fae09"
+source = "git+https://github.com/rust-skia/rust-skia.git?rev=a31b86ba3b767344d39af3b8c30043003d8fc991#a31b86ba3b767344d39af3b8c30043003d8fc991"
 dependencies = [
  "bindgen",
  "cc",
@@ -597,7 +623,7 @@ dependencies = [
 [[package]]
 name = "skia-safe"
 version = "0.94.0"
-source = "git+https://github.com/rust-skia/rust-skia.git?rev=c19a70ee1e5ea5a7790ee05a9b6f5fa3c05fae09#c19a70ee1e5ea5a7790ee05a9b6f5fa3c05fae09"
+source = "git+https://github.com/rust-skia/rust-skia.git?rev=a31b86ba3b767344d39af3b8c30043003d8fc991#a31b86ba3b767344d39af3b8c30043003d8fc991"
 dependencies = [
  "bitflags",
  "skia-bindings",

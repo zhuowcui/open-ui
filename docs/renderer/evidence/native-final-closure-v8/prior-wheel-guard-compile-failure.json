@@ -1,0 +1,110 @@
+{
+  "owner_pid": 3434130,
+  "source": {
+    "commit": "9ad2fb264da070d484859ebc2a6a9a8cf787fb08",
+    "clean": true,
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "source_tree_sha256": "7b3b67bdf5ac6135df89ba05c76f99a92ec2f9ce8186dca25cbcd4c68a0db133",
+    "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6"
+  },
+  "checks": [
+    {
+      "name": "c-normalized-wheel-guards",
+      "argv": [
+        "cargo",
+        "+stable",
+        "--config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "--offline",
+        "--no-fail-fast",
+        "-p",
+        "openui-ffi",
+        "--lib",
+        "wheel_input_tests"
+      ],
+      "pid": 3434186,
+      "actual_exit_code": 101,
+      "terminal_reaped": true,
+      "log_sha256": "6984125bf7f396d7719a15d1e674ee04c0fcae1ab1133dcce7604ebe40d850a6",
+      "reported_passed": 0,
+      "reported_failed": 0,
+      "reported_ignored": 0
+    },
+    {
+      "name": "c-abi-library-build",
+      "argv": [
+        "cargo",
+        "+stable",
+        "--config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "build",
+        "--locked",
+        "--offline",
+        "-p",
+        "openui-ffi"
+      ],
+      "pid": 3434246,
+      "actual_exit_code": 0,
+      "terminal_reaped": true,
+      "log_sha256": "77e2b9b9d6a7f85b9b99db974fde3f0d7a76c5159f3f9bd976539ef137fe2558",
+      "reported_passed": 0,
+      "reported_failed": 0,
+      "reported_ignored": 0
+    },
+    {
+      "name": "c-cpp-headless-consumers",
+      "argv": [
+        "python3",
+        "-B",
+        "/home/nero/code/open-ui/tools/ffi/verify_abi.py",
+        "--library",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-c-normalized-wheel-runtime-v4586/libopenui_ffi.so",
+        "--keep-going"
+      ],
+      "pid": 3434373,
+      "actual_exit_code": 1,
+      "terminal_reaped": true,
+      "log_sha256": "04feb03c77a053f3dfc89ab34b173921ada8ef49f594b5a1402eded9732d6926",
+      "reported_passed": 0,
+      "reported_failed": 0,
+      "reported_ignored": 0
+    }
+  ],
+  "complete": true,
+  "renderer_qualified": false,
+  "release_qualified": false,
+  "runtime_scope": "bounded five C normalized-wheel guard groups delegated to shared Rust Document route, current-source additive163-export FFI library and all74 actual C/C++ consumers; immutable5520 completed pixel checkpoint preserved; full native workspace retry after separate exact diagnostic color correction remains required; no Chromium pixel or release qualification",
+  "independent_live_pixel_epoch": {
+    "source_before": {
+      "commit": "5520ed920523164574fc80187b2702892cb5ac62",
+      "clean": true,
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_tree_sha256": "0e2c22d402f809735879222fed8bbaad849d989d3aa7c96ac61595e1d3c77336",
+      "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6"
+    },
+    "runner_sha256": "02cc432163bf1f925772405b2f60f6903824cf42f1598f84311b186215c43ad5",
+    "performance_qualification": false,
+    "shared_cargo_target_used_by_pixel_runner": false,
+    "fresh_runner_build_receipt_sha256": "80b4a2567a5b44eddddda5ae949e2ccdd14c152705c67f9cf10ebe5a1d9b249d",
+    "source_unchanged": true,
+    "runner_unchanged": true
+  },
+  "boot_id": "362ae37b-d85f-4812-9f25-ef02cf732134",
+  "current_source_library": {
+    "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-c-normalized-wheel-runtime-v4586/libopenui_ffi.so",
+    "sha256": "b14f01880e57c3a722e72b899cf80af6e719ac5eb459bc6a63607ceec768028e",
+    "source_commit": "9ad2fb264da070d484859ebc2a6a9a8cf787fb08",
+    "successful_build_pid": 3434246
+  },
+  "source_after": {
+    "commit": "9ad2fb264da070d484859ebc2a6a9a8cf787fb08",
+    "clean": true,
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "source_tree_sha256": "7b3b67bdf5ac6135df89ba05c76f99a92ec2f9ce8186dca25cbcd4c68a0db133",
+    "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6"
+  },
+  "source_unchanged": true,
+  "intended_exit_code": 1
+}

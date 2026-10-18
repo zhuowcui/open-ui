@@ -1,0 +1,159 @@
+{
+  "applied_to_umbrella": false,
+  "artifacts": [
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-color-f32-clean-v1014/build.json",
+      "sha256": "b8b4f6cc27b8fc69db8f741558462b6775da7776eeb384b5625fbcd8b981abf7"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-color-f32-rust-v1015/receipt.json",
+      "sha256": "0eb03f1bfcf2b047994d7691d831cad58d5f0aa3f8228542316473f8d703a837"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-color-f32-neighbors-v1017/receipt.json",
+      "sha256": "f3d2a7cf6dfcb1f1c588bfc0b4cb0776678483f0fbec3e9a05ca1fc5f1443899"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-color-f32-audit-v1022.json",
+      "sha256": "b22ae0ca0b07a4dc56049e85c90e04bc596dc617d6d2e84515ffd4427a0cbbf9"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-writing-mode-diagnostic-v1020/receipt.json",
+      "sha256": "c03d494a9cdce44cb3a9dc7fef4e31f521a7944845dbfa59113138d8e48340af"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-collapse-checks-v1023/receipt.json",
+      "sha256": "7380259b5073c86fdd1e02dbc9186da6abea7d283a9a420c2c18476d4bdc6f29"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-docs-checks-v1016/receipt.json",
+      "sha256": "11010a9cdc9f0b7e4514d09ee2389e953de9af6ba51e4e6ba85eaf0f22a30176"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-docs-ci-v1018/receipt.json",
+      "sha256": "6d29d30a01e3acd2b80558985032122aec1156b7a5831d581d42644beefc31c4"
+    },
+    {
+      "path": "docs/renderer/evidence/native-writing-mode-v1/native-writing-mode-v1.patch",
+      "sha256": "bde0acba9a8c36c335160908f9d2a70ee4854f5c80003202a8f9183c8547cdfd"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-collapse-clean-v1024/build.json",
+      "sha256": "55693f94db7257895c6fc3fd3c5bb7ec5c3839d22581bbf7e28e54af1f2f50d7"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-collapse-rust-v1025/receipt.json",
+      "sha256": "1d14c1bd017090dc4170a076ca778bb6d03f5e2a89674050f18aa1efa5724dad"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-collapse-c-v1026/receipt.json",
+      "sha256": "0a927f3825bf702dfff45395b04c8bec916780efff46034b7fa1cd1027a55869"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-writing-mode-api-review-v1028.json",
+      "sha256": "ec3f6b1e165b04bb1c37f6d676a8c3a9f63e75bf8c926c48c8d32dd034ea53e2"
+    }
+  ],
+  "new_release_states_admitted": 0,
+  "old_openui_images": "Immutable provenance, never expected pixels or a release gate",
+  "owned_float_color_api": {
+    "actual_pixel_probe_exit_code": 1,
+    "additive_exports": 1,
+    "all_previous_32_native_images_unchanged": true,
+    "all_six_build_stages_zero": true,
+    "all_struct_layouts_unchanged": true,
+    "all_ten_readonly_checks_zero": true,
+    "api_pass_does_not_qualify_unresolved_margin_or_pixels": true,
+    "c_consumers_passed": 11,
+    "color_properties_verified": 12,
+    "cpp_consumers_passed": 5,
+    "geometry_exact": 40,
+    "new_native_process_errors": 0,
+    "original_eight_process_failures_preserved": true,
+    "original_float_reference_inputs_reused_without_rewrite": true,
+    "pixel_failure_owner": "openui-paint",
+    "pixel_failures": 29,
+    "pixels_exact": 11,
+    "previous_exports_preserved": 112,
+    "public_rust_consumers_passed": 5,
+    "source": {
+      "clean": true,
+      "commit": "9cf13fcca00157e66db9a116cea4cda03641eac9",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "26c629c2777c2dab9a8bdc1309a511a18cdc1ca74ac33534b800d5d3c0d91b83",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "verified_native_callback_mutation_and_owned_snapshot_lifetime": true,
+    "workspace_failed": 0,
+    "workspace_ignored": 13,
+    "workspace_passed": 8542
+  },
+  "permanent_application_contract": "Open UI executes no JavaScript in any version. Native applications use public Rust APIs and Rust callbacks. Every needed element behavior is shared Rust Engine work and must be exposed to consuming applications. C and accessibility use that same Engine. Separate offline reference tools may execute scripts inside Chromium only.",
+  "pixel_target": "Pinned Chromium only, zero tolerance",
+  "previous_index": {
+    "path": "docs/renderer/generated/native-scroll-insets-v14.json",
+    "sha256": "f1c985ef07b1f6058149706139f193fe773a600cdb6044501fac56b9e3eaf07b"
+  },
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "schema_version": 1,
+  "umbrella_documentation": {
+    "all_ten_readonly_checks_zero": true,
+    "all_three_hosted_workflows_success": true,
+    "private_runtime_qualification": false,
+    "skipped_jobs": 5,
+    "skipped_jobs_are_not_passes": true,
+    "source": "e345cf6985c55698825bf52e8dbc5b5246a4c1e9",
+    "successful_jobs": 6
+  },
+  "writing_mode_candidate": {
+    "all_210_prior_native_failures_reviewed_and_repaired": true,
+    "all_eight_build_stages_zero": true,
+    "all_original_chromium_observations_unchanged": true,
+    "all_owned_snapshots_survive_mutation_and_teardown": true,
+    "all_ten_readonly_checks_zero": true,
+    "base_commit": "2240ee9ce61d2d0533bb55eb6733372dc33230bf",
+    "c_states_exact": 45,
+    "c_states_total": 45,
+    "exact_gains": 210,
+    "exact_losses": 0,
+    "full_censuses_not_started": true,
+    "future_pixel_sweeps_require_own_api_gates": true,
+    "implementation": "Shared Engine propagation on attachment, parent mutation, detach, reparent, insert and clone; authored initial values and fully resolved anonymous/pseudo snapshots retain their values.",
+    "initial_pixel_guards_running": true,
+    "native_process_errors": 0,
+    "patch": "docs/renderer/evidence/native-writing-mode-v1/native-writing-mode-v1.patch",
+    "patch_reverse_check_actual_exit": 0,
+    "rust_states_exact": 765,
+    "rust_states_total": 765,
+    "scope": "Inherited writing-mode only; other inherited property behavior remains separate implementation work.",
+    "source": {
+      "clean": true,
+      "commit": "944068e171d3041b6e74733e6af275ae91c68fde",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "e5a090eb16308409ae400671319d6176aba0215b328c115f5bb6a6ae2db377dd",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "workspace_failed": 0,
+    "workspace_ignored": 13,
+    "workspace_passed": 8542
+  },
+  "writing_mode_diagnosis": {
+    "all_commands_terminal": true,
+    "images_rendered": 0,
+    "owner": "openui-engine",
+    "previous_765_case_receipt_preserved": true,
+    "public_rust_horizontal_actual_exit": 0,
+    "public_rust_vertical_lr_actual_exit": 101,
+    "public_rust_vertical_rl_actual_exit": 101,
+    "regression_test_actual_exit": 101,
+    "root_cause": "Native attachment and inherited parent style mutations do not propagate writing-mode to unstyled descendants; schema declares it inherited. Children retain horizontal-tb and enter orthogonal block flow.",
+    "source": {
+      "clean": true,
+      "commit": "6953dfad79ea2b5dd704b38cc27e521a8163d059",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "877c7cecb54b9c345d0a59f41d861bd7e3f44662d4c73b9ed5392f1f984c2dcb",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "writer_pid": 3433662,
+  "receipt_sha256": "064d180ac239b2651f52f3bd183bb3d4353db3cde9dbd76c1def6cbc05c26cf8",
+  "actual_owner_exit_code": 1,
+  "parent_terminal_receipt_sha256": "29fe3cc516dd6006e9cb3200d834bd046e8b0a2016ee6e01b74ab581871e315c",
+  "known_pids": [
+    3349721,
+    3349774,
+    3354794,
+    3359073,
+    3421170
+  ],
+  "known_pids_absent": true,
+  "complete": true,
+  "source": {
+    "clean": true,
+    "commit": "5520ed920523164574fc80187b2702892cb5ac62",
+    "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6",
+    "source_tree_sha256": "0e2c22d402f809735879222fed8bbaad849d989d3aa7c96ac61595e1d3c77336",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_unchanged": true,
+  "runner_sha256": "02cc432163bf1f925772405b2f60f6903824cf42f1598f84311b186215c43ad5",
+  "runner_unchanged": true,
+  "steps": [
+    {
+      "suite": "focused",
+      "actual_exit_code": 0,
+      "reaped": true,
+      "counts": {
+        "different": 0,
+        "errors": 0,
+        "exact": 640,
+        "profile_result_sha256": "47d7350c590fadb6a16ea653786a19587f43d251df1ad2fae64d5835bbec176b",
+        "total": 640
+      },
+      "summary_sha256": "5b5f37e3a8c69e8f24dc8dc7029c5932f677df3646a4486ec1e8a6d1b0bc1066",
+      "evidence": {
+        "binary_unchanged": true,
+        "kind": "qualification",
+        "qualification_backend_match": true,
+        "qualification_policy_match": true,
+        "qualified": true,
+        "source_unchanged": true,
+        "tolerance_pixels": 0
+      }
+    },
+    {
+      "suite": "primitive",
+      "actual_exit_code": 0,
+      "reaped": true,
+      "counts": {
+        "different": 0,
+        "errors": 0,
+        "exact": 960,
+        "profile_result_sha256": "71a6d52bfb8bc39d40b67a0153d1b470b2648c7aab6ed8bc0336fbde8b51e86a",
+        "total": 960
+      },
+      "summary_sha256": "ccd4a88c890dd6872efb577f71c4b8714e0d26efbf378f99c5b5cf93d6a58f37",
+      "evidence": {
+        "binary_unchanged": true,
+        "kind": "qualification",
+        "qualification_backend_match": true,
+        "qualification_policy_match": true,
+        "qualified": true,
+        "source_unchanged": true,
+        "tolerance_pixels": 0
+      }
+    },
+    {
+      "suite": "full",
+      "actual_exit_code": 1,
+      "reaped": true,
+      "counts": {
+        "different": 1918,
+        "errors": 0,
+        "exact": 21006,
+        "profile_result_sha256": "74b53af9eb896466daee383798eba5b50dc33fdb0680c2d78244abb0af3ae94a",
+        "total": 22924
+      },
+      "summary_sha256": "b7d958a84283a5696d58df5e53499b4786ede149d8d8dc930de8fece61b49fef",
+      "evidence": {
+        "binary_unchanged": true,
+        "kind": "diagnostic-census",
+        "qualification_backend_match": true,
+        "qualification_policy_match": true,
+        "qualified": false,
+        "source_unchanged": true,
+        "tolerance_pixels": 0
+      }
+    },
+    {
+      "suite": "expanded",
+      "actual_exit_code": 1,
+      "reaped": true,
+      "counts": {
+        "different": 1994,
+        "errors": 0,
+        "exact": 21734,
+        "profile_result_sha256": "5c7bcbdb4ec1c0c1a94450e023d73671dc779ee64e8fd0d5b1cede3a001f01f6",
+        "total": 23728
+      },
+      "summary_sha256": "379c2e58578a3799137deaa79a967ef0e485598943160dbb61dee2c803243b17",
+      "evidence": {
+        "binary_unchanged": true,
+        "kind": "diagnostic-census",
+        "qualification_backend_match": true,
+        "qualification_policy_match": true,
+        "qualified": false,
+        "source_unchanged": true,
+        "tolerance_pixels": 0
+      }
+    }
+  ],
+  "release_qualified": false
+}

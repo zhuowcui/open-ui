@@ -5,6 +5,7 @@
 //!
 //! Orchestrates: item collection → line breaking → flexing → alignment → positioning.
 
+use crate::layout_context::LayoutDocument;
 use openui_dom::{Document, ElementTag, NodeId, PseudoElementKind};
 use openui_geometry::Length;
 use openui_geometry::{
@@ -19,7 +20,7 @@ use openui_style::{
 use crate::block::{resolve_border, resolve_margins, resolve_padding};
 use crate::constraint_space::ConstraintSpace;
 use crate::fragment::Fragment;
-use crate::intrinsic_sizing::compute_intrinsic_block_sizes;
+use crate::intrinsic_sizing::compute_intrinsic_block_sizes_with_layout;
 use crate::length_resolver::resolve_length;
 
 use super::alignment::{
@@ -103,6 +104,13 @@ impl FlexItemAxisMapping {
         }
     }
 
+    /// Percentages on physical cross-axis properties still use the
+    /// container's logical cross size. Physical flow selects width/height;
+    /// flex-direction selects inline/block, independently of writing mode.
+    fn container_cross_percentage_size(self, inline: LayoutUnit, block: LayoutUnit) -> LayoutUnit {
+        self.container_logical_to_main_cross(inline, block).1
+    }
+
     fn child_space(
         self,
         available_main: LayoutUnit,
@@ -182,7 +190,19 @@ impl FlexItemAxisMapping {
 /// Blink: `FlexLayoutAlgorithm::Layout()` → `LayoutInternal()` → `PlaceFlexItems()`.
 ///
 /// Takes a flex container node and its constraint space, returns a positioned Fragment.
-pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> Fragment {
+pub(crate) fn flex_layout_with_layout(
+    doc: &dyn LayoutDocument,
+    node_id: NodeId,
+    space: &ConstraintSpace,
+) -> Fragment {
+    crate::scrollbars::layout(doc, node_id, space)
+}
+
+pub(crate) fn flex_layout_contents(
+    doc: &dyn LayoutDocument,
+    node_id: NodeId,
+    space: &ConstraintSpace,
+) -> Fragment {
     let style = &doc.node(node_id).style;
 
     // ── Axis orientation (Blink constructor, line 170-191) ───────────
@@ -206,20 +226,39 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
     let logical_padding = padding.to_logical(writing_direction);
     let border_padding_inline = logical_border.inline_sum() + logical_padding.inline_sum();
     let border_padding_block = logical_border.block_sum() + logical_padding.block_sum();
+    let element_scrollbars = crate::scrollbars::for_node(space, node_id);
+    let scrollbar_insets = element_scrollbars.map_or(BoxStrut::zero(), |bars| bars.insets);
+    let logical_scrollbars = scrollbar_insets.to_logical(writing_direction);
+    let border_scrollbar_padding_inline = border_padding_inline + logical_scrollbars.inline_sum();
+    let border_scrollbar_padding_block = border_padding_block + logical_scrollbars.block_sum();
+    // The fragment retains authored padding. Placement consumes the additional
+    // gutter edges without turning them into CSS padding or painting them twice.
+    let layout_padding = BoxStrut::new(
+        padding.top + scrollbar_insets.top,
+        padding.right + scrollbar_insets.right,
+        padding.bottom + scrollbar_insets.bottom,
+        padding.left + scrollbar_insets.left,
+    );
 
     // ── Resolve container inline size (width for row, used for percentage base) ──
     let container_inline_size =
         resolve_container_inline_size(doc, node_id, style, space, border_padding_inline);
 
     // Content-box sizes
-    let content_inline_size = container_inline_size - border_padding_inline;
+    let content_inline_size = if container_inline_size.is_indefinite() {
+        container_inline_size
+    } else {
+        (container_inline_size - border_scrollbar_padding_inline).clamp_negative_to_zero()
+    };
 
     // ── Resolve gaps (Blink line 187-191) ────────────────────────────
     // CSS Box Alignment §8: row-gap % resolves against block size,
     // column-gap % resolves against inline size.
     let column_gap_pct_base = content_inline_size;
     let block_size = logical_box.sizes.block_size;
-    let row_gap_pct_base = if !block_size.is_auto() && !block_size.is_content_or_intrinsic() {
+    let row_gap_pct_base = if space.is_fixed_block_size || space.stretch_block_size {
+        (space.available_block_size - border_scrollbar_padding_block).clamp_negative_to_zero()
+    } else if !block_size.is_auto() && !block_size.is_content_or_intrinsic() {
         let raw = resolve_length(
             block_size,
             space.percentage_resolution_block_size,
@@ -227,12 +266,10 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
             LayoutUnit::zero(),
         );
         if style.box_sizing == openui_style::BoxSizing::BorderBox {
-            (raw - border_padding_block).clamp_negative_to_zero()
+            (raw - border_scrollbar_padding_block).clamp_negative_to_zero()
         } else {
-            raw
+            (raw - logical_scrollbars.block_sum()).clamp_negative_to_zero()
         }
-    } else if space.is_fixed_block_size || space.stretch_block_size {
-        (space.available_block_size - border_padding_block).clamp_negative_to_zero()
     } else {
         // Auto height → percentage gap resolves to 0
         LayoutUnit::zero()
@@ -271,10 +308,15 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
             border_padding_block,
             container_inline_size,
         );
+        let resolved = if resolved.is_indefinite() {
+            resolved
+        } else {
+            (resolved - logical_scrollbars.block_sum()).clamp_negative_to_zero()
+        };
         // If resolved to indefinite but parent provided a fixed height, use it for
         // wrapping decisions (CSS Flexbox §9.2: definite size from containing block)
         if resolved.is_indefinite() && (space.is_fixed_block_size || space.stretch_block_size) {
-            (space.available_block_size - border_padding_block).clamp_negative_to_zero()
+            (space.available_block_size - border_scrollbar_padding_block).clamp_negative_to_zero()
         } else if resolved.is_indefinite()
             && style.flex_wrap != FlexWrap::Nowrap
             && space.fragmentainer_block_size > LayoutUnit::zero()
@@ -283,7 +325,8 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
             // column height as the wrapping boundary so items wrap correctly.
             // Only for wrapping containers — non-wrapping ones should stay
             // indefinite and be fragmented by the multicol distribution pass.
-            (space.fragmentainer_block_size - border_padding_block).clamp_negative_to_zero()
+            (space.fragmentainer_block_size - border_scrollbar_padding_block)
+                .clamp_negative_to_zero()
         } else {
             resolved
         }
@@ -306,7 +349,7 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
         // Descendant percentages use its content box; resolving the
         // container's authored percentage again against the child space
         // would apply the containing-block reduction twice.
-        (space.available_block_size - border_padding_block).clamp_negative_to_zero()
+        (space.available_block_size - border_scrollbar_padding_block).clamp_negative_to_zero()
     } else if !block_size.is_auto() {
         if block_size.is_content_or_intrinsic() {
             // Intrinsic keyword on container height → treat as indefinite for child percentages
@@ -320,9 +363,9 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
                 LayoutUnit::zero(),
             );
             let content = if style.box_sizing == openui_style::BoxSizing::BorderBox {
-                (raw - border_padding_block).clamp_negative_to_zero()
+                (raw - border_scrollbar_padding_block).clamp_negative_to_zero()
             } else {
-                raw
+                (raw - logical_scrollbars.block_sum()).clamp_negative_to_zero()
             };
             content
         }
@@ -336,7 +379,7 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
         {
             let ratio = ar.ratio.0 / ar.ratio.1;
             let ar_block = LayoutUnit::from_f32(container_inline_size.to_f32() / ratio);
-            (ar_block - border_padding_block).clamp_negative_to_zero()
+            (ar_block - border_scrollbar_padding_block).clamp_negative_to_zero()
         } else {
             LayoutUnit::from_raw(-64) // indefinite
         }
@@ -519,7 +562,8 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
             // Exception: if the parent flex has set a definite block size (via
             // is_fixed_block_size or stretch_block_size), the cross size IS definite.
             if space.is_fixed_block_size || space.stretch_block_size {
-                (space.available_block_size - border_padding_block).clamp_negative_to_zero()
+                (space.available_block_size - border_scrollbar_padding_block)
+                    .clamp_negative_to_zero()
             } else if !block_size.is_auto() && !block_size.is_content_or_intrinsic() {
                 // Explicit height — use resolved content-box value
                 let raw = resolve_length(
@@ -529,9 +573,9 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
                     LayoutUnit::zero(),
                 );
                 if style.box_sizing == openui_style::BoxSizing::BorderBox {
-                    (raw - border_padding_block).clamp_negative_to_zero()
+                    (raw - border_scrollbar_padding_block).clamp_negative_to_zero()
                 } else {
-                    raw
+                    (raw - logical_scrollbars.block_sum()).clamp_negative_to_zero()
                 }
             } else {
                 flex_lines[0].line_cross_size // keep computed size
@@ -545,19 +589,24 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
             let max_block = logical_box.sizes.max_block_size;
             let min_h = if !min_block.is_auto() {
                 if min_block.is_content_or_intrinsic() {
-                    let sizes = compute_intrinsic_block_sizes(doc, node_id);
+                    let sizes = crate::scrollbars::intrinsic_sizes_for_layout(
+                        doc,
+                        node_id,
+                        space,
+                        compute_intrinsic_block_sizes_with_layout(doc, node_id),
+                    );
                     let intrinsic = match min_block.length_type() {
                         LengthType::MinContent => sizes.min_content_block_size,
                         _ => sizes.max_content_block_size,
                     };
-                    (intrinsic - border_padding_block).clamp_negative_to_zero()
+                    (intrinsic - border_scrollbar_padding_block).clamp_negative_to_zero()
                 } else if !pct_base.is_indefinite() || min_block.is_fixed() {
                     let min_raw =
                         resolve_length(min_block, pct_base, LayoutUnit::zero(), LayoutUnit::zero());
                     if style.box_sizing == openui_style::BoxSizing::BorderBox {
-                        (min_raw - border_padding_block).clamp_negative_to_zero()
+                        (min_raw - border_scrollbar_padding_block).clamp_negative_to_zero()
                     } else {
-                        min_raw
+                        (min_raw - logical_scrollbars.block_sum()).clamp_negative_to_zero()
                     }
                 } else {
                     LayoutUnit::zero()
@@ -567,12 +616,17 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
             };
             let max_h = if !max_block.is_none() {
                 if max_block.is_content_or_intrinsic() {
-                    let sizes = compute_intrinsic_block_sizes(doc, node_id);
+                    let sizes = crate::scrollbars::intrinsic_sizes_for_layout(
+                        doc,
+                        node_id,
+                        space,
+                        compute_intrinsic_block_sizes_with_layout(doc, node_id),
+                    );
                     let intrinsic = match max_block.length_type() {
                         LengthType::MinContent => sizes.min_content_block_size,
                         _ => sizes.max_content_block_size,
                     };
-                    (intrinsic - border_padding_block).clamp_negative_to_zero()
+                    (intrinsic - border_scrollbar_padding_block).clamp_negative_to_zero()
                 } else if !pct_base.is_indefinite() || max_block.is_fixed() {
                     let max_raw = resolve_length(
                         max_block,
@@ -581,9 +635,9 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
                         LayoutUnit::from_i32(33554431),
                     );
                     if style.box_sizing == openui_style::BoxSizing::BorderBox {
-                        (max_raw - border_padding_block).clamp_negative_to_zero()
+                        (max_raw - border_scrollbar_padding_block).clamp_negative_to_zero()
                     } else {
-                        max_raw
+                        (max_raw - logical_scrollbars.block_sum()).clamp_negative_to_zero()
                     }
                 } else {
                     LayoutUnit::from_i32(33554431)
@@ -604,12 +658,12 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
         &flex_lines,
         is_column,
         gap_between_lines,
-        border_padding_block,
+        border_scrollbar_padding_block,
     );
 
     let sizing_intrinsic_block_size = crate::containment::logical_block_fallback(style)
         .map_or(intrinsic_block_size, |fallback| {
-            fallback + border_padding_block
+            fallback + border_scrollbar_padding_block
         });
     let total_block_size = resolve_total_block_size(
         doc,
@@ -629,7 +683,8 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
     // justify-content and column-reverse positioning use the real free space.
     // Blink: LayoutColumnReverse() recalculates offsets using the resolved size.
     if is_column && effective_main_axis_inner_size.is_indefinite() {
-        let resolved_main = (total_block_size - border_padding_block).clamp_negative_to_zero();
+        let resolved_main =
+            (total_block_size - border_scrollbar_padding_block).clamp_negative_to_zero();
         for line in &mut flex_lines {
             let num_vis = line
                 .item_indices
@@ -642,7 +697,8 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
         }
     }
     if is_column {
-        let resolved_main = (total_block_size - border_padding_block).clamp_negative_to_zero();
+        let resolved_main =
+            (total_block_size - border_scrollbar_padding_block).clamp_negative_to_zero();
         let should_reflex_to_resolved_main = resolved_main.raw() > 0
             && (effective_main_axis_inner_size.is_indefinite()
                 || resolved_main != effective_main_axis_inner_size);
@@ -691,7 +747,7 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
     let content_cross_size = if is_column {
         content_inline_size
     } else {
-        total_block_size - border_padding_block
+        (total_block_size - border_scrollbar_padding_block).clamp_negative_to_zero()
     };
     {
         let total_line_cross: LayoutUnit = flex_lines
@@ -750,7 +806,7 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
         &style.justify_content,
         &style.align_content,
         &border,
-        &padding,
+        &layout_padding,
         child_percentage_inline,
         child_percentage_block,
         &hypothetical_cross_border_box_sizes,
@@ -774,9 +830,9 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
                     .iter()
                     .map(|c| c.offset.left + c.width())
                     .fold(LayoutUnit::zero(), |acc, w| acc.max_of(w));
-                max_child_width + border.right + padding.right
+                max_child_width + border.right + layout_padding.right
             } else {
-                max_line_main + border_padding_inline
+                max_line_main + border_scrollbar_padding_inline
             };
             result
         } else {
@@ -785,13 +841,16 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
     let fragment_size =
         logical_box.physical_size(LogicalSize::new(final_inline_size, total_block_size));
     let mut fragment = Fragment::new_box(node_id, fragment_size);
+    fragment.element_scrollbars = element_scrollbars;
     fragment.padding = padding.clone();
     fragment.border = border.clone();
     fragment.children = children;
 
     // ── Lay out out-of-flow (absolute/fixed) children ────────────────
-    let content_inline = (final_inline_size - border_padding_inline).clamp_negative_to_zero();
-    let content_block = (total_block_size - border_padding_block).clamp_negative_to_zero();
+    let content_inline =
+        (final_inline_size - border_scrollbar_padding_inline).clamp_negative_to_zero();
+    let content_block =
+        (total_block_size - border_scrollbar_padding_block).clamp_negative_to_zero();
     let content_size = logical_box.physical_size(LogicalSize::new(content_inline, content_block));
     // CSS Position: the padding box establishes the abspos containing block;
     // flex alignment itself continues to use the content box below.
@@ -805,7 +864,15 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
     let mut oof_candidates = Vec::new();
     let mut bubbled_oof_candidates = Vec::new();
     let is_root = node_id == doc.root();
-    let establishes_cb_for_abspos = style.position.is_positioned() || is_root;
+    let establishes_cb_for_abspos = style.position.is_positioned()
+        || is_root
+        || style.has_transform_containing_block()
+        || style.has_layout_containment()
+        || doc.anonymous_absolute_container(node_id);
+    let captures_fixed = is_root
+        || style.has_transform_containing_block()
+        || style.has_layout_containment()
+        || doc.anonymous_fixed_container(node_id);
 
     // Collect bubbled OOF candidates from flex item fragments.
     for child_frag in &mut fragment.children {
@@ -814,12 +881,14 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
             c.static_position.left = c.static_position.left + child_frag.offset.left;
             c.static_position.top = c.static_position.top + child_frag.offset.top;
             let captures = if c.style.position == openui_style::Position::Fixed {
-                is_root
+                captures_fixed
             } else {
                 establishes_cb_for_abspos
             };
             if captures {
                 c.containing_block_size = cb_size;
+                c.containing_block_offset =
+                    PhysicalOffset::new(scrollbar_insets.left, scrollbar_insets.top);
                 c.containing_block_border = border.clone();
                 c.containing_block_direction = style.direction;
                 c.containing_block_node = node_id;
@@ -846,6 +915,7 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
                 is_column,
                 &border,
                 &padding,
+                &scrollbar_insets,
             );
             let mut candidate = crate::out_of_flow::OutOfFlowCandidate {
                 node_id: child_id,
@@ -853,7 +923,10 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
                 static_position: static_position.offset,
                 static_position_horizontal_edge: static_position.horizontal_edge,
                 static_position_vertical_edge: static_position.vertical_edge,
-                containing_block_offset: PhysicalOffset::zero(),
+                containing_block_offset: PhysicalOffset::new(
+                    scrollbar_insets.left,
+                    scrollbar_insets.top,
+                ),
                 containing_block_node: NodeId::NONE,
                 containing_block_size: cb_size,
                 containing_block_border: border.clone(),
@@ -863,7 +936,7 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
                 inline_containing_block_node: None,
             };
             let captures = if child_style.position == openui_style::Position::Fixed {
-                is_root
+                captures_fixed
             } else {
                 establishes_cb_for_abspos
             };
@@ -876,16 +949,12 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
         }
     }
     if !oof_candidates.is_empty() {
-        let oof_fragments = crate::out_of_flow::layout_out_of_flow_children(doc, &oof_candidates);
+        let oof_fragments =
+            crate::out_of_flow::layout_out_of_flow_children_with_layout(doc, &oof_candidates);
         fragment.children.extend(oof_fragments);
     }
     fragment.oof_candidates = bubbled_oof_candidates;
     finalize_flex_fragment(doc, &mut fragment, style, is_column);
-    if style.overflow_x != openui_style::Overflow::Visible
-        || style.overflow_y != openui_style::Overflow::Visible
-    {
-        crate::block::apply_sticky_descendants_in_scrollport(doc, &mut fragment);
-    }
     // Override baselines with values computed from the baseline alignment group.
     // flex_baseline_from_child only examines the first/last child and cannot
     // account for baseline-aligned items (which may be deeper in the list and
@@ -904,7 +973,7 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
 
 /// Resolve the container's logical inline size.
 fn resolve_container_inline_size(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     node_id: NodeId,
     style: &openui_style::ComputedStyle,
     space: &ConstraintSpace,
@@ -920,14 +989,24 @@ fn resolve_container_inline_size(
     } else if inline_size.is_auto() {
         if space.available_inline_size.is_indefinite() {
             // Shrink-to-fit: compute max-content inline size from children
-            let sizes = compute_intrinsic_block_sizes(doc, node_id);
+            let sizes = crate::scrollbars::intrinsic_sizes_for_layout(
+                doc,
+                node_id,
+                space,
+                compute_intrinsic_block_sizes_with_layout(doc, node_id),
+            );
             sizes.max_content_inline_size.max_of(border_padding_inline)
         } else {
             space.available_inline_size
         }
     } else if inline_size.is_content_or_intrinsic() {
         // Resolve intrinsic sizing keywords for the flex container inline size.
-        let sizes = compute_intrinsic_block_sizes(doc, node_id);
+        let sizes = crate::scrollbars::intrinsic_sizes_for_layout(
+            doc,
+            node_id,
+            space,
+            compute_intrinsic_block_sizes_with_layout(doc, node_id),
+        );
         let bp = border_padding_inline;
         match inline_size.length_type() {
             LengthType::MinContent => sizes.min_content_inline_size.max_of(bp),
@@ -960,7 +1039,7 @@ fn resolve_container_inline_size(
 
 /// Clamp the logical inline size to its min/max constraints.
 fn clamp_inline_size(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     node_id: NodeId,
     style: &openui_style::ComputedStyle,
     space: &ConstraintSpace,
@@ -974,7 +1053,12 @@ fn clamp_inline_size(
 
     let min = if !min_inline_size.is_auto() {
         if min_inline_size.is_content_or_intrinsic() {
-            let sizes = compute_intrinsic_block_sizes(doc, node_id);
+            let sizes = crate::scrollbars::intrinsic_sizes_for_layout(
+                doc,
+                node_id,
+                space,
+                compute_intrinsic_block_sizes_with_layout(doc, node_id),
+            );
             match min_inline_size.length_type() {
                 LengthType::MinContent => sizes.min_content_inline_size,
                 _ => sizes.max_content_inline_size,
@@ -998,7 +1082,12 @@ fn clamp_inline_size(
 
     let max = if !max_inline_size.is_none() {
         if max_inline_size.is_content_or_intrinsic() {
-            let sizes = compute_intrinsic_block_sizes(doc, node_id);
+            let sizes = crate::scrollbars::intrinsic_sizes_for_layout(
+                doc,
+                node_id,
+                space,
+                compute_intrinsic_block_sizes_with_layout(doc, node_id),
+            );
             match max_inline_size.length_type() {
                 LengthType::MinContent => sizes.min_content_inline_size,
                 LengthType::MaxContent | LengthType::FitContent => sizes.max_content_inline_size,
@@ -1140,7 +1229,7 @@ fn resolve_container_block_size_for_flex(
 
 /// Resolve the total block size of the container.
 fn resolve_total_block_size(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     node_id: NodeId,
     style: &openui_style::ComputedStyle,
     space: &ConstraintSpace,
@@ -1185,7 +1274,12 @@ fn resolve_total_block_size(
         // final intrinsic inline size so wrapping feeds back into cross size.
         intrinsic_block_size
     } else if block_size.is_content_or_intrinsic() {
-        let sizes = compute_intrinsic_block_sizes(doc, node_id);
+        let sizes = crate::scrollbars::intrinsic_sizes_for_layout(
+            doc,
+            node_id,
+            space,
+            compute_intrinsic_block_sizes_with_layout(doc, node_id),
+        );
         match block_size.length_type() {
             LengthType::MinContent => sizes.min_content_block_size.max_of(border_padding_block),
             LengthType::MaxContent => sizes.max_content_block_size.max_of(border_padding_block),
@@ -1214,7 +1308,12 @@ fn resolve_total_block_size(
             || min_block_size.is_content_or_intrinsic())
     {
         if min_block_size.is_content_or_intrinsic() {
-            let sizes = compute_intrinsic_block_sizes(doc, node_id);
+            let sizes = crate::scrollbars::intrinsic_sizes_for_layout(
+                doc,
+                node_id,
+                space,
+                compute_intrinsic_block_sizes_with_layout(doc, node_id),
+            );
             match min_block_size.length_type() {
                 LengthType::MinContent => sizes.min_content_block_size.max_of(border_padding_block),
                 _ => sizes.max_content_block_size.max_of(border_padding_block),
@@ -1242,7 +1341,12 @@ fn resolve_total_block_size(
             || max_block_size.is_content_or_intrinsic())
     {
         if max_block_size.is_content_or_intrinsic() {
-            let sizes = compute_intrinsic_block_sizes(doc, node_id);
+            let sizes = crate::scrollbars::intrinsic_sizes_for_layout(
+                doc,
+                node_id,
+                space,
+                compute_intrinsic_block_sizes_with_layout(doc, node_id),
+            );
             match max_block_size.length_type() {
                 LengthType::MinContent => sizes.min_content_block_size.max_of(border_padding_block),
                 LengthType::MaxContent | LengthType::FitContent => {
@@ -1286,7 +1390,7 @@ fn resolve_gap(gap: &Option<Length>, percentage_base: LayoutUnit) -> LayoutUnit 
 /// Construct flex items from in-flow children.
 /// Blink: `ConstructAndAppendFlexItems()` at line 801.
 fn construct_flex_items(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     container_id: NodeId,
     is_column: bool,
     is_horizontal_flow: bool,
@@ -1304,7 +1408,7 @@ fn construct_flex_items(
     if doc.node(container_id).pseudo_kind == Some(PseudoElementKind::ScrollMarkerGroup) {
         let origin = doc.node(container_id).pseudo_origin;
         if !origin.is_none() {
-            let origin_fragment = crate::block::block_layout(doc, origin, space);
+            let origin_fragment = crate::block::block_layout_with_layout(doc, origin, space);
             let column_count = origin_fragment
                 .children
                 .iter()
@@ -1452,10 +1556,14 @@ fn construct_flex_items(
 /// boxes whose contents are an inline formatting context; invoking block
 /// layout directly on the Text node would otherwise measure its advance but
 /// produce an empty zero-height box with no paintable text fragment.
-fn layout_flex_item(doc: &Document, child_id: NodeId, space: &ConstraintSpace) -> Fragment {
+fn layout_flex_item(
+    doc: &dyn LayoutDocument,
+    child_id: NodeId,
+    space: &ConstraintSpace,
+) -> Fragment {
     if doc.node(child_id).tag == ElementTag::Text {
         let anonymous_run = anonymous_flex_text_run(doc, child_id);
-        let mut fragment = crate::inline::algorithm::inline_layout_for_children(
+        let mut fragment = crate::inline::algorithm::inline_layout_for_children_with_layout(
             doc,
             child_id,
             &anonymous_run,
@@ -1482,11 +1590,11 @@ fn layout_flex_item(doc: &Document, child_id: NodeId, space: &ConstraintSpace) -
         }
         fragment
     } else {
-        crate::block::block_layout(doc, child_id, space)
+        crate::block::block_layout_with_layout(doc, child_id, space)
     }
 }
 
-fn flex_box_children(doc: &Document, parent_id: NodeId) -> Vec<NodeId> {
+fn flex_box_children(doc: &dyn LayoutDocument, parent_id: NodeId) -> Vec<NodeId> {
     let mut flattened = Vec::new();
     flatten_flex_box_children(doc, parent_id, &mut flattened);
     let mut children = Vec::new();
@@ -1537,7 +1645,11 @@ fn flex_box_children(doc: &Document, parent_id: NodeId) -> Vec<NodeId> {
     children
 }
 
-fn flatten_flex_box_children(doc: &Document, parent_id: NodeId, output: &mut Vec<NodeId>) {
+fn flatten_flex_box_children(
+    doc: &dyn LayoutDocument,
+    parent_id: NodeId,
+    output: &mut Vec<NodeId>,
+) {
     if doc.node(parent_id).pseudo_kind == Some(PseudoElementKind::ScrollMarkerGroup) {
         let origin = doc.node(parent_id).pseudo_origin;
         if !origin.is_none() {
@@ -1558,7 +1670,7 @@ fn flatten_flex_box_children(doc: &Document, parent_id: NodeId, output: &mut Vec
     }
 }
 
-fn anonymous_flex_text_run(doc: &Document, representative: NodeId) -> Vec<NodeId> {
+fn anonymous_flex_text_run(doc: &dyn LayoutDocument, representative: NodeId) -> Vec<NodeId> {
     let mut flex_parent = doc.node(representative).parent;
     while !flex_parent.is_none() && !doc.node(flex_parent).style.display.is_flex() {
         flex_parent = doc.node(flex_parent).parent;
@@ -1590,7 +1702,7 @@ fn anonymous_flex_text_run(doc: &Document, representative: NodeId) -> Vec<NodeId
 }
 
 fn anonymous_flex_text_run_max_inline_size(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     representative: NodeId,
 ) -> Option<LayoutUnit> {
     let run = anonymous_flex_text_run(doc, representative);
@@ -1603,19 +1715,26 @@ fn anonymous_flex_text_run_max_inline_size(
             current = LayoutUnit::zero();
         } else {
             current = current
-                + crate::intrinsic_sizing::compute_intrinsic_inline_sizes(doc, child_id).max;
+                + crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_layout(
+                    doc, child_id,
+                )
+                .max;
         }
     }
     Some(maximum.max_of(current))
 }
 
-fn flex_abspos_children(doc: &Document, parent_id: NodeId) -> Vec<NodeId> {
+fn flex_abspos_children(doc: &dyn LayoutDocument, parent_id: NodeId) -> Vec<NodeId> {
     let mut children = Vec::new();
     append_flex_abspos_children(doc, parent_id, &mut children);
     children
 }
 
-fn append_flex_abspos_children(doc: &Document, parent_id: NodeId, children: &mut Vec<NodeId>) {
+fn append_flex_abspos_children(
+    doc: &dyn LayoutDocument,
+    parent_id: NodeId,
+    children: &mut Vec<NodeId>,
+) {
     for child_id in doc.children(parent_id) {
         let child_style = &doc.node(child_id).style;
         if child_style.display == openui_style::Display::None {
@@ -1674,7 +1793,7 @@ fn resolve_item_alignment(
 ///
 /// Returns (base_content_size, is_used_flex_basis_indefinite).
 fn resolve_flex_basis(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     child_id: NodeId,
     child_style: &openui_style::ComputedStyle,
     is_column: bool,
@@ -1714,7 +1833,9 @@ fn resolve_flex_basis(
             // For min-content specifically, we need the min-content value.
             if flex_basis.length_type() == LengthType::MinContent {
                 let contrib =
-                    crate::intrinsic_sizing::compute_child_intrinsic_contribution(doc, child_id);
+                    crate::intrinsic_sizing::compute_child_intrinsic_contribution_with_layout(
+                        doc, child_id,
+                    );
                 let child_margin = resolve_margins(child_style, LayoutUnit::zero());
                 let margin_main = if is_main_axis_horizontal {
                     child_margin.left + child_margin.right
@@ -1817,7 +1938,7 @@ fn resolve_flex_basis(
                     });
                 if let Some(block_size) = stretched_block_size {
                     let sizes =
-                        crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_block_size(
+                        crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_block_size_with_layout(
                             doc,
                             child_id,
                             block_size,
@@ -1828,14 +1949,14 @@ fn resolve_flex_basis(
                         _ => sizes.max,
                     }
                 } else {
-                    let sizes = compute_intrinsic_block_sizes(doc, child_id);
+                    let sizes = compute_intrinsic_block_sizes_with_layout(doc, child_id);
                     match main_length.length_type() {
                         LengthType::MinContent => sizes.min_content_inline_size,
                         _ => sizes.max_content_inline_size,
                     }
                 }
             } else {
-                let sizes = compute_intrinsic_block_sizes(doc, child_id);
+                let sizes = compute_intrinsic_block_sizes_with_layout(doc, child_id);
                 match main_length.length_type() {
                     LengthType::MinContent => sizes.min_content_block_size,
                     _ => sizes.max_content_block_size,
@@ -1942,7 +2063,7 @@ fn resolve_flex_basis(
 /// Also handles aspect-ratio: if the item has an aspect ratio and one dimension
 /// is known, derive the main-axis size from the cross-axis size.
 fn effective_flex_item_aspect_ratio(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     child_id: NodeId,
     child_style: &openui_style::ComputedStyle,
 ) -> Option<openui_style::AspectRatio> {
@@ -1971,7 +2092,7 @@ fn effective_flex_item_aspect_ratio(
 }
 
 fn stretched_cross_replaced_inline_contribution(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     node_id: NodeId,
     stretched_block_size: LayoutUnit,
 ) -> Option<LayoutUnit> {
@@ -1981,7 +2102,7 @@ fn stretched_cross_replaced_inline_contribution(
         return None;
     }
     Some(
-        crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_block_size(
+        crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_block_size_with_layout(
             doc,
             node_id,
             stretched_block_size,
@@ -1992,7 +2113,7 @@ fn stretched_cross_replaced_inline_contribution(
 }
 
 fn resolve_content_based_size(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     child_id: NodeId,
     child_style: &openui_style::ComputedStyle,
     is_column: bool,
@@ -2350,14 +2471,14 @@ fn resolve_content_based_size(
     // would apply an authored width and turn (for example) an empty padded
     // item's 10px content contribution into width + padding.
     if replaces_main_size && is_main_axis_horizontal {
-        let intrinsic = compute_intrinsic_block_sizes(doc, child_id);
+        let intrinsic = compute_intrinsic_block_sizes_with_layout(doc, child_id);
         return (intrinsic.max_content_inline_size - main_axis_border_padding)
             .clamp_negative_to_zero();
     }
 
     // Flex base sizing ignores min/max constraints on the main axis. A final
     // layout pass already applies those constraints, so measuring a replaced
-    // item through block_layout here incorrectly bakes (for example) a
+    // item through block_layout_with_layout here incorrectly bakes (for example) a
     // min-width into the base before free-space distribution. Definite cross
     // sizes and stretch transfers were handled above; the remaining
     // content-based basis is the resource's natural main-axis dimension.
@@ -2440,8 +2561,9 @@ fn resolve_content_based_size(
                 // max-content cross size is wider.
                 (child_percentage_inline - cross_margin).clamp_negative_to_zero()
             } else {
-                let min_max =
-                    crate::intrinsic_sizing::compute_intrinsic_inline_sizes(doc, child_id);
+                let min_max = crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_layout(
+                    doc, child_id,
+                );
                 if min_max.max > LayoutUnit::zero() {
                     min_max.max
                 } else {
@@ -2533,7 +2655,7 @@ fn resolve_content_based_size(
 
     // CSS Flexbox §9.2 step E: "size the item into the available space using
     // its used flex basis in place of its main size, treating a value of content
-    // as max-content." For column flex, the main axis is block — block_layout
+    // as max-content." For column flex, the main axis is block — block_layout_with_layout
     // would use the item's own `height` property (even with indefinite available
     // space, a fixed height still resolves). Instead, compute the intrinsic
     // max-content block size, which ignores the item's height property and
@@ -2565,16 +2687,16 @@ fn resolve_content_based_size(
             // size. A measurement document provides that style override while
             // retaining the actual cross size, so wrapping, floats, controls,
             // and replaced descendants all contribute through normal layout.
-            let mut measurement_doc = doc.clone();
-            let measurement_style = measurement_doc.node(child_id).style.derive(|style| {
+            let measurement_style = doc.node(child_id).style.derive(|style| {
                 if is_main_axis_horizontal {
                     style.width = Length::auto();
                 } else {
                     style.height = Length::auto();
                 }
             });
-            measurement_doc.install_resolved_style(child_id, measurement_style);
-            let child_fragment = layout_flex_item(&measurement_doc, child_id, &child_space);
+            let measurement_context =
+                crate::layout_context::NodeStyleContext::new(doc, child_id, measurement_style);
+            let child_fragment = layout_flex_item(&measurement_context, child_id, &child_space);
             if is_main_axis_horizontal {
                 child_fragment.width()
             } else {
@@ -2585,7 +2707,7 @@ fn resolve_content_based_size(
             // table layout here would already apply min-height and inflate the
             // base before free-space distribution; use the raw table content
             // contribution and clamp only when forming the hypothetical size.
-            compute_intrinsic_block_sizes(doc, child_id).max_content_block_size
+            compute_intrinsic_block_sizes_with_layout(doc, child_id).max_content_block_size
         } else {
             // Preserve the established auto/content path: its layout-based
             // sizing also carries cross-axis constraints and aspect-ratio
@@ -2647,7 +2769,7 @@ fn resolve_content_based_size(
         }
     }
 
-    // If block_layout returned indefinite (empty element with unconstrained axis),
+    // If block_layout_with_layout returned indefinite (empty element with unconstrained axis),
     // treat as zero content size.
     let main_size = main_size.clamp_indefinite_to_zero();
 
@@ -2910,7 +3032,7 @@ fn compute_transferred_size_suggestion(
 /// Whether this node's own inline formatting context contains a semantic
 /// forced break. Inline wrappers are transparent here; atomic/block children
 /// establish their own formatting context and are measured independently.
-fn has_semantic_break_in_inline_flow(doc: &Document, node_id: NodeId) -> bool {
+fn has_semantic_break_in_inline_flow(doc: &dyn LayoutDocument, node_id: NodeId) -> bool {
     doc.children(node_id).any(|child_id| {
         let child = doc.node(child_id);
         if child.style.display == openui_style::Display::None
@@ -2931,7 +3053,7 @@ fn has_semantic_break_in_inline_flow(doc: &Document, node_id: NodeId) -> bool {
 /// Resolve min/max constraints on the main axis.
 /// Blink: lines 1034-1157.
 fn resolve_main_axis_min_max(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     child_id: NodeId,
     child_style: &openui_style::ComputedStyle,
     is_column: bool,
@@ -3016,10 +3138,11 @@ fn resolve_main_axis_min_max(
                         if min <= LayoutUnit::zero() && max == LayoutUnit::max() {
                             None
                         } else {
-                            let natural = crate::intrinsic_sizing::compute_intrinsic_block_sizes(
-                                doc, child_id,
-                            )
-                            .max_content_block_size;
+                            let natural =
+                                crate::intrinsic_sizing::compute_intrinsic_block_sizes_with_layout(
+                                    doc, child_id,
+                                )
+                                .max_content_block_size;
                             Some(natural.clamp(min, max))
                         }
                     })
@@ -3027,9 +3150,9 @@ fn resolve_main_axis_min_max(
                     None
                 };
                 let min_max = constrained_cross.map_or_else(
-                    || crate::intrinsic_sizing::compute_intrinsic_inline_sizes(doc, child_id),
+                    || crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_layout(doc, child_id),
                     |block_size| {
-                        crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_block_size(
+                        crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_block_size_with_layout(
                             doc, child_id, block_size, pct_inline,
                         )
                     },
@@ -3190,8 +3313,9 @@ fn resolve_main_axis_min_max(
                 }
                 cs
             } else {
-                let intrinsic =
-                    crate::intrinsic_sizing::compute_intrinsic_block_sizes(doc, child_id);
+                let intrinsic = crate::intrinsic_sizing::compute_intrinsic_block_sizes_with_layout(
+                    doc, child_id,
+                );
                 let has_definite_inline_constraint = child_style.width.is_fixed()
                     || child_style.min_width.is_fixed()
                     || (!child_style.max_width.is_none()
@@ -3474,14 +3598,16 @@ fn resolve_main_axis_min_max(
         if let Some(transferred) = transferred_intrinsic {
             transferred
         } else if is_main_axis_horizontal {
-            let min_max = crate::intrinsic_sizing::compute_intrinsic_inline_sizes(doc, child_id);
+            let min_max =
+                crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_layout(doc, child_id);
             let val = match min_prop.length_type() {
                 LengthType::MinContent => min_max.min,
                 _ => min_max.max,
             };
             (val - main_axis_border_padding).clamp_negative_to_zero()
         } else {
-            let intrinsic = crate::intrinsic_sizing::compute_intrinsic_block_sizes(doc, child_id);
+            let intrinsic =
+                crate::intrinsic_sizing::compute_intrinsic_block_sizes_with_layout(doc, child_id);
             let val = match min_prop.length_type() {
                 LengthType::MinContent => intrinsic.min_content_block_size,
                 _ => intrinsic.max_content_block_size,
@@ -3503,14 +3629,16 @@ fn resolve_main_axis_min_max(
     } else if max_prop.is_content_or_intrinsic() {
         // CSS Sizing 3: max-width/max-height: min-content/max-content
         if is_main_axis_horizontal {
-            let min_max = crate::intrinsic_sizing::compute_intrinsic_inline_sizes(doc, child_id);
+            let min_max =
+                crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_layout(doc, child_id);
             let val = match max_prop.length_type() {
                 LengthType::MinContent => min_max.min,
                 _ => min_max.max,
             };
             (val - main_axis_border_padding).clamp_negative_to_zero()
         } else {
-            let intrinsic = crate::intrinsic_sizing::compute_intrinsic_block_sizes(doc, child_id);
+            let intrinsic =
+                crate::intrinsic_sizing::compute_intrinsic_block_sizes_with_layout(doc, child_id);
             let val = match max_prop.length_type() {
                 LengthType::MinContent => intrinsic.min_content_block_size,
                 _ => intrinsic.max_content_block_size,
@@ -3538,7 +3666,8 @@ fn resolve_main_axis_min_max(
     // position the following item at the authored minimum while the principal
     // table box overflows through it.
     let min = if child_style.display.is_table_wrapper() && main_is_child_inline {
-        let intrinsic = crate::intrinsic_sizing::compute_intrinsic_inline_sizes(doc, child_id);
+        let intrinsic =
+            crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_layout(doc, child_id);
         min.max_of((intrinsic.min - main_axis_border_padding).clamp_negative_to_zero())
     } else {
         min
@@ -3557,7 +3686,7 @@ fn resolve_main_axis_min_max(
 
 /// Resolve a cross-axis min or max constraint, handling intrinsic keywords.
 fn resolve_cross_min_max(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     node_id: NodeId,
     prop: &openui_geometry::Length,
     is_column: bool,
@@ -3572,9 +3701,10 @@ fn resolve_cross_min_max(
     }
     if prop.is_content_or_intrinsic() {
         let sizes = if is_column {
-            crate::intrinsic_sizing::compute_intrinsic_inline_sizes(doc, node_id)
+            crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_layout(doc, node_id)
         } else {
-            let block = crate::intrinsic_sizing::compute_intrinsic_block_sizes(doc, node_id);
+            let block =
+                crate::intrinsic_sizing::compute_intrinsic_block_sizes_with_layout(doc, node_id);
             MinMaxSizes::new(block.min_content_block_size, block.max_content_block_size)
         };
         return match prop.length_type() {
@@ -3596,7 +3726,7 @@ fn resolve_cross_min_max(
 /// Compute cross-axis sizes for each line.
 /// Blink: PlaceFlexItems cross-size computation (line 1470-1558).
 fn compute_line_cross_sizes(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     items: &[FlexItem],
     lines: &mut [FlexLine],
     is_column: bool,
@@ -3654,11 +3784,12 @@ fn compute_line_cross_sizes(
             } else {
                 (&child_style.min_width, &child_style.max_width)
             };
-            let cross_pct_base = if is_main_axis_horizontal {
-                child_percentage_block
-            } else {
-                child_percentage_inline
-            };
+            let cross_pct_base =
+                FlexItemAxisMapping::new(child_style, is_column, is_main_axis_horizontal)
+                    .container_cross_percentage_size(
+                        child_percentage_inline,
+                        child_percentage_block,
+                    );
             let cross_min_raw = resolve_cross_min_max(
                 doc,
                 item.node_id,
@@ -3771,7 +3902,7 @@ fn compute_line_cross_sizes(
 
 /// Resolve the cross-axis size of a single flex item.
 fn resolve_cross_size(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     item: &FlexItem,
     child_style: &openui_style::ComputedStyle,
     is_column: bool,
@@ -3781,11 +3912,13 @@ fn resolve_cross_size(
     child_percentage_block: LayoutUnit,
     _space: &ConstraintSpace,
 ) -> LayoutUnit {
-    let (cross_prop, pct_base) = if is_main_axis_horizontal {
-        (&child_style.height, child_percentage_block)
+    let cross_prop = if is_main_axis_horizontal {
+        &child_style.height
     } else {
-        (&child_style.width, child_percentage_inline)
+        &child_style.width
     };
+    let pct_base = FlexItemAxisMapping::new(child_style, is_column, is_main_axis_horizontal)
+        .container_cross_percentage_size(child_percentage_inline, child_percentage_block);
 
     if cross_prop.is_stretch() && !pct_base.is_indefinite() {
         let margin_box = (pct_base - item.cross_axis_margin_extent()).clamp_negative_to_zero();
@@ -3862,7 +3995,7 @@ fn resolve_cross_size(
                 // item that is the child's block size, so percentage-height
                 // replaced descendants transfer that exact size into the
                 // fit-content cross contribution.
-                crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_block_size(
+                crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_block_size_with_layout(
                     doc,
                     item.node_id,
                     item.flexed_border_box_size(),
@@ -4017,7 +4150,7 @@ fn compute_intrinsic_block_size(
 /// Blink: `GiveItemsFinalPositionAndSize()` at line 1834.
 #[allow(clippy::too_many_arguments)]
 fn give_items_final_position(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     items: &mut [FlexItem],
     lines: &mut [FlexLine],
     is_column: bool,
@@ -4064,7 +4197,7 @@ fn give_items_final_position(
 
     // ── Resolve align-content (cross-axis line offsets) ──────────────
     // NOTE: Line stretching (align-content:stretch/normal) was already
-    // performed before reversals in flex_layout(), so lines are already
+    // performed before reversals in flex_layout_with_layout(), so lines are already
     // at their final cross sizes here. Just compute remaining free space.
     let total_line_cross: LayoutUnit = lines
         .iter()
@@ -4259,11 +4392,10 @@ fn give_items_final_position(
                 } else {
                     (&child_style.min_width, &child_style.max_width)
                 };
-                let cross_pct_base = if is_main_axis_horizontal {
-                    child_percentage_block
-                } else {
-                    child_percentage_inline
-                };
+                let cross_pct_base = axis_mapping.container_cross_percentage_size(
+                    child_percentage_inline,
+                    child_percentage_block,
+                );
                 let cross_min_raw = resolve_cross_min_max(
                     doc,
                     item.node_id,
@@ -4307,11 +4439,15 @@ fn give_items_final_position(
             if item.flex_grow == 0.0 {
                 if let Some(ar) = &child_style.aspect_ratio {
                     if ar.ratio.0 > 0.0 && ar.ratio.1 > 0.0 {
-                        let (cross_max_prop, cross_pct_base) = if is_column {
-                            (&child_style.max_width, child_percentage_inline)
+                        let cross_max_prop = if is_main_axis_horizontal {
+                            &child_style.max_height
                         } else {
-                            (&child_style.max_height, child_percentage_block)
+                            &child_style.max_width
                         };
+                        let cross_pct_base = axis_mapping.container_cross_percentage_size(
+                            child_percentage_inline,
+                            child_percentage_block,
+                        );
                         if !cross_max_prop.is_none()
                             && (!cross_pct_base.is_indefinite() || cross_max_prop.is_fixed())
                         {
@@ -4325,7 +4461,7 @@ fn give_items_final_position(
                                 == openui_style::BoxSizing::BorderBox
                                 && !ar.auto_flag
                             {
-                                if is_column {
+                                if !is_main_axis_horizontal {
                                     LayoutUnit::from_f32(
                                         cross_max.to_f32() * ar.ratio.1 / ar.ratio.0,
                                     )
@@ -4342,7 +4478,7 @@ fn give_items_final_position(
                                 } else {
                                     cross_max
                                 };
-                                let content_main = if is_column {
+                                let content_main = if !is_main_axis_horizontal {
                                     LayoutUnit::from_f32(
                                         content_cross.to_f32() * ar.ratio.1 / ar.ratio.0,
                                     )
@@ -4924,7 +5060,7 @@ fn give_items_final_position(
 }
 
 fn finalize_flex_fragment(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     fragment: &mut Fragment,
     style: &openui_style::ComputedStyle,
     is_column: bool,
@@ -5004,15 +5140,14 @@ fn finalize_flex_fragment(
     if overflow != border_box_rect {
         fragment.overflow_rect = Some(overflow);
     }
-    fragment.has_overflow_clip = style.overflow_x != openui_style::Overflow::Visible
-        || style.overflow_y != openui_style::Overflow::Visible;
+    fragment.has_overflow_clip = crate::scroll_area::has_overflow_clip(doc, fragment.node_id);
 
     fragment.first_baseline = flex_baseline_from_child(doc, fragment, style, is_column, true);
     fragment.last_baseline = flex_baseline_from_child(doc, fragment, style, is_column, false);
 }
 
 fn flex_baseline_from_child(
-    _doc: &Document,
+    _doc: &dyn LayoutDocument,
     fragment: &Fragment,
     style: &openui_style::ComputedStyle,
     is_column: bool,
@@ -5194,7 +5329,7 @@ fn edge_offset(edge: crate::out_of_flow::StaticPositionEdge, size: LayoutUnit) -
 }
 
 fn compute_abspos_static_position(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     child_id: NodeId,
     child_style: &openui_style::ComputedStyle,
     container_style: &openui_style::ComputedStyle,
@@ -5203,6 +5338,7 @@ fn compute_abspos_static_position(
     is_column: bool,
     border: &BoxStrut,
     padding: &BoxStrut,
+    scrollbar_insets: &BoxStrut,
 ) -> FlexAbsposStaticPosition {
     let writing_direction = container_style
         .direction
@@ -5232,7 +5368,7 @@ fn compute_abspos_static_position(
             false,
             child_direction,
         );
-    let child_fragment = crate::block::block_layout(doc, child_id, &child_space);
+    let child_fragment = crate::block::block_layout_with_layout(doc, child_id, &child_space);
     let child_margins = resolve_margins(child_style, physical_padding_box.width);
     let child_margin_box = PhysicalSize::new(
         child_fragment.size.width + child_margins.left + child_margins.right,
@@ -5243,8 +5379,18 @@ fn compute_abspos_static_position(
     let converter = WritingModeConverter::new(
         writing_direction,
         PhysicalSize::new(
-            content_width + border.left + border.right + padding.left + padding.right,
-            content_height + border.top + border.bottom + padding.top + padding.bottom,
+            content_width
+                + border.left
+                + border.right
+                + padding.left
+                + padding.right
+                + scrollbar_insets.inline_sum(),
+            content_height
+                + border.top
+                + border.bottom
+                + padding.top
+                + padding.bottom
+                + scrollbar_insets.block_sum(),
         ),
     );
     let content_logical = converter.to_logical_size(container_content_physical);
@@ -5302,12 +5448,15 @@ fn compute_abspos_static_position(
     };
     let logical_border = border.to_logical(writing_direction);
     let logical_padding = padding.to_logical(writing_direction);
+    let logical_scrollbars = scrollbar_insets.to_logical(writing_direction);
     let logical_anchor = LogicalOffset::new(
         logical_border.inline_start
             + logical_padding.inline_start
+            + logical_scrollbars.inline_start
             + edge_offset(inline_edge, content_logical.inline_size),
         logical_border.block_start
             + logical_padding.block_start
+            + logical_scrollbars.block_start
             + edge_offset(block_edge, content_logical.block_size),
     );
     let physical_anchor = converter.to_physical_offset(logical_anchor, PhysicalSize::zero());
@@ -5408,7 +5557,7 @@ mod tests {
         doc.append_child(container, sibling);
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(300), LayoutUnit::from_i32(200));
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
         assert_eq!(fragment.first_baseline, Some(LayoutUnit::from_i32(1)));
     }
 
@@ -5433,7 +5582,7 @@ mod tests {
         doc.update_resolved_style(trailing, |style| style.margin_bottom = Length::px(8.0));
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(300), LayoutUnit::from_i32(200));
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
         assert_eq!(fragment.height(), LayoutUnit::from_i32(20));
     }
 
@@ -5459,7 +5608,7 @@ mod tests {
         doc.update_resolved_style(clamped, |style| style.line_clamp = LineClamp::Lines(3));
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(300), LayoutUnit::from_i32(200));
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
         assert_eq!(fragment.height(), LayoutUnit::from_i32(12));
     }
 
@@ -5475,7 +5624,7 @@ mod tests {
         doc.update_resolved_style(second, |style| style.min_width = Length::zero());
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(300), LayoutUnit::from_i32(200));
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
         assert_eq!(fragment.children[0].offset.left, LayoutUnit::from_i32(120));
         assert_eq!(fragment.children[1].offset.left, LayoutUnit::from_i32(170));
     }
@@ -5712,8 +5861,10 @@ mod tests {
 
     #[test]
     fn overflow_padding_does_not_extend_an_items_existing_overflow_rect() {
+        let mut doc = Document::new();
+        let owner = doc.create_node(ElementTag::Div);
         let mut container = Fragment::new_box(
-            NodeId::NONE,
+            owner,
             PhysicalSize::new(LayoutUnit::from_i32(100), LayoutUnit::from_i32(100)),
         );
         container.padding = BoxStrut::new(
@@ -5734,7 +5885,7 @@ mod tests {
         container.children.push(item);
 
         finalize_flex_fragment(
-            &Document::new(),
+            &doc,
             &mut container,
             &openui_style::ComputedStyle::default(),
             false,
@@ -5745,8 +5896,10 @@ mod tests {
 
     #[test]
     fn scrollable_flex_overflow_includes_margin_box_and_end_padding() {
+        let mut doc = Document::new();
+        let owner = doc.create_node(ElementTag::Div);
         let mut container = Fragment::new_box(
-            NodeId::NONE,
+            owner,
             PhysicalSize::new(LayoutUnit::from_i32(86), LayoutUnit::from_i32(86)),
         );
         container.padding = BoxStrut::new(
@@ -5773,7 +5926,8 @@ mod tests {
             computed.overflow_x = Overflow::Scroll;
             computed.overflow_y = Overflow::Scroll;
         });
-        finalize_flex_fragment(&Document::new(), &mut container, &style, false);
+        doc.install_resolved_style(owner, style.clone());
+        finalize_flex_fragment(&doc, &mut container, &style, false);
 
         assert_eq!(
             container.overflow_rect,
@@ -5786,8 +5940,10 @@ mod tests {
 
     #[test]
     fn reversed_scrollable_flex_overflow_puts_end_padding_at_start() {
+        let mut doc = Document::new();
+        let owner = doc.create_node(ElementTag::Div);
         let mut container = Fragment::new_box(
-            NodeId::NONE,
+            owner,
             PhysicalSize::new(LayoutUnit::from_i32(86), LayoutUnit::from_i32(86)),
         );
         container.padding = BoxStrut::new(
@@ -5816,7 +5972,8 @@ mod tests {
             computed.overflow_x = Overflow::Scroll;
             computed.overflow_y = Overflow::Scroll;
         });
-        finalize_flex_fragment(&Document::new(), &mut container, &style, false);
+        doc.install_resolved_style(owner, style.clone());
+        finalize_flex_fragment(&doc, &mut container, &style, false);
 
         assert_eq!(
             container.overflow_rect,
@@ -5837,7 +5994,7 @@ mod tests {
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(300), LayoutUnit::from_i32(100));
 
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
 
         assert_eq!(fragment.children.len(), 3);
         // Items should be placed left-to-right: 0, 50, 130
@@ -5874,7 +6031,7 @@ mod tests {
             LayoutUnit::from_i32(30),
             direction,
         );
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
 
         assert_eq!(
             fragment.size,
@@ -5930,7 +6087,7 @@ mod tests {
             LayoutUnit::from_i32(100),
             direction,
         );
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
 
         assert_eq!(fragment.children[0].node_id, first);
         assert_eq!(fragment.children[1].node_id, second);
@@ -5963,7 +6120,7 @@ mod tests {
             LayoutUnit::from_i32(30),
             direction,
         );
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
 
         assert_eq!(
             fragment.children[0].offset,
@@ -6008,7 +6165,7 @@ mod tests {
             LayoutUnit::from_i32(30),
             direction,
         );
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
 
         assert_eq!(
             fragment.children[0].offset,
@@ -6055,7 +6212,7 @@ mod tests {
             LayoutUnit::from_i32(100),
             direction,
         );
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
 
         let offsets: Vec<_> = fragment.children.iter().map(|child| child.offset).collect();
         assert_eq!(
@@ -6100,7 +6257,7 @@ mod tests {
             LayoutUnit::from_i32(100),
             direction,
         );
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
 
         let offsets: Vec<_> = fragment.children.iter().map(|child| child.offset).collect();
         assert_eq!(
@@ -6177,8 +6334,8 @@ mod tests {
 
         let (target_doc, target_node, target_space) = build(false);
         let (reference_doc, reference_node, reference_space) = build(true);
-        let target = flex_layout(&target_doc, target_node, &target_space);
-        let reference = flex_layout(&reference_doc, reference_node, &reference_space);
+        let target = flex_layout_with_layout(&target_doc, target_node, &target_space);
+        let reference = flex_layout_with_layout(&reference_doc, reference_node, &reference_space);
         let mut target_geometry = Vec::new();
         let mut reference_geometry = Vec::new();
         geometry(&target, &mut target_geometry);
@@ -6211,7 +6368,7 @@ mod tests {
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(300), LayoutUnit::from_i32(100));
 
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
 
         // Each should get 150px width (300 / 2)
         assert_eq!(fragment.children[0].width(), LayoutUnit::from_i32(150));
@@ -6237,7 +6394,7 @@ mod tests {
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(400), LayoutUnit::from_i32(100));
 
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
 
         // Proportions: 1:2:1 of 400 = 100:200:100
         assert_eq!(fragment.children[0].width(), LayoutUnit::from_i32(100));
@@ -6264,7 +6421,7 @@ mod tests {
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(400), LayoutUnit::from_i32(100));
 
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
 
         // Total items = 100, free space = 300, offset = 150
         assert_eq!(fragment.children[0].offset.left, LayoutUnit::from_i32(150));
@@ -6292,7 +6449,7 @@ mod tests {
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(400), LayoutUnit::from_i32(100));
 
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
 
         // Free space = 250, 2 gaps → 125 each
         // Positions: 0, 50+125=175, 175+50+125=350
@@ -6321,7 +6478,7 @@ mod tests {
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(200), LayoutUnit::from_i32(300));
 
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
 
         assert_eq!(fragment.children.len(), 3);
         // First two on line 1, third on line 2
@@ -6349,7 +6506,7 @@ mod tests {
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(200), LayoutUnit::from_i32(300));
 
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
 
         // Column: items stack vertically
         assert_eq!(fragment.children[0].offset.top, LayoutUnit::zero());
@@ -6390,7 +6547,7 @@ mod tests {
             LayoutUnit::from_i32(100),
             direction,
         );
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
 
         let geometry: Vec<_> = fragment
             .children
@@ -6457,7 +6614,7 @@ mod tests {
             openui_geometry::INDEFINITE_SIZE,
             direction,
         );
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
 
         let total_child_block: LayoutUnit = fragment
             .children
@@ -6523,7 +6680,7 @@ mod tests {
                     LayoutUnit::from_i32(100),
                     writing_direction,
                 );
-                let fragment = flex_layout(&doc, container, &space);
+                let fragment = flex_layout_with_layout(&doc, container, &space);
                 let main_offsets: Vec<_> = fragment
                     .children
                     .iter()
@@ -6601,7 +6758,7 @@ mod tests {
                     LayoutUnit::from_i32(40),
                     direction,
                 );
-                let fragment = flex_layout(&doc, container, &space);
+                let fragment = flex_layout_with_layout(&doc, container, &space);
                 assert_eq!(fragment.children.len(), 4);
                 assert!(fragment.children.iter().all(|child| {
                     if flex_direction.is_column() {
@@ -6731,7 +6888,8 @@ mod tests {
             doc.append_child(container, child);
         }
 
-        let sizes = crate::intrinsic_sizing::compute_intrinsic_block_sizes(&doc, container);
+        let sizes =
+            crate::intrinsic_sizing::compute_intrinsic_block_sizes_with_layout(&doc, container);
         assert!(sizes.max_content_inline_size >= sizes.min_content_inline_size);
         assert!(sizes.max_content_block_size >= sizes.min_content_block_size);
     }
@@ -6776,7 +6934,7 @@ mod tests {
         assert_eq!(bounds.min, LayoutUnit::from_i32(200));
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(200), LayoutUnit::from_i32(200));
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
         assert_eq!(fragment.children[0].width(), LayoutUnit::from_i32(200));
         assert_eq!(fragment.children[0].height(), LayoutUnit::from_i32(200));
     }
@@ -6811,7 +6969,7 @@ mod tests {
         doc.append_child(item, canvas);
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(760), LayoutUnit::from_i32(560));
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
         assert_eq!(fragment.children[0].width(), LayoutUnit::from_i32(100));
     }
 
@@ -6833,7 +6991,7 @@ mod tests {
         doc.update_resolved_style(child, |style| style.flex_shrink = 0.0);
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(90), LayoutUnit::from_i32(90));
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
 
         assert_eq!(fragment.children[0].offset.top, LayoutUnit::zero());
     }
@@ -6858,7 +7016,7 @@ mod tests {
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(400), LayoutUnit::from_i32(100));
 
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
 
         // Positions: 0, 50+20=70, 70+50+20=140
         assert_eq!(fragment.children[0].offset.left, LayoutUnit::from_i32(0));
@@ -6881,7 +7039,7 @@ mod tests {
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(300), LayoutUnit::from_i32(100));
 
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
 
         // Order: c2(1), c3(2), c1(3)
         // c2 should be first (leftmost), c1 should be last (rightmost)
@@ -6908,7 +7066,7 @@ mod tests {
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(300), LayoutUnit::from_i32(100));
 
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
 
         // Cross space = 100 - 40 = 60, center offset = 30
         assert_eq!(fragment.children[0].offset.top, LayoutUnit::from_i32(30));
@@ -6934,7 +7092,7 @@ mod tests {
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(300), LayoutUnit::from_i32(100));
 
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
 
         // Row-reverse: items reversed, justify-content flex-start means right side
         // free_space = 300 - 130 = 170
@@ -6945,4 +7103,9 @@ mod tests {
         assert_eq!(fragment.children[0].node_id, c2);
         assert_eq!(fragment.children[1].node_id, c1);
     }
+}
+
+// Public entry points retain the original native Document signatures.
+pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> Fragment {
+    flex_layout_with_layout(doc, node_id, space)
 }

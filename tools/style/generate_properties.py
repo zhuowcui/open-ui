@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import csv
 import io
+import os
 import re
 from collections import Counter
 from pathlib import Path
@@ -14,12 +15,15 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 SCHEMA = ROOT / "bindings/rust/openui-style/property-schema.csv"
 INTERNAL_SCHEMA = ROOT / "bindings/rust/openui-style/internal-style-fields.csv"
+CANONICAL_SCHEMA = ROOT / "bindings/rust/openui-style/canonical-style-fields.csv"
+CANONICAL_IDS_SCHEMA = ROOT / "bindings/rust/openui-style/canonical-style-field-ids.csv"
 COMPUTED = ROOT / "bindings/rust/openui-style/src/computed.rs"
 RUST_OUT = ROOT / "bindings/rust/openui-style/src/generated_properties.rs"
 ACCESSORS_OUT = ROOT / "bindings/rust/openui-style/src/generated_computed_accessors.rs"
 C_OUT = ROOT / "include/openui_style_properties.h"
 DOC_OUT = ROOT / "docs/v02/generated/style-properties.md"
 FRAMEWORK_OUT = ROOT / "bindings/rust/openui/src/generated_style_setters.rs"
+AUTHORED_OUT = ROOT / "bindings/rust/openui-style/src/generated_authored_fields.rs"
 
 # Frozen from Chromium 147.0.7727.24's css_properties.json5 after excluding
 # descriptors, SVG-only properties, and non-stable runtime flags. Keeping the
@@ -68,6 +72,59 @@ def computed_fields() -> dict[str, str]:
 def field_names(row: dict[str, str]) -> list[str]:
     value = row["computed_fields"].strip()
     return [] if value == "-" else value.split(";")
+
+
+def canonical_group_fields(schema: list[dict[str, str]]) -> dict[str, list[str]]:
+    groups = {row["rust_name"]: field_names(row) for row in schema}
+    groups["BackgroundColor"] += ["background_current_color"]
+    groups["Transform"] += ["native_transform", "transform_matrix"]
+    corners = ["BorderTopLeftRadius", "BorderTopRightRadius", "BorderBottomRightRadius", "BorderBottomLeftRadius"]
+    for index, name in enumerate(corners):
+        groups[name] += [f"border_radius_percent[{index}]", f"border_radius_lengths[{index}]"]
+        numeric = field_names(next(row for row in schema if row["rust_name"] == name))[0]
+        for axis, suffix in enumerate(("X", "Y")):
+            groups[name + suffix] = [
+                f"{numeric}.{axis}", f"border_radius_percent[{index}].{axis}",
+                f"border_radius_lengths[{index}].{axis}",
+            ]
+    # This is an explicit native computed override, not a CSS longhand. Its
+    # identity is separate; its write set still intersects all corner sources.
+    groups["BorderRadiusPercent"] = [
+        field for index in range(4) for axis in range(2)
+        for field in (f"border_radius_percent[{index}].{axis}", f"border_radius_lengths[{index}].{axis}")
+    ]
+    return groups
+
+
+def canonical_rows(schema: list[dict[str, str]]) -> list[dict[str, str]]:
+    parsed = list(csv.DictReader(CANONICAL_SCHEMA.read_text().splitlines()))
+    if not parsed or set(parsed[0]) != {"property", "canonical_groups", "mutation_fields"}:
+        raise SystemExit("canonical style schema columns do not match the generator contract")
+    if [row["property"] for row in parsed] != [row["rust_name"] for row in schema]:
+        raise SystemExit("canonical ownership must cover every property exactly once in ID order")
+    groups = canonical_group_fields(schema)
+    fields = computed_fields()
+    for row in parsed:
+        names = row["canonical_groups"].split(";")
+        if len(names) != len(set(names)) or any(name not in groups for name in names):
+            raise SystemExit("invalid canonical groups for " + row["property"])
+        if any(not groups[name] and name != "Cursor" for name in names):
+            raise SystemExit("canonical owner has no projection: " + row["property"])
+        expected = list(dict.fromkeys(field for name in names for field in groups[name]))
+        writes = [] if row["mutation_fields"] == "-" else row["mutation_fields"].split(";")
+        if set(writes) != set(expected) or len(writes) != len(set(writes)):
+            raise SystemExit("canonical mutation fields disagree for " + row["property"])
+        for field in writes:
+            base = field.split("[")[0].split(".")[0]
+            if base not in fields:
+                raise SystemExit("unknown canonical projection field: " + field)
+            radius_numeric = {"border_top_left_radius", "border_top_right_radius", "border_bottom_right_radius", "border_bottom_left_radius"}
+            radius_arrays = {"border_radius_percent", "border_radius_lengths"}
+            allowed = {f"{name}[{i}]{suffix}" for name in radius_arrays for i in range(4) for suffix in ("", ".0", ".1")}
+            allowed |= {f"{name}.{axis}" for name in radius_numeric for axis in range(2)}
+            if ("[" in field or "." in field) and field not in allowed:
+                raise SystemExit("invalid canonical component projection: " + field)
+    return parsed
 
 
 def internal_rows() -> list[dict[str, str]]:
@@ -159,17 +216,209 @@ def rust_output(schema: list[dict[str, str]]) -> bytes:
     # this list owns exactly one field by schema construction.
     fields = computed_fields()
     renderer_rows = [row for row in schema if len(field_names(row)) == 1]
-    renderer_variants = "\n".join(
+    renderer_variants = "    ScrollSnapAlignPair([ScrollSnapAlign; 2]),\n" + "\n".join(
         f"    {row['rust_name']}({fields[field_names(row)[0]]})," for row in renderer_rows
     )
-    renderer_apply = "\n".join(
-        f"            (StyleProperty::{row['rust_name']}, Self::{row['rust_name']}(value)) => {{ style.fields.{field_names(row)[0]} = value.clone(); true }},"
+    renderer_apply = "            (StyleProperty::ScrollSnapAlign, Self::ScrollSnapAlignPair(value)) => { style.fields.scroll_snap_align = ScrollSnapAlign::None; style.fields.scroll_snap_align_block = Some(value[0]); style.fields.scroll_snap_align_inline = Some(value[1]); true },\n" + "\n".join(
+        f"            (StyleProperty::{row['rust_name']}, Self::{row['rust_name']}(value)) => {{ style.fields.{field_names(row)[0]} = value.clone();"
+        + (" style.fields.scroll_snap_align_block = None; style.fields.scroll_snap_align_inline = None;" if row['rust_name'] == 'ScrollSnapAlign' else "")
+        + (f" style.fields.border_radius_lengths[{['BorderTopLeftRadius', 'BorderTopRightRadius', 'BorderBottomRightRadius', 'BorderBottomLeftRadius'].index(row['rust_name'])}] = None;" if row['rust_name'] in {'BorderTopLeftRadius', 'BorderTopRightRadius', 'BorderBottomRightRadius', 'BorderBottomLeftRadius'} else "")
+        + (" style.fields.border_radius_lengths = [None; 4];" if row['rust_name'] == 'BorderRadiusPercent' else "")
+        + " true },"
         for row in renderer_rows
     )
     renderer_read = "\n".join(
+        "            StyleProperty::ScrollSnapAlign => Some(if style.fields.scroll_snap_align_block.is_some() || style.fields.scroll_snap_align_inline.is_some() { Self::ScrollSnapAlignPair([style.fields.scroll_snap_align_block.unwrap_or(style.fields.scroll_snap_align), style.fields.scroll_snap_align_inline.unwrap_or(style.fields.scroll_snap_align)]) } else { Self::ScrollSnapAlign(style.fields.scroll_snap_align) }),"
+        if row['rust_name'] == 'ScrollSnapAlign' else
         f"            StyleProperty::{row['rust_name']} => Some(Self::{row['rust_name']}(style.fields.{field_names(row)[0]}.clone())),"
         for row in renderer_rows
     )
+    # Animation endpoints and current computed values share one semantic
+    # conversion. Derive native wrappers from the public constructor surface;
+    # the renderer representation remains property-bound and lossless.
+    property_source = (ROOT / "bindings/rust/openui-style/src/property.rs").read_text()
+    native_variants = dict(re.findall(
+        r"impl_style_value!\(([^,]+),\s*([A-Za-z0-9_]+)\);", property_source
+    ))
+    typography_variants = dict(re.findall(
+        r"impl_typography_value!\(([^,]+),\s*([A-Za-z0-9_]+)\);", property_source
+    ))
+    animation_cases = []
+    for row in renderer_rows:
+        name = row["rust_name"]
+        field_type = fields[field_names(row)[0]].removeprefix("crate::")
+        kind = row["value_kind"]
+        expression = None
+        if kind == "number" and field_type == "f32":
+            expression = "Some(crate::CompositedStyleValue::Number { value: *value as f64, kind: crate::AnimationNumberKind::Number })"
+        elif kind == "integer" and field_type in {"i32", "u32"}:
+            expression = "Some(crate::CompositedStyleValue::Number { value: *value as f64, kind: crate::AnimationNumberKind::Integer })"
+        elif kind == "integer" and field_type in {"Option<i32>", "Option<u32>"}:
+            expression = "value.as_ref().map(|value| crate::CompositedStyleValue::Number { value: *value as f64, kind: crate::AnimationNumberKind::Integer })"
+        elif kind == "length" and field_type == "f32":
+            expression = "Some(crate::CompositedStyleValue::from_style_value(StyleValue::Length(LengthValue::px(*value))))"
+        elif kind == "length" and field_type == "Length":
+            expression = "Some(crate::CompositedStyleValue::from_style_value(StyleValue::Length(LengthValue::Computed(*value))))"
+        elif kind == "length" and field_type == "LengthValue":
+            expression = "Some(crate::CompositedStyleValue::from_style_value(StyleValue::Length(*value)))"
+        elif kind == "length" and field_type == "Option<Length>":
+            expression = "value.as_ref().map(|value| crate::CompositedStyleValue::from_style_value(StyleValue::Length(LengthValue::Computed(*value))))"
+        elif kind == "color" and field_type == "StyleColor":
+            # Keep keywords as owned working fractions; the property-bound
+            # sampler canonicalizes the schema's Color/compound representation.
+            expression = "Some(crate::CompositedStyleValue::from_style_value(StyleValue::Typography(TypographyValue::StyleColor(*value))))"
+        elif kind == "color" and field_type == "Option<Color>":
+            expression = "value.as_ref().map(|value| crate::CompositedStyleValue::from_style_value(StyleValue::Color(*value)))"
+        elif field_type == "Transform2D":
+            expression = "Some(crate::CompositedStyleValue::from_style_value(StyleValue::Transform(if *value == Transform2D::IDENTITY { TransformList::default() } else { TransformList(vec![TransformOperation::Matrix(*value)]) })))"
+        elif field_type in native_variants:
+            expression = f"Some(crate::CompositedStyleValue::from_style_value(StyleValue::{native_variants[field_type]}(value.clone())))"
+        elif field_type in typography_variants:
+            expression = f"Some(crate::CompositedStyleValue::from_style_value(StyleValue::Typography(TypographyValue::{typography_variants[field_type]}(value.clone()))))"
+        if expression is not None:
+            animation_cases.append(f"            Self::{name}(value) => {expression},")
+    animation_conversion = "\n".join(animation_cases)
+    # Copy computed values, without resolving inherited lengths again.
+    inherited_fields = sorted({field for row in schema if row["inherited"] == "true" for field in field_names(row)})
+    inherited_copy = "\n".join(f"        self.fields.{field} = parent.fields.{field}.clone();" for field in inherited_fields)
+    # Shorthands and normalization write more than their canonical inventory
+    # field. Use those write sets when deciding whether a repeated declaration
+    # is still effective after later declarations.
+    mutation_cases = []
+    for row in canonical_rows(schema):
+        names = [] if row["mutation_fields"] == "-" else row["mutation_fields"].split(";")
+        values = ", ".join(f'"{name}"' for name in names)
+        mutation_cases.append(f"            Self::{row['property']} => &[{values}],")
+    mutation_match = "\n".join(mutation_cases)
+
+    # Author values keep relative lengths until the engine resolves them. This
+    # bridge also serves C's scalar transport; computed renderer values remain
+    # a separate, lossless path through the same fields.
+    primitive_shapes = {
+        ("length", "Length"): ("Length", "resolve_length(*value)", "length(input).map(StyleValue::Length)"),
+        ("length", "Option<Length>"): (
+            "Length", "{ let value = resolve_length(*value); (!value.is_auto()).then_some(value) }",
+            "length(input).map(StyleValue::Length)",
+        ),
+        ("number", "f32"): ("Number", "*value", "input.parse::<f32>().ok().filter(|value| value.is_finite()).map(StyleValue::Number)"),
+        ("integer", "i32"): ("Integer", "*value", "input.parse::<i32>().ok().map(StyleValue::Integer)"),
+        ("integer", "u32"): ("Integer", "u32::try_from(*value).ok()?", None),
+        ("integer", "Option<u32>"): ("Integer", "Some(u32::try_from(*value).ok().filter(|value| *value > 0)?)", None),
+        ("color", "StyleColor"): ("Color", "StyleColor::Resolved(*value)", None),
+        ("color", "Option<Color>"): ("Color", "Some(*value)", None),
+        ("overflow", "Overflow"): ("Overflow", "*value", "overflow_literal(input).map(StyleValue::Overflow)"),
+        ("item-alignment", "ItemAlignment"): ("ItemAlignment", "*value", "item_alignment_literal(input).map(StyleValue::ItemAlignment)"),
+        ("content-alignment", "ContentAlignment"): ("ContentAlignment", "*value", "content_alignment_literal(input).map(StyleValue::ContentAlignment)"),
+    }
+    # These native value constructors are property-bound, owned renderer
+    # values. Keep every variant of each supported enum available through the
+    # same path that C uses, rather than interpreting an untyped enum number.
+    enum_keywords = {
+        "BorderCollapse": {"separate": "Separate", "collapse": "Collapse"},
+        "BorderStyle": {
+            "none": "None", "hidden": "Hidden", "dotted": "Dotted",
+            "dashed": "Dashed", "solid": "Solid", "double": "Double",
+            "groove": "Groove", "ridge": "Ridge", "inset": "Inset",
+            "outset": "Outset",
+        },
+        "BoxDecorationBreak": {"slice": "Slice", "clone": "Clone"},
+        "BreakValue": {
+            "auto": "Auto", "avoid": "Avoid", "avoid-page": "AvoidPage",
+            "avoid-column": "AvoidColumn", "page": "Page", "column": "Column",
+            "left": "Left", "right": "Right", "always": "Always",
+        },
+        "BreakInside": {
+            "auto": "Auto", "avoid": "Avoid", "avoid-page": "AvoidPage",
+            "avoid-column": "AvoidColumn",
+        },
+        "ColumnFill": {
+            "balance": "Balance", "balance-all": "BalanceAll", "auto": "Auto",
+        },
+        "ColumnSpan": {"none": "None", "all": "All"},
+        "ColumnWrap": {"auto": "Auto", "wrap": "Wrap", "nowrap": "NoWrap"},
+        "ScrollSnapStrictness": {"mandatory": "Mandatory", "proximity": "Proximity"},
+        "ScrollSnapStop": {"normal": "Normal", "always": "Always"},
+        "ScrollSnapAlign": {"none": "None", "start": "Start", "center": "Center", "end": "End"},
+        "ScrollSnapAxis": {"none": "None", "x": "X", "y": "Y", "both": "Both", "inline": "Inline", "block": "Block"},
+    }
+    enum_source = (ROOT / "bindings/rust/openui-style/src/enums.rs").read_text() + (ROOT / "bindings/rust/openui-style/src/layout_systems.rs").read_text()
+    for enum_type, keywords in enum_keywords.items():
+        declaration = re.search(
+            rf"pub enum {re.escape(enum_type)} \{{(.*?)\n\}}", enum_source, re.S
+        )
+        if declaration is None:
+            raise SystemExit(f"missing native enum declaration: {enum_type}")
+        declared_variants = set(re.findall(
+            r"^\s*(\w+)\s*(?:=\s*\d+)?\s*,?\s*$", declaration[1], re.M
+        ))
+        if declared_variants != set(keywords.values()):
+            raise SystemExit(f"native keyword constructors do not cover {enum_type}")
+    primitive_apply_cases = []
+    primitive_parse_cases = []
+    for row in renderer_rows:
+        field_type = fields[field_names(row)[0]]
+        if int(row["id"]) <= 125:
+            continue
+        shape = primitive_shapes.get((row["value_kind"], fields[field_names(row)[0]]))
+        if shape is None:
+            enum_type = fields[field_names(row)[0]]
+            if enum_type == "Option<ScrollSnapAlign>":
+                name = row["rust_name"]
+                cases = "\n".join(f'            "{keyword}" => Some(Some(ScrollSnapAlign::{variant})),' for keyword, variant in enum_keywords["ScrollSnapAlign"].items())
+                primitive_parse_cases.append(
+                    f"        StyleProperty::{name} => (match input.trim() {{\n{cases}\n            \"auto\" => Some(None),\n            _ => None,\n        }}).map(|value| StyleValue::Renderer(RendererStyleValue::{name}(value))),")
+                continue
+            if row["rust_name"] == "ScrollSnapAlign":
+                primitive_parse_cases.append("""        StyleProperty::ScrollSnapAlign => {
+            let align = |value| match value {
+                "none" => Some(ScrollSnapAlign::None), "start" => Some(ScrollSnapAlign::Start),
+                "center" => Some(ScrollSnapAlign::Center), "end" => Some(ScrollSnapAlign::End), _ => None,
+            };
+            match input.split_whitespace().collect::<Vec<_>>().as_slice() {
+                [value] => align(value).map(|value| StyleValue::Renderer(RendererStyleValue::ScrollSnapAlign(value))),
+                [block, inline] => Some(StyleValue::Renderer(RendererStyleValue::ScrollSnapAlignPair([align(block)?, align(inline)?]))),
+                _ => None,
+            }
+        },""")
+                continue
+            if enum_type in enum_keywords:
+                name = row["rust_name"]
+                cases = "\n".join(
+                    f'            "{keyword}" => Some({enum_type}::{variant}),'
+                    for keyword, variant in enum_keywords[enum_type].items()
+                )
+                primitive_parse_cases.append(
+                    f"        StyleProperty::{name} => (match input.trim() {{\n"
+                    f"{cases}\n            _ => None,\n"
+                    f"        }}).map(|value| StyleValue::Renderer(RendererStyleValue::{name}(value))),"
+                )
+                continue
+            if row["value_kind"] in {key[0] for key in primitive_shapes}:
+                raise SystemExit(f"missing author-value bridge for {row['css_name']}: {row['rust_type']}")
+            continue
+        variant, value, parse = shape
+        name = row["rust_name"]
+        primitive_apply_cases.append(
+            f"            (StyleProperty::{name}, StyleValue::{variant}(value)) => Some(Self::{name}({value})),"
+        )
+        if row["value_kind"] == "color" and field_type == "StyleColor":
+            primitive_apply_cases.append(
+                f"            (StyleProperty::{name}, StyleValue::Typography(TypographyValue::StyleColor(value))) => Some(Self::{name}(*value)),"
+            )
+        # ColumnCount's auto/positive literal parser is handwritten. Its
+        # native integer bridge still uses the checked generated apply path.
+        if name == "ColumnCount":
+            continue
+        if parse is None:
+            if row["rust_type"] == "u32":
+                parse = f"input.parse::<u32>().ok().map(|value| StyleValue::Renderer(RendererStyleValue::{name}(value)))"
+            elif row["rust_type"] == "StyleColor":
+                parse = f'if input.eq_ignore_ascii_case("currentcolor") {{ Some(StyleValue::Renderer(RendererStyleValue::{name}(StyleColor::CurrentColor))) }} else {{ color(input).map(StyleValue::Color) }}'
+            elif row["rust_type"] == "Option<Color>":
+                parse = f'if input == "auto" {{ Some(StyleValue::Renderer(RendererStyleValue::{name}(None))) }} else {{ color(input).map(StyleValue::Color) }}'
+        primitive_parse_cases.append(f"        StyleProperty::{name} => {parse},")
+    primitive_apply = "\n".join(primitive_apply_cases)
+    primitive_parse = "\n".join(primitive_parse_cases)
     internal = internal_rows()
     internal_variants = "\n".join(
         f"    {title(row['field'].replace('_', '-'))}({fields[row['field']]}),"
@@ -185,7 +434,7 @@ def rust_output(schema: list[dict[str, str]]) -> bytes:
                 f"    pub fn {rust_method(row['css_name'])}(self, value: {row['rust_type']}) -> Self {{",
                 (
                     f"        self.with(StyleProperty::{row['rust_name']}, value)"
-                    if int(row["id"]) <= 125
+                    if int(row["id"]) <= 125 or row["rust_type"] == "LengthValue"
                     else f"        self.with_renderer(StyleProperty::{row['rust_name']}, RendererStyleValue::{row['rust_name']}(value))"
                 ),
                 "    }",
@@ -211,7 +460,8 @@ pub enum StyleProperty {{
 }}
 
 /// Schema-generated values for renderer longhands appended after the stable
-/// v0.2 property surface. Each variant is tied to exactly one computed field.
+/// v0.2 property surface. Variants are property-bound; the paired snap value
+/// writes both logical alignments through the existing align property.
 #[derive(Debug, Clone)]
 pub enum RendererStyleValue {{
 {renderer_variants}
@@ -230,14 +480,40 @@ impl PartialEq for RendererStyleValue {{
 impl RendererStyleValue {{
     pub fn property(&self) -> StyleProperty {{
         match self {{
+            Self::ScrollSnapAlignPair(..) => StyleProperty::ScrollSnapAlign,
 {chr(10).join(f"            Self::{row['rust_name']}(..) => StyleProperty::{row['rust_name']}," for row in renderer_rows)}
         }}
     }}
 
     pub(crate) fn apply(&self, style: &mut ComputedStyle, property: StyleProperty) -> bool {{
+        if matches!((property, self),
+            (StyleProperty::WhiteSpace, Self::WhiteSpace(_)) |
+            (StyleProperty::TextWrap, Self::TextWrap(_))) {{
+            return apply_to_computed(style, property, &StyleValue::Renderer(self.clone()), (0.0, 0.0)).is_ok();
+        }}
         match (property, self) {{
 {renderer_apply}
             _ => false,
+        }}
+    }}
+
+    /// Convert supported computed payloads through the shared native animation
+    /// value path. Optional/auto and unresolved keyword sources remain owned.
+    pub(crate) fn animation_value(&self) -> Option<crate::CompositedStyleValue> {{
+        match self {{
+{animation_conversion}
+            _ => None,
+        }}
+    }}
+
+    pub(crate) fn from_author_value(
+        property: StyleProperty,
+        value: &StyleValue,
+        resolve_length: impl Fn(LengthValue) -> Length,
+    ) -> Option<Self> {{
+        match (property, value) {{
+{primitive_apply}
+            _ => None,
         }}
     }}
 
@@ -249,6 +525,13 @@ impl RendererStyleValue {{
 {renderer_read}
             _ => None,
         }}
+    }}
+}}
+
+fn parse_renderer_author_literal(property: StyleProperty, input: &str) -> Option<StyleValue> {{
+    match property {{
+{primitive_parse}
+        _ => None,
     }}
 }}
 
@@ -269,7 +552,28 @@ impl RendererInternalStyleValue {{
     }}
 }}
 
+impl ComputedStyle {{
+    /// Copy modeled inherited computed fields from a parent snapshot.
+    /// Authored values are reapplied by the retained engine afterwards.
+    #[doc(hidden)]
+    pub fn inherit_properties_from(&mut self, parent: &Self) {{
+{inherited_copy}
+        self.resolve_current_color_dependencies();
+    }}
+}}
+
 impl StyleProperty {{
+    #[doc(hidden)]
+    pub fn affects_same_fields_as(self, other: Self) -> bool {{
+        self == other || self.mutation_fields().iter().any(|field| other.mutation_fields().contains(field))
+    }}
+
+    fn mutation_fields(self) -> &'static [&'static str] {{
+        match self {{
+{mutation_match}
+        }}
+    }}
+
     pub fn from_u16(value: u16) -> Option<Self> {{
         PROPERTY_METADATA
             .get(value.checked_sub(1)? as usize)
@@ -324,8 +628,11 @@ impl Style {{
 
 
 def c_output(schema: list[dict[str, str]]) -> bytes:
+    # Preserve the published spelling; new vendor properties avoid a reserved
+    # double underscore in C++ identifiers.
+    legacy_c_names = {"-webkit-font-smoothing": "_WEBKIT_FONT_SMOOTHING"}
     enum_rows = "\n".join(
-        f"  OUI_STYLE_PROPERTY_{screaming(row['css_name'])} = {row['id']}," for row in schema
+        f"  OUI_STYLE_PROPERTY_{legacy_c_names.get(row['css_name'], screaming(row['css_name'].lstrip('-')))} = {row['id']}," for row in schema
     )
     text = f"""/* @generated by tools/style/generate_properties.py; do not edit. */
 #ifndef OPENUI_STYLE_PROPERTIES_H_
@@ -360,7 +667,7 @@ def framework_output(schema: list[dict[str, str]]) -> bytes:
                 f"    pub fn set_{rust_method(row['css_name'])}(&self, value: {row['rust_type']}) -> Result<(), Error> {{",
                 (
                     f"        self.set_property(StyleProperty::{row['rust_name']}, value.into())"
-                    if int(row["id"]) <= 125
+                    if int(row["id"]) <= 125 or row["rust_type"] == "LengthValue"
                     else f"        self.set_property(StyleProperty::{row['rust_name']}, StyleValue::Renderer(RendererStyleValue::{row['rust_name']}(value)))"
                 ),
                 "    }",
@@ -420,10 +727,73 @@ def accessors_output(schema: list[dict[str, str]]) -> bytes:
     ).encode()
 
 
+def authored_output(schema: list[dict[str, str]]) -> bytes:
+    ownership = canonical_rows(schema)
+    group_fields = canonical_group_fields(schema)
+    used = {name for row in ownership for name in row["canonical_groups"].split(";")}
+    # Stable IDs are an owned ledger: old paired compatibility owners remain
+    # available even when new axis declarations use more precise live masks.
+    ledger = list(csv.DictReader(CANONICAL_IDS_SCHEMA.read_text().splitlines()))
+    if not ledger or set(ledger[0]) != {"id", "canonical_group"}:
+        raise SystemExit("canonical ID ledger columns do not match")
+    if [int(row["id"]) for row in ledger] != list(range(len(ledger))):
+        raise SystemExit("canonical ID ledger must be contiguous and ordered")
+    names = [row["canonical_group"] for row in ledger]
+    if len(names) != len(set(names)) or not used.issubset(names) or any(name not in group_fields for name in names):
+        raise SystemExit("canonical ID ledger must cover all owners with existing property identities")
+    def expanded_fields(fields):
+        radius_names = {"border_top_left_radius", "border_top_right_radius", "border_bottom_right_radius", "border_bottom_left_radius"}
+        radius_pairs = {f"{name}[{i}]" for name in ("border_radius_percent", "border_radius_lengths") for i in range(4)}
+        return {component for field in fields for component in
+                ((field + ".0", field + ".1") if field in radius_names | radius_pairs else (field,))}
+    variants = "\n".join(f"    {name} = {index}," for index, name in enumerate(names))
+    values = "\n".join(f"    CanonicalStyleField::{name}," for name in names)
+    copy_cases = []
+    write_cases = []
+    words = (len(names) + 63) // 64
+    for name in names:
+        fields = group_fields[name]
+        radius_axes = [corner + axis for corner in ("BorderTopLeftRadius", "BorderTopRightRadius", "BorderBottomRightRadius", "BorderBottomLeftRadius") for axis in ("X", "Y")]
+        if name in radius_axes:
+            index = radius_axes.index(name)
+            assignments = f"target.copy_border_radius_axis_from(source, {index // 2}, {index % 2});"
+        elif name == "BorderRadiusPercent":
+            assignments = "target.fields.border_radius_percent = source.fields.border_radius_percent; target.fields.border_radius_lengths = source.fields.border_radius_lengths;"
+        else:
+            assignments = " ".join(f"target.fields.{field} = source.fields.{field}.clone();" for field in fields)
+        copy_cases.append(f"            Self::{name} => {{ {assignments} }},")
+        dependent = [0] * words
+        for index, other in enumerate(names):
+            if expanded_fields(fields).intersection(expanded_fields(group_fields[other])):
+                dependent[index // 64] |= 1 << (index % 64)
+        write_cases.append(f"            Self::{name} => CanonicalStyleFields([{', '.join(str(word) for word in dependent)}]),")
+    property_cases = []
+    for row in ownership:
+        groups = ", ".join(f"CanonicalStyleField::{name}" for name in row["canonical_groups"].split(";"))
+        property_cases.append(f"            Self::{row['property']} => &[{groups}],")
+    return ("// @generated by tools/style/generate_properties.py; do not edit.\n"
+            "// Canonical ownership is separate from derived/write dependencies.\n"
+            f"\nconst CANONICAL_STYLE_FIELD_WORDS: usize = {words};\n\n"
+            "#[doc(hidden)]\n#[derive(Debug, Clone, Copy, PartialEq, Eq)]\n#[repr(u16)]\n"
+            "pub enum CanonicalStyleField {\n" + variants + "\n}\n\n"
+            "const CANONICAL_STYLE_FIELDS: &[CanonicalStyleField] = &[\n" + values + "\n];\n\n"
+            "#[rustfmt::skip]\nimpl CanonicalStyleField {\n"
+            "    #[allow(clippy::clone_on_copy)]\n"
+            "    fn copy_from(self, target: &mut ComputedStyle, source: &ComputedStyle) {\n"
+            "        match self {\n" + "\n".join(copy_cases) + "\n        }\n    }\n"
+            "    fn dependent_mutation_groups(self) -> CanonicalStyleFields {\n"
+            "        match self {\n" + "\n".join(write_cases) + "\n        }\n    }\n}\n"
+            "\n#[rustfmt::skip]\nimpl StyleProperty {\n"
+            "    #[doc(hidden)]\n"
+            "    pub fn canonical_field_groups(self) -> &'static [CanonicalStyleField] {\n"
+            "        match self {\n" + "\n".join(property_cases) + "\n        }\n    }\n}\n").encode()
+
+
 def outputs() -> dict[Path, bytes]:
     schema = rows()
     return {
         RUST_OUT: rust_output(schema),
+        AUTHORED_OUT: authored_output(schema),
         ACCESSORS_OUT: accessors_output(schema),
         FRAMEWORK_OUT: framework_output(schema),
         C_OUT: c_output(schema),
@@ -444,7 +814,11 @@ def main() -> None:
         return
     for path, data in generated.items():
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_bytes(data)
+        mode = path.stat().st_mode if path.exists() else 0o644
+        temporary = path.with_name(path.name + ".generated-new")
+        temporary.write_bytes(data)
+        os.chmod(temporary, mode)
+        temporary.replace(path)
     print(f"style schema: wrote={len(generated)} properties={len(rows())}")
 
 

@@ -1,0 +1,854 @@
+diff --git a/bindings/rust/openui-compositor/src/ganesh_gl.rs b/bindings/rust/openui-compositor/src/ganesh_gl.rs
+index fbcd01af..6e82a7d9 100644
+--- a/bindings/rust/openui-compositor/src/ganesh_gl.rs
++++ b/bindings/rust/openui-compositor/src/ganesh_gl.rs
+@@ -1,7 +1,8 @@
+ //! Explicit offscreen EGL/Mesa Ganesh compositor.
+ 
+ use super::{
+-    CompositorError, CompositorStats, Frame, RasterBackendIdentity, SceneGeneration, SceneSnapshot,
++    CachedFrame, CompositorError, CompositorStats, Frame, RasterBackendIdentity, SceneGeneration,
++    SceneSnapshot,
+ };
+ use glutin::api::egl::{context::PossiblyCurrentContext, device::Device, display::Display};
+ use glutin::config::{ConfigSurfaceTypes, ConfigTemplateBuilder, GlConfig};
+@@ -15,12 +16,13 @@ use skia_safe::{
+ use std::ffi::CStr;
+ 
+ pub struct GaneshGlCompositor {
+-    // Field order is intentional: Ganesh must be destroyed before EGL.
++    // Field order is intentional: recordings must be destroyed before Ganesh,
++    // and Ganesh must be destroyed before EGL.
++    last_frame: Option<CachedFrame>,
+     direct_context: gpu::DirectContext,
+     _gl_context: PossiblyCurrentContext,
+     identity: RasterBackendIdentity,
+     last_presented: Option<SceneGeneration>,
+-    last_frame: Option<Frame>,
+     stats: CompositorStats,
+ }
+ 
+@@ -184,11 +186,13 @@ impl GaneshGlCompositor {
+ 
+     pub fn render(&mut self, scene: &SceneSnapshot) -> Result<Frame, CompositorError> {
+         self.stats.submitted += 1;
+-        if self.last_presented == Some(scene.generation) {
+-            if let Some(frame) = self.last_frame.clone() {
+-                self.stats.reused += 1;
+-                return Ok(frame);
+-            }
++        if let Some(frame) = self
++            .last_frame
++            .as_ref()
++            .and_then(|cached| cached.frame_for(scene))
++        {
++            self.stats.reused += 1;
++            return Ok(frame);
+         }
+         let mut surface = self.render_surface(scene)?;
+         let width = scene.viewport.physical_width();
+@@ -220,7 +224,7 @@ impl GaneshGlCompositor {
+         };
+         self.stats.rasterized += 1;
+         self.last_presented = Some(scene.generation);
+-        self.last_frame = Some(frame.clone());
++        self.last_frame = Some(CachedFrame::new(scene, frame.clone()));
+         Ok(frame)
+     }
+ 
+diff --git a/bindings/rust/openui-compositor/src/lib.rs b/bindings/rust/openui-compositor/src/lib.rs
+index 06d2914c..b866c4b5 100644
+--- a/bindings/rust/openui-compositor/src/lib.rs
++++ b/bindings/rust/openui-compositor/src/lib.rs
+@@ -193,10 +193,32 @@ impl std::fmt::Display for CompositorError {
+ 
+ impl std::error::Error for CompositorError {}
+ 
++/// Retain the immutable recording while its frame is cached. Scene generations
++/// belong to individual documents, so a generation alone cannot identify pixels.
++struct CachedFrame {
++    picture: Arc<RecordedPicture>,
++    frame: Frame,
++}
++
++impl CachedFrame {
++    fn new(scene: &SceneSnapshot, frame: Frame) -> Self {
++        Self {
++            picture: Arc::clone(&scene.picture),
++            frame,
++        }
++    }
++
++    fn frame_for(&self, scene: &SceneSnapshot) -> Option<Frame> {
++        (self.frame.scene_generation == scene.generation
++            && Arc::ptr_eq(&self.picture, &scene.picture))
++        .then(|| self.frame.clone())
++    }
++}
++
+ #[derive(Default)]
+ pub struct SoftwareCompositor {
+     last_presented: Option<SceneGeneration>,
+-    last_frame: Option<Frame>,
++    last_frame: Option<CachedFrame>,
+     stats: CompositorStats,
+ }
+ 
+@@ -208,11 +230,13 @@ impl SoftwareCompositor {
+             ));
+         }
+         self.stats.submitted += 1;
+-        if self.last_presented == Some(scene.generation) {
+-            if let Some(frame) = self.last_frame.clone() {
+-                self.stats.reused += 1;
+-                return Ok(frame);
+-            }
++        if let Some(frame) = self
++            .last_frame
++            .as_ref()
++            .and_then(|cached| cached.frame_for(scene))
++        {
++            self.stats.reused += 1;
++            return Ok(frame);
+         }
+         let mut surface = rasterize_picture(&scene.picture).map_err(CompositorError::Raster)?;
+         let image = surface.image_snapshot();
+@@ -245,7 +269,7 @@ impl SoftwareCompositor {
+         };
+         self.stats.rasterized += 1;
+         self.last_presented = Some(scene.generation);
+-        self.last_frame = Some(frame.clone());
++        self.last_frame = Some(CachedFrame::new(scene, frame.clone()));
+         Ok(frame)
+     }
+ 
+@@ -339,6 +363,16 @@ impl SceneMailbox {
+ mod tests {
+     use super::*;
+ 
++    fn recorded_scene(
++        viewport: ViewportMetrics,
++        configuration: RasterConfiguration,
++    ) -> SceneSnapshot {
++        let mut document = openui_dom::Document::new();
++        document.set_raster_context(configuration, viewport.device_scale_factor());
++        let (fragment, picture) = openui_paint::record_document(&document, viewport).unwrap();
++        SceneSnapshot::new(SceneGeneration(1), picture, Arc::new(fragment), Vec::new())
++    }
++
+     #[test]
+     fn immutable_scenes_can_cross_render_threads() {
+         fn assert_send_sync<T: Send + Sync>() {}
+@@ -391,6 +425,93 @@ mod tests {
+         assert_eq!(compositor.stats().reused, 1);
+     }
+ 
++    #[test]
++    fn software_frame_cache_accepts_new_viewports_with_equal_generations() {
++        let first = recorded_scene(
++            ViewportMetrics::from_logical_size(10.0, 10.0, 1.0).unwrap(),
++            RasterConfiguration::default(),
++        );
++        let second = recorded_scene(
++            ViewportMetrics::from_logical_size(16.0, 12.0, 2.0).unwrap(),
++            RasterConfiguration::chromium_linux_lcd(),
++        );
++        let mut compositor = SoftwareCompositor::default();
++        assert_eq!(compositor.render(&first).unwrap().width, 10);
++        let frame = compositor.render(&second).unwrap();
++        assert_eq!((frame.width, frame.height), (32, 24));
++        assert_eq!(frame.viewport, second.viewport());
++        assert_eq!(frame.raster_configuration, second.raster_configuration());
++        assert_eq!(compositor.render(&second.clone()).unwrap(), frame);
++        assert_eq!(compositor.stats().rasterized, 2);
++        assert_eq!(compositor.stats().reused, 1);
++    }
++
++    #[test]
++    fn frame_cache_releases_recordings_on_replacement_png_and_drop() {
++        let viewport = ViewportMetrics::from_logical_size(10.0, 10.0, 1.0).unwrap();
++        let first = recorded_scene(viewport, RasterConfiguration::default());
++        let first_picture = Arc::downgrade(&first.picture);
++        let mut compositor = SoftwareCompositor::default();
++        compositor.render(&first).unwrap();
++        drop(first);
++        assert!(first_picture.upgrade().is_some());
++
++        let second = recorded_scene(viewport, RasterConfiguration::default());
++        let second_picture = Arc::downgrade(&second.picture);
++        compositor.render(&second).unwrap();
++        assert!(first_picture.upgrade().is_none());
++        drop(second);
++        assert!(second_picture.upgrade().is_some());
++
++        let third = recorded_scene(viewport, RasterConfiguration::default());
++        let third_picture = Arc::downgrade(&third.picture);
++        compositor.render_png(&third).unwrap();
++        assert!(second_picture.upgrade().is_none());
++        drop(third);
++        assert!(third_picture.upgrade().is_none());
++
++        let fourth = recorded_scene(viewport, RasterConfiguration::default());
++        let fourth_picture = Arc::downgrade(&fourth.picture);
++        compositor.render(&fourth).unwrap();
++        drop(fourth);
++        assert!(fourth_picture.upgrade().is_some());
++        drop(compositor);
++        assert!(fourth_picture.upgrade().is_none());
++    }
++
++    #[cfg(feature = "ganesh-gl")]
++    #[test]
++    fn ganesh_frame_cache_distinguishes_recordings_and_rejects_cpu_scenes() {
++        let first = recorded_scene(
++            ViewportMetrics::from_logical_size(10.0, 10.0, 1.0).unwrap(),
++            RasterConfiguration::chromium_linux_ganesh(),
++        );
++        let second = recorded_scene(
++            ViewportMetrics::from_logical_size(16.0, 12.0, 2.0).unwrap(),
++            RasterConfiguration::chromium_linux_ganesh(),
++        );
++        let cpu = recorded_scene(first.viewport(), RasterConfiguration::default());
++        let mut compositor = GaneshGlCompositor::new().unwrap();
++        let first_frame = compositor.render(&first).unwrap();
++        assert_eq!(compositor.render(&first.clone()).unwrap(), first_frame);
++        assert!(matches!(
++            compositor.render(&cpu),
++            Err(CompositorError::Raster(_))
++        ));
++        assert_eq!(compositor.stats().rasterized, 1);
++        assert_eq!(compositor.stats().reused, 1);
++
++        let second_frame = compositor.render(&second).unwrap();
++        assert_eq!((second_frame.width, second_frame.height), (32, 24));
++        assert_eq!(compositor.render(&second.clone()).unwrap(), second_frame);
++        assert_eq!(compositor.stats().rasterized, 2);
++        assert_eq!(compositor.stats().reused, 2);
++        compositor.render_png(&first).unwrap();
++        assert_eq!(compositor.render(&second).unwrap(), second_frame);
++        assert_eq!(compositor.stats().rasterized, 4);
++        assert_eq!(compositor.stats().reused, 2);
++    }
++
+     #[test]
+     fn damage_is_converted_outward_to_physical_pixels() {
+         use openui_dom::Document;
+diff --git a/bindings/rust/openui-engine/src/lib.rs b/bindings/rust/openui-engine/src/lib.rs
+index 03c9167d..4b2448b5 100644
+--- a/bindings/rust/openui-engine/src/lib.rs
++++ b/bindings/rust/openui-engine/src/lib.rs
+@@ -2609,6 +2609,217 @@ mod tests {
+         }
+     }
+ 
++    #[test]
++    fn native_intrinsic_collapsible_leading_spaces_preserve_width_and_indentation() {
++        use openui_geometry::Length;
++        use openui_style::{FontFamilyList, LineHeight, Position};
++
++        // Independent Chromium queries distinguish installed aliased Ahem
++        // (80px) from the same bytes supplied as a font resource (80.015625px).
++        // Collapsible leading whitespace changes neither width. Preserve the
++        // selected font's advance rather than normalizing away its remainder.
++        for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
++            for (configuration, expected) in [
++                (RasterConfiguration::default(), 80.015625),
++                (RasterConfiguration::deterministic_aliased(false), 80.0),
++            ] {
++                for context in ["absolute", "inline-block", "float", "min", "max"] {
++                    let mut engine = Engine::new_with_font_collection_and_options(
++                        ViewportMetrics::from_logical_size(320.0, 160.0, scale).unwrap(),
++                        FontCollection::deterministic_test(),
++                        EngineOptions {
++                            raster_configuration: configuration,
++                        },
++                    )
++                    .unwrap();
++                    let root = engine.root();
++                    engine
++                        .set_property(
++                            root,
++                            StyleProperty::FontFamily,
++                            StyleValue::Renderer(RendererStyleValue::FontFamily(
++                                FontFamilyList::single("Ahem"),
++                            )),
++                        )
++                        .unwrap();
++                    engine
++                        .set_property(root, StyleProperty::FontSize, LengthValue::px(16.0).into())
++                        .unwrap();
++                    engine
++                        .set_property(
++                            root,
++                            StyleProperty::LineHeight,
++                            StyleValue::Renderer(RendererStyleValue::LineHeight(
++                                LineHeight::Number(1.0),
++                            )),
++                        )
++                        .unwrap();
++                    let target = engine.create_native_element(ElementTag::Div).unwrap();
++                    match context {
++                        "absolute" => engine
++                            .set_property(
++                                target,
++                                StyleProperty::Position,
++                                Position::Absolute.into(),
++                            )
++                            .unwrap(),
++                        "inline-block" => engine
++                            .set_property(
++                                target,
++                                StyleProperty::Display,
++                                Display::InlineBlock.into(),
++                            )
++                            .unwrap(),
++                        "float" => engine
++                            .set_property(
++                                target,
++                                StyleProperty::Float,
++                                openui_style::Float::Left.into(),
++                            )
++                            .unwrap(),
++                        "min" => engine
++                            .set_property(
++                                target,
++                                StyleProperty::Width,
++                                LengthValue::Computed(Length::min_content()).into(),
++                            )
++                            .unwrap(),
++                        "max" => engine
++                            .set_property(
++                                target,
++                                StyleProperty::Width,
++                                LengthValue::Computed(Length::max_content()).into(),
++                            )
++                            .unwrap(),
++                        _ => unreachable!(),
++                    }
++                    let text = engine.create_text("XXXXX").unwrap();
++                    engine.append_child(target, text).unwrap();
++                    engine.append_child(root, target).unwrap();
++                    for value in ["XXXXX", " XXXXX", "XXXXX ", " XXXXX ", "\n XXXXX\n"] {
++                        engine.set_text(text, value).unwrap();
++                        let bounds = engine.bounds(target).unwrap().unwrap();
++                        assert_eq!(
++                            bounds.width, expected,
++                            "scale={scale} context={context} value={value:?}"
++                        );
++                        assert_eq!(bounds.height, 16.0);
++                    }
++                    engine
++                        .set_property(
++                            root,
++                            StyleProperty::TextIndent,
++                            LengthValue::px(20.0).into(),
++                        )
++                        .unwrap();
++                    assert_eq!(
++                        engine.bounds(target).unwrap().unwrap().width,
++                        expected + 20.0
++                    );
++                    engine
++                        .set_property(
++                            target,
++                            StyleProperty::WhiteSpace,
++                            StyleValue::Renderer(RendererStyleValue::WhiteSpace(
++                                openui_style::WhiteSpace::PreLine,
++                            )),
++                        )
++                        .unwrap();
++                    engine.set_text(text, "X\n XXXXX").unwrap();
++                    assert_eq!(engine.bounds(target).unwrap().unwrap().width, expected);
++                    assert_eq!(engine.bounds(target).unwrap().unwrap().height, 32.0);
++                }
++            }
++        }
++    }
++
++    #[test]
++    fn native_atomic_constraints_contribute_to_enclosing_intrinsic_size() {
++        use openui_geometry::Length;
++        use openui_style::BoxSizing;
++
++        // A consuming app's outer inline-block must reserve the inner box's
++        // constrained size, rather than only its unconstrained 20px content
++        // and 20px padding. The corresponding Chromium border boxes measure
++        // 40px with no minimum, 200px with a border-box minimum, and 220px
++        // with a content-box minimum. A smaller maximum cannot defeat a min.
++        for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
++            for (sizing, minimum, expected) in [
++                (BoxSizing::BorderBox, 0.0, 40.0),
++                (BoxSizing::BorderBox, 200.0, 200.0),
++                (BoxSizing::ContentBox, 200.0, 220.0),
++            ] {
++                let mut engine =
++                    Engine::new(ViewportMetrics::from_logical_size(320.0, 160.0, scale).unwrap())
++                        .unwrap();
++                let root = engine.root();
++                let outer = engine.create_native_element(ElementTag::Div).unwrap();
++                let inner = engine.create_native_element(ElementTag::Div).unwrap();
++                let content = engine.create_native_element(ElementTag::Div).unwrap();
++                for node in [outer, inner] {
++                    engine
++                        .set_property(node, StyleProperty::Display, Display::InlineBlock.into())
++                        .unwrap();
++                }
++                engine
++                    .set_property(
++                        inner,
++                        StyleProperty::BoxSizing,
++                        StyleValue::Renderer(RendererStyleValue::BoxSizing(sizing)),
++                    )
++                    .unwrap();
++                engine
++                    .set_property(
++                        inner,
++                        StyleProperty::Width,
++                        LengthValue::Computed(Length::min_content()).into(),
++                    )
++                    .unwrap();
++                engine
++                    .set_property(
++                        inner,
++                        StyleProperty::MinWidth,
++                        LengthValue::px(minimum).into(),
++                    )
++                    .unwrap();
++                for property in [
++                    StyleProperty::PaddingTop,
++                    StyleProperty::PaddingRight,
++                    StyleProperty::PaddingBottom,
++                    StyleProperty::PaddingLeft,
++                ] {
++                    engine
++                        .set_property(inner, property, LengthValue::px(10.0).into())
++                        .unwrap();
++                }
++                for property in [StyleProperty::Width, StyleProperty::Height] {
++                    engine
++                        .set_property(content, property, LengthValue::px(20.0).into())
++                        .unwrap();
++                }
++                engine.append_child(inner, content).unwrap();
++                engine.append_child(outer, inner).unwrap();
++                engine.append_child(root, outer).unwrap();
++                let snapshot = engine.bounds(outer).unwrap().unwrap();
++                assert_eq!(snapshot.width, expected, "scale={scale} sizing={sizing:?}");
++                assert_eq!(engine.bounds(inner).unwrap().unwrap().width, expected);
++                engine
++                    .set_property(
++                        inner,
++                        StyleProperty::MaxWidth,
++                        LengthValue::px(100.0).into(),
++                    )
++                    .unwrap();
++                assert_eq!(engine.bounds(outer).unwrap().unwrap().width, expected);
++                engine
++                    .set_property(inner, StyleProperty::MinWidth, LengthValue::px(0.0).into())
++                    .unwrap();
++                assert_eq!(engine.bounds(outer).unwrap().unwrap().width, 40.0);
++                assert_eq!(snapshot.width, expected, "owned bounds retain their value");
++            }
++        }
++    }
++
+     #[test]
+     fn native_resolved_computed_defaults_preserve_snapshots_and_native_inheritance() {
+         let mut engine =
+@@ -3261,6 +3472,56 @@ mod tests {
+         assert_eq!(generation.0, before_accessibility.scenes);
+     }
+ 
++    #[test]
++    fn compositor_distinguishes_owned_recordings_with_equal_document_generations() {
++        for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
++            let mut scenes = Vec::new();
++            for color in [Color::RED, Color::BLUE] {
++                let mut engine =
++                    Engine::new(ViewportMetrics::from_logical_size(64.0, 48.0, scale).unwrap())
++                        .unwrap();
++                let element = engine.create_element(ElementTag::Div).unwrap();
++                engine.append_child(engine.root(), element).unwrap();
++                engine
++                    .set_property(element, StyleProperty::Display, Display::Block.into())
++                    .unwrap();
++                engine
++                    .set_property(element, StyleProperty::Width, LengthValue::px(32.0).into())
++                    .unwrap();
++                engine
++                    .set_property(element, StyleProperty::Height, LengthValue::px(24.0).into())
++                    .unwrap();
++                engine
++                    .set_property(element, StyleProperty::BackgroundColor, color.into())
++                    .unwrap();
++                scenes.push(engine.scene().unwrap());
++                // Rendering below uses owned scenes after both documents die.
++            }
++            assert_eq!(scenes[0].generation(), scenes[1].generation());
++            let first = SoftwareCompositor::default().render(&scenes[0]).unwrap();
++            let second = SoftwareCompositor::default().render(&scenes[1]).unwrap();
++            assert_ne!(first.pixels, second.pixels);
++
++            let mut compositor = SoftwareCompositor::default();
++            assert_eq!(compositor.render(&scenes[0]).unwrap(), first);
++            assert_eq!(compositor.render(&scenes[0].clone()).unwrap(), first);
++            assert_eq!(compositor.stats().rasterized, 1);
++            assert_eq!(compositor.stats().reused, 1);
++            assert_eq!(
++                compositor.render(&scenes[1]).unwrap(),
++                second,
++                "scale={scale}"
++            );
++            assert_eq!(compositor.stats().rasterized, 2);
++            assert_eq!(compositor.stats().reused, 1);
++            assert_eq!(compositor.render(&scenes[1].clone()).unwrap(), second);
++            assert_eq!(compositor.stats().rasterized, 2);
++            assert_eq!(compositor.stats().reused, 2);
++            assert_eq!(compositor.render(&scenes[0]).unwrap(), first);
++            assert_eq!(compositor.stats().rasterized, 3);
++        }
++    }
++
+     #[test]
+     fn typed_tree_renders_through_scene_compositor() {
+         let mut engine =
+diff --git a/bindings/rust/openui-layout/src/intrinsic_sizing.rs b/bindings/rust/openui-layout/src/intrinsic_sizing.rs
+index e7365c35..43b56288 100644
+--- a/bindings/rust/openui-layout/src/intrinsic_sizing.rs
++++ b/bindings/rust/openui-layout/src/intrinsic_sizing.rs
+@@ -346,7 +346,11 @@ fn intrinsic_close_rounding_excess(data: &InlineItemsData, close_item_index: usi
+ /// IFC needs line-break state across DOM boundaries. This compact scanner is
+ /// deliberately fed by `InlineItemsBuilder`, which has already performed CSS
+ /// white-space processing and emitted explicit open/close decoration items.
+-fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> MinMaxSizes {
++fn compute_inline_sequence_intrinsic_sizes(
++    doc: &Document,
++    node_id: NodeId,
++    child_contributions: Option<&std::collections::HashMap<NodeId, IntrinsicSizes>>,
++) -> MinMaxSizes {
+     let container_style = &doc.node(node_id).style;
+     let mut data = InlineItemsBuilder::collect_for_intrinsic_sizes(doc, node_id);
+     let base_direction = if container_style.unicode_bidi == openui_style::UnicodeBidi::Plaintext {
+@@ -395,6 +399,9 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
+ 
+     let mut max_line = first_line_indent;
+     let mut max_content = LayoutUnit::zero();
++    // Indentation and decoration edges do not make line-start whitespace
++    // interior. Only text or an atomic object does.
++    let mut line_has_content = false;
+     let mut pending_collapsible_space = LayoutUnit::zero();
+     let mut pending_min_collapsible_space = LayoutUnit::zero();
+ 
+@@ -477,6 +484,7 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
+                 last_content_was_text = false;
+             }
+             InlineItemType::Control => {
++                line_has_content = false;
+                 soft_break_after_pending_edges = false;
+                 last_content_was_text = false;
+                 pending_min_collapsible_space = LayoutUnit::zero();
+@@ -510,20 +518,24 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
+                 soft_break_after_pending_edges = false;
+                 last_content_was_text = false;
+ 
+-                let margin = resolve_margins(style, LayoutUnit::zero()).inline_sum();
+-                let border = resolve_border(style).inline_sum();
+-                let padding = resolve_padding(style, LayoutUnit::zero()).inline_sum();
+-                let intrinsic = item
+-                    .intrinsic_inline_size
+-                    .map(|(min, max)| {
+-                        (
+-                            LayoutUnit::from_f32(min) + border + padding + margin,
+-                            LayoutUnit::from_f32(max) + border + padding + margin,
+-                        )
+-                    })
+-                    .unwrap_or((border + padding + margin, border + padding + margin));
+-                min_segment = min_segment + intrinsic.0;
+-                max_line = max_line + pending_collapsible_space + intrinsic.1;
++                // An atomic child's contribution includes its preferred size,
++                // min/max constraints, decorations and margins. The content
++                // endpoints stored on an inline item omit those constraints;
++                // using them here can reserve 40px for a box whose own layout
++                // produces a 200px minimum. Share the block/flex contribution
++                // calculation so enclosing intrinsic sizes retain the same
++                // constrained box that normal layout will place.
++                // Reuse direct-child contributions already resolved by the
++                // enclosing walk, including parent-dependent replaced sizes.
++                // Nested atomics inside inline wrappers still use the shared
++                // contribution calculation at their own boundary.
++                let intrinsic = child_contributions
++                    .and_then(|contributions| contributions.get(&item.node_id))
++                    .copied()
++                    .unwrap_or_else(|| compute_child_intrinsic_contribution(doc, item.node_id));
++                min_segment = min_segment + intrinsic.min_content_inline_size;
++                max_line = max_line + pending_collapsible_space + intrinsic.max_content_inline_size;
++                line_has_content = true;
+                 pending_collapsible_space = LayoutUnit::zero();
+                 // Atomic inline-level boxes establish a soft wrap
+                 // opportunity at their boundary. Adjacent inline-blocks
+@@ -574,6 +586,15 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
+                             || style.line_break == LineBreak::Anywhere)
+                         && !is_space
+                         && !is_forced;
++                    if collapses && is_space && !line_has_content && byte_index == run_start {
++                        // Leading spaces contribute no width or soft break.
++                        // Snap advances after them so the first word retains
++                        // both its font's remainder and the first-line indent.
++                        run_start = byte_end;
++                        run_start_char = char_end;
++                        line_start_char = char_end;
++                        continue;
++                    }
+                     if !is_space && !is_forced && !is_break_all_character {
+                         continue;
+                     }
+@@ -614,6 +635,7 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
+                         min_segment = min_segment + width;
+                         max_line = max_line + pending_collapsible_space + max_width;
+                         pending_collapsible_space = LayoutUnit::zero();
++                        line_has_content = true;
+                     }
+ 
+                     if is_forced {
+@@ -630,6 +652,7 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
+                             &mut pending_collapsible_space,
+                         );
+                         line_start_char = char_end;
++                        line_has_content = false;
+                     } else if is_break_all_character {
+                         let max_width =
+                             intrinsic_text_width(shape.width_for_range(line_start_char, char_end))
+@@ -656,6 +679,7 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
+                         min_segment = min_segment + width;
+                         max_line = max_line + pending_collapsible_space + max_width;
+                         pending_collapsible_space = LayoutUnit::zero();
++                        line_has_content = true;
+                         soft_break_pending = true;
+                         soft_break_after_pending_edges = false;
+                         last_content_was_text = true;
+@@ -671,6 +695,7 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
+                         } else {
+                             max_line = max_line + pending_collapsible_space + max_width;
+                             pending_collapsible_space = LayoutUnit::zero();
++                            line_has_content = true;
+                         }
+                         if wraps {
+                             soft_break_pending = true;
+@@ -731,6 +756,7 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
+                     min_segment = min_segment + width;
+                     max_line = max_line + pending_collapsible_space + max_width;
+                     pending_collapsible_space = LayoutUnit::zero();
++                    line_has_content = true;
+                 }
+             }
+             InlineItemType::BlockInInline => {}
+@@ -867,6 +893,7 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
+         .iter()
+         .map(|(_, child_id, _)| *child_id)
+         .collect();
++    let mut child_contributions = std::collections::HashMap::new();
+     for (ordered_index, child_id) in ordered_child_ids.iter().copied().enumerate() {
+         let child_style = &doc.node(child_id).style;
+ 
+@@ -964,6 +991,9 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
+         }
+         let child_is_inline =
+             is_inline_level(child_style) || doc.node(child_id).tag == ElementTag::Text;
++        if child_is_inline && doc.node(child_id).tag != ElementTag::Text {
++            child_contributions.insert(child_id, child_sizes);
++        }
+ 
+         if multicol_algo.is_some() {
+             if has_spanner_descendant_through_transparent_wrappers(doc, child_id) {
+@@ -1081,7 +1111,8 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
+             .iter()
+             .any(|child| doc.node(*child).style.float != openui_style::Float::None);
+         if !has_float_children {
+-            let inline_sizes = compute_inline_sequence_intrinsic_sizes(doc, node_id);
++            let inline_sizes =
++                compute_inline_sequence_intrinsic_sizes(doc, node_id, Some(&child_contributions));
+             min_inline = inline_sizes.min;
+             max_inline = inline_sizes.max;
+         }
+@@ -4254,7 +4285,7 @@ mod tests {
+         }
+ 
+         assert_eq!(
+-            compute_inline_sequence_intrinsic_sizes(&doc, container),
++            compute_inline_sequence_intrinsic_sizes(&doc, container, None),
+             MinMaxSizes::new(LayoutUnit::from_i32(25), LayoutUnit::from_i32(125))
+         );
+     }
+diff --git a/bindings/rust/openui/examples/native_intrinsic_constraints.rs b/bindings/rust/openui/examples/native_intrinsic_constraints.rs
+new file mode 100644
+index 00000000..a3a4504d
+--- /dev/null
++++ b/bindings/rust/openui/examples/native_intrinsic_constraints.rs
+@@ -0,0 +1,167 @@
++//! Public native Rust app for atomic constraints and leading whitespace.
++use openui::prelude::*;
++use std::{cell::Cell, path::PathBuf, rc::Rc};
++
++fn bounds_json(element: &Element) -> Result<String, Box<dyn std::error::Error>> {
++    let r = element.bounding_rect()?.ok_or("native box required")?;
++    Ok(format!(
++        "{{\"x\":{},\"y\":{},\"width\":{},\"height\":{}}}",
++        r.x, r.y, r.width, r.height
++    ))
++}
++
++fn main() -> Result<(), Box<dyn std::error::Error>> {
++    let mut args = std::env::args().skip(1);
++    let output = PathBuf::from(args.next().ok_or("output directory required")?);
++    let scale: f64 = args.next().ok_or("device scale required")?.parse()?;
++    let mode = args.next().ok_or("constraints or whitespace required")?;
++    let context = args.next().ok_or("layout context required")?;
++    let sizing = args.next().unwrap_or_else(|| "border-box".into());
++    let minimum: f32 = args.next().unwrap_or_else(|| "200".into()).parse()?;
++    let profile = args.next().unwrap_or_else(|| "owned".into());
++    if args.next().is_some()
++        || !matches!(mode.as_str(), "constraints" | "whitespace")
++        || !matches!(sizing.as_str(), "border-box" | "content-box")
++        || ![0.0, 60.0, 200.0].contains(&minimum)
++        || !matches!(profile.as_str(), "owned" | "installed")
++    {
++        return Err("invalid native case arguments".into());
++    }
++    let configuration = if profile == "installed" {
++        RasterConfiguration::deterministic_aliased(false)
++    } else {
++        RasterConfiguration::default()
++    };
++    let document = Document::with_font_collection_and_options(
++        ViewportMetrics::from_logical_size(320.0, 240.0, scale)?,
++        FontCollection::deterministic_test(),
++        EngineOptions {
++            raster_configuration: configuration,
++        },
++    )?;
++    assert_eq!(document.raster_configuration()?, configuration);
++    let root = document.body();
++    root.set_background_color(Color::WHITE)?;
++    root.set_font_family(FontFamilyList::single("Ahem"))?;
++    root.set_font_size(LengthValue::px(16.0))?;
++    root.set_line_height(LineHeight::Number(1.0))?;
++    let parent = Element::create(&document, "div")?;
++    parent.set_position(Position::Relative)?;
++    parent.set_width(LengthValue::px(240.0))?;
++    parent.set_height(LengthValue::px(200.0))?;
++    root.append_child(&parent)?;
++    let outer = Element::create(&document, "div")?;
++    match context.as_str() {
++        "absolute" => outer.set_position(Position::Absolute)?,
++        "inline-block" => outer.set_display(Display::InlineBlock)?,
++        "float" => outer.set_float(Float::Left)?,
++        "min-content" => outer.set_width(LengthValue::Computed(Length::min_content()))?,
++        "max-content" => outer.set_width(LengthValue::Computed(Length::max_content()))?,
++        _ => return Err("invalid native layout context".into()),
++    }
++    outer.set_background_color(Color::RED)?;
++    parent.append_child(&outer)?;
++    let inner = Element::create(&document, "div")?;
++    let content = Element::create(&document, "div")?;
++    if mode == "constraints" {
++        inner.set_display(Display::InlineBlock)?;
++        inner.set_width(LengthValue::Computed(Length::min_content()))?;
++        inner.set_min_width(LengthValue::px(minimum))?;
++        inner.set_box_sizing(if sizing == "border-box" {
++            BoxSizing::BorderBox
++        } else {
++            BoxSizing::ContentBox
++        })?;
++        inner.set_padding(Edges::all(LengthValue::px(10.0)))?;
++        inner.set_background_color(Color::GREEN)?;
++        content.set_width(LengthValue::px(20.0))?;
++        content.set_height(LengthValue::px(20.0))?;
++        content.set_background_color(Color::BLUE)?;
++        inner.append_child(&content)?;
++        outer.append_child(&inner)?;
++    } else {
++        outer.set_text("\n XXXXX\n")?;
++    }
++    let before_snapshot = outer
++        .bounding_rect()?
++        .ok_or("owned before bounds required")?;
++    let constrained_width = |value: f32| {
++        if sizing == "border-box" {
++            value.max(40.0)
++        } else {
++            (value + 20.0).max(40.0)
++        }
++    };
++    let text_width = if profile == "installed" {
++        80.0
++    } else {
++        80.015625
++    };
++    let expected_before = if mode == "constraints" {
++        constrained_width(minimum)
++    } else {
++        text_width
++    };
++    assert_eq!(before_snapshot.width, expected_before);
++    let before = bounds_json(&outer)?;
++    std::fs::create_dir_all(&output)?;
++    std::fs::write(output.join("before.png"), document.render_to_png_buffer()?)?;
++    let calls = Rc::new(Cell::new(0));
++    let observed = calls.clone();
++    let weak_outer = outer.downgrade();
++    let weak_inner = inner.downgrade();
++    let target = weak_inner.clone();
++    let text_target = weak_outer.clone();
++    let constraints = mode == "constraints";
++    let next_minimum = if minimum == 0.0 { 200.0 } else { 0.0 };
++    outer.on("click", move |_| {
++        if constraints {
++            let element = target.upgrade().expect("native inner remains alive");
++            element
++                .set_min_width(LengthValue::px(next_minimum))
++                .expect("minimum mutation");
++            element
++                .set_max_width(LengthValue::px(100.0))
++                .expect("maximum mutation");
++        } else {
++            let element = text_target.upgrade().expect("native target remains alive");
++            element.set_text(" XXXXX ").expect("text mutation");
++            element
++                .set_text_indent(LengthValue::px(20.0))
++                .expect("indent mutation");
++        }
++        observed.set(observed.get() + 1);
++    })?;
++    outer.click()?;
++    assert_eq!(calls.get(), 1);
++    let after = bounds_json(&outer)?;
++    let after_snapshot = outer
++        .bounding_rect()?
++        .ok_or("owned after bounds required")?;
++    let expected_after = if constraints {
++        constrained_width(next_minimum)
++    } else {
++        text_width + 20.0
++    };
++    assert_eq!(after_snapshot.width, expected_after);
++    assert_eq!(before_snapshot.width, expected_before);
++    std::fs::write(output.join("after.png"), document.render_to_png_buffer()?)?;
++    std::fs::write(
++        output.join("geometry.json"),
++        format!("{{\"before\":{before},\"after\":{after}}}\n"),
++    )?;
++    // Retain owned geometry after native document teardown; callbacks hold
++    // only weak elements and must not keep the document alive.
++    drop(content);
++    drop(inner);
++    drop(outer);
++    drop(parent);
++    drop(root);
++    drop(document);
++    assert!(weak_outer.upgrade().is_none());
++    assert!(weak_inner.upgrade().is_none());
++    assert_eq!(before_snapshot.width, expected_before);
++    assert_eq!(after_snapshot.width, expected_after);
++    println!("native intrinsic constraints: {mode} {context} {sizing} min={minimum} profile={profile} scale={scale} callback=1 owned-bounds=2 teardown=1 passed");
++    Ok(())
++}

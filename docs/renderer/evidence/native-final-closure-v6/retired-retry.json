@@ -1,0 +1,8 @@
+{
+  "owner_pid": 2283510,
+  "prior_receipt_sha256": "f0f76eba1baa59ee527b65d096335a58bc8bb559ca9ff6862938443ee1295cd8",
+  "prior_stage": "awaiting-independent-epoch-lock",
+  "reason": "Prioritize a freshly rebuilt current-source census after the radius, timing and retained-source checkpoints; unchanged old-source retry has not executed.",
+  "signal": "SIGTERM",
+  "native_or_browser_child_executed": false
+}

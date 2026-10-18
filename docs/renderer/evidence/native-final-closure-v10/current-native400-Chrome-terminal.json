@@ -1,0 +1,10 @@
+{
+  "observer_pid": 3762607,
+  "writer_pid": 3762608,
+  "actual_exit_code": 0,
+  "reaped_ECHILD": true,
+  "writer_pid_absent": true,
+  "stdout_sha256": "c6836894a705b7bb64d2c74543113f8f944600d26c79bf6545ec19da1df96ef4",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "native_browser_execution": false
+}

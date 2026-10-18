@@ -122,6 +122,60 @@ class CensusSummaryTests(unittest.TestCase):
             {key: value for key, value in snapshot.items() if key != "output_sha256"}
         ))
 
+    def set_raster_policy(self, index, override, match):
+        report = json.loads(self.paths[index].read_text())
+        report["selection"] = {"monochrome_raster_config": override}
+        report["evidence"]["qualification_policy_match"] = match
+        self.paths[index].write_text(json.dumps(report))
+
+    def test_old_and_explicit_automatic_policies_share_original_identity(self):
+        self.set_raster_policy(1, None, True)
+        snapshot = self.summarize()
+        self.assertEqual(snapshot["raster_policy"], {
+            "monochrome_raster_config": None,
+            "qualification_policy_match": True,
+        })
+        self.assertFalse(snapshot["qualifying"])
+
+    def test_mixed_automatic_and_candidate_policies_fail(self):
+        self.set_raster_policy(1, "chromium-linux-monochrome", False)
+        with self.assertRaisesRegex(ValueError, "mixed raster policy identity"):
+            self.summarize()
+
+    def test_mixed_candidate_overrides_fail(self):
+        self.set_raster_policy(0, "deterministic-alias", False)
+        self.set_raster_policy(1, "chromium-linux-monochrome", False)
+        with self.assertRaisesRegex(ValueError, "mixed raster policy identity"):
+            self.summarize()
+
+    def test_homogeneous_candidate_policy_is_retained_and_never_qualifies(self):
+        for index in range(2):
+            self.set_raster_policy(index, "chromium-linux-monochrome", False)
+        snapshot = self.summarize()
+        self.assertEqual(snapshot["raster_policy"], {
+            "monochrome_raster_config": "chromium-linux-monochrome",
+            "qualification_policy_match": False,
+        })
+        self.assertFalse(snapshot["qualifying"])
+        self.assertEqual(snapshot["comparison_counts"],
+                         {"exact": 3, "different": 1, "error": 0})
+
+    def test_inconsistent_or_untyped_policy_match_fails(self):
+        for override, match in ((None, False), ("chromium-linux-monochrome", True),
+                                (None, 1), (None, None)):
+            with self.subTest(override=override, match=match):
+                self.set_raster_policy(1, override, match)
+                with self.assertRaisesRegex(ValueError, "inconsistent qualification_policy_match"):
+                    self.summarize()
+
+    def test_candidate_without_policy_match_does_not_default_to_original(self):
+        self.set_raster_policy(1, "chromium-linux-monochrome", False)
+        report = json.loads(self.paths[1].read_text())
+        del report["evidence"]["qualification_policy_match"]
+        self.paths[1].write_text(json.dumps(report))
+        with self.assertRaisesRegex(ValueError, "inconsistent qualification_policy_match"):
+            self.summarize()
+
     def test_missing_or_duplicate_shards_fail(self):
         for paths in (self.paths[:1], [self.paths[0], self.paths[0]]):
             with self.assertRaisesRegex(ValueError, "shard indices"):

@@ -1,0 +1,56 @@
+{
+  "all_commands_terminal": false,
+  "all_seven_jobs_passed": false,
+  "conclusion": "",
+  "job_conclusions": {
+    "": 4,
+    "success": 3
+  },
+  "jobs": [
+    {
+      "conclusion": "success",
+      "name": "miri-handles",
+      "status": "completed"
+    },
+    {
+      "conclusion": "",
+      "name": "fuzz-smoke",
+      "status": "in_progress"
+    },
+    {
+      "conclusion": "",
+      "name": "msrv",
+      "status": "in_progress"
+    },
+    {
+      "conclusion": "",
+      "name": "conformance-and-platform",
+      "status": "in_progress"
+    },
+    {
+      "conclusion": "success",
+      "name": "c-undefined-sanitizer",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "native-sanitizers (address)",
+      "status": "completed"
+    },
+    {
+      "conclusion": "",
+      "name": "native-sanitizers (leak)",
+      "status": "in_progress"
+    }
+  ],
+  "native_pixel_qualification": false,
+  "owner_pid": 3784255,
+  "probe_sha256": "52eeed2e7cfb45d4c92a3835952b59672351b93ac3972360605354a8450f0339",
+  "release_qualification": false,
+  "run_id": 37344385577,
+  "run_url": "https://github.com/zhuowcui/open-ui/actions/runs/37344385577",
+  "schema_version": 1,
+  "source": "e389b26ab28f259544e43c3052c895501e4c8686",
+  "state": "awaiting-own-source-manual-hardening",
+  "status": "in_progress"
+}

@@ -1,0 +1,48 @@
+{
+  "all_commands_terminal": true,
+  "c_raster_configuration_parity": "prepared, uncompiled and unqualified",
+  "existing_exports_preserved": 113,
+  "immutable_probe_hashes": {
+    "/tmp/openui-native-c-raster-build-v1295.py": "0900cbec312ba1a5c156b21e4efbd1b7568417ab9e83a7de9f6d5107e4e18a3c",
+    "/tmp/openui-native-c-raster-consumer-v1297.py": "6f13c682d0be3ab6aa22780f4d13f16e87a6642c3be9267fce5cee7c39dcb90d",
+    "/tmp/openui-native-c-raster-matrices-v1298.py": "771d1a879bcd3ec989bef84d01cc74ace119e1a27953fca67ac99025869ae4a6",
+    "/tmp/openui-native-c-raster-miri-v1296.py": "df4423ea55c0bd8013fa2e0f7b65496540a28ecba789726a08b4b24f2b7de6d6"
+  },
+  "inherits_unapplied_intrinsic_and_font_trials": true,
+  "javascript_executed_by_openui": false,
+  "new_release_states_admitted": 0,
+  "old_openui_pixels_are_provenance_only": true,
+  "ordered_build_and_image_stages": true,
+  "original_pixel_gate_remains_required": true,
+  "owner_observed_exit_code": 143,
+  "planned_stages_executed": 0,
+  "prior_whole_pipelines": [
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/scene-recording-cache-pipeline-v1233/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-pipeline-v1265/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-backends-pipeline-v1281/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-umbrella-pipeline-v1291/receipt.json"
+  ],
+  "probe_sha256": "75555068512916331411b9a86b1cd271d524cbb2af5626d97441640a1832e787",
+  "promotion_allowed": false,
+  "proposed_exports": 117,
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "3395cefad116fa93a2db8f839ff707fb84230a3a",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "bddddbd1c64f35de60da2824163682eb11c95ef7da5a8536bea17f43a73c60cb",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "3395cefad116fa93a2db8f839ff707fb84230a3a",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "bddddbd1c64f35de60da2824163682eb11c95ef7da5a8536bea17f43a73c60cb",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "state": "superseded-before-build-due-to-known-parent-consumer-type-errors",
+  "steps": [],
+  "superseded": true,
+  "supersession_reason": "Known parent native_font_raster example has two LengthValue/Length compile errors; no C build or image stage has started."
+}

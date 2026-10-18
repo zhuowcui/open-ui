@@ -1,0 +1,36 @@
+{
+  "backend": "software",
+  "consumers": [
+    {
+      "binary_sha256": "99235b52277e6b994b4c407c544623fe501e5b4ce1925d5dd273c590370dcd22",
+      "compiler": "/home/nero/chromium/src/third_party/llvm-build/Release+Asserts/bin/clang",
+      "returncode": 0,
+      "source": "examples/c_v02/native/window.c",
+      "source_sha256": "bfee1cb2abcf994b059f5a40c2c6ace43d5597699b07703d918ce5c6d5fef78b",
+      "stderr": "",
+      "stdout": "native C: backend=2 frames=2 resized=1 input=2\n",
+      "timed_out": false
+    },
+    {
+      "binary_sha256": "cae959b1ee9d2786b16e8297308d7fbd931e4a3211f716305a238536a90e0d42",
+      "compiler": "/home/nero/chromium/src/third_party/llvm-build/Release+Asserts/bin/clang++",
+      "returncode": 0,
+      "source": "examples/c_v02/native/window.cc",
+      "source_sha256": "44fdeb2af0108e25873e1d1d3ba7650d504e756eabf90e79b38c1b6a42289de1",
+      "stderr": "",
+      "stdout": "native C++: backend=2 frames=2\n",
+      "timed_out": false
+    }
+  ],
+  "header_sha256": "60e10ac3477bb4a212ec96a266cfc62955b4438648f4fd9ed758908d5329113d",
+  "kind": "native_c_cpp_window_functional_smoke",
+  "library_sha256": "a20064ec0fbc6068dbf2238f85b5d4b588d063c6ead4561967b765c88701d158",
+  "passed": true,
+  "protocol": "wayland",
+  "release_qualification": false,
+  "schema_version": 1,
+  "source_changes": [],
+  "source_clean": true,
+  "source_commit": "07be54f91c7f24d06d70a49360f4221e685220ed",
+  "tool_sha256": "54f3952a0c0d0dee2c351f193c454ac3557cd6b99b6d7a4f751955f45e4cbbf8"
+}

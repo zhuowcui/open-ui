@@ -1,0 +1,13 @@
+{
+  "fontconfig_sha256": "99fd54cf2f3875bba44a2272b3dfe5adc7c08263ca0511ec2473ec5e59c09195",
+  "installed_font_path": "/home/nero/.local/share/fonts/Ahem.ttf",
+  "installed_font_sha256": "b719ecb31c5b21fc573c03f6421c74ac63c271a5a3ff841e34f9705fb94b8448",
+  "javascript_executed_by_openui": false,
+  "observed_exit_code": 0,
+  "owned_font_path": "/home/nero/code/open-ui/bindings/rust/openui-text/fonts/Ahem.ttf",
+  "owned_font_sha256": "b719ecb31c5b21fc573c03f6421c74ac63c271a5a3ff841e34f9705fb94b8448",
+  "queries_only": true,
+  "release_qualification": false,
+  "same_font_bytes": true,
+  "screenshots_generated": 0
+}

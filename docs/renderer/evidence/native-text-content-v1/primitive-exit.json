@@ -1,0 +1,27 @@
+{
+  "command": [
+    "/usr/bin/python3",
+    "/dev/shm/openui-native-raster-fields-retry-e0dc491e/tools/qualification/run_renderer_matrix.py",
+    "--suite",
+    "primitive",
+    "--results-dir",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-primitive-v1559",
+    "--cache-dir",
+    "/mnt/e/openui-v02-qualification-d174ea0b/renderer-cache",
+    "--oracle-cache-dir",
+    "/home/nero/code/open-ui/out/renderer-qualification-cache/chromium-oracle",
+    "--pixel-compare",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/pixel_compare",
+    "--chrome",
+    "/home/nero/code/open-ui/chrome/linux-147.0.7727.50/chrome-linux64/chrome",
+    "--raster-backend",
+    "cpu-skia",
+    "--jobs",
+    "2"
+  ],
+  "log_sha256": "eec05866f2905f10610df3636171d962182dd1500abb8e434ad483496a75d2f8",
+  "observed_exit_code": 0,
+  "release_qualification": false,
+  "schema_version": 1,
+  "suite": "primitive"
+}

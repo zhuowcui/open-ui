@@ -1,0 +1,7 @@
+{
+  "all_written_probes_preserved": true,
+  "native_owner_v1672_never_started": true,
+  "reason": "prefix-only inheritance filter omitted the inherited-styles guard",
+  "schema_version": 1,
+  "v1671_preflight_exit": 1
+}

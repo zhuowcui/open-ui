@@ -1,0 +1,9 @@
+{
+  "branch": "agent/native-text-content-v1613",
+  "dispatched_at_utc": "2026-10-05T18:03:12.030645+00:00",
+  "native_pixel_qualification": false,
+  "observed_exit_code": 0,
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": "d5bd17d77a2262f10b97e445d380723dff093d51"
+}

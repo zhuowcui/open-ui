@@ -1,0 +1,231 @@
+{
+  "all_commands_terminal": true,
+  "baseline_regression_reproduced": true,
+  "javascript_executed_by_openui": false,
+  "probe_sha256": "f57be2c00368d08fa421b9e7cca5421f67f632c26a618bb2c4b145f3d2761fd2",
+  "promotion_allowed": false,
+  "public_native_rust_api": true,
+  "release_qualification": false,
+  "schema_version": 1,
+  "selected_native_test_names": [
+    "tests::native_bevel_border_raises_low_contrast_colors_without_changing_author_style"
+  ],
+  "source": {
+    "clean": true,
+    "commit": "cbcbc9fb776aba1c40e01d84ed88d6afdbd272a7",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "c1444b99f6f0ef4d21782bd96cd2697cb79a7c0e480e8815388e2f1dfdadea25",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "cbcbc9fb776aba1c40e01d84ed88d6afdbd272a7",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "c1444b99f6f0ef4d21782bd96cd2697cb79a7c0e480e8815388e2f1dfdadea25",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "state": "complete",
+  "steps": [
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "clean",
+        "-p",
+        "openui-geometry",
+        "-p",
+        "openui-style",
+        "-p",
+        "openui-dom",
+        "-p",
+        "openui-text",
+        "-p",
+        "openui-layout",
+        "-p",
+        "openui-paint",
+        "-p",
+        "openui-compositor",
+        "-p",
+        "openui-engine",
+        "-p",
+        "openui-platform",
+        "-p",
+        "openui-ffi",
+        "-p",
+        "openui",
+        "-p",
+        "openui-macros",
+        "-p",
+        "hello",
+        "-p",
+        "counter",
+        "-p",
+        "todo",
+        "-p",
+        "dashboard",
+        "-p",
+        "framework-test",
+        "-p",
+        "pixel-compare"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "723290f62c7b05714e20daa79ef290057704474e94a4309642d9583b8f874a1e",
+      "name": "clean-baseline",
+      "observed_exit_code": 0,
+      "source": {
+        "clean": true,
+        "commit": "39aff4434d7a8a9b1be32d3911bc50701fa06e9f",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "7dfbdf4d8e5527f731aba87dda2abfaa739515acd51c9312fd5bd4688d9a4a7c",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "39aff4434d7a8a9b1be32d3911bc50701fa06e9f",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "7dfbdf4d8e5527f731aba87dda2abfaa739515acd51c9312fd5bd4688d9a4a7c",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "-p",
+        "openui-engine",
+        "--lib",
+        "tests::native_bevel_border_raises_low_contrast_colors_without_changing_author_style",
+        "--",
+        "--exact"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "ef1c715ea0c9c0f03724cb272e07bcd52539f794515af305f1d864eb248ffadd",
+      "name": "baseline-bevel-contrast-guard",
+      "observed_exit_code": 101,
+      "source": {
+        "clean": true,
+        "commit": "39aff4434d7a8a9b1be32d3911bc50701fa06e9f",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "7dfbdf4d8e5527f731aba87dda2abfaa739515acd51c9312fd5bd4688d9a4a7c",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "39aff4434d7a8a9b1be32d3911bc50701fa06e9f",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "7dfbdf4d8e5527f731aba87dda2abfaa739515acd51c9312fd5bd4688d9a4a7c",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "clean",
+        "-p",
+        "openui-geometry",
+        "-p",
+        "openui-style",
+        "-p",
+        "openui-dom",
+        "-p",
+        "openui-text",
+        "-p",
+        "openui-layout",
+        "-p",
+        "openui-paint",
+        "-p",
+        "openui-compositor",
+        "-p",
+        "openui-engine",
+        "-p",
+        "openui-platform",
+        "-p",
+        "openui-ffi",
+        "-p",
+        "openui",
+        "-p",
+        "openui-macros",
+        "-p",
+        "hello",
+        "-p",
+        "counter",
+        "-p",
+        "todo",
+        "-p",
+        "dashboard",
+        "-p",
+        "framework-test",
+        "-p",
+        "pixel-compare"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "9ffa6dda2ea7b54fc250f5afd334d5cd09201df663ff3253a2afd6c840bb4921",
+      "name": "clean-fixed",
+      "observed_exit_code": 0,
+      "source": {
+        "clean": true,
+        "commit": "cbcbc9fb776aba1c40e01d84ed88d6afdbd272a7",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "c1444b99f6f0ef4d21782bd96cd2697cb79a7c0e480e8815388e2f1dfdadea25",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "cbcbc9fb776aba1c40e01d84ed88d6afdbd272a7",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "c1444b99f6f0ef4d21782bd96cd2697cb79a7c0e480e8815388e2f1dfdadea25",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "-p",
+        "openui-engine",
+        "--lib",
+        "tests::native_bevel_border_raises_low_contrast_colors_without_changing_author_style",
+        "--",
+        "--exact"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "1175e95dfb550ed8a2e11ae01ae8b4b9484f5bb70140ab2c4a8aee4c45df0ccf",
+      "name": "fixed-bevel-contrast-and-owned-scene-guard",
+      "observed_exit_code": 0,
+      "observed_named_tests": [
+        "tests::native_bevel_border_raises_low_contrast_colors_without_changing_author_style"
+      ],
+      "source": {
+        "clean": true,
+        "commit": "cbcbc9fb776aba1c40e01d84ed88d6afdbd272a7",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "c1444b99f6f0ef4d21782bd96cd2697cb79a7c0e480e8815388e2f1dfdadea25",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "cbcbc9fb776aba1c40e01d84ed88d6afdbd272a7",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "c1444b99f6f0ef4d21782bd96cd2697cb79a7c0e480e8815388e2f1dfdadea25",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "test_counts": [
+        [
+          1,
+          0,
+          0
+        ]
+      ]
+    }
+  ],
+  "workspace_cleaned_at_every_source_switch": true
+}

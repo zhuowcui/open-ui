@@ -1,0 +1,1252 @@
+{
+  "applied_to_umbrella": false,
+  "artifacts": [
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-insets-trace-v666/receipt.json",
+      "sha256": "2c43c137a61da486ab8848cc8b2d30cf03c1c86a2747db6a49e21d859f4d0d36"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-insets-picture-trace-v667/receipt.json",
+      "sha256": "6554689ee7569ecaef7df71d8f3dab1880e413ee2422f0bc7a0dda342a85cea0"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-phase-v668/receipt.json",
+      "sha256": "3c6ec39fc094b74ab39c30fe741b8b4fe1f75e5a1484409a9e828377044dee83"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-phase-v669/receipt.json",
+      "sha256": "cdcade8e8b51cef4300e15ad0d638ddaf5e5f88347cbea3542fc01107517c90e"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-phase-v669/compile.log",
+      "sha256": "2c2a80a67cdf50215fb84f6eeb421f8459fe09df01a13feeff5d775a3f25284b"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-phase-v670/receipt.json",
+      "sha256": "501c0ad6740c99de85ca58393e70418bbc39657365cced6aed00adca72604690"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-phase-v670/native-phase",
+      "sha256": "d76a039fa2ab993ce48f01039d8a15ddd8797100070f736c7504d0b3a53db812"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-screen-primary-v672/receipt.json",
+      "sha256": "dbee7ad9706f90d360a4f9c1da38a86d637db445a5dfd0b2bdf26157a9ed96ca"
+    },
+    {
+      "path": "docs/renderer/generated/native-scroll-insets-v1.json",
+      "sha256": "2b658b69ef24082a2fbf5bdadf9cd0972e7283673ab0d37658395cacf54cb897"
+    },
+    {
+      "path": "docs/renderer/evidence/native-scroll-screen-v1/native-scroll-screen-v1.patch",
+      "sha256": "b9b2c209956d37de73fd8102dc7a2acaad100cfe16810ea23bb8349e131f7b27"
+    },
+    {
+      "path": "docs/renderer/evidence/native-scroll-screen-v1/native-scroll-phase.c",
+      "sha256": "ecbec7c49152c1b0ef169dd0211d37987cea9e9226be079c43b9046158c5d5d2"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-screen-primary-v672/cc/trees/property_tree.cc",
+      "sha256": "c85d1ae7fb1218dc1a57b9fc093dcfcb3426a57137b60013351f5a7f19a8830d"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-screen-primary-v672/cc/layers/picture_layer_impl.cc",
+      "sha256": "59f3d876f20670e76a85ba4865f9a336a974a0b1fc34f2df462ac57956d7a94c"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-screen-primary-v672/third_party/blink/renderer/core/paint/paint_property_tree_builder.cc",
+      "sha256": "704f562b6af7466c0d66fe655008dc5538041c83361334e5ea51b1aa5247dcbc"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-screen-primary-v672/third_party/blink/renderer/platform/graphics/compositing/paint_chunks_to_cc_layer.cc",
+      "sha256": "68292c768571eb0add2939928ac103410b15bf5b3d4cef2e9ea15948d497da39"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-screen-primary-v672/cc/paint/paint_op.cc",
+      "sha256": "35c65f0a703629b2c519ff937db2875d594c7617b4502b23bca1229f9c65b1fe"
+    }
+  ],
+  "chromium_traces": {
+    "all_eight_pngs_byte_identical_to_existing_oracles": true,
+    "captures": 2,
+    "cases_per_capture": 4,
+    "finding": "Final snapshots contain one opaque page-content TileDisplayLayerImpl. Software raster uses nested DrawScrollingContentsOp display lists; no separate scrolling content layer is established for these reduced cases.",
+    "snapshot_limits": "LayerTree.makeSnapshot protocol errors and empty layer-tree notifications are retained. Trace display-list picture snapshots use zero scroll offsets and can cull the still-offscreen target; they do not establish the complete final target drawing command sequence."
+  },
+  "failed_attempts": {
+    "v668": "The /usr/bin/cc path was absent; no compilation or native case ran.",
+    "v669": "One-step C driver link failed. The subsequent attempt uses the already verified C-compile/C++-lld-link sequence. Logs remain immutable."
+  },
+  "javascript_executed_by_openui": false,
+  "javascript_usage": "Only the separate Chromium oracle is operated through CDP. The native C consumer calls the shared Rust Engine.",
+  "measured_source": {
+    "clean": true,
+    "commit": "45ddd7a438afbe2b132887dad9f566b8d60f175f",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "f78e5cf479e621b9ce376f9ebd64fc0c1cbbf73c497203df4d4fabc2a65ac108",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "native_neighbor_matrix": {
+    "all_native_app_exits": 0,
+    "all_two_fresh_chromium_repeats_identical": true,
+    "css_position_phases": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "different": 17,
+    "geometry_exact": 100,
+    "modes": [
+      "flat",
+      "static",
+      "clipped",
+      "scrolled",
+      "clip"
+    ],
+    "observed_comparison_exit_code": 1,
+    "ordinary_and_single_clip_static_controls_exact": true,
+    "pixel_tolerance": 0,
+    "pixels_exact": 83,
+    "scales": [
+      1,
+      1.25,
+      1.5,
+      2,
+      3
+    ],
+    "total": 100
+  },
+  "new_states_admitted": false,
+  "pixel_reference": "Pinned Chromium only; prior Open UI images are immutable provenance.",
+  "previous_index": "docs/renderer/generated/native-scroll-insets-v1.json",
+  "primary_source_review": "The local Chromium checkout is 147.0.7727.24; exact 147.0.7727.50 tag sources were downloaded and hashed. Four files agree byte-for-byte. The fifth differs only at the border-shape inner-path call, outside the reviewed scroll/paint-offset functions. The pinned tag copies are authoritative.",
+  "primary_sources": {
+    "local_checkout_commit": "09d377d9438dc95267369f74a073acd81bdde38f",
+    "local_checkout_version": "147.0.7727.24",
+    "release_qualification": false,
+    "schema_version": 1,
+    "sources": [
+      {
+        "local_checkout_byte_identical": true,
+        "local_checkout_sha256": "c85d1ae7fb1218dc1a57b9fc093dcfcb3426a57137b60013351f5a7f19a8830d",
+        "sha256": "c85d1ae7fb1218dc1a57b9fc093dcfcb3426a57137b60013351f5a7f19a8830d",
+        "source": "cc/trees/property_tree.cc",
+        "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/cc/trees/property_tree.cc?format=TEXT"
+      },
+      {
+        "local_checkout_byte_identical": true,
+        "local_checkout_sha256": "59f3d876f20670e76a85ba4865f9a336a974a0b1fc34f2df462ac57956d7a94c",
+        "sha256": "59f3d876f20670e76a85ba4865f9a336a974a0b1fc34f2df462ac57956d7a94c",
+        "source": "cc/layers/picture_layer_impl.cc",
+        "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/cc/layers/picture_layer_impl.cc?format=TEXT"
+      },
+      {
+        "local_checkout_byte_identical": false,
+        "local_checkout_sha256": "c31fe55f6ce690b3ff199919957bb2424a46f5671778577776384cfff11fca99",
+        "sha256": "704f562b6af7466c0d66fe655008dc5538041c83361334e5ea51b1aa5247dcbc",
+        "source": "third_party/blink/renderer/core/paint/paint_property_tree_builder.cc",
+        "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/third_party/blink/renderer/core/paint/paint_property_tree_builder.cc?format=TEXT"
+      },
+      {
+        "local_checkout_byte_identical": true,
+        "local_checkout_sha256": "68292c768571eb0add2939928ac103410b15bf5b3d4cef2e9ea15948d497da39",
+        "sha256": "68292c768571eb0add2939928ac103410b15bf5b3d4cef2e9ea15948d497da39",
+        "source": "third_party/blink/renderer/platform/graphics/compositing/paint_chunks_to_cc_layer.cc",
+        "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/third_party/blink/renderer/platform/graphics/compositing/paint_chunks_to_cc_layer.cc?format=TEXT"
+      },
+      {
+        "local_checkout_byte_identical": true,
+        "local_checkout_sha256": "35c65f0a703629b2c519ff937db2875d594c7617b4502b23bca1229f9c65b1fe",
+        "sha256": "35c65f0a703629b2c519ff937db2875d594c7617b4502b23bca1229f9c65b1fe",
+        "source": "cc/paint/paint_op.cc",
+        "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/cc/paint/paint_op.cc?format=TEXT"
+      }
+    ],
+    "tag": "147.0.7727.50"
+  },
+  "private_prototype": {
+    "based_on_clean_scroll_inset_candidate": "45ddd7a438afbe2b132887dad9f566b8d60f175f",
+    "build_waits_for": [
+      "native-scroll-insets-full-exit-v655.json",
+      "native-scroll-insets-expanded-exit-v655.json"
+    ],
+    "cargo_tests": "not run",
+    "format_and_diff_checks": "pass",
+    "patch_path": "docs/renderer/evidence/native-scroll-screen-v1/native-scroll-screen-v1.patch",
+    "patch_sha256": "b9b2c209956d37de73fd8102dc7a2acaad100cfe16810ea23bb8349e131f7b27",
+    "pixel_tests": "not run",
+    "remaining_transform_work": "Authored transforms, SVG, raster backings and retained presentation-side transform/effect trees require further qualification.",
+    "scope": "Direct element scroll painting with translation-only ancestry; include realized ancestor translations and rounded CSS paint origin. Preserve hidden containers with zero scroll/origin and existing explicit backing behavior.",
+    "source": {
+      "clean": true,
+      "commit": "dac78e258a039c9488952114fb1c877ea0689625",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "590377b0d0ad1ddf1f52254fb56a61b9ae80d079c52c5574cc5ed1a99870178c",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "probe_sha256": "4f2f32f29239f5048eabbefa681d77c3a8043ab7c70cfae62d099a75be8c437a",
+  "release_qualification": false,
+  "residuals": [
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 25,
+            "maximum_absolute_delta": 32,
+            "maximum_signed_delta": 32,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 800
+          },
+          "green": {
+            "changed_pixels": 25,
+            "maximum_absolute_delta": 16,
+            "maximum_signed_delta": 16,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 400
+          },
+          "red": {
+            "changed_pixels": 25,
+            "maximum_absolute_delta": 32,
+            "maximum_signed_delta": 32,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 800
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 25,
+              "x": 150,
+              "y": 137
+            },
+            "mismatched_pixels": 25
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 1,
+          "width": 25,
+          "x": 150,
+          "y": 137
+        },
+        "mismatched_pixels": 25
+      },
+      "mode": "clipped",
+      "owner": "openui-paint",
+      "phase": 0,
+      "scale": 1.25
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 26,
+            "maximum_absolute_delta": 36,
+            "maximum_signed_delta": 36,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 893
+          },
+          "green": {
+            "changed_pixels": 26,
+            "maximum_absolute_delta": 18,
+            "maximum_signed_delta": 18,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 447
+          },
+          "red": {
+            "changed_pixels": 26,
+            "maximum_absolute_delta": 36,
+            "maximum_signed_delta": 36,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 893
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 151,
+              "y": 138
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 1,
+          "width": 26,
+          "x": 151,
+          "y": 138
+        },
+        "mismatched_pixels": 26
+      },
+      "mode": "clipped",
+      "owner": "openui-paint",
+      "phase": 1,
+      "scale": 1.25
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 26,
+            "maximum_absolute_delta": 12,
+            "maximum_signed_delta": 12,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 298
+          },
+          "green": {
+            "changed_pixels": 26,
+            "maximum_absolute_delta": 6,
+            "maximum_signed_delta": 6,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 149
+          },
+          "red": {
+            "changed_pixels": 26,
+            "maximum_absolute_delta": 12,
+            "maximum_signed_delta": 12,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 298
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 153,
+              "y": 141
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 1,
+          "width": 26,
+          "x": 153,
+          "y": 141
+        },
+        "mismatched_pixels": 26
+      },
+      "mode": "clipped",
+      "owner": "openui-paint",
+      "phase": 3,
+      "scale": 1.25
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -16,
+            "signed_delta_sum": 1176
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 127,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2376
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 149,
+              "y": 112
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 149,
+              "y": 137
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 149,
+          "y": 112
+        },
+        "mismatched_pixels": 52
+      },
+      "mode": "scrolled",
+      "owner": "openui-paint",
+      "phase": 0,
+      "scale": 1.25
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 149,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 110,
+            "minimum_signed_delta": -127,
+            "signed_delta_sum": -1900
+          },
+          "green": {
+            "changed_pixels": 149,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 55,
+            "minimum_signed_delta": -63,
+            "signed_delta_sum": -961
+          },
+          "red": {
+            "changed_pixels": 149,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 110,
+            "minimum_signed_delta": -127,
+            "signed_delta_sum": -1900
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 26,
+              "width": 27,
+              "x": 150,
+              "y": 113
+            },
+            "mismatched_pixels": 149
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 27,
+          "x": 150,
+          "y": 113
+        },
+        "mismatched_pixels": 149
+      },
+      "mode": "scrolled",
+      "owner": "openui-paint",
+      "phase": 1,
+      "scale": 1.25
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 50,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 64,
+            "minimum_signed_delta": -127,
+            "signed_delta_sum": -1575
+          },
+          "green": {
+            "changed_pixels": 50,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 32,
+            "minimum_signed_delta": -63,
+            "signed_delta_sum": -775
+          },
+          "red": {
+            "changed_pixels": 50,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 64,
+            "minimum_signed_delta": -127,
+            "signed_delta_sum": -1575
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 25,
+              "width": 1,
+              "x": 152,
+              "y": 115
+            },
+            "mismatched_pixels": 25
+          },
+          {
+            "bounds": {
+              "height": 25,
+              "width": 1,
+              "x": 177,
+              "y": 115
+            },
+            "mismatched_pixels": 25
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 25,
+          "width": 26,
+          "x": 152,
+          "y": 115
+        },
+        "mismatched_pixels": 50
+      },
+      "mode": "scrolled",
+      "owner": "openui-paint",
+      "phase": 2,
+      "scale": 1.25
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 100,
+            "maximum_absolute_delta": 64,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 1072
+          },
+          "green": {
+            "changed_pixels": 99,
+            "maximum_absolute_delta": 32,
+            "maximum_signed_delta": 31,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 525
+          },
+          "red": {
+            "changed_pixels": 100,
+            "maximum_absolute_delta": 64,
+            "maximum_signed_delta": 63,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 1072
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 26,
+              "width": 26,
+              "x": 153,
+              "y": 116
+            },
+            "mismatched_pixels": 100
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 153,
+          "y": 116
+        },
+        "mismatched_pixels": 100
+      },
+      "mode": "scrolled",
+      "owner": "openui-paint",
+      "phase": 3,
+      "scale": 1.25
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 191,
+            "maximum_signed_delta": 191,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 3176
+          },
+          "green": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 95,
+            "maximum_signed_delta": 95,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 1576
+          },
+          "red": {
+            "changed_pixels": 52,
+            "maximum_absolute_delta": 191,
+            "maximum_signed_delta": 191,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 3176
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 149,
+              "y": 112
+            },
+            "mismatched_pixels": 26
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 26,
+              "x": 149,
+              "y": 137
+            },
+            "mismatched_pixels": 26
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 149,
+          "y": 112
+        },
+        "mismatched_pixels": 52
+      },
+      "mode": "clip",
+      "owner": "openui-paint",
+      "phase": 0,
+      "scale": 1.25
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 149,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 83,
+            "minimum_signed_delta": -127,
+            "signed_delta_sum": -1600
+          },
+          "green": {
+            "changed_pixels": 149,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 41,
+            "minimum_signed_delta": -63,
+            "signed_delta_sum": -812
+          },
+          "red": {
+            "changed_pixels": 149,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 83,
+            "minimum_signed_delta": -127,
+            "signed_delta_sum": -1600
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 26,
+              "width": 27,
+              "x": 150,
+              "y": 113
+            },
+            "mismatched_pixels": 149
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 27,
+          "x": 150,
+          "y": 113
+        },
+        "mismatched_pixels": 149
+      },
+      "mode": "clip",
+      "owner": "openui-paint",
+      "phase": 1,
+      "scale": 1.25
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 50,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 64,
+            "minimum_signed_delta": -127,
+            "signed_delta_sum": -1575
+          },
+          "green": {
+            "changed_pixels": 50,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 32,
+            "minimum_signed_delta": -63,
+            "signed_delta_sum": -775
+          },
+          "red": {
+            "changed_pixels": 50,
+            "maximum_absolute_delta": 127,
+            "maximum_signed_delta": 64,
+            "minimum_signed_delta": -127,
+            "signed_delta_sum": -1575
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 25,
+              "width": 1,
+              "x": 152,
+              "y": 115
+            },
+            "mismatched_pixels": 25
+          },
+          {
+            "bounds": {
+              "height": 25,
+              "width": 1,
+              "x": 177,
+              "y": 115
+            },
+            "mismatched_pixels": 25
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 25,
+          "width": 26,
+          "x": 152,
+          "y": 115
+        },
+        "mismatched_pixels": 50
+      },
+      "mode": "clip",
+      "owner": "openui-paint",
+      "phase": 2,
+      "scale": 1.25
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 100,
+            "maximum_absolute_delta": 111,
+            "maximum_signed_delta": 111,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 1970
+          },
+          "green": {
+            "changed_pixels": 100,
+            "maximum_absolute_delta": 55,
+            "maximum_signed_delta": 55,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 974
+          },
+          "red": {
+            "changed_pixels": 100,
+            "maximum_absolute_delta": 111,
+            "maximum_signed_delta": 111,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 1970
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 26,
+              "width": 26,
+              "x": 153,
+              "y": 116
+            },
+            "mismatched_pixels": 100
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 26,
+          "x": 153,
+          "y": 116
+        },
+        "mismatched_pixels": 100
+      },
+      "mode": "clip",
+      "owner": "openui-paint",
+      "phase": 3,
+      "scale": 1.25
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 31,
+            "maximum_absolute_delta": 32,
+            "maximum_signed_delta": 32,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 952
+          },
+          "green": {
+            "changed_pixels": 31,
+            "maximum_absolute_delta": 16,
+            "maximum_signed_delta": 16,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 476
+          },
+          "red": {
+            "changed_pixels": 31,
+            "maximum_absolute_delta": 32,
+            "maximum_signed_delta": 32,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 952
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 31,
+              "x": 181,
+              "y": 166
+            },
+            "mismatched_pixels": 31
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 1,
+          "width": 31,
+          "x": 181,
+          "y": 166
+        },
+        "mismatched_pixels": 31
+      },
+      "mode": "clipped",
+      "owner": "openui-paint",
+      "phase": 1,
+      "scale": 1.5
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 31,
+            "maximum_absolute_delta": 32,
+            "maximum_signed_delta": 32,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 952
+          },
+          "green": {
+            "changed_pixels": 31,
+            "maximum_absolute_delta": 16,
+            "maximum_signed_delta": 16,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 476
+          },
+          "red": {
+            "changed_pixels": 31,
+            "maximum_absolute_delta": 32,
+            "maximum_signed_delta": 32,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 952
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 31,
+              "x": 184,
+              "y": 169
+            },
+            "mismatched_pixels": 31
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 1,
+          "width": 31,
+          "x": 184,
+          "y": 169
+        },
+        "mismatched_pixels": 31
+      },
+      "mode": "clipped",
+      "owner": "openui-paint",
+      "phase": 3,
+      "scale": 1.5
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 120,
+            "maximum_absolute_delta": 191,
+            "maximum_signed_delta": 191,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 4717
+          },
+          "green": {
+            "changed_pixels": 120,
+            "maximum_absolute_delta": 95,
+            "maximum_signed_delta": 95,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2329
+          },
+          "red": {
+            "changed_pixels": 120,
+            "maximum_absolute_delta": 191,
+            "maximum_signed_delta": 191,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 4717
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 31,
+              "width": 31,
+              "x": 181,
+              "y": 136
+            },
+            "mismatched_pixels": 120
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 31,
+          "width": 31,
+          "x": 181,
+          "y": 136
+        },
+        "mismatched_pixels": 120
+      },
+      "mode": "scrolled",
+      "owner": "openui-paint",
+      "phase": 1,
+      "scale": 1.5
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 120,
+            "maximum_absolute_delta": 191,
+            "maximum_signed_delta": 191,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 4717
+          },
+          "green": {
+            "changed_pixels": 120,
+            "maximum_absolute_delta": 95,
+            "maximum_signed_delta": 95,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2329
+          },
+          "red": {
+            "changed_pixels": 120,
+            "maximum_absolute_delta": 191,
+            "maximum_signed_delta": 191,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 4717
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 31,
+              "width": 31,
+              "x": 184,
+              "y": 139
+            },
+            "mismatched_pixels": 120
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 31,
+          "width": 31,
+          "x": 184,
+          "y": 139
+        },
+        "mismatched_pixels": 120
+      },
+      "mode": "scrolled",
+      "owner": "openui-paint",
+      "phase": 3,
+      "scale": 1.5
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 120,
+            "maximum_absolute_delta": 223,
+            "maximum_signed_delta": 223,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 5669
+          },
+          "green": {
+            "changed_pixels": 120,
+            "maximum_absolute_delta": 111,
+            "maximum_signed_delta": 111,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2805
+          },
+          "red": {
+            "changed_pixels": 120,
+            "maximum_absolute_delta": 223,
+            "maximum_signed_delta": 223,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 5669
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 31,
+              "width": 31,
+              "x": 181,
+              "y": 136
+            },
+            "mismatched_pixels": 120
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 31,
+          "width": 31,
+          "x": 181,
+          "y": 136
+        },
+        "mismatched_pixels": 120
+      },
+      "mode": "clip",
+      "owner": "openui-paint",
+      "phase": 1,
+      "scale": 1.5
+    },
+    {
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 120,
+            "maximum_absolute_delta": 223,
+            "maximum_signed_delta": 223,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 5669
+          },
+          "green": {
+            "changed_pixels": 120,
+            "maximum_absolute_delta": 111,
+            "maximum_signed_delta": 111,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2805
+          },
+          "red": {
+            "changed_pixels": 120,
+            "maximum_absolute_delta": 223,
+            "maximum_signed_delta": 223,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": 5669
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 31,
+              "width": 31,
+              "x": 184,
+              "y": 139
+            },
+            "mismatched_pixels": 120
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 31,
+          "width": 31,
+          "x": 184,
+          "y": 139
+        },
+        "mismatched_pixels": 120
+      },
+      "mode": "clip",
+      "owner": "openui-paint",
+      "phase": 3,
+      "scale": 1.5
+    }
+  ],
+  "reviewed_shared_behavior": {
+    "independent_clip_difference": "With no scrolling, two nested rectangular clip ends share the same physical boundary. Native replay multiplies both coverage masks; Chromium preserves the single intersected edge coverage. Five clipped neighbors reproduce this independently of the scroll rounding difference. Generic clip fusion remains required.",
+    "original_inset_states": "The previous 58 endpoint differences remain unrepaired and unqualified. This investigation does not admit them as passes.",
+    "owner": "openui-paint",
+    "screen_origin": "Pinned TransformTree::UpdateSnapping rounds the complete screen-space scroll transform, then maps the correction to local scroll translation. PictureLayerImpl::GetRasterInducingScrollOffsets reads the realized transform including its snap amount. Open UI currently rounds only ScrollPosition in its direct element paint path, omitting the containing screen origin.",
+    "witness": {
+      "case": "1.25 hidden none",
+      "chromium_bottom_exclusive": 137,
+      "chromium_top_row": 112,
+      "container_css_origin": [
+        40,
+        30
+      ],
+      "current_paint_translation": [
+        -70.4,
+        -220.0
+      ],
+      "current_target_physical_top": 112.5,
+      "geometry_remains_logical": [
+        120,
+        90,
+        20,
+        20
+      ],
+      "proposed_paint_translation_from_complete_origin": [
+        -70.4,
+        -220.4
+      ],
+      "proposed_target_physical_top": 112.0,
+      "repair_status": "Prediction from primary source and measured bounds; not a qualifying corrected native render.",
+      "scroll_offset": [
+        70,
+        220
+      ]
+    }
+  },
+  "schema_version": 1
+}

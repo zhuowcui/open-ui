@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "writer_pid": 3440626,
+  "source_commit": "9ad2fb264da070d484859ebc2a6a9a8cf787fb08",
+  "source_inputs": [
+    {
+      "path": "/dev/shm/openui-native-renderer-v4587/tools/accountability/data/wpt_ported/all_wpt_templates.json",
+      "sha256": "1672d31bcc4b13a8ecb6c1b8af6a7b255052aac52293fb916181e6e0bd1d6ba6"
+    },
+    {
+      "path": "/dev/shm/openui-native-renderer-v4587/bindings/rust/pixel-compare/src/pending_native_mutation_v1.rs",
+      "sha256": "08e23d77a566bc2f0b8dbbee164889ba9b36ec4c87411da19f3d8c3d6a26c7e2"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-ordered-mutation-matrix-v4589/alias_wrapper.py",
+      "sha256": "4e6cb6bf708e93d89358feddea603787d4f9247d973cfc1a37722a3cb26497e6"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-ordered-mutation-matrix-v4589/matrix/legacy-800x600@1/pending/native-mutation-v1/wpt/css_break/out-of-flow-in-multicolumn-120/test.html",
+      "sha256": "01b291cdbafbacd01748201edbb5ba146d32ba91d052d816f29f73d020b2e382"
+    },
+    {
+      "path": "/dev/shm/openui-native-renderer-v4587/docs/renderer/generated/pending-native-mutation-replay-v1.json",
+      "sha256": "9a6095ac993deefee4510780ce062e5df6fd6185f3ba0309999dc38ad7216110"
+    }
+  ],
+  "case": "pending/native-mutation-v1/wpt/css_break/out-of-flow-in-multicolumn-120",
+  "finding": "The native replay inserts a new 60px-height child at the start of abscb, while the alias Chromium input uses the immutable original template with only the original 50px flow child and90px absolute child. These are different final DOM states.",
+  "native_ops": [
+    "initial Engine.update layout barrier",
+    "create node_6",
+    "set height60px",
+    "insert_before abscb first child",
+    "apply inherited selector declarations to new child"
+  ],
+  "chromium_input_has_extra_child": false,
+  "canonical_original_template_preserved": true,
+  "old_pending_receipts_preserved": [
+    "native-ordered-mutation-matrix-v4536/receipt.json",
+    "native-ordered-mutation-matrix-v4589/receipt.json"
+  ],
+  "complete_original5520_census_invalidated": false,
+  "raw12_counts_are_final_state_qualification": false,
+  "renderer_root_cause_for_remaining_difference_proven": false,
+  "next_action": "Audit all3 pending source/AST/native/final Chromium input histories, then create separately versioned final-state Chromium oracle inputs with immutable original5731/archive/current-input bytes preserved.",
+  "owner": "table_border_review",
+  "native_execution": false,
+  "browser_execution": false,
+  "source_mutation": false,
+  "qualification": false,
+  "release_qualified": false
+}

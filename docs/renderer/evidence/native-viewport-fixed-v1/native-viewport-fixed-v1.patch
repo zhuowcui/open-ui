@@ -1,0 +1,500 @@
+diff --git a/bindings/rust/openui-engine/src/lib.rs b/bindings/rust/openui-engine/src/lib.rs
+index 72f0238f..8d25235a 100644
+--- a/bindings/rust/openui-engine/src/lib.rs
++++ b/bindings/rust/openui-engine/src/lib.rs
+@@ -1985,6 +1985,15 @@ impl Engine {
+             let border_box = fragment.border_box_rect();
+             let box_width = border_box.size.width.to_f32();
+             let box_height = border_box.size.height.to_f32();
++            // Viewport-fixed boxes bypass the document scroll transform.
++            // Their fragment ancestry still retains authored containing blocks
++            // and their descendants' own element scroll transforms.
++            let parent_world = if fragment.is_viewport_fixed(document) {
++                let root = document.node(document.root());
++                parent_world.then(Affine::translate(root.scroll_left, root.scroll_top))
++            } else {
++                parent_world
++            };
+             let translated = parent_world.then(Affine::translate(
+                 fragment.offset.left.to_f32(),
+                 fragment.offset.top.to_f32(),
+@@ -2036,17 +2045,7 @@ impl Engine {
+                 // moves them. Their DOM parents may belong to scrollports
+                 // outside this geometry chain. Continuation fragments retain
+                 // the first principal box's ancestry, just like box_worlds.
+-                let root_style = &document.node(document.root()).style;
+-                let viewport_fixed = document.node(fragment.node_id).style.position
+-                    == openui_style::Position::Fixed
+-                    && fragment
+-                        .positioned_fragmentation
+-                        .as_ref()
+-                        .is_some_and(|positioned| {
+-                            positioned.containing_block_node == document.root()
+-                        })
+-                    && !root_style.establishes_transform_containing_block
+-                    && !root_style.has_layout_containment();
++                let viewport_fixed = fragment.is_viewport_fixed(document);
+                 // A viewport-anchored fixed box cannot be revealed by moving
+                 // the document. Descendants may move this box's own scrollport,
+                 // but the reveal chain ends before the viewport scroll node.
+diff --git a/bindings/rust/openui-engine/src/scroll_into_view.rs b/bindings/rust/openui-engine/src/scroll_into_view.rs
+index 384704ca..cd88685a 100644
+--- a/bindings/rust/openui-engine/src/scroll_into_view.rs
++++ b/bindings/rust/openui-engine/src/scroll_into_view.rs
+@@ -271,6 +271,74 @@ mod tests {
+         assert_eq!(engine.stats().layouts, layouts + 2);
+     }
+ 
++    #[test]
++    fn viewport_fixed_geometry_and_hits_preserve_existing_document_scroll() {
++        for (position, root_transform) in [
++            (Position::Fixed, false),
++            (Position::Absolute, false),
++            (Position::Fixed, true),
++        ] {
++            let (mut engine, outer, _, target) = nested();
++            engine
++                .set_property(outer, StyleProperty::Position, Position::Static.into())
++                .unwrap();
++            let root = engine.root();
++            box_node(&mut engine, root, 320.0, 1000.0);
++            engine
++                .set_property(
++                    target,
++                    StyleProperty::MarginLeft,
++                    LengthValue::px(0.0).into(),
++                )
++                .unwrap();
++            engine
++                .set_property(
++                    target,
++                    StyleProperty::MarginTop,
++                    LengthValue::px(0.0).into(),
++                )
++                .unwrap();
++            engine
++                .set_property(target, StyleProperty::Position, position.into())
++                .unwrap();
++            engine
++                .set_property(target, StyleProperty::Left, LengthValue::px(280.0).into())
++                .unwrap();
++            engine
++                .set_property(target, StyleProperty::Top, LengthValue::px(180.0).into())
++                .unwrap();
++            if root_transform {
++                engine
++                    .set_property(
++                        root,
++                        StyleProperty::Transform,
++                        openui_style::TransformList(vec![
++                            openui_style::TransformOperation::Translate(
++                                LengthValue::px(0.0),
++                                LengthValue::px(0.0),
++                            ),
++                        ])
++                        .into(),
++                    )
++                    .unwrap();
++            }
++            engine.bounds(target).unwrap();
++            let layouts = engine.stats().layouts;
++            engine.scroll_to(root, 0.0, 120.0).unwrap();
++            let y = if position == Position::Fixed && !root_transform {
++                180.0
++            } else {
++                60.0
++            };
++            let bounds = engine.bounds(target).unwrap().unwrap();
++            assert_eq!((bounds.x, bounds.y), (280.0, y));
++            assert_eq!(engine.hit_test(285.0, y + 5.0).unwrap(), Some(target));
++            engine.scroll_into_view(target, nearest()).unwrap();
++            assert_eq!(engine.scroll_offset(root).unwrap(), (0.0, 120.0));
++            assert_eq!(engine.stats().layouts, layouts);
++        }
++    }
++
+     #[test]
+     fn offscreen_viewport_fixed_reveal_preserves_document_scroll() {
+         for position in [Position::Fixed, Position::Absolute] {
+diff --git a/bindings/rust/openui-layout/src/fragment.rs b/bindings/rust/openui-layout/src/fragment.rs
+index 7ffd1795..b63cf6d7 100644
+--- a/bindings/rust/openui-layout/src/fragment.rs
++++ b/bindings/rust/openui-layout/src/fragment.rs
+@@ -509,6 +509,22 @@ pub struct Fragment {
+ }
+ 
+ impl Fragment {
++    /// Whether this positioned box uses the viewport instead of an authored
++    /// transform or layout-containment box as its fixed containing block.
++    pub fn is_viewport_fixed(&self, document: &openui_dom::Document) -> bool {
++        if self.node_id.is_none()
++            || document.node(self.node_id).style.position != openui_style::Position::Fixed
++            || !self
++                .positioned_fragmentation
++                .as_ref()
++                .is_some_and(|positioned| positioned.containing_block_node == document.root())
++        {
++            return false;
++        }
++        let root_style = &document.node(document.root()).style;
++        !root_style.establishes_transform_containing_block && !root_style.has_layout_containment()
++    }
++
+     /// Create a new box fragment.
+     pub fn new_box(node_id: NodeId, size: PhysicalSize) -> Self {
+         Self {
+diff --git a/bindings/rust/openui-paint/src/painter.rs b/bindings/rust/openui-paint/src/painter.rs
+index 126fc4ca..ce9093a4 100644
+--- a/bindings/rust/openui-paint/src/painter.rs
++++ b/bindings/rust/openui-paint/src/painter.rs
+@@ -37,8 +37,8 @@ use skia_safe::image::RequiredProperties;
+ use skia_safe::rrect::Corner as RRectCorner;
+ use skia_safe::{
+     color_filters, gradient_shader, image_filters, surfaces, AlphaType, BlendMode, ClipOp, Color4f,
+-    ColorSpace, ColorType, Data, FilterMode, IRect, Image, ImageInfo, Matrix, MipmapMode, Paint,
+-    PaintStyle, PathBuilder, PathFillType, PathMeasure, PictureRecorder, Point, RRect, Rect,
++    ColorSpace, ColorType, Contains, Data, FilterMode, IRect, Image, ImageInfo, Matrix, MipmapMode,
++    Paint, PaintStyle, PathBuilder, PathFillType, PathMeasure, PictureRecorder, Point, RRect, Rect,
+     RoundOut, SamplingOptions, TileMode,
+ };
+ 
+@@ -153,6 +153,7 @@ thread_local! {
+     static CONTENT_BACKGROUND_DEVICE_SPACE: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
+     static CONTENT_BACKGROUND_EFFECT: std::cell::Cell<(f32, bool)> = const { std::cell::Cell::new((1.0, true)) };
+     static VIEWPORT_CONTENT_LAYER: RefCell<Option<crate::RecordedContentLayer>> = const { RefCell::new(None) };
++    static VIEWPORT_SCROLL_REPLAY: std::cell::Cell<Option<ViewportScrollReplay>> = const { std::cell::Cell::new(None) };
+     static BROKEN_IMAGE: RefCell<Option<Image>> = const { RefCell::new(None) };
+     static BROKEN_IMAGE_HIGH_RES: RefCell<Option<Image>> = const { RefCell::new(None) };
+     static RASTERIZING_PROMOTED_TRANSFORM: RefCell<bool> = const { RefCell::new(false) };
+@@ -168,6 +169,134 @@ thread_local! {
+     // enclosing ColumnBox can discover the same contour, so retain ownership
+     // by fragment identity for the duration of one picture recording.
+     static PAINTED_FRAGMENTED_OUTLINES: RefCell<HashSet<usize>> = RefCell::new(HashSet::new());
++    // Compatible rectangular overflow clips share one geometric intersection
++    // in Blink's paint-property conversion. Retain exact vector bounds for
++    // the containing clip, rather than reconstructing them from raster cells.
++    static RECTANGULAR_OVERFLOW_CLIP: std::cell::Cell<Option<RectangularOverflowClip>> = const { std::cell::Cell::new(None) };
++}
++
++#[derive(Clone, Copy)]
++struct RectangularOverflowClip {
++    canvas: usize,
++    transform: Matrix,
++    rect: Rect,
++}
++
++struct RectangularOverflowClipScope(Option<RectangularOverflowClip>);
++
++impl RectangularOverflowClipScope {
++    fn barrier() -> Self {
++        Self(RECTANGULAR_OVERFLOW_CLIP.with(|clip| clip.replace(None)))
++    }
++
++    fn apply(canvas: &Canvas, rect: Rect, antialias: bool, compatible: bool) -> Self {
++        let transform = canvas.local_to_device_as_3x3();
++        let identity = canvas.raw_untracked() as *const skia_safe::Canvas as usize;
++        let previous = RECTANGULAR_OVERFLOW_CLIP.with(|clip| clip.get());
++        let current = (compatible
++            && antialias
++            && rect.is_finite()
++            && !rect.is_empty()
++            && !transform.has_perspective()
++            && transform.rect_stays_rect())
++        .then_some(RectangularOverflowClip {
++            canvas: identity,
++            transform,
++            rect,
++        });
++        // A containing child clip contributes no geometry to the intersection.
++        // Repeating it as a second AA mask instead squares coverage on a shared
++        // fractional edge. Only remove it in the same canvas/transform space;
++        // scroll translations, effects, rounded clips and paths form barriers.
++        let redundant = current.is_some()
++            && previous.is_some_and(|parent| {
++                parent.canvas == identity
++                    && parent.transform == transform
++                    && rect.contains(parent.rect)
++            });
++        if !redundant {
++            canvas.clip_rect(rect, ClipOp::Intersect, antialias);
++        }
++        // A removed clip must keep its containing clip's tighter vector bounds
++        // for subsequent descendants. This scope never widens the native clip.
++        Self(
++            RECTANGULAR_OVERFLOW_CLIP
++                .with(|clip| clip.replace(if redundant { previous } else { current })),
++        )
++    }
++}
++
++impl Drop for RectangularOverflowClipScope {
++    fn drop(&mut self) {
++        RECTANGULAR_OVERFLOW_CLIP.with(|clip| clip.set(self.0));
++    }
++}
++
++fn overflow_clip_boundary(fragment: &Fragment, doc: &Document) -> bool {
++    if fragment.node_id.is_none()
++        || !matches!(fragment.kind, FragmentKind::Box | FragmentKind::Viewport)
++        || fragment.decoration_slice.is_some()
++        || fragment.block_axis_clip_only
++        || fragment.inline_axis_clip_only
++    {
++        return true;
++    }
++    let node = doc.node(fragment.node_id);
++    let style = &node.style;
++    style.transform != openui_style::Transform2D::IDENTITY
++        || style.opacity != 1.0
++        || style.filter_blur != 0.0
++        || style.filter_grayscale != 0.0
++        || !style.mask_layers.is_empty()
++        || style.clip_path_inset.is_some()
++        || style.has_border_radius()
++        || node.is_svg_foreign_object
++        || node.tag == ElementTag::Svg
++}
++
++fn overflow_clip_owns_scroll_translation(fragment: &Fragment, doc: &Document) -> bool {
++    if fragment.node_id.is_none() {
++        return true;
++    }
++    let node = doc.node(fragment.node_id);
++    let style = &node.style;
++    // Raster-inducing scroll nodes remain boundaries even when their realized
++    // translation is identity. An unscrolled hidden box with zero ScrollOrigin
++    // has no such node in Blink, so its compatible clips can combine.
++    matches!(style.overflow_x, Overflow::Auto | Overflow::Scroll)
++        || matches!(style.overflow_y, Overflow::Auto | Overflow::Scroll)
++        || node.scroll_left != 0.0
++        || node.scroll_top != 0.0
++        || fragment.scroll_area.is_some_and(|area| {
++            (area.client_rect.x() - area.content_rect.x())
++                .to_f32()
++                .floor()
++                != 0.0
++                || (area.client_rect.y() - area.content_rect.y())
++                    .to_f32()
++                    .floor()
++                    != 0.0
++        })
++}
++
++#[derive(Clone, Copy)]
++struct ViewportScrollReplay {
++    canvas: usize,
++    translation: (f32, f32),
++}
++
++struct ViewportScrollReplayScope(Option<ViewportScrollReplay>);
++
++impl ViewportScrollReplayScope {
++    fn set(value: Option<ViewportScrollReplay>) -> Self {
++        Self(VIEWPORT_SCROLL_REPLAY.with(|replay| replay.replace(value)))
++    }
++}
++
++impl Drop for ViewportScrollReplayScope {
++    fn drop(&mut self) {
++        VIEWPORT_SCROLL_REPLAY.with(|replay| replay.set(self.0));
++    }
+ }
+ 
+ #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+@@ -185,9 +314,11 @@ pub(crate) fn set_paint_raster_tiled(tiled: bool) {
+ }
+ 
+ pub(crate) fn reset_picture_paint_state() {
++    VIEWPORT_SCROLL_REPLAY.with(|replay| replay.set(None));
+     PAINTED_FRAGMENTED_OUTLINES.with(|painted| painted.borrow_mut().clear());
+     EXTERNALLY_DEFERRED_OUTLINES.with(|deferred| deferred.borrow_mut().clear());
+     VIEWPORT_CONTENT_LAYER.with(|layer| *layer.borrow_mut() = None);
++    RECTANGULAR_OVERFLOW_CLIP.with(|clip| clip.set(None));
+ }
+ 
+ pub(crate) fn take_viewport_content_layer() -> Option<crate::RecordedContentLayer> {
+@@ -727,6 +858,22 @@ fn paint_fragment_tracked(
+     doc: &Document,
+     offset: PhysicalOffset,
+ ) {
++    // This recording is replayed below the viewport's snapped scroll
++    // translation. Cancel only that translation for a viewport-fixed box;
++    // its own effects and descendant scrollports retain their transforms.
++    // A different raster canvas or a recursive promoted replay owns another
++    // coordinate mapping and cannot consume this scope a second time.
++    let fixed_scroll = VIEWPORT_SCROLL_REPLAY.with(|replay| {
++        replay.get().filter(|replay| {
++            replay.canvas == canvas.raw_untracked() as *const skia_safe::Canvas as usize
++                && fragment.is_viewport_fixed(doc)
++        })
++    });
++    let _fixed_scope = fixed_scroll.map(|replay| {
++        canvas.save();
++        canvas.translate((-replay.translation.0, -replay.translation.1));
++        ViewportScrollReplayScope::set(None)
++    });
+     // A box that crosses a fractional viewport edge is cut by the physical
+     // viewport scissor before its overflowing ink reaches the terminal cell.
+     // A box ending at that edge keeps its own snapped edge coverage, so clip
+@@ -779,6 +926,9 @@ fn paint_fragment_tracked(
+     if clips_fractional_terminal_column {
+         canvas.restore();
+     }
++    if fixed_scroll.is_some() {
++        canvas.restore();
++    }
+ }
+ 
+ fn paint_fragment_contents(
+@@ -787,6 +937,8 @@ fn paint_fragment_contents(
+     doc: &Document,
+     offset: PhysicalOffset,
+ ) {
++    let _clip_boundary =
++        overflow_clip_boundary(fragment, doc).then(RectangularOverflowClipScope::barrier);
+     // Keep accumulated offset fractional (sub-pixel precision).
+     // Pixel snapping happens only at the point of drawing (paint_box_decoration_background,
+     // paint_text_fragment, etc.) using Blink's PixelSnappedIntRect approach:
+@@ -1590,6 +1742,12 @@ fn paint_fragment_contents(
+         let paint_recording =
+             crate::paint_record::RecordingScope::new(layer_canvas.raw_untracked());
+         let background_recording = BackgroundRecordingScope::new();
++        let viewport_scroll_replay = ViewportScrollReplayScope::set(
++            (scroll_translation != (0.0, 0.0)).then_some(ViewportScrollReplay {
++                canvas: layer_canvas.raw_untracked() as *const skia_safe::Canvas as usize,
++                translation: scroll_translation,
++            }),
++        );
+         paint_scrolling_canvas_background(layer_canvas, doc, fragment, bounds);
+         paint_children_with_stacking_order(
+             layer_canvas,
+@@ -1599,6 +1757,7 @@ fn paint_fragment_contents(
+             true,
+             style.display.is_flex() && fragmented_flex_has_internal_four_way_junction(fragment),
+         );
++        drop(viewport_scroll_replay);
+         let annotations = background_recording.annotations();
+         let paint_record = paint_recording.snapshot();
+         drop(paint_recording);
+@@ -9892,17 +10051,22 @@ fn paint_with_overflow_clip(
+         && !has_scroll_range
+         && (style.overflow_x == Overflow::Scroll || style.overflow_y == Overflow::Scroll)
+         && opaque_in_flow_child_covers_inner_border_box(fragment, doc);
++    // Raster-inducing scroll contents remain below their scrollport's
++    // geometric clip. At fractional replay scales, both auto and explicitly
++    // scrollable boxes retain that clip's analytic edge coverage, even when
++    // the scroll transform snaps an opaque child past the scrollport edge.
+     let antialias_transformed_clip = analytic_table_slice_end
+         || antialias_rectangular_overflow_clip(fragment, doc, style)
+         || (!composited_scroll_layer
+             && style.device_scale_factor.fract().abs() > f64::EPSILON
+-            && (style.overflow_x == Overflow::Auto
+-                || style.overflow_y == Overflow::Auto
+-                || implicit_scroll_backing_clip));
++            && (matches!(style.overflow_x, Overflow::Auto | Overflow::Scroll)
++                || matches!(style.overflow_y, Overflow::Auto | Overflow::Scroll)));
+ 
+     // When border-radius is set, clip to a rounded rect so children are
+     // clipped along the curves. Otherwise use a simple rect clip.
++    let rectangular_clip_scope;
+     if let Some(rrect) = rounded_clip_rrect {
++        rectangular_clip_scope = RectangularOverflowClipScope::barrier();
+         let top_left = rrect.radii(RRectCorner::UpperLeft);
+         if fragment.decoration_slice.is_some() && top_left.x > 0.0 && top_left.y > 0.0 {
+             fragmented_top_left_tangent = Some((rrect.rect().left, rrect.rect().top + top_left.y));
+@@ -9952,10 +10116,14 @@ fn paint_with_overflow_clip(
+         } else {
+             clip_rect
+         };
+-        canvas.clip_rect(
++        rectangular_clip_scope = RectangularOverflowClipScope::apply(
++            canvas,
+             raster_clip_rect,
+-            ClipOp::Intersect,
+             antialias_transformed_clip,
++            !composited_scroll_layer
++                && !implicit_scroll_backing_clip
++                && !overflow_clip_boundary(fragment, doc)
++                && !overflow_clip_owns_scroll_translation(fragment, doc),
+         );
+     }
+ 
+@@ -10065,6 +10233,7 @@ fn paint_with_overflow_clip(
+         );
+     }
+ 
++    drop(rectangular_clip_scope);
+     canvas.restore();
+     paint_element_scrollbars(canvas, fragment, doc, offset);
+ }
+diff --git a/bindings/rust/openui/examples/native_reveal_containers.rs b/bindings/rust/openui/examples/native_reveal_containers.rs
+index 71727d60..522a3415 100644
+--- a/bindings/rust/openui/examples/native_reveal_containers.rs
++++ b/bindings/rust/openui/examples/native_reveal_containers.rs
+@@ -57,6 +57,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
+         "fixed-transform",
+         "fixed-root-scrollable",
+         "absolute-root-scrollable",
++        "fixed-root-prescrolled",
++        "absolute-root-prescrolled",
+     ]
+     .contains(&case.as_str())
+     {
+@@ -68,7 +70,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
+     let root = document.body();
+     root.set_background_color(Color::WHITE)?;
+     root.set_scrollbar_width(ScrollbarWidth::None)?;
+-    let root_scroll_case = case.ends_with("-scrollable");
++    let prescrolled = case.ends_with("-prescrolled");
++    let root_scroll_case = case.ends_with("-scrollable") || prescrolled;
+     let root_filler = if root_scroll_case {
+         Some(block(&document, &root, 320.0, 1000.0)?)
+     } else {
+@@ -115,7 +118,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
+         let (left, top) = if case == "absolute-inner" {
+             (150.0, 120.0)
+         } else if case == "absolute-root" || case == "fixed-root" || root_scroll_case {
+-            (280.0, if root_scroll_case { 500.0 } else { 200.0 })
++            (
++                280.0,
++                if prescrolled {
++                    180.0
++                } else if root_scroll_case {
++                    500.0
++                } else {
++                    200.0
++                },
++            )
+         } else {
+             (250.0, 180.0)
+         };
+@@ -143,6 +155,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
+         }
+         callback_calls.set(callback_calls.get() + 1);
+     })?;
++    if prescrolled {
++        root.scroll_to(0.0, 120.0)?;
++    }
+     let mut records = vec![snapshot(
+         &document,
+         [&root, &outer, &inner, &target],
+diff --git a/docs/renderer/generated/author-style-inventory.json b/docs/renderer/generated/author-style-inventory.json
+index db000a0c..9f02a902 100644
+--- a/docs/renderer/generated/author-style-inventory.json
++++ b/docs/renderer/generated/author-style-inventory.json
+@@ -951,6 +951,7 @@
+       "classification": "internal",
+       "consumers": [
+         "bindings/rust/openui-layout/src/block.rs",
++        "bindings/rust/openui-layout/src/fragment.rs",
+         "bindings/rust/openui-layout/src/grid.rs",
+         "bindings/rust/openui-layout/src/inline/algorithm.rs",
+         "bindings/rust/openui-layout/src/inline/items_builder.rs",
+@@ -2326,6 +2327,7 @@
+         "bindings/rust/openui-layout/src/block.rs",
+         "bindings/rust/openui-layout/src/flex/algorithm.rs",
+         "bindings/rust/openui-layout/src/flex/alignment.rs",
++        "bindings/rust/openui-layout/src/fragment.rs",
+         "bindings/rust/openui-layout/src/grid.rs",
+         "bindings/rust/openui-layout/src/inline/algorithm.rs",
+         "bindings/rust/openui-layout/src/inline/items_builder.rs",

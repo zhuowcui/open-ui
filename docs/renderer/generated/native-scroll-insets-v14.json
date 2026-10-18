@@ -1,0 +1,416 @@
+{
+  "applied_to_umbrella": false,
+  "artifacts": [
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-clip-range-complete-audit-v914.json",
+      "sha256": "4b56d45dbeda68aaa505809be4d713896b8dceb5970985e36b246fd458ba595c"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-clip-range-after-pixels-v915/receipt.json",
+      "sha256": "33a4d2e037c35daa5c178666485bc3562c55347e85642969d3bcc81d1a8d8f61"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-clip-range-clean-full-v910/full-summary.json",
+      "sha256": "23104a0cb6374c99e36abc40252c34f481698f29f9af6e9b5a54d4224bd211c6"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-clip-range-clean-expanded-v910/expanded-summary.json",
+      "sha256": "5fb03c01bbe177e1d90ed1a10f5c2303d5650a4ad03ee14ed87f402fc08a1236"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-opaque-primary-v955/sources.json",
+      "sha256": "673e72615333087b039d2ca9a77a000012a0cb09933474028e40fd93f602ffa7"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-opaque-color-analysis-v956.json",
+      "sha256": "619644fcb763bd57a8713ea0c5110c5941ff3b2b6f80fe8d910034cd6dc7091d"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-opaque-neighbors-v959/receipt.json",
+      "sha256": "560a350d75468fb96374a62c04a602849eefd7b0ca082bd904744ad64e01c0d5"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-opaque-consumer-review-v962.json",
+      "sha256": "585b250518aca994dc27965a62782631f97c7393a630262ab22db5a6a65c9fa2"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-opaque-neighbors-v964/receipt.json",
+      "sha256": "887750498ee296ed9c1f50108d2cfbd37336f951b5da1ab3a870196ba2b89082"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-opaque-review-v966.json",
+      "sha256": "fe9132b70e0714ce059381acf14b3f05e28e302d8592763a8d23dff0fc76bc08"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-collapse-clean-v935/build.json",
+      "sha256": "a883cc18c1539527ec18f185c54eb34ddcad3c80705f09da319e28715e382d9e"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-collapse-clean-v975/build.json",
+      "sha256": "28ac8924956fab5100a4e4d9677e1815de4b30a077c01486f225307ed9ba5202"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-collapse-compile-queue-retirement-v972.json",
+      "sha256": "9a4b16db3ba7770466d88fb91315c7585c922d4144e612fc180ceabcfcd70fda"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-collapse-compile-queue-retirement-v973.json",
+      "sha256": "f814acc7ec544d67404ae0e40405f4045257358fa4fa6e3d7689199326b49545"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-collapse-checks-v995/receipt.json",
+      "sha256": "d9591c7527d7e543576e673293f23536418387d6ecd34523bc8c054efd2cce80"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-collapse-clean-v996/build.json",
+      "sha256": "ade2f796af1d883ae42e94a3e94027ff1e56de0c55c674da15d3530fc6fbad80"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-collapse-c-v998/receipt.json",
+      "sha256": "544e9e21b45c40c79fe6200962753efd195981943331ea6f2d83c8623dce045b"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-color-f32-compile-v971/receipt.json",
+      "sha256": "f892ae10e4fa02ecb90e262eedcf6b32a106820582d99595e6ffd02a595b8244"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-color-f32-checks-v1013/receipt.json",
+      "sha256": "109975f35c634206cce1f65aad8ab7c6ddee7d99777c443055f762d27f8aa4d6"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-docs-checks-v967/receipt.json",
+      "sha256": "635515d29f7516b9e98d6f57588f712f89010f59ee0c235df82cdc6523c10619"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-docs-ci-v969/receipt.json",
+      "sha256": "e7a295a6e0ae7cd5ded9ee7d42ca630f75661a1a9a8a043bb5501e93858bba22"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-collapse-rust-v997/receipt.json",
+      "sha256": "55eab05375fc2e43170e4f699b6d0f5000d02086c9ff9059d8cf89fabc5b2f6a"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-collapse-after-build-v1012/receipt.json",
+      "sha256": "278e6bb39c3f29514d68a7c5c78e9a8b14b99679db8f423d29e42ebd69dca1db"
+    }
+  ],
+  "cargo_and_local_image_sweeps_run_separately": true,
+  "completed_source45_census": {
+    "actual_full_and_expanded_exits": [
+      1,
+      1
+    ],
+    "addition_cases": {
+      "exact_at_all_four_profiles": 200,
+      "failed": {
+        "wpt/css_display/display-contents-dynamic-fieldset-legend-001": [
+          {
+            "mismatched_pixels": 0,
+            "profile": "legacy-800x600@1",
+            "status": "exact"
+          },
+          {
+            "mismatched_pixels": 0,
+            "profile": "mobile-375x667@2",
+            "status": "exact"
+          },
+          {
+            "mismatched_pixels": 1315,
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "mismatched_pixels": 0,
+            "profile": "desktop-1920x1080@1.5",
+            "status": "exact"
+          }
+        ]
+      },
+      "total": 201
+    },
+    "all_804_addition_invariants_unchanged": true,
+    "all_chromium_bytes_and_identities_unchanged": true,
+    "all_original_rows_agree_between_original_and_expanded": true,
+    "deltas": {
+      "clip_containment_cf59ea29": {
+        "expanded": {
+          "changed_rows": 35,
+          "counts": {
+            "exact_losses": 1,
+            "improved": 26,
+            "new_exact": 11,
+            "worsened": 9
+          }
+        },
+        "full": {
+          "changed_rows": 35,
+          "counts": {
+            "exact_losses": 1,
+            "improved": 26,
+            "new_exact": 11,
+            "worsened": 9
+          }
+        }
+      },
+      "implemented_d174ea0b": {
+        "expanded": {
+          "changed_rows": 59,
+          "counts": {
+            "exact_losses": 1,
+            "improved": 43,
+            "new_exact": 17,
+            "same_pixel_count": 4,
+            "worsened": 12
+          }
+        },
+        "full": {
+          "changed_rows": 59,
+          "counts": {
+            "exact_losses": 1,
+            "improved": 43,
+            "new_exact": 17,
+            "same_pixel_count": 4,
+            "worsened": 12
+          }
+        }
+      },
+      "inset_45ddd7a4": {
+        "expanded": {
+          "changed_rows": 59,
+          "counts": {
+            "exact_losses": 1,
+            "improved": 43,
+            "new_exact": 17,
+            "same_pixel_count": 4,
+            "worsened": 12
+          }
+        },
+        "full": {
+          "changed_rows": 59,
+          "counts": {
+            "exact_losses": 1,
+            "improved": 43,
+            "new_exact": 17,
+            "same_pixel_count": 4,
+            "worsened": 12
+          }
+        }
+      },
+      "screen_dac78e25": {
+        "expanded": {
+          "changed_rows": 35,
+          "counts": {
+            "exact_losses": 1,
+            "improved": 26,
+            "new_exact": 11,
+            "worsened": 9
+          }
+        },
+        "full": {
+          "changed_rows": 35,
+          "counts": {
+            "exact_losses": 1,
+            "improved": 26,
+            "new_exact": 11,
+            "worsened": 9
+          }
+        }
+      },
+      "viewport_fixed_4dd50621": {
+        "expanded": {
+          "changed_rows": 23,
+          "counts": {
+            "exact_losses": 0,
+            "improved": 23,
+            "new_exact": 9
+          }
+        },
+        "full": {
+          "changed_rows": 23,
+          "counts": {
+            "exact_losses": 0,
+            "improved": 23,
+            "new_exact": 9
+          }
+        }
+      }
+    },
+    "exact_loss_vs_implemented_umbrella": {
+      "id": "wpt/css_multicol/multicol-scroll-content",
+      "mismatched_pixels": 250,
+      "owner": "openui-layout/openui-paint",
+      "profile": "desktop-1280x720@1.25",
+      "qualification": "fail"
+    },
+    "native_collapsed_api_failures": 20,
+    "opaque_white_pixel_failures": 14,
+    "residual_test_ids": 875,
+    "results": {
+      "expanded": {
+        "different": 1575,
+        "errors": 0,
+        "exact": 22153,
+        "profile_result_sha256": "7044771e20233e1a33bc418576e133f5d7893dd4826528c9cdb31f91fc5149f4",
+        "total": 23728
+      },
+      "full": {
+        "different": 1574,
+        "errors": 0,
+        "exact": 21350,
+        "profile_result_sha256": "f4f1fe872fa4c3543604059c525aa4214d121eb4fa652dba3af7989f68716ba8",
+        "total": 22924
+      }
+    },
+    "source": {
+      "clean": true,
+      "commit": "45ddeee3b5abceca5f8e0f0a752aa1e9d10ac14e",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "30baddc5d5196b40436bcc6b5c9e6906808df9c300460f2db1e72c4ff96c6e0f",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "corrected_margin_trial": {
+    "all_eight_own_build_stages_zero": true,
+    "all_ten_own_readonly_checks_zero": true,
+    "c_api": {
+      "all_chromium_observations_unchanged": true,
+      "all_owned_snapshots_survive_mutation_and_teardown": true,
+      "exact": 45,
+      "exact_losses": 0,
+      "gains": 20,
+      "native_process_errors": 0,
+      "total": 45
+    },
+    "full_census_and_pixel_qualification": "pending; no earlier pixel pass inherited",
+    "initial_guards": {
+      "actual_exit": 1,
+      "full_censuses_started": false,
+      "initial_pixel_probes_started": false,
+      "public_native_api_gate_failed": true
+    },
+    "previous_clean_compile_failures": [
+      {
+        "actual_exit": 101,
+        "cause": "unmatched JSON format-string brace in new public Rust consumer",
+        "source": "af89e377edae118b2d681048c764bf31bfdfaf7c",
+        "tests_executed": 0
+      },
+      {
+        "actual_exit": 101,
+        "cause": "two existing standalone text Fragment literals lacked new end-margin metadata",
+        "source": "295389ecfab840ece94480907512db3062e71992",
+        "tests_executed": 0
+      }
+    ],
+    "rust_api": {
+      "actual_exit": 1,
+      "all_owned_snapshots_survive_mutation_and_teardown": true,
+      "exact": 555,
+      "failed_states": 210,
+      "failure_scope": "All210failuresarevertical-rl/vertical-lr empty and nested-empty cases; exact logical/physical end-margin and self-collapsing mechanism review remains required.",
+      "native_process_errors": 0,
+      "owner": "openui-layout/openui-engine",
+      "total": 765
+    },
+    "source": {
+      "clean": true,
+      "commit": "2240ee9ce61d2d0533bb55eb6733372dc33230bf",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "c70afa8c756db75516b5ed91a026eac75f6d01c157cfa41238b0391b83ce526d",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "workspace": {
+      "failed": 0,
+      "ignored": 13,
+      "passed": 8540
+    }
+  },
+  "docs_checkpoint_f6b841db": {
+    "all_ten_own_readonly_checks_zero": true,
+    "all_three_hosted_workflows_success": true,
+    "private_runtime_qualification": false,
+    "skipped_jobs": 5,
+    "skipped_jobs_are_not_passes": true,
+    "successful_jobs": 6
+  },
+  "full_chromium_exactness_and_all_needed_native_apis_complete": false,
+  "native_float_color_trial": {
+    "all_struct_layouts_unchanged": true,
+    "all_ten_own_readonly_checks_zero": true,
+    "append_only_exports_after": 113,
+    "append_only_exports_before": 112,
+    "complete_private_patch_reverse_check": 0,
+    "native_public_consumers": [
+      "bindings/rust/openui/examples/native_float_colors.rs",
+      "examples/c_v02/float_colors.c",
+      "examples/c_v02/float_colors.cc"
+    ],
+    "new_build": "native-color-f32-clean-v1014/build.json running after failed native margin API gate; no image sweeps started",
+    "new_method": "oui_style_value_color_f32_v1",
+    "owned_property_bound_thread_affine_color_value": true,
+    "preliminary_c_and_cpp_compile_only_exits": [
+      0,
+      0
+    ],
+    "preliminary_compile_source_was_dirty_not_qualifying": true,
+    "runtime_and_pixel_qualification": "pending",
+    "source": {
+      "clean": true,
+      "commit": "9cf13fcca00157e66db9a116cea4cda03641eac9",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "26c629c2777c2dab9a8bdc1309a511a18cdc1ca74ac33534b800d5d3c0d91b83",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "supported_color_longhands": 12,
+    "umbrella_checksum_policy": "Full private patch checksum is source-specific and does not apply to the umbrella. Source-only umbrella patch excludes that checksum; regenerate and verify all ABI artifacts from umbrella source after application. No generator gate is weakened.",
+    "umbrella_source_patch_apply_check": 0
+  },
+  "opaque_neighbor_review": {
+    "all_four_original_white_native_and_reference_images_unchanged": true,
+    "all_two_chromium_repeats_identical": true,
+    "corrected_trial_uses_new_typed_rgba8_inputs": true,
+    "finding": "Chromium promotes whole-content opaque scrolling below1.5; trailing gaps/translucency/separate opacity keep parent paint ownership. At1.5 ordinary user-scrollable content composites. Native CPU extent/phase and scale-only decisions miss that ownership proof. Exact high-DPI tile/sampling edge step remains open.",
+    "first_trial_eight_rgba_text_process_errors_preserved": true,
+    "geometry_exact": 40,
+    "native_process_errors": 0,
+    "original_float_rgba_reference_not_qualified_by_changed_input": true,
+    "owned_pixel_failures": 29,
+    "owner": "openui-paint",
+    "pixels_exact": 11,
+    "source": {
+      "clean": true,
+      "commit": "45ddeee3b5abceca5f8e0f0a752aa1e9d10ac14e",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "30baddc5d5196b40436bcc6b5c9e6906808df9c300460f2db1e72c4ff96c6e0f",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "total": 40
+  },
+  "previous_index": {
+    "immutable": true,
+    "path": "docs/renderer/generated/native-scroll-insets-v13.json",
+    "sha256": "ac51e12d039b608ea46bad306482b7773383a9aeaf46ef5e41c10d812317f9ca"
+  },
+  "product_policy": "Open UI executes no JavaScript in any version. Needed application behavior uses public native Rust methods/callbacks. C and accessibility share the Engine. Pinned Chromium alone supplies expected pixels; archived Open UI bytes are provenance.",
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "required_pixel_gate": "fail",
+  "reviewable_patches": [
+    {
+      "applied_to_umbrella": false,
+      "path": "docs/renderer/evidence/native-scroll-collapsed-v2/native-scroll-collapsed-v2.patch",
+      "sha256": "420c6ec7a9d30bff972479a2483600dfb9b6be414c1340edf95a458c01e6190e"
+    },
+    {
+      "applied_to_umbrella": false,
+      "path": "docs/renderer/evidence/native-color-f32-v1/native-color-f32-v1.patch",
+      "sha256": "239a134893d405087c51e17984ee0ee87d1092b02513d125e349bc41779163fd"
+    },
+    {
+      "applied_to_umbrella": false,
+      "path": "docs/renderer/evidence/native-color-f32-v1/native-color-f32-umbrella-v1.patch",
+      "sha256": "6f0e2a32f1542370563a7eadd621d8da842a27513c52c6309492fca87be22eeb"
+    }
+  ],
+  "schema_version": 1
+}

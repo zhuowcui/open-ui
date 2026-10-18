@@ -19,4 +19,4 @@ BINDGEN_EXTRA_CLANG_ARGS = "--sysroot=/home/nero/chromium/src/build/linux/debian
 SKIA_NINJA_COMMAND = "/home/nero/chromium/src/third_party/ninja/ninja"
 PKG_CONFIG_SYSROOT_DIR = "/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot"
 CXXFLAGS = "--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot"
-SKIA_GN_ARGS = 'extra_cflags += [ "-DSK_SUPPORT_LEGACY_CONIC_CHOP", "-DSK_USE_FREETYPE_EMBOLDEN", "-DSK_GAMMA_EXPONENT=1.2", "-DSK_GAMMA_CONTRAST=0.2", "-fno-strict-aliasing", "-msse3", "--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot" ]'
+SKIA_GN_ARGS = 'extra_cflags += [ "-DSK_SUPPORT_LEGACY_CONIC_CHOP", "-DSK_ENABLE_LEGACY_SHADERCONTEXT", "-DSK_USE_FREETYPE_EMBOLDEN", "-DSK_GAMMA_EXPONENT=1.2", "-DSK_GAMMA_CONTRAST=0.2", "-fno-strict-aliasing", "-msse3", "--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot" ]'

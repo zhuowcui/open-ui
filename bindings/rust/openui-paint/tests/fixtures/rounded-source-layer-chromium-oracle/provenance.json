@@ -1,0 +1,367 @@
+{
+  "schema_version": 1,
+  "chromium": {
+    "path": "/home/nero/code/open-ui/chrome/linux-147.0.7727.50/chrome-linux64/chrome",
+    "role": "pinned_stock_Chrome_binary",
+    "sha256": "0ba87684df0afc11faaea40ac57bd2f1d68b67191443b38215a36b90e6f08848",
+    "version": "147.0.7727.50"
+  },
+  "scope": "exact captured(1) promoted rounded20x20/radius3 blue primitive on white32x32; all5scales, full-frame zero tolerance. No original fixture/Viz/release/layer qualification.",
+  "base_source_commit": "26044df5e3dd495c2f65f4e52d2e82c0a469db50",
+  "original_unit_source_sha256": "c15cace55411a3c92d21ebe618ce0cb47f3396163c8e62ce28344d30fa5a557d",
+  "exact_helper_unchanged": true,
+  "captured_mode": 1,
+  "receipt": {
+    "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-rounded-source-layer-chromium-oracle-v4680/receipt.json",
+    "sha256": "d90b36cf986ea5626a1e7c8fd238edccb9ea00dafc66bfc9b7d8334dacdf1317"
+  },
+  "terminal": {
+    "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-rounded-source-layer-chromium-oracle-v4680/terminal-record.json",
+    "sha256": "1c6e100138c6c2eed85aa3acd3c4392c8bad88f28506895283082ea7ddd122dd"
+  },
+  "native_dump_receipt": {
+    "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-rounded-source-layer-unit-runtime-v4675/receipt.json",
+    "sha256": "488a8fd1de3b0bd55731479c424b0e168753d2cc8f25e1d10dff4e17d60c6361"
+  },
+  "html_sha256": "e21dc2d131a57bf4053c6a013a346954b1bb51da9678ba5f291a4be1dfa94b3a",
+  "assets": [
+    {
+      "path": "bindings/rust/openui-paint/tests/fixtures/rounded-source-layer-chromium-oracle/scale-1_0.rgba",
+      "scale": 1.0,
+      "physical_size": [
+        32,
+        32
+      ],
+      "byte_length": 4096,
+      "rgba_sha256": "992e87d7488da11db342196f4e26d0ed1c8e8ccb77085865d26cc323787a93c8"
+    },
+    {
+      "path": "bindings/rust/openui-paint/tests/fixtures/rounded-source-layer-chromium-oracle/scale-1_25.rgba",
+      "scale": 1.25,
+      "physical_size": [
+        40,
+        40
+      ],
+      "byte_length": 6400,
+      "rgba_sha256": "9d907e8946011f74b6e9d9517c12f2a9d4ceacd6e9134c2acce04262815ced1b"
+    },
+    {
+      "path": "bindings/rust/openui-paint/tests/fixtures/rounded-source-layer-chromium-oracle/scale-1_5.rgba",
+      "scale": 1.5,
+      "physical_size": [
+        48,
+        48
+      ],
+      "byte_length": 9216,
+      "rgba_sha256": "d24b0c7422863646ca46d88eaf64b0707061ca8985ae1b1e8aea231ec86335bc"
+    },
+    {
+      "path": "bindings/rust/openui-paint/tests/fixtures/rounded-source-layer-chromium-oracle/scale-1_75.rgba",
+      "scale": 1.75,
+      "physical_size": [
+        56,
+        56
+      ],
+      "byte_length": 12544,
+      "rgba_sha256": "00ce000aacedff6501e95bcb1dbf2a0a6b97784533fb52891747f505beca7eca"
+    },
+    {
+      "path": "bindings/rust/openui-paint/tests/fixtures/rounded-source-layer-chromium-oracle/scale-2_0.rgba",
+      "scale": 2.0,
+      "physical_size": [
+        64,
+        64
+      ],
+      "byte_length": 16384,
+      "rgba_sha256": "cb3468c99927b63a723955358a55a2ab5f39ba9f7c58432ff9e8acfd1ff06298"
+    }
+  ],
+  "captures": [
+    {
+      "profile": "tiny-32x32@1",
+      "repeat": 0,
+      "source_html": "/mnt/d/openui-v02-qualification-d174ea0b/native-rounded-source-layer-chromium-oracle-v4680/tiny-32x32@1/repeat-0/test.html",
+      "html_sha256": "e21dc2d131a57bf4053c6a013a346954b1bb51da9678ba5f291a4be1dfa94b3a",
+      "png": "/mnt/d/openui-v02-qualification-d174ea0b/native-rounded-source-layer-chromium-oracle-v4680/tiny-32x32@1/repeat-0/chromium.png",
+      "png_sha256": "43b98f88f832d60df6e52c5a78b6bfd9c99883187527677af28054ac92ea21d7",
+      "rgba_sha256": "992e87d7488da11db342196f4e26d0ed1c8e8ccb77085865d26cc323787a93c8",
+      "physical_size": [
+        32,
+        32
+      ],
+      "actual_exit": 0,
+      "browser_terminal_reaped": true,
+      "group_profile_retired": true
+    },
+    {
+      "profile": "tiny-32x32@1",
+      "repeat": 1,
+      "source_html": "/mnt/d/openui-v02-qualification-d174ea0b/native-rounded-source-layer-chromium-oracle-v4680/tiny-32x32@1/repeat-1/test.html",
+      "html_sha256": "e21dc2d131a57bf4053c6a013a346954b1bb51da9678ba5f291a4be1dfa94b3a",
+      "png": "/mnt/d/openui-v02-qualification-d174ea0b/native-rounded-source-layer-chromium-oracle-v4680/tiny-32x32@1/repeat-1/chromium.png",
+      "png_sha256": "43b98f88f832d60df6e52c5a78b6bfd9c99883187527677af28054ac92ea21d7",
+      "rgba_sha256": "992e87d7488da11db342196f4e26d0ed1c8e8ccb77085865d26cc323787a93c8",
+      "physical_size": [
+        32,
+        32
+      ],
+      "actual_exit": 0,
+      "browser_terminal_reaped": true,
+      "group_profile_retired": true
+    },
+    {
+      "profile": "tiny-32x32@1.25",
+      "repeat": 0,
+      "source_html": "/mnt/d/openui-v02-qualification-d174ea0b/native-rounded-source-layer-chromium-oracle-v4680/tiny-32x32@1.25/repeat-0/test.html",
+      "html_sha256": "e21dc2d131a57bf4053c6a013a346954b1bb51da9678ba5f291a4be1dfa94b3a",
+      "png": "/mnt/d/openui-v02-qualification-d174ea0b/native-rounded-source-layer-chromium-oracle-v4680/tiny-32x32@1.25/repeat-0/chromium.png",
+      "png_sha256": "6a8b368c731144980ac2f0c08d10252dbeeeed17e3b9271f84fe73a435b02526",
+      "rgba_sha256": "9d907e8946011f74b6e9d9517c12f2a9d4ceacd6e9134c2acce04262815ced1b",
+      "physical_size": [
+        40,
+        40
+      ],
+      "actual_exit": 0,
+      "browser_terminal_reaped": true,
+      "group_profile_retired": true
+    },
+    {
+      "profile": "tiny-32x32@1.25",
+      "repeat": 1,
+      "source_html": "/mnt/d/openui-v02-qualification-d174ea0b/native-rounded-source-layer-chromium-oracle-v4680/tiny-32x32@1.25/repeat-1/test.html",
+      "html_sha256": "e21dc2d131a57bf4053c6a013a346954b1bb51da9678ba5f291a4be1dfa94b3a",
+      "png": "/mnt/d/openui-v02-qualification-d174ea0b/native-rounded-source-layer-chromium-oracle-v4680/tiny-32x32@1.25/repeat-1/chromium.png",
+      "png_sha256": "6a8b368c731144980ac2f0c08d10252dbeeeed17e3b9271f84fe73a435b02526",
+      "rgba_sha256": "9d907e8946011f74b6e9d9517c12f2a9d4ceacd6e9134c2acce04262815ced1b",
+      "physical_size": [
+        40,
+        40
+      ],
+      "actual_exit": 0,
+      "browser_terminal_reaped": true,
+      "group_profile_retired": true
+    },
+    {
+      "profile": "tiny-32x32@1.5",
+      "repeat": 0,
+      "source_html": "/mnt/d/openui-v02-qualification-d174ea0b/native-rounded-source-layer-chromium-oracle-v4680/tiny-32x32@1.5/repeat-0/test.html",
+      "html_sha256": "e21dc2d131a57bf4053c6a013a346954b1bb51da9678ba5f291a4be1dfa94b3a",
+      "png": "/mnt/d/openui-v02-qualification-d174ea0b/native-rounded-source-layer-chromium-oracle-v4680/tiny-32x32@1.5/repeat-0/chromium.png",
+      "png_sha256": "759062a12605351401331c337d9737ab7b4aace66750b00f0c8200c7759d4cfa",
+      "rgba_sha256": "d24b0c7422863646ca46d88eaf64b0707061ca8985ae1b1e8aea231ec86335bc",
+      "physical_size": [
+        48,
+        48
+      ],
+      "actual_exit": 0,
+      "browser_terminal_reaped": true,
+      "group_profile_retired": true
+    },
+    {
+      "profile": "tiny-32x32@1.5",
+      "repeat": 1,
+      "source_html": "/mnt/d/openui-v02-qualification-d174ea0b/native-rounded-source-layer-chromium-oracle-v4680/tiny-32x32@1.5/repeat-1/test.html",
+      "html_sha256": "e21dc2d131a57bf4053c6a013a346954b1bb51da9678ba5f291a4be1dfa94b3a",
+      "png": "/mnt/d/openui-v02-qualification-d174ea0b/native-rounded-source-layer-chromium-oracle-v4680/tiny-32x32@1.5/repeat-1/chromium.png",
+      "png_sha256": "759062a12605351401331c337d9737ab7b4aace66750b00f0c8200c7759d4cfa",
+      "rgba_sha256": "d24b0c7422863646ca46d88eaf64b0707061ca8985ae1b1e8aea231ec86335bc",
+      "physical_size": [
+        48,
+        48
+      ],
+      "actual_exit": 0,
+      "browser_terminal_reaped": true,
+      "group_profile_retired": true
+    },
+    {
+      "profile": "tiny-32x32@1.75",
+      "repeat": 0,
+      "source_html": "/mnt/d/openui-v02-qualification-d174ea0b/native-rounded-source-layer-chromium-oracle-v4680/tiny-32x32@1.75/repeat-0/test.html",
+      "html_sha256": "e21dc2d131a57bf4053c6a013a346954b1bb51da9678ba5f291a4be1dfa94b3a",
+      "png": "/mnt/d/openui-v02-qualification-d174ea0b/native-rounded-source-layer-chromium-oracle-v4680/tiny-32x32@1.75/repeat-0/chromium.png",
+      "png_sha256": "a7d2e0d76bc882d03bb8a2918c33fa43b0c762ede0d3184e4c163963eb47521f",
+      "rgba_sha256": "00ce000aacedff6501e95bcb1dbf2a0a6b97784533fb52891747f505beca7eca",
+      "physical_size": [
+        56,
+        56
+      ],
+      "actual_exit": 0,
+      "browser_terminal_reaped": true,
+      "group_profile_retired": true
+    },
+    {
+      "profile": "tiny-32x32@1.75",
+      "repeat": 1,
+      "source_html": "/mnt/d/openui-v02-qualification-d174ea0b/native-rounded-source-layer-chromium-oracle-v4680/tiny-32x32@1.75/repeat-1/test.html",
+      "html_sha256": "e21dc2d131a57bf4053c6a013a346954b1bb51da9678ba5f291a4be1dfa94b3a",
+      "png": "/mnt/d/openui-v02-qualification-d174ea0b/native-rounded-source-layer-chromium-oracle-v4680/tiny-32x32@1.75/repeat-1/chromium.png",
+      "png_sha256": "a7d2e0d76bc882d03bb8a2918c33fa43b0c762ede0d3184e4c163963eb47521f",
+      "rgba_sha256": "00ce000aacedff6501e95bcb1dbf2a0a6b97784533fb52891747f505beca7eca",
+      "physical_size": [
+        56,
+        56
+      ],
+      "actual_exit": 0,
+      "browser_terminal_reaped": true,
+      "group_profile_retired": true
+    },
+    {
+      "profile": "tiny-32x32@2",
+      "repeat": 0,
+      "source_html": "/mnt/d/openui-v02-qualification-d174ea0b/native-rounded-source-layer-chromium-oracle-v4680/tiny-32x32@2/repeat-0/test.html",
+      "html_sha256": "e21dc2d131a57bf4053c6a013a346954b1bb51da9678ba5f291a4be1dfa94b3a",
+      "png": "/mnt/d/openui-v02-qualification-d174ea0b/native-rounded-source-layer-chromium-oracle-v4680/tiny-32x32@2/repeat-0/chromium.png",
+      "png_sha256": "c43ff6c5d8dd2babb08b2b82b82941d20818460d5c542c0a94f439f0bc2214e8",
+      "rgba_sha256": "cb3468c99927b63a723955358a55a2ab5f39ba9f7c58432ff9e8acfd1ff06298",
+      "physical_size": [
+        64,
+        64
+      ],
+      "actual_exit": 0,
+      "browser_terminal_reaped": true,
+      "group_profile_retired": true
+    },
+    {
+      "profile": "tiny-32x32@2",
+      "repeat": 1,
+      "source_html": "/mnt/d/openui-v02-qualification-d174ea0b/native-rounded-source-layer-chromium-oracle-v4680/tiny-32x32@2/repeat-1/test.html",
+      "html_sha256": "e21dc2d131a57bf4053c6a013a346954b1bb51da9678ba5f291a4be1dfa94b3a",
+      "png": "/mnt/d/openui-v02-qualification-d174ea0b/native-rounded-source-layer-chromium-oracle-v4680/tiny-32x32@2/repeat-1/chromium.png",
+      "png_sha256": "c43ff6c5d8dd2babb08b2b82b82941d20818460d5c542c0a94f439f0bc2214e8",
+      "rgba_sha256": "cb3468c99927b63a723955358a55a2ab5f39ba9f7c58432ff9e8acfd1ff06298",
+      "physical_size": [
+        64,
+        64
+      ],
+      "actual_exit": 0,
+      "browser_terminal_reaped": true,
+      "group_profile_retired": true
+    }
+  ],
+  "comparison_summary": [
+    {
+      "scale": 1.0,
+      "arm": "canonical",
+      "different_pixels": 0,
+      "native_sha256": "992e87d7488da11db342196f4e26d0ed1c8e8ccb77085865d26cc323787a93c8",
+      "chrome_rgba_sha256": "992e87d7488da11db342196f4e26d0ed1c8e8ccb77085865d26cc323787a93c8"
+    },
+    {
+      "scale": 1.0,
+      "arm": "exact-spine",
+      "different_pixels": 0,
+      "native_sha256": "992e87d7488da11db342196f4e26d0ed1c8e8ccb77085865d26cc323787a93c8",
+      "chrome_rgba_sha256": "992e87d7488da11db342196f4e26d0ed1c8e8ccb77085865d26cc323787a93c8"
+    },
+    {
+      "scale": 1.0,
+      "arm": "local-source",
+      "different_pixels": 0,
+      "native_sha256": "992e87d7488da11db342196f4e26d0ed1c8e8ccb77085865d26cc323787a93c8",
+      "chrome_rgba_sha256": "992e87d7488da11db342196f4e26d0ed1c8e8ccb77085865d26cc323787a93c8"
+    },
+    {
+      "scale": 1.25,
+      "arm": "canonical",
+      "different_pixels": 0,
+      "native_sha256": "9d907e8946011f74b6e9d9517c12f2a9d4ceacd6e9134c2acce04262815ced1b",
+      "chrome_rgba_sha256": "9d907e8946011f74b6e9d9517c12f2a9d4ceacd6e9134c2acce04262815ced1b"
+    },
+    {
+      "scale": 1.25,
+      "arm": "exact-spine",
+      "different_pixels": 0,
+      "native_sha256": "9d907e8946011f74b6e9d9517c12f2a9d4ceacd6e9134c2acce04262815ced1b",
+      "chrome_rgba_sha256": "9d907e8946011f74b6e9d9517c12f2a9d4ceacd6e9134c2acce04262815ced1b"
+    },
+    {
+      "scale": 1.25,
+      "arm": "local-source",
+      "different_pixels": 0,
+      "native_sha256": "9d907e8946011f74b6e9d9517c12f2a9d4ceacd6e9134c2acce04262815ced1b",
+      "chrome_rgba_sha256": "9d907e8946011f74b6e9d9517c12f2a9d4ceacd6e9134c2acce04262815ced1b"
+    },
+    {
+      "scale": 1.5,
+      "arm": "canonical",
+      "different_pixels": 0,
+      "native_sha256": "d24b0c7422863646ca46d88eaf64b0707061ca8985ae1b1e8aea231ec86335bc",
+      "chrome_rgba_sha256": "d24b0c7422863646ca46d88eaf64b0707061ca8985ae1b1e8aea231ec86335bc"
+    },
+    {
+      "scale": 1.5,
+      "arm": "exact-spine",
+      "different_pixels": 0,
+      "native_sha256": "d24b0c7422863646ca46d88eaf64b0707061ca8985ae1b1e8aea231ec86335bc",
+      "chrome_rgba_sha256": "d24b0c7422863646ca46d88eaf64b0707061ca8985ae1b1e8aea231ec86335bc"
+    },
+    {
+      "scale": 1.5,
+      "arm": "local-source",
+      "different_pixels": 0,
+      "native_sha256": "d24b0c7422863646ca46d88eaf64b0707061ca8985ae1b1e8aea231ec86335bc",
+      "chrome_rgba_sha256": "d24b0c7422863646ca46d88eaf64b0707061ca8985ae1b1e8aea231ec86335bc"
+    },
+    {
+      "scale": 1.75,
+      "arm": "canonical",
+      "different_pixels": 10,
+      "native_sha256": "b5847c43eaf7eafa8de19a3949ee4ec6ec680a00ca79b3436858fc1eb8b8e680",
+      "chrome_rgba_sha256": "00ce000aacedff6501e95bcb1dbf2a0a6b97784533fb52891747f505beca7eca"
+    },
+    {
+      "scale": 1.75,
+      "arm": "exact-spine",
+      "different_pixels": 10,
+      "native_sha256": "b5847c43eaf7eafa8de19a3949ee4ec6ec680a00ca79b3436858fc1eb8b8e680",
+      "chrome_rgba_sha256": "00ce000aacedff6501e95bcb1dbf2a0a6b97784533fb52891747f505beca7eca"
+    },
+    {
+      "scale": 1.75,
+      "arm": "local-source",
+      "different_pixels": 0,
+      "native_sha256": "00ce000aacedff6501e95bcb1dbf2a0a6b97784533fb52891747f505beca7eca",
+      "chrome_rgba_sha256": "00ce000aacedff6501e95bcb1dbf2a0a6b97784533fb52891747f505beca7eca"
+    },
+    {
+      "scale": 2.0,
+      "arm": "canonical",
+      "different_pixels": 10,
+      "native_sha256": "386ad7b8ad4094e8708c0ff551de7a78ae39756267ead9d1c7e6d33bd5767c7e",
+      "chrome_rgba_sha256": "cb3468c99927b63a723955358a55a2ab5f39ba9f7c58432ff9e8acfd1ff06298"
+    },
+    {
+      "scale": 2.0,
+      "arm": "exact-spine",
+      "different_pixels": 10,
+      "native_sha256": "386ad7b8ad4094e8708c0ff551de7a78ae39756267ead9d1c7e6d33bd5767c7e",
+      "chrome_rgba_sha256": "cb3468c99927b63a723955358a55a2ab5f39ba9f7c58432ff9e8acfd1ff06298"
+    },
+    {
+      "scale": 2.0,
+      "arm": "local-source",
+      "different_pixels": 0,
+      "native_sha256": "cb3468c99927b63a723955358a55a2ab5f39ba9f7c58432ff9e8acfd1ff06298",
+      "chrome_rgba_sha256": "cb3468c99927b63a723955358a55a2ab5f39ba9f7c58432ff9e8acfd1ff06298"
+    }
+  ],
+  "decode": "Pillow PNG convertRGBA, lossless stored raw full-frame; all alpha255; no pixel/color/AA/epsilon adjustment. Native BGRA toRGBA swaps R/B only and was independently verified against all measured bytes.",
+  "browser_initial_window": [
+    800,
+    600
+  ],
+  "effective_viewport": [
+    32,
+    32
+  ],
+  "browser_visibility": "visible before rAF; strict effective DPR/physical dimensions from receipt",
+  "old_failure_preserved": [
+    "v4664 original canonical-equality unit failure",
+    "v4675 exact helper unchanged dump",
+    "v4680 canonical/exact-spine measured10differences at1.75/2.0"
+  ],
+  "unchanged_neighbors": "all modes exceptmode1 retain existing canonical equality; strategy/item/property/host-state/query/inverse-path assertions preserved",
+  "native_runtime_of_new_guard": false,
+  "canonical_renderer_changed": false,
+  "qualified": false
+}

@@ -1,0 +1,58 @@
+{
+  "all_commands_terminal": false,
+  "build_receipt_sha256": "9836684cb22f779cc3a17fad189270c52ef4a3bf5076804547c554e3154c02c4",
+  "current_process": {
+    "pid": 2857287,
+    "program": "openui-native-intrinsic-followup-matrices-v1212.py"
+  },
+  "new_release_states_admitted": 0,
+  "probe_sha256": "c4f916b7dd0484d990decb08f5578bd75459a85a05e51865eb942061dbdbb2ae",
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "c170aa7eaeca3c1e8f93eabda11ff777df46937e",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "17053cfb5603971b87c3c9c16a03c3a08b1dd41fb7054d3b197174dcdcb5cf40",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "c170aa7eaeca3c1e8f93eabda11ff777df46937e",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "17053cfb5603971b87c3c9c16a03c3a08b1dd41fb7054d3b197174dcdcb5cf40",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "state": "running-focused",
+  "steps": [
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-native-intrinsic-followup-consumer-v1210.py"
+      ],
+      "log_sha256": "d4c13186d0971809ff6b17e9989b45eb75e4ae3c9230a4f0774705e487ddbc48",
+      "name": "intrinsic-native",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-native-intrinsic-followup-static-v1211.py"
+      ],
+      "log_sha256": "752f831d74311d552c0145b4f5c2a4bcd47f71613cb6211650d5ad9cb573efaf",
+      "name": "static-native",
+      "observed_exit_code": 1
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-native-intrinsic-followup-matrices-v1212.py",
+        "selection"
+      ],
+      "log_sha256": "5ac6236c2ef422bb8450644985eaa14d7406b85cd53a28fa91a2450fa276d965",
+      "name": "selection",
+      "observed_exit_code": 1
+    }
+  ]
+}

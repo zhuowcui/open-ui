@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "session_id": 29446,
+  "actual_tool_exit_code": 0,
+  "actual_terminal_chunk": "958fe8",
+  "terminal_reaped": true,
+  "receipt_sha256": "4105cd5f96735c0e31213332764b36818b6f0df1fc5729a727aa6028e409ecee",
+  "all_recorded_pids_absent": [
+    3378472,
+    3378563
+  ],
+  "reported_passed": 6,
+  "reported_failed": 0,
+  "renderer_qualified": false,
+  "release_qualified": false
+}

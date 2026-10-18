@@ -1,0 +1,16 @@
+{
+  "writer_pid": 3391424,
+  "receipt_sha256": "68b45476af18e5b1530ba47bcc85441bb67d28109851fa66c8a7f49629ff5fba",
+  "owner_actual_exit_code": 0,
+  "owner_terminal_reaped": true,
+  "terminal_chunk": "142de8",
+  "known_pids": [
+    3391144,
+    3391146,
+    3391176,
+    3391204,
+    3391242
+  ],
+  "all_known_pids_absent": true,
+  "qualification": false
+}

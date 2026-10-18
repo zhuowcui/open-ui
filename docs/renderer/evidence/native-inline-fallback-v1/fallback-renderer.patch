@@ -1,0 +1,25 @@
+diff --git a/bindings/rust/openui-layout/src/inline/items_builder.rs b/bindings/rust/openui-layout/src/inline/items_builder.rs
+index 5bb23949..e1d1e32a 100644
+--- a/bindings/rust/openui-layout/src/inline/items_builder.rs
++++ b/bindings/rust/openui-layout/src/inline/items_builder.rs
+@@ -986,11 +986,16 @@ impl<'a> InlineItemsBuilder<'a> {
+             return;
+         }
+ 
+-        // Replaced inline content contributes one atomic box, including its
+-        // authored dimensions and resource's intrinsic size. Collecting its
+-        // children as ordinary inline text drops that box entirely.
++        // Installed replaced content contributes one atomic box, including
++        // authored dimensions and intrinsic size. An image without installed
++        // content may instead own retained fallback children; those children
++        // participate in normal inline flow. Empty image hosts and the other
++        // replaced kinds retain their native replaced sizing defaults.
++        let image_fallback =
++            node.tag == ElementTag::Image && node.replaced.is_none() && !node.first_child.is_none();
+         if node.style.display == Display::Inline
+-            && (node.replaced.is_some() || crate::intrinsic_sizing::is_replaced_element(node.tag))
++            && (node.replaced.is_some()
++                || (crate::intrinsic_sizing::is_replaced_element(node.tag) && !image_fallback))
+         {
+             let style = node.style.clone();
+             self.append_atomic_inline(child_id, &style);

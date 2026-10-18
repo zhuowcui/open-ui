@@ -1,0 +1,3437 @@
+{
+  "actual_combined_umbrella_source_measured": false,
+  "all_local_qualification_commands_terminal": true,
+  "all_native_apis_qualified": false,
+  "candidate_nonregression": true,
+  "compositor_qualified": false,
+  "expanded_candidates": 201,
+  "expanded_candidates_exact_at_all_four_profiles": 200,
+  "files": [
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__receipt.json.gz",
+      "raw_bytes": 229871,
+      "raw_sha256": "c3d661b2e037ce1f959d4b46edd7fa2951e6a996bf067e45971e4d4e6650eeec",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/receipt.json",
+      "stored_bytes": 12694,
+      "stored_sha256": "b4534f53e1f6e60a62f3bf645dfd1f72f4b4f2bb71840da46af01914ecf4e3c2"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1__chromium-1-capture-1.png",
+      "raw_bytes": 4874,
+      "raw_sha256": "07f19063f6b1b641c28c1f4ee2cec4b2dfa619ea85f12092b5150cec188565bc",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-1/chromium-1-capture-1.png",
+      "stored_bytes": 4874,
+      "stored_sha256": "07f19063f6b1b641c28c1f4ee2cec4b2dfa619ea85f12092b5150cec188565bc"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1__chromium-1-capture-2.png",
+      "raw_bytes": 4874,
+      "raw_sha256": "07f19063f6b1b641c28c1f4ee2cec4b2dfa619ea85f12092b5150cec188565bc",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-1/chromium-1-capture-2.png",
+      "stored_bytes": 4874,
+      "stored_sha256": "07f19063f6b1b641c28c1f4ee2cec4b2dfa619ea85f12092b5150cec188565bc"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1__chromium-1-geometry.json.gz",
+      "raw_bytes": 6812,
+      "raw_sha256": "4c1097bac3d49b7ad278bc73ba8b8b71bf61b31b1a8ec2f46da431a1e4a112ef",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-1/chromium-1-geometry.json",
+      "stored_bytes": 622,
+      "stored_sha256": "0d9c020574b4203a843dcc5bb4ede7a6414e03dd92a92fd1bd60182d906f3e10"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1__chromium-2-capture-1.png",
+      "raw_bytes": 4874,
+      "raw_sha256": "07f19063f6b1b641c28c1f4ee2cec4b2dfa619ea85f12092b5150cec188565bc",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-1/chromium-2-capture-1.png",
+      "stored_bytes": 4874,
+      "stored_sha256": "07f19063f6b1b641c28c1f4ee2cec4b2dfa619ea85f12092b5150cec188565bc"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1__chromium-2-capture-2.png",
+      "raw_bytes": 4874,
+      "raw_sha256": "07f19063f6b1b641c28c1f4ee2cec4b2dfa619ea85f12092b5150cec188565bc",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-1/chromium-2-capture-2.png",
+      "stored_bytes": 4874,
+      "stored_sha256": "07f19063f6b1b641c28c1f4ee2cec4b2dfa619ea85f12092b5150cec188565bc"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1__chromium-2-geometry.json.gz",
+      "raw_bytes": 6812,
+      "raw_sha256": "4c1097bac3d49b7ad278bc73ba8b8b71bf61b31b1a8ec2f46da431a1e4a112ef",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-1/chromium-2-geometry.json",
+      "stored_bytes": 622,
+      "stored_sha256": "0d9c020574b4203a843dcc5bb4ede7a6414e03dd92a92fd1bd60182d906f3e10"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1__native-1__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-1/native-1/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1__native-1__openui.png",
+      "raw_bytes": 6001,
+      "raw_sha256": "24f78c2558af7b4c1481334ac7e977f3aedfa9fdfacf1a7baedd081c7440949b",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-1/native-1/openui.png",
+      "stored_bytes": 6001,
+      "stored_sha256": "24f78c2558af7b4c1481334ac7e977f3aedfa9fdfacf1a7baedd081c7440949b"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1__native-1.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-1/native-1.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1__native-2__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-1/native-2/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1__native-2__openui.png",
+      "raw_bytes": 6001,
+      "raw_sha256": "24f78c2558af7b4c1481334ac7e977f3aedfa9fdfacf1a7baedd081c7440949b",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-1/native-2/openui.png",
+      "stored_bytes": 6001,
+      "stored_sha256": "24f78c2558af7b4c1481334ac7e977f3aedfa9fdfacf1a7baedd081c7440949b"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1__native-2.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-1/native-2.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1__test.html.gz",
+      "raw_bytes": 1684,
+      "raw_sha256": "56f03b3048a4884570f21fd2691f51ea23e8d0589ba4e115074cde4a9422a4db",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-1/test.html",
+      "stored_bytes": 628,
+      "stored_sha256": "aef1b193bb2a1243b723be41ae4ab93ae5f421c6c3f33457b5d357e3b0c07af4"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1.25__chromium-1-capture-1.png",
+      "raw_bytes": 7973,
+      "raw_sha256": "1cbeebf432727d7c319da3de9f3bac3c4cf50e4cf0c24cf00371f6bd31534727",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-1.25/chromium-1-capture-1.png",
+      "stored_bytes": 7973,
+      "stored_sha256": "1cbeebf432727d7c319da3de9f3bac3c4cf50e4cf0c24cf00371f6bd31534727"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1.25__chromium-1-capture-2.png",
+      "raw_bytes": 7973,
+      "raw_sha256": "1cbeebf432727d7c319da3de9f3bac3c4cf50e4cf0c24cf00371f6bd31534727",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-1.25/chromium-1-capture-2.png",
+      "stored_bytes": 7973,
+      "stored_sha256": "1cbeebf432727d7c319da3de9f3bac3c4cf50e4cf0c24cf00371f6bd31534727"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1.25__chromium-1-geometry.json.gz",
+      "raw_bytes": 6815,
+      "raw_sha256": "14d9401b8f8fe37ad5a236770af5e15f8188e8fb99672a18969626fd0b8bb506",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-1.25/chromium-1-geometry.json",
+      "stored_bytes": 624,
+      "stored_sha256": "5a5bb2511af0fa4b09647333aa4862ab7660d6708173ae68d182ea1c24c9c9d1"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1.25__chromium-2-capture-1.png",
+      "raw_bytes": 7973,
+      "raw_sha256": "1cbeebf432727d7c319da3de9f3bac3c4cf50e4cf0c24cf00371f6bd31534727",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-1.25/chromium-2-capture-1.png",
+      "stored_bytes": 7973,
+      "stored_sha256": "1cbeebf432727d7c319da3de9f3bac3c4cf50e4cf0c24cf00371f6bd31534727"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1.25__chromium-2-capture-2.png",
+      "raw_bytes": 7973,
+      "raw_sha256": "1cbeebf432727d7c319da3de9f3bac3c4cf50e4cf0c24cf00371f6bd31534727",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-1.25/chromium-2-capture-2.png",
+      "stored_bytes": 7973,
+      "stored_sha256": "1cbeebf432727d7c319da3de9f3bac3c4cf50e4cf0c24cf00371f6bd31534727"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1.25__chromium-2-geometry.json.gz",
+      "raw_bytes": 6815,
+      "raw_sha256": "14d9401b8f8fe37ad5a236770af5e15f8188e8fb99672a18969626fd0b8bb506",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-1.25/chromium-2-geometry.json",
+      "stored_bytes": 624,
+      "stored_sha256": "5a5bb2511af0fa4b09647333aa4862ab7660d6708173ae68d182ea1c24c9c9d1"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1.25__native-1__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-1.25/native-1/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1.25__native-1__openui.png",
+      "raw_bytes": 9702,
+      "raw_sha256": "606af21fca4fe6b150c1b162486a49cdc303edf761d0ef348d7e3ffdfa24cb93",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-1.25/native-1/openui.png",
+      "stored_bytes": 9702,
+      "stored_sha256": "606af21fca4fe6b150c1b162486a49cdc303edf761d0ef348d7e3ffdfa24cb93"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1.25__native-1.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-1.25/native-1.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1.25__native-2__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-1.25/native-2/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1.25__native-2__openui.png",
+      "raw_bytes": 9702,
+      "raw_sha256": "606af21fca4fe6b150c1b162486a49cdc303edf761d0ef348d7e3ffdfa24cb93",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-1.25/native-2/openui.png",
+      "stored_bytes": 9702,
+      "stored_sha256": "606af21fca4fe6b150c1b162486a49cdc303edf761d0ef348d7e3ffdfa24cb93"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1.25__native-2.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-1.25/native-2.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1.25__test.html.gz",
+      "raw_bytes": 1684,
+      "raw_sha256": "56f03b3048a4884570f21fd2691f51ea23e8d0589ba4e115074cde4a9422a4db",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-1.25/test.html",
+      "stored_bytes": 628,
+      "stored_sha256": "aef1b193bb2a1243b723be41ae4ab93ae5f421c6c3f33457b5d357e3b0c07af4"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1.5__chromium-1-capture-1.png",
+      "raw_bytes": 9598,
+      "raw_sha256": "2b13fd98ab39f26e94d2f26225d48fc1c0ca8f6e4cc3217c7476d11f5141a12e",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-1.5/chromium-1-capture-1.png",
+      "stored_bytes": 9598,
+      "stored_sha256": "2b13fd98ab39f26e94d2f26225d48fc1c0ca8f6e4cc3217c7476d11f5141a12e"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1.5__chromium-1-capture-2.png",
+      "raw_bytes": 9598,
+      "raw_sha256": "2b13fd98ab39f26e94d2f26225d48fc1c0ca8f6e4cc3217c7476d11f5141a12e",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-1.5/chromium-1-capture-2.png",
+      "stored_bytes": 9598,
+      "stored_sha256": "2b13fd98ab39f26e94d2f26225d48fc1c0ca8f6e4cc3217c7476d11f5141a12e"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1.5__chromium-1-geometry.json.gz",
+      "raw_bytes": 6814,
+      "raw_sha256": "2d90ee869d7fca3677a95e61c7645b7a8fcc3b50510eb8f4a8dfa4e184a4d85a",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-1.5/chromium-1-geometry.json",
+      "stored_bytes": 624,
+      "stored_sha256": "e455681efd1b47358dd745ab20b6ab468006c5bbe88c47424d5ed7337cbd228a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1.5__chromium-2-capture-1.png",
+      "raw_bytes": 9598,
+      "raw_sha256": "2b13fd98ab39f26e94d2f26225d48fc1c0ca8f6e4cc3217c7476d11f5141a12e",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-1.5/chromium-2-capture-1.png",
+      "stored_bytes": 9598,
+      "stored_sha256": "2b13fd98ab39f26e94d2f26225d48fc1c0ca8f6e4cc3217c7476d11f5141a12e"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1.5__chromium-2-capture-2.png",
+      "raw_bytes": 9598,
+      "raw_sha256": "2b13fd98ab39f26e94d2f26225d48fc1c0ca8f6e4cc3217c7476d11f5141a12e",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-1.5/chromium-2-capture-2.png",
+      "stored_bytes": 9598,
+      "stored_sha256": "2b13fd98ab39f26e94d2f26225d48fc1c0ca8f6e4cc3217c7476d11f5141a12e"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1.5__chromium-2-geometry.json.gz",
+      "raw_bytes": 6814,
+      "raw_sha256": "2d90ee869d7fca3677a95e61c7645b7a8fcc3b50510eb8f4a8dfa4e184a4d85a",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-1.5/chromium-2-geometry.json",
+      "stored_bytes": 624,
+      "stored_sha256": "e455681efd1b47358dd745ab20b6ab468006c5bbe88c47424d5ed7337cbd228a"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1.5__native-1__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-1.5/native-1/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1.5__native-1__openui.png",
+      "raw_bytes": 12029,
+      "raw_sha256": "cb201f3d7dd4b05601366ebb836d4e443755b467b07f8f957aa173857eb626aa",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-1.5/native-1/openui.png",
+      "stored_bytes": 12029,
+      "stored_sha256": "cb201f3d7dd4b05601366ebb836d4e443755b467b07f8f957aa173857eb626aa"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1.5__native-1.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-1.5/native-1.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1.5__native-2__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-1.5/native-2/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1.5__native-2__openui.png",
+      "raw_bytes": 12029,
+      "raw_sha256": "cb201f3d7dd4b05601366ebb836d4e443755b467b07f8f957aa173857eb626aa",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-1.5/native-2/openui.png",
+      "stored_bytes": 12029,
+      "stored_sha256": "cb201f3d7dd4b05601366ebb836d4e443755b467b07f8f957aa173857eb626aa"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1.5__native-2.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-1.5/native-2.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1.5__test.html.gz",
+      "raw_bytes": 1684,
+      "raw_sha256": "56f03b3048a4884570f21fd2691f51ea23e8d0589ba4e115074cde4a9422a4db",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-1.5/test.html",
+      "stored_bytes": 628,
+      "stored_sha256": "aef1b193bb2a1243b723be41ae4ab93ae5f421c6c3f33457b5d357e3b0c07af4"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-2__chromium-1-capture-1.png",
+      "raw_bytes": 14733,
+      "raw_sha256": "50d6fc548a461a628836e3f14abfee378865495402c1c80ba544d56d73a5155f",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-2/chromium-1-capture-1.png",
+      "stored_bytes": 14733,
+      "stored_sha256": "50d6fc548a461a628836e3f14abfee378865495402c1c80ba544d56d73a5155f"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-2__chromium-1-capture-2.png",
+      "raw_bytes": 14733,
+      "raw_sha256": "50d6fc548a461a628836e3f14abfee378865495402c1c80ba544d56d73a5155f",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-2/chromium-1-capture-2.png",
+      "stored_bytes": 14733,
+      "stored_sha256": "50d6fc548a461a628836e3f14abfee378865495402c1c80ba544d56d73a5155f"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-2__chromium-1-geometry.json.gz",
+      "raw_bytes": 6812,
+      "raw_sha256": "c83e01c6eb8d096fdf38ab14c967ac897141630b9a9841683c778bd44e4fc074",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-2/chromium-1-geometry.json",
+      "stored_bytes": 622,
+      "stored_sha256": "cfb70ad83bd02a3cea9827d60584dfbf2c4c1943acbc77531e3f2ded395663af"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-2__chromium-2-capture-1.png",
+      "raw_bytes": 14733,
+      "raw_sha256": "50d6fc548a461a628836e3f14abfee378865495402c1c80ba544d56d73a5155f",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-2/chromium-2-capture-1.png",
+      "stored_bytes": 14733,
+      "stored_sha256": "50d6fc548a461a628836e3f14abfee378865495402c1c80ba544d56d73a5155f"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-2__chromium-2-capture-2.png",
+      "raw_bytes": 14733,
+      "raw_sha256": "50d6fc548a461a628836e3f14abfee378865495402c1c80ba544d56d73a5155f",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-2/chromium-2-capture-2.png",
+      "stored_bytes": 14733,
+      "stored_sha256": "50d6fc548a461a628836e3f14abfee378865495402c1c80ba544d56d73a5155f"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-2__chromium-2-geometry.json.gz",
+      "raw_bytes": 6812,
+      "raw_sha256": "c83e01c6eb8d096fdf38ab14c967ac897141630b9a9841683c778bd44e4fc074",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-2/chromium-2-geometry.json",
+      "stored_bytes": 622,
+      "stored_sha256": "cfb70ad83bd02a3cea9827d60584dfbf2c4c1943acbc77531e3f2ded395663af"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-2__native-1__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-2/native-1/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-2__native-1__openui.png",
+      "raw_bytes": 18671,
+      "raw_sha256": "02858d2514f7f177ef94ad7fd8fd66bf623e72d3c62fd277cf1c36d527a24c94",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-2/native-1/openui.png",
+      "stored_bytes": 18671,
+      "stored_sha256": "02858d2514f7f177ef94ad7fd8fd66bf623e72d3c62fd277cf1c36d527a24c94"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-2__native-1.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-2/native-1.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-2__native-2__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-2/native-2/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-2__native-2__openui.png",
+      "raw_bytes": 18671,
+      "raw_sha256": "02858d2514f7f177ef94ad7fd8fd66bf623e72d3c62fd277cf1c36d527a24c94",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-2/native-2/openui.png",
+      "stored_bytes": 18671,
+      "stored_sha256": "02858d2514f7f177ef94ad7fd8fd66bf623e72d3c62fd277cf1c36d527a24c94"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-2__native-2.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-2/native-2.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-2__test.html.gz",
+      "raw_bytes": 1684,
+      "raw_sha256": "56f03b3048a4884570f21fd2691f51ea23e8d0589ba4e115074cde4a9422a4db",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-2/test.html",
+      "stored_bytes": 628,
+      "stored_sha256": "aef1b193bb2a1243b723be41ae4ab93ae5f421c6c3f33457b5d357e3b0c07af4"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-3__chromium-1-capture-1.png",
+      "raw_bytes": 30138,
+      "raw_sha256": "88da11e3877bd91fa9c9d74078765e6502e846269ac59ac4cc85a9fe985890f6",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-3/chromium-1-capture-1.png",
+      "stored_bytes": 30138,
+      "stored_sha256": "88da11e3877bd91fa9c9d74078765e6502e846269ac59ac4cc85a9fe985890f6"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-3__chromium-1-capture-2.png",
+      "raw_bytes": 30138,
+      "raw_sha256": "88da11e3877bd91fa9c9d74078765e6502e846269ac59ac4cc85a9fe985890f6",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-3/chromium-1-capture-2.png",
+      "stored_bytes": 30138,
+      "stored_sha256": "88da11e3877bd91fa9c9d74078765e6502e846269ac59ac4cc85a9fe985890f6"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-3__chromium-1-geometry.json.gz",
+      "raw_bytes": 6812,
+      "raw_sha256": "abd7cf094fd66517128d19d0858986eb4d3e8bd5ed7a1bd81253f528296dd8c2",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-3/chromium-1-geometry.json",
+      "stored_bytes": 623,
+      "stored_sha256": "281e671d5deac76674438f096bcc299cbb322a75e018a319b9c509bce9e72874"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-3__chromium-2-capture-1.png",
+      "raw_bytes": 30138,
+      "raw_sha256": "88da11e3877bd91fa9c9d74078765e6502e846269ac59ac4cc85a9fe985890f6",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-3/chromium-2-capture-1.png",
+      "stored_bytes": 30138,
+      "stored_sha256": "88da11e3877bd91fa9c9d74078765e6502e846269ac59ac4cc85a9fe985890f6"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-3__chromium-2-capture-2.png",
+      "raw_bytes": 30138,
+      "raw_sha256": "88da11e3877bd91fa9c9d74078765e6502e846269ac59ac4cc85a9fe985890f6",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-3/chromium-2-capture-2.png",
+      "stored_bytes": 30138,
+      "stored_sha256": "88da11e3877bd91fa9c9d74078765e6502e846269ac59ac4cc85a9fe985890f6"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-3__chromium-2-geometry.json.gz",
+      "raw_bytes": 6812,
+      "raw_sha256": "abd7cf094fd66517128d19d0858986eb4d3e8bd5ed7a1bd81253f528296dd8c2",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-3/chromium-2-geometry.json",
+      "stored_bytes": 623,
+      "stored_sha256": "281e671d5deac76674438f096bcc299cbb322a75e018a319b9c509bce9e72874"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-3__native-1__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-3/native-1/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-3__native-1__openui.png",
+      "raw_bytes": 38449,
+      "raw_sha256": "388e2b5f99b4ab1e7487170f5ac9bf1dbb35de49664d3b69d33e4169f5ca4518",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-3/native-1/openui.png",
+      "stored_bytes": 38449,
+      "stored_sha256": "388e2b5f99b4ab1e7487170f5ac9bf1dbb35de49664d3b69d33e4169f5ca4518"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-3__native-1.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-3/native-1.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-3__native-2__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-3/native-2/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-3__native-2__openui.png",
+      "raw_bytes": 38449,
+      "raw_sha256": "388e2b5f99b4ab1e7487170f5ac9bf1dbb35de49664d3b69d33e4169f5ca4518",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-3/native-2/openui.png",
+      "stored_bytes": 38449,
+      "stored_sha256": "388e2b5f99b4ab1e7487170f5ac9bf1dbb35de49664d3b69d33e4169f5ca4518"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-3__native-2.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-3/native-2.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-3__test.html.gz",
+      "raw_bytes": 1684,
+      "raw_sha256": "56f03b3048a4884570f21fd2691f51ea23e8d0589ba4e115074cde4a9422a4db",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3585/scale-3/test.html",
+      "stored_bytes": 628,
+      "stored_sha256": "aef1b193bb2a1243b723be41ae4ab93ae5f421c6c3f33457b5d357e3b0c07af4"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__receipt.json.gz",
+      "raw_bytes": 282910,
+      "raw_sha256": "12d6c87064b2e16455093ad1de34019bd48e743cfc2e98b5b51787fb9187af49",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/receipt.json",
+      "stored_bytes": 15897,
+      "stored_sha256": "72dc5c0f3f0a3ec2ae8191d1d37c011be759876453e0c5e0bb72690f998204f5"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0-alpha-0__chromium-1-capture-1.png",
+      "raw_bytes": 7616,
+      "raw_sha256": "777a4556ea350d5270d884d4d9a17a9b46e282f75c295d0d2d9f9173bb7fd9ef",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0-alpha-0/chromium-1-capture-1.png",
+      "stored_bytes": 7616,
+      "stored_sha256": "777a4556ea350d5270d884d4d9a17a9b46e282f75c295d0d2d9f9173bb7fd9ef"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0-alpha-0__chromium-1-capture-2.png",
+      "raw_bytes": 7616,
+      "raw_sha256": "777a4556ea350d5270d884d4d9a17a9b46e282f75c295d0d2d9f9173bb7fd9ef",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0-alpha-0/chromium-1-capture-2.png",
+      "stored_bytes": 7616,
+      "stored_sha256": "777a4556ea350d5270d884d4d9a17a9b46e282f75c295d0d2d9f9173bb7fd9ef"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0-alpha-0__chromium-1-geometry.json.gz",
+      "raw_bytes": 6815,
+      "raw_sha256": "14d9401b8f8fe37ad5a236770af5e15f8188e8fb99672a18969626fd0b8bb506",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0-alpha-0/chromium-1-geometry.json",
+      "stored_bytes": 624,
+      "stored_sha256": "5a5bb2511af0fa4b09647333aa4862ab7660d6708173ae68d182ea1c24c9c9d1"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0-alpha-0__chromium-2-capture-1.png",
+      "raw_bytes": 7616,
+      "raw_sha256": "777a4556ea350d5270d884d4d9a17a9b46e282f75c295d0d2d9f9173bb7fd9ef",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0-alpha-0/chromium-2-capture-1.png",
+      "stored_bytes": 7616,
+      "stored_sha256": "777a4556ea350d5270d884d4d9a17a9b46e282f75c295d0d2d9f9173bb7fd9ef"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0-alpha-0__chromium-2-capture-2.png",
+      "raw_bytes": 7616,
+      "raw_sha256": "777a4556ea350d5270d884d4d9a17a9b46e282f75c295d0d2d9f9173bb7fd9ef",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0-alpha-0/chromium-2-capture-2.png",
+      "stored_bytes": 7616,
+      "stored_sha256": "777a4556ea350d5270d884d4d9a17a9b46e282f75c295d0d2d9f9173bb7fd9ef"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0-alpha-0__chromium-2-geometry.json.gz",
+      "raw_bytes": 6815,
+      "raw_sha256": "14d9401b8f8fe37ad5a236770af5e15f8188e8fb99672a18969626fd0b8bb506",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0-alpha-0/chromium-2-geometry.json",
+      "stored_bytes": 624,
+      "stored_sha256": "5a5bb2511af0fa4b09647333aa4862ab7660d6708173ae68d182ea1c24c9c9d1"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0-alpha-0__native-1__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0-alpha-0/native-1/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0-alpha-0__native-1__openui.png",
+      "raw_bytes": 9265,
+      "raw_sha256": "4710b5476834a7fbc88212bfacb5ae9574b9a24d15dc17dba87085263ab4b3de",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0-alpha-0/native-1/openui.png",
+      "stored_bytes": 9265,
+      "stored_sha256": "4710b5476834a7fbc88212bfacb5ae9574b9a24d15dc17dba87085263ab4b3de"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0-alpha-0__native-1.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0-alpha-0/native-1.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0-alpha-0__native-2__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0-alpha-0/native-2/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0-alpha-0__native-2__openui.png",
+      "raw_bytes": 9265,
+      "raw_sha256": "4710b5476834a7fbc88212bfacb5ae9574b9a24d15dc17dba87085263ab4b3de",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0-alpha-0/native-2/openui.png",
+      "stored_bytes": 9265,
+      "stored_sha256": "4710b5476834a7fbc88212bfacb5ae9574b9a24d15dc17dba87085263ab4b3de"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0-alpha-0__native-2.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0-alpha-0/native-2.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0-alpha-0__test.html.gz",
+      "raw_bytes": 1678,
+      "raw_sha256": "d71376d02ee61e41a891bb29563f60999673836869374fc19c6a907e53637ae3",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0-alpha-0/test.html",
+      "stored_bytes": 624,
+      "stored_sha256": "09583b8ecea692ade2dafeff39cd34cd45bd5deab197eaa47941c85b75f715ec"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0-alpha-1__chromium-1-capture-1.png",
+      "raw_bytes": 7910,
+      "raw_sha256": "f7efebbfb70c456f538026d9601c3997dff8a6d353a1e07f50a36bc0bba71c7d",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0-alpha-1/chromium-1-capture-1.png",
+      "stored_bytes": 7910,
+      "stored_sha256": "f7efebbfb70c456f538026d9601c3997dff8a6d353a1e07f50a36bc0bba71c7d"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0-alpha-1__chromium-1-capture-2.png",
+      "raw_bytes": 7910,
+      "raw_sha256": "f7efebbfb70c456f538026d9601c3997dff8a6d353a1e07f50a36bc0bba71c7d",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0-alpha-1/chromium-1-capture-2.png",
+      "stored_bytes": 7910,
+      "stored_sha256": "f7efebbfb70c456f538026d9601c3997dff8a6d353a1e07f50a36bc0bba71c7d"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0-alpha-1__chromium-1-geometry.json.gz",
+      "raw_bytes": 6815,
+      "raw_sha256": "14d9401b8f8fe37ad5a236770af5e15f8188e8fb99672a18969626fd0b8bb506",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0-alpha-1/chromium-1-geometry.json",
+      "stored_bytes": 624,
+      "stored_sha256": "5a5bb2511af0fa4b09647333aa4862ab7660d6708173ae68d182ea1c24c9c9d1"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0-alpha-1__chromium-2-capture-1.png",
+      "raw_bytes": 7910,
+      "raw_sha256": "f7efebbfb70c456f538026d9601c3997dff8a6d353a1e07f50a36bc0bba71c7d",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0-alpha-1/chromium-2-capture-1.png",
+      "stored_bytes": 7910,
+      "stored_sha256": "f7efebbfb70c456f538026d9601c3997dff8a6d353a1e07f50a36bc0bba71c7d"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0-alpha-1__chromium-2-capture-2.png",
+      "raw_bytes": 7910,
+      "raw_sha256": "f7efebbfb70c456f538026d9601c3997dff8a6d353a1e07f50a36bc0bba71c7d",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0-alpha-1/chromium-2-capture-2.png",
+      "stored_bytes": 7910,
+      "stored_sha256": "f7efebbfb70c456f538026d9601c3997dff8a6d353a1e07f50a36bc0bba71c7d"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0-alpha-1__chromium-2-geometry.json.gz",
+      "raw_bytes": 6815,
+      "raw_sha256": "14d9401b8f8fe37ad5a236770af5e15f8188e8fb99672a18969626fd0b8bb506",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0-alpha-1/chromium-2-geometry.json",
+      "stored_bytes": 624,
+      "stored_sha256": "5a5bb2511af0fa4b09647333aa4862ab7660d6708173ae68d182ea1c24c9c9d1"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0-alpha-1__native-1__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0-alpha-1/native-1/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0-alpha-1__native-1__openui.png",
+      "raw_bytes": 9598,
+      "raw_sha256": "571db0152595eaddcad56f096909b801526fd48daca2e3479625ce60414a39bb",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0-alpha-1/native-1/openui.png",
+      "stored_bytes": 9598,
+      "stored_sha256": "571db0152595eaddcad56f096909b801526fd48daca2e3479625ce60414a39bb"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0-alpha-1__native-1.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0-alpha-1/native-1.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0-alpha-1__native-2__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0-alpha-1/native-2/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0-alpha-1__native-2__openui.png",
+      "raw_bytes": 9598,
+      "raw_sha256": "571db0152595eaddcad56f096909b801526fd48daca2e3479625ce60414a39bb",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0-alpha-1/native-2/openui.png",
+      "stored_bytes": 9598,
+      "stored_sha256": "571db0152595eaddcad56f096909b801526fd48daca2e3479625ce60414a39bb"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0-alpha-1__native-2.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0-alpha-1/native-2.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0-alpha-1__test.html.gz",
+      "raw_bytes": 1678,
+      "raw_sha256": "ceca13c989accf39dbae9db06f9310bd0da4367f4656ab298c9b6ff991e8bbea",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0-alpha-1/test.html",
+      "stored_bytes": 623,
+      "stored_sha256": "332596b91d2191a37d77607d4b79dd9acde63ed8fbfa04872947ee8ccf62ffd2"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0.25-alpha-0.5__chromium-1-capture-1.png",
+      "raw_bytes": 7984,
+      "raw_sha256": "439e28d1869600fa9d028b88fa01f81a135687f5cb3a57f4bb74437c2538bc51",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0.25-alpha-0.5/chromium-1-capture-1.png",
+      "stored_bytes": 7984,
+      "stored_sha256": "439e28d1869600fa9d028b88fa01f81a135687f5cb3a57f4bb74437c2538bc51"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0.25-alpha-0.5__chromium-1-capture-2.png",
+      "raw_bytes": 7984,
+      "raw_sha256": "439e28d1869600fa9d028b88fa01f81a135687f5cb3a57f4bb74437c2538bc51",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0.25-alpha-0.5/chromium-1-capture-2.png",
+      "stored_bytes": 7984,
+      "stored_sha256": "439e28d1869600fa9d028b88fa01f81a135687f5cb3a57f4bb74437c2538bc51"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0.25-alpha-0.5__chromium-1-geometry.json.gz",
+      "raw_bytes": 7055,
+      "raw_sha256": "02c688c13dff763b4c121fa01836c810417ec6506d21db3a305b28111553b798",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0.25-alpha-0.5/chromium-1-geometry.json",
+      "stored_bytes": 645,
+      "stored_sha256": "feb2566f5c01fe36fed984b8957707acb6b0f744ec1d958c5eae1963f7f931f2"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0.25-alpha-0.5__chromium-2-capture-1.png",
+      "raw_bytes": 7984,
+      "raw_sha256": "439e28d1869600fa9d028b88fa01f81a135687f5cb3a57f4bb74437c2538bc51",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0.25-alpha-0.5/chromium-2-capture-1.png",
+      "stored_bytes": 7984,
+      "stored_sha256": "439e28d1869600fa9d028b88fa01f81a135687f5cb3a57f4bb74437c2538bc51"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0.25-alpha-0.5__chromium-2-capture-2.png",
+      "raw_bytes": 7984,
+      "raw_sha256": "439e28d1869600fa9d028b88fa01f81a135687f5cb3a57f4bb74437c2538bc51",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0.25-alpha-0.5/chromium-2-capture-2.png",
+      "stored_bytes": 7984,
+      "stored_sha256": "439e28d1869600fa9d028b88fa01f81a135687f5cb3a57f4bb74437c2538bc51"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0.25-alpha-0.5__chromium-2-geometry.json.gz",
+      "raw_bytes": 7055,
+      "raw_sha256": "02c688c13dff763b4c121fa01836c810417ec6506d21db3a305b28111553b798",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0.25-alpha-0.5/chromium-2-geometry.json",
+      "stored_bytes": 645,
+      "stored_sha256": "feb2566f5c01fe36fed984b8957707acb6b0f744ec1d958c5eae1963f7f931f2"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0.25-alpha-0.5__native-1__geometry.json.gz",
+      "raw_bytes": 7164,
+      "raw_sha256": "6d71cc7177b2930311231c6b56b7b3d94271bd15dc1707a3098c417dce722d68",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0.25-alpha-0.5/native-1/geometry.json",
+      "stored_bytes": 628,
+      "stored_sha256": "431d607eb5816a82f25c56e5e8819e9d6dcbe653ad4ba1d431c20bb400a558ae"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0.25-alpha-0.5__native-1__openui.png",
+      "raw_bytes": 9681,
+      "raw_sha256": "89a5449c48f8f6fbed0c6f2bd130190ccfda4bae1c296cd745d3f83904ed825f",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0.25-alpha-0.5/native-1/openui.png",
+      "stored_bytes": 9681,
+      "stored_sha256": "89a5449c48f8f6fbed0c6f2bd130190ccfda4bae1c296cd745d3f83904ed825f"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0.25-alpha-0.5__native-1.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0.25-alpha-0.5/native-1.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0.25-alpha-0.5__native-2__geometry.json.gz",
+      "raw_bytes": 7164,
+      "raw_sha256": "6d71cc7177b2930311231c6b56b7b3d94271bd15dc1707a3098c417dce722d68",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0.25-alpha-0.5/native-2/geometry.json",
+      "stored_bytes": 628,
+      "stored_sha256": "431d607eb5816a82f25c56e5e8819e9d6dcbe653ad4ba1d431c20bb400a558ae"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0.25-alpha-0.5__native-2__openui.png",
+      "raw_bytes": 9681,
+      "raw_sha256": "89a5449c48f8f6fbed0c6f2bd130190ccfda4bae1c296cd745d3f83904ed825f",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0.25-alpha-0.5/native-2/openui.png",
+      "stored_bytes": 9681,
+      "stored_sha256": "89a5449c48f8f6fbed0c6f2bd130190ccfda4bae1c296cd745d3f83904ed825f"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0.25-alpha-0.5__native-2.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0.25-alpha-0.5/native-2.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0.25-alpha-0.5__test.html.gz",
+      "raw_bytes": 1686,
+      "raw_sha256": "516bb90a79794f2203b22dc5c9200b863e8cd86e57fda87360a608c2ce4eaeb1",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0.25-alpha-0.5/test.html",
+      "stored_bytes": 629,
+      "stored_sha256": "c520e47e6244d5b8b10621cebcef191a5e08d62934805ad783717edf345b3423"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0.5-alpha-0.5__chromium-1-capture-1.png",
+      "raw_bytes": 8486,
+      "raw_sha256": "93cbbe6aec7ed2ba7eeb990f2c7d9cb27603d403e76923b385d638c0c2db06bf",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0.5-alpha-0.5/chromium-1-capture-1.png",
+      "stored_bytes": 8486,
+      "stored_sha256": "93cbbe6aec7ed2ba7eeb990f2c7d9cb27603d403e76923b385d638c0c2db06bf"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0.5-alpha-0.5__chromium-1-capture-2.png",
+      "raw_bytes": 8486,
+      "raw_sha256": "93cbbe6aec7ed2ba7eeb990f2c7d9cb27603d403e76923b385d638c0c2db06bf",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0.5-alpha-0.5/chromium-1-capture-2.png",
+      "stored_bytes": 8486,
+      "stored_sha256": "93cbbe6aec7ed2ba7eeb990f2c7d9cb27603d403e76923b385d638c0c2db06bf"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0.5-alpha-0.5__chromium-1-geometry.json.gz",
+      "raw_bytes": 6975,
+      "raw_sha256": "25f24e71590cf62ab98a1de5ae0e1305a201693c0144f8a78c8915d0479a2937",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0.5-alpha-0.5/chromium-1-geometry.json",
+      "stored_bytes": 643,
+      "stored_sha256": "7cc057d070c251fc05ad4e8d35361640cce9cec5711532f1a530d29e7685eaa0"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0.5-alpha-0.5__chromium-2-capture-1.png",
+      "raw_bytes": 8486,
+      "raw_sha256": "93cbbe6aec7ed2ba7eeb990f2c7d9cb27603d403e76923b385d638c0c2db06bf",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0.5-alpha-0.5/chromium-2-capture-1.png",
+      "stored_bytes": 8486,
+      "stored_sha256": "93cbbe6aec7ed2ba7eeb990f2c7d9cb27603d403e76923b385d638c0c2db06bf"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0.5-alpha-0.5__chromium-2-capture-2.png",
+      "raw_bytes": 8486,
+      "raw_sha256": "93cbbe6aec7ed2ba7eeb990f2c7d9cb27603d403e76923b385d638c0c2db06bf",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0.5-alpha-0.5/chromium-2-capture-2.png",
+      "stored_bytes": 8486,
+      "stored_sha256": "93cbbe6aec7ed2ba7eeb990f2c7d9cb27603d403e76923b385d638c0c2db06bf"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0.5-alpha-0.5__chromium-2-geometry.json.gz",
+      "raw_bytes": 6975,
+      "raw_sha256": "25f24e71590cf62ab98a1de5ae0e1305a201693c0144f8a78c8915d0479a2937",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0.5-alpha-0.5/chromium-2-geometry.json",
+      "stored_bytes": 643,
+      "stored_sha256": "7cc057d070c251fc05ad4e8d35361640cce9cec5711532f1a530d29e7685eaa0"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0.5-alpha-0.5__native-1__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "7587f182639e4020231cb1f9ced1827b48c934f977456d4e76a6fe47ac81179d",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0.5-alpha-0.5/native-1/geometry.json",
+      "stored_bytes": 623,
+      "stored_sha256": "767205f3930f02493f0eaa50222802658ad296fbfe7230337a1edd25c7bc87da"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0.5-alpha-0.5__native-1__openui.png",
+      "raw_bytes": 10269,
+      "raw_sha256": "e7584099e98f8aec4f6c3f2ede85afd7eb06731fc629f0191fad0c7c976374ea",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0.5-alpha-0.5/native-1/openui.png",
+      "stored_bytes": 10269,
+      "stored_sha256": "e7584099e98f8aec4f6c3f2ede85afd7eb06731fc629f0191fad0c7c976374ea"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0.5-alpha-0.5__native-1.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0.5-alpha-0.5/native-1.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0.5-alpha-0.5__native-2__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "7587f182639e4020231cb1f9ced1827b48c934f977456d4e76a6fe47ac81179d",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0.5-alpha-0.5/native-2/geometry.json",
+      "stored_bytes": 623,
+      "stored_sha256": "767205f3930f02493f0eaa50222802658ad296fbfe7230337a1edd25c7bc87da"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0.5-alpha-0.5__native-2__openui.png",
+      "raw_bytes": 10269,
+      "raw_sha256": "e7584099e98f8aec4f6c3f2ede85afd7eb06731fc629f0191fad0c7c976374ea",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0.5-alpha-0.5/native-2/openui.png",
+      "stored_bytes": 10269,
+      "stored_sha256": "e7584099e98f8aec4f6c3f2ede85afd7eb06731fc629f0191fad0c7c976374ea"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0.5-alpha-0.5__native-2.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0.5-alpha-0.5/native-2.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0.5-alpha-0.5__test.html.gz",
+      "raw_bytes": 1684,
+      "raw_sha256": "509e3c122fd866795f62a5fbe2721fe1d6c1e579502f05b66ab6586bb9178a41",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0.5-alpha-0.5/test.html",
+      "stored_bytes": 627,
+      "stored_sha256": "881877d45f3516be1b3065f4aedc78a77bfd81ce8c0a9671828a2ef135e55a7c"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0.75-alpha-0.5__chromium-1-capture-1.png",
+      "raw_bytes": 8486,
+      "raw_sha256": "93cbbe6aec7ed2ba7eeb990f2c7d9cb27603d403e76923b385d638c0c2db06bf",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0.75-alpha-0.5/chromium-1-capture-1.png",
+      "stored_bytes": 8486,
+      "stored_sha256": "93cbbe6aec7ed2ba7eeb990f2c7d9cb27603d403e76923b385d638c0c2db06bf"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0.75-alpha-0.5__chromium-1-capture-2.png",
+      "raw_bytes": 8486,
+      "raw_sha256": "93cbbe6aec7ed2ba7eeb990f2c7d9cb27603d403e76923b385d638c0c2db06bf",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0.75-alpha-0.5/chromium-1-capture-2.png",
+      "stored_bytes": 8486,
+      "stored_sha256": "93cbbe6aec7ed2ba7eeb990f2c7d9cb27603d403e76923b385d638c0c2db06bf"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0.75-alpha-0.5__chromium-1-geometry.json.gz",
+      "raw_bytes": 7055,
+      "raw_sha256": "e0f6ae667006eb6025fe91dea2ddcc1f4db3a62604c5b0d212935aa2a562c167",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0.75-alpha-0.5/chromium-1-geometry.json",
+      "stored_bytes": 642,
+      "stored_sha256": "d4c3ce57921ef1a3413eabb3854431cc7586f4e0010f8c7f5dc26e410ff6dc25"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0.75-alpha-0.5__chromium-2-capture-1.png",
+      "raw_bytes": 8486,
+      "raw_sha256": "93cbbe6aec7ed2ba7eeb990f2c7d9cb27603d403e76923b385d638c0c2db06bf",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0.75-alpha-0.5/chromium-2-capture-1.png",
+      "stored_bytes": 8486,
+      "stored_sha256": "93cbbe6aec7ed2ba7eeb990f2c7d9cb27603d403e76923b385d638c0c2db06bf"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0.75-alpha-0.5__chromium-2-capture-2.png",
+      "raw_bytes": 8486,
+      "raw_sha256": "93cbbe6aec7ed2ba7eeb990f2c7d9cb27603d403e76923b385d638c0c2db06bf",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0.75-alpha-0.5/chromium-2-capture-2.png",
+      "stored_bytes": 8486,
+      "stored_sha256": "93cbbe6aec7ed2ba7eeb990f2c7d9cb27603d403e76923b385d638c0c2db06bf"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0.75-alpha-0.5__chromium-2-geometry.json.gz",
+      "raw_bytes": 7055,
+      "raw_sha256": "e0f6ae667006eb6025fe91dea2ddcc1f4db3a62604c5b0d212935aa2a562c167",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0.75-alpha-0.5/chromium-2-geometry.json",
+      "stored_bytes": 642,
+      "stored_sha256": "d4c3ce57921ef1a3413eabb3854431cc7586f4e0010f8c7f5dc26e410ff6dc25"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0.75-alpha-0.5__native-1__geometry.json.gz",
+      "raw_bytes": 7164,
+      "raw_sha256": "b228dcde8e787052f73aecd8fce43a6515e1952d8cbaa8fbd049c405d1d86b02",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0.75-alpha-0.5/native-1/geometry.json",
+      "stored_bytes": 625,
+      "stored_sha256": "54b00178c1e355ce846c4d8cae28039d793a07e25aa006d8e13920baf2ff20d4"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0.75-alpha-0.5__native-1__openui.png",
+      "raw_bytes": 10269,
+      "raw_sha256": "e7584099e98f8aec4f6c3f2ede85afd7eb06731fc629f0191fad0c7c976374ea",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0.75-alpha-0.5/native-1/openui.png",
+      "stored_bytes": 10269,
+      "stored_sha256": "e7584099e98f8aec4f6c3f2ede85afd7eb06731fc629f0191fad0c7c976374ea"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0.75-alpha-0.5__native-1.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0.75-alpha-0.5/native-1.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0.75-alpha-0.5__native-2__geometry.json.gz",
+      "raw_bytes": 7164,
+      "raw_sha256": "b228dcde8e787052f73aecd8fce43a6515e1952d8cbaa8fbd049c405d1d86b02",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0.75-alpha-0.5/native-2/geometry.json",
+      "stored_bytes": 625,
+      "stored_sha256": "54b00178c1e355ce846c4d8cae28039d793a07e25aa006d8e13920baf2ff20d4"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0.75-alpha-0.5__native-2__openui.png",
+      "raw_bytes": 10269,
+      "raw_sha256": "e7584099e98f8aec4f6c3f2ede85afd7eb06731fc629f0191fad0c7c976374ea",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0.75-alpha-0.5/native-2/openui.png",
+      "stored_bytes": 10269,
+      "stored_sha256": "e7584099e98f8aec4f6c3f2ede85afd7eb06731fc629f0191fad0c7c976374ea"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0.75-alpha-0.5__native-2.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0.75-alpha-0.5/native-2.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0.75-alpha-0.5__test.html.gz",
+      "raw_bytes": 1686,
+      "raw_sha256": "0549dd10893fdcdbe3f0515c69cefffb0366ba252feb04f401a2e631e96b0d57",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.25-phase-0.75-alpha-0.5/test.html",
+      "stored_bytes": 629,
+      "stored_sha256": "0e74f7f5a5cb0e1cd693e2323f9f7ddaa1c701093c80b0a49bfdcd5be96f912a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.5-phase-0.5-alpha-0.5__chromium-1-capture-1.png",
+      "raw_bytes": 10067,
+      "raw_sha256": "7830937b7a5a66b06024e19d23eceacb01f2c805faa150a42e8435435fe19886",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.5-phase-0.5-alpha-0.5/chromium-1-capture-1.png",
+      "stored_bytes": 10067,
+      "stored_sha256": "7830937b7a5a66b06024e19d23eceacb01f2c805faa150a42e8435435fe19886"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.5-phase-0.5-alpha-0.5__chromium-1-capture-2.png",
+      "raw_bytes": 10067,
+      "raw_sha256": "7830937b7a5a66b06024e19d23eceacb01f2c805faa150a42e8435435fe19886",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.5-phase-0.5-alpha-0.5/chromium-1-capture-2.png",
+      "stored_bytes": 10067,
+      "stored_sha256": "7830937b7a5a66b06024e19d23eceacb01f2c805faa150a42e8435435fe19886"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.5-phase-0.5-alpha-0.5__chromium-1-geometry.json.gz",
+      "raw_bytes": 6974,
+      "raw_sha256": "7700354dc56cabe9b601af5f5eb9e79b88d002641ffad59074dcbe842b1fec2c",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.5-phase-0.5-alpha-0.5/chromium-1-geometry.json",
+      "stored_bytes": 643,
+      "stored_sha256": "47ac0bd7ceaf5c4943d2b1ed206b4acf6a29d096521d34102883f2de68ac0ffa"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.5-phase-0.5-alpha-0.5__chromium-2-capture-1.png",
+      "raw_bytes": 10067,
+      "raw_sha256": "7830937b7a5a66b06024e19d23eceacb01f2c805faa150a42e8435435fe19886",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.5-phase-0.5-alpha-0.5/chromium-2-capture-1.png",
+      "stored_bytes": 10067,
+      "stored_sha256": "7830937b7a5a66b06024e19d23eceacb01f2c805faa150a42e8435435fe19886"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.5-phase-0.5-alpha-0.5__chromium-2-capture-2.png",
+      "raw_bytes": 10067,
+      "raw_sha256": "7830937b7a5a66b06024e19d23eceacb01f2c805faa150a42e8435435fe19886",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.5-phase-0.5-alpha-0.5/chromium-2-capture-2.png",
+      "stored_bytes": 10067,
+      "stored_sha256": "7830937b7a5a66b06024e19d23eceacb01f2c805faa150a42e8435435fe19886"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.5-phase-0.5-alpha-0.5__chromium-2-geometry.json.gz",
+      "raw_bytes": 6974,
+      "raw_sha256": "7700354dc56cabe9b601af5f5eb9e79b88d002641ffad59074dcbe842b1fec2c",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.5-phase-0.5-alpha-0.5/chromium-2-geometry.json",
+      "stored_bytes": 643,
+      "stored_sha256": "47ac0bd7ceaf5c4943d2b1ed206b4acf6a29d096521d34102883f2de68ac0ffa"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.5-phase-0.5-alpha-0.5__native-1__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "7587f182639e4020231cb1f9ced1827b48c934f977456d4e76a6fe47ac81179d",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.5-phase-0.5-alpha-0.5/native-1/geometry.json",
+      "stored_bytes": 623,
+      "stored_sha256": "767205f3930f02493f0eaa50222802658ad296fbfe7230337a1edd25c7bc87da"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.5-phase-0.5-alpha-0.5__native-1__openui.png",
+      "raw_bytes": 12569,
+      "raw_sha256": "080163e117e4f9c66b62af044ba4d3a39428e9546e5318975c98cc802426e75d",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.5-phase-0.5-alpha-0.5/native-1/openui.png",
+      "stored_bytes": 12569,
+      "stored_sha256": "080163e117e4f9c66b62af044ba4d3a39428e9546e5318975c98cc802426e75d"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.5-phase-0.5-alpha-0.5__native-1.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.5-phase-0.5-alpha-0.5/native-1.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.5-phase-0.5-alpha-0.5__native-2__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "7587f182639e4020231cb1f9ced1827b48c934f977456d4e76a6fe47ac81179d",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.5-phase-0.5-alpha-0.5/native-2/geometry.json",
+      "stored_bytes": 623,
+      "stored_sha256": "767205f3930f02493f0eaa50222802658ad296fbfe7230337a1edd25c7bc87da"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.5-phase-0.5-alpha-0.5__native-2__openui.png",
+      "raw_bytes": 12569,
+      "raw_sha256": "080163e117e4f9c66b62af044ba4d3a39428e9546e5318975c98cc802426e75d",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.5-phase-0.5-alpha-0.5/native-2/openui.png",
+      "stored_bytes": 12569,
+      "stored_sha256": "080163e117e4f9c66b62af044ba4d3a39428e9546e5318975c98cc802426e75d"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.5-phase-0.5-alpha-0.5__native-2.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.5-phase-0.5-alpha-0.5/native-2.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.5-phase-0.5-alpha-0.5__test.html.gz",
+      "raw_bytes": 1684,
+      "raw_sha256": "509e3c122fd866795f62a5fbe2721fe1d6c1e579502f05b66ab6586bb9178a41",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3591/scale-1.5-phase-0.5-alpha-0.5/test.html",
+      "stored_bytes": 627,
+      "stored_sha256": "881877d45f3516be1b3065f4aedc78a77bfd81ce8c0a9671828a2ef135e55a7c"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__receipt.json.gz",
+      "raw_bytes": 246746,
+      "raw_sha256": "5ce79a5b5b03386c6ebbf19c2f6d9cedc0d049b0f2b4d60b9a8bf28875010a6d",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/receipt.json",
+      "stored_bytes": 8153,
+      "stored_sha256": "0ff8897896ec8c4fd2ee55c325ceef4a0a95afac59bfc85ac24c7dad0b836cfa"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1__native-1__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1/native-1/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1__native-1__openui.png",
+      "raw_bytes": 6001,
+      "raw_sha256": "24f78c2558af7b4c1481334ac7e977f3aedfa9fdfacf1a7baedd081c7440949b",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1/native-1/openui.png",
+      "stored_bytes": 6001,
+      "stored_sha256": "24f78c2558af7b4c1481334ac7e977f3aedfa9fdfacf1a7baedd081c7440949b"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1__native-1.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1/native-1.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1__native-2__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1/native-2/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1__native-2__openui.png",
+      "raw_bytes": 6001,
+      "raw_sha256": "24f78c2558af7b4c1481334ac7e977f3aedfa9fdfacf1a7baedd081c7440949b",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1/native-2/openui.png",
+      "stored_bytes": 6001,
+      "stored_sha256": "24f78c2558af7b4c1481334ac7e977f3aedfa9fdfacf1a7baedd081c7440949b"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1__native-2.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1/native-2.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.25__native-1__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.25/native-1/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.25__native-1__openui.png",
+      "raw_bytes": 9663,
+      "raw_sha256": "f28a63a9122c418e5c3f42e4fe367c12b33c3f9849d2d86b40720cbb5760424e",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.25/native-1/openui.png",
+      "stored_bytes": 9663,
+      "stored_sha256": "f28a63a9122c418e5c3f42e4fe367c12b33c3f9849d2d86b40720cbb5760424e"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.25__native-1.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.25/native-1.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.25__native-2__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.25/native-2/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.25__native-2__openui.png",
+      "raw_bytes": 9663,
+      "raw_sha256": "f28a63a9122c418e5c3f42e4fe367c12b33c3f9849d2d86b40720cbb5760424e",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.25/native-2/openui.png",
+      "stored_bytes": 9663,
+      "stored_sha256": "f28a63a9122c418e5c3f42e4fe367c12b33c3f9849d2d86b40720cbb5760424e"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.25__native-2.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.25/native-2.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.25-phase-0-alpha-0__native-1__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.25-phase-0-alpha-0/native-1/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.25-phase-0-alpha-0__native-1__openui.png",
+      "raw_bytes": 9256,
+      "raw_sha256": "9928957f82c35148d096ae766b2916787962b70f73bb9fcfb71b322cf6c23d11",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.25-phase-0-alpha-0/native-1/openui.png",
+      "stored_bytes": 9256,
+      "stored_sha256": "9928957f82c35148d096ae766b2916787962b70f73bb9fcfb71b322cf6c23d11"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.25-phase-0-alpha-0__native-1.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.25-phase-0-alpha-0/native-1.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.25-phase-0-alpha-0__native-2__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.25-phase-0-alpha-0/native-2/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.25-phase-0-alpha-0__native-2__openui.png",
+      "raw_bytes": 9256,
+      "raw_sha256": "9928957f82c35148d096ae766b2916787962b70f73bb9fcfb71b322cf6c23d11",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.25-phase-0-alpha-0/native-2/openui.png",
+      "stored_bytes": 9256,
+      "stored_sha256": "9928957f82c35148d096ae766b2916787962b70f73bb9fcfb71b322cf6c23d11"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.25-phase-0-alpha-0__native-2.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.25-phase-0-alpha-0/native-2.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.25-phase-0-alpha-1__native-1__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.25-phase-0-alpha-1/native-1/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.25-phase-0-alpha-1__native-1__openui.png",
+      "raw_bytes": 9586,
+      "raw_sha256": "277712b7ec53c43947b64a01d01c02f1de6d13fb4a27ed2d2718e6dc8ff59c33",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.25-phase-0-alpha-1/native-1/openui.png",
+      "stored_bytes": 9586,
+      "stored_sha256": "277712b7ec53c43947b64a01d01c02f1de6d13fb4a27ed2d2718e6dc8ff59c33"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.25-phase-0-alpha-1__native-1.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.25-phase-0-alpha-1/native-1.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.25-phase-0-alpha-1__native-2__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.25-phase-0-alpha-1/native-2/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.25-phase-0-alpha-1__native-2__openui.png",
+      "raw_bytes": 9586,
+      "raw_sha256": "277712b7ec53c43947b64a01d01c02f1de6d13fb4a27ed2d2718e6dc8ff59c33",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.25-phase-0-alpha-1/native-2/openui.png",
+      "stored_bytes": 9586,
+      "stored_sha256": "277712b7ec53c43947b64a01d01c02f1de6d13fb4a27ed2d2718e6dc8ff59c33"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.25-phase-0-alpha-1__native-2.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.25-phase-0-alpha-1/native-2.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.25-phase-0.25-alpha-0.5__native-1__geometry.json.gz",
+      "raw_bytes": 7164,
+      "raw_sha256": "6d71cc7177b2930311231c6b56b7b3d94271bd15dc1707a3098c417dce722d68",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.25-phase-0.25-alpha-0.5/native-1/geometry.json",
+      "stored_bytes": 628,
+      "stored_sha256": "431d607eb5816a82f25c56e5e8819e9d6dcbe653ad4ba1d431c20bb400a558ae"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.25-phase-0.25-alpha-0.5__native-1__openui.png",
+      "raw_bytes": 9680,
+      "raw_sha256": "8af751e422f1101f7669268e06c1c067242889b12e2215154f644d7fce17e3b0",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.25-phase-0.25-alpha-0.5/native-1/openui.png",
+      "stored_bytes": 9680,
+      "stored_sha256": "8af751e422f1101f7669268e06c1c067242889b12e2215154f644d7fce17e3b0"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.25-phase-0.25-alpha-0.5__native-1.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.25-phase-0.25-alpha-0.5/native-1.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.25-phase-0.25-alpha-0.5__native-2__geometry.json.gz",
+      "raw_bytes": 7164,
+      "raw_sha256": "6d71cc7177b2930311231c6b56b7b3d94271bd15dc1707a3098c417dce722d68",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.25-phase-0.25-alpha-0.5/native-2/geometry.json",
+      "stored_bytes": 628,
+      "stored_sha256": "431d607eb5816a82f25c56e5e8819e9d6dcbe653ad4ba1d431c20bb400a558ae"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.25-phase-0.25-alpha-0.5__native-2__openui.png",
+      "raw_bytes": 9680,
+      "raw_sha256": "8af751e422f1101f7669268e06c1c067242889b12e2215154f644d7fce17e3b0",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.25-phase-0.25-alpha-0.5/native-2/openui.png",
+      "stored_bytes": 9680,
+      "stored_sha256": "8af751e422f1101f7669268e06c1c067242889b12e2215154f644d7fce17e3b0"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.25-phase-0.25-alpha-0.5__native-2.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.25-phase-0.25-alpha-0.5/native-2.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.25-phase-0.5-alpha-0.5__native-1__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "7587f182639e4020231cb1f9ced1827b48c934f977456d4e76a6fe47ac81179d",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.25-phase-0.5-alpha-0.5/native-1/geometry.json",
+      "stored_bytes": 623,
+      "stored_sha256": "767205f3930f02493f0eaa50222802658ad296fbfe7230337a1edd25c7bc87da"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.25-phase-0.5-alpha-0.5__native-1__openui.png",
+      "raw_bytes": 10265,
+      "raw_sha256": "c07a35e161aed6f3d1775052a4f599cfa9b54696cf6b06ec86bcfe9107eb620c",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.25-phase-0.5-alpha-0.5/native-1/openui.png",
+      "stored_bytes": 10265,
+      "stored_sha256": "c07a35e161aed6f3d1775052a4f599cfa9b54696cf6b06ec86bcfe9107eb620c"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.25-phase-0.5-alpha-0.5__native-1.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.25-phase-0.5-alpha-0.5/native-1.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.25-phase-0.5-alpha-0.5__native-2__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "7587f182639e4020231cb1f9ced1827b48c934f977456d4e76a6fe47ac81179d",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.25-phase-0.5-alpha-0.5/native-2/geometry.json",
+      "stored_bytes": 623,
+      "stored_sha256": "767205f3930f02493f0eaa50222802658ad296fbfe7230337a1edd25c7bc87da"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.25-phase-0.5-alpha-0.5__native-2__openui.png",
+      "raw_bytes": 10265,
+      "raw_sha256": "c07a35e161aed6f3d1775052a4f599cfa9b54696cf6b06ec86bcfe9107eb620c",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.25-phase-0.5-alpha-0.5/native-2/openui.png",
+      "stored_bytes": 10265,
+      "stored_sha256": "c07a35e161aed6f3d1775052a4f599cfa9b54696cf6b06ec86bcfe9107eb620c"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.25-phase-0.5-alpha-0.5__native-2.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.25-phase-0.5-alpha-0.5/native-2.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.25-phase-0.75-alpha-0.5__native-1__geometry.json.gz",
+      "raw_bytes": 7164,
+      "raw_sha256": "b228dcde8e787052f73aecd8fce43a6515e1952d8cbaa8fbd049c405d1d86b02",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.25-phase-0.75-alpha-0.5/native-1/geometry.json",
+      "stored_bytes": 625,
+      "stored_sha256": "54b00178c1e355ce846c4d8cae28039d793a07e25aa006d8e13920baf2ff20d4"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.25-phase-0.75-alpha-0.5__native-1__openui.png",
+      "raw_bytes": 10265,
+      "raw_sha256": "c07a35e161aed6f3d1775052a4f599cfa9b54696cf6b06ec86bcfe9107eb620c",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.25-phase-0.75-alpha-0.5/native-1/openui.png",
+      "stored_bytes": 10265,
+      "stored_sha256": "c07a35e161aed6f3d1775052a4f599cfa9b54696cf6b06ec86bcfe9107eb620c"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.25-phase-0.75-alpha-0.5__native-1.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.25-phase-0.75-alpha-0.5/native-1.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.25-phase-0.75-alpha-0.5__native-2__geometry.json.gz",
+      "raw_bytes": 7164,
+      "raw_sha256": "b228dcde8e787052f73aecd8fce43a6515e1952d8cbaa8fbd049c405d1d86b02",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.25-phase-0.75-alpha-0.5/native-2/geometry.json",
+      "stored_bytes": 625,
+      "stored_sha256": "54b00178c1e355ce846c4d8cae28039d793a07e25aa006d8e13920baf2ff20d4"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.25-phase-0.75-alpha-0.5__native-2__openui.png",
+      "raw_bytes": 10265,
+      "raw_sha256": "c07a35e161aed6f3d1775052a4f599cfa9b54696cf6b06ec86bcfe9107eb620c",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.25-phase-0.75-alpha-0.5/native-2/openui.png",
+      "stored_bytes": 10265,
+      "stored_sha256": "c07a35e161aed6f3d1775052a4f599cfa9b54696cf6b06ec86bcfe9107eb620c"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.25-phase-0.75-alpha-0.5__native-2.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.25-phase-0.75-alpha-0.5/native-2.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.5__native-1__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.5/native-1/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.5__native-1__openui.png",
+      "raw_bytes": 11948,
+      "raw_sha256": "7b1515fce8f99dccf481b273aaea90e4408878b321c6033930b3cca84b47cddd",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.5/native-1/openui.png",
+      "stored_bytes": 11948,
+      "stored_sha256": "7b1515fce8f99dccf481b273aaea90e4408878b321c6033930b3cca84b47cddd"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.5__native-1.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.5/native-1.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.5__native-2__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.5/native-2/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.5__native-2__openui.png",
+      "raw_bytes": 11948,
+      "raw_sha256": "7b1515fce8f99dccf481b273aaea90e4408878b321c6033930b3cca84b47cddd",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.5/native-2/openui.png",
+      "stored_bytes": 11948,
+      "stored_sha256": "7b1515fce8f99dccf481b273aaea90e4408878b321c6033930b3cca84b47cddd"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.5__native-2.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.5/native-2.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.5-phase-0.5-alpha-0.5__native-1__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "7587f182639e4020231cb1f9ced1827b48c934f977456d4e76a6fe47ac81179d",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.5-phase-0.5-alpha-0.5/native-1/geometry.json",
+      "stored_bytes": 623,
+      "stored_sha256": "767205f3930f02493f0eaa50222802658ad296fbfe7230337a1edd25c7bc87da"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.5-phase-0.5-alpha-0.5__native-1__openui.png",
+      "raw_bytes": 12561,
+      "raw_sha256": "3d55e6d77037e04199a8545cdafa13d63942877e7c1c349cbe11e962bf3d2383",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.5-phase-0.5-alpha-0.5/native-1/openui.png",
+      "stored_bytes": 12561,
+      "stored_sha256": "3d55e6d77037e04199a8545cdafa13d63942877e7c1c349cbe11e962bf3d2383"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.5-phase-0.5-alpha-0.5__native-1.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.5-phase-0.5-alpha-0.5/native-1.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.5-phase-0.5-alpha-0.5__native-2__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "7587f182639e4020231cb1f9ced1827b48c934f977456d4e76a6fe47ac81179d",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.5-phase-0.5-alpha-0.5/native-2/geometry.json",
+      "stored_bytes": 623,
+      "stored_sha256": "767205f3930f02493f0eaa50222802658ad296fbfe7230337a1edd25c7bc87da"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.5-phase-0.5-alpha-0.5__native-2__openui.png",
+      "raw_bytes": 12561,
+      "raw_sha256": "3d55e6d77037e04199a8545cdafa13d63942877e7c1c349cbe11e962bf3d2383",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.5-phase-0.5-alpha-0.5/native-2/openui.png",
+      "stored_bytes": 12561,
+      "stored_sha256": "3d55e6d77037e04199a8545cdafa13d63942877e7c1c349cbe11e962bf3d2383"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-1.5-phase-0.5-alpha-0.5__native-2.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-1.5-phase-0.5-alpha-0.5/native-2.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-2__native-1__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-2/native-1/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-2__native-1__openui.png",
+      "raw_bytes": 18671,
+      "raw_sha256": "02858d2514f7f177ef94ad7fd8fd66bf623e72d3c62fd277cf1c36d527a24c94",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-2/native-1/openui.png",
+      "stored_bytes": 18671,
+      "stored_sha256": "02858d2514f7f177ef94ad7fd8fd66bf623e72d3c62fd277cf1c36d527a24c94"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-2__native-1.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-2/native-1.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-2__native-2__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-2/native-2/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-2__native-2__openui.png",
+      "raw_bytes": 18671,
+      "raw_sha256": "02858d2514f7f177ef94ad7fd8fd66bf623e72d3c62fd277cf1c36d527a24c94",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-2/native-2/openui.png",
+      "stored_bytes": 18671,
+      "stored_sha256": "02858d2514f7f177ef94ad7fd8fd66bf623e72d3c62fd277cf1c36d527a24c94"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-2__native-2.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-2/native-2.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-3__native-1__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-3/native-1/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-3__native-1__openui.png",
+      "raw_bytes": 38449,
+      "raw_sha256": "388e2b5f99b4ab1e7487170f5ac9bf1dbb35de49664d3b69d33e4169f5ca4518",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-3/native-1/openui.png",
+      "stored_bytes": 38449,
+      "stored_sha256": "388e2b5f99b4ab1e7487170f5ac9bf1dbb35de49664d3b69d33e4169f5ca4518"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-3__native-1.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-3/native-1.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-3__native-2__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-3/native-2/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-3__native-2__openui.png",
+      "raw_bytes": 38449,
+      "raw_sha256": "388e2b5f99b4ab1e7487170f5ac9bf1dbb35de49664d3b69d33e4169f5ca4518",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-3/native-2/openui.png",
+      "stored_bytes": 38449,
+      "stored_sha256": "388e2b5f99b4ab1e7487170f5ac9bf1dbb35de49664d3b69d33e4169f5ca4518"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/candidate__scale-3__native-2.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-candidate-compare-v3595/scale-3/native-2.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-short-reference__receipt.json.gz",
+      "raw_bytes": 24417,
+      "raw_sha256": "6bb6c1701f1313d0263a76dbaf247363cfc3e279727801ec96415d68e63ba287",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3581/receipt.json",
+      "stored_bytes": 2688,
+      "stored_sha256": "33a3a605ccb75e789ac8c3ce417e63953b8026ef873ffc62b49282c284c49f04"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-short-reference__scale-1__chromium-1-capture-1.png",
+      "raw_bytes": 4874,
+      "raw_sha256": "07f19063f6b1b641c28c1f4ee2cec4b2dfa619ea85f12092b5150cec188565bc",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3581/scale-1/chromium-1-capture-1.png",
+      "stored_bytes": 4874,
+      "stored_sha256": "07f19063f6b1b641c28c1f4ee2cec4b2dfa619ea85f12092b5150cec188565bc"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-short-reference__scale-1__chromium-1-capture-2.png",
+      "raw_bytes": 4874,
+      "raw_sha256": "07f19063f6b1b641c28c1f4ee2cec4b2dfa619ea85f12092b5150cec188565bc",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3581/scale-1/chromium-1-capture-2.png",
+      "stored_bytes": 4874,
+      "stored_sha256": "07f19063f6b1b641c28c1f4ee2cec4b2dfa619ea85f12092b5150cec188565bc"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-short-reference__scale-1__chromium-1-geometry.json.gz",
+      "raw_bytes": 6812,
+      "raw_sha256": "4c1097bac3d49b7ad278bc73ba8b8b71bf61b31b1a8ec2f46da431a1e4a112ef",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3581/scale-1/chromium-1-geometry.json",
+      "stored_bytes": 622,
+      "stored_sha256": "0d9c020574b4203a843dcc5bb4ede7a6414e03dd92a92fd1bd60182d906f3e10"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-short-reference__scale-1__chromium-2-capture-1.png",
+      "raw_bytes": 4874,
+      "raw_sha256": "07f19063f6b1b641c28c1f4ee2cec4b2dfa619ea85f12092b5150cec188565bc",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3581/scale-1/chromium-2-capture-1.png",
+      "stored_bytes": 4874,
+      "stored_sha256": "07f19063f6b1b641c28c1f4ee2cec4b2dfa619ea85f12092b5150cec188565bc"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-short-reference__scale-1__chromium-2-capture-2.png",
+      "raw_bytes": 4874,
+      "raw_sha256": "07f19063f6b1b641c28c1f4ee2cec4b2dfa619ea85f12092b5150cec188565bc",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3581/scale-1/chromium-2-capture-2.png",
+      "stored_bytes": 4874,
+      "stored_sha256": "07f19063f6b1b641c28c1f4ee2cec4b2dfa619ea85f12092b5150cec188565bc"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-short-reference__scale-1__chromium-2-geometry.json.gz",
+      "raw_bytes": 6812,
+      "raw_sha256": "4c1097bac3d49b7ad278bc73ba8b8b71bf61b31b1a8ec2f46da431a1e4a112ef",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3581/scale-1/chromium-2-geometry.json",
+      "stored_bytes": 622,
+      "stored_sha256": "0d9c020574b4203a843dcc5bb4ede7a6414e03dd92a92fd1bd60182d906f3e10"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-short-reference__scale-1__native-1__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3581/scale-1/native-1/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-short-reference__scale-1__native-1__openui.png",
+      "raw_bytes": 6001,
+      "raw_sha256": "24f78c2558af7b4c1481334ac7e977f3aedfa9fdfacf1a7baedd081c7440949b",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3581/scale-1/native-1/openui.png",
+      "stored_bytes": 6001,
+      "stored_sha256": "24f78c2558af7b4c1481334ac7e977f3aedfa9fdfacf1a7baedd081c7440949b"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-short-reference__scale-1__native-1.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3581/scale-1/native-1.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-short-reference__scale-1__native-2__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3581/scale-1/native-2/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-short-reference__scale-1__native-2__openui.png",
+      "raw_bytes": 6001,
+      "raw_sha256": "24f78c2558af7b4c1481334ac7e977f3aedfa9fdfacf1a7baedd081c7440949b",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3581/scale-1/native-2/openui.png",
+      "stored_bytes": 6001,
+      "stored_sha256": "24f78c2558af7b4c1481334ac7e977f3aedfa9fdfacf1a7baedd081c7440949b"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-short-reference__scale-1__native-2.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3581/scale-1/native-2.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-short-reference__scale-1__test.html.gz",
+      "raw_bytes": 1684,
+      "raw_sha256": "56f03b3048a4884570f21fd2691f51ea23e8d0589ba4e115074cde4a9422a4db",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3581/scale-1/test.html",
+      "stored_bytes": 628,
+      "stored_sha256": "aef1b193bb2a1243b723be41ae4ab93ae5f421c6c3f33457b5d357e3b0c07af4"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-short-reference__scale-1.25__chromium-1-capture-1.png",
+      "raw_bytes": 8240,
+      "raw_sha256": "2c8a6665ac9e4d3e406d3a9062f6871c5f3d803fbd1bd0548eebdc23ee478072",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3581/scale-1.25/chromium-1-capture-1.png",
+      "stored_bytes": 8240,
+      "stored_sha256": "2c8a6665ac9e4d3e406d3a9062f6871c5f3d803fbd1bd0548eebdc23ee478072"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-short-reference__scale-1.25__chromium-1-capture-2.png",
+      "raw_bytes": 7973,
+      "raw_sha256": "1cbeebf432727d7c319da3de9f3bac3c4cf50e4cf0c24cf00371f6bd31534727",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3581/scale-1.25/chromium-1-capture-2.png",
+      "stored_bytes": 7973,
+      "stored_sha256": "1cbeebf432727d7c319da3de9f3bac3c4cf50e4cf0c24cf00371f6bd31534727"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-short-reference__scale-1.25__native-1__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3581/scale-1.25/native-1/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-short-reference__scale-1.25__native-1__openui.png",
+      "raw_bytes": 9702,
+      "raw_sha256": "606af21fca4fe6b150c1b162486a49cdc303edf761d0ef348d7e3ffdfa24cb93",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3581/scale-1.25/native-1/openui.png",
+      "stored_bytes": 9702,
+      "stored_sha256": "606af21fca4fe6b150c1b162486a49cdc303edf761d0ef348d7e3ffdfa24cb93"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-short-reference__scale-1.25__native-1.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3581/scale-1.25/native-1.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-short-reference__scale-1.25__native-2__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3581/scale-1.25/native-2/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-short-reference__scale-1.25__native-2__openui.png",
+      "raw_bytes": 9702,
+      "raw_sha256": "606af21fca4fe6b150c1b162486a49cdc303edf761d0ef348d7e3ffdfa24cb93",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3581/scale-1.25/native-2/openui.png",
+      "stored_bytes": 9702,
+      "stored_sha256": "606af21fca4fe6b150c1b162486a49cdc303edf761d0ef348d7e3ffdfa24cb93"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-short-reference__scale-1.25__native-2.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3581/scale-1.25/native-2.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-short-reference__scale-1.25__test.html.gz",
+      "raw_bytes": 1684,
+      "raw_sha256": "56f03b3048a4884570f21fd2691f51ea23e8d0589ba4e115074cde4a9422a4db",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3581/scale-1.25/test.html",
+      "stored_bytes": 628,
+      "stored_sha256": "aef1b193bb2a1243b723be41ae4ab93ae5f421c6c3f33457b5d357e3b0c07af4"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__receipt.json.gz",
+      "raw_bytes": 116195,
+      "raw_sha256": "bae21462c9c1754668821d4f9126a199856c7458f061a7499cd0bd3c1962e1c9",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/receipt.json",
+      "stored_bytes": 4640,
+      "stored_sha256": "3b004f502431ccd2fa7b0a6106f5d555dbfaf73d86c6cabcbb73e399f8545f4d"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-1__chromium-1-capture-1.png",
+      "raw_bytes": 4890,
+      "raw_sha256": "5b0fad36d43f2bac9a99d0dc7d3cfe37867a031b2524e518e88a1be337c20fca",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-1/chromium-1-capture-1.png",
+      "stored_bytes": 4890,
+      "stored_sha256": "5b0fad36d43f2bac9a99d0dc7d3cfe37867a031b2524e518e88a1be337c20fca"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-1__chromium-1-capture-2.png",
+      "raw_bytes": 4890,
+      "raw_sha256": "5b0fad36d43f2bac9a99d0dc7d3cfe37867a031b2524e518e88a1be337c20fca",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-1/chromium-1-capture-2.png",
+      "stored_bytes": 4890,
+      "stored_sha256": "5b0fad36d43f2bac9a99d0dc7d3cfe37867a031b2524e518e88a1be337c20fca"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-1__chromium-1-geometry.json.gz",
+      "raw_bytes": 6812,
+      "raw_sha256": "4c1097bac3d49b7ad278bc73ba8b8b71bf61b31b1a8ec2f46da431a1e4a112ef",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-1/chromium-1-geometry.json",
+      "stored_bytes": 622,
+      "stored_sha256": "0d9c020574b4203a843dcc5bb4ede7a6414e03dd92a92fd1bd60182d906f3e10"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-1__chromium-2-capture-1.png",
+      "raw_bytes": 4890,
+      "raw_sha256": "5b0fad36d43f2bac9a99d0dc7d3cfe37867a031b2524e518e88a1be337c20fca",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-1/chromium-2-capture-1.png",
+      "stored_bytes": 4890,
+      "stored_sha256": "5b0fad36d43f2bac9a99d0dc7d3cfe37867a031b2524e518e88a1be337c20fca"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-1__chromium-2-capture-2.png",
+      "raw_bytes": 4890,
+      "raw_sha256": "5b0fad36d43f2bac9a99d0dc7d3cfe37867a031b2524e518e88a1be337c20fca",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-1/chromium-2-capture-2.png",
+      "stored_bytes": 4890,
+      "stored_sha256": "5b0fad36d43f2bac9a99d0dc7d3cfe37867a031b2524e518e88a1be337c20fca"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-1__chromium-2-geometry.json.gz",
+      "raw_bytes": 6812,
+      "raw_sha256": "4c1097bac3d49b7ad278bc73ba8b8b71bf61b31b1a8ec2f46da431a1e4a112ef",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-1/chromium-2-geometry.json",
+      "stored_bytes": 622,
+      "stored_sha256": "0d9c020574b4203a843dcc5bb4ede7a6414e03dd92a92fd1bd60182d906f3e10"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-1__native-1__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-1/native-1/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-1__native-1__openui.png",
+      "raw_bytes": 6001,
+      "raw_sha256": "24f78c2558af7b4c1481334ac7e977f3aedfa9fdfacf1a7baedd081c7440949b",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-1/native-1/openui.png",
+      "stored_bytes": 6001,
+      "stored_sha256": "24f78c2558af7b4c1481334ac7e977f3aedfa9fdfacf1a7baedd081c7440949b"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-1__native-1.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-1/native-1.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-1__native-2__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-1/native-2/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-1__native-2__openui.png",
+      "raw_bytes": 6001,
+      "raw_sha256": "24f78c2558af7b4c1481334ac7e977f3aedfa9fdfacf1a7baedd081c7440949b",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-1/native-2/openui.png",
+      "stored_bytes": 6001,
+      "stored_sha256": "24f78c2558af7b4c1481334ac7e977f3aedfa9fdfacf1a7baedd081c7440949b"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-1__native-2.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-1/native-2.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-1__test.html.gz",
+      "raw_bytes": 1678,
+      "raw_sha256": "4cb144405bacd174aa8bb563162c4c85fd9be3cf3913f597a9eeaa76a3ba5fbf",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-1/test.html",
+      "stored_bytes": 628,
+      "stored_sha256": "9de3decf085b090e7d5a593c3cbff686421f378f4500479d9b445d74a131262e"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-1.25__chromium-1-capture-1.png",
+      "raw_bytes": 8162,
+      "raw_sha256": "e0edb21d077c5525b4df292c12dafc4f74c87acbf48b7b33b925c0e39d8474d0",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-1.25/chromium-1-capture-1.png",
+      "stored_bytes": 8162,
+      "stored_sha256": "e0edb21d077c5525b4df292c12dafc4f74c87acbf48b7b33b925c0e39d8474d0"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-1.25__chromium-1-capture-2.png",
+      "raw_bytes": 8162,
+      "raw_sha256": "e0edb21d077c5525b4df292c12dafc4f74c87acbf48b7b33b925c0e39d8474d0",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-1.25/chromium-1-capture-2.png",
+      "stored_bytes": 8162,
+      "stored_sha256": "e0edb21d077c5525b4df292c12dafc4f74c87acbf48b7b33b925c0e39d8474d0"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-1.25__chromium-1-geometry.json.gz",
+      "raw_bytes": 6815,
+      "raw_sha256": "14d9401b8f8fe37ad5a236770af5e15f8188e8fb99672a18969626fd0b8bb506",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-1.25/chromium-1-geometry.json",
+      "stored_bytes": 624,
+      "stored_sha256": "5a5bb2511af0fa4b09647333aa4862ab7660d6708173ae68d182ea1c24c9c9d1"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-1.25__chromium-2-capture-1.png",
+      "raw_bytes": 8162,
+      "raw_sha256": "e0edb21d077c5525b4df292c12dafc4f74c87acbf48b7b33b925c0e39d8474d0",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-1.25/chromium-2-capture-1.png",
+      "stored_bytes": 8162,
+      "stored_sha256": "e0edb21d077c5525b4df292c12dafc4f74c87acbf48b7b33b925c0e39d8474d0"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-1.25__chromium-2-capture-2.png",
+      "raw_bytes": 8162,
+      "raw_sha256": "e0edb21d077c5525b4df292c12dafc4f74c87acbf48b7b33b925c0e39d8474d0",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-1.25/chromium-2-capture-2.png",
+      "stored_bytes": 8162,
+      "stored_sha256": "e0edb21d077c5525b4df292c12dafc4f74c87acbf48b7b33b925c0e39d8474d0"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-1.25__chromium-2-geometry.json.gz",
+      "raw_bytes": 6815,
+      "raw_sha256": "14d9401b8f8fe37ad5a236770af5e15f8188e8fb99672a18969626fd0b8bb506",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-1.25/chromium-2-geometry.json",
+      "stored_bytes": 624,
+      "stored_sha256": "5a5bb2511af0fa4b09647333aa4862ab7660d6708173ae68d182ea1c24c9c9d1"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-1.25__native-1__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-1.25/native-1/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-1.25__native-1__openui.png",
+      "raw_bytes": 9702,
+      "raw_sha256": "606af21fca4fe6b150c1b162486a49cdc303edf761d0ef348d7e3ffdfa24cb93",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-1.25/native-1/openui.png",
+      "stored_bytes": 9702,
+      "stored_sha256": "606af21fca4fe6b150c1b162486a49cdc303edf761d0ef348d7e3ffdfa24cb93"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-1.25__native-1.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-1.25/native-1.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-1.25__native-2__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-1.25/native-2/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-1.25__native-2__openui.png",
+      "raw_bytes": 9702,
+      "raw_sha256": "606af21fca4fe6b150c1b162486a49cdc303edf761d0ef348d7e3ffdfa24cb93",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-1.25/native-2/openui.png",
+      "stored_bytes": 9702,
+      "stored_sha256": "606af21fca4fe6b150c1b162486a49cdc303edf761d0ef348d7e3ffdfa24cb93"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-1.25__native-2.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-1.25/native-2.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-1.25__test.html.gz",
+      "raw_bytes": 1678,
+      "raw_sha256": "4cb144405bacd174aa8bb563162c4c85fd9be3cf3913f597a9eeaa76a3ba5fbf",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-1.25/test.html",
+      "stored_bytes": 628,
+      "stored_sha256": "9de3decf085b090e7d5a593c3cbff686421f378f4500479d9b445d74a131262e"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-1.5__chromium-1-capture-1.png",
+      "raw_bytes": 9691,
+      "raw_sha256": "25fa6a88a6e523b8d05211c93020760906efaf2e073afd63ed052f7969c69727",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-1.5/chromium-1-capture-1.png",
+      "stored_bytes": 9691,
+      "stored_sha256": "25fa6a88a6e523b8d05211c93020760906efaf2e073afd63ed052f7969c69727"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-1.5__chromium-1-capture-2.png",
+      "raw_bytes": 9691,
+      "raw_sha256": "25fa6a88a6e523b8d05211c93020760906efaf2e073afd63ed052f7969c69727",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-1.5/chromium-1-capture-2.png",
+      "stored_bytes": 9691,
+      "stored_sha256": "25fa6a88a6e523b8d05211c93020760906efaf2e073afd63ed052f7969c69727"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-1.5__chromium-1-geometry.json.gz",
+      "raw_bytes": 6814,
+      "raw_sha256": "2d90ee869d7fca3677a95e61c7645b7a8fcc3b50510eb8f4a8dfa4e184a4d85a",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-1.5/chromium-1-geometry.json",
+      "stored_bytes": 624,
+      "stored_sha256": "e455681efd1b47358dd745ab20b6ab468006c5bbe88c47424d5ed7337cbd228a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-1.5__chromium-2-capture-1.png",
+      "raw_bytes": 9691,
+      "raw_sha256": "25fa6a88a6e523b8d05211c93020760906efaf2e073afd63ed052f7969c69727",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-1.5/chromium-2-capture-1.png",
+      "stored_bytes": 9691,
+      "stored_sha256": "25fa6a88a6e523b8d05211c93020760906efaf2e073afd63ed052f7969c69727"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-1.5__chromium-2-capture-2.png",
+      "raw_bytes": 9691,
+      "raw_sha256": "25fa6a88a6e523b8d05211c93020760906efaf2e073afd63ed052f7969c69727",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-1.5/chromium-2-capture-2.png",
+      "stored_bytes": 9691,
+      "stored_sha256": "25fa6a88a6e523b8d05211c93020760906efaf2e073afd63ed052f7969c69727"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-1.5__chromium-2-geometry.json.gz",
+      "raw_bytes": 6814,
+      "raw_sha256": "2d90ee869d7fca3677a95e61c7645b7a8fcc3b50510eb8f4a8dfa4e184a4d85a",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-1.5/chromium-2-geometry.json",
+      "stored_bytes": 624,
+      "stored_sha256": "e455681efd1b47358dd745ab20b6ab468006c5bbe88c47424d5ed7337cbd228a"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-1.5__native-1__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-1.5/native-1/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-1.5__native-1__openui.png",
+      "raw_bytes": 12029,
+      "raw_sha256": "cb201f3d7dd4b05601366ebb836d4e443755b467b07f8f957aa173857eb626aa",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-1.5/native-1/openui.png",
+      "stored_bytes": 12029,
+      "stored_sha256": "cb201f3d7dd4b05601366ebb836d4e443755b467b07f8f957aa173857eb626aa"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-1.5__native-1.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-1.5/native-1.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-1.5__native-2__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-1.5/native-2/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-1.5__native-2__openui.png",
+      "raw_bytes": 12029,
+      "raw_sha256": "cb201f3d7dd4b05601366ebb836d4e443755b467b07f8f957aa173857eb626aa",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-1.5/native-2/openui.png",
+      "stored_bytes": 12029,
+      "stored_sha256": "cb201f3d7dd4b05601366ebb836d4e443755b467b07f8f957aa173857eb626aa"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-1.5__native-2.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-1.5/native-2.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-1.5__test.html.gz",
+      "raw_bytes": 1678,
+      "raw_sha256": "4cb144405bacd174aa8bb563162c4c85fd9be3cf3913f597a9eeaa76a3ba5fbf",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-1.5/test.html",
+      "stored_bytes": 628,
+      "stored_sha256": "9de3decf085b090e7d5a593c3cbff686421f378f4500479d9b445d74a131262e"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-2__chromium-1-capture-1.png",
+      "raw_bytes": 14727,
+      "raw_sha256": "f261b770c539c275ad413d4c6c87c4cbe0e82c8a1fa75ebb734455469cc2a966",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-2/chromium-1-capture-1.png",
+      "stored_bytes": 14727,
+      "stored_sha256": "f261b770c539c275ad413d4c6c87c4cbe0e82c8a1fa75ebb734455469cc2a966"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-2__chromium-1-capture-2.png",
+      "raw_bytes": 14727,
+      "raw_sha256": "f261b770c539c275ad413d4c6c87c4cbe0e82c8a1fa75ebb734455469cc2a966",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-2/chromium-1-capture-2.png",
+      "stored_bytes": 14727,
+      "stored_sha256": "f261b770c539c275ad413d4c6c87c4cbe0e82c8a1fa75ebb734455469cc2a966"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-2__chromium-1-geometry.json.gz",
+      "raw_bytes": 6812,
+      "raw_sha256": "c83e01c6eb8d096fdf38ab14c967ac897141630b9a9841683c778bd44e4fc074",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-2/chromium-1-geometry.json",
+      "stored_bytes": 622,
+      "stored_sha256": "cfb70ad83bd02a3cea9827d60584dfbf2c4c1943acbc77531e3f2ded395663af"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-2__chromium-2-capture-1.png",
+      "raw_bytes": 14727,
+      "raw_sha256": "f261b770c539c275ad413d4c6c87c4cbe0e82c8a1fa75ebb734455469cc2a966",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-2/chromium-2-capture-1.png",
+      "stored_bytes": 14727,
+      "stored_sha256": "f261b770c539c275ad413d4c6c87c4cbe0e82c8a1fa75ebb734455469cc2a966"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-2__chromium-2-capture-2.png",
+      "raw_bytes": 14727,
+      "raw_sha256": "f261b770c539c275ad413d4c6c87c4cbe0e82c8a1fa75ebb734455469cc2a966",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-2/chromium-2-capture-2.png",
+      "stored_bytes": 14727,
+      "stored_sha256": "f261b770c539c275ad413d4c6c87c4cbe0e82c8a1fa75ebb734455469cc2a966"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-2__chromium-2-geometry.json.gz",
+      "raw_bytes": 6812,
+      "raw_sha256": "c83e01c6eb8d096fdf38ab14c967ac897141630b9a9841683c778bd44e4fc074",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-2/chromium-2-geometry.json",
+      "stored_bytes": 622,
+      "stored_sha256": "cfb70ad83bd02a3cea9827d60584dfbf2c4c1943acbc77531e3f2ded395663af"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-2__native-1__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-2/native-1/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-2__native-1__openui.png",
+      "raw_bytes": 18671,
+      "raw_sha256": "02858d2514f7f177ef94ad7fd8fd66bf623e72d3c62fd277cf1c36d527a24c94",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-2/native-1/openui.png",
+      "stored_bytes": 18671,
+      "stored_sha256": "02858d2514f7f177ef94ad7fd8fd66bf623e72d3c62fd277cf1c36d527a24c94"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-2__native-1.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-2/native-1.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-2__native-2__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-2/native-2/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-2__native-2__openui.png",
+      "raw_bytes": 18671,
+      "raw_sha256": "02858d2514f7f177ef94ad7fd8fd66bf623e72d3c62fd277cf1c36d527a24c94",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-2/native-2/openui.png",
+      "stored_bytes": 18671,
+      "stored_sha256": "02858d2514f7f177ef94ad7fd8fd66bf623e72d3c62fd277cf1c36d527a24c94"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-2__native-2.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-2/native-2.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-2__test.html.gz",
+      "raw_bytes": 1678,
+      "raw_sha256": "4cb144405bacd174aa8bb563162c4c85fd9be3cf3913f597a9eeaa76a3ba5fbf",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-2/test.html",
+      "stored_bytes": 628,
+      "stored_sha256": "9de3decf085b090e7d5a593c3cbff686421f378f4500479d9b445d74a131262e"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-3__chromium-1-capture-1.png",
+      "raw_bytes": 30139,
+      "raw_sha256": "085f2bd1e8b7534a070dbdd892fbaa12af7868b254b17e2f1ba76bb139e73248",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-3/chromium-1-capture-1.png",
+      "stored_bytes": 30139,
+      "stored_sha256": "085f2bd1e8b7534a070dbdd892fbaa12af7868b254b17e2f1ba76bb139e73248"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-3__chromium-1-capture-2.png",
+      "raw_bytes": 30139,
+      "raw_sha256": "085f2bd1e8b7534a070dbdd892fbaa12af7868b254b17e2f1ba76bb139e73248",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-3/chromium-1-capture-2.png",
+      "stored_bytes": 30139,
+      "stored_sha256": "085f2bd1e8b7534a070dbdd892fbaa12af7868b254b17e2f1ba76bb139e73248"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-3__chromium-1-geometry.json.gz",
+      "raw_bytes": 6812,
+      "raw_sha256": "abd7cf094fd66517128d19d0858986eb4d3e8bd5ed7a1bd81253f528296dd8c2",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-3/chromium-1-geometry.json",
+      "stored_bytes": 623,
+      "stored_sha256": "281e671d5deac76674438f096bcc299cbb322a75e018a319b9c509bce9e72874"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-3__chromium-2-capture-1.png",
+      "raw_bytes": 30139,
+      "raw_sha256": "085f2bd1e8b7534a070dbdd892fbaa12af7868b254b17e2f1ba76bb139e73248",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-3/chromium-2-capture-1.png",
+      "stored_bytes": 30139,
+      "stored_sha256": "085f2bd1e8b7534a070dbdd892fbaa12af7868b254b17e2f1ba76bb139e73248"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-3__chromium-2-capture-2.png",
+      "raw_bytes": 30139,
+      "raw_sha256": "085f2bd1e8b7534a070dbdd892fbaa12af7868b254b17e2f1ba76bb139e73248",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-3/chromium-2-capture-2.png",
+      "stored_bytes": 30139,
+      "stored_sha256": "085f2bd1e8b7534a070dbdd892fbaa12af7868b254b17e2f1ba76bb139e73248"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-3__chromium-2-geometry.json.gz",
+      "raw_bytes": 6812,
+      "raw_sha256": "abd7cf094fd66517128d19d0858986eb4d3e8bd5ed7a1bd81253f528296dd8c2",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-3/chromium-2-geometry.json",
+      "stored_bytes": 623,
+      "stored_sha256": "281e671d5deac76674438f096bcc299cbb322a75e018a319b9c509bce9e72874"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-3__native-1__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-3/native-1/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-3__native-1__openui.png",
+      "raw_bytes": 38449,
+      "raw_sha256": "388e2b5f99b4ab1e7487170f5ac9bf1dbb35de49664d3b69d33e4169f5ca4518",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-3/native-1/openui.png",
+      "stored_bytes": 38449,
+      "stored_sha256": "388e2b5f99b4ab1e7487170f5ac9bf1dbb35de49664d3b69d33e4169f5ca4518"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-3__native-1.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-3/native-1.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-3__native-2__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-3/native-2/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-3__native-2__openui.png",
+      "raw_bytes": 38449,
+      "raw_sha256": "388e2b5f99b4ab1e7487170f5ac9bf1dbb35de49664d3b69d33e4169f5ca4518",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-3/native-2/openui.png",
+      "stored_bytes": 38449,
+      "stored_sha256": "388e2b5f99b4ab1e7487170f5ac9bf1dbb35de49664d3b69d33e4169f5ca4518"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-3__native-2.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-3/native-2.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-legend-reference__scale-3__test.html.gz",
+      "raw_bytes": 1678,
+      "raw_sha256": "4cb144405bacd174aa8bb563162c4c85fd9be3cf3913f597a9eeaa76a3ba5fbf",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-sweep-v3578/scale-3/test.html",
+      "stored_bytes": 628,
+      "stored_sha256": "9de3decf085b090e7d5a593c3cbff686421f378f4500479d9b445d74a131262e"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/native-terminal-v3579.json",
+      "raw_bytes": 1755,
+      "raw_sha256": "7061bf87e7a31ec08492f7ed973b9f0ef6ae6f53bdbb6bccb7c73fd7f2ebdfb4",
+      "source": "/tmp/openui-native-fragmented-fieldset-sweep-terminal-v3579.json",
+      "stored_bytes": 1755,
+      "stored_sha256": "7061bf87e7a31ec08492f7ed973b9f0ef6ae6f53bdbb6bccb7c73fd7f2ebdfb4"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/native-terminal-v3582.json",
+      "raw_bytes": 3662,
+      "raw_sha256": "4ef4c2eec89da7d9d7dc9e215a7fd1141de811d9db2e392d32b0a1a7ac9e858e",
+      "source": "/tmp/openui-native-fragmented-fieldset-sweep-terminal-v3582.json",
+      "stored_bytes": 3662,
+      "stored_sha256": "4ef4c2eec89da7d9d7dc9e215a7fd1141de811d9db2e392d32b0a1a7ac9e858e"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/native-terminal-v3586.json",
+      "raw_bytes": 8685,
+      "raw_sha256": "07a1a43c1769154e8b71808b0cb2237d12c66b7ff33e37fa072d074ca018ff84",
+      "source": "/tmp/openui-native-fragmented-fieldset-sweep-terminal-v3586.json",
+      "stored_bytes": 8685,
+      "stored_sha256": "07a1a43c1769154e8b71808b0cb2237d12c66b7ff33e37fa072d074ca018ff84"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/native-terminal-v3592.json",
+      "raw_bytes": 12047,
+      "raw_sha256": "0a2331fa5eb9041ffdb2e14bdb0ed8d79fff0909543f2e924d338c5b8ef19398",
+      "source": "/tmp/openui-native-fragmented-fieldset-sweep-terminal-v3592.json",
+      "stored_bytes": 12047,
+      "stored_sha256": "0a2331fa5eb9041ffdb2e14bdb0ed8d79fff0909543f2e924d338c5b8ef19398"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/native-terminal-v3599.json",
+      "raw_bytes": 11670,
+      "raw_sha256": "cef534187bf9e6f28044bb0a0669e4415e14c01e05c45bbd24123bb0d729153c",
+      "source": "/tmp/openui-native-fragmented-fieldset-candidate-compare-terminal-v3599.json",
+      "stored_bytes": 11670,
+      "stored_sha256": "cef534187bf9e6f28044bb0a0669e4415e14c01e05c45bbd24123bb0d729153c"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/native-build-v3593__add-painter.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-build-v3593/add-painter.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/native-build-v3593__apply-local-color-fill.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-build-v3593/apply-local-color-fill.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/native-build-v3593__checkout-mode.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-build-v3593/checkout-mode.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/native-build-v3593__checkout.log.gz",
+      "raw_bytes": 90,
+      "raw_sha256": "07c363ea503f05749987485d920826dd5ef0a15becd58bcf3f66029e503c0ada",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-build-v3593/checkout.log",
+      "stored_bytes": 101,
+      "stored_sha256": "4e5b636ac1a0ae3e3a59cb9cffb185c6dd2788f6c71325a2e46f9140a9aacefb"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/native-build-v3593__clean-local-packages.log.gz",
+      "raw_bytes": 9016,
+      "raw_sha256": "9f2ca9db941e538ab3abea55a9ccbb2efc307f3b5f89264620aa0f84bc9cb0fc",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-build-v3593/clean-local-packages.log",
+      "stored_bytes": 671,
+      "stored_sha256": "d6dc9b4bef4a5c61e5a3bd9b312d918b626b664bd16bc345e6d05357fe0fe7dc"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/native-build-v3593__clone.log.gz",
+      "raw_bytes": 80,
+      "raw_sha256": "4848acd8f33fbc1b65c8f30c6b7ea1dc2fef8efc55e8f557dbb44d27c57fc4a0",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-build-v3593/clone.log",
+      "stored_bytes": 94,
+      "stored_sha256": "f7504e329c9d8e1e1206d3864c0ebd5f01bd254c3e9f9946ec8e79371864f182"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/native-build-v3593__commit-painter.log.gz",
+      "raw_bytes": 138,
+      "raw_sha256": "40eb6b6c3f4883c1f30e556140b47467f390a6b414641bd29503633a01dc9e9c",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-build-v3593/commit-painter.log",
+      "stored_bytes": 139,
+      "stored_sha256": "bfde985803674bb78dd3ce393102cf95320f59dc5259ed93a76670eb6f841f32"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/native-build-v3593__configure-user.email.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-build-v3593/configure-user.email.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/native-build-v3593__configure-user.name.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-build-v3593/configure-user.name.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/native-build-v3593__metadata.log.gz",
+      "raw_bytes": 714982,
+      "raw_sha256": "02bcaf67669f9feab0435a26b75fc940d937c09423a3107e4e61937b82075239",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-build-v3593/metadata.log",
+      "stored_bytes": 67180,
+      "stored_sha256": "be056958ee76a5176c4d00a57cb9212ee9e4d7a1e667a702e1ef5eec88b0c184"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/native-build-v3593__native-build.log.gz",
+      "raw_bytes": 123160,
+      "raw_sha256": "fc9ebe99adc598af719a2ddcd1bfe89c5362d5d121a079d3cf6e05ed4169fb6f",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-build-v3593/native-build.log",
+      "stored_bytes": 9704,
+      "stored_sha256": "5a13af5922dda4c823237037e08ed73b17cec4dac3e5904a185e34e36792f0ee"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/native-build-v3593__receipt.json.gz",
+      "raw_bytes": 37530,
+      "raw_sha256": "b4aebc227f6dbac53f5d54f2784833b1750a690fc5054a3e33b0bab86dcb026c",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragmented-fieldset-build-v3593/receipt.json",
+      "stored_bytes": 4602,
+      "stored_sha256": "29e4f9f0d260ec46dafe538e33df017654856bb4bd1812db088ced3b09295ebf"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/native-build-terminal.json",
+      "raw_bytes": 1220,
+      "raw_sha256": "f5e9cf805f6641aeecfa80229b46b854893d431cda527575b8d74b1cd6e291ea",
+      "source": "/tmp/openui-native-fragmented-fieldset-build-terminal-v3594.json",
+      "stored_bytes": 1220,
+      "stored_sha256": "f5e9cf805f6641aeecfa80229b46b854893d431cda527575b8d74b1cd6e291ea"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-audit-v3596.json",
+      "raw_bytes": 632,
+      "raw_sha256": "393b294dcbda1bbe8cc09656b943c3bf353ca6139c2676ae510953961451b997",
+      "source": "/tmp/openui-native-fragmented-fieldset-candidate-compare-audit-failure-v3596.json",
+      "stored_bytes": 632,
+      "stored_sha256": "393b294dcbda1bbe8cc09656b943c3bf353ca6139c2676ae510953961451b997"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/failed-audit-v3596.py.gz",
+      "raw_bytes": 6297,
+      "raw_sha256": "02b7a33ada89bdc32899da663d247f160546ea5c4c5423fc897b54bea079df16",
+      "source": "/tmp/openui-native-fragmented-fieldset-candidate-compare-audit-v3596.py",
+      "stored_bytes": 1891,
+      "stored_sha256": "956f8ec07bfaf0604cb799ec6188835d4eee88a46ed9ddd2cfd56894e2f2072f"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/corrected-audit-v3599.py.gz",
+      "raw_bytes": 6307,
+      "raw_sha256": "ab6e267adec7036f1127df8d17e04c31ed9609e25375e72630a6251f558e59df",
+      "source": "/tmp/openui-native-fragmented-fieldset-candidate-compare-audit-v3599.py",
+      "stored_bytes": 1896,
+      "stored_sha256": "35485daf861a73ac08e876fdf5b575baafb6413d440301e761a1531ada64226c"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/renderer-completed-audit.json",
+      "raw_bytes": 2959,
+      "raw_sha256": "ccda8f2b69f556dbe387f61aec2da3e29ba8c2d4f4f1b78fa0d8d1965e9a125e",
+      "source": "/tmp/openui-private-fragmented-fieldset-renderer-completed-audit-v3598.json",
+      "stored_bytes": 2959,
+      "stored_sha256": "ccda8f2b69f556dbe387f61aec2da3e29ba8c2d4f4f1b78fa0d8d1965e9a125e"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/renderer-terminal.json",
+      "raw_bytes": 2516,
+      "raw_sha256": "8b06d2a96c32f6d0497ad7c99cefafde18ca8c5def373026e51a03cb97dd2817",
+      "source": "/tmp/openui-private-fragmented-fieldset-renderer-terminal-v3604.json",
+      "stored_bytes": 2516,
+      "stored_sha256": "8b06d2a96c32f6d0497ad7c99cefafde18ca8c5def373026e51a03cb97dd2817"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/integration.json",
+      "raw_bytes": 1580,
+      "raw_sha256": "5a960b4fa3de722de8746ffe71ffc861f0bed1fb01c53907c741f95e97d913ae",
+      "source": "/tmp/openui-native-fragmented-fieldset-integration-v3605.json",
+      "stored_bytes": 1580,
+      "stored_sha256": "5a960b4fa3de722de8746ffe71ffc861f0bed1fb01c53907c741f95e97d913ae"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/renderer-driver.py.gz",
+      "raw_bytes": 12720,
+      "raw_sha256": "0c3b3bd2e8aa006574a995f197d4dbd1cbf4a076c7223e05e1601a977cc532b7",
+      "source": "/tmp/openui-private-fragmented-fieldset-renderer-v3597.py",
+      "stored_bytes": 4136,
+      "stored_sha256": "afe5fdde8402ddadc219b6ad42c38b1cd2bb8bad513a8381cd93926304fadf8a"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/renderer-audit-driver.py.gz",
+      "raw_bytes": 7013,
+      "raw_sha256": "67c2fcd6095b6516143a9359c705a7bc6170d3bfb34f54563a88b44554b46ae5",
+      "source": "/tmp/openui-private-fragmented-fieldset-renderer-audit-v3598.py",
+      "stored_bytes": 2443,
+      "stored_sha256": "9addd124c3826369068787e203d24dbfebbb6b3c717a45a78a729a4b0d704a52"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/renderer-terminal-driver.py.gz",
+      "raw_bytes": 3024,
+      "raw_sha256": "e6d41f591d4bd16a9d95ddb4d232a215d64663526a8df0e8d5e4ca863eb9c45b",
+      "source": "/tmp/openui-private-fragmented-fieldset-renderer-terminal-v3604.py",
+      "stored_bytes": 1174,
+      "stored_sha256": "cde1912040b6a10a8c2bc70109b3d09fbbab0decbe06e042040e1660f52c7b97"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/single-decoration-owner.patch",
+      "raw_bytes": 875,
+      "raw_sha256": "71594ccc29e55924c78626f436b2871f19f1f8195965b7705e9fcf6f3e134548",
+      "source": "/tmp/openui-fragment-decoration-single-owner-candidate-v3583.patch",
+      "stored_bytes": 875,
+      "stored_sha256": "71594ccc29e55924c78626f436b2871f19f1f8195965b7705e9fcf6f3e134548"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/local-sliced-background.patch",
+      "raw_bytes": 1443,
+      "raw_sha256": "214f33ce4f702920ef9bb75ab56a33db22e35387bd6cd408e381d0e97322cea1",
+      "source": "/tmp/openui-sliced-background-local-fill-candidate-v3593.patch",
+      "stored_bytes": 1443,
+      "stored_sha256": "214f33ce4f702920ef9bb75ab56a33db22e35387bd6cd408e381d0e97322cea1"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/measured-native-app.rs.gz",
+      "raw_bytes": 6162,
+      "raw_sha256": "a0e919b8e48479eb52c6d210d60f7df45c598cd8e7e9632fb29a36d71d1c483e",
+      "source": "/dev/shm/openui-native-fragmented-fieldset-source-v3593/bindings/rust/openui/examples/native_fragmented_fieldset.rs",
+      "stored_bytes": 2022,
+      "stored_sha256": "5f4336d501273eef2be3e1f88c5cd5614c0cb2126260a00ff08b909dd95b03d6"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/renderer-receipt.json.gz",
+      "raw_bytes": 85940,
+      "raw_sha256": "5520e58ccd4ec7bd4ee6fec76179620693b86de250e9bd73c727b0335bbeb3cc",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/private-fragmented-fieldset-renderer-v3597/receipt.json",
+      "stored_bytes": 8008,
+      "stored_sha256": "58c6f122bae7a2d8273950af629eabe059af0aed941329afa81d94afefbf3413"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/focused.log.gz",
+      "raw_bytes": 1246,
+      "raw_sha256": "c320ff190e4509e2320672c11998300880588dd4dce457c4e87f48b448514cdf",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/private-fragmented-fieldset-renderer-v3597/focused.log",
+      "stored_bytes": 302,
+      "stored_sha256": "70fcf6eb0075b36b1238f885ff81acd1fb5fb4e2e0771500fa2f6a65a2cc8edb"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/focused-summary.json.gz",
+      "raw_bytes": 1646615,
+      "raw_sha256": "0118d82229e1b0729d92c934bee2ee8912173d7d4fa47da6d300b4d7ec0f9d38",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/private-fragmented-fieldset-renderer-v3597/focused-matrix/focused-summary.json",
+      "stored_bytes": 160579,
+      "stored_sha256": "08d829049a8c20a396bd7c9da494a4d055f83adcca453b62601b464eee2aa2b8"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/primitive.log.gz",
+      "raw_bytes": 1250,
+      "raw_sha256": "f80d4f6c31a0216852b892d28bc04d95f2d04752bb28971df7b3ab619fa0c7da",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/private-fragmented-fieldset-renderer-v3597/primitive.log",
+      "stored_bytes": 305,
+      "stored_sha256": "dd94c82bfaab6182ea935feeed62cc24387dc52a878a5c435b0485018c11af52"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/primitive-summary.json.gz",
+      "raw_bytes": 2455821,
+      "raw_sha256": "7aceb8e8505d7dcac0ade17bdf1424eb3beaceff9bdaef8194270f19b074e0f6",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/private-fragmented-fieldset-renderer-v3597/primitive-matrix/primitive-summary.json",
+      "stored_bytes": 222648,
+      "stored_sha256": "584958a278b960562d43a196f242599374ab08c1e7c6cd3c43665f7af72d4f23"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/full.log.gz",
+      "raw_bytes": 7205,
+      "raw_sha256": "b345511f40b990ca5ed6ec73f59709a4ecee901c74f6a6b0bf440286bdbf209e",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/private-fragmented-fieldset-renderer-v3597/full.log",
+      "stored_bytes": 762,
+      "stored_sha256": "54c73728df9a1cc4a8b65f87b77ed288e5c7dbce7b3ba17a8d4a8b13a1fcc539"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/full-summary.json.gz",
+      "raw_bytes": 70292107,
+      "raw_sha256": "3abc2ee7e7599de3c05906ac8fb6a45bf6e315cb26186089cad1a86d88d61997",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/private-fragmented-fieldset-renderer-v3597/full-matrix/full-summary.json",
+      "stored_bytes": 4314737,
+      "stored_sha256": "165d2cb732299b29bdc6761258645290e43158807fbf7ef22ee5b6da84d64d53"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/expanded.log.gz",
+      "raw_bytes": 7457,
+      "raw_sha256": "14448a9d252e5cefa5e5895666054dd8196ff51dc8e7f66ba1b96343b1135124",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/private-fragmented-fieldset-renderer-v3597/expanded.log",
+      "stored_bytes": 779,
+      "stored_sha256": "88bbb1d8510e9cf5f9b6f2d840344f698b7c9318ebda31eada1c6e8300a10d75"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/expanded-summary.json.gz",
+      "raw_bytes": 72329086,
+      "raw_sha256": "ada51b7fbcf9e090e580a42760153a5c6fd99fa011ba87da19e67e7720f84cdf",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/private-fragmented-fieldset-renderer-v3597/expanded-matrix/expanded-summary.json",
+      "stored_bytes": 4424273,
+      "stored_sha256": "9a79e90700a6d242dc4213e2ccf5e62e936502680946dfcdaee9f5239a154d7c"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/guarded-build__build.stderr.gz",
+      "raw_bytes": 1771,
+      "raw_sha256": "d47b9f3b42db92b274454444bae701162826ca681bf512f73fd49706cb1f3e00",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/private-fragmented-fieldset-renderer-v3597/guarded-build/build.stderr",
+      "stored_bytes": 350,
+      "stored_sha256": "429a17f73623f95cda6f7ad021020c4021e5c7da9c0223b231122b754110ccda"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/guarded-build__build.stdout.gz",
+      "raw_bytes": 137137,
+      "raw_sha256": "a05211a06ead82598dded0607b77701b9c0b20db96e2883cfd15f2c8cd513c05",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/private-fragmented-fieldset-renderer-v3597/guarded-build/build.stdout",
+      "stored_bytes": 9930,
+      "stored_sha256": "caef3f09ef5cad21800caf87e724508e5b09f4aabc24c74652abc5229a4b2529"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/guarded-build__clean-local-packages.stderr.gz",
+      "raw_bytes": 9016,
+      "raw_sha256": "a0611afbe391aa33f1e3b6c74290a5ab5cbd2ef58f11cbd1dbf53ea205527a97",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/private-fragmented-fieldset-renderer-v3597/guarded-build/clean-local-packages.stderr",
+      "stored_bytes": 671,
+      "stored_sha256": "5001c75206bd8f478eb42110fc56e4ae82911776191943b09e5ff29bc3a55fc2"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/guarded-build__clean-local-packages.stdout.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/private-fragmented-fieldset-renderer-v3597/guarded-build/clean-local-packages.stdout",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/guarded-build__metadata.stderr.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/private-fragmented-fieldset-renderer-v3597/guarded-build/metadata.stderr",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/guarded-build__metadata.stdout.gz",
+      "raw_bytes": 714982,
+      "raw_sha256": "02bcaf67669f9feab0435a26b75fc940d937c09423a3107e4e61937b82075239",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/private-fragmented-fieldset-renderer-v3597/guarded-build/metadata.stdout",
+      "stored_bytes": 67180,
+      "stored_sha256": "be056958ee76a5176c4d00a57cb9212ee9e4d7a1e667a702e1ef5eec88b0c184"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/guarded-build__receipt.json.gz",
+      "raw_bytes": 30293,
+      "raw_sha256": "6cd62101865f811fb23a2d7acd6f290f9a506af8256b85c8763fddf8638543af",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/private-fragmented-fieldset-renderer-v3597/guarded-build/receipt.json",
+      "stored_bytes": 3614,
+      "stored_sha256": "884d73722e853b608b4a16e3c7c140010c2f93559695373d8bbe6def71e62469"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-v1/final-integration.json",
+      "raw_bytes": 975,
+      "raw_sha256": "416a49c2a1d5e2957a8b3ac5ba852e36fa481c22d64fec405b257d0ae25664cf",
+      "source": "/tmp/openui-native-fieldset-final-integration-v3608.json",
+      "stored_bytes": 975,
+      "stored_sha256": "416a49c2a1d5e2957a8b3ac5ba852e36fa481c22d64fec405b257d0ae25664cf"
+    }
+  ],
+  "hardware_qualified": false,
+  "historical_openui_archive_is_a_pixel_target": false,
+  "implementation_integrated": true,
+  "javascript_executed_by_openui": false,
+  "measured_source": {
+    "clean": true,
+    "commit": "0a5f558733b94f7d0d7dfb06a01454913015e77d",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "56780c592cc78e553946dc7909c7007d3afb766789d2a3307552e1d7eb054540",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "native_bounds_and_client_rect_sets_exact": 143,
+  "native_callback_count_per_case": 4,
+  "native_interaction": "Public Rust Document/Element methods and Rust callbacks",
+  "native_owned_handle_teardown_pass": true,
+  "native_processes_per_case": 2,
+  "native_reduction_cases": [
+    {
+      "alpha": 0.5,
+      "baseline_wrong_pixels": 0,
+      "candidate_wrong_pixels": 0,
+      "connected_regions": [],
+      "mismatch_bounds": null,
+      "phase": 0.0,
+      "scale": 1.0
+    },
+    {
+      "alpha": 0.5,
+      "baseline_wrong_pixels": 2336,
+      "candidate_wrong_pixels": 0,
+      "connected_regions": [],
+      "mismatch_bounds": null,
+      "phase": 0.0,
+      "scale": 1.25
+    },
+    {
+      "alpha": 0.5,
+      "baseline_wrong_pixels": 1104,
+      "candidate_wrong_pixels": 0,
+      "connected_regions": [],
+      "mismatch_bounds": null,
+      "phase": 0.0,
+      "scale": 1.5
+    },
+    {
+      "alpha": 0.5,
+      "baseline_wrong_pixels": 0,
+      "candidate_wrong_pixels": 0,
+      "connected_regions": [],
+      "mismatch_bounds": null,
+      "phase": 0.0,
+      "scale": 2.0
+    },
+    {
+      "alpha": 0.5,
+      "baseline_wrong_pixels": 0,
+      "candidate_wrong_pixels": 0,
+      "connected_regions": [],
+      "mismatch_bounds": null,
+      "phase": 0.0,
+      "scale": 3.0
+    },
+    {
+      "alpha": 0,
+      "baseline_wrong_pixels": 1284,
+      "candidate_wrong_pixels": 0,
+      "connected_regions": [],
+      "mismatch_bounds": null,
+      "phase": 0,
+      "scale": 1.25
+    },
+    {
+      "alpha": 1,
+      "baseline_wrong_pixels": 1285,
+      "candidate_wrong_pixels": 322,
+      "connected_regions": [
+        {
+          "bounds": {
+            "height": 1,
+            "width": 322,
+            "x": 18,
+            "y": 262
+          },
+          "mismatched_pixels": 322
+        }
+      ],
+      "mismatch_bounds": {
+        "height": 1,
+        "width": 322,
+        "x": 18,
+        "y": 262
+      },
+      "phase": 0,
+      "scale": 1.25
+    },
+    {
+      "alpha": 0.5,
+      "baseline_wrong_pixels": 1284,
+      "candidate_wrong_pixels": 0,
+      "connected_regions": [],
+      "mismatch_bounds": null,
+      "phase": 0.25,
+      "scale": 1.25
+    },
+    {
+      "alpha": 0.5,
+      "baseline_wrong_pixels": 2442,
+      "candidate_wrong_pixels": 386,
+      "connected_regions": [
+        {
+          "bounds": {
+            "height": 1,
+            "width": 193,
+            "x": 20,
+            "y": 101
+          },
+          "mismatched_pixels": 193
+        },
+        {
+          "bounds": {
+            "height": 1,
+            "width": 193,
+            "x": 276,
+            "y": 101
+          },
+          "mismatched_pixels": 193
+        }
+      ],
+      "mismatch_bounds": {
+        "height": 1,
+        "width": 449,
+        "x": 20,
+        "y": 101
+      },
+      "phase": 0.5,
+      "scale": 1.25
+    },
+    {
+      "alpha": 0.5,
+      "baseline_wrong_pixels": 2442,
+      "candidate_wrong_pixels": 386,
+      "connected_regions": [
+        {
+          "bounds": {
+            "height": 1,
+            "width": 193,
+            "x": 20,
+            "y": 101
+          },
+          "mismatched_pixels": 193
+        },
+        {
+          "bounds": {
+            "height": 1,
+            "width": 193,
+            "x": 276,
+            "y": 101
+          },
+          "mismatched_pixels": 193
+        }
+      ],
+      "mismatch_bounds": {
+        "height": 1,
+        "width": 449,
+        "x": 20,
+        "y": 101
+      },
+      "phase": 0.75,
+      "scale": 1.25
+    },
+    {
+      "alpha": 0.5,
+      "baseline_wrong_pixels": 2933,
+      "candidate_wrong_pixels": 849,
+      "connected_regions": [
+        {
+          "bounds": {
+            "height": 1,
+            "width": 386,
+            "x": 24,
+            "y": 316
+          },
+          "mismatched_pixels": 386
+        },
+        {
+          "bounds": {
+            "height": 1,
+            "width": 232,
+            "x": 331,
+            "y": 121
+          },
+          "mismatched_pixels": 232
+        },
+        {
+          "bounds": {
+            "height": 1,
+            "width": 231,
+            "x": 24,
+            "y": 121
+          },
+          "mismatched_pixels": 231
+        }
+      ],
+      "mismatch_bounds": {
+        "height": 196,
+        "width": 539,
+        "x": 24,
+        "y": 121
+      },
+      "phase": 0.5,
+      "scale": 1.5
+    }
+  ],
+  "native_repeated_pixels_identical": true,
+  "original_residual_ownership_qualified": false,
+  "original_residual_test_ids": 882,
+  "pixel_target": "pinned Chromium",
+  "pixel_tolerance": 0,
+  "production_example_sha256": "691590b93b48a3547c1fbc98a2050368d360f6a747f03e81a6756c8a1bd9fc55",
+  "production_painter_rustfmt_applied": true,
+  "production_painter_sha256": "623b95a7626e3237c4f4c6bbbac1dcb42fdd1bb09974e29dc932e1789ce5808b",
+  "public_parent": {
+    "clean": true,
+    "commit": "6e301f588d4064bdffbe170bd6b521564b1f760c",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "500061a0a5c0c2c711b922b3778c519c5b0029bf81ca74e77c424fb978a24501",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "release_qualified": false,
+  "remaining": [
+    "Four fractional-phase/opaque reduced images still differ.",
+    "882 original residual IDs require reviewed causes and ownership.",
+    "35 pending native final-state candidates are not admitted by this run.",
+    "Fresh combined umbrella qualification, complete native APIs, compositor, lab and release remain open."
+  ],
+  "renderer_actual_exit_code": 1,
+  "renderer_audit_actual_exit_code": 0,
+  "renderer_compiled_paths_verified": 26,
+  "renderer_linked_libraries_fresh": true,
+  "renderer_matrix_results": {
+    "expanded": {
+      "actual_exit_code": 1,
+      "changed_rows": 7,
+      "chromium_reference_changed_rows": 0,
+      "different": 1583,
+      "errors": 0,
+      "exact": 22145,
+      "gains": 4,
+      "losses": 0,
+      "total": 23728,
+      "worsened": 0
+    },
+    "focused": {
+      "actual_exit_code": 0,
+      "changed_rows": 0,
+      "chromium_reference_changed_rows": 0,
+      "different": 0,
+      "errors": 0,
+      "exact": 640,
+      "gains": 0,
+      "losses": 0,
+      "total": 640,
+      "worsened": 0
+    },
+    "full": {
+      "actual_exit_code": 1,
+      "changed_rows": 7,
+      "chromium_reference_changed_rows": 0,
+      "different": 1582,
+      "errors": 0,
+      "exact": 21342,
+      "gains": 4,
+      "losses": 0,
+      "total": 22924,
+      "worsened": 0
+    },
+    "primitive": {
+      "actual_exit_code": 0,
+      "changed_rows": 0,
+      "chromium_reference_changed_rows": 0,
+      "different": 0,
+      "errors": 0,
+      "exact": 960,
+      "gains": 0,
+      "losses": 0,
+      "total": 960,
+      "worsened": 0
+    }
+  },
+  "renderer_matrix_rows_verified": 48252,
+  "renderer_qualified": false,
+  "saved_audits_are_chronological_and_retired_for_reexecution": true,
+  "schema_version": 1,
+  "scope": "Completed clean private candidate; measured shared paint logic adopted with Rust formatting. Fresh combined umbrella qualification pending."
+}

@@ -1,0 +1,103 @@
+diff --git a/bindings/rust/openui-paint/tests/text_raster_configuration_tests.rs b/bindings/rust/openui-paint/tests/text_raster_configuration_tests.rs
+index 31f6b8ac..8b36417c 100644
+--- a/bindings/rust/openui-paint/tests/text_raster_configuration_tests.rs
++++ b/bindings/rust/openui-paint/tests/text_raster_configuration_tests.rs
+@@ -1,6 +1,8 @@
+ //! Raster configuration must change the raster, independently of layout.
+ 
+-use openui_geometry::RasterConfiguration;
++use openui_geometry::{
++    RasterBackend, RasterConfiguration, TextEdging, TextHinting, TextRasterConfiguration,
++};
+ use openui_paint::text_painter::paint_text;
+ use openui_style::{ComputedStyle, FontFamilyList};
+ use openui_text::{Font, FontCollection, FontDescription, TextDirection, TextShaper};
+@@ -73,3 +75,88 @@ fn lcd_phase_moves_ink_by_physical_pixels_for_each_text_role() {
+         }
+     }
+ }
++
++fn render_control_strike(
++    role: usize,
++    family: &str,
++    size: f32,
++    scale: f64,
++    backend: RasterBackend,
++    origin: (f32, f32),
++) -> Vec<u8> {
++    let mut style = ComputedStyle::default();
++    let fields = style.fields_mut();
++    fields.font_family = FontFamilyList::single(family);
++    fields.font_size = size;
++    fields.device_scale_factor = scale;
++    fields.native_control_text = role == 1;
++    fields.embedded_document_text = role == 2;
++    fields.raster_configuration = RasterConfiguration::default().with_backend(backend);
++    let fitted = TextRasterConfiguration {
++        edging: TextEdging::AntiAlias,
++        hinting: TextHinting::Full,
++        subpixel_positioning: false,
++        force_autohint: false,
++        lcd_phase_64ths: 0,
++    };
++    fields.raster_configuration.native_text = fitted;
++    fields.raster_configuration.embedded_text = fitted;
++    let font = Font::new_in_collection(
++        FontDescription::from_computed_style(&style),
++        FontCollection::deterministic_test(),
++    );
++    let shaped = TextShaper::new().shape("X", &font, TextDirection::Ltr);
++    assert_eq!(shaped.num_glyphs(), 1);
++    let info = ImageInfo::new_n32_premul((200, 160), None);
++    let mut surface = surfaces::raster(&info, None, None).unwrap();
++    let canvas = surface.canvas();
++    canvas.clear(Color::WHITE);
++    canvas.scale((scale as f32, scale as f32));
++    paint_text(canvas, &shaped, origin, &style);
++    let mut pixels = vec![0; info.compute_byte_size(info.min_row_bytes())];
++    assert!(surface.image_snapshot().read_pixels(
++        &info,
++        &mut pixels,
++        info.min_row_bytes(),
++        (0, 0),
++        skia_safe::image::CachingHint::Disallow,
++    ));
++    assert!(pixels.chunks_exact(4).any(|pixel| pixel[..3] != [255; 3]));
++    pixels
++}
++
++#[test]
++fn native_outlines_fit_at_physical_size_with_default_and_explicit_backends() {
++    // A single glyph must have the same physical ink regardless of how
++    // logical size and device scale divide the physical strike. This uses
++    // independently shaped unit-scale glyphs and compares every output byte.
++    // Full fitting makes scaling an already fitted logical outline observable.
++    for role in [1, 2] {
++        for family in ["DejaVu Sans Mono", "DejaVu Serif"] {
++            for size in [10.0, 13.0, 17.0, 24.0] {
++                for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
++                    let physical = render_control_strike(
++                        role,
++                        family,
++                        size * scale as f32,
++                        1.0,
++                        RasterBackend::Skia,
++                        (16.0 * scale as f32, 32.0 * scale as f32),
++                    );
++                    for backend in [
++                        RasterBackend::Skia,
++                        RasterBackend::ChromiumLinux,
++                        RasterBackend::ChromiumLinuxFontations,
++                    ] {
++                        let replay =
++                            render_control_strike(role, family, size, scale, backend, (16.0, 32.0));
++                        assert!(
++                            replay == physical,
++                            "role {role}, family {family}, size {size}, scale {scale}, backend {backend:?}"
++                        );
++                    }
++                }
++            }
++        }
++    }
++}

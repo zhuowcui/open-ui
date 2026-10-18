@@ -1,0 +1,185 @@
+diff --git a/bindings/rust/openui-engine/src/lib.rs b/bindings/rust/openui-engine/src/lib.rs
+index 8f1e21f7..6a97aae3 100644
+--- a/bindings/rust/openui-engine/src/lib.rs
++++ b/bindings/rust/openui-engine/src/lib.rs
+@@ -2210,6 +2210,19 @@ mod tests {
+         use openui_geometry::Length;
+         use openui_style::{BreakInside, ColumnFill, Position};
+ 
++        fn collect_sources(fragment: &Fragment, sources: &mut Vec<std::sync::Weak<Fragment>>) {
++            if let Some(source) = &fragment.repeated_table_source {
++                assert!(source.repeated_table_source.is_none());
++                let weak = Arc::downgrade(source);
++                if !sources.iter().any(|existing| existing.ptr_eq(&weak)) {
++                    sources.push(weak);
++                }
++            }
++            for child in &fragment.children {
++                collect_sources(child, sources);
++            }
++        }
++
+         fn child(engine: &mut Engine, parent: NodeHandle, display: Display) -> NodeHandle {
+             let node = engine.create_element(ElementTag::Div).unwrap();
+             engine
+@@ -2327,8 +2340,17 @@ mod tests {
+                         );
+                     }
+                 }
++                let mut sources = Vec::new();
++                collect_sources(engine.latest_fragment.as_ref().unwrap(), &mut sources);
++                assert_eq!(
++                    sources.len(),
++                    1,
++                    "all table slices share one immutable source"
++                );
+                 engine.remove(outer).unwrap();
+                 assert_eq!(engine.client_rects(table), Err(EngineError::StaleHandle));
++                drop(engine);
++                assert!(sources.iter().all(|source| source.upgrade().is_none()));
+             }
+         }
+     }
+diff --git a/bindings/rust/openui-layout/src/block.rs b/bindings/rust/openui-layout/src/block.rs
+index 8cc8a765..85bebb40 100644
+--- a/bindings/rust/openui-layout/src/block.rs
++++ b/bindings/rust/openui-layout/src/block.rs
+@@ -10262,7 +10262,8 @@ fn nested_repeated_table_flow_block_size(
+         .find(|child| {
+             !child.node_id.is_none() && doc.node(child.node_id).style.display.is_table_wrapper()
+         })?;
+-    let sections = repeated_table_sections(table, doc);
++    let sections =
++        repeated_table_sections(table.repeated_table_source.as_deref().unwrap_or(table), doc);
+     if sections.is_empty() {
+         return None;
+     }
+@@ -10524,8 +10525,14 @@ fn prepare_nested_repeated_table_slice(
+                 {
+                     return None;
+                 }
+-                let sections = repeated_table_sections(table, doc);
+-                (!sections.is_empty()).then(|| (table.offset.top, table.clone(), sections))
++                let mut canonical_table = table
++                    .repeated_table_source
++                    .as_deref()
++                    .unwrap_or(table)
++                    .clone();
++                canonical_table.repeated_table_source = table.repeated_table_source.clone();
++                let sections = repeated_table_sections(&canonical_table, doc);
++                (!sections.is_empty()).then(|| (table.offset.top, canonical_table, sections))
+             })
+         else {
+             return false;
+@@ -10630,7 +10637,10 @@ fn prepare_nested_repeated_table_slice(
+             {
+                 return None;
+             }
+-            let sections = repeated_table_sections(table, doc);
++            let sections = repeated_table_sections(
++                table.repeated_table_source.as_deref().unwrap_or(table),
++                doc,
++            );
+             (!sections.is_empty()).then_some(sections)
+         })
+     {
+@@ -10654,7 +10664,9 @@ fn prepare_nested_repeated_table_slice(
+             {
+                 continue;
+             }
+-            let sections = repeated_table_sections(table, doc);
++            let canonical_source = table.repeated_table_source.clone();
++            let canonical_table = canonical_source.as_deref().unwrap_or(table).clone();
++            let sections = repeated_table_sections(&canonical_table, doc);
+             if sections.is_empty() {
+                 continue;
+             }
+@@ -10719,6 +10731,11 @@ fn prepare_nested_repeated_table_slice(
+             } else {
+                 nominal_table_fragment_size.max_of(sections.header + painted_body_capacity)
+             };
++            // Restore the immutable source before applying this ancestor's
++            // body window. The first inner slice may already have cropped
++            // descendants and moved the footer into its repeated position.
++            *table = canonical_table;
++            table.repeated_table_source = canonical_source;
+             prepare_repeated_table_slice(
+                 table,
+                 doc,
+@@ -27717,6 +27734,13 @@ fn layout_multicol(
+                             };
+                         let mut repeating_table_sections =
+                             repeated_table_sections(&child_frag, doc);
++                        let repeated_table_source =
++                            (!repeating_table_sections.is_empty()).then(|| {
++                                child_frag
++                                    .repeated_table_source
++                                    .clone()
++                                    .unwrap_or_else(|| std::sync::Arc::new(child_frag.clone()))
++                            });
+                         if !repeating_table_sections.is_empty()
+                             && has_nested_multicol_ancestors(doc, child_node_id)
+                         {
+@@ -29329,6 +29353,9 @@ fn layout_multicol(
+                             }
+ 
+                             let mut part = child_frag.clone();
++                            if let Some(source) = &repeated_table_source {
++                                part.repeated_table_source = Some(std::sync::Arc::clone(source));
++                            }
+                             part.size.height = visual_part_height;
+                             if let Some(source_box) = child_frag.principal_box_rect {
+                                 // Visible child flow may outlive the containing box.
+diff --git a/bindings/rust/openui-layout/src/fragment.rs b/bindings/rust/openui-layout/src/fragment.rs
+index 7ffd1795..482110a5 100644
+--- a/bindings/rust/openui-layout/src/fragment.rs
++++ b/bindings/rust/openui-layout/src/fragment.rs
+@@ -340,6 +340,12 @@ pub struct Fragment {
+     /// Resolved column geometry when this fragment is a multicol container.
+     pub multicol_fragmentation: Option<MulticolFragmentationData>,
+ 
++    /// Immutable unsliced table subtree shared by its continuations. An
++    /// ancestor fragmentainer must advance through the complete body, rather
++    /// than treating a cropped first row as the table's source extent.
++    /// The captured source predates its slices and never points back to them.
++    pub repeated_table_source: Option<Arc<Fragment>>,
++
+     /// Writing direction of the fragmentation context that produced this
+     /// physical fragment. `None` means the fragment is not a fragmentainer or
+     /// an in-flow continuation. Paint uses this to map logical block slicing
+@@ -543,6 +549,7 @@ impl Fragment {
+             promoted_transform_ancestors: Vec::new(),
+             promoted_transform_uses_fragment_decoration: false,
+             multicol_fragmentation: None,
++            repeated_table_source: None,
+             fragmentation_writing_direction: None,
+             decoration_paint_block_size: None,
+             decoration_limit_preserves_inline_coverage: false,
+@@ -612,6 +619,7 @@ impl Fragment {
+             promoted_transform_ancestors: Vec::new(),
+             promoted_transform_uses_fragment_decoration: false,
+             multicol_fragmentation: None,
++            repeated_table_source: None,
+             fragmentation_writing_direction: None,
+             decoration_paint_block_size: None,
+             decoration_limit_preserves_inline_coverage: false,
+diff --git a/bindings/rust/openui-paint/tests/text_paint_tests.rs b/bindings/rust/openui-paint/tests/text_paint_tests.rs
+index 4bd96de6..8c9ad520 100644
+--- a/bindings/rust/openui-paint/tests/text_paint_tests.rs
++++ b/bindings/rust/openui-paint/tests/text_paint_tests.rs
+@@ -1134,6 +1134,7 @@ fn paint_text_fragment_no_shape_result() {
+         promoted_transform_ancestors: Vec::new(),
+         promoted_transform_uses_fragment_decoration: false,
+         multicol_fragmentation: None,
++        repeated_table_source: None,
+         fragmentation_writing_direction: None,
+         principal_box_rect: None,
+         decoration_paint_block_size: None,
+@@ -1528,6 +1529,7 @@ fn paint_ellipsis_hidden_visibility_no_output() {
+         promoted_transform_ancestors: Vec::new(),
+         promoted_transform_uses_fragment_decoration: false,
+         multicol_fragmentation: None,
++        repeated_table_source: None,
+         fragmentation_writing_direction: None,
+         principal_box_rect: None,
+         decoration_paint_block_size: None,

@@ -1,0 +1,116 @@
+{
+  "applied_to_umbrella": false,
+  "artifacts": [
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-clean-v1171/build.json",
+      "sha256": "0c5029e41d461193111c4a3093eeedb5051c3fded17b1340c4bf82e7b6209e71"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-pipeline-v1172/receipt.json",
+      "sha256": "a46a15aeec90911a1a5327c7f76e1264dcf521e282eca52170c6bf09b12ebb98"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-replaced-guard-v1180/receipt.json",
+      "sha256": "0a3923fb5a2b3cf7c012d93688d33a11ccb7364fc22a62eb86e295a9106461ea"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-checks-v1181/receipt.json",
+      "sha256": "652f05846143b725f5981c803e91ffa672df677000a5cda7adca2595faf584ca"
+    }
+  ],
+  "contract": "Open UI executes no JavaScript in any version. Consuming apps call public native Rust APIs and Rust callbacks over the shared Engine. Needed browser element behavior must be implemented in Rust and tested from a consuming app. Chromium alone supplies expected pixels with zero tolerance; old Open UI screenshots are immutable provenance.",
+  "javascript_executed_by_openui": false,
+  "local_builds_and_image_sweeps_are_separate": true,
+  "new_public_rust_api": [
+    "Document::with_options",
+    "Document::with_font_collection_and_options",
+    "Document::raster_configuration",
+    "AppBuilder::raster_configuration",
+    "HeadlessApp::with_options"
+  ],
+  "new_release_states_admitted": 0,
+  "prior_failed_workspace": {
+    "expected_natural_width_css_px": 1,
+    "failed": 1,
+    "failing_guard": "definite_float_height_transfers_through_nested_replaced_ratio_only",
+    "observed_exit_code": 101,
+    "observed_natural_width_css_px": 0,
+    "owner": "openui-layout inline replaced content collection and intrinsic sizing",
+    "passed_before_stop": 5763,
+    "reviewed_root_cause": "The shared intrinsic sequence newly exposed a missing inline-item classification. Inline replaced content was collected as an ordinary inline wrapper, which traversed no children and discarded natural replaced dimensions. The prior recursive intrinsic accumulator retained that natural size.",
+    "shared_fix": "Collect inline replaced content as one atomic inline item, using the shared replaced-element classification. Preserve its natural dimensions and aspect-ratio contribution without checking fixture IDs.",
+    "source": {
+      "clean": true,
+      "commit": "12769e70b6b5bdbe0e32907cfe368f2bd3e01971",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "f10538049d08543d9a93de03653d3f9e1a9e24254ad91451c46c726b3999e269",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "workspace_incomplete": true
+  },
+  "prior_snapshot": {
+    "path": "docs/renderer/generated/native-scroll-insets-v23.json",
+    "sha256": "03e6ea2621a54a14d1e1650b2a1f7dceeb5d22132b6e56ad0bb3ffd421fd5f31"
+  },
+  "probe_sha256": "6a20eea8cd442df0fb48b9f3ce3e75e53ed57e1113d50d5ced187fb48623271f",
+  "promotion_allowed": false,
+  "read_only_checks_passed": 10,
+  "reference_inputs_changed": false,
+  "release_qualification": false,
+  "required_work_still_open": [
+    "Complete original and expanded Chromium equality with reviewed residual ownership.",
+    "Fix native absolute intrinsic widths and review glyph advance and paint discrepancies.",
+    "Complete all needed public native Rust element APIs and shared C/accessibility parity.",
+    "Complete compositor/3D, blocked-UI animation, hardening, hardware, accessibility, performance, packaging, provenance and approved signed publication."
+  ],
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "ee6167d91dda131348ae40d1abb68af94ff7b9d0",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "cbc3e5738bff1ef09a0dc18485ff7aa652a97f9794830ac7d4bd46657dff1eb8",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_patch": {
+    "bytes": 34398,
+    "path": "docs/renderer/evidence/native-inherited-styles-v1/native-intrinsic-and-raster-options-v3.patch",
+    "sha256": "37aacc36d7a1caf5c5e7ef0af2df0a2a2da81a1904d86753334a88ac857fddcf"
+  },
+  "targeted_verification": {
+    "baseline_width_proof": {
+      "expected_pinned_chromium_width_css_px": 80.015625,
+      "failed": 1,
+      "native_text_node_attached": true,
+      "observed_exit_code": 101,
+      "observed_initial_width_css_px": 80.0,
+      "passed": 0,
+      "source": {
+        "clean": true,
+        "commit": "e781cf980ef111148e65788f0fe0e7c0febec1b9",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "889ddc634d4736e00a3c2a176fcdcd790681ff5e4a22ad20d525e8795a9d09a7",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "corrected_native_engine_width_guard_passed": 1,
+    "failed": 0,
+    "observed_exit_codes": [
+      0,
+      0
+    ],
+    "receipt": {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-replaced-guard-v1180/receipt.json",
+      "sha256": "0a3923fb5a2b3cf7c012d93688d33a11ccb7364fc22a62eb86e295a9106461ea"
+    },
+    "replaced_and_positioning_tests_passed": 26
+  },
+  "verification_observation": {
+    "full_census_pass_claimed": false,
+    "native_geometry_pass_claimed": false,
+    "native_pixel_pass_claimed": false,
+    "snapshot_path": "docs/renderer/evidence/native-inherited-styles-v1/native-intrinsic-pipeline-snapshot-v3.json",
+    "snapshot_sha256": "f7267b2a7866b8c88880477b8854c2d890643044a32caaef0360af363cd42b7b",
+    "state": "running-fresh-native-build",
+    "workspace_pass_claimed": false
+  }
+}

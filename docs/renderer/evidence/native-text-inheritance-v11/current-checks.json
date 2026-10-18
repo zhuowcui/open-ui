@@ -1,0 +1,234 @@
+{
+  "all_commands_terminal": true,
+  "cargo_commands_run": 0,
+  "checks": [
+    {
+      "command": [
+        "python3",
+        "tools/qualification/generate_renderer_contract.py",
+        "--check"
+      ],
+      "log_sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691",
+      "name": "renderer",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/wpt/generate_sp13r_multicol_closure.py",
+        "--check"
+      ],
+      "log_sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222",
+      "name": "multicol",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/wpt/generate_sp17_closure.py",
+        "--check"
+      ],
+      "log_sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a",
+      "name": "sp17",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/wpt/generate_sp18_closure.py",
+        "--check"
+      ],
+      "log_sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763",
+      "name": "sp18",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/wpt/generate_sp20_closure.py",
+        "--check"
+      ],
+      "log_sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d",
+      "name": "sp20",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/release/generate_v02_contract.py",
+        "--check"
+      ],
+      "log_sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd",
+      "name": "v02",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/style/generate_properties.py",
+        "--check"
+      ],
+      "log_sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1",
+      "name": "style",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/ffi/generate_ffi.py",
+        "--check"
+      ],
+      "log_sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821",
+      "name": "ffi",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/accountability/restore_frozen_openui_archive.py",
+        "--check"
+      ],
+      "log_sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32",
+      "name": "archive",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/accountability/audit.py",
+        "--repository-only"
+      ],
+      "log_sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1",
+      "name": "accountability",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "ulimit -s 262144; exec rustfmt --edition 2021 --config skip_children=true --check bindings/rust/openui-engine/src/lib.rs bindings/rust/openui/src/element.rs bindings/rust/openui-ffi/src/lib.rs bindings/rust/openui/examples/native_text_content.rs bindings/rust/openui-engine/src/animation.rs bindings/rust/openui-style/src/property.rs bindings/rust/openui/examples/native_inherited_styles.rs bindings/rust/openui/examples/native_relative_styles.rs bindings/rust/openui/examples/native_static_position.rs bindings/rust/openui/tests/native_text_style_inheritance.rs bindings/rust/openui-layout/src/intrinsic_sizing.rs"
+      ],
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "rust-format",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/home/nero/chromium/src/third_party/llvm-build/Release+Asserts/bin/clang",
+        "-std=c11",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot",
+        "-I/home/nero/code/open-ui/include",
+        "-fsyntax-only",
+        "/home/nero/code/open-ui/examples/c_v02/text_content.c"
+      ],
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "syntax-c",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/home/nero/chromium/src/third_party/llvm-build/Release+Asserts/bin/clang++",
+        "-std=c++17",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot",
+        "-I/home/nero/code/open-ui/include",
+        "-fsyntax-only",
+        "/home/nero/code/open-ui/examples/c_v02/text_content.cc"
+      ],
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "syntax-cpp",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/mnt/e/openui-v02-format-tools-v1724/clang_format/data/bin/clang-format",
+        "--dry-run",
+        "--Werror",
+        "examples/c_v02/accessibility.c",
+        "examples/c_v02/common.h",
+        "examples/c_v02/counter.c",
+        "examples/c_v02/dashboard.c",
+        "examples/c_v02/float_colors.c",
+        "examples/c_v02/float_colors.cc",
+        "examples/c_v02/geometry.c",
+        "examples/c_v02/header_smoke.cc",
+        "examples/c_v02/hello.c",
+        "examples/c_v02/native/window.c",
+        "examples/c_v02/native/window.cc",
+        "examples/c_v02/primitive_styles.c",
+        "examples/c_v02/primitive_styles.cc",
+        "examples/c_v02/scroll_into_view.c",
+        "examples/c_v02/scroll_metrics.c",
+        "examples/c_v02/scroll_metrics.cc",
+        "examples/c_v02/svg_viewport.c",
+        "examples/c_v02/svg_viewport.cc",
+        "examples/c_v02/text_content.c",
+        "examples/c_v02/text_content.cc",
+        "examples/c_v02/todo.c",
+        "examples/hello_world.cc",
+        "examples/skia_gallery.c",
+        "examples/skia_hello.c",
+        "examples/skia_poc/main.cc",
+        "include/openui/openui_skia.h",
+        "src/api/openui.h",
+        "src/api/openui_api_test.cc",
+        "src/api/openui_c_render_test.c",
+        "src/api/openui_c_test.c",
+        "src/api/openui_element_factory.cc",
+        "src/api/openui_element_factory.h",
+        "src/api/openui_events.cc",
+        "src/api/openui_events.h",
+        "src/api/openui_impl.cc",
+        "src/api/openui_impl.h",
+        "src/api/openui_init.cc",
+        "src/api/openui_init.h",
+        "src/api/openui_pixel_diff.cc",
+        "src/api/openui_pixel_diff.h",
+        "src/api/openui_render.cc",
+        "src/api/openui_render.h",
+        "src/api/openui_render_pages.cc",
+        "src/api/openui_render_test.cc",
+        "src/api/openui_resource_provider.cc",
+        "src/api/openui_resource_provider.h",
+        "src/platform/oui_window_x11.cc",
+        "src/rendering_pipeline/chromium/rendering_test.cc",
+        "src/rendering_pipeline/chromium/smoke_test.cc",
+        "src/skia/oui_sk_canvas.cc",
+        "src/skia/oui_sk_effects.cc",
+        "src/skia/oui_sk_font.cc",
+        "src/skia/oui_sk_image.cc",
+        "src/skia/oui_sk_paint.cc",
+        "src/skia/oui_sk_path.cc",
+        "src/skia/oui_sk_surface.cc",
+        "src/skia/oui_sk_types_internal.h",
+        "src/skia/oui_sk_util.cc"
+      ],
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "clang-format",
+      "observed_exit_code": 0
+    }
+  ],
+  "probe_sha256": "bb7db6564cb1d702b3b144a45031aa1cc149b8d03a47559f977317facf9a32ce",
+  "release_qualification": false,
+  "schema_version": 1,
+  "screenshots_generated": 0,
+  "source": {
+    "clean": true,
+    "commit": "8a6be0fe8e8d756d594eb2ff5bb9f2bb0c99f5e9",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "3e3c1ebfcbe132a939701a2385cd072408dd7e5d892b15f69112ebc2d616d559",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "8a6be0fe8e8d756d594eb2ff5bb9f2bb0c99f5e9",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "3e3c1ebfcbe132a939701a2385cd072408dd7e5d892b15f69112ebc2d616d559",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/dev/shm/openui-native-image-occlusion-3827199a/tools/qualification/generate_renderer_contract.py", line 776, in <module>
+    main()
+  File "/dev/shm/openui-native-image-occlusion-3827199a/tools/qualification/generate_renderer_contract.py", line 753, in main
+    generated = outputs()
+                ^^^^^^^^^
+  File "/dev/shm/openui-native-image-occlusion-3827199a/tools/qualification/generate_renderer_contract.py", line 743, in outputs
+    STYLE_OUT: encoded(style_inventory()),
+                       ^^^^^^^^^^^^^^^^^
+  File "/dev/shm/openui-native-image-occlusion-3827199a/tools/qualification/generate_renderer_contract.py", line 423, in style_inventory
+    raise ValueError(f"expected 203 consumed author fields, found {public_count}")
+ValueError: expected 203 consumed author fields, found 204

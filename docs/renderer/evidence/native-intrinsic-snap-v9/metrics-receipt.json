@@ -1,0 +1,29 @@
+{
+  "all_commands_terminal": true,
+  "all_requested_files_fetched": true,
+  "cargo_commands_run": 0,
+  "chromium_tag": "147.0.7727.50",
+  "files": [
+    {
+      "bytes": 1869,
+      "fetched": true,
+      "http_status": 200,
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-width-pinned-metrics-v1783/skia_text_metrics.h",
+      "sha256": "9f4b9d441c2caf79be0b1457e4188ef72d3778c9a7e0f8bcaf241901f4237d99",
+      "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/third_party/blink/renderer/platform/fonts/skia/skia_text_metrics.h?format=TEXT"
+    },
+    {
+      "bytes": 6526,
+      "fetched": true,
+      "http_status": 200,
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-width-pinned-metrics-v1783/skia_text_metrics.cc",
+      "sha256": "376a90b1af745815356bffb02cd3cd16e28c24ecc3daad274715d8578a93ee19",
+      "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/third_party/blink/renderer/platform/fonts/skia/skia_text_metrics.cc?format=TEXT"
+    }
+  ],
+  "probe_sha256": "7b471c3e85e24f0dc88461dbfad4be2b98c622697a060c93c1c477cd4fd21b1a",
+  "raster_commands_run": 0,
+  "release_qualification": false,
+  "schema_version": 1,
+  "screenshots_generated": 0
+}

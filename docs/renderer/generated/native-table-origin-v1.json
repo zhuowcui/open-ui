@@ -1,0 +1,2407 @@
+{
+  "all_archive_hashes_verified": true,
+  "all_measurement_commands_terminal": true,
+  "all_native_apis_qualified": false,
+  "archive": {
+    "bytes": 311028,
+    "excluded": [
+      {
+        "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/native-consumer",
+        "reason": "Owned executable retained outside Git",
+        "sha256": "019b56ed870bc1d6464a463924ee4a8bbc507278da5035d18dace32e72dcae0c"
+      }
+    ],
+    "files": 193,
+    "members": [
+      {
+        "bytes": 2853,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-source-v4148/main.rs.gz",
+        "raw_bytes": 9430,
+        "raw_sha256": "1966a88610aaabc1efc21076d4448ba383a751eb4482f8ecd430f1ab5e428d47",
+        "sha256": "96edb7323f1bb9fbc43a48695572c6cc0cf4993a29c9a855dfb7acc66f932a04",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-source-v4148/main.rs"
+        ]
+      },
+      {
+        "bytes": 597,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-source-v4148/oracle-no.html.gz",
+        "raw_bytes": 1186,
+        "raw_sha256": "61adf3cee0270e5c09ebd41f95a6cbf1d3ed9c7c688b485114b9c341b388ff15",
+        "sha256": "0663ae6814f2e7a7a9310c2ff0e9ea392d9c521d8aa51f17a2e19c995d234ceb",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-source-v4148/oracle-no.html"
+        ]
+      },
+      {
+        "bytes": 621,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-source-v4148/oracle-yes.html.gz",
+        "raw_bytes": 1337,
+        "raw_sha256": "5917b05be769211deee9a47d60cdaa53a911a1136c096e7c434d716175d76d58",
+        "sha256": "410ea5d1686e71e3155fd99b2c987f9130b40712188e4da814012a9e2e76584f",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-source-v4148/oracle-yes.html"
+        ]
+      },
+      {
+        "bytes": 3023,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-source-v4148/plan.json.gz",
+        "raw_bytes": 7087,
+        "raw_sha256": "5bda603c2f47259c0b87a90926a4bbb698377e641993c2843ee464c096e23a7c",
+        "sha256": "1aa02fc9aca113a7283dbf8566f97f790271c3120e14f8859a877cbdc655ae8b",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-source-v4148/plan.json"
+        ]
+      },
+      {
+        "bytes": 362,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-source-v4148/prepared-project.json.gz",
+        "raw_bytes": 539,
+        "raw_sha256": "02eea621c69d1ac5b2e7c1e5cb92f8372d9206a31935229fbb1efc9f7be71e89",
+        "sha256": "aa1f39c09f857e172e9541390ab486bc7df1498aa5f2ec06817ac61708fc5f21",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-source-v4148/prepared-project.json"
+        ]
+      },
+      {
+        "bytes": 4962,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-source-v4148/project/Cargo.lock.gz",
+        "raw_bytes": 19448,
+        "raw_sha256": "4c9e7a0c3b325b57b3fe0f5659b5c65dd91b429bd4b3662e2705c595f5479cb3",
+        "sha256": "16e9c6607ac0e1f10cfd280ac6fe3474e9dca4757662dea286ed77ea3ed2b77c",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-source-v4148/project/Cargo.lock"
+        ]
+      },
+      {
+        "bytes": 356,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-source-v4148/project/Cargo.toml.gz",
+        "raw_bytes": 1011,
+        "raw_sha256": "3becbf06a1cc0eb8a218e038c111e27b83f10b84782d1c7430f1d5b36be79459",
+        "sha256": "022b70cd4470c5f7d9c86e75f7d044c7769abc89a2f5b8abf72d6c82c5d841c1",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-source-v4148/project/Cargo.toml"
+        ]
+      },
+      {
+        "bytes": 2901,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-source-v4148/project/src/main.rs.gz",
+        "raw_bytes": 9939,
+        "raw_sha256": "af9053a1761bda71d56300aa593137a997a6f6edae62407d69a50833a60820c3",
+        "sha256": "5fdeab3bb082efb232c0e8afed46dd84ab3a255766b5ad0e4aef218c4f91e37e",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-source-v4148/project/src/main.rs"
+        ]
+      },
+      {
+        "bytes": 566,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4152/clean-local-packages.log.gz",
+        "raw_bytes": 5454,
+        "raw_sha256": "c345ce063017132ed7e2652d3ca3aefa792ce5d3e00a880eda78d06ad6086d28",
+        "sha256": "e9c455514e52a438c1ae52e3ff4c60a3e6732aa70bd47b5eb3b1e5d7893ffeb1",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4152/clean-local-packages.log"
+        ]
+      },
+      {
+        "bytes": 38184,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4152/metadata.log.gz",
+        "raw_bytes": 415951,
+        "raw_sha256": "156015f0e6666a54437ee58e792484462dc873c697f3d95e64ae203e49fc1385",
+        "sha256": "c008de092a2e7552b1bbd79017cb29554b07910066486c1c305c8f414d1b1ad3",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4152/metadata.log"
+        ]
+      },
+      {
+        "bytes": 7928,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4152/native-build.log.gz",
+        "raw_bytes": 86576,
+        "raw_sha256": "0c7b38b939acaf8696159ee489e9350690686489fd6efc51c7ebd4af594c915f",
+        "sha256": "f11b38976ac18f61e329a314753301dbaf137f521bc8a5e9c1ca2488160c40ba",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4152/native-build.log"
+        ]
+      },
+      {
+        "bytes": 1758,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4152/receipt.json.gz",
+        "raw_bytes": 6261,
+        "raw_sha256": "4b0bb68ab5252d0f88076154e77674b158578c1363db31c81cddee820c03bd87",
+        "sha256": "30b8fa5aab0c75ce1be160eb6216df3cdeeea24f9ff90b2438ec9abf13a37590",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4152/receipt.json"
+        ]
+      },
+      {
+        "bytes": 349,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-source-v4155/correction.json.gz",
+        "raw_bytes": 497,
+        "raw_sha256": "7ce57ff1ab3e852aa4ae722abd4c1b8dbe224a4089b5911f490c55d9ede83162",
+        "sha256": "e779049dfbecad63a13af50b7a9b8d58e2e5988685918d7587ee2cd97e3f5026",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-source-v4155/correction.json"
+        ]
+      },
+      {
+        "bytes": 2853,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-source-v4155/main.rs.gz",
+        "raw_bytes": 9430,
+        "raw_sha256": "1966a88610aaabc1efc21076d4448ba383a751eb4482f8ecd430f1ab5e428d47",
+        "sha256": "96edb7323f1bb9fbc43a48695572c6cc0cf4993a29c9a855dfb7acc66f932a04",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-source-v4155/main.rs"
+        ]
+      },
+      {
+        "bytes": 597,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-source-v4155/oracle-no.html.gz",
+        "raw_bytes": 1186,
+        "raw_sha256": "61adf3cee0270e5c09ebd41f95a6cbf1d3ed9c7c688b485114b9c341b388ff15",
+        "sha256": "0663ae6814f2e7a7a9310c2ff0e9ea392d9c521d8aa51f17a2e19c995d234ceb",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-source-v4155/oracle-no.html"
+        ]
+      },
+      {
+        "bytes": 621,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-source-v4155/oracle-yes.html.gz",
+        "raw_bytes": 1337,
+        "raw_sha256": "5917b05be769211deee9a47d60cdaa53a911a1136c096e7c434d716175d76d58",
+        "sha256": "410ea5d1686e71e3155fd99b2c987f9130b40712188e4da814012a9e2e76584f",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-source-v4155/oracle-yes.html"
+        ]
+      },
+      {
+        "bytes": 3023,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-source-v4155/plan.json.gz",
+        "raw_bytes": 7087,
+        "raw_sha256": "5bda603c2f47259c0b87a90926a4bbb698377e641993c2843ee464c096e23a7c",
+        "sha256": "1aa02fc9aca113a7283dbf8566f97f790271c3120e14f8859a877cbdc655ae8b",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-source-v4155/plan.json"
+        ]
+      },
+      {
+        "bytes": 362,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-source-v4155/prepared-project.json.gz",
+        "raw_bytes": 539,
+        "raw_sha256": "02eea621c69d1ac5b2e7c1e5cb92f8372d9206a31935229fbb1efc9f7be71e89",
+        "sha256": "aa1f39c09f857e172e9541390ab486bc7df1498aa5f2ec06817ac61708fc5f21",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-source-v4155/prepared-project.json"
+        ]
+      },
+      {
+        "bytes": 4962,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-source-v4155/project/Cargo.lock.gz",
+        "raw_bytes": 19448,
+        "raw_sha256": "4c9e7a0c3b325b57b3fe0f5659b5c65dd91b429bd4b3662e2705c595f5479cb3",
+        "sha256": "16e9c6607ac0e1f10cfd280ac6fe3474e9dca4757662dea286ed77ea3ed2b77c",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-source-v4155/project/Cargo.lock"
+        ]
+      },
+      {
+        "bytes": 356,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-source-v4155/project/Cargo.toml.gz",
+        "raw_bytes": 1011,
+        "raw_sha256": "3becbf06a1cc0eb8a218e038c111e27b83f10b84782d1c7430f1d5b36be79459",
+        "sha256": "022b70cd4470c5f7d9c86e75f7d044c7769abc89a2f5b8abf72d6c82c5d841c1",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-source-v4155/project/Cargo.toml"
+        ]
+      },
+      {
+        "bytes": 2907,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-source-v4155/project/src/main.rs.gz",
+        "raw_bytes": 9943,
+        "raw_sha256": "d91b307457d4c74066efe0d230cfe5eb66c711d03fba2cd73933154f180a5aad",
+        "sha256": "5604d0016e95b5a56c24cd75e6c450399c988b3fef03f9c88b54a89077c357fc",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-source-v4155/project/src/main.rs"
+        ]
+      },
+      {
+        "bytes": 565,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/clean-local-packages.log.gz",
+        "raw_bytes": 5455,
+        "raw_sha256": "b3f6c168231bc4dc39234096b5442a5e26406551bccdf90846f32354a4d6f796",
+        "sha256": "901db45041800bc7875f32ef9a1d3e61e8ba2fc80fc6717faf3d7bd97ca1174e",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/clean-local-packages.log"
+        ]
+      },
+      {
+        "bytes": 38184,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/metadata.log.gz",
+        "raw_bytes": 415951,
+        "raw_sha256": "cd580e0c82b2cf6efe5599200ab6381e0d4ff8988d4f449ee626448e1deb3fc4",
+        "sha256": "c2531cfbc3a6a72f4d9cd987082fceb7ae62fbb41f9922a998b0fc037ec3c9d8",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/metadata.log"
+        ]
+      },
+      {
+        "bytes": 7763,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/native-build.log.gz",
+        "raw_bytes": 86394,
+        "raw_sha256": "5ed4e97142aa2757c80a2a64824e1577b54fd8f9a628bf9df36235d81dd07042",
+        "sha256": "7e01f4fcfab0b99213051b6afd95f2618a2b0c0e6a8691ae2c588c727d0a072f",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/native-build.log"
+        ]
+      },
+      {
+        "bytes": 926,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-table-origin-v1/png/90c2fc0e808ac76dad0033907daa5d0702ea912ae8af63a5118afa3d45857ceb.png",
+        "raw_bytes": 926,
+        "raw_sha256": "90c2fc0e808ac76dad0033907daa5d0702ea912ae8af63a5118afa3d45857ceb",
+        "sha256": "90c2fc0e808ac76dad0033907daa5d0702ea912ae8af63a5118afa3d45857ceb",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0/chromium-1-no-1.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0/chromium-1-no-2.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0/chromium-1-yes-1.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0/chromium-1-yes-2.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0/chromium-2-no-1.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0/chromium-2-no-2.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0/chromium-2-yes-1.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0/chromium-2-yes-2.png"
+        ]
+      },
+      {
+        "bytes": 295,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-0/chromium-1-no-bounds.json.gz",
+        "raw_bytes": 2154,
+        "raw_sha256": "63e8394047a5c495f363abf126b5aa7db2fd79a5d8498397bf1fcd181c0553de",
+        "sha256": "cbd9a3ea53f01e31fbf65f810993a381634c19b96ec77800c9c7abba497e876e",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0/chromium-1-no-bounds.json"
+        ]
+      },
+      {
+        "bytes": 372,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-0/chromium-1-yes-bounds.json.gz",
+        "raw_bytes": 3074,
+        "raw_sha256": "3887fd11cd950609a193a183ec92f45685240619b2c10ea3fe92a0840ea8d272",
+        "sha256": "782b5941af15199000bd8de1b89417df64f4867094f707b068fecbf59a3dfb9d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0/chromium-1-yes-bounds.json"
+        ]
+      },
+      {
+        "bytes": 295,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-0/chromium-2-no-bounds.json.gz",
+        "raw_bytes": 2154,
+        "raw_sha256": "63e8394047a5c495f363abf126b5aa7db2fd79a5d8498397bf1fcd181c0553de",
+        "sha256": "cbd9a3ea53f01e31fbf65f810993a381634c19b96ec77800c9c7abba497e876e",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0/chromium-2-no-bounds.json"
+        ]
+      },
+      {
+        "bytes": 372,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-0/chromium-2-yes-bounds.json.gz",
+        "raw_bytes": 3074,
+        "raw_sha256": "3887fd11cd950609a193a183ec92f45685240619b2c10ea3fe92a0840ea8d272",
+        "sha256": "782b5941af15199000bd8de1b89417df64f4867094f707b068fecbf59a3dfb9d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0/chromium-2-yes-bounds.json"
+        ]
+      },
+      {
+        "bytes": 737,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-0/native-auto-no-1/bounds.json.gz",
+        "raw_bytes": 3961,
+        "raw_sha256": "b3e61498ceae408faa4b174d5ab7394103c33168663af0dce562d06dabbadf5e",
+        "sha256": "6e13bc3752229aa492cc73c370021ae4ae63e76e65c7f91da827fc3a0b754d7b",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0/native-auto-no-1/bounds.json"
+        ]
+      },
+      {
+        "bytes": 1017,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-table-origin-v1/png/dd5c1ac389f1315ba28d01cfa2c297b68bf9cc00e6121549963df4c9c36d9f1a.png",
+        "raw_bytes": 1017,
+        "raw_sha256": "dd5c1ac389f1315ba28d01cfa2c297b68bf9cc00e6121549963df4c9c36d9f1a",
+        "sha256": "dd5c1ac389f1315ba28d01cfa2c297b68bf9cc00e6121549963df4c9c36d9f1a",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0/native-auto-no-1/frame.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0/native-auto-no-2/frame.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0/native-auto-yes-1/frame.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0/native-auto-yes-2/frame.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0/native-fitted-no-1/frame.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0/native-fitted-no-2/frame.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0/native-fitted-yes-1/frame.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0/native-fitted-yes-2/frame.png"
+        ]
+      },
+      {
+        "bytes": 172,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-0/native-auto-no-1/lifecycle.json.gz",
+        "raw_bytes": 234,
+        "raw_sha256": "b8b58acbe8a88c2b46792345a27e0a0898e7b06cc3d10a52bd948d730f12bd79",
+        "sha256": "acb3692511cfa79a5f0673bd76df6eddaa5249d75b485d4d6bc706025f400f7d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0/native-auto-no-1/lifecycle.json"
+        ]
+      },
+      {
+        "bytes": 737,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-0/native-auto-no-2/bounds.json.gz",
+        "raw_bytes": 3961,
+        "raw_sha256": "b3e61498ceae408faa4b174d5ab7394103c33168663af0dce562d06dabbadf5e",
+        "sha256": "6e13bc3752229aa492cc73c370021ae4ae63e76e65c7f91da827fc3a0b754d7b",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0/native-auto-no-2/bounds.json"
+        ]
+      },
+      {
+        "bytes": 172,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-0/native-auto-no-2/lifecycle.json.gz",
+        "raw_bytes": 234,
+        "raw_sha256": "b8b58acbe8a88c2b46792345a27e0a0898e7b06cc3d10a52bd948d730f12bd79",
+        "sha256": "acb3692511cfa79a5f0673bd76df6eddaa5249d75b485d4d6bc706025f400f7d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0/native-auto-no-2/lifecycle.json"
+        ]
+      },
+      {
+        "bytes": 827,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-0/native-auto-yes-1/bounds.json.gz",
+        "raw_bytes": 5086,
+        "raw_sha256": "ff836d8a5f049c96fbcd13b85108779d88d8ef79eacd914e107ba58f493bba21",
+        "sha256": "b97b051048b35eb7b700ce275d2631a586ee7dea7caf25d0d9a9229ecc4c62e7",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0/native-auto-yes-1/bounds.json"
+        ]
+      },
+      {
+        "bytes": 172,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-0/native-auto-yes-1/lifecycle.json.gz",
+        "raw_bytes": 234,
+        "raw_sha256": "b8b58acbe8a88c2b46792345a27e0a0898e7b06cc3d10a52bd948d730f12bd79",
+        "sha256": "acb3692511cfa79a5f0673bd76df6eddaa5249d75b485d4d6bc706025f400f7d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0/native-auto-yes-1/lifecycle.json"
+        ]
+      },
+      {
+        "bytes": 827,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-0/native-auto-yes-2/bounds.json.gz",
+        "raw_bytes": 5086,
+        "raw_sha256": "ff836d8a5f049c96fbcd13b85108779d88d8ef79eacd914e107ba58f493bba21",
+        "sha256": "b97b051048b35eb7b700ce275d2631a586ee7dea7caf25d0d9a9229ecc4c62e7",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0/native-auto-yes-2/bounds.json"
+        ]
+      },
+      {
+        "bytes": 172,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-0/native-auto-yes-2/lifecycle.json.gz",
+        "raw_bytes": 234,
+        "raw_sha256": "b8b58acbe8a88c2b46792345a27e0a0898e7b06cc3d10a52bd948d730f12bd79",
+        "sha256": "acb3692511cfa79a5f0673bd76df6eddaa5249d75b485d4d6bc706025f400f7d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0/native-auto-yes-2/lifecycle.json"
+        ]
+      },
+      {
+        "bytes": 725,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-0/native-fitted-no-1/bounds.json.gz",
+        "raw_bytes": 3833,
+        "raw_sha256": "1cf1838713f3230bf09e3c2a067529c1f5265b96ff392924e7757c6f29ce81e5",
+        "sha256": "e277702cf35186b3e73d6c7e0f19de3535829ee8861fff022759b87319032ee6",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0/native-fitted-no-1/bounds.json"
+        ]
+      },
+      {
+        "bytes": 172,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-0/native-fitted-no-1/lifecycle.json.gz",
+        "raw_bytes": 234,
+        "raw_sha256": "b8b58acbe8a88c2b46792345a27e0a0898e7b06cc3d10a52bd948d730f12bd79",
+        "sha256": "acb3692511cfa79a5f0673bd76df6eddaa5249d75b485d4d6bc706025f400f7d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0/native-fitted-no-1/lifecycle.json"
+        ]
+      },
+      {
+        "bytes": 725,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-0/native-fitted-no-2/bounds.json.gz",
+        "raw_bytes": 3833,
+        "raw_sha256": "1cf1838713f3230bf09e3c2a067529c1f5265b96ff392924e7757c6f29ce81e5",
+        "sha256": "e277702cf35186b3e73d6c7e0f19de3535829ee8861fff022759b87319032ee6",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0/native-fitted-no-2/bounds.json"
+        ]
+      },
+      {
+        "bytes": 172,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-0/native-fitted-no-2/lifecycle.json.gz",
+        "raw_bytes": 234,
+        "raw_sha256": "b8b58acbe8a88c2b46792345a27e0a0898e7b06cc3d10a52bd948d730f12bd79",
+        "sha256": "acb3692511cfa79a5f0673bd76df6eddaa5249d75b485d4d6bc706025f400f7d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0/native-fitted-no-2/lifecycle.json"
+        ]
+      },
+      {
+        "bytes": 815,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-0/native-fitted-yes-1/bounds.json.gz",
+        "raw_bytes": 4928,
+        "raw_sha256": "35674a230386029265b3dd86d88906b14a66ebc79771eee9307bb81951e8ac50",
+        "sha256": "e9dc6ce6af63ba7e822a6635fb885f5250691ae90f08a0d7a766e9153389e262",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0/native-fitted-yes-1/bounds.json"
+        ]
+      },
+      {
+        "bytes": 172,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-0/native-fitted-yes-1/lifecycle.json.gz",
+        "raw_bytes": 234,
+        "raw_sha256": "b8b58acbe8a88c2b46792345a27e0a0898e7b06cc3d10a52bd948d730f12bd79",
+        "sha256": "acb3692511cfa79a5f0673bd76df6eddaa5249d75b485d4d6bc706025f400f7d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0/native-fitted-yes-1/lifecycle.json"
+        ]
+      },
+      {
+        "bytes": 815,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-0/native-fitted-yes-2/bounds.json.gz",
+        "raw_bytes": 4928,
+        "raw_sha256": "35674a230386029265b3dd86d88906b14a66ebc79771eee9307bb81951e8ac50",
+        "sha256": "e9dc6ce6af63ba7e822a6635fb885f5250691ae90f08a0d7a766e9153389e262",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0/native-fitted-yes-2/bounds.json"
+        ]
+      },
+      {
+        "bytes": 172,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-0/native-fitted-yes-2/lifecycle.json.gz",
+        "raw_bytes": 234,
+        "raw_sha256": "b8b58acbe8a88c2b46792345a27e0a0898e7b06cc3d10a52bd948d730f12bd79",
+        "sha256": "acb3692511cfa79a5f0673bd76df6eddaa5249d75b485d4d6bc706025f400f7d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0/native-fitted-yes-2/lifecycle.json"
+        ]
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-0-auto-no-1.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0-auto-no-1.log"
+        ]
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-0-auto-no-2.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0-auto-no-2.log"
+        ]
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-0-auto-yes-1.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0-auto-yes-1.log"
+        ]
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-0-auto-yes-2.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0-auto-yes-2.log"
+        ]
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-0-fitted-no-1.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0-fitted-no-1.log"
+        ]
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-0-fitted-no-2.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0-fitted-no-2.log"
+        ]
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-0-fitted-yes-1.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0-fitted-yes-1.log"
+        ]
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-0-fitted-yes-2.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-0-fitted-yes-2.log"
+        ]
+      },
+      {
+        "bytes": 1249,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-table-origin-v1/png/69e2c36580e8a77fdf8aecbe5db73ddb1ccbca437945c00e150a6d1bf1a3eb40.png",
+        "raw_bytes": 1249,
+        "raw_sha256": "69e2c36580e8a77fdf8aecbe5db73ddb1ccbca437945c00e150a6d1bf1a3eb40",
+        "sha256": "69e2c36580e8a77fdf8aecbe5db73ddb1ccbca437945c00e150a6d1bf1a3eb40",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1/chromium-1-no-1.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1/chromium-1-no-2.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1/chromium-1-yes-1.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1/chromium-1-yes-2.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1/chromium-2-no-1.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1/chromium-2-no-2.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1/chromium-2-yes-1.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1/chromium-2-yes-2.png"
+        ]
+      },
+      {
+        "bytes": 295,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-1/chromium-1-no-bounds.json.gz",
+        "raw_bytes": 2154,
+        "raw_sha256": "63e8394047a5c495f363abf126b5aa7db2fd79a5d8498397bf1fcd181c0553de",
+        "sha256": "cbd9a3ea53f01e31fbf65f810993a381634c19b96ec77800c9c7abba497e876e",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1/chromium-1-no-bounds.json"
+        ]
+      },
+      {
+        "bytes": 374,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-1/chromium-1-yes-bounds.json.gz",
+        "raw_bytes": 3082,
+        "raw_sha256": "fd05ab5cce2df86145a4241e830aaf55df99323c94ad425e08e58e71f9cf73c6",
+        "sha256": "88ccb0c6b8c58794dfbf0bd27ad12c2be53327228c6da0d6ca40ad843c4ec8bf",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1/chromium-1-yes-bounds.json"
+        ]
+      },
+      {
+        "bytes": 295,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-1/chromium-2-no-bounds.json.gz",
+        "raw_bytes": 2154,
+        "raw_sha256": "63e8394047a5c495f363abf126b5aa7db2fd79a5d8498397bf1fcd181c0553de",
+        "sha256": "cbd9a3ea53f01e31fbf65f810993a381634c19b96ec77800c9c7abba497e876e",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1/chromium-2-no-bounds.json"
+        ]
+      },
+      {
+        "bytes": 374,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-1/chromium-2-yes-bounds.json.gz",
+        "raw_bytes": 3082,
+        "raw_sha256": "fd05ab5cce2df86145a4241e830aaf55df99323c94ad425e08e58e71f9cf73c6",
+        "sha256": "88ccb0c6b8c58794dfbf0bd27ad12c2be53327228c6da0d6ca40ad843c4ec8bf",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1/chromium-2-yes-bounds.json"
+        ]
+      },
+      {
+        "bytes": 742,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-1/native-auto-no-1/bounds.json.gz",
+        "raw_bytes": 3962,
+        "raw_sha256": "08b0149fb54b82fcf5b1df9d3fa3cfa1fed956338759e63824653ffc06f959d5",
+        "sha256": "eeabec25bab6d560412a9bbe204bdab60a61562a1f6e2476aec0a841a1b6d18d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1/native-auto-no-1/bounds.json"
+        ]
+      },
+      {
+        "bytes": 1452,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-table-origin-v1/png/1dd9adfbcfab628a5b9ea246864ce1db26effc7de16c0d6a4581ab61ecd7369e.png",
+        "raw_bytes": 1452,
+        "raw_sha256": "1dd9adfbcfab628a5b9ea246864ce1db26effc7de16c0d6a4581ab61ecd7369e",
+        "sha256": "1dd9adfbcfab628a5b9ea246864ce1db26effc7de16c0d6a4581ab61ecd7369e",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1/native-auto-no-1/frame.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1/native-auto-no-2/frame.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1/native-auto-yes-1/frame.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1/native-auto-yes-2/frame.png"
+        ]
+      },
+      {
+        "bytes": 172,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-1/native-auto-no-1/lifecycle.json.gz",
+        "raw_bytes": 234,
+        "raw_sha256": "b8b58acbe8a88c2b46792345a27e0a0898e7b06cc3d10a52bd948d730f12bd79",
+        "sha256": "acb3692511cfa79a5f0673bd76df6eddaa5249d75b485d4d6bc706025f400f7d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1/native-auto-no-1/lifecycle.json"
+        ]
+      },
+      {
+        "bytes": 742,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-1/native-auto-no-2/bounds.json.gz",
+        "raw_bytes": 3962,
+        "raw_sha256": "08b0149fb54b82fcf5b1df9d3fa3cfa1fed956338759e63824653ffc06f959d5",
+        "sha256": "eeabec25bab6d560412a9bbe204bdab60a61562a1f6e2476aec0a841a1b6d18d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1/native-auto-no-2/bounds.json"
+        ]
+      },
+      {
+        "bytes": 172,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-1/native-auto-no-2/lifecycle.json.gz",
+        "raw_bytes": 234,
+        "raw_sha256": "b8b58acbe8a88c2b46792345a27e0a0898e7b06cc3d10a52bd948d730f12bd79",
+        "sha256": "acb3692511cfa79a5f0673bd76df6eddaa5249d75b485d4d6bc706025f400f7d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1/native-auto-no-2/lifecycle.json"
+        ]
+      },
+      {
+        "bytes": 834,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-1/native-auto-yes-1/bounds.json.gz",
+        "raw_bytes": 5089,
+        "raw_sha256": "3894826e3300d10a8a60314b561caa8a9ff6ec9e571237fba0cecdfc7aa33691",
+        "sha256": "b8f83b22406ce524dfafb7e157ce4dde8d4b8895e9b6ade95e095a14bd53bd74",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1/native-auto-yes-1/bounds.json"
+        ]
+      },
+      {
+        "bytes": 172,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-1/native-auto-yes-1/lifecycle.json.gz",
+        "raw_bytes": 234,
+        "raw_sha256": "b8b58acbe8a88c2b46792345a27e0a0898e7b06cc3d10a52bd948d730f12bd79",
+        "sha256": "acb3692511cfa79a5f0673bd76df6eddaa5249d75b485d4d6bc706025f400f7d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1/native-auto-yes-1/lifecycle.json"
+        ]
+      },
+      {
+        "bytes": 834,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-1/native-auto-yes-2/bounds.json.gz",
+        "raw_bytes": 5089,
+        "raw_sha256": "3894826e3300d10a8a60314b561caa8a9ff6ec9e571237fba0cecdfc7aa33691",
+        "sha256": "b8f83b22406ce524dfafb7e157ce4dde8d4b8895e9b6ade95e095a14bd53bd74",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1/native-auto-yes-2/bounds.json"
+        ]
+      },
+      {
+        "bytes": 172,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-1/native-auto-yes-2/lifecycle.json.gz",
+        "raw_bytes": 234,
+        "raw_sha256": "b8b58acbe8a88c2b46792345a27e0a0898e7b06cc3d10a52bd948d730f12bd79",
+        "sha256": "acb3692511cfa79a5f0673bd76df6eddaa5249d75b485d4d6bc706025f400f7d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1/native-auto-yes-2/lifecycle.json"
+        ]
+      },
+      {
+        "bytes": 730,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-1/native-fitted-no-1/bounds.json.gz",
+        "raw_bytes": 3834,
+        "raw_sha256": "e96c1774c7b3658fa4f757131fc03c0d1c0933afa9df5fd95a0ae79ba15df2fb",
+        "sha256": "86d0ff8daf7b3f5c2d86901b9109e6bfd969e7aa55a74347fa515e1708eca37b",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1/native-fitted-no-1/bounds.json"
+        ]
+      },
+      {
+        "bytes": 1452,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-table-origin-v1/png/ccfc9b11188fafecef99a87ac412c6a4e20ceb3c0691d440f8979be9b5cdf0ac.png",
+        "raw_bytes": 1452,
+        "raw_sha256": "ccfc9b11188fafecef99a87ac412c6a4e20ceb3c0691d440f8979be9b5cdf0ac",
+        "sha256": "ccfc9b11188fafecef99a87ac412c6a4e20ceb3c0691d440f8979be9b5cdf0ac",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1/native-fitted-no-1/frame.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1/native-fitted-no-2/frame.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1/native-fitted-yes-1/frame.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1/native-fitted-yes-2/frame.png"
+        ]
+      },
+      {
+        "bytes": 172,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-1/native-fitted-no-1/lifecycle.json.gz",
+        "raw_bytes": 234,
+        "raw_sha256": "b8b58acbe8a88c2b46792345a27e0a0898e7b06cc3d10a52bd948d730f12bd79",
+        "sha256": "acb3692511cfa79a5f0673bd76df6eddaa5249d75b485d4d6bc706025f400f7d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1/native-fitted-no-1/lifecycle.json"
+        ]
+      },
+      {
+        "bytes": 730,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-1/native-fitted-no-2/bounds.json.gz",
+        "raw_bytes": 3834,
+        "raw_sha256": "e96c1774c7b3658fa4f757131fc03c0d1c0933afa9df5fd95a0ae79ba15df2fb",
+        "sha256": "86d0ff8daf7b3f5c2d86901b9109e6bfd969e7aa55a74347fa515e1708eca37b",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1/native-fitted-no-2/bounds.json"
+        ]
+      },
+      {
+        "bytes": 172,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-1/native-fitted-no-2/lifecycle.json.gz",
+        "raw_bytes": 234,
+        "raw_sha256": "b8b58acbe8a88c2b46792345a27e0a0898e7b06cc3d10a52bd948d730f12bd79",
+        "sha256": "acb3692511cfa79a5f0673bd76df6eddaa5249d75b485d4d6bc706025f400f7d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1/native-fitted-no-2/lifecycle.json"
+        ]
+      },
+      {
+        "bytes": 823,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-1/native-fitted-yes-1/bounds.json.gz",
+        "raw_bytes": 4931,
+        "raw_sha256": "68ccb2e9072ae5d8fc5eb2eedccd11061e7b7cfc3c41879c9953ee151b0877a1",
+        "sha256": "47296b8e885de8b3a3e86327c54d4710b780554cc3eb12739d6750b887aa04a6",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1/native-fitted-yes-1/bounds.json"
+        ]
+      },
+      {
+        "bytes": 172,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-1/native-fitted-yes-1/lifecycle.json.gz",
+        "raw_bytes": 234,
+        "raw_sha256": "b8b58acbe8a88c2b46792345a27e0a0898e7b06cc3d10a52bd948d730f12bd79",
+        "sha256": "acb3692511cfa79a5f0673bd76df6eddaa5249d75b485d4d6bc706025f400f7d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1/native-fitted-yes-1/lifecycle.json"
+        ]
+      },
+      {
+        "bytes": 823,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-1/native-fitted-yes-2/bounds.json.gz",
+        "raw_bytes": 4931,
+        "raw_sha256": "68ccb2e9072ae5d8fc5eb2eedccd11061e7b7cfc3c41879c9953ee151b0877a1",
+        "sha256": "47296b8e885de8b3a3e86327c54d4710b780554cc3eb12739d6750b887aa04a6",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1/native-fitted-yes-2/bounds.json"
+        ]
+      },
+      {
+        "bytes": 172,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-1/native-fitted-yes-2/lifecycle.json.gz",
+        "raw_bytes": 234,
+        "raw_sha256": "b8b58acbe8a88c2b46792345a27e0a0898e7b06cc3d10a52bd948d730f12bd79",
+        "sha256": "acb3692511cfa79a5f0673bd76df6eddaa5249d75b485d4d6bc706025f400f7d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1/native-fitted-yes-2/lifecycle.json"
+        ]
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-1-auto-no-1.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1-auto-no-1.log"
+        ]
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-1-auto-no-2.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1-auto-no-2.log"
+        ]
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-1-auto-yes-1.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1-auto-yes-1.log"
+        ]
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-1-auto-yes-2.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1-auto-yes-2.log"
+        ]
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-1-fitted-no-1.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1-fitted-no-1.log"
+        ]
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-1-fitted-no-2.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1-fitted-no-2.log"
+        ]
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-1-fitted-yes-1.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1-fitted-yes-1.log"
+        ]
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-1-fitted-yes-2.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-1-fitted-yes-2.log"
+        ]
+      },
+      {
+        "bytes": 1515,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-table-origin-v1/png/3e5ff4e34caf49ecf9f4961c8cf241c1d4135f7aacc58cd07b195eed83746839.png",
+        "raw_bytes": 1515,
+        "raw_sha256": "3e5ff4e34caf49ecf9f4961c8cf241c1d4135f7aacc58cd07b195eed83746839",
+        "sha256": "3e5ff4e34caf49ecf9f4961c8cf241c1d4135f7aacc58cd07b195eed83746839",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2/chromium-1-no-1.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2/chromium-1-no-2.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2/chromium-1-yes-1.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2/chromium-1-yes-2.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2/chromium-2-no-1.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2/chromium-2-no-2.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2/chromium-2-yes-1.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2/chromium-2-yes-2.png"
+        ]
+      },
+      {
+        "bytes": 295,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-2/chromium-1-no-bounds.json.gz",
+        "raw_bytes": 2154,
+        "raw_sha256": "63e8394047a5c495f363abf126b5aa7db2fd79a5d8498397bf1fcd181c0553de",
+        "sha256": "cbd9a3ea53f01e31fbf65f810993a381634c19b96ec77800c9c7abba497e876e",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2/chromium-1-no-bounds.json"
+        ]
+      },
+      {
+        "bytes": 373,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-2/chromium-1-yes-bounds.json.gz",
+        "raw_bytes": 3078,
+        "raw_sha256": "18b7c7315c3df124c8f833fadf511d8af795293e65f743446a898c26ab8ab1df",
+        "sha256": "8a74816127ca49d9d431f7298250dc413b22b2dcd9ed196889d4917eeb4846b6",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2/chromium-1-yes-bounds.json"
+        ]
+      },
+      {
+        "bytes": 295,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-2/chromium-2-no-bounds.json.gz",
+        "raw_bytes": 2154,
+        "raw_sha256": "63e8394047a5c495f363abf126b5aa7db2fd79a5d8498397bf1fcd181c0553de",
+        "sha256": "cbd9a3ea53f01e31fbf65f810993a381634c19b96ec77800c9c7abba497e876e",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2/chromium-2-no-bounds.json"
+        ]
+      },
+      {
+        "bytes": 373,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-2/chromium-2-yes-bounds.json.gz",
+        "raw_bytes": 3078,
+        "raw_sha256": "18b7c7315c3df124c8f833fadf511d8af795293e65f743446a898c26ab8ab1df",
+        "sha256": "8a74816127ca49d9d431f7298250dc413b22b2dcd9ed196889d4917eeb4846b6",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2/chromium-2-yes-bounds.json"
+        ]
+      },
+      {
+        "bytes": 742,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-2/native-auto-no-1/bounds.json.gz",
+        "raw_bytes": 3961,
+        "raw_sha256": "fb2b8262bd50cc8d2df6ecb5db4b294a489513f2cb5831c4a1173a07f8781bad",
+        "sha256": "6d5fb22befa11ee379790a6d18b77ceb81f4111d878076690265390d536abd0e",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2/native-auto-no-1/bounds.json"
+        ]
+      },
+      {
+        "bytes": 1860,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-table-origin-v1/png/2bbfa5848114e0c7630bbd08cc31a0972354f0df0daadaa6dac781e553a48d2f.png",
+        "raw_bytes": 1860,
+        "raw_sha256": "2bbfa5848114e0c7630bbd08cc31a0972354f0df0daadaa6dac781e553a48d2f",
+        "sha256": "2bbfa5848114e0c7630bbd08cc31a0972354f0df0daadaa6dac781e553a48d2f",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2/native-auto-no-1/frame.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2/native-auto-no-2/frame.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2/native-auto-yes-1/frame.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2/native-auto-yes-2/frame.png"
+        ]
+      },
+      {
+        "bytes": 172,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-2/native-auto-no-1/lifecycle.json.gz",
+        "raw_bytes": 234,
+        "raw_sha256": "b8b58acbe8a88c2b46792345a27e0a0898e7b06cc3d10a52bd948d730f12bd79",
+        "sha256": "acb3692511cfa79a5f0673bd76df6eddaa5249d75b485d4d6bc706025f400f7d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2/native-auto-no-1/lifecycle.json"
+        ]
+      },
+      {
+        "bytes": 742,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-2/native-auto-no-2/bounds.json.gz",
+        "raw_bytes": 3961,
+        "raw_sha256": "fb2b8262bd50cc8d2df6ecb5db4b294a489513f2cb5831c4a1173a07f8781bad",
+        "sha256": "6d5fb22befa11ee379790a6d18b77ceb81f4111d878076690265390d536abd0e",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2/native-auto-no-2/bounds.json"
+        ]
+      },
+      {
+        "bytes": 172,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-2/native-auto-no-2/lifecycle.json.gz",
+        "raw_bytes": 234,
+        "raw_sha256": "b8b58acbe8a88c2b46792345a27e0a0898e7b06cc3d10a52bd948d730f12bd79",
+        "sha256": "acb3692511cfa79a5f0673bd76df6eddaa5249d75b485d4d6bc706025f400f7d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2/native-auto-no-2/lifecycle.json"
+        ]
+      },
+      {
+        "bytes": 835,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-2/native-auto-yes-1/bounds.json.gz",
+        "raw_bytes": 5086,
+        "raw_sha256": "4bb8d11a6801cbee784ed13759dfcda57bbb745ebb926321a80873b4aca0993a",
+        "sha256": "cf616b46284c14c5e70d1f6ac7ad6d018d92dd7a4d66baa51df176bb07a4b86c",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2/native-auto-yes-1/bounds.json"
+        ]
+      },
+      {
+        "bytes": 172,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-2/native-auto-yes-1/lifecycle.json.gz",
+        "raw_bytes": 234,
+        "raw_sha256": "b8b58acbe8a88c2b46792345a27e0a0898e7b06cc3d10a52bd948d730f12bd79",
+        "sha256": "acb3692511cfa79a5f0673bd76df6eddaa5249d75b485d4d6bc706025f400f7d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2/native-auto-yes-1/lifecycle.json"
+        ]
+      },
+      {
+        "bytes": 835,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-2/native-auto-yes-2/bounds.json.gz",
+        "raw_bytes": 5086,
+        "raw_sha256": "4bb8d11a6801cbee784ed13759dfcda57bbb745ebb926321a80873b4aca0993a",
+        "sha256": "cf616b46284c14c5e70d1f6ac7ad6d018d92dd7a4d66baa51df176bb07a4b86c",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2/native-auto-yes-2/bounds.json"
+        ]
+      },
+      {
+        "bytes": 172,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-2/native-auto-yes-2/lifecycle.json.gz",
+        "raw_bytes": 234,
+        "raw_sha256": "b8b58acbe8a88c2b46792345a27e0a0898e7b06cc3d10a52bd948d730f12bd79",
+        "sha256": "acb3692511cfa79a5f0673bd76df6eddaa5249d75b485d4d6bc706025f400f7d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2/native-auto-yes-2/lifecycle.json"
+        ]
+      },
+      {
+        "bytes": 730,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-2/native-fitted-no-1/bounds.json.gz",
+        "raw_bytes": 3833,
+        "raw_sha256": "b09ae0c4e1de4d732654895d644b4c3e6615e897bb49ebd2039ac8f6740e884c",
+        "sha256": "f37b3df388fde94bd3be096e27fe8b706c00f57356742daea17ea0bab60974e5",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2/native-fitted-no-1/bounds.json"
+        ]
+      },
+      {
+        "bytes": 1855,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-table-origin-v1/png/39e95e9b07c9297c5aa6bf3d3f57927ad413ae48923724d79f97fb22b33b8e4f.png",
+        "raw_bytes": 1855,
+        "raw_sha256": "39e95e9b07c9297c5aa6bf3d3f57927ad413ae48923724d79f97fb22b33b8e4f",
+        "sha256": "39e95e9b07c9297c5aa6bf3d3f57927ad413ae48923724d79f97fb22b33b8e4f",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2/native-fitted-no-1/frame.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2/native-fitted-no-2/frame.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2/native-fitted-yes-1/frame.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2/native-fitted-yes-2/frame.png"
+        ]
+      },
+      {
+        "bytes": 172,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-2/native-fitted-no-1/lifecycle.json.gz",
+        "raw_bytes": 234,
+        "raw_sha256": "b8b58acbe8a88c2b46792345a27e0a0898e7b06cc3d10a52bd948d730f12bd79",
+        "sha256": "acb3692511cfa79a5f0673bd76df6eddaa5249d75b485d4d6bc706025f400f7d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2/native-fitted-no-1/lifecycle.json"
+        ]
+      },
+      {
+        "bytes": 730,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-2/native-fitted-no-2/bounds.json.gz",
+        "raw_bytes": 3833,
+        "raw_sha256": "b09ae0c4e1de4d732654895d644b4c3e6615e897bb49ebd2039ac8f6740e884c",
+        "sha256": "f37b3df388fde94bd3be096e27fe8b706c00f57356742daea17ea0bab60974e5",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2/native-fitted-no-2/bounds.json"
+        ]
+      },
+      {
+        "bytes": 172,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-2/native-fitted-no-2/lifecycle.json.gz",
+        "raw_bytes": 234,
+        "raw_sha256": "b8b58acbe8a88c2b46792345a27e0a0898e7b06cc3d10a52bd948d730f12bd79",
+        "sha256": "acb3692511cfa79a5f0673bd76df6eddaa5249d75b485d4d6bc706025f400f7d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2/native-fitted-no-2/lifecycle.json"
+        ]
+      },
+      {
+        "bytes": 823,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-2/native-fitted-yes-1/bounds.json.gz",
+        "raw_bytes": 4928,
+        "raw_sha256": "1325b735cfba4676ea1720c4751163084c5f9ec8ee70b5f14e708045f2a4b7d3",
+        "sha256": "87b3cab90019aac235b78321511ca2b178a70f6b3090c59119f85dca0ab9611b",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2/native-fitted-yes-1/bounds.json"
+        ]
+      },
+      {
+        "bytes": 172,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-2/native-fitted-yes-1/lifecycle.json.gz",
+        "raw_bytes": 234,
+        "raw_sha256": "b8b58acbe8a88c2b46792345a27e0a0898e7b06cc3d10a52bd948d730f12bd79",
+        "sha256": "acb3692511cfa79a5f0673bd76df6eddaa5249d75b485d4d6bc706025f400f7d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2/native-fitted-yes-1/lifecycle.json"
+        ]
+      },
+      {
+        "bytes": 823,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-2/native-fitted-yes-2/bounds.json.gz",
+        "raw_bytes": 4928,
+        "raw_sha256": "1325b735cfba4676ea1720c4751163084c5f9ec8ee70b5f14e708045f2a4b7d3",
+        "sha256": "87b3cab90019aac235b78321511ca2b178a70f6b3090c59119f85dca0ab9611b",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2/native-fitted-yes-2/bounds.json"
+        ]
+      },
+      {
+        "bytes": 172,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-2/native-fitted-yes-2/lifecycle.json.gz",
+        "raw_bytes": 234,
+        "raw_sha256": "b8b58acbe8a88c2b46792345a27e0a0898e7b06cc3d10a52bd948d730f12bd79",
+        "sha256": "acb3692511cfa79a5f0673bd76df6eddaa5249d75b485d4d6bc706025f400f7d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2/native-fitted-yes-2/lifecycle.json"
+        ]
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-2-auto-no-1.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2-auto-no-1.log"
+        ]
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-2-auto-no-2.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2-auto-no-2.log"
+        ]
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-2-auto-yes-1.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2-auto-yes-1.log"
+        ]
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-2-auto-yes-2.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2-auto-yes-2.log"
+        ]
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-2-fitted-no-1.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2-fitted-no-1.log"
+        ]
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-2-fitted-no-2.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2-fitted-no-2.log"
+        ]
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-2-fitted-yes-1.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2-fitted-yes-1.log"
+        ]
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-2-fitted-yes-2.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-2-fitted-yes-2.log"
+        ]
+      },
+      {
+        "bytes": 2308,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-table-origin-v1/png/38e584850526c7796339681d64316bb8e5d681b4df4b87b90e0e8e91aad8db9f.png",
+        "raw_bytes": 2308,
+        "raw_sha256": "38e584850526c7796339681d64316bb8e5d681b4df4b87b90e0e8e91aad8db9f",
+        "sha256": "38e584850526c7796339681d64316bb8e5d681b4df4b87b90e0e8e91aad8db9f",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3/chromium-1-no-1.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3/chromium-1-no-2.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3/chromium-1-yes-1.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3/chromium-1-yes-2.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3/chromium-2-no-1.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3/chromium-2-no-2.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3/chromium-2-yes-1.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3/chromium-2-yes-2.png"
+        ]
+      },
+      {
+        "bytes": 295,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-3/chromium-1-no-bounds.json.gz",
+        "raw_bytes": 2154,
+        "raw_sha256": "63e8394047a5c495f363abf126b5aa7db2fd79a5d8498397bf1fcd181c0553de",
+        "sha256": "cbd9a3ea53f01e31fbf65f810993a381634c19b96ec77800c9c7abba497e876e",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3/chromium-1-no-bounds.json"
+        ]
+      },
+      {
+        "bytes": 372,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-3/chromium-1-yes-bounds.json.gz",
+        "raw_bytes": 3074,
+        "raw_sha256": "c693331f98b8a08e0307e61e53ab5f88fe24e5b7a1ade9cf40e30694cce40709",
+        "sha256": "f5d8b914da387fb58f0f56a50ebc86437348847fa89aff75f1001b3e65df049e",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3/chromium-1-yes-bounds.json"
+        ]
+      },
+      {
+        "bytes": 295,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-3/chromium-2-no-bounds.json.gz",
+        "raw_bytes": 2154,
+        "raw_sha256": "63e8394047a5c495f363abf126b5aa7db2fd79a5d8498397bf1fcd181c0553de",
+        "sha256": "cbd9a3ea53f01e31fbf65f810993a381634c19b96ec77800c9c7abba497e876e",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3/chromium-2-no-bounds.json"
+        ]
+      },
+      {
+        "bytes": 372,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-3/chromium-2-yes-bounds.json.gz",
+        "raw_bytes": 3074,
+        "raw_sha256": "c693331f98b8a08e0307e61e53ab5f88fe24e5b7a1ade9cf40e30694cce40709",
+        "sha256": "f5d8b914da387fb58f0f56a50ebc86437348847fa89aff75f1001b3e65df049e",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3/chromium-2-yes-bounds.json"
+        ]
+      },
+      {
+        "bytes": 741,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-3/native-auto-no-1/bounds.json.gz",
+        "raw_bytes": 3961,
+        "raw_sha256": "7a05692c8384f6c249aa8639d117e2a2f0c2de8d3231a3d596eb00696ccb9fbc",
+        "sha256": "98b86604499474c5e7d59253ba86ad3c8104dc94de3f19db790278b7acdd36e4",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3/native-auto-no-1/bounds.json"
+        ]
+      },
+      {
+        "bytes": 2699,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-table-origin-v1/png/81cb2cc6ac5348f8e0e0525c0ac55e90e3724d9081a06bd3ac1ea98d417add72.png",
+        "raw_bytes": 2699,
+        "raw_sha256": "81cb2cc6ac5348f8e0e0525c0ac55e90e3724d9081a06bd3ac1ea98d417add72",
+        "sha256": "81cb2cc6ac5348f8e0e0525c0ac55e90e3724d9081a06bd3ac1ea98d417add72",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3/native-auto-no-1/frame.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3/native-auto-no-2/frame.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3/native-auto-yes-1/frame.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3/native-auto-yes-2/frame.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3/native-fitted-no-1/frame.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3/native-fitted-no-2/frame.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3/native-fitted-yes-1/frame.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3/native-fitted-yes-2/frame.png"
+        ]
+      },
+      {
+        "bytes": 172,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-3/native-auto-no-1/lifecycle.json.gz",
+        "raw_bytes": 234,
+        "raw_sha256": "b8b58acbe8a88c2b46792345a27e0a0898e7b06cc3d10a52bd948d730f12bd79",
+        "sha256": "acb3692511cfa79a5f0673bd76df6eddaa5249d75b485d4d6bc706025f400f7d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3/native-auto-no-1/lifecycle.json"
+        ]
+      },
+      {
+        "bytes": 741,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-3/native-auto-no-2/bounds.json.gz",
+        "raw_bytes": 3961,
+        "raw_sha256": "7a05692c8384f6c249aa8639d117e2a2f0c2de8d3231a3d596eb00696ccb9fbc",
+        "sha256": "98b86604499474c5e7d59253ba86ad3c8104dc94de3f19db790278b7acdd36e4",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3/native-auto-no-2/bounds.json"
+        ]
+      },
+      {
+        "bytes": 172,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-3/native-auto-no-2/lifecycle.json.gz",
+        "raw_bytes": 234,
+        "raw_sha256": "b8b58acbe8a88c2b46792345a27e0a0898e7b06cc3d10a52bd948d730f12bd79",
+        "sha256": "acb3692511cfa79a5f0673bd76df6eddaa5249d75b485d4d6bc706025f400f7d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3/native-auto-no-2/lifecycle.json"
+        ]
+      },
+      {
+        "bytes": 833,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-3/native-auto-yes-1/bounds.json.gz",
+        "raw_bytes": 5086,
+        "raw_sha256": "34611d7d68b065dc6d5e81a23d065a0c69511a39d32c9c1e5de86d1e5e5726b7",
+        "sha256": "782d1c436e35354019a7563734b7db53bfab02971c6f13d872b3431d1b450e3b",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3/native-auto-yes-1/bounds.json"
+        ]
+      },
+      {
+        "bytes": 172,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-3/native-auto-yes-1/lifecycle.json.gz",
+        "raw_bytes": 234,
+        "raw_sha256": "b8b58acbe8a88c2b46792345a27e0a0898e7b06cc3d10a52bd948d730f12bd79",
+        "sha256": "acb3692511cfa79a5f0673bd76df6eddaa5249d75b485d4d6bc706025f400f7d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3/native-auto-yes-1/lifecycle.json"
+        ]
+      },
+      {
+        "bytes": 833,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-3/native-auto-yes-2/bounds.json.gz",
+        "raw_bytes": 5086,
+        "raw_sha256": "34611d7d68b065dc6d5e81a23d065a0c69511a39d32c9c1e5de86d1e5e5726b7",
+        "sha256": "782d1c436e35354019a7563734b7db53bfab02971c6f13d872b3431d1b450e3b",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3/native-auto-yes-2/bounds.json"
+        ]
+      },
+      {
+        "bytes": 172,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-3/native-auto-yes-2/lifecycle.json.gz",
+        "raw_bytes": 234,
+        "raw_sha256": "b8b58acbe8a88c2b46792345a27e0a0898e7b06cc3d10a52bd948d730f12bd79",
+        "sha256": "acb3692511cfa79a5f0673bd76df6eddaa5249d75b485d4d6bc706025f400f7d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3/native-auto-yes-2/lifecycle.json"
+        ]
+      },
+      {
+        "bytes": 729,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-3/native-fitted-no-1/bounds.json.gz",
+        "raw_bytes": 3833,
+        "raw_sha256": "b8dbbb929d09722ff885418373f53d38403b3d5e5f6336f3897a83ff3356c696",
+        "sha256": "6a3c09cff6d113e0fb24598c5c1e10cad3e66fd11d4e8f62558783d1990cca5d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3/native-fitted-no-1/bounds.json"
+        ]
+      },
+      {
+        "bytes": 172,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-3/native-fitted-no-1/lifecycle.json.gz",
+        "raw_bytes": 234,
+        "raw_sha256": "b8b58acbe8a88c2b46792345a27e0a0898e7b06cc3d10a52bd948d730f12bd79",
+        "sha256": "acb3692511cfa79a5f0673bd76df6eddaa5249d75b485d4d6bc706025f400f7d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3/native-fitted-no-1/lifecycle.json"
+        ]
+      },
+      {
+        "bytes": 729,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-3/native-fitted-no-2/bounds.json.gz",
+        "raw_bytes": 3833,
+        "raw_sha256": "b8dbbb929d09722ff885418373f53d38403b3d5e5f6336f3897a83ff3356c696",
+        "sha256": "6a3c09cff6d113e0fb24598c5c1e10cad3e66fd11d4e8f62558783d1990cca5d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3/native-fitted-no-2/bounds.json"
+        ]
+      },
+      {
+        "bytes": 172,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-3/native-fitted-no-2/lifecycle.json.gz",
+        "raw_bytes": 234,
+        "raw_sha256": "b8b58acbe8a88c2b46792345a27e0a0898e7b06cc3d10a52bd948d730f12bd79",
+        "sha256": "acb3692511cfa79a5f0673bd76df6eddaa5249d75b485d4d6bc706025f400f7d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3/native-fitted-no-2/lifecycle.json"
+        ]
+      },
+      {
+        "bytes": 820,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-3/native-fitted-yes-1/bounds.json.gz",
+        "raw_bytes": 4928,
+        "raw_sha256": "2efd55bf7fe28cb94e0889070fb765d5abb55e1165b23b6cd8b5433af65fe3a6",
+        "sha256": "49592fc5f747e2aa84d90a7a62ffb71003c7959bdf642f34c28fd26ee9abf57b",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3/native-fitted-yes-1/bounds.json"
+        ]
+      },
+      {
+        "bytes": 172,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-3/native-fitted-yes-1/lifecycle.json.gz",
+        "raw_bytes": 234,
+        "raw_sha256": "b8b58acbe8a88c2b46792345a27e0a0898e7b06cc3d10a52bd948d730f12bd79",
+        "sha256": "acb3692511cfa79a5f0673bd76df6eddaa5249d75b485d4d6bc706025f400f7d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3/native-fitted-yes-1/lifecycle.json"
+        ]
+      },
+      {
+        "bytes": 820,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-3/native-fitted-yes-2/bounds.json.gz",
+        "raw_bytes": 4928,
+        "raw_sha256": "2efd55bf7fe28cb94e0889070fb765d5abb55e1165b23b6cd8b5433af65fe3a6",
+        "sha256": "49592fc5f747e2aa84d90a7a62ffb71003c7959bdf642f34c28fd26ee9abf57b",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3/native-fitted-yes-2/bounds.json"
+        ]
+      },
+      {
+        "bytes": 172,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-3/native-fitted-yes-2/lifecycle.json.gz",
+        "raw_bytes": 234,
+        "raw_sha256": "b8b58acbe8a88c2b46792345a27e0a0898e7b06cc3d10a52bd948d730f12bd79",
+        "sha256": "acb3692511cfa79a5f0673bd76df6eddaa5249d75b485d4d6bc706025f400f7d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3/native-fitted-yes-2/lifecycle.json"
+        ]
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-3-auto-no-1.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3-auto-no-1.log"
+        ]
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-3-auto-no-2.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3-auto-no-2.log"
+        ]
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-3-auto-yes-1.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3-auto-yes-1.log"
+        ]
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-3-auto-yes-2.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3-auto-yes-2.log"
+        ]
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-3-fitted-no-1.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3-fitted-no-1.log"
+        ]
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-3-fitted-no-2.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3-fitted-no-2.log"
+        ]
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-3-fitted-yes-1.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3-fitted-yes-1.log"
+        ]
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-3-fitted-yes-2.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-3-fitted-yes-2.log"
+        ]
+      },
+      {
+        "bytes": 4210,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-table-origin-v1/png/1b04e6453b1d4b6e202b7d7ea97ebfadafd1b8123c06e5207d3bc66e78eddd14.png",
+        "raw_bytes": 4210,
+        "raw_sha256": "1b04e6453b1d4b6e202b7d7ea97ebfadafd1b8123c06e5207d3bc66e78eddd14",
+        "sha256": "1b04e6453b1d4b6e202b7d7ea97ebfadafd1b8123c06e5207d3bc66e78eddd14",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4/chromium-1-no-1.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4/chromium-1-no-2.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4/chromium-1-yes-1.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4/chromium-1-yes-2.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4/chromium-2-no-1.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4/chromium-2-no-2.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4/chromium-2-yes-1.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4/chromium-2-yes-2.png"
+        ]
+      },
+      {
+        "bytes": 295,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-4/chromium-1-no-bounds.json.gz",
+        "raw_bytes": 2154,
+        "raw_sha256": "63e8394047a5c495f363abf126b5aa7db2fd79a5d8498397bf1fcd181c0553de",
+        "sha256": "cbd9a3ea53f01e31fbf65f810993a381634c19b96ec77800c9c7abba497e876e",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4/chromium-1-no-bounds.json"
+        ]
+      },
+      {
+        "bytes": 371,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-4/chromium-1-yes-bounds.json.gz",
+        "raw_bytes": 3074,
+        "raw_sha256": "155893c461345463fa2b8cfa4eb32fb6a33f5bf8545b489ffe6355f68b8d52ec",
+        "sha256": "73adf2b2b065edc0dcba82c7109be277850a3be2fea235e070b2286bb3dc4e7b",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4/chromium-1-yes-bounds.json"
+        ]
+      },
+      {
+        "bytes": 295,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-4/chromium-2-no-bounds.json.gz",
+        "raw_bytes": 2154,
+        "raw_sha256": "63e8394047a5c495f363abf126b5aa7db2fd79a5d8498397bf1fcd181c0553de",
+        "sha256": "cbd9a3ea53f01e31fbf65f810993a381634c19b96ec77800c9c7abba497e876e",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4/chromium-2-no-bounds.json"
+        ]
+      },
+      {
+        "bytes": 371,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-4/chromium-2-yes-bounds.json.gz",
+        "raw_bytes": 3074,
+        "raw_sha256": "155893c461345463fa2b8cfa4eb32fb6a33f5bf8545b489ffe6355f68b8d52ec",
+        "sha256": "73adf2b2b065edc0dcba82c7109be277850a3be2fea235e070b2286bb3dc4e7b",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4/chromium-2-yes-bounds.json"
+        ]
+      },
+      {
+        "bytes": 741,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-4/native-auto-no-1/bounds.json.gz",
+        "raw_bytes": 3962,
+        "raw_sha256": "4316294fc64353dd4dc57ce0bd266621657c12c63f5d485b364cfd049e4dcd2a",
+        "sha256": "64771d1d81e555a88160ee49cdcf7f0a9f2c71461f9b525024bbadc54614ab9f",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4/native-auto-no-1/bounds.json"
+        ]
+      },
+      {
+        "bytes": 5227,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-table-origin-v1/png/5463031ed844661182c0bae9112e0fc91c9221580c1b323d4eff2ad688f22b19.png",
+        "raw_bytes": 5227,
+        "raw_sha256": "5463031ed844661182c0bae9112e0fc91c9221580c1b323d4eff2ad688f22b19",
+        "sha256": "5463031ed844661182c0bae9112e0fc91c9221580c1b323d4eff2ad688f22b19",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4/native-auto-no-1/frame.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4/native-auto-no-2/frame.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4/native-auto-yes-1/frame.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4/native-auto-yes-2/frame.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4/native-fitted-no-1/frame.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4/native-fitted-no-2/frame.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4/native-fitted-yes-1/frame.png",
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4/native-fitted-yes-2/frame.png"
+        ]
+      },
+      {
+        "bytes": 172,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-4/native-auto-no-1/lifecycle.json.gz",
+        "raw_bytes": 234,
+        "raw_sha256": "b8b58acbe8a88c2b46792345a27e0a0898e7b06cc3d10a52bd948d730f12bd79",
+        "sha256": "acb3692511cfa79a5f0673bd76df6eddaa5249d75b485d4d6bc706025f400f7d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4/native-auto-no-1/lifecycle.json"
+        ]
+      },
+      {
+        "bytes": 741,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-4/native-auto-no-2/bounds.json.gz",
+        "raw_bytes": 3962,
+        "raw_sha256": "4316294fc64353dd4dc57ce0bd266621657c12c63f5d485b364cfd049e4dcd2a",
+        "sha256": "64771d1d81e555a88160ee49cdcf7f0a9f2c71461f9b525024bbadc54614ab9f",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4/native-auto-no-2/bounds.json"
+        ]
+      },
+      {
+        "bytes": 172,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-4/native-auto-no-2/lifecycle.json.gz",
+        "raw_bytes": 234,
+        "raw_sha256": "b8b58acbe8a88c2b46792345a27e0a0898e7b06cc3d10a52bd948d730f12bd79",
+        "sha256": "acb3692511cfa79a5f0673bd76df6eddaa5249d75b485d4d6bc706025f400f7d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4/native-auto-no-2/lifecycle.json"
+        ]
+      },
+      {
+        "bytes": 830,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-4/native-auto-yes-1/bounds.json.gz",
+        "raw_bytes": 5087,
+        "raw_sha256": "b23dd23b4a0a9816531df29debed50e785f218f463b2b1ddad827c688e003e97",
+        "sha256": "1b3166782d71b63787610af4385d84983157823943bd9a1f0e2568190dbee62f",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4/native-auto-yes-1/bounds.json"
+        ]
+      },
+      {
+        "bytes": 172,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-4/native-auto-yes-1/lifecycle.json.gz",
+        "raw_bytes": 234,
+        "raw_sha256": "b8b58acbe8a88c2b46792345a27e0a0898e7b06cc3d10a52bd948d730f12bd79",
+        "sha256": "acb3692511cfa79a5f0673bd76df6eddaa5249d75b485d4d6bc706025f400f7d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4/native-auto-yes-1/lifecycle.json"
+        ]
+      },
+      {
+        "bytes": 830,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-4/native-auto-yes-2/bounds.json.gz",
+        "raw_bytes": 5087,
+        "raw_sha256": "b23dd23b4a0a9816531df29debed50e785f218f463b2b1ddad827c688e003e97",
+        "sha256": "1b3166782d71b63787610af4385d84983157823943bd9a1f0e2568190dbee62f",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4/native-auto-yes-2/bounds.json"
+        ]
+      },
+      {
+        "bytes": 172,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-4/native-auto-yes-2/lifecycle.json.gz",
+        "raw_bytes": 234,
+        "raw_sha256": "b8b58acbe8a88c2b46792345a27e0a0898e7b06cc3d10a52bd948d730f12bd79",
+        "sha256": "acb3692511cfa79a5f0673bd76df6eddaa5249d75b485d4d6bc706025f400f7d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4/native-auto-yes-2/lifecycle.json"
+        ]
+      },
+      {
+        "bytes": 728,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-4/native-fitted-no-1/bounds.json.gz",
+        "raw_bytes": 3834,
+        "raw_sha256": "a9c4093c23bd979eda8ffb3a14e0a016003ff7f681174da8651b11f4306348d0",
+        "sha256": "07344387a7145fe2a194352560b58cec6b52abd283c18cf193b0ba05aed7db91",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4/native-fitted-no-1/bounds.json"
+        ]
+      },
+      {
+        "bytes": 172,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-4/native-fitted-no-1/lifecycle.json.gz",
+        "raw_bytes": 234,
+        "raw_sha256": "b8b58acbe8a88c2b46792345a27e0a0898e7b06cc3d10a52bd948d730f12bd79",
+        "sha256": "acb3692511cfa79a5f0673bd76df6eddaa5249d75b485d4d6bc706025f400f7d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4/native-fitted-no-1/lifecycle.json"
+        ]
+      },
+      {
+        "bytes": 728,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-4/native-fitted-no-2/bounds.json.gz",
+        "raw_bytes": 3834,
+        "raw_sha256": "a9c4093c23bd979eda8ffb3a14e0a016003ff7f681174da8651b11f4306348d0",
+        "sha256": "07344387a7145fe2a194352560b58cec6b52abd283c18cf193b0ba05aed7db91",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4/native-fitted-no-2/bounds.json"
+        ]
+      },
+      {
+        "bytes": 172,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-4/native-fitted-no-2/lifecycle.json.gz",
+        "raw_bytes": 234,
+        "raw_sha256": "b8b58acbe8a88c2b46792345a27e0a0898e7b06cc3d10a52bd948d730f12bd79",
+        "sha256": "acb3692511cfa79a5f0673bd76df6eddaa5249d75b485d4d6bc706025f400f7d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4/native-fitted-no-2/lifecycle.json"
+        ]
+      },
+      {
+        "bytes": 819,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-4/native-fitted-yes-1/bounds.json.gz",
+        "raw_bytes": 4929,
+        "raw_sha256": "cdcd843b49e3c8b1695732dedd3287265c4681f815aeb215a6fa3fd9a0ee85ba",
+        "sha256": "eb4073ad0295551f3c272781498ea222988dab2cdb2da7f3fecc88c89de8b9b5",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4/native-fitted-yes-1/bounds.json"
+        ]
+      },
+      {
+        "bytes": 172,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-4/native-fitted-yes-1/lifecycle.json.gz",
+        "raw_bytes": 234,
+        "raw_sha256": "b8b58acbe8a88c2b46792345a27e0a0898e7b06cc3d10a52bd948d730f12bd79",
+        "sha256": "acb3692511cfa79a5f0673bd76df6eddaa5249d75b485d4d6bc706025f400f7d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4/native-fitted-yes-1/lifecycle.json"
+        ]
+      },
+      {
+        "bytes": 819,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-4/native-fitted-yes-2/bounds.json.gz",
+        "raw_bytes": 4929,
+        "raw_sha256": "cdcd843b49e3c8b1695732dedd3287265c4681f815aeb215a6fa3fd9a0ee85ba",
+        "sha256": "eb4073ad0295551f3c272781498ea222988dab2cdb2da7f3fecc88c89de8b9b5",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4/native-fitted-yes-2/bounds.json"
+        ]
+      },
+      {
+        "bytes": 172,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-4/native-fitted-yes-2/lifecycle.json.gz",
+        "raw_bytes": 234,
+        "raw_sha256": "b8b58acbe8a88c2b46792345a27e0a0898e7b06cc3d10a52bd948d730f12bd79",
+        "sha256": "acb3692511cfa79a5f0673bd76df6eddaa5249d75b485d4d6bc706025f400f7d",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4/native-fitted-yes-2/lifecycle.json"
+        ]
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-4-auto-no-1.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4-auto-no-1.log"
+        ]
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-4-auto-no-2.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4-auto-no-2.log"
+        ]
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-4-auto-yes-1.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4-auto-yes-1.log"
+        ]
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-4-auto-yes-2.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4-auto-yes-2.log"
+        ]
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-4-fitted-no-1.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4-fitted-no-1.log"
+        ]
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-4-fitted-no-2.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4-fitted-no-2.log"
+        ]
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-4-fitted-yes-1.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4-fitted-yes-1.log"
+        ]
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/profile-4-fitted-yes-2.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/profile-4-fitted-yes-2.log"
+        ]
+      },
+      {
+        "bytes": 13133,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-origin-v4156/receipt.json.gz",
+        "raw_bytes": 289061,
+        "raw_sha256": "f2c082cca44f7659ce1d899d8478e90c5363fda3d041b5622cc5340732891a4a",
+        "sha256": "bd6d936493431bc803409d0e674ea4a9e70cd43302b5b04c269f45fae025839b",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-origin-v4156/receipt.json"
+        ]
+      },
+      {
+        "bytes": 19237,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-border-source-v4151/box_border_painter.cc.gz",
+        "raw_bytes": 98942,
+        "raw_sha256": "df610e882fc43bb756e031a1741f4516ab82a655b7cbd6f30e73946ccdaf4fa9",
+        "sha256": "7f800f78722dc46d83e0a2a45d8a63ab9c2fb30788b8cf11980c0bff1aa774e6",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-border-source-v4151/box_border_painter.cc"
+        ]
+      },
+      {
+        "bytes": 31810,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-border-source-v4151/box_border_painter.cc.response-base64.gz",
+        "raw_bytes": 131924,
+        "raw_sha256": "f42e1597ffbc6bcbf12c7e13241e90b58f37aa70bf0a321a56f48b62176f9f31",
+        "sha256": "1b836f7b82918463a25abd0eebf167652045c8114e1928bac3c5752dfaeccace",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-border-source-v4151/box_border_painter.cc.response-base64"
+        ]
+      },
+      {
+        "bytes": 2713,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-border-source-v4151/physical_rect.h.gz",
+        "raw_bytes": 9018,
+        "raw_sha256": "d24524dc420ea3b721bb1d754bac8bc744973c2c3a039cf698da487985e9fefa",
+        "sha256": "bdfc84977a016fd1dd0cbd4106762af9e4afff5c65035fee1d91e96cd31b6261",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-border-source-v4151/physical_rect.h"
+        ]
+      },
+      {
+        "bytes": 4444,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-border-source-v4151/physical_rect.h.response-base64.gz",
+        "raw_bytes": 12024,
+        "raw_sha256": "f9d8c82bacb6be2c00648ad3ae7671788a8b02233bc09e39ca5614133ee43cf6",
+        "sha256": "ec0ddeb396733aa8126219528c3914338107660dae9caa6c16fa0fa8d9b0daaf",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-border-source-v4151/physical_rect.h.response-base64"
+        ]
+      },
+      {
+        "bytes": 787,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-border-source-v4151/receipt.json.gz",
+        "raw_bytes": 2773,
+        "raw_sha256": "d0361c0826c580acaa662a009f6c3200bb56c992d703a2124dd8f672a58d31c7",
+        "sha256": "954071659b1fd8cbd9da85380dabbb1ec438b756d09ae9d5bc47ac41e7caeada",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-border-source-v4151/receipt.json"
+        ]
+      },
+      {
+        "bytes": 3339,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-border-source-v4151/review.json.gz",
+        "raw_bytes": 9150,
+        "raw_sha256": "629c58732009e372851f86fdec0d0c6e180e450ed9ebb6aa5e5f66860868c8b1",
+        "sha256": "c9217595d5bc7b0bea75a01483d2fafa14da2465bcddf4b67ce832acb57d9d07",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-border-source-v4151/review.json"
+        ]
+      },
+      {
+        "bytes": 7055,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-border-source-v4151/table_painters.cc.gz",
+        "raw_bytes": 34808,
+        "raw_sha256": "3950a9f48b2945db36f0908e8722168284951df400c9cfed1304bbcc0d5c815f",
+        "sha256": "e24df04299e676d4e6324c7a7aeb1e7c45ef078d9adf828e5ffd6b133ae90074",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-border-source-v4151/table_painters.cc"
+        ]
+      },
+      {
+        "bytes": 11392,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/native-table-border-source-v4151/table_painters.cc.response-base64.gz",
+        "raw_bytes": 46412,
+        "raw_sha256": "7671b7522bafef9e203fa116163566b103ce668ccf2de70ac5a9081576fa9e75",
+        "sha256": "4a0c53e53c721038d5351c9104f1a3a5f59ddc46e352b6b80f9a1b9e89279b6e",
+        "sources": [
+          "/mnt/d/openui-v02-qualification-d174ea0b/native-table-border-source-v4151/table_painters.cc.response-base64"
+        ]
+      },
+      {
+        "bytes": 5078,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/drivers-and-proofs/openui-native-table-origin-owner-v4152.py.gz",
+        "raw_bytes": 14399,
+        "raw_sha256": "5b6eddab367c5ca60fa7f95cf2d97ed4d36a011a50bb33f032fc79e6a26e6384",
+        "sha256": "d8a3094c2e5f121f6cc988fba9090a36b5ec2fd3976c8e0ed35296d38d4fe791",
+        "sources": [
+          "/tmp/openui-native-table-origin-owner-v4152.py"
+        ]
+      },
+      {
+        "bytes": 2667,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/drivers-and-proofs/openui-native-table-origin-audit-v4153.py.gz",
+        "raw_bytes": 8207,
+        "raw_sha256": "ceb152e89c6801fef5812330c9650c728c5f245e5e129d18a3c14c8252582457",
+        "sha256": "2e84dec101e0e5952b24860c42f67450167e5e629945023effd37e53d90807ec",
+        "sources": [
+          "/tmp/openui-native-table-origin-audit-v4153.py"
+        ]
+      },
+      {
+        "bytes": 578,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/drivers-and-proofs/openui-native-table-origin-audit-v4153.json.gz",
+        "raw_bytes": 1025,
+        "raw_sha256": "25a4fe0622f103edb2070fae72b5a4c529e9f4fbfb4316fbc49aaedb3f719edc",
+        "sha256": "2d80d024fec1156455aa18550c4770a178441b988f76c6d262535fe6b5d67054",
+        "sources": [
+          "/tmp/openui-native-table-origin-audit-v4153.json"
+        ]
+      },
+      {
+        "bytes": 429,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/drivers-and-proofs/openui-native-table-origin-reaped-v4154.json.gz",
+        "raw_bytes": 729,
+        "raw_sha256": "30bbae0f2f4a48b31f50b20c3e144142ec7b8cab56af44e80e3efead043d4552",
+        "sha256": "1a012f6040026f862071c1056a93053a76ff2a627f4d5f75d0c36396a2453d85",
+        "sources": [
+          "/tmp/openui-native-table-origin-reaped-v4154.json"
+        ]
+      },
+      {
+        "bytes": 5068,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/drivers-and-proofs/openui-native-table-origin-owner-v4156.py.gz",
+        "raw_bytes": 14401,
+        "raw_sha256": "0fdedfb7bfb20c7229536e9887f55bdd0cf5292d5c45d4d3dda5faf7b20a42cf",
+        "sha256": "d36679e1e72ce55f50ae05567776ec9633fbbeb2211e60df9a3282aeb22c6208",
+        "sources": [
+          "/tmp/openui-native-table-origin-owner-v4156.py"
+        ]
+      },
+      {
+        "bytes": 2662,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/drivers-and-proofs/openui-native-table-origin-audit-v4157.py.gz",
+        "raw_bytes": 8207,
+        "raw_sha256": "d90c646fdcc0b43543bdf71846c2803d6896ab885a63a3453a5e74b50a189126",
+        "sha256": "8bd1e2215a9dbacc558fb175bb98ec5a9f7a70a43da50f6f19de5529dc110ef8",
+        "sources": [
+          "/tmp/openui-native-table-origin-audit-v4157.py"
+        ]
+      },
+      {
+        "bytes": 2219,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/drivers-and-proofs/openui-native-table-origin-audit-v4157.json.gz",
+        "raw_bytes": 27612,
+        "raw_sha256": "86a5fb99905dfe43d8bc6f29cd98229102775a44da176460283b2a353677a4d3",
+        "sha256": "1f60313103505fc6ab149d726b68cb632111ae135259eb8e03476f6a37858b96",
+        "sources": [
+          "/tmp/openui-native-table-origin-audit-v4157.json"
+        ]
+      },
+      {
+        "bytes": 432,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-table-origin-v1/drivers-and-proofs/openui-native-table-origin-reaped-v4158.json.gz",
+        "raw_bytes": 752,
+        "raw_sha256": "05245606e2a63ca313004b56eda04d1a05291971f6e4db467103b0e180993dda",
+        "sha256": "5d1f070ed0e45ba71b614a95fd0728d206adb1a4bdabf4ee8fa84cc457e0e9c5",
+        "sources": [
+          "/tmp/openui-native-table-origin-reaped-v4158.json"
+        ]
+      }
+    ]
+  },
+  "border_joint_explanation": "Pinned source and existing immutable pixel arithmetic support independent joint overlap; actual edge-operation trace/causal repair remains open.",
+  "comparisons_verified": 20,
+  "compiled_paths_verified": 29,
+  "exact_geometry_records": 75,
+  "exact_images": 8,
+  "first_build_failure_preserved": true,
+  "fresh_compiler_records": 16,
+  "geometry_records": 170,
+  "image_count": 20,
+  "image_files_verified": 80,
+  "javascript_executed_by_openui": false,
+  "marker_pixels_and_common_geometry_neutral": true,
+  "measured_source": {
+    "clean": true,
+    "commit": "c6a0b92e48f0d03059ac02a2d9936034a45b7bbe",
+    "harness_sha256": "f2248950a92a4d6bbb0feef34a01ee02dbe531c28b3e095eb80aa055210a7fbf",
+    "source_tree_sha256": "5ca01607b5707a42004bdfef350093aa8bd2da6c357a1a673b93955b662ae8a2",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "native_api_findings": [
+    "Synthetic grid-decoration and anonymous row boxes share the authored table node identity, creating duplicate public rectangles and duplicate authored effects in the Engine input traversal.",
+    "Collapsed cell query exposes paint extent instead of Chromium used border box; winning-edge geometry remains to be implemented.",
+    "Row-group model collection can reuse the group node for anonymous row/cell content while constructing an authored outer group; those helpers need the same ownership classification and guards."
+  ],
+  "observations": [
+    {
+      "chromium_marker_changed_pixels": 0,
+      "native": {
+        "auto": {
+          "different_pixels": {
+            "no": 0,
+            "yes": 0
+          },
+          "exact_bounds": {
+            "no": 1,
+            "yes": 1
+          },
+          "marker_changed_pixels": 0
+        },
+        "fitted": {
+          "different_pixels": {
+            "no": 0,
+            "yes": 0
+          },
+          "exact_bounds": {
+            "no": 5,
+            "yes": 8
+          },
+          "marker_changed_pixels": 0
+        }
+      },
+      "policy_changed_pixels": 0,
+      "profile": {
+        "height": 240,
+        "scale": 1,
+        "width": 400
+      }
+    },
+    {
+      "chromium_marker_changed_pixels": 0,
+      "native": {
+        "auto": {
+          "different_pixels": {
+            "no": 562,
+            "yes": 562
+          },
+          "exact_bounds": {
+            "no": 1,
+            "yes": 1
+          },
+          "marker_changed_pixels": 0
+        },
+        "fitted": {
+          "different_pixels": {
+            "no": 482,
+            "yes": 482
+          },
+          "exact_bounds": {
+            "no": 5,
+            "yes": 8
+          },
+          "marker_changed_pixels": 0
+        }
+      },
+      "policy_changed_pixels": 80,
+      "profile": {
+        "height": 240,
+        "scale": 1.25,
+        "width": 400
+      }
+    },
+    {
+      "chromium_marker_changed_pixels": 0,
+      "native": {
+        "auto": {
+          "different_pixels": {
+            "no": 432,
+            "yes": 432
+          },
+          "exact_bounds": {
+            "no": 1,
+            "yes": 1
+          },
+          "marker_changed_pixels": 0
+        },
+        "fitted": {
+          "different_pixels": {
+            "no": 432,
+            "yes": 432
+          },
+          "exact_bounds": {
+            "no": 5,
+            "yes": 8
+          },
+          "marker_changed_pixels": 0
+        }
+      },
+      "policy_changed_pixels": 48,
+      "profile": {
+        "height": 240,
+        "scale": 1.5,
+        "width": 400
+      }
+    },
+    {
+      "chromium_marker_changed_pixels": 0,
+      "native": {
+        "auto": {
+          "different_pixels": {
+            "no": 0,
+            "yes": 0
+          },
+          "exact_bounds": {
+            "no": 1,
+            "yes": 1
+          },
+          "marker_changed_pixels": 0
+        },
+        "fitted": {
+          "different_pixels": {
+            "no": 0,
+            "yes": 0
+          },
+          "exact_bounds": {
+            "no": 5,
+            "yes": 8
+          },
+          "marker_changed_pixels": 0
+        }
+      },
+      "policy_changed_pixels": 0,
+      "profile": {
+        "height": 240,
+        "scale": 2,
+        "width": 400
+      }
+    },
+    {
+      "chromium_marker_changed_pixels": 0,
+      "native": {
+        "auto": {
+          "different_pixels": {
+            "no": 432,
+            "yes": 432
+          },
+          "exact_bounds": {
+            "no": 1,
+            "yes": 1
+          },
+          "marker_changed_pixels": 0
+        },
+        "fitted": {
+          "different_pixels": {
+            "no": 432,
+            "yes": 432
+          },
+          "exact_bounds": {
+            "no": 5,
+            "yes": 8
+          },
+          "marker_changed_pixels": 0
+        }
+      },
+      "policy_changed_pixels": 0,
+      "profile": {
+        "height": 240,
+        "scale": 3,
+        "width": 400
+      }
+    }
+  ],
+  "original_table_regressions_not_yet_reproduced": true,
+  "pixel_target": "pinned Chromium147.0.7727.50",
+  "pixel_tolerance": 0,
+  "release_qualified": false,
+  "renderer_qualified": false,
+  "schema_version": 1,
+  "scope": "Reduced native table and matched-origin text diagnostic:400x240 at five scales, both explicit policies and marker modes. Does not replace any original census."
+}

@@ -1,0 +1,34 @@
+{
+  "actual_reaping_chunk_id": "c7aa1e",
+  "actual_session_exit_code": 1,
+  "all_known_owned_pids_absent": true,
+  "all_steps_actual_wait_reaped": true,
+  "counts": {
+    "expanded": {
+      "different": 2052,
+      "errors": 0,
+      "exact": 21676,
+      "profile_result_sha256": "d7504d9e5373e5e6867aadb6852d778acdb2da0e7ad3e7dba346f073bc54a624",
+      "total": 23728
+    },
+    "full": {
+      "different": 1976,
+      "errors": 0,
+      "exact": 20948,
+      "profile_result_sha256": "6713da18c9bca336a7a206946f9c977ab7f36a523e04ab1c8f54131abcbddc7b",
+      "total": 22924
+    }
+  },
+  "known_owned_pids": [
+    3772428,
+    3772472,
+    3804969
+  ],
+  "qualification": false,
+  "receipt_sha256": "7b3275a159ed1bb828af1116e0d6866c4c47b4b1388cd29c0d5eb7b47b66179a",
+  "release_qualified": false,
+  "root_tool_session_id": 48039,
+  "schema_version": 1,
+  "writer_pid": 3806860,
+  "written_utc": "2026-10-14T13:45:35.771221+00:00"
+}

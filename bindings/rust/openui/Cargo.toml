@@ -13,6 +13,7 @@ description = "Typed reactive Linux and headless application framework over the 
 [features]
 default = []
 linux = ["dep:openui-platform", "openui-platform/linux"]
+ffi-integration = []
 
 [dependencies]
 openui-compositor = { version = "=0.2.0", path = "../openui-compositor" }
@@ -22,3 +23,6 @@ openui-macros = { version = "=0.2.0", path = "../openui-macros" }
 openui-platform = { version = "=0.2.0", path = "../openui-platform", optional = true }
 openui-style = { version = "=0.2.0", path = "../openui-style" }
 openui-text = { version = "=0.2.0", path = "../openui-text" }
+
+[dev-dependencies]
+serde_json = "1.0"

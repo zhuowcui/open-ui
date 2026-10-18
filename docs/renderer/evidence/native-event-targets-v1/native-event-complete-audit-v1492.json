@@ -1,0 +1,115 @@
+{
+  "addition_cases": 201,
+  "addition_cases_four_profile_exact": 200,
+  "all_commands_terminal": true,
+  "all_comparison_invariants_unchanged": 48252,
+  "api_checkpoint_ready_for_umbrella": true,
+  "build_receipt_sha256": "66cfd334ee426be802ebe4476655ff1259832be5adc8ef80faf04a3928399d44",
+  "c_abi": {
+    "c_examples": 11,
+    "cpp_examples": 5,
+    "exports": 113,
+    "ran": true
+  },
+  "cargo_commands_run": 0,
+  "full_renderer_gate_passed": false,
+  "hosted": {
+    "run_url": "https://github.com/zhuowcui/open-ui/actions/runs/37277487481",
+    "skipped_jobs": 0,
+    "successful_jobs": 7
+  },
+  "hosted_receipt_sha256": "ec06aef54931fb38b750cd9a4d7292bd9c9f01ff2f7ee55d489fcb057917fc9d",
+  "javascript_executed_by_openui": false,
+  "native_app": {
+    "consecutive_chromium_captures": 40,
+    "deterministic_native_pairs": 5,
+    "geometry_exact": 10,
+    "images": 10,
+    "independent_chromium_capture_processes": 20,
+    "native_runs": 10,
+    "pixel_exact": 10
+  },
+  "new_release_states_admitted": 0,
+  "original_rows_identical_in_expanded": 22924,
+  "owner_receipt_sha256": "40dd438ec4e5e86cb36d09680c776c2852573278af5a7e0da0093f80da8baa8e",
+  "pixel_tolerance": 0,
+  "probe_sha256": "ffe01471be309869803373bd9c382ee3dcdad7aef11b880b4a2f59fa9a8f08e8",
+  "public_rust_api": [
+    "Event::target()",
+    "Event::current_target()"
+  ],
+  "release_qualification": false,
+  "schema_version": 1,
+  "scoped_behavior_audit_sha256": "13897a3278029b0609fedf9b2568f1a0cda5e192ef6401a0114f9d7361c5e99e",
+  "scoped_native_event_behavior_verified": true,
+  "screenshots_generated": 0,
+  "source": {
+    "clean": true,
+    "commit": "1c8540e9f8c6eeb8fce10a76cb9a32c2f42f01fd",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "f9a60849daecfc54884266c3fdedca48d0de32d02066ae7c9b72881d1eef9a3e",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "1c8540e9f8c6eeb8fce10a76cb9a32c2f42f01fd",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "f9a60849daecfc54884266c3fdedca48d0de32d02066ae7c9b72881d1eef9a3e",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "suites": {
+    "expanded": {
+      "actual_exit": 1,
+      "all_nine_comparison_invariants_unchanged": 23728,
+      "different": 1591,
+      "errors": 0,
+      "exact": 22137,
+      "exit_receipt_sha256": "f23e817550814a79f2ed520d64a0ec0d9ec7b2381dfbaf9aaf6586cf8b1513d8",
+      "prior_summary_sha256": "b29e4560fabc65d9f2206fdc131d0c3757cfa934a3fc11bf0e25f557bda8bc56",
+      "profiles": 4,
+      "summary_sha256": "f97df7d44847097030e747e78e4d7439222c74ae2fafe8224497ddcf7e539b11",
+      "total": 23728
+    },
+    "focused": {
+      "actual_exit": 0,
+      "all_nine_comparison_invariants_unchanged": 640,
+      "different": 0,
+      "errors": 0,
+      "exact": 640,
+      "exit_receipt_sha256": "80236996228c1d01bd24ce33fc3c70fa99ddaa6532086e135461c870404c6397",
+      "prior_summary_sha256": "a7a4e655cdcaab3adb653430ec7245a43de033c51be93474f2a9a886c7ac16fe",
+      "profiles": 40,
+      "summary_sha256": "6523450639e285a7c26331944c2921fd803a7612f842fd47160ccb934dc80080",
+      "total": 640
+    },
+    "full": {
+      "actual_exit": 1,
+      "all_nine_comparison_invariants_unchanged": 22924,
+      "different": 1590,
+      "errors": 0,
+      "exact": 21334,
+      "exit_receipt_sha256": "c1692a2f85a0f32b8d567e9d861dfef5cd8231a88c0a6006eec07931b2e93d58",
+      "prior_summary_sha256": "86a6ef3e692d6aefa7ab459720329ab9455c9d1626011a1b2ef6fbb13f07ecf6",
+      "profiles": 4,
+      "summary_sha256": "dd2f5ce9377812818c9a1d393f1d98beb5da918737bfbecca4d78d888f476316",
+      "total": 22924
+    },
+    "primitive": {
+      "actual_exit": 0,
+      "all_nine_comparison_invariants_unchanged": 960,
+      "different": 0,
+      "errors": 0,
+      "exact": 960,
+      "exit_receipt_sha256": "a93118aacf0f8f84bf0fd454307f58500c62eed8e9b2c1a713aa39c12a60313a",
+      "prior_summary_sha256": "ee4b449fc89de738401138aa1128eaeadcce541ed435fbcca3bed2115d99853b",
+      "profiles": 40,
+      "summary_sha256": "220101ae01aa264e7b99ae68a0fdd2de39f4b65bd05fdddea76103f79bd6f02d",
+      "total": 960
+    }
+  },
+  "workspace": {
+    "failed": 0,
+    "ignored": 13,
+    "passed": 8536
+  }
+}

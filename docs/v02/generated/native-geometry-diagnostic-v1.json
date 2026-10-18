@@ -1,0 +1,43 @@
+{
+  "baseline_failed_scenarios": [
+    "native_geometry_preserves_empty_and_singular_boxes",
+    "native_geometry_is_independent_of_pointer_and_visibility",
+    "native_geometry_includes_all_column_fragments"
+  ],
+  "baseline_failure_log_sha256": "dec4805783033fbae7b84b2abe73344764532ceb58224aa3b22dbbdc6f288d8b",
+  "c_abi": {
+    "checksum_sha256": "4e10dd31e4d8958c81087cea941ac3c969e7342e5c75677b3e73c20b2debf443",
+    "cpp_header_consumers": 1,
+    "exports": 107,
+    "headless_c_consumers": 6,
+    "log_sha256": "60970f8e27bff6895d3321732b8a39b6ddb264b50702fd96a98ee33f2dadc5a1"
+  },
+  "chromium_geometry": {
+    "all_repeated_queries_equal": true,
+    "cases": 5,
+    "fresh_recheck_sha256": "89a0972dcec3a0515aa3cd01f72735b0af518121d09f5dde0be0291d55dfb035",
+    "reference_sha256": "0bdc3a46347e1f0d8c71651bc10fc2713349575f240ea6b947595a17b5def827"
+  },
+  "final_workspace": {
+    "failed": 0,
+    "ignored": 13,
+    "log_sha256": "936459a8fa2c1f5f0e80f24ec6c129d2b52cced765a30e2f2b312590331390ec",
+    "passed": 8486,
+    "suites": 147
+  },
+  "reason": "Native geometry evidence only; complete renderer, native API review and release-lab gates remain open.",
+  "release_qualification": false,
+  "schema_version": 1,
+  "source_files": {
+    "bindings/rust/openui-engine/src/accessibility.rs": "f0fe4bac60c6f9022fb3d853b4c8f51d9d295bc6340c41f9c0e73d7773541137",
+    "bindings/rust/openui-engine/src/animation.rs": "0d56ebf77427850fc53021a856ef32b1041611056f2b338b8334b5fa558b7511",
+    "bindings/rust/openui-engine/src/lib.rs": "d62bea1f6bf507c4a2e060b4d8fe0b954744112ef557b801b8d3cb1e9a0d3b7c",
+    "bindings/rust/openui-ffi/src/lib.rs": "4addac48df1adfbc093d0a9ed947e8c04a4294b3c1d504be220aae6a5d9535bb",
+    "bindings/rust/openui-ffi/src/value.rs": "e67f38d5e1a9251b493d2bd4c05c91cc63a2c7c386c79d67ba464c05080f593b",
+    "bindings/rust/openui-style/src/property.rs": "5a76179f8279bf478572942ba00714002d207beff133cda455f1bfc08519a6e7",
+    "bindings/rust/openui/src/element.rs": "ed0f368062a563b3d7461ec020d56380b1fb98829add2e7a3ad99897b0a51e6c",
+    "bindings/rust/openui/tests/v02_conformance.rs": "268abced80af042056c30ef959fd8053d587b4ebf8d7bf60af1c1781addaa2a1",
+    "examples/c_v02/geometry.c": "2e27cba8a5d5ce99f80da0d66cc2e94a601d41b224f52a959fcfcb123b19cc61",
+    "tools/qualification/probe_native_geometry_oracle.py": "c444654bb3ba769d1416cf8c82bf9c2218a6eebbdbf917855ed2ca45c48c4752"
+  }
+}

@@ -1,0 +1,227 @@
+{
+  "agent": "/root/opacity_census_audit",
+  "all_known_browser_pids_absent": true,
+  "all_local_git_children_terminal_reaped": true,
+  "browser_tmp_absent": true,
+  "existing_layer_and_replay_evidence": [
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-opacity-layer-diagnostic-v4464/results-v5/receipt.json",
+      "sha256": "446f37a64b8300188cd58522d26e663b95c69a73d7dbbb85b9a0fed1f0551a61"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-opacity-native-picture-replay-diagnostic-v4477/receipt.json",
+      "sha256": "f463713588ff13032e0c0f7e85e61c44699cd798fcbd375eec231a7f3a26d1a2"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-opacity-operation-finding-v4481/finding-v1.json",
+      "sha256": "ee6fe16a888ed0bb6cee94fce972967ff271181a650c6d86531315741cee983a"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-opacity-folding-route-table-border-review-v4300/review-table-border-review-opacity-folding-cpu-v1.json",
+      "sha256": "752dcddf997c4fa4b5c140f531e045d347c4f931e815466f40d4b0b0dfdb4bff"
+    }
+  ],
+  "external_cleanup_proof": {
+    "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-opacity-folding-oracles-opacity-census-audit-v4482/terminal-cleanup-proof-opacity-census-audit-v1.json",
+    "sha256": "fdf898b4d86a38af42765333e6b562aa1969fa95ddf890d91a4595e8ff218e7d"
+  },
+  "final_viz_route_attributed": false,
+  "findings": [
+    {
+      "finding": "Only immediate SaveLayerAlpha, one recursively single-op supported drawing operation, and Restore can fold alpha. SrcOver/no filters/no looper are required; text blobs/worklets are excluded. Multiple draws and intervening state operations preserve the layer. Coverage or opaque overdraw alone does not admit folding.",
+      "id": "adjacent-operation-folding",
+      "source": "paint_op_buffer_iterator.cc:13-65,96-145; paint_flags.cc:130-144",
+      "status": "exact-primary-source"
+    },
+    {
+      "finding": "The converter enters output clip and local transform before emitting SaveLayerAlpha explicitly to enable adjacent folding. At five scales structural fragmentation matches the ordinary single red draw byte-for-byte; actual clipping changes both coverage and interior arithmetic. Root may remove only proven coverage-inert structural state inside the effect, preserving actual clip/transform and ordinary fallback.",
+      "id": "state-before-effect",
+      "source": "paint_chunks_to_cc_layer.cc:662-674,719",
+      "status": "exact-primary-source-and-pixel-neighbor"
+    },
+    {
+      "finding": "Layerization decides whether effects can be decomposited into the parent picture. Required-own-layer/direct-compositing/transform ownership and property-state upcast/merge rules prevent flattening; draw opacity is subsequently derived from the relevant effect-tree interval, not reapplied indiscriminately to the full picture.",
+      "id": "ownership-before-opacity-publication",
+      "source": "paint_artifact_compositor.cc:668-736,740-825; draw_property_utils.cc:585-616; render_surface_impl.cc:577-581; layer_impl.cc:221-233",
+      "status": "exact-primary-source"
+    },
+    {
+      "finding": "Software nonroot render passes have transparent-cleared N32 premultiplied backing; picture/solid/resource publication paths are distinct and can carry float SharedQuadState opacity. The old contain LayerTree picture has its own 100x100 WillChangeTransform layer and transparent replay, and the fresh contained full-cover two-draw case matches the single green leaf output, unlike ordinary overlapping/group/rounded/outline neighbors. This establishes a missing context boundary, not the actual final Viz quad material, final SQS opacity, or exact executed software surface path.",
+      "id": "transparent-layer-context",
+      "source": "software_renderer.cc:201-219,227-264,391-435,1072-1085; picture_layer_impl.cc:224-276,341-369",
+      "status": "source-and-observed-picture-context-final-route-unknown"
+    },
+    {
+      "finding": "Native canonical recording is cleared white and rasterized as a whole picture. Retained authored layers keep effect metadata but expose only canonical/content/viewport roles: arbitrary element/effect pictures and transparent independent surface bindings are not yet partitioned. The scene cannot reconstruct the Chromium-owned transparent picture/effect interval from these baked recordings alone.",
+      "id": "native-scene-context-loss",
+      "source": "render.rs:275,353-398; retained_scene.rs:1-3,31-32,109-126,243-280",
+      "source_commit": "539ab92deda29737e05aedbc62045e970a41dd20",
+      "status": "pinned-native-source"
+    }
+  ],
+  "limits": [
+    "Fresh output screenshots are opaque composites and cannot identify an intermediate surface format or opacity placement by themselves.",
+    "Inspector picture logging and unpremultiplied replay RGBA quantize paint/surface data; they do not reveal full stored alpha precision or the final Viz quad route.",
+    "The contain/WillChangeTransform fixture changes multiple ownership inputs together; it does not isolate each reason independently.",
+    "No actual native builds or renderer raster were executed by this task. Current retained layer successor is peer-owned and is not assessed by these pinned historical native files."
+  ],
+  "native_api_qualified": false,
+  "native_executed": false,
+  "native_source_pins": [
+    {
+      "git_path": "bindings/rust/openui-paint/src/render.rs",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-opacity-folding-publication-source-opacity-census-audit-v4482/native-source-539ab92-opacity-census-audit-v2/bindings/rust/openui-paint/src/render.rs",
+      "sha256": "d2857ee381b2b742ae41d6b7883c2fc3fbb45a4cb0f5a76ef58033de3a9212e9",
+      "source_commit": "539ab92deda29737e05aedbc62045e970a41dd20"
+    },
+    {
+      "git_path": "bindings/rust/openui-compositor/src/retained_scene.rs",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-opacity-folding-publication-source-opacity-census-audit-v4482/native-source-539ab92-opacity-census-audit-v2/bindings/rust/openui-compositor/src/retained_scene.rs",
+      "sha256": "6effb7a96a252df44ac11ad6a3e5559e458af13ae51fdd54e09b9136d75f8625",
+      "source_commit": "539ab92deda29737e05aedbc62045e970a41dd20"
+    },
+    {
+      "git_path": "bindings/rust/openui-engine/src/compositor_scene.rs",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-opacity-folding-publication-source-opacity-census-audit-v4482/native-source-539ab92-opacity-census-audit-v2/bindings/rust/openui-engine/src/compositor_scene.rs",
+      "sha256": "1a7a397e9d1f4e16ea6c9526b570aea4e158d222557d73e7d46b4ba7eef052e6",
+      "source_commit": "539ab92deda29737e05aedbc62045e970a41dd20"
+    }
+  ],
+  "native_source_readers": [
+    {
+      "actual_exit_code": 0,
+      "argv": [
+        "git",
+        "show",
+        "539ab92deda29737e05aedbc62045e970a41dd20:bindings/rust/openui-paint/src/render.rs"
+      ],
+      "pid": 2118481,
+      "stderr": "",
+      "terminal_reaped": true
+    },
+    {
+      "actual_exit_code": 0,
+      "argv": [
+        "git",
+        "show",
+        "539ab92deda29737e05aedbc62045e970a41dd20:bindings/rust/openui-compositor/src/retained_scene.rs"
+      ],
+      "pid": 2118482,
+      "stderr": "",
+      "terminal_reaped": true
+    },
+    {
+      "actual_exit_code": 0,
+      "argv": [
+        "git",
+        "show",
+        "539ab92deda29737e05aedbc62045e970a41dd20:bindings/rust/openui-engine/src/compositor_scene.rs"
+      ],
+      "pid": 2118483,
+      "stderr": "",
+      "terminal_reaped": true
+    }
+  ],
+  "oracle_pixel_analysis": {
+    "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-opacity-folding-publication-source-opacity-census-audit-v4482/oracle-pixel-analysis-opacity-census-audit-v2.json",
+    "sha256": "58ad3c77716a76b5c3e168c9af8ba0aa808126916571389b38dcad9bd7291422"
+  },
+  "original_browser_receipt": {
+    "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-opacity-folding-oracles-opacity-census-audit-v4482/receipt.json",
+    "sha256": "2c923d6a897667ce4dbabdfc49a24d43ac5dfbff50f0fca0ae97d10a07290b44"
+  },
+  "pixel_tolerance": 0,
+  "preserved_failures": [
+    "Web official iterator open inaccessible (turn140view0); direct official wire fetch succeeded and matched prior pin.",
+    "First narrow archive lookup guessed4477/4480 basenames absent; corrected using Root supplied exact paths.",
+    "Initial direct official guessed effect_tree.cc and bitmap_raster_buffer_provider.cc return404, all six wire bodies retained; corrected property_tree.cc and raster_buffer_provider.cc return200.",
+    "Original oracle owner exited 1 after all100captures due only to owned Chrome socket residue; receipt remains unchanged and cleanup is separately proven.",
+    "Initial post-compaction read used unavailable python and exited127 before reading files; corrected python3 read exited0."
+  ],
+  "preserved_predecessor": {
+    "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-opacity-folding-publication-source-opacity-census-audit-v4482/finding-opacity-census-audit-v1.json",
+    "sha256": "8fb1976d9b2e582882cc46316a706e135aa43e4cfc1eabdfd2eac1b7e9931d7d"
+  },
+  "primary_pins_verified": [
+    {
+      "official_url": "https://chromium.googlesource.com/chromium/src/+/147.0.7727.50/cc/paint/paint_op_buffer_iterator.cc?format=TEXT",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-opacity-folding-publication-source-opacity-census-audit-v4482/cc/paint/paint_op_buffer_iterator.cc",
+      "sha256": "f4b4142ce5d6a4655c7c47ebd7b6884a812b318cb65c8e6d5251afbda073d24d"
+    },
+    {
+      "official_url": "https://chromium.googlesource.com/chromium/src/+/147.0.7727.50/cc/paint/paint_flags.cc?format=TEXT",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-opacity-folding-publication-source-opacity-census-audit-v4482/cc/paint/paint_flags.cc",
+      "sha256": "9435cb1dab2c4663c5ef248945e1186e70e57f930aa629f61960779f914a7439"
+    },
+    {
+      "official_url": "https://chromium.googlesource.com/chromium/src/+/147.0.7727.50/cc/trees/draw_property_utils.cc?format=TEXT",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-opacity-folding-publication-source-opacity-census-audit-v4482/cc/trees/draw_property_utils.cc",
+      "sha256": "53fc90b66d265180f7313d8798f43470f4afca66fc59b79517820461940663c2"
+    },
+    {
+      "official_url": "https://chromium.googlesource.com/chromium/src/+/147.0.7727.50/cc/layers/render_surface_impl.cc?format=TEXT",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-opacity-folding-publication-source-opacity-census-audit-v4482/cc/layers/render_surface_impl.cc",
+      "sha256": "c7cc6822733ce6a9ebcfa044fa85c23210a0357d671198a045e8e385a92cf888"
+    },
+    {
+      "official_url": "https://chromium.googlesource.com/chromium/src/+/147.0.7727.50/cc/layers/picture_layer_impl.cc?format=TEXT",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-opacity-folding-publication-source-opacity-census-audit-v4482/cc/layers/picture_layer_impl.cc",
+      "sha256": "59f3d876f20670e76a85ba4865f9a336a974a0b1fc34f2df462ac57956d7a94c"
+    },
+    {
+      "official_url": "https://chromium.googlesource.com/chromium/src/+/147.0.7727.50/cc/trees/property_tree.cc?format=TEXT",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-opacity-folding-publication-source-opacity-census-audit-v4482/primary-v2/cc/trees/property_tree.cc",
+      "sha256": "c85d1ae7fb1218dc1a57b9fc093dcfcb3426a57137b60013351f5a7f19a8830d"
+    },
+    {
+      "official_url": "https://chromium.googlesource.com/chromium/src/+/147.0.7727.50/cc/layers/layer_impl.cc?format=TEXT",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-opacity-folding-publication-source-opacity-census-audit-v4482/primary-v2/cc/layers/layer_impl.cc",
+      "sha256": "a1f06bff7a1633cbf0903461973caba5dd7f232c24e02df81a2760335dcc8852"
+    },
+    {
+      "official_url": "https://chromium.googlesource.com/chromium/src/+/147.0.7727.50/components/viz/service/display/software_renderer.cc?format=TEXT",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-opacity-folding-publication-source-opacity-census-audit-v4482/primary-v2/components/viz/service/display/software_renderer.cc",
+      "sha256": "c3dec17e4de86214cf02d9d550281e11374ef49c005d34e6eb4d0c223c48042a"
+    },
+    {
+      "official_url": "https://chromium.googlesource.com/chromium/src/+/147.0.7727.50/cc/raster/raster_buffer_provider.cc?format=TEXT",
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-opacity-folding-publication-source-opacity-census-audit-v4482/primary-v2/cc/raster/raster_buffer_provider.cc",
+      "sha256": "aae11b91ad8f38cf378235133d70fccbfb7edaa383d5b4c048451e74b4c1bb66"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-opacity-operation-review-v4256/third_party__blink__renderer__platform__graphics__compositing__paint_chunks_to_cc_layer.cc",
+      "receipt": "/mnt/d/openui-v02-qualification-d174ea0b/native-opacity-operation-review-v4256/additional-source-receipt.json",
+      "sha256": "68292c768571eb0add2939928ac103410b15bf5b3d4cef2e9ea15948d497da39"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-opacity-operation-review-v4256/third_party__blink__renderer__platform__graphics__compositing__paint_artifact_compositor.cc",
+      "receipt": "/mnt/d/openui-v02-qualification-d174ea0b/native-opacity-operation-review-v4256/additional-source-receipt.json",
+      "sha256": "8f8728ed4ec7068598f82066c59f01acc791d50c63d797d07b20eb36eff52dba"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-opacity-operation-review-v4256/third_party__blink__renderer__platform__graphics__compositing__pending_layer.cc",
+      "receipt": "/mnt/d/openui-v02-qualification-d174ea0b/native-opacity-operation-review-v4256/additional-source-receipt.json",
+      "sha256": "c9a02edce1923262a187bd68cc7ab16421f5189f6ea5dda7ea44e9dea8a0431d"
+    }
+  ],
+  "primary_receipts": [
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-opacity-folding-publication-source-opacity-census-audit-v4482/primary-receipt-opacity-census-audit-v1.json",
+      "sha256": "82c93994b606dd1f28e1e674f6954e8888e83d3cb03ca0ab8ce1558f2d43380f"
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-opacity-folding-publication-source-opacity-census-audit-v4482/primary-receipt-opacity-census-audit-v2.json",
+      "sha256": "a2ddc69615c18f7f0632d1b34050cfdbe7f32c3dfd047454a0f4fb6e1253584e"
+    }
+  ],
+  "producer_pid": 2117453,
+  "renderer_qualified": false,
+  "repository_source_target_cache_oracle_mutation": false,
+  "schema": 2,
+  "source_implementation_recommendation": {
+    "ordinary_single_draw": "Keep the exact adjacent supported-operation float-alpha fold. Move or omit only proven coverage-inert structural state that blocks adjacency; retain real clips, transforms, readbacks and ordinary fallback.",
+    "retained_ownership": "Carry actual source-driven layer/effect/clip ownership through paint capture; publish owned transparent per-layer paint programs/pictures and the correct effect-tree opacity interval independently of canonical CPU replay. Do not partition by DOM shape or infer safe multi-draw folding from opaque overdraw.",
+    "validation": "Compare the unchanged whole 320x240 images at all five scales, including exact Root 40x40 two-column reduced fixture; preserve multi-draw, real-clip, rounded, transformed and outline neighbors. Further final surface/material/SQS observation is required before choosing a contain numeric publication route."
+  },
+  "source_review_ready": true
+}

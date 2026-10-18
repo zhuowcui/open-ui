@@ -1,0 +1,38 @@
+{
+  "actual_guard_exit": 1,
+  "actual_whole_owner_exit": 1,
+  "all_commands_terminal": true,
+  "failure": "Guard restored wrong branch twice (git exit 128); owner then failed source identity assertion",
+  "frozen_source_and_guard_probes_unchanged": true,
+  "guard_log_sha256": "4682d67a8b0ae4e3ed0c50b0bc851adfc392ce618680fe755117f976504dded6",
+  "guard_pid_absent": true,
+  "known_session_closed_actual_exit": 1,
+  "known_session_id": 18625,
+  "matrices_executed": 0,
+  "named_baseline_tests_executed": 3,
+  "named_fixed_tests_executed": 0,
+  "native_pixel_qualification": false,
+  "no_cargo_or_pixel_compare_process_alive_at_observation": true,
+  "old_guard_sha256": "64354955673d902295ef7cbe11e2436dc4398b10972171256bf125ce6bdf52f0",
+  "old_owner_sha256": "75dadcb0c24433bd544c8ca6b728d953178fff3d6cd8e8c89e6a99f55db3db94",
+  "old_receipts_preserved": true,
+  "owner_pid_absent": true,
+  "probe_sha256": "696bec7cb1b0d54bf80a5fde0bcd47bfcf1299121d9baa6177cf419d2e2389db",
+  "qualification_failed": true,
+  "release_qualification": false,
+  "schema_version": 1,
+  "source_after": {
+    "clean": true,
+    "commit": "5390b683c6b7898d79f36450f1034f0d6a89d37d",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "44e861dd4e2d16ba3885a6fa7541dceb0f406adfc165aac35ab74f9ae6f125a4",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_before": {
+    "clean": true,
+    "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

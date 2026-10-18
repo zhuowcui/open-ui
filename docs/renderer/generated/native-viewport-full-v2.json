@@ -1,0 +1,682 @@
+{
+  "accountability": {
+    "checks_passed": 7,
+    "clean_checkout_command": [
+      "python3",
+      "tools/accountability/audit.py",
+      "--repository-only"
+    ],
+    "prior_default_command_exit_code": 1,
+    "prior_default_failure": "All 5,731 ignored historical PNG pairs are absent from this clean worktree. The existing clean-checkout mode verifies committed historical metadata; the separate immutable archive check passes. No audit rule or pixel gate is changed.",
+    "process_exit_code": 0
+  },
+  "affected_selection": {
+    "changed": [
+      {
+        "candidate": 0,
+        "earlier": 184,
+        "id": "wpt/css_backgrounds/background-attachment-fixed-inside-transform-1",
+        "neutral": 0,
+        "profile": "legacy-800x600@1"
+      },
+      {
+        "candidate": 0,
+        "earlier": 184,
+        "id": "wpt/css_backgrounds/background-attachment-fixed-inside-transform-1-ref",
+        "neutral": 0,
+        "profile": "legacy-800x600@1"
+      },
+      {
+        "candidate": 365,
+        "earlier": 365,
+        "id": "wpt/css_backgrounds/background-clip_clip-border-box_with_radius",
+        "neutral": 365,
+        "profile": "legacy-800x600@1"
+      },
+      {
+        "candidate": 382,
+        "earlier": 383,
+        "id": "wpt/css_backgrounds/background-clip_clip-content-box_with_radius",
+        "neutral": 382,
+        "profile": "legacy-800x600@1"
+      },
+      {
+        "candidate": 428,
+        "earlier": 429,
+        "id": "wpt/css_backgrounds/background-clip_clip-padding-box_with_radius",
+        "neutral": 428,
+        "profile": "legacy-800x600@1"
+      },
+      {
+        "candidate": 622,
+        "earlier": 628,
+        "id": "wpt/css_backgrounds/background-origin_origin-border-box_with_radius",
+        "neutral": 622,
+        "profile": "legacy-800x600@1"
+      },
+      {
+        "candidate": 622,
+        "earlier": 628,
+        "id": "wpt/css_backgrounds/background-origin_origin-content-box_with_radius",
+        "neutral": 622,
+        "profile": "legacy-800x600@1"
+      },
+      {
+        "candidate": 622,
+        "earlier": 628,
+        "id": "wpt/css_backgrounds/background-origin_origin-padding-box_with_radius",
+        "neutral": 622,
+        "profile": "legacy-800x600@1"
+      },
+      {
+        "candidate": 0,
+        "earlier": 3,
+        "id": "wpt/css_overflow/scroll-markers_targeted-column-scroll-marker-selection-001-ref",
+        "neutral": 0,
+        "profile": "legacy-800x600@1"
+      },
+      {
+        "candidate": 0,
+        "earlier": 3,
+        "id": "wpt/css_overflow/scroll-markers_targeted-column-scroll-marker-selection-002-ref",
+        "neutral": 0,
+        "profile": "legacy-800x600@1"
+      },
+      {
+        "candidate": 0,
+        "earlier": 3,
+        "id": "wpt/css_overflow/scroll-markers_targeted-column-scroll-marker-selection-003-ref",
+        "neutral": 0,
+        "profile": "legacy-800x600@1"
+      },
+      {
+        "candidate": 0,
+        "earlier": 3,
+        "id": "wpt/css_overflow/scroll-markers_targeted-column-scroll-marker-selection-004-ref",
+        "neutral": 0,
+        "profile": "legacy-800x600@1"
+      },
+      {
+        "candidate": 0,
+        "earlier": 188,
+        "id": "wpt/css_backgrounds/background-attachment-fixed-inside-transform-1",
+        "neutral": 0,
+        "profile": "mobile-375x667@2"
+      },
+      {
+        "candidate": 0,
+        "earlier": 188,
+        "id": "wpt/css_backgrounds/background-attachment-fixed-inside-transform-1-ref",
+        "neutral": 0,
+        "profile": "mobile-375x667@2"
+      },
+      {
+        "candidate": 0,
+        "earlier": 18,
+        "id": "wpt/css_break/transform-009",
+        "neutral": 0,
+        "profile": "mobile-375x667@2"
+      },
+      {
+        "candidate": 0,
+        "earlier": 16,
+        "id": "wpt/css_flexbox/flexbox-align-self-horiz-001-table",
+        "neutral": 0,
+        "profile": "mobile-375x667@2"
+      },
+      {
+        "candidate": 0,
+        "earlier": 4,
+        "id": "wpt/css_flexbox/flexbox-align-self-vert-002",
+        "neutral": 0,
+        "profile": "mobile-375x667@2"
+      },
+      {
+        "candidate": 0,
+        "earlier": 4,
+        "id": "wpt/css_flexbox/flexbox-align-self-vert-002-ref",
+        "neutral": 0,
+        "profile": "mobile-375x667@2"
+      },
+      {
+        "candidate": 0,
+        "earlier": 4,
+        "id": "wpt/css_flexbox/flexbox-align-self-vert-rtl-002",
+        "neutral": 0,
+        "profile": "mobile-375x667@2"
+      },
+      {
+        "candidate": 0,
+        "earlier": 4,
+        "id": "wpt/css_flexbox/flexbox-align-self-vert-rtl-002-ref",
+        "neutral": 0,
+        "profile": "mobile-375x667@2"
+      },
+      {
+        "candidate": 0,
+        "earlier": 4,
+        "id": "wpt/css_flexbox/flexbox-align-self-vert-rtl-005",
+        "neutral": 0,
+        "profile": "mobile-375x667@2"
+      },
+      {
+        "candidate": 0,
+        "earlier": 4,
+        "id": "wpt/css_flexbox/flexbox-align-self-vert-rtl-005-ref",
+        "neutral": 0,
+        "profile": "mobile-375x667@2"
+      },
+      {
+        "candidate": 189,
+        "earlier": 271,
+        "id": "wpt/css_overflow/overflow-replaced-element-002",
+        "neutral": 189,
+        "profile": "mobile-375x667@2"
+      },
+      {
+        "candidate": 189,
+        "earlier": 271,
+        "id": "wpt/css_overflow/overflow-replaced-element-002-ref",
+        "neutral": 189,
+        "profile": "mobile-375x667@2"
+      },
+      {
+        "candidate": 822,
+        "earlier": 832,
+        "id": "wpt/css_overflow/scroll-markers_targeted-column-scroll-marker-selection-003-ref",
+        "neutral": 822,
+        "profile": "mobile-375x667@2"
+      },
+      {
+        "candidate": 822,
+        "earlier": 832,
+        "id": "wpt/css_overflow/scroll-markers_targeted-column-scroll-marker-selection-004-ref",
+        "neutral": 822,
+        "profile": "mobile-375x667@2"
+      },
+      {
+        "candidate": 1735,
+        "earlier": 1738,
+        "id": "wpt/css_position/position-absolute-semi-replaced-stretch-other",
+        "neutral": 1735,
+        "profile": "mobile-375x667@2"
+      },
+      {
+        "candidate": 1735,
+        "earlier": 1738,
+        "id": "wpt/css_position/position-absolute-semi-replaced-stretch-other-ref",
+        "neutral": 1735,
+        "profile": "mobile-375x667@2"
+      },
+      {
+        "candidate": 1,
+        "earlier": 40,
+        "id": "wpt/css_backgrounds/background-attachment-fixed-inside-transform-1",
+        "neutral": 1,
+        "profile": "desktop-1280x720@1.25"
+      },
+      {
+        "candidate": 1,
+        "earlier": 40,
+        "id": "wpt/css_backgrounds/background-attachment-fixed-inside-transform-1-ref",
+        "neutral": 1,
+        "profile": "desktop-1280x720@1.25"
+      }
+    ],
+    "complete_contract_scope": false,
+    "exact_losses_from_neutral_in_selection": [],
+    "oracle_inputs_unchanged": true,
+    "process_exit_code": 1,
+    "remaining_exact_losses": [],
+    "report_sha256": "24133975846ef78ac23346025e85135f2518b37c5c14d9fb45c3f22c843b02dd",
+    "restored_exact": [
+      [
+        "legacy-800x600@1",
+        "wpt/css_backgrounds/background-attachment-fixed-inside-transform-1"
+      ],
+      [
+        "legacy-800x600@1",
+        "wpt/css_backgrounds/background-attachment-fixed-inside-transform-1-ref"
+      ],
+      [
+        "legacy-800x600@1",
+        "wpt/css_overflow/scroll-markers_targeted-column-scroll-marker-selection-001-ref"
+      ],
+      [
+        "legacy-800x600@1",
+        "wpt/css_overflow/scroll-markers_targeted-column-scroll-marker-selection-002-ref"
+      ],
+      [
+        "legacy-800x600@1",
+        "wpt/css_overflow/scroll-markers_targeted-column-scroll-marker-selection-003-ref"
+      ],
+      [
+        "legacy-800x600@1",
+        "wpt/css_overflow/scroll-markers_targeted-column-scroll-marker-selection-004-ref"
+      ],
+      [
+        "mobile-375x667@2",
+        "wpt/css_backgrounds/background-attachment-fixed-inside-transform-1"
+      ],
+      [
+        "mobile-375x667@2",
+        "wpt/css_backgrounds/background-attachment-fixed-inside-transform-1-ref"
+      ],
+      [
+        "mobile-375x667@2",
+        "wpt/css_break/transform-009"
+      ],
+      [
+        "mobile-375x667@2",
+        "wpt/css_flexbox/flexbox-align-self-horiz-001-table"
+      ],
+      [
+        "mobile-375x667@2",
+        "wpt/css_flexbox/flexbox-align-self-vert-002"
+      ],
+      [
+        "mobile-375x667@2",
+        "wpt/css_flexbox/flexbox-align-self-vert-002-ref"
+      ],
+      [
+        "mobile-375x667@2",
+        "wpt/css_flexbox/flexbox-align-self-vert-rtl-002"
+      ],
+      [
+        "mobile-375x667@2",
+        "wpt/css_flexbox/flexbox-align-self-vert-rtl-002-ref"
+      ],
+      [
+        "mobile-375x667@2",
+        "wpt/css_flexbox/flexbox-align-self-vert-rtl-005"
+      ],
+      [
+        "mobile-375x667@2",
+        "wpt/css_flexbox/flexbox-align-self-vert-rtl-005-ref"
+      ]
+    ],
+    "results": {
+      "different": 63,
+      "errors": 0,
+      "exact": 33,
+      "profile_result_sha256": "71f24f403c8bf5c8c061e21b3a8c21264760581a38543d429c7b14e36ac5992b",
+      "total": 96
+    },
+    "source": {
+      "clean": true,
+      "commit": "1366b72f1ce5ebc0ee8f55ce03f69458856fd0a1",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "32974b1d86729b7c9a34a5bf9ee98a4ce2418d8fe36d4b967ebcccf023cc05a3",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "affected_selection_native_png_rgba_and_diff_signatures_all_match_neutral_gamma": true,
+  "artifacts": [
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/compositor-clip-build-v34.log",
+      "sha256": "855463032d553c684ac8bfa88f6794d52e3e9c40224fc1321c5eb64a7c516a93"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/compositor-clip-clean-v34/source-before-build.json",
+      "sha256": "5d7744208327554ce882424021e859ba3ad627d4cd92c135725abb623c6750e3"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/compositor-clip-clean-v34/source-after-build.json",
+      "sha256": "5d7744208327554ce882424021e859ba3ad627d4cd92c135725abb623c6750e3"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/compositor-clip-clean-v34/renderer-build-identity.json",
+      "sha256": "d54c9b2cf2e43dfabb0ab293cbed3fdaf317147cd72d038e62b0b603ad932a11"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/compositor-clip-affected-v34/full-summary.json",
+      "sha256": "24133975846ef78ac23346025e85135f2518b37c5c14d9fb45c3f22c843b02dd"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/compositor-clip-affected-delta-v34.json",
+      "sha256": "b7c1a17af139b22baf91f30cdba26b16b12d7c8deba62a73b0a69de7db0fa7e9"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/compositor-clip-native-delta-v34.json",
+      "sha256": "052fd7a2666a7be45a8daaf7c2317ac09be3cb11388e1a8a72080e5f327b2589"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/compositor-clip-clean-v34-comparison-v1.json",
+      "sha256": "a285f78e26c4655179758ef7841f84d4cd272d5ea145e6a4cc804f8d80bb6bb4"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/direction-guards-v2/compositor-clip-clean-v34-comparison-v1.json",
+      "sha256": "253e08f6be4294ba410884f4522b714100d5709f69217189d95af6fa0cfdfc9e"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/compositor-clip-workspace-v34/workspace.json",
+      "sha256": "ab8883b057342912fc57569f8c801f6700963861402c039f9b02338676ce76a2"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/compositor-clip-workspace-v34.log",
+      "sha256": "0a6f01d6b1faaa6576b761cea5ff968083eb0ea62f2e4671a2b22c74214e8313"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/compositor-clip-contract-checks-v35.json",
+      "sha256": "3cf9175024b7810a5d4ebf8f5c9444932a56fb45cadd5f273571b5339930ef9b"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/compositor-clip-release-source-v35.log",
+      "sha256": "d08a8af21975df89969d24c7409f282fb7fc1571df563105f44315da749acbb1"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/compositor-clip-accountability-v35.log",
+      "sha256": "6e46ec78e9e16a451e079633e2e12fab8f4989472810b07a6c0d3948f407ae47"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/compositor-clip-accountability-repository-v36.log",
+      "sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/compositor-clip-clean-focused-v35/focused-summary.json",
+      "sha256": "3f6fa53fa8d9efe76d9e8414e52e7c516538b163488d8187c43be3676ca85214"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/compositor-clip-clean-primitive-v35/primitive-summary.json",
+      "sha256": "64cfccd627b9dd132d8950b9e61ae1bff83f3a2333862f8c3ab1572d4f2e6ec4"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/compositor-clip-umbrella-code-proof-v36.json",
+      "sha256": "1f6a5a0be8115d27a8e1deae528777b3b56cedc594e67465e3d31b425e0a0bf5"
+    }
+  ],
+  "complete_census_runs": [
+    {
+      "results_dir": "out/renderer-evidence/native-viewport-scroll-v1/compositor-clip-clean-full-v35",
+      "source": {
+        "clean": true,
+        "commit": "1366b72f1ce5ebc0ee8f55ce03f69458856fd0a1",
+        "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+        "source_tree_sha256": "32974b1d86729b7c9a34a5bf9ee98a4ce2418d8fe36d4b967ebcccf023cc05a3",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "status": "running; no final result claimed",
+      "suite": "full"
+    },
+    {
+      "results_dir": "out/renderer-evidence/native-viewport-scroll-v1/compositor-clip-clean-expanded-v35",
+      "source": {
+        "clean": true,
+        "commit": "1366b72f1ce5ebc0ee8f55ce03f69458856fd0a1",
+        "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+        "source_tree_sha256": "32974b1d86729b7c9a34a5bf9ee98a4ce2418d8fe36d4b967ebcccf023cc05a3",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "status": "running; no final result claimed",
+      "suite": "expanded"
+    }
+  ],
+  "complete_matrices": [
+    {
+      "all_native_oracle_image_hashes_and_diff_signatures_unchanged": true,
+      "process_exit_code": 0,
+      "report_path": "out/renderer-evidence/native-viewport-scroll-v1/compositor-clip-clean-focused-v35/focused-summary.json",
+      "report_sha256": "3f6fa53fa8d9efe76d9e8414e52e7c516538b163488d8187c43be3676ca85214",
+      "results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 640,
+        "profile_result_sha256": "5275c06857804277ad777509e1f87d73cfb9ca537ebeaaed68ab4cad7b88fd66",
+        "total": 640
+      },
+      "source": {
+        "clean": true,
+        "commit": "1366b72f1ce5ebc0ee8f55ce03f69458856fd0a1",
+        "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+        "source_tree_sha256": "32974b1d86729b7c9a34a5bf9ee98a4ce2418d8fe36d4b967ebcccf023cc05a3",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "1366b72f1ce5ebc0ee8f55ce03f69458856fd0a1",
+        "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+        "source_tree_sha256": "32974b1d86729b7c9a34a5bf9ee98a4ce2418d8fe36d4b967ebcccf023cc05a3",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "suite": "focused"
+    },
+    {
+      "all_native_oracle_image_hashes_and_diff_signatures_unchanged": true,
+      "process_exit_code": 0,
+      "report_path": "out/renderer-evidence/native-viewport-scroll-v1/compositor-clip-clean-primitive-v35/primitive-summary.json",
+      "report_sha256": "64cfccd627b9dd132d8950b9e61ae1bff83f3a2333862f8c3ab1572d4f2e6ec4",
+      "results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 960,
+        "profile_result_sha256": "ad0a0d152328e5a2bb65ce5f1aac7d1a509b06d0fc4de49cf143bbe663afd233",
+        "total": 960
+      },
+      "source": {
+        "clean": true,
+        "commit": "1366b72f1ce5ebc0ee8f55ce03f69458856fd0a1",
+        "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+        "source_tree_sha256": "32974b1d86729b7c9a34a5bf9ee98a4ce2418d8fe36d4b967ebcccf023cc05a3",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "1366b72f1ce5ebc0ee8f55ce03f69458856fd0a1",
+        "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+        "source_tree_sha256": "32974b1d86729b7c9a34a5bf9ee98a4ce2418d8fe36d4b967ebcccf023cc05a3",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "suite": "primitive"
+    }
+  ],
+  "formatting": {
+    "command": [
+      "cargo",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "process_exit_code": 0
+  },
+  "implementation": {
+    "applied_to_umbrella": true,
+    "qualification_source": {
+      "clean": true,
+      "commit": "1366b72f1ce5ebc0ee8f55ce03f69458856fd0a1",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "32974b1d86729b7c9a34a5bf9ee98a4ce2418d8fe36d4b967ebcccf023cc05a3",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "reviewed_root_cause": "The duplicate outer viewport clip inside document raster changes analytic coverage of transformed ink near the final surface edge. Keep the smaller client clip for reserved scrollbar gutters, and defer clipping the outer viewport to surface/tile assembly when no gutter is reserved.",
+    "root_cause_owner": "openui-paint",
+    "runtime_file": "bindings/rust/openui-paint/src/painter.rs",
+    "runtime_file_sha256": "178b528c4a46f05d4ee7469a58af0f98fab3f1aee0a2a1816e078a72e637fc81"
+  },
+  "javascript_executed_by_openui": false,
+  "locked_workspace": {
+    "artifact": {
+      "before_sha256": "c18c847b7ab493b099217cd9a710ab5d731026ca7474a0bcfc3be7a3e0be0871",
+      "produced_sha256": "23b3d97436ebb63a32051c3f17a8e5e50ebc136fd8b4b2b86a64d7a84bfa3b13",
+      "restored_sha256": "c18c847b7ab493b099217cd9a710ab5d731026ca7474a0bcfc3be7a3e0be0871"
+    },
+    "command": [
+      "cargo",
+      "--config",
+      ".cargo/config.chromium.toml",
+      "test",
+      "--workspace",
+      "--locked"
+    ],
+    "failed": 0,
+    "ignored": 13,
+    "log_sha256": "0a6f01d6b1faaa6576b761cea5ff968083eb0ea62f2e4671a2b22c74214e8313",
+    "passed": 8498,
+    "process_exit_code": 0,
+    "source": {
+      "clean": true,
+      "commit": "1366b72f1ce5ebc0ee8f55ce03f69458856fd0a1",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "32974b1d86729b7c9a34a5bf9ee98a4ce2418d8fe36d4b967ebcccf023cc05a3",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "1366b72f1ce5ebc0ee8f55ce03f69458856fd0a1",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "32974b1d86729b7c9a34a5bf9ee98a4ce2418d8fe36d4b967ebcccf023cc05a3",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test_profile_debug": 0,
+    "test_result_lines": 147
+  },
+  "native_replays": [
+    {
+      "changed_image_or_geometry_or_difference_records": [],
+      "exact": 196,
+      "process_exit_code": 0,
+      "report_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/compositor-clip-clean-v34-comparison-v1.json",
+      "report_sha256": "a285f78e26c4655179758ef7841f84d4cd272d5ea145e6a4cc804f8d80bb6bb4",
+      "total": 250
+    },
+    {
+      "changed_image_or_geometry_or_difference_records": [],
+      "exact": 488,
+      "process_exit_code": 0,
+      "report_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/direction-guards-v2/compositor-clip-clean-v34-comparison-v1.json",
+      "report_sha256": "253e08f6be4294ba410884f4522b714100d5709f69217189d95af6fa0cfdfc9e",
+      "total": 600
+    }
+  ],
+  "pixel_target": "Pinned Chromium 147; prior Open UI images are provenance only",
+  "prior_complete_failure_index": "docs/renderer/generated/native-viewport-full-v1.json",
+  "read_only_generators_and_archive": [
+    {
+      "command": [
+        "python3",
+        "tools/qualification/generate_renderer_contract.py",
+        "--check"
+      ],
+      "log_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/compositor-clip-renderer-check-v35.log",
+      "log_sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691",
+      "name": "renderer",
+      "process_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/wpt/generate_sp13r_multicol_closure.py",
+        "--check"
+      ],
+      "log_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/compositor-clip-multicol-check-v35.log",
+      "log_sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222",
+      "name": "multicol",
+      "process_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/wpt/generate_sp17_closure.py",
+        "--check"
+      ],
+      "log_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/compositor-clip-sp17-check-v35.log",
+      "log_sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a",
+      "name": "sp17",
+      "process_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/wpt/generate_sp18_closure.py",
+        "--check"
+      ],
+      "log_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/compositor-clip-sp18-check-v35.log",
+      "log_sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763",
+      "name": "sp18",
+      "process_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/wpt/generate_sp20_closure.py",
+        "--check"
+      ],
+      "log_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/compositor-clip-sp20-check-v35.log",
+      "log_sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d",
+      "name": "sp20",
+      "process_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/release/generate_v02_contract.py",
+        "--check"
+      ],
+      "log_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/compositor-clip-v02-check-v35.log",
+      "log_sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd",
+      "name": "v02",
+      "process_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/style/generate_properties.py",
+        "--check"
+      ],
+      "log_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/compositor-clip-style-check-v35.log",
+      "log_sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1",
+      "name": "style",
+      "process_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/ffi/generate_ffi.py",
+        "--check"
+      ],
+      "log_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/compositor-clip-ffi-check-v35.log",
+      "log_sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821",
+      "name": "ffi",
+      "process_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/accountability/restore_frozen_openui_archive.py",
+        "--check"
+      ],
+      "log_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/compositor-clip-archive-check-v35.log",
+      "log_sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32",
+      "name": "archive",
+      "process_exit_code": 0
+    }
+  ],
+  "release_qualification": false,
+  "release_source_verification": {
+    "conformance_scenarios": 58,
+    "domains": 10,
+    "frozen_abi_preserved": true,
+    "process_exit_code": 0,
+    "public_crates": 11
+  },
+  "remaining_gaps": [
+    "Complete original/expanded repair census and any new regressions",
+    "166 native fractional-scale images",
+    "Remaining public Rust/C API coverage and native scrollbar input/accessibility",
+    "892 previously unreviewed original residual IDs plus any new unreviewed residuals",
+    "Renderer oracle consistency, backend, compositor, hardening, hardware, packaging, signing and publication"
+  ],
+  "schema_version": 1,
+  "umbrella_source_proof": {
+    "all_renderer_build_harness_resource_and_input_files_match": true,
+    "non_runtime_differences": [
+      "README.md",
+      "docs/progress/current-status.md",
+      "docs/renderer/generated/native-viewport-full-v1.json",
+      "docs/renderer/generated/native-viewport-full-v2.json",
+      "docs/v02/release.md"
+    ],
+    "painter_sha256": "178b528c4a46f05d4ee7469a58af0f98fab3f1aee0a2a1816e078a72e637fc81",
+    "qualification_source": "1366b72f1ce5ebc0ee8f55ce03f69458856fd0a1"
+  }
+}

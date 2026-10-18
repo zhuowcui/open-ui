@@ -1,0 +1,1850 @@
+{
+  "schema_version": 1,
+  "admitted": false,
+  "javascript_executed_by_openui": false,
+  "device_scales": [
+    1,
+    1.25,
+    1.5,
+    2,
+    3
+  ],
+  "cases": [
+    {
+      "case": "green-0-phase-0-replaced-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/green.png",
+        "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+        "60",
+        "60",
+        "60",
+        "60",
+        "0",
+        "replaced",
+        "1"
+      ],
+      "resource_sha256": "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+      "input_sha256": "14d8ca8c8bc743227e249f0cad389f60d40da36f2a4a0c6ee21c2ea42a690f70",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/green-0-phase-0-replaced-opacity-1/test.html"
+    },
+    {
+      "case": "green-0-phase-0-replaced-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/green.png",
+        "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+        "60",
+        "60",
+        "60",
+        "60",
+        "0",
+        "replaced",
+        "0.5"
+      ],
+      "resource_sha256": "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+      "input_sha256": "af9c62cd30eef721ff34f5a8fd1a80ba72f2d3b31019c540c89c8247d9ae93bd",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/green-0-phase-0-replaced-opacity-0.5/test.html"
+    },
+    {
+      "case": "green-0-phase-0-background-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/green.png",
+        "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+        "60",
+        "60",
+        "60",
+        "60",
+        "0",
+        "background",
+        "1"
+      ],
+      "resource_sha256": "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+      "input_sha256": "3d048d10a9141906f8d30267ee22d651f68d083f90bed2efc643890118a03f42",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/green-0-phase-0-background-opacity-1/test.html"
+    },
+    {
+      "case": "green-0-phase-0-background-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/green.png",
+        "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+        "60",
+        "60",
+        "60",
+        "60",
+        "0",
+        "background",
+        "0.5"
+      ],
+      "resource_sha256": "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+      "input_sha256": "f4704b73fa9faadfbd274ee18193ab88285a326537f19c6f0444cb7da96946a8",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/green-0-phase-0-background-opacity-0.5/test.html"
+    },
+    {
+      "case": "green-0-phase-0.5-replaced-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/green.png",
+        "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+        "60",
+        "60",
+        "60",
+        "60",
+        "0.5",
+        "replaced",
+        "1"
+      ],
+      "resource_sha256": "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+      "input_sha256": "3f2b8c81b2eb0a652027788aa1943f13b9ae23d484113cd2380773f15418143c",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/green-0-phase-0.5-replaced-opacity-1/test.html"
+    },
+    {
+      "case": "green-0-phase-0.5-replaced-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/green.png",
+        "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+        "60",
+        "60",
+        "60",
+        "60",
+        "0.5",
+        "replaced",
+        "0.5"
+      ],
+      "resource_sha256": "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+      "input_sha256": "0891afdec302f094f81cede7852921e14809ffcb6b4c8035689f9001c8b513ab",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/green-0-phase-0.5-replaced-opacity-0.5/test.html"
+    },
+    {
+      "case": "green-0-phase-0.5-background-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/green.png",
+        "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+        "60",
+        "60",
+        "60",
+        "60",
+        "0.5",
+        "background",
+        "1"
+      ],
+      "resource_sha256": "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+      "input_sha256": "1f2b66cb2f6d5e6a085e8228501613fcd21c9bad18fb32abe8b100e1002225fa",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/green-0-phase-0.5-background-opacity-1/test.html"
+    },
+    {
+      "case": "green-0-phase-0.5-background-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/green.png",
+        "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+        "60",
+        "60",
+        "60",
+        "60",
+        "0.5",
+        "background",
+        "0.5"
+      ],
+      "resource_sha256": "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+      "input_sha256": "d19bb28854fa3386c5fbeed8248a8054aed315e9a69abbf3b144cd581d8a0778",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/green-0-phase-0.5-background-opacity-0.5/test.html"
+    },
+    {
+      "case": "green-1-phase-0-replaced-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/green.png",
+        "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+        "60",
+        "60",
+        "45.5",
+        "33.5",
+        "0",
+        "replaced",
+        "1"
+      ],
+      "resource_sha256": "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+      "input_sha256": "7d1331b9d0cd4cf43900a44a449af2e4138ae9dadc9c070a5bc0550963f19240",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/green-1-phase-0-replaced-opacity-1/test.html"
+    },
+    {
+      "case": "green-1-phase-0-replaced-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/green.png",
+        "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+        "60",
+        "60",
+        "45.5",
+        "33.5",
+        "0",
+        "replaced",
+        "0.5"
+      ],
+      "resource_sha256": "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+      "input_sha256": "bf007cd04a43eb907ce1378e0c1a23a74d4bdd3131c4aa48f839047de636f144",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/green-1-phase-0-replaced-opacity-0.5/test.html"
+    },
+    {
+      "case": "green-1-phase-0-background-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/green.png",
+        "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+        "60",
+        "60",
+        "45.5",
+        "33.5",
+        "0",
+        "background",
+        "1"
+      ],
+      "resource_sha256": "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+      "input_sha256": "142bce99279bc80e62ec1879c3fbf1ad4f6fe5c15c55947bf37c7d3fc88a14e6",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/green-1-phase-0-background-opacity-1/test.html"
+    },
+    {
+      "case": "green-1-phase-0-background-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/green.png",
+        "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+        "60",
+        "60",
+        "45.5",
+        "33.5",
+        "0",
+        "background",
+        "0.5"
+      ],
+      "resource_sha256": "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+      "input_sha256": "648fdcff38cfe0fb2e25328304ada77ef4f21d65ecea884d2ba142bb9dcb4c88",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/green-1-phase-0-background-opacity-0.5/test.html"
+    },
+    {
+      "case": "green-1-phase-0.5-replaced-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/green.png",
+        "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+        "60",
+        "60",
+        "45.5",
+        "33.5",
+        "0.5",
+        "replaced",
+        "1"
+      ],
+      "resource_sha256": "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+      "input_sha256": "1e0fb184ad30d4d691d6c240ae3a82f657cbce9040640d05cffffaad1e21031c",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/green-1-phase-0.5-replaced-opacity-1/test.html"
+    },
+    {
+      "case": "green-1-phase-0.5-replaced-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/green.png",
+        "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+        "60",
+        "60",
+        "45.5",
+        "33.5",
+        "0.5",
+        "replaced",
+        "0.5"
+      ],
+      "resource_sha256": "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+      "input_sha256": "f7baeadc0f4acb8b615e9e069d3576e64f147a33aa13a767e352f28b97536a7f",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/green-1-phase-0.5-replaced-opacity-0.5/test.html"
+    },
+    {
+      "case": "green-1-phase-0.5-background-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/green.png",
+        "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+        "60",
+        "60",
+        "45.5",
+        "33.5",
+        "0.5",
+        "background",
+        "1"
+      ],
+      "resource_sha256": "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+      "input_sha256": "f4d19d4897bb8e558959979f62551c7c65a542c1756db631c60f50e4d459f64b",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/green-1-phase-0.5-background-opacity-1/test.html"
+    },
+    {
+      "case": "green-1-phase-0.5-background-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/green.png",
+        "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+        "60",
+        "60",
+        "45.5",
+        "33.5",
+        "0.5",
+        "background",
+        "0.5"
+      ],
+      "resource_sha256": "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+      "input_sha256": "601af37293121c59b196f64ee71a5f40c22ac2e022142ee53cd7f526aa6b957b",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/green-1-phase-0.5-background-opacity-0.5/test.html"
+    },
+    {
+      "case": "green-2-phase-0-replaced-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/green.png",
+        "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+        "60",
+        "60",
+        "101.5",
+        "72.5",
+        "0",
+        "replaced",
+        "1"
+      ],
+      "resource_sha256": "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+      "input_sha256": "7b7443de3427d4fced79a7380457638889b1b5fee6e6054d92c26502a0e1deee",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/green-2-phase-0-replaced-opacity-1/test.html"
+    },
+    {
+      "case": "green-2-phase-0-replaced-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/green.png",
+        "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+        "60",
+        "60",
+        "101.5",
+        "72.5",
+        "0",
+        "replaced",
+        "0.5"
+      ],
+      "resource_sha256": "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+      "input_sha256": "e497e13feea0001826cae3870ada66019b1d56a62fef87d32621cdd8cc9496d9",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/green-2-phase-0-replaced-opacity-0.5/test.html"
+    },
+    {
+      "case": "green-2-phase-0-background-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/green.png",
+        "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+        "60",
+        "60",
+        "101.5",
+        "72.5",
+        "0",
+        "background",
+        "1"
+      ],
+      "resource_sha256": "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+      "input_sha256": "de31628ceaab28b721c3652c390d8a5bc39939817fc3e8162a5a186e2251daea",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/green-2-phase-0-background-opacity-1/test.html"
+    },
+    {
+      "case": "green-2-phase-0-background-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/green.png",
+        "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+        "60",
+        "60",
+        "101.5",
+        "72.5",
+        "0",
+        "background",
+        "0.5"
+      ],
+      "resource_sha256": "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+      "input_sha256": "116ae270e1e779b01d6d2cbac21d5920b129abbf71a58d62daa0a0c7064d7f41",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/green-2-phase-0-background-opacity-0.5/test.html"
+    },
+    {
+      "case": "green-2-phase-0.5-replaced-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/green.png",
+        "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+        "60",
+        "60",
+        "101.5",
+        "72.5",
+        "0.5",
+        "replaced",
+        "1"
+      ],
+      "resource_sha256": "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+      "input_sha256": "4d29bc7f4646c99c4ea3c46901c2997108daf11bc01ad6260e5e2368688168bd",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/green-2-phase-0.5-replaced-opacity-1/test.html"
+    },
+    {
+      "case": "green-2-phase-0.5-replaced-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/green.png",
+        "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+        "60",
+        "60",
+        "101.5",
+        "72.5",
+        "0.5",
+        "replaced",
+        "0.5"
+      ],
+      "resource_sha256": "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+      "input_sha256": "e429ff7ff1ee9d790d32c00465f078c3bd4c644885f6609b10850a9dfdd5c746",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/green-2-phase-0.5-replaced-opacity-0.5/test.html"
+    },
+    {
+      "case": "green-2-phase-0.5-background-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/green.png",
+        "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+        "60",
+        "60",
+        "101.5",
+        "72.5",
+        "0.5",
+        "background",
+        "1"
+      ],
+      "resource_sha256": "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+      "input_sha256": "9aa6b72a29a70b77f27a25801ef1f45e166a3b48cdf1a04631086816a0e7d52f",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/green-2-phase-0.5-background-opacity-1/test.html"
+    },
+    {
+      "case": "green-2-phase-0.5-background-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/green.png",
+        "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+        "60",
+        "60",
+        "101.5",
+        "72.5",
+        "0.5",
+        "background",
+        "0.5"
+      ],
+      "resource_sha256": "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+      "input_sha256": "6e27bac11cb18feeeef1cef5017a032753d04680c977f2bf24b2d7dbd6f14397",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/green-2-phase-0.5-background-opacity-0.5/test.html"
+    },
+    {
+      "case": "pattern-0-phase-0-replaced-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/pattern.png",
+        "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+        "100",
+        "100",
+        "100",
+        "100",
+        "0",
+        "replaced",
+        "1"
+      ],
+      "resource_sha256": "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+      "input_sha256": "eb5d6dd4a80875b55e8cc930166fe41e69092030aacb057d779574f033a6ce7c",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/pattern-0-phase-0-replaced-opacity-1/test.html"
+    },
+    {
+      "case": "pattern-0-phase-0-replaced-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/pattern.png",
+        "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+        "100",
+        "100",
+        "100",
+        "100",
+        "0",
+        "replaced",
+        "0.5"
+      ],
+      "resource_sha256": "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+      "input_sha256": "b60972658513de813be9e992d23edb501d86d6f75d70d1e2bb6661569a271621",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/pattern-0-phase-0-replaced-opacity-0.5/test.html"
+    },
+    {
+      "case": "pattern-0-phase-0-background-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/pattern.png",
+        "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+        "100",
+        "100",
+        "100",
+        "100",
+        "0",
+        "background",
+        "1"
+      ],
+      "resource_sha256": "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+      "input_sha256": "aeb7a1b9fa766dbe44430e6150560969cd0a05228c474d4f49268f888f3241b6",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/pattern-0-phase-0-background-opacity-1/test.html"
+    },
+    {
+      "case": "pattern-0-phase-0-background-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/pattern.png",
+        "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+        "100",
+        "100",
+        "100",
+        "100",
+        "0",
+        "background",
+        "0.5"
+      ],
+      "resource_sha256": "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+      "input_sha256": "399732446e946258673087792ce5ff69b05a90ef617eb98172e9723ee761903f",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/pattern-0-phase-0-background-opacity-0.5/test.html"
+    },
+    {
+      "case": "pattern-0-phase-0.5-replaced-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/pattern.png",
+        "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+        "100",
+        "100",
+        "100",
+        "100",
+        "0.5",
+        "replaced",
+        "1"
+      ],
+      "resource_sha256": "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+      "input_sha256": "8d158f74c8816735d9d567d484c5b27bee8033fa2ee879f546b31121d4bc1027",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/pattern-0-phase-0.5-replaced-opacity-1/test.html"
+    },
+    {
+      "case": "pattern-0-phase-0.5-replaced-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/pattern.png",
+        "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+        "100",
+        "100",
+        "100",
+        "100",
+        "0.5",
+        "replaced",
+        "0.5"
+      ],
+      "resource_sha256": "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+      "input_sha256": "6d91b7f45cd981149cfd1f57903b6ad57d5f1f5e150297d0895a95d5905f0d13",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/pattern-0-phase-0.5-replaced-opacity-0.5/test.html"
+    },
+    {
+      "case": "pattern-0-phase-0.5-background-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/pattern.png",
+        "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+        "100",
+        "100",
+        "100",
+        "100",
+        "0.5",
+        "background",
+        "1"
+      ],
+      "resource_sha256": "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+      "input_sha256": "af16c34bd116d714225ba21ea7fa5da580bd05c44acbb45d89db4c59057596c9",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/pattern-0-phase-0.5-background-opacity-1/test.html"
+    },
+    {
+      "case": "pattern-0-phase-0.5-background-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/pattern.png",
+        "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+        "100",
+        "100",
+        "100",
+        "100",
+        "0.5",
+        "background",
+        "0.5"
+      ],
+      "resource_sha256": "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+      "input_sha256": "980559196e2ad9b66f3d0b3941b0d9c997a5afa65edd8ae122b77e16ed3aeb3c",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/pattern-0-phase-0.5-background-opacity-0.5/test.html"
+    },
+    {
+      "case": "pattern-1-phase-0-replaced-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/pattern.png",
+        "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+        "100",
+        "100",
+        "45.5",
+        "33.5",
+        "0",
+        "replaced",
+        "1"
+      ],
+      "resource_sha256": "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+      "input_sha256": "2078406aefd3bcd6baa9beef0a11b65a123a0e5c0ee4f956f85ee1e59dce5a28",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/pattern-1-phase-0-replaced-opacity-1/test.html"
+    },
+    {
+      "case": "pattern-1-phase-0-replaced-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/pattern.png",
+        "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+        "100",
+        "100",
+        "45.5",
+        "33.5",
+        "0",
+        "replaced",
+        "0.5"
+      ],
+      "resource_sha256": "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+      "input_sha256": "f1ab9a60c2a8218a2027e0bb0784549f5a8e278ff8d1c23689f91a9eca5236a9",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/pattern-1-phase-0-replaced-opacity-0.5/test.html"
+    },
+    {
+      "case": "pattern-1-phase-0-background-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/pattern.png",
+        "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+        "100",
+        "100",
+        "45.5",
+        "33.5",
+        "0",
+        "background",
+        "1"
+      ],
+      "resource_sha256": "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+      "input_sha256": "5163f115691306e1cd925e525440e885b9b0ab6a25bd91e69a5c1e61346d4dca",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/pattern-1-phase-0-background-opacity-1/test.html"
+    },
+    {
+      "case": "pattern-1-phase-0-background-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/pattern.png",
+        "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+        "100",
+        "100",
+        "45.5",
+        "33.5",
+        "0",
+        "background",
+        "0.5"
+      ],
+      "resource_sha256": "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+      "input_sha256": "6ac2b905a175f46eada64a0a581f964f5db24a789ba3aaa0bcc125a228f92070",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/pattern-1-phase-0-background-opacity-0.5/test.html"
+    },
+    {
+      "case": "pattern-1-phase-0.5-replaced-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/pattern.png",
+        "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+        "100",
+        "100",
+        "45.5",
+        "33.5",
+        "0.5",
+        "replaced",
+        "1"
+      ],
+      "resource_sha256": "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+      "input_sha256": "efbbb23d116292d240516d2baad004f7aff37079dd41b6f216094a180167454d",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/pattern-1-phase-0.5-replaced-opacity-1/test.html"
+    },
+    {
+      "case": "pattern-1-phase-0.5-replaced-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/pattern.png",
+        "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+        "100",
+        "100",
+        "45.5",
+        "33.5",
+        "0.5",
+        "replaced",
+        "0.5"
+      ],
+      "resource_sha256": "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+      "input_sha256": "f54213955011aede8fc44eb82420cca238c524b4de3244a3a0bd3e6535ae6d65",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/pattern-1-phase-0.5-replaced-opacity-0.5/test.html"
+    },
+    {
+      "case": "pattern-1-phase-0.5-background-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/pattern.png",
+        "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+        "100",
+        "100",
+        "45.5",
+        "33.5",
+        "0.5",
+        "background",
+        "1"
+      ],
+      "resource_sha256": "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+      "input_sha256": "0c60a5ffbd44b72df4d15d125f6af3012e5d980ec231f1e54c6171c27737968a",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/pattern-1-phase-0.5-background-opacity-1/test.html"
+    },
+    {
+      "case": "pattern-1-phase-0.5-background-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/pattern.png",
+        "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+        "100",
+        "100",
+        "45.5",
+        "33.5",
+        "0.5",
+        "background",
+        "0.5"
+      ],
+      "resource_sha256": "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+      "input_sha256": "541d9b677afeb2c2484f0fc0b8c0172d5d8851e1623e39ed5481fe42470f7abf",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/pattern-1-phase-0.5-background-opacity-0.5/test.html"
+    },
+    {
+      "case": "pattern-2-phase-0-replaced-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/pattern.png",
+        "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+        "100",
+        "100",
+        "101.5",
+        "72.5",
+        "0",
+        "replaced",
+        "1"
+      ],
+      "resource_sha256": "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+      "input_sha256": "e1e3ebeb57cfbd4b66c1963a12f46e779ad81741255da8bca1edf1f88ea4d419",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/pattern-2-phase-0-replaced-opacity-1/test.html"
+    },
+    {
+      "case": "pattern-2-phase-0-replaced-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/pattern.png",
+        "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+        "100",
+        "100",
+        "101.5",
+        "72.5",
+        "0",
+        "replaced",
+        "0.5"
+      ],
+      "resource_sha256": "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+      "input_sha256": "0c7909d2e06cde9d8de2609664d98740180c1e36f614605a7df76c53ff4e503c",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/pattern-2-phase-0-replaced-opacity-0.5/test.html"
+    },
+    {
+      "case": "pattern-2-phase-0-background-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/pattern.png",
+        "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+        "100",
+        "100",
+        "101.5",
+        "72.5",
+        "0",
+        "background",
+        "1"
+      ],
+      "resource_sha256": "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+      "input_sha256": "c6c721dd01bd222d005c47edc0e991ee8dfea75c6eeb26bb63c6a40eae02c490",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/pattern-2-phase-0-background-opacity-1/test.html"
+    },
+    {
+      "case": "pattern-2-phase-0-background-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/pattern.png",
+        "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+        "100",
+        "100",
+        "101.5",
+        "72.5",
+        "0",
+        "background",
+        "0.5"
+      ],
+      "resource_sha256": "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+      "input_sha256": "cdc6cd8a320db99cbef6ea0e061b1f1e9f3300c69a486586b374ffa862d127ac",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/pattern-2-phase-0-background-opacity-0.5/test.html"
+    },
+    {
+      "case": "pattern-2-phase-0.5-replaced-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/pattern.png",
+        "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+        "100",
+        "100",
+        "101.5",
+        "72.5",
+        "0.5",
+        "replaced",
+        "1"
+      ],
+      "resource_sha256": "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+      "input_sha256": "27a20193045a7865e3a1665a87878f673ad600700cea2e605551f823ee51bca1",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/pattern-2-phase-0.5-replaced-opacity-1/test.html"
+    },
+    {
+      "case": "pattern-2-phase-0.5-replaced-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/pattern.png",
+        "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+        "100",
+        "100",
+        "101.5",
+        "72.5",
+        "0.5",
+        "replaced",
+        "0.5"
+      ],
+      "resource_sha256": "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+      "input_sha256": "ff300d21be03ea9a4d50c0e945f43f190f917c99f3dab50c441b4ec22d077c49",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/pattern-2-phase-0.5-replaced-opacity-0.5/test.html"
+    },
+    {
+      "case": "pattern-2-phase-0.5-background-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/pattern.png",
+        "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+        "100",
+        "100",
+        "101.5",
+        "72.5",
+        "0.5",
+        "background",
+        "1"
+      ],
+      "resource_sha256": "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+      "input_sha256": "cd92e0dfa6574fa09821dad1865af9c3ce5755c149d49c9e93a3a4e77dd7137f",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/pattern-2-phase-0.5-background-opacity-1/test.html"
+    },
+    {
+      "case": "pattern-2-phase-0.5-background-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/pattern.png",
+        "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+        "100",
+        "100",
+        "101.5",
+        "72.5",
+        "0.5",
+        "background",
+        "0.5"
+      ],
+      "resource_sha256": "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+      "input_sha256": "ad259218c94677c8d9868d140a9f22c4aeef37069f6fa00364c1678d958d8ac2",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/pattern-2-phase-0.5-background-opacity-0.5/test.html"
+    },
+    {
+      "case": "icc-0-phase-0-replaced-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/icc.png",
+        "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+        "300",
+        "224",
+        "300",
+        "224",
+        "0",
+        "replaced",
+        "1"
+      ],
+      "resource_sha256": "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+      "input_sha256": "574d12c77c33594de0e7ba8fcf8f080ff3e9df72735e7a318258c97c7a6b6719",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/icc-0-phase-0-replaced-opacity-1/test.html"
+    },
+    {
+      "case": "icc-0-phase-0-replaced-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/icc.png",
+        "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+        "300",
+        "224",
+        "300",
+        "224",
+        "0",
+        "replaced",
+        "0.5"
+      ],
+      "resource_sha256": "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+      "input_sha256": "af54ed59e4e46fb8f0f7dda9df0f9af37a96e90a9cc62df30ac78bdddb3bff7d",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/icc-0-phase-0-replaced-opacity-0.5/test.html"
+    },
+    {
+      "case": "icc-0-phase-0-background-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/icc.png",
+        "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+        "300",
+        "224",
+        "300",
+        "224",
+        "0",
+        "background",
+        "1"
+      ],
+      "resource_sha256": "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+      "input_sha256": "f573c5f7c4864d1430310520d8b555370ef8b208e0155c2739e2cf01ff67276d",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/icc-0-phase-0-background-opacity-1/test.html"
+    },
+    {
+      "case": "icc-0-phase-0-background-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/icc.png",
+        "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+        "300",
+        "224",
+        "300",
+        "224",
+        "0",
+        "background",
+        "0.5"
+      ],
+      "resource_sha256": "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+      "input_sha256": "f1e17a1be6046b6051c416cb202f74ed77de260fade5649195af4b1cf1638556",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/icc-0-phase-0-background-opacity-0.5/test.html"
+    },
+    {
+      "case": "icc-0-phase-0.5-replaced-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/icc.png",
+        "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+        "300",
+        "224",
+        "300",
+        "224",
+        "0.5",
+        "replaced",
+        "1"
+      ],
+      "resource_sha256": "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+      "input_sha256": "e17cd00326f8e0909ec509effb0ba7e3448ba5656c966eff26fa76d0c6e53188",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/icc-0-phase-0.5-replaced-opacity-1/test.html"
+    },
+    {
+      "case": "icc-0-phase-0.5-replaced-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/icc.png",
+        "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+        "300",
+        "224",
+        "300",
+        "224",
+        "0.5",
+        "replaced",
+        "0.5"
+      ],
+      "resource_sha256": "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+      "input_sha256": "265241090a61d9000336f99e505e9720565d569930d2b9df68458b71ec4325c4",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/icc-0-phase-0.5-replaced-opacity-0.5/test.html"
+    },
+    {
+      "case": "icc-0-phase-0.5-background-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/icc.png",
+        "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+        "300",
+        "224",
+        "300",
+        "224",
+        "0.5",
+        "background",
+        "1"
+      ],
+      "resource_sha256": "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+      "input_sha256": "852c4c6edf9f36ba87cb6b84ebe1b62b536026c70ce8968c331f02c599942cf7",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/icc-0-phase-0.5-background-opacity-1/test.html"
+    },
+    {
+      "case": "icc-0-phase-0.5-background-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/icc.png",
+        "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+        "300",
+        "224",
+        "300",
+        "224",
+        "0.5",
+        "background",
+        "0.5"
+      ],
+      "resource_sha256": "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+      "input_sha256": "2acb9558fb2910d8972918c0b36b42f300cedc5f520ee97e09075500cdf87714",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/icc-0-phase-0.5-background-opacity-0.5/test.html"
+    },
+    {
+      "case": "icc-1-phase-0-replaced-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/icc.png",
+        "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+        "300",
+        "224",
+        "45.5",
+        "33.5",
+        "0",
+        "replaced",
+        "1"
+      ],
+      "resource_sha256": "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+      "input_sha256": "656f6ecbc5b2fe927f5d7d867dde792fbc1f8d81dc5815aa036fa8861b515426",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/icc-1-phase-0-replaced-opacity-1/test.html"
+    },
+    {
+      "case": "icc-1-phase-0-replaced-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/icc.png",
+        "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+        "300",
+        "224",
+        "45.5",
+        "33.5",
+        "0",
+        "replaced",
+        "0.5"
+      ],
+      "resource_sha256": "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+      "input_sha256": "6c2acdfdd0019b9070678eb84997d4c0a53f3ca57161374b582d326aff1e426b",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/icc-1-phase-0-replaced-opacity-0.5/test.html"
+    },
+    {
+      "case": "icc-1-phase-0-background-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/icc.png",
+        "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+        "300",
+        "224",
+        "45.5",
+        "33.5",
+        "0",
+        "background",
+        "1"
+      ],
+      "resource_sha256": "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+      "input_sha256": "ea673165e0f12f6c6d412f4a6219f96f72a75145f2192d0b2df112c2090bb13c",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/icc-1-phase-0-background-opacity-1/test.html"
+    },
+    {
+      "case": "icc-1-phase-0-background-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/icc.png",
+        "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+        "300",
+        "224",
+        "45.5",
+        "33.5",
+        "0",
+        "background",
+        "0.5"
+      ],
+      "resource_sha256": "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+      "input_sha256": "2909b30386d379932925786c7b4e62b653bcf00b2fdb6b0aaebaff4327eceda8",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/icc-1-phase-0-background-opacity-0.5/test.html"
+    },
+    {
+      "case": "icc-1-phase-0.5-replaced-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/icc.png",
+        "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+        "300",
+        "224",
+        "45.5",
+        "33.5",
+        "0.5",
+        "replaced",
+        "1"
+      ],
+      "resource_sha256": "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+      "input_sha256": "a16738ad0a9177c213ef721c8854f83c9e2c29f3394971378b20ab9a8564c02f",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/icc-1-phase-0.5-replaced-opacity-1/test.html"
+    },
+    {
+      "case": "icc-1-phase-0.5-replaced-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/icc.png",
+        "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+        "300",
+        "224",
+        "45.5",
+        "33.5",
+        "0.5",
+        "replaced",
+        "0.5"
+      ],
+      "resource_sha256": "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+      "input_sha256": "6a38018c5ebc7c1849bde01871873e963957cd82fe852575374f8beaa9ff991a",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/icc-1-phase-0.5-replaced-opacity-0.5/test.html"
+    },
+    {
+      "case": "icc-1-phase-0.5-background-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/icc.png",
+        "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+        "300",
+        "224",
+        "45.5",
+        "33.5",
+        "0.5",
+        "background",
+        "1"
+      ],
+      "resource_sha256": "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+      "input_sha256": "1a063ccfa3b208a5d447b74737f073af5c2aefc826598c7eb9b464cc9cc35fb7",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/icc-1-phase-0.5-background-opacity-1/test.html"
+    },
+    {
+      "case": "icc-1-phase-0.5-background-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/icc.png",
+        "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+        "300",
+        "224",
+        "45.5",
+        "33.5",
+        "0.5",
+        "background",
+        "0.5"
+      ],
+      "resource_sha256": "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+      "input_sha256": "8e78f5efeb9ac7e343a2f7f308d6f360cc0493e08b222e73afac92f5144aea71",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/icc-1-phase-0.5-background-opacity-0.5/test.html"
+    },
+    {
+      "case": "icc-2-phase-0-replaced-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/icc.png",
+        "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+        "300",
+        "224",
+        "101.5",
+        "72.5",
+        "0",
+        "replaced",
+        "1"
+      ],
+      "resource_sha256": "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+      "input_sha256": "6510e5a75a3dc9925c2f3925bcc9b2f522912e7798990693fe563466e4d46a79",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/icc-2-phase-0-replaced-opacity-1/test.html"
+    },
+    {
+      "case": "icc-2-phase-0-replaced-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/icc.png",
+        "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+        "300",
+        "224",
+        "101.5",
+        "72.5",
+        "0",
+        "replaced",
+        "0.5"
+      ],
+      "resource_sha256": "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+      "input_sha256": "04f9c0bb70e3e4bba0a208761bd6c934465a510a5f8ece53a04b74b61ee0d951",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/icc-2-phase-0-replaced-opacity-0.5/test.html"
+    },
+    {
+      "case": "icc-2-phase-0-background-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/icc.png",
+        "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+        "300",
+        "224",
+        "101.5",
+        "72.5",
+        "0",
+        "background",
+        "1"
+      ],
+      "resource_sha256": "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+      "input_sha256": "b32037012f353c953f559439922225a19dc123320b557f9b877e706978da7d75",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/icc-2-phase-0-background-opacity-1/test.html"
+    },
+    {
+      "case": "icc-2-phase-0-background-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/icc.png",
+        "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+        "300",
+        "224",
+        "101.5",
+        "72.5",
+        "0",
+        "background",
+        "0.5"
+      ],
+      "resource_sha256": "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+      "input_sha256": "cdf476dc44060d715c7396d819fec3cd6f6a1a0fdaa4ee201c8481c5c1c958ca",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/icc-2-phase-0-background-opacity-0.5/test.html"
+    },
+    {
+      "case": "icc-2-phase-0.5-replaced-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/icc.png",
+        "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+        "300",
+        "224",
+        "101.5",
+        "72.5",
+        "0.5",
+        "replaced",
+        "1"
+      ],
+      "resource_sha256": "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+      "input_sha256": "2030f56ba51125c20dbd45beb7e794034b8065223d7b04d410eb9cc5d038a9fc",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/icc-2-phase-0.5-replaced-opacity-1/test.html"
+    },
+    {
+      "case": "icc-2-phase-0.5-replaced-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/icc.png",
+        "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+        "300",
+        "224",
+        "101.5",
+        "72.5",
+        "0.5",
+        "replaced",
+        "0.5"
+      ],
+      "resource_sha256": "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+      "input_sha256": "1541f62a49fb3441b3719b914bd25b27ba474df472f789cf127aec35d9bad3ef",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/icc-2-phase-0.5-replaced-opacity-0.5/test.html"
+    },
+    {
+      "case": "icc-2-phase-0.5-background-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/icc.png",
+        "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+        "300",
+        "224",
+        "101.5",
+        "72.5",
+        "0.5",
+        "background",
+        "1"
+      ],
+      "resource_sha256": "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+      "input_sha256": "c55574c7b686de96cf71dda6c6ba3860200741e39c48e36ca721ed61d1479945",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/icc-2-phase-0.5-background-opacity-1/test.html"
+    },
+    {
+      "case": "icc-2-phase-0.5-background-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/icc.png",
+        "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+        "300",
+        "224",
+        "101.5",
+        "72.5",
+        "0.5",
+        "background",
+        "0.5"
+      ],
+      "resource_sha256": "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+      "input_sha256": "cc56a5b6aa6706d6c1d64c8f176576a0d9eecd01a4e8d13c9ca899e4946c3639",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/icc-2-phase-0.5-background-opacity-0.5/test.html"
+    },
+    {
+      "case": "alpha-0-phase-0-replaced-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/alpha.png",
+        "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+        "256",
+        "256",
+        "256",
+        "256",
+        "0",
+        "replaced",
+        "1"
+      ],
+      "resource_sha256": "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+      "input_sha256": "d1a415260c8ca66642122d77a48df7d431c6be9ccf6ec479033e3ded8de89e40",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/alpha-0-phase-0-replaced-opacity-1/test.html"
+    },
+    {
+      "case": "alpha-0-phase-0-replaced-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/alpha.png",
+        "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+        "256",
+        "256",
+        "256",
+        "256",
+        "0",
+        "replaced",
+        "0.5"
+      ],
+      "resource_sha256": "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+      "input_sha256": "e8e968c5df4d81c8601d24c08a8413c5e550e512174b65869aed1726311cb3fb",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/alpha-0-phase-0-replaced-opacity-0.5/test.html"
+    },
+    {
+      "case": "alpha-0-phase-0-background-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/alpha.png",
+        "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+        "256",
+        "256",
+        "256",
+        "256",
+        "0",
+        "background",
+        "1"
+      ],
+      "resource_sha256": "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+      "input_sha256": "f1f258699739790a787e2e3611b70e2db398cc7db55083651e9acff851fa218b",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/alpha-0-phase-0-background-opacity-1/test.html"
+    },
+    {
+      "case": "alpha-0-phase-0-background-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/alpha.png",
+        "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+        "256",
+        "256",
+        "256",
+        "256",
+        "0",
+        "background",
+        "0.5"
+      ],
+      "resource_sha256": "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+      "input_sha256": "5b9487becd0983964c5660020b005fe55adcd5f36e9ed35b70f8be4841244c32",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/alpha-0-phase-0-background-opacity-0.5/test.html"
+    },
+    {
+      "case": "alpha-0-phase-0.5-replaced-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/alpha.png",
+        "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+        "256",
+        "256",
+        "256",
+        "256",
+        "0.5",
+        "replaced",
+        "1"
+      ],
+      "resource_sha256": "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+      "input_sha256": "9df6f8a90744cd8fb8b5dd7df1faa638603dd98d0c167c3a7abb0b6e7dac3a6b",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/alpha-0-phase-0.5-replaced-opacity-1/test.html"
+    },
+    {
+      "case": "alpha-0-phase-0.5-replaced-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/alpha.png",
+        "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+        "256",
+        "256",
+        "256",
+        "256",
+        "0.5",
+        "replaced",
+        "0.5"
+      ],
+      "resource_sha256": "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+      "input_sha256": "e955ad38128efd528b406c8f64422e416477f2bbf8cd3172ed12ee074170ea9b",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/alpha-0-phase-0.5-replaced-opacity-0.5/test.html"
+    },
+    {
+      "case": "alpha-0-phase-0.5-background-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/alpha.png",
+        "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+        "256",
+        "256",
+        "256",
+        "256",
+        "0.5",
+        "background",
+        "1"
+      ],
+      "resource_sha256": "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+      "input_sha256": "6c4722d3274ae6023c4250e0200186ff9f3827fc7a30e74b766d9e359fafa8af",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/alpha-0-phase-0.5-background-opacity-1/test.html"
+    },
+    {
+      "case": "alpha-0-phase-0.5-background-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/alpha.png",
+        "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+        "256",
+        "256",
+        "256",
+        "256",
+        "0.5",
+        "background",
+        "0.5"
+      ],
+      "resource_sha256": "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+      "input_sha256": "bdb97b31b96a44e1093d5f20713dfade67bd8b9a601f7894b9da6f38377cc365",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/alpha-0-phase-0.5-background-opacity-0.5/test.html"
+    },
+    {
+      "case": "alpha-1-phase-0-replaced-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/alpha.png",
+        "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+        "256",
+        "256",
+        "45.5",
+        "33.5",
+        "0",
+        "replaced",
+        "1"
+      ],
+      "resource_sha256": "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+      "input_sha256": "f006021f6f46ee79b9cf89ec321b54e220ee8294064977863129d08a640bac6f",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/alpha-1-phase-0-replaced-opacity-1/test.html"
+    },
+    {
+      "case": "alpha-1-phase-0-replaced-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/alpha.png",
+        "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+        "256",
+        "256",
+        "45.5",
+        "33.5",
+        "0",
+        "replaced",
+        "0.5"
+      ],
+      "resource_sha256": "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+      "input_sha256": "c42f84567d79e9f2cb054c7d10ec48f061af51f7ec5eb83c82eee864d2aab38d",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/alpha-1-phase-0-replaced-opacity-0.5/test.html"
+    },
+    {
+      "case": "alpha-1-phase-0-background-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/alpha.png",
+        "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+        "256",
+        "256",
+        "45.5",
+        "33.5",
+        "0",
+        "background",
+        "1"
+      ],
+      "resource_sha256": "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+      "input_sha256": "9b923670e7e8941950ad926c92b3952c88db105b564f266798d4035a4c55c510",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/alpha-1-phase-0-background-opacity-1/test.html"
+    },
+    {
+      "case": "alpha-1-phase-0-background-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/alpha.png",
+        "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+        "256",
+        "256",
+        "45.5",
+        "33.5",
+        "0",
+        "background",
+        "0.5"
+      ],
+      "resource_sha256": "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+      "input_sha256": "d5c3ea61a4c5e1ddafb30c8f848ec5b2cefded0a43826073ad6dab32ed2b4db8",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/alpha-1-phase-0-background-opacity-0.5/test.html"
+    },
+    {
+      "case": "alpha-1-phase-0.5-replaced-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/alpha.png",
+        "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+        "256",
+        "256",
+        "45.5",
+        "33.5",
+        "0.5",
+        "replaced",
+        "1"
+      ],
+      "resource_sha256": "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+      "input_sha256": "41c36cd6a204e7d3c7310793d510d6decae300e097b76c19ed9f7360f5fd5074",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/alpha-1-phase-0.5-replaced-opacity-1/test.html"
+    },
+    {
+      "case": "alpha-1-phase-0.5-replaced-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/alpha.png",
+        "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+        "256",
+        "256",
+        "45.5",
+        "33.5",
+        "0.5",
+        "replaced",
+        "0.5"
+      ],
+      "resource_sha256": "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+      "input_sha256": "a237ee70f060341415ae291e322bc808a8a072770c4a5236b46507bdfddfa5f7",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/alpha-1-phase-0.5-replaced-opacity-0.5/test.html"
+    },
+    {
+      "case": "alpha-1-phase-0.5-background-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/alpha.png",
+        "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+        "256",
+        "256",
+        "45.5",
+        "33.5",
+        "0.5",
+        "background",
+        "1"
+      ],
+      "resource_sha256": "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+      "input_sha256": "e6c8afd91cffbbe22d50851fb907ede144e2094aa6a84c4daad4835d7d5469c6",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/alpha-1-phase-0.5-background-opacity-1/test.html"
+    },
+    {
+      "case": "alpha-1-phase-0.5-background-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/alpha.png",
+        "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+        "256",
+        "256",
+        "45.5",
+        "33.5",
+        "0.5",
+        "background",
+        "0.5"
+      ],
+      "resource_sha256": "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+      "input_sha256": "c43d8ceaf9a5cb250f9c60fe5abb64fb598660ccfe94843e1ea43337c5a03906",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/alpha-1-phase-0.5-background-opacity-0.5/test.html"
+    },
+    {
+      "case": "alpha-2-phase-0-replaced-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/alpha.png",
+        "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+        "256",
+        "256",
+        "101.5",
+        "72.5",
+        "0",
+        "replaced",
+        "1"
+      ],
+      "resource_sha256": "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+      "input_sha256": "5d44dfa4aecbead528960213a148e0421bacd71e79f31201fc6321af37c4cbd0",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/alpha-2-phase-0-replaced-opacity-1/test.html"
+    },
+    {
+      "case": "alpha-2-phase-0-replaced-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/alpha.png",
+        "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+        "256",
+        "256",
+        "101.5",
+        "72.5",
+        "0",
+        "replaced",
+        "0.5"
+      ],
+      "resource_sha256": "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+      "input_sha256": "c5c5f2c6549c78c40c12e8d4f2579a00dc302fb75a78da5e3381c8493669077b",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/alpha-2-phase-0-replaced-opacity-0.5/test.html"
+    },
+    {
+      "case": "alpha-2-phase-0-background-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/alpha.png",
+        "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+        "256",
+        "256",
+        "101.5",
+        "72.5",
+        "0",
+        "background",
+        "1"
+      ],
+      "resource_sha256": "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+      "input_sha256": "6b9b4e4eda2c96ad894a2a714ad8ca9392354038ef0d988016200cfb24292c2f",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/alpha-2-phase-0-background-opacity-1/test.html"
+    },
+    {
+      "case": "alpha-2-phase-0-background-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/alpha.png",
+        "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+        "256",
+        "256",
+        "101.5",
+        "72.5",
+        "0",
+        "background",
+        "0.5"
+      ],
+      "resource_sha256": "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+      "input_sha256": "d6d78b1a6b3b1a10b025ac547a2e5c1964c8b30f8beaec0847e60824aae5b32c",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/alpha-2-phase-0-background-opacity-0.5/test.html"
+    },
+    {
+      "case": "alpha-2-phase-0.5-replaced-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/alpha.png",
+        "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+        "256",
+        "256",
+        "101.5",
+        "72.5",
+        "0.5",
+        "replaced",
+        "1"
+      ],
+      "resource_sha256": "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+      "input_sha256": "7f3c89bcc640ba9d59eae48ceec330c391a83622915e82368339fe45e1f17441",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/alpha-2-phase-0.5-replaced-opacity-1/test.html"
+    },
+    {
+      "case": "alpha-2-phase-0.5-replaced-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/alpha.png",
+        "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+        "256",
+        "256",
+        "101.5",
+        "72.5",
+        "0.5",
+        "replaced",
+        "0.5"
+      ],
+      "resource_sha256": "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+      "input_sha256": "a6ca826aa758105057b3289e8040889e0955cd63f138f4069fe5389474c0b9c4",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/alpha-2-phase-0.5-replaced-opacity-0.5/test.html"
+    },
+    {
+      "case": "alpha-2-phase-0.5-background-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/alpha.png",
+        "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+        "256",
+        "256",
+        "101.5",
+        "72.5",
+        "0.5",
+        "background",
+        "1"
+      ],
+      "resource_sha256": "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+      "input_sha256": "e467ddb3d4f9cbf3afcbb249db407820cc816e2b43f4ee31fb2c7db309d2ddec",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/alpha-2-phase-0.5-background-opacity-1/test.html"
+    },
+    {
+      "case": "alpha-2-phase-0.5-background-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/alpha.png",
+        "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+        "256",
+        "256",
+        "101.5",
+        "72.5",
+        "0.5",
+        "background",
+        "0.5"
+      ],
+      "resource_sha256": "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+      "input_sha256": "4eb92dafa71f5f798d61946e6c9e09406e7a70a18f13381ee468b47b0238cb7d",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/alpha-2-phase-0.5-background-opacity-0.5/test.html"
+    },
+    {
+      "case": "border-0-phase-0-border-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/border.png",
+        "fea0d9ccac4281eb5836bcd1a0339d3d2ee5187ea8b8286dbc7090e926b6f4ba",
+        "100",
+        "100",
+        "50",
+        "50",
+        "0",
+        "border",
+        "1"
+      ],
+      "resource_sha256": "fea0d9ccac4281eb5836bcd1a0339d3d2ee5187ea8b8286dbc7090e926b6f4ba",
+      "input_sha256": "9a941610a3de2a2812674c9a23b6db99328679e9d1f8afc7b902864f588250f5",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/border-0-phase-0-border-opacity-1/test.html"
+    },
+    {
+      "case": "border-0-phase-0-border-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/border.png",
+        "fea0d9ccac4281eb5836bcd1a0339d3d2ee5187ea8b8286dbc7090e926b6f4ba",
+        "100",
+        "100",
+        "50",
+        "50",
+        "0",
+        "border",
+        "0.5"
+      ],
+      "resource_sha256": "fea0d9ccac4281eb5836bcd1a0339d3d2ee5187ea8b8286dbc7090e926b6f4ba",
+      "input_sha256": "9dc7e502d837ae9a845464ff249089f500f8a8e64f3cf452b99be2c7157391f6",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/border-0-phase-0-border-opacity-0.5/test.html"
+    },
+    {
+      "case": "border-0-phase-0.5-border-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/border.png",
+        "fea0d9ccac4281eb5836bcd1a0339d3d2ee5187ea8b8286dbc7090e926b6f4ba",
+        "100",
+        "100",
+        "50",
+        "50",
+        "0.5",
+        "border",
+        "1"
+      ],
+      "resource_sha256": "fea0d9ccac4281eb5836bcd1a0339d3d2ee5187ea8b8286dbc7090e926b6f4ba",
+      "input_sha256": "ba3c800d38150c965a4c255c90941ca0630c734e50e2a14f4d53e6e5c4665764",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/border-0-phase-0.5-border-opacity-1/test.html"
+    },
+    {
+      "case": "border-0-phase-0.5-border-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/border.png",
+        "fea0d9ccac4281eb5836bcd1a0339d3d2ee5187ea8b8286dbc7090e926b6f4ba",
+        "100",
+        "100",
+        "50",
+        "50",
+        "0.5",
+        "border",
+        "0.5"
+      ],
+      "resource_sha256": "fea0d9ccac4281eb5836bcd1a0339d3d2ee5187ea8b8286dbc7090e926b6f4ba",
+      "input_sha256": "8906d8766ed1a419d778dffa6438dbc19cded1866756ff6aa77fe3f06b1a9a32",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/border-0-phase-0.5-border-opacity-0.5/test.html"
+    },
+    {
+      "case": "border-1-phase-0-border-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/border.png",
+        "fea0d9ccac4281eb5836bcd1a0339d3d2ee5187ea8b8286dbc7090e926b6f4ba",
+        "100",
+        "100",
+        "45.5",
+        "33.5",
+        "0",
+        "border",
+        "1"
+      ],
+      "resource_sha256": "fea0d9ccac4281eb5836bcd1a0339d3d2ee5187ea8b8286dbc7090e926b6f4ba",
+      "input_sha256": "2e958d3eefca0f73b70c9cf29a9603310e36a43a3a701029fff3f2f6450f0160",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/border-1-phase-0-border-opacity-1/test.html"
+    },
+    {
+      "case": "border-1-phase-0-border-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/border.png",
+        "fea0d9ccac4281eb5836bcd1a0339d3d2ee5187ea8b8286dbc7090e926b6f4ba",
+        "100",
+        "100",
+        "45.5",
+        "33.5",
+        "0",
+        "border",
+        "0.5"
+      ],
+      "resource_sha256": "fea0d9ccac4281eb5836bcd1a0339d3d2ee5187ea8b8286dbc7090e926b6f4ba",
+      "input_sha256": "287ad221fc8f71d50735d10334e4271a6e065ea683fa2c6376265c8ba0bc3f89",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/border-1-phase-0-border-opacity-0.5/test.html"
+    },
+    {
+      "case": "border-1-phase-0.5-border-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/border.png",
+        "fea0d9ccac4281eb5836bcd1a0339d3d2ee5187ea8b8286dbc7090e926b6f4ba",
+        "100",
+        "100",
+        "45.5",
+        "33.5",
+        "0.5",
+        "border",
+        "1"
+      ],
+      "resource_sha256": "fea0d9ccac4281eb5836bcd1a0339d3d2ee5187ea8b8286dbc7090e926b6f4ba",
+      "input_sha256": "7fadd7327abcbc5f6c1b9d2f2ec6eb2c94c1de0219fc45c513e3d50dfdb07d5c",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/border-1-phase-0.5-border-opacity-1/test.html"
+    },
+    {
+      "case": "border-1-phase-0.5-border-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/border.png",
+        "fea0d9ccac4281eb5836bcd1a0339d3d2ee5187ea8b8286dbc7090e926b6f4ba",
+        "100",
+        "100",
+        "45.5",
+        "33.5",
+        "0.5",
+        "border",
+        "0.5"
+      ],
+      "resource_sha256": "fea0d9ccac4281eb5836bcd1a0339d3d2ee5187ea8b8286dbc7090e926b6f4ba",
+      "input_sha256": "8df0dbb0d502c65b27499a2ea0238ccc326a3a57a8e58cfa5a5b290306badbc4",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/border-1-phase-0.5-border-opacity-0.5/test.html"
+    },
+    {
+      "case": "border-2-phase-0-border-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/border.png",
+        "fea0d9ccac4281eb5836bcd1a0339d3d2ee5187ea8b8286dbc7090e926b6f4ba",
+        "100",
+        "100",
+        "101.5",
+        "72.5",
+        "0",
+        "border",
+        "1"
+      ],
+      "resource_sha256": "fea0d9ccac4281eb5836bcd1a0339d3d2ee5187ea8b8286dbc7090e926b6f4ba",
+      "input_sha256": "5567792f8df703abaf20a03b961e84672d74075e58f4bca43b170319278a2dff",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/border-2-phase-0-border-opacity-1/test.html"
+    },
+    {
+      "case": "border-2-phase-0-border-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/border.png",
+        "fea0d9ccac4281eb5836bcd1a0339d3d2ee5187ea8b8286dbc7090e926b6f4ba",
+        "100",
+        "100",
+        "101.5",
+        "72.5",
+        "0",
+        "border",
+        "0.5"
+      ],
+      "resource_sha256": "fea0d9ccac4281eb5836bcd1a0339d3d2ee5187ea8b8286dbc7090e926b6f4ba",
+      "input_sha256": "cc334ae697887099a639bfe6f203e6089882d189e35b4ff8761569e154a90455",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/border-2-phase-0-border-opacity-0.5/test.html"
+    },
+    {
+      "case": "border-2-phase-0.5-border-opacity-1",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/border.png",
+        "fea0d9ccac4281eb5836bcd1a0339d3d2ee5187ea8b8286dbc7090e926b6f4ba",
+        "100",
+        "100",
+        "101.5",
+        "72.5",
+        "0.5",
+        "border",
+        "1"
+      ],
+      "resource_sha256": "fea0d9ccac4281eb5836bcd1a0339d3d2ee5187ea8b8286dbc7090e926b6f4ba",
+      "input_sha256": "a6a98214e8dc858bda22e32a0ecf478035238e4295638ba76d6c7d4ff80b12c8",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/border-2-phase-0.5-border-opacity-1/test.html"
+    },
+    {
+      "case": "border-2-phase-0.5-border-opacity-0.5",
+      "arguments": [
+        "docs/renderer/evidence/native-png-sampling-v1/assets/border.png",
+        "fea0d9ccac4281eb5836bcd1a0339d3d2ee5187ea8b8286dbc7090e926b6f4ba",
+        "100",
+        "100",
+        "101.5",
+        "72.5",
+        "0.5",
+        "border",
+        "0.5"
+      ],
+      "resource_sha256": "fea0d9ccac4281eb5836bcd1a0339d3d2ee5187ea8b8286dbc7090e926b6f4ba",
+      "input_sha256": "2d9d434126ec938c1d6c0cad6e508097e6b0df7847b3ea1d143d959539fc16b6",
+      "reference_input": "docs/renderer/evidence/native-png-sampling-v1/inputs/border-2-phase-0.5-border-opacity-0.5/test.html"
+    }
+  ]
+}

@@ -1,0 +1,215 @@
+{
+  "artifacts": [
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-font-cache-hosted-complete-v652/receipt.json",
+      "sha256": "ce4ab68901bc94cfb2ceeb548cc6667bb11466f554e8f7bcb5cb212048b057e7"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-font-cache-hosted-complete-v652/run.json",
+      "sha256": "27ccdd6e9c9e9ee50d5db60f5dafe699828c896a3740f01d338414ebc570eed9"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-insets-oracle-v634/oracle.json",
+      "sha256": "70e821ddd1af7cad4a577f07ae67adfb202ba29cc002be9aa20530030d1f152e"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-insets-clean-v637/build.json",
+      "sha256": "a08ceda80baa0fd9bbb18242c29429e1a730635a2b8901cf7d777d6601761982"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-insets-checks-v636/receipt.json",
+      "sha256": "37e2b80307a227cd04506be59f426042b80bf93bdcdbae601051c636f3f56b5f"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-insets-workspace-v644/receipt.json",
+      "sha256": "e9a01c8406892e46899309d6dc678952999acdbbe94aca9c52dc721cb80d0ad3"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-insets-workspace-v647/receipt.json",
+      "sha256": "dcb8d4c97e677a929cf5855af57bd9ca12938b2bd7e9149971d527de299957da"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-insets-workspace-v650/receipt.json",
+      "sha256": "9ca5e97df5dd84bca23d26608bf8a8c14e6dbc30f151b4792791d7cc0994f71b"
+    }
+  ],
+  "font_fix_applied_head": "a41fdeb9818e9dbe7b07642a911570acd4da45de",
+  "hosted_hardening": {
+    "all_seven_jobs_pass": true,
+    "captured_utc": "2026-10-03T20:17:06.022034+00:00",
+    "earlier_unavailable_log_attempt_preserved": "native-font-cache-hosted-pass-logs-v649",
+    "head": "a41fdeb9818e9dbe7b07642a911570acd4da45de",
+    "jobs": [
+      {
+        "command": [
+          "gh",
+          "run",
+          "view",
+          "37149510887",
+          "--job",
+          "111280189159",
+          "--log"
+        ],
+        "conclusion": "success",
+        "job": "miri-handles",
+        "job_id": 111280189159,
+        "log_sha256": "332c5ce47838b2d7971a066753c3796af5f5ece5aa95244cd4ebc98d88351382",
+        "observed_download_exit_code": 0,
+        "test_results": [
+          "test result: ok. 1 passed; 0 failed; 0 ignored"
+        ]
+      },
+      {
+        "command": [
+          "gh",
+          "run",
+          "view",
+          "37149510887",
+          "--job",
+          "111280189271",
+          "--log"
+        ],
+        "conclusion": "success",
+        "job": "native-sanitizers (address)",
+        "job_id": 111280189271,
+        "log_sha256": "a464df1a3b5ec7c09e6acf3fa90286135269153b9d7f87401293c57bf2aef201",
+        "observed_download_exit_code": 0,
+        "test_results": [
+          "test result: ok. 29 passed; 0 failed; 0 ignored",
+          "test result: ok. 0 passed; 0 failed; 0 ignored"
+        ]
+      },
+      {
+        "command": [
+          "gh",
+          "run",
+          "view",
+          "37149510887",
+          "--job",
+          "111280189285",
+          "--log"
+        ],
+        "conclusion": "success",
+        "job": "native-sanitizers (leak)",
+        "job_id": 111280189285,
+        "log_sha256": "aa0c18a84f23bc2740dde57b67b4ae3bdf32d926b276081aec61591875776cf6",
+        "observed_download_exit_code": 0,
+        "test_results": [
+          "test result: ok. 29 passed; 0 failed; 0 ignored",
+          "test result: ok. 0 passed; 0 failed; 0 ignored"
+        ]
+      },
+      {
+        "command": [
+          "gh",
+          "run",
+          "view",
+          "37149510887",
+          "--job",
+          "111280189305",
+          "--log"
+        ],
+        "conclusion": "success",
+        "job": "c-undefined-sanitizer",
+        "job_id": 111280189305,
+        "log_sha256": "8dbc79af0f0fab85fdb3ff62cddcabde2091031d1cf42aea622767de3ed38503",
+        "observed_download_exit_code": 0,
+        "test_results": []
+      },
+      {
+        "command": [
+          "gh",
+          "run",
+          "view",
+          "37149510887",
+          "--job",
+          "111280189313",
+          "--log"
+        ],
+        "conclusion": "success",
+        "job": "msrv",
+        "job_id": 111280189313,
+        "log_sha256": "8974ab2f7b84d6819a9a62214986a0b2a7171140fbf9ed313b589cdf34fd2935",
+        "observed_download_exit_code": 0,
+        "test_results": []
+      },
+      {
+        "command": [
+          "gh",
+          "run",
+          "view",
+          "37149510887",
+          "--job",
+          "111280189339",
+          "--log"
+        ],
+        "conclusion": "success",
+        "job": "conformance-and-platform",
+        "job_id": 111280189339,
+        "log_sha256": "3f5c580fb946ec544cc603e0692fe4345366e902bbb42312b4cb13f4fe59173c",
+        "observed_download_exit_code": 0,
+        "test_results": [
+          "test result: ok. 58 passed; 0 failed; 0 ignored",
+          "test result: ok. 30 passed; 0 failed; 0 ignored",
+          "test result: ok. 0 passed; 0 failed; 0 ignored"
+        ]
+      },
+      {
+        "command": [
+          "gh",
+          "run",
+          "view",
+          "37149510887",
+          "--job",
+          "111280189351",
+          "--log"
+        ],
+        "conclusion": "success",
+        "job": "fuzz-smoke",
+        "job_id": 111280189351,
+        "log_sha256": "56e0c0ab50a534390566fa37618bab57a82cd94b547f043249083e4ad4003cd7",
+        "observed_download_exit_code": 0,
+        "test_results": []
+      }
+    ],
+    "probe_sha256": "b9bed4211c41a434f0849693cdad0aba529a1d78f5bd1c799cd2aa6fd15dcdaf",
+    "release_qualification": false,
+    "required_pixel_gate": "still fails; these hardening jobs are not a pixel qualification",
+    "run_conclusion": "success",
+    "run_id": 37149510887,
+    "run_json_sha256": "27ccdd6e9c9e9ee50d5db60f5dafe699828c896a3740f01d338414ebc570eed9",
+    "run_url": "https://github.com/zhuowcui/open-ui/actions/runs/37149510887",
+    "schema_version": 1
+  },
+  "javascript_executed_by_openui": false,
+  "native_pixel_status": "All eight invariants unchanged across complete original/expanded and focused/primitive scopes; the original 1590 pixel failures remain open.",
+  "previous_snapshot": {
+    "path": "docs/renderer/generated/native-font-cache-lifetime-v3.json",
+    "sha256": "757f43d836413b752539d9e61c9b4d089bf7b2fc2f6b2481ea3d0f75faf20453",
+    "unchanged": true
+  },
+  "private_native_scroll_insets": {
+    "applied_to_umbrella": false,
+    "chromium_oracle": {
+      "cases": 170,
+      "identical_fresh_repeats": 2,
+      "scales": 5
+    },
+    "earlier_attempts": [
+      "mixed-worktree Cargo artifacts",
+      "old schema-count assertion retained and updated for appended IDs"
+    ],
+    "head": "45ddd7a438afbe2b132887dad9f566b8d60f175f",
+    "native_geometry_and_pixels": "pending comparison from rebuilt clean runner",
+    "public_rust_and_c_setters": 18,
+    "workspace": {
+      "failed": 0,
+      "ignored": 13,
+      "observed_exit_code": 0,
+      "passed": 8532,
+      "source_clean_unchanged": true
+    }
+  },
+  "release_qualification": false,
+  "schema_version": 1
+}

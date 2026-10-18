@@ -1,0 +1,41 @@
+{
+  "all_available_ci_logs_preserved": true,
+  "all_commands_terminal": true,
+  "attempt": 2,
+  "cancelled_job_not_passed": true,
+  "jobs": [
+    {
+      "bytes": 28,
+      "capture_actual_exit": 1,
+      "job": "historical-pixel-audit",
+      "job_conclusion": "cancelled",
+      "job_id": 111952548571,
+      "log_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-style-ci-job-logs-v1685/111952548571.log",
+      "log_sha256": "9eec33249ee5c26cdc4608e25d2926748977ce377dac4ecb9ddab9acf80b80fa"
+    },
+    {
+      "bytes": 1103019,
+      "capture_actual_exit": 0,
+      "job": "rust-parity",
+      "job_conclusion": "success",
+      "job_id": 111952549943,
+      "log_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-style-ci-job-logs-v1685/111952549943.log",
+      "log_sha256": "b630040551a97ebfab81ee633ef0b4189a797e4189df20985df9c4baedf909b0"
+    },
+    {
+      "bytes": 54482,
+      "capture_actual_exit": 0,
+      "job": "python-accountability",
+      "job_conclusion": "success",
+      "job_id": 111952551012,
+      "log_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-style-ci-job-logs-v1685/111952551012.log",
+      "log_sha256": "a35a380a5968ed29f63a3f13e67232e8c6e92e10bfe488eae0c6ee5369b51a3d"
+    }
+  ],
+  "parent_receipt_sha256": "811154761e4e8c475edd66419d129cc9d1e380ec81db12f64098381e58d65c88",
+  "probe_sha256": "8c815ab8e89646238b0daeadc5b9ecfe03d40a2785011b4e8157f4165a00647b",
+  "release_qualification": false,
+  "run": 37362608916,
+  "schema_version": 1,
+  "source": "95426acf51bcf789108c68671f5d875d051bd7b4"
+}

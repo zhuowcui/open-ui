@@ -1,0 +1,95 @@
+{
+  "writer_pid": 3441935,
+  "actual_owner_exit_code": 1,
+  "parent_terminal_reaped_chunk": "1c2667",
+  "receipt_sha256": "a2655b495699152aa4d5f6c60381264b5c1192648f66d7aba318895b37bad95b",
+  "known_pids": [
+    3438452,
+    3438498,
+    3440071,
+    3441346
+  ],
+  "known_pids_absent": true,
+  "source": {
+    "clean": true,
+    "commit": "9ad2fb264da070d484859ebc2a6a9a8cf787fb08",
+    "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6",
+    "source_tree_sha256": "7b3b67bdf5ac6135df89ba05c76f99a92ec2f9ce8186dca25cbcd4c68a0db133",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_unchanged": true,
+  "runner_sha256": "e31c299fba4ae0370b8c5b71e2414636799433dbbc84b4d19dc3ca2238f77b74",
+  "runner_unchanged": true,
+  "complete": true,
+  "scope": "full focused and primitive gates plus two originalIDs only,8 originalrows; no completeoriginalcensus",
+  "steps": [
+    {
+      "suite": "focused",
+      "actual_exit_code": 0,
+      "reaped": true,
+      "counts": {
+        "different": 0,
+        "errors": 0,
+        "exact": 640,
+        "profile_result_sha256": "32da1dec860406a28440008ec781305a262b26f29ddba668589a961c4cb4f0ab",
+        "total": 640
+      },
+      "summary_sha256": "5cfbdd180aeff7050c222e8e8674140f71ad4f073253105cff8be6523e1556e3",
+      "evidence": {
+        "binary_unchanged": true,
+        "kind": "qualification",
+        "qualification_backend_match": true,
+        "qualification_policy_match": true,
+        "qualified": true,
+        "source_unchanged": true,
+        "tolerance_pixels": 0
+      }
+    },
+    {
+      "suite": "primitive",
+      "actual_exit_code": 0,
+      "reaped": true,
+      "counts": {
+        "different": 0,
+        "errors": 0,
+        "exact": 960,
+        "profile_result_sha256": "2a70ba11201c3bbb7196a18c2bb52f46582904f011d8eedee01b2ffd3a0048c4",
+        "total": 960
+      },
+      "summary_sha256": "1c2b152d11505d64253ae75637136d648df83966c123280415b2f30c419be3b9",
+      "evidence": {
+        "binary_unchanged": true,
+        "kind": "qualification",
+        "qualification_backend_match": true,
+        "qualification_policy_match": true,
+        "qualified": true,
+        "source_unchanged": true,
+        "tolerance_pixels": 0
+      }
+    },
+    {
+      "suite": "full",
+      "actual_exit_code": 1,
+      "reaped": true,
+      "counts": {
+        "different": 5,
+        "errors": 0,
+        "exact": 3,
+        "profile_result_sha256": "6abced0aa484826d0b012cc84319c332e4c0a0dc051533d483d7fcd66bb6d25f",
+        "total": 8
+      },
+      "summary_sha256": "e65de0a65fba1e8479932c1436086044f9836d947c2b6bbc6d76ae9e27503ff2",
+      "evidence": {
+        "binary_unchanged": true,
+        "kind": "diagnostic-census",
+        "qualification_backend_match": true,
+        "qualification_policy_match": true,
+        "qualified": false,
+        "source_unchanged": true,
+        "tolerance_pixels": 0
+      }
+    }
+  ],
+  "qualification": false,
+  "release_qualified": false
+}

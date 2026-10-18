@@ -1,0 +1,235 @@
+{
+  "applied_to_umbrella": false,
+  "artifacts": [
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-clean-v1206/build.json",
+      "sha256": "9836684cb22f779cc3a17fad189270c52ef4a3bf5076804547c554e3154c02c4"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-checks-v1207/receipt.json",
+      "sha256": "52e7496357418031782ca9c8df9f05284be50917a3afb6471f59c0b4f680e617"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-shared-consumer-v1203/receipt.json",
+      "sha256": "0868c659fb998b554030aa36bba23422f0d2f7c5c5197c6fde7fff75fbee4ade"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-followup-consumer-v1210/receipt.json",
+      "sha256": "3b133cf9786ce50647e1e86edb61ae1a880a30780b373d5d966429413267819b"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-followup-static-v1211/receipt.json",
+      "sha256": "ffa9c3c14ce981db9e6e0ba24d6d930ed011e723537ac781db350724212095b3"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-lcd-checks-v1217/receipt.json",
+      "sha256": "4c71318db15f0081ec12b7075b784040ab83f2bb0187bdd24d5cd89623364d96"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scene-recording-cache-checks-v1231/receipt.json",
+      "sha256": "24d55e8c938aaabeee2a36dc46e513f79f179918785e84049831f1b9e1cc522b"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-raster-audit-v1229.json",
+      "sha256": "2aef6b836b1ad5489dab595a3fb10b6d978f9c0de570db43ef3f929377c95f9b"
+    }
+  ],
+  "build": {
+    "c_consumers": 11,
+    "c_exports": 113,
+    "cpp_consumers": 5,
+    "read_only_checks_passed": 10,
+    "stages_passed": 9,
+    "workspace_failed": 0,
+    "workspace_ignored": 13,
+    "workspace_passed": 8544
+  },
+  "contract": "Open UI executes no JavaScript in any version. Consuming apps call public native Rust APIs and Rust callbacks over the shared Engine. Needed browser element behavior must be implemented in Rust and tested from a consuming app. Chromium alone supplies expected pixels with zero tolerance; old Open UI screenshots are immutable provenance.",
+  "javascript_executed_by_openui": false,
+  "local_builds_and_image_sweeps_are_separate": true,
+  "native_sizing": {
+    "cases_per_scale": 200,
+    "geometry_exact": 1000,
+    "geometry_total": 1000,
+    "no_resource_guard_triggered": true,
+    "observed_comparison_exit_code": 0,
+    "peak_rss_bytes": 84824064,
+    "pixel_comparisons_total": 0,
+    "public_native_callback_and_owned_bounds_runs_passed": 5,
+    "runs_passed": 5,
+    "shared_fixes": [
+      "Propagate only newly added float exclusions from block wrappers.",
+      "Use shared intrinsic min/max sizing for native atomic boxes independently of font profile.",
+      "Reset advance rounding after forced newlines.",
+      "Keep the first unbreakable text unit together across inline and shaping boundaries, retaining Unicode soft opportunities."
+    ]
+  },
+  "native_static_position": {
+    "geometry_exact": 120,
+    "geometry_total": 120,
+    "independent_native_repeats_identical": 60,
+    "observed_comparison_exit_code": 1,
+    "owner": "openui-paint author text raster policy and outline selection",
+    "pixel_exact": 0,
+    "pixel_total": 120,
+    "policies": {
+      "chromium-linux-lcd": {
+        "deterministic_repeats": 30,
+        "geometry_exact": 60,
+        "native_runs_passed": 60,
+        "pixel_exact": 0,
+        "total": 60
+      },
+      "default": {
+        "deterministic_repeats": 30,
+        "geometry_exact": 60,
+        "native_runs_passed": 60,
+        "pixel_exact": 0,
+        "total": 60
+      }
+    },
+    "references_unchanged": true,
+    "representative_lcd_difference": {
+      "alpha_and_blue_identical": true,
+      "case": "inline-reset",
+      "changed_channels": [
+        "red",
+        "green"
+      ],
+      "connected_regions": 6,
+      "maximum_green_absolute_delta": 11,
+      "maximum_red_absolute_delta": 7,
+      "mismatched_pixels": 192,
+      "scale": 1,
+      "state": "before"
+    },
+    "root_cause_status": "reviewed policy-selection omission; pixel causation remains a hypothesis until the prepared fix is tested"
+  },
+  "new_public_rust_api": [
+    "Document::with_options",
+    "Document::with_font_collection_and_options",
+    "Document::raster_configuration",
+    "AppBuilder::raster_configuration",
+    "HeadlessApp::with_options"
+  ],
+  "new_release_states_admitted": 0,
+  "pipeline_observation": {
+    "all_commands_terminal": false,
+    "full_census_pass_claimed": false,
+    "snapshot_path": "docs/renderer/evidence/native-inherited-styles-v1/native-intrinsic-pipeline-snapshot-v5.json",
+    "snapshot_sha256": "78b56afaa2acaef084526e0f91af1c50f98c9b93a34e4f774a352f81912e4aa7",
+    "state": "running-full",
+    "static_pixels_pass_claimed": false
+  },
+  "prepared_lcd_followup": {
+    "compiled": false,
+    "full_workspace_verified": false,
+    "native_pixels_verified": false,
+    "no_fixture_id_selection": true,
+    "no_implicit_backend_selection": true,
+    "patch": {
+      "bytes": 1217,
+      "path": "docs/renderer/evidence/native-inherited-styles-v1/native-lcd-outline-policy-v1.patch",
+      "sha256": "7b6471dca2b99680d06bcb0a78e726c54690657be272661968f5e0ec15dbeba1"
+    },
+    "read_only_checks_passed": 10,
+    "reviewed_omission": "Explicit Chromium LCD author text selected LCD surface/font settings but paint_text still selected the portable Skia outline path. The compatible author outline path was used only for escape from the aliased font profile.",
+    "shared_fix": "Select the compatible author outline policy whenever immutable raster configuration explicitly requests the Chromium Linux backend and LCD author text. Native-control and embedded-document paths remain independently selected.",
+    "source": {
+      "clean": true,
+      "commit": "52788b83f72025430614c046065aae526230ae75",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "8e470497ebaae7b57f6c6572ba612cdc7cfde3c6558c1b1d0bdad310e3df5acb",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "prepared_scene_recording_cache": {
+    "baseline_regression_test_executed": false,
+    "baseline_test_only_checkpoint": "a49d100100b1372aa49e6dabcd87bbebed275ae4",
+    "compiled": false,
+    "fixed_regression_tests_executed": false,
+    "full_workspace_verified": false,
+    "native_pixels_verified": false,
+    "no_fixture_id_selection": true,
+    "no_implicit_backend_selection": true,
+    "owner": "openui-compositor CPU and Ganesh immutable frame caches",
+    "patch": {
+      "bytes": 13813,
+      "path": "docs/renderer/evidence/native-inherited-styles-v1/native-scene-recording-cache-v1.patch",
+      "sha256": "7fa592568d14e8d508b6b57676c57d0aa07166051e25c866dfeda0beb9c0267f"
+    },
+    "pipeline_observation": {
+      "all_commands_terminal": false,
+      "snapshot_path": "docs/renderer/evidence/native-inherited-styles-v1/native-scene-recording-cache-snapshot-v1.json",
+      "snapshot_sha256": "9facd9c53b811b5783489ed32c866165aa9dcf88e44bf9205329e52f1e03baed",
+      "starts_only_after_both_intrinsic_and_lcd_pipelines_are_terminal": true,
+      "state": "awaiting-separate-intrinsic-and-lcd-pipelines"
+    },
+    "public_interfaces_changed": false,
+    "read_only_checks_passed": 10,
+    "reviewed_source_cause": "Scene generations restart per Engine, while both compositors reuse a frame by generation alone. A different document can therefore receive the previous document frame. Ganesh may also return that cached frame before validating a CPU scene.",
+    "shared_fix": "Cache an owned immutable recording with the completed frame and require recording identity plus generation before reuse. The strong recording owner prevents allocation-address reuse. Ganesh releases that owner before its graphics context.",
+    "source": {
+      "clean": true,
+      "commit": "107e2e36c3a0fb57ddb85cac14d9c4fdb1dcf2da",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "ef67a5b541e9ebf2c2d9eed8d3a2406ea9a488ed514eba3563fd7a8716f8020a",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "tests_prepared": [
+      "Independent native documents with equal scene generations and different colors at five scales, after document destruction.",
+      "New viewport, device scale and raster policy with the same generation.",
+      "Recording retention and release on replacement, PNG rendering and compositor destruction.",
+      "Explicit Mesa Ganesh recording changes, repeated frame reuse, CPU scene rejection and PNG cache invalidation."
+    ]
+  },
+  "prior_snapshot": {
+    "path": "docs/renderer/generated/native-scroll-insets-v26.json",
+    "sha256": "28e6348259705045ddd31e51ac41ea7fd06f26de26d358008601e7ca64aef3b0"
+  },
+  "probe_sha256": "1990cb365d1bd9cf857e45d07805c809ff1ee65ef09631da24fd5d3a812a38fd",
+  "promotion_allowed": false,
+  "raster_matrices": {
+    "all_1600_comparison_invariants_unchanged": true,
+    "audit": {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-raster-audit-v1229.json",
+      "sha256": "2aef6b836b1ad5489dab595a3fb10b6d978f9c0de570db43ef3f929377c95f9b"
+    },
+    "focused_exact": 640,
+    "focused_total": 640,
+    "observed_exit_codes": [
+      0,
+      0
+    ],
+    "primitive_exact": 960,
+    "primitive_total": 960,
+    "source": {
+      "clean": true,
+      "commit": "c170aa7eaeca3c1e8f93eabda11ff777df46937e",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "17053cfb5603971b87c3c9c16a03c3a08b1dd41fb7054d3b197174dcdcb5cf40",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "reference_inputs_changed": false,
+  "release_qualification": false,
+  "required_work_still_open": [
+    "Complete original and expanded Chromium equality with reviewed residual ownership.",
+    "Fix native absolute intrinsic widths and review glyph advance and paint discrepancies.",
+    "Complete all needed public native Rust element APIs and shared C/accessibility parity.",
+    "Complete compositor/3D, blocked-UI animation, hardening, hardware, accessibility, performance, packaging, provenance and approved signed publication."
+  ],
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "c170aa7eaeca3c1e8f93eabda11ff777df46937e",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "17053cfb5603971b87c3c9c16a03c3a08b1dd41fb7054d3b197174dcdcb5cf40",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_patch": {
+    "bytes": 49872,
+    "path": "docs/renderer/evidence/native-inherited-styles-v1/native-intrinsic-and-raster-options-v6.patch",
+    "sha256": "dc460445d4e56fbc9b8438fc4069176d64cd018270fa88280c15afe3c5c02809"
+  }
+}

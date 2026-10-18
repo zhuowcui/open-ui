@@ -340469,9 +340469,9 @@ fn css_break_flexbox_textarea_input_flex_items_in_multicol_crash(
         n3,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n3, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n3, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
-    doc.set_style(n3, RendererStyleValue::Width(Length::px(176.0)));
-    doc.set_style(n3, RendererStyleValue::Height(Length::px(28.0)));
+    doc.set_style(n3, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n3, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n3, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n3, RendererStyleValue::BorderTopWidth(1));
@@ -340485,15 +340485,7 @@ fn css_break_flexbox_textarea_input_flex_items_in_multicol_crash(
     );
     doc.set_style(n3, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n3, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n3,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n3, openui_dom::FormControlRole::TextArea);
     doc.set_style(n3, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n3, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n3, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -340536,9 +340528,8 @@ fn css_break_flexbox_textarea_input_flex_items_in_multicol_crash(
         n4,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextInput)),
     );
+    doc.set_node_state(n4, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n4, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
-    doc.set_style(n4, RendererStyleValue::Width(Length::px(262.0)));
-    doc.set_style(n4, RendererStyleValue::Height(Length::px(26.0)));
     doc.set_style(n4, RendererStyleValue::BorderTopWidth(2));
     doc.set_style(n4, RendererStyleValue::BorderTopStyle(BorderStyle::Inset));
     doc.set_style(n4, RendererStyleValue::BorderRightWidth(2));
@@ -340550,15 +340541,7 @@ fn css_break_flexbox_textarea_input_flex_items_in_multicol_crash(
     );
     doc.set_style(n4, RendererStyleValue::BorderLeftWidth(2));
     doc.set_style(n4, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n4,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(169.0),
-            intrinsic_height: Some(20.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n4, openui_dom::FormControlRole::TextInput);
     doc.set_style(n4, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n4, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n4, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -340738,15 +340721,7 @@ fn css_break_form_control(viewport: ViewportMetrics) -> Result<Engine, EngineErr
     );
     doc.set_style(n3, RendererStyleValue::BorderLeftWidth(2));
     doc.set_style(n3, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n3,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(169.0),
-            intrinsic_height: Some(20.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n3, openui_dom::FormControlRole::TextInput);
     doc.set_style(n3, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n3, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n3, RendererStyleValue::MarginBottom(Length::px(0.0)));

@@ -1,0 +1,664 @@
+{
+  "all_commands_terminal": true,
+  "named_baseline_regressions": [
+    "lcd_phase_moves_ink_by_physical_pixels_for_each_text_role",
+    "shaping::shape_result::tests::fontations_preserves_requested_mask_and_position_settings",
+    "native_outlines_fit_at_physical_size_with_default_and_explicit_backends"
+  ],
+  "observed_exit_code": 0,
+  "probe_sha256": "a83f5445615ee0bf6a88c761724563ddf476892fc94225db301d06f99ddc8ca0",
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "state": "complete",
+  "steps": [
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "clean",
+        "-p",
+        "openui-geometry",
+        "-p",
+        "openui-style",
+        "-p",
+        "openui-dom",
+        "-p",
+        "openui-layout",
+        "-p",
+        "openui-paint",
+        "-p",
+        "openui-compositor",
+        "-p",
+        "openui-engine",
+        "-p",
+        "openui-platform",
+        "-p",
+        "openui-ffi",
+        "-p",
+        "openui-text",
+        "-p",
+        "openui",
+        "-p",
+        "openui-macros",
+        "-p",
+        "hello",
+        "-p",
+        "counter",
+        "-p",
+        "todo",
+        "-p",
+        "dashboard",
+        "-p",
+        "framework-test",
+        "-p",
+        "pixel-compare"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "eea389c7fd08bb3c92d55288e7892f8da1717d26b241b3575ec22ddf05715879",
+      "name": "clean-baseline-phase-and-settings",
+      "observed_exit_code": 0,
+      "source": {
+        "clean": true,
+        "commit": "b7284ac9fb733d22f4314561c0ae19166007f444",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "8759c5279fe6379037948848568641bdb44c0ece95452465e740add9da49e30d",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "b7284ac9fb733d22f4314561c0ae19166007f444",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "8759c5279fe6379037948848568641bdb44c0ece95452465e740add9da49e30d",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "-p",
+        "openui-paint",
+        "--test",
+        "text_raster_configuration_tests",
+        "lcd_phase_moves_ink_by_physical_pixels_for_each_text_role",
+        "--",
+        "--exact"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "9033533362cf28f9d3a23d465d6ecb9b423af57df8e5ecd177f324f3627c52ec",
+      "name": "baseline-lcd_phase_moves_ink_by_physical_pixels_for_each_text_role",
+      "named_test_failed": true,
+      "named_test_passed": false,
+      "observed_exit_code": 101,
+      "source": {
+        "clean": true,
+        "commit": "b7284ac9fb733d22f4314561c0ae19166007f444",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "8759c5279fe6379037948848568641bdb44c0ece95452465e740add9da49e30d",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "b7284ac9fb733d22f4314561c0ae19166007f444",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "8759c5279fe6379037948848568641bdb44c0ece95452465e740add9da49e30d",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "test": "lcd_phase_moves_ink_by_physical_pixels_for_each_text_role"
+    },
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "-p",
+        "openui-text",
+        "--lib",
+        "shaping::shape_result::tests::fontations_preserves_requested_mask_and_position_settings",
+        "--",
+        "--exact"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "f40ebb6acd4ad01c115f71670db8b3e040def966032177e65b6ec13d77dba2c8",
+      "name": "baseline-fontations_preserves_requested_mask_and_position_settings",
+      "named_test_failed": true,
+      "named_test_passed": false,
+      "observed_exit_code": 101,
+      "source": {
+        "clean": true,
+        "commit": "b7284ac9fb733d22f4314561c0ae19166007f444",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "8759c5279fe6379037948848568641bdb44c0ece95452465e740add9da49e30d",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "b7284ac9fb733d22f4314561c0ae19166007f444",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "8759c5279fe6379037948848568641bdb44c0ece95452465e740add9da49e30d",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "test": "shaping::shape_result::tests::fontations_preserves_requested_mask_and_position_settings"
+    },
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "clean",
+        "-p",
+        "openui-geometry",
+        "-p",
+        "openui-style",
+        "-p",
+        "openui-dom",
+        "-p",
+        "openui-layout",
+        "-p",
+        "openui-paint",
+        "-p",
+        "openui-compositor",
+        "-p",
+        "openui-engine",
+        "-p",
+        "openui-platform",
+        "-p",
+        "openui-ffi",
+        "-p",
+        "openui-text",
+        "-p",
+        "openui",
+        "-p",
+        "openui-macros",
+        "-p",
+        "hello",
+        "-p",
+        "counter",
+        "-p",
+        "todo",
+        "-p",
+        "dashboard",
+        "-p",
+        "framework-test",
+        "-p",
+        "pixel-compare"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "a79a2d979e2e50d79450d60e3634e1f2da73d69a20a78e3ac38968bbf550c1e4",
+      "name": "clean-baseline-default-strike",
+      "observed_exit_code": 0,
+      "source": {
+        "clean": true,
+        "commit": "5390b683c6b7898d79f36450f1034f0d6a89d37d",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "44e861dd4e2d16ba3885a6fa7541dceb0f406adfc165aac35ab74f9ae6f125a4",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "5390b683c6b7898d79f36450f1034f0d6a89d37d",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "44e861dd4e2d16ba3885a6fa7541dceb0f406adfc165aac35ab74f9ae6f125a4",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "-p",
+        "openui-paint",
+        "--test",
+        "text_raster_configuration_tests",
+        "native_outlines_fit_at_physical_size_with_default_and_explicit_backends",
+        "--",
+        "--exact"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "a1e4e47e268a7e48a4e0aa823c917f63fe30830fbf1e99878a730a8aeca5d45c",
+      "name": "baseline-native_outlines_fit_at_physical_size_with_default_and_explicit_backends",
+      "named_test_failed": true,
+      "named_test_passed": false,
+      "observed_exit_code": 101,
+      "source": {
+        "clean": true,
+        "commit": "5390b683c6b7898d79f36450f1034f0d6a89d37d",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "44e861dd4e2d16ba3885a6fa7541dceb0f406adfc165aac35ab74f9ae6f125a4",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "5390b683c6b7898d79f36450f1034f0d6a89d37d",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "44e861dd4e2d16ba3885a6fa7541dceb0f406adfc165aac35ab74f9ae6f125a4",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "test": "native_outlines_fit_at_physical_size_with_default_and_explicit_backends"
+    },
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "clean",
+        "-p",
+        "openui-geometry",
+        "-p",
+        "openui-style",
+        "-p",
+        "openui-dom",
+        "-p",
+        "openui-layout",
+        "-p",
+        "openui-paint",
+        "-p",
+        "openui-compositor",
+        "-p",
+        "openui-engine",
+        "-p",
+        "openui-platform",
+        "-p",
+        "openui-ffi",
+        "-p",
+        "openui-text",
+        "-p",
+        "openui",
+        "-p",
+        "openui-macros",
+        "-p",
+        "hello",
+        "-p",
+        "counter",
+        "-p",
+        "todo",
+        "-p",
+        "dashboard",
+        "-p",
+        "framework-test",
+        "-p",
+        "pixel-compare"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "987b838705a1713620c051bca3bcb8b1de7a230b34536de5c560c658f3e3accf",
+      "name": "clean-fixed",
+      "observed_exit_code": 0,
+      "source": {
+        "clean": true,
+        "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "-p",
+        "openui-paint",
+        "--test",
+        "text_raster_configuration_tests",
+        "lcd_phase_moves_ink_by_physical_pixels_for_each_text_role",
+        "--",
+        "--exact"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "0850ef0fbe70465e4b312b8d3029a85aef4b28234fd179bc34397f52f52af7c9",
+      "name": "fixed-lcd_phase_moves_ink_by_physical_pixels_for_each_text_role",
+      "named_test_failed": false,
+      "named_test_passed": true,
+      "observed_exit_code": 0,
+      "source": {
+        "clean": true,
+        "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "test": "lcd_phase_moves_ink_by_physical_pixels_for_each_text_role"
+    },
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "-p",
+        "openui-text",
+        "--lib",
+        "shaping::shape_result::tests::fontations_preserves_requested_mask_and_position_settings",
+        "--",
+        "--exact"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "9f6c14e4bb28aebb651df4c094b4ed317b8da6ddb9b4efae7185a09ee5f5d08b",
+      "name": "fixed-fontations_preserves_requested_mask_and_position_settings",
+      "named_test_failed": false,
+      "named_test_passed": true,
+      "observed_exit_code": 0,
+      "source": {
+        "clean": true,
+        "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "test": "shaping::shape_result::tests::fontations_preserves_requested_mask_and_position_settings"
+    },
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "-p",
+        "openui-paint",
+        "--test",
+        "text_raster_configuration_tests",
+        "native_outlines_fit_at_physical_size_with_default_and_explicit_backends",
+        "--",
+        "--exact"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "fe99f6720a1a80204c4b24d058ea133b9385f764595f1d8a5b71f37a438d66ac",
+      "name": "fixed-native_outlines_fit_at_physical_size_with_default_and_explicit_backends",
+      "named_test_failed": false,
+      "named_test_passed": true,
+      "observed_exit_code": 0,
+      "source": {
+        "clean": true,
+        "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "test": "native_outlines_fit_at_physical_size_with_default_and_explicit_backends"
+    },
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "-p",
+        "openui-text",
+        "--lib",
+        "shaping::shape_result::tests::fontations_lcd_hints_at_physical_size_before_replay",
+        "--",
+        "--exact"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "3b7d770eaa7dad7461662e830136508e2421d83e7252776eaa3f660fcb846016",
+      "name": "fixed-fontations_lcd_hints_at_physical_size_before_replay",
+      "named_test_failed": false,
+      "named_test_passed": true,
+      "observed_exit_code": 0,
+      "source": {
+        "clean": true,
+        "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "test": "shaping::shape_result::tests::fontations_lcd_hints_at_physical_size_before_replay"
+    },
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "-p",
+        "openui-engine",
+        "--lib",
+        "tests::compositor_distinguishes_owned_recordings_with_equal_document_generations",
+        "--",
+        "--exact"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "dd8e6338aa287515dbaadc6014a9f96c9aae319ba3934b04408544da466c297e",
+      "name": "fixed-compositor_distinguishes_owned_recordings_with_equal_document_generations",
+      "named_test_failed": false,
+      "named_test_passed": true,
+      "observed_exit_code": 0,
+      "source": {
+        "clean": true,
+        "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "test": "tests::compositor_distinguishes_owned_recordings_with_equal_document_generations"
+    },
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "-p",
+        "openui-text",
+        "--lib"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "6a9a93db180733c57563cfcdfb312f0ed683b6c6811cd6730e486fa997b89240",
+      "name": "text-library",
+      "observed_exit_code": 0,
+      "source": {
+        "clean": true,
+        "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "-p",
+        "openui-paint",
+        "--test",
+        "text_raster_configuration_tests"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "943fb405e215aa1c4871e1cf54e9878b2fb2977f3f7daf330ef0f477c36474b7",
+      "name": "paint-raster-configuration",
+      "observed_exit_code": 0,
+      "source": {
+        "clean": true,
+        "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "-p",
+        "openui-engine",
+        "--lib"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "e002358f913b7c2ece6112f91a4a4e26e92929e6ec22d772ee1d2d72c3ebd5cc",
+      "name": "engine-library",
+      "observed_exit_code": 0,
+      "source": {
+        "clean": true,
+        "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "-p",
+        "openui-compositor",
+        "--lib"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "74ba93591faeaf1d78f25a3dd838e189db9cc308a548346781552f694f78c1cb",
+      "name": "software-compositor",
+      "observed_exit_code": 0,
+      "source": {
+        "clean": true,
+        "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "-p",
+        "openui-compositor",
+        "--features",
+        "ganesh-gl",
+        "--lib",
+        "--",
+        "--test-threads=1"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "27199a88925ee0836403697221e230c06389fed6aef84ad08a772e050c1b054c",
+      "name": "ganesh-compositor",
+      "observed_exit_code": 0,
+      "source": {
+        "clean": true,
+        "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "workspace_cleaned_at_every_source_switch": true
+}

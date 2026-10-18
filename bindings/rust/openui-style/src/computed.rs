@@ -566,10 +566,15 @@ pub struct ComputedStyleFields {
     /// Whether each stored radius component is a percentage rather than px.
     /// Corner order: top-left, top-right, bottom-right, bottom-left.
     pub border_radius_percent: [(bool, bool); 4],
+    /// Resolved native length pairs retain Fixed/Percent/Calculated source kind.
+    pub border_radius_lengths: [Option<(Length, Length)>; 4],
 
     // ── Colors ───────────────────────────────────────────────────────
     /// CSS `background-color`. Initial: `transparent`.
     pub background_color: Color,
+    /// Keeps an authored background currentcolor dependency while the existing
+    /// background Color field exposes the final used color.
+    pub background_current_color: bool,
 
     /// First CSS linear-gradient background-image layer. Initial: `none`.
     pub background_linear_gradient: Option<LinearGradient>,
@@ -594,6 +599,8 @@ pub struct ComputedStyleFields {
     /// CSS `color` (inherited). Initial: `black` (CanvasText in Blink,
     /// but we use black for simplicity — matches most user agents).
     pub color: Color,
+    /// CSS `-webkit-text-fill-color` (inherited). Initial: currentcolor.
+    pub text_fill_color: StyleColor,
 
     /// CSS `opacity`. Initial: `1.0`.
     pub opacity: f32,
@@ -687,11 +694,31 @@ pub struct ComputedStyleFields {
     pub scroll_target_group: ScrollTargetGroup,
     pub scroll_snap_align: ScrollSnapAlign,
     pub scroll_snap_axis: ScrollSnapAxis,
+    pub scroll_snap_strictness: ScrollSnapStrictness,
+    pub scroll_snap_stop: ScrollSnapStop,
+    /// Optional logical overrides; the compatibility align value applies to
+    /// both axes when the corresponding override is absent.
+    pub scroll_snap_align_block: Option<ScrollSnapAlign>,
+    pub scroll_snap_align_inline: Option<ScrollSnapAlign>,
+    pub scroll_padding_top: Length,
+    pub scroll_padding_right: Length,
+    pub scroll_padding_bottom: Length,
+    pub scroll_padding_left: Length,
+    pub scroll_margin_top: Length,
+    pub scroll_margin_right: Length,
+    pub scroll_margin_bottom: Length,
+    pub scroll_margin_left: Length,
 
     // ── Replaced content and deterministic effects ───────────────────
     pub object_fit: ObjectFit,
     pub object_position: ObjectPosition,
     pub transform: Transform2D,
+    /// Owned native transform source. `None` preserves legacy callers which
+    /// write the existing affine `transform` field directly.
+    pub native_transform: Option<crate::TransformList>,
+    /// Full constant transform when independent of the reference box. Used
+    /// fragment matrices are finalized after layout, including deferred lists.
+    pub transform_matrix: Option<crate::TransformMatrix>,
     pub transform_origin: (Length, Length),
     /// Deterministic CSS filter functions represented by the paint backend.
     pub filter_blur: f32,
@@ -1077,6 +1104,30 @@ pub struct ComputedStyleFields {
 }
 
 impl ComputedStyleFields {
+    /// A specified transform creates transform policy even when its used
+    /// matrix is identity. Direct legacy affine callers keep their old view.
+    #[inline]
+    pub fn has_transform(&self) -> bool {
+        self.native_transform
+            .as_ref()
+            .map_or(self.transform != Transform2D::IDENTITY, |list| {
+                !list.0.is_empty()
+            })
+    }
+
+    #[inline]
+    pub fn has_transform_containing_block(&self) -> bool {
+        self.establishes_transform_containing_block || self.has_transform()
+    }
+
+    /// Evaluate the retained native operation list with the actual used box.
+    #[doc(hidden)]
+    pub fn transform_for_reference_box(&self, width: f64, height: f64) -> crate::TransformMatrix {
+        self.native_transform.as_ref().map_or_else(
+            || crate::TransformMatrix::from_affine(self.transform),
+            |list| crate::transform_list_matrix(list, (width, height)),
+        )
+    }
     /// Compose nested derived-style setup while the DOM owns the only mutable
     /// borrow. This cannot be used to obtain or retain a mutable snapshot.
     #[doc(hidden)]
@@ -1235,8 +1286,10 @@ impl ComputedStyle {
                 border_bottom_right_radius: (0.0, 0.0),
                 border_bottom_left_radius: (0.0, 0.0),
                 border_radius_percent: [(false, false); 4],
+                border_radius_lengths: [None; 4],
 
                 background_color: Color::TRANSPARENT,
+                background_current_color: false,
                 background_linear_gradient: None,
                 background_layers: Vec::new(),
                 mask_layers: Vec::new(),
@@ -1244,6 +1297,7 @@ impl ComputedStyle {
                 background_attachment: BackgroundAttachment::Scroll,
                 border_image: None,
                 color: Color::BLACK,
+                text_fill_color: StyleColor::CurrentColor,
                 opacity: 1.0,
                 box_shadow: Vec::new(),
                 z_index: None, // auto
@@ -1297,11 +1351,25 @@ impl ComputedStyle {
                 scroll_target_group: ScrollTargetGroup::None,
                 scroll_snap_align: ScrollSnapAlign::None,
                 scroll_snap_axis: ScrollSnapAxis::None,
+                scroll_snap_strictness: ScrollSnapStrictness::Mandatory,
+                scroll_snap_stop: ScrollSnapStop::Normal,
+                scroll_snap_align_block: None,
+                scroll_snap_align_inline: None,
+                scroll_padding_top: Length::auto(),
+                scroll_padding_right: Length::auto(),
+                scroll_padding_bottom: Length::auto(),
+                scroll_padding_left: Length::auto(),
+                scroll_margin_top: Length::px(0.0),
+                scroll_margin_right: Length::px(0.0),
+                scroll_margin_bottom: Length::px(0.0),
+                scroll_margin_left: Length::px(0.0),
 
                 // Replaced content and deterministic effects
                 object_fit: ObjectFit::Fill,
                 object_position: ObjectPosition::default(),
                 transform: Transform2D::IDENTITY,
+                native_transform: None,
+                transform_matrix: None,
                 transform_origin: (Length::percent(50.0), Length::percent(50.0)),
                 filter_blur: 0.0,
                 filter_grayscale: 0.0,
@@ -1484,6 +1552,7 @@ impl ComputedStyle {
         style.fields.device_scale_factor = origin.device_scale_factor;
         style.fields.color = origin.color;
         style.fields.visibility = origin.visibility;
+        style.fields.border_collapse = origin.border_collapse;
         style.fields.pointer_events = origin.pointer_events;
         style.fields.direction = origin.direction;
         style.fields.font_family = origin.font_family.clone();
@@ -1544,6 +1613,7 @@ impl ComputedStyle {
         style.fields.text_emphasis_fill = origin.text_emphasis_fill;
         style.fields.text_emphasis_position = origin.text_emphasis_position;
         style.fields.text_emphasis_color = origin.text_emphasis_color;
+        style.fields.text_fill_color = origin.text_fill_color;
         style.fields.text_combine_upright = origin.text_combine_upright;
         style.fields.ruby_position = origin.ruby_position;
         style.fields.ruby_align = origin.ruby_align;
@@ -1563,6 +1633,61 @@ impl ComputedStyle {
     /// which the generated porter can materialize the cascade.
     pub fn for_anonymous_box(parent: &Self) -> Self {
         Self::for_pseudo(parent)
+    }
+
+    /// Resolve inherited/currentcolor text fill against the final own color.
+    pub fn effective_text_fill_color(&self) -> Color {
+        self.text_fill_color.resolve(&self.color)
+    }
+
+    /// Publish dependent ordinary colors after the own color cascade/effect stack.
+    pub fn resolve_current_color_dependencies(&mut self) {
+        if self.fields.background_current_color {
+            self.fields.background_color = self.fields.color;
+        }
+    }
+
+    /// Resolve retained corner source lengths against the actual physical box.
+    /// This does not apply the shared CSS overlap reduction or raster scale.
+    /// Explicit numeric/flag transports retain their established meaning.
+    #[doc(hidden)]
+    pub fn border_radii_for_box(&self, size: (f32, f32)) -> [(f32, f32); 4] {
+        let numeric = [
+            self.fields.border_top_left_radius,
+            self.fields.border_top_right_radius,
+            self.fields.border_bottom_right_radius,
+            self.fields.border_bottom_left_radius,
+        ];
+        let resolve = |length: Length, basis: f32| {
+            // Pinned .50 FloatValueForLength distinguishes Percent from Calc.
+            if length.is_calculated() {
+                length.calc_offset() + (length.value() / 100.0) * basis
+            } else if length.is_percent() {
+                basis * length.value() / 100.0
+            } else {
+                length.value()
+            }
+        };
+        std::array::from_fn(|index| {
+            let (x, y) = if let Some((x, y)) = self.fields.border_radius_lengths[index] {
+                (resolve(x, size.0), resolve(y, size.1))
+            } else {
+                let flags = self.fields.border_radius_percent[index];
+                (
+                    if flags.0 {
+                        size.0 * numeric[index].0 / 100.0
+                    } else {
+                        numeric[index].0
+                    },
+                    if flags.1 {
+                        size.1 * numeric[index].1 / 100.0
+                    } else {
+                        numeric[index].1
+                    },
+                )
+            };
+            (x.max(0.0), y.max(0.0))
+        })
     }
 
     // ── Convenience: effective border width (0 if style is none/hidden) ──
@@ -1683,6 +1808,19 @@ impl ComputedStyle {
     /// True if any border-radius corner is non-zero.
     #[inline]
     pub fn has_border_radius(&self) -> bool {
+        // A calculated source may project to zero legacy numbers while still
+        // producing a nonzero radius on the actual reference box.
+        let source_nonzero = |length: Length| {
+            length.value() != 0.0 || (length.is_calculated() && length.calc_offset() != 0.0)
+        };
+        if self
+            .border_radius_lengths
+            .iter()
+            .flatten()
+            .any(|&(x, y)| source_nonzero(x) || source_nonzero(y))
+        {
+            return true;
+        }
         self.border_top_left_radius != (0.0, 0.0)
             || self.border_top_right_radius != (0.0, 0.0)
             || self.border_bottom_right_radius != (0.0, 0.0)

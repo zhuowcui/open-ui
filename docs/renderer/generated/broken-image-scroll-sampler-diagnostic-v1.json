@@ -1,0 +1,48 @@
+{
+  "baseline_report_sha256": "3e7a7f5f4b46af927594fd5f52a1d2e6dad82c4fb17cd879be36e651a1967fa2",
+  "baseline_source": {
+    "clean": true,
+    "commit": "09683348f3cf1b66a7952584e0286f330b06f1fb",
+    "harness_sha256": "40e2d778d6a3437226f17e7b84eb1dcb223a2d6f5329654c4923bc2961b3ac30",
+    "source_tree_sha256": "e7101889181c7632e044c9e718f7d32dbfda1776fdd425b70db2c282452f1ab4",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "changed_openui_comparisons": [
+    {
+      "baseline_mismatched_pixels": 67,
+      "baseline_status": "different",
+      "chromium_oracle_rgba_sha256": "7d18509c98c72db22385e4b7254bd3a32da3d9c9bb6ab1eb4b2c613d93a1a49a",
+      "diagnostic_mismatched_pixels": 63,
+      "diagnostic_status": "different",
+      "profile": "desktop-1280x720@1.25",
+      "test_id": "wpt/css_overflow/overflow-img-scroll-non-replaced"
+    },
+    {
+      "baseline_mismatched_pixels": 156,
+      "baseline_status": "different",
+      "chromium_oracle_rgba_sha256": "8c9d9c34cb2d23558f2a067b47cbd88ff7628a4073519a03cc59e74a00dd05ee",
+      "diagnostic_mismatched_pixels": 70,
+      "diagnostic_status": "different",
+      "profile": "desktop-1920x1080@1.5",
+      "test_id": "wpt/css_overflow/overflow-img-scroll-non-replaced"
+    }
+  ],
+  "chromium_oracle_changes": 0,
+  "diagnostic_report_sha256": "7ce4abbd7db8bc4aa131413b21220867a4e3c8e9e8edd5057c3084f0891b68d2",
+  "diagnostic_source": {
+    "clean": false,
+    "commit": "a2a6a6fdf2b843dee6f2eeb1c7bd000a55a6c267",
+    "harness_sha256": "40e2d778d6a3437226f17e7b84eb1dcb223a2d6f5329654c4923bc2961b3ac30",
+    "source_tree_sha256": "ca34eeaceef8e09981a53ef7f488a6f152440bb8e9f6792e6d78f3d10a154fe9",
+    "status_sha256": "d1385c46c8933cc4441baa5f2ff483b5c3e59fc4dac5ee2faa12b740e14973bb"
+  },
+  "disposition": "reverted: no comparison became exact and the remaining icon/scroll path still differs",
+  "exact_after": 212,
+  "exact_before": 212,
+  "hypothesis": "Use the ordinary floating image sampler for a broken-image host with overflow:scroll.",
+  "id_manifest_sha256": "73fc8465c9ed5734e4e0480e34e4cd9d4a064850400084b0b7035205e23d689d",
+  "schema_version": 1,
+  "selected_comparison_count": 220,
+  "selected_test_count": 55,
+  "status": "rejected-dirty-diagnostic"
+}

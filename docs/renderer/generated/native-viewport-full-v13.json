@@ -1,0 +1,434 @@
+{
+  "artifacts": [
+    {
+      "path": "docs/renderer/generated/native-viewport-full-v12.json",
+      "sha256": "80a4c1560992879759622788fb74da4d94889bf0de05ff6956f5f156883edbf6"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/corner-coverage-clean-focused-v109/focused-summary.json",
+      "sha256": "a13ae88536c4ece65c7934bfa6e31af7d66883ed631e271f9777f7282a1317fb"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/corner-coverage-clean-focused-v109.log",
+      "sha256": "6b2ba6beb85177932fb173dbecadff416e39723f9c08a6aa2792ffab0b306a5f"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/corner-coverage-clean-primitive-v109/primitive-summary.json",
+      "sha256": "ffdb2b90a572efbc14d76e5e7e1ce6d5fe7795bc809a5f2aacd708228d1e3233"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/corner-coverage-clean-primitive-v109.log",
+      "sha256": "8b6706acf6ad57d9a26937291422b773e11f2cc3bf155e1dd96b939cb9b75acd"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/corner-coverage-raster-delta-v113.json",
+      "sha256": "71334eaf0764d75433cfd73febe68cde743596e0b363186a94587f8c1e317cc9"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-rust-contract-ci-v115.json",
+      "sha256": "ca01bf98b15b5c8f1b866f58f5eefc5b374400d00b24de33287e7b8f341705e2"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/solid-tile-clip-clean-expanded-v88/expanded-summary.json",
+      "sha256": "1ec8e40d2fd8cd93153b4218351cf5ee41a589e25897d22cd47ba1f4d95ba82e"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/solid-tile-clip-clean-expanded-v88.log",
+      "sha256": "dea5b5dfa78f2ad0c14e4455f3fc157d8f188a1df222e58cec567e021b615199"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/solid-tile-clip-clean-full-v88/full-summary.json",
+      "sha256": "ca32afff5352b7ebd7f72a1b025bfc187776375af86d6d909294d3b7099f2b7e"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/solid-tile-clip-clean-full-v88.log",
+      "sha256": "fd78cd7b58130ca6cdc64e94602047da22a50f34d6983e05f87ee20e23581e99"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/solid-tile-complete-delta-v122.json",
+      "sha256": "a147537555b36f9750d49b6d13cf7c6b865c5cf90530d7e39ba30f3f35b53b29"
+    }
+  ],
+  "corner_candidate_complete_censuses": "Both v105 original and expanded runs remain in progress on clean immutable 64fa1a7c source. No complete totals are claimed.",
+  "corner_candidate_complete_raster_matrices": {
+    "matrices": [
+      {
+        "all_native_and_chromium_images_oracle_identities_and_differences_unchanged": true,
+        "observed_exit_code": 0,
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/corner-coverage-clean-focused-v109/focused-summary.json",
+        "results": {
+          "different": 0,
+          "errors": 0,
+          "exact": 640,
+          "profile_result_sha256": "0685b707a99fb708ef9de9319baa69e1c44d92302d6f87169f24cbb619daaf24",
+          "total": 640
+        },
+        "sha256": "a13ae88536c4ece65c7934bfa6e31af7d66883ed631e271f9777f7282a1317fb",
+        "source": {
+          "clean": true,
+          "commit": "64fa1a7cee6186fe4c35287769ed42d3400af8ac",
+          "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+          "source_tree_sha256": "08acfa07d5c97f37cc1ad32e226266aee34ce04114967794db2139e0d3d1e69a",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "source_after": {
+          "clean": true,
+          "commit": "64fa1a7cee6186fe4c35287769ed42d3400af8ac",
+          "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+          "source_tree_sha256": "08acfa07d5c97f37cc1ad32e226266aee34ce04114967794db2139e0d3d1e69a",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "suite": "focused"
+      },
+      {
+        "all_native_and_chromium_images_oracle_identities_and_differences_unchanged": true,
+        "observed_exit_code": 0,
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/corner-coverage-clean-primitive-v109/primitive-summary.json",
+        "results": {
+          "different": 0,
+          "errors": 0,
+          "exact": 960,
+          "profile_result_sha256": "fcdd3907d3311974b8e7b61cbb84b3ad7b567c0d6e333919da72ed985c2997d9",
+          "total": 960
+        },
+        "sha256": "ffdb2b90a572efbc14d76e5e7e1ce6d5fe7795bc809a5f2aacd708228d1e3233",
+        "source": {
+          "clean": true,
+          "commit": "64fa1a7cee6186fe4c35287769ed42d3400af8ac",
+          "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+          "source_tree_sha256": "08acfa07d5c97f37cc1ad32e226266aee34ce04114967794db2139e0d3d1e69a",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "source_after": {
+          "clean": true,
+          "commit": "64fa1a7cee6186fe4c35287769ed42d3400af8ac",
+          "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+          "source_tree_sha256": "08acfa07d5c97f37cc1ad32e226266aee34ce04114967794db2139e0d3d1e69a",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "suite": "primitive"
+      }
+    ],
+    "release_qualification": false,
+    "schema_version": 1
+  },
+  "javascript_executed_by_openui": false,
+  "native_api_evidence": "docs/v02/generated/native-c-scroll-metrics-v1.json",
+  "pixel_tolerance": 0,
+  "policy": "Chromium is the sole pixel target. Open UI never executes JavaScript. Consuming native apps use public Rust methods and Rust callbacks.",
+  "previous_evidence": "docs/renderer/generated/native-viewport-full-v12.json",
+  "prior_umbrella_hosted_checks": {
+    "captured_at_utc": "2026-10-02T19:47:27.640239+00:00",
+    "checkpoints": [
+      {
+        "head_sha": "f33bad1318c56b5593e9513830072a81243efcc4",
+        "job_conclusions": {
+          "cancelled": 1,
+          "skipped": 5,
+          "success": 5
+        },
+        "jobs": [
+          {
+            "conclusion": "success",
+            "name": "conformance-and-platform",
+            "run_id": 37053118298,
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37053118298/job/110991113328"
+          },
+          {
+            "conclusion": "skipped",
+            "name": "msrv",
+            "run_id": 37053118298,
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37053118298/job/110991114723"
+          },
+          {
+            "conclusion": "skipped",
+            "name": "miri-handles",
+            "run_id": 37053118298,
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37053118298/job/110991114815"
+          },
+          {
+            "conclusion": "skipped",
+            "name": "fuzz-smoke",
+            "run_id": 37053118298,
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37053118298/job/110991114845"
+          },
+          {
+            "conclusion": "skipped",
+            "name": "c-undefined-sanitizer",
+            "run_id": 37053118298,
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37053118298/job/110991114873"
+          },
+          {
+            "conclusion": "skipped",
+            "name": "native-sanitizers",
+            "run_id": 37053118298,
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37053118298/job/110991114964"
+          },
+          {
+            "conclusion": "cancelled",
+            "name": "rust-parity",
+            "run_id": 37053118046,
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37053118046/job/110991112239"
+          },
+          {
+            "conclusion": "success",
+            "name": "historical-pixel-audit",
+            "run_id": 37053118046,
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37053118046/job/110991112625"
+          },
+          {
+            "conclusion": "success",
+            "name": "python-accountability",
+            "run_id": 37053118046,
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37053118046/job/110991112661"
+          },
+          {
+            "conclusion": "success",
+            "name": "clang-format",
+            "run_id": 37053117887,
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37053117887/job/110991111732"
+          },
+          {
+            "conclusion": "success",
+            "name": "gn-format",
+            "run_id": 37053117887,
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37053117887/job/110991112005"
+          }
+        ],
+        "runs": [
+          {
+            "conclusion": "success",
+            "databaseId": 37053118298,
+            "headSha": "f33bad1318c56b5593e9513830072a81243efcc4",
+            "name": "v0.2 Hardening",
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37053118298"
+          },
+          {
+            "conclusion": "cancelled",
+            "databaseId": 37053118046,
+            "headSha": "f33bad1318c56b5593e9513830072a81243efcc4",
+            "name": "CI",
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37053118046"
+          },
+          {
+            "conclusion": "success",
+            "databaseId": 37053117887,
+            "headSha": "f33bad1318c56b5593e9513830072a81243efcc4",
+            "name": "Format Check",
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37053117887"
+          }
+        ],
+        "unfinished": 0
+      },
+      {
+        "head_sha": "cced75443fe0e38f0bde6815d63a30447b8f301f",
+        "job_conclusions": {
+          "skipped": 5,
+          "success": 6
+        },
+        "jobs": [
+          {
+            "conclusion": "success",
+            "name": "rust-parity",
+            "run_id": 37053583021,
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37053583021/job/110992828107"
+          },
+          {
+            "conclusion": "success",
+            "name": "python-accountability",
+            "run_id": 37053583021,
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37053583021/job/110992828460"
+          },
+          {
+            "conclusion": "success",
+            "name": "historical-pixel-audit",
+            "run_id": 37053583021,
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37053583021/job/110992828559"
+          },
+          {
+            "conclusion": "success",
+            "name": "conformance-and-platform",
+            "run_id": 37053583187,
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37053583187/job/110992670452"
+          },
+          {
+            "conclusion": "skipped",
+            "name": "native-sanitizers",
+            "run_id": 37053583187,
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37053583187/job/110992672047"
+          },
+          {
+            "conclusion": "skipped",
+            "name": "c-undefined-sanitizer",
+            "run_id": 37053583187,
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37053583187/job/110992672542"
+          },
+          {
+            "conclusion": "skipped",
+            "name": "msrv",
+            "run_id": 37053583187,
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37053583187/job/110992672552"
+          },
+          {
+            "conclusion": "skipped",
+            "name": "fuzz-smoke",
+            "run_id": 37053583187,
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37053583187/job/110992672601"
+          },
+          {
+            "conclusion": "skipped",
+            "name": "miri-handles",
+            "run_id": 37053583187,
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37053583187/job/110992722340"
+          },
+          {
+            "conclusion": "success",
+            "name": "clang-format",
+            "run_id": 37053583333,
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37053583333/job/110992669436"
+          },
+          {
+            "conclusion": "success",
+            "name": "gn-format",
+            "run_id": 37053583333,
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37053583333/job/110992669685"
+          }
+        ],
+        "runs": [
+          {
+            "conclusion": "success",
+            "databaseId": 37053583021,
+            "headSha": "cced75443fe0e38f0bde6815d63a30447b8f301f",
+            "name": "CI",
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37053583021"
+          },
+          {
+            "conclusion": "success",
+            "databaseId": 37053583187,
+            "headSha": "cced75443fe0e38f0bde6815d63a30447b8f301f",
+            "name": "v0.2 Hardening",
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37053583187"
+          },
+          {
+            "conclusion": "success",
+            "databaseId": 37053583333,
+            "headSha": "cced75443fe0e38f0bde6815d63a30447b8f301f",
+            "name": "Format Check",
+            "status": "completed",
+            "url": "https://github.com/zhuowcui/open-ui/actions/runs/37053583333"
+          }
+        ],
+        "unfinished": 0
+      }
+    ],
+    "qualification_note": "Five skipped hardening jobs remain unverified. Prior checkpoint results do not qualify a later API commit.",
+    "release_qualification": false,
+    "schema_version": 1
+  },
+  "prototype_runtime_applied_to_umbrella": false,
+  "release_qualification": false,
+  "remaining_release_contract": "The private solid-tile full runs preserve all 22,924 original and 804 addition image hashes and difference signatures against the preceding accepted renderer. They still fail the required original and expanded exact gates. The combined sampling/corner candidate is 850/850 native, 12/12 wider, 640/640 focused and 960/960 primitive exact; complete original/expanded runs are required before promotion. New native API source requires its own later renderer and hosted qualification. Residual ownership, native input, compositor, hardware, hardening, packaging and signing remain open.",
+  "schema_version": 1,
+  "solid_tile_candidate_complete_censuses": {
+    "addition_comparisons": 804,
+    "addition_ids": 201,
+    "addition_ids_exact_at_all_profiles": 200,
+    "failed_addition_ids": [
+      "wpt/css_display/display-contents-dynamic-fieldset-legend-001"
+    ],
+    "matrices": [
+      {
+        "all_chromium_images_and_oracle_identities_unchanged": true,
+        "changed_comparisons": [],
+        "exact_regressions": [],
+        "observed_exit_code": 1,
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/solid-tile-clip-clean-full-v88/full-summary.json",
+        "results": {
+          "different": 1616,
+          "errors": 0,
+          "exact": 21308,
+          "profile_result_sha256": "ba509adee703a3b48066f3d4f5be159ed01ecb397ff9525412e2a17bcbce77fa",
+          "total": 22924
+        },
+        "sha256": "ca32afff5352b7ebd7f72a1b025bfc187776375af86d6d909294d3b7099f2b7e",
+        "source": {
+          "clean": true,
+          "commit": "d64d3f7f14c1c066af092b6e7ec277e35fb3e94d",
+          "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+          "source_tree_sha256": "e09a79c07ea0f2e4f6dafe625421be45fa8489ea160b94a4c179a3e3552cb75c",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "source_after": {
+          "clean": true,
+          "commit": "d64d3f7f14c1c066af092b6e7ec277e35fb3e94d",
+          "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+          "source_tree_sha256": "e09a79c07ea0f2e4f6dafe625421be45fa8489ea160b94a4c179a3e3552cb75c",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "suite": "full",
+        "worsened_pixel_counts": []
+      },
+      {
+        "all_chromium_images_and_oracle_identities_unchanged": true,
+        "changed_comparisons": [],
+        "exact_regressions": [],
+        "observed_exit_code": 1,
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/solid-tile-clip-clean-expanded-v88/expanded-summary.json",
+        "results": {
+          "different": 1617,
+          "errors": 0,
+          "exact": 22111,
+          "profile_result_sha256": "e0f0a8d2d74002aace625a0308b01eb32c52e23c4c7738b04a4ab9b2996fc65a",
+          "total": 23728
+        },
+        "sha256": "1ec8e40d2fd8cd93153b4218351cf5ee41a589e25897d22cd47ba1f4d95ba82e",
+        "source": {
+          "clean": true,
+          "commit": "d64d3f7f14c1c066af092b6e7ec277e35fb3e94d",
+          "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+          "source_tree_sha256": "e09a79c07ea0f2e4f6dafe625421be45fa8489ea160b94a4c179a3e3552cb75c",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "source_after": {
+          "clean": true,
+          "commit": "d64d3f7f14c1c066af092b6e7ec277e35fb3e94d",
+          "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+          "source_tree_sha256": "e09a79c07ea0f2e4f6dafe625421be45fa8489ea160b94a4c179a3e3552cb75c",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "suite": "expanded",
+        "worsened_pixel_counts": []
+      }
+    ],
+    "original_rows_agree_between_full_and_expanded": true,
+    "release_qualification": false,
+    "schema_version": 1
+  }
+}

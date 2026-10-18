@@ -1,0 +1,3074 @@
+{
+  "chromium": {
+    "binary_sha256": "0ba87684df0afc11faaea40ac57bd2f1d68b67191443b38215a36b90e6f08848",
+    "build_identity": "147.0.7727.50",
+    "capture_harness_sha256": "1aa6f07a50e71c82ae715502b86f974915128f057c6963a6dfd49319fba3f582",
+    "oracle_cache": "/home/nero/code/open-ui/out/renderer-qualification-cache/chromium-oracle"
+  },
+  "commit": "814a200523b642c5b7ad5cdee4d97f8152421834",
+  "complete_contract_scope": false,
+  "contract_sha256": "bd31f7168671d23139ea9de51965f3612a3d7e88df89302c725be085ba4c5e09",
+  "evidence": {
+    "kind": "diagnostic-census",
+    "qualification_backend_match": true,
+    "qualified": false,
+    "tolerance_pixels": 0
+  },
+  "font_byte_hashes": {
+    "bindings/rust/openui-text/fonts/Ahem.ttf": "b719ecb31c5b21fc573c03f6421c74ac63c271a5a3ff841e34f9705fb94b8448",
+    "bindings/rust/openui-text/fonts/DejaVuSans-Bold.ttf": "5c1247acef7f2b8522a31742c76d6adcb5569bacc0be7ceaa4dc39dd252ce895",
+    "bindings/rust/openui-text/fonts/DejaVuSans.ttf": "ae7b7855e115a5966d8b1b3f80f254ccc117ec86f9965e202ee2940453837280",
+    "bindings/rust/openui-text/fonts/DejaVuSansMono-Bold.ttf": "3a3c502eeff669a231549e80df9f7c49de109bafe303170409e905d0b31a38fe",
+    "bindings/rust/openui-text/fonts/DejaVuSansMono.ttf": "c805f9436dbc268644c1d9584f01a601a653e028e08fd74b9b949f6cf8304d88",
+    "bindings/rust/openui-text/fonts/DejaVuSerif-Bold.ttf": "847b33e13925f19ff87e4d934d6b3cf7cac35ce16424f6f670e40c2f377cf2df",
+    "bindings/rust/openui-text/fonts/DejaVuSerif.ttf": "8f2c103bfa3fd5de71f1b92b18f21906b5a26871fb7e19a9a4c9af539c3cc7ab",
+    "bindings/rust/openui-text/fonts/DroidSansFallback-reduced.ttf": "27db42b79d0846f6fd01b3d6a8233df9a8a5ece80b042299dc4174c48213ffd3",
+    "bindings/rust/openui-text/fonts/NotoColorEmoji.ttf": "72a635cb3d2f3524c51620cdde406b217204e8a6a06c6a096ff8ed4b5fd6e27b",
+    "bindings/rust/openui-text/fonts/NotoSansDevanagari-Regular.ttf": "b1dffa1fccb30dc45287111834a9db15c652b05d4d67201abe73e67717017590",
+    "bindings/rust/openui-text/fonts/certification/fixture.otc": "d646722927f94b620e35e3ed3a99ad34e856b400dd2fb191a51d3d357a97d216",
+    "bindings/rust/openui-text/fonts/certification/fixture.otf": "235f7207a202026a0a73c38c64713d58eace082bdf605f5abd2a28166fab61aa",
+    "bindings/rust/openui-text/fonts/certification/fixture.ttc": "29456016c3d05578b3702eb38258f2872e82048c811ae7e5927406ec8048dc55",
+    "bindings/rust/openui-text/fonts/certification/fixture.ttf": "b719ecb31c5b21fc573c03f6421c74ac63c271a5a3ff841e34f9705fb94b8448",
+    "bindings/rust/openui-text/fonts/certification/fixture.woff": "4e0e5135fa60f01e456e74ea50af23537d39cfc7822ab01dfa499a6efd8544e0",
+    "bindings/rust/openui-text/fonts/certification/fixture.woff2": "984e2d1e7062a65a5ac746f38520a9ce0e1058e33533bfddd243bb5cfba061d4"
+  },
+  "id_manifest": {
+    "count": 1,
+    "path": "/dev/shm/openui-table-814a2005-one-id.json",
+    "sha256": "8b070d740a4141454dc257d50f674609304febb9c89abd7c9254bb4b01261645"
+  },
+  "manifest_scope": {
+    "admitted_candidate_count": 200,
+    "expanded_count": 5931,
+    "original_count": 5731,
+    "reported_suite": "residual-cross"
+  },
+  "openui": {
+    "binary_sha256": "b2695113139b898730cf67c22c586ed6de98d8daa0d807be90f012088380611c",
+    "raster_backend_identity": {
+      "backend": "cpu-skia",
+      "color_type": "N32-premultiplied",
+      "driver": null,
+      "gl_renderer": null,
+      "gl_version": null,
+      "sample_count": 0,
+      "surface_properties": "scene-raster-configuration-v1"
+    }
+  },
+  "profiles": [
+    {
+      "device_scale": 1.0,
+      "different": 0,
+      "errors": 0,
+      "exact": 1,
+      "logical_size_css_px": [
+        320,
+        240
+      ],
+      "ordered_id_sha256": "34ccf4276e821ee73f480ee46c80c04c1cd593be93768a1225baa6c496e9f2c7",
+      "physical_size_px": [
+        320,
+        240
+      ],
+      "profile": "focused-320x240@1",
+      "result_sha256": "234a9a14c0ca3b0b895157e5c9b63e23903cb767bc4dda5928a71e4b4bbcea05",
+      "tests": [
+        {
+          "cache_identity_sha256": "09ee8c306d3c4d6e6e1eee62b8c30217244bc24106011990d71f2c826e6c154e",
+          "chromium_oracle_identity_sha256": "1918e7c0a1dbc0a48ff92e72eb8795b2f83db3130652c45b2a41e92d90dedcb7",
+          "chromium_oracle_rgba_sha256": "f1d033b6a9ebf0931a8f2140b91d1da1be9a8cc0c70e7092c34f008b5ce174b8",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/94/94b241819ae3236e9578a61f9002dfb20619ec9cb0d5aff9b5fda1a9d09ed0a4.png",
+          "chromium_png_sha256": "94b241819ae3236e9578a61f9002dfb20619ec9cb0d5aff9b5fda1a9d09ed0a4",
+          "chromium_rgba_sha256": "f1d033b6a9ebf0931a8f2140b91d1da1be9a8cc0c70e7092c34f008b5ce174b8",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "registered-ahem",
+          "id": "wpt/css_break/table_repeated-section_multiple-row-groups.tentative",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/2c/2c431d275137d9cbac0f232eed3b662dbff18d567973d4b380480a8e0921811f.png",
+          "openui_png_sha256": "2c431d275137d9cbac0f232eed3b662dbff18d567973d4b380480a8e0921811f",
+          "openui_rgba_sha256": "f1d033b6a9ebf0931a8f2140b91d1da1be9a8cc0c70e7092c34f008b5ce174b8",
+          "raster_configuration": "cpu-skia:deterministic-alias",
+          "status": "exact"
+        }
+      ],
+      "total": 1
+    },
+    {
+      "device_scale": 1.25,
+      "different": 0,
+      "errors": 0,
+      "exact": 1,
+      "logical_size_css_px": [
+        320,
+        240
+      ],
+      "ordered_id_sha256": "34ccf4276e821ee73f480ee46c80c04c1cd593be93768a1225baa6c496e9f2c7",
+      "physical_size_px": [
+        400,
+        300
+      ],
+      "profile": "focused-320x240@1.25",
+      "result_sha256": "a04ea7223029a251917ff929ce9c922e93730afdf2c9a5ad2db3d5adc81bccf4",
+      "tests": [
+        {
+          "cache_identity_sha256": "f2238ca696ba3283d79ef5692dd740777b62eee21afb2c260d39490f72330874",
+          "chromium_oracle_identity_sha256": "18bba0420014dc91c2d2be87b045f63495dd44d00aa9c051dbfc2e150041a3ad",
+          "chromium_oracle_rgba_sha256": "6eaf95d925d8632512fb910c35fab85efd12e34442918a90dee4d1849a4b5503",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/6e/6ed165815353f96c85a31e148f353e8790a23827dd53cdabe931e3fd34b0eba1.png",
+          "chromium_png_sha256": "6ed165815353f96c85a31e148f353e8790a23827dd53cdabe931e3fd34b0eba1",
+          "chromium_rgba_sha256": "6eaf95d925d8632512fb910c35fab85efd12e34442918a90dee4d1849a4b5503",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "registered-ahem",
+          "id": "wpt/css_break/table_repeated-section_multiple-row-groups.tentative",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/54/54ce1ecae73fe7a234d7c1516aedede3beb7ce763ec3f89cb9730fdac9665486.png",
+          "openui_png_sha256": "54ce1ecae73fe7a234d7c1516aedede3beb7ce763ec3f89cb9730fdac9665486",
+          "openui_rgba_sha256": "6eaf95d925d8632512fb910c35fab85efd12e34442918a90dee4d1849a4b5503",
+          "raster_configuration": "cpu-skia:deterministic-alias",
+          "status": "exact"
+        }
+      ],
+      "total": 1
+    },
+    {
+      "device_scale": 1.5,
+      "different": 0,
+      "errors": 0,
+      "exact": 1,
+      "logical_size_css_px": [
+        320,
+        240
+      ],
+      "ordered_id_sha256": "34ccf4276e821ee73f480ee46c80c04c1cd593be93768a1225baa6c496e9f2c7",
+      "physical_size_px": [
+        480,
+        360
+      ],
+      "profile": "focused-320x240@1.5",
+      "result_sha256": "8964a10db9885e2d986cbb2f01e41c8d6cfc652e2121249312181bcae0204c19",
+      "tests": [
+        {
+          "cache_identity_sha256": "60d6686b651a4d64a3069ef86415c578d6326dd5ba7b5f14003a3b49734a6628",
+          "chromium_oracle_identity_sha256": "7e9bf6607a7360575f736bd5571139431ea177e0406a4e6e119f4f39a801d334",
+          "chromium_oracle_rgba_sha256": "d590057c258e609d08c46aa017cf4fced319b91c3ebef58a5ccaa6a80819a78d",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/9a/9a4eff1c647f3aae3ba34440f654b6219f6552ab2e129bd0c586261561a396bf.png",
+          "chromium_png_sha256": "9a4eff1c647f3aae3ba34440f654b6219f6552ab2e129bd0c586261561a396bf",
+          "chromium_rgba_sha256": "d590057c258e609d08c46aa017cf4fced319b91c3ebef58a5ccaa6a80819a78d",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "registered-ahem",
+          "id": "wpt/css_break/table_repeated-section_multiple-row-groups.tentative",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/28/2892b25e8200136228d4f28b3fc54903b615729782a39d4f8c48a0c2780a02fb.png",
+          "openui_png_sha256": "2892b25e8200136228d4f28b3fc54903b615729782a39d4f8c48a0c2780a02fb",
+          "openui_rgba_sha256": "d590057c258e609d08c46aa017cf4fced319b91c3ebef58a5ccaa6a80819a78d",
+          "raster_configuration": "cpu-skia:deterministic-alias",
+          "status": "exact"
+        }
+      ],
+      "total": 1
+    },
+    {
+      "device_scale": 2.0,
+      "different": 0,
+      "errors": 0,
+      "exact": 1,
+      "logical_size_css_px": [
+        320,
+        240
+      ],
+      "ordered_id_sha256": "34ccf4276e821ee73f480ee46c80c04c1cd593be93768a1225baa6c496e9f2c7",
+      "physical_size_px": [
+        640,
+        480
+      ],
+      "profile": "focused-320x240@2",
+      "result_sha256": "c1d188c3d1feca58b43455d7af9533d8f90c6331949ae277d47810befafa10d1",
+      "tests": [
+        {
+          "cache_identity_sha256": "92aceb6a94d951a0a9ad605567b91f43b874ff2f396de48a6933e0781c97e4b1",
+          "chromium_oracle_identity_sha256": "8f99304d42f4629b4a640f858f4007535f3980838bceb18aeca311d0397ee679",
+          "chromium_oracle_rgba_sha256": "dfac3dbe9f71d443b186e82bc3e30963a80999246f853191820db06f3c220c7e",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/3e/3edd82574f7fa3a4d980f554142715788c2e6ba52a0a705a9007b04470042d72.png",
+          "chromium_png_sha256": "3edd82574f7fa3a4d980f554142715788c2e6ba52a0a705a9007b04470042d72",
+          "chromium_rgba_sha256": "dfac3dbe9f71d443b186e82bc3e30963a80999246f853191820db06f3c220c7e",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "registered-ahem",
+          "id": "wpt/css_break/table_repeated-section_multiple-row-groups.tentative",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/cc/cc6da9e7d4dd54943ca135de7b6000cc3b8e029e7245228628a97983ff57dfdc.png",
+          "openui_png_sha256": "cc6da9e7d4dd54943ca135de7b6000cc3b8e029e7245228628a97983ff57dfdc",
+          "openui_rgba_sha256": "dfac3dbe9f71d443b186e82bc3e30963a80999246f853191820db06f3c220c7e",
+          "raster_configuration": "cpu-skia:deterministic-alias",
+          "status": "exact"
+        }
+      ],
+      "total": 1
+    },
+    {
+      "device_scale": 3.0,
+      "different": 0,
+      "errors": 0,
+      "exact": 1,
+      "logical_size_css_px": [
+        320,
+        240
+      ],
+      "ordered_id_sha256": "34ccf4276e821ee73f480ee46c80c04c1cd593be93768a1225baa6c496e9f2c7",
+      "physical_size_px": [
+        960,
+        720
+      ],
+      "profile": "focused-320x240@3",
+      "result_sha256": "298408ac5fa7f9f0879580be650330b64e7a1a2de24fc8280c8ad8c056c4f103",
+      "tests": [
+        {
+          "cache_identity_sha256": "2b631911b3809ce3cd4262cd02a905abd705b8f869e4543cdcf4efda9d688fa6",
+          "chromium_oracle_identity_sha256": "6b53f5d80a984779a60768fd359cc23ad6c617c8a080a173f982b867b0c1cce7",
+          "chromium_oracle_rgba_sha256": "ce31d35385f3fb7d295b11b510d702edfe0ca3deced05f3627945abe935e4722",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/16/1679a7257da3a2b3a8aff833ddc21f3642d8b9bf6840b49064a263ff4c801b7a.png",
+          "chromium_png_sha256": "1679a7257da3a2b3a8aff833ddc21f3642d8b9bf6840b49064a263ff4c801b7a",
+          "chromium_rgba_sha256": "ce31d35385f3fb7d295b11b510d702edfe0ca3deced05f3627945abe935e4722",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "registered-ahem",
+          "id": "wpt/css_break/table_repeated-section_multiple-row-groups.tentative",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/d0/d04b2fb687e25e119f9e8272f45b6da38acb3b878f3d87654ca70e65fac43110.png",
+          "openui_png_sha256": "d04b2fb687e25e119f9e8272f45b6da38acb3b878f3d87654ca70e65fac43110",
+          "openui_rgba_sha256": "ce31d35385f3fb7d295b11b510d702edfe0ca3deced05f3627945abe935e4722",
+          "raster_configuration": "cpu-skia:deterministic-alias",
+          "status": "exact"
+        }
+      ],
+      "total": 1
+    },
+    {
+      "device_scale": 1.0,
+      "different": 0,
+      "errors": 0,
+      "exact": 1,
+      "logical_size_css_px": [
+        375,
+        667
+      ],
+      "ordered_id_sha256": "34ccf4276e821ee73f480ee46c80c04c1cd593be93768a1225baa6c496e9f2c7",
+      "physical_size_px": [
+        375,
+        667
+      ],
+      "profile": "focused-375x667@1",
+      "result_sha256": "ecd0b7359ed4458f009e0c5f251aba2137c7de3cfc93acf3f4c439b7a294287f",
+      "tests": [
+        {
+          "cache_identity_sha256": "6a59d5b68adfc7a3ddfe523f33d54170edb6c065c876b8361e56e105994607f7",
+          "chromium_oracle_identity_sha256": "b69bbe28161cbd267c5eebf5ebfbce0000c8722e01d25f94de1632417e6cd2e3",
+          "chromium_oracle_rgba_sha256": "ff16a600fa551ae7cc886b5ab135e38a5c3a75991d46b761ac67725c41ae1079",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/31/3140f1ef904e7b58ae476de48d83c5d3204449f4fb3e19a1e4d27e5314f91f7d.png",
+          "chromium_png_sha256": "3140f1ef904e7b58ae476de48d83c5d3204449f4fb3e19a1e4d27e5314f91f7d",
+          "chromium_rgba_sha256": "ff16a600fa551ae7cc886b5ab135e38a5c3a75991d46b761ac67725c41ae1079",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "registered-ahem",
+          "id": "wpt/css_break/table_repeated-section_multiple-row-groups.tentative",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/f2/f2641e5b27c51e0da5acf21171bc65a91f225a2caaa43f31eec7000b64c0713e.png",
+          "openui_png_sha256": "f2641e5b27c51e0da5acf21171bc65a91f225a2caaa43f31eec7000b64c0713e",
+          "openui_rgba_sha256": "ff16a600fa551ae7cc886b5ab135e38a5c3a75991d46b761ac67725c41ae1079",
+          "raster_configuration": "cpu-skia:deterministic-alias",
+          "status": "exact"
+        }
+      ],
+      "total": 1
+    },
+    {
+      "device_scale": 1.25,
+      "different": 0,
+      "errors": 0,
+      "exact": 1,
+      "logical_size_css_px": [
+        375,
+        667
+      ],
+      "ordered_id_sha256": "34ccf4276e821ee73f480ee46c80c04c1cd593be93768a1225baa6c496e9f2c7",
+      "physical_size_px": [
+        469,
+        834
+      ],
+      "profile": "focused-375x667@1.25",
+      "result_sha256": "7ebe3022d08aebe34d5eccabb19179d0089f6b0b179d9404927b2fb3b16535e3",
+      "tests": [
+        {
+          "cache_identity_sha256": "d5f388b79d61fc231ca34e636e0760c32f0c8348ffdd56a8fca305ccc56386b2",
+          "chromium_oracle_identity_sha256": "26ac62dfa31a16018665008f2bad8a46984f830552746b43d17c1012bd75b18c",
+          "chromium_oracle_rgba_sha256": "97723ed1155a2be1668f7e8590daab57f5ece95f0e9b0d77d7291669f7176cf9",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/d1/d185428cb12174ff893d51628dbdc1255dd857f077eb58255fd84904ee23dc87.png",
+          "chromium_png_sha256": "d185428cb12174ff893d51628dbdc1255dd857f077eb58255fd84904ee23dc87",
+          "chromium_rgba_sha256": "97723ed1155a2be1668f7e8590daab57f5ece95f0e9b0d77d7291669f7176cf9",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "registered-ahem",
+          "id": "wpt/css_break/table_repeated-section_multiple-row-groups.tentative",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/44/4413146ac1739694a65d6abfae9337e1fb0f7e955b0cad116deef82acfd92dfd.png",
+          "openui_png_sha256": "4413146ac1739694a65d6abfae9337e1fb0f7e955b0cad116deef82acfd92dfd",
+          "openui_rgba_sha256": "97723ed1155a2be1668f7e8590daab57f5ece95f0e9b0d77d7291669f7176cf9",
+          "raster_configuration": "cpu-skia:deterministic-alias",
+          "status": "exact"
+        }
+      ],
+      "total": 1
+    },
+    {
+      "device_scale": 1.5,
+      "different": 0,
+      "errors": 0,
+      "exact": 1,
+      "logical_size_css_px": [
+        375,
+        667
+      ],
+      "ordered_id_sha256": "34ccf4276e821ee73f480ee46c80c04c1cd593be93768a1225baa6c496e9f2c7",
+      "physical_size_px": [
+        563,
+        1001
+      ],
+      "profile": "focused-375x667@1.5",
+      "result_sha256": "f055dbad7cb2cad9cbac55a714c4b5077c9724cdfff6afb62472ea186efeea9c",
+      "tests": [
+        {
+          "cache_identity_sha256": "d1658f3fc8c731604ae3f2a19325e12a57fd11cf4fbd496c72a92a6c71059f1c",
+          "chromium_oracle_identity_sha256": "26d337e3ae86857455b7631b75a797ebdc8d1906f175d6dec0e771019951c39d",
+          "chromium_oracle_rgba_sha256": "ba0fb53863b05210bd5d003d2a111bcf014f44cbdf8e2fc33eede17c0d1d2192",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/de/de6c7c80d36165079198f6c2301d99c7f503a5c9d3c9f4e756098ca0f2d38f33.png",
+          "chromium_png_sha256": "de6c7c80d36165079198f6c2301d99c7f503a5c9d3c9f4e756098ca0f2d38f33",
+          "chromium_rgba_sha256": "ba0fb53863b05210bd5d003d2a111bcf014f44cbdf8e2fc33eede17c0d1d2192",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "registered-ahem",
+          "id": "wpt/css_break/table_repeated-section_multiple-row-groups.tentative",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/66/6654720ebca61e048160d885989fc602ce12bc3df7fff14b953eac246cc1b2e3.png",
+          "openui_png_sha256": "6654720ebca61e048160d885989fc602ce12bc3df7fff14b953eac246cc1b2e3",
+          "openui_rgba_sha256": "ba0fb53863b05210bd5d003d2a111bcf014f44cbdf8e2fc33eede17c0d1d2192",
+          "raster_configuration": "cpu-skia:deterministic-alias",
+          "status": "exact"
+        }
+      ],
+      "total": 1
+    },
+    {
+      "device_scale": 2.0,
+      "different": 0,
+      "errors": 0,
+      "exact": 1,
+      "logical_size_css_px": [
+        375,
+        667
+      ],
+      "ordered_id_sha256": "34ccf4276e821ee73f480ee46c80c04c1cd593be93768a1225baa6c496e9f2c7",
+      "physical_size_px": [
+        750,
+        1334
+      ],
+      "profile": "focused-375x667@2",
+      "result_sha256": "9a08fb41a8fa71d2a3fcaee69071d437b7356d43ca24c995a37dac890067c066",
+      "tests": [
+        {
+          "cache_identity_sha256": "e7e56163b4bb29e3ecf4ff3d0952303f896a7c26cfcd519f4126fff4f99b935d",
+          "chromium_oracle_identity_sha256": "20af605b0b5c3c358d321c466b089995c87b622756d3ca65a04bb6fb6234a832",
+          "chromium_oracle_rgba_sha256": "003451be61b83ae8f7893ed1500b93b42d2da147f8a75b7d0294e397accc25e7",
+          "chromium_oracle_source": "cache",
+          "chromium_png_cache_path": "png/7f/7f56eb605eacf39651e3849050f242d7d8371ae17d25ea5c6b359c99d15f43ea.png",
+          "chromium_png_sha256": "7f56eb605eacf39651e3849050f242d7d8371ae17d25ea5c6b359c99d15f43ea",
+          "chromium_rgba_sha256": "003451be61b83ae8f7893ed1500b93b42d2da147f8a75b7d0294e397accc25e7",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "registered-ahem",
+          "id": "wpt/css_break/table_repeated-section_multiple-row-groups.tentative",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/b2/b26bc07a4c14ccb2574488d84896b6b8f4cefd8491ab4e91dee61467533aeabd.png",
+          "openui_png_sha256": "b26bc07a4c14ccb2574488d84896b6b8f4cefd8491ab4e91dee61467533aeabd",
+          "openui_rgba_sha256": "003451be61b83ae8f7893ed1500b93b42d2da147f8a75b7d0294e397accc25e7",
+          "raster_configuration": "cpu-skia:deterministic-alias",
+          "status": "exact"
+        }
+      ],
+      "total": 1
+    },
+    {
+      "device_scale": 3.0,
+      "different": 0,
+      "errors": 0,
+      "exact": 1,
+      "logical_size_css_px": [
+        375,
+        667
+      ],
+      "ordered_id_sha256": "34ccf4276e821ee73f480ee46c80c04c1cd593be93768a1225baa6c496e9f2c7",
+      "physical_size_px": [
+        1125,
+        2001
+      ],
+      "profile": "focused-375x667@3",
+      "result_sha256": "d8d4567d0188006e43171229f715156d0d5b3f02fb951b4d73903c7673a7cc65",
+      "tests": [
+        {
+          "cache_identity_sha256": "72679ad1a3a1c992003f614c99605cf7984732f04dfc6cf36cd60f22f34d6eee",
+          "chromium_oracle_identity_sha256": "d029e87121943c2b76ba772edb2bffc53aa59b1c5ce1684ceb83f75fc78b3cb5",
+          "chromium_oracle_rgba_sha256": "0148119c2300b1546d45cb5d8d5a96aa611438e8ca0960fde84d544cd26f5d5a",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/4f/4f5591e3160b40f0e6eb06327b421435603f4ce57e08e4feba862467363cd9d7.png",
+          "chromium_png_sha256": "4f5591e3160b40f0e6eb06327b421435603f4ce57e08e4feba862467363cd9d7",
+          "chromium_rgba_sha256": "0148119c2300b1546d45cb5d8d5a96aa611438e8ca0960fde84d544cd26f5d5a",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "registered-ahem",
+          "id": "wpt/css_break/table_repeated-section_multiple-row-groups.tentative",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/47/474f3a6dec6684c5252c6c217fb428125d37e642dedbb3137b9ac3c65f2abab2.png",
+          "openui_png_sha256": "474f3a6dec6684c5252c6c217fb428125d37e642dedbb3137b9ac3c65f2abab2",
+          "openui_rgba_sha256": "0148119c2300b1546d45cb5d8d5a96aa611438e8ca0960fde84d544cd26f5d5a",
+          "raster_configuration": "cpu-skia:deterministic-alias",
+          "status": "exact"
+        }
+      ],
+      "total": 1
+    },
+    {
+      "device_scale": 1.0,
+      "different": 0,
+      "errors": 0,
+      "exact": 1,
+      "logical_size_css_px": [
+        800,
+        600
+      ],
+      "ordered_id_sha256": "34ccf4276e821ee73f480ee46c80c04c1cd593be93768a1225baa6c496e9f2c7",
+      "physical_size_px": [
+        800,
+        600
+      ],
+      "profile": "focused-800x600@1",
+      "result_sha256": "876d2832172e6af01d94d57200b37507b93a5b7f7f587194e6db97c869bc7f0d",
+      "tests": [
+        {
+          "cache_identity_sha256": "f8d5f752a7288f6f21428af2ed9b3bf654ddb4b22ac3c1e30b37b2531fa531da",
+          "chromium_oracle_identity_sha256": "94c967a5f6eb1dd1f5fe55837d3522fd9c9c96dc3086d11c717b98b385ed051a",
+          "chromium_oracle_rgba_sha256": "c3bd607098b2ca40bf0371e0f83bd8fdf565243090cd037c6c3d5a75bda8f722",
+          "chromium_oracle_source": "cache",
+          "chromium_png_cache_path": "png/1d/1db27b02bb3f9404655553c86bd442c94e54a4b2aa032028756ae7e981262de5.png",
+          "chromium_png_sha256": "1db27b02bb3f9404655553c86bd442c94e54a4b2aa032028756ae7e981262de5",
+          "chromium_rgba_sha256": "c3bd607098b2ca40bf0371e0f83bd8fdf565243090cd037c6c3d5a75bda8f722",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "registered-ahem",
+          "id": "wpt/css_break/table_repeated-section_multiple-row-groups.tentative",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/cc/cc30bc7adaddf427e980da5c6a7129fa8522e9c594b43249933f1d99a63fa82d.png",
+          "openui_png_sha256": "cc30bc7adaddf427e980da5c6a7129fa8522e9c594b43249933f1d99a63fa82d",
+          "openui_rgba_sha256": "c3bd607098b2ca40bf0371e0f83bd8fdf565243090cd037c6c3d5a75bda8f722",
+          "raster_configuration": "cpu-skia:deterministic-alias",
+          "status": "exact"
+        }
+      ],
+      "total": 1
+    },
+    {
+      "device_scale": 1.25,
+      "different": 0,
+      "errors": 0,
+      "exact": 1,
+      "logical_size_css_px": [
+        800,
+        600
+      ],
+      "ordered_id_sha256": "34ccf4276e821ee73f480ee46c80c04c1cd593be93768a1225baa6c496e9f2c7",
+      "physical_size_px": [
+        1000,
+        750
+      ],
+      "profile": "focused-800x600@1.25",
+      "result_sha256": "8ed34c3622561da8d77031c6329a640447e3f80010d1532eb93b60b0b3fb5ce4",
+      "tests": [
+        {
+          "cache_identity_sha256": "f4467bfd549374c7294562259d4c681f9f9e58c9667ac979d71cfc505da81b01",
+          "chromium_oracle_identity_sha256": "de7335970d261878bb65d4b6321cf14766301c6dcb6dfb5469c10154585a3298",
+          "chromium_oracle_rgba_sha256": "36f79ff34a2788dd251836a9a13817c8357001ce140d44ce4fe0086440a0c3ac",
+          "chromium_oracle_source": "cache",
+          "chromium_png_cache_path": "png/1c/1c4f7b02acea9000ee0bc64d9b65d1c0a50399fd80508655bf84badc8a4f6113.png",
+          "chromium_png_sha256": "1c4f7b02acea9000ee0bc64d9b65d1c0a50399fd80508655bf84badc8a4f6113",
+          "chromium_rgba_sha256": "36f79ff34a2788dd251836a9a13817c8357001ce140d44ce4fe0086440a0c3ac",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "registered-ahem",
+          "id": "wpt/css_break/table_repeated-section_multiple-row-groups.tentative",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/56/56122fb49afc71b6c1821cfdb471f59d6479f541e5ad12e7d97a986e401956e6.png",
+          "openui_png_sha256": "56122fb49afc71b6c1821cfdb471f59d6479f541e5ad12e7d97a986e401956e6",
+          "openui_rgba_sha256": "36f79ff34a2788dd251836a9a13817c8357001ce140d44ce4fe0086440a0c3ac",
+          "raster_configuration": "cpu-skia:deterministic-alias",
+          "status": "exact"
+        }
+      ],
+      "total": 1
+    },
+    {
+      "device_scale": 1.5,
+      "different": 0,
+      "errors": 0,
+      "exact": 1,
+      "logical_size_css_px": [
+        800,
+        600
+      ],
+      "ordered_id_sha256": "34ccf4276e821ee73f480ee46c80c04c1cd593be93768a1225baa6c496e9f2c7",
+      "physical_size_px": [
+        1200,
+        900
+      ],
+      "profile": "focused-800x600@1.5",
+      "result_sha256": "8d1b0ba88eddeec314c0719d3ef2036812164d18cfe17c164b72c6be24d3cd3b",
+      "tests": [
+        {
+          "cache_identity_sha256": "97636460f2b36f168b6491239a127bdb9cb819b93632caf17c0974fec0f66a9a",
+          "chromium_oracle_identity_sha256": "0dd5925e2ff030176851d7e0864b0a61c6ac1a5139302bb495c383c340384a03",
+          "chromium_oracle_rgba_sha256": "10c2c45a1c1738ede7e3c6704d9f54ca56c7a3271a1d265ba112650f88547052",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/20/20504ad2d78b030107754aa8939552f6190ddd8cb6c3277101cfa81069fee656.png",
+          "chromium_png_sha256": "20504ad2d78b030107754aa8939552f6190ddd8cb6c3277101cfa81069fee656",
+          "chromium_rgba_sha256": "10c2c45a1c1738ede7e3c6704d9f54ca56c7a3271a1d265ba112650f88547052",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "registered-ahem",
+          "id": "wpt/css_break/table_repeated-section_multiple-row-groups.tentative",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/9e/9e9ee732a62b3eb2d4012c44c24701512666dc044235b088b78785bd6a3c6b32.png",
+          "openui_png_sha256": "9e9ee732a62b3eb2d4012c44c24701512666dc044235b088b78785bd6a3c6b32",
+          "openui_rgba_sha256": "10c2c45a1c1738ede7e3c6704d9f54ca56c7a3271a1d265ba112650f88547052",
+          "raster_configuration": "cpu-skia:deterministic-alias",
+          "status": "exact"
+        }
+      ],
+      "total": 1
+    },
+    {
+      "device_scale": 2.0,
+      "different": 0,
+      "errors": 0,
+      "exact": 1,
+      "logical_size_css_px": [
+        800,
+        600
+      ],
+      "ordered_id_sha256": "34ccf4276e821ee73f480ee46c80c04c1cd593be93768a1225baa6c496e9f2c7",
+      "physical_size_px": [
+        1600,
+        1200
+      ],
+      "profile": "focused-800x600@2",
+      "result_sha256": "02d148a8ce4a49ae0b6c6e3f1512a67ff344e4412c7f3a320b249da533b4aeea",
+      "tests": [
+        {
+          "cache_identity_sha256": "0972d7052a4b5d5751d8070afe709399f22668e3dc503eb6d862064d228f9715",
+          "chromium_oracle_identity_sha256": "78ecae245853edd54dcd4815db176ef1b3305487c99a206e7e9d32a1eb8441fc",
+          "chromium_oracle_rgba_sha256": "95c4f5f63820dd09677efaf923862a370a738e524438b7932f3c5d256fd37273",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/4c/4cc1c94739a59a2b4b4bfe079ce814fecdf645740c7d47ff0f3a877f4b3a25e7.png",
+          "chromium_png_sha256": "4cc1c94739a59a2b4b4bfe079ce814fecdf645740c7d47ff0f3a877f4b3a25e7",
+          "chromium_rgba_sha256": "95c4f5f63820dd09677efaf923862a370a738e524438b7932f3c5d256fd37273",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "registered-ahem",
+          "id": "wpt/css_break/table_repeated-section_multiple-row-groups.tentative",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/70/70179046e4470d83908c55af51d365ec5787b38659569256213c06c8fea0fdd6.png",
+          "openui_png_sha256": "70179046e4470d83908c55af51d365ec5787b38659569256213c06c8fea0fdd6",
+          "openui_rgba_sha256": "95c4f5f63820dd09677efaf923862a370a738e524438b7932f3c5d256fd37273",
+          "raster_configuration": "cpu-skia:deterministic-alias",
+          "status": "exact"
+        }
+      ],
+      "total": 1
+    },
+    {
+      "device_scale": 3.0,
+      "different": 0,
+      "errors": 0,
+      "exact": 1,
+      "logical_size_css_px": [
+        800,
+        600
+      ],
+      "ordered_id_sha256": "34ccf4276e821ee73f480ee46c80c04c1cd593be93768a1225baa6c496e9f2c7",
+      "physical_size_px": [
+        2400,
+        1800
+      ],
+      "profile": "focused-800x600@3",
+      "result_sha256": "292190b24cd3dd333c68cefdde2432bd292214f34f29f60fbc3e5615dc1d674a",
+      "tests": [
+        {
+          "cache_identity_sha256": "78d20d587c52650c45375a30bdc9f3b8f8a37beccb6a0f5f4b18cc5a77b42292",
+          "chromium_oracle_identity_sha256": "ac95c9400abd034165b17c5a7f372df90f5b637c8e023a3480f4ec8f58c4c760",
+          "chromium_oracle_rgba_sha256": "d3d54a70aab7cec29b325c7e2661fbfe2c6fcd2f9f25fa6b56dfce9b6eae1477",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/84/84e6ffe3971cf7a5b5e39283eefb97a8e1026e4bc6e476426e9cf2d376c8cb45.png",
+          "chromium_png_sha256": "84e6ffe3971cf7a5b5e39283eefb97a8e1026e4bc6e476426e9cf2d376c8cb45",
+          "chromium_rgba_sha256": "d3d54a70aab7cec29b325c7e2661fbfe2c6fcd2f9f25fa6b56dfce9b6eae1477",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "registered-ahem",
+          "id": "wpt/css_break/table_repeated-section_multiple-row-groups.tentative",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/01/01a78e27f3bad5f51b2c94aef7aa9283863b1d357fd9c7279064c87d74033a1d.png",
+          "openui_png_sha256": "01a78e27f3bad5f51b2c94aef7aa9283863b1d357fd9c7279064c87d74033a1d",
+          "openui_rgba_sha256": "d3d54a70aab7cec29b325c7e2661fbfe2c6fcd2f9f25fa6b56dfce9b6eae1477",
+          "raster_configuration": "cpu-skia:deterministic-alias",
+          "status": "exact"
+        }
+      ],
+      "total": 1
+    },
+    {
+      "device_scale": 1.0,
+      "different": 0,
+      "errors": 0,
+      "exact": 1,
+      "logical_size_css_px": [
+        600,
+        1200
+      ],
+      "ordered_id_sha256": "34ccf4276e821ee73f480ee46c80c04c1cd593be93768a1225baa6c496e9f2c7",
+      "physical_size_px": [
+        600,
+        1200
+      ],
+      "profile": "focused-600x1200@1",
+      "result_sha256": "bb01e04f83c798e4dcefbf133573a5a702683ad87740fd69810fb35d24354826",
+      "tests": [
+        {
+          "cache_identity_sha256": "66615b92125c4cddf55dc563eef697ab0b6b6cff30b278eb7c90a21e4aa24bc4",
+          "chromium_oracle_identity_sha256": "67ff8ce72f98652f2ab7e830a60923ab5fdbfbafbc6f2fc0798d5f91de7d47c6",
+          "chromium_oracle_rgba_sha256": "5cf7483a143dbf058f0e6bc181bd8f21766ddba495f2ec619cd80eb852fdbbe1",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/c8/c8ef75a04319c407c055a98e3f2b19719f399d4b895704e1217b51539fa57b5c.png",
+          "chromium_png_sha256": "c8ef75a04319c407c055a98e3f2b19719f399d4b895704e1217b51539fa57b5c",
+          "chromium_rgba_sha256": "5cf7483a143dbf058f0e6bc181bd8f21766ddba495f2ec619cd80eb852fdbbe1",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "registered-ahem",
+          "id": "wpt/css_break/table_repeated-section_multiple-row-groups.tentative",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/52/52b4da2ec5bf506788e64317efc90a7a930207176daf72926507d5bafd01a39e.png",
+          "openui_png_sha256": "52b4da2ec5bf506788e64317efc90a7a930207176daf72926507d5bafd01a39e",
+          "openui_rgba_sha256": "5cf7483a143dbf058f0e6bc181bd8f21766ddba495f2ec619cd80eb852fdbbe1",
+          "raster_configuration": "cpu-skia:deterministic-alias",
+          "status": "exact"
+        }
+      ],
+      "total": 1
+    },
+    {
+      "device_scale": 1.25,
+      "different": 0,
+      "errors": 0,
+      "exact": 1,
+      "logical_size_css_px": [
+        600,
+        1200
+      ],
+      "ordered_id_sha256": "34ccf4276e821ee73f480ee46c80c04c1cd593be93768a1225baa6c496e9f2c7",
+      "physical_size_px": [
+        750,
+        1500
+      ],
+      "profile": "focused-600x1200@1.25",
+      "result_sha256": "714ce5ecc6362baa9f28dc82fc52e8f376950ce42e7c53b82c706252816da8a3",
+      "tests": [
+        {
+          "cache_identity_sha256": "ed2ad2201defabbd91e71a1770afbcbfb6a169a42c8ee260c368e00da3eb503a",
+          "chromium_oracle_identity_sha256": "81be8a6fe7cc01ec59f460f021a0baf8c5c9ea27e16aadf4034debdae2b27f54",
+          "chromium_oracle_rgba_sha256": "b42756b7e44ce73623b767a472c53de09392bb1cf42536b284940172f18ca999",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/98/98dd7a246202a102618a9a26c73d98e69739b0ab032665ffc61e4bfd5b09deab.png",
+          "chromium_png_sha256": "98dd7a246202a102618a9a26c73d98e69739b0ab032665ffc61e4bfd5b09deab",
+          "chromium_rgba_sha256": "b42756b7e44ce73623b767a472c53de09392bb1cf42536b284940172f18ca999",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "registered-ahem",
+          "id": "wpt/css_break/table_repeated-section_multiple-row-groups.tentative",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/b0/b0d93d3cae08407b60ed410437db6316db4ed07e16ee70a02886df132e871cdb.png",
+          "openui_png_sha256": "b0d93d3cae08407b60ed410437db6316db4ed07e16ee70a02886df132e871cdb",
+          "openui_rgba_sha256": "b42756b7e44ce73623b767a472c53de09392bb1cf42536b284940172f18ca999",
+          "raster_configuration": "cpu-skia:deterministic-alias",
+          "status": "exact"
+        }
+      ],
+      "total": 1
+    },
+    {
+      "device_scale": 1.5,
+      "different": 0,
+      "errors": 0,
+      "exact": 1,
+      "logical_size_css_px": [
+        600,
+        1200
+      ],
+      "ordered_id_sha256": "34ccf4276e821ee73f480ee46c80c04c1cd593be93768a1225baa6c496e9f2c7",
+      "physical_size_px": [
+        900,
+        1800
+      ],
+      "profile": "focused-600x1200@1.5",
+      "result_sha256": "f2fbe088b05dc4a5bd322c65794617081d537c00e92d60c840b6b6c44749f922",
+      "tests": [
+        {
+          "cache_identity_sha256": "3e56f8aea0c194fc01002f08e6e06ab4f6abc5f02903e2608b3e2d64d63f6e00",
+          "chromium_oracle_identity_sha256": "03aef7023671ada4306c6f64b54fe45cc93880ea92d69746aaa116ca28bce8be",
+          "chromium_oracle_rgba_sha256": "81604622894a57716f949c89fd4026ed56136a5590d3b5db33646d5981390f45",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/b8/b8fa983e0027a2c7d778769bad50047898d524ab891d418a8da6727f1d2fa28e.png",
+          "chromium_png_sha256": "b8fa983e0027a2c7d778769bad50047898d524ab891d418a8da6727f1d2fa28e",
+          "chromium_rgba_sha256": "81604622894a57716f949c89fd4026ed56136a5590d3b5db33646d5981390f45",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "registered-ahem",
+          "id": "wpt/css_break/table_repeated-section_multiple-row-groups.tentative",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/50/502da4a22ad038d27f015f1bff6c93d160299ebdf8580a7862249247615c6124.png",
+          "openui_png_sha256": "502da4a22ad038d27f015f1bff6c93d160299ebdf8580a7862249247615c6124",
+          "openui_rgba_sha256": "81604622894a57716f949c89fd4026ed56136a5590d3b5db33646d5981390f45",
+          "raster_configuration": "cpu-skia:deterministic-alias",
+          "status": "exact"
+        }
+      ],
+      "total": 1
+    },
+    {
+      "device_scale": 2.0,
+      "different": 0,
+      "errors": 0,
+      "exact": 1,
+      "logical_size_css_px": [
+        600,
+        1200
+      ],
+      "ordered_id_sha256": "34ccf4276e821ee73f480ee46c80c04c1cd593be93768a1225baa6c496e9f2c7",
+      "physical_size_px": [
+        1200,
+        2400
+      ],
+      "profile": "focused-600x1200@2",
+      "result_sha256": "5f048064fc887809fef2317732175d48384b67161ef2b2a4961080dd5a2bd0b9",
+      "tests": [
+        {
+          "cache_identity_sha256": "c26b83602beb98b0781c68ab35eaeccb0194cbaa0ed5a25ca0d5be13730fdec5",
+          "chromium_oracle_identity_sha256": "1659c29399be4b92c7956ffe06b7e069435f2625bd5bae1a2cbdd4748421dff7",
+          "chromium_oracle_rgba_sha256": "891701563fe9a63984e7ab2d26fb512ce94ff348a9b008a0552b2a7b6131ac0d",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/a0/a035a8cb72a23a50aeefb58ef5c53588dc2e7a8282d6361aec3c832614c8657a.png",
+          "chromium_png_sha256": "a035a8cb72a23a50aeefb58ef5c53588dc2e7a8282d6361aec3c832614c8657a",
+          "chromium_rgba_sha256": "891701563fe9a63984e7ab2d26fb512ce94ff348a9b008a0552b2a7b6131ac0d",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "registered-ahem",
+          "id": "wpt/css_break/table_repeated-section_multiple-row-groups.tentative",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/cb/cb7647cf99ec1f772cd3324633155a72a4640d55f43d3e9069666d3c96f1201f.png",
+          "openui_png_sha256": "cb7647cf99ec1f772cd3324633155a72a4640d55f43d3e9069666d3c96f1201f",
+          "openui_rgba_sha256": "891701563fe9a63984e7ab2d26fb512ce94ff348a9b008a0552b2a7b6131ac0d",
+          "raster_configuration": "cpu-skia:deterministic-alias",
+          "status": "exact"
+        }
+      ],
+      "total": 1
+    },
+    {
+      "device_scale": 3.0,
+      "different": 0,
+      "errors": 0,
+      "exact": 1,
+      "logical_size_css_px": [
+        600,
+        1200
+      ],
+      "ordered_id_sha256": "34ccf4276e821ee73f480ee46c80c04c1cd593be93768a1225baa6c496e9f2c7",
+      "physical_size_px": [
+        1800,
+        3600
+      ],
+      "profile": "focused-600x1200@3",
+      "result_sha256": "1562895f9024f44e4a8f92c257c1044971c2704b6142dc90959cbb385a3ee029",
+      "tests": [
+        {
+          "cache_identity_sha256": "72a9522edef9e19411e18ddeec647ef10a9d6560cb5dbb00acdbabc412b131a1",
+          "chromium_oracle_identity_sha256": "f5c6e0f211135f83928ddc4e09b33b783396d9c120d28b2a0bffb696365d8a1a",
+          "chromium_oracle_rgba_sha256": "cd9ccaed259e385fceab7832fbb8245f6282b2c178737de2b0bac98b962e99b7",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/3f/3f197a962f182beecede5c4077e4d9477553881da302312c285646534d99858c.png",
+          "chromium_png_sha256": "3f197a962f182beecede5c4077e4d9477553881da302312c285646534d99858c",
+          "chromium_rgba_sha256": "cd9ccaed259e385fceab7832fbb8245f6282b2c178737de2b0bac98b962e99b7",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "registered-ahem",
+          "id": "wpt/css_break/table_repeated-section_multiple-row-groups.tentative",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/6a/6a5e04258de86e65bb400a88e76d4fdd5a7b4f04fd447dd584e2c35331cf5b94.png",
+          "openui_png_sha256": "6a5e04258de86e65bb400a88e76d4fdd5a7b4f04fd447dd584e2c35331cf5b94",
+          "openui_rgba_sha256": "cd9ccaed259e385fceab7832fbb8245f6282b2c178737de2b0bac98b962e99b7",
+          "raster_configuration": "cpu-skia:deterministic-alias",
+          "status": "exact"
+        }
+      ],
+      "total": 1
+    },
+    {
+      "device_scale": 1.0,
+      "different": 0,
+      "errors": 0,
+      "exact": 1,
+      "logical_size_css_px": [
+        1280,
+        720
+      ],
+      "ordered_id_sha256": "34ccf4276e821ee73f480ee46c80c04c1cd593be93768a1225baa6c496e9f2c7",
+      "physical_size_px": [
+        1280,
+        720
+      ],
+      "profile": "focused-1280x720@1",
+      "result_sha256": "0c24033aee3f6fbdec456b813c54c7b6fa9406865b4969016fee535c5287d853",
+      "tests": [
+        {
+          "cache_identity_sha256": "c997f66de500bf974a3cef93cdafd042d41384f846e67e974e031e704dafab56",
+          "chromium_oracle_identity_sha256": "aece1ecd3ca127e819998bf4f120bbea0a19d0b84a219c8fa6e9d9e1b0a19ac8",
+          "chromium_oracle_rgba_sha256": "1e7a521053cc7b4aec0bd504bff6b913e4dd7a07bbb5793137c6c2df87253532",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/5a/5a454e37cb16ac2f9dbf770b5221b8164d232371859512bcc5c2b055b3c3b91f.png",
+          "chromium_png_sha256": "5a454e37cb16ac2f9dbf770b5221b8164d232371859512bcc5c2b055b3c3b91f",
+          "chromium_rgba_sha256": "1e7a521053cc7b4aec0bd504bff6b913e4dd7a07bbb5793137c6c2df87253532",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "registered-ahem",
+          "id": "wpt/css_break/table_repeated-section_multiple-row-groups.tentative",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/6a/6ac025a7e661492865774347f8a5fc788c05c73af4d0e96ea2e80693257275ed.png",
+          "openui_png_sha256": "6ac025a7e661492865774347f8a5fc788c05c73af4d0e96ea2e80693257275ed",
+          "openui_rgba_sha256": "1e7a521053cc7b4aec0bd504bff6b913e4dd7a07bbb5793137c6c2df87253532",
+          "raster_configuration": "cpu-skia:deterministic-alias",
+          "status": "exact"
+        }
+      ],
+      "total": 1
+    },
+    {
+      "device_scale": 1.25,
+      "different": 0,
+      "errors": 0,
+      "exact": 1,
+      "logical_size_css_px": [
+        1280,
+        720
+      ],
+      "ordered_id_sha256": "34ccf4276e821ee73f480ee46c80c04c1cd593be93768a1225baa6c496e9f2c7",
+      "physical_size_px": [
+        1600,
+        900
+      ],
+      "profile": "focused-1280x720@1.25",
+      "result_sha256": "83a9a9a88d390fb633e3ade5c6e0fc7d9eda0e700d82e269ae252d6344f7bf74",
+      "tests": [
+        {
+          "cache_identity_sha256": "dd3136942ff1c0f9b0af5fb24c74f986301e8b15f854a0fe87c31d70f7c70395",
+          "chromium_oracle_identity_sha256": "a2eadb1ff0d086c9a1d791af99b00098e61b44f3d3ef238eafb5db68b6967972",
+          "chromium_oracle_rgba_sha256": "0c4826d7cb87bbe8278b34b2eb00b9384960cd981f3c46f7eb2c86fa4825ee3f",
+          "chromium_oracle_source": "cache",
+          "chromium_png_cache_path": "png/aa/aa201c4ddf341c8ad708bcebc713480c4942b275138f09a622c29bd6ee9fd377.png",
+          "chromium_png_sha256": "aa201c4ddf341c8ad708bcebc713480c4942b275138f09a622c29bd6ee9fd377",
+          "chromium_rgba_sha256": "0c4826d7cb87bbe8278b34b2eb00b9384960cd981f3c46f7eb2c86fa4825ee3f",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "registered-ahem",
+          "id": "wpt/css_break/table_repeated-section_multiple-row-groups.tentative",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/d1/d11283116b1d05fe2ee489ccae8c612891b4ba426a8d1543b05e43a106c4a3ec.png",
+          "openui_png_sha256": "d11283116b1d05fe2ee489ccae8c612891b4ba426a8d1543b05e43a106c4a3ec",
+          "openui_rgba_sha256": "0c4826d7cb87bbe8278b34b2eb00b9384960cd981f3c46f7eb2c86fa4825ee3f",
+          "raster_configuration": "cpu-skia:deterministic-alias",
+          "status": "exact"
+        }
+      ],
+      "total": 1
+    },
+    {
+      "device_scale": 1.5,
+      "different": 0,
+      "errors": 0,
+      "exact": 1,
+      "logical_size_css_px": [
+        1280,
+        720
+      ],
+      "ordered_id_sha256": "34ccf4276e821ee73f480ee46c80c04c1cd593be93768a1225baa6c496e9f2c7",
+      "physical_size_px": [
+        1920,
+        1080
+      ],
+      "profile": "focused-1280x720@1.5",
+      "result_sha256": "190d756f64072cac09e42be9a6276944081722205213a09df55a06e44e738a6c",
+      "tests": [
+        {
+          "cache_identity_sha256": "7cd8658074d07ddea6674697ee1f0693897814d2d322b873d0191e85a5810f88",
+          "chromium_oracle_identity_sha256": "aa0710d0b92b2a1b8955e30861e3b7a395fad57591906bf043b761fd98716528",
+          "chromium_oracle_rgba_sha256": "d34c6c3f30c8442bf33114f2dc0789646146c6b1ce2200763abaf95a8b959a72",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/a9/a952b9b12921522c9125e92abecf4683a28bcc38523edcca99c35b0c4d51242f.png",
+          "chromium_png_sha256": "a952b9b12921522c9125e92abecf4683a28bcc38523edcca99c35b0c4d51242f",
+          "chromium_rgba_sha256": "d34c6c3f30c8442bf33114f2dc0789646146c6b1ce2200763abaf95a8b959a72",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "registered-ahem",
+          "id": "wpt/css_break/table_repeated-section_multiple-row-groups.tentative",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/12/12449251e5971c3bbe40d80dd394801e3575ae37fbdd1abf13b9eb7a4dad565f.png",
+          "openui_png_sha256": "12449251e5971c3bbe40d80dd394801e3575ae37fbdd1abf13b9eb7a4dad565f",
+          "openui_rgba_sha256": "d34c6c3f30c8442bf33114f2dc0789646146c6b1ce2200763abaf95a8b959a72",
+          "raster_configuration": "cpu-skia:deterministic-alias",
+          "status": "exact"
+        }
+      ],
+      "total": 1
+    },
+    {
+      "device_scale": 2.0,
+      "different": 0,
+      "errors": 0,
+      "exact": 1,
+      "logical_size_css_px": [
+        1280,
+        720
+      ],
+      "ordered_id_sha256": "34ccf4276e821ee73f480ee46c80c04c1cd593be93768a1225baa6c496e9f2c7",
+      "physical_size_px": [
+        2560,
+        1440
+      ],
+      "profile": "focused-1280x720@2",
+      "result_sha256": "94b96179f277e43c473af00a9a602acabf54d085e990791c2f4eebf77d30e360",
+      "tests": [
+        {
+          "cache_identity_sha256": "cc37f405c145d8ecf2950706c4dface06719ccb21195d75c30abb46b8343a9aa",
+          "chromium_oracle_identity_sha256": "5488dbae6a40dfa72d634f67b38d67a9c8a192ddda0e07fd5f2f49b936df75dd",
+          "chromium_oracle_rgba_sha256": "30fd813943f46d8e594c76570ab75c6b0d0616629a75b746a14b53d433a419a9",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/19/196adafa1b9c475a35deaf3c567f99d775b65931bd04eec5d6d32f0466ca07f4.png",
+          "chromium_png_sha256": "196adafa1b9c475a35deaf3c567f99d775b65931bd04eec5d6d32f0466ca07f4",
+          "chromium_rgba_sha256": "30fd813943f46d8e594c76570ab75c6b0d0616629a75b746a14b53d433a419a9",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "registered-ahem",
+          "id": "wpt/css_break/table_repeated-section_multiple-row-groups.tentative",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/bb/bb199248b4e52367d59cf4018bf07e9a3fbe86cd3f9569be111f572f55100f2a.png",
+          "openui_png_sha256": "bb199248b4e52367d59cf4018bf07e9a3fbe86cd3f9569be111f572f55100f2a",
+          "openui_rgba_sha256": "30fd813943f46d8e594c76570ab75c6b0d0616629a75b746a14b53d433a419a9",
+          "raster_configuration": "cpu-skia:deterministic-alias",
+          "status": "exact"
+        }
+      ],
+      "total": 1
+    },
+    {
+      "device_scale": 3.0,
+      "different": 0,
+      "errors": 0,
+      "exact": 1,
+      "logical_size_css_px": [
+        1280,
+        720
+      ],
+      "ordered_id_sha256": "34ccf4276e821ee73f480ee46c80c04c1cd593be93768a1225baa6c496e9f2c7",
+      "physical_size_px": [
+        3840,
+        2160
+      ],
+      "profile": "focused-1280x720@3",
+      "result_sha256": "e8e29d59676b6aeb7167a6f80bd4f0e3f63c245ced4772486e68964a4d24fa25",
+      "tests": [
+        {
+          "cache_identity_sha256": "4ed7529bfc0029f83c1945e286184e537d8d142b632b7e3c22d5685b47a38889",
+          "chromium_oracle_identity_sha256": "c6d05b4fe316cb486df0550634c303d0d375b312bca9b86c101b1ad5fd02fbec",
+          "chromium_oracle_rgba_sha256": "5e64e19757f8acef7e0c07271d479cb583c9fc5fa8df19932a29747691f75062",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/f6/f6d1a886042235cb68a33df86c412938301de931e574032b4285a1288ded6df9.png",
+          "chromium_png_sha256": "f6d1a886042235cb68a33df86c412938301de931e574032b4285a1288ded6df9",
+          "chromium_rgba_sha256": "5e64e19757f8acef7e0c07271d479cb583c9fc5fa8df19932a29747691f75062",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "registered-ahem",
+          "id": "wpt/css_break/table_repeated-section_multiple-row-groups.tentative",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/c1/c1d569c314b18e8f4e687d8989afb312a8087a2502f539ff0559a743e6fecce8.png",
+          "openui_png_sha256": "c1d569c314b18e8f4e687d8989afb312a8087a2502f539ff0559a743e6fecce8",
+          "openui_rgba_sha256": "5e64e19757f8acef7e0c07271d479cb583c9fc5fa8df19932a29747691f75062",
+          "raster_configuration": "cpu-skia:deterministic-alias",
+          "status": "exact"
+        }
+      ],
+      "total": 1
+    },
+    {
+      "device_scale": 1.0,
+      "different": 0,
+      "errors": 0,
+      "exact": 1,
+      "logical_size_css_px": [
+        1920,
+        1080
+      ],
+      "ordered_id_sha256": "34ccf4276e821ee73f480ee46c80c04c1cd593be93768a1225baa6c496e9f2c7",
+      "physical_size_px": [
+        1920,
+        1080
+      ],
+      "profile": "focused-1920x1080@1",
+      "result_sha256": "13ebb31da9ff112eb281aae06d3d36896fc2ac691e488e190f29059a6ff72777",
+      "tests": [
+        {
+          "cache_identity_sha256": "ace2ef4c5fef2bbaf25bc2a8f5125b3698d88c894c5851275ea811a0765f6da3",
+          "chromium_oracle_identity_sha256": "d8402f856aa3b500015f837834995a84fe2ab358a98f841f60c73b6e8b535d7c",
+          "chromium_oracle_rgba_sha256": "ff38710a7091c9b1b412b5ad79bbe55e549b1419fc40a860d6a74e0486bdea31",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/d7/d7377cc5f062acccf835f9ed94332c2c77450523dd2d77defa495416e58a1757.png",
+          "chromium_png_sha256": "d7377cc5f062acccf835f9ed94332c2c77450523dd2d77defa495416e58a1757",
+          "chromium_rgba_sha256": "ff38710a7091c9b1b412b5ad79bbe55e549b1419fc40a860d6a74e0486bdea31",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "registered-ahem",
+          "id": "wpt/css_break/table_repeated-section_multiple-row-groups.tentative",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/ed/edcebb5138b620445f493504829269ce7631a21169465953d3569f44aaa4170b.png",
+          "openui_png_sha256": "edcebb5138b620445f493504829269ce7631a21169465953d3569f44aaa4170b",
+          "openui_rgba_sha256": "ff38710a7091c9b1b412b5ad79bbe55e549b1419fc40a860d6a74e0486bdea31",
+          "raster_configuration": "cpu-skia:deterministic-alias",
+          "status": "exact"
+        }
+      ],
+      "total": 1
+    },
+    {
+      "device_scale": 1.25,
+      "different": 0,
+      "errors": 0,
+      "exact": 1,
+      "logical_size_css_px": [
+        1920,
+        1080
+      ],
+      "ordered_id_sha256": "34ccf4276e821ee73f480ee46c80c04c1cd593be93768a1225baa6c496e9f2c7",
+      "physical_size_px": [
+        2400,
+        1350
+      ],
+      "profile": "focused-1920x1080@1.25",
+      "result_sha256": "56df13017a9c7d30e44151c915b2832e5902ee52bc2e52ec755cbee8141fa30c",
+      "tests": [
+        {
+          "cache_identity_sha256": "30a1c7567e6ca2cb2d4db97725d023c79828643c6fddeb9d685a24b7c4483b22",
+          "chromium_oracle_identity_sha256": "4fa6c467685581c2d665e0effaa36487b8af2c80ce57d7f39048db84bd3cb926",
+          "chromium_oracle_rgba_sha256": "f1bb33ee43ef0a3cb5fb857e0ac9ebec12d98a50f4b8ff5f421a70249c37e84d",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/cb/cbbc1f668b97f4875e410e9fecaf46a87cf7b611c89d2c1986cc0f1d38207d3b.png",
+          "chromium_png_sha256": "cbbc1f668b97f4875e410e9fecaf46a87cf7b611c89d2c1986cc0f1d38207d3b",
+          "chromium_rgba_sha256": "f1bb33ee43ef0a3cb5fb857e0ac9ebec12d98a50f4b8ff5f421a70249c37e84d",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "registered-ahem",
+          "id": "wpt/css_break/table_repeated-section_multiple-row-groups.tentative",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/e9/e900c1a94387b11abf8307338348a358c7ce69c31cf59b3deee4de78aa1f4d92.png",
+          "openui_png_sha256": "e900c1a94387b11abf8307338348a358c7ce69c31cf59b3deee4de78aa1f4d92",
+          "openui_rgba_sha256": "f1bb33ee43ef0a3cb5fb857e0ac9ebec12d98a50f4b8ff5f421a70249c37e84d",
+          "raster_configuration": "cpu-skia:deterministic-alias",
+          "status": "exact"
+        }
+      ],
+      "total": 1
+    },
+    {
+      "device_scale": 1.5,
+      "different": 0,
+      "errors": 0,
+      "exact": 1,
+      "logical_size_css_px": [
+        1920,
+        1080
+      ],
+      "ordered_id_sha256": "34ccf4276e821ee73f480ee46c80c04c1cd593be93768a1225baa6c496e9f2c7",
+      "physical_size_px": [
+        2880,
+        1620
+      ],
+      "profile": "focused-1920x1080@1.5",
+      "result_sha256": "d61373494b5c587b5cabe650860ffd45120c41d6dd88b383d0e4e3e5431695c6",
+      "tests": [
+        {
+          "cache_identity_sha256": "bc2c0e0b15e2646653d9913a785de2b6a1c101ed636624f320c911cba481bb81",
+          "chromium_oracle_identity_sha256": "a24d65c8361dcaff7cb71f24a37cfff58d18a24ce6074c7c0dcce77dfba964c5",
+          "chromium_oracle_rgba_sha256": "7f7965743cec59eaabc940a2d19ba7f30e83ec8cc02f26b27dc700292b98dbb7",
+          "chromium_oracle_source": "cache",
+          "chromium_png_cache_path": "png/8c/8c775cc36b3bb733120591b888f6ea6afb2981d5c161c008fbc1d19908d4850c.png",
+          "chromium_png_sha256": "8c775cc36b3bb733120591b888f6ea6afb2981d5c161c008fbc1d19908d4850c",
+          "chromium_rgba_sha256": "7f7965743cec59eaabc940a2d19ba7f30e83ec8cc02f26b27dc700292b98dbb7",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "registered-ahem",
+          "id": "wpt/css_break/table_repeated-section_multiple-row-groups.tentative",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/fc/fc89f9d7e9adc126c92bf22bf2e4295eca9a74a125099b68314bbfbd30b8d0e9.png",
+          "openui_png_sha256": "fc89f9d7e9adc126c92bf22bf2e4295eca9a74a125099b68314bbfbd30b8d0e9",
+          "openui_rgba_sha256": "7f7965743cec59eaabc940a2d19ba7f30e83ec8cc02f26b27dc700292b98dbb7",
+          "raster_configuration": "cpu-skia:deterministic-alias",
+          "status": "exact"
+        }
+      ],
+      "total": 1
+    },
+    {
+      "device_scale": 2.0,
+      "different": 0,
+      "errors": 0,
+      "exact": 1,
+      "logical_size_css_px": [
+        1920,
+        1080
+      ],
+      "ordered_id_sha256": "34ccf4276e821ee73f480ee46c80c04c1cd593be93768a1225baa6c496e9f2c7",
+      "physical_size_px": [
+        3840,
+        2160
+      ],
+      "profile": "focused-1920x1080@2",
+      "result_sha256": "b6c56b44a5b94039803d8ad954d9964298363226d47ae09fb843236807930983",
+      "tests": [
+        {
+          "cache_identity_sha256": "80f3928f60fd246276ca7cab8b809442509687540a9f4e64776568ecd1e4c95e",
+          "chromium_oracle_identity_sha256": "8520105f98eb15a24a578f024b9bfc55913320315382866b7e3dfc079e3977d1",
+          "chromium_oracle_rgba_sha256": "ce0758d082d598b91a1bd74115370b2c0c3e6e90971ca05cd0d9e4c590ade9c4",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/b6/b6004b971d151e893945003bc616fbb29884a09a45215e11ccf451394987323c.png",
+          "chromium_png_sha256": "b6004b971d151e893945003bc616fbb29884a09a45215e11ccf451394987323c",
+          "chromium_rgba_sha256": "ce0758d082d598b91a1bd74115370b2c0c3e6e90971ca05cd0d9e4c590ade9c4",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "registered-ahem",
+          "id": "wpt/css_break/table_repeated-section_multiple-row-groups.tentative",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/7c/7c2ae4d63af7486a17e8ed380bee5e4e5957eb6d0911822bbca23ee4dfb77d56.png",
+          "openui_png_sha256": "7c2ae4d63af7486a17e8ed380bee5e4e5957eb6d0911822bbca23ee4dfb77d56",
+          "openui_rgba_sha256": "ce0758d082d598b91a1bd74115370b2c0c3e6e90971ca05cd0d9e4c590ade9c4",
+          "raster_configuration": "cpu-skia:deterministic-alias",
+          "status": "exact"
+        }
+      ],
+      "total": 1
+    },
+    {
+      "device_scale": 3.0,
+      "different": 0,
+      "errors": 0,
+      "exact": 1,
+      "logical_size_css_px": [
+        1920,
+        1080
+      ],
+      "ordered_id_sha256": "34ccf4276e821ee73f480ee46c80c04c1cd593be93768a1225baa6c496e9f2c7",
+      "physical_size_px": [
+        5760,
+        3240
+      ],
+      "profile": "focused-1920x1080@3",
+      "result_sha256": "55562025699a2c90acaadf744d2e6cf7330bd6c95ea18eeabe776641ce47a247",
+      "tests": [
+        {
+          "cache_identity_sha256": "4a470ca2f3a894e871b457722733d3736e8ffa03d8b5fcae167a56673a84971c",
+          "chromium_oracle_identity_sha256": "7522d90dfe50cb765141779afc7c5dcc837c712bc5b6326f3352ddae9139f8f1",
+          "chromium_oracle_rgba_sha256": "85ff8d74a30ce33c4bc2d7109d6231e8d7bcef59d419792c6af11e4671e1d70c",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/58/58fac74eb464ca251a11b2d7e5ca221ad5c814693978e9b1950317265c3b7a25.png",
+          "chromium_png_sha256": "58fac74eb464ca251a11b2d7e5ca221ad5c814693978e9b1950317265c3b7a25",
+          "chromium_rgba_sha256": "85ff8d74a30ce33c4bc2d7109d6231e8d7bcef59d419792c6af11e4671e1d70c",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "registered-ahem",
+          "id": "wpt/css_break/table_repeated-section_multiple-row-groups.tentative",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/06/067f3c0e09c86c5f209bd4487a97ec6225f555ef8ef98fce3b7173d0a75f5adb.png",
+          "openui_png_sha256": "067f3c0e09c86c5f209bd4487a97ec6225f555ef8ef98fce3b7173d0a75f5adb",
+          "openui_rgba_sha256": "85ff8d74a30ce33c4bc2d7109d6231e8d7bcef59d419792c6af11e4671e1d70c",
+          "raster_configuration": "cpu-skia:deterministic-alias",
+          "status": "exact"
+        }
+      ],
+      "total": 1
+    },
+    {
+      "device_scale": 1.0,
+      "different": 0,
+      "errors": 0,
+      "exact": 1,
+      "logical_size_css_px": [
+        2560,
+        1440
+      ],
+      "ordered_id_sha256": "34ccf4276e821ee73f480ee46c80c04c1cd593be93768a1225baa6c496e9f2c7",
+      "physical_size_px": [
+        2560,
+        1440
+      ],
+      "profile": "focused-2560x1440@1",
+      "result_sha256": "4320946e66880a2c0b7f0419998704aa614afa111b14021f89876130b5e997a0",
+      "tests": [
+        {
+          "cache_identity_sha256": "27931b211e415dbbd392108476d82f5ca242b4186dff8d347944e03d7a181d57",
+          "chromium_oracle_identity_sha256": "d73d1eb7e58c00288a3b7398070d142c7a95fe5f660d4b8fd5293b68beb7e632",
+          "chromium_oracle_rgba_sha256": "228a56de9b03f792b66c8a6d889515d5d936f32bb2d3d9486f9ee4ef96b85c2a",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/92/920a7471a40ba96894bc9bca143fce1a99d39941ddbe33ac5f9b25e73e2a7f9c.png",
+          "chromium_png_sha256": "920a7471a40ba96894bc9bca143fce1a99d39941ddbe33ac5f9b25e73e2a7f9c",
+          "chromium_rgba_sha256": "228a56de9b03f792b66c8a6d889515d5d936f32bb2d3d9486f9ee4ef96b85c2a",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "registered-ahem",
+          "id": "wpt/css_break/table_repeated-section_multiple-row-groups.tentative",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/1e/1e4c4e4d67d99b01e3307ce35e1389964b6ad6372f983cc693d6bdf3c128edea.png",
+          "openui_png_sha256": "1e4c4e4d67d99b01e3307ce35e1389964b6ad6372f983cc693d6bdf3c128edea",
+          "openui_rgba_sha256": "228a56de9b03f792b66c8a6d889515d5d936f32bb2d3d9486f9ee4ef96b85c2a",
+          "raster_configuration": "cpu-skia:deterministic-alias",
+          "status": "exact"
+        }
+      ],
+      "total": 1
+    },
+    {
+      "device_scale": 1.25,
+      "different": 0,
+      "errors": 0,
+      "exact": 1,
+      "logical_size_css_px": [
+        2560,
+        1440
+      ],
+      "ordered_id_sha256": "34ccf4276e821ee73f480ee46c80c04c1cd593be93768a1225baa6c496e9f2c7",
+      "physical_size_px": [
+        3200,
+        1800
+      ],
+      "profile": "focused-2560x1440@1.25",
+      "result_sha256": "f01d873d48b322bb6ecc25eb0fa3a667e18f589de20e7055e3e2ab5674f92dcc",
+      "tests": [
+        {
+          "cache_identity_sha256": "8858a7e854324ecaa90d90fec9654ebb61003eb719786b822649e709a83e830f",
+          "chromium_oracle_identity_sha256": "6038a43ad50903a7b3580cd67805309b9e20967e72e77c68a62ba4125c38dd4b",
+          "chromium_oracle_rgba_sha256": "19b93bd2fa3be676e8487ca4a68f31633e2a6b5c535ddddfa8864419074e73ad",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/8f/8fb80361119497c39145f137794c85e7b471e26bdac2f4a4ab349e2be9b6bca1.png",
+          "chromium_png_sha256": "8fb80361119497c39145f137794c85e7b471e26bdac2f4a4ab349e2be9b6bca1",
+          "chromium_rgba_sha256": "19b93bd2fa3be676e8487ca4a68f31633e2a6b5c535ddddfa8864419074e73ad",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "registered-ahem",
+          "id": "wpt/css_break/table_repeated-section_multiple-row-groups.tentative",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/5f/5ffcb8959a8909c2dc1173b505df755af2d1e83e2e0400a9677f6c98a7f7028d.png",
+          "openui_png_sha256": "5ffcb8959a8909c2dc1173b505df755af2d1e83e2e0400a9677f6c98a7f7028d",
+          "openui_rgba_sha256": "19b93bd2fa3be676e8487ca4a68f31633e2a6b5c535ddddfa8864419074e73ad",
+          "raster_configuration": "cpu-skia:deterministic-alias",
+          "status": "exact"
+        }
+      ],
+      "total": 1
+    },
+    {
+      "device_scale": 1.5,
+      "different": 0,
+      "errors": 0,
+      "exact": 1,
+      "logical_size_css_px": [
+        2560,
+        1440
+      ],
+      "ordered_id_sha256": "34ccf4276e821ee73f480ee46c80c04c1cd593be93768a1225baa6c496e9f2c7",
+      "physical_size_px": [
+        3840,
+        2160
+      ],
+      "profile": "focused-2560x1440@1.5",
+      "result_sha256": "2e5855cefdcb710a0c0b108b517b8fbce6e7b51140bfe32e26724b318bfd2296",
+      "tests": [
+        {
+          "cache_identity_sha256": "73eac28ccdf46eadd862659e40008e780cda36927152e8a58317d7c8b29b0b71",
+          "chromium_oracle_identity_sha256": "977f4ea42fcd00d87ea3f5a4454507707034c6573ec47ab6a2120e8d7ba944ca",
+          "chromium_oracle_rgba_sha256": "492e018064d9daa22008bdb5901840c352c00e53b9fc6c25b3e5563410b055ba",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/af/af7c5ebaa1ddbf0fc067c1cbbd6150ed90bcb79c961b1a62c2d13d569c10a972.png",
+          "chromium_png_sha256": "af7c5ebaa1ddbf0fc067c1cbbd6150ed90bcb79c961b1a62c2d13d569c10a972",
+          "chromium_rgba_sha256": "492e018064d9daa22008bdb5901840c352c00e53b9fc6c25b3e5563410b055ba",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "registered-ahem",
+          "id": "wpt/css_break/table_repeated-section_multiple-row-groups.tentative",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/cf/cf94acd922bdc5ad85a828844838ff0e5a4550cb7bc5c8f76f763e588608ff60.png",
+          "openui_png_sha256": "cf94acd922bdc5ad85a828844838ff0e5a4550cb7bc5c8f76f763e588608ff60",
+          "openui_rgba_sha256": "492e018064d9daa22008bdb5901840c352c00e53b9fc6c25b3e5563410b055ba",
+          "raster_configuration": "cpu-skia:deterministic-alias",
+          "status": "exact"
+        }
+      ],
+      "total": 1
+    },
+    {
+      "device_scale": 2.0,
+      "different": 0,
+      "errors": 0,
+      "exact": 1,
+      "logical_size_css_px": [
+        2560,
+        1440
+      ],
+      "ordered_id_sha256": "34ccf4276e821ee73f480ee46c80c04c1cd593be93768a1225baa6c496e9f2c7",
+      "physical_size_px": [
+        5120,
+        2880
+      ],
+      "profile": "focused-2560x1440@2",
+      "result_sha256": "70b6fe1f6a05e253768c6b658cd09d02e285aad256b30c7cb2e7282c812ca4b7",
+      "tests": [
+        {
+          "cache_identity_sha256": "27779e54a0bacb2a3f5d7a80ce0f348b07c954619c39410cae4c9e98fec488b7",
+          "chromium_oracle_identity_sha256": "cc50a44939a1588dbfc98d6582a5b3648ce560369960abb948680c9fbc74d488",
+          "chromium_oracle_rgba_sha256": "e3c6597648e1616330151633862ff04108801998f11f9f4e1379c54c4abe1a77",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/31/31738e3f557c53b5aa217a9ff826593853be7e3af1d45a7f70e4868635a35bdf.png",
+          "chromium_png_sha256": "31738e3f557c53b5aa217a9ff826593853be7e3af1d45a7f70e4868635a35bdf",
+          "chromium_rgba_sha256": "e3c6597648e1616330151633862ff04108801998f11f9f4e1379c54c4abe1a77",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "registered-ahem",
+          "id": "wpt/css_break/table_repeated-section_multiple-row-groups.tentative",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/61/61bc94b6e6d2702202ff130087c25575e16ab4c101b02a1673b5d7aa8d8f844d.png",
+          "openui_png_sha256": "61bc94b6e6d2702202ff130087c25575e16ab4c101b02a1673b5d7aa8d8f844d",
+          "openui_rgba_sha256": "e3c6597648e1616330151633862ff04108801998f11f9f4e1379c54c4abe1a77",
+          "raster_configuration": "cpu-skia:deterministic-alias",
+          "status": "exact"
+        }
+      ],
+      "total": 1
+    },
+    {
+      "device_scale": 3.0,
+      "different": 0,
+      "errors": 0,
+      "exact": 1,
+      "logical_size_css_px": [
+        2560,
+        1440
+      ],
+      "ordered_id_sha256": "34ccf4276e821ee73f480ee46c80c04c1cd593be93768a1225baa6c496e9f2c7",
+      "physical_size_px": [
+        7680,
+        4320
+      ],
+      "profile": "focused-2560x1440@3",
+      "result_sha256": "7275775da9f595b9a2de672922571382c27037e7b3cc9a2dab98811aec38741b",
+      "tests": [
+        {
+          "cache_identity_sha256": "579f0a6fa75a1eff6af65745e3666205afef9b3918c6ec29030fd938bc8fa73b",
+          "chromium_oracle_identity_sha256": "b55a2e22e871ec6e314ce67f433a4a8ec8770500e030e5326fb1962617012d78",
+          "chromium_oracle_rgba_sha256": "a8405f24a8e4cdbb521206516df8d3c5801fbcd048589f83fbfff30e8b156385",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/2b/2b36e0ef12baf52e137a4753a9c36e9efeb4e00f98539c74b55bc4ce3957e08e.png",
+          "chromium_png_sha256": "2b36e0ef12baf52e137a4753a9c36e9efeb4e00f98539c74b55bc4ce3957e08e",
+          "chromium_rgba_sha256": "a8405f24a8e4cdbb521206516df8d3c5801fbcd048589f83fbfff30e8b156385",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "registered-ahem",
+          "id": "wpt/css_break/table_repeated-section_multiple-row-groups.tentative",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/ce/ce0c43cc1f1dc80f257ed7fa9d429e2ccf58eae9b02e08d9e1de23386bd606df.png",
+          "openui_png_sha256": "ce0c43cc1f1dc80f257ed7fa9d429e2ccf58eae9b02e08d9e1de23386bd606df",
+          "openui_rgba_sha256": "a8405f24a8e4cdbb521206516df8d3c5801fbcd048589f83fbfff30e8b156385",
+          "raster_configuration": "cpu-skia:deterministic-alias",
+          "status": "exact"
+        }
+      ],
+      "total": 1
+    },
+    {
+      "device_scale": 1.0,
+      "different": 0,
+      "errors": 0,
+      "exact": 1,
+      "logical_size_css_px": [
+        3440,
+        1440
+      ],
+      "ordered_id_sha256": "34ccf4276e821ee73f480ee46c80c04c1cd593be93768a1225baa6c496e9f2c7",
+      "physical_size_px": [
+        3440,
+        1440
+      ],
+      "profile": "focused-3440x1440@1",
+      "result_sha256": "708e89f673d09f8db2e0e7a106f1c2598e8e50b80078012559f729d42f124159",
+      "tests": [
+        {
+          "cache_identity_sha256": "cec83da6527ac2fdbca5eef485fed9463878349b0201e33fe4a72a83cc132c40",
+          "chromium_oracle_identity_sha256": "8e426ae54f5b2dd6759e7191c8fcec990a4123120d2f2ec75a754f4749b2ec9e",
+          "chromium_oracle_rgba_sha256": "5b018e57b2052f16ea826ab3048e18d2f529185019f6af79fb51220c7f72a519",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/c0/c06f4525ad5329626080df46159b4cb146b89e85a23f174c727fd1a1bf019f70.png",
+          "chromium_png_sha256": "c06f4525ad5329626080df46159b4cb146b89e85a23f174c727fd1a1bf019f70",
+          "chromium_rgba_sha256": "5b018e57b2052f16ea826ab3048e18d2f529185019f6af79fb51220c7f72a519",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "registered-ahem",
+          "id": "wpt/css_break/table_repeated-section_multiple-row-groups.tentative",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/53/53218b6a04f00d0157dcdef999bd5ab189949e05afcc4a9963e5c747d68fcc9b.png",
+          "openui_png_sha256": "53218b6a04f00d0157dcdef999bd5ab189949e05afcc4a9963e5c747d68fcc9b",
+          "openui_rgba_sha256": "5b018e57b2052f16ea826ab3048e18d2f529185019f6af79fb51220c7f72a519",
+          "raster_configuration": "cpu-skia:deterministic-alias",
+          "status": "exact"
+        }
+      ],
+      "total": 1
+    },
+    {
+      "device_scale": 1.25,
+      "different": 0,
+      "errors": 0,
+      "exact": 1,
+      "logical_size_css_px": [
+        3440,
+        1440
+      ],
+      "ordered_id_sha256": "34ccf4276e821ee73f480ee46c80c04c1cd593be93768a1225baa6c496e9f2c7",
+      "physical_size_px": [
+        4300,
+        1800
+      ],
+      "profile": "focused-3440x1440@1.25",
+      "result_sha256": "7f1c1b6be2bbfaa99cfcff175ca9fa0566edd165f16eff1988dec925bf7b20f0",
+      "tests": [
+        {
+          "cache_identity_sha256": "7a86ed081fea3bc7a653f0aa70441c0444c2b8c2e8f03bd5e9ddd0b8d652a77a",
+          "chromium_oracle_identity_sha256": "4fa9fcf17a648b23fb814bac0f4439fcac40bc9ef6e8629b11c26b3dbd688738",
+          "chromium_oracle_rgba_sha256": "48eddbaacc2b177b9e555919f33da579f6321e774cc22620f8c775653797d6f7",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/76/768c6dea127d8c43f4bec6bfecc6292b50431002d3a9ff9d67f9ac1b9493f8ab.png",
+          "chromium_png_sha256": "768c6dea127d8c43f4bec6bfecc6292b50431002d3a9ff9d67f9ac1b9493f8ab",
+          "chromium_rgba_sha256": "48eddbaacc2b177b9e555919f33da579f6321e774cc22620f8c775653797d6f7",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "registered-ahem",
+          "id": "wpt/css_break/table_repeated-section_multiple-row-groups.tentative",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/d9/d9576de9b3f271d3c522f8b0fa6b26c994fc04e6e3971bffffa2227cd3b72f50.png",
+          "openui_png_sha256": "d9576de9b3f271d3c522f8b0fa6b26c994fc04e6e3971bffffa2227cd3b72f50",
+          "openui_rgba_sha256": "48eddbaacc2b177b9e555919f33da579f6321e774cc22620f8c775653797d6f7",
+          "raster_configuration": "cpu-skia:deterministic-alias",
+          "status": "exact"
+        }
+      ],
+      "total": 1
+    },
+    {
+      "device_scale": 1.5,
+      "different": 0,
+      "errors": 0,
+      "exact": 1,
+      "logical_size_css_px": [
+        3440,
+        1440
+      ],
+      "ordered_id_sha256": "34ccf4276e821ee73f480ee46c80c04c1cd593be93768a1225baa6c496e9f2c7",
+      "physical_size_px": [
+        5160,
+        2160
+      ],
+      "profile": "focused-3440x1440@1.5",
+      "result_sha256": "e6f8069c33c73d2ed4aec94065abad89b3f49a95b8183f23e5bb8cd78abbb191",
+      "tests": [
+        {
+          "cache_identity_sha256": "65a9b7d897041d04ef2a5c936c07be9290afaeb1c6d4ca4204e4363a8c1ab890",
+          "chromium_oracle_identity_sha256": "ef08614b13ed081ef8d2c808bddb621dd52f0bbc45604b1387ff89128d54f692",
+          "chromium_oracle_rgba_sha256": "c6191ce7a6bd56f1e46d2788105dcc5631a2b4b08c394924216c1382ef7cf9c3",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/8c/8c3ebc823c0213a69e6eb23ad2718257a4b52c2c26e630b4eb27e0b0ff60fe1e.png",
+          "chromium_png_sha256": "8c3ebc823c0213a69e6eb23ad2718257a4b52c2c26e630b4eb27e0b0ff60fe1e",
+          "chromium_rgba_sha256": "c6191ce7a6bd56f1e46d2788105dcc5631a2b4b08c394924216c1382ef7cf9c3",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "registered-ahem",
+          "id": "wpt/css_break/table_repeated-section_multiple-row-groups.tentative",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/b2/b2f05f611eb445c680d8efdfb061edc249c6fd6c27ca35bd580f2412bf63cfcc.png",
+          "openui_png_sha256": "b2f05f611eb445c680d8efdfb061edc249c6fd6c27ca35bd580f2412bf63cfcc",
+          "openui_rgba_sha256": "c6191ce7a6bd56f1e46d2788105dcc5631a2b4b08c394924216c1382ef7cf9c3",
+          "raster_configuration": "cpu-skia:deterministic-alias",
+          "status": "exact"
+        }
+      ],
+      "total": 1
+    },
+    {
+      "device_scale": 2.0,
+      "different": 0,
+      "errors": 0,
+      "exact": 1,
+      "logical_size_css_px": [
+        3440,
+        1440
+      ],
+      "ordered_id_sha256": "34ccf4276e821ee73f480ee46c80c04c1cd593be93768a1225baa6c496e9f2c7",
+      "physical_size_px": [
+        6880,
+        2880
+      ],
+      "profile": "focused-3440x1440@2",
+      "result_sha256": "eb2e09e92ccd40cad1c27e2825ede5bcf570d7f78d0793141f5395268923ec4b",
+      "tests": [
+        {
+          "cache_identity_sha256": "3387e36a2b6440b776835da9786f1762d7ea9430707c03791e3b669ce43795cd",
+          "chromium_oracle_identity_sha256": "a1f6f5d283bfce5090cfb2c2fecd0ca04e453855627300c5fea3d89ff05c0754",
+          "chromium_oracle_rgba_sha256": "f333b47f9dfa509befcf7d88f3c2fa2bb9ac7273b02a3a54279480418c334af6",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/a4/a4991764eb9a5e8e5baa05b757e5f286a1bb8ae727d49dbe184d2bcb9e00c565.png",
+          "chromium_png_sha256": "a4991764eb9a5e8e5baa05b757e5f286a1bb8ae727d49dbe184d2bcb9e00c565",
+          "chromium_rgba_sha256": "f333b47f9dfa509befcf7d88f3c2fa2bb9ac7273b02a3a54279480418c334af6",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "registered-ahem",
+          "id": "wpt/css_break/table_repeated-section_multiple-row-groups.tentative",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/e7/e771236a9c081ecb57bdc71ebb46bf4f12ba569f2f72bd13f6822dd3393664a5.png",
+          "openui_png_sha256": "e771236a9c081ecb57bdc71ebb46bf4f12ba569f2f72bd13f6822dd3393664a5",
+          "openui_rgba_sha256": "f333b47f9dfa509befcf7d88f3c2fa2bb9ac7273b02a3a54279480418c334af6",
+          "raster_configuration": "cpu-skia:deterministic-alias",
+          "status": "exact"
+        }
+      ],
+      "total": 1
+    },
+    {
+      "device_scale": 3.0,
+      "different": 0,
+      "errors": 0,
+      "exact": 1,
+      "logical_size_css_px": [
+        3440,
+        1440
+      ],
+      "ordered_id_sha256": "34ccf4276e821ee73f480ee46c80c04c1cd593be93768a1225baa6c496e9f2c7",
+      "physical_size_px": [
+        10320,
+        4320
+      ],
+      "profile": "focused-3440x1440@3",
+      "result_sha256": "0cadd3d55f4e5e4c8a6035b4a8fce18125d36a06695c5fe603a3c106fb91989b",
+      "tests": [
+        {
+          "cache_identity_sha256": "0917a89023801a4808aafb09785f005092b6c03e844684d223d3a26c4aae57f9",
+          "chromium_oracle_identity_sha256": "97b532409bc5ff0078c957dbeb4ccfc8ae45bfe7c846b0cbc78d7a34433cff66",
+          "chromium_oracle_rgba_sha256": "d6993e861711960bdfcb1cb15100b4bea3e1d844cd2fdd13eb9e2b6926176a9e",
+          "chromium_oracle_source": "capture",
+          "chromium_png_cache_path": "png/5b/5b3b17f8f6d641d1979fdf201abc744c1ee8927b0f198799db28b24523cf8642.png",
+          "chromium_png_sha256": "5b3b17f8f6d641d1979fdf201abc744c1ee8927b0f198799db28b24523cf8642",
+          "chromium_rgba_sha256": "d6993e861711960bdfcb1cb15100b4bea3e1d844cd2fdd13eb9e2b6926176a9e",
+          "diff_signature": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "font_profile": "registered-ahem",
+          "id": "wpt/css_break/table_repeated-section_multiple-row-groups.tentative",
+          "mismatched_pixels": 0,
+          "openui_png_cache_path": "png/85/854bc5e07f24699f7d109bd5375ea8429db36bba01e92f7ce3569846cd6c28e7.png",
+          "openui_png_sha256": "854bc5e07f24699f7d109bd5375ea8429db36bba01e92f7ce3569846cd6c28e7",
+          "openui_rgba_sha256": "d6993e861711960bdfcb1cb15100b4bea3e1d844cd2fdd13eb9e2b6926176a9e",
+          "raster_configuration": "cpu-skia:deterministic-alias",
+          "status": "exact"
+        }
+      ],
+      "total": 1
+    }
+  ],
+  "raster": {
+    "backend_identity_fields": [
+      "backend",
+      "gl_renderer",
+      "gl_version",
+      "driver",
+      "color_type",
+      "sample_count",
+      "surface_properties"
+    ],
+    "backend_selection": "explicit-immutable",
+    "candidate_backend": {
+      "name": "ganesh-gl",
+      "promotion_policy": "global primitive, focused, and full-census improvement only"
+    },
+    "destination_color_space": "sRGB",
+    "device_transform_before_raster": true,
+    "exact_tolerance_pixels": 0,
+    "logical_recording": true,
+    "physical_surface": true,
+    "pixel_format": "N32 premultiplied RGBA",
+    "portable_backend": "cpu-skia",
+    "qualification_backend": "cpu-skia",
+    "whole_frame_resampling": "forbidden"
+  },
+  "resource_hashes": {
+    "docs/renderer/generated/media-first-frames-v1.json": "81c297a3201b04d6d28761f68312e4ad9f66856f87f87f0cf3337b411c6fb70a",
+    "tools/accountability/data/wpt_ported/sp20_resource_manifest.json": "7b6ef91b6dcfccef8751fdd25b47a0e3a9a682e8b982474fe34bdf72cf331328",
+    "tools/qualification/manifests/complete-5731.json": "2d68221f88c8280249b45c304338a9ab312918fd8c82d80ae1a46c0a26a8816f",
+    "tools/qualification/manifests/expanded-v1.json": "e1bd3cdad5b48d267856f06e112dd33bdfd00e1e8a7270128730f14d536dee46",
+    "tools/qualification/manifests/focused-raster.json": "215b2eee97e6eacb7984ede2e8c8e11e5d049d1ffe948589083efc3258528c98",
+    "tools/qualification/manifests/primitive-raster.json": "03a376120ce4b67a5d9580c9ed38f337795f95a0bd2b800175862ea1b966d978",
+    "tools/qualification/residual-ownership-v2.json": "ca8d04dce8056248f785e0be572827462abe44fbf7b75c459abd08de9b110f7d"
+  },
+  "results": {
+    "different": 0,
+    "errors": 0,
+    "exact": 40,
+    "profile_result_sha256": "6f0af4714d133d99a9434ff22a216b0cfe9b8260a284475f96eaac88e4a0708e",
+    "total": 40
+  },
+  "schema_version": 2,
+  "shard": {
+    "count": 1,
+    "index": 0
+  },
+  "source": {
+    "clean": true,
+    "commit": "814a200523b642c5b7ad5cdee4d97f8152421834",
+    "harness_sha256": "b2638f1e1ad8b683528946073086d01419aa5e9b71134eedd5bf259b2a76114b",
+    "source_tree_sha256": "5ce24781ae7d5094d1f0a2e766b995f83df7f61e127725360fa6d9c8cc04cb12",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "suite": "residual-cross"
+}

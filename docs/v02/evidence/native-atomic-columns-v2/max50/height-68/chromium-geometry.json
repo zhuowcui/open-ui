@@ -1,0 +1,100 @@
+{
+  "case": "height-68",
+  "geometry": {
+    "hit": "border",
+    "nodes": {
+      "border": {
+        "bounds": {
+          "height": 68,
+          "width": 380,
+          "x": 0,
+          "y": 0
+        },
+        "rects": [
+          {
+            "height": 50,
+            "width": 56,
+            "x": 0,
+            "y": 0
+          },
+          {
+            "height": 68,
+            "width": 56,
+            "x": 108,
+            "y": 0
+          },
+          {
+            "height": 50,
+            "width": 56,
+            "x": 216,
+            "y": 0
+          },
+          {
+            "height": 38,
+            "width": 56,
+            "x": 324,
+            "y": 0
+          }
+        ]
+      },
+      "columns": {
+        "bounds": {
+          "height": 50,
+          "width": 300,
+          "x": 0,
+          "y": 0
+        },
+        "rects": [
+          {
+            "height": 50,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          }
+        ]
+      },
+      "limit": {
+        "bounds": {
+          "height": 68,
+          "width": 300,
+          "x": 0,
+          "y": 0
+        },
+        "rects": [
+          {
+            "height": 50,
+            "width": 84,
+            "x": 0,
+            "y": 0
+          },
+          {
+            "height": 68,
+            "width": 84,
+            "x": 108,
+            "y": 0
+          },
+          {
+            "height": 42,
+            "width": 84,
+            "x": 216,
+            "y": 0
+          },
+          {
+            "height": 0,
+            "width": 84,
+            "x": 324,
+            "y": 0
+          }
+        ]
+      }
+    },
+    "viewport": {
+      "dpr": 1,
+      "height": 340,
+      "width": 320
+    }
+  },
+  "input_sha256": "e7fc557a1f9467dc674ee1f1fbaebf7eefee516f491c381ef38ed36ed5416272",
+  "png_sha256": "e24a9b2b82c7cfbec46deabdbc645ab844005f45df3f8e688172ea6a8c50087e",
+  "repeated_query_equal": true
+}

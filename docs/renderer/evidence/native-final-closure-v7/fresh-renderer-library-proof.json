@@ -1,0 +1,682 @@
+{
+  "all_commands_terminal": true,
+  "artifacts": {
+    "bytemuck": [
+      {
+        "executable": null,
+        "features": [
+          "bytemuck_derive",
+          "derive",
+          "min_const_generics"
+        ],
+        "filenames": [
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-087b6a2b3a3980c7.rlib",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-087b6a2b3a3980c7.rmeta"
+        ],
+        "fresh": false,
+        "manifest_path": "/dev/shm/openui-native-renderer-v4517/bindings/rust/vendor/bytemuck-v1/Cargo.toml",
+        "package_id": "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/vendor/bytemuck-v1#bytemuck@1.25.0",
+        "profile": {
+          "debug_assertions": true,
+          "debuginfo": 0,
+          "opt_level": "0",
+          "overflow_checks": true,
+          "test": false
+        },
+        "reason": "compiler-artifact",
+        "target": {
+          "crate_types": [
+            "lib"
+          ],
+          "doc": true,
+          "doctest": true,
+          "edition": "2018",
+          "kind": [
+            "lib"
+          ],
+          "name": "bytemuck",
+          "src_path": "/dev/shm/openui-native-renderer-v4517/bindings/rust/vendor/bytemuck-v1/src/lib.rs",
+          "test": true
+        }
+      }
+    ],
+    "bytemuck_derive": [
+      {
+        "executable": null,
+        "features": [],
+        "filenames": [
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck_derive-3a810cf7a7c794b9.so"
+        ],
+        "fresh": false,
+        "manifest_path": "/dev/shm/openui-native-renderer-v4517/bindings/rust/vendor/bytemuck_derive-v1/Cargo.toml",
+        "package_id": "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/vendor/bytemuck_derive-v1#bytemuck_derive@1.10.2",
+        "profile": {
+          "debug_assertions": true,
+          "debuginfo": 0,
+          "opt_level": "0",
+          "overflow_checks": true,
+          "test": false
+        },
+        "reason": "compiler-artifact",
+        "target": {
+          "crate_types": [
+            "proc-macro"
+          ],
+          "doc": true,
+          "doctest": true,
+          "edition": "2018",
+          "kind": [
+            "proc-macro"
+          ],
+          "name": "bytemuck_derive",
+          "src_path": "/dev/shm/openui-native-renderer-v4517/bindings/rust/vendor/bytemuck_derive-v1/src/lib.rs",
+          "test": true
+        }
+      }
+    ],
+    "font-types": [
+      {
+        "executable": null,
+        "features": [
+          "bytemuck",
+          "std"
+        ],
+        "filenames": [
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-e33b946bf9cdb70b.rlib",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-e33b946bf9cdb70b.rmeta"
+        ],
+        "fresh": false,
+        "manifest_path": "/dev/shm/openui-native-renderer-v4517/bindings/rust/vendor/font-types-v0_11/Cargo.toml",
+        "package_id": "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/vendor/font-types-v0_11#font-types@0.11.0",
+        "profile": {
+          "debug_assertions": true,
+          "debuginfo": 0,
+          "opt_level": "0",
+          "overflow_checks": true,
+          "test": false
+        },
+        "reason": "compiler-artifact",
+        "target": {
+          "crate_types": [
+            "lib"
+          ],
+          "doc": true,
+          "doctest": true,
+          "edition": "2021",
+          "kind": [
+            "lib"
+          ],
+          "name": "font_types",
+          "src_path": "/dev/shm/openui-native-renderer-v4517/bindings/rust/vendor/font-types-v0_11/src/lib.rs",
+          "test": true
+        }
+      }
+    ],
+    "openui-compositor": [
+      {
+        "executable": null,
+        "features": [
+          "default"
+        ],
+        "filenames": [
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-2a790426442dcf82.rlib",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-2a790426442dcf82.rmeta"
+        ],
+        "fresh": false,
+        "manifest_path": "/dev/shm/openui-native-renderer-v4517/bindings/rust/openui-compositor/Cargo.toml",
+        "package_id": "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/openui-compositor#0.2.0",
+        "profile": {
+          "debug_assertions": true,
+          "debuginfo": 0,
+          "opt_level": "0",
+          "overflow_checks": true,
+          "test": false
+        },
+        "reason": "compiler-artifact",
+        "target": {
+          "crate_types": [
+            "lib"
+          ],
+          "doc": true,
+          "doctest": true,
+          "edition": "2021",
+          "kind": [
+            "lib"
+          ],
+          "name": "openui_compositor",
+          "src_path": "/dev/shm/openui-native-renderer-v4517/bindings/rust/openui-compositor/src/lib.rs",
+          "test": true
+        }
+      }
+    ],
+    "openui-dom": [
+      {
+        "executable": null,
+        "features": [],
+        "filenames": [
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-d1c3bc152e8680f8.rlib",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-d1c3bc152e8680f8.rmeta"
+        ],
+        "fresh": false,
+        "manifest_path": "/dev/shm/openui-native-renderer-v4517/bindings/rust/openui-dom/Cargo.toml",
+        "package_id": "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/openui-dom#0.2.0",
+        "profile": {
+          "debug_assertions": true,
+          "debuginfo": 0,
+          "opt_level": "0",
+          "overflow_checks": true,
+          "test": false
+        },
+        "reason": "compiler-artifact",
+        "target": {
+          "crate_types": [
+            "lib"
+          ],
+          "doc": true,
+          "doctest": true,
+          "edition": "2021",
+          "kind": [
+            "lib"
+          ],
+          "name": "openui_dom",
+          "src_path": "/dev/shm/openui-native-renderer-v4517/bindings/rust/openui-dom/src/lib.rs",
+          "test": true
+        }
+      }
+    ],
+    "openui-engine": [
+      {
+        "executable": null,
+        "features": [],
+        "filenames": [
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-c971e3ea18717d45.rlib",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-c971e3ea18717d45.rmeta"
+        ],
+        "fresh": false,
+        "manifest_path": "/dev/shm/openui-native-renderer-v4517/bindings/rust/openui-engine/Cargo.toml",
+        "package_id": "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/openui-engine#0.2.0",
+        "profile": {
+          "debug_assertions": true,
+          "debuginfo": 0,
+          "opt_level": "0",
+          "overflow_checks": true,
+          "test": false
+        },
+        "reason": "compiler-artifact",
+        "target": {
+          "crate_types": [
+            "lib"
+          ],
+          "doc": true,
+          "doctest": true,
+          "edition": "2021",
+          "kind": [
+            "lib"
+          ],
+          "name": "openui_engine",
+          "src_path": "/dev/shm/openui-native-renderer-v4517/bindings/rust/openui-engine/src/lib.rs",
+          "test": true
+        }
+      }
+    ],
+    "openui-geometry": [
+      {
+        "executable": null,
+        "features": [],
+        "filenames": [
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-efd9b399590a9cc0.rlib",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-efd9b399590a9cc0.rmeta"
+        ],
+        "fresh": false,
+        "manifest_path": "/dev/shm/openui-native-renderer-v4517/bindings/rust/openui-geometry/Cargo.toml",
+        "package_id": "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/openui-geometry#0.2.0",
+        "profile": {
+          "debug_assertions": true,
+          "debuginfo": 0,
+          "opt_level": "0",
+          "overflow_checks": true,
+          "test": false
+        },
+        "reason": "compiler-artifact",
+        "target": {
+          "crate_types": [
+            "lib"
+          ],
+          "doc": true,
+          "doctest": true,
+          "edition": "2021",
+          "kind": [
+            "lib"
+          ],
+          "name": "openui_geometry",
+          "src_path": "/dev/shm/openui-native-renderer-v4517/bindings/rust/openui-geometry/src/lib.rs",
+          "test": true
+        }
+      }
+    ],
+    "openui-layout": [
+      {
+        "executable": null,
+        "features": [],
+        "filenames": [
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-2b29aafb1a34dc59.rlib",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-2b29aafb1a34dc59.rmeta"
+        ],
+        "fresh": false,
+        "manifest_path": "/dev/shm/openui-native-renderer-v4517/bindings/rust/openui-layout/Cargo.toml",
+        "package_id": "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/openui-layout#0.2.0",
+        "profile": {
+          "debug_assertions": true,
+          "debuginfo": 0,
+          "opt_level": "0",
+          "overflow_checks": true,
+          "test": false
+        },
+        "reason": "compiler-artifact",
+        "target": {
+          "crate_types": [
+            "lib"
+          ],
+          "doc": true,
+          "doctest": true,
+          "edition": "2021",
+          "kind": [
+            "lib"
+          ],
+          "name": "openui_layout",
+          "src_path": "/dev/shm/openui-native-renderer-v4517/bindings/rust/openui-layout/src/lib.rs",
+          "test": true
+        }
+      }
+    ],
+    "openui-paint": [
+      {
+        "executable": null,
+        "features": [],
+        "filenames": [
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-3b124772dacb6746.rlib",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-3b124772dacb6746.rmeta"
+        ],
+        "fresh": false,
+        "manifest_path": "/dev/shm/openui-native-renderer-v4517/bindings/rust/openui-paint/Cargo.toml",
+        "package_id": "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/openui-paint#0.2.0",
+        "profile": {
+          "debug_assertions": true,
+          "debuginfo": 0,
+          "opt_level": "0",
+          "overflow_checks": true,
+          "test": false
+        },
+        "reason": "compiler-artifact",
+        "target": {
+          "crate_types": [
+            "lib"
+          ],
+          "doc": true,
+          "doctest": true,
+          "edition": "2021",
+          "kind": [
+            "lib"
+          ],
+          "name": "openui_paint",
+          "src_path": "/dev/shm/openui-native-renderer-v4517/bindings/rust/openui-paint/src/lib.rs",
+          "test": true
+        }
+      }
+    ],
+    "openui-style": [
+      {
+        "executable": null,
+        "features": [],
+        "filenames": [
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-834764aabb68552d.rlib",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-834764aabb68552d.rmeta"
+        ],
+        "fresh": false,
+        "manifest_path": "/dev/shm/openui-native-renderer-v4517/bindings/rust/openui-style/Cargo.toml",
+        "package_id": "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/openui-style#0.2.0",
+        "profile": {
+          "debug_assertions": true,
+          "debuginfo": 0,
+          "opt_level": "0",
+          "overflow_checks": true,
+          "test": false
+        },
+        "reason": "compiler-artifact",
+        "target": {
+          "crate_types": [
+            "lib"
+          ],
+          "doc": true,
+          "doctest": true,
+          "edition": "2021",
+          "kind": [
+            "lib"
+          ],
+          "name": "openui_style",
+          "src_path": "/dev/shm/openui-native-renderer-v4517/bindings/rust/openui-style/src/lib.rs",
+          "test": true
+        }
+      }
+    ],
+    "openui-text": [
+      {
+        "executable": null,
+        "features": [],
+        "filenames": [
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-685d07112f60e769.rlib",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-685d07112f60e769.rmeta"
+        ],
+        "fresh": false,
+        "manifest_path": "/dev/shm/openui-native-renderer-v4517/bindings/rust/openui-text/Cargo.toml",
+        "package_id": "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/openui-text#0.2.0",
+        "profile": {
+          "debug_assertions": true,
+          "debuginfo": 0,
+          "opt_level": "0",
+          "overflow_checks": true,
+          "test": false
+        },
+        "reason": "compiler-artifact",
+        "target": {
+          "crate_types": [
+            "lib"
+          ],
+          "doc": true,
+          "doctest": true,
+          "edition": "2021",
+          "kind": [
+            "lib"
+          ],
+          "name": "openui_text",
+          "src_path": "/dev/shm/openui-native-renderer-v4517/bindings/rust/openui-text/src/lib.rs",
+          "test": true
+        }
+      }
+    ],
+    "pixel-compare": [
+      {
+        "executable": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/pixel_compare",
+        "features": [
+          "default"
+        ],
+        "filenames": [
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/pixel_compare"
+        ],
+        "fresh": false,
+        "manifest_path": "/dev/shm/openui-native-renderer-v4517/bindings/rust/pixel-compare/Cargo.toml",
+        "package_id": "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/pixel-compare#0.1.0",
+        "profile": {
+          "debug_assertions": true,
+          "debuginfo": 0,
+          "opt_level": "0",
+          "overflow_checks": true,
+          "test": false
+        },
+        "reason": "compiler-artifact",
+        "target": {
+          "crate_types": [
+            "bin"
+          ],
+          "doc": true,
+          "doctest": false,
+          "edition": "2021",
+          "kind": [
+            "bin"
+          ],
+          "name": "pixel_compare",
+          "src_path": "/dev/shm/openui-native-renderer-v4517/bindings/rust/pixel-compare/src/main.rs",
+          "test": true
+        }
+      }
+    ],
+    "read-fonts": [
+      {
+        "executable": null,
+        "features": [
+          "std"
+        ],
+        "filenames": [
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-f7fc50324ff71df1.rlib",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-f7fc50324ff71df1.rmeta"
+        ],
+        "fresh": false,
+        "manifest_path": "/dev/shm/openui-native-renderer-v4517/bindings/rust/vendor/read-fonts-v0_37/Cargo.toml",
+        "package_id": "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/vendor/read-fonts-v0_37#read-fonts@0.37.0",
+        "profile": {
+          "debug_assertions": true,
+          "debuginfo": 0,
+          "opt_level": "0",
+          "overflow_checks": true,
+          "test": false
+        },
+        "reason": "compiler-artifact",
+        "target": {
+          "crate_types": [
+            "lib"
+          ],
+          "doc": true,
+          "doctest": true,
+          "edition": "2021",
+          "kind": [
+            "lib"
+          ],
+          "name": "read_fonts",
+          "src_path": "/dev/shm/openui-native-renderer-v4517/bindings/rust/vendor/read-fonts-v0_37/src/lib.rs",
+          "test": true
+        }
+      }
+    ],
+    "skrifa": [
+      {
+        "executable": null,
+        "features": [
+          "autohint_shaping",
+          "default",
+          "std"
+        ],
+        "filenames": [
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-35f5ca75a4e799ca.rlib",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-35f5ca75a4e799ca.rmeta"
+        ],
+        "fresh": false,
+        "manifest_path": "/dev/shm/openui-native-renderer-v4517/bindings/rust/vendor/skrifa-v0_40/Cargo.toml",
+        "package_id": "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/vendor/skrifa-v0_40#skrifa@0.40.0",
+        "profile": {
+          "debug_assertions": true,
+          "debuginfo": 0,
+          "opt_level": "0",
+          "overflow_checks": true,
+          "test": false
+        },
+        "reason": "compiler-artifact",
+        "target": {
+          "crate_types": [
+            "lib"
+          ],
+          "doc": true,
+          "doctest": true,
+          "edition": "2021",
+          "kind": [
+            "lib"
+          ],
+          "name": "skrifa",
+          "src_path": "/dev/shm/openui-native-renderer-v4517/bindings/rust/vendor/skrifa-v0_40/src/lib.rs",
+          "test": true
+        }
+      }
+    ]
+  },
+  "binary": "/mnt/d/openui-v02-qualification-d174ea0b/native-fresh-renderer-build-v4525/guarded-build/pixel_compare",
+  "binary_sha256": "02cc432163bf1f925772405b2f60f6903824cf42f1598f84311b186215c43ad5",
+  "cleaned_local_package_ids": [
+    "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/examples/counter#0.2.0",
+    "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/examples/dashboard#0.2.0",
+    "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/examples/framework-test#0.2.0",
+    "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/examples/hello#0.2.0",
+    "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/examples/todo#0.2.0",
+    "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/openui#0.2.0",
+    "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/openui-compositor#0.2.0",
+    "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/openui-dom#0.2.0",
+    "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/openui-engine#0.2.0",
+    "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/openui-ffi#0.2.0",
+    "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/openui-geometry#0.2.0",
+    "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/openui-layout#0.2.0",
+    "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/openui-macros#0.2.0",
+    "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/openui-paint#0.2.0",
+    "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/openui-platform#0.2.0",
+    "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/openui-style#0.2.0",
+    "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/openui-text#0.2.0",
+    "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/pixel-compare#0.1.0",
+    "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/vendor/bytemuck-v1#bytemuck@1.25.0",
+    "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/vendor/bytemuck_derive-v1#bytemuck_derive@1.10.2",
+    "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/vendor/font-types-v0_11#font-types@0.11.0",
+    "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/vendor/read-fonts-v0_37#read-fonts@0.37.0",
+    "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/vendor/skrifa-v0_40#skrifa@0.40.0"
+  ],
+  "compiled_artifact_sha256": {
+    "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-087b6a2b3a3980c7.rlib": "38ee6df329df35154b5156f154531014d3a0bd65104d6f4985fa7d1d02456ae2",
+    "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-087b6a2b3a3980c7.rmeta": "7f9aa567ffaad7f0bf0227a37252183048c4496bd3aba0ee0bcc1f9039dfefbc",
+    "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck_derive-3a810cf7a7c794b9.so": "7e0a3f937508cdc1a5252ccf39b949a4dc36757603dd4811005094925ffcf38c",
+    "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-e33b946bf9cdb70b.rlib": "e03d9218c174b8508f320438cf2782c71281c69defb395c88d3443331c2e1aac",
+    "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-e33b946bf9cdb70b.rmeta": "40f8f329b0cc921cab6c822fdab7aad30aad42aa17b9bbb6dcafca6ec8a61132",
+    "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-2a790426442dcf82.rlib": "9f52d2c213bb76c82df577143a089d10601037828982919a8f59ab3723a08f1f",
+    "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-2a790426442dcf82.rmeta": "f16293b612d3bf52054de3a0d03c60b52cdeaaa0c393a5b2c5abe330279c9e13",
+    "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-d1c3bc152e8680f8.rlib": "faa3064569bb7915ab70512bbd022e69abb6830e0edd0af11825b20c592d86f4",
+    "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-d1c3bc152e8680f8.rmeta": "f33a68b5083c35c987afb017d16dee931b3c3e53fa89e09597b279cf6f87f318",
+    "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-c971e3ea18717d45.rlib": "e6e622e12671325cdbd92b2d20b157d0b0e479eef45a96f48b107b61a1b0da2f",
+    "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-c971e3ea18717d45.rmeta": "7c02f7fad4bbeffeda7e96a8d3fe6696673c662bd34062fb000399d440d5242f",
+    "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-efd9b399590a9cc0.rlib": "575e1526ddd61f0be052a732ba3fa03e7cedc58f5841bea8ead60c79f352d304",
+    "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-efd9b399590a9cc0.rmeta": "251ae694d1603857a1cf778685da45411a5df966ed500219921d4c6e0ebbdf8e",
+    "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-2b29aafb1a34dc59.rlib": "46d59bfdc094ba78007e59d5dc03ca3c2ded3a4f5e4d17141debf1fdc0a92fd9",
+    "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-2b29aafb1a34dc59.rmeta": "fd69d742c070a779cb12ec91624cdea2d19fcd3731985ad2b2e52beecf76bf77",
+    "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-3b124772dacb6746.rlib": "5833fc765307503886123c8d891c1161e5507074e1c79145818ddaee7f7f1267",
+    "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-3b124772dacb6746.rmeta": "bf06f33a68fc7fd59b936956cb4e932b81165e37c621cef956c90b6c21c5ed78",
+    "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-834764aabb68552d.rlib": "503384b126855de6385d44dc45bb986a6592aeeaca80b5b6d44a0e38c26521e2",
+    "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-834764aabb68552d.rmeta": "840985e766c8cee4f9f34884790a307cf44d406eb0f1bb1094c2029e97cff996",
+    "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-685d07112f60e769.rlib": "858dbd57b7eca84a67e755b8e0f9f22048f12bce7e4b246578947b4d8dbf4168",
+    "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-685d07112f60e769.rmeta": "a63b028cecf07b2f104090297b3441a53f391a4e8eb0b18e79535bfec62f7615",
+    "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-f7fc50324ff71df1.rlib": "5df9025ba526268f07e434b0f851b0d9c30975af9973db656921eb013b2c9e08",
+    "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-f7fc50324ff71df1.rmeta": "27d3ed55868ac40d0f80154f0fa6f723ac8bf0b20769c6c868c75e4815e1d164",
+    "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-35f5ca75a4e799ca.rlib": "2c6e2290202abb66f85aa2abfb0d7fc891bf91d113464b9bad5e8db0cb8f9b26",
+    "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-35f5ca75a4e799ca.rmeta": "c74dee77eacde296e67dcab50a0238342b27ecc3e6999359f3783df1306a6318",
+    "/mnt/e/openui-v02-cargo-c73754e2/target/debug/pixel_compare": "02cc432163bf1f925772405b2f60f6903824cf42f1598f84311b186215c43ad5"
+  },
+  "dirty_diagnostic_only": false,
+  "observed_exit_code": 0,
+  "release_qualification": false,
+  "renderer_library_provenance_verified": true,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "5520ed920523164574fc80187b2702892cb5ac62",
+    "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6",
+    "source_tree_sha256": "0e2c22d402f809735879222fed8bbaad849d989d3aa7c96ac61595e1d3c77336",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "5520ed920523164574fc80187b2702892cb5ac62",
+    "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6",
+    "source_tree_sha256": "0e2c22d402f809735879222fed8bbaad849d989d3aa7c96ac61595e1d3c77336",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_root": "/dev/shm/openui-native-renderer-v4517",
+  "source_unchanged": true,
+  "steps": [
+    {
+      "command": [
+        "cargo",
+        "--config",
+        "/dev/shm/openui-native-renderer-v4517/bindings/rust/.cargo/config.chromium.toml",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1"
+      ],
+      "name": "metadata",
+      "observed_exit_code": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "663897734574dbfc93f955b0ba6eacfa6f5226e143f3f7a3bbb3eea387d53693"
+    },
+    {
+      "command": [
+        "cargo",
+        "--config",
+        "/dev/shm/openui-native-renderer-v4517/bindings/rust/.cargo/config.chromium.toml",
+        "clean",
+        "--locked",
+        "-p",
+        "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/examples/counter#0.2.0",
+        "-p",
+        "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/examples/dashboard#0.2.0",
+        "-p",
+        "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/examples/framework-test#0.2.0",
+        "-p",
+        "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/examples/hello#0.2.0",
+        "-p",
+        "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/examples/todo#0.2.0",
+        "-p",
+        "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/openui#0.2.0",
+        "-p",
+        "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/openui-compositor#0.2.0",
+        "-p",
+        "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/openui-dom#0.2.0",
+        "-p",
+        "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/openui-engine#0.2.0",
+        "-p",
+        "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/openui-ffi#0.2.0",
+        "-p",
+        "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/openui-geometry#0.2.0",
+        "-p",
+        "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/openui-layout#0.2.0",
+        "-p",
+        "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/openui-macros#0.2.0",
+        "-p",
+        "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/openui-paint#0.2.0",
+        "-p",
+        "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/openui-platform#0.2.0",
+        "-p",
+        "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/openui-style#0.2.0",
+        "-p",
+        "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/openui-text#0.2.0",
+        "-p",
+        "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/pixel-compare#0.1.0",
+        "-p",
+        "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/vendor/bytemuck-v1#bytemuck@1.25.0",
+        "-p",
+        "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/vendor/bytemuck_derive-v1#bytemuck_derive@1.10.2",
+        "-p",
+        "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/vendor/font-types-v0_11#font-types@0.11.0",
+        "-p",
+        "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/vendor/read-fonts-v0_37#read-fonts@0.37.0",
+        "-p",
+        "path+file:///dev/shm/openui-native-renderer-v4517/bindings/rust/vendor/skrifa-v0_40#skrifa@0.40.0"
+      ],
+      "name": "clean-local-packages",
+      "observed_exit_code": 0,
+      "stderr_sha256": "97fc71bf0c6b860cba14945565dc80ebe394c463e7df67e798f47878a2f95cdf",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "cargo",
+        "--config",
+        "/dev/shm/openui-native-renderer-v4517/bindings/rust/.cargo/config.chromium.toml",
+        "build",
+        "--locked",
+        "--offline",
+        "--package",
+        "pixel-compare",
+        "--bin",
+        "pixel_compare",
+        "--message-format=json"
+      ],
+      "name": "build",
+      "observed_exit_code": 0,
+      "stderr_sha256": "ea881ad9de70a7ee1048e357fdf1e90c4a6175e31825e2ddc2c0cc0866efe4a5",
+      "stdout_sha256": "769a05f10712ad68d77ea8166ef58de7f2babb3b7a64a6681a0dcd7908472827"
+    }
+  ]
+}

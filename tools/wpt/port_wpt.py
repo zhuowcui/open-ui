@@ -46,11 +46,11 @@ from collections import OrderedDict
 
 try:
     # Package import used by the repository's unittest modules.
-    from tools.wpt.engine_fixture_codegen import engineify_module
+    from tools.wpt.engine_fixture_codegen import engineify_module, native_control_geometry_request
 except ModuleNotFoundError:
     # Direct-script execution puts tools/wpt, rather than the repository root,
     # on sys.path.
-    from engine_fixture_codegen import engineify_module
+    from engine_fixture_codegen import engineify_module, native_control_geometry_request
 
 
 class PorterProfile(Enum):
@@ -75,7 +75,7 @@ MEDIA_FIRST_FRAME_MANIFEST = (
     PROJECT_ROOT / 'docs' / 'renderer' / 'generated' / 'media-first-frames-v1.json'
 )
 JAVASCRIPT_MUTATION_AUDIT = (
-    PROJECT_ROOT / 'docs' / 'renderer' / 'generated' / 'javascript-mutation-audit-v2.json'
+    PROJECT_ROOT / 'docs' / 'renderer' / 'generated' / 'javascript-mutation-audit-v3.json'
 )
 _ACTIVE_RESOURCE_BASE: Path | None = None
 _MUTATION_AUDIT_BY_TEST_ID: dict[str, dict] | None = None
@@ -232,6 +232,10 @@ SUPPORTED_PROPERTIES = {
     'container', 'container-type', 'container-name', 'margin-trim',
     'scroll-marker-group', 'scroll-target-group',
     'scroll-snap-align', 'scroll-snap-type', 'scroll-snap-stop',
+    'scroll-padding', 'scroll-padding-top', 'scroll-padding-right',
+    'scroll-padding-bottom', 'scroll-padding-left',
+    'scroll-margin', 'scroll-margin-top', 'scroll-margin-right',
+    'scroll-margin-bottom', 'scroll-margin-left',
     # Replaced content and deterministic effects
     'object-fit', 'object-position', 'transform', 'transform-origin',
     'filter',
@@ -294,9 +298,6 @@ IGNORED_PROPERTIES = {
     'word-break', 'overflow-wrap', 'line-break', 'hyphens',
     'list-style', 'list-style-type', 'list-style-position',
     'cursor', 'pointer-events', 'user-select',
-    # `scroll-snap-stop` only changes traversal through intermediate snap
-    # positions; static snap geometry is emitted separately.
-    'scroll-snap-stop',
     # Print/page
     'print-color-adjust', 'image-rendering', 'size',
 }
@@ -2503,7 +2504,15 @@ def _apply_ast_mutation_ir(parser: 'WptHtmlParser') -> None:
             if styles is None or not isinstance(name, str) or not isinstance(value, str):
                 unsupported.append((kind, operation.get('order'), 'invalid cascade delta'))
             else:
-                styles[name] = value
+                if value == '':
+                    # CSSOM empty assignment removes the authored declaration,
+                    # allowing stylesheet/default sources to win the cascade.
+                    styles.pop(name, None)
+                    if isinstance(styles, CssDeclarations):
+                        styles.cascade_priority.pop(name, None)
+                        styles.important.pop(name, None)
+                else:
+                    styles[name] = value
         elif kind == 'set-style-text':
             styles = style_target(target)
             if styles is None or not isinstance(operation.get('value'), str):
@@ -2567,6 +2576,21 @@ def _apply_ast_mutation_ir(parser: 'WptHtmlParser') -> None:
             children = [resolve(child) for child in operation.get('children', [])]
             if not children or any(not append(target, child) for child in children):
                 unsupported.append((kind, operation.get('order'), 'invalid append target'))
+        elif kind == 'prepend':
+            children = [resolve(child) for child in operation.get('children', [])]
+            if (not isinstance(target, DomNode) or not children
+                    or any(not isinstance(child, DomNode) for child in children)):
+                unsupported.append((kind, operation.get('order'), 'invalid prepend target'))
+            else:
+                inserted = []
+                for child in children:
+                    detach(child)
+                    if child.tag == '#document-fragment':
+                        inserted.extend(child.children)
+                        child.children.clear()
+                    else:
+                        inserted.append(child)
+                target.children[0:0] = inserted
         elif kind == 'insert-before':
             child = resolve(operation.get('child'))
             before = resolve(operation.get('before'))
@@ -7331,33 +7355,82 @@ def generate_single_style(
         if val in mapping:
             return f"{s}.scroll_target_group = {mapping[val]};"
 
+    # Snap inputs retain their complete computed state. They use Engine's
+    # ordinary scroll geometry and offsets, including later native mutations.
     if prop == 'scroll-snap-align':
         tokens = val.split()
-        if len(tokens) in (1, 2):
-            # SP19 stores the cohort's shared/inline alignment point.  All
-            # selected rows use identical one-value axis alignment.
-            mapping = {
-                'none': 'ScrollSnapAlign::None',
-                'start': 'ScrollSnapAlign::Start',
-                'center': 'ScrollSnapAlign::Center',
-                'end': 'ScrollSnapAlign::End',
-            }
-            if tokens[0] in mapping and (len(tokens) == 1 or tokens[1] == tokens[0]):
-                return f"{s}.scroll_snap_align = {mapping[tokens[0]]};"
+        mapping = {
+            'none': 'ScrollSnapAlign::None',
+            'start': 'ScrollSnapAlign::Start',
+            'center': 'ScrollSnapAlign::Center',
+            'end': 'ScrollSnapAlign::End',
+        }
+        if len(tokens) not in (1, 2) or not all(token in mapping for token in tokens):
+            return None
+        if len(tokens) == 1:
+            return f"{s}.scroll_snap_align = {mapping[tokens[0]]};"
+        return [
+            f"{s}.scroll_snap_align = ScrollSnapAlign::None;",
+            f"{s}.scroll_snap_align_block = Some({mapping[tokens[0]]});",
+            f"{s}.scroll_snap_align_inline = Some({mapping[tokens[1]]});",
+        ]
 
     if prop == 'scroll-snap-type':
         tokens = val.split()
-        if tokens:
-            mapping = {
-                'none': 'ScrollSnapAxis::None',
-                'x': 'ScrollSnapAxis::X',
-                'y': 'ScrollSnapAxis::Y',
-                'both': 'ScrollSnapAxis::Both',
-                'inline': 'ScrollSnapAxis::Inline',
-                'block': 'ScrollSnapAxis::Block',
-            }
-            if tokens[0] in mapping:
-                return f"{s}.scroll_snap_axis = {mapping[tokens[0]]};"
+        mapping = {
+            'none': 'ScrollSnapAxis::None',
+            'x': 'ScrollSnapAxis::X',
+            'y': 'ScrollSnapAxis::Y',
+            'both': 'ScrollSnapAxis::Both',
+            'inline': 'ScrollSnapAxis::Inline',
+            'block': 'ScrollSnapAxis::Block',
+        }
+        if not tokens or len(tokens) > 2 or tokens[0] not in mapping:
+            return None
+        if tokens[0] == 'none':
+            return f"{s}.scroll_snap_axis = ScrollSnapAxis::None;" if len(tokens) == 1 else None
+        if len(tokens) == 2 and tokens[1] not in {'mandatory', 'proximity'}:
+            return None
+        # Chromium147 ParseSingleValue serializes axis-only and explicit
+        # proximity identically. Mandatory must remain an explicit value.
+        strictness = 'Mandatory' if len(tokens) == 2 and tokens[1] == 'mandatory' else 'Proximity'
+        return [
+            f"{s}.scroll_snap_axis = {mapping[tokens[0]]};",
+            f"{s}.scroll_snap_strictness = ScrollSnapStrictness::{strictness};",
+        ]
+
+    if prop == 'scroll-snap-stop':
+        mapping = {'normal': 'ScrollSnapStop::Normal', 'always': 'ScrollSnapStop::Always'}
+        if val in mapping:
+            return f"{s}.scroll_snap_stop = {mapping[val]};"
+        return None
+
+    if prop in {'scroll-padding', 'scroll-margin'}:
+        tokens = _grid_tokens(val)
+        sides = _expand_four(tokens) if tokens else None
+        if not sides:
+            return None
+        lines = []
+        for side, value in zip(('top', 'right', 'bottom', 'left'), sides):
+            code = generate_single_style(f'{prop}-{side}', value, s, font_size, radius_basis)
+            if not code:
+                return None
+            lines.extend(code if isinstance(code, list) else [code])
+        return lines
+
+    if prop in {
+        'scroll-padding-top', 'scroll-padding-right', 'scroll-padding-bottom', 'scroll-padding-left',
+        'scroll-margin-top', 'scroll-margin-right', 'scroll-margin-bottom', 'scroll-margin-left',
+    }:
+        margin = prop.startswith('scroll-margin-')
+        if margin and ('%' in val or val == 'auto'):
+            return None
+        if not margin and re.fullmatch(r'-(?:\d+(?:\.\d*)?|\.\d+)(?:[a-zA-Z]+|%)?', val):
+            return None
+        length = parse_length(val, font_size)
+        if length:
+            return f"{s}.{prop.replace('-', '_')} = {length};"
+        return None
 
     # ── replaced content and deterministic effects ──
     if prop == 'object-fit':
@@ -9728,6 +9801,7 @@ def generate_rust_fn(
     html_styles: dict | None = None,
     *,
     root_aware: bool = False,
+    _legacy_control_geometry_projection: bool = False,
 ) -> str:
     """Generate a Rust function that builds a Document matching the DOM tree."""
     global _ACTIVE_RESOURCE_BASE
@@ -10831,6 +10905,10 @@ def generate_rust_fn(
                 f"BoxSizing::{'ContentBox' if control_all_reset else 'BorderBox'};"
             )
             if node.tag == 'textarea':
+                # The UA enables resizing unless an all reset removes that
+                # declaration. Later authored resize declarations override it.
+                if not control_all_reset:
+                    lines.append(f"{ws}doc.node_mut({var}).style.resize = Resize::Both;")
                 lines.append(f"{ws}doc.node_mut({var}).style.overflow_x = Overflow::Auto;")
                 lines.append(f"{ws}doc.node_mut({var}).style.overflow_y = Overflow::Auto;")
             input_type = node.attrs.get('type', 'text').lower() if node.tag == 'input' else ''
@@ -11499,13 +11577,59 @@ def generate_rust_fn(
                     15.0 if authored_font_token is None else
                     float(max(3.0, round(select_font_size)))
                 )
-                intrinsic_height = float(visible_rows * select_row_height)
-            lines.append(
-                f"{ws}doc.node_mut({var}).replaced = Some(openui_dom::ReplacedContent {{ "
-                "resource: openui_dom::ReplacedResourceKind::TransparentCanvas, "
-                f"intrinsic_width: Some({intrinsic_width}), "
-                f"intrinsic_height: Some({intrinsic_height}), intrinsic_ratio: None }});"
+                if (
+                    RETAIN_TEXT
+                    and not is_real_font_profile()
+                    and visible_rows == 1
+                    and not multiple
+                    and not control_all_reset
+                    and node.styles.get('appearance', '').strip() != 'none'
+                ):
+                    # Blink's native menu list uses the primary font's
+                    # integer ascent + descent, plus one CSS pixel of inner
+                    # theme padding at each block edge. Resolve those metrics
+                    # in the Engine's font collection rather than rounding
+                    # the font size or approximating the face's ascent.
+                    # The control's UA size is 13.3333px unless authored;
+                    # it does not inherit the parent's default 16px size.
+                    # See LayoutBox::MenuListIntrinsicBlockSize and
+                    # LayoutThemeDefault::PopupInternalPaddingTop/Bottom.
+                    menu_font_size = (
+                        13.333333 if authored_font_token is None
+                        else select_font_size
+                    )
+                    lines.append(
+                        f"{ws}let mut {var}_menu_description = openui_text::FontDescription::from_computed_style(&doc.node({var}).style);"
+                    )
+                    lines.append(
+                        f"{ws}{var}_menu_description.size = {menu_font_size};"
+                    )
+                    lines.append(
+                        f"{ws}let {var}_menu_font = openui_text::Font::new_in_collection({var}_menu_description, std::sync::Arc::clone(doc.font_collection()));"
+                    )
+                    lines.append(
+                        f"{ws}let {var}_menu_height = {var}_menu_font.font_metrics().map_or({menu_font_size}, |metrics| metrics.int_ascent() + metrics.int_descent());"
+                    )
+                    intrinsic_height = f"{var}_menu_height + 2.0"
+                else:
+                    intrinsic_height = float(visible_rows * select_row_height)
+            native_role = (
+                'TextArea' if node.tag == 'textarea'
+                else 'TextInput' if node.tag == 'input' and role.endswith('::TextInput')
+                else None
             )
+            if native_role is not None and not _legacy_control_geometry_projection:
+                lines.append(f"{ws}" + native_control_geometry_request(var, native_role))
+            else:
+                # Sole compatibility projection for the surgical transaction:
+                # compare the original UA-generated statement before replacing
+                # it. Ordinary generation always requests native text geometry.
+                lines.append(
+                    f"{ws}doc.node_mut({var}).replaced = Some(openui_dom::ReplacedContent {{ "
+                    "resource: openui_dom::ReplacedResourceKind::TransparentCanvas, "
+                    f"intrinsic_width: Some({intrinsic_width}), "
+                    f"intrinsic_height: Some({intrinsic_height}), intrinsic_ratio: None }});"
+                )
 
         # Set display:block for block-level HTML elements (our engine defaults to inline)
         block_tags = {'div', 'p', 'section', 'article', 'header', 'footer', 'nav', 'main',

@@ -195,7 +195,10 @@ impl BidiParagraph {
     /// the offset is adjusted back to the nearest character boundary.
     pub fn level_at_byte(&self, byte_offset: usize) -> u8 {
         let byte_offset = byte_offset.min(self.text.len());
-        let safe_offset = self.text.floor_char_boundary(byte_offset);
+        let mut safe_offset = byte_offset;
+        while !self.text.is_char_boundary(safe_offset) {
+            safe_offset -= 1;
+        }
         let char_index = self.text[..safe_offset].chars().count();
         self.level_at(char_index)
     }

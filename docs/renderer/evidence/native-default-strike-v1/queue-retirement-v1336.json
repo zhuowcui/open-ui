@@ -1,0 +1,45 @@
+{
+  "all_commands_terminal": true,
+  "release_qualification": false,
+  "replacements": [
+    {
+      "new_pipeline": "native-raster-fields-pipeline-v1337",
+      "old_pipeline": "native-raster-fields-pipeline-v1322",
+      "probe": "/tmp/openui-native-raster-fields-pipeline-v1337.py",
+      "probe_sha256": "23cdec763580f54c089e83129bd33afacbbc26d1840747a868d7b0e9a366e24d",
+      "source_changed": false,
+      "stage_probes_changed": false,
+      "stages": 10
+    },
+    {
+      "new_pipeline": "native-default-strike-pipeline-v1338",
+      "old_pipeline": "native-default-strike-pipeline-v1333",
+      "probe": "/tmp/openui-native-default-strike-pipeline-v1338.py",
+      "probe_sha256": "cf91c645f005d1dce7968de24ab0a38921bf1310de1fc6e4a63f6a2b3ca4231e",
+      "source_changed": false,
+      "stage_probes_changed": false,
+      "stages": 11
+    }
+  ],
+  "retired_waiting_owners": [
+    {
+      "name": "native-default-strike-pipeline-v1333",
+      "observed_session_exit_code": 143,
+      "pid": 3116457,
+      "pre_termination_sha256": "2842253898b87cbbee26f15d5ae3c86652a6a0b44a60d27fa903b3110d244d73",
+      "session_closed": true,
+      "terminal_receipt_sha256": "9214b3a9eae4a914ed9389792c3bcc178fc47edfd178c8e8b5e18e732316ebe6",
+      "zero_executed_stages": true
+    },
+    {
+      "name": "native-raster-fields-pipeline-v1322",
+      "observed_session_exit_code": 143,
+      "pid": 3074553,
+      "pre_termination_sha256": "8b1c4e3e3205fbe749c2c4da90f2807db7a740db67e164299991598687cd4baf",
+      "session_closed": true,
+      "terminal_receipt_sha256": "52cf3252c2b1366a9783cd99ac8b06161ad43a57eb1319d2ae85b9a95dd48767",
+      "zero_executed_stages": true
+    }
+  ],
+  "schema_version": 1
+}

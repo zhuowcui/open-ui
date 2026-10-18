@@ -1,0 +1,48 @@
+{
+  "baseline_source": {
+    "clean": true,
+    "commit": "15f9f12daa1f2027289b6cd4b050e51f7b2aa3f7",
+    "harness_sha256": "98f1377a682ee9fa561f08020715956e5bce2ca19fdb9f5820f59a1c702f8e34",
+    "source_tree_sha256": "9359b47816f3c0e9d2f3fcf31874a1d0d7b07ac6502546bfb3a29b0fa8a48d03",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "changed_comparisons": [],
+  "comparison_count": 1600,
+  "output_sha256": "c384da9dda1f09cb1f7c2fd502d9781e8c61f0c21797904cec0db4a3b4b2777d",
+  "release_qualification": false,
+  "schema_version": 1,
+  "scope": "Complete focused and primitive static guards only; original and expanded census counts are not updated.",
+  "source": {
+    "clean": true,
+    "commit": "04394c863b4f8a8d69a5768a3fa5e9d4a2998411",
+    "harness_sha256": "84b2b1ce2c0ecfdb1000948a6e5e655dc44dabc0b65ab4c54cd924ce547fda41",
+    "source_tree_sha256": "3cbb7a7276be905e92f747344522f074d8724612331d1466a7610600483d9de5",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "suites": {
+    "focused": {
+      "baseline_report_sha256": "6366cc1ad6bab25fe2bda303f31c627d2b01dbca8875f4c9d799148919ed0853",
+      "comparisons": 640,
+      "counts": {
+        "different": 0,
+        "errors": 0,
+        "exact": 640,
+        "profile_result_sha256": "8954f190706147f4c6635345e05bf26c7094759b036379afb23c998543c10725",
+        "total": 640
+      },
+      "current_report_sha256": "4e5cb4829acf7f219c0b1ca725f4e55c48d224132506ca784e781d6f64d03765"
+    },
+    "primitive": {
+      "baseline_report_sha256": "888968ea09377be2ebfc23cb9485640c924bf7035c07560e02bf7514d64b2e93",
+      "comparisons": 960,
+      "counts": {
+        "different": 0,
+        "errors": 0,
+        "exact": 960,
+        "profile_result_sha256": "a77bc4580b2546669532369b41876f567059ab4922652948ec65732446b7b293",
+        "total": 960
+      },
+      "current_report_sha256": "cee84892d46cedddd0ee8fb9cc7254515db7e8bebc0305734260a1e73d8756e0"
+    }
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "all_commands_terminal": true,
+  "cargo_target_dir": "/mnt/e/openui-v02-cargo-c73754e2/target",
+  "expected_stages": 13,
+  "probe_sha256": "44fe1a62a074c41779ea010a123e805328c8b8f50556997f51a7e2cc122dffe7",
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "ac08ec56e90a6465b22c05c3e76fe8dacefcdcd6",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "98cc1ae8a7de51a7d0195db38f2c0c3147e763fa688ecafcb843cd2248eb1f21",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "ac08ec56e90a6465b22c05c3e76fe8dacefcdcd6",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "98cc1ae8a7de51a7d0195db38f2c0c3147e763fa688ecafcb843cd2248eb1f21",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "steps": [
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "clean",
+        "-p",
+        "pixel-compare"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "ad881a5e81cdeef39ba8fb45efdad33587582c3810f09978fa27c8d92c83f8ac",
+      "name": "clean-runner",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "-p",
+        "openui-ffi",
+        "--lib",
+        "--features",
+        "linux",
+        "raster_configuration::tests::"
+      ],
+      "disk_guard_triggered": false,
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "ca844cc4851c2b3f4d01a5299b6b6b7895f096e168247acc5e1fe932f736d033",
+      "name": "raster-boundaries",
+      "observed_exit_code": 101,
+      "passed": 0
+    }
+  ]
+}

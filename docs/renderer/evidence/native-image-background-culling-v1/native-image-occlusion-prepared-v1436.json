@@ -1,0 +1,33 @@
+{
+  "baseline": "954c22a4e32edb71a356050b02fdf27c451863af",
+  "cargo_commands_run": 0,
+  "prior_failed_read_only_record": "out/renderer-evidence/native-viewport-scroll-v1/native-image-occlusion-checks-v1434/receipt.json",
+  "probes": [
+    {
+      "path": "/tmp/openui-native-image-occlusion-guards-v1436.py",
+      "sha256": "ccd906d01c544e1de1ec01a595656ceb06bc22c69953db68557857ddb23c4a6c"
+    },
+    {
+      "path": "/tmp/openui-native-image-occlusion-build-v1436.py",
+      "sha256": "ee0cb06ea1b2d571d5516cae953ec192fdcbdabfb62032a482067bb06c96b281"
+    },
+    {
+      "path": "/tmp/openui-native-image-occlusion-fieldsets-v1436.py",
+      "sha256": "e21c52b0dd715c5d6de36599eb65298718499f003f485865552d3be0fdc43643"
+    },
+    {
+      "path": "/tmp/openui-native-image-occlusion-consumer-v1436.py",
+      "sha256": "fbcd6b94b840d1a1b29df0fc7f8f31c49e1980b1bee1ff3d1ad8ef8b33a17568"
+    },
+    {
+      "path": "/tmp/openui-native-image-occlusion-matrices-v1436.py",
+      "sha256": "16cb7432d6582cd0cc5eb7e76e3b1e0373a76535ff01a080dd8aa60853f733f6"
+    }
+  ],
+  "release_qualification": false,
+  "schema_version": 1,
+  "screenshots_generated": 0,
+  "shape_outside_enum_verified_from_source": true,
+  "shape_outside_inventory_updated_to_204_author_fields": true,
+  "source": "d913041dba9b36987ce83a1b3ed85dc6b4bf93e4"
+}

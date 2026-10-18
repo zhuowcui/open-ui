@@ -1,0 +1,395 @@
+{
+  "all_commands_terminal": true,
+  "all_native_apis_qualified": false,
+  "c_abi": {
+    "c_consumers": 15,
+    "cpp_consumers": 9,
+    "current_exports": 116,
+    "current_layouts": 32,
+    "existing_exports_preserved": 114,
+    "existing_layouts_preserved": 31,
+    "headless_tests": 47
+  },
+  "chromium_reference_consistency": {
+    "captures": 6,
+    "cases": 2,
+    "references_rewritten": false,
+    "root_cause_reviewed": false,
+    "same_recorded_identity_conflict_reproduced": true
+  },
+  "combined_native_runtime_verified": true,
+  "combined_source_pixel_qualification": false,
+  "combined_static_nonregression_verified": true,
+  "comparisons": {
+    "expanded": {
+      "baseline_summary": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-control-renderer-qualification-v2568/baseline/expanded-matrix/expanded-summary.json",
+      "baseline_summary_sha256": "8ae1a3ab06efb0b13102287612ad6fc3a9d2601c5c3ec345a538e5e579cff407",
+      "changes": [],
+      "fields": [
+        "openui_png_sha256",
+        "openui_rgba_sha256",
+        "chromium_png_sha256",
+        "chromium_rgba_sha256",
+        "chromium_oracle_identity_sha256",
+        "chromium_oracle_rgba_sha256",
+        "mismatched_pixels",
+        "status",
+        "diff_signature"
+      ],
+      "nine_invariants_preserved": true,
+      "rows_audited": 23728
+    },
+    "focused": {
+      "baseline_summary": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-control-renderer-qualification-v2568/baseline/focused-matrix/focused-summary.json",
+      "baseline_summary_sha256": "9d91bd28d1688ff42e43789929364b99d9339b3f0ddeec19ee6b64aaee1f18e6",
+      "changes": [],
+      "fields": [
+        "openui_png_sha256",
+        "openui_rgba_sha256",
+        "chromium_png_sha256",
+        "chromium_rgba_sha256",
+        "chromium_oracle_identity_sha256",
+        "chromium_oracle_rgba_sha256",
+        "mismatched_pixels",
+        "status",
+        "diff_signature"
+      ],
+      "nine_invariants_preserved": true,
+      "rows_audited": 640
+    },
+    "full": {
+      "baseline_summary": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-control-renderer-qualification-v2568/baseline/full-matrix/full-summary.json",
+      "baseline_summary_sha256": "08f53c983f072ad2e5cff829ba6d1be5ab824f7c062af94e6d4dba023550cb8e",
+      "changes": [],
+      "fields": [
+        "openui_png_sha256",
+        "openui_rgba_sha256",
+        "chromium_png_sha256",
+        "chromium_rgba_sha256",
+        "chromium_oracle_identity_sha256",
+        "chromium_oracle_rgba_sha256",
+        "mismatched_pixels",
+        "status",
+        "diff_signature"
+      ],
+      "nine_invariants_preserved": true,
+      "rows_audited": 22924
+    },
+    "primitive": {
+      "baseline_summary": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-control-renderer-qualification-v2568/baseline/primitive-matrix/primitive-summary.json",
+      "baseline_summary_sha256": "37c0626878055b5bb15fae98829af17c8390786c9a9d0ac174cacbfce4237a9e",
+      "changes": [],
+      "fields": [
+        "openui_png_sha256",
+        "openui_rgba_sha256",
+        "chromium_png_sha256",
+        "chromium_rgba_sha256",
+        "chromium_oracle_identity_sha256",
+        "chromium_oracle_rgba_sha256",
+        "mismatched_pixels",
+        "status",
+        "diff_signature"
+      ],
+      "nine_invariants_preserved": true,
+      "rows_audited": 960
+    }
+  },
+  "controls": {
+    "bounds_exact": 90,
+    "callbacks_per_run": 45,
+    "chromium_reference_source": {
+      "clean": true,
+      "commit": "1d8ef55fc6bdbd8435a5737273efe87071f253f4",
+      "harness_sha256": "1a87b0599fe6a068ed34bb6250d6ca2857d2d7293a98fb602a33825230daa1f2",
+      "source_tree_sha256": "cd6e192665f34edd3de03e8ceb127e1a562d0ed189a72e2750a3b93307e7bf57",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "hit_targets_exact": 45,
+    "pixels_exact": 90,
+    "repeated_identical": true,
+    "states": 90
+  },
+  "hosted_hardening": {
+    "all_jobs_terminal": true,
+    "failed": 0,
+    "github_run_sha256": "ab8d1e34cff8be644759f1b2aaf78ce445f1eb6b199d5aabfcc816035e33dd5a",
+    "jobs": [
+      {
+        "conclusion": "success",
+        "name": "conformance-and-platform"
+      },
+      {
+        "conclusion": "success",
+        "name": "c-undefined-sanitizer"
+      },
+      {
+        "conclusion": "success",
+        "name": "native-sanitizers (address)"
+      },
+      {
+        "conclusion": "success",
+        "name": "native-sanitizers (leak)"
+      },
+      {
+        "conclusion": "success",
+        "name": "fuzz-smoke"
+      },
+      {
+        "conclusion": "success",
+        "name": "msrv"
+      },
+      {
+        "conclusion": "success",
+        "name": "miri-handles"
+      }
+    ],
+    "passed": 7,
+    "physical_lab_qualified": false,
+    "release_qualification": false,
+    "run_url": "https://github.com/zhuowcui/open-ui/actions/runs/37690178157",
+    "schema_version": 1,
+    "skipped": 0,
+    "source_commit": "3ee3f9d3fb99a65e0582d8810ed9731ba21738da"
+  },
+  "implementation_integrated": true,
+  "initial_orchestrator_failure": "KeyError('candidate_nonregression_verified')",
+  "initial_renderer_failure": "FileNotFoundError(2, 'No such file or directory')",
+  "javascript_executed_by_openui": false,
+  "matrices": {
+    "trial-expanded": {
+      "observed_exit_code": 1,
+      "results": {
+        "different": 1595,
+        "errors": 0,
+        "exact": 22133,
+        "profile_result_sha256": "8b3a0408685eb94bac375845c402ed1ba6274ccad393fce5ac5cb6d3cb66835b",
+        "total": 23728
+      },
+      "summary_sha256": "b523ccb49a4b03238c8e5408dcd757ad75693d68c006087bdf1ac3ce3d33a2d3"
+    },
+    "trial-focused": {
+      "observed_exit_code": 0,
+      "results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 640,
+        "profile_result_sha256": "f97b84c89b21043abc6dd00acc898a35ec8967269c14dd3397e046eed45c205a",
+        "total": 640
+      },
+      "summary_sha256": "e9aaa1cac338d3fb48f768383d20084ba6c0877267a157ba10d99a1303ad5732"
+    },
+    "trial-full": {
+      "observed_exit_code": 1,
+      "results": {
+        "different": 1594,
+        "errors": 0,
+        "exact": 21330,
+        "profile_result_sha256": "07fb12a1043e845c79b269037ce0378d6b3d0526d083c5dc199d7c80241753dd",
+        "total": 22924
+      },
+      "summary_sha256": "7196077d2f200aaa74ced29b0bfcdf4e58a8a4621144cf59775763466f4df405"
+    },
+    "trial-primitive": {
+      "observed_exit_code": 0,
+      "results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 960,
+        "profile_result_sha256": "5f8b2125b8bff189bb003c901ad0f6ff08442cc11aec8fabcd096fd3e60cc771",
+        "total": 960
+      },
+      "summary_sha256": "8baef1700ef5662de57f2b58bd8d1e70e14f73cca38cc862a379d7242f8a94ea"
+    }
+  },
+  "measured_source": {
+    "clean": true,
+    "commit": "3ee3f9d3fb99a65e0582d8810ed9731ba21738da",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "53422f4afd10dfbf65566bfe0c14c24e3500b2a225cfd9e8c8e8b4cf4ec40016",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "native_focus_callback_rows": 338,
+  "native_focus_observations": {
+    "c": {
+      "callback_rows": 338,
+      "differences": [],
+      "exact": true,
+      "first_sha256": "d0f18f1cb2752d07d2324a73924118077c10e9342ad519cc13a0302ad5fe89b1",
+      "repeated_identical": true,
+      "scenarios": 12,
+      "second_sha256": "d0f18f1cb2752d07d2324a73924118077c10e9342ad519cc13a0302ad5fe89b1"
+    },
+    "cpp": {
+      "callback_rows": 338,
+      "differences": [],
+      "exact": true,
+      "first_sha256": "d0f18f1cb2752d07d2324a73924118077c10e9342ad519cc13a0302ad5fe89b1",
+      "repeated_identical": true,
+      "scenarios": 12,
+      "second_sha256": "d0f18f1cb2752d07d2324a73924118077c10e9342ad519cc13a0302ad5fe89b1"
+    },
+    "rust": {
+      "callback_rows": 338,
+      "differences": [],
+      "exact": true,
+      "first_sha256": "ed3e1351cdc0c2b7e8ac36fb59babdf2e1baf919813f0e95e05168ed696eb47a",
+      "repeated_identical": true,
+      "scenarios": 12,
+      "second_sha256": "ed3e1351cdc0c2b7e8ac36fb59babdf2e1baf919813f0e95e05168ed696eb47a"
+    }
+  },
+  "native_focus_scenarios": 12,
+  "new_release_comparisons_admitted": 0,
+  "ordinary_ci": {
+    "clang_format": "failed; formatting correction separately checked and awaiting hosted verification",
+    "optional_hardening": "five skipped in ordinary CI; all seven passed in separate manual hardening",
+    "source_commit": "3ee3f9d3fb99a65e0582d8810ed9731ba21738da"
+  },
+  "pixel_target": "pinned Chromium",
+  "pixel_tolerance": 0,
+  "release_qualification": false,
+  "remaining_gates": [
+    "complete pinned Chromium equality",
+    "Chromium reference identity reconciliation",
+    "reviewed residual causes and ownership",
+    "complete needed native APIs",
+    "retained compositor and 3D behavior",
+    "physical Linux/GPU/accessibility/performance lab",
+    "reproducible packaging signing and publication"
+  ],
+  "review_evidence": [
+    {
+      "decoded_sha256": "55a4de33826d04250e5d70340d264e90bf1e57fca9bc38ed73c37916b95f7d14",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-combined-runtime-v2596/receipt.json",
+      "path": "docs/renderer/evidence/native-controls-focus-v2/runtime-receipt.json.gz",
+      "sha256": "b1cf39ea47a2778e24973dc4388a80b9ae37f0b2e3ddd40e45256d18b426cfd1"
+    },
+    {
+      "decoded_sha256": "d6d737d1891092cb57fc1d48db662c35e7c8be4663c5f72bef3f151a76185805",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-combined-runtime-v2596/guarded-build/receipt.json",
+      "path": "docs/renderer/evidence/native-controls-focus-v2/guarded-build-receipt.json.gz",
+      "sha256": "e6ab01b5f240ede03d6b3fa4eadf06bffe48b9d2593322b92ef9d41ae67ce490"
+    },
+    {
+      "decoded_sha256": "ec528d0edfc9e9df169a47794d0b257d6937a0a0013e6dba138a99b072f8ea18",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-combined-checks-v2597/receipt.json",
+      "path": "docs/renderer/evidence/native-controls-focus-v2/workspace-receipt.json.gz",
+      "sha256": "c6353c2f832ed96f734e9ab466e053811e48daf731281167e9f22b9675061ca6"
+    },
+    {
+      "decoded_sha256": "77b7a2e761f426859b924a1c4a6dea73abc5af86438556f0d4e3a33e625d76c9",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-combined-checks-v2597/locked-workspace-tests.log",
+      "path": "docs/renderer/evidence/native-controls-focus-v2/workspace-tests.log.gz",
+      "sha256": "8e747262d882568fb052d9ccad174b05e340affcfa491fe3bcf0bc2bd1e7c073"
+    },
+    {
+      "decoded_sha256": "d0e4e364e9cef6c8f5a01dc3fa469abb7e5f9266b60be902cf78d3c05fccf727",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-combined-checks-v2597/all-c-cpp-consumers.log",
+      "path": "docs/renderer/evidence/native-controls-focus-v2/abi-consumers.log.gz",
+      "sha256": "6fffe9c7ad84d04109699e51621fe70c358d250737b38b679b5af9d191de673d"
+    },
+    {
+      "decoded_sha256": "691a419ac777d96e844d193fb6bee0e99e607a029469d8d151bb7a5c05960f3a",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-combined-renderer-v2605/receipt.json",
+      "path": "docs/renderer/evidence/native-controls-focus-v2/renderer-receipt.json.gz",
+      "sha256": "5b24477be892657b01b08776c3a650403b370b52e7bebaa3f9c12d55f7e159b7"
+    },
+    {
+      "decoded_sha256": "c658ea7ccf1d09d97c8c7b787a53a521133b0be34836caf7b3f276ad3a88fdb1",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-controls-combined-v2613/receipt.json",
+      "path": "docs/renderer/evidence/native-controls-focus-v2/control-consumer-receipt.json.gz",
+      "sha256": "30fd9ed4b736bd1e00a08c46d7159808d0ab6ca3f38d8f021acac242c89ad1a1"
+    },
+    {
+      "decoded_sha256": "642f2c16cda71b00a1e62c0a9f5d219a9ca446906cf5e67c683bbc432ca7b02b",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-controls-combined-comparison-v2614/receipt.json",
+      "path": "docs/renderer/evidence/native-controls-focus-v2/control-comparison-receipt.json.gz",
+      "sha256": "0c97ece902b6174b8bf5bd845e155dc78e4a67aa13b3336dd5c288613ec971a8"
+    },
+    {
+      "decoded_sha256": "7f3d747711fe7c74c58dfe8f998598dafc1bebf817f7eb18e19cbb6a91b8b494",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-exact-oracle-recapture-v2603/receipt.json",
+      "path": "docs/renderer/evidence/native-controls-focus-v2/chromium-recapture-receipt.json.gz",
+      "sha256": "a9ab7457deac6d2685549dc8ba3fe09a8eb71a48a036ddfc90b32a7a2e8459c2"
+    },
+    {
+      "decoded_sha256": "e20ceb6c6e21a79bb51845c6fe8be886af128be1bc8573e72e190116dfa82d6c",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-combined-hosted-hardening-v2608/report.json",
+      "path": "docs/renderer/evidence/native-controls-focus-v2/hosted-hardening.json.gz",
+      "sha256": "38ff7f6994d6f11781c8595b54806b7f0f3d25bb0fec0fa4c256b1cc2a7e8fd4"
+    },
+    {
+      "decoded_sha256": "ab8d1e34cff8be644759f1b2aaf78ce445f1eb6b199d5aabfcc816035e33dd5a",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-combined-hosted-hardening-v2608/github-run.json",
+      "path": "docs/renderer/evidence/native-controls-focus-v2/github-run.json.gz",
+      "sha256": "929c2d7099729d968b69800532899443839cc0308ba904d19ce147be3a3227ab"
+    },
+    {
+      "decoded_sha256": "bacb203c9a6217aec710c5541d44c07690cd8ceb64746865244b45a8b003c277",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-combined-owner-v2599/receipt.json",
+      "path": "docs/renderer/evidence/native-controls-focus-v2/initial-owner-failure.json.gz",
+      "sha256": "106d21c65ef3ce04c5d839fd50611ecbf259072bfcd78aac31caa2b297129a86"
+    },
+    {
+      "decoded_sha256": "c51ee21dca85826534bae2c72fae60b53d0e758ad61f1296135128479442289f",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-combined-renderer-v2598/receipt.json",
+      "path": "docs/renderer/evidence/native-controls-focus-v2/initial-renderer-failure.json.gz",
+      "sha256": "e1a44e44f0408181c7801ddc6bf1a8057b2097cf909ba8629a247a2dce560c66"
+    },
+    {
+      "decoded_sha256": "50b58d434d28e0086f0dd2c23b8658fd254b63b22c77f23d98a84fe3a6163c3b",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-focus-format-check-v2611/report.json",
+      "path": "docs/renderer/evidence/native-controls-focus-v2/format-consumer-check.json.gz",
+      "sha256": "b72dfca637dc0e0c6623ab5d0b22ad927220f7e15f6a534cbfae7ea323ed56a4"
+    },
+    {
+      "decoded_sha256": "ed3e1351cdc0c2b7e8ac36fb59babdf2e1baf919813f0e95e05168ed696eb47a",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-combined-runtime-v2596/rust-observations-1.json",
+      "path": "docs/renderer/evidence/native-controls-focus-v2/rust-focus-observations.json.gz",
+      "sha256": "408c72654628f534d53a94e026576012fecffd528005e150ac281c88c97da278"
+    },
+    {
+      "decoded_sha256": "d0f18f1cb2752d07d2324a73924118077c10e9342ad519cc13a0302ad5fe89b1",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-combined-runtime-v2596/c-observations-1.json",
+      "path": "docs/renderer/evidence/native-controls-focus-v2/c-focus-observations.json.gz",
+      "sha256": "ed9bd73310b3321335e4ea3b277fd3ba4ac8c3e7d9337d75b4e3b63a11383eed"
+    },
+    {
+      "decoded_sha256": "d0f18f1cb2752d07d2324a73924118077c10e9342ad519cc13a0302ad5fe89b1",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-combined-runtime-v2596/cpp-observations-1.json",
+      "path": "docs/renderer/evidence/native-controls-focus-v2/cpp-focus-observations.json.gz",
+      "sha256": "ed9bd73310b3321335e4ea3b277fd3ba4ac8c3e7d9337d75b4e3b63a11383eed"
+    },
+    {
+      "decoded_sha256": "e9aaa1cac338d3fb48f768383d20084ba6c0877267a157ba10d99a1303ad5732",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-combined-renderer-v2605/trial/focused-matrix/focused-summary.json",
+      "path": "docs/renderer/evidence/native-controls-focus-v2/focused-summary.json.gz",
+      "sha256": "81a452381d197a81446caa65acf683c910c2ed90acd3fb186efb91e64b9a8c32"
+    },
+    {
+      "decoded_sha256": "8baef1700ef5662de57f2b58bd8d1e70e14f73cca38cc862a379d7242f8a94ea",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-combined-renderer-v2605/trial/primitive-matrix/primitive-summary.json",
+      "path": "docs/renderer/evidence/native-controls-focus-v2/primitive-summary.json.gz",
+      "sha256": "22bf380fef79ee35f7815bd28b8ff240ea851d727ea10efdc833551ac8776be6"
+    },
+    {
+      "decoded_sha256": "7196077d2f200aaa74ced29b0bfcdf4e58a8a4621144cf59775763466f4df405",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-combined-renderer-v2605/trial/full-matrix/full-summary.json",
+      "path": "docs/renderer/evidence/native-controls-focus-v2/full-summary.json.gz",
+      "sha256": "fa2223aa39cd8ebc1fe8accbc1c00ccb5ef379910692f4ede043d201263d2b72"
+    },
+    {
+      "decoded_sha256": "b523ccb49a4b03238c8e5408dcd757ad75693d68c006087bdf1ac3ce3d33a2d3",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-combined-renderer-v2605/trial/expanded-matrix/expanded-summary.json",
+      "path": "docs/renderer/evidence/native-controls-focus-v2/expanded-summary.json.gz",
+      "sha256": "e2f89984b48de06ea0e4f0028b0841348dfe771a76c6cfd844c54abd8fbf19c9"
+    }
+  ],
+  "schema_version": 2,
+  "verification_stages": 20,
+  "workspace_tests": {
+    "failed": 0,
+    "ignored": 13,
+    "passed": 8595
+  }
+}

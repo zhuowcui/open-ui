@@ -1,0 +1,21 @@
+{
+  "session_id": 14428,
+  "actual_exit_code": 0,
+  "terminal_reaped": true,
+  "terminal_chunk_id": "60fe54",
+  "receipt_sha256": "578674505f49f7928faa64b44eb3ee57206d8b454647541bf4bc73980a0d2fb8",
+  "all_known_pids": [
+    3765507,
+    3765551,
+    3765696,
+    3765822,
+    3765872,
+    3765938,
+    3766008,
+    3766153,
+    3766255,
+    3766340,
+    3766435
+  ],
+  "all_pids_absent": true
+}

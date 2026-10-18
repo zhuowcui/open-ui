@@ -793,6 +793,7 @@ def check_summary_integrity(*, require_images=True):
     proof_failures = 0
     missing_results = 0
     missing_images = 0
+    nonzero_channel_deltas = 0
 
     for test in summary["tests"]:
         if test["status"] == "pass":
@@ -812,7 +813,8 @@ def check_summary_integrity(*, require_images=True):
             # Each test triggers at most one proof failure (no double-counting)
             has_proof_issue = False
 
-            # Strict check: mismatch_pct must be present AND exactly 0.0
+            # This is the historical tolerance-based report metric, not an
+            # exact RGBA comparison. The strict audit runs separately.
             pct = result.get("mismatch_pct")
             if pct is None:
                 has_proof_issue = True
@@ -833,6 +835,9 @@ def check_summary_integrity(*, require_images=True):
                     proof_failures += 1
                     if proof_failures <= 3:
                         issue(f"Pass claimed but result.json status='{result_status}': {test['id']}")
+
+            if result.get("max_channel_diff", 0) > 0:
+                nonzero_channel_deltas += 1
 
             if require_images:
                 # PNGs are intentionally workstation artifacts rather than
@@ -855,8 +860,12 @@ def check_summary_integrity(*, require_images=True):
         issue(f"... and {missing_images - 3} more passes with missing PNGs")
 
     if missing_results == 0 and proof_failures == 0 and missing_images == 0:
-        proof = "0.0% mismatch + PNG proof" if require_images else "committed 0.0% result proof"
-        ok(f"All {pass_count} passes have verified {proof}")
+        proof = "result metadata and PNG presence" if require_images else "committed result metadata"
+        ok(f"All {pass_count} historical passes have verified {proof}")
+        print(
+            f"  Historical comparator: {nonzero_channel_deltas} passes report "
+            "nonzero channel deltas; exact oracle pixels are audited separately"
+        )
 
     # Verify totals (errors are folded into failed for accounting).
     error_count = sum(1 for t in summary["tests"] if t["status"] == "error")

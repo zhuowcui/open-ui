@@ -9,7 +9,7 @@ use openui_dom::NodeId;
 use openui_geometry::{
     BoxStrut, LayoutUnit, PhysicalOffset, PhysicalRect, PhysicalSize, WritingDirectionMode,
 };
-use openui_style::{ComputedStyle, TextOrientation, WritingMode};
+use openui_style::{ComputedStyle, Overflow, Position, TextOrientation, WritingMode};
 use openui_text::ShapeResult;
 use std::sync::Arc;
 
@@ -30,6 +30,96 @@ pub enum FragmentKind {
     /// An anonymous column box in a multicol container.
     /// Clips content to column boundaries (CSS Multicol §3.1).
     ColumnBox,
+}
+
+/// Whether a fragment carries its source element's box or only layout structure.
+///
+/// Layout helpers can reuse an authored node for style lookup without owning
+/// that element's geometry, input target, or independently applied effects.
+/// Continuations of an authored box retain `AuthoredElement` ownership.
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
+pub enum FragmentBoxOwnership {
+    #[default]
+    AuthoredElement,
+    LayoutHelper,
+}
+
+/// Retained identity of an anonymous formatting box with native scroll state.
+/// The owner remains the authored semantic element; this box contributes no
+/// second element geometry, input target, accessibility node or element effect.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum AnonymousLayoutBox {
+    FieldsetContent { owner: NodeId },
+}
+
+/// The table formatting role retained by layout for background painting.
+///
+/// These are source identities and grid indices, not copied paint rectangles.
+/// Fragment projection and continuation slicing preserve them while the
+/// painter uses the actual cell fragments in each retained row. In particular,
+/// a spanning cell receives the background of its originating column only.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum FragmentTablePart {
+    Table,
+    /// The table grid decoration delegated by a captioned authored wrapper.
+    GridDecoration,
+    Section,
+    Row,
+    Cell {
+        column_index: usize,
+    },
+    Column {
+        start_column: usize,
+        span: usize,
+    },
+    ColumnGroup {
+        start_column: usize,
+        span: usize,
+    },
+}
+
+impl FragmentTablePart {
+    pub fn column_range(self) -> Option<std::ops::Range<usize>> {
+        match self {
+            Self::Column { start_column, span } | Self::ColumnGroup { start_column, span } => {
+                Some(start_column..start_column.saturating_add(span))
+            }
+            _ => None,
+        }
+    }
+
+    pub fn paints_into_cells(self) -> bool {
+        matches!(self, Self::Section | Self::Row)
+    }
+}
+
+/// Final layout geometry used to position column/group backgrounds across
+/// the real section continuations of one authored table.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct TableColumnBackgroundPositioning {
+    pub rect: PhysicalRect,
+    pub writing_direction: WritingDirectionMode,
+}
+
+/// Immutable geometry of the document's viewport scroll container.
+///
+/// Scrollbar gutters belong to the viewport, rather than to an authored
+/// element's border or padding. Layout, paint and native input consume this
+/// same geometry.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ViewportScrollport {
+    /// Actual principal layout box before outer viewport gutters are restored.
+    /// It retains authored size/padding independently from aggregate child overflow.
+    pub layout_box_rect: PhysicalRect,
+    pub client_rect: PhysicalRect,
+    pub content_rect: PhysicalRect,
+    pub horizontal_scrollbar: bool,
+    pub vertical_scrollbar: bool,
+    pub scrollbar_thickness: LayoutUnit,
+    pub overflow_x: Overflow,
+    pub overflow_y: Overflow,
+    pub negative_x: bool,
+    pub negative_y: bool,
 }
 
 /// Resolved orientation of one shaped text run in physical fragment storage.
@@ -163,10 +253,38 @@ pub struct PositionedFragmentationData {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct PromotedTransformAncestor {
     pub node_id: NodeId,
+    /// Normal-flow source anchor before authored visual displacement.
     pub source_offset: PhysicalOffset,
     pub source_size: PhysicalSize,
+    /// This ancestor's own cumulative displacement, applied after slicing.
+    /// It is a vector in the same physical/logical basis as `source_offset`.
+    pub visual_offset: PhysicalOffset,
     pub fragment_offset: PhysicalOffset,
     pub fragment_size: PhysicalSize,
+    /// Actual owned border box in source space, retaining its principal origin.
+    pub source_reference_box: PhysicalRect,
+    /// Owned reference box in this physical continuation's local coordinates.
+    pub fragment_reference_box: PhysicalRect,
+    /// Sliced decorations use the original block reference dimension.
+    pub reference_block_size: Option<LayoutUnit>,
+    pub reference_block_axis_is_x: bool,
+}
+
+impl PromotedTransformAncestor {
+    /// Intersect the retained owned box with a logical-block source slice.
+    pub(crate) fn resolve_reference_slice(&mut self, consumed: LayoutUnit) {
+        let source = self.source_reference_box;
+        let top = (source.y() - consumed)
+            .max_of(LayoutUnit::zero())
+            .min_of(self.fragment_size.height);
+        let bottom = (source.bottom() - consumed)
+            .max_of(top)
+            .min_of(self.fragment_size.height);
+        self.fragment_reference_box = PhysicalRect::new(
+            PhysicalOffset::new(source.x(), top),
+            PhysicalSize::new(source.width(), (bottom - top).clamp_negative_to_zero()),
+        );
+    }
 }
 
 /// Authoritative geometry of a multicol fragment. Nested fragmentation uses
@@ -182,6 +300,70 @@ pub struct MulticolFragmentationData {
     pub declared_column_count: u32,
 }
 
+/// Principal-box continuation geometry retained by layout, independently of
+/// decoration slicing and visual overflow. Logical consumption is measured in
+/// the fragmenting context's axes; `stitched_size` is always physical.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct FragmentBoxGeometry {
+    pub source_size: PhysicalSize,
+    /// Original physical wrapper extent before an ancestor slices this box.
+    pub source_fragment_size: PhysicalSize,
+    /// Original physical principal border box, relative to that wrapper.
+    /// Preserve any authored principal origin independently of wrapper extent.
+    pub source_border_box_rect: PhysicalRect,
+    /// Unsliced used edges captured before continuation decoration removal.
+    pub source_border: BoxStrut,
+    pub source_padding: BoxStrut,
+    pub stitched_size: PhysicalSize,
+    pub writing_direction: WritingDirectionMode,
+    pub inline_size: LayoutUnit,
+    pub block_size: LayoutUnit,
+    pub consumed_block_size: LayoutUnit,
+    pub has_next: bool,
+    pub is_repeated: bool,
+    /// Distinguishes an actual continuation token from the unsplit source.
+    pub continuation_record: bool,
+}
+
+/// Original layout geometry used by a view timeline's sticky range.
+/// Paint and hit testing continue to consume the resolved fragment offset.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct StickyTimelineGeometry {
+    pub scroll_container: NodeId,
+    pub parent_relative_normal_offset: PhysicalOffset,
+    pub scroll_container_relative_normal_offset: PhysicalOffset,
+    pub containing_block_rect: PhysicalRect,
+    pub insets: crate::sticky::StickyConstraintRect,
+    /// Stitched/line-union authored box before sticky and scroll movement.
+    pub sticky_box_rect: PhysicalRect,
+    pub containing_block: NodeId,
+    pub nearest_sticky_box: Option<NodeId>,
+    pub nearest_sticky_containing_block: Option<NodeId>,
+    /// Box-only and box-plus-containing-block channels remain independent.
+    pub total_sticky_box_offset: PhysicalOffset,
+    pub total_containing_block_offset: PhysicalOffset,
+    pub is_fixed_to_view: bool,
+}
+
+/// Distinct physical movements retained before fragmentation. Inline
+/// reconstruction can remove an ancestor while the box also has its own
+/// relative positioning; neither contribution replaces the other.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct FragmentVisualOffsets {
+    pub relative: Option<PhysicalOffset>,
+    pub reconstructed_inline: Option<PhysicalOffset>,
+}
+
+impl FragmentVisualOffsets {
+    fn total(self) -> PhysicalOffset {
+        let relative = self.relative.unwrap_or_else(PhysicalOffset::zero);
+        let inline = self
+            .reconstructed_inline
+            .unwrap_or_else(PhysicalOffset::zero);
+        PhysicalOffset::new(relative.left + inline.left, relative.top + inline.top)
+    }
+}
+
 /// A positioned layout fragment, ready for painting.
 ///
 /// Mirrors Blink's `PhysicalBoxFragment`. Contains the resolved size,
@@ -195,11 +377,32 @@ pub struct Fragment {
     /// What type of fragment.
     pub kind: FragmentKind,
 
+    /// Ownership of the source element's box, independent of style lookup.
+    /// Anonymous layout boxes and decoration helpers retain their source
+    /// `node_id` without creating another authored element box.
+    pub box_ownership: FragmentBoxOwnership,
+
+    /// Layout-owned anonymous formatting/scroll identity, separate from the
+    /// source node used for inherited style and semantic scroll state.
+    pub anonymous_layout_box: Option<AnonymousLayoutBox>,
+
     /// Offset from the parent fragment's top-left corner.
     pub offset: PhysicalOffset,
 
-    /// The fragment's border-box size.
+    /// The fragment's layout extent, including any continuation space needed
+    /// to carry visible in-flow overflow.
     pub size: PhysicalSize,
+
+    /// The fragment's own border box in local coordinates when its layout
+    /// extent also carries visible child overflow. Geometry and input use
+    /// this box; children retain their independently positioned fragments.
+    /// `None` means the border box fills `size`. This is layout ownership
+    /// data, independent of decoration ink and paint clipping.
+    pub principal_box_rect: Option<PhysicalRect>,
+
+    /// Full matrix resolved against this physical fragment's actual reference
+    /// box after layout; the owned authored operation list remains in style.
+    pub resolved_transform: Option<crate::ResolvedFragmentTransform>,
 
     /// Resolved padding (in LayoutUnit).
     pub padding: BoxStrut,
@@ -259,6 +462,17 @@ pub struct Fragment {
     /// Blink: `PhysicalBoxFragment::ScrollableOverflow()`.
     pub overflow_rect: Option<PhysicalRect>,
 
+    /// Layout-owned viewport client and content extents. Scrollbar space is
+    /// separate from authored borders and padding.
+    pub viewport_scrollport: Option<ViewportScrollport>,
+
+    /// Classic element scrollbar gutters, independent of CSS box edges.
+    pub element_scrollbars: Option<crate::ElementScrollbars>,
+
+    /// Layout-owned client, reachable content and scroll directions for the
+    /// principal box. Native queries and input consume this same snapshot.
+    pub scroll_area: Option<crate::ScrollArea>,
+
     /// Whether this fragment clips overflowing content.
     ///
     /// Set to `true` when the element's `overflow-x` or `overflow-y` is not
@@ -281,11 +495,19 @@ pub struct Fragment {
     pub column_block_start_ink_overflow: LayoutUnit,
     pub column_block_end_ink_overflow: LayoutUnit,
 
-    /// Visual translation inherited from inline ancestors that were removed
-    /// by block-in-inline anonymous-box reconstruction. Fragmentation uses
-    /// this to slice in normal-flow coordinates while moving each slice and
-    /// its clip with the interrupted inline continuation.
+    /// Complete physical visual movement before fragmentation, including
+    /// relative positioning and removed inline ancestors. Existing projection
+    /// consumers use this sum; extraction uses the retained contributions.
     pub fragmentation_visual_offset: PhysicalOffset,
+    pub fragmentation_visual_offsets: FragmentVisualOffsets,
+
+    /// Source and consumed principal-box geometry for native dimension/timeline
+    /// consumers. Paint and hit testing continue to use the actual local box.
+    pub box_geometry: Option<FragmentBoxGeometry>,
+
+    /// Sticky source geometry before scroll-dependent visual displacement.
+    /// Timeline geometry ignores this displacement, including that of ancestors.
+    pub sticky_timeline_geometry: Option<StickyTimelineGeometry>,
 
     /// The positioning inputs used to create an out-of-flow fragment.
     pub positioned_fragmentation: Option<PositionedFragmentationData>,
@@ -313,6 +535,10 @@ pub struct Fragment {
     /// (background/border/shadow), while leaving children free to overflow.
     pub decoration_paint_block_size: Option<LayoutUnit>,
 
+    /// The decoration limit only trims a fragmentainer-expanded block tail;
+    /// preserve the normal fractional coverage of its inline edge.
+    pub decoration_limit_preserves_inline_coverage: bool,
+
     /// Whether this structural fragment delegates its background and border
     /// to a synthetic child with the same source style. Table wrappers use
     /// this when captions sit outside the table-grid decoration box.
@@ -330,6 +556,18 @@ pub struct Fragment {
     /// Independently sized collapsed-table border pieces painted above cell
     /// backgrounds. Empty means `border` uses the fragment's full border box.
     pub collapsed_border_segments: Vec<CollapsedBorderSegment>,
+    /// Resolved full-width table paint sources, owned once by the table.
+    /// Geometry clients use each cell's already-resolved Fragment::border.
+    pub collapsed_table_border_data: Option<std::sync::Arc<crate::CollapsedTableBorderData>>,
+    /// Actual source rows and local boundaries of this section continuation.
+    /// The full resolved graph remains owned once by the enclosing table.
+    pub collapsed_table_section: Option<crate::resolved_table_borders::CollapsedTableSectionData>,
+    /// This grid participant's authored border is painted by the table's
+    /// resolved graph, independently of its used layout border strut.
+    pub collapsed_table_border_participant: bool,
+    /// A cell originating in a collapsed row or spanning only collapsed
+    /// columns is retained for geometry but contributes no painted subtree.
+    pub is_hidden_for_paint: bool,
 
     /// Optional local rectangles that clip this fragment's table-structural
     /// decoration while retaining the fragment border box as the background
@@ -340,6 +578,19 @@ pub struct Fragment {
     /// Number of table rows occupied by a laid-out table-cell fragment.
     /// Non-cell fragments and cells clamped to one available row use one.
     pub table_row_span: usize,
+
+    /// Layout-owned table background source/target classification. Anonymous
+    /// structure retains its role without gaining authored box ownership.
+    pub table_part: Option<FragmentTablePart>,
+
+    /// Column/group source inline offset relative to the first table track.
+    /// This remains logical through fragment projection and source cloning.
+    pub table_column_background_inline_offset: Option<LayoutUnit>,
+
+    /// Full stitched section union in this table continuation's local physical
+    /// coordinates. Final document layout owns this positioning rectangle;
+    /// actual retained cells independently determine the painted area.
+    pub table_column_background_positioning: Option<TableColumnBackgroundPositioning>,
 
     /// Shared source-space decoration geometry for a sliced continuation.
     /// `None` means this fragment owns an independent positioning area (the
@@ -468,13 +719,171 @@ pub struct Fragment {
 }
 
 impl Fragment {
+    /// True only when the actual owned fixed box was resolved against the
+    /// viewport. Missing positioned metadata cannot establish that ownership.
+    /// Keep this rule shared by viewport overflow and immutable paint context.
+    pub fn is_fixed_to_viewport(
+        &self,
+        style: &ComputedStyle,
+        root: NodeId,
+        root_establishes_transform_containing_block: bool,
+    ) -> bool {
+        self.owns_element_box()
+            && style.position == Position::Fixed
+            && self.positioned_fragmentation.is_some_and(|positioned| {
+                positioned.containing_block_node.is_none()
+                    || (positioned.containing_block_node == root
+                        && !root_establishes_transform_containing_block)
+            })
+    }
+
+    /// Whether a producer retained a visual contribution, including an
+    /// applied zero or independent contributions whose sum cancels.
+    pub(crate) fn has_recorded_fragmentation_visual_offset(&self) -> bool {
+        self.fragmentation_visual_offsets.relative.is_some()
+            || self
+                .fragmentation_visual_offsets
+                .reconstructed_inline
+                .is_some()
+    }
+
+    pub(crate) fn record_relative_fragmentation_offset(&mut self, offset: PhysicalOffset) {
+        self.fragmentation_visual_offsets.relative = Some(offset);
+        self.fragmentation_visual_offset = self.fragmentation_visual_offsets.total();
+    }
+
+    pub(crate) fn record_reconstructed_inline_offset(&mut self, offset: PhysicalOffset) {
+        self.fragmentation_visual_offsets.reconstructed_inline = Some(offset);
+        self.fragmentation_visual_offset = self.fragmentation_visual_offsets.total();
+    }
+
+    /// Whether this box contributes geometry and input for its source element.
+    ///
+    /// Authored viewport boxes preserve the root element's geometry. Text,
+    /// column fragments and helpers can reference the same node for paint
+    /// without owning another element box.
+    #[inline]
+    pub fn owns_element_box(&self) -> bool {
+        matches!(self.kind, FragmentKind::Box | FragmentKind::Viewport)
+            && self.box_ownership == FragmentBoxOwnership::AuthoredElement
+            && !self.node_id.is_none()
+    }
+
+    /// Authored boxes and explicitly retained anonymous formatting boxes both
+    /// own layout geometry. Element APIs still use `owns_element_box()`.
+    #[inline]
+    pub fn owns_layout_box(&self) -> bool {
+        self.owns_element_box()
+            || matches!(
+                self.anonymous_layout_box,
+                Some(AnonymousLayoutBox::FieldsetContent { .. })
+            )
+    }
+
+    /// Whether this box applies its owner's scroll state to its descendants.
+    /// A fieldset wrapper delegates that operation to its content box.
+    #[inline]
+    pub fn owns_scroll_box(&self) -> bool {
+        fn delegates(fragment: &Fragment, owner: NodeId) -> bool {
+            matches!(fragment.anonymous_layout_box,
+                Some(AnonymousLayoutBox::FieldsetContent { owner: content_owner }) if content_owner == owner)
+                || fragment
+                    .children
+                    .iter()
+                    .any(|child| delegates(child, owner))
+        }
+        self.owns_layout_box()
+            && (self.anonymous_layout_box.is_some()
+                || !self
+                    .children
+                    .iter()
+                    .any(|child| delegates(child, self.node_id)))
+    }
+
+    #[inline]
+    pub fn layout_style<'a>(&'a self, authored: &'a ComputedStyle) -> &'a ComputedStyle {
+        if self.anonymous_layout_box.is_some() {
+            self.inherited_style.as_ref().unwrap_or(authored)
+        } else {
+            authored
+        }
+    }
+
+    /// Actual formatting box that owns this element's retained scroll state.
+    /// Fieldset wrappers delegate to their anonymous content box; layout-only
+    /// table helpers and line/column boxes cannot acquire that ownership.
+    pub fn find_scroll_box(&self, node: NodeId) -> Option<&Self> {
+        if self.node_id == node && self.owns_scroll_box() && self.scroll_area.is_some() {
+            return Some(self);
+        }
+        self.children
+            .iter()
+            .find_map(|child| child.find_scroll_box(node))
+    }
+
+    /// Membership in the retained box tree, rather than DOM parentage. The
+    /// rendered legend belongs to the fieldset wrapper, outside its content.
+    pub fn contains_element_box(&self, node: NodeId) -> bool {
+        (self.node_id == node && self.owns_element_box())
+            || self
+                .children
+                .iter()
+                .any(|child| child.contains_element_box(node))
+    }
+
+    /// All retained continuations participate in content membership. An
+    /// authored wrapper that delegates scrolling cannot make its sibling
+    /// legend part of the anonymous scroll box.
+    pub fn scroll_box_contains_element(&self, owner: NodeId, target: NodeId) -> bool {
+        (self.node_id == owner
+            && self.owns_scroll_box()
+            && self.scroll_area.is_some()
+            && self.contains_element_box(target))
+            || self
+                .children
+                .iter()
+                .any(|child| child.scroll_box_contains_element(owner, target))
+    }
+
+    /// Nearest retained scroll ancestor of an authored box. Its own overflow
+    /// is excluded, matching the source operation for a view timeline.
+    pub fn nearest_scroll_ancestor(&self, target: NodeId) -> Option<NodeId> {
+        fn walk(
+            fragment: &Fragment,
+            target: NodeId,
+            ancestor: Option<NodeId>,
+        ) -> Option<Option<NodeId>> {
+            if fragment.owns_element_box() && fragment.node_id == target {
+                return Some(ancestor);
+            }
+            let next = if fragment.owns_scroll_box()
+                && fragment
+                    .scroll_area
+                    .is_some_and(|area| area.is_scroll_container())
+            {
+                Some(fragment.node_id)
+            } else {
+                ancestor
+            };
+            fragment
+                .children
+                .iter()
+                .find_map(|child| walk(child, target, next))
+        }
+        walk(self, target, None).flatten()
+    }
+
     /// Create a new box fragment.
     pub fn new_box(node_id: NodeId, size: PhysicalSize) -> Self {
         Self {
             node_id,
             kind: FragmentKind::Box,
+            box_ownership: FragmentBoxOwnership::AuthoredElement,
+            anonymous_layout_box: None,
             offset: PhysicalOffset::zero(),
             size,
+            principal_box_rect: None,
+            resolved_transform: None,
             padding: BoxStrut::zero(),
             border: BoxStrut::zero(),
             margin: BoxStrut::zero(),
@@ -488,24 +897,38 @@ impl Fragment {
             baseline_offset: 0.0,
             text_combine: None,
             overflow_rect: None,
+            viewport_scrollport: None,
+            element_scrollbars: None,
+            scroll_area: None,
             has_overflow_clip: false,
             block_axis_clip_only: false,
             inline_axis_clip_only: false,
             column_block_start_ink_overflow: LayoutUnit::zero(),
             column_block_end_ink_overflow: LayoutUnit::zero(),
             fragmentation_visual_offset: PhysicalOffset::zero(),
+            fragmentation_visual_offsets: FragmentVisualOffsets::default(),
+            box_geometry: None,
+            sticky_timeline_geometry: None,
             positioned_fragmentation: None,
             promoted_transform_ancestors: Vec::new(),
             promoted_transform_uses_fragment_decoration: false,
             multicol_fragmentation: None,
             fragmentation_writing_direction: None,
             decoration_paint_block_size: None,
+            decoration_limit_preserves_inline_coverage: false,
             skip_box_decoration: false,
             ignore_border_radius: false,
             paint_border_after_children: false,
             collapsed_border_segments: Vec::new(),
+            collapsed_table_border_data: None,
+            collapsed_table_section: None,
+            collapsed_table_border_participant: false,
+            is_hidden_for_paint: false,
             decoration_clip_rects: Vec::new(),
             table_row_span: 1,
+            table_part: None,
+            table_column_background_inline_offset: None,
+            table_column_background_positioning: None,
             decoration_slice: None,
             paint_zero_block_outline: false,
             is_block_end_decoration_marker: false,
@@ -537,8 +960,12 @@ impl Fragment {
         Self {
             node_id,
             kind: FragmentKind::Text,
+            box_ownership: FragmentBoxOwnership::LayoutHelper,
+            anonymous_layout_box: None,
             offset: PhysicalOffset::zero(),
             size,
+            principal_box_rect: None,
+            resolved_transform: None,
             padding: BoxStrut::zero(),
             border: BoxStrut::zero(),
             margin: BoxStrut::zero(),
@@ -552,24 +979,38 @@ impl Fragment {
             baseline_offset: 0.0,
             text_combine: None,
             overflow_rect: None,
+            viewport_scrollport: None,
+            element_scrollbars: None,
+            scroll_area: None,
             has_overflow_clip: false,
             block_axis_clip_only: false,
             inline_axis_clip_only: false,
             column_block_start_ink_overflow: LayoutUnit::zero(),
             column_block_end_ink_overflow: LayoutUnit::zero(),
             fragmentation_visual_offset: PhysicalOffset::zero(),
+            fragmentation_visual_offsets: FragmentVisualOffsets::default(),
+            box_geometry: None,
+            sticky_timeline_geometry: None,
             positioned_fragmentation: None,
             promoted_transform_ancestors: Vec::new(),
             promoted_transform_uses_fragment_decoration: false,
             multicol_fragmentation: None,
             fragmentation_writing_direction: None,
             decoration_paint_block_size: None,
+            decoration_limit_preserves_inline_coverage: false,
             skip_box_decoration: false,
             ignore_border_radius: false,
             paint_border_after_children: false,
             collapsed_border_segments: Vec::new(),
+            collapsed_table_border_data: None,
+            collapsed_table_section: None,
+            collapsed_table_border_participant: false,
+            is_hidden_for_paint: false,
             decoration_clip_rects: Vec::new(),
             table_row_span: 1,
+            table_part: None,
+            table_column_background_inline_offset: None,
+            table_column_background_positioning: None,
             decoration_slice: None,
             paint_zero_block_outline: false,
             is_block_end_decoration_marker: false,
@@ -588,27 +1029,32 @@ impl Fragment {
         }
     }
 
-    /// The content box rect (border-box minus border minus padding).
+    /// Physical content origin, excluding actual border, padding and gutters.
     pub fn content_offset(&self) -> PhysicalOffset {
+        let border = crate::ScrollArea::used_border(self);
+        let padding = crate::ScrollArea::used_padding(self);
+        let gutters = self
+            .element_scrollbars
+            .map_or(BoxStrut::zero(), |bars| bars.insets);
         PhysicalOffset::new(
-            self.border.left + self.padding.left,
-            self.border.top + self.padding.top,
+            border.left + padding.left + gutters.left,
+            border.top + padding.top + gutters.top,
         )
     }
 
-    /// The content box size.
+    /// Physical content size. Gutters consume inner space without changing
+    /// the authored border or padding or the resource's outer replaced size.
     pub fn content_size(&self) -> PhysicalSize {
+        let border = crate::ScrollArea::used_border(self);
+        let padding = crate::ScrollArea::used_padding(self);
+        let gutters = self
+            .element_scrollbars
+            .map_or(BoxStrut::zero(), |bars| bars.insets);
         PhysicalSize::new(
-            self.size.width
-                - self.border.left
-                - self.border.right
-                - self.padding.left
-                - self.padding.right,
-            self.size.height
-                - self.border.top
-                - self.border.bottom
-                - self.padding.top
-                - self.padding.bottom,
+            (self.size.width - border.inline_sum() - padding.inline_sum() - gutters.inline_sum())
+                .clamp_negative_to_zero(),
+            (self.size.height - border.block_sum() - padding.block_sum() - gutters.block_sum())
+                .clamp_negative_to_zero(),
         )
     }
 
@@ -648,10 +1094,11 @@ impl Fragment {
             .unwrap_or_else(|| PhysicalRect::new(PhysicalOffset::zero(), self.size))
     }
 
-    /// The border-box rect with offset at zero (local coordinates).
+    /// The fragment's own border-box rect in local coordinates.
     #[inline]
     pub fn border_box_rect(&self) -> PhysicalRect {
-        PhysicalRect::new(PhysicalOffset::zero(), self.size)
+        self.principal_box_rect
+            .unwrap_or_else(|| PhysicalRect::new(PhysicalOffset::zero(), self.size))
     }
 }
 
@@ -659,6 +1106,39 @@ impl Fragment {
 mod tests {
     use super::*;
     use openui_style::Direction;
+
+    #[test]
+    fn element_box_ownership_preserves_authored_continuations_and_viewports() {
+        let mut doc = openui_dom::Document::new();
+        let node = doc.create_node(openui_dom::ElementTag::Div);
+        let authored = Fragment::new_box(node, PhysicalSize::zero());
+        assert!(authored.owns_element_box());
+
+        let mut continuation = authored.clone();
+        continuation.is_first_for_node = false;
+        continuation.is_last_for_node = false;
+        assert!(continuation.owns_element_box());
+
+        let mut viewport = authored.clone();
+        viewport.kind = FragmentKind::Viewport;
+        assert!(viewport.owns_element_box());
+
+        let mut helper = authored.clone();
+        helper.box_ownership = FragmentBoxOwnership::LayoutHelper;
+        assert!(!helper.owns_element_box());
+        assert_eq!(helper.node_id, node);
+
+        for kind in [
+            FragmentKind::Text,
+            FragmentKind::ColumnRule,
+            FragmentKind::ColumnBox,
+        ] {
+            let mut nonbox = authored.clone();
+            nonbox.kind = kind;
+            assert!(!nonbox.owns_element_box());
+        }
+        assert!(!Fragment::new_box(NodeId::NONE, PhysicalSize::zero()).owns_element_box());
+    }
 
     #[test]
     fn text_run_orientation_matrix_is_layout_authoritative() {

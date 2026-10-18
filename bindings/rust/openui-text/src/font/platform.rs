@@ -5,14 +5,18 @@
 //! `FontMetrics` for the resolved size.
 
 use openui_geometry::{
-    physical_font_size, RasterConfiguration, TextEdging, TextHinting, TextRasterConfiguration,
+    physical_font_size, RasterBackend, RasterConfiguration, TextEdging, TextHinting,
+    TextRasterConfiguration,
 };
 use skia_safe::{
     font_style::Slant as SkSlant, Font as SkFont, FontHinting, FontMetrics as SkFontMetrics,
     FontStyle as SkFontStyle, GlyphId, Rect, Typeface,
 };
 
+use super::collection::FontCacheLifetime;
 use super::metrics::FontMetrics;
+use super::render_settings::AppliedPlatformFontSettings;
+use super::source::FontSelectionSource;
 use super::{FontFeatureDefault, FontMetricOverrides};
 
 /// Face-specific values resolved by `FontCollection` before a platform font
@@ -32,6 +36,7 @@ pub(crate) struct ResolvedFontConfiguration {
 pub struct FontPlatformData {
     typeface: Typeface,
     sk_font: SkFont,
+    shaping_font: SkFont,
     size: f32,
     metrics: FontMetrics,
     vertical_metrics: Option<VerticalMetrics>,
@@ -40,6 +45,11 @@ pub struct FontPlatformData {
     /// 0.0 for normal/italic styles. CSS default oblique is 14°.
     synthetic_oblique_angle: f32,
     feature_defaults: Vec<FontFeatureDefault>,
+    source: FontSelectionSource,
+    applied_font_settings: AppliedPlatformFontSettings,
+    // Resolved font data can outlive the collection that selected it. Keep the
+    // strike cache lifetime active until these owned font objects are released.
+    _cache_lifetime: FontCacheLifetime,
 }
 
 /// OpenType `vhea`/`vmtx` data retained with a resolved face.
@@ -157,6 +167,16 @@ fn resolve_hinting(
         {
             FontHinting::None
         }
+        // At a fractional physical Ahem strike, Skia's light-fitting drops
+        // the trailing coverage cell that Chromium keeps. Integral strikes
+        // retain light fitting; removing it there regresses exact glyphs.
+        TextHinting::Slight
+            if requested_edging == TextEdging::SubpixelAntiAlias
+                && is_ahem
+                && (size - size.round()).abs() > 1.0e-4 =>
+        {
+            FontHinting::None
+        }
         TextHinting::Slight => FontHinting::Slight,
         TextHinting::Normal => FontHinting::Normal,
         TextHinting::Full => FontHinting::Full,
@@ -235,7 +255,7 @@ impl FontPlatformData {
     pub(crate) fn with_resolved_configuration(
         typeface: Typeface,
         size: f32,
-        mut oblique_angle: f32,
+        oblique_angle: f32,
         requested_weight: skia_safe::font_style::Weight,
         native_control_text: bool,
         embedded_document_text: bool,
@@ -244,6 +264,36 @@ impl FontPlatformData {
         device_scale_factor: f64,
         configuration: ResolvedFontConfiguration,
     ) -> Self {
+        Self::with_source_configuration(
+            typeface,
+            size,
+            oblique_angle,
+            requested_weight,
+            native_control_text,
+            embedded_document_text,
+            native_button_text_metrics,
+            raster_configuration,
+            device_scale_factor,
+            configuration,
+            FontSelectionSource::external(),
+        )
+    }
+
+    pub(crate) fn with_source_configuration(
+        typeface: Typeface,
+        size: f32,
+        mut oblique_angle: f32,
+        requested_weight: skia_safe::font_style::Weight,
+        native_control_text: bool,
+        embedded_document_text: bool,
+        native_button_text_metrics: bool,
+        raster_configuration: RasterConfiguration,
+        device_scale_factor: f64,
+        configuration: ResolvedFontConfiguration,
+        source: FontSelectionSource,
+    ) -> Self {
+        let source = source.with_external_typeface(&typeface);
+        let cache_lifetime = FontCacheLifetime::new();
         // Font matching may return a regular face when a family has no bold
         // member (Ahem is the canonical example). CSS font synthesis requires
         // a synthetic bold face in that case; SkFont does not infer it from
@@ -313,6 +363,21 @@ impl FontPlatformData {
             sk_font.set_skew_x(-oblique_angle.to_radians().tan());
         }
 
+        // Blink's WebFontRenderStyle::ApplyToSkFont force-enables subpixel
+        // metrics outside web-test mode unless the resolved hinting is Full.
+        // Its linear-metrics flag still follows the requested positioning
+        // preference. Keep that metric font separate from the application's
+        // explicit raster positioning policy: changing advances must not
+        // silently change the owned font used to build paint strikes.
+        let mut shaping_font = sk_font.clone();
+        if matches!(
+            raster_configuration.backend,
+            RasterBackend::ChromiumLinux | RasterBackend::GaneshGl
+        ) {
+            shaping_font.set_subpixel(hinting != FontHinting::Full || subpixel);
+            shaping_font.set_linear_metrics(subpixel);
+        }
+
         let (_, sk_metrics) = sk_font.metrics();
         let mut metrics = Self::convert_metrics(&sk_metrics, &typeface, &sk_font);
         if let Some(value) = configuration.metric_overrides.ascent {
@@ -326,16 +391,30 @@ impl FontPlatformData {
         }
         metrics.line_spacing = metrics.ascent + metrics.descent + metrics.line_gap;
         let vertical_metrics = VerticalMetrics::from_typeface(&typeface);
+        let applied_font_settings = AppliedPlatformFontSettings::capture(
+            &sk_font,
+            &shaping_font,
+            raster_configuration,
+            settings,
+            device_scale_factor,
+            native_control_text,
+            embedded_document_text,
+            native_button_text_metrics,
+        );
 
         Self {
             typeface,
             sk_font,
+            shaping_font,
             size,
             metrics,
             vertical_metrics,
             synthetic_bold,
             synthetic_oblique_angle: oblique_angle,
             feature_defaults: configuration.feature_defaults,
+            source,
+            applied_font_settings,
+            _cache_lifetime: cache_lifetime,
         }
     }
 
@@ -351,6 +430,23 @@ impl FontPlatformData {
         &self.sk_font
     }
 
+    /// Borrow immutable selection facts without querying or retaining a registry.
+    pub fn source_info(&self) -> &FontSelectionSource {
+        &self.source
+    }
+
+    /// Borrow actual owned source/shaping settings before final device/scaler setup.
+    /// Reading this snapshot performs no selection, allocation, or platform query.
+    pub fn applied_font_settings(&self) -> &AppliedPlatformFontSettings {
+        &self.applied_font_settings
+    }
+
+    /// Resolved font for shared shaping metrics, independent of paint strikes.
+    #[inline]
+    pub(crate) fn shaping_font(&self) -> &SkFont {
+        &self.shaping_font
+    }
+
     /// The resolved font size in CSS pixels.
     #[inline]
     pub fn size(&self) -> f32 {
@@ -361,6 +457,33 @@ impl FontPlatformData {
     #[inline]
     pub fn metrics(&self) -> &FontMetrics {
         &self.metrics
+    }
+
+    /// Reference advance for native `ch` declarations. This query follows
+    /// Blink's ZeroInlineSize without changing shaped glyph advances.
+    pub(crate) fn zero_inline_size(&self, orientation: openui_style::FontOrientation) -> f32 {
+        let upright = orientation == openui_style::FontOrientation::VerticalUpright;
+        let glyph = self.sk_font.unichar_to_glyph('0' as i32);
+        if glyph == 0 {
+            return self.size * if upright { 1.0 } else { 0.5 };
+        }
+        if upright {
+            return self
+                .vertical_metrics
+                .as_ref()
+                .and_then(|metrics| {
+                    metrics
+                        .advances
+                        .get(glyph as usize)
+                        .map(|advance| *advance as f32 * self.size / metrics.units_per_em)
+                })
+                .unwrap_or_else(|| self.metrics.int_ascent() + self.metrics.int_descent());
+        }
+        if self.sk_font.is_subpixel() {
+            self.metrics.zero_width
+        } else {
+            self.metrics.zero_width.round()
+        }
     }
 
     /// OpenType vertical advance for a glyph, falling back to one em for a
@@ -502,6 +625,49 @@ mod tests {
     use super::*;
 
     #[test]
+    fn chromium_metric_subpixel_force_is_separate_from_raster_and_linear_flags() {
+        let face = skia_safe::FontMgr::default()
+            .new_from_data(include_bytes!("../../fonts/Ahem.ttf"), None)
+            .unwrap();
+        for backend in [
+            RasterBackend::ChromiumLinux,
+            RasterBackend::GaneshGl,
+            RasterBackend::Skia,
+        ] {
+            for hinting in [TextHinting::None, TextHinting::Normal, TextHinting::Full] {
+                for requested_subpixel in [false, true] {
+                    let mut configuration =
+                        RasterConfiguration::deterministic_aliased(requested_subpixel);
+                    configuration.backend = backend;
+                    configuration.author_text.hinting = hinting;
+                    let data = FontPlatformData::with_resolved_configuration(
+                        face.clone(),
+                        16.0,
+                        0.0,
+                        skia_safe::font_style::Weight::NORMAL,
+                        false,
+                        false,
+                        false,
+                        configuration,
+                        1.0,
+                        ResolvedFontConfiguration::default(),
+                    );
+                    assert_eq!(data.sk_font().is_subpixel(), requested_subpixel);
+                    assert_eq!(data.sk_font().is_linear_metrics(), requested_subpixel);
+                    assert_eq!(data.shaping_font().is_linear_metrics(), requested_subpixel);
+                    let force = backend != RasterBackend::Skia && hinting != TextHinting::Full;
+                    assert_eq!(
+                        data.shaping_font().is_subpixel(),
+                        force || requested_subpixel
+                    );
+                    assert_eq!(data.shaping_font().hinting(), data.sk_font().hinting());
+                    assert_eq!(data.shaping_font().edging(), data.sk_font().edging());
+                }
+            }
+        }
+    }
+
+    #[test]
     fn aliased_ahem_hinting_tracks_computed_font_size() {
         assert_eq!(
             resolve_hinting(TextHinting::None, TextEdging::Alias, "Ahem", 8.0, 1.0),
@@ -523,6 +689,32 @@ mod tests {
             ),
             FontHinting::None
         );
+    }
+
+    #[test]
+    fn lcd_ahem_hinting_tracks_physical_strike_fraction() {
+        assert_eq!(
+            resolve_hinting(
+                TextHinting::Slight,
+                TextEdging::SubpixelAntiAlias,
+                "Ahem",
+                physical_font_size(50.0, 1.25),
+                1.25,
+            ),
+            FontHinting::None
+        );
+        for (css_size, scale) in [(16.0, 1.0), (16.0, 1.5), (50.0, 1.5)] {
+            assert_eq!(
+                resolve_hinting(
+                    TextHinting::Slight,
+                    TextEdging::SubpixelAntiAlias,
+                    "Ahem",
+                    physical_font_size(css_size, scale),
+                    scale,
+                ),
+                FontHinting::Slight
+            );
+        }
     }
 
     #[test]

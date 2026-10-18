@@ -1,0 +1,437 @@
+{
+  "applied_to_umbrella": false,
+  "artifacts": [
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-reveal-root-native-audit-v761.json",
+      "sha256": "45cde1753f1943baef40a75d5011dc7c1b0ff5171b48242899aaa1caa2fa5662"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-reveal-root-raster-audit-v757.json",
+      "sha256": "5d1c461e81b0a76db06cabaa7ae493efe8df416acfdb97006791194624589fcd"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-clip-reduced-audit-v803.json",
+      "sha256": "1c16db4b98f5374bb4da66037617f3c5b118e357f850d1fc722239ae7e239bc4"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-clip-native-audit-v804.json",
+      "sha256": "37f4dbe4b1d84079c5f9a441ad706e31b73ca95f8ebef52ce6175898631de918"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-clip-raster-audit-v805.json",
+      "sha256": "a0d61f42e9525158996ba40b3530f7a7624e903ad158a3f42b1e9ab9c1f5cea6"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-clip-clean-v760/build.json",
+      "sha256": "82dadd03e149f14db9e5ae38d2e226bad217726ac647ad5bb2a67476ca619e60"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-viewport-fixed-native-audit-v806.json",
+      "sha256": "392e908722a0edf54d056fa45009cd728120234ca4000aab72cf20b1d8c406a6"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-viewport-fixed-raster-audit-v809.json",
+      "sha256": "a9c98d56ad5b60e8a837fbfeacc4b87387feea36d3c3f4bd135e52ec09716085"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-viewport-fixed-clean-v777/build.json",
+      "sha256": "c97fbc1810478b39bc36384efefa1773638810b4d3359b40cf631c17500bdda2"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-edge-v808/receipt.json",
+      "sha256": "aff936aa33af5c9d46947c73acaf88d1d43894738fa9f4fa37e1cd225c20a965"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-docs-ci-complete-v802.json",
+      "sha256": "3c95e213a426f4263189c2bcd0299144c92abfc788f2147d61930096f21e642b"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-docs-checks-v801/receipt.json",
+      "sha256": "e8f56e981b2ccab97561e5cb7f09276cdf981b266fc007fd89608d192e5abd84"
+    }
+  ],
+  "documentation_checkpoint_eaed7e2e": {
+    "all_three_hosted_workflows_complete_success": true,
+    "private_runtime_qualification": false,
+    "read_only_checks_passed": 10,
+    "skipped_jobs": 5,
+    "skipped_jobs_are_not_passes": true,
+    "successful_jobs": 6
+  },
+  "javascript_executed_by_openui": false,
+  "native_viewport_cutoff": {
+    "all_1600_eight_comparison_invariants_unchanged": true,
+    "already_scrolled_fixed_control_failures": 10,
+    "focused_exact": 640,
+    "native_states_exact": 710,
+    "primitive_exact": 960,
+    "source": {
+      "clean": true,
+      "commit": "2cc950e064a4ffa9ddef74a99fa7db7c80e1b511",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "d6fdb1fb0a43f0d2ef97a357308533a45de1aa33554dac1a16988b9c4b2e38a7",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "workspace": {
+      "failed": 0,
+      "ignored": 13,
+      "passed": 8537
+    }
+  },
+  "native_viewport_fixed_candidate": {
+    "all_1600_eight_comparison_invariants_unchanged": true,
+    "complete_original_and_expanded_censuses_running": true,
+    "focused_exact": 640,
+    "fresh_build_stages_passed": 6,
+    "inherited_scroll_clip_regressions_open": true,
+    "native_states_exact": 935,
+    "prescrolled_c_exact_losses": 0,
+    "prescrolled_c_geometry_gains": 10,
+    "prescrolled_c_pixel_gains": 10,
+    "previous_885_states_and_all_chromium_inputs_unchanged": true,
+    "primitive_exact": 960,
+    "promotion_allowed": false,
+    "read_only_checks_passed": 10,
+    "shared_rust_c_geometry_and_pixels_identical": true,
+    "source": {
+      "clean": true,
+      "commit": "4dd50621cb4d0332d8dbb2e0a2c1fcb8465fce9b",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "fb4e994d8bcd9aecadc19507e40f3d355bf7e5a4ed9c7bea988ebdb5c3815ab0",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "workspace": {
+      "failed": 0,
+      "ignored": 13,
+      "passed": 8538
+    }
+  },
+  "new_release_states_admitted": 0,
+  "pixel_target": "Pinned Chromium only, zero tolerance",
+  "previous_index": {
+    "path": "docs/renderer/generated/native-scroll-insets-v8.json",
+    "sha256": "82bf837a5dfa296d2244cf966bf4bfbbd9e5c655ca44e4f50e03aa311eb7695d"
+  },
+  "promotion_allowed": false,
+  "reduced_native_scroll_edge_examples": {
+    "all_two_fresh_chromium_repeats_identical": true,
+    "geometry_exact": 140,
+    "native_consumer_sha256": "ad8ead984e650ce1c7e9d81d49678918ad7a27a1ed8289c07c79e3d018c64917",
+    "native_source": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-edge-v808/openui-native-scroll-edge-v807.c",
+    "owner": "openui-paint",
+    "pixels_exact": 90,
+    "qualification": false,
+    "scope": "Two native scroll boxes, seven integral/fractional origins, five scales, two captured native builds; further reduction and transform/coverage repair required",
+    "total_comparisons": 140
+  },
+  "release_qualification": false,
+  "remaining": [
+    "Complete original/expanded Chromium pixel exactness",
+    "Scroll clip/transform coverage regressions",
+    "Broader native API coverage and transformed/fragmented reveal paths",
+    "Compositor/3D, hardware, packaging and release gates"
+  ],
+  "schema_version": 1,
+  "scroll_clip_candidate": {
+    "all_native_and_raster_previous_exact_bytes_unchanged": true,
+    "complete_contract_scope": false,
+    "exact_losses_vs_dac78e25": 3,
+    "exact_losses_vs_implemented_d174ea0b": 2,
+    "focused_exact": 640,
+    "fresh_build_stages_passed": 5,
+    "native_states_exact": 685,
+    "new_exact_losses": [
+      {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 350,
+            "maximum_absolute_delta": 64,
+            "maximum_signed_delta": 64,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": -20560
+          },
+          "green": {
+            "changed_pixels": 350,
+            "maximum_absolute_delta": 64,
+            "maximum_signed_delta": 64,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": -20560
+          },
+          "red": {
+            "changed_pixels": 350,
+            "maximum_absolute_delta": 64,
+            "maximum_signed_delta": 64,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": -20560
+          }
+        },
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 144,
+              "width": 1,
+              "x": 412,
+              "y": 221
+            },
+            "mismatched_pixels": 144
+          },
+          {
+            "bounds": {
+              "height": 96,
+              "width": 5,
+              "x": 412,
+              "y": 485
+            },
+            "mismatched_pixels": 100
+          },
+          {
+            "bounds": {
+              "height": 72,
+              "width": 1,
+              "x": 412,
+              "y": 389
+            },
+            "mismatched_pixels": 72
+          },
+          {
+            "bounds": {
+              "height": 24,
+              "width": 1,
+              "x": 412,
+              "y": 173
+            },
+            "mismatched_pixels": 24
+          },
+          {
+            "bounds": {
+              "height": 5,
+              "width": 1,
+              "x": 913,
+              "y": 72
+            },
+            "mismatched_pixels": 5
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 5,
+              "x": 223,
+              "y": 580
+            },
+            "mismatched_pixels": 5
+          }
+        ],
+        "id": "wpt/css_overflow/overflow-auto-scrollbar-gutter-intrinsic-001-ref",
+        "mismatched_pixels": 350,
+        "owner": "openui-paint",
+        "profile": "desktop-1920x1080@1.5"
+      },
+      {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 350,
+            "maximum_absolute_delta": 64,
+            "maximum_signed_delta": 64,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": -20560
+          },
+          "green": {
+            "changed_pixels": 350,
+            "maximum_absolute_delta": 64,
+            "maximum_signed_delta": 64,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": -20560
+          },
+          "red": {
+            "changed_pixels": 350,
+            "maximum_absolute_delta": 64,
+            "maximum_signed_delta": 64,
+            "minimum_signed_delta": -64,
+            "signed_delta_sum": -20560
+          }
+        },
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 144,
+              "width": 1,
+              "x": 412,
+              "y": 221
+            },
+            "mismatched_pixels": 144
+          },
+          {
+            "bounds": {
+              "height": 96,
+              "width": 5,
+              "x": 412,
+              "y": 485
+            },
+            "mismatched_pixels": 100
+          },
+          {
+            "bounds": {
+              "height": 72,
+              "width": 1,
+              "x": 412,
+              "y": 389
+            },
+            "mismatched_pixels": 72
+          },
+          {
+            "bounds": {
+              "height": 24,
+              "width": 1,
+              "x": 412,
+              "y": 173
+            },
+            "mismatched_pixels": 24
+          },
+          {
+            "bounds": {
+              "height": 5,
+              "width": 1,
+              "x": 913,
+              "y": 72
+            },
+            "mismatched_pixels": 5
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 5,
+              "x": 223,
+              "y": 580
+            },
+            "mismatched_pixels": 5
+          }
+        ],
+        "id": "wpt/css_overflow/overflow-auto-scrollbar-gutter-intrinsic-002-ref",
+        "mismatched_pixels": 350,
+        "owner": "openui-paint",
+        "profile": "desktop-1920x1080@1.5"
+      },
+      {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 154,
+            "maximum_absolute_delta": 32,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": -4784
+          },
+          "green": {
+            "changed_pixels": 123,
+            "maximum_absolute_delta": 32,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": -3824
+          },
+          "red": {
+            "changed_pixels": 154,
+            "maximum_absolute_delta": 32,
+            "maximum_signed_delta": 32,
+            "minimum_signed_delta": -32,
+            "signed_delta_sum": 2864
+          }
+        },
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 1,
+              "width": 31,
+              "x": 1244,
+              "y": 859
+            },
+            "mismatched_pixels": 31
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 31,
+              "x": 1424,
+              "y": 859
+            },
+            "mismatched_pixels": 31
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 31,
+              "x": 1604,
+              "y": 859
+            },
+            "mismatched_pixels": 31
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 31,
+              "x": 1784,
+              "y": 859
+            },
+            "mismatched_pixels": 31
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 30,
+              "x": 1065,
+              "y": 859
+            },
+            "mismatched_pixels": 30
+          }
+        ],
+        "id": "wpt/css_overflow/scroll-markers_scroll-marker-group-keeps-active-in-view-ref",
+        "mismatched_pixels": 154,
+        "owner": "openui-paint",
+        "profile": "desktop-1920x1080@1.5"
+      }
+    ],
+    "primitive_exact": 960,
+    "promotion_allowed": false,
+    "read_only_checks_passed": 10,
+    "reduced_original_observed_exit_code": 1,
+    "reduced_original_results": {
+      "different": 59,
+      "errors": 0,
+      "exact": 85,
+      "profile_result_sha256": "25a87ef5db2b8d811873f38d43a719f33c6f5a01c671c46820487e5814a2126c",
+      "total": 144
+    },
+    "source": {
+      "clean": true,
+      "commit": "c5769f2d4aeaf42a3ead0a3c4c4804802c08267a",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "e723670fe13eb7e5cbdd97b4143fc36f0d30e2bfffff768607bac058f06f660e",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "two_previous_screen_exact_losses_repaired_in_reduced_selection": true,
+    "workspace": {
+      "failed": 0,
+      "ignored": 13,
+      "passed": 8532
+    }
+  }
+}

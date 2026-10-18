@@ -1,0 +1,15 @@
+diff --git a/bindings/rust/openui-ffi/src/lib.rs b/bindings/rust/openui-ffi/src/lib.rs
+index 0dd8e316..b5397ef9 100644
+--- a/bindings/rust/openui-ffi/src/lib.rs
++++ b/bindings/rust/openui-ffi/src/lib.rs
+@@ -3806,6 +3806,10 @@ mod tests {
+         for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
+             let mut config = document_config(800, 600);
+             config.viewport.device_scale_factor = scale;
++            // Logical dimensions are authoritative; derive physical dimensions
++            // at this scale instead of retaining the helper's scale-1 values.
++            config.viewport.physical_width = 0;
++            config.viewport.physical_height = 0;
+             let mut c_document = ptr::null_mut();
+             assert_eq!(oui_document_create(&config, &mut c_document), OuiStatus::Ok);
+             let mut root = ptr::null_mut();

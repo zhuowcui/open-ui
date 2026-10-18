@@ -574,6 +574,17 @@ impl ExclusionSpace {
         result
     }
 
+    /// Return floats added after a child inherited its parent's exclusion
+    /// space. Propagating the inherited entries again would duplicate them at
+    /// each non-BFC ancestor and can give them the wrong translated offset.
+    pub fn added_exclusions_since(&self, inherited: &Self) -> Vec<ExclusionArea> {
+        assert!(self.left_floats.starts_with(&inherited.left_floats));
+        assert!(self.right_floats.starts_with(&inherited.right_floats));
+        let mut added = self.left_floats[inherited.left_floats.len()..].to_vec();
+        added.extend_from_slice(&self.right_floats[inherited.right_floats.len()..]);
+        added
+    }
+
     /// Whether `rect` has positive-area overlap with any float exclusion.
     pub fn overlaps_float(&self, rect: &BfcRect) -> bool {
         self.left_floats

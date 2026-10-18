@@ -1,0 +1,190 @@
+{
+  "artifacts": [
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-clip-reproduction-v37.json",
+      "sha256": "cba16874177c460c8de601cac347c9412e5f086ad090b8bd1f0a06d0c6fc8c2d"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-clip-clean-v37/build.json",
+      "sha256": "3e140841172113abbff401331b354327708cee1bdf2938116ab3b393f50dbabc"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-clip-clean-v37/source-before-build.json",
+      "sha256": "6ba2745163b02c1a2952e949aa34cc10a9e60627b40aacd30ae2044d141aec26"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-clip-clean-v37/source-after-build.json",
+      "sha256": "6ba2745163b02c1a2952e949aa34cc10a9e60627b40aacd30ae2044d141aec26"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-clip-clean-v37/source-after-native.json",
+      "sha256": "6ba2745163b02c1a2952e949aa34cc10a9e60627b40aacd30ae2044d141aec26"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-clip-clean-v37.log",
+      "sha256": "ecf2a3a0fac50d777fe81e86b5fc20798751baeffd0cad2ff7563718fadc8333"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-clip-build-v37.log",
+      "sha256": "924f1c39fcd65925e3b99b4b019c399767b3fbf956c9c86dad07c3aa280b0818"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-clip-release-source-v37.log",
+      "sha256": "d08a8af21975df89969d24c7409f282fb7fc1571df563105f44315da749acbb1"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-clip-clean-v37-comparison-v1.json",
+      "sha256": "fe5c795d5dfd22b10c7c49c0b52950f6acf8f961f6bf5f15c8df77b621b3c101"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/direction-guards-v2/umbrella-clip-clean-v37-comparison-v1.json",
+      "sha256": "d4f7214802b6555d1af2cd185fdd5a81d171ace8ae738f368917963d0bb6730f"
+    }
+  ],
+  "complete_original_and_expanded_repair_census": "running on immutable clean 1366b72f; no final result or new full exact total claimed",
+  "fresh_umbrella_build": {
+    "build_command_exit_code": 0,
+    "clean_command_exit_code": 0,
+    "native_binary_sha256": "1599153da745661cdeda73e4abe2f0ab217a7c57314ca57654e6b969f4d52502",
+    "source": {
+      "clean": true,
+      "commit": "28cde83147d4ae5ad91ed439113de210b8a86acd",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "e051ee8b2946a0b44b70254541262ca3e6a06a67cd6841be0e86d016e2e27009",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "28cde83147d4ae5ad91ed439113de210b8a86acd",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "e051ee8b2946a0b44b70254541262ca3e6a06a67cd6841be0e86d016e2e27009",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "fresh_umbrella_native_reproduction": {
+    "native_fractional_pixel_failures": 166,
+    "only_documentation_differs_from_qualification_source": true,
+    "public_rust_callback_offset_bounds_dimensions_and_teardown_checks": 850,
+    "qualification_source": "1366b72f1ce5ebc0ee8f55ce03f69458856fd0a1",
+    "release_qualification": false,
+    "reports": [
+      {
+        "all_native_pngs_geometry_and_difference_signatures_unchanged": true,
+        "exact": 196,
+        "process_exit_code": 0,
+        "report_path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-clip-clean-v37-comparison-v1.json",
+        "report_sha256": "fe5c795d5dfd22b10c7c49c0b52950f6acf8f961f6bf5f15c8df77b621b3c101",
+        "total": 250
+      },
+      {
+        "all_native_pngs_geometry_and_difference_signatures_unchanged": true,
+        "exact": 488,
+        "process_exit_code": 0,
+        "report_path": "out/renderer-evidence/native-viewport-scroll-v1/direction-guards-v2/umbrella-clip-clean-v37-comparison-v1.json",
+        "report_sha256": "d4f7214802b6555d1af2cd185fdd5a81d171ace8ae738f368917963d0bb6730f",
+        "total": 600
+      }
+    ],
+    "source": {
+      "clean": true,
+      "commit": "28cde83147d4ae5ad91ed439113de210b8a86acd",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "e051ee8b2946a0b44b70254541262ca3e6a06a67cd6841be0e86d016e2e27009",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "28cde83147d4ae5ad91ed439113de210b8a86acd",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "e051ee8b2946a0b44b70254541262ca3e6a06a67cd6841be0e86d016e2e27009",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "hosted_checks_snapshot": {
+    "checks": [
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37018493082/job/110875206078",
+        "name": "clang-format",
+        "state": "SUCCESS",
+        "workflow": "Format Check"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37018493587/job/110875207396",
+        "name": "rust-parity",
+        "state": "IN_PROGRESS",
+        "workflow": "CI"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37018494167/job/110875209019",
+        "name": "conformance-and-platform",
+        "state": "IN_PROGRESS",
+        "workflow": "v0.2 Hardening"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37018493587/job/110875207319",
+        "name": "historical-pixel-audit",
+        "state": "SUCCESS",
+        "workflow": "CI"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37018493082/job/110875206360",
+        "name": "gn-format",
+        "state": "SUCCESS",
+        "workflow": "Format Check"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37018493587/job/110875207213",
+        "name": "python-accountability",
+        "state": "IN_PROGRESS",
+        "workflow": "CI"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37018494167/job/110875210696",
+        "name": "msrv",
+        "state": "SKIPPED",
+        "workflow": "v0.2 Hardening"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37018494167/job/110875210679",
+        "name": "miri-handles",
+        "state": "SKIPPED",
+        "workflow": "v0.2 Hardening"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37018494167/job/110875210606",
+        "name": "native-sanitizers",
+        "state": "SKIPPED",
+        "workflow": "v0.2 Hardening"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37018494167/job/110875210488",
+        "name": "c-undefined-sanitizer",
+        "state": "SKIPPED",
+        "workflow": "v0.2 Hardening"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37018494167/job/110875210718",
+        "name": "fuzz-smoke",
+        "state": "SKIPPED",
+        "workflow": "v0.2 Hardening"
+      }
+    ],
+    "head": "28cde83147d4ae5ad91ed439113de210b8a86acd",
+    "pending_is_not_pass": true,
+    "skipped_hardening_is_not_pass": true
+  },
+  "implemented_code_commit": "28cde83147d4ae5ad91ed439113de210b8a86acd",
+  "javascript_executed_by_openui": false,
+  "prior_failure_evidence": "docs/renderer/generated/native-viewport-full-v1.json",
+  "release_qualification": false,
+  "release_source_verification": {
+    "conformance_scenarios": 58,
+    "domains": 10,
+    "frozen_abi_preserved": true,
+    "process_exit_code": 0,
+    "public_crates": 11
+  },
+  "remaining_native_fractional_pixel_failures": 166,
+  "repair_evidence": "docs/renderer/generated/native-viewport-full-v2.json",
+  "schema_version": 1
+}

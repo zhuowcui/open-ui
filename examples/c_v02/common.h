@@ -33,6 +33,7 @@ static int oui_example_render(const char* label, OuiColor background) {
   OuiDocument* document = NULL;
   OuiElement* root = NULL;
   OuiElement* card = NULL;
+  OuiElement* found = NULL;
   OuiElement* text_node = NULL;
   OuiBuffer* png = NULL;
   int result = 1;
@@ -42,7 +43,13 @@ static int oui_example_render(const char* label, OuiColor background) {
       !oui_example_check(oui_text_create(document, oui_example_utf8(label), &text_node),
                          "create text") ||
       !oui_example_check(oui_element_append_child(root, card), "append card") ||
-      !oui_example_check(oui_element_append_child(card, text_node), "append text")) {
+      !oui_example_check(oui_element_append_child(card, text_node), "append text") ||
+      !oui_example_check(
+          oui_element_set_attribute(card, oui_example_utf8("id"), oui_example_utf8("primary")),
+          "set ID") ||
+      !oui_example_check(oui_document_element_by_id(document, oui_example_utf8("primary"), &found),
+                         "find card") ||
+      found == NULL) {
     result = 0;
     goto cleanup;
   }
@@ -55,7 +62,7 @@ static int oui_example_render(const char* label, OuiColor background) {
       !oui_example_check(oui_element_set_property(card, OUI_STYLE_PROPERTY_HEIGHT, &height),
                          "set height") ||
       !oui_example_check(
-          oui_element_set_property(card, OUI_STYLE_PROPERTY_BACKGROUND_COLOR, &color),
+          oui_element_set_property(found, OUI_STYLE_PROPERTY_BACKGROUND_COLOR, &color),
           "set color") ||
       !oui_example_check(oui_document_render_png(document, &png), "render PNG")) {
     result = 0;
@@ -66,6 +73,8 @@ static int oui_example_render(const char* label, OuiColor background) {
 cleanup:
   if (png)
     oui_buffer_destroy(png);
+  if (found)
+    oui_element_destroy(found);
   if (text_node)
     oui_element_destroy(text_node);
   if (card)

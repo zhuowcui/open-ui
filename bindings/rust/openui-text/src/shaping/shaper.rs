@@ -529,7 +529,7 @@ impl TextShaper {
             None => return ShapeResult::empty(direction),
         };
 
-        let sk_font = font_data.sk_font();
+        let sk_font = font_data.shaping_font();
         let left_to_right = direction.is_ltr();
 
         let mut collector = ShapeCollector::new(Arc::clone(&font_data), direction);
@@ -646,7 +646,7 @@ impl TextShaper {
         }
         let skia_features = to_skia_features(&features, text.len());
         let mut font_iter =
-            shaper::Shaper::new_trivial_font_run_iterator(font_data.sk_font(), text.len());
+            shaper::Shaper::new_trivial_font_run_iterator(font_data.shaping_font(), text.len());
         let bidi_level = if direction.is_ltr() { 0 } else { 1 };
         let mut script_iter = shaper::Shaper::new_hb_icu_script_run_iterator(text);
         let language = shaping_language(description);

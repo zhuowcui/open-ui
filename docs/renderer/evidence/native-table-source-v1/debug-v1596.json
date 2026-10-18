@@ -1,0 +1,228 @@
+{
+  "all_commands_terminal": true,
+  "binary_sha256": "ed9c7593b705a07303a548e4695b99168e36dcedc70823451cddab2634d4cf2f",
+  "build_receipt_sha256": "e2d866c3607345fe91d8f89a0bcbc2b995d50b942aef5cfdfab94e0d401b8031",
+  "cargo_commands_run": 0,
+  "cli_source_sha256": "dbadccc0eddd8934af24a0722ae4ae6d41e588318a0b9c989adce7c11d2d0d1b",
+  "fixture_source_sha256": "9d7ba875bc87779fefca1fb992108a2f7dbdfb6cbbd7896a0454d9b5e52420ac",
+  "independent_debug_runs_identical": true,
+  "javascript_executed_by_openui": false,
+  "mode": "debug",
+  "native_raster_commands_run": 0,
+  "nonraster_geometry_diagnostic_only": true,
+  "observations": 8,
+  "observed_exit_code": 0,
+  "prior_cli_failure": {
+    "actual_probe_exit": 1,
+    "log_sha256": "77fb07a1a1866758159f474689109c3e32a568144fbadb0e397442c03a7f0692",
+    "reason": "The executable uses --backend; --raster-backend belongs to the matrix wrapper. The first attempt stops before fixture layout.",
+    "receipt_sha256": "40fc569407b221e378f3f387b20afd182017c7bf0827f050562419d0e5061a05"
+  },
+  "probe_sha256": "19d725898beba4119f272a5002934268146032e111dea51cd4d7aade493c3633",
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "runs": [
+    {
+      "repeat": 1,
+      "rows": [
+        {
+          "column_box_count": 10,
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/pixel_compare",
+            "debug",
+            "wpt/css_break/table_repeated-section_variable-fragmentainer-size-003-crash",
+            "--viewport",
+            "800x600",
+            "--scale",
+            "1",
+            "--backend",
+            "cpu-skia"
+          ],
+          "fragment_count": 79,
+          "height": 600,
+          "log": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-table-fragment-debug-v1596/legacy-1.log",
+          "log_sha256": "d55c2ff6b5a03eb109d0b6675bd98f6c48a6a8bcc312348f4f063c107cbde627",
+          "observed_exit_code": 0,
+          "profile": "legacy",
+          "scale": 1,
+          "width": 800
+        },
+        {
+          "column_box_count": 10,
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/pixel_compare",
+            "debug",
+            "wpt/css_break/table_repeated-section_variable-fragmentainer-size-003-crash",
+            "--viewport",
+            "375x667",
+            "--scale",
+            "2",
+            "--backend",
+            "cpu-skia"
+          ],
+          "fragment_count": 79,
+          "height": 667,
+          "log": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-table-fragment-debug-v1596/mobile-1.log",
+          "log_sha256": "7cfa52f1fd6425c49c46cd13ecb218fba48a60abab6498fdbafb4a37488dfc11",
+          "observed_exit_code": 0,
+          "profile": "mobile",
+          "scale": 2,
+          "width": 375
+        },
+        {
+          "column_box_count": 10,
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/pixel_compare",
+            "debug",
+            "wpt/css_break/table_repeated-section_variable-fragmentainer-size-003-crash",
+            "--viewport",
+            "1280x720",
+            "--scale",
+            "1.25",
+            "--backend",
+            "cpu-skia"
+          ],
+          "fragment_count": 79,
+          "height": 720,
+          "log": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-table-fragment-debug-v1596/desktop125-1.log",
+          "log_sha256": "4e78bdaac2592cb2324666ab93f9cdf86fb614a8bee8f1ff7facae1398d3bec9",
+          "observed_exit_code": 0,
+          "profile": "desktop125",
+          "scale": 1.25,
+          "width": 1280
+        },
+        {
+          "column_box_count": 10,
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/pixel_compare",
+            "debug",
+            "wpt/css_break/table_repeated-section_variable-fragmentainer-size-003-crash",
+            "--viewport",
+            "1920x1080",
+            "--scale",
+            "1.5",
+            "--backend",
+            "cpu-skia"
+          ],
+          "fragment_count": 79,
+          "height": 1080,
+          "log": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-table-fragment-debug-v1596/desktop150-1.log",
+          "log_sha256": "df6a9ed36a22db4ddecd5e9a9b1edac0c0288ee53ddd1cfcf222ba0dcef421c3",
+          "observed_exit_code": 0,
+          "profile": "desktop150",
+          "scale": 1.5,
+          "width": 1920
+        }
+      ]
+    },
+    {
+      "repeat": 2,
+      "rows": [
+        {
+          "column_box_count": 10,
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/pixel_compare",
+            "debug",
+            "wpt/css_break/table_repeated-section_variable-fragmentainer-size-003-crash",
+            "--viewport",
+            "800x600",
+            "--scale",
+            "1",
+            "--backend",
+            "cpu-skia"
+          ],
+          "fragment_count": 79,
+          "height": 600,
+          "log": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-table-fragment-debug-v1596/legacy-2.log",
+          "log_sha256": "d55c2ff6b5a03eb109d0b6675bd98f6c48a6a8bcc312348f4f063c107cbde627",
+          "observed_exit_code": 0,
+          "profile": "legacy",
+          "scale": 1,
+          "width": 800
+        },
+        {
+          "column_box_count": 10,
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/pixel_compare",
+            "debug",
+            "wpt/css_break/table_repeated-section_variable-fragmentainer-size-003-crash",
+            "--viewport",
+            "375x667",
+            "--scale",
+            "2",
+            "--backend",
+            "cpu-skia"
+          ],
+          "fragment_count": 79,
+          "height": 667,
+          "log": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-table-fragment-debug-v1596/mobile-2.log",
+          "log_sha256": "7cfa52f1fd6425c49c46cd13ecb218fba48a60abab6498fdbafb4a37488dfc11",
+          "observed_exit_code": 0,
+          "profile": "mobile",
+          "scale": 2,
+          "width": 375
+        },
+        {
+          "column_box_count": 10,
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/pixel_compare",
+            "debug",
+            "wpt/css_break/table_repeated-section_variable-fragmentainer-size-003-crash",
+            "--viewport",
+            "1280x720",
+            "--scale",
+            "1.25",
+            "--backend",
+            "cpu-skia"
+          ],
+          "fragment_count": 79,
+          "height": 720,
+          "log": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-table-fragment-debug-v1596/desktop125-2.log",
+          "log_sha256": "4e78bdaac2592cb2324666ab93f9cdf86fb614a8bee8f1ff7facae1398d3bec9",
+          "observed_exit_code": 0,
+          "profile": "desktop125",
+          "scale": 1.25,
+          "width": 1280
+        },
+        {
+          "column_box_count": 10,
+          "command": [
+            "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/pixel_compare",
+            "debug",
+            "wpt/css_break/table_repeated-section_variable-fragmentainer-size-003-crash",
+            "--viewport",
+            "1920x1080",
+            "--scale",
+            "1.5",
+            "--backend",
+            "cpu-skia"
+          ],
+          "fragment_count": 79,
+          "height": 1080,
+          "log": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-table-fragment-debug-v1596/desktop150-2.log",
+          "log_sha256": "df6a9ed36a22db4ddecd5e9a9b1edac0c0288ee53ddd1cfcf222ba0dcef421c3",
+          "observed_exit_code": 0,
+          "profile": "desktop150",
+          "scale": 1.5,
+          "width": 1920
+        }
+      ]
+    }
+  ],
+  "schema_version": 1,
+  "screenshots_generated": 0,
+  "source": {
+    "clean": true,
+    "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

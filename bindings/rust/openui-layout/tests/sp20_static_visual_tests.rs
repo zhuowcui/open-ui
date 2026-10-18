@@ -245,7 +245,9 @@ fn descendant_positions(
 ) {
     let left = parent_left + fragment.offset.left;
     let top = parent_top + fragment.offset.top;
-    if fragment.node_id == node {
+    // These positions describe authored elements. Retained formatting helpers
+    // can borrow a node identity without owning another element box.
+    if fragment.node_id == node && fragment.owns_element_box() {
         out.push((left, top));
     }
     for child in &fragment.children {
@@ -419,6 +421,22 @@ fn definite_float_height_transfers_through_nested_replaced_ratio_only() {
     let natural_canvas = make_canvas(&mut doc);
     doc.append_child(auto_wrapper, natural_canvas);
 
+    // The same retained resource must enter the shared inline stream as an
+    // atomic box. A normal inline wrapper with no children contributes zero.
+    for (parent, canvas, expected) in [
+        (wrapper, nested_canvas, 100.0),
+        (auto_wrapper, natural_canvas, 1.0),
+    ] {
+        let data = InlineItemsBuilder::collect(&doc, parent);
+        assert_eq!(data.items.len(), 1);
+        assert_eq!(data.items[0].node_id, canvas);
+        assert_eq!(data.items[0].item_type, InlineItemType::AtomicInline);
+        assert_eq!(
+            data.items[0].intrinsic_inline_size,
+            Some((expected, expected))
+        );
+    }
+
     let fragment = layout(&doc);
     let mut nested = Vec::new();
     let mut natural = Vec::new();
@@ -428,6 +446,99 @@ fn definite_float_height_transfers_through_nested_replaced_ratio_only() {
     assert_eq!(natural.len(), 1);
     assert_eq!(nested[0].width(), lu(100));
     assert_eq!(natural[0].width(), lu(1));
+}
+
+#[test]
+fn inline_replaced_resources_are_atomic_independent_of_container_tag() {
+    for tag in [
+        ElementTag::Canvas,
+        ElementTag::Image,
+        ElementTag::Span,
+        ElementTag::Div,
+    ] {
+        let mut doc = Document::new();
+        let container = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(container, |style| style.display = Display::Block);
+        doc.append_child(doc.root(), container);
+        let replaced = doc.create_node(tag);
+        doc.update_resolved_style(replaced, |style| style.display = Display::Inline);
+        doc.node_mut(replaced).replaced = Some(ReplacedContent {
+            resource: ReplacedResourceKind::TransparentCanvas,
+            intrinsic_width: Some(3.0),
+            intrinsic_height: Some(2.0),
+            intrinsic_ratio: Some((3.0, 2.0)),
+        });
+        doc.append_child(container, replaced);
+        let fallback = doc.create_node(ElementTag::Span);
+        doc.update_resolved_style(fallback, |style| {
+            style.display = Display::InlineBlock;
+            style.width = Length::px(80.0);
+            style.height = Length::px(10.0);
+        });
+        doc.append_child(replaced, fallback);
+
+        let data = InlineItemsBuilder::collect(&doc, container);
+        assert_eq!(data.text, "\u{fffc}");
+        assert_eq!(data.items.len(), 1);
+        assert_eq!(data.items[0].node_id, replaced);
+        assert_eq!(data.items[0].item_type, InlineItemType::AtomicInline);
+        assert_eq!(data.items[0].intrinsic_inline_size, Some((3.0, 3.0)));
+        assert!(!data.items.iter().any(|item| item.node_id == fallback));
+
+        // Without a retained replacement, an ordinary inline container keeps
+        // its child stream. Failed images use this existing fallback class too.
+        if tag != ElementTag::Canvas {
+            doc.node_mut(replaced).replaced = None;
+            let data = InlineItemsBuilder::collect(&doc, container);
+            assert!(!data.items.iter().any(|item| {
+                item.node_id == replaced && item.item_type == InlineItemType::AtomicInline
+            }));
+            assert!(data.items.iter().any(|item| {
+                item.node_id == fallback && item.item_type == InlineItemType::AtomicInline
+            }));
+        }
+    }
+}
+
+#[test]
+fn replaced_inline_classification_preserves_display_and_position_roles() {
+    let mut doc = Document::new();
+    let container = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.append_child(doc.root(), container);
+    let replaced = doc.create_node(ElementTag::Canvas);
+    doc.node_mut(replaced).replaced = Some(ReplacedContent {
+        resource: ReplacedResourceKind::TransparentCanvas,
+        intrinsic_width: Some(3.0),
+        intrinsic_height: Some(2.0),
+        intrinsic_ratio: Some((3.0, 2.0)),
+    });
+    doc.append_child(container, replaced);
+
+    for display in [Display::Inline, Display::InlineBlock] {
+        doc.update_resolved_style(replaced, |style| style.display = display);
+        let data = InlineItemsBuilder::collect(&doc, container);
+        assert_eq!(data.items.len(), 1);
+        assert_eq!(data.items[0].item_type, InlineItemType::AtomicInline);
+    }
+    doc.update_resolved_style(replaced, |style| style.display = Display::Block);
+    let data = InlineItemsBuilder::collect(&doc, container);
+    assert_eq!(data.items.len(), 1);
+    assert_eq!(data.items[0].item_type, InlineItemType::BlockInInline);
+
+    doc.update_resolved_style(replaced, |style| style.display = Display::None);
+    let data = InlineItemsBuilder::collect(&doc, container);
+    assert!(data.items.is_empty());
+    assert!(data.oof_children.is_empty());
+
+    doc.update_resolved_style(replaced, |style| {
+        style.display = Display::Inline;
+        style.position = Position::Absolute;
+    });
+    let data = InlineItemsBuilder::collect(&doc, container);
+    assert!(data.items.is_empty());
+    assert_eq!(data.oof_children.len(), 1);
+    assert_eq!(data.oof_children[0].node_id, replaced);
 }
 
 #[test]
@@ -1039,6 +1150,24 @@ fn fieldset_promotes_a_legend_through_display_contents_before_ordinary_content()
         LayoutUnit::zero(),
         LayoutUnit::zero(),
         &mut ordinary_positions,
+    );
+
+    let mut fieldset_fragments = Vec::new();
+    descendants(&fragment, fieldset, &mut fieldset_fragments);
+    assert_eq!(
+        fieldset_fragments
+            .iter()
+            .filter(|f| f.owns_element_box())
+            .count(),
+        1
+    );
+    assert_eq!(
+        fieldset_fragments
+            .iter()
+            .filter(|f| f.owns_layout_box() && !f.owns_element_box())
+            .count(),
+        1,
+        "the fieldset content helper remains retained without duplicating element geometry"
     );
 
     assert_eq!(fieldset_positions.len(), 1);

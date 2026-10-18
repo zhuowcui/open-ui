@@ -1,0 +1,318 @@
+diff --git a/bindings/rust/openui-compositor/src/ganesh_gl.rs b/bindings/rust/openui-compositor/src/ganesh_gl.rs
+index fbcd01af..6e82a7d9 100644
+--- a/bindings/rust/openui-compositor/src/ganesh_gl.rs
++++ b/bindings/rust/openui-compositor/src/ganesh_gl.rs
+@@ -1,7 +1,8 @@
+ //! Explicit offscreen EGL/Mesa Ganesh compositor.
+ 
+ use super::{
+-    CompositorError, CompositorStats, Frame, RasterBackendIdentity, SceneGeneration, SceneSnapshot,
++    CachedFrame, CompositorError, CompositorStats, Frame, RasterBackendIdentity, SceneGeneration,
++    SceneSnapshot,
+ };
+ use glutin::api::egl::{context::PossiblyCurrentContext, device::Device, display::Display};
+ use glutin::config::{ConfigSurfaceTypes, ConfigTemplateBuilder, GlConfig};
+@@ -15,12 +16,13 @@ use skia_safe::{
+ use std::ffi::CStr;
+ 
+ pub struct GaneshGlCompositor {
+-    // Field order is intentional: Ganesh must be destroyed before EGL.
++    // Field order is intentional: recordings must be destroyed before Ganesh,
++    // and Ganesh must be destroyed before EGL.
++    last_frame: Option<CachedFrame>,
+     direct_context: gpu::DirectContext,
+     _gl_context: PossiblyCurrentContext,
+     identity: RasterBackendIdentity,
+     last_presented: Option<SceneGeneration>,
+-    last_frame: Option<Frame>,
+     stats: CompositorStats,
+ }
+ 
+@@ -184,11 +186,13 @@ impl GaneshGlCompositor {
+ 
+     pub fn render(&mut self, scene: &SceneSnapshot) -> Result<Frame, CompositorError> {
+         self.stats.submitted += 1;
+-        if self.last_presented == Some(scene.generation) {
+-            if let Some(frame) = self.last_frame.clone() {
+-                self.stats.reused += 1;
+-                return Ok(frame);
+-            }
++        if let Some(frame) = self
++            .last_frame
++            .as_ref()
++            .and_then(|cached| cached.frame_for(scene))
++        {
++            self.stats.reused += 1;
++            return Ok(frame);
+         }
+         let mut surface = self.render_surface(scene)?;
+         let width = scene.viewport.physical_width();
+@@ -220,7 +224,7 @@ impl GaneshGlCompositor {
+         };
+         self.stats.rasterized += 1;
+         self.last_presented = Some(scene.generation);
+-        self.last_frame = Some(frame.clone());
++        self.last_frame = Some(CachedFrame::new(scene, frame.clone()));
+         Ok(frame)
+     }
+ 
+diff --git a/bindings/rust/openui-compositor/src/lib.rs b/bindings/rust/openui-compositor/src/lib.rs
+index 06d2914c..b866c4b5 100644
+--- a/bindings/rust/openui-compositor/src/lib.rs
++++ b/bindings/rust/openui-compositor/src/lib.rs
+@@ -193,10 +193,32 @@ impl std::fmt::Display for CompositorError {
+ 
+ impl std::error::Error for CompositorError {}
+ 
++/// Retain the immutable recording while its frame is cached. Scene generations
++/// belong to individual documents, so a generation alone cannot identify pixels.
++struct CachedFrame {
++    picture: Arc<RecordedPicture>,
++    frame: Frame,
++}
++
++impl CachedFrame {
++    fn new(scene: &SceneSnapshot, frame: Frame) -> Self {
++        Self {
++            picture: Arc::clone(&scene.picture),
++            frame,
++        }
++    }
++
++    fn frame_for(&self, scene: &SceneSnapshot) -> Option<Frame> {
++        (self.frame.scene_generation == scene.generation
++            && Arc::ptr_eq(&self.picture, &scene.picture))
++        .then(|| self.frame.clone())
++    }
++}
++
+ #[derive(Default)]
+ pub struct SoftwareCompositor {
+     last_presented: Option<SceneGeneration>,
+-    last_frame: Option<Frame>,
++    last_frame: Option<CachedFrame>,
+     stats: CompositorStats,
+ }
+ 
+@@ -208,11 +230,13 @@ impl SoftwareCompositor {
+             ));
+         }
+         self.stats.submitted += 1;
+-        if self.last_presented == Some(scene.generation) {
+-            if let Some(frame) = self.last_frame.clone() {
+-                self.stats.reused += 1;
+-                return Ok(frame);
+-            }
++        if let Some(frame) = self
++            .last_frame
++            .as_ref()
++            .and_then(|cached| cached.frame_for(scene))
++        {
++            self.stats.reused += 1;
++            return Ok(frame);
+         }
+         let mut surface = rasterize_picture(&scene.picture).map_err(CompositorError::Raster)?;
+         let image = surface.image_snapshot();
+@@ -245,7 +269,7 @@ impl SoftwareCompositor {
+         };
+         self.stats.rasterized += 1;
+         self.last_presented = Some(scene.generation);
+-        self.last_frame = Some(frame.clone());
++        self.last_frame = Some(CachedFrame::new(scene, frame.clone()));
+         Ok(frame)
+     }
+ 
+@@ -339,6 +363,16 @@ impl SceneMailbox {
+ mod tests {
+     use super::*;
+ 
++    fn recorded_scene(
++        viewport: ViewportMetrics,
++        configuration: RasterConfiguration,
++    ) -> SceneSnapshot {
++        let mut document = openui_dom::Document::new();
++        document.set_raster_context(configuration, viewport.device_scale_factor());
++        let (fragment, picture) = openui_paint::record_document(&document, viewport).unwrap();
++        SceneSnapshot::new(SceneGeneration(1), picture, Arc::new(fragment), Vec::new())
++    }
++
+     #[test]
+     fn immutable_scenes_can_cross_render_threads() {
+         fn assert_send_sync<T: Send + Sync>() {}
+@@ -391,6 +425,93 @@ mod tests {
+         assert_eq!(compositor.stats().reused, 1);
+     }
+ 
++    #[test]
++    fn software_frame_cache_accepts_new_viewports_with_equal_generations() {
++        let first = recorded_scene(
++            ViewportMetrics::from_logical_size(10.0, 10.0, 1.0).unwrap(),
++            RasterConfiguration::default(),
++        );
++        let second = recorded_scene(
++            ViewportMetrics::from_logical_size(16.0, 12.0, 2.0).unwrap(),
++            RasterConfiguration::chromium_linux_lcd(),
++        );
++        let mut compositor = SoftwareCompositor::default();
++        assert_eq!(compositor.render(&first).unwrap().width, 10);
++        let frame = compositor.render(&second).unwrap();
++        assert_eq!((frame.width, frame.height), (32, 24));
++        assert_eq!(frame.viewport, second.viewport());
++        assert_eq!(frame.raster_configuration, second.raster_configuration());
++        assert_eq!(compositor.render(&second.clone()).unwrap(), frame);
++        assert_eq!(compositor.stats().rasterized, 2);
++        assert_eq!(compositor.stats().reused, 1);
++    }
++
++    #[test]
++    fn frame_cache_releases_recordings_on_replacement_png_and_drop() {
++        let viewport = ViewportMetrics::from_logical_size(10.0, 10.0, 1.0).unwrap();
++        let first = recorded_scene(viewport, RasterConfiguration::default());
++        let first_picture = Arc::downgrade(&first.picture);
++        let mut compositor = SoftwareCompositor::default();
++        compositor.render(&first).unwrap();
++        drop(first);
++        assert!(first_picture.upgrade().is_some());
++
++        let second = recorded_scene(viewport, RasterConfiguration::default());
++        let second_picture = Arc::downgrade(&second.picture);
++        compositor.render(&second).unwrap();
++        assert!(first_picture.upgrade().is_none());
++        drop(second);
++        assert!(second_picture.upgrade().is_some());
++
++        let third = recorded_scene(viewport, RasterConfiguration::default());
++        let third_picture = Arc::downgrade(&third.picture);
++        compositor.render_png(&third).unwrap();
++        assert!(second_picture.upgrade().is_none());
++        drop(third);
++        assert!(third_picture.upgrade().is_none());
++
++        let fourth = recorded_scene(viewport, RasterConfiguration::default());
++        let fourth_picture = Arc::downgrade(&fourth.picture);
++        compositor.render(&fourth).unwrap();
++        drop(fourth);
++        assert!(fourth_picture.upgrade().is_some());
++        drop(compositor);
++        assert!(fourth_picture.upgrade().is_none());
++    }
++
++    #[cfg(feature = "ganesh-gl")]
++    #[test]
++    fn ganesh_frame_cache_distinguishes_recordings_and_rejects_cpu_scenes() {
++        let first = recorded_scene(
++            ViewportMetrics::from_logical_size(10.0, 10.0, 1.0).unwrap(),
++            RasterConfiguration::chromium_linux_ganesh(),
++        );
++        let second = recorded_scene(
++            ViewportMetrics::from_logical_size(16.0, 12.0, 2.0).unwrap(),
++            RasterConfiguration::chromium_linux_ganesh(),
++        );
++        let cpu = recorded_scene(first.viewport(), RasterConfiguration::default());
++        let mut compositor = GaneshGlCompositor::new().unwrap();
++        let first_frame = compositor.render(&first).unwrap();
++        assert_eq!(compositor.render(&first.clone()).unwrap(), first_frame);
++        assert!(matches!(
++            compositor.render(&cpu),
++            Err(CompositorError::Raster(_))
++        ));
++        assert_eq!(compositor.stats().rasterized, 1);
++        assert_eq!(compositor.stats().reused, 1);
++
++        let second_frame = compositor.render(&second).unwrap();
++        assert_eq!((second_frame.width, second_frame.height), (32, 24));
++        assert_eq!(compositor.render(&second.clone()).unwrap(), second_frame);
++        assert_eq!(compositor.stats().rasterized, 2);
++        assert_eq!(compositor.stats().reused, 2);
++        compositor.render_png(&first).unwrap();
++        assert_eq!(compositor.render(&second).unwrap(), second_frame);
++        assert_eq!(compositor.stats().rasterized, 4);
++        assert_eq!(compositor.stats().reused, 2);
++    }
++
+     #[test]
+     fn damage_is_converted_outward_to_physical_pixels() {
+         use openui_dom::Document;
+diff --git a/bindings/rust/openui-engine/src/lib.rs b/bindings/rust/openui-engine/src/lib.rs
+index e71258b1..6c14aebb 100644
+--- a/bindings/rust/openui-engine/src/lib.rs
++++ b/bindings/rust/openui-engine/src/lib.rs
+@@ -2273,6 +2273,56 @@ mod tests {
+         assert_eq!(generation.0, before_accessibility.scenes);
+     }
+ 
++    #[test]
++    fn compositor_distinguishes_owned_recordings_with_equal_document_generations() {
++        for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
++            let mut scenes = Vec::new();
++            for color in [Color::RED, Color::BLUE] {
++                let mut engine =
++                    Engine::new(ViewportMetrics::from_logical_size(64.0, 48.0, scale).unwrap())
++                        .unwrap();
++                let element = engine.create_element(ElementTag::Div).unwrap();
++                engine.append_child(engine.root(), element).unwrap();
++                engine
++                    .set_property(element, StyleProperty::Display, Display::Block.into())
++                    .unwrap();
++                engine
++                    .set_property(element, StyleProperty::Width, LengthValue::px(32.0).into())
++                    .unwrap();
++                engine
++                    .set_property(element, StyleProperty::Height, LengthValue::px(24.0).into())
++                    .unwrap();
++                engine
++                    .set_property(element, StyleProperty::BackgroundColor, color.into())
++                    .unwrap();
++                scenes.push(engine.scene().unwrap());
++                // Rendering below uses owned scenes after both documents die.
++            }
++            assert_eq!(scenes[0].generation(), scenes[1].generation());
++            let first = SoftwareCompositor::default().render(&scenes[0]).unwrap();
++            let second = SoftwareCompositor::default().render(&scenes[1]).unwrap();
++            assert_ne!(first.pixels, second.pixels);
++
++            let mut compositor = SoftwareCompositor::default();
++            assert_eq!(compositor.render(&scenes[0]).unwrap(), first);
++            assert_eq!(compositor.render(&scenes[0].clone()).unwrap(), first);
++            assert_eq!(compositor.stats().rasterized, 1);
++            assert_eq!(compositor.stats().reused, 1);
++            assert_eq!(
++                compositor.render(&scenes[1]).unwrap(),
++                second,
++                "scale={scale}"
++            );
++            assert_eq!(compositor.stats().rasterized, 2);
++            assert_eq!(compositor.stats().reused, 1);
++            assert_eq!(compositor.render(&scenes[1].clone()).unwrap(), second);
++            assert_eq!(compositor.stats().rasterized, 2);
++            assert_eq!(compositor.stats().reused, 2);
++            assert_eq!(compositor.render(&scenes[0]).unwrap(), first);
++            assert_eq!(compositor.stats().rasterized, 3);
++        }
++    }
++
+     #[test]
+     fn typed_tree_renders_through_scene_compositor() {
+         let mut engine =
+diff --git a/docs/v02/compositor.md b/docs/v02/compositor.md
+index e6a0f06e..3d4f3012 100644
+--- a/docs/v02/compositor.md
++++ b/docs/v02/compositor.md
+@@ -5,9 +5,14 @@ owns a generation-numbered Skia picture, retained fragment tree, viewport, and
+ damage list. It contains no application callback, signal, DOM borrow, or other
+ mutable UI-thread state.
+ 
+-`SoftwareCompositor` caches the completed RGBA frame for its last scene
+-generation. Submitting the same generation returns that immutable result
+-without replaying paint commands. `SceneMailbox` is a synchronized one-slot
++`SoftwareCompositor` and the explicitly selected `GaneshGlCompositor` cache the
++completed RGBA frame together with its immutable recording. Reusing that same
++recording and generation returns the frame without replaying paint commands.
++Scene generations belong to individual documents: equal generation numbers
++from different documents do not identify the same frame. The cache retains
++the recording until replacement, PNG rendering, or compositor destruction;
++Ganesh releases its retained recording before its graphics context.
++`SceneMailbox` is a synchronized one-slot
+ queue: a producer replaces any unconsumed scene, and a consumer receives only
+ the newest complete snapshot. The mailbox exposes deterministic submission and
+ coalescing counters for tests and diagnostics.

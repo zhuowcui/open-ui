@@ -1,0 +1,14 @@
+diff --git a/bindings/rust/openui-paint/src/painter.rs b/bindings/rust/openui-paint/src/painter.rs
+index 417d63b8..b433f093 100644
+--- a/bindings/rust/openui-paint/src/painter.rs
++++ b/bindings/rust/openui-paint/src/painter.rs
+@@ -9635,8 +9635,7 @@ fn paint_with_overflow_clip(
+         canvas.save();
+     }
+     let mut fragmented_top_left_tangent = None;
+-    let composited_scroll_layer = has_composited_scroll_contents(fragment, style)
+-        || needs_fractional_cpu_scroll_backing(fragment, style, clip_rect);
++    let composited_scroll_layer = has_composited_scroll_contents(fragment, style);
+     let overflow = fragment.scrollable_overflow();
+     let has_scroll_range = overflow.x() < LayoutUnit::zero()
+         || overflow.right() > fragment.size.width

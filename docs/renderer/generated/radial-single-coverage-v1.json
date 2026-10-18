@@ -1,0 +1,114 @@
+{
+  "baseline_clean_commit": "d70c4696e38edeee08dab189ba05cf8d2aa4c76a",
+  "baseline_report_sha256": "8dea896d72705dece16e1b7bca4127c4c50ec044c8148c05a4bd51b5c7fc0d47",
+  "changes": [
+    {
+      "chromium_oracle_rgba_sha256": "b02f486b5c8360d77bb07b3a30a8dab2cb90439cdcf3d6c8565125b3b7a0637a",
+      "new_channel_deltas": {
+        "alpha": {
+          "changed_pixels": 0,
+          "maximum_absolute_delta": 0,
+          "maximum_signed_delta": 0,
+          "minimum_signed_delta": 0,
+          "signed_delta_sum": 0
+        },
+        "blue": {
+          "changed_pixels": 0,
+          "maximum_absolute_delta": 0,
+          "maximum_signed_delta": 0,
+          "minimum_signed_delta": 0,
+          "signed_delta_sum": 0
+        },
+        "green": {
+          "changed_pixels": 1,
+          "maximum_absolute_delta": 1,
+          "maximum_signed_delta": 1,
+          "minimum_signed_delta": 0,
+          "signed_delta_sum": 1
+        },
+        "red": {
+          "changed_pixels": 0,
+          "maximum_absolute_delta": 0,
+          "maximum_signed_delta": 0,
+          "minimum_signed_delta": 0,
+          "signed_delta_sum": 0
+        }
+      },
+      "new_mismatch_bounds": {
+        "height": 1,
+        "width": 1,
+        "x": 186,
+        "y": 216
+      },
+      "new_mismatched_pixels": 1,
+      "new_openui_rgba_sha256": "db232baa324bca3b2987cbe8a9dceed185ac5b3c158756d467b1452bad22c6ee",
+      "old_mismatched_pixels": 626,
+      "old_openui_rgba_sha256": "cbb20ceabe0de42801d43aa31dc647859fb3e5742afbcd16753951c4c034ce54",
+      "profile": "desktop-1280x720@1.25",
+      "test_id": "wpt/css_backgrounds/background-image-centered"
+    },
+    {
+      "chromium_oracle_rgba_sha256": "b02f486b5c8360d77bb07b3a30a8dab2cb90439cdcf3d6c8565125b3b7a0637a",
+      "new_channel_deltas": {
+        "alpha": {
+          "changed_pixels": 0,
+          "maximum_absolute_delta": 0,
+          "maximum_signed_delta": 0,
+          "minimum_signed_delta": 0,
+          "signed_delta_sum": 0
+        },
+        "blue": {
+          "changed_pixels": 0,
+          "maximum_absolute_delta": 0,
+          "maximum_signed_delta": 0,
+          "minimum_signed_delta": 0,
+          "signed_delta_sum": 0
+        },
+        "green": {
+          "changed_pixels": 1,
+          "maximum_absolute_delta": 1,
+          "maximum_signed_delta": 1,
+          "minimum_signed_delta": 0,
+          "signed_delta_sum": 1
+        },
+        "red": {
+          "changed_pixels": 0,
+          "maximum_absolute_delta": 0,
+          "maximum_signed_delta": 0,
+          "minimum_signed_delta": 0,
+          "signed_delta_sum": 0
+        }
+      },
+      "new_mismatch_bounds": {
+        "height": 1,
+        "width": 1,
+        "x": 186,
+        "y": 216
+      },
+      "new_mismatched_pixels": 1,
+      "new_openui_rgba_sha256": "db232baa324bca3b2987cbe8a9dceed185ac5b3c158756d467b1452bad22c6ee",
+      "old_mismatched_pixels": 626,
+      "old_openui_rgba_sha256": "cbb20ceabe0de42801d43aa31dc647859fb3e5742afbcd16753951c4c034ce54",
+      "profile": "desktop-1280x720@1.25",
+      "test_id": "wpt/css_backgrounds/background-image-centered-ref"
+    }
+  ],
+  "chromium_oracle_identity_changes": 0,
+  "chromium_oracle_rgba_changes": 0,
+  "clean_guard_report_sha256": "4816761982c7adf65f83a2d13e4cea95632b3ffd7fe0627365d48477ad79c8b9",
+  "clean_source_commit": "d0860d3f453dfc0550e2fc43aae65a6a0a3d21c0",
+  "comparisons": {
+    "different": 17,
+    "errors": 0,
+    "exact": 19,
+    "profile_result_sha256": "ce36fb8aa57cbf3d18918dd6691e7c2c572d3520b968c4cbd27bc8b90c3efcd4",
+    "total": 36
+  },
+  "contract_sha256": "b51624ccb5b994601e3b96bca0be7442c926b5abdbc325f233524dcfe5a14e0e",
+  "exact_regressions": 0,
+  "openui_rgba_changes": 2,
+  "qualification": false,
+  "schema_version": 1,
+  "scope": "nine radial and neighboring original cases at four required profiles",
+  "status_changes": 0
+}

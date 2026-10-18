@@ -1,0 +1,58 @@
+{
+  "compilation_run": false,
+  "finding": "Authored and embedded LCD phase fields have no production reader. The native phase reaches blob construction, but its biased origin is subtracted again before painting at the original origin; outside rounding and the existing special phase correction, the added phase cancels. General pixel behavior remains unverified.",
+  "further_findings": [
+    "Custom Fontations outline construction hard-codes hinting, edging and subpixel choices by TextRasterPolicy. Public custom text settings need complete semantic review.",
+    "The current source contains special 10px phase and y-origin corrections. Their general shared causes require proof before release qualification."
+  ],
+  "owner": "openui-paint and openui-text raster policy flow",
+  "pixel_comparison_run": false,
+  "release_qualification": false,
+  "required_followup": [
+    "Implement and verify every public raster field through real native apps.",
+    "Reduce phase differences using matching physical glyph origins and repeated pinned Chromium captures.",
+    "Qualify default native rendering, including C and C++.",
+    "Do not promote transport ownership tests as proof of complete rendering semantics."
+  ],
+  "schema_version": 1,
+  "source_commit": "3395cefad116fa93a2db8f839ff707fb84230a3a",
+  "source_review_only": true,
+  "sources": [
+    {
+      "excerpt": "#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]\npub enum RasterPixelGeometry {\n    Unknown,\n    RgbHorizontal,\n    BgrHorizontal,\n    RgbVertical,\n    BgrVertical,\n}\n\n#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]\npub struct TextRasterConfiguration {\n    pub edging: TextEdging,\n    pub hinting: TextHinting,\n    pub subpixel_positioning: bool,\n    pub force_autohint: bool,\n    /// Horizontal LCD phase in 1/64 physical pixel units.\n    pub lcd_phase_64ths: i16,\n}\n",
+      "path": "bindings/rust/openui-geometry/src/raster.rs",
+      "sha256": "c800717112389238708d9813fbc6891deaa8a7a8996756d0406a59651faa3dc4",
+      "start_line": 35
+    },
+    {
+      "excerpt": "    raster_policy: TextRasterPolicy,\n) {\n    let text_raster = if style.native_control_text {\n        style.raster_configuration.native_text\n    } else if style.embedded_document_text {\n        style.raster_configuration.embedded_text\n    } else {\n        style.raster_configuration.author_text\n    };\n    let aliased_ahem = text_raster.edging == TextEdging::Alias\n        && !shape_result.runs.is_empty()\n        && shape_result.runs.iter().all(|run| {\n            run.font_data\n                .typeface()\n                .family_name()\n                .eq_ignore_ascii_case(\"Ahem\")\n        });\n    let origin = if text_raster.subpixel_positioning\n        || (style.device_scale_factor - 1.0).abs() <= f64::EPSILON\n        // Chromium retains the LayoutUnit origin while selecting a monochrome\n        // Ahem mask. Snapping the run origin first changes the phase of every\n        // later fractional advance; the glyph rasterizer, not paint, owns\n        // that final device-cell choice.\n        || aliased_ahem\n    {\n        origin\n    } else {\n        let snapping = RasterSnapping::new(style.device_scale_factor);\n        (\n            snapping.logical_coordinate(origin.0, PhysicalSnap::Nearest),\n            snapping.logical_coordinate(origin.1, PhysicalSnap::Nearest),\n        )\n    };\n    // Build a Skia TextBlob from the shaped glyph runs.\n    // Blink: TextPainter::Paint \u2192 DrawBlob \u2192 canvas->drawTextBlob()\n    let lcd_origin = (style.native_control_text\n        || raster_policy == TextRasterPolicy::ChromiumAuthorLcd\n        || text_raster.edging == TextEdging::SubpixelAntiAlias)\n        .then(|| {\n            origin.0\n                + if style.native_control_text {\n                    f32::from(style.raster_configuration.native_text.lcd_phase_64ths)\n                        / 64.0\n                        / style.device_scale_factor as f32\n                } else {\n                    0.0\n                }",
+      "path": "bindings/rust/openui-paint/src/text_painter.rs",
+      "sha256": "61ce393107258314bd848655e91306ee627edc5c066f314e2261662442d465dc",
+      "start_line": 74
+    },
+    {
+      "excerpt": "        paint.set_anti_alias(true);\n        paint.set_style(PaintStyle::Fill);\n\n        // Set the text color from the computed `color` property.\n        // For non-color glyphs, this is used directly. For color glyphs\n        // (COLR/CPAL, CBDT/CBLC, sbix, SVG), Skia overrides this paint\n        // color with the glyph's embedded palette colors automatically.\n        // Blink: TextPainterBase::UpdatePaint sets the fill color.\n        let c = &style.color;\n        paint.set_color4f(Color4f::new(c.r, c.g, c.b, c.a), None::<&ColorSpace>);\n\n        let physical_scale = style.device_scale_factor as f32;\n        if style.raster_configuration.backend.is_chromium_cpu()\n            && (physical_scale - 1.0).abs() > f32::EPSILON\n        {\n            if let Some(physical_blob) = shape_result.to_text_blob_with_raster_policy_at_scale(\n                lcd_origin,\n                raster_policy,\n                physical_scale,\n            ) {\n                canvas.save();\n                canvas.translate(origin);\n                canvas.scale((1.0 / physical_scale, 1.0 / physical_scale));\n                canvas.draw_text_blob(&physical_blob, Point::new(0.0, 0.0), &paint);\n                canvas.restore();\n            }\n        } else {",
+      "path": "bindings/rust/openui-paint/src/text_painter.rs",
+      "sha256": "61ce393107258314bd848655e91306ee627edc5c066f314e2261662442d465dc",
+      "start_line": 143
+    },
+    {
+      "excerpt": "}\n\n/// Match Chromium's retained 10px LCD mask in the one fixed-point phase cell\n/// where direct Skia switches to the following cached mask early. Larger\n/// strikes use Skia's native phase boundary.\nfn chromium_lcd_raster_x(device_x: f32, font_size: f32) -> f32 {\n    let phase = device_x.rem_euclid(1.0);\n    if (font_size - 10.0).abs() < f32::EPSILON && (24.0 / 64.0..25.0 / 64.0).contains(&phase) {\n        device_x - phase + 1.0 / 3.0\n    } else {\n        device_x\n    }\n}\n\nfn chromium_lcd_strike_y_offset(\n    device_scale: f32,\n    edging: Edging,\n    hinting: FontHinting,\n    font_size: f32,\n    family: &str,\n) -> f32 {\n    // Chromium's retained 10px no-hint LCD strike keeps its origin one\n    // logical pixel above Skia's direct scaled replay. Ahem is a synthetic\n    // geometric face and does not use this outline-strike origin.\n    if (device_scale - 1.0).abs() > f32::EPSILON\n        && edging == Edging::SubpixelAntiAlias\n        && hinting == FontHinting::None\n        && (font_size - 10.0).abs() < f32::EPSILON\n        && !family.eq_ignore_ascii_case(\"Ahem\")\n    {\n        1.0\n    } else {\n        0.0\n    }\n}",
+      "path": "bindings/rust/openui-text/src/shaping/shape_result.rs",
+      "sha256": "2ecddb1f93764b0b3ef9f2951cea7d731abc81ec35004063743300e034f2c56c",
+      "start_line": 35
+    },
+    {
+      "excerpt": "    }\n}\n\nfn fontations_compatible_font(\n    source_font: &skia_safe::Font,\n    glyphs: &[u16],\n    raster_policy: TextRasterPolicy,\n) -> Option<skia_safe::Font> {\n    let (font_data, ttc_index) = source_font.typeface().to_font_data()?;\n    let font_ref = FontRef::from_index(&font_data, ttc_index as u32).ok()?;\n    let outlines = font_ref.outline_glyphs();\n    let size = source_font.size();\n    let location = LocationRef::default();\n    let hinting = match raster_policy {\n        TextRasterPolicy::ChromiumNativeControl\n        | TextRasterPolicy::ChromiumAuthorLcd\n        | TextRasterPolicy::ChromiumEmbeddedDocument => {\n            let glyph_styles = GlyphStyles::new(&outlines);\n            HintingInstance::new(\n                &outlines,\n                Size::new(size),\n                location,\n                HintingOptions {\n                    engine: Engine::Auto(Some(glyph_styles)),\n                    target: Target::Smooth {\n                        mode: SmoothMode::Light,\n                        symmetric_rendering: true,\n                        preserve_linear_metrics: false,\n                    },\n                },\n            )\n            .ok()?\n        }\n        TextRasterPolicy::ChromiumAliased => HintingInstance::new(\n            &outlines,\n            Size::new(size),\n            location,\n            skrifa::outline::HintingMode::Strong,\n        )\n        .ok()?,\n        TextRasterPolicy::Skia => return None,\n    };\n\n    let mut builder = CustomTypefaceBuilder::new();\n    builder.set_metrics(&FontMetrics::default(), 1.0);\n    for &glyph_id in glyphs {\n        let glyph = outlines.get(SkrifaGlyphId::new(glyph_id as u32))?;\n        let mut pen = SkiaPathPen::default();\n        glyph\n            .draw(DrawSettings::hinted(&hinting, false), &mut pen)\n            .ok()?;\n        let path = pen.0.detach();\n        builder.set_glyph(glyph_id, 0.0, &path);\n    }\n    let typeface = builder.detach()?;\n    let mut font = source_font.with_size(1.0)?;\n    font.set_typeface(typeface);\n    font.set_hinting(FontHinting::None);\n    let native_control = matches!(\n        raster_policy,\n        TextRasterPolicy::ChromiumNativeControl | TextRasterPolicy::ChromiumAuthorLcd\n    );\n    let embedded_document = raster_policy == TextRasterPolicy::ChromiumEmbeddedDocument;\n    font.set_subpixel(true);\n    font.set_linear_metrics(native_control);\n    font.set_edging(if native_control {\n        Edging::SubpixelAntiAlias\n    } else if embedded_document {\n        Edging::AntiAlias\n    } else {\n        Edging::Alias\n    });\n    Some(font)\n}",
+      "path": "bindings/rust/openui-text/src/shaping/shape_result.rs",
+      "sha256": "2ecddb1f93764b0b3ef9f2951cea7d731abc81ec35004063743300e034f2c56c",
+      "start_line": 98
+    },
+    {
+      "excerpt": "            for i in 0..run.num_glyphs {\n                let local_x = x + run.offsets[i].0;\n                let raster_x = device_origin_x.map_or(local_x, |origin| {\n                    let mut device_x = origin + local_x;\n                    if matches!(\n                        raster_policy,\n                        TextRasterPolicy::ChromiumNativeControl\n                            | TextRasterPolicy::ChromiumAuthorLcd\n                    ) {\n                        // Blink hands native-control glyph origins to Skia in\n                        // LayoutUnit coordinates. Preserve that 1/64-device-\n                        // pixel boundary before Skia selects its LCD phase.\n                        device_x = (device_x * 64.0).round() / 64.0;\n                    }\n                    chromium_lcd_raster_x(device_x, source_font.size()) - origin\n                });\n                positions_out[i] = Point::new(\n                    raster_x * device_scale,\n                    (run.offsets[i].1\n                        - chromium_lcd_strike_y_offset(\n                            device_scale,\n                            source_font.edging(),\n                            source_font.hinting(),\n                            source_font.size(),\n                            &source_font.typeface().family_name(),\n                        ))\n                        * device_scale,\n                );\n                x += run.advances[i];\n            }\n            run_x = x;\n        }\n",
+      "path": "bindings/rust/openui-text/src/shaping/shape_result.rs",
+      "sha256": "2ecddb1f93764b0b3ef9f2951cea7d731abc81ec35004063743300e034f2c56c",
+      "start_line": 533
+    }
+  ]
+}

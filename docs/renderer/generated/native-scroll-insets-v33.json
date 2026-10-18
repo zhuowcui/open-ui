@@ -1,0 +1,327 @@
+{
+  "accepted_renderer": {
+    "admitted_additions": 201,
+    "admitted_additions_quad_exact": 200,
+    "changed_by_this_candidate": false,
+    "expanded_comparisons": 23728,
+    "expanded_exact": 22137,
+    "full_pixel_gate": "FAIL",
+    "original_comparisons": 22924,
+    "original_different": 1590,
+    "original_errors": 0,
+    "original_exact": 21334,
+    "source": "d174ea0b"
+  },
+  "actual_read_only_checks": {
+    "checks": [
+      {
+        "command": [
+          "python3",
+          "tools/qualification/generate_renderer_contract.py",
+          "--check"
+        ],
+        "log_sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691",
+        "name": "renderer",
+        "observed_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/wpt/generate_sp13r_multicol_closure.py",
+          "--check"
+        ],
+        "log_sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222",
+        "name": "multicol",
+        "observed_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/wpt/generate_sp17_closure.py",
+          "--check"
+        ],
+        "log_sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a",
+        "name": "sp17",
+        "observed_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/wpt/generate_sp18_closure.py",
+          "--check"
+        ],
+        "log_sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763",
+        "name": "sp18",
+        "observed_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/wpt/generate_sp20_closure.py",
+          "--check"
+        ],
+        "log_sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d",
+        "name": "sp20",
+        "observed_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/release/generate_v02_contract.py",
+          "--check"
+        ],
+        "log_sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd",
+        "name": "v02",
+        "observed_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/style/generate_properties.py",
+          "--check"
+        ],
+        "log_sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1",
+        "name": "style",
+        "observed_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/ffi/generate_ffi.py",
+          "--check"
+        ],
+        "log_sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821",
+        "name": "ffi",
+        "observed_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/accountability/restore_frozen_openui_archive.py",
+          "--check"
+        ],
+        "log_sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32",
+        "name": "archive",
+        "observed_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/accountability/audit.py",
+          "--repository-only"
+        ],
+        "log_sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1",
+        "name": "accountability",
+        "observed_exit_code": 0
+      }
+    ],
+    "release_qualification": false,
+    "schema_version": 1,
+    "source": {
+      "clean": true,
+      "commit": "bcb7063f5f51fd32160f3095b546c226f8e89ff9",
+      "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+      "source_tree_sha256": "2a40d6ae90d2dddfe05de318cba6a270a030428834f33482d62ac763c9b823ae",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "bcb7063f5f51fd32160f3095b546c226f8e89ff9",
+      "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+      "source_tree_sha256": "2a40d6ae90d2dddfe05de318cba6a270a030428834f33482d62ac763c9b823ae",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "applied_to_umbrella": false,
+  "artifacts": {
+    "docs/renderer/evidence/native-raster-fields-v1/baseline-guards-v1.patch": {
+      "bytes": 6296,
+      "sha256": "7da63e01507d55334beb128d3efa5764fd234bb60ed5b085de1edce4e39853a8"
+    },
+    "docs/renderer/evidence/native-raster-fields-v1/native-raster-fields-v1.patch": {
+      "bytes": 39458,
+      "sha256": "e75df8478ed3ebe0cd8357598fe52ea81a5b323084970410418018db70012a98"
+    },
+    "docs/renderer/evidence/native-raster-fields-v1/native_raster_fields.rs": {
+      "bytes": 6350,
+      "sha256": "ce9e9b82b80e89c73081c9e614c28c6a4627d2c186f5be4583a8d70af01cce95"
+    },
+    "docs/renderer/evidence/native-raster-fields-v1/pipeline-at-observation-v1322.json": {
+      "bytes": 2851,
+      "sha256": "8b1c4e3e3205fbe749c2c4da90f2807db7a740db67e164299991598687cd4baf"
+    },
+    "docs/renderer/evidence/native-raster-fields-v1/probe-application-v1322.py": {
+      "bytes": 9839,
+      "sha256": "0cea16e50c86b3d3c5ebf084e2266fbfac5cac1ee22bf6a3ef15fcdb1b5b92b6"
+    },
+    "docs/renderer/evidence/native-raster-fields-v1/probe-build-v1322.py": {
+      "bytes": 7223,
+      "sha256": "34e40941516ebb7d9a91a01cf923b210a8b28e116b7c33f074ef009b0be2989a"
+    },
+    "docs/renderer/evidence/native-raster-fields-v1/probe-consumer-v1322.py": {
+      "bytes": 14672,
+      "sha256": "b3af62c0abef9fa3786ba253e28ca789f456e6656b5378dd868f87f132590ff6"
+    },
+    "docs/renderer/evidence/native-raster-fields-v1/probe-guards-v1322.py": {
+      "bytes": 5308,
+      "sha256": "cdace1ce6920c7f08454e93d0a220ab1bcd1b250af6543a059d7cc5d3c74d609"
+    },
+    "docs/renderer/evidence/native-raster-fields-v1/probe-matrices-v1322.py": {
+      "bytes": 2049,
+      "sha256": "d39e3301dc93fee81444bd50858ae22cb25ce40dac051aea1abc3a000f04a640"
+    },
+    "docs/renderer/evidence/native-raster-fields-v1/probe-pipeline-v1322.py": {
+      "bytes": 6454,
+      "sha256": "24d49e33b231c632041120ce279ac37e1bec6a875b82cc0ac9c2df162e042da3"
+    },
+    "docs/renderer/evidence/native-raster-fields-v1/probe-read-only-v1323.py": {
+      "bytes": 1437,
+      "sha256": "7eba51dba045f9cdb46744c537e563215827cc8598d19361a49755b549ca949d"
+    },
+    "docs/renderer/evidence/native-raster-fields-v1/probe-sizing-v1322.py": {
+      "bytes": 3800,
+      "sha256": "2b5391bbd2db2760d736aae79cd86e4d6aebc181874e80e3bf4bb2432775e9b2"
+    },
+    "docs/renderer/evidence/native-raster-fields-v1/probe-static-v1322.py": {
+      "bytes": 5912,
+      "sha256": "25eddab661823e1131fd97a7e89945dc5003574adb85b518f8416976306acb57"
+    },
+    "docs/renderer/evidence/native-raster-fields-v1/read-only-before-metadata-v1321.json": {
+      "bytes": 3524,
+      "sha256": "865d58b2f69c36ecbd2870f23ebef056ada03adb4c6814bec4c138862ee41ec9"
+    },
+    "docs/renderer/evidence/native-raster-fields-v1/read-only-v1323.json": {
+      "bytes": 3524,
+      "sha256": "7f46593ea7e2a17c9a4240bd7d19ed61b66ee6ef0bbff7fc1512f0c2af2ecaa7"
+    },
+    "docs/renderer/evidence/native-raster-fields-v1/text_raster_configuration_tests.rs": {
+      "bytes": 3188,
+      "sha256": "32cec1952bae5fe2dc48a1b275b40cd21a635c43f656f0d074254d3cde2049e7"
+    }
+  },
+  "baseline_guard_verified": false,
+  "changes": [
+    "Apply author/native/embedded LCD phase once after layout-origin glyph fitting, in physical pixel units.",
+    "Retain requested Fontations mask, subpixel positioning, linear-metric and autohint flags.",
+    "Select unhinted/light/normal/full/mono fitting from configured font settings, including LCD orientation.",
+    "Retain explicit Fontations backend choice for aliased and grayscale author text.",
+    "Remove private 10px-only horizontal phase and vertical origin corrections.",
+    "Add a consuming public Rust app with immutable configuration, callbacks, owned geometry and teardown checks.",
+    "Regenerate author-style inventory through its generator after using the shared emphasis-settings helper."
+  ],
+  "checkpoint_commits": {
+    "explicit_fontations": "bcb7063f",
+    "shared_raster": "791681d4",
+    "test_only": "ee3d4134"
+  },
+  "compilation_verified": false,
+  "first_read_only_failure": {
+    "check": "renderer",
+    "corrected_by_normal_generator": true,
+    "observed_exit_code": 1,
+    "reason": "author-style inventory consumer drift"
+  },
+  "fixed_guard_verified": false,
+  "javascript_executed_by_openui": false,
+  "native_application_verified": false,
+  "new_release_states_admitted": 0,
+  "old_openui_pixels_are_provenance_only": true,
+  "original_pixel_gate_remains_required": true,
+  "owner": "openui-paint and openui-text raster policy flow",
+  "pipeline_observation": {
+    "all_commands_terminal": false,
+    "consumer_compile_correction_only": false,
+    "immutable_probe_hashes": {
+      "/tmp/openui-native-raster-fields-application-v1322.py": "0cea16e50c86b3d3c5ebf084e2266fbfac5cac1ee22bf6a3ef15fcdb1b5b92b6",
+      "/tmp/openui-native-raster-fields-build-v1322.py": "34e40941516ebb7d9a91a01cf923b210a8b28e116b7c33f074ef009b0be2989a",
+      "/tmp/openui-native-raster-fields-consumer-v1322.py": "b3af62c0abef9fa3786ba253e28ca789f456e6656b5378dd868f87f132590ff6",
+      "/tmp/openui-native-raster-fields-guards-v1322.py": "cdace1ce6920c7f08454e93d0a220ab1bcd1b250af6543a059d7cc5d3c74d609",
+      "/tmp/openui-native-raster-fields-matrices-v1322.py": "d39e3301dc93fee81444bd50858ae22cb25ce40dac051aea1abc3a000f04a640",
+      "/tmp/openui-native-raster-fields-sizing-v1322.py": "2b5391bbd2db2760d736aae79cd86e4d6aebc181874e80e3bf4bb2432775e9b2",
+      "/tmp/openui-native-raster-fields-static-v1322.py": "25eddab661823e1131fd97a7e89945dc5003574adb85b518f8416976306acb57"
+    },
+    "javascript_executed_by_openui": false,
+    "new_release_states_admitted": 0,
+    "old_openui_pixels_are_provenance_only": true,
+    "ordered_build_and_image_stages": true,
+    "original_pixel_gate_remains_required": true,
+    "prior_whole_pipelines": [
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-umbrella-pipeline-v1291/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-retry-pipeline-v1310/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-retry-pipeline-v1311/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-c-raster-retry-pipeline-v1312/receipt.json"
+    ],
+    "probe_sha256": "24d49e33b231c632041120ce279ac37e1bec6a875b82cc0ac9c2df162e042da3",
+    "promotion_allowed": false,
+    "release_qualification": false,
+    "renderer_production_unchanged_from_prior_candidate": false,
+    "schema_version": 1,
+    "selection_hashes": {},
+    "source": {
+      "clean": true,
+      "commit": "bcb7063f5f51fd32160f3095b546c226f8e89ff9",
+      "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+      "source_tree_sha256": "2a40d6ae90d2dddfe05de318cba6a270a030428834f33482d62ac763c9b823ae",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "bcb7063f5f51fd32160f3095b546c226f8e89ff9",
+      "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+      "source_tree_sha256": "2a40d6ae90d2dddfe05de318cba6a270a030428834f33482d62ac763c9b823ae",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "state": "awaiting-entire-clean-cache-fieldset-font-and-c-raster-retry-pipelines",
+    "steps": []
+  },
+  "pixel_improvement_verified": false,
+  "planned_verification": {
+    "chromium_font_cases": 200,
+    "chromium_font_images": 400,
+    "chromium_logical_origin_states": 25600,
+    "clean_build_stages": 16,
+    "expanded_required": 23728,
+    "focused_required": 640,
+    "internal_phase_contract_checks_are_chromium_qualification": false,
+    "named_baseline_failures_required": 2,
+    "named_fixed_guards_required": 3,
+    "native_intrinsic_states": 1000,
+    "original_required": 22924,
+    "primitive_required": 960,
+    "public_app_cases": 840,
+    "stages": 10,
+    "starts_only_after_entire_pipelines": [
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-umbrella-pipeline-v1291/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-retry-pipeline-v1310/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-retry-pipeline-v1311/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-c-raster-retry-pipeline-v1312/receipt.json"
+    ]
+  },
+  "prior_snapshot": {
+    "path": "docs/renderer/generated/native-scroll-insets-v32.json",
+    "sha256": "2d9c049153250a10c07b4caa28030a91720cfb927fc4f3c80bd872640320048b"
+  },
+  "probe_sha256": "824bea6b46d636985e1a95541b0c77a31a1a57dc7015529c777a67330283e607",
+  "promotion_allowed": false,
+  "reference_inputs_changed": false,
+  "release_qualification": false,
+  "required_work_still_open": [
+    "Compile and run baseline/fixed guards, complete workspace and Rust/C/C++ native consumers.",
+    "Verify exact repeated Chromium font captures and original/expanded/focused/primitive matrices.",
+    "Review remaining family/size hinting and FreeType aliased-profile overrides against the requested public settings.",
+    "Qualify default native raster: default Skia still bypasses the explicit CPU physical-strike branch for custom outlines.",
+    "Review synthetic/variable/color-font and transformed/vertical text behavior; this patch does not prove those complete.",
+    "Preserve and reconcile every immutable original Chromium oracle input; no changed cached image is admitted.",
+    "Complete all needed public native APIs, retained compositor/3D and blocked-UI animation work.",
+    "Complete Linux hardware/accessibility/performance/packaging/provenance and approved release gates."
+  ],
+  "rust_format_verified": true,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "bcb7063f5f51fd32160f3095b546c226f8e89ff9",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "2a40d6ae90d2dddfe05de318cba6a270a030428834f33482d62ac763c9b823ae",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

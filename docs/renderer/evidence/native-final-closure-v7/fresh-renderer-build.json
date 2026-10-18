@@ -1,0 +1,39 @@
+{
+  "owner_pid": 3346750,
+  "source": {
+    "commit": "5520ed920523164574fc80187b2702892cb5ac62",
+    "clean": true,
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "source_tree_sha256": "0e2c22d402f809735879222fed8bbaad849d989d3aa7c96ac61595e1d3c77336",
+    "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6"
+  },
+  "complete": true,
+  "renderer_qualified": false,
+  "release_qualified": false,
+  "argv": [
+    "python3",
+    "-B",
+    "/dev/shm/openui-native-renderer-v4517/tools/qualification/build_renderer.py",
+    "--source-root",
+    "/dev/shm/openui-native-renderer-v4517",
+    "--results-dir",
+    "/mnt/d/openui-v02-qualification-d174ea0b/native-fresh-renderer-build-v4525/guarded-build",
+    "--target-dir",
+    "/mnt/e/openui-v02-cargo-c73754e2/target",
+    "--cargo-config",
+    "/dev/shm/openui-native-renderer-v4517/bindings/rust/.cargo/config.chromium.toml",
+    "--offline"
+  ],
+  "child_pid": 3346777,
+  "actual_exit_code": 0,
+  "terminal_reaped": true,
+  "source_after": {
+    "commit": "5520ed920523164574fc80187b2702892cb5ac62",
+    "clean": true,
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "source_tree_sha256": "0e2c22d402f809735879222fed8bbaad849d989d3aa7c96ac61595e1d3c77336",
+    "harness_sha256": "be1bdff1d096a861b76d55c7a56e263ed09af02c7068d053a2b37662fd8e6fe6"
+  },
+  "log_sha256": "786367ba0404703e52a6e2463267e6d5da5a9608a52627e67a7a8dd373c310f6",
+  "source_unchanged": true
+}

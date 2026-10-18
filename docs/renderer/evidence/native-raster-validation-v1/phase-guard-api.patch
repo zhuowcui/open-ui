@@ -1,0 +1,38 @@
+diff --git a/bindings/rust/openui-paint/tests/text_raster_configuration_tests.rs b/bindings/rust/openui-paint/tests/text_raster_configuration_tests.rs
+index 31f6b8ac..77efa041 100644
+--- a/bindings/rust/openui-paint/tests/text_raster_configuration_tests.rs
++++ b/bindings/rust/openui-paint/tests/text_raster_configuration_tests.rs
+@@ -8,19 +8,20 @@ use skia_safe::{surfaces, Color, ImageInfo, PixelGeometry, SurfaceProps, Surface
+ 
+ fn render(role: usize, scale: f64, phase: i16) -> Vec<u8> {
+     let mut style = ComputedStyle::default();
+-    let fields = style.fields_mut();
+-    fields.font_family = FontFamilyList::single("DejaVu Sans");
+-    fields.font_size = 17.0;
+-    fields.device_scale_factor = scale;
+-    fields.native_control_text = role == 1;
+-    fields.embedded_document_text = role == 2;
+-    fields.raster_configuration = RasterConfiguration::chromium_linux_fontations_lcd();
+-    let settings = match role {
+-        0 => &mut fields.raster_configuration.author_text,
+-        1 => &mut fields.raster_configuration.native_text,
+-        _ => &mut fields.raster_configuration.embedded_text,
+-    };
+-    settings.lcd_phase_64ths = phase;
++    style.update_derived(|fields| {
++        fields.font_family = FontFamilyList::single("DejaVu Sans");
++        fields.font_size = 17.0;
++        fields.device_scale_factor = scale;
++        fields.native_control_text = role == 1;
++        fields.embedded_document_text = role == 2;
++        fields.raster_configuration = RasterConfiguration::chromium_linux_fontations_lcd();
++        let settings = match role {
++            0 => &mut fields.raster_configuration.author_text,
++            1 => &mut fields.raster_configuration.native_text,
++            _ => &mut fields.raster_configuration.embedded_text,
++        };
++        settings.lcd_phase_64ths = phase;
++    });
+     let font = Font::new_in_collection(
+         FontDescription::from_computed_style(&style),
+         FontCollection::deterministic_test(),

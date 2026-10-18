@@ -1,0 +1,9 @@
+{
+  "all_commands_terminal": true,
+  "log_sha256": "889f0fb2130d844f9e9b7cd85eff9be7300d05980d55c07bfc91171fc768c901",
+  "observed_exit_code": 0,
+  "owner_receipt_sha256": "8a4885aeff98023bda333073c37030a8b4e4caa17d18ae88291d13ec2fc8bfcc",
+  "probe_sha256": "2672ffb505d2f3130b074c5f930e682d72aeeea26c06e079070f274dec07a24c",
+  "release_qualification": false,
+  "schema_version": 1
+}

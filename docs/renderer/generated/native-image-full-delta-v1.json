@@ -1,0 +1,628 @@
+{
+  "addition_comparison_count": 804,
+  "all_original_rows_identical_in_expanded": true,
+  "build_identity_sha256": "bfefe4228fb3ad9fdadf2147f1a1ae51de833439861c12243fe5533d20c32116",
+  "original_comparison_count": 22924,
+  "policy": "Chromium is the sole pixel target. No JavaScript executes in Open UI. Historical Open UI images are provenance only.",
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "9b158cdaa444a018ca6c8f5a2245477b8c453713",
+    "harness_sha256": "e5d5d749235aeaf5f5d8c11b9af508922e549ec96b7830874289cfe0de608014",
+    "source_tree_sha256": "6d5060761bbbab224a59b1284daf5c8845ad3efeb2987d9f1b4407b5e54ed8e4",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "suites": {
+    "expanded": {
+      "all_oracle_identities_and_rgba_unchanged": true,
+      "baseline_report_sha256": "fbc4df1cbe71634457f39bb3c1bd055e6d8fc99ecee9ab0b3d79aa00d75c04aa",
+      "baseline_results": {
+        "different": 1634,
+        "errors": 0,
+        "exact": 22094,
+        "profile_result_sha256": "0919c64696fb110ba27955904cc4d1afd676855038bb0db8a2d7f16e474eaa11",
+        "total": 23728
+      },
+      "changed_images": 30,
+      "changes": [
+        {
+          "after_pixels": 195,
+          "after_status": "different",
+          "before_pixels": 467,
+          "before_status": "different",
+          "profile": "desktop-1280x720@1.25",
+          "test_id": "wpt/css_backgrounds/border-radius-content-edge-001"
+        },
+        {
+          "after_pixels": 90,
+          "after_status": "different",
+          "before_pixels": 626,
+          "before_status": "different",
+          "profile": "desktop-1280x720@1.25",
+          "test_id": "wpt/css_break/block-max-height-004"
+        },
+        {
+          "after_pixels": 90,
+          "after_status": "different",
+          "before_pixels": 626,
+          "before_status": "different",
+          "profile": "desktop-1280x720@1.25",
+          "test_id": "wpt/css_break/block-max-height-004-ref"
+        },
+        {
+          "after_pixels": 138,
+          "after_status": "different",
+          "before_pixels": 500,
+          "before_status": "different",
+          "profile": "desktop-1280x720@1.25",
+          "test_id": "wpt/css_break/fieldset-004"
+        },
+        {
+          "after_pixels": 0,
+          "after_status": "exact",
+          "before_pixels": 436,
+          "before_status": "different",
+          "profile": "desktop-1280x720@1.25",
+          "test_id": "wpt/css_break/flexbox_image-in-fragmented-flexbox-001-crash"
+        },
+        {
+          "after_pixels": 0,
+          "after_status": "exact",
+          "before_pixels": 1747,
+          "before_status": "different",
+          "profile": "desktop-1280x720@1.25",
+          "test_id": "wpt/css_display/display-none-inline-img-ref"
+        },
+        {
+          "after_pixels": 310,
+          "after_status": "different",
+          "before_pixels": 844,
+          "before_status": "different",
+          "profile": "desktop-1280x720@1.25",
+          "test_id": "wpt/css_flexbox/flex-item-z-ordering-001"
+        },
+        {
+          "after_pixels": 0,
+          "after_status": "exact",
+          "before_pixels": 80,
+          "before_status": "different",
+          "profile": "desktop-1280x720@1.25",
+          "test_id": "wpt/css_multicol/img-alt-as-multicol-crash"
+        },
+        {
+          "after_pixels": 20,
+          "after_status": "different",
+          "before_pixels": 67,
+          "before_status": "different",
+          "profile": "desktop-1280x720@1.25",
+          "test_id": "wpt/css_overflow/overflow-img-scroll-non-replaced"
+        },
+        {
+          "after_pixels": 64,
+          "after_status": "different",
+          "before_pixels": 78,
+          "before_status": "different",
+          "profile": "desktop-1280x720@1.25",
+          "test_id": "wpt/css_overflow/overflow-img-scroll-non-replaced-ref"
+        },
+        {
+          "after_pixels": 0,
+          "after_status": "exact",
+          "before_pixels": 550,
+          "before_status": "different",
+          "profile": "desktop-1280x720@1.25",
+          "test_id": "wpt/css_sizing/aspect-ratio_grid-aspect-ratio-003"
+        },
+        {
+          "after_pixels": 0,
+          "after_status": "exact",
+          "before_pixels": 350,
+          "before_status": "different",
+          "profile": "desktop-1280x720@1.25",
+          "test_id": "wpt/css_sizing/aspect-ratio_grid-aspect-ratio-004"
+        },
+        {
+          "after_pixels": 0,
+          "after_status": "exact",
+          "before_pixels": 550,
+          "before_status": "different",
+          "profile": "desktop-1280x720@1.25",
+          "test_id": "wpt/css_sizing/aspect-ratio_grid-aspect-ratio-005"
+        },
+        {
+          "after_pixels": 0,
+          "after_status": "exact",
+          "before_pixels": 200,
+          "before_status": "different",
+          "profile": "desktop-1280x720@1.25",
+          "test_id": "wpt/css_sizing/aspect-ratio_grid-aspect-ratio-006"
+        },
+        {
+          "after_pixels": 1576,
+          "after_status": "different",
+          "before_pixels": 4724,
+          "before_status": "different",
+          "profile": "desktop-1280x720@1.25",
+          "test_id": "wpt/css_sizing/aspect-ratio_large-aspect-ratio-crash"
+        },
+        {
+          "after_pixels": 0,
+          "after_status": "exact",
+          "before_pixels": 296,
+          "before_status": "different",
+          "profile": "desktop-1280x720@1.25",
+          "test_id": "wpt/css_sizing/aspect-ratio_replaced-element-025"
+        },
+        {
+          "after_pixels": 226,
+          "after_status": "different",
+          "before_pixels": 546,
+          "before_status": "different",
+          "profile": "desktop-1920x1080@1.5",
+          "test_id": "wpt/css_backgrounds/border-radius-content-edge-001"
+        },
+        {
+          "after_pixels": 0,
+          "after_status": "exact",
+          "before_pixels": 531,
+          "before_status": "different",
+          "profile": "desktop-1920x1080@1.5",
+          "test_id": "wpt/css_break/block-max-height-004"
+        },
+        {
+          "after_pixels": 0,
+          "after_status": "exact",
+          "before_pixels": 531,
+          "before_status": "different",
+          "profile": "desktop-1920x1080@1.5",
+          "test_id": "wpt/css_break/block-max-height-004-ref"
+        },
+        {
+          "after_pixels": 0,
+          "after_status": "exact",
+          "before_pixels": 516,
+          "before_status": "different",
+          "profile": "desktop-1920x1080@1.5",
+          "test_id": "wpt/css_break/flexbox_image-in-fragmented-flexbox-001-crash"
+        },
+        {
+          "after_pixels": 0,
+          "after_status": "exact",
+          "before_pixels": 1638,
+          "before_status": "different",
+          "profile": "desktop-1920x1080@1.5",
+          "test_id": "wpt/css_display/display-none-inline-img-ref"
+        },
+        {
+          "after_pixels": 187,
+          "after_status": "different",
+          "before_pixels": 653,
+          "before_status": "different",
+          "profile": "desktop-1920x1080@1.5",
+          "test_id": "wpt/css_flexbox/flex-item-z-ordering-001"
+        },
+        {
+          "after_pixels": 69,
+          "after_status": "different",
+          "before_pixels": 156,
+          "before_status": "different",
+          "profile": "desktop-1920x1080@1.5",
+          "test_id": "wpt/css_overflow/overflow-img-scroll-non-replaced"
+        },
+        {
+          "after_pixels": 88,
+          "after_status": "different",
+          "before_pixels": 127,
+          "before_status": "different",
+          "profile": "desktop-1920x1080@1.5",
+          "test_id": "wpt/css_overflow/overflow-img-scroll-non-replaced-ref"
+        },
+        {
+          "after_pixels": 0,
+          "after_status": "exact",
+          "before_pixels": 588,
+          "before_status": "different",
+          "profile": "desktop-1920x1080@1.5",
+          "test_id": "wpt/css_sizing/aspect-ratio_grid-aspect-ratio-003"
+        },
+        {
+          "after_pixels": 0,
+          "after_status": "exact",
+          "before_pixels": 348,
+          "before_status": "different",
+          "profile": "desktop-1920x1080@1.5",
+          "test_id": "wpt/css_sizing/aspect-ratio_grid-aspect-ratio-004"
+        },
+        {
+          "after_pixels": 0,
+          "after_status": "exact",
+          "before_pixels": 588,
+          "before_status": "different",
+          "profile": "desktop-1920x1080@1.5",
+          "test_id": "wpt/css_sizing/aspect-ratio_grid-aspect-ratio-005"
+        },
+        {
+          "after_pixels": 0,
+          "after_status": "exact",
+          "before_pixels": 168,
+          "before_status": "different",
+          "profile": "desktop-1920x1080@1.5",
+          "test_id": "wpt/css_sizing/aspect-ratio_grid-aspect-ratio-006"
+        },
+        {
+          "after_pixels": 2855,
+          "after_status": "different",
+          "before_pixels": 5705,
+          "before_status": "different",
+          "profile": "desktop-1920x1080@1.5",
+          "test_id": "wpt/css_sizing/aspect-ratio_large-aspect-ratio-crash"
+        },
+        {
+          "after_pixels": 0,
+          "after_status": "exact",
+          "before_pixels": 348,
+          "before_status": "different",
+          "profile": "desktop-1920x1080@1.5",
+          "test_id": "wpt/css_sizing/aspect-ratio_replaced-element-025"
+        }
+      ],
+      "comparison_count": 23728,
+      "execution": {
+        "log_sha256": "4712692d08e5e4ea711445c7ca8402f3b16642954b8c1934fb2079080cba2fa8",
+        "process_exit_code": null,
+        "reason": "PTY process handles no longer exist; complete final reports and terminal summaries are preserved. No process exit code is inferred.",
+        "terminal_summary_verified": true
+      },
+      "formerly_exact_regressions": 0,
+      "improved_comparisons": 30,
+      "new_exact_comparisons": 17,
+      "report_sha256": "301b7ab0d3920b49d06c24c05fc5b44136ddbbc6e89b644430ca7d1f89a3899e",
+      "results": {
+        "different": 1617,
+        "errors": 0,
+        "exact": 22111,
+        "profile_result_sha256": "dd8910218638c4a1fb35ef1f1617241803fb975f9ee260cedff1e6cbbc375c4d",
+        "total": 23728
+      },
+      "worsened_comparisons": 0
+    },
+    "focused": {
+      "all_oracle_identities_and_rgba_unchanged": true,
+      "baseline_report_sha256": "311bf101e61b9957b1f3f5307d595d9eb9224e492eb316fe55c3236157277dca",
+      "baseline_results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 640,
+        "profile_result_sha256": "7a18c8ea844083f49b65163624651840b050bf0034bb1c966214dbaa1bfe5f0a",
+        "total": 640
+      },
+      "changed_images": 0,
+      "changes": [],
+      "comparison_count": 640,
+      "execution": {
+        "log_sha256": "8ce6f2293b8c9f0505f087d260d62f41cbe9d788eeaf7212482f247997d71879",
+        "process_exit_code": null,
+        "reason": "PTY process handles no longer exist; complete final reports and terminal summaries are preserved. No process exit code is inferred.",
+        "terminal_summary_verified": true
+      },
+      "formerly_exact_regressions": 0,
+      "improved_comparisons": 0,
+      "new_exact_comparisons": 0,
+      "report_sha256": "c6d09c78793c77620780b47f254b80368af35153ec4afe8d41239d6888e60bc0",
+      "results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 640,
+        "profile_result_sha256": "149e65782f57141e59a6d4009366732cfdd3ba2413772038554fac24a48a9dd6",
+        "total": 640
+      },
+      "worsened_comparisons": 0
+    },
+    "original": {
+      "all_oracle_identities_and_rgba_unchanged": true,
+      "baseline_report_sha256": "f4195953dbe3a4ea1c750e4a80ccce3e45f4792637693df9fbb887052e0631f3",
+      "baseline_results": {
+        "different": 1633,
+        "errors": 0,
+        "exact": 21291,
+        "profile_result_sha256": "eebd02fc27e99333038cee1e45fc60a4b2bc7f3a016deb71ad436437a445a86a",
+        "total": 22924
+      },
+      "changed_images": 30,
+      "changes": [
+        {
+          "after_pixels": 195,
+          "after_status": "different",
+          "before_pixels": 467,
+          "before_status": "different",
+          "profile": "desktop-1280x720@1.25",
+          "test_id": "wpt/css_backgrounds/border-radius-content-edge-001"
+        },
+        {
+          "after_pixels": 90,
+          "after_status": "different",
+          "before_pixels": 626,
+          "before_status": "different",
+          "profile": "desktop-1280x720@1.25",
+          "test_id": "wpt/css_break/block-max-height-004"
+        },
+        {
+          "after_pixels": 90,
+          "after_status": "different",
+          "before_pixels": 626,
+          "before_status": "different",
+          "profile": "desktop-1280x720@1.25",
+          "test_id": "wpt/css_break/block-max-height-004-ref"
+        },
+        {
+          "after_pixels": 138,
+          "after_status": "different",
+          "before_pixels": 500,
+          "before_status": "different",
+          "profile": "desktop-1280x720@1.25",
+          "test_id": "wpt/css_break/fieldset-004"
+        },
+        {
+          "after_pixels": 0,
+          "after_status": "exact",
+          "before_pixels": 436,
+          "before_status": "different",
+          "profile": "desktop-1280x720@1.25",
+          "test_id": "wpt/css_break/flexbox_image-in-fragmented-flexbox-001-crash"
+        },
+        {
+          "after_pixels": 0,
+          "after_status": "exact",
+          "before_pixels": 1747,
+          "before_status": "different",
+          "profile": "desktop-1280x720@1.25",
+          "test_id": "wpt/css_display/display-none-inline-img-ref"
+        },
+        {
+          "after_pixels": 310,
+          "after_status": "different",
+          "before_pixels": 844,
+          "before_status": "different",
+          "profile": "desktop-1280x720@1.25",
+          "test_id": "wpt/css_flexbox/flex-item-z-ordering-001"
+        },
+        {
+          "after_pixels": 0,
+          "after_status": "exact",
+          "before_pixels": 80,
+          "before_status": "different",
+          "profile": "desktop-1280x720@1.25",
+          "test_id": "wpt/css_multicol/img-alt-as-multicol-crash"
+        },
+        {
+          "after_pixels": 20,
+          "after_status": "different",
+          "before_pixels": 67,
+          "before_status": "different",
+          "profile": "desktop-1280x720@1.25",
+          "test_id": "wpt/css_overflow/overflow-img-scroll-non-replaced"
+        },
+        {
+          "after_pixels": 64,
+          "after_status": "different",
+          "before_pixels": 78,
+          "before_status": "different",
+          "profile": "desktop-1280x720@1.25",
+          "test_id": "wpt/css_overflow/overflow-img-scroll-non-replaced-ref"
+        },
+        {
+          "after_pixels": 0,
+          "after_status": "exact",
+          "before_pixels": 550,
+          "before_status": "different",
+          "profile": "desktop-1280x720@1.25",
+          "test_id": "wpt/css_sizing/aspect-ratio_grid-aspect-ratio-003"
+        },
+        {
+          "after_pixels": 0,
+          "after_status": "exact",
+          "before_pixels": 350,
+          "before_status": "different",
+          "profile": "desktop-1280x720@1.25",
+          "test_id": "wpt/css_sizing/aspect-ratio_grid-aspect-ratio-004"
+        },
+        {
+          "after_pixels": 0,
+          "after_status": "exact",
+          "before_pixels": 550,
+          "before_status": "different",
+          "profile": "desktop-1280x720@1.25",
+          "test_id": "wpt/css_sizing/aspect-ratio_grid-aspect-ratio-005"
+        },
+        {
+          "after_pixels": 0,
+          "after_status": "exact",
+          "before_pixels": 200,
+          "before_status": "different",
+          "profile": "desktop-1280x720@1.25",
+          "test_id": "wpt/css_sizing/aspect-ratio_grid-aspect-ratio-006"
+        },
+        {
+          "after_pixels": 1576,
+          "after_status": "different",
+          "before_pixels": 4724,
+          "before_status": "different",
+          "profile": "desktop-1280x720@1.25",
+          "test_id": "wpt/css_sizing/aspect-ratio_large-aspect-ratio-crash"
+        },
+        {
+          "after_pixels": 0,
+          "after_status": "exact",
+          "before_pixels": 296,
+          "before_status": "different",
+          "profile": "desktop-1280x720@1.25",
+          "test_id": "wpt/css_sizing/aspect-ratio_replaced-element-025"
+        },
+        {
+          "after_pixels": 226,
+          "after_status": "different",
+          "before_pixels": 546,
+          "before_status": "different",
+          "profile": "desktop-1920x1080@1.5",
+          "test_id": "wpt/css_backgrounds/border-radius-content-edge-001"
+        },
+        {
+          "after_pixels": 0,
+          "after_status": "exact",
+          "before_pixels": 531,
+          "before_status": "different",
+          "profile": "desktop-1920x1080@1.5",
+          "test_id": "wpt/css_break/block-max-height-004"
+        },
+        {
+          "after_pixels": 0,
+          "after_status": "exact",
+          "before_pixels": 531,
+          "before_status": "different",
+          "profile": "desktop-1920x1080@1.5",
+          "test_id": "wpt/css_break/block-max-height-004-ref"
+        },
+        {
+          "after_pixels": 0,
+          "after_status": "exact",
+          "before_pixels": 516,
+          "before_status": "different",
+          "profile": "desktop-1920x1080@1.5",
+          "test_id": "wpt/css_break/flexbox_image-in-fragmented-flexbox-001-crash"
+        },
+        {
+          "after_pixels": 0,
+          "after_status": "exact",
+          "before_pixels": 1638,
+          "before_status": "different",
+          "profile": "desktop-1920x1080@1.5",
+          "test_id": "wpt/css_display/display-none-inline-img-ref"
+        },
+        {
+          "after_pixels": 187,
+          "after_status": "different",
+          "before_pixels": 653,
+          "before_status": "different",
+          "profile": "desktop-1920x1080@1.5",
+          "test_id": "wpt/css_flexbox/flex-item-z-ordering-001"
+        },
+        {
+          "after_pixels": 69,
+          "after_status": "different",
+          "before_pixels": 156,
+          "before_status": "different",
+          "profile": "desktop-1920x1080@1.5",
+          "test_id": "wpt/css_overflow/overflow-img-scroll-non-replaced"
+        },
+        {
+          "after_pixels": 88,
+          "after_status": "different",
+          "before_pixels": 127,
+          "before_status": "different",
+          "profile": "desktop-1920x1080@1.5",
+          "test_id": "wpt/css_overflow/overflow-img-scroll-non-replaced-ref"
+        },
+        {
+          "after_pixels": 0,
+          "after_status": "exact",
+          "before_pixels": 588,
+          "before_status": "different",
+          "profile": "desktop-1920x1080@1.5",
+          "test_id": "wpt/css_sizing/aspect-ratio_grid-aspect-ratio-003"
+        },
+        {
+          "after_pixels": 0,
+          "after_status": "exact",
+          "before_pixels": 348,
+          "before_status": "different",
+          "profile": "desktop-1920x1080@1.5",
+          "test_id": "wpt/css_sizing/aspect-ratio_grid-aspect-ratio-004"
+        },
+        {
+          "after_pixels": 0,
+          "after_status": "exact",
+          "before_pixels": 588,
+          "before_status": "different",
+          "profile": "desktop-1920x1080@1.5",
+          "test_id": "wpt/css_sizing/aspect-ratio_grid-aspect-ratio-005"
+        },
+        {
+          "after_pixels": 0,
+          "after_status": "exact",
+          "before_pixels": 168,
+          "before_status": "different",
+          "profile": "desktop-1920x1080@1.5",
+          "test_id": "wpt/css_sizing/aspect-ratio_grid-aspect-ratio-006"
+        },
+        {
+          "after_pixels": 2855,
+          "after_status": "different",
+          "before_pixels": 5705,
+          "before_status": "different",
+          "profile": "desktop-1920x1080@1.5",
+          "test_id": "wpt/css_sizing/aspect-ratio_large-aspect-ratio-crash"
+        },
+        {
+          "after_pixels": 0,
+          "after_status": "exact",
+          "before_pixels": 348,
+          "before_status": "different",
+          "profile": "desktop-1920x1080@1.5",
+          "test_id": "wpt/css_sizing/aspect-ratio_replaced-element-025"
+        }
+      ],
+      "comparison_count": 22924,
+      "execution": {
+        "log_sha256": "98deb591890288a3984b93178aed13f2baea364fc2c8568c02e993934cfe58aa",
+        "process_exit_code": null,
+        "reason": "PTY process handles no longer exist; complete final reports and terminal summaries are preserved. No process exit code is inferred.",
+        "terminal_summary_verified": true
+      },
+      "formerly_exact_regressions": 0,
+      "improved_comparisons": 30,
+      "new_exact_comparisons": 17,
+      "report_sha256": "d74a544b679a8b46d7d88ffa937113a2aa4937da25e604576503164d3a6f8877",
+      "results": {
+        "different": 1616,
+        "errors": 0,
+        "exact": 21308,
+        "profile_result_sha256": "ef61568c820b73556802749bc3256b1acc56d60e2b70d78ab9ecaa0ae1da6d74",
+        "total": 22924
+      },
+      "worsened_comparisons": 0
+    },
+    "primitive": {
+      "all_oracle_identities_and_rgba_unchanged": true,
+      "baseline_report_sha256": "d17fb0e8726b1e6e69afbc064e0c06e1a807cc9cbe488e76b12bb9d3c5b63cd5",
+      "baseline_results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 960,
+        "profile_result_sha256": "17c97824b601fbacb0827fc61a23ed600ad3fbb1e14a28cd74a62edf1fa1abd0",
+        "total": 960
+      },
+      "changed_images": 0,
+      "changes": [],
+      "comparison_count": 960,
+      "execution": {
+        "log_sha256": "fe3d2611990ae97d730446f45970fa8d265e668498512d8ad5b3de56da2742a6",
+        "process_exit_code": null,
+        "reason": "PTY process handles no longer exist; complete final reports and terminal summaries are preserved. No process exit code is inferred.",
+        "terminal_summary_verified": true
+      },
+      "formerly_exact_regressions": 0,
+      "improved_comparisons": 0,
+      "new_exact_comparisons": 0,
+      "report_sha256": "e8b68b1620756643797ee5d2f96bbaeb85c96b96ceaca9b1acc583e69b2186d0",
+      "results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 960,
+        "profile_result_sha256": "c43c47b5fe5e1e37e4ae2d259961221757ccb92b53edf2b6e67cfca3dd3c1355",
+        "total": 960
+      },
+      "worsened_comparisons": 0
+    }
+  }
+}

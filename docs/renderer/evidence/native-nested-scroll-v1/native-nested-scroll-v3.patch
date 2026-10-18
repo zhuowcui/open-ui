@@ -1,0 +1,1735 @@
+diff --git a/bindings/rust/openui-engine/src/animation.rs b/bindings/rust/openui-engine/src/animation.rs
+index 5806b393..b4f0de62 100644
+--- a/bindings/rust/openui-engine/src/animation.rs
++++ b/bindings/rust/openui-engine/src/animation.rs
+@@ -694,7 +694,7 @@ mod tests {
+     use super::*;
+     use crate::ViewportMetrics;
+     use openui_dom::ElementTag;
+-    use openui_style::{FillMode, Keyframe};
++    use openui_style::{Display, FillMode, Keyframe, Overflow};
+ 
+     fn opacity_frames() -> PropertyKeyframes {
+         PropertyKeyframes::typed(
+@@ -820,6 +820,23 @@ mod tests {
+             Engine::new(ViewportMetrics::from_logical_size(100.0, 100.0, 1.0).unwrap()).unwrap();
+         let node = engine.create_element(ElementTag::Div).unwrap();
+         engine.append_child(engine.root(), node).unwrap();
++        let content = engine.create_element(ElementTag::Div).unwrap();
++        engine.append_child(node, content).unwrap();
++        for (target, property, value) in [
++            (node, StyleProperty::Display, Display::Block.into()),
++            (node, StyleProperty::Width, LengthValue::px(100.0).into()),
++            (node, StyleProperty::Height, LengthValue::px(80.0).into()),
++            (node, StyleProperty::Overflow, Overflow::Hidden.into()),
++            (content, StyleProperty::Display, Display::Block.into()),
++            (content, StyleProperty::Width, LengthValue::px(300.0).into()),
++            (
++                content,
++                StyleProperty::Height,
++                LengthValue::px(240.0).into(),
++            ),
++        ] {
++            engine.set_property(target, property, value).unwrap();
++        }
+         engine
+             .smooth_scroll_to(node, 100.0, 40.0, 100.0, openui_style::Easing::Linear)
+             .unwrap();
+diff --git a/bindings/rust/openui-engine/src/lib.rs b/bindings/rust/openui-engine/src/lib.rs
+index 887fa2f6..d3b62a56 100644
+--- a/bindings/rust/openui-engine/src/lib.rs
++++ b/bindings/rust/openui-engine/src/lib.rs
+@@ -696,6 +696,59 @@ impl Engine {
+         Ok(handle)
+     }
+ 
++    /// Create an application element with the native kind's display default.
++    /// Rust and C application bindings use this same constructor. The raw
++    /// `create_element` entry point retains its initial-style behavior for
++    /// Engine callers that supply a complete resolved style.
++    pub fn create_native_element(&mut self, tag: ElementTag) -> Result<NodeHandle, EngineError> {
++        let display = match tag {
++            ElementTag::Div
++            | ElementTag::Fieldset
++            | ElementTag::Legend
++            | ElementTag::Details
++            | ElementTag::Summary
++            | ElementTag::Option
++            | ElementTag::OptGroup
++            | ElementTag::Form
++            | ElementTag::Html
++            | ElementTag::Body
++            | ElementTag::Viewport => Display::Block,
++            ElementTag::Table => Display::Table,
++            ElementTag::TableCaption => Display::TableCaption,
++            ElementTag::TableColumnGroup => Display::TableColumnGroup,
++            ElementTag::TableColumn => Display::TableColumn,
++            ElementTag::TableHead => Display::TableHeaderGroup,
++            ElementTag::TableBody => Display::TableRowGroup,
++            ElementTag::TableFoot => Display::TableFooterGroup,
++            ElementTag::TableRow => Display::TableRow,
++            ElementTag::TableCell | ElementTag::TableHeaderCell => Display::TableCell,
++            ElementTag::Image
++            | ElementTag::Canvas
++            | ElementTag::Svg
++            | ElementTag::IFrame
++            | ElementTag::Object
++            | ElementTag::Audio
++            | ElementTag::Video
++            | ElementTag::Input
++            | ElementTag::Button
++            | ElementTag::Meter
++            | ElementTag::Progress
++            | ElementTag::TextArea
++            | ElementTag::Select
++            | ElementTag::Embed => Display::InlineBlock,
++            ElementTag::Span
++            | ElementTag::Text
++            | ElementTag::Break
++            | ElementTag::WordBreak
++            | ElementTag::Ruby
++            | ElementTag::RubyText
++            | ElementTag::Style => Display::Inline,
++        };
++        let handle = self.create_element(tag)?;
++        self.set_property(handle, StyleProperty::Display, display.into())?;
++        Ok(handle)
++    }
++
+     /// Create a native SVG foreignObject viewport for retained UI children.
+     /// Width and height describe the viewport, including the fragment bounds;
+     /// border and padding do not enlarge it. Authored children, style, events,
+@@ -1437,28 +1490,15 @@ impl Engine {
+         handle: NodeHandle,
+     ) -> Result<Option<ScrollMetrics>, EngineError> {
+         let node = self.resolve(handle)?;
+-        self.update()?;
+-        fn find(fragment: &Fragment, node: NodeId) -> Option<&Fragment> {
+-            if fragment.node_id == node {
+-                return Some(fragment);
+-            }
+-            fragment.children.iter().find_map(|child| find(child, node))
++        if !self.node_is_connected(node) {
++            return Ok(None);
+         }
+-        let Some(fragment) = self
+-            .latest_fragment
+-            .as_ref()
+-            .and_then(|root| find(root, node))
+-        else {
++        self.update()?;
++        let Some(area) = self.layout_scroll_area(node) else {
+             return Ok(None);
+         };
+-        let (client, content) = if let Some(scrollport) = fragment.viewport_scrollport {
+-            (scrollport.client_rect.size, scrollport.content_rect.size)
+-        } else {
+-            (
+-                fragment.padding_box_size(),
+-                fragment.scrollable_overflow().size,
+-            )
+-        };
++        let client = area.client_rect.size;
++        let content = area.content_rect.size;
+         Ok(Some(ScrollMetrics {
+             client_width: client.width.to_f64(),
+             client_height: client.height.to_f64(),
+@@ -1507,52 +1547,24 @@ impl Engine {
+         y: f64,
+     ) -> Result<(f32, f32), EngineError> {
+         let node = self.resolve(handle)?;
+-        if node != self.document.root() {
+-            // Nested scroll containers retain their existing path while
+-            // their geometry and writing-direction ranges are qualified.
+-            return Ok((
+-                x.max(0.0).min(f32::MAX as f64) as f32,
+-                y.max(0.0).min(f32::MAX as f64) as f32,
+-            ));
+-        }
+         self.update()?;
+-        let scrollport = self
+-            .latest_fragment
+-            .as_ref()
+-            .and_then(|fragment| fragment.viewport_scrollport)
+-            .expect("viewport layout establishes a scrollport");
+-        let (x_range, y_range) = self.viewport_scroll_limits(scrollport);
+-        Ok((
+-            x.clamp(x_range.0, x_range.1) as f32,
+-            y.clamp(y_range.0, y_range.1) as f32,
+-        ))
++        Ok(self
++            .layout_scroll_area(node)
++            .map_or((0.0, 0.0), |area| area.clamp_offset(x, y)))
+     }
+ 
+-    fn viewport_scroll_limits(
+-        &self,
+-        scrollport: openui_layout::ViewportScrollport,
+-    ) -> ((f64, f64), (f64, f64)) {
+-        let x_range = if scrollport.negative_x {
+-            (scrollport.content_rect.x().to_f64().min(0.0), 0.0)
+-        } else {
+-            (
+-                0.0,
+-                (scrollport.content_rect.right() - scrollport.client_rect.width())
+-                    .to_f64()
+-                    .max(0.0),
+-            )
+-        };
+-        let y_range = if scrollport.negative_y {
+-            (scrollport.content_rect.y().to_f64().min(0.0), 0.0)
+-        } else {
+-            (
+-                0.0,
+-                (scrollport.content_rect.bottom() - scrollport.client_rect.height())
+-                    .to_f64()
+-                    .max(0.0),
+-            )
+-        };
+-        (x_range, y_range)
++    fn layout_scroll_area(&self, node: NodeId) -> Option<openui_layout::ScrollArea> {
++        fn find(fragment: &Fragment, node: NodeId) -> Option<openui_layout::ScrollArea> {
++            if fragment.node_id == node {
++                if let Some(area) = fragment.scroll_area {
++                    return Some(area);
++                }
++            }
++            fragment.children.iter().find_map(|child| find(child, node))
++        }
++        self.latest_fragment
++            .as_ref()
++            .and_then(|root| find(root, node))
+     }
+ 
+     /// Apply user wheel input through the document-owned viewport geometry.
+@@ -1567,24 +1579,15 @@ impl Engine {
+             return Err(EngineError::InvalidInput("wheel deltas must be finite"));
+         }
+         let node = self.resolve(handle)?;
+-        let (user_x, user_y) = if node == self.document.root() {
+-            self.update()?;
+-            let scrollport = self
+-                .latest_fragment
+-                .as_ref()
+-                .and_then(|fragment| fragment.viewport_scrollport)
+-                .expect("viewport layout establishes a scrollport");
+-            (
+-                scrollport.overflow_x.is_scrollable(),
+-                scrollport.overflow_y.is_scrollable(),
+-            )
+-        } else {
+-            let style = &self.document.node(node).style;
+-            (
+-                style.overflow_x.is_scrollable(),
+-                style.overflow_y.is_scrollable(),
+-            )
+-        };
++        self.update()?;
++        let (user_x, user_y) = self
++            .layout_scroll_area(node)
++            .map_or((false, false), |area| {
++                (
++                    area.overflow_x.is_scrollable(),
++                    area.overflow_y.is_scrollable(),
++                )
++            });
+         let before = self.scroll_offset(handle)?;
+         self.scroll_to(
+             handle,
+@@ -1689,23 +1692,42 @@ impl Engine {
+             );
+             let mut fragment =
+                 openui_layout::block_layout(&self.document, self.document.root(), &space);
+-            if let Some(scrollport) = fragment.viewport_scrollport {
+-                let (x_range, y_range) = self.viewport_scroll_limits(scrollport);
+-                let root = self.document.root();
+-                let old = (
+-                    self.document.node(root).scroll_left,
+-                    self.document.node(root).scroll_top,
+-                );
+-                let next = (
+-                    (old.0 as f64).clamp(x_range.0, x_range.1) as f32,
+-                    (old.1 as f64).clamp(y_range.0, y_range.1) as f32,
+-                );
+-                if old != next {
+-                    self.document.node_mut(root).scroll_left = next.0;
+-                    self.document.node_mut(root).scroll_top = next.1;
+-                    // Sticky layout consumes the retained offset too.
+-                    fragment = openui_layout::block_layout(&self.document, root, &space);
++            fn collect_clamped_offsets(
++                fragment: &Fragment,
++                document: &NativeDocument,
++                seen: &mut std::collections::HashSet<NodeId>,
++                changes: &mut Vec<(NodeId, f32, f32)>,
++            ) {
++                if let Some(area) = fragment.scroll_area {
++                    if seen.insert(fragment.node_id) {
++                        let node = document.node(fragment.node_id);
++                        let (x, y) =
++                            area.clamp_offset(node.scroll_left as f64, node.scroll_top as f64);
++                        if (node.scroll_left, node.scroll_top) != (x, y) {
++                            changes.push((fragment.node_id, x, y));
++                        }
++                    }
++                }
++                for child in &fragment.children {
++                    collect_clamped_offsets(child, document, seen, changes);
++                }
++            }
++            let mut changes = Vec::new();
++            collect_clamped_offsets(
++                &fragment,
++                &self.document,
++                &mut std::collections::HashSet::new(),
++                &mut changes,
++            );
++            if !changes.is_empty() {
++                for (node, x, y) in changes {
++                    let node = self.document.node_mut(node);
++                    node.scroll_left = x;
++                    node.scroll_top = y;
+                 }
++                // Sticky descendants also consume the retained offsets.
++                fragment =
++                    openui_layout::block_layout(&self.document, self.document.root(), &space);
+             }
+             let fragment = Arc::new(fragment);
+             self.stats.layouts += 1;
+@@ -1765,6 +1787,9 @@ impl Engine {
+     /// visibility, and clipping do not remove layout boxes from this query.
+     pub fn client_rects(&mut self, handle: NodeHandle) -> Result<Vec<SceneRect>, EngineError> {
+         let node = self.resolve(handle)?;
++        if !self.node_is_connected(node) {
++            return Ok(Vec::new());
++        }
+         self.update()?;
+         Ok(self.fragment_rects.get(&node).cloned().unwrap_or_default())
+     }
+@@ -1774,10 +1799,26 @@ impl Engine {
+     /// if there is no layout box, return `None`.
+     pub fn bounds(&mut self, handle: NodeHandle) -> Result<Option<SceneRect>, EngineError> {
+         let node = self.resolve(handle)?;
++        if !self.node_is_connected(node) {
++            return Ok(None);
++        }
+         self.update()?;
+         Ok(self.node_bounds(node))
+     }
+ 
++    fn node_is_connected(&self, mut node: NodeId) -> bool {
++        // Chromium's UpdateStyleAndLayoutForNode skips detached nodes. A
++        // geometry read on a detached subtree must not flush unrelated
++        // attached layout or clamp its pending scroll positions.
++        while !node.is_none() {
++            if node == self.document.root() {
++                return true;
++            }
++            node = self.document.node(node).parent;
++        }
++        false
++    }
++
+     fn node_bounds(&self, node: NodeId) -> Option<SceneRect> {
+         let rects = self.fragment_rects.get(&node)?;
+         let bounds = rects
+diff --git a/bindings/rust/openui-ffi/src/lib.rs b/bindings/rust/openui-ffi/src/lib.rs
+index 76da4e93..d620d24e 100644
+--- a/bindings/rust/openui-ffi/src/lib.rs
++++ b/bindings/rust/openui-ffi/src/lib.rs
+@@ -1222,7 +1222,7 @@ pub extern "C" fn oui_element_create(
+             if tag == 39 {
+                 engine.create_svg_foreign_object()?
+             } else {
+-                engine.create_element(element_tag(tag)?)?
++                engine.create_native_element(element_tag(tag)?)?
+             }
+         };
+         write_element_handle(out_element, &state, node)
+diff --git a/bindings/rust/openui-layout/src/block.rs b/bindings/rust/openui-layout/src/block.rs
+index ac805e58..ceb9275d 100644
+--- a/bindings/rust/openui-layout/src/block.rs
++++ b/bindings/rust/openui-layout/src/block.rs
+@@ -1519,10 +1519,17 @@ fn project_oof_candidate_to_physical(
+ ///
+ /// Returns a `Fragment` with resolved sizes and positioned children.
+ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> Fragment {
+-    if doc.node(node_id).tag == ElementTag::Viewport {
+-        return crate::viewport::layout(doc, node_id, space);
++    let mut fragment = if doc.node(node_id).tag == ElementTag::Viewport {
++        crate::viewport::layout(doc, node_id, space)
++    } else {
++        block_layout_contents(doc, node_id, space)
++    };
++    // Ancestors can resize and project child fragments. Capture scroll
++    // geometry once, after the document's final physical layout is complete.
++    if node_id == doc.root() {
++        crate::scroll_area::populate(doc, &mut fragment);
+     }
+-    block_layout_contents(doc, node_id, space)
++    fragment
+ }
+ 
+ pub(crate) fn block_layout_contents(
+diff --git a/bindings/rust/openui-layout/src/fragment.rs b/bindings/rust/openui-layout/src/fragment.rs
+index e54eadf5..0678d2a9 100644
+--- a/bindings/rust/openui-layout/src/fragment.rs
++++ b/bindings/rust/openui-layout/src/fragment.rs
+@@ -289,6 +289,10 @@ pub struct Fragment {
+     /// separate from authored borders and padding.
+     pub viewport_scrollport: Option<ViewportScrollport>,
+ 
++    /// Layout-owned client, reachable content and scroll directions for the
++    /// principal box. Native queries and input consume this same snapshot.
++    pub scroll_area: Option<crate::ScrollArea>,
++
+     /// Whether this fragment clips overflowing content.
+     ///
+     /// Set to `true` when the element's `overflow-x` or `overflow-y` is not
+@@ -524,6 +528,7 @@ impl Fragment {
+             text_combine: None,
+             overflow_rect: None,
+             viewport_scrollport: None,
++            scroll_area: None,
+             has_overflow_clip: false,
+             block_axis_clip_only: false,
+             inline_axis_clip_only: false,
+@@ -591,6 +596,7 @@ impl Fragment {
+             text_combine: None,
+             overflow_rect: None,
+             viewport_scrollport: None,
++            scroll_area: None,
+             has_overflow_clip: false,
+             block_axis_clip_only: false,
+             inline_axis_clip_only: false,
+diff --git a/bindings/rust/openui-layout/src/lib.rs b/bindings/rust/openui-layout/src/lib.rs
+index 873209ea..0fbfab5b 100644
+--- a/bindings/rust/openui-layout/src/lib.rs
++++ b/bindings/rust/openui-layout/src/lib.rs
+@@ -24,6 +24,7 @@ pub mod new_formatting_context;
+ pub mod out_of_flow;
+ pub mod relative;
+ pub mod ruby;
++mod scroll_area;
+ pub mod size_constraints;
+ pub mod sticky;
+ pub mod table;
+@@ -65,6 +66,7 @@ pub use new_formatting_context::{creates_new_formatting_context, layout_new_form
+ pub use out_of_flow::{layout_out_of_flow_children, OutOfFlowCandidate, StaticPositionEdge};
+ pub use relative::apply_relative_offset;
+ pub use ruby::{clamp_overhang, compute_ruby_layout, max_ruby_overhang, RubyInfo, RubyLayout};
++pub use scroll_area::ScrollArea;
+ pub use size_constraints::{
+     apply_box_sizing_adjustment, constrain_block_size, constrain_inline_size, resolve_block_size,
+     resolve_inline_size, resolve_size_constraints, SizeConstraint,
+diff --git a/bindings/rust/openui-layout/src/scroll_area.rs b/bindings/rust/openui-layout/src/scroll_area.rs
+new file mode 100644
+index 00000000..1a388623
+--- /dev/null
++++ b/bindings/rust/openui-layout/src/scroll_area.rs
+@@ -0,0 +1,304 @@
++//! Scroll geometry in final physical fragment coordinates.
++//!
++//! Chromium's ScrollableOverflowCalculator starts with the padding rectangle,
++//! adds child overflow, then includes padding around in-flow bounds. The
++//! border box used for painting is not the native scroll content size.
++
++use crate::{Fragment, FragmentKind};
++use openui_dom::Document;
++use openui_geometry::{LayoutUnit, PhysicalOffset, PhysicalRect, PhysicalSize};
++use openui_style::{ComputedStyle, Display, FlexDirection, FlexWrap, Overflow, WritingMode};
++
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++pub struct ScrollArea {
++    pub client_rect: PhysicalRect,
++    pub content_rect: PhysicalRect,
++    pub overflow_x: Overflow,
++    pub overflow_y: Overflow,
++    pub negative_x: bool,
++    pub negative_y: bool,
++    /// The pinned Chromium element scrollport rounds logical offsets. The
++    /// root-frame viewport retains precision for its subviewports.
++    pub integer_offsets: bool,
++}
++
++impl ScrollArea {
++    pub fn clamp_offset(self, x: f64, y: f64) -> (f32, f32) {
++        let (x_range, y_range) = self.limits();
++        let x = x.clamp(x_range.0, x_range.1);
++        let y = y.clamp(y_range.0, y_range.1);
++        if self.integer_offsets {
++            (x.round() as f32, y.round() as f32)
++        } else {
++            (x as f32, y as f32)
++        }
++    }
++
++    /// Native scroll offsets are relative to the client origin, including
++    /// negative offsets in reversed physical directions.
++    pub fn limits(self) -> ((f64, f64), (f64, f64)) {
++        let axis = |start: LayoutUnit,
++                    end: LayoutUnit,
++                    client_start: LayoutUnit,
++                    client_end: LayoutUnit,
++                    negative: bool,
++                    overflow: Overflow| {
++            if matches!(overflow, Overflow::Visible | Overflow::Clip) {
++                (0.0, 0.0)
++            } else if negative {
++                ((start - client_start).to_f64().min(0.0), 0.0)
++            } else {
++                (0.0, (end - client_end).to_f64().max(0.0))
++            }
++        };
++        (
++            axis(
++                self.content_rect.x(),
++                self.content_rect.right(),
++                self.client_rect.x(),
++                self.client_rect.right(),
++                self.negative_x,
++                self.overflow_x,
++            ),
++            axis(
++                self.content_rect.y(),
++                self.content_rect.bottom(),
++                self.client_rect.y(),
++                self.client_rect.bottom(),
++                self.negative_y,
++                self.overflow_y,
++            ),
++        )
++    }
++}
++
++fn union(a: PhysicalRect, b: PhysicalRect) -> PhysicalRect {
++    // Empty border boxes still contribute their edge coordinates.
++    let left = a.x().min_of(b.x());
++    let top = a.y().min_of(b.y());
++    let right = a.right().max_of(b.right());
++    let bottom = a.bottom().max_of(b.bottom());
++    PhysicalRect::from_xywh(left, top, right - left, bottom - top)
++}
++
++fn directions(style: &ComputedStyle) -> (bool, bool) {
++    let direction = style.direction.writing_direction(style.writing_mode);
++    let mut x = if direction.is_horizontal() {
++        direction.is_rtl()
++    } else {
++        direction.is_flipped_blocks()
++    };
++    let mut y = !direction.is_horizontal()
++        && (direction.is_rtl() != (style.writing_mode == WritingMode::SidewaysLr));
++    if matches!(style.display, Display::Flex | Display::InlineFlex) {
++        let column = matches!(
++            style.flex_direction,
++            FlexDirection::Column | FlexDirection::ColumnReverse
++        );
++        let reverse = matches!(
++            style.flex_direction,
++            FlexDirection::RowReverse | FlexDirection::ColumnReverse
++        );
++        let inline_reverse = if column {
++            style.flex_wrap == FlexWrap::WrapReverse
++        } else {
++            reverse
++        };
++        let block_reverse = if column {
++            reverse
++        } else {
++            style.flex_wrap == FlexWrap::WrapReverse
++        };
++        if direction.is_horizontal() {
++            x ^= inline_reverse;
++            y ^= block_reverse;
++        } else {
++            x ^= block_reverse;
++            y ^= inline_reverse;
++        }
++    }
++    (x, y)
++}
++
++fn overflow_pair(style: &ComputedStyle) -> (Overflow, Overflow) {
++    let mut x = style.overflow_x;
++    let mut y = style.overflow_y;
++    if !matches!(x, Overflow::Visible | Overflow::Clip)
++        || !matches!(y, Overflow::Visible | Overflow::Clip)
++    {
++        let computed = |value| match value {
++            Overflow::Visible => Overflow::Auto,
++            Overflow::Clip => Overflow::Hidden,
++            other => other,
++        };
++        x = computed(x);
++        y = computed(y);
++    }
++    (x, y)
++}
++
++fn reachable(rect: PhysicalRect, client: PhysicalRect, x: bool, y: bool) -> PhysicalRect {
++    let left = if x {
++        rect.x().min_of(client.right())
++    } else {
++        rect.x().max_of(client.x())
++    };
++    let right = if x {
++        rect.right().min_of(client.right())
++    } else {
++        rect.right().max_of(client.x())
++    };
++    let top = if y {
++        rect.y().min_of(client.bottom())
++    } else {
++        rect.y().max_of(client.y())
++    };
++    let bottom = if y {
++        rect.bottom().min_of(client.bottom())
++    } else {
++        rect.bottom().max_of(client.y())
++    };
++    PhysicalRect::from_xywh(left, top, right - left, bottom - top)
++}
++
++fn propagated(doc: &Document, child: &Fragment) -> PhysicalRect {
++    let border = PhysicalRect::new(PhysicalOffset::zero(), child.size);
++    let Some(area) = child.scroll_area else {
++        return child.scrollable_overflow();
++    };
++    let style = &doc.node(child.node_id).style;
++    let mut rect = border;
++    if !style.has_layout_containment() && style.display != Display::Inline {
++        let mut content = area.content_rect;
++        if area.overflow_x != Overflow::Visible {
++            content.offset.left = LayoutUnit::zero();
++            content.size.width = child.size.width;
++        }
++        if area.overflow_y != Overflow::Visible {
++            content.offset.top = LayoutUnit::zero();
++            content.size.height = child.size.height;
++        }
++        rect = union(rect, content);
++    }
++    let transform = style.transform;
++    if transform != openui_style::Transform2D::IDENTITY {
++        let origin_x = crate::resolve_length(
++            &style.transform_origin.0,
++            child.size.width,
++            child.size.width / 2,
++            child.size.width / 2,
++        )
++        .to_f32();
++        let origin_y = crate::resolve_length(
++            &style.transform_origin.1,
++            child.size.height,
++            child.size.height / 2,
++            child.size.height / 2,
++        )
++        .to_f32();
++        let points = [
++            (rect.x(), rect.y()),
++            (rect.right(), rect.y()),
++            (rect.x(), rect.bottom()),
++            (rect.right(), rect.bottom()),
++        ];
++        let mut bounds = (
++            f32::INFINITY,
++            f32::INFINITY,
++            f32::NEG_INFINITY,
++            f32::NEG_INFINITY,
++        );
++        for (x, y) in points {
++            let x = x.to_f32() - origin_x;
++            let y = y.to_f32() - origin_y;
++            let next_x = transform.a * x + transform.c * y + transform.e + origin_x;
++            let next_y = transform.b * x + transform.d * y + transform.f + origin_y;
++            bounds.0 = bounds.0.min(next_x);
++            bounds.1 = bounds.1.min(next_y);
++            bounds.2 = bounds.2.max(next_x);
++            bounds.3 = bounds.3.max(next_y);
++        }
++        rect = PhysicalRect::from_xywh(
++            LayoutUnit::from_f32(bounds.0),
++            LayoutUnit::from_f32(bounds.1),
++            LayoutUnit::from_f32(bounds.2 - bounds.0),
++            LayoutUnit::from_f32(bounds.3 - bounds.1),
++        );
++    }
++    rect
++}
++
++pub(crate) fn populate(doc: &Document, fragment: &mut Fragment) {
++    for child in &mut fragment.children {
++        populate(doc, child);
++    }
++    if let Some(viewport) = fragment.viewport_scrollport {
++        fragment.scroll_area = Some(ScrollArea {
++            client_rect: viewport.client_rect,
++            content_rect: viewport.content_rect,
++            overflow_x: viewport.overflow_x,
++            overflow_y: viewport.overflow_y,
++            negative_x: viewport.negative_x,
++            negative_y: viewport.negative_y,
++            integer_offsets: false,
++        });
++        return;
++    }
++    if fragment.node_id.is_none()
++        || fragment.kind != FragmentKind::Box
++        || fragment.skip_box_decoration
++    {
++        return;
++    }
++    let style = &doc.node(fragment.node_id).style;
++    let (overflow_x, overflow_y) = overflow_pair(style);
++    let (negative_x, negative_y) = directions(style);
++    let client = PhysicalRect::new(
++        PhysicalOffset::new(fragment.border.left, fragment.border.top),
++        PhysicalSize::new(
++            fragment.padding_box_size().width.clamp_negative_to_zero(),
++            fragment.padding_box_size().height.clamp_negative_to_zero(),
++        ),
++    );
++    let mut content = client;
++    let mut inflow: Option<PhysicalRect> = None;
++    for child in &fragment.children {
++        let mut child_rect = propagated(doc, child);
++        child_rect.offset.left = child_rect.offset.left + child.offset.left;
++        child_rect.offset.top = child_rect.offset.top + child.offset.top;
++        content = union(
++            content,
++            reachable(child_rect, client, negative_x, negative_y),
++        );
++        if child.node_id.is_none()
++            || !doc
++                .node(child.node_id)
++                .style
++                .position
++                .is_absolutely_positioned()
++        {
++            let bounds = PhysicalRect::new(child.offset, child.size);
++            inflow = Some(inflow.map_or(bounds, |current| union(current, bounds)));
++        }
++    }
++    if style.is_scroll_container() {
++        if let Some(inflow) = inflow {
++            let padding = PhysicalRect::from_xywh(
++                inflow.x() - fragment.padding.left,
++                inflow.y() - fragment.padding.top,
++                inflow.width() + fragment.padding.left + fragment.padding.right,
++                inflow.height() + fragment.padding.top + fragment.padding.bottom,
++            );
++            content = union(content, reachable(padding, client, negative_x, negative_y));
++        }
++    }
++    fragment.scroll_area = Some(ScrollArea {
++        client_rect: client,
++        content_rect: content,
++        overflow_x,
++        overflow_y,
++        negative_x,
++        negative_y,
++        integer_offsets: true,
++    });
++}
+diff --git a/bindings/rust/openui-paint/tests/text_paint_tests.rs b/bindings/rust/openui-paint/tests/text_paint_tests.rs
+index b9187252..55582293 100644
+--- a/bindings/rust/openui-paint/tests/text_paint_tests.rs
++++ b/bindings/rust/openui-paint/tests/text_paint_tests.rs
+@@ -1122,6 +1122,7 @@ fn paint_text_fragment_no_shape_result() {
+         text_combine: None,
+         overflow_rect: None,
+         viewport_scrollport: None,
++        scroll_area: None,
+         has_overflow_clip: false,
+         block_axis_clip_only: false,
+         inline_axis_clip_only: false,
+@@ -1514,6 +1515,7 @@ fn paint_ellipsis_hidden_visibility_no_output() {
+         text_combine: None,
+         overflow_rect: None,
+         viewport_scrollport: None,
++        scroll_area: None,
+         has_overflow_clip: false,
+         block_axis_clip_only: false,
+         inline_axis_clip_only: false,
+diff --git a/bindings/rust/openui-style/src/color.rs b/bindings/rust/openui-style/src/color.rs
+index 83bbb0f7..6bf3e682 100644
+--- a/bindings/rust/openui-style/src/color.rs
++++ b/bindings/rust/openui-style/src/color.rs
+@@ -57,6 +57,167 @@ impl Color {
+         a: 1.0,
+     };
+ 
++    /// Resolve a case-insensitive named sRGB color from Chromium's pinned
++    /// color table. Context-dependent colors such as currentcolor are not
++    /// fixed colors and must be represented with StyleColor instead.
++    pub fn from_named(name: &str) -> Option<Self> {
++        let rgba = match name.trim().to_ascii_lowercase().as_str() {
++            "aliceblue" => 0xf0f8ffff,
++            "antiquewhite" => 0xfaebd7ff,
++            "aqua" => 0x00ffffff,
++            "aquamarine" => 0x7fffd4ff,
++            "azure" => 0xf0ffffff,
++            "beige" => 0xf5f5dcff,
++            "bisque" => 0xffe4c4ff,
++            "black" => 0x000000ff,
++            "blanchedalmond" => 0xffebcdff,
++            "blue" => 0x0000ffff,
++            "blueviolet" => 0x8a2be2ff,
++            "brown" => 0xa52a2aff,
++            "burlywood" => 0xdeb887ff,
++            "cadetblue" => 0x5f9ea0ff,
++            "chartreuse" => 0x7fff00ff,
++            "chocolate" => 0xd2691eff,
++            "coral" => 0xff7f50ff,
++            "cornflowerblue" => 0x6495edff,
++            "cornsilk" => 0xfff8dcff,
++            "crimson" => 0xdc143cff,
++            "cyan" => 0x00ffffff,
++            "darkblue" => 0x00008bff,
++            "darkcyan" => 0x008b8bff,
++            "darkgoldenrod" => 0xb8860bff,
++            "darkgray" => 0xa9a9a9ff,
++            "darkgrey" => 0xa9a9a9ff,
++            "darkgreen" => 0x006400ff,
++            "darkkhaki" => 0xbdb76bff,
++            "darkmagenta" => 0x8b008bff,
++            "darkolivegreen" => 0x556b2fff,
++            "darkorange" => 0xff8c00ff,
++            "darkorchid" => 0x9932ccff,
++            "darkred" => 0x8b0000ff,
++            "darksalmon" => 0xe9967aff,
++            "darkseagreen" => 0x8fbc8fff,
++            "darkslateblue" => 0x483d8bff,
++            "darkslategray" => 0x2f4f4fff,
++            "darkslategrey" => 0x2f4f4fff,
++            "darkturquoise" => 0x00ced1ff,
++            "darkviolet" => 0x9400d3ff,
++            "deeppink" => 0xff1493ff,
++            "deepskyblue" => 0x00bfffff,
++            "dimgray" => 0x696969ff,
++            "dimgrey" => 0x696969ff,
++            "dodgerblue" => 0x1e90ffff,
++            "firebrick" => 0xb22222ff,
++            "floralwhite" => 0xfffaf0ff,
++            "forestgreen" => 0x228b22ff,
++            "fuchsia" => 0xff00ffff,
++            "gainsboro" => 0xdcdcdcff,
++            "ghostwhite" => 0xf8f8ffff,
++            "gold" => 0xffd700ff,
++            "goldenrod" => 0xdaa520ff,
++            "gray" => 0x808080ff,
++            "grey" => 0x808080ff,
++            "green" => 0x008000ff,
++            "greenyellow" => 0xadff2fff,
++            "honeydew" => 0xf0fff0ff,
++            "hotpink" => 0xff69b4ff,
++            "indianred" => 0xcd5c5cff,
++            "indigo" => 0x4b0082ff,
++            "ivory" => 0xfffff0ff,
++            "khaki" => 0xf0e68cff,
++            "lavender" => 0xe6e6faff,
++            "lavenderblush" => 0xfff0f5ff,
++            "lawngreen" => 0x7cfc00ff,
++            "lemonchiffon" => 0xfffacdff,
++            "lightblue" => 0xadd8e6ff,
++            "lightcoral" => 0xf08080ff,
++            "lightcyan" => 0xe0ffffff,
++            "lightgoldenrodyellow" => 0xfafad2ff,
++            "lightgray" => 0xd3d3d3ff,
++            "lightgrey" => 0xd3d3d3ff,
++            "lightgreen" => 0x90ee90ff,
++            "lightpink" => 0xffb6c1ff,
++            "lightsalmon" => 0xffa07aff,
++            "lightseagreen" => 0x20b2aaff,
++            "lightskyblue" => 0x87cefaff,
++            "lightslateblue" => 0x8470ffff,
++            "lightslategray" => 0x778899ff,
++            "lightslategrey" => 0x778899ff,
++            "lightsteelblue" => 0xb0c4deff,
++            "lightyellow" => 0xffffe0ff,
++            "lime" => 0x00ff00ff,
++            "limegreen" => 0x32cd32ff,
++            "linen" => 0xfaf0e6ff,
++            "magenta" => 0xff00ffff,
++            "maroon" => 0x800000ff,
++            "mediumaquamarine" => 0x66cdaaff,
++            "mediumblue" => 0x0000cdff,
++            "mediumorchid" => 0xba55d3ff,
++            "mediumpurple" => 0x9370dbff,
++            "mediumseagreen" => 0x3cb371ff,
++            "mediumslateblue" => 0x7b68eeff,
++            "mediumspringgreen" => 0x00fa9aff,
++            "mediumturquoise" => 0x48d1ccff,
++            "mediumvioletred" => 0xc71585ff,
++            "midnightblue" => 0x191970ff,
++            "mintcream" => 0xf5fffaff,
++            "mistyrose" => 0xffe4e1ff,
++            "moccasin" => 0xffe4b5ff,
++            "navajowhite" => 0xffdeadff,
++            "navy" => 0x000080ff,
++            "oldlace" => 0xfdf5e6ff,
++            "olive" => 0x808000ff,
++            "olivedrab" => 0x6b8e23ff,
++            "orange" => 0xffa500ff,
++            "orangered" => 0xff4500ff,
++            "orchid" => 0xda70d6ff,
++            "palegoldenrod" => 0xeee8aaff,
++            "palegreen" => 0x98fb98ff,
++            "paleturquoise" => 0xafeeeeff,
++            "palevioletred" => 0xdb7093ff,
++            "papayawhip" => 0xffefd5ff,
++            "peachpuff" => 0xffdab9ff,
++            "peru" => 0xcd853fff,
++            "pink" => 0xffc0cbff,
++            "plum" => 0xdda0ddff,
++            "powderblue" => 0xb0e0e6ff,
++            "purple" => 0x800080ff,
++            "rebeccapurple" => 0x663399ff,
++            "red" => 0xff0000ff,
++            "rosybrown" => 0xbc8f8fff,
++            "royalblue" => 0x4169e1ff,
++            "saddlebrown" => 0x8b4513ff,
++            "salmon" => 0xfa8072ff,
++            "sandybrown" => 0xf4a460ff,
++            "seagreen" => 0x2e8b57ff,
++            "seashell" => 0xfff5eeff,
++            "sienna" => 0xa0522dff,
++            "silver" => 0xc0c0c0ff,
++            "skyblue" => 0x87ceebff,
++            "slateblue" => 0x6a5acdff,
++            "slategray" => 0x708090ff,
++            "slategrey" => 0x708090ff,
++            "snow" => 0xfffafaff,
++            "springgreen" => 0x00ff7fff,
++            "steelblue" => 0x4682b4ff,
++            "tan" => 0xd2b48cff,
++            "teal" => 0x008080ff,
++            "thistle" => 0xd8bfd8ff,
++            "tomato" => 0xff6347ff,
++            "transparent" => 0x00000000,
++            "turquoise" => 0x40e0d0ff,
++            "violet" => 0xee82eeff,
++            "violetred" => 0xd02090ff,
++            "wheat" => 0xf5deb3ff,
++            "white" => 0xffffffff,
++            "whitesmoke" => 0xf5f5f5ff,
++            "yellow" => 0xffff00ff,
++            "yellowgreen" => 0x9acd32ff,
++            _ => return None,
++        };
++        Some(Self::from_hex(rgba, true))
++    }
++
+     /// Construct from 0–255 integer components.
+     #[inline]
+     pub fn from_rgba8(r: u8, g: u8, b: u8, a: u8) -> Self {
+diff --git a/bindings/rust/openui-style/src/property.rs b/bindings/rust/openui-style/src/property.rs
+index ee101936..b32756bb 100644
+--- a/bindings/rust/openui-style/src/property.rs
++++ b/bindings/rust/openui-style/src/property.rs
+@@ -603,19 +603,25 @@ fn content_alignment_literal(input: &str) -> Option<ContentAlignment> {
+ }
+ 
+ fn color(input: &str) -> Option<Color> {
+-    match input.trim().to_ascii_lowercase().as_str() {
+-        "transparent" => Some(Color::TRANSPARENT),
+-        "black" => Some(Color::BLACK),
+-        "white" => Some(Color::WHITE),
+-        "red" => Some(Color::RED),
+-        "green" => Some(Color::GREEN),
+-        "blue" => Some(Color::BLUE),
+-        value if value.starts_with('#') && (value.len() == 7 || value.len() == 9) => {
+-            u32::from_str_radix(&value[1..], 16)
+-                .ok()
+-                .map(|hex| Color::from_hex(hex, value.len() == 9))
++    let input = input.trim();
++    if let Some(hex) = input.strip_prefix('#') {
++        if !hex.bytes().all(|byte| byte.is_ascii_hexdigit()) {
++            return None;
+         }
+-        _ => None,
++        let (value, alpha) = match hex.len() {
++            3 | 4 => {
++                let value = hex
++                    .chars()
++                    .flat_map(|digit| [digit, digit])
++                    .collect::<String>();
++                (u32::from_str_radix(&value, 16).ok()?, hex.len() == 4)
++            }
++            6 | 8 => (u32::from_str_radix(hex, 16).ok()?, hex.len() == 8),
++            _ => return None,
++        };
++        Some(Color::from_hex(value, alpha))
++    } else {
++        Color::from_named(input)
+     }
+ }
+ 
+@@ -1662,6 +1668,22 @@ pub fn parse_literal(property: StyleProperty, input: &str) -> Result<StyleValue,
+         }
+         .map(StyleValue::Position),
+         P::Overflow => overflow_literal(input).map(StyleValue::Overflow),
++        P::ScrollbarWidth => match input.trim() {
++            "auto" => Some(ScrollbarWidth::Auto),
++            "thin" => Some(ScrollbarWidth::Thin),
++            "none" => Some(ScrollbarWidth::None),
++            _ => None,
++        }
++        .map(|value| StyleValue::Renderer(RendererStyleValue::ScrollbarWidth(value))),
++        P::ScrollbarGutter => match input.split_whitespace().collect::<Vec<_>>().as_slice() {
++            ["auto"] => Some(ScrollbarGutter::Auto),
++            ["stable"] => Some(ScrollbarGutter::Stable),
++            ["stable", "both-edges"] | ["both-edges", "stable"] => {
++                Some(ScrollbarGutter::StableBothEdges)
++            }
++            _ => None,
++        }
++        .map(|value| StyleValue::Renderer(RendererStyleValue::ScrollbarGutter(value))),
+         P::Width
+         | P::Height
+         | P::MinWidth
+diff --git a/bindings/rust/openui/examples/native_nested_scroll.rs b/bindings/rust/openui/examples/native_nested_scroll.rs
+new file mode 100644
+index 00000000..9e00493b
+--- /dev/null
++++ b/bindings/rust/openui/examples/native_nested_scroll.rs
+@@ -0,0 +1,211 @@
++//! A consuming native application for scroll geometry and mutation.
++use openui::prelude::*;
++use std::{cell::Cell, path::Path, rc::Rc};
++
++fn snapshot(
++    document: &Document,
++    viewport: &Element,
++    child: &Element,
++    calls: u32,
++    name: &str,
++    output: &Path,
++) -> Result<String, Box<dyn std::error::Error>> {
++    let metrics = viewport.scroll_metrics()?.ok_or("scroll metrics missing")?;
++    let bounds = viewport.bounding_rect()?.ok_or("viewport bounds missing")?;
++    let child_bounds = child.bounding_rect()?.ok_or("child bounds missing")?;
++    std::fs::write(
++        output.join(format!("{name}.png")),
++        document.render_to_png_buffer()?,
++    )?;
++    Ok(format!("{{\"name\":\"{name}\",\"callback_count\":{calls},\"scroll\":{{\"x\":{},\"y\":{}}},\"client\":{{\"width\":{},\"height\":{}}},\"extent\":{{\"width\":{},\"height\":{}}},\"nodes\":{{\"viewport\":{{\"x\":{},\"y\":{},\"width\":{},\"height\":{}}},\"child\":{{\"x\":{},\"y\":{},\"width\":{},\"height\":{}}}}}}}",
++        viewport.scroll_left()?, viewport.scroll_top()?, metrics.client_width, metrics.client_height,
++        metrics.scroll_width, metrics.scroll_height, bounds.x, bounds.y, bounds.width, bounds.height,
++        child_bounds.x, child_bounds.y, child_bounds.width, child_bounds.height))
++}
++
++fn main() -> Result<(), Box<dyn std::error::Error>> {
++    let mut args = std::env::args().skip(1);
++    let output = std::path::PathBuf::from(args.next().ok_or("output directory required")?);
++    let scale: f64 = args.next().ok_or("scale required")?.parse()?;
++    let writing = match args.next().ok_or("writing mode required")?.as_str() {
++        "horizontal-tb" => WritingMode::HorizontalTb,
++        "vertical-rl" => WritingMode::VerticalRl,
++        "vertical-lr" => WritingMode::VerticalLr,
++        "sideways-rl" => WritingMode::SidewaysRl,
++        "sideways-lr" => WritingMode::SidewaysLr,
++        _ => return Err("unknown writing mode".into()),
++    };
++    let direction = match args.next().ok_or("direction required")?.as_str() {
++        "ltr" => Direction::Ltr,
++        "rtl" => Direction::Rtl,
++        _ => return Err("unknown direction".into()),
++    };
++    let flow = args.next().ok_or("flow required")?;
++    let overflow = match args.next().ok_or("overflow required")?.as_str() {
++        "scroll" => Overflow::Scroll,
++        "auto" => Overflow::Auto,
++        "hidden" => Overflow::Hidden,
++        "visible" => Overflow::Visible,
++        "clip" => Overflow::Clip,
++        _ => return Err("unknown overflow".into()),
++    };
++    let scrollbar = match args.next().ok_or("scrollbar width required")?.as_str() {
++        "none" => ScrollbarWidth::None,
++        "auto" => ScrollbarWidth::Auto,
++        "thin" => ScrollbarWidth::Thin,
++        _ => return Err("unknown scrollbar width".into()),
++    };
++    std::fs::create_dir_all(&output)?;
++    let document =
++        Document::with_viewport_metrics(ViewportMetrics::from_logical_size(320.0, 240.0, scale)?)?;
++    let root = document.body();
++    root.set_background_color(Color::WHITE)?;
++    root.set_scrollbar_width(ScrollbarWidth::None)?;
++    let viewport = Element::create(&document, "div")?;
++    viewport.set_position(Position::Absolute)?;
++    viewport.set_left(Length::px(44.25))?;
++    viewport.set_top(Length::px(44.25))?;
++    viewport.set_width(LengthValue::px(80.0))?;
++    viewport.set_height(LengthValue::px(80.0))?;
++    viewport.set_padding(Edges::all(LengthValue::px(10.0)))?;
++    viewport.set_border(Border {
++        width: 3.0,
++        style: BorderStyle::Solid,
++        color: Color::from_named("OrAnGe").ok_or("named border color missing")?,
++    })?;
++    viewport.set_writing_mode(writing)?;
++    viewport.set_direction(direction)?;
++    viewport.set_overflow(overflow)?;
++    viewport.set_scrollbar_width(scrollbar)?;
++    if flow != "block" {
++        viewport.set_display(Display::Flex)?;
++        viewport.set_flex_direction(match flow.as_str() {
++            "row" => FlexDirection::Row,
++            "row-reverse" => FlexDirection::RowReverse,
++            "column" => FlexDirection::Column,
++            "column-reverse" => FlexDirection::ColumnReverse,
++            _ => return Err("unknown flow".into()),
++        })?;
++    }
++    root.append_child(&viewport)?;
++    let child = Element::create(&document, "div")?;
++    child.set_width(LengthValue::px(130.0))?;
++    child.set_height(LengthValue::px(120.0))?;
++    child.set_flex_shrink(0.0)?;
++    child.set_background_color(Color::from_rgba8(0, 128, 128, 255))?;
++    viewport.append_child(&child)?;
++    let calls = Rc::new(Cell::new(0u32));
++    let stage = Rc::new(Cell::new(0u8));
++    let callback_calls = calls.clone();
++    let callback_stage = stage.clone();
++    let weak_viewport = viewport.downgrade();
++    let weak_child = child.downgrade();
++    child.on("click", move |_| {
++        let viewport = weak_viewport.upgrade().expect("viewport remains attached");
++        match callback_stage.get() {
++            1 => viewport
++                .scroll_to(f64::MAX, f64::MAX)
++                .expect("positive limit"),
++            2 => viewport
++                .scroll_to(-f64::MAX, -f64::MAX)
++                .expect("negative limit"),
++            3 => viewport.scroll_by(7.0, 11.0).expect("relative scroll"),
++            4 => {
++                viewport
++                    .smooth_scroll_to(-1000.0, 1000.0, 100.0, Easing::Linear)
++                    .expect("smooth scroll");
++            }
++            5 => {
++                let child = weak_child.upgrade().expect("child remains attached");
++                child
++                    .set_width(LengthValue::px(30.0))
++                    .expect("shrink width");
++                child
++                    .set_height(LengthValue::px(20.0))
++                    .expect("shrink height");
++            }
++            6 => {
++                viewport
++                    .set_width(LengthValue::px(140.0))
++                    .expect("resize width");
++                viewport
++                    .set_height(LengthValue::px(140.0))
++                    .expect("resize height");
++            }
++            _ => panic!("unknown callback stage"),
++        }
++        callback_calls.set(callback_calls.get() + 1);
++    })?;
++    let owned = viewport
++        .scroll_metrics()?
++        .ok_or("initial metrics missing")?;
++    let mut records = vec![snapshot(
++        &document,
++        &viewport,
++        &child,
++        calls.get(),
++        "initial",
++        &output,
++    )?];
++    for (index, name) in [(1, "positive"), (2, "negative"), (3, "by")] {
++        stage.set(index);
++        child.click()?;
++        records.push(snapshot(
++            &document,
++            &viewport,
++            &child,
++            calls.get(),
++            name,
++            &output,
++        )?);
++    }
++    stage.set(4);
++    child.click()?;
++    document.advance_time(50.0)?;
++    records.push(snapshot(
++        &document,
++        &viewport,
++        &child,
++        calls.get(),
++        "smooth-half",
++        &output,
++    )?);
++    document.advance_time(100.0)?;
++    records.push(snapshot(
++        &document,
++        &viewport,
++        &child,
++        calls.get(),
++        "smooth-end",
++        &output,
++    )?);
++    assert!(!document.is_animating()?);
++    for (index, name) in [(5, "shrink"), (6, "resize")] {
++        stage.set(index);
++        child.click()?;
++        records.push(snapshot(
++            &document,
++            &viewport,
++            &child,
++            calls.get(),
++            name,
++            &output,
++        )?);
++    }
++    assert_eq!(calls.get(), 6);
++    if scrollbar == ScrollbarWidth::None {
++        assert_eq!(owned.client_width, 100.0);
++        assert_eq!(owned.client_height, 100.0);
++    }
++    std::fs::write(
++        output.join("geometry.json"),
++        format!("[{}]\n", records.join(",")),
++    )?;
++    let weak = viewport.downgrade();
++    drop(child);
++    drop(viewport);
++    drop(root);
++    drop(document);
++    assert!(weak.upgrade().is_none(), "callback retained document");
++    Ok(())
++}
+diff --git a/bindings/rust/openui/src/element.rs b/bindings/rust/openui/src/element.rs
+index 407c9ee6..50dac3dc 100644
+--- a/bindings/rust/openui/src/element.rs
++++ b/bindings/rust/openui/src/element.rs
+@@ -57,7 +57,7 @@ impl Element {
+             return Self::create_svg_foreign_object(document);
+         }
+         let (tag_kind, display) = tag_definition(tag)?;
+-        let handle = document.with_engine_mut(|engine| engine.create_element(tag_kind))?;
++        let handle = document.with_engine_mut(|engine| engine.create_native_element(tag_kind))?;
+         if let Some(display) = display {
+             document.with_engine_mut(|engine| {
+                 engine.set_property(handle, StyleProperty::Display, display.into())
+@@ -808,46 +808,44 @@ fn tag_definition(tag: &str) -> Result<(ElementTag, Option<Display>), Error> {
+     let normalized = tag.to_ascii_lowercase();
+     let definition = match normalized.as_str() {
+         "div" | "main" | "nav" | "header" | "footer" | "section" | "article" | "aside" | "p"
+-        | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "ul" | "ol" | "hr" => {
+-            (T::Div, Some(Display::Block))
+-        }
++        | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "ul" | "ol" | "hr" => (T::Div, None),
+         "li" => (T::Div, Some(Display::ListItem)),
+-        "span" | "a" | "label" | "strong" | "em" | "small" => (T::Span, Some(Display::Inline)),
++        "span" | "a" | "label" | "strong" | "em" | "small" => (T::Span, None),
+         "br" => (T::Break, None),
+         "wbr" => (T::WordBreak, None),
+-        "ruby" => (T::Ruby, Some(Display::Inline)),
+-        "rt" => (T::RubyText, Some(Display::Inline)),
+-        "table" => (T::Table, Some(Display::Table)),
+-        "caption" => (T::TableCaption, Some(Display::TableCaption)),
+-        "colgroup" => (T::TableColumnGroup, Some(Display::TableColumnGroup)),
+-        "col" => (T::TableColumn, Some(Display::TableColumn)),
+-        "thead" => (T::TableHead, Some(Display::TableHeaderGroup)),
+-        "tbody" => (T::TableBody, Some(Display::TableRowGroup)),
+-        "tfoot" => (T::TableFoot, Some(Display::TableFooterGroup)),
+-        "tr" => (T::TableRow, Some(Display::TableRow)),
+-        "td" => (T::TableCell, Some(Display::TableCell)),
+-        "th" => (T::TableHeaderCell, Some(Display::TableCell)),
+-        "img" => (T::Image, Some(Display::InlineBlock)),
+-        "canvas" => (T::Canvas, Some(Display::InlineBlock)),
+-        "svg" => (T::Svg, Some(Display::InlineBlock)),
+-        "iframe" => (T::IFrame, Some(Display::InlineBlock)),
+-        "object" => (T::Object, Some(Display::InlineBlock)),
+-        "audio" => (T::Audio, Some(Display::InlineBlock)),
+-        "video" => (T::Video, Some(Display::InlineBlock)),
+-        "input" => (T::Input, Some(Display::InlineBlock)),
+-        "button" => (T::Button, Some(Display::InlineBlock)),
+-        "meter" => (T::Meter, Some(Display::InlineBlock)),
+-        "progress" => (T::Progress, Some(Display::InlineBlock)),
+-        "fieldset" => (T::Fieldset, Some(Display::Block)),
+-        "legend" => (T::Legend, Some(Display::Block)),
+-        "details" => (T::Details, Some(Display::Block)),
+-        "summary" => (T::Summary, Some(Display::Block)),
+-        "textarea" => (T::TextArea, Some(Display::InlineBlock)),
+-        "select" => (T::Select, Some(Display::InlineBlock)),
+-        "option" => (T::Option, Some(Display::Block)),
+-        "optgroup" => (T::OptGroup, Some(Display::Block)),
+-        "form" => (T::Form, Some(Display::Block)),
+-        "embed" => (T::Embed, Some(Display::InlineBlock)),
++        "ruby" => (T::Ruby, None),
++        "rt" => (T::RubyText, None),
++        "table" => (T::Table, None),
++        "caption" => (T::TableCaption, None),
++        "colgroup" => (T::TableColumnGroup, None),
++        "col" => (T::TableColumn, None),
++        "thead" => (T::TableHead, None),
++        "tbody" => (T::TableBody, None),
++        "tfoot" => (T::TableFoot, None),
++        "tr" => (T::TableRow, None),
++        "td" => (T::TableCell, None),
++        "th" => (T::TableHeaderCell, None),
++        "img" => (T::Image, None),
++        "canvas" => (T::Canvas, None),
++        "svg" => (T::Svg, None),
++        "iframe" => (T::IFrame, None),
++        "object" => (T::Object, None),
++        "audio" => (T::Audio, None),
++        "video" => (T::Video, None),
++        "input" => (T::Input, None),
++        "button" => (T::Button, None),
++        "meter" => (T::Meter, None),
++        "progress" => (T::Progress, None),
++        "fieldset" => (T::Fieldset, None),
++        "legend" => (T::Legend, None),
++        "details" => (T::Details, None),
++        "summary" => (T::Summary, None),
++        "textarea" => (T::TextArea, None),
++        "select" => (T::Select, None),
++        "option" => (T::Option, None),
++        "optgroup" => (T::OptGroup, None),
++        "form" => (T::Form, None),
++        "embed" => (T::Embed, None),
+         _ => return Err(Error::UnknownTag(tag.to_owned())),
+     };
+     Ok(definition)
+diff --git a/bindings/rust/openui/tests/v02_conformance.rs b/bindings/rust/openui/tests/v02_conformance.rs
+index 3f91f26c..631f8e80 100644
+--- a/bindings/rust/openui/tests/v02_conformance.rs
++++ b/bindings/rust/openui/tests/v02_conformance.rs
+@@ -19,6 +19,18 @@ fn sized(element: &Element, width: f32, height: f32) {
+     element.set_height(LengthValue::px(height)).unwrap();
+ }
+ 
++// Scroll operations need reachable content; empty boxes have zero range.
++fn nested_scroll_fixture(document: &Document) -> Element {
++    let scroller = child(document, "div");
++    sized(&scroller, 100.0, 80.0);
++    scroller.set_overflow(Overflow::Scroll).unwrap();
++    scroller.set_scrollbar_width(ScrollbarWidth::None).unwrap();
++    let content = Element::create(document, "div").unwrap();
++    sized(&content, 300.0, 240.0);
++    scroller.append_child(&content).unwrap();
++    scroller
++}
++
+ fn animation_options(duration_ms: f64) -> AnimationOptions {
+     AnimationOptions {
+         duration_ms,
+@@ -559,55 +571,88 @@ fn native_geometry_preserves_empty_and_singular_boxes() {
+ 
+ #[test]
+ fn native_geometry_updates_after_scroll_transform_and_detachment() {
+-    let document = document();
+-    let scroller = child(&document, "div");
+-    sized(&scroller, 80.0, 50.0);
+-    scroller.set_overflow(Overflow::Hidden).unwrap();
+-    let target = Element::create(&document, "div").unwrap();
+-    sized(&target, 120.0, 100.0);
+-    scroller.append_child(&target).unwrap();
+-    let original = target.client_rects().unwrap();
+-    assert_eq!(
+-        (
+-            original[0].x,
+-            original[0].y,
+-            original[0].width,
+-            original[0].height
+-        ),
+-        (0.0, 0.0, 120.0, 100.0)
+-    );
+-
+-    scroller.scroll_to(20.0, 30.0).unwrap();
+-    let scrolled = target.bounding_rect().unwrap().unwrap();
+-    assert_eq!(
+-        (scrolled.x, scrolled.y, scrolled.width, scrolled.height),
+-        (-20.0, -30.0, 120.0, 100.0)
+-    );
+-    target
+-        .set_transform(TransformList(vec![TransformOperation::Translate(
+-            LengthValue::px(15.0),
+-            LengthValue::px(7.0),
+-        )]))
++    for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
++        let document = Document::with_viewport_metrics(
++            ViewportMetrics::from_logical_size(320.0, 240.0, scale).unwrap(),
++        )
+         .unwrap();
+-    let transformed = target.bounding_rect().unwrap().unwrap();
+-    assert_eq!(
+-        (
+-            transformed.x,
+-            transformed.y,
+-            transformed.width,
+-            transformed.height
+-        ),
+-        (-5.0, -23.0, 120.0, 100.0)
+-    );
+-    assert_eq!((original[0].x, original[0].y), (0.0, 0.0));
++        let scroller = child(&document, "div");
++        sized(&scroller, 80.0, 50.0);
++        scroller.set_overflow(Overflow::Hidden).unwrap();
++        let target = Element::create(&document, "div").unwrap();
++        sized(&target, 120.0, 100.0);
++        scroller.append_child(&target).unwrap();
++        let original = target.client_rects().unwrap();
++        assert_eq!(
++            (
++                original[0].x,
++                original[0].y,
++                original[0].width,
++                original[0].height
++            ),
++            (0.0, 0.0, 120.0, 100.0)
++        );
+ 
+-    target.detach().unwrap();
+-    assert!(target.client_rects().unwrap().is_empty());
+-    assert!(target.bounding_rect().unwrap().is_none());
+-    scroller.append_child(&target).unwrap();
+-    assert_eq!(target.client_rects().unwrap(), [transformed]);
+-    target.remove().unwrap();
+-    assert!(target.client_rects().is_err());
++        scroller.scroll_to(20.0, 30.0).unwrap();
++        let scrolled = target.bounding_rect().unwrap().unwrap();
++        assert_eq!(
++            (scrolled.x, scrolled.y, scrolled.width, scrolled.height),
++            (-20.0, -30.0, 120.0, 100.0)
++        );
++        target
++            .set_transform(TransformList(vec![TransformOperation::Translate(
++                LengthValue::px(15.0),
++                LengthValue::px(7.0),
++            )]))
++            .unwrap();
++        let transformed = target.bounding_rect().unwrap().unwrap();
++        assert_eq!(
++            (
++                transformed.x,
++                transformed.y,
++                transformed.width,
++                transformed.height
++            ),
++            (-5.0, -23.0, 120.0, 100.0)
++        );
++        assert_eq!((original[0].x, original[0].y), (0.0, 0.0));
++
++        target.detach().unwrap();
++        assert!(target.client_rects().unwrap().is_empty());
++        assert!(target.bounding_rect().unwrap().is_none());
++        scroller.append_child(&target).unwrap();
++        assert_eq!(target.client_rects().unwrap(), [transformed]);
++
++        // A detached query skips unrelated layout; an attached query is a
++        // layout barrier and clamps the parent's now-empty scrolling range.
++        target.detach().unwrap();
++        assert!(target.client_rects().unwrap().is_empty());
++        assert!(target.bounding_rect().unwrap().is_none());
++        assert!(target.scroll_metrics().unwrap().is_none());
++        let empty = scroller.scroll_metrics().unwrap().unwrap();
++        assert_eq!((empty.scroll_width, empty.scroll_height), (80.0, 50.0));
++        assert_eq!(
++            (
++                scroller.scroll_left().unwrap(),
++                scroller.scroll_top().unwrap()
++            ),
++            (0.0, 0.0)
++        );
++        scroller.append_child(&target).unwrap();
++        let after_barrier = target.bounding_rect().unwrap().unwrap();
++        assert_eq!(
++            (
++                after_barrier.x,
++                after_barrier.y,
++                after_barrier.width,
++                after_barrier.height
++            ),
++            (15.0, 7.0, 120.0, 100.0)
++        );
++        assert_eq!((original[0].x, original[0].y), (0.0, 0.0));
++        target.remove().unwrap();
++        assert!(target.client_rects().is_err());
++    }
+ }
+ 
+ #[test]
+@@ -1451,9 +1496,7 @@ fn hover_and_active_state_follow_pointer() {
+ #[test]
+ fn nested_scroll_container_consumes_wheel() {
+     let document = document();
+-    let scroller = child(&document, "div");
+-    sized(&scroller, 100.0, 80.0);
+-    scroller.set_overflow(Overflow::Scroll).unwrap();
++    let scroller = nested_scroll_fixture(&document);
+     document.update_all().unwrap();
+     document
+         .dispatch_wheel_event(10.0, 10.0, 4.0, 12.0, Modifiers::NONE)
+@@ -1585,7 +1628,7 @@ fn viewport_smooth_scroll_clamps_its_target_and_tracks_content_shrink() {
+ #[test]
+ fn smooth_scroll_uses_manual_clock() {
+     let document = document();
+-    let scroller = child(&document, "div");
++    let scroller = nested_scroll_fixture(&document);
+     scroller
+         .smooth_scroll_to(100.0, 50.0, 100.0, Easing::Linear)
+         .unwrap();
+@@ -1602,7 +1645,7 @@ fn smooth_scroll_uses_manual_clock() {
+ #[test]
+ fn scroll_snap_selects_nearest_point() {
+     let document = document();
+-    let scroller = child(&document, "div");
++    let scroller = nested_scroll_fixture(&document);
+     scroller.scroll_to(70.0, 0.0).unwrap();
+     scroller
+         .settle_scroll_snap(&[0.0, 100.0], &[], 100.0, Easing::Linear)
+@@ -1686,7 +1729,7 @@ fn reduced_motion_finishes_animation() {
+ #[test]
+ fn scroll_timeline_samples_from_offset() {
+     let document = document();
+-    let scroller = child(&document, "div");
++    let scroller = nested_scroll_fixture(&document);
+     let target = child(&document, "div");
+     target
+         .animate_on_scroll(
+diff --git a/docs/renderer/generated/author-style-inventory.json b/docs/renderer/generated/author-style-inventory.json
+index e3200411..2063cee0 100644
+--- a/docs/renderer/generated/author-style-inventory.json
++++ b/docs/renderer/generated/author-style-inventory.json
+@@ -482,6 +482,7 @@
+         "bindings/rust/openui-layout/src/margin_collapsing.rs",
+         "bindings/rust/openui-layout/src/out_of_flow.rs",
+         "bindings/rust/openui-layout/src/relative.rs",
++        "bindings/rust/openui-layout/src/scroll_area.rs",
+         "bindings/rust/openui-layout/src/sticky.rs",
+         "bindings/rust/openui-layout/src/table.rs",
+         "bindings/rust/openui-layout/src/viewport.rs",
+@@ -889,6 +890,7 @@
+         "bindings/rust/openui-layout/src/logical_geometry.rs",
+         "bindings/rust/openui-layout/src/out_of_flow.rs",
+         "bindings/rust/openui-layout/src/relative.rs",
++        "bindings/rust/openui-layout/src/scroll_area.rs",
+         "bindings/rust/openui-layout/src/table.rs",
+         "bindings/rust/openui-layout/src/viewport.rs",
+         "bindings/rust/openui-paint/src/painter.rs",
+@@ -915,6 +917,7 @@
+         "bindings/rust/openui-layout/src/new_formatting_context.rs",
+         "bindings/rust/openui-layout/src/out_of_flow.rs",
+         "bindings/rust/openui-layout/src/relative.rs",
++        "bindings/rust/openui-layout/src/scroll_area.rs",
+         "bindings/rust/openui-layout/src/table.rs",
+         "bindings/rust/openui-paint/src/paint_order.rs",
+         "bindings/rust/openui-paint/src/painter.rs",
+@@ -1029,7 +1032,8 @@
+       "consumers": [
+         "bindings/rust/openui-layout/src/block.rs",
+         "bindings/rust/openui-layout/src/flex/algorithm.rs",
+-        "bindings/rust/openui-layout/src/intrinsic_sizing.rs"
++        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
++        "bindings/rust/openui-layout/src/scroll_area.rs"
+       ],
+       "css_name": "flex-direction",
+       "field": "flex_direction",
+@@ -1072,7 +1076,8 @@
+       "consumers": [
+         "bindings/rust/openui-layout/src/block.rs",
+         "bindings/rust/openui-layout/src/flex/algorithm.rs",
+-        "bindings/rust/openui-layout/src/intrinsic_sizing.rs"
++        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
++        "bindings/rust/openui-layout/src/scroll_area.rs"
+       ],
+       "css_name": "flex-wrap",
+       "field": "flex_wrap",
+@@ -1525,6 +1530,7 @@
+         "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+         "bindings/rust/openui-layout/src/logical_geometry.rs",
+         "bindings/rust/openui-layout/src/out_of_flow.rs",
++        "bindings/rust/openui-layout/src/scroll_area.rs",
+         "bindings/rust/openui-layout/src/sticky.rs",
+         "bindings/rust/openui-layout/src/table.rs",
+         "bindings/rust/openui-layout/src/viewport.rs",
+@@ -1647,6 +1653,7 @@
+         "bindings/rust/openui-layout/src/logical_geometry.rs",
+         "bindings/rust/openui-layout/src/out_of_flow.rs",
+         "bindings/rust/openui-layout/src/relative.rs",
++        "bindings/rust/openui-layout/src/scroll_area.rs",
+         "bindings/rust/openui-layout/src/sticky.rs",
+         "bindings/rust/openui-layout/src/table.rs",
+         "bindings/rust/openui-paint/src/content_layer.rs",
+@@ -2178,6 +2185,7 @@
+         "bindings/rust/openui-layout/src/inline/algorithm.rs",
+         "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+         "bindings/rust/openui-layout/src/new_formatting_context.rs",
++        "bindings/rust/openui-layout/src/scroll_area.rs",
+         "bindings/rust/openui-layout/src/table.rs",
+         "bindings/rust/openui-layout/src/viewport.rs",
+         "bindings/rust/openui-paint/src/painter.rs",
+@@ -2198,6 +2206,7 @@
+         "bindings/rust/openui-layout/src/grid.rs",
+         "bindings/rust/openui-layout/src/inline/algorithm.rs",
+         "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
++        "bindings/rust/openui-layout/src/scroll_area.rs",
+         "bindings/rust/openui-layout/src/table.rs",
+         "bindings/rust/openui-layout/src/viewport.rs",
+         "bindings/rust/openui-paint/src/painter.rs",
+@@ -2317,6 +2326,7 @@
+         "bindings/rust/openui-layout/src/out_of_flow.rs",
+         "bindings/rust/openui-layout/src/relative.rs",
+         "bindings/rust/openui-layout/src/ruby/layout.rs",
++        "bindings/rust/openui-layout/src/scroll_area.rs",
+         "bindings/rust/openui-layout/src/sticky.rs",
+         "bindings/rust/openui-layout/src/table.rs",
+         "bindings/rust/openui-paint/src/paint_order.rs",
+@@ -2394,6 +2404,7 @@
+         "bindings/rust/openui-layout/src/logical_geometry.rs",
+         "bindings/rust/openui-layout/src/out_of_flow.rs",
+         "bindings/rust/openui-layout/src/relative.rs",
++        "bindings/rust/openui-layout/src/scroll_area.rs",
+         "bindings/rust/openui-layout/src/sticky.rs",
+         "bindings/rust/openui-layout/src/table.rs",
+         "bindings/rust/openui-layout/src/viewport.rs",
+@@ -2962,6 +2973,7 @@
+         "bindings/rust/openui-layout/src/margin_collapsing.rs",
+         "bindings/rust/openui-layout/src/out_of_flow.rs",
+         "bindings/rust/openui-layout/src/relative.rs",
++        "bindings/rust/openui-layout/src/scroll_area.rs",
+         "bindings/rust/openui-layout/src/sticky.rs",
+         "bindings/rust/openui-layout/src/table.rs",
+         "bindings/rust/openui-paint/src/content_layer.rs",
+@@ -2981,6 +2993,7 @@
+       "classification": "public-typed",
+       "consumers": [
+         "bindings/rust/openui-layout/src/block.rs",
++        "bindings/rust/openui-layout/src/scroll_area.rs",
+         "bindings/rust/openui-paint/src/paint_order.rs",
+         "bindings/rust/openui-paint/src/painter.rs",
+         "bindings/rust/openui-paint/src/render.rs"
+@@ -2995,6 +3008,7 @@
+       "canonical_schema_entry": true,
+       "classification": "public-typed",
+       "consumers": [
++        "bindings/rust/openui-layout/src/scroll_area.rs",
+         "bindings/rust/openui-paint/src/painter.rs"
+       ],
+       "css_name": "transform-origin",
+@@ -3118,6 +3132,7 @@
+         "bindings/rust/openui-layout/src/multicol/mod.rs",
+         "bindings/rust/openui-layout/src/new_formatting_context.rs",
+         "bindings/rust/openui-layout/src/out_of_flow.rs",
++        "bindings/rust/openui-layout/src/scroll_area.rs",
+         "bindings/rust/openui-layout/src/sticky.rs",
+         "bindings/rust/openui-layout/src/table.rs",
+         "bindings/rust/openui-layout/src/viewport.rs",
+@@ -3190,6 +3205,7 @@
+         "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+         "bindings/rust/openui-layout/src/logical_geometry.rs",
+         "bindings/rust/openui-layout/src/out_of_flow.rs",
++        "bindings/rust/openui-layout/src/scroll_area.rs",
+         "bindings/rust/openui-layout/src/table.rs",
+         "bindings/rust/openui-layout/src/viewport.rs",
+         "bindings/rust/openui-paint/src/emphasis_painter.rs",
+diff --git a/examples/c_v02/scroll_metrics.c b/examples/c_v02/scroll_metrics.c
+index 3b9bedcf..28929076 100644
+--- a/examples/c_v02/scroll_metrics.c
++++ b/examples/c_v02/scroll_metrics.c
+@@ -40,6 +40,84 @@ static OuiStyleValue overflow_value(int value) {
+   return result;
+ }
+ 
++typedef struct NestedScrollCallback {
++  OuiElement* viewport;
++  unsigned calls;
++} NestedScrollCallback;
++
++static void nested_clicked(OuiEvent* event, void* data) {
++  NestedScrollCallback* state = (NestedScrollCallback*)data;
++  assert(event->event_type == OUI_EVENT_CLICK);
++  assert(oui_element_scroll_to(state->viewport, 1000.0, 1000.0) == OUI_OK);
++  ++state->calls;
++}
++
++static void nested(double scale) {
++  OuiDocumentConfig config = {sizeof(config),
++                              OUI_ABI_VERSION,
++                              {320.0, 240.0, (uint32_t)(320.0 * scale), (uint32_t)(240.0 * scale),
++                               scale, OUI_VIEWPORT_LOGICAL, 0}};
++  OuiDocument* document = NULL;
++  OuiElement* root = NULL;
++  OuiElement* viewport = NULL;
++  OuiElement* child = NULL;
++  assert(oui_document_create(&config, &document) == OUI_OK);
++  assert(oui_document_root(document, &root) == OUI_OK);
++  assert(oui_element_create(document, OUI_ELEMENT_DIV, &viewport) == OUI_OK);
++  assert(oui_element_create(document, OUI_ELEMENT_DIV, &child) == OUI_OK);
++  assert(oui_element_append_child(root, viewport) == OUI_OK);
++  assert(oui_element_append_child(viewport, child) == OUI_OK);
++  property(viewport, OUI_STYLE_PROPERTY_POSITION, "absolute");
++  property(viewport, OUI_STYLE_PROPERTY_LEFT, "40px");
++  property(viewport, OUI_STYLE_PROPERTY_TOP, "40px");
++  property(viewport, OUI_STYLE_PROPERTY_WIDTH, "80px");
++  property(viewport, OUI_STYLE_PROPERTY_HEIGHT, "80px");
++  property(viewport, OUI_STYLE_PROPERTY_PADDING, "10px");
++  property(viewport, OUI_STYLE_PROPERTY_BORDER, "3px solid orange");
++  property(viewport, OUI_STYLE_PROPERTY_OVERFLOW, "hidden");
++  property(viewport, OUI_STYLE_PROPERTY_SCROLLBAR_WIDTH, "none");
++  property(child, OUI_STYLE_PROPERTY_WIDTH, "130px");
++  property(child, OUI_STYLE_PROPERTY_HEIGHT, "120px");
++  OuiScrollMetricsV1 original = metrics(viewport);
++  assert(original.client_width == 100.0 && original.client_height == 100.0);
++  assert(original.scroll_width == 150.0 && original.scroll_height == 140.0);
++  NestedScrollCallback state = {viewport, 0};
++  OuiListener* listener = NULL;
++  assert(oui_element_add_event_listener(viewport, OUI_EVENT_CLICK, 0, nested_clicked, &state,
++                                        &listener) == OUI_OK);
++  OuiEvent event;
++  memset(&event, 0, sizeof(event));
++  event.struct_size = sizeof(event);
++  event.abi_version = OUI_ABI_VERSION;
++  event.event_type = OUI_EVENT_CLICK;
++  assert(oui_document_dispatch_event(document, viewport, &event) == OUI_OK);
++  assert(state.calls == 1);
++  double x = 0.0, y = 0.0;
++  assert(oui_element_get_scroll_offset(viewport, &x, &y) == OUI_OK && x == 50.0 && y == 40.0);
++  OuiRect bounds;
++  assert(oui_element_get_bounds(child, &bounds) == OUI_OK && bounds.x == 3.0f && bounds.y == 13.0f);
++  property(viewport, OUI_STYLE_PROPERTY_DIRECTION, "rtl");
++  assert(oui_element_scroll_to(viewport, -1000.0, 1000.0) == OUI_OK);
++  assert(oui_element_get_scroll_offset(viewport, &x, &y) == OUI_OK && x == -50.0 && y == 40.0);
++  property(child, OUI_STYLE_PROPERTY_WIDTH, "30px");
++  property(child, OUI_STYLE_PROPERTY_HEIGHT, "20px");
++  assert(oui_element_get_scroll_offset(viewport, &x, &y) == OUI_OK && x == 0.0 && y == 0.0);
++  OuiScrollMetricsV1 small = metrics(viewport);
++  assert(small.scroll_width == 100.0 && small.scroll_height == 100.0);
++  property(viewport, OUI_STYLE_PROPERTY_WIDTH, "140px");
++  property(viewport, OUI_STYLE_PROPERTY_HEIGHT, "140px");
++  OuiScrollMetricsV1 resized = metrics(viewport);
++  assert(resized.client_width == 160.0 && resized.client_height == 160.0);
++  assert(resized.scroll_width == 160.0 && resized.scroll_height == 160.0);
++  assert(original.scroll_width == 150.0 && original.scroll_height == 140.0);
++  assert(oui_listener_destroy(listener) == OUI_OK);
++  assert(oui_element_destroy(child) == OUI_OK);
++  assert(oui_element_destroy(viewport) == OUI_OK);
++  assert(oui_element_destroy(root) == OUI_OK);
++  assert(oui_document_destroy(document) == OUI_OK);
++  printf("native C nested scroll metrics: scale=%g passed\n", scale);
++}
++
+ static void viewport(double scale) {
+   OuiDocumentConfig config = {sizeof(config),
+                               OUI_ABI_VERSION,
+@@ -136,7 +214,9 @@ static void viewport(double scale) {
+ 
+ int main(void) {
+   const double scales[] = {1.0, 1.25, 1.5, 2.0, 3.0};
+-  for (size_t i = 0; i < sizeof(scales) / sizeof(scales[0]); ++i)
++  for (size_t i = 0; i < sizeof(scales) / sizeof(scales[0]); ++i) {
+     viewport(scales[i]);
++    nested(scales[i]);
++  }
+   return 0;
+ }

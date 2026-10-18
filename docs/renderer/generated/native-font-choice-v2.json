@@ -1,0 +1,119 @@
+{
+  "all_400_old_native_images_unchanged": true,
+  "all_commands_terminal": true,
+  "all_reference_images_unchanged": true,
+  "archived_members": 3717,
+  "artifacts": [
+    {
+      "bytes": 10104243,
+      "path": "docs/renderer/evidence/native-font-choice-v2/completed-evidence.tar.gz",
+      "sha256": "05f22699c786819f45869658a9dee64dec5f86799275cb07167bbe810830e65e"
+    },
+    {
+      "bytes": 767030,
+      "path": "docs/renderer/evidence/native-font-choice-v2/archive-members.json",
+      "sha256": "001cc1f6cfd22c0f838b0a4f154e9738e296b14ba9c92aa3c23f53574265a6ec"
+    }
+  ],
+  "build_stages_passed": 8,
+  "chromium_is_only_pixel_target": true,
+  "chromium_metrics_queries": 60,
+  "chromium_metrics_reference_images_rewritten": 0,
+  "configurations": {
+    "chromium-lcd": {
+      "all_200_chromium_pngs_unchanged": true,
+      "all_200_native_pngs_equal_prior_descriptor_trial": true,
+      "exact": 0,
+      "geometry_exact": 11520,
+      "geometry_total": 12800,
+      "images": 200,
+      "mismatched_pixels": 2723524,
+      "phase_exact": 63
+    },
+    "default": {
+      "all_200_chromium_pngs_unchanged": true,
+      "all_200_native_pngs_equal_prior_descriptor_trial": true,
+      "exact": 0,
+      "geometry_exact": 11520,
+      "geometry_total": 12800,
+      "images": 200,
+      "mismatched_pixels": 2941967,
+      "phase_exact": 63
+    },
+    "fontations": {
+      "all_200_chromium_pngs_unchanged": true,
+      "exact": 62,
+      "geometry_exact": 11520,
+      "geometry_total": 12800,
+      "images": 200,
+      "mismatched_pixels": 2169868,
+      "phase_exact": 4080
+    }
+  },
+  "font_matching_shaping_and_metrics_still_use_freetype": true,
+  "fontations_larger_scales_exact": 22,
+  "fontations_larger_scales_total": 160,
+  "fontations_unit_scale_exact": 40,
+  "fontations_unit_scale_total": 40,
+  "hosted_all_six_native_guards_executed_and_passed": true,
+  "hosted_jobs": {
+    "failed": 0,
+    "skipped": 5,
+    "success": 13
+  },
+  "hosted_source": "6974740922acd79ed4c7546704b2f3f892917085",
+  "inherited_full_census_exact_losses": 29,
+  "inherits_rejected_descriptor_change": true,
+  "javascript_executed_by_openui": false,
+  "local_source_review_is_not_a_runtime_typeface_factory_trace": true,
+  "measured_chromium_binary_version": "147.0.7727.50",
+  "native": {
+    "all_native_pairs_deterministic": true,
+    "all_reference_bytes_unchanged": true,
+    "cases": 300,
+    "geometry_exact": 34560,
+    "images": 600,
+    "native_processes": 600,
+    "phase_exact": 4206,
+    "phase_states": 38400,
+    "pixel_exact": 62
+  },
+  "new_release_states_admitted": 0,
+  "new_source_full_original_and_expanded_matrices_not_measured": true,
+  "option_is_private_unintegrated_outline_adapter": true,
+  "pixel_tolerance": 0,
+  "preserver_sha256": "66edcbda68e92dd90639379005a3adb4f922c15c6d876ff9590b8d6c18d79e12",
+  "previous_font_choice_index": {
+    "path": "docs/renderer/generated/native-font-choice-v1.json",
+    "sha256": "079408f3d118945f7b0e9cc33123440628ffefcf9ceae3022f4c53744b885079"
+  },
+  "promotion_allowed": false,
+  "receipts_sha256": {
+    "native-font-choice-build-v1850/build.json": "f6e52bf2a9c7b0009e713b565a9d776b6e1c7be0793737e32daa5498b5815e22",
+    "native-font-choice-consumer-v1850/receipt.json": "59748402f1d3014916ee1162d88a9fe884176892aadbe367027eeeffb9889284",
+    "native-font-choice-pipeline-v1850/receipt.json": "bca7540666e3a1998ae4680e164c86e7facd05b7d6e7768a3833cd9ba3812bf9",
+    "native-font-scale-query-v1861/receipt.json": "d57bd858ba338176058951ec1f677b02826b50edc7b4815230250138cdf8de16",
+    "native-glyph-umbrella-hosted-v1846/receipt.json": "5f55be052bf2bc3cac3167bbdba1130aebade85b58d8e81635146c650037aa2d"
+  },
+  "release_qualification": false,
+  "repeated_chromium_metrics_cases": 30,
+  "reviewed_chromium_source_version": "147.0.7727.24",
+  "schema_version": 1,
+  "skipped_jobs_are_not_release_passes": true,
+  "source": {
+    "clean": true,
+    "commit": "ef8880b083876319df54599416c0fe11c543a26c",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "6cc716662c812617f2d860da1892d58b0b6acb9db14fee53db26d3136b077893",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "ef8880b083876319df54599416c0fe11c543a26c",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "6cc716662c812617f2d860da1892d58b0b6acb9db14fee53db26d3136b077893",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "text_tests_passed": 343,
+  "workspace_tests_passed": 8560
+}

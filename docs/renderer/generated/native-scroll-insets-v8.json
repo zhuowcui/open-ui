@@ -1,0 +1,121 @@
+{
+  "already_scrolled_viewport_check": {
+    "chromium_two_fresh_repeats_identical": true,
+    "failed_states": 10,
+    "failure": "Viewport-fixed target wrongly moves from y180 to y60 in geometry and paint, while root scrollTop remains120. Absolute neighbor is exact.",
+    "follow_up_compiled": false,
+    "follow_up_pixels_verified": false,
+    "full_connected_regions_channel_deltas_and_scale_behavior_recorded": true,
+    "geometry_exact": 10,
+    "owner": "openui-engine and openui-paint",
+    "pixels_exact": 10,
+    "prepared_follow_up": "4dd50621cb4d0332d8dbb2e0a2c1fcb8465fce9b",
+    "root_scroll_top": 120,
+    "source": {
+      "clean": true,
+      "commit": "2cc950e064a4ffa9ddef74a99fa7db7c80e1b511",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "d6fdb1fb0a43f0d2ef97a357308533a45de1aa33554dac1a16988b9c4b2e38a7",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "target_css_top": 180,
+    "total_c_states": 20
+  },
+  "applied_to_umbrella": false,
+  "artifacts": [
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-reveal-root-native-audit-v798.json",
+      "sha256": "d49f3be052a05eb73a68184dfe46cd6596d060751e1981f65cc610d82b2572c8"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-reveal-root-clean-v744/build.json",
+      "sha256": "4ddc0dbdb4f17678e7f262fd412b5e3a3c6c23a5828c6d9ba647db5f53c0e52a"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-reveal-root-c-v750/comparison.json",
+      "sha256": "26a75c527dca778dc891fa6370889cde60177ef8114644dd07df6c78e589b3ee"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-reveal-root-rust-v751/comparison.json",
+      "sha256": "cd198f0558df813c27c551ccd7a8c6308e2b37d4b351f6bf6ca16df122b8b94f"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-reveal-root-insets-v752/comparison.json",
+      "sha256": "09af7f9edf5d600a3edb1855cdf1cfca4afa961b9e43941589ab6f5c77ad5bfc"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-reveal-root-containers-v753/comparison.json",
+      "sha256": "cdf2359b6b2d12f9f82c10e8b098d5c58a1ca46b9ae0608f303d0065b0aa96c6"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-reveal-root-c-containers-v755/comparison.json",
+      "sha256": "1e85246b7f0e6198f5c40af2e6fde7b193245fb21b4fbf94c0bdab795e7c4c0c"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-reveal-root-prescrolled-oracle-v764/oracle.json",
+      "sha256": "f047021bda1ff6d9f80c390186cd7d3389136537bdc2612c88d69796078f4b23"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-reveal-root-prescrolled-c-v770/comparison.json",
+      "sha256": "b300913302fc7b699aad2caf09ec1e2ae4017370d0d74282f6e82baca98a695e"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-viewport-fixed-residual-review-v799.json",
+      "sha256": "1f77345e1f32d62f6b4ed69d12c3a8e04bede92591099d2e99dbf4fd1ae1756b"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-viewport-fixed-residual-review-v800.json",
+      "sha256": "96e0a06b60ff8d11ab6c7105433032d91d20671159c59fe8984f333af5607496"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-docs-checks-v795/receipt.json",
+      "sha256": "ad9e1b14cb6a4e2d51cabf06451959d08a26247b26e8ef4afd3d9db293d0fee6"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-docs-ci-complete-v796.json",
+      "sha256": "573a5088a79f214b6e57485ac7642c0695833c14c9f6b4b85879a474cdc7c4e9"
+    }
+  ],
+  "documentation_checkpoint_fe472bd8": {
+    "all_three_hosted_workflows_complete_success": true,
+    "private_runtime_qualification": false,
+    "read_only_checks_passed": 10,
+    "skipped_jobs": 5,
+    "skipped_jobs_are_not_passes": true,
+    "successful_jobs": 6
+  },
+  "javascript_executed_by_openui": false,
+  "native_reveal_cutoff": {
+    "application_states_exact": 710,
+    "both_focused_and_primitive_gates_still_running": true,
+    "c_exact_losses": 0,
+    "c_geometry_gains": 5,
+    "c_pixel_gains": 5,
+    "fresh_build_steps_passed": 6,
+    "new_c_states_exact": 20,
+    "new_rust_states_exact": 30,
+    "previous_660_states_and_all_reference_bytes_unchanged": true,
+    "read_only_checks_passed": 10,
+    "source": {
+      "clean": true,
+      "commit": "2cc950e064a4ffa9ddef74a99fa7db7c80e1b511",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "d6fdb1fb0a43f0d2ef97a357308533a45de1aa33554dac1a16988b9c4b2e38a7",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "workspace": {
+      "failed": 0,
+      "ignored": 13,
+      "passed": 8537
+    }
+  },
+  "new_release_states_admitted": 0,
+  "pixel_target": "Pinned Chromium only, zero tolerance",
+  "previous_index": {
+    "path": "docs/renderer/generated/native-scroll-insets-v7.json",
+    "sha256": "a17f111cfd8c94cb146a2f3c742133ab513aff38ee1783cf752a0264e61ce58c"
+  },
+  "release_qualification": false,
+  "remaining": "Complete original/expanded exactness, the two screen exact losses, fixed-control scroll paint/geometry, all needed native APIs, compositor/3D, hardware, packaging and release gates remain open.",
+  "schema_version": 1
+}

@@ -1,0 +1,1146 @@
+{
+  "addition_cases_four_profile_exact": 200,
+  "additions_unchanged": 804,
+  "all_commands_terminal": true,
+  "all_four_renderer_matrices_complete": true,
+  "all_reference_capture_pairs_stable": true,
+  "artifact_bytes": 9551985,
+  "artifact_count": 151,
+  "artifacts": [
+    {
+      "bytes": 7604,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-capture-pipeline-v1786/receipt.json",
+      "sha256": "f61617da5960edadca19e3a07e846243350ca4281155e5260ad629401dafe910",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-pipeline-v1786/receipt.json"
+    },
+    {
+      "bytes": 93,
+      "decompressed_bytes": 79,
+      "decompressed_sha256": "580fff3ad73cbcde7c06ea988daafe0e2e8b78fe0f5f707df4fe88a08bb582cf",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-capture-pipeline-v1786/build-and-guards.log.gz",
+      "sha256": "f9e0bad2c50cbca2d35785fc43d624868c0c6c30fab2a9bbf0d89112bf6d5f07",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-pipeline-v1786/build-and-guards.log"
+    },
+    {
+      "bytes": 423,
+      "decompressed_bytes": 834,
+      "decompressed_sha256": "74cde9a12db4a286589dc76d266b9266c9bc896c06e939b2553dd02f796f28e1",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-capture-pipeline-v1786/native-application.log.gz",
+      "sha256": "c89b0cebba180dfb27a66f700c1596e50e4f5936e9a56465255542758e4f5e53",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-pipeline-v1786/native-application.log"
+    },
+    {
+      "bytes": 246,
+      "decompressed_bytes": 439,
+      "decompressed_sha256": "c512c843958b26c7e61dbdf3ef7c5e9f7ef80c18275a553612d113a69e7ba27f",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-capture-pipeline-v1786/native-table-geometry-diagnostic.log.gz",
+      "sha256": "f834d446fe9af02c281b6203f91984c02e5590e7fa3b934cc31ae56caf9e8bf4",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-pipeline-v1786/native-table-geometry-diagnostic.log"
+    },
+    {
+      "bytes": 64,
+      "decompressed_bytes": 46,
+      "decompressed_sha256": "4d5d27f47141da4a2ba94d9b4ba599bc6cfbff10184dd8813515396191d0c06f",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-capture-pipeline-v1786/focused.log.gz",
+      "sha256": "51499bb3dfc68948768b3a7eceaeb50be5be261c0da36acbc00da9e31d702890",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-pipeline-v1786/focused.log"
+    },
+    {
+      "bytes": 66,
+      "decompressed_bytes": 48,
+      "decompressed_sha256": "c8ff259e92802eae86439802da4104746cf6157a4c4533dfb2b816a16bc48dd5",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-capture-pipeline-v1786/primitive.log.gz",
+      "sha256": "d222df34d4387ac2c9502743dac57fbe08a80a0563f38e5748737fe6e479cfed",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-pipeline-v1786/primitive.log"
+    },
+    {
+      "bytes": 61,
+      "decompressed_bytes": 43,
+      "decompressed_sha256": "1ec3fad0c8e26da34fe27c245cd419624df4876d2019d8788067d7e6d61f083b",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-capture-pipeline-v1786/full.log.gz",
+      "sha256": "50e8c91627b4fa6a5a93a76acb1cd19b1105a00e703801eeb241be2b7ac2e2ae",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-pipeline-v1786/full.log"
+    },
+    {
+      "bytes": 65,
+      "decompressed_bytes": 47,
+      "decompressed_sha256": "056df3dc72d3531bf378119ca3a4fac7495899d5ac1d919925c9b3be1839d7b8",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-capture-pipeline-v1786/expanded.log.gz",
+      "sha256": "fec9ff6f39d06fc81e1cd54d25b7c8a2c19761be959dcbffe5a993e13dfa333c",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-pipeline-v1786/expanded.log"
+    },
+    {
+      "bytes": 13060,
+      "path": "docs/renderer/evidence/native-keywords-v6/probes/openui-native-image-coverage-fieldsets-v1448.py",
+      "sha256": "b1a480f5f49bada97d341d5cf5e7626f8f03496bc87b4ef83b40c298331d1710",
+      "source_path": "/tmp/openui-native-image-coverage-fieldsets-v1448.py"
+    },
+    {
+      "bytes": 2452,
+      "path": "docs/renderer/evidence/native-keywords-v6/probes/openui-native-keywords-capture-build-reuse-v1785.py",
+      "sha256": "4e4e97386ecb2549806455079000dbe60412b2f605c242f57f7fe573ca4a8d9c",
+      "source_path": "/tmp/openui-native-keywords-capture-build-reuse-v1785.py"
+    },
+    {
+      "bytes": 7204,
+      "path": "docs/renderer/evidence/native-keywords-v6/probes/openui-native-keywords-capture-consumer-v1785.py",
+      "sha256": "42465fd24eac5d39e3e7fd417688ecfaeddeb1ff5a00a78516b42b3fc546311a",
+      "source_path": "/tmp/openui-native-keywords-capture-consumer-v1785.py"
+    },
+    {
+      "bytes": 2158,
+      "path": "docs/renderer/evidence/native-keywords-v6/probes/openui-native-keywords-capture-matrices-v1785.py",
+      "sha256": "12f4055bd46bfd0d34796b15a598572a1244975c95f1aab346e92c9dc7554bf7",
+      "source_path": "/tmp/openui-native-keywords-capture-matrices-v1785.py"
+    },
+    {
+      "bytes": 9756,
+      "path": "docs/renderer/evidence/native-keywords-v6/probes/openui-native-keywords-capture-table-geometry-v1785.py",
+      "sha256": "2f0aa475651326cbc00185d468f8a31ed125d602cf8daa2b334d915b02cd6311",
+      "source_path": "/tmp/openui-native-keywords-capture-table-geometry-v1785.py"
+    },
+    {
+      "bytes": 8352,
+      "path": "docs/renderer/evidence/native-keywords-v6/probes/openui-native-keywords-capture-pipeline-v1786.py",
+      "sha256": "282aba92102af19e596ba222178cb462d41778a1d4daa30661039fd62dbd51de",
+      "source_path": "/tmp/openui-native-keywords-capture-pipeline-v1786.py"
+    },
+    {
+      "bytes": 6717,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-pipeline-v1788/receipt.json",
+      "sha256": "d8c79859da8b2289e42562573bad556d1174cf7f28e12a621e80073dac1b3447",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-pipeline-v1788/receipt.json"
+    },
+    {
+      "bytes": 93,
+      "decompressed_bytes": 79,
+      "decompressed_sha256": "580fff3ad73cbcde7c06ea988daafe0e2e8b78fe0f5f707df4fe88a08bb582cf",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-pipeline-v1788/build-and-guards.log.gz",
+      "sha256": "f9e0bad2c50cbca2d35785fc43d624868c0c6c30fab2a9bbf0d89112bf6d5f07",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-pipeline-v1788/build-and-guards.log"
+    },
+    {
+      "bytes": 78,
+      "decompressed_bytes": 221,
+      "decompressed_sha256": "f68bdcc6ef50d88492b2b12f025a60ac8f91d018a97dbb9a347ed9e305872d4f",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-pipeline-v1788/native-application.log.gz",
+      "sha256": "91d7b70833b30feca073746771f07671539dea87d20282c0d1d33706cbdb4049",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-pipeline-v1788/native-application.log"
+    },
+    {
+      "bytes": 250,
+      "decompressed_bytes": 377,
+      "decompressed_sha256": "4877b18eea356eb8fdf2d6e6937d681840fee81ec4e506febd0ed1eae513fbf1",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-pipeline-v1788/native-table-geometry-diagnostic.log.gz",
+      "sha256": "a874c5b489893202c3d82b011c423ae821502f4aa43098fba3a58e5d7d98eb6a",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-pipeline-v1788/native-table-geometry-diagnostic.log"
+    },
+    {
+      "bytes": 2457,
+      "path": "docs/renderer/evidence/native-keywords-v6/probes/openui-native-keywords-native-retry-build-reuse-v1787.py",
+      "sha256": "e275044a32270ee7f8084a46426b0c161f17db571f075aefdd5c3c5c02ae2569",
+      "source_path": "/tmp/openui-native-keywords-native-retry-build-reuse-v1787.py"
+    },
+    {
+      "bytes": 7717,
+      "path": "docs/renderer/evidence/native-keywords-v6/probes/openui-native-keywords-native-retry-consumer-v1787.py",
+      "sha256": "b79f4bd4bac8ae7bfb531fee48d2d011deef37500a5d292c4ff9678bb554cfd6",
+      "source_path": "/tmp/openui-native-keywords-native-retry-consumer-v1787.py"
+    },
+    {
+      "bytes": 9850,
+      "path": "docs/renderer/evidence/native-keywords-v6/probes/openui-native-keywords-native-retry-table-geometry-v1787.py",
+      "sha256": "26927ac71181775ee3cf6519dc376b3e29ae8180da6f4366e117f20f8faa6f95",
+      "source_path": "/tmp/openui-native-keywords-native-retry-table-geometry-v1787.py"
+    },
+    {
+      "bytes": 7734,
+      "path": "docs/renderer/evidence/native-keywords-v6/probes/openui-native-keywords-native-retry-pipeline-v1788.py",
+      "sha256": "bfb4a8e64718f233165442262c498b139a2ddc32f493086d3fecdd3608deefe6",
+      "source_path": "/tmp/openui-native-keywords-native-retry-pipeline-v1788.py"
+    },
+    {
+      "bytes": 6215,
+      "path": "docs/renderer/evidence/native-keywords-v6/complete-matrix-audit.json",
+      "sha256": "76e5208a8d826747bea4c4c583fe25b10007557f33d848d02bea0389e937fd7f",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-matrix-audit-v1795.json"
+    },
+    {
+      "bytes": 4432357,
+      "decompressed_bytes": 72468643,
+      "decompressed_sha256": "c76c650c6bff0f3cf4501da18d07e4729fc1b8fa72152bf83056c227be6d94c6",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v6/expanded-summary.json.gz",
+      "sha256": "0a846fecd2b00b3ae14aaf04201ccb73267645a40c9ab6a92b8ccb0183f0a291",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-clean-expanded-v1785/expanded-summary.json"
+    },
+    {
+      "bytes": 1022,
+      "path": "docs/renderer/evidence/native-keywords-v6/expanded-actual-exit.json",
+      "sha256": "a16bc165f4383120e705634332ebe8e72152240ef66783eeb290ad66f957f8ca",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-expanded-exit-v1785.json"
+    },
+    {
+      "bytes": 792,
+      "decompressed_bytes": 7474,
+      "decompressed_sha256": "92134b51f970bdae0a0d1e411d9a086abc670d8032c88556d6087681d231051b",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v6/expanded.log.gz",
+      "sha256": "0264f7adbcaa31a3800811c538da6837749d434fe2248531fa77f712f40591d7",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-clean-expanded-v1785.log"
+    },
+    {
+      "bytes": 160421,
+      "decompressed_bytes": 1646461,
+      "decompressed_sha256": "aa7742bd16c6a605e57da1da336d58a9e79ff8306e6ad4474597de3ed9595ede",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v6/focused-summary.json.gz",
+      "sha256": "ac1793a54eb8f3b2d8dfb64220cae80d5ce86bbd861d39375bff60c26c79ffa4",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-clean-focused-v1785/focused-summary.json"
+    },
+    {
+      "bytes": 1019,
+      "path": "docs/renderer/evidence/native-keywords-v6/focused-actual-exit.json",
+      "sha256": "7cde243c7a9d7835e06f6009581c8b117389bdf017e1c4388586a2f4fd242dd4",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-focused-exit-v1785.json"
+    },
+    {
+      "bytes": 310,
+      "decompressed_bytes": 1263,
+      "decompressed_sha256": "1df880627ba3651d2b41e1d970b2cd6fd6e3c66a05f58b3c057550e07253144e",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v6/focused.log.gz",
+      "sha256": "cb614d81c9f90c1d5809ab5d4b622d744804f7fa2a196ff3560d2d69f582628a",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-clean-focused-v1785.log"
+    },
+    {
+      "bytes": 4322839,
+      "decompressed_bytes": 70431664,
+      "decompressed_sha256": "ec1af319d6b9cf32a66d2d10b83bed0125570891f8c37454c30ca864627d0ced",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v6/full-summary.json.gz",
+      "sha256": "2e2de723d62833d4fbba907999c4f08a9e5a15734906638438e842e387b11572",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-clean-full-v1785/full-summary.json"
+    },
+    {
+      "bytes": 1010,
+      "path": "docs/renderer/evidence/native-keywords-v6/full-actual-exit.json",
+      "sha256": "6d66f134be231711ffa8ea52c73f24865ab142d410917ee2e38f9899d581514a",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-full-exit-v1785.json"
+    },
+    {
+      "bytes": 772,
+      "decompressed_bytes": 7222,
+      "decompressed_sha256": "3337acebed54cc137ac7f92e75747daf41d090aeabe59db39275deeff23ba09a",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v6/full.log.gz",
+      "sha256": "41fa9c3ef6f9ece61fd82d0fd2b49981825ce95abb7280b12c823a1814ba63a4",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-clean-full-v1785.log"
+    },
+    {
+      "bytes": 222561,
+      "decompressed_bytes": 2455667,
+      "decompressed_sha256": "43c4613c280e0f690bee1a69c9b978460611bfd027b162efc290cf2c0c148a78",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v6/primitive-summary.json.gz",
+      "sha256": "4681f8e192193b572ca817f4c95da549ad999cb91d0c20a65a948c3117ad6510",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-clean-primitive-v1785/primitive-summary.json"
+    },
+    {
+      "bytes": 1025,
+      "path": "docs/renderer/evidence/native-keywords-v6/primitive-actual-exit.json",
+      "sha256": "bb8a07f4e6a9549e48e99f6675a999f0c1381251bb3d2fc625bf39f1026f4b2a",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-primitive-exit-v1785.json"
+    },
+    {
+      "bytes": 313,
+      "decompressed_bytes": 1267,
+      "decompressed_sha256": "d417228ae8f9c676f58b8ee6418d50134a9ea102b7bbe0e4a3d9a6c8555b536d",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v6/primitive.log.gz",
+      "sha256": "83ce05e6c7ff7d8c1e4d6ee0bd35fab60cf0f1f19c43da2478b6bbc93599b651",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-clean-primitive-v1785.log"
+    },
+    {
+      "bytes": 6948,
+      "path": "docs/renderer/evidence/native-keywords-v6/probes/matrix-audit.py",
+      "sha256": "807817150738203a1433c6192611c1f960fe3d21034be382c7401c6a1cd230cb",
+      "source_path": "/tmp/openui-native-keywords-capture-matrix-audit-v1795.py"
+    },
+    {
+      "bytes": 3717,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-capture-consumer-v1785/receipt.json",
+      "sha256": "ae62d0fc130956554cbe432e405bd5a1fdb57f2c4e058134682c716802a1ae23",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-consumer-v1785/receipt.json"
+    },
+    {
+      "bytes": 486,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-capture-consumer-v1785/after.html",
+      "sha256": "1c3f1e3cf05f084cb067aaceebcbc6527d7ced78a97cb269030ad58baa0d5193",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-consumer-v1785/after.html"
+    },
+    {
+      "bytes": 412,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-capture-consumer-v1785/before.html",
+      "sha256": "0847b1401e497b93dcddd17db95013159892c5310c442b678db17dfe31c747ee",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-consumer-v1785/before.html"
+    },
+    {
+      "bytes": 238,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-capture-consumer-v1785/native-1/scale-1/after.png",
+      "sha256": "7e3e260b23a84519d80c5941069e592c68ce4dc7b6cec05a3e084b882066b53e",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-consumer-v1785/native-1/scale-1/after.png"
+    },
+    {
+      "bytes": 243,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-capture-consumer-v1785/native-1/scale-1/before.png",
+      "sha256": "42abc7a8cd5e217fca1ef52e81a897fb2fde4dfb357964a49c65f9e4170e5cfd",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-consumer-v1785/native-1/scale-1/before.png"
+    },
+    {
+      "bytes": 266,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-capture-consumer-v1785/native-1/scale-1.25/after.png",
+      "sha256": "729398b03659f4cba5c7e01161b2bbf1a5f7a37c12819c839e7373261274cd75",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-consumer-v1785/native-1/scale-1.25/after.png"
+    },
+    {
+      "bytes": 271,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-capture-consumer-v1785/native-1/scale-1.25/before.png",
+      "sha256": "33d61453f1cd2651314df0b3503499f97fed7ece7f73016d54a4036dfa468060",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-consumer-v1785/native-1/scale-1.25/before.png"
+    },
+    {
+      "bytes": 298,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-capture-consumer-v1785/native-1/scale-1.5/after.png",
+      "sha256": "6e32cf9085e36efab02d8e91ae4aa7874c0b410760b357ea73e13a2661bedab5",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-consumer-v1785/native-1/scale-1.5/after.png"
+    },
+    {
+      "bytes": 299,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-capture-consumer-v1785/native-1/scale-1.5/before.png",
+      "sha256": "05052b8e203d160c1037d4661f50ce43dc1a23a097fdcb8e389cb29875b205a0",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-consumer-v1785/native-1/scale-1.5/before.png"
+    },
+    {
+      "bytes": 369,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-capture-consumer-v1785/native-1/scale-2/after.png",
+      "sha256": "7f28080ec2597bc5095f7e71eebbc193f244906880af8275866d6b3d1474bc34",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-consumer-v1785/native-1/scale-2/after.png"
+    },
+    {
+      "bytes": 375,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-capture-consumer-v1785/native-1/scale-2/before.png",
+      "sha256": "5545c8a370c82042a02693bfd98ecb67780dffb704821aa5e85eac4f863db61a",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-consumer-v1785/native-1/scale-2/before.png"
+    },
+    {
+      "bytes": 522,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-capture-consumer-v1785/native-1/scale-3/after.png",
+      "sha256": "9b7f2961149aabbdb4bfe9b4f141e2104487033ef9f343ce037abb75178914b7",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-consumer-v1785/native-1/scale-3/after.png"
+    },
+    {
+      "bytes": 524,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-capture-consumer-v1785/native-1/scale-3/before.png",
+      "sha256": "b1ab8b5024f0340689ff6690197305bccca8774015605db57440de38adf2a3fe",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-consumer-v1785/native-1/scale-3/before.png"
+    },
+    {
+      "bytes": 113,
+      "decompressed_bytes": 390,
+      "decompressed_sha256": "3c2b1832984b8911e44c2cae6303350d10aa4cad9443a721cb88b3dcb70cef72",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-capture-consumer-v1785/native-1.log",
+      "sha256": "4d8d4c92aca8999e6dd674a45dea9e055b1c60187a961441694b1dcf164b8c6c",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-consumer-v1785/native-1.log"
+    },
+    {
+      "bytes": 238,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-capture-consumer-v1785/native-2/scale-1/after.png",
+      "sha256": "7e3e260b23a84519d80c5941069e592c68ce4dc7b6cec05a3e084b882066b53e",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-consumer-v1785/native-2/scale-1/after.png"
+    },
+    {
+      "bytes": 243,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-capture-consumer-v1785/native-2/scale-1/before.png",
+      "sha256": "42abc7a8cd5e217fca1ef52e81a897fb2fde4dfb357964a49c65f9e4170e5cfd",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-consumer-v1785/native-2/scale-1/before.png"
+    },
+    {
+      "bytes": 266,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-capture-consumer-v1785/native-2/scale-1.25/after.png",
+      "sha256": "729398b03659f4cba5c7e01161b2bbf1a5f7a37c12819c839e7373261274cd75",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-consumer-v1785/native-2/scale-1.25/after.png"
+    },
+    {
+      "bytes": 271,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-capture-consumer-v1785/native-2/scale-1.25/before.png",
+      "sha256": "33d61453f1cd2651314df0b3503499f97fed7ece7f73016d54a4036dfa468060",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-consumer-v1785/native-2/scale-1.25/before.png"
+    },
+    {
+      "bytes": 298,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-capture-consumer-v1785/native-2/scale-1.5/after.png",
+      "sha256": "6e32cf9085e36efab02d8e91ae4aa7874c0b410760b357ea73e13a2661bedab5",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-consumer-v1785/native-2/scale-1.5/after.png"
+    },
+    {
+      "bytes": 299,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-capture-consumer-v1785/native-2/scale-1.5/before.png",
+      "sha256": "05052b8e203d160c1037d4661f50ce43dc1a23a097fdcb8e389cb29875b205a0",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-consumer-v1785/native-2/scale-1.5/before.png"
+    },
+    {
+      "bytes": 369,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-capture-consumer-v1785/native-2/scale-2/after.png",
+      "sha256": "7f28080ec2597bc5095f7e71eebbc193f244906880af8275866d6b3d1474bc34",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-consumer-v1785/native-2/scale-2/after.png"
+    },
+    {
+      "bytes": 375,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-capture-consumer-v1785/native-2/scale-2/before.png",
+      "sha256": "5545c8a370c82042a02693bfd98ecb67780dffb704821aa5e85eac4f863db61a",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-consumer-v1785/native-2/scale-2/before.png"
+    },
+    {
+      "bytes": 522,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-capture-consumer-v1785/native-2/scale-3/after.png",
+      "sha256": "9b7f2961149aabbdb4bfe9b4f141e2104487033ef9f343ce037abb75178914b7",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-consumer-v1785/native-2/scale-3/after.png"
+    },
+    {
+      "bytes": 524,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-capture-consumer-v1785/native-2/scale-3/before.png",
+      "sha256": "b1ab8b5024f0340689ff6690197305bccca8774015605db57440de38adf2a3fe",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-consumer-v1785/native-2/scale-3/before.png"
+    },
+    {
+      "bytes": 113,
+      "decompressed_bytes": 390,
+      "decompressed_sha256": "3c2b1832984b8911e44c2cae6303350d10aa4cad9443a721cb88b3dcb70cef72",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-capture-consumer-v1785/native-2.log",
+      "sha256": "4d8d4c92aca8999e6dd674a45dea9e055b1c60187a961441694b1dcf164b8c6c",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-consumer-v1785/native-2.log"
+    },
+    {
+      "bytes": 2632,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-capture-table-geometry-v1785/receipt.json",
+      "sha256": "2a95a7c343c70519cd49fedbf88198b585d6781aee0b49602612b77216a8d4a4",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-table-geometry-v1785/receipt.json"
+    },
+    {
+      "bytes": 30133,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/receipt.json",
+      "sha256": "f2616f4098807bc71499734707bd2624510ac16a5487d04615492c55b67c3e94",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/receipt.json"
+    },
+    {
+      "bytes": 179,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/1.0/after-chromium-1-first-capture.png",
+      "sha256": "b2e98d74ade8158a1331bb08c6323571decebd18533d59faf1b223c1b7669c64",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/1.0/after-chromium-1-first-capture.png"
+    },
+    {
+      "bytes": 179,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/1.0/after-chromium-1-second-capture.png",
+      "sha256": "b2e98d74ade8158a1331bb08c6323571decebd18533d59faf1b223c1b7669c64",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/1.0/after-chromium-1-second-capture.png"
+    },
+    {
+      "bytes": 179,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/1.0/after-chromium-1.png",
+      "sha256": "b2e98d74ade8158a1331bb08c6323571decebd18533d59faf1b223c1b7669c64",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/1.0/after-chromium-1.png"
+    },
+    {
+      "bytes": 179,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/1.0/after-chromium-2-first-capture.png",
+      "sha256": "b2e98d74ade8158a1331bb08c6323571decebd18533d59faf1b223c1b7669c64",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/1.0/after-chromium-2-first-capture.png"
+    },
+    {
+      "bytes": 179,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/1.0/after-chromium-2-second-capture.png",
+      "sha256": "b2e98d74ade8158a1331bb08c6323571decebd18533d59faf1b223c1b7669c64",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/1.0/after-chromium-2-second-capture.png"
+    },
+    {
+      "bytes": 179,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/1.0/after-chromium-2.png",
+      "sha256": "b2e98d74ade8158a1331bb08c6323571decebd18533d59faf1b223c1b7669c64",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/1.0/after-chromium-2.png"
+    },
+    {
+      "bytes": 180,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/1.0/before-chromium-1-first-capture.png",
+      "sha256": "e65a83429f5e4986a4beebd57ca22c4febabb7f222f44c63d5d75f9c18ed64f3",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/1.0/before-chromium-1-first-capture.png"
+    },
+    {
+      "bytes": 180,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/1.0/before-chromium-1-second-capture.png",
+      "sha256": "e65a83429f5e4986a4beebd57ca22c4febabb7f222f44c63d5d75f9c18ed64f3",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/1.0/before-chromium-1-second-capture.png"
+    },
+    {
+      "bytes": 180,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/1.0/before-chromium-1.png",
+      "sha256": "e65a83429f5e4986a4beebd57ca22c4febabb7f222f44c63d5d75f9c18ed64f3",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/1.0/before-chromium-1.png"
+    },
+    {
+      "bytes": 180,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/1.0/before-chromium-2-first-capture.png",
+      "sha256": "e65a83429f5e4986a4beebd57ca22c4febabb7f222f44c63d5d75f9c18ed64f3",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/1.0/before-chromium-2-first-capture.png"
+    },
+    {
+      "bytes": 180,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/1.0/before-chromium-2-second-capture.png",
+      "sha256": "e65a83429f5e4986a4beebd57ca22c4febabb7f222f44c63d5d75f9c18ed64f3",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/1.0/before-chromium-2-second-capture.png"
+    },
+    {
+      "bytes": 180,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/1.0/before-chromium-2.png",
+      "sha256": "e65a83429f5e4986a4beebd57ca22c4febabb7f222f44c63d5d75f9c18ed64f3",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/1.0/before-chromium-2.png"
+    },
+    {
+      "bytes": 195,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/1.25/after-chromium-1-first-capture.png",
+      "sha256": "a2704189614eb4e6610b3523a7f706175b23db8660cf9148981080fabfab5537",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/1.25/after-chromium-1-first-capture.png"
+    },
+    {
+      "bytes": 195,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/1.25/after-chromium-1-second-capture.png",
+      "sha256": "a2704189614eb4e6610b3523a7f706175b23db8660cf9148981080fabfab5537",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/1.25/after-chromium-1-second-capture.png"
+    },
+    {
+      "bytes": 195,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/1.25/after-chromium-1.png",
+      "sha256": "a2704189614eb4e6610b3523a7f706175b23db8660cf9148981080fabfab5537",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/1.25/after-chromium-1.png"
+    },
+    {
+      "bytes": 195,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/1.25/after-chromium-2-first-capture.png",
+      "sha256": "a2704189614eb4e6610b3523a7f706175b23db8660cf9148981080fabfab5537",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/1.25/after-chromium-2-first-capture.png"
+    },
+    {
+      "bytes": 195,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/1.25/after-chromium-2-second-capture.png",
+      "sha256": "a2704189614eb4e6610b3523a7f706175b23db8660cf9148981080fabfab5537",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/1.25/after-chromium-2-second-capture.png"
+    },
+    {
+      "bytes": 195,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/1.25/after-chromium-2.png",
+      "sha256": "a2704189614eb4e6610b3523a7f706175b23db8660cf9148981080fabfab5537",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/1.25/after-chromium-2.png"
+    },
+    {
+      "bytes": 199,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/1.25/before-chromium-1-first-capture.png",
+      "sha256": "a74df3d71b3d9164da0467455085e114e76ec7aa7c917ca030c607e076117e6a",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/1.25/before-chromium-1-first-capture.png"
+    },
+    {
+      "bytes": 199,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/1.25/before-chromium-1-second-capture.png",
+      "sha256": "a74df3d71b3d9164da0467455085e114e76ec7aa7c917ca030c607e076117e6a",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/1.25/before-chromium-1-second-capture.png"
+    },
+    {
+      "bytes": 199,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/1.25/before-chromium-1.png",
+      "sha256": "a74df3d71b3d9164da0467455085e114e76ec7aa7c917ca030c607e076117e6a",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/1.25/before-chromium-1.png"
+    },
+    {
+      "bytes": 199,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/1.25/before-chromium-2-first-capture.png",
+      "sha256": "a74df3d71b3d9164da0467455085e114e76ec7aa7c917ca030c607e076117e6a",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/1.25/before-chromium-2-first-capture.png"
+    },
+    {
+      "bytes": 199,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/1.25/before-chromium-2-second-capture.png",
+      "sha256": "a74df3d71b3d9164da0467455085e114e76ec7aa7c917ca030c607e076117e6a",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/1.25/before-chromium-2-second-capture.png"
+    },
+    {
+      "bytes": 199,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/1.25/before-chromium-2.png",
+      "sha256": "a74df3d71b3d9164da0467455085e114e76ec7aa7c917ca030c607e076117e6a",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/1.25/before-chromium-2.png"
+    },
+    {
+      "bytes": 263,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/1.5/after-chromium-1-first-capture.png",
+      "sha256": "186754e6ba4435b97c36363e13069315bb16bf89b2e153921e58fbd36b847f34",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/1.5/after-chromium-1-first-capture.png"
+    },
+    {
+      "bytes": 263,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/1.5/after-chromium-1-second-capture.png",
+      "sha256": "186754e6ba4435b97c36363e13069315bb16bf89b2e153921e58fbd36b847f34",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/1.5/after-chromium-1-second-capture.png"
+    },
+    {
+      "bytes": 263,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/1.5/after-chromium-1.png",
+      "sha256": "186754e6ba4435b97c36363e13069315bb16bf89b2e153921e58fbd36b847f34",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/1.5/after-chromium-1.png"
+    },
+    {
+      "bytes": 263,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/1.5/after-chromium-2-first-capture.png",
+      "sha256": "186754e6ba4435b97c36363e13069315bb16bf89b2e153921e58fbd36b847f34",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/1.5/after-chromium-2-first-capture.png"
+    },
+    {
+      "bytes": 263,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/1.5/after-chromium-2-second-capture.png",
+      "sha256": "186754e6ba4435b97c36363e13069315bb16bf89b2e153921e58fbd36b847f34",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/1.5/after-chromium-2-second-capture.png"
+    },
+    {
+      "bytes": 263,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/1.5/after-chromium-2.png",
+      "sha256": "186754e6ba4435b97c36363e13069315bb16bf89b2e153921e58fbd36b847f34",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/1.5/after-chromium-2.png"
+    },
+    {
+      "bytes": 265,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/1.5/before-chromium-1-first-capture.png",
+      "sha256": "2ba03361b95b65eb16ae212e99d357b96d7d61831bbd59033a1a9d42598f3c42",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/1.5/before-chromium-1-first-capture.png"
+    },
+    {
+      "bytes": 265,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/1.5/before-chromium-1-second-capture.png",
+      "sha256": "2ba03361b95b65eb16ae212e99d357b96d7d61831bbd59033a1a9d42598f3c42",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/1.5/before-chromium-1-second-capture.png"
+    },
+    {
+      "bytes": 265,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/1.5/before-chromium-1.png",
+      "sha256": "2ba03361b95b65eb16ae212e99d357b96d7d61831bbd59033a1a9d42598f3c42",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/1.5/before-chromium-1.png"
+    },
+    {
+      "bytes": 265,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/1.5/before-chromium-2-first-capture.png",
+      "sha256": "2ba03361b95b65eb16ae212e99d357b96d7d61831bbd59033a1a9d42598f3c42",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/1.5/before-chromium-2-first-capture.png"
+    },
+    {
+      "bytes": 265,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/1.5/before-chromium-2-second-capture.png",
+      "sha256": "2ba03361b95b65eb16ae212e99d357b96d7d61831bbd59033a1a9d42598f3c42",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/1.5/before-chromium-2-second-capture.png"
+    },
+    {
+      "bytes": 265,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/1.5/before-chromium-2.png",
+      "sha256": "2ba03361b95b65eb16ae212e99d357b96d7d61831bbd59033a1a9d42598f3c42",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/1.5/before-chromium-2.png"
+    },
+    {
+      "bytes": 329,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/2.0/after-chromium-1-first-capture.png",
+      "sha256": "40e11cf4c8c6fa55936fd7c0003cf1467d599b356f67756cd970fd941cb3da93",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/2.0/after-chromium-1-first-capture.png"
+    },
+    {
+      "bytes": 329,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/2.0/after-chromium-1-second-capture.png",
+      "sha256": "40e11cf4c8c6fa55936fd7c0003cf1467d599b356f67756cd970fd941cb3da93",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/2.0/after-chromium-1-second-capture.png"
+    },
+    {
+      "bytes": 329,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/2.0/after-chromium-1.png",
+      "sha256": "40e11cf4c8c6fa55936fd7c0003cf1467d599b356f67756cd970fd941cb3da93",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/2.0/after-chromium-1.png"
+    },
+    {
+      "bytes": 329,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/2.0/after-chromium-2-first-capture.png",
+      "sha256": "40e11cf4c8c6fa55936fd7c0003cf1467d599b356f67756cd970fd941cb3da93",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/2.0/after-chromium-2-first-capture.png"
+    },
+    {
+      "bytes": 329,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/2.0/after-chromium-2-second-capture.png",
+      "sha256": "40e11cf4c8c6fa55936fd7c0003cf1467d599b356f67756cd970fd941cb3da93",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/2.0/after-chromium-2-second-capture.png"
+    },
+    {
+      "bytes": 329,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/2.0/after-chromium-2.png",
+      "sha256": "40e11cf4c8c6fa55936fd7c0003cf1467d599b356f67756cd970fd941cb3da93",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/2.0/after-chromium-2.png"
+    },
+    {
+      "bytes": 331,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/2.0/before-chromium-1-first-capture.png",
+      "sha256": "4f1531b2339ca5a407f649c30da637bf54a9b6be08b2dc91b4eb21527d2bbccc",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/2.0/before-chromium-1-first-capture.png"
+    },
+    {
+      "bytes": 331,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/2.0/before-chromium-1-second-capture.png",
+      "sha256": "4f1531b2339ca5a407f649c30da637bf54a9b6be08b2dc91b4eb21527d2bbccc",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/2.0/before-chromium-1-second-capture.png"
+    },
+    {
+      "bytes": 331,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/2.0/before-chromium-1.png",
+      "sha256": "4f1531b2339ca5a407f649c30da637bf54a9b6be08b2dc91b4eb21527d2bbccc",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/2.0/before-chromium-1.png"
+    },
+    {
+      "bytes": 331,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/2.0/before-chromium-2-first-capture.png",
+      "sha256": "4f1531b2339ca5a407f649c30da637bf54a9b6be08b2dc91b4eb21527d2bbccc",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/2.0/before-chromium-2-first-capture.png"
+    },
+    {
+      "bytes": 331,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/2.0/before-chromium-2-second-capture.png",
+      "sha256": "4f1531b2339ca5a407f649c30da637bf54a9b6be08b2dc91b4eb21527d2bbccc",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/2.0/before-chromium-2-second-capture.png"
+    },
+    {
+      "bytes": 331,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/2.0/before-chromium-2.png",
+      "sha256": "4f1531b2339ca5a407f649c30da637bf54a9b6be08b2dc91b4eb21527d2bbccc",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/2.0/before-chromium-2.png"
+    },
+    {
+      "bytes": 467,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/3.0/after-chromium-1-first-capture.png",
+      "sha256": "1b72541053317afc4bc3aa4317cbaf7b8def54a90764802b02cb207efd2f7a61",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/3.0/after-chromium-1-first-capture.png"
+    },
+    {
+      "bytes": 467,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/3.0/after-chromium-1-second-capture.png",
+      "sha256": "1b72541053317afc4bc3aa4317cbaf7b8def54a90764802b02cb207efd2f7a61",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/3.0/after-chromium-1-second-capture.png"
+    },
+    {
+      "bytes": 467,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/3.0/after-chromium-1.png",
+      "sha256": "1b72541053317afc4bc3aa4317cbaf7b8def54a90764802b02cb207efd2f7a61",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/3.0/after-chromium-1.png"
+    },
+    {
+      "bytes": 467,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/3.0/after-chromium-2-first-capture.png",
+      "sha256": "1b72541053317afc4bc3aa4317cbaf7b8def54a90764802b02cb207efd2f7a61",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/3.0/after-chromium-2-first-capture.png"
+    },
+    {
+      "bytes": 467,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/3.0/after-chromium-2-second-capture.png",
+      "sha256": "1b72541053317afc4bc3aa4317cbaf7b8def54a90764802b02cb207efd2f7a61",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/3.0/after-chromium-2-second-capture.png"
+    },
+    {
+      "bytes": 467,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/3.0/after-chromium-2.png",
+      "sha256": "1b72541053317afc4bc3aa4317cbaf7b8def54a90764802b02cb207efd2f7a61",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/3.0/after-chromium-2.png"
+    },
+    {
+      "bytes": 467,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/3.0/before-chromium-1-first-capture.png",
+      "sha256": "5af081698d64bae5df66fb3a3fb173efa80e20dcadc8b375db22707646d16742",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/3.0/before-chromium-1-first-capture.png"
+    },
+    {
+      "bytes": 467,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/3.0/before-chromium-1-second-capture.png",
+      "sha256": "5af081698d64bae5df66fb3a3fb173efa80e20dcadc8b375db22707646d16742",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/3.0/before-chromium-1-second-capture.png"
+    },
+    {
+      "bytes": 467,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/3.0/before-chromium-1.png",
+      "sha256": "5af081698d64bae5df66fb3a3fb173efa80e20dcadc8b375db22707646d16742",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/3.0/before-chromium-1.png"
+    },
+    {
+      "bytes": 467,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/3.0/before-chromium-2-first-capture.png",
+      "sha256": "5af081698d64bae5df66fb3a3fb173efa80e20dcadc8b375db22707646d16742",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/3.0/before-chromium-2-first-capture.png"
+    },
+    {
+      "bytes": 467,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/3.0/before-chromium-2-second-capture.png",
+      "sha256": "5af081698d64bae5df66fb3a3fb173efa80e20dcadc8b375db22707646d16742",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/3.0/before-chromium-2-second-capture.png"
+    },
+    {
+      "bytes": 467,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/3.0/before-chromium-2.png",
+      "sha256": "5af081698d64bae5df66fb3a3fb173efa80e20dcadc8b375db22707646d16742",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/3.0/before-chromium-2.png"
+    },
+    {
+      "bytes": 486,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/after.html",
+      "sha256": "1c3f1e3cf05f084cb067aaceebcbc6527d7ced78a97cb269030ad58baa0d5193",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/after.html"
+    },
+    {
+      "bytes": 412,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/before.html",
+      "sha256": "0847b1401e497b93dcddd17db95013159892c5310c442b678db17dfe31c747ee",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/before.html"
+    },
+    {
+      "bytes": 238,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/native-1/scale-1/after.png",
+      "sha256": "7e3e260b23a84519d80c5941069e592c68ce4dc7b6cec05a3e084b882066b53e",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/native-1/scale-1/after.png"
+    },
+    {
+      "bytes": 243,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/native-1/scale-1/before.png",
+      "sha256": "42abc7a8cd5e217fca1ef52e81a897fb2fde4dfb357964a49c65f9e4170e5cfd",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/native-1/scale-1/before.png"
+    },
+    {
+      "bytes": 266,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/native-1/scale-1.25/after.png",
+      "sha256": "729398b03659f4cba5c7e01161b2bbf1a5f7a37c12819c839e7373261274cd75",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/native-1/scale-1.25/after.png"
+    },
+    {
+      "bytes": 271,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/native-1/scale-1.25/before.png",
+      "sha256": "33d61453f1cd2651314df0b3503499f97fed7ece7f73016d54a4036dfa468060",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/native-1/scale-1.25/before.png"
+    },
+    {
+      "bytes": 298,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/native-1/scale-1.5/after.png",
+      "sha256": "6e32cf9085e36efab02d8e91ae4aa7874c0b410760b357ea73e13a2661bedab5",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/native-1/scale-1.5/after.png"
+    },
+    {
+      "bytes": 299,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/native-1/scale-1.5/before.png",
+      "sha256": "05052b8e203d160c1037d4661f50ce43dc1a23a097fdcb8e389cb29875b205a0",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/native-1/scale-1.5/before.png"
+    },
+    {
+      "bytes": 369,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/native-1/scale-2/after.png",
+      "sha256": "7f28080ec2597bc5095f7e71eebbc193f244906880af8275866d6b3d1474bc34",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/native-1/scale-2/after.png"
+    },
+    {
+      "bytes": 375,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/native-1/scale-2/before.png",
+      "sha256": "5545c8a370c82042a02693bfd98ecb67780dffb704821aa5e85eac4f863db61a",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/native-1/scale-2/before.png"
+    },
+    {
+      "bytes": 522,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/native-1/scale-3/after.png",
+      "sha256": "9b7f2961149aabbdb4bfe9b4f141e2104487033ef9f343ce037abb75178914b7",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/native-1/scale-3/after.png"
+    },
+    {
+      "bytes": 524,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/native-1/scale-3/before.png",
+      "sha256": "b1ab8b5024f0340689ff6690197305bccca8774015605db57440de38adf2a3fe",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/native-1/scale-3/before.png"
+    },
+    {
+      "bytes": 113,
+      "decompressed_bytes": 390,
+      "decompressed_sha256": "3c2b1832984b8911e44c2cae6303350d10aa4cad9443a721cb88b3dcb70cef72",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/native-1.log",
+      "sha256": "4d8d4c92aca8999e6dd674a45dea9e055b1c60187a961441694b1dcf164b8c6c",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/native-1.log"
+    },
+    {
+      "bytes": 238,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/native-2/scale-1/after.png",
+      "sha256": "7e3e260b23a84519d80c5941069e592c68ce4dc7b6cec05a3e084b882066b53e",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/native-2/scale-1/after.png"
+    },
+    {
+      "bytes": 243,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/native-2/scale-1/before.png",
+      "sha256": "42abc7a8cd5e217fca1ef52e81a897fb2fde4dfb357964a49c65f9e4170e5cfd",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/native-2/scale-1/before.png"
+    },
+    {
+      "bytes": 266,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/native-2/scale-1.25/after.png",
+      "sha256": "729398b03659f4cba5c7e01161b2bbf1a5f7a37c12819c839e7373261274cd75",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/native-2/scale-1.25/after.png"
+    },
+    {
+      "bytes": 271,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/native-2/scale-1.25/before.png",
+      "sha256": "33d61453f1cd2651314df0b3503499f97fed7ece7f73016d54a4036dfa468060",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/native-2/scale-1.25/before.png"
+    },
+    {
+      "bytes": 298,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/native-2/scale-1.5/after.png",
+      "sha256": "6e32cf9085e36efab02d8e91ae4aa7874c0b410760b357ea73e13a2661bedab5",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/native-2/scale-1.5/after.png"
+    },
+    {
+      "bytes": 299,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/native-2/scale-1.5/before.png",
+      "sha256": "05052b8e203d160c1037d4661f50ce43dc1a23a097fdcb8e389cb29875b205a0",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/native-2/scale-1.5/before.png"
+    },
+    {
+      "bytes": 369,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/native-2/scale-2/after.png",
+      "sha256": "7f28080ec2597bc5095f7e71eebbc193f244906880af8275866d6b3d1474bc34",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/native-2/scale-2/after.png"
+    },
+    {
+      "bytes": 375,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/native-2/scale-2/before.png",
+      "sha256": "5545c8a370c82042a02693bfd98ecb67780dffb704821aa5e85eac4f863db61a",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/native-2/scale-2/before.png"
+    },
+    {
+      "bytes": 522,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/native-2/scale-3/after.png",
+      "sha256": "9b7f2961149aabbdb4bfe9b4f141e2104487033ef9f343ce037abb75178914b7",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/native-2/scale-3/after.png"
+    },
+    {
+      "bytes": 524,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/native-2/scale-3/before.png",
+      "sha256": "b1ab8b5024f0340689ff6690197305bccca8774015605db57440de38adf2a3fe",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/native-2/scale-3/before.png"
+    },
+    {
+      "bytes": 113,
+      "decompressed_bytes": 390,
+      "decompressed_sha256": "3c2b1832984b8911e44c2cae6303350d10aa4cad9443a721cb88b3dcb70cef72",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-consumer-v1787/native-2.log",
+      "sha256": "4d8d4c92aca8999e6dd674a45dea9e055b1c60187a961441694b1dcf164b8c6c",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-consumer-v1787/native-2.log"
+    },
+    {
+      "bytes": 222894,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-keywords-native-retry-table-geometry-v1787/receipt.json",
+      "sha256": "afb42e9a653a9c53ed86bb98077e95fdf83a917e1120effe93e6e551074395c0",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-table-geometry-v1787/receipt.json"
+    },
+    {
+      "bytes": 2894,
+      "path": "docs/renderer/evidence/native-keywords-v6/native-retry-preparation.json",
+      "sha256": "15cbfe633b2b1afe368609f6577ac15176f4cdbf3c260013b572d180e49fc0b5",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-native-retry-prepared-v1787.json"
+    },
+    {
+      "bytes": 6220,
+      "path": "docs/renderer/evidence/native-keywords-v6/probes/native-retry-preparation.py",
+      "sha256": "d01a551742f9daf939d050974340bb6c0e5f1849db9283b0fc0e8c9f4b11a4dd",
+      "source_path": "/tmp/openui-native-keywords-native-retry-prepare-v1787.py"
+    },
+    {
+      "bytes": 6273,
+      "path": "docs/renderer/evidence/native-keywords-v6/preserver.py",
+      "sha256": "18706810878a54ac480e08cca54d276b4af088b113662c56658ad3ca0bbb891f",
+      "source_path": "/tmp/openui-native-keywords-qualified-checkpoint-preserve-v1806.py"
+    }
+  ],
+  "c_table_geometry_equality_with_chromium_not_claimed": true,
+  "c_table_native_observations": 120,
+  "c_table_repeats_identical": true,
+  "candidate_applied_to_umbrella": false,
+  "completed_owner_stage_exits": [
+    [
+      0,
+      1,
+      1,
+      0,
+      0,
+      1,
+      1
+    ],
+    [
+      0,
+      0,
+      0
+    ]
+  ],
+  "consecutive_chromium_captures": 40,
+  "expanded_residual_ids": 883,
+  "full_pixel_gates_still_fail": true,
+  "independent_chromium_processes": 20,
+  "independent_native_runs": 2,
+  "javascript_executed_by_openui": false,
+  "new_release_states_admitted": 0,
+  "old_openui_pixels_are_provenance_only": true,
+  "original_residual_ids": 882,
+  "original_rows_identical_in_expanded": 22924,
+  "original_startup_and_fractional_viewport_failures_preserved": true,
+  "pixel_tolerance": 0,
+  "public_native_rust_apis_required": true,
+  "public_native_rust_bounds_exact": 10,
+  "public_native_rust_callback_images_exact": 10,
+  "release_qualification": false,
+  "reviewed_wpt_residual_ownership_unchanged": true,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "7d6ffabfea1f72c90f97475488dba8a8058ac4c7",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "c24ab4b7c6003be5febbf60385f34286f8af2025b9d836361de70dc10281a2fe",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "7d6ffabfea1f72c90f97475488dba8a8058ac4c7",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "c24ab4b7c6003be5febbf60385f34286f8af2025b9d836361de70dc10281a2fe",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "suites": {
+    "expanded": {
+      "actual_exit": 1,
+      "actual_exit_receipt_sha256": "a16bc165f4383120e705634332ebe8e72152240ef66783eeb290ad66f957f8ca",
+      "changed_comparisons": 0,
+      "exact_gains": 0,
+      "exact_losses": 0,
+      "immutable_chromium_rows": 23728,
+      "native_rgba_changes": 0,
+      "prior_results": {
+        "different": 1591,
+        "errors": 0,
+        "exact": 22137,
+        "profile_result_sha256": "9022d4819c578703b70bde9f26c57d9a1514bcbe131918355324fb7ec89fa7de",
+        "total": 23728
+      },
+      "prior_summary_sha256": "f97df7d44847097030e747e78e4d7439222c74ae2fafe8224497ddcf7e539b11",
+      "residual_ids": 883,
+      "results": {
+        "different": 1591,
+        "errors": 0,
+        "exact": 22137,
+        "profile_result_sha256": "771d82c99234368840907e102c43f01e1bdaa2b2b153136180d61b36058e777b",
+        "total": 23728
+      },
+      "summary_sha256": "c76c650c6bff0f3cf4501da18d07e4729fc1b8fa72152bf83056c227be6d94c6",
+      "unchanged_nine_invariant_rows": 23728
+    },
+    "focused": {
+      "actual_exit": 0,
+      "actual_exit_receipt_sha256": "7cde243c7a9d7835e06f6009581c8b117389bdf017e1c4388586a2f4fd242dd4",
+      "changed_comparisons": 0,
+      "exact_gains": 0,
+      "exact_losses": 0,
+      "immutable_chromium_rows": 640,
+      "native_rgba_changes": 0,
+      "prior_results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 640,
+        "profile_result_sha256": "689e8240eb60b3f4b9a18468d8fdfd6d4a3ea621b88a4e7d5334170a29625f6d",
+        "total": 640
+      },
+      "prior_summary_sha256": "6523450639e285a7c26331944c2921fd803a7612f842fd47160ccb934dc80080",
+      "residual_ids": 0,
+      "results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 640,
+        "profile_result_sha256": "4004c9a3ea384911ecdfd2b14e50d8444e5a7f164c41d240e2d12bb53ea62892",
+        "total": 640
+      },
+      "summary_sha256": "aa7742bd16c6a605e57da1da336d58a9e79ff8306e6ad4474597de3ed9595ede",
+      "unchanged_nine_invariant_rows": 640
+    },
+    "full": {
+      "actual_exit": 1,
+      "actual_exit_receipt_sha256": "6d66f134be231711ffa8ea52c73f24865ab142d410917ee2e38f9899d581514a",
+      "changed_comparisons": 0,
+      "exact_gains": 0,
+      "exact_losses": 0,
+      "immutable_chromium_rows": 22924,
+      "native_rgba_changes": 0,
+      "prior_results": {
+        "different": 1590,
+        "errors": 0,
+        "exact": 21334,
+        "profile_result_sha256": "6d180f9ef0d5cdf1b1fd0eb078f26b72924727abaa855cb6141a715f1038a35f",
+        "total": 22924
+      },
+      "prior_summary_sha256": "dd2f5ce9377812818c9a1d393f1d98beb5da918737bfbecca4d78d888f476316",
+      "residual_ids": 882,
+      "results": {
+        "different": 1590,
+        "errors": 0,
+        "exact": 21334,
+        "profile_result_sha256": "88979f0f86f82361c0a3cb9bdb8ebea3829f8965f64f476b6faa93088eac5bc1",
+        "total": 22924
+      },
+      "summary_sha256": "ec1af319d6b9cf32a66d2d10b83bed0125570891f8c37454c30ca864627d0ced",
+      "unchanged_nine_invariant_rows": 22924
+    },
+    "primitive": {
+      "actual_exit": 0,
+      "actual_exit_receipt_sha256": "bb8a07f4e6a9549e48e99f6675a999f0c1381251bb3d2fc625bf39f1026f4b2a",
+      "changed_comparisons": 0,
+      "exact_gains": 0,
+      "exact_losses": 0,
+      "immutable_chromium_rows": 960,
+      "native_rgba_changes": 0,
+      "prior_results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 960,
+        "profile_result_sha256": "f085a73c5f8b8c7a8f940f1ee1683b21a61ebd447a850307a8dd7e6eb3c7a3dd",
+        "total": 960
+      },
+      "prior_summary_sha256": "220101ae01aa264e7b99ae68a0fdd2de39f4b65bd05fdddea76103f79bd6f02d",
+      "residual_ids": 0,
+      "results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 960,
+        "profile_result_sha256": "45b7d2a6da7cde31a9104ddc63c36cbb9fe3105dcb95acc1532f338dd0126432",
+        "total": 960
+      },
+      "summary_sha256": "43c4613c280e0f690bee1a69c9b978460611bfd027b162efc290cf2c0c148a78",
+      "unchanged_nine_invariant_rows": 960
+    }
+  },
+  "unchanged_nine_invariant_rows": 48252
+}

@@ -1,0 +1,3697 @@
+{
+  "schema_version": 1,
+  "archive_sha256": "85ead64820eeb5dda09068e2a94583576a18232e50ed0309181ab952a33a44f3",
+  "members": [
+    {
+      "path": "primary/SkTypeface_fontations.cpp",
+      "bytes": 74603,
+      "sha256": "0507775ddd5047dd51ea2f8317f1161541fa54c61ea72d066172c47bf109789e"
+    },
+    {
+      "path": "primary/chromium-DEPS",
+      "bytes": 186066,
+      "sha256": "c4a31c05527cbea2f31ab177acaf7f151cd91031d9927ab0b27158e09788cb16"
+    },
+    {
+      "path": "primary/ffi.rs",
+      "bytes": 16058,
+      "sha256": "223173aa97431b3484f8748743abb61f20c9ca84331dc9ecec03ca3e4094457a"
+    },
+    {
+      "path": "primary/hinting.rs",
+      "bytes": 4649,
+      "sha256": "714fbd0851e097ada077616be4d52e4e81d764e64462266ee59afba523e32d34"
+    },
+    {
+      "path": "primary/receipt.json",
+      "bytes": 1175,
+      "sha256": "c10b557ea4dec2b1530d90fb680da4b522a4786d486fa9e45cfad84b98379c1d"
+    },
+    {
+      "path": "probes/openui-native-edit-command-checks-v2417.py",
+      "bytes": 5215,
+      "sha256": "954b0cdc1084710bbc16de1b4b844a22b47706077e38a11250f5f3d012e0e4d6"
+    },
+    {
+      "path": "probes/openui-native-editor-clip-only-whole-v2415.py",
+      "bytes": 5308,
+      "sha256": "5207799d082d201388ed349638a09c95786e2422c46eaa3d85973a768628847b"
+    },
+    {
+      "path": "probes/openui-native-editor-direct-strike-whole-v2410.py",
+      "bytes": 5332,
+      "sha256": "0862d3c934fa25d125f3fdbd0d1edb268043af928cecbe2c784849ee275456f7"
+    },
+    {
+      "path": "probes/openui-native-editor-fresh-parent-v2406.py",
+      "bytes": 13361,
+      "sha256": "198a6939c225b5a26f527222852e1c4308c8f6975b61817c9e20b578ae3e4c34"
+    },
+    {
+      "path": "runs/native-edit-command-checks-v2417/build-native-consumer.log",
+      "bytes": 116399,
+      "sha256": "080c04eaee5f5e357def37527a1a2ba280bc97a43a599aae462541d3198e8410"
+    },
+    {
+      "path": "runs/native-edit-command-checks-v2417/c-abi-generator.log",
+      "bytes": 126,
+      "sha256": "688bdcb0995462bdf78aa2a698f74ec6ebe578c4cfa1690588fd7f6a1cb66cd2"
+    },
+    {
+      "path": "runs/native-edit-command-checks-v2417/clean-local-packages.log",
+      "bytes": 7544,
+      "sha256": "13b6aaec55f889c0734c0733b71bc63e7398f311f99249b937373bbf4d8b0e7f"
+    },
+    {
+      "path": "runs/native-edit-command-checks-v2417/locked-metadata.log",
+      "bytes": 694323,
+      "sha256": "2175cfd18e2a63e8074003b011f61b411b6d11629087d58dae6dad96ab20c08d"
+    },
+    {
+      "path": "runs/native-edit-command-checks-v2417/native-consumer-first.log",
+      "bytes": 159,
+      "sha256": "495e2764795b08de281e94730f240caf3c25e7a5544c438d3a569ee163bec05b"
+    },
+    {
+      "path": "runs/native-edit-command-checks-v2417/native-consumer-second.log",
+      "bytes": 159,
+      "sha256": "495e2764795b08de281e94730f240caf3c25e7a5544c438d3a569ee163bec05b"
+    },
+    {
+      "path": "runs/native-edit-command-checks-v2417/receipt.json",
+      "bytes": 52274,
+      "sha256": "a650099cfe4b63542c2edf032066e6658de1bad54e0fa1cd3d9c1155e3f710d4"
+    },
+    {
+      "path": "runs/native-edit-command-checks-v2417/renderer-contract.log",
+      "bytes": 81,
+      "sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691"
+    },
+    {
+      "path": "runs/native-edit-command-checks-v2417/rust-format.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "runs/native-edit-command-checks-v2417/rust-public-api-tests.log",
+      "bytes": 121832,
+      "sha256": "ac32ab319914df79aa470da785af3df0cee57d3bbf71ebbb258f4d0a3b7142eb"
+    },
+    {
+      "path": "runs/native-edit-command-generator-retry-v2418/accountability-audit.log",
+      "bytes": 2839,
+      "sha256": "3eb1bdd1433d5757ac36df64bbe7354c87eaa2c9991b6500b2209143032469e9"
+    },
+    {
+      "path": "runs/native-edit-command-generator-retry-v2418/c-abi-generator.log",
+      "bytes": 32,
+      "sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821"
+    },
+    {
+      "path": "runs/native-edit-command-generator-retry-v2418/receipt.json",
+      "bytes": 1448,
+      "sha256": "2b2e5957a29fa91f1ed83ad1bd5c11309e9ea22db6973a8269b86c1ef5710e13"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/clean-native-app-and-public-api.log",
+      "bytes": 37,
+      "sha256": "e55237599ba8f530cdd84e156649ba2d4af0ade116306c9d33a31b16ac568d31"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-desktop-after/1-geometry.json",
+      "bytes": 57,
+      "sha256": "beeb67f6aedd8db41b74af1860862c992799da2f263eba93d53e192b7ee3d9f1"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-desktop-after/1.png",
+      "bytes": 6541,
+      "sha256": "9e62940ba2fc5006e91497fc0713741535f51a8359a1dce837537b178b455234"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-desktop-after/2-geometry.json",
+      "bytes": 57,
+      "sha256": "beeb67f6aedd8db41b74af1860862c992799da2f263eba93d53e192b7ee3d9f1"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-desktop-after/2.png",
+      "bytes": 6541,
+      "sha256": "9e62940ba2fc5006e91497fc0713741535f51a8359a1dce837537b178b455234"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-desktop-after/test.html",
+      "bytes": 576,
+      "sha256": "bcb3a8cc19ed32737d6443e74de10cdacd257aedf939438cc3549af7e1e35ef1"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-desktop-before/1-geometry.json",
+      "bytes": 57,
+      "sha256": "ca6c9071aefd7e369c9cafe8b27e99345500f0e9192d6326de4ff3965f9fadf6"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-desktop-before/1.png",
+      "bytes": 6561,
+      "sha256": "73ef398bf6d16c1415ca0727e237cf7df52c2cfe5d1f16e389b26cd84267b784"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-desktop-before/2-geometry.json",
+      "bytes": 57,
+      "sha256": "ca6c9071aefd7e369c9cafe8b27e99345500f0e9192d6326de4ff3965f9fadf6"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-desktop-before/2.png",
+      "bytes": 6561,
+      "sha256": "73ef398bf6d16c1415ca0727e237cf7df52c2cfe5d1f16e389b26cd84267b784"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-desktop-before/test.html",
+      "bytes": 576,
+      "sha256": "1f971900e25636591a4366500d2bb408db9b4170f29c61baf457b92cda024e7e"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-large-after/1-geometry.json",
+      "bytes": 57,
+      "sha256": "beeb67f6aedd8db41b74af1860862c992799da2f263eba93d53e192b7ee3d9f1"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-large-after/1.png",
+      "bytes": 17544,
+      "sha256": "2ef31a936f0a9d023c2269d61cf6ac166ece86873af762dba38ec60703d69578"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-large-after/2-geometry.json",
+      "bytes": 57,
+      "sha256": "beeb67f6aedd8db41b74af1860862c992799da2f263eba93d53e192b7ee3d9f1"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-large-after/2.png",
+      "bytes": 17544,
+      "sha256": "2ef31a936f0a9d023c2269d61cf6ac166ece86873af762dba38ec60703d69578"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-large-after/test.html",
+      "bytes": 576,
+      "sha256": "bcb3a8cc19ed32737d6443e74de10cdacd257aedf939438cc3549af7e1e35ef1"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-large-before/1-geometry.json",
+      "bytes": 57,
+      "sha256": "ca6c9071aefd7e369c9cafe8b27e99345500f0e9192d6326de4ff3965f9fadf6"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-large-before/1.png",
+      "bytes": 17560,
+      "sha256": "486c6455fefe26a8112017f4b43e07a4af905fce257668a53730bb2aecf732fe"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-large-before/2-geometry.json",
+      "bytes": 57,
+      "sha256": "ca6c9071aefd7e369c9cafe8b27e99345500f0e9192d6326de4ff3965f9fadf6"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-large-before/2.png",
+      "bytes": 17560,
+      "sha256": "486c6455fefe26a8112017f4b43e07a4af905fce257668a53730bb2aecf732fe"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-large-before/test.html",
+      "bytes": 576,
+      "sha256": "1f971900e25636591a4366500d2bb408db9b4170f29c61baf457b92cda024e7e"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-legacy-after/1-geometry.json",
+      "bytes": 57,
+      "sha256": "beeb67f6aedd8db41b74af1860862c992799da2f263eba93d53e192b7ee3d9f1"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-legacy-after/1.png",
+      "bytes": 2847,
+      "sha256": "75369f940550ae9c9af472937ed0362c8a93431903c6ee227b92f1545b1dacd7"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-legacy-after/2-geometry.json",
+      "bytes": 57,
+      "sha256": "beeb67f6aedd8db41b74af1860862c992799da2f263eba93d53e192b7ee3d9f1"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-legacy-after/2.png",
+      "bytes": 2847,
+      "sha256": "75369f940550ae9c9af472937ed0362c8a93431903c6ee227b92f1545b1dacd7"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-legacy-after/test.html",
+      "bytes": 576,
+      "sha256": "bcb3a8cc19ed32737d6443e74de10cdacd257aedf939438cc3549af7e1e35ef1"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-legacy-before/1-geometry.json",
+      "bytes": 57,
+      "sha256": "ca6c9071aefd7e369c9cafe8b27e99345500f0e9192d6326de4ff3965f9fadf6"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-legacy-before/1.png",
+      "bytes": 2845,
+      "sha256": "523c1cc64d37b5fd36ba27679f4064a77f56c8d4a91fe0e2d34f98f45a09501a"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-legacy-before/2-geometry.json",
+      "bytes": 57,
+      "sha256": "ca6c9071aefd7e369c9cafe8b27e99345500f0e9192d6326de4ff3965f9fadf6"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-legacy-before/2.png",
+      "bytes": 2845,
+      "sha256": "523c1cc64d37b5fd36ba27679f4064a77f56c8d4a91fe0e2d34f98f45a09501a"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-legacy-before/test.html",
+      "bytes": 576,
+      "sha256": "1f971900e25636591a4366500d2bb408db9b4170f29c61baf457b92cda024e7e"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-mobile-after/1-geometry.json",
+      "bytes": 57,
+      "sha256": "beeb67f6aedd8db41b74af1860862c992799da2f263eba93d53e192b7ee3d9f1"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-mobile-after/1.png",
+      "bytes": 5997,
+      "sha256": "c6d6e7d0955014b4cdda6e9cc4d7f628791e28df9bc8b325304ff5035c244ab3"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-mobile-after/2-geometry.json",
+      "bytes": 57,
+      "sha256": "beeb67f6aedd8db41b74af1860862c992799da2f263eba93d53e192b7ee3d9f1"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-mobile-after/2.png",
+      "bytes": 5997,
+      "sha256": "c6d6e7d0955014b4cdda6e9cc4d7f628791e28df9bc8b325304ff5035c244ab3"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-mobile-after/test.html",
+      "bytes": 576,
+      "sha256": "bcb3a8cc19ed32737d6443e74de10cdacd257aedf939438cc3549af7e1e35ef1"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-mobile-before/1-geometry.json",
+      "bytes": 57,
+      "sha256": "ca6c9071aefd7e369c9cafe8b27e99345500f0e9192d6326de4ff3965f9fadf6"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-mobile-before/1.png",
+      "bytes": 5996,
+      "sha256": "2d5d3cfa794e1e92e622e157c609ef7d76196c82f207ef25122ceabf58c633e9"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-mobile-before/2-geometry.json",
+      "bytes": 57,
+      "sha256": "ca6c9071aefd7e369c9cafe8b27e99345500f0e9192d6326de4ff3965f9fadf6"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-mobile-before/2.png",
+      "bytes": 5996,
+      "sha256": "2d5d3cfa794e1e92e622e157c609ef7d76196c82f207ef25122ceabf58c633e9"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-mobile-before/test.html",
+      "bytes": 576,
+      "sha256": "1f971900e25636591a4366500d2bb408db9b4170f29c61baf457b92cda024e7e"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-triple-after/1-geometry.json",
+      "bytes": 57,
+      "sha256": "beeb67f6aedd8db41b74af1860862c992799da2f263eba93d53e192b7ee3d9f1"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-triple-after/1.png",
+      "bytes": 16742,
+      "sha256": "bce2a18e17a46cc2f93417c14f4ad13cc014f7c1f5f9c21321f6d37451d62d70"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-triple-after/2-geometry.json",
+      "bytes": 57,
+      "sha256": "beeb67f6aedd8db41b74af1860862c992799da2f263eba93d53e192b7ee3d9f1"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-triple-after/2.png",
+      "bytes": 16742,
+      "sha256": "bce2a18e17a46cc2f93417c14f4ad13cc014f7c1f5f9c21321f6d37451d62d70"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-triple-after/test.html",
+      "bytes": 576,
+      "sha256": "bcb3a8cc19ed32737d6443e74de10cdacd257aedf939438cc3549af7e1e35ef1"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-triple-before/1-geometry.json",
+      "bytes": 57,
+      "sha256": "ca6c9071aefd7e369c9cafe8b27e99345500f0e9192d6326de4ff3965f9fadf6"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-triple-before/1.png",
+      "bytes": 16743,
+      "sha256": "7a537f846a0aaa297403ef643277eafdc4122ae07b8244d608920b9f548dbd43"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-triple-before/2-geometry.json",
+      "bytes": 57,
+      "sha256": "ca6c9071aefd7e369c9cafe8b27e99345500f0e9192d6326de4ff3965f9fadf6"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-triple-before/2.png",
+      "bytes": 16743,
+      "sha256": "7a537f846a0aaa297403ef643277eafdc4122ae07b8244d608920b9f548dbd43"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/input-triple-before/test.html",
+      "bytes": 576,
+      "sha256": "1f971900e25636591a4366500d2bb408db9b4170f29c61baf457b92cda024e7e"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-desktop-after/1-geometry.json",
+      "bytes": 59,
+      "sha256": "291f0a49a54ec43530a1d398e72d046edd6639d903a39829c7ec28c6d909b9b8"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-desktop-after/1.png",
+      "bytes": 6443,
+      "sha256": "35d3f47e384745c173aa252d83e93f05958beca2929c19b8a036557beac9423b"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-desktop-after/2-geometry.json",
+      "bytes": 59,
+      "sha256": "291f0a49a54ec43530a1d398e72d046edd6639d903a39829c7ec28c6d909b9b8"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-desktop-after/2.png",
+      "bytes": 6443,
+      "sha256": "35d3f47e384745c173aa252d83e93f05958beca2929c19b8a036557beac9423b"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-desktop-after/test.html",
+      "bytes": 519,
+      "sha256": "a00a11bd05390bf7ce17443e0258bc498e9a832ab9428bc9d14e3c167a2b2052"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-desktop-before/1-geometry.json",
+      "bytes": 59,
+      "sha256": "5b970960089388550283f8a66f35c7476f258502422542772193ec50427a5d6f"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-desktop-before/1.png",
+      "bytes": 6425,
+      "sha256": "e4d8f7a7bc0c8c863f9ebe183f26867923217ebbe9b212bcb4b36bff98a8ffbe"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-desktop-before/2-geometry.json",
+      "bytes": 59,
+      "sha256": "5b970960089388550283f8a66f35c7476f258502422542772193ec50427a5d6f"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-desktop-before/2.png",
+      "bytes": 6425,
+      "sha256": "e4d8f7a7bc0c8c863f9ebe183f26867923217ebbe9b212bcb4b36bff98a8ffbe"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-desktop-before/test.html",
+      "bytes": 519,
+      "sha256": "8e2df4e3cc041b1ad76ce6b275ca32e117a6940bf83f0be0734a6a65aece9e1b"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-large-after/1-geometry.json",
+      "bytes": 60,
+      "sha256": "c9cf52e77556fe44bf86d6b68cf00dc2c79917ede0228433bd0aff9e1737df14"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-large-after/1.png",
+      "bytes": 17584,
+      "sha256": "6e1fcdaa2ddcc51d98a2de2755f10343247fcaf6501c764fcd4446208791b943"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-large-after/2-geometry.json",
+      "bytes": 60,
+      "sha256": "c9cf52e77556fe44bf86d6b68cf00dc2c79917ede0228433bd0aff9e1737df14"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-large-after/2.png",
+      "bytes": 17584,
+      "sha256": "6e1fcdaa2ddcc51d98a2de2755f10343247fcaf6501c764fcd4446208791b943"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-large-after/test.html",
+      "bytes": 519,
+      "sha256": "96831e015edc2648a60e4f46300488f279f10c6ddda0029035e6f0e0bc376d1a"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-large-before/1-geometry.json",
+      "bytes": 60,
+      "sha256": "7987a6c892cd85df3e6f49887d71c588a675866bd54d13d7c55fb47186da11a9"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-large-before/1.png",
+      "bytes": 17568,
+      "sha256": "d149a928a2272556e90f4be6be8867d9d79c5cde7e2081c0b83f737c6f420d81"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-large-before/2-geometry.json",
+      "bytes": 60,
+      "sha256": "7987a6c892cd85df3e6f49887d71c588a675866bd54d13d7c55fb47186da11a9"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-large-before/2.png",
+      "bytes": 17568,
+      "sha256": "d149a928a2272556e90f4be6be8867d9d79c5cde7e2081c0b83f737c6f420d81"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-large-before/test.html",
+      "bytes": 519,
+      "sha256": "f2853cd8ec9bd7f546940ccd0f02d406ba885dfa883f36d120875968268216fe"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-legacy-after/1-geometry.json",
+      "bytes": 58,
+      "sha256": "832a2e251249c18b6713ba78afb6e652c0872362bebdd2704768130ffc2442b5"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-legacy-after/1.png",
+      "bytes": 2809,
+      "sha256": "8ee978b789b425e7b47e9e08f75808bdd97a5d46d644c589b735d82fc8be5c38"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-legacy-after/2-geometry.json",
+      "bytes": 58,
+      "sha256": "832a2e251249c18b6713ba78afb6e652c0872362bebdd2704768130ffc2442b5"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-legacy-after/2.png",
+      "bytes": 2809,
+      "sha256": "8ee978b789b425e7b47e9e08f75808bdd97a5d46d644c589b735d82fc8be5c38"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-legacy-after/test.html",
+      "bytes": 519,
+      "sha256": "b7a1ad456d268a43185e7c350559f1ec9ab523b5ff6402191f07f1d1c3e4f3cb"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-legacy-before/1-geometry.json",
+      "bytes": 58,
+      "sha256": "ede8845fd2c6177151604c6e0dfe5dc0c53c7f6ccffee950c5278512aa3d0bd6"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-legacy-before/1.png",
+      "bytes": 2809,
+      "sha256": "4119b3be67a84d5a1702750f616e656a5fa4f790ab6a07994f97c62b28f087ea"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-legacy-before/2-geometry.json",
+      "bytes": 58,
+      "sha256": "ede8845fd2c6177151604c6e0dfe5dc0c53c7f6ccffee950c5278512aa3d0bd6"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-legacy-before/2.png",
+      "bytes": 2809,
+      "sha256": "4119b3be67a84d5a1702750f616e656a5fa4f790ab6a07994f97c62b28f087ea"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-legacy-before/test.html",
+      "bytes": 519,
+      "sha256": "92f739058c53bc432c1947435afe0effb1f73e747569338eeadfa293b366a9a9"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-mobile-after/1-geometry.json",
+      "bytes": 58,
+      "sha256": "230602bb0b81a755f927736634a2a347c4bb139fb864181b9e4652bc841e7396"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-mobile-after/1.png",
+      "bytes": 5958,
+      "sha256": "011e9576f6c6a10b3ef798932796b193ab8859146f7b3f68c35748bd4251fa9a"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-mobile-after/2-geometry.json",
+      "bytes": 58,
+      "sha256": "230602bb0b81a755f927736634a2a347c4bb139fb864181b9e4652bc841e7396"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-mobile-after/2.png",
+      "bytes": 5958,
+      "sha256": "011e9576f6c6a10b3ef798932796b193ab8859146f7b3f68c35748bd4251fa9a"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-mobile-after/test.html",
+      "bytes": 519,
+      "sha256": "ee03b86e59e9fa93dc5d7698178e07af3123e976e2055bbc0c5bab20f8c2e137"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-mobile-before/1-geometry.json",
+      "bytes": 58,
+      "sha256": "2839edddb232bde9969ffed7f423e91a47a5ceee526cc7614bdd266e55ec25df"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-mobile-before/1.png",
+      "bytes": 5958,
+      "sha256": "f3137c71cd0a691201b4bfe8a4473b517fccdea80949902b9aa22490f0f3bdaf"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-mobile-before/2-geometry.json",
+      "bytes": 58,
+      "sha256": "2839edddb232bde9969ffed7f423e91a47a5ceee526cc7614bdd266e55ec25df"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-mobile-before/2.png",
+      "bytes": 5958,
+      "sha256": "f3137c71cd0a691201b4bfe8a4473b517fccdea80949902b9aa22490f0f3bdaf"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-mobile-before/test.html",
+      "bytes": 519,
+      "sha256": "c2020f1420056f1114596d1d5a4cab1eb9d697911025d85b348a155c44c132ef"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-triple-after/1-geometry.json",
+      "bytes": 58,
+      "sha256": "832a2e251249c18b6713ba78afb6e652c0872362bebdd2704768130ffc2442b5"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-triple-after/1.png",
+      "bytes": 16707,
+      "sha256": "a769a9040eb4022d0ed9aad4a5bb52141a446ef1b408b3131d14eca5c53fdf7d"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-triple-after/2-geometry.json",
+      "bytes": 58,
+      "sha256": "832a2e251249c18b6713ba78afb6e652c0872362bebdd2704768130ffc2442b5"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-triple-after/2.png",
+      "bytes": 16707,
+      "sha256": "a769a9040eb4022d0ed9aad4a5bb52141a446ef1b408b3131d14eca5c53fdf7d"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-triple-after/test.html",
+      "bytes": 519,
+      "sha256": "b7a1ad456d268a43185e7c350559f1ec9ab523b5ff6402191f07f1d1c3e4f3cb"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-triple-before/1-geometry.json",
+      "bytes": 58,
+      "sha256": "ede8845fd2c6177151604c6e0dfe5dc0c53c7f6ccffee950c5278512aa3d0bd6"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-triple-before/1.png",
+      "bytes": 16707,
+      "sha256": "ad13d86c2674fdd6458a8631a1451c579799677c1a03a1a19c161d8dc802d8a4"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-triple-before/2-geometry.json",
+      "bytes": 58,
+      "sha256": "ede8845fd2c6177151604c6e0dfe5dc0c53c7f6ccffee950c5278512aa3d0bd6"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-triple-before/2.png",
+      "bytes": 16707,
+      "sha256": "ad13d86c2674fdd6458a8631a1451c579799677c1a03a1a19c161d8dc802d8a4"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/large-text-triple-before/test.html",
+      "bytes": 519,
+      "sha256": "92f739058c53bc432c1947435afe0effb1f73e747569338eeadfa293b366a9a9"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-build.log",
+      "bytes": 131856,
+      "sha256": "736ce34fb0b38aa074b9bc879505ddd01963e7bad9833692e27e227c3e359ea6"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-first.log",
+      "bytes": 4004,
+      "sha256": "5b6e9801f7d5a2a923c64b7ed9ed26f1ab798f3f36da5cf14fbe3b4cca4b99c7"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-first/input-desktop/after.png",
+      "bytes": 7916,
+      "sha256": "2a74f6e84fc4d7db44bbd9d46f2cf0b153e681fc7a16f506e960aecdb0697481"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-first/input-desktop/before.png",
+      "bytes": 7930,
+      "sha256": "4e708855a80ab834d2c500d721c8cb67c290312dfadd9cfe8aa34055aec5c31d"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-first/input-large/after.png",
+      "bytes": 22219,
+      "sha256": "e2e18d29fc9a862ba377f3dcdbcf64edcb03f26ff5459f683877f685dc2b8de7"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-first/input-large/before.png",
+      "bytes": 22233,
+      "sha256": "ef9681a7f73f6ebfa8c6d0ca4f93e7886b1095f5364725401a7a52b08c011e07"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-first/input-legacy/after.png",
+      "bytes": 3322,
+      "sha256": "8cede6672095c46af1e5fe21c20748069269555e75cf9a9789a2da682cf8b9ac"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-first/input-legacy/before.png",
+      "bytes": 3323,
+      "sha256": "dac642e1bbb07b5d1d915f1936f5383f82a1f0cb1652c602e64a1ace6f3d0b82"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-first/input-mobile/after.png",
+      "bytes": 7013,
+      "sha256": "ed6fbd2526668d6371878210429dd47d8f0d47a7216a472ff7efd899c681443a"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-first/input-mobile/before.png",
+      "bytes": 7013,
+      "sha256": "2bf04ba0a0c1cd3095776bbcc4716ab411b7f17732edd02968d76f6b37e4f2d6"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-first/input-triple/after.png",
+      "bytes": 21017,
+      "sha256": "75f835624b0b0b10b37ca9185a36f671f47683a2c9e1b55a79ac378e4f29f8f6"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-first/input-triple/before.png",
+      "bytes": 21018,
+      "sha256": "616f832f83696a3066da9fd32f0c901ae9d66d4c74e9ce6f23d62ad892400f1a"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-first/large-text-desktop/after.png",
+      "bytes": 7792,
+      "sha256": "0870514600d13cd4afbb41eff712c4673fe89b3b40daea780da8c7b00ea6e5e2"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-first/large-text-desktop/before.png",
+      "bytes": 7770,
+      "sha256": "9144ea67506574f55daa8681a40d9cb64e734d9b75102c9e27ba15b5710d8cc4"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-first/large-text-large/after.png",
+      "bytes": 22203,
+      "sha256": "c7f2a6cb2572325fb399d6c11af567347405a83a5e7d28c0cbb6db83af602af4"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-first/large-text-large/before.png",
+      "bytes": 22190,
+      "sha256": "c929439b5d2afdc16c6f7825159698a4b18efcb8a2f926ebcf94207a855fa584"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-first/large-text-legacy/after.png",
+      "bytes": 3277,
+      "sha256": "896b6bb5bfcd3da16cb3726041e1aed1907ecd694cb36d4d8f336dd6fded55c1"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-first/large-text-legacy/before.png",
+      "bytes": 3277,
+      "sha256": "e7b78bc5f8b0159fac4767aaa542b1af3d85e5e236e8736e1db67d175a8f0b9d"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-first/large-text-mobile/after.png",
+      "bytes": 6965,
+      "sha256": "692a2c72e28b0c6c3258b44d7b25e95bb0fc3dd11078f98eb1202001d1e2d8a2"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-first/large-text-mobile/before.png",
+      "bytes": 6964,
+      "sha256": "2a14aa410784930354556ea1f894a9333847587726839775db80901e6fc5453f"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-first/large-text-triple/after.png",
+      "bytes": 21025,
+      "sha256": "0ff71b4f784d8d00fdb59e3a0d580e2bf5031cef27c85f52257d372382807e09"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-first/large-text-triple/before.png",
+      "bytes": 21026,
+      "sha256": "dab0074d205bb737418e6015a05d46a1e280196166d8196967b55e2194a396b4"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-first/sticky-desktop/after.png",
+      "bytes": 7770,
+      "sha256": "482138fe5e3cd62c117eb234d8d51b579d4bbcbf07158083220e934245b5ef32"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-first/sticky-desktop/before.png",
+      "bytes": 7770,
+      "sha256": "9144ea67506574f55daa8681a40d9cb64e734d9b75102c9e27ba15b5710d8cc4"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-first/sticky-large/after.png",
+      "bytes": 22185,
+      "sha256": "973620d0ed6e421eb54abd98313bfad8dca6fd68f0d8c4695ec5113960539212"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-first/sticky-large/before.png",
+      "bytes": 22190,
+      "sha256": "c929439b5d2afdc16c6f7825159698a4b18efcb8a2f926ebcf94207a855fa584"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-first/sticky-legacy/after.png",
+      "bytes": 3277,
+      "sha256": "2744365387fa0e44bb4e6743c80620ba79acf5ea42b9ece7aaefe19f58cc5af0"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-first/sticky-legacy/before.png",
+      "bytes": 3277,
+      "sha256": "e7b78bc5f8b0159fac4767aaa542b1af3d85e5e236e8736e1db67d175a8f0b9d"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-first/sticky-mobile/after.png",
+      "bytes": 6964,
+      "sha256": "46d799ebe43ba7c02059fee8bd5a8277b7cfc2e497b6c33e24c1e2c5e7d973ae"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-first/sticky-mobile/before.png",
+      "bytes": 6964,
+      "sha256": "2a14aa410784930354556ea1f894a9333847587726839775db80901e6fc5453f"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-first/sticky-triple/after.png",
+      "bytes": 21041,
+      "sha256": "abcd89a607205b44e4429805580e0a2382030c24430948c9f5777efbb6b03c4c"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-first/sticky-triple/before.png",
+      "bytes": 21026,
+      "sha256": "dab0074d205bb737418e6015a05d46a1e280196166d8196967b55e2194a396b4"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-format.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-metadata.log",
+      "bytes": 408126,
+      "sha256": "7900f535c855ec3db3a61b8d49fb02cefcfd1ff5e933093663b9de6cf8d3bd90"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-second.log",
+      "bytes": 4004,
+      "sha256": "5b6e9801f7d5a2a923c64b7ed9ed26f1ab798f3f36da5cf14fbe3b4cca4b99c7"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-second/input-desktop/after.png",
+      "bytes": 7916,
+      "sha256": "2a74f6e84fc4d7db44bbd9d46f2cf0b153e681fc7a16f506e960aecdb0697481"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-second/input-desktop/before.png",
+      "bytes": 7930,
+      "sha256": "4e708855a80ab834d2c500d721c8cb67c290312dfadd9cfe8aa34055aec5c31d"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-second/input-large/after.png",
+      "bytes": 22219,
+      "sha256": "e2e18d29fc9a862ba377f3dcdbcf64edcb03f26ff5459f683877f685dc2b8de7"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-second/input-large/before.png",
+      "bytes": 22233,
+      "sha256": "ef9681a7f73f6ebfa8c6d0ca4f93e7886b1095f5364725401a7a52b08c011e07"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-second/input-legacy/after.png",
+      "bytes": 3322,
+      "sha256": "8cede6672095c46af1e5fe21c20748069269555e75cf9a9789a2da682cf8b9ac"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-second/input-legacy/before.png",
+      "bytes": 3323,
+      "sha256": "dac642e1bbb07b5d1d915f1936f5383f82a1f0cb1652c602e64a1ace6f3d0b82"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-second/input-mobile/after.png",
+      "bytes": 7013,
+      "sha256": "ed6fbd2526668d6371878210429dd47d8f0d47a7216a472ff7efd899c681443a"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-second/input-mobile/before.png",
+      "bytes": 7013,
+      "sha256": "2bf04ba0a0c1cd3095776bbcc4716ab411b7f17732edd02968d76f6b37e4f2d6"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-second/input-triple/after.png",
+      "bytes": 21017,
+      "sha256": "75f835624b0b0b10b37ca9185a36f671f47683a2c9e1b55a79ac378e4f29f8f6"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-second/input-triple/before.png",
+      "bytes": 21018,
+      "sha256": "616f832f83696a3066da9fd32f0c901ae9d66d4c74e9ce6f23d62ad892400f1a"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-second/large-text-desktop/after.png",
+      "bytes": 7792,
+      "sha256": "0870514600d13cd4afbb41eff712c4673fe89b3b40daea780da8c7b00ea6e5e2"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-second/large-text-desktop/before.png",
+      "bytes": 7770,
+      "sha256": "9144ea67506574f55daa8681a40d9cb64e734d9b75102c9e27ba15b5710d8cc4"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-second/large-text-large/after.png",
+      "bytes": 22203,
+      "sha256": "c7f2a6cb2572325fb399d6c11af567347405a83a5e7d28c0cbb6db83af602af4"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-second/large-text-large/before.png",
+      "bytes": 22190,
+      "sha256": "c929439b5d2afdc16c6f7825159698a4b18efcb8a2f926ebcf94207a855fa584"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-second/large-text-legacy/after.png",
+      "bytes": 3277,
+      "sha256": "896b6bb5bfcd3da16cb3726041e1aed1907ecd694cb36d4d8f336dd6fded55c1"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-second/large-text-legacy/before.png",
+      "bytes": 3277,
+      "sha256": "e7b78bc5f8b0159fac4767aaa542b1af3d85e5e236e8736e1db67d175a8f0b9d"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-second/large-text-mobile/after.png",
+      "bytes": 6965,
+      "sha256": "692a2c72e28b0c6c3258b44d7b25e95bb0fc3dd11078f98eb1202001d1e2d8a2"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-second/large-text-mobile/before.png",
+      "bytes": 6964,
+      "sha256": "2a14aa410784930354556ea1f894a9333847587726839775db80901e6fc5453f"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-second/large-text-triple/after.png",
+      "bytes": 21025,
+      "sha256": "0ff71b4f784d8d00fdb59e3a0d580e2bf5031cef27c85f52257d372382807e09"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-second/large-text-triple/before.png",
+      "bytes": 21026,
+      "sha256": "dab0074d205bb737418e6015a05d46a1e280196166d8196967b55e2194a396b4"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-second/sticky-desktop/after.png",
+      "bytes": 7770,
+      "sha256": "482138fe5e3cd62c117eb234d8d51b579d4bbcbf07158083220e934245b5ef32"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-second/sticky-desktop/before.png",
+      "bytes": 7770,
+      "sha256": "9144ea67506574f55daa8681a40d9cb64e734d9b75102c9e27ba15b5710d8cc4"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-second/sticky-large/after.png",
+      "bytes": 22185,
+      "sha256": "973620d0ed6e421eb54abd98313bfad8dca6fd68f0d8c4695ec5113960539212"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-second/sticky-large/before.png",
+      "bytes": 22190,
+      "sha256": "c929439b5d2afdc16c6f7825159698a4b18efcb8a2f926ebcf94207a855fa584"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-second/sticky-legacy/after.png",
+      "bytes": 3277,
+      "sha256": "2744365387fa0e44bb4e6743c80620ba79acf5ea42b9ece7aaefe19f58cc5af0"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-second/sticky-legacy/before.png",
+      "bytes": 3277,
+      "sha256": "e7b78bc5f8b0159fac4767aaa542b1af3d85e5e236e8736e1db67d175a8f0b9d"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-second/sticky-mobile/after.png",
+      "bytes": 6964,
+      "sha256": "46d799ebe43ba7c02059fee8bd5a8277b7cfc2e497b6c33e24c1e2c5e7d973ae"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-second/sticky-mobile/before.png",
+      "bytes": 6964,
+      "sha256": "2a14aa410784930354556ea1f894a9333847587726839775db80901e6fc5453f"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-second/sticky-triple/after.png",
+      "bytes": 21041,
+      "sha256": "abcd89a607205b44e4429805580e0a2382030c24430948c9f5777efbb6b03c4c"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/native-second/sticky-triple/before.png",
+      "bytes": 21026,
+      "sha256": "dab0074d205bb737418e6015a05d46a1e280196166d8196967b55e2194a396b4"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/receipt.json",
+      "bytes": 96664,
+      "sha256": "f770722122f35e1b840f01f90f3453fb8dac7cec3ae757f8e63714a93d7291e9"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-desktop-after/1-geometry.json",
+      "bytes": 59,
+      "sha256": "5b970960089388550283f8a66f35c7476f258502422542772193ec50427a5d6f"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-desktop-after/1.png",
+      "bytes": 6426,
+      "sha256": "ec583af0bbbcd4cef790ae38a9d78f4dcc9cf91f50e44a62f870883c1f36042e"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-desktop-after/2-geometry.json",
+      "bytes": 59,
+      "sha256": "5b970960089388550283f8a66f35c7476f258502422542772193ec50427a5d6f"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-desktop-after/2.png",
+      "bytes": 6426,
+      "sha256": "ec583af0bbbcd4cef790ae38a9d78f4dcc9cf91f50e44a62f870883c1f36042e"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-desktop-after/test.html",
+      "bytes": 631,
+      "sha256": "a6b0415f47cde60c03048c7722a517e29f1f6ae1174f865ace26fd167c4344f0"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-desktop-before/1-geometry.json",
+      "bytes": 59,
+      "sha256": "5b970960089388550283f8a66f35c7476f258502422542772193ec50427a5d6f"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-desktop-before/1.png",
+      "bytes": 6425,
+      "sha256": "e4d8f7a7bc0c8c863f9ebe183f26867923217ebbe9b212bcb4b36bff98a8ffbe"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-desktop-before/2-geometry.json",
+      "bytes": 59,
+      "sha256": "5b970960089388550283f8a66f35c7476f258502422542772193ec50427a5d6f"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-desktop-before/2.png",
+      "bytes": 6425,
+      "sha256": "e4d8f7a7bc0c8c863f9ebe183f26867923217ebbe9b212bcb4b36bff98a8ffbe"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-desktop-before/test.html",
+      "bytes": 631,
+      "sha256": "07ab8f18536f914f28b090a111e30636c04fbdb86555c41e1add974a1b8b8611"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-large-after/1-geometry.json",
+      "bytes": 60,
+      "sha256": "7987a6c892cd85df3e6f49887d71c588a675866bd54d13d7c55fb47186da11a9"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-large-after/1.png",
+      "bytes": 17563,
+      "sha256": "6965d4e7bd8554a86c271c8fb9819d039ef175f60700a99a07a2774ba7d737f7"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-large-after/2-geometry.json",
+      "bytes": 60,
+      "sha256": "7987a6c892cd85df3e6f49887d71c588a675866bd54d13d7c55fb47186da11a9"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-large-after/2.png",
+      "bytes": 17563,
+      "sha256": "6965d4e7bd8554a86c271c8fb9819d039ef175f60700a99a07a2774ba7d737f7"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-large-after/test.html",
+      "bytes": 631,
+      "sha256": "c882bf0c61e043cb6598b9ec970701bce9a6e861f67c5f4becfc882004dd299e"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-large-before/1-geometry.json",
+      "bytes": 60,
+      "sha256": "7987a6c892cd85df3e6f49887d71c588a675866bd54d13d7c55fb47186da11a9"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-large-before/1.png",
+      "bytes": 17568,
+      "sha256": "d149a928a2272556e90f4be6be8867d9d79c5cde7e2081c0b83f737c6f420d81"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-large-before/2-geometry.json",
+      "bytes": 60,
+      "sha256": "7987a6c892cd85df3e6f49887d71c588a675866bd54d13d7c55fb47186da11a9"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-large-before/2.png",
+      "bytes": 17568,
+      "sha256": "d149a928a2272556e90f4be6be8867d9d79c5cde7e2081c0b83f737c6f420d81"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-large-before/test.html",
+      "bytes": 631,
+      "sha256": "368062febb46cf976d4ef29bf12e8abaa47a84b540a705b5b139e84d51f385ab"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-legacy-after/1-geometry.json",
+      "bytes": 58,
+      "sha256": "ede8845fd2c6177151604c6e0dfe5dc0c53c7f6ccffee950c5278512aa3d0bd6"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-legacy-after/1.png",
+      "bytes": 2809,
+      "sha256": "ecd48b4dc7b63728c5248667f388abd4dcb26d3260191b7333e7be9b2a164c08"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-legacy-after/2-geometry.json",
+      "bytes": 58,
+      "sha256": "ede8845fd2c6177151604c6e0dfe5dc0c53c7f6ccffee950c5278512aa3d0bd6"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-legacy-after/2.png",
+      "bytes": 2809,
+      "sha256": "ecd48b4dc7b63728c5248667f388abd4dcb26d3260191b7333e7be9b2a164c08"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-legacy-after/test.html",
+      "bytes": 631,
+      "sha256": "26d79e4a54f41890f5e57415fcaab06e26d1bc2408a8477ff5ec09a560bdde22"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-legacy-before/1-geometry.json",
+      "bytes": 58,
+      "sha256": "ede8845fd2c6177151604c6e0dfe5dc0c53c7f6ccffee950c5278512aa3d0bd6"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-legacy-before/1.png",
+      "bytes": 2809,
+      "sha256": "4119b3be67a84d5a1702750f616e656a5fa4f790ab6a07994f97c62b28f087ea"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-legacy-before/2-geometry.json",
+      "bytes": 58,
+      "sha256": "ede8845fd2c6177151604c6e0dfe5dc0c53c7f6ccffee950c5278512aa3d0bd6"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-legacy-before/2.png",
+      "bytes": 2809,
+      "sha256": "4119b3be67a84d5a1702750f616e656a5fa4f790ab6a07994f97c62b28f087ea"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-legacy-before/test.html",
+      "bytes": 631,
+      "sha256": "516e119c4454b0cb16dfbb69c897508a5fcb25df8221f8fc0a2614679e3a0ac0"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-mobile-after/1-geometry.json",
+      "bytes": 58,
+      "sha256": "2839edddb232bde9969ffed7f423e91a47a5ceee526cc7614bdd266e55ec25df"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-mobile-after/1.png",
+      "bytes": 5958,
+      "sha256": "66bd1add7487df120d1ba586315f73040cd33b44b56e8ccc6c88658cf00ec004"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-mobile-after/2-geometry.json",
+      "bytes": 58,
+      "sha256": "2839edddb232bde9969ffed7f423e91a47a5ceee526cc7614bdd266e55ec25df"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-mobile-after/2.png",
+      "bytes": 5958,
+      "sha256": "66bd1add7487df120d1ba586315f73040cd33b44b56e8ccc6c88658cf00ec004"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-mobile-after/test.html",
+      "bytes": 631,
+      "sha256": "2e56170d51976088bb439107ccb24502bc2eda7ae795646c8de213b464466322"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-mobile-before/1-geometry.json",
+      "bytes": 58,
+      "sha256": "2839edddb232bde9969ffed7f423e91a47a5ceee526cc7614bdd266e55ec25df"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-mobile-before/1.png",
+      "bytes": 5958,
+      "sha256": "f3137c71cd0a691201b4bfe8a4473b517fccdea80949902b9aa22490f0f3bdaf"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-mobile-before/2-geometry.json",
+      "bytes": 58,
+      "sha256": "2839edddb232bde9969ffed7f423e91a47a5ceee526cc7614bdd266e55ec25df"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-mobile-before/2.png",
+      "bytes": 5958,
+      "sha256": "f3137c71cd0a691201b4bfe8a4473b517fccdea80949902b9aa22490f0f3bdaf"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-mobile-before/test.html",
+      "bytes": 631,
+      "sha256": "1d4118efb9b3a6a85a9aa38469b333f712c22c537bce5d41595c807caecd7738"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-triple-after/1-geometry.json",
+      "bytes": 58,
+      "sha256": "ede8845fd2c6177151604c6e0dfe5dc0c53c7f6ccffee950c5278512aa3d0bd6"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-triple-after/1.png",
+      "bytes": 16810,
+      "sha256": "ade9b4a62807bdaeba01d7bb736ce161d735a13db792bee389dec0f843713bf3"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-triple-after/2-geometry.json",
+      "bytes": 58,
+      "sha256": "ede8845fd2c6177151604c6e0dfe5dc0c53c7f6ccffee950c5278512aa3d0bd6"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-triple-after/2.png",
+      "bytes": 16810,
+      "sha256": "ade9b4a62807bdaeba01d7bb736ce161d735a13db792bee389dec0f843713bf3"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-triple-after/test.html",
+      "bytes": 631,
+      "sha256": "26d79e4a54f41890f5e57415fcaab06e26d1bc2408a8477ff5ec09a560bdde22"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-triple-before/1-geometry.json",
+      "bytes": 58,
+      "sha256": "ede8845fd2c6177151604c6e0dfe5dc0c53c7f6ccffee950c5278512aa3d0bd6"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-triple-before/1.png",
+      "bytes": 16707,
+      "sha256": "ad13d86c2674fdd6458a8631a1451c579799677c1a03a1a19c161d8dc802d8a4"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-triple-before/2-geometry.json",
+      "bytes": 58,
+      "sha256": "ede8845fd2c6177151604c6e0dfe5dc0c53c7f6ccffee950c5278512aa3d0bd6"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-triple-before/2.png",
+      "bytes": 16707,
+      "sha256": "ad13d86c2674fdd6458a8631a1451c579799677c1a03a1a19c161d8dc802d8a4"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/sticky-triple-before/test.html",
+      "bytes": 631,
+      "sha256": "516e119c4454b0cb16dfbb69c897508a5fcb25df8221f8fc0a2614679e3a0ac0"
+    },
+    {
+      "path": "runs/native-editor-clip-only-app-v2415/used-observe.py",
+      "bytes": 4287,
+      "sha256": "32c2a164fd6f52093a68c647d26e9d9324dd5e1ec8d5fe69427a26497f1bc4a7"
+    },
+    {
+      "path": "runs/native-editor-clip-only-build-v2415/guarded-build/build.stderr",
+      "bytes": 1911,
+      "sha256": "28882d41c99e06b521efcce8aaf795882f33ac1f5d78813e89dba743a7b3ac70"
+    },
+    {
+      "path": "runs/native-editor-clip-only-build-v2415/guarded-build/build.stdout",
+      "bytes": 140496,
+      "sha256": "affc94921abf77e5fc1adae68df6ddbef43a7cd34c595590520ad319502c13d5"
+    },
+    {
+      "path": "runs/native-editor-clip-only-build-v2415/guarded-build/clean-local-packages.stderr",
+      "bytes": 9476,
+      "sha256": "5ff5560786b55ea463a337ade15d091141f848d2ba17cb5cf16732e4c8d7c76f"
+    },
+    {
+      "path": "runs/native-editor-clip-only-build-v2415/guarded-build/clean-local-packages.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "runs/native-editor-clip-only-build-v2415/guarded-build/metadata.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "runs/native-editor-clip-only-build-v2415/guarded-build/metadata.stdout",
+      "bytes": 713925,
+      "sha256": "b66f3c992e43e39cc2769beb30d80a3906cf5ebbd73fdca78a963f2cd110684b"
+    },
+    {
+      "path": "runs/native-editor-clip-only-build-v2415/guarded-build/receipt.json",
+      "bytes": 31206,
+      "sha256": "972933961837f48d40fc0ed58e28db8a9abf1ae2994fcf7ff9950e18f66761e9"
+    },
+    {
+      "path": "runs/native-editor-clip-only-build-v2415/guarded-renderer-build.log",
+      "bytes": 592,
+      "sha256": "697e1f0e90f04875253fd18ccd29dea93a2f71fad9274378f1cfb171b4b9e3a5"
+    },
+    {
+      "path": "runs/native-editor-clip-only-build-v2415/receipt.json",
+      "bytes": 4965,
+      "sha256": "97ce727f8d27e9004f90909962b26ac2b4eefaf316e920ff04371fd3ffa61a8c"
+    },
+    {
+      "path": "runs/native-editor-clip-only-build-v2415/verified-native-app.log",
+      "bytes": 3835,
+      "sha256": "1758b92ba96adaae4eb0c689f46abc0ee7d57e2e7d915310d7631f0c2aa276b0"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/clean-native-app-and-public-api.log",
+      "bytes": 37,
+      "sha256": "909c7c18141cac1086dfd4f40ec660a2fec345ea9cac66158dc5e97a91cfca72"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-desktop-after/1-geometry.json",
+      "bytes": 57,
+      "sha256": "beeb67f6aedd8db41b74af1860862c992799da2f263eba93d53e192b7ee3d9f1"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-desktop-after/1.png",
+      "bytes": 6541,
+      "sha256": "9e62940ba2fc5006e91497fc0713741535f51a8359a1dce837537b178b455234"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-desktop-after/2-geometry.json",
+      "bytes": 57,
+      "sha256": "beeb67f6aedd8db41b74af1860862c992799da2f263eba93d53e192b7ee3d9f1"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-desktop-after/2.png",
+      "bytes": 6541,
+      "sha256": "9e62940ba2fc5006e91497fc0713741535f51a8359a1dce837537b178b455234"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-desktop-after/test.html",
+      "bytes": 576,
+      "sha256": "bcb3a8cc19ed32737d6443e74de10cdacd257aedf939438cc3549af7e1e35ef1"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-desktop-before/1-geometry.json",
+      "bytes": 57,
+      "sha256": "ca6c9071aefd7e369c9cafe8b27e99345500f0e9192d6326de4ff3965f9fadf6"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-desktop-before/1.png",
+      "bytes": 6561,
+      "sha256": "73ef398bf6d16c1415ca0727e237cf7df52c2cfe5d1f16e389b26cd84267b784"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-desktop-before/2-geometry.json",
+      "bytes": 57,
+      "sha256": "ca6c9071aefd7e369c9cafe8b27e99345500f0e9192d6326de4ff3965f9fadf6"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-desktop-before/2.png",
+      "bytes": 6561,
+      "sha256": "73ef398bf6d16c1415ca0727e237cf7df52c2cfe5d1f16e389b26cd84267b784"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-desktop-before/test.html",
+      "bytes": 576,
+      "sha256": "1f971900e25636591a4366500d2bb408db9b4170f29c61baf457b92cda024e7e"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-large-after/1-geometry.json",
+      "bytes": 57,
+      "sha256": "beeb67f6aedd8db41b74af1860862c992799da2f263eba93d53e192b7ee3d9f1"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-large-after/1.png",
+      "bytes": 17544,
+      "sha256": "2ef31a936f0a9d023c2269d61cf6ac166ece86873af762dba38ec60703d69578"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-large-after/2-geometry.json",
+      "bytes": 57,
+      "sha256": "beeb67f6aedd8db41b74af1860862c992799da2f263eba93d53e192b7ee3d9f1"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-large-after/2.png",
+      "bytes": 17544,
+      "sha256": "2ef31a936f0a9d023c2269d61cf6ac166ece86873af762dba38ec60703d69578"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-large-after/test.html",
+      "bytes": 576,
+      "sha256": "bcb3a8cc19ed32737d6443e74de10cdacd257aedf939438cc3549af7e1e35ef1"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-large-before/1-geometry.json",
+      "bytes": 57,
+      "sha256": "ca6c9071aefd7e369c9cafe8b27e99345500f0e9192d6326de4ff3965f9fadf6"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-large-before/1.png",
+      "bytes": 17560,
+      "sha256": "486c6455fefe26a8112017f4b43e07a4af905fce257668a53730bb2aecf732fe"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-large-before/2-geometry.json",
+      "bytes": 57,
+      "sha256": "ca6c9071aefd7e369c9cafe8b27e99345500f0e9192d6326de4ff3965f9fadf6"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-large-before/2.png",
+      "bytes": 17560,
+      "sha256": "486c6455fefe26a8112017f4b43e07a4af905fce257668a53730bb2aecf732fe"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-large-before/test.html",
+      "bytes": 576,
+      "sha256": "1f971900e25636591a4366500d2bb408db9b4170f29c61baf457b92cda024e7e"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-legacy-after/1-geometry.json",
+      "bytes": 57,
+      "sha256": "beeb67f6aedd8db41b74af1860862c992799da2f263eba93d53e192b7ee3d9f1"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-legacy-after/1.png",
+      "bytes": 2847,
+      "sha256": "75369f940550ae9c9af472937ed0362c8a93431903c6ee227b92f1545b1dacd7"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-legacy-after/2-geometry.json",
+      "bytes": 57,
+      "sha256": "beeb67f6aedd8db41b74af1860862c992799da2f263eba93d53e192b7ee3d9f1"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-legacy-after/2.png",
+      "bytes": 2847,
+      "sha256": "75369f940550ae9c9af472937ed0362c8a93431903c6ee227b92f1545b1dacd7"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-legacy-after/test.html",
+      "bytes": 576,
+      "sha256": "bcb3a8cc19ed32737d6443e74de10cdacd257aedf939438cc3549af7e1e35ef1"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-legacy-before/1-geometry.json",
+      "bytes": 57,
+      "sha256": "ca6c9071aefd7e369c9cafe8b27e99345500f0e9192d6326de4ff3965f9fadf6"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-legacy-before/1.png",
+      "bytes": 2845,
+      "sha256": "523c1cc64d37b5fd36ba27679f4064a77f56c8d4a91fe0e2d34f98f45a09501a"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-legacy-before/2-geometry.json",
+      "bytes": 57,
+      "sha256": "ca6c9071aefd7e369c9cafe8b27e99345500f0e9192d6326de4ff3965f9fadf6"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-legacy-before/2.png",
+      "bytes": 2845,
+      "sha256": "523c1cc64d37b5fd36ba27679f4064a77f56c8d4a91fe0e2d34f98f45a09501a"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-legacy-before/test.html",
+      "bytes": 576,
+      "sha256": "1f971900e25636591a4366500d2bb408db9b4170f29c61baf457b92cda024e7e"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-mobile-after/1-geometry.json",
+      "bytes": 57,
+      "sha256": "beeb67f6aedd8db41b74af1860862c992799da2f263eba93d53e192b7ee3d9f1"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-mobile-after/1.png",
+      "bytes": 5997,
+      "sha256": "c6d6e7d0955014b4cdda6e9cc4d7f628791e28df9bc8b325304ff5035c244ab3"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-mobile-after/2-geometry.json",
+      "bytes": 57,
+      "sha256": "beeb67f6aedd8db41b74af1860862c992799da2f263eba93d53e192b7ee3d9f1"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-mobile-after/2.png",
+      "bytes": 5997,
+      "sha256": "c6d6e7d0955014b4cdda6e9cc4d7f628791e28df9bc8b325304ff5035c244ab3"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-mobile-after/test.html",
+      "bytes": 576,
+      "sha256": "bcb3a8cc19ed32737d6443e74de10cdacd257aedf939438cc3549af7e1e35ef1"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-mobile-before/1-geometry.json",
+      "bytes": 57,
+      "sha256": "ca6c9071aefd7e369c9cafe8b27e99345500f0e9192d6326de4ff3965f9fadf6"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-mobile-before/1.png",
+      "bytes": 5996,
+      "sha256": "2d5d3cfa794e1e92e622e157c609ef7d76196c82f207ef25122ceabf58c633e9"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-mobile-before/2-geometry.json",
+      "bytes": 57,
+      "sha256": "ca6c9071aefd7e369c9cafe8b27e99345500f0e9192d6326de4ff3965f9fadf6"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-mobile-before/2.png",
+      "bytes": 5996,
+      "sha256": "2d5d3cfa794e1e92e622e157c609ef7d76196c82f207ef25122ceabf58c633e9"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-mobile-before/test.html",
+      "bytes": 576,
+      "sha256": "1f971900e25636591a4366500d2bb408db9b4170f29c61baf457b92cda024e7e"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-triple-after/1-geometry.json",
+      "bytes": 57,
+      "sha256": "beeb67f6aedd8db41b74af1860862c992799da2f263eba93d53e192b7ee3d9f1"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-triple-after/1.png",
+      "bytes": 16742,
+      "sha256": "bce2a18e17a46cc2f93417c14f4ad13cc014f7c1f5f9c21321f6d37451d62d70"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-triple-after/2-geometry.json",
+      "bytes": 57,
+      "sha256": "beeb67f6aedd8db41b74af1860862c992799da2f263eba93d53e192b7ee3d9f1"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-triple-after/2.png",
+      "bytes": 16742,
+      "sha256": "bce2a18e17a46cc2f93417c14f4ad13cc014f7c1f5f9c21321f6d37451d62d70"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-triple-after/test.html",
+      "bytes": 576,
+      "sha256": "bcb3a8cc19ed32737d6443e74de10cdacd257aedf939438cc3549af7e1e35ef1"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-triple-before/1-geometry.json",
+      "bytes": 57,
+      "sha256": "ca6c9071aefd7e369c9cafe8b27e99345500f0e9192d6326de4ff3965f9fadf6"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-triple-before/1.png",
+      "bytes": 16743,
+      "sha256": "7a537f846a0aaa297403ef643277eafdc4122ae07b8244d608920b9f548dbd43"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-triple-before/2-geometry.json",
+      "bytes": 57,
+      "sha256": "ca6c9071aefd7e369c9cafe8b27e99345500f0e9192d6326de4ff3965f9fadf6"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-triple-before/2.png",
+      "bytes": 16743,
+      "sha256": "7a537f846a0aaa297403ef643277eafdc4122ae07b8244d608920b9f548dbd43"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/input-triple-before/test.html",
+      "bytes": 576,
+      "sha256": "1f971900e25636591a4366500d2bb408db9b4170f29c61baf457b92cda024e7e"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-desktop-after/1-geometry.json",
+      "bytes": 59,
+      "sha256": "291f0a49a54ec43530a1d398e72d046edd6639d903a39829c7ec28c6d909b9b8"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-desktop-after/1.png",
+      "bytes": 6443,
+      "sha256": "35d3f47e384745c173aa252d83e93f05958beca2929c19b8a036557beac9423b"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-desktop-after/2-geometry.json",
+      "bytes": 59,
+      "sha256": "291f0a49a54ec43530a1d398e72d046edd6639d903a39829c7ec28c6d909b9b8"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-desktop-after/2.png",
+      "bytes": 6443,
+      "sha256": "35d3f47e384745c173aa252d83e93f05958beca2929c19b8a036557beac9423b"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-desktop-after/test.html",
+      "bytes": 519,
+      "sha256": "a00a11bd05390bf7ce17443e0258bc498e9a832ab9428bc9d14e3c167a2b2052"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-desktop-before/1-geometry.json",
+      "bytes": 59,
+      "sha256": "5b970960089388550283f8a66f35c7476f258502422542772193ec50427a5d6f"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-desktop-before/1.png",
+      "bytes": 6425,
+      "sha256": "e4d8f7a7bc0c8c863f9ebe183f26867923217ebbe9b212bcb4b36bff98a8ffbe"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-desktop-before/2-geometry.json",
+      "bytes": 59,
+      "sha256": "5b970960089388550283f8a66f35c7476f258502422542772193ec50427a5d6f"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-desktop-before/2.png",
+      "bytes": 6425,
+      "sha256": "e4d8f7a7bc0c8c863f9ebe183f26867923217ebbe9b212bcb4b36bff98a8ffbe"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-desktop-before/test.html",
+      "bytes": 519,
+      "sha256": "8e2df4e3cc041b1ad76ce6b275ca32e117a6940bf83f0be0734a6a65aece9e1b"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-large-after/1-geometry.json",
+      "bytes": 60,
+      "sha256": "c9cf52e77556fe44bf86d6b68cf00dc2c79917ede0228433bd0aff9e1737df14"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-large-after/1.png",
+      "bytes": 17584,
+      "sha256": "6e1fcdaa2ddcc51d98a2de2755f10343247fcaf6501c764fcd4446208791b943"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-large-after/2-geometry.json",
+      "bytes": 60,
+      "sha256": "c9cf52e77556fe44bf86d6b68cf00dc2c79917ede0228433bd0aff9e1737df14"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-large-after/2.png",
+      "bytes": 17584,
+      "sha256": "6e1fcdaa2ddcc51d98a2de2755f10343247fcaf6501c764fcd4446208791b943"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-large-after/test.html",
+      "bytes": 519,
+      "sha256": "96831e015edc2648a60e4f46300488f279f10c6ddda0029035e6f0e0bc376d1a"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-large-before/1-geometry.json",
+      "bytes": 60,
+      "sha256": "7987a6c892cd85df3e6f49887d71c588a675866bd54d13d7c55fb47186da11a9"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-large-before/1.png",
+      "bytes": 17568,
+      "sha256": "d149a928a2272556e90f4be6be8867d9d79c5cde7e2081c0b83f737c6f420d81"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-large-before/2-geometry.json",
+      "bytes": 60,
+      "sha256": "7987a6c892cd85df3e6f49887d71c588a675866bd54d13d7c55fb47186da11a9"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-large-before/2.png",
+      "bytes": 17568,
+      "sha256": "d149a928a2272556e90f4be6be8867d9d79c5cde7e2081c0b83f737c6f420d81"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-large-before/test.html",
+      "bytes": 519,
+      "sha256": "f2853cd8ec9bd7f546940ccd0f02d406ba885dfa883f36d120875968268216fe"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-legacy-after/1-geometry.json",
+      "bytes": 58,
+      "sha256": "832a2e251249c18b6713ba78afb6e652c0872362bebdd2704768130ffc2442b5"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-legacy-after/1.png",
+      "bytes": 2809,
+      "sha256": "8ee978b789b425e7b47e9e08f75808bdd97a5d46d644c589b735d82fc8be5c38"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-legacy-after/2-geometry.json",
+      "bytes": 58,
+      "sha256": "832a2e251249c18b6713ba78afb6e652c0872362bebdd2704768130ffc2442b5"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-legacy-after/2.png",
+      "bytes": 2809,
+      "sha256": "8ee978b789b425e7b47e9e08f75808bdd97a5d46d644c589b735d82fc8be5c38"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-legacy-after/test.html",
+      "bytes": 519,
+      "sha256": "b7a1ad456d268a43185e7c350559f1ec9ab523b5ff6402191f07f1d1c3e4f3cb"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-legacy-before/1-geometry.json",
+      "bytes": 58,
+      "sha256": "ede8845fd2c6177151604c6e0dfe5dc0c53c7f6ccffee950c5278512aa3d0bd6"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-legacy-before/1.png",
+      "bytes": 2809,
+      "sha256": "4119b3be67a84d5a1702750f616e656a5fa4f790ab6a07994f97c62b28f087ea"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-legacy-before/2-geometry.json",
+      "bytes": 58,
+      "sha256": "ede8845fd2c6177151604c6e0dfe5dc0c53c7f6ccffee950c5278512aa3d0bd6"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-legacy-before/2.png",
+      "bytes": 2809,
+      "sha256": "4119b3be67a84d5a1702750f616e656a5fa4f790ab6a07994f97c62b28f087ea"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-legacy-before/test.html",
+      "bytes": 519,
+      "sha256": "92f739058c53bc432c1947435afe0effb1f73e747569338eeadfa293b366a9a9"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-mobile-after/1-geometry.json",
+      "bytes": 58,
+      "sha256": "230602bb0b81a755f927736634a2a347c4bb139fb864181b9e4652bc841e7396"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-mobile-after/1.png",
+      "bytes": 5958,
+      "sha256": "011e9576f6c6a10b3ef798932796b193ab8859146f7b3f68c35748bd4251fa9a"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-mobile-after/2-geometry.json",
+      "bytes": 58,
+      "sha256": "230602bb0b81a755f927736634a2a347c4bb139fb864181b9e4652bc841e7396"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-mobile-after/2.png",
+      "bytes": 5958,
+      "sha256": "011e9576f6c6a10b3ef798932796b193ab8859146f7b3f68c35748bd4251fa9a"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-mobile-after/test.html",
+      "bytes": 519,
+      "sha256": "ee03b86e59e9fa93dc5d7698178e07af3123e976e2055bbc0c5bab20f8c2e137"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-mobile-before/1-geometry.json",
+      "bytes": 58,
+      "sha256": "2839edddb232bde9969ffed7f423e91a47a5ceee526cc7614bdd266e55ec25df"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-mobile-before/1.png",
+      "bytes": 5958,
+      "sha256": "f3137c71cd0a691201b4bfe8a4473b517fccdea80949902b9aa22490f0f3bdaf"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-mobile-before/2-geometry.json",
+      "bytes": 58,
+      "sha256": "2839edddb232bde9969ffed7f423e91a47a5ceee526cc7614bdd266e55ec25df"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-mobile-before/2.png",
+      "bytes": 5958,
+      "sha256": "f3137c71cd0a691201b4bfe8a4473b517fccdea80949902b9aa22490f0f3bdaf"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-mobile-before/test.html",
+      "bytes": 519,
+      "sha256": "c2020f1420056f1114596d1d5a4cab1eb9d697911025d85b348a155c44c132ef"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-triple-after/1-geometry.json",
+      "bytes": 58,
+      "sha256": "832a2e251249c18b6713ba78afb6e652c0872362bebdd2704768130ffc2442b5"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-triple-after/1.png",
+      "bytes": 16707,
+      "sha256": "a769a9040eb4022d0ed9aad4a5bb52141a446ef1b408b3131d14eca5c53fdf7d"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-triple-after/2-geometry.json",
+      "bytes": 58,
+      "sha256": "832a2e251249c18b6713ba78afb6e652c0872362bebdd2704768130ffc2442b5"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-triple-after/2.png",
+      "bytes": 16707,
+      "sha256": "a769a9040eb4022d0ed9aad4a5bb52141a446ef1b408b3131d14eca5c53fdf7d"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-triple-after/test.html",
+      "bytes": 519,
+      "sha256": "b7a1ad456d268a43185e7c350559f1ec9ab523b5ff6402191f07f1d1c3e4f3cb"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-triple-before/1-geometry.json",
+      "bytes": 58,
+      "sha256": "ede8845fd2c6177151604c6e0dfe5dc0c53c7f6ccffee950c5278512aa3d0bd6"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-triple-before/1.png",
+      "bytes": 16707,
+      "sha256": "ad13d86c2674fdd6458a8631a1451c579799677c1a03a1a19c161d8dc802d8a4"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-triple-before/2-geometry.json",
+      "bytes": 58,
+      "sha256": "ede8845fd2c6177151604c6e0dfe5dc0c53c7f6ccffee950c5278512aa3d0bd6"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-triple-before/2.png",
+      "bytes": 16707,
+      "sha256": "ad13d86c2674fdd6458a8631a1451c579799677c1a03a1a19c161d8dc802d8a4"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/large-text-triple-before/test.html",
+      "bytes": 519,
+      "sha256": "92f739058c53bc432c1947435afe0effb1f73e747569338eeadfa293b366a9a9"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-build.log",
+      "bytes": 131856,
+      "sha256": "16d7ece4d5f6ebbe84320e5fb22707f4bc670f6b11f5b4a3bb62e6949976f496"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-first.log",
+      "bytes": 4004,
+      "sha256": "5b6e9801f7d5a2a923c64b7ed9ed26f1ab798f3f36da5cf14fbe3b4cca4b99c7"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-first/input-desktop/after.png",
+      "bytes": 7916,
+      "sha256": "2a74f6e84fc4d7db44bbd9d46f2cf0b153e681fc7a16f506e960aecdb0697481"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-first/input-desktop/before.png",
+      "bytes": 7930,
+      "sha256": "4e708855a80ab834d2c500d721c8cb67c290312dfadd9cfe8aa34055aec5c31d"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-first/input-large/after.png",
+      "bytes": 22219,
+      "sha256": "e2e18d29fc9a862ba377f3dcdbcf64edcb03f26ff5459f683877f685dc2b8de7"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-first/input-large/before.png",
+      "bytes": 22233,
+      "sha256": "ef9681a7f73f6ebfa8c6d0ca4f93e7886b1095f5364725401a7a52b08c011e07"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-first/input-legacy/after.png",
+      "bytes": 3322,
+      "sha256": "8cede6672095c46af1e5fe21c20748069269555e75cf9a9789a2da682cf8b9ac"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-first/input-legacy/before.png",
+      "bytes": 3323,
+      "sha256": "dac642e1bbb07b5d1d915f1936f5383f82a1f0cb1652c602e64a1ace6f3d0b82"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-first/input-mobile/after.png",
+      "bytes": 7013,
+      "sha256": "ed6fbd2526668d6371878210429dd47d8f0d47a7216a472ff7efd899c681443a"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-first/input-mobile/before.png",
+      "bytes": 7013,
+      "sha256": "2bf04ba0a0c1cd3095776bbcc4716ab411b7f17732edd02968d76f6b37e4f2d6"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-first/input-triple/after.png",
+      "bytes": 21017,
+      "sha256": "75f835624b0b0b10b37ca9185a36f671f47683a2c9e1b55a79ac378e4f29f8f6"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-first/input-triple/before.png",
+      "bytes": 21018,
+      "sha256": "616f832f83696a3066da9fd32f0c901ae9d66d4c74e9ce6f23d62ad892400f1a"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-first/large-text-desktop/after.png",
+      "bytes": 7792,
+      "sha256": "0870514600d13cd4afbb41eff712c4673fe89b3b40daea780da8c7b00ea6e5e2"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-first/large-text-desktop/before.png",
+      "bytes": 7770,
+      "sha256": "ad1bfb3f74f963c172acf16d956e73796fee345286e3d8c22dced50389a721b9"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-first/large-text-large/after.png",
+      "bytes": 22210,
+      "sha256": "dcd7a27ba41f06f1d35d37407e6189ae9fa844a380e8b9e3f2bbfbddc7d363d2"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-first/large-text-large/before.png",
+      "bytes": 22190,
+      "sha256": "c929439b5d2afdc16c6f7825159698a4b18efcb8a2f926ebcf94207a855fa584"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-first/large-text-legacy/after.png",
+      "bytes": 3277,
+      "sha256": "896b6bb5bfcd3da16cb3726041e1aed1907ecd694cb36d4d8f336dd6fded55c1"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-first/large-text-legacy/before.png",
+      "bytes": 3277,
+      "sha256": "e7b78bc5f8b0159fac4767aaa542b1af3d85e5e236e8736e1db67d175a8f0b9d"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-first/large-text-mobile/after.png",
+      "bytes": 6965,
+      "sha256": "692a2c72e28b0c6c3258b44d7b25e95bb0fc3dd11078f98eb1202001d1e2d8a2"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-first/large-text-mobile/before.png",
+      "bytes": 6964,
+      "sha256": "2a14aa410784930354556ea1f894a9333847587726839775db80901e6fc5453f"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-first/large-text-triple/after.png",
+      "bytes": 21025,
+      "sha256": "0ff71b4f784d8d00fdb59e3a0d580e2bf5031cef27c85f52257d372382807e09"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-first/large-text-triple/before.png",
+      "bytes": 21026,
+      "sha256": "dab0074d205bb737418e6015a05d46a1e280196166d8196967b55e2194a396b4"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-first/sticky-desktop/after.png",
+      "bytes": 7782,
+      "sha256": "c0dc4a5d83c57bfcc11e86ecd3435b3e0c233e69349d985b851cb2cfa37ed36f"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-first/sticky-desktop/before.png",
+      "bytes": 7770,
+      "sha256": "ad1bfb3f74f963c172acf16d956e73796fee345286e3d8c22dced50389a721b9"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-first/sticky-large/after.png",
+      "bytes": 22185,
+      "sha256": "973620d0ed6e421eb54abd98313bfad8dca6fd68f0d8c4695ec5113960539212"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-first/sticky-large/before.png",
+      "bytes": 22190,
+      "sha256": "c929439b5d2afdc16c6f7825159698a4b18efcb8a2f926ebcf94207a855fa584"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-first/sticky-legacy/after.png",
+      "bytes": 3277,
+      "sha256": "2744365387fa0e44bb4e6743c80620ba79acf5ea42b9ece7aaefe19f58cc5af0"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-first/sticky-legacy/before.png",
+      "bytes": 3277,
+      "sha256": "e7b78bc5f8b0159fac4767aaa542b1af3d85e5e236e8736e1db67d175a8f0b9d"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-first/sticky-mobile/after.png",
+      "bytes": 6964,
+      "sha256": "46d799ebe43ba7c02059fee8bd5a8277b7cfc2e497b6c33e24c1e2c5e7d973ae"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-first/sticky-mobile/before.png",
+      "bytes": 6964,
+      "sha256": "2a14aa410784930354556ea1f894a9333847587726839775db80901e6fc5453f"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-first/sticky-triple/after.png",
+      "bytes": 21041,
+      "sha256": "abcd89a607205b44e4429805580e0a2382030c24430948c9f5777efbb6b03c4c"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-first/sticky-triple/before.png",
+      "bytes": 21026,
+      "sha256": "dab0074d205bb737418e6015a05d46a1e280196166d8196967b55e2194a396b4"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-format.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-metadata.log",
+      "bytes": 408126,
+      "sha256": "f6d16653084d5589a83523d994b1890af6632d6be5d253a35d484c12bca01928"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-second.log",
+      "bytes": 4004,
+      "sha256": "5b6e9801f7d5a2a923c64b7ed9ed26f1ab798f3f36da5cf14fbe3b4cca4b99c7"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-second/input-desktop/after.png",
+      "bytes": 7916,
+      "sha256": "2a74f6e84fc4d7db44bbd9d46f2cf0b153e681fc7a16f506e960aecdb0697481"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-second/input-desktop/before.png",
+      "bytes": 7930,
+      "sha256": "4e708855a80ab834d2c500d721c8cb67c290312dfadd9cfe8aa34055aec5c31d"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-second/input-large/after.png",
+      "bytes": 22219,
+      "sha256": "e2e18d29fc9a862ba377f3dcdbcf64edcb03f26ff5459f683877f685dc2b8de7"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-second/input-large/before.png",
+      "bytes": 22233,
+      "sha256": "ef9681a7f73f6ebfa8c6d0ca4f93e7886b1095f5364725401a7a52b08c011e07"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-second/input-legacy/after.png",
+      "bytes": 3322,
+      "sha256": "8cede6672095c46af1e5fe21c20748069269555e75cf9a9789a2da682cf8b9ac"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-second/input-legacy/before.png",
+      "bytes": 3323,
+      "sha256": "dac642e1bbb07b5d1d915f1936f5383f82a1f0cb1652c602e64a1ace6f3d0b82"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-second/input-mobile/after.png",
+      "bytes": 7013,
+      "sha256": "ed6fbd2526668d6371878210429dd47d8f0d47a7216a472ff7efd899c681443a"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-second/input-mobile/before.png",
+      "bytes": 7013,
+      "sha256": "2bf04ba0a0c1cd3095776bbcc4716ab411b7f17732edd02968d76f6b37e4f2d6"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-second/input-triple/after.png",
+      "bytes": 21017,
+      "sha256": "75f835624b0b0b10b37ca9185a36f671f47683a2c9e1b55a79ac378e4f29f8f6"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-second/input-triple/before.png",
+      "bytes": 21018,
+      "sha256": "616f832f83696a3066da9fd32f0c901ae9d66d4c74e9ce6f23d62ad892400f1a"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-second/large-text-desktop/after.png",
+      "bytes": 7792,
+      "sha256": "0870514600d13cd4afbb41eff712c4673fe89b3b40daea780da8c7b00ea6e5e2"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-second/large-text-desktop/before.png",
+      "bytes": 7770,
+      "sha256": "ad1bfb3f74f963c172acf16d956e73796fee345286e3d8c22dced50389a721b9"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-second/large-text-large/after.png",
+      "bytes": 22210,
+      "sha256": "dcd7a27ba41f06f1d35d37407e6189ae9fa844a380e8b9e3f2bbfbddc7d363d2"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-second/large-text-large/before.png",
+      "bytes": 22190,
+      "sha256": "c929439b5d2afdc16c6f7825159698a4b18efcb8a2f926ebcf94207a855fa584"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-second/large-text-legacy/after.png",
+      "bytes": 3277,
+      "sha256": "896b6bb5bfcd3da16cb3726041e1aed1907ecd694cb36d4d8f336dd6fded55c1"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-second/large-text-legacy/before.png",
+      "bytes": 3277,
+      "sha256": "e7b78bc5f8b0159fac4767aaa542b1af3d85e5e236e8736e1db67d175a8f0b9d"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-second/large-text-mobile/after.png",
+      "bytes": 6965,
+      "sha256": "692a2c72e28b0c6c3258b44d7b25e95bb0fc3dd11078f98eb1202001d1e2d8a2"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-second/large-text-mobile/before.png",
+      "bytes": 6964,
+      "sha256": "2a14aa410784930354556ea1f894a9333847587726839775db80901e6fc5453f"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-second/large-text-triple/after.png",
+      "bytes": 21025,
+      "sha256": "0ff71b4f784d8d00fdb59e3a0d580e2bf5031cef27c85f52257d372382807e09"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-second/large-text-triple/before.png",
+      "bytes": 21026,
+      "sha256": "dab0074d205bb737418e6015a05d46a1e280196166d8196967b55e2194a396b4"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-second/sticky-desktop/after.png",
+      "bytes": 7782,
+      "sha256": "c0dc4a5d83c57bfcc11e86ecd3435b3e0c233e69349d985b851cb2cfa37ed36f"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-second/sticky-desktop/before.png",
+      "bytes": 7770,
+      "sha256": "ad1bfb3f74f963c172acf16d956e73796fee345286e3d8c22dced50389a721b9"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-second/sticky-large/after.png",
+      "bytes": 22185,
+      "sha256": "973620d0ed6e421eb54abd98313bfad8dca6fd68f0d8c4695ec5113960539212"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-second/sticky-large/before.png",
+      "bytes": 22190,
+      "sha256": "c929439b5d2afdc16c6f7825159698a4b18efcb8a2f926ebcf94207a855fa584"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-second/sticky-legacy/after.png",
+      "bytes": 3277,
+      "sha256": "2744365387fa0e44bb4e6743c80620ba79acf5ea42b9ece7aaefe19f58cc5af0"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-second/sticky-legacy/before.png",
+      "bytes": 3277,
+      "sha256": "e7b78bc5f8b0159fac4767aaa542b1af3d85e5e236e8736e1db67d175a8f0b9d"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-second/sticky-mobile/after.png",
+      "bytes": 6964,
+      "sha256": "46d799ebe43ba7c02059fee8bd5a8277b7cfc2e497b6c33e24c1e2c5e7d973ae"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-second/sticky-mobile/before.png",
+      "bytes": 6964,
+      "sha256": "2a14aa410784930354556ea1f894a9333847587726839775db80901e6fc5453f"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-second/sticky-triple/after.png",
+      "bytes": 21041,
+      "sha256": "abcd89a607205b44e4429805580e0a2382030c24430948c9f5777efbb6b03c4c"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/native-second/sticky-triple/before.png",
+      "bytes": 21026,
+      "sha256": "dab0074d205bb737418e6015a05d46a1e280196166d8196967b55e2194a396b4"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/receipt.json",
+      "bytes": 98238,
+      "sha256": "77b5df2e7937d2f688e69871a61b1a3f3e42ebf4b9b27d4f07a4f95b5073f3cd"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-desktop-after/1-geometry.json",
+      "bytes": 59,
+      "sha256": "5b970960089388550283f8a66f35c7476f258502422542772193ec50427a5d6f"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-desktop-after/1.png",
+      "bytes": 6426,
+      "sha256": "ec583af0bbbcd4cef790ae38a9d78f4dcc9cf91f50e44a62f870883c1f36042e"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-desktop-after/2-geometry.json",
+      "bytes": 59,
+      "sha256": "5b970960089388550283f8a66f35c7476f258502422542772193ec50427a5d6f"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-desktop-after/2.png",
+      "bytes": 6426,
+      "sha256": "ec583af0bbbcd4cef790ae38a9d78f4dcc9cf91f50e44a62f870883c1f36042e"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-desktop-after/test.html",
+      "bytes": 631,
+      "sha256": "a6b0415f47cde60c03048c7722a517e29f1f6ae1174f865ace26fd167c4344f0"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-desktop-before/1-geometry.json",
+      "bytes": 59,
+      "sha256": "5b970960089388550283f8a66f35c7476f258502422542772193ec50427a5d6f"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-desktop-before/1.png",
+      "bytes": 6425,
+      "sha256": "e4d8f7a7bc0c8c863f9ebe183f26867923217ebbe9b212bcb4b36bff98a8ffbe"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-desktop-before/2-geometry.json",
+      "bytes": 59,
+      "sha256": "5b970960089388550283f8a66f35c7476f258502422542772193ec50427a5d6f"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-desktop-before/2.png",
+      "bytes": 6425,
+      "sha256": "e4d8f7a7bc0c8c863f9ebe183f26867923217ebbe9b212bcb4b36bff98a8ffbe"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-desktop-before/test.html",
+      "bytes": 631,
+      "sha256": "07ab8f18536f914f28b090a111e30636c04fbdb86555c41e1add974a1b8b8611"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-large-after/1-geometry.json",
+      "bytes": 60,
+      "sha256": "7987a6c892cd85df3e6f49887d71c588a675866bd54d13d7c55fb47186da11a9"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-large-after/1.png",
+      "bytes": 17563,
+      "sha256": "6965d4e7bd8554a86c271c8fb9819d039ef175f60700a99a07a2774ba7d737f7"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-large-after/2-geometry.json",
+      "bytes": 60,
+      "sha256": "7987a6c892cd85df3e6f49887d71c588a675866bd54d13d7c55fb47186da11a9"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-large-after/2.png",
+      "bytes": 17563,
+      "sha256": "6965d4e7bd8554a86c271c8fb9819d039ef175f60700a99a07a2774ba7d737f7"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-large-after/test.html",
+      "bytes": 631,
+      "sha256": "c882bf0c61e043cb6598b9ec970701bce9a6e861f67c5f4becfc882004dd299e"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-large-before/1-geometry.json",
+      "bytes": 60,
+      "sha256": "7987a6c892cd85df3e6f49887d71c588a675866bd54d13d7c55fb47186da11a9"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-large-before/1.png",
+      "bytes": 17568,
+      "sha256": "d149a928a2272556e90f4be6be8867d9d79c5cde7e2081c0b83f737c6f420d81"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-large-before/2-geometry.json",
+      "bytes": 60,
+      "sha256": "7987a6c892cd85df3e6f49887d71c588a675866bd54d13d7c55fb47186da11a9"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-large-before/2.png",
+      "bytes": 17568,
+      "sha256": "d149a928a2272556e90f4be6be8867d9d79c5cde7e2081c0b83f737c6f420d81"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-large-before/test.html",
+      "bytes": 631,
+      "sha256": "368062febb46cf976d4ef29bf12e8abaa47a84b540a705b5b139e84d51f385ab"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-legacy-after/1-geometry.json",
+      "bytes": 58,
+      "sha256": "ede8845fd2c6177151604c6e0dfe5dc0c53c7f6ccffee950c5278512aa3d0bd6"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-legacy-after/1.png",
+      "bytes": 2809,
+      "sha256": "ecd48b4dc7b63728c5248667f388abd4dcb26d3260191b7333e7be9b2a164c08"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-legacy-after/2-geometry.json",
+      "bytes": 58,
+      "sha256": "ede8845fd2c6177151604c6e0dfe5dc0c53c7f6ccffee950c5278512aa3d0bd6"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-legacy-after/2.png",
+      "bytes": 2809,
+      "sha256": "ecd48b4dc7b63728c5248667f388abd4dcb26d3260191b7333e7be9b2a164c08"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-legacy-after/test.html",
+      "bytes": 631,
+      "sha256": "26d79e4a54f41890f5e57415fcaab06e26d1bc2408a8477ff5ec09a560bdde22"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-legacy-before/1-geometry.json",
+      "bytes": 58,
+      "sha256": "ede8845fd2c6177151604c6e0dfe5dc0c53c7f6ccffee950c5278512aa3d0bd6"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-legacy-before/1.png",
+      "bytes": 2809,
+      "sha256": "4119b3be67a84d5a1702750f616e656a5fa4f790ab6a07994f97c62b28f087ea"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-legacy-before/2-geometry.json",
+      "bytes": 58,
+      "sha256": "ede8845fd2c6177151604c6e0dfe5dc0c53c7f6ccffee950c5278512aa3d0bd6"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-legacy-before/2.png",
+      "bytes": 2809,
+      "sha256": "4119b3be67a84d5a1702750f616e656a5fa4f790ab6a07994f97c62b28f087ea"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-legacy-before/test.html",
+      "bytes": 631,
+      "sha256": "516e119c4454b0cb16dfbb69c897508a5fcb25df8221f8fc0a2614679e3a0ac0"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-mobile-after/1-geometry.json",
+      "bytes": 58,
+      "sha256": "2839edddb232bde9969ffed7f423e91a47a5ceee526cc7614bdd266e55ec25df"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-mobile-after/1.png",
+      "bytes": 5958,
+      "sha256": "66bd1add7487df120d1ba586315f73040cd33b44b56e8ccc6c88658cf00ec004"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-mobile-after/2-geometry.json",
+      "bytes": 58,
+      "sha256": "2839edddb232bde9969ffed7f423e91a47a5ceee526cc7614bdd266e55ec25df"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-mobile-after/2.png",
+      "bytes": 5958,
+      "sha256": "66bd1add7487df120d1ba586315f73040cd33b44b56e8ccc6c88658cf00ec004"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-mobile-after/test.html",
+      "bytes": 631,
+      "sha256": "2e56170d51976088bb439107ccb24502bc2eda7ae795646c8de213b464466322"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-mobile-before/1-geometry.json",
+      "bytes": 58,
+      "sha256": "2839edddb232bde9969ffed7f423e91a47a5ceee526cc7614bdd266e55ec25df"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-mobile-before/1.png",
+      "bytes": 5958,
+      "sha256": "f3137c71cd0a691201b4bfe8a4473b517fccdea80949902b9aa22490f0f3bdaf"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-mobile-before/2-geometry.json",
+      "bytes": 58,
+      "sha256": "2839edddb232bde9969ffed7f423e91a47a5ceee526cc7614bdd266e55ec25df"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-mobile-before/2.png",
+      "bytes": 5958,
+      "sha256": "f3137c71cd0a691201b4bfe8a4473b517fccdea80949902b9aa22490f0f3bdaf"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-mobile-before/test.html",
+      "bytes": 631,
+      "sha256": "1d4118efb9b3a6a85a9aa38469b333f712c22c537bce5d41595c807caecd7738"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-triple-after/1-geometry.json",
+      "bytes": 58,
+      "sha256": "ede8845fd2c6177151604c6e0dfe5dc0c53c7f6ccffee950c5278512aa3d0bd6"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-triple-after/1.png",
+      "bytes": 16810,
+      "sha256": "ade9b4a62807bdaeba01d7bb736ce161d735a13db792bee389dec0f843713bf3"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-triple-after/2-geometry.json",
+      "bytes": 58,
+      "sha256": "ede8845fd2c6177151604c6e0dfe5dc0c53c7f6ccffee950c5278512aa3d0bd6"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-triple-after/2.png",
+      "bytes": 16810,
+      "sha256": "ade9b4a62807bdaeba01d7bb736ce161d735a13db792bee389dec0f843713bf3"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-triple-after/test.html",
+      "bytes": 631,
+      "sha256": "26d79e4a54f41890f5e57415fcaab06e26d1bc2408a8477ff5ec09a560bdde22"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-triple-before/1-geometry.json",
+      "bytes": 58,
+      "sha256": "ede8845fd2c6177151604c6e0dfe5dc0c53c7f6ccffee950c5278512aa3d0bd6"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-triple-before/1.png",
+      "bytes": 16707,
+      "sha256": "ad13d86c2674fdd6458a8631a1451c579799677c1a03a1a19c161d8dc802d8a4"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-triple-before/2-geometry.json",
+      "bytes": 58,
+      "sha256": "ede8845fd2c6177151604c6e0dfe5dc0c53c7f6ccffee950c5278512aa3d0bd6"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-triple-before/2.png",
+      "bytes": 16707,
+      "sha256": "ad13d86c2674fdd6458a8631a1451c579799677c1a03a1a19c161d8dc802d8a4"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/sticky-triple-before/test.html",
+      "bytes": 631,
+      "sha256": "516e119c4454b0cb16dfbb69c897508a5fcb25df8221f8fc0a2614679e3a0ac0"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-app-v2410/used-observe.py",
+      "bytes": 4287,
+      "sha256": "32c2a164fd6f52093a68c647d26e9d9324dd5e1ec8d5fe69427a26497f1bc4a7"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-build-v2410/guarded-build/build.stderr",
+      "bytes": 1911,
+      "sha256": "57878e96dab684a91afc564b1a81c9c976cbae5cc7512dc9cf8df1dbe3e20e7e"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-build-v2410/guarded-build/build.stdout",
+      "bytes": 140496,
+      "sha256": "7f50edd31172f2097a60d6ecb18cf6b92c72c0c6d7a3d705dc6cc449d13b699c"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-build-v2410/guarded-build/clean-local-packages.stderr",
+      "bytes": 9476,
+      "sha256": "c5e3350585479abd2bfa3e3846d5c006714bd3112f3130612c21a2394ceed6f2"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-build-v2410/guarded-build/clean-local-packages.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-build-v2410/guarded-build/metadata.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-build-v2410/guarded-build/metadata.stdout",
+      "bytes": 713925,
+      "sha256": "3772c94ec583af765b88449a8f4e8ee7662bd653511b874ff647f9fa0d6b8205"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-build-v2410/guarded-build/receipt.json",
+      "bytes": 31210,
+      "sha256": "62c0fa16232fd453da1ca020fb421d268202f2ca6bdd67e5fcc61fb80335ee95"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-build-v2410/guarded-renderer-build.log",
+      "bytes": 596,
+      "sha256": "c3bf9ed69edf01972311ca6a69794d25491b20183e4ef4728affc2b5805710b0"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-build-v2410/receipt.json",
+      "bytes": 5840,
+      "sha256": "180647948f21a916efef6022d7913448df54476d54e1d6067a8c03bd84ac4989"
+    },
+    {
+      "path": "runs/native-editor-direct-strike-build-v2410/verified-native-app.log",
+      "bytes": 3846,
+      "sha256": "5005b08dfb2f1877791fedbc586ab527c149e0cf0b2d70121b96aeb017ae0abc"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/clean-native-app-and-public-api.log",
+      "bytes": 38,
+      "sha256": "263d839b1683954c5a830ce903787cb2e438d55909b951a82e1a974f8a975181"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-desktop-after/1-geometry.json",
+      "bytes": 57,
+      "sha256": "beeb67f6aedd8db41b74af1860862c992799da2f263eba93d53e192b7ee3d9f1"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-desktop-after/1.png",
+      "bytes": 6541,
+      "sha256": "9e62940ba2fc5006e91497fc0713741535f51a8359a1dce837537b178b455234"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-desktop-after/2-geometry.json",
+      "bytes": 57,
+      "sha256": "beeb67f6aedd8db41b74af1860862c992799da2f263eba93d53e192b7ee3d9f1"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-desktop-after/2.png",
+      "bytes": 6541,
+      "sha256": "9e62940ba2fc5006e91497fc0713741535f51a8359a1dce837537b178b455234"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-desktop-after/test.html",
+      "bytes": 576,
+      "sha256": "bcb3a8cc19ed32737d6443e74de10cdacd257aedf939438cc3549af7e1e35ef1"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-desktop-before/1-geometry.json",
+      "bytes": 57,
+      "sha256": "ca6c9071aefd7e369c9cafe8b27e99345500f0e9192d6326de4ff3965f9fadf6"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-desktop-before/1.png",
+      "bytes": 6561,
+      "sha256": "73ef398bf6d16c1415ca0727e237cf7df52c2cfe5d1f16e389b26cd84267b784"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-desktop-before/2-geometry.json",
+      "bytes": 57,
+      "sha256": "ca6c9071aefd7e369c9cafe8b27e99345500f0e9192d6326de4ff3965f9fadf6"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-desktop-before/2.png",
+      "bytes": 6561,
+      "sha256": "73ef398bf6d16c1415ca0727e237cf7df52c2cfe5d1f16e389b26cd84267b784"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-desktop-before/test.html",
+      "bytes": 576,
+      "sha256": "1f971900e25636591a4366500d2bb408db9b4170f29c61baf457b92cda024e7e"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-large-after/1-geometry.json",
+      "bytes": 57,
+      "sha256": "beeb67f6aedd8db41b74af1860862c992799da2f263eba93d53e192b7ee3d9f1"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-large-after/1.png",
+      "bytes": 17544,
+      "sha256": "2ef31a936f0a9d023c2269d61cf6ac166ece86873af762dba38ec60703d69578"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-large-after/2-geometry.json",
+      "bytes": 57,
+      "sha256": "beeb67f6aedd8db41b74af1860862c992799da2f263eba93d53e192b7ee3d9f1"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-large-after/2.png",
+      "bytes": 17544,
+      "sha256": "2ef31a936f0a9d023c2269d61cf6ac166ece86873af762dba38ec60703d69578"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-large-after/test.html",
+      "bytes": 576,
+      "sha256": "bcb3a8cc19ed32737d6443e74de10cdacd257aedf939438cc3549af7e1e35ef1"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-large-before/1-geometry.json",
+      "bytes": 57,
+      "sha256": "ca6c9071aefd7e369c9cafe8b27e99345500f0e9192d6326de4ff3965f9fadf6"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-large-before/1.png",
+      "bytes": 17560,
+      "sha256": "486c6455fefe26a8112017f4b43e07a4af905fce257668a53730bb2aecf732fe"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-large-before/2-geometry.json",
+      "bytes": 57,
+      "sha256": "ca6c9071aefd7e369c9cafe8b27e99345500f0e9192d6326de4ff3965f9fadf6"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-large-before/2.png",
+      "bytes": 17560,
+      "sha256": "486c6455fefe26a8112017f4b43e07a4af905fce257668a53730bb2aecf732fe"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-large-before/test.html",
+      "bytes": 576,
+      "sha256": "1f971900e25636591a4366500d2bb408db9b4170f29c61baf457b92cda024e7e"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-legacy-after/1-geometry.json",
+      "bytes": 57,
+      "sha256": "beeb67f6aedd8db41b74af1860862c992799da2f263eba93d53e192b7ee3d9f1"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-legacy-after/1.png",
+      "bytes": 2847,
+      "sha256": "75369f940550ae9c9af472937ed0362c8a93431903c6ee227b92f1545b1dacd7"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-legacy-after/2-geometry.json",
+      "bytes": 57,
+      "sha256": "beeb67f6aedd8db41b74af1860862c992799da2f263eba93d53e192b7ee3d9f1"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-legacy-after/2.png",
+      "bytes": 2847,
+      "sha256": "75369f940550ae9c9af472937ed0362c8a93431903c6ee227b92f1545b1dacd7"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-legacy-after/test.html",
+      "bytes": 576,
+      "sha256": "bcb3a8cc19ed32737d6443e74de10cdacd257aedf939438cc3549af7e1e35ef1"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-legacy-before/1-geometry.json",
+      "bytes": 57,
+      "sha256": "ca6c9071aefd7e369c9cafe8b27e99345500f0e9192d6326de4ff3965f9fadf6"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-legacy-before/1.png",
+      "bytes": 2845,
+      "sha256": "523c1cc64d37b5fd36ba27679f4064a77f56c8d4a91fe0e2d34f98f45a09501a"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-legacy-before/2-geometry.json",
+      "bytes": 57,
+      "sha256": "ca6c9071aefd7e369c9cafe8b27e99345500f0e9192d6326de4ff3965f9fadf6"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-legacy-before/2.png",
+      "bytes": 2845,
+      "sha256": "523c1cc64d37b5fd36ba27679f4064a77f56c8d4a91fe0e2d34f98f45a09501a"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-legacy-before/test.html",
+      "bytes": 576,
+      "sha256": "1f971900e25636591a4366500d2bb408db9b4170f29c61baf457b92cda024e7e"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-mobile-after/1-geometry.json",
+      "bytes": 57,
+      "sha256": "beeb67f6aedd8db41b74af1860862c992799da2f263eba93d53e192b7ee3d9f1"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-mobile-after/1.png",
+      "bytes": 5997,
+      "sha256": "c6d6e7d0955014b4cdda6e9cc4d7f628791e28df9bc8b325304ff5035c244ab3"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-mobile-after/2-geometry.json",
+      "bytes": 57,
+      "sha256": "beeb67f6aedd8db41b74af1860862c992799da2f263eba93d53e192b7ee3d9f1"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-mobile-after/2.png",
+      "bytes": 5997,
+      "sha256": "c6d6e7d0955014b4cdda6e9cc4d7f628791e28df9bc8b325304ff5035c244ab3"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-mobile-after/test.html",
+      "bytes": 576,
+      "sha256": "bcb3a8cc19ed32737d6443e74de10cdacd257aedf939438cc3549af7e1e35ef1"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-mobile-before/1-geometry.json",
+      "bytes": 57,
+      "sha256": "ca6c9071aefd7e369c9cafe8b27e99345500f0e9192d6326de4ff3965f9fadf6"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-mobile-before/1.png",
+      "bytes": 5996,
+      "sha256": "2d5d3cfa794e1e92e622e157c609ef7d76196c82f207ef25122ceabf58c633e9"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-mobile-before/2-geometry.json",
+      "bytes": 57,
+      "sha256": "ca6c9071aefd7e369c9cafe8b27e99345500f0e9192d6326de4ff3965f9fadf6"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-mobile-before/2.png",
+      "bytes": 5996,
+      "sha256": "2d5d3cfa794e1e92e622e157c609ef7d76196c82f207ef25122ceabf58c633e9"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-mobile-before/test.html",
+      "bytes": 576,
+      "sha256": "1f971900e25636591a4366500d2bb408db9b4170f29c61baf457b92cda024e7e"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-triple-after/1-geometry.json",
+      "bytes": 57,
+      "sha256": "beeb67f6aedd8db41b74af1860862c992799da2f263eba93d53e192b7ee3d9f1"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-triple-after/1.png",
+      "bytes": 16742,
+      "sha256": "bce2a18e17a46cc2f93417c14f4ad13cc014f7c1f5f9c21321f6d37451d62d70"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-triple-after/2-geometry.json",
+      "bytes": 57,
+      "sha256": "beeb67f6aedd8db41b74af1860862c992799da2f263eba93d53e192b7ee3d9f1"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-triple-after/2.png",
+      "bytes": 16742,
+      "sha256": "bce2a18e17a46cc2f93417c14f4ad13cc014f7c1f5f9c21321f6d37451d62d70"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-triple-after/test.html",
+      "bytes": 576,
+      "sha256": "bcb3a8cc19ed32737d6443e74de10cdacd257aedf939438cc3549af7e1e35ef1"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-triple-before/1-geometry.json",
+      "bytes": 57,
+      "sha256": "ca6c9071aefd7e369c9cafe8b27e99345500f0e9192d6326de4ff3965f9fadf6"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-triple-before/1.png",
+      "bytes": 16743,
+      "sha256": "7a537f846a0aaa297403ef643277eafdc4122ae07b8244d608920b9f548dbd43"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-triple-before/2-geometry.json",
+      "bytes": 57,
+      "sha256": "ca6c9071aefd7e369c9cafe8b27e99345500f0e9192d6326de4ff3965f9fadf6"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-triple-before/2.png",
+      "bytes": 16743,
+      "sha256": "7a537f846a0aaa297403ef643277eafdc4122ae07b8244d608920b9f548dbd43"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/input-triple-before/test.html",
+      "bytes": 576,
+      "sha256": "1f971900e25636591a4366500d2bb408db9b4170f29c61baf457b92cda024e7e"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-desktop-after/1-geometry.json",
+      "bytes": 59,
+      "sha256": "291f0a49a54ec43530a1d398e72d046edd6639d903a39829c7ec28c6d909b9b8"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-desktop-after/1.png",
+      "bytes": 6443,
+      "sha256": "35d3f47e384745c173aa252d83e93f05958beca2929c19b8a036557beac9423b"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-desktop-after/2-geometry.json",
+      "bytes": 59,
+      "sha256": "291f0a49a54ec43530a1d398e72d046edd6639d903a39829c7ec28c6d909b9b8"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-desktop-after/2.png",
+      "bytes": 6443,
+      "sha256": "35d3f47e384745c173aa252d83e93f05958beca2929c19b8a036557beac9423b"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-desktop-after/test.html",
+      "bytes": 519,
+      "sha256": "a00a11bd05390bf7ce17443e0258bc498e9a832ab9428bc9d14e3c167a2b2052"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-desktop-before/1-geometry.json",
+      "bytes": 59,
+      "sha256": "5b970960089388550283f8a66f35c7476f258502422542772193ec50427a5d6f"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-desktop-before/1.png",
+      "bytes": 6425,
+      "sha256": "e4d8f7a7bc0c8c863f9ebe183f26867923217ebbe9b212bcb4b36bff98a8ffbe"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-desktop-before/2-geometry.json",
+      "bytes": 59,
+      "sha256": "5b970960089388550283f8a66f35c7476f258502422542772193ec50427a5d6f"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-desktop-before/2.png",
+      "bytes": 6425,
+      "sha256": "e4d8f7a7bc0c8c863f9ebe183f26867923217ebbe9b212bcb4b36bff98a8ffbe"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-desktop-before/test.html",
+      "bytes": 519,
+      "sha256": "8e2df4e3cc041b1ad76ce6b275ca32e117a6940bf83f0be0734a6a65aece9e1b"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-large-after/1-geometry.json",
+      "bytes": 60,
+      "sha256": "c9cf52e77556fe44bf86d6b68cf00dc2c79917ede0228433bd0aff9e1737df14"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-large-after/1.png",
+      "bytes": 17584,
+      "sha256": "6e1fcdaa2ddcc51d98a2de2755f10343247fcaf6501c764fcd4446208791b943"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-large-after/2-geometry.json",
+      "bytes": 60,
+      "sha256": "c9cf52e77556fe44bf86d6b68cf00dc2c79917ede0228433bd0aff9e1737df14"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-large-after/2.png",
+      "bytes": 17584,
+      "sha256": "6e1fcdaa2ddcc51d98a2de2755f10343247fcaf6501c764fcd4446208791b943"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-large-after/test.html",
+      "bytes": 519,
+      "sha256": "96831e015edc2648a60e4f46300488f279f10c6ddda0029035e6f0e0bc376d1a"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-large-before/1-geometry.json",
+      "bytes": 60,
+      "sha256": "7987a6c892cd85df3e6f49887d71c588a675866bd54d13d7c55fb47186da11a9"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-large-before/1.png",
+      "bytes": 17568,
+      "sha256": "d149a928a2272556e90f4be6be8867d9d79c5cde7e2081c0b83f737c6f420d81"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-large-before/2-geometry.json",
+      "bytes": 60,
+      "sha256": "7987a6c892cd85df3e6f49887d71c588a675866bd54d13d7c55fb47186da11a9"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-large-before/2.png",
+      "bytes": 17568,
+      "sha256": "d149a928a2272556e90f4be6be8867d9d79c5cde7e2081c0b83f737c6f420d81"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-large-before/test.html",
+      "bytes": 519,
+      "sha256": "f2853cd8ec9bd7f546940ccd0f02d406ba885dfa883f36d120875968268216fe"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-legacy-after/1-geometry.json",
+      "bytes": 58,
+      "sha256": "832a2e251249c18b6713ba78afb6e652c0872362bebdd2704768130ffc2442b5"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-legacy-after/1.png",
+      "bytes": 2809,
+      "sha256": "8ee978b789b425e7b47e9e08f75808bdd97a5d46d644c589b735d82fc8be5c38"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-legacy-after/2-geometry.json",
+      "bytes": 58,
+      "sha256": "832a2e251249c18b6713ba78afb6e652c0872362bebdd2704768130ffc2442b5"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-legacy-after/2.png",
+      "bytes": 2809,
+      "sha256": "8ee978b789b425e7b47e9e08f75808bdd97a5d46d644c589b735d82fc8be5c38"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-legacy-after/test.html",
+      "bytes": 519,
+      "sha256": "b7a1ad456d268a43185e7c350559f1ec9ab523b5ff6402191f07f1d1c3e4f3cb"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-legacy-before/1-geometry.json",
+      "bytes": 58,
+      "sha256": "ede8845fd2c6177151604c6e0dfe5dc0c53c7f6ccffee950c5278512aa3d0bd6"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-legacy-before/1.png",
+      "bytes": 2809,
+      "sha256": "4119b3be67a84d5a1702750f616e656a5fa4f790ab6a07994f97c62b28f087ea"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-legacy-before/2-geometry.json",
+      "bytes": 58,
+      "sha256": "ede8845fd2c6177151604c6e0dfe5dc0c53c7f6ccffee950c5278512aa3d0bd6"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-legacy-before/2.png",
+      "bytes": 2809,
+      "sha256": "4119b3be67a84d5a1702750f616e656a5fa4f790ab6a07994f97c62b28f087ea"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-legacy-before/test.html",
+      "bytes": 519,
+      "sha256": "92f739058c53bc432c1947435afe0effb1f73e747569338eeadfa293b366a9a9"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-mobile-after/1-geometry.json",
+      "bytes": 58,
+      "sha256": "230602bb0b81a755f927736634a2a347c4bb139fb864181b9e4652bc841e7396"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-mobile-after/1.png",
+      "bytes": 5958,
+      "sha256": "011e9576f6c6a10b3ef798932796b193ab8859146f7b3f68c35748bd4251fa9a"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-mobile-after/2-geometry.json",
+      "bytes": 58,
+      "sha256": "230602bb0b81a755f927736634a2a347c4bb139fb864181b9e4652bc841e7396"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-mobile-after/2.png",
+      "bytes": 5958,
+      "sha256": "011e9576f6c6a10b3ef798932796b193ab8859146f7b3f68c35748bd4251fa9a"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-mobile-after/test.html",
+      "bytes": 519,
+      "sha256": "ee03b86e59e9fa93dc5d7698178e07af3123e976e2055bbc0c5bab20f8c2e137"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-mobile-before/1-geometry.json",
+      "bytes": 58,
+      "sha256": "2839edddb232bde9969ffed7f423e91a47a5ceee526cc7614bdd266e55ec25df"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-mobile-before/1.png",
+      "bytes": 5958,
+      "sha256": "f3137c71cd0a691201b4bfe8a4473b517fccdea80949902b9aa22490f0f3bdaf"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-mobile-before/2-geometry.json",
+      "bytes": 58,
+      "sha256": "2839edddb232bde9969ffed7f423e91a47a5ceee526cc7614bdd266e55ec25df"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-mobile-before/2.png",
+      "bytes": 5958,
+      "sha256": "f3137c71cd0a691201b4bfe8a4473b517fccdea80949902b9aa22490f0f3bdaf"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-mobile-before/test.html",
+      "bytes": 519,
+      "sha256": "c2020f1420056f1114596d1d5a4cab1eb9d697911025d85b348a155c44c132ef"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-triple-after/1-geometry.json",
+      "bytes": 58,
+      "sha256": "832a2e251249c18b6713ba78afb6e652c0872362bebdd2704768130ffc2442b5"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-triple-after/1.png",
+      "bytes": 16707,
+      "sha256": "a769a9040eb4022d0ed9aad4a5bb52141a446ef1b408b3131d14eca5c53fdf7d"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-triple-after/2-geometry.json",
+      "bytes": 58,
+      "sha256": "832a2e251249c18b6713ba78afb6e652c0872362bebdd2704768130ffc2442b5"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-triple-after/2.png",
+      "bytes": 16707,
+      "sha256": "a769a9040eb4022d0ed9aad4a5bb52141a446ef1b408b3131d14eca5c53fdf7d"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-triple-after/test.html",
+      "bytes": 519,
+      "sha256": "b7a1ad456d268a43185e7c350559f1ec9ab523b5ff6402191f07f1d1c3e4f3cb"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-triple-before/1-geometry.json",
+      "bytes": 58,
+      "sha256": "ede8845fd2c6177151604c6e0dfe5dc0c53c7f6ccffee950c5278512aa3d0bd6"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-triple-before/1.png",
+      "bytes": 16707,
+      "sha256": "ad13d86c2674fdd6458a8631a1451c579799677c1a03a1a19c161d8dc802d8a4"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-triple-before/2-geometry.json",
+      "bytes": 58,
+      "sha256": "ede8845fd2c6177151604c6e0dfe5dc0c53c7f6ccffee950c5278512aa3d0bd6"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-triple-before/2.png",
+      "bytes": 16707,
+      "sha256": "ad13d86c2674fdd6458a8631a1451c579799677c1a03a1a19c161d8dc802d8a4"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/large-text-triple-before/test.html",
+      "bytes": 519,
+      "sha256": "92f739058c53bc432c1947435afe0effb1f73e747569338eeadfa293b366a9a9"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-build.log",
+      "bytes": 123132,
+      "sha256": "45c974b18201aaf82fbe414300b7f40989f8dac76bf3487aa46f6f230a93dc18"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-first.log",
+      "bytes": 4004,
+      "sha256": "5b6e9801f7d5a2a923c64b7ed9ed26f1ab798f3f36da5cf14fbe3b4cca4b99c7"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-first/input-desktop/after.png",
+      "bytes": 7892,
+      "sha256": "a3aaa9454485f2b85b64b7fb5a1b070d977896b250a0cb72e81b8003c5697cb7"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-first/input-desktop/before.png",
+      "bytes": 7886,
+      "sha256": "eb247c95aaf9f0a70aaad0a02b0be62c5a244f5f551474d91bcc140d7773893a"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-first/input-large/after.png",
+      "bytes": 22212,
+      "sha256": "1b2994051f0cc5d60a3c0314fdd908ce4e4ed7f4c3fc524874bb65ffe6fd2508"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-first/input-large/before.png",
+      "bytes": 22233,
+      "sha256": "49f5c46bd91fac17484df81cf2a2888a1a07366a6a493ec5132234deeadabedb"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-first/input-legacy/after.png",
+      "bytes": 3322,
+      "sha256": "8cede6672095c46af1e5fe21c20748069269555e75cf9a9789a2da682cf8b9ac"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-first/input-legacy/before.png",
+      "bytes": 3323,
+      "sha256": "dac642e1bbb07b5d1d915f1936f5383f82a1f0cb1652c602e64a1ace6f3d0b82"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-first/input-mobile/after.png",
+      "bytes": 7013,
+      "sha256": "342ee36f0ce93cb8a7b70d64379ea929c326ba200c24dd6a5d64d020e1482bd3"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-first/input-mobile/before.png",
+      "bytes": 7013,
+      "sha256": "d7e281ff949002e1f91122489ab442df313ca882c04b998363a4defdd712cceb"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-first/input-triple/after.png",
+      "bytes": 21017,
+      "sha256": "d9cc68b5101587bbd05a84f5d2b58b9e9aee1fce376c83adb6661e9c2f5845b7"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-first/input-triple/before.png",
+      "bytes": 21018,
+      "sha256": "853b52ad47e50ba1c594800a838143de57429f2339f538c8c85901bb14c59bfb"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-first/large-text-desktop/after.png",
+      "bytes": 7792,
+      "sha256": "0870514600d13cd4afbb41eff712c4673fe89b3b40daea780da8c7b00ea6e5e2"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-first/large-text-desktop/before.png",
+      "bytes": 7770,
+      "sha256": "9144ea67506574f55daa8681a40d9cb64e734d9b75102c9e27ba15b5710d8cc4"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-first/large-text-large/after.png",
+      "bytes": 22203,
+      "sha256": "c7f2a6cb2572325fb399d6c11af567347405a83a5e7d28c0cbb6db83af602af4"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-first/large-text-large/before.png",
+      "bytes": 22190,
+      "sha256": "c929439b5d2afdc16c6f7825159698a4b18efcb8a2f926ebcf94207a855fa584"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-first/large-text-legacy/after.png",
+      "bytes": 3277,
+      "sha256": "896b6bb5bfcd3da16cb3726041e1aed1907ecd694cb36d4d8f336dd6fded55c1"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-first/large-text-legacy/before.png",
+      "bytes": 3277,
+      "sha256": "e7b78bc5f8b0159fac4767aaa542b1af3d85e5e236e8736e1db67d175a8f0b9d"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-first/large-text-mobile/after.png",
+      "bytes": 6965,
+      "sha256": "692a2c72e28b0c6c3258b44d7b25e95bb0fc3dd11078f98eb1202001d1e2d8a2"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-first/large-text-mobile/before.png",
+      "bytes": 6964,
+      "sha256": "2a14aa410784930354556ea1f894a9333847587726839775db80901e6fc5453f"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-first/large-text-triple/after.png",
+      "bytes": 21025,
+      "sha256": "0ff71b4f784d8d00fdb59e3a0d580e2bf5031cef27c85f52257d372382807e09"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-first/large-text-triple/before.png",
+      "bytes": 21026,
+      "sha256": "dab0074d205bb737418e6015a05d46a1e280196166d8196967b55e2194a396b4"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-first/sticky-desktop/after.png",
+      "bytes": 7770,
+      "sha256": "482138fe5e3cd62c117eb234d8d51b579d4bbcbf07158083220e934245b5ef32"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-first/sticky-desktop/before.png",
+      "bytes": 7770,
+      "sha256": "9144ea67506574f55daa8681a40d9cb64e734d9b75102c9e27ba15b5710d8cc4"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-first/sticky-large/after.png",
+      "bytes": 22185,
+      "sha256": "973620d0ed6e421eb54abd98313bfad8dca6fd68f0d8c4695ec5113960539212"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-first/sticky-large/before.png",
+      "bytes": 22190,
+      "sha256": "c929439b5d2afdc16c6f7825159698a4b18efcb8a2f926ebcf94207a855fa584"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-first/sticky-legacy/after.png",
+      "bytes": 3277,
+      "sha256": "2744365387fa0e44bb4e6743c80620ba79acf5ea42b9ece7aaefe19f58cc5af0"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-first/sticky-legacy/before.png",
+      "bytes": 3277,
+      "sha256": "e7b78bc5f8b0159fac4767aaa542b1af3d85e5e236e8736e1db67d175a8f0b9d"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-first/sticky-mobile/after.png",
+      "bytes": 6964,
+      "sha256": "46d799ebe43ba7c02059fee8bd5a8277b7cfc2e497b6c33e24c1e2c5e7d973ae"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-first/sticky-mobile/before.png",
+      "bytes": 6964,
+      "sha256": "2a14aa410784930354556ea1f894a9333847587726839775db80901e6fc5453f"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-first/sticky-triple/after.png",
+      "bytes": 21041,
+      "sha256": "abcd89a607205b44e4429805580e0a2382030c24430948c9f5777efbb6b03c4c"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-first/sticky-triple/before.png",
+      "bytes": 21026,
+      "sha256": "dab0074d205bb737418e6015a05d46a1e280196166d8196967b55e2194a396b4"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-format.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-metadata.log",
+      "bytes": 393450,
+      "sha256": "1948eb23fb7c24e200b1c40cd36d339dc85fb6df518945a9f42e355e32e2975d"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-second.log",
+      "bytes": 4004,
+      "sha256": "5b6e9801f7d5a2a923c64b7ed9ed26f1ab798f3f36da5cf14fbe3b4cca4b99c7"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-second/input-desktop/after.png",
+      "bytes": 7892,
+      "sha256": "a3aaa9454485f2b85b64b7fb5a1b070d977896b250a0cb72e81b8003c5697cb7"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-second/input-desktop/before.png",
+      "bytes": 7886,
+      "sha256": "eb247c95aaf9f0a70aaad0a02b0be62c5a244f5f551474d91bcc140d7773893a"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-second/input-large/after.png",
+      "bytes": 22212,
+      "sha256": "1b2994051f0cc5d60a3c0314fdd908ce4e4ed7f4c3fc524874bb65ffe6fd2508"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-second/input-large/before.png",
+      "bytes": 22233,
+      "sha256": "49f5c46bd91fac17484df81cf2a2888a1a07366a6a493ec5132234deeadabedb"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-second/input-legacy/after.png",
+      "bytes": 3322,
+      "sha256": "8cede6672095c46af1e5fe21c20748069269555e75cf9a9789a2da682cf8b9ac"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-second/input-legacy/before.png",
+      "bytes": 3323,
+      "sha256": "dac642e1bbb07b5d1d915f1936f5383f82a1f0cb1652c602e64a1ace6f3d0b82"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-second/input-mobile/after.png",
+      "bytes": 7013,
+      "sha256": "342ee36f0ce93cb8a7b70d64379ea929c326ba200c24dd6a5d64d020e1482bd3"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-second/input-mobile/before.png",
+      "bytes": 7013,
+      "sha256": "d7e281ff949002e1f91122489ab442df313ca882c04b998363a4defdd712cceb"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-second/input-triple/after.png",
+      "bytes": 21017,
+      "sha256": "d9cc68b5101587bbd05a84f5d2b58b9e9aee1fce376c83adb6661e9c2f5845b7"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-second/input-triple/before.png",
+      "bytes": 21018,
+      "sha256": "853b52ad47e50ba1c594800a838143de57429f2339f538c8c85901bb14c59bfb"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-second/large-text-desktop/after.png",
+      "bytes": 7792,
+      "sha256": "0870514600d13cd4afbb41eff712c4673fe89b3b40daea780da8c7b00ea6e5e2"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-second/large-text-desktop/before.png",
+      "bytes": 7770,
+      "sha256": "9144ea67506574f55daa8681a40d9cb64e734d9b75102c9e27ba15b5710d8cc4"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-second/large-text-large/after.png",
+      "bytes": 22203,
+      "sha256": "c7f2a6cb2572325fb399d6c11af567347405a83a5e7d28c0cbb6db83af602af4"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-second/large-text-large/before.png",
+      "bytes": 22190,
+      "sha256": "c929439b5d2afdc16c6f7825159698a4b18efcb8a2f926ebcf94207a855fa584"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-second/large-text-legacy/after.png",
+      "bytes": 3277,
+      "sha256": "896b6bb5bfcd3da16cb3726041e1aed1907ecd694cb36d4d8f336dd6fded55c1"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-second/large-text-legacy/before.png",
+      "bytes": 3277,
+      "sha256": "e7b78bc5f8b0159fac4767aaa542b1af3d85e5e236e8736e1db67d175a8f0b9d"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-second/large-text-mobile/after.png",
+      "bytes": 6965,
+      "sha256": "692a2c72e28b0c6c3258b44d7b25e95bb0fc3dd11078f98eb1202001d1e2d8a2"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-second/large-text-mobile/before.png",
+      "bytes": 6964,
+      "sha256": "2a14aa410784930354556ea1f894a9333847587726839775db80901e6fc5453f"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-second/large-text-triple/after.png",
+      "bytes": 21025,
+      "sha256": "0ff71b4f784d8d00fdb59e3a0d580e2bf5031cef27c85f52257d372382807e09"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-second/large-text-triple/before.png",
+      "bytes": 21026,
+      "sha256": "dab0074d205bb737418e6015a05d46a1e280196166d8196967b55e2194a396b4"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-second/sticky-desktop/after.png",
+      "bytes": 7770,
+      "sha256": "482138fe5e3cd62c117eb234d8d51b579d4bbcbf07158083220e934245b5ef32"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-second/sticky-desktop/before.png",
+      "bytes": 7770,
+      "sha256": "9144ea67506574f55daa8681a40d9cb64e734d9b75102c9e27ba15b5710d8cc4"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-second/sticky-large/after.png",
+      "bytes": 22185,
+      "sha256": "973620d0ed6e421eb54abd98313bfad8dca6fd68f0d8c4695ec5113960539212"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-second/sticky-large/before.png",
+      "bytes": 22190,
+      "sha256": "c929439b5d2afdc16c6f7825159698a4b18efcb8a2f926ebcf94207a855fa584"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-second/sticky-legacy/after.png",
+      "bytes": 3277,
+      "sha256": "2744365387fa0e44bb4e6743c80620ba79acf5ea42b9ece7aaefe19f58cc5af0"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-second/sticky-legacy/before.png",
+      "bytes": 3277,
+      "sha256": "e7b78bc5f8b0159fac4767aaa542b1af3d85e5e236e8736e1db67d175a8f0b9d"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-second/sticky-mobile/after.png",
+      "bytes": 6964,
+      "sha256": "46d799ebe43ba7c02059fee8bd5a8277b7cfc2e497b6c33e24c1e2c5e7d973ae"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-second/sticky-mobile/before.png",
+      "bytes": 6964,
+      "sha256": "2a14aa410784930354556ea1f894a9333847587726839775db80901e6fc5453f"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-second/sticky-triple/after.png",
+      "bytes": 21041,
+      "sha256": "abcd89a607205b44e4429805580e0a2382030c24430948c9f5777efbb6b03c4c"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/native-second/sticky-triple/before.png",
+      "bytes": 21026,
+      "sha256": "dab0074d205bb737418e6015a05d46a1e280196166d8196967b55e2194a396b4"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/receipt.json",
+      "bytes": 97212,
+      "sha256": "e607373260129732067e615703b0dacd54e9089ae259e0913e1a59486b0f2f9b"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-desktop-after/1-geometry.json",
+      "bytes": 59,
+      "sha256": "5b970960089388550283f8a66f35c7476f258502422542772193ec50427a5d6f"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-desktop-after/1.png",
+      "bytes": 6426,
+      "sha256": "ec583af0bbbcd4cef790ae38a9d78f4dcc9cf91f50e44a62f870883c1f36042e"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-desktop-after/2-geometry.json",
+      "bytes": 59,
+      "sha256": "5b970960089388550283f8a66f35c7476f258502422542772193ec50427a5d6f"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-desktop-after/2.png",
+      "bytes": 6426,
+      "sha256": "ec583af0bbbcd4cef790ae38a9d78f4dcc9cf91f50e44a62f870883c1f36042e"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-desktop-after/test.html",
+      "bytes": 631,
+      "sha256": "a6b0415f47cde60c03048c7722a517e29f1f6ae1174f865ace26fd167c4344f0"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-desktop-before/1-geometry.json",
+      "bytes": 59,
+      "sha256": "5b970960089388550283f8a66f35c7476f258502422542772193ec50427a5d6f"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-desktop-before/1.png",
+      "bytes": 6425,
+      "sha256": "e4d8f7a7bc0c8c863f9ebe183f26867923217ebbe9b212bcb4b36bff98a8ffbe"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-desktop-before/2-geometry.json",
+      "bytes": 59,
+      "sha256": "5b970960089388550283f8a66f35c7476f258502422542772193ec50427a5d6f"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-desktop-before/2.png",
+      "bytes": 6425,
+      "sha256": "e4d8f7a7bc0c8c863f9ebe183f26867923217ebbe9b212bcb4b36bff98a8ffbe"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-desktop-before/test.html",
+      "bytes": 631,
+      "sha256": "07ab8f18536f914f28b090a111e30636c04fbdb86555c41e1add974a1b8b8611"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-large-after/1-geometry.json",
+      "bytes": 60,
+      "sha256": "7987a6c892cd85df3e6f49887d71c588a675866bd54d13d7c55fb47186da11a9"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-large-after/1.png",
+      "bytes": 17563,
+      "sha256": "6965d4e7bd8554a86c271c8fb9819d039ef175f60700a99a07a2774ba7d737f7"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-large-after/2-geometry.json",
+      "bytes": 60,
+      "sha256": "7987a6c892cd85df3e6f49887d71c588a675866bd54d13d7c55fb47186da11a9"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-large-after/2.png",
+      "bytes": 17563,
+      "sha256": "6965d4e7bd8554a86c271c8fb9819d039ef175f60700a99a07a2774ba7d737f7"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-large-after/test.html",
+      "bytes": 631,
+      "sha256": "c882bf0c61e043cb6598b9ec970701bce9a6e861f67c5f4becfc882004dd299e"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-large-before/1-geometry.json",
+      "bytes": 60,
+      "sha256": "7987a6c892cd85df3e6f49887d71c588a675866bd54d13d7c55fb47186da11a9"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-large-before/1.png",
+      "bytes": 17568,
+      "sha256": "d149a928a2272556e90f4be6be8867d9d79c5cde7e2081c0b83f737c6f420d81"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-large-before/2-geometry.json",
+      "bytes": 60,
+      "sha256": "7987a6c892cd85df3e6f49887d71c588a675866bd54d13d7c55fb47186da11a9"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-large-before/2.png",
+      "bytes": 17568,
+      "sha256": "d149a928a2272556e90f4be6be8867d9d79c5cde7e2081c0b83f737c6f420d81"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-large-before/test.html",
+      "bytes": 631,
+      "sha256": "368062febb46cf976d4ef29bf12e8abaa47a84b540a705b5b139e84d51f385ab"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-legacy-after/1-geometry.json",
+      "bytes": 58,
+      "sha256": "ede8845fd2c6177151604c6e0dfe5dc0c53c7f6ccffee950c5278512aa3d0bd6"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-legacy-after/1.png",
+      "bytes": 2809,
+      "sha256": "ecd48b4dc7b63728c5248667f388abd4dcb26d3260191b7333e7be9b2a164c08"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-legacy-after/2-geometry.json",
+      "bytes": 58,
+      "sha256": "ede8845fd2c6177151604c6e0dfe5dc0c53c7f6ccffee950c5278512aa3d0bd6"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-legacy-after/2.png",
+      "bytes": 2809,
+      "sha256": "ecd48b4dc7b63728c5248667f388abd4dcb26d3260191b7333e7be9b2a164c08"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-legacy-after/test.html",
+      "bytes": 631,
+      "sha256": "26d79e4a54f41890f5e57415fcaab06e26d1bc2408a8477ff5ec09a560bdde22"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-legacy-before/1-geometry.json",
+      "bytes": 58,
+      "sha256": "ede8845fd2c6177151604c6e0dfe5dc0c53c7f6ccffee950c5278512aa3d0bd6"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-legacy-before/1.png",
+      "bytes": 2809,
+      "sha256": "4119b3be67a84d5a1702750f616e656a5fa4f790ab6a07994f97c62b28f087ea"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-legacy-before/2-geometry.json",
+      "bytes": 58,
+      "sha256": "ede8845fd2c6177151604c6e0dfe5dc0c53c7f6ccffee950c5278512aa3d0bd6"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-legacy-before/2.png",
+      "bytes": 2809,
+      "sha256": "4119b3be67a84d5a1702750f616e656a5fa4f790ab6a07994f97c62b28f087ea"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-legacy-before/test.html",
+      "bytes": 631,
+      "sha256": "516e119c4454b0cb16dfbb69c897508a5fcb25df8221f8fc0a2614679e3a0ac0"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-mobile-after/1-geometry.json",
+      "bytes": 58,
+      "sha256": "2839edddb232bde9969ffed7f423e91a47a5ceee526cc7614bdd266e55ec25df"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-mobile-after/1.png",
+      "bytes": 5958,
+      "sha256": "66bd1add7487df120d1ba586315f73040cd33b44b56e8ccc6c88658cf00ec004"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-mobile-after/2-geometry.json",
+      "bytes": 58,
+      "sha256": "2839edddb232bde9969ffed7f423e91a47a5ceee526cc7614bdd266e55ec25df"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-mobile-after/2.png",
+      "bytes": 5958,
+      "sha256": "66bd1add7487df120d1ba586315f73040cd33b44b56e8ccc6c88658cf00ec004"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-mobile-after/test.html",
+      "bytes": 631,
+      "sha256": "2e56170d51976088bb439107ccb24502bc2eda7ae795646c8de213b464466322"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-mobile-before/1-geometry.json",
+      "bytes": 58,
+      "sha256": "2839edddb232bde9969ffed7f423e91a47a5ceee526cc7614bdd266e55ec25df"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-mobile-before/1.png",
+      "bytes": 5958,
+      "sha256": "f3137c71cd0a691201b4bfe8a4473b517fccdea80949902b9aa22490f0f3bdaf"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-mobile-before/2-geometry.json",
+      "bytes": 58,
+      "sha256": "2839edddb232bde9969ffed7f423e91a47a5ceee526cc7614bdd266e55ec25df"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-mobile-before/2.png",
+      "bytes": 5958,
+      "sha256": "f3137c71cd0a691201b4bfe8a4473b517fccdea80949902b9aa22490f0f3bdaf"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-mobile-before/test.html",
+      "bytes": 631,
+      "sha256": "1d4118efb9b3a6a85a9aa38469b333f712c22c537bce5d41595c807caecd7738"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-triple-after/1-geometry.json",
+      "bytes": 58,
+      "sha256": "ede8845fd2c6177151604c6e0dfe5dc0c53c7f6ccffee950c5278512aa3d0bd6"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-triple-after/1.png",
+      "bytes": 16810,
+      "sha256": "ade9b4a62807bdaeba01d7bb736ce161d735a13db792bee389dec0f843713bf3"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-triple-after/2-geometry.json",
+      "bytes": 58,
+      "sha256": "ede8845fd2c6177151604c6e0dfe5dc0c53c7f6ccffee950c5278512aa3d0bd6"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-triple-after/2.png",
+      "bytes": 16810,
+      "sha256": "ade9b4a62807bdaeba01d7bb736ce161d735a13db792bee389dec0f843713bf3"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-triple-after/test.html",
+      "bytes": 631,
+      "sha256": "26d79e4a54f41890f5e57415fcaab06e26d1bc2408a8477ff5ec09a560bdde22"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-triple-before/1-geometry.json",
+      "bytes": 58,
+      "sha256": "ede8845fd2c6177151604c6e0dfe5dc0c53c7f6ccffee950c5278512aa3d0bd6"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-triple-before/1.png",
+      "bytes": 16707,
+      "sha256": "ad13d86c2674fdd6458a8631a1451c579799677c1a03a1a19c161d8dc802d8a4"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-triple-before/2-geometry.json",
+      "bytes": 58,
+      "sha256": "ede8845fd2c6177151604c6e0dfe5dc0c53c7f6ccffee950c5278512aa3d0bd6"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-triple-before/2.png",
+      "bytes": 16707,
+      "sha256": "ad13d86c2674fdd6458a8631a1451c579799677c1a03a1a19c161d8dc802d8a4"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/sticky-triple-before/test.html",
+      "bytes": 631,
+      "sha256": "516e119c4454b0cb16dfbb69c897508a5fcb25df8221f8fc0a2614679e3a0ac0"
+    },
+    {
+      "path": "runs/native-editor-fresh-parent-v2406/used-observe.py",
+      "bytes": 4287,
+      "sha256": "32c2a164fd6f52093a68c647d26e9d9324dd5e1ec8d5fe69427a26497f1bc4a7"
+    },
+    {
+      "path": "runs/native-editor-glyph-metrics-v2403/input-desktop-before/1-shadow-bounds.json",
+      "bytes": 1043,
+      "sha256": "144851ebc907132455a18fe3786a6519253663ef42c0929a1899fb54aabc51a5"
+    },
+    {
+      "path": "runs/native-editor-glyph-metrics-v2403/input-desktop-before/1.attempt.json",
+      "bytes": 3749,
+      "sha256": "5c1ffc32c326c3d90c709644e69073c050589c90a5eab21054549f279d2ac646"
+    },
+    {
+      "path": "runs/native-editor-glyph-metrics-v2403/input-desktop-before/1.png",
+      "bytes": 6561,
+      "sha256": "73ef398bf6d16c1415ca0727e237cf7df52c2cfe5d1f16e389b26cd84267b784"
+    },
+    {
+      "path": "runs/native-editor-glyph-metrics-v2403/input-desktop-before/1.stderr.log",
+      "bytes": 552,
+      "sha256": "73e0bf5e85cbc0e1289e647764741a179fd008747e6fbc4be2a2de1e4d4a88d0"
+    },
+    {
+      "path": "runs/native-editor-glyph-metrics-v2403/input-desktop-before/2-shadow-bounds.json",
+      "bytes": 1043,
+      "sha256": "144851ebc907132455a18fe3786a6519253663ef42c0929a1899fb54aabc51a5"
+    },
+    {
+      "path": "runs/native-editor-glyph-metrics-v2403/input-desktop-before/2.attempt.json",
+      "bytes": 3749,
+      "sha256": "119605ad214b1ab36e81fde85c0a99a938c963b3d06b51670acadba1d334056f"
+    },
+    {
+      "path": "runs/native-editor-glyph-metrics-v2403/input-desktop-before/2.png",
+      "bytes": 6561,
+      "sha256": "73ef398bf6d16c1415ca0727e237cf7df52c2cfe5d1f16e389b26cd84267b784"
+    },
+    {
+      "path": "runs/native-editor-glyph-metrics-v2403/input-desktop-before/2.stderr.log",
+      "bytes": 552,
+      "sha256": "2448af5f753b2d1a763a379dad1016a67d9c8a11e5b456f948dc888a50d6c8c3"
+    },
+    {
+      "path": "runs/native-editor-glyph-metrics-v2403/input-desktop-before/test.html",
+      "bytes": 576,
+      "sha256": "1f971900e25636591a4366500d2bb408db9b4170f29c61baf457b92cda024e7e"
+    },
+    {
+      "path": "runs/native-editor-glyph-metrics-v2403/receipt.json",
+      "bytes": 3693,
+      "sha256": "c132c97c635e17626e48a6a2a83cc50e1d92d3e3216afa05a2c5353432c03cde"
+    },
+    {
+      "path": "runs/native-editor-glyph-metrics-v2403/used-observe.py",
+      "bytes": 6360,
+      "sha256": "91ea584fc9694c393ee439a63940d6e511882c5ef83ec6c988477491b2630e24"
+    },
+    {
+      "path": "runs/native-editor-glyph-metrics-v2404/input-desktop-before/1-shadow-bounds.json",
+      "bytes": 1264,
+      "sha256": "09c506e7f1f170d3e380ba843a2dc6efa613d1cb75d6476233563261359bff5e"
+    },
+    {
+      "path": "runs/native-editor-glyph-metrics-v2404/input-desktop-before/1.attempt.json",
+      "bytes": 3764,
+      "sha256": "4af0eda7e4e9bf9af9d10ad36b8a1f86abd40b9cc0286f022b50767403c311bc"
+    },
+    {
+      "path": "runs/native-editor-glyph-metrics-v2404/input-desktop-before/1.png",
+      "bytes": 6561,
+      "sha256": "73ef398bf6d16c1415ca0727e237cf7df52c2cfe5d1f16e389b26cd84267b784"
+    },
+    {
+      "path": "runs/native-editor-glyph-metrics-v2404/input-desktop-before/1.stderr.log",
+      "bytes": 552,
+      "sha256": "6aa42ebd963cc6ff5d2f7f5bba5b6f20b4e5e693677b948f3db79ed3f0ac9b59"
+    },
+    {
+      "path": "runs/native-editor-glyph-metrics-v2404/input-desktop-before/2-shadow-bounds.json",
+      "bytes": 1264,
+      "sha256": "09c506e7f1f170d3e380ba843a2dc6efa613d1cb75d6476233563261359bff5e"
+    },
+    {
+      "path": "runs/native-editor-glyph-metrics-v2404/input-desktop-before/2.attempt.json",
+      "bytes": 3764,
+      "sha256": "3e137b9b67670f1a7b0eaf58179e3ea3b3312eea145a98722eb56167f16f8d9a"
+    },
+    {
+      "path": "runs/native-editor-glyph-metrics-v2404/input-desktop-before/2.png",
+      "bytes": 6561,
+      "sha256": "73ef398bf6d16c1415ca0727e237cf7df52c2cfe5d1f16e389b26cd84267b784"
+    },
+    {
+      "path": "runs/native-editor-glyph-metrics-v2404/input-desktop-before/2.stderr.log",
+      "bytes": 552,
+      "sha256": "31902bba7622ca687ee51fe6b006b2f6e6bea0152cdcbfae1cc1ed61f4f127d8"
+    },
+    {
+      "path": "runs/native-editor-glyph-metrics-v2404/input-desktop-before/test.html",
+      "bytes": 576,
+      "sha256": "1f971900e25636591a4366500d2bb408db9b4170f29c61baf457b92cda024e7e"
+    },
+    {
+      "path": "runs/native-editor-glyph-metrics-v2404/receipt.json",
+      "bytes": 3920,
+      "sha256": "4a06230a906712224da5d82cf8635764d56105f0a2ae23c9aeebd107a35429f9"
+    },
+    {
+      "path": "runs/native-editor-glyph-metrics-v2404/used-observe.py",
+      "bytes": 6440,
+      "sha256": "4f633113567bd54be159f9d3ff22c896c5de916cf9810e8258b2e7f6210280a6"
+    },
+    {
+      "path": "sources/native-app/Cargo.lock",
+      "bytes": 17441,
+      "sha256": "40d7124af1ca4bc13dc0fbd49dc0d8b652a03a21897282a62e1b716938515736"
+    },
+    {
+      "path": "sources/native-app/Cargo.toml",
+      "bytes": 1509,
+      "sha256": "23989895b5b3e8e44205e0c888814015b4e93809ac0561c7957c2c448704809b"
+    },
+    {
+      "path": "sources/native-app/src/main.rs",
+      "bytes": 7684,
+      "sha256": "dbdce96f53f2e1f5e8b5156da75971d4d20523e62a2f3dfa53ff7782a62ad75a"
+    },
+    {
+      "path": "sources/native-edit-api/bindings/rust/openui/examples/native_edit_commands.rs",
+      "bytes": 2699,
+      "sha256": "e90a845bf3f3385c2f742dde210025f7d9b76b063ace2158aefab11893fb4df2"
+    },
+    {
+      "path": "sources/native-edit-api/bindings/rust/openui/src/document.rs",
+      "bytes": 70671,
+      "sha256": "5332e3c91930d9bd72a30f0279a2addce7f986bfea4c9c566912f2d5e5d9ac60"
+    },
+    {
+      "path": "sources/native-edit-api/bindings/rust/openui/src/element.rs",
+      "bytes": 47237,
+      "sha256": "8741f12a2d59bf323e52fa3957ab870719b93fad2f7800ea10edeff44e209fb4"
+    },
+    {
+      "path": "sources/native-edit-api/bindings/rust/openui/src/prelude.rs",
+      "bytes": 1514,
+      "sha256": "5f29e78b0d7d2895fe4d47ed17728a8456d152c9ebcf7e779a19329716499c8f"
+    },
+    {
+      "path": "sources/native-edit-api/patch.diff",
+      "bytes": 12924,
+      "sha256": "4941f7a10c65f9dbebbb1f0210d2711adbe0f1d13f5260fc41993cd33511d083"
+    },
+    {
+      "path": "sources/sdk-v2407/bindings/rust/.cargo/config.chromium.toml",
+      "bytes": 2368,
+      "sha256": "4a8f0816b12b783016f4e5e82600e7824b33d7923544516e1a287a68b88d22a6"
+    },
+    {
+      "path": "sources/sdk-v2407/bindings/rust/Cargo.lock",
+      "bytes": 87486,
+      "sha256": "8750cd0e06a2f91669fa43bc0615bc12b959c879ed95f78e053eb69cb4ad5b34"
+    },
+    {
+      "path": "sources/sdk-v2407/bindings/rust/openui-paint/src/painter.rs",
+      "bytes": 956288,
+      "sha256": "04f23399f1394f002255ab8349f49850eefffb137d4755c075ba39a9f7676e8e"
+    },
+    {
+      "path": "sources/sdk-v2407/bindings/rust/openui-paint/src/text_painter.rs",
+      "bytes": 18696,
+      "sha256": "c44fa5129fd430caf47e84c2efa342ecd32f465dc06b00e1d2657370c0e649fe"
+    },
+    {
+      "path": "sources/sdk-v2407/bindings/rust/openui-text/src/shaping/shape_result.rs",
+      "bytes": 43395,
+      "sha256": "a6c39d1b3215bb6219164b4fb799edbeee4c6894ddb3f914234292cd216f22e8"
+    },
+    {
+      "path": "sources/sdk-v2407/patch.diff",
+      "bytes": 7844,
+      "sha256": "d109f19439e6271394c2be9cf1d4c967815bf1d3148244cb1e5eb94bd5dd3c20"
+    },
+    {
+      "path": "sources/sdk-v2412/bindings/rust/.cargo/config.chromium.toml",
+      "bytes": 2368,
+      "sha256": "4a8f0816b12b783016f4e5e82600e7824b33d7923544516e1a287a68b88d22a6"
+    },
+    {
+      "path": "sources/sdk-v2412/bindings/rust/Cargo.lock",
+      "bytes": 87486,
+      "sha256": "8750cd0e06a2f91669fa43bc0615bc12b959c879ed95f78e053eb69cb4ad5b34"
+    },
+    {
+      "path": "sources/sdk-v2412/bindings/rust/openui-paint/src/painter.rs",
+      "bytes": 956288,
+      "sha256": "04f23399f1394f002255ab8349f49850eefffb137d4755c075ba39a9f7676e8e"
+    },
+    {
+      "path": "sources/sdk-v2412/bindings/rust/openui-paint/src/text_painter.rs",
+      "bytes": 18489,
+      "sha256": "ae1b88fa0153905ab3b2bd845357832315c5e5d14e7da6f99861f8473a927bcc"
+    },
+    {
+      "path": "sources/sdk-v2412/bindings/rust/openui-text/src/shaping/shape_result.rs",
+      "bytes": 42631,
+      "sha256": "a0288a42ae4e56c94e2ebd0b5d8e6fb4a556bb6744bbb3224f3da40c83919a9e"
+    },
+    {
+      "path": "sources/sdk-v2412/patch.diff",
+      "bytes": 2856,
+      "sha256": "0a69d7244cbf420773b73302f8a758adf61cdc7045058d945eeaa10a1050eba3"
+    }
+  ],
+  "all_members_verified": true
+}

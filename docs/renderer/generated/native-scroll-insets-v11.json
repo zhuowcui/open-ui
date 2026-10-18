@@ -1,0 +1,255 @@
+{
+  "applied_to_umbrella": false,
+  "artifacts": [
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-viewport-fixed-complete-audit-v825.json",
+      "sha256": "faa4edba85922dc5bdf6599c918285678caf46ba22266bf2a67b1d4b667fb49a"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-lcd-policy-clean-v824/build.json",
+      "sha256": "32a7779117305509241b13c4e5fe737206272fa8da8b06d5faf9c6e16368ed55"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-lcd-policy-native-audit-v841.json",
+      "sha256": "8ad4e7f36b105048bec3d8366e1d2162525fb1d4f9ff8cf936b098492c1430a6"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-lcd-policy-edges-v827/receipt.json",
+      "sha256": "ad0b3db575f68e915b4efb7a29bdc8236f610c6c8d24d5c21105e0dcedac2bb8"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-lcd-policy-raster-failure-audit-v875.json",
+      "sha256": "e120c4d2e8c83b65438e701dae1ce702a15039858865ba750a80ebac919d96dd"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-lcd-policy-reduced-audit-v840.json",
+      "sha256": "156e3c83ef40946056d8e2554a7ef6092d72bd784cd3c2fe7ee3b6a9bcf84725"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-queue-retirement-v874.json",
+      "sha256": "d1de418ed84da731ffcc4f3a428be200c2b383383626f8a06391f8b8418bc53c"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-edge-metrics-v851/receipt.json",
+      "sha256": "00119a383265cd89b7f47ec84d0be8b4a1677f26630ede5e81cead1106e25297"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-neighbors-review-v856/receipt.json",
+      "sha256": "5f42f78de1e4a48a4a84dc45029f0ec32f91a4dc4825aacbd9a338c18a8d1d38"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-metrics-oracle-v857/receipt.json",
+      "sha256": "634c779cf32b0f7690bb0b2671659979049ff74c4f7e886b978c2d902d512254"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-empty-auto-compositor-v876/receipt.json",
+      "sha256": "470d8af09ffa84a60975522e41a8b9f482820b3f615d3158782e197692e785c0"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-empty-auto-review-v877/receipt.json",
+      "sha256": "1d496a2620f0d6b8f9fdb5d19f3d3f569cc92a7ac1a3a1df67f2eb9032bf4aee"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-clip-range-clean-v880/build.json",
+      "sha256": "1c99268a89f4cc5131ba15f03b4dc6202b33b0a1429431fb5b0deb2caf041109"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-compile-recovery-v899.json",
+      "sha256": "98027f576b7e4885f31d4b9fc6385d1f8480d0ba64e27036759c8210ff519f59"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-clip-range-checks-v897/receipt.json",
+      "sha256": "518802a979ac81aa2eefd680489c814cdc2a3e518fd066a06138a4f15440817c"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-docs-ci-v843/receipt.json",
+      "sha256": "4f83d04d6d1a5bdb662f5199edd1b732bd2889b8f1771ab3f974fd3231aafe94"
+    }
+  ],
+  "completed_lcd_policy_candidate": {
+    "all_chromium_bytes_and_identities_unchanged": true,
+    "complete_original_and_expanded_not_run_after_primitive_failure": true,
+    "focused_exact": 640,
+    "focused_total": 640,
+    "fresh_build_stages_passed": 7,
+    "native_rust_c_states_exact": 935,
+    "previous_885_states_unchanged": true,
+    "primitive_actual_exit": 1,
+    "primitive_exact": 952,
+    "primitive_exact_losses": 8,
+    "primitive_total": 960,
+    "qualified": false,
+    "read_only_checks_passed": 10,
+    "reduced_actual_exit": 1,
+    "reduced_exact_losses_vs_applied_umbrella": 1,
+    "reduced_original_results": {
+      "different": 68,
+      "errors": 0,
+      "exact": 108,
+      "profile_result_sha256": "5a82b9b29d71f51fbe43b32410581a6eccaa477f453edd92a9e4fb5fab098536",
+      "total": 176
+    },
+    "reduced_residual_exact_loss": [
+      {
+        "id": "wpt/css_multicol/multicol-scroll-content",
+        "mismatched_pixels": 250,
+        "owner": "openui-paint",
+        "profile": "desktop-1280x720@1.25"
+      }
+    ],
+    "source": {
+      "clean": true,
+      "commit": "b6a62a9bc8314459c441b4a0b638e91b62af7edc",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "6572dd98877b8c69752fdee91d9358f8966d122a8804c96d6fa0523c21e17dbd",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "two_child_rust_c_states_exact": 70,
+    "workspace": {
+      "failed": 0,
+      "ignored": 13,
+      "passed": 8538
+    }
+  },
+  "completed_viewport_fixed_candidate": {
+    "addition_cases": {
+      "exact_at_all_four_profiles": 200,
+      "failed": {
+        "wpt/css_display/display-contents-dynamic-fieldset-legend-001": [
+          {
+            "mismatched_pixels": 0,
+            "profile": "legacy-800x600@1",
+            "status": "exact"
+          },
+          {
+            "mismatched_pixels": 0,
+            "profile": "mobile-375x667@2",
+            "status": "exact"
+          },
+          {
+            "mismatched_pixels": 1315,
+            "profile": "desktop-1280x720@1.25",
+            "status": "different"
+          },
+          {
+            "mismatched_pixels": 0,
+            "profile": "desktop-1920x1080@1.5",
+            "status": "exact"
+          }
+        ]
+      },
+      "total": 201
+    },
+    "all_804_addition_invariants_unchanged": true,
+    "all_chromium_bytes_and_identities_unchanged": true,
+    "exact_losses_vs_applied_umbrella": 5,
+    "exact_losses_vs_clip_containment": 6,
+    "original_and_expanded_actual_exits": [
+      1,
+      1
+    ],
+    "qualified": false,
+    "residual_original_ids": 881,
+    "results": {
+      "expanded": {
+        "different": 1584,
+        "errors": 0,
+        "exact": 22144,
+        "profile_result_sha256": "dadb9c056d868f06f2788b890faf0f858dc743d4bbcfc049304982405a9f668c",
+        "total": 23728
+      },
+      "full": {
+        "different": 1583,
+        "errors": 0,
+        "exact": 21341,
+        "profile_result_sha256": "7129ea4fa5d0d484e20b0ea52ea99c626685d2f37cb85b98b3b47756b8de5cfa",
+        "total": 22924
+      }
+    },
+    "source": {
+      "clean": true,
+      "commit": "4dd50621cb4d0332d8dbb2e0a2c1fcb8465fce9b",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "fb4e994d8bcd9aecadc19507e40f3d355bf7e5a4ed9c7bea988ebdb5c3815ab0",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "documentation_checkpoint_c94d7997": {
+    "all_three_hosted_workflows_complete_success": true,
+    "private_runtime_qualification": false,
+    "skipped_jobs": 5,
+    "skipped_jobs_are_not_passes": true,
+    "successful_jobs": 6
+  },
+  "empty_auto_clip_finding": {
+    "all_five_images_equal_immutable_references": true,
+    "element_scroll_transform_absent_at_all_five_scales": true,
+    "exact_release_tag": "147.0.7727.50",
+    "fresh_chromium_captures": 5,
+    "owner": "openui-paint",
+    "primary_sources": [
+      {
+        "path": "third_party/blink/renderer/core/paint/paint_property_tree_builder.cc",
+        "sha256": "704f562b6af7466c0d66fe655008dc5538041c83361334e5ea51b1aa5247dcbc",
+        "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/third_party/blink/renderer/core/paint/paint_property_tree_builder.cc?format=TEXT"
+      }
+    ],
+    "root_cause": "High-DPI composition policy was applied to an auto box without a scroll transform; its clip remains in paint."
+  },
+  "javascript_executed_by_openui": false,
+  "native_margin_finding": {
+    "all_70_fresh_reference_images_unchanged": true,
+    "fresh_chromium_metric_cases": 70,
+    "missing_trailing_margin_css_pixels": 20,
+    "native_api_exact": 8,
+    "native_api_states": 16,
+    "owner": "openui-layout/openui-engine",
+    "remaining": [
+      "Collapsed margin struts and self-collapsing blocks require native final-state checks.",
+      "Opaque paint-chunk clip ownership and compositor property spaces remain incomplete."
+    ]
+  },
+  "new_release_states_admitted": 0,
+  "next_candidate": {
+    "build_status": "Fresh seven-stage build in progress; no pixel qualification claimed.",
+    "earlier_compile_failure": {
+      "actual_exit": 101,
+      "repair": "Use the typed RendererStyleValue scrollbar wrapper in the regression test.",
+      "source_commit": "2cc6b8d56245de858eac5da319f4b5ad840f2e48",
+      "tests_not_run": true
+    },
+    "meaningful_native_mutation_regression": "Trailing child margin growth/shrink clamps scroll offsets and preserves owned metrics.",
+    "pixel_status": "Not run",
+    "promotion_allowed": false,
+    "public_rust_consumer": "bindings/rust/openui/examples/native_scroll_clip.rs",
+    "read_only_checks_passed": 10,
+    "scope": "Retain child margins in scroll extents and share reachable scroll geometry between transform and clip decisions.",
+    "source": {
+      "clean": true,
+      "commit": "45ddeee3b5abceca5f8e0f0a752aa1e9d10ac14e",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "30baddc5d5196b40436bcc6b5c9e6906808df9c300460f2db1e72c4ff96c6e0f",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "permanent_application_contract": "No JavaScript execution or bindings in Open UI, in any version. Consuming native applications use public Rust methods and Rust callbacks. C and accessibility use the same Rust Engine.",
+  "pixel_target": "Pinned Chromium only, zero tolerance",
+  "previous_index": {
+    "path": "docs/renderer/generated/native-scroll-insets-v10.json",
+    "sha256": "c366288b0d615fe7647d3f86a3cb99e980d85c035950e0cdc294b06a4de5c595"
+  },
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "remaining": [
+    "Complete original/expanded Chromium pixel exactness",
+    "All focused and primitive raster profiles exact",
+    "Native scroll-margin collapse and all needed public Rust API behavior",
+    "Low-DPI opaque/direct compositor clip ownership and multicolumn scrolling regression",
+    "Compositor/3D, physical hardware, packaging, provenance and release gates"
+  ],
+  "reviewable_patch": {
+    "path": "docs/renderer/evidence/native-scroll-clip-range-v1/native-scroll-clip-range-v1.patch",
+    "sha256": "1cb0e29743292730000e27e3a857651bb5f818c5465bca00727316b2b489da12"
+  },
+  "schema_version": 1
+}

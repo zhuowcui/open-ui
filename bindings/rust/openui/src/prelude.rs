@@ -5,20 +5,28 @@
 //! ```
 
 pub use crate::app::{
-    App, AppBuilder, BackendPreference, HeadlessApp, LogicalSize, RenderOptions, WindowOptions,
+    App, AppBuilder, AppExitHandle, BackendPreference, HeadlessApp, LogicalSize, RenderOptions,
+    WindowOptions,
 };
 pub use crate::context::{current_document, with_document};
 pub use crate::document::Document;
 pub use crate::element::{Element, WeakElement};
 pub use crate::events::*;
 pub use crate::renderer::{DynChild, For, Show};
+pub use crate::scroll_button::{
+    ScrollButton, ScrollButtonAvailability, ScrollButtonDirection, ScrollButtonState,
+    ScrollSnapStrictness,
+};
 pub use crate::style::*;
 pub use crate::text_node::{TextNode, WeakTextNode};
 pub use crate::typed_style::*;
 pub use crate::view_node::{mount_view, IntoView, ViewNode};
+pub use crate::ElementTag;
 pub use crate::{
-    AccessibilityAction, AccessibilityLive, AccessibilityRelation, AccessibilityRole,
-    ViewportAuthority, ViewportMetrics,
+    AccessibilityAction, AccessibilityLive, AccessibilityRelation, AccessibilityRole, EditCommand,
+    EngineOptions, RangeSelectionMode, RasterBackend, RasterConfiguration, RasterPixelGeometry,
+    ScrollMetrics, SelectionDirection, TextDirection, TextEdging, TextHinting,
+    TextRasterConfiguration, TextUnit, ViewportAuthority, ViewportMetrics,
 };
 pub use openui_macros::{component, view};
 pub use openui_text::{

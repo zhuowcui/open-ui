@@ -1,0 +1,25 @@
+diff --git a/bindings/rust/openui-paint/src/painter.rs b/bindings/rust/openui-paint/src/painter.rs
+index 3a0f9335..72f0a085 100644
+--- a/bindings/rust/openui-paint/src/painter.rs
++++ b/bindings/rust/openui-paint/src/painter.rs
+@@ -11164,8 +11164,18 @@ pub(crate) fn paint_viewport_scrollbars(
+                 true,
+             );
+             let mut fill = thumb.clone();
+-            fill.set_anti_alias(false);
+-            canvas.draw_rect(thumb_rect, &fill);
++            let scale = style.device_scale_factor as f32;
++            // cc encloses the thumb quad in its own physical content space.
++            // Its rounded mask retains the authored bounds in target space;
++            // the solid quad must cover that mask even at fractional scales.
++            let left = ((thumb_rect.left - outer.left) * scale).floor() / scale + outer.left;
++            let top = ((thumb_rect.top - outer.top) * scale).floor() / scale + outer.top;
++            let right = ((thumb_rect.right - outer.left) * scale).ceil() / scale + outer.left;
++            let bottom = ((thumb_rect.bottom - outer.top) * scale).ceil() / scale + outer.top;
++            fill.set_anti_alias(
++                (outer.left * scale).fract() != 0.0 || (outer.top * scale).fract() != 0.0,
++            );
++            canvas.draw_rect(Rect::new(left, top, right, bottom), &fill);
+             canvas.restore();
+         }
+     }

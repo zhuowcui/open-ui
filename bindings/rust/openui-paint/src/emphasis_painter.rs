@@ -68,6 +68,17 @@ pub fn paint_emphasis_marks(
     style: &ComputedStyle,
     text_content: Option<&str>,
 ) {
+    paint_emphasis_marks_tracked(canvas, shape_result, origin, style, text_content);
+}
+
+pub(crate) fn paint_emphasis_marks_tracked(
+    canvas: &dyn crate::paint_record::PaintCanvas,
+    shape_result: &ShapeResult,
+    origin: (f32, f32),
+    style: &ComputedStyle,
+    text_content: Option<&str>,
+) {
+    canvas.legacy_helper_boundary();
     if style.text_emphasis_mark == TextEmphasisMark::None {
         return;
     }

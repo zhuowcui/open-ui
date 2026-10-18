@@ -6,6 +6,7 @@
 //! It deliberately shares child layout, positioned layout, writing-mode
 //! projection, and paint fragments with the other formatting contexts.
 
+use crate::layout_context::LayoutDocument;
 use std::collections::{HashMap, HashSet};
 
 use openui_dom::{Document, ElementTag, NodeId, PseudoElementKind};
@@ -20,12 +21,14 @@ use openui_style::{
     OverflowAlignment,
 };
 
-use crate::block::{block_layout, resolve_border, resolve_margins, resolve_padding};
+use crate::block::{block_layout_with_layout, resolve_border, resolve_margins, resolve_padding};
 use crate::constraint_space::ConstraintSpace;
 use crate::fragment::Fragment;
-use crate::intrinsic_sizing::{compute_child_intrinsic_contribution, IntrinsicSizes};
+use crate::intrinsic_sizing::{compute_child_intrinsic_contribution_with_layout, IntrinsicSizes};
 use crate::length_resolver::resolve_length;
-use crate::out_of_flow::{layout_out_of_flow_children, OutOfFlowCandidate, StaticPositionEdge};
+use crate::out_of_flow::{
+    layout_out_of_flow_children_with_layout, OutOfFlowCandidate, StaticPositionEdge,
+};
 
 #[derive(Clone, Copy)]
 struct Track {
@@ -242,9 +245,9 @@ fn expand_tracks(
     output
 }
 
-fn collect_grid_children(doc: &Document, parent: NodeId, output: &mut Vec<NodeId>) {
+fn collect_grid_children(doc: &dyn LayoutDocument, parent: NodeId, output: &mut Vec<NodeId>) {
     if doc.node(parent).pseudo_kind == Some(PseudoElementKind::ScrollMarkerGroup) {
-        fn collect_markers(doc: &Document, origin: NodeId, output: &mut Vec<NodeId>) {
+        fn collect_markers(doc: &dyn LayoutDocument, origin: NodeId, output: &mut Vec<NodeId>) {
             for child_id in doc.children(origin) {
                 match doc.node(child_id).pseudo_kind {
                     Some(PseudoElementKind::ScrollMarker)
@@ -399,7 +402,7 @@ fn resolve_axis_range(
 }
 
 fn placement_area(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     child_id: NodeId,
     style: &openui_style::ComputedStyle,
     columns: bool,
@@ -427,7 +430,7 @@ fn occupy(occupied: &mut HashSet<(usize, usize)>, column: AxisRange, row: AxisRa
 }
 
 fn place_items(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     node_id: NodeId,
     style: &openui_style::ComputedStyle,
     columns: &AxisTracks,
@@ -717,7 +720,7 @@ fn axis_contribution(intrinsic: IntrinsicSizes, columns: bool, max_content: bool
 /// auto for the intrinsic pass, but a definite opposite-axis size still
 /// transfers through the preferred aspect ratio.
 fn cyclic_ratio_contribution_with_opposite_basis(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     node_id: NodeId,
     columns: bool,
     opposite_percentage_basis: Option<LayoutUnit>,
@@ -792,7 +795,11 @@ fn cyclic_ratio_contribution_with_opposite_basis(
     )
 }
 
-fn cyclic_ratio_contribution(doc: &Document, node_id: NodeId, columns: bool) -> Option<LayoutUnit> {
+fn cyclic_ratio_contribution(
+    doc: &dyn LayoutDocument,
+    node_id: NodeId,
+    columns: bool,
+) -> Option<LayoutUnit> {
     cyclic_ratio_contribution_with_opposite_basis(doc, node_id, columns, None)
 }
 
@@ -803,7 +810,7 @@ fn cyclic_ratio_contribution(doc: &Document, node_id: NodeId, columns: bool) -> 
 /// to shrink as a flex item's Grid container shrinks, while its max-content
 /// contribution continues to expose the resource's natural size.
 fn grid_item_min_contribution(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     node_id: NodeId,
     intrinsic: IntrinsicSizes,
     columns: bool,
@@ -881,7 +888,7 @@ fn grid_item_min_contribution(
 }
 
 fn size_intrinsic_tracks(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     items: &[GridItem],
     tracks: &mut [Track],
     columns: bool,
@@ -908,7 +915,7 @@ fn size_intrinsic_tracks(
         }
         let intrinsic = *cache
             .entry(item.node_id)
-            .or_insert_with(|| compute_child_intrinsic_contribution(doc, item.node_id));
+            .or_insert_with(|| compute_child_intrinsic_contribution_with_layout(doc, item.node_id));
         let min = grid_item_min_contribution(doc, item.node_id, intrinsic, columns);
         let max = cyclic_ratio_contribution(doc, item.node_id, columns)
             .unwrap_or_else(|| axis_contribution(intrinsic, columns, true));
@@ -1000,7 +1007,7 @@ fn maximize_fixed_max_tracks(
 }
 
 fn size_row_tracks_from_layout(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     items: &[GridItem],
     rows: &mut [Track],
     columns: &[Track],
@@ -1075,7 +1082,7 @@ fn size_row_tracks_from_layout(
                 .min_height
                 .is_content_or_intrinsic()
             {
-                let intrinsic = compute_child_intrinsic_contribution(doc, item.node_id);
+                let intrinsic = compute_child_intrinsic_contribution_with_layout(doc, item.node_id);
                 grid_item_min_contribution(doc, item.node_id, intrinsic, false)
             } else {
                 cyclic_ratio_contribution_with_opposite_basis(
@@ -1350,7 +1357,7 @@ fn collapse_empty_auto_fit_tracks(tracks: &mut [Track], items: &[GridItem], colu
 /// which keeps subsequent row offsets and the Grid container's continuation
 /// size in the same linear source coordinate space.
 fn apply_row_fragmentation_breaks(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     items: &[GridItem],
     rows: &mut [Track],
     row_gap: LayoutUnit,
@@ -1407,7 +1414,7 @@ fn apply_row_fragmentation_breaks(
             }
         }
         if end == start + 1 {
-            let intrinsic = compute_child_intrinsic_contribution(doc, item.node_id);
+            let intrinsic = compute_child_intrinsic_contribution_with_layout(doc, item.node_id);
             unfragmented_row_size[start] =
                 unfragmented_row_size[start].max_of(intrinsic.max_content_block_size);
         }
@@ -1647,7 +1654,7 @@ fn style_axis_size(style: &openui_style::ComputedStyle, inline_axis: bool) -> &L
 }
 
 fn layout_grid_child(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     child_id: NodeId,
     parent_space: &ConstraintSpace,
     available_inline: LayoutUnit,
@@ -1659,7 +1666,7 @@ fn layout_grid_child(
 ) -> Fragment {
     let child_style = &doc.node(child_id).style;
     let mut available_inline = if doc.node(child_id).tag == ElementTag::Text && !stretch_inline {
-        crate::intrinsic_sizing::compute_intrinsic_inline_sizes(doc, child_id)
+        crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_layout(doc, child_id)
             .max
             .min_of(available_inline)
     } else {
@@ -1675,14 +1682,14 @@ fn layout_grid_child(
         let intrinsic = if !available_block.is_indefinite()
             && (stretch_block || !child_logical.sizes.block_size.is_auto())
         {
-            crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_block_size(
+            crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_block_size_with_layout(
                 doc,
                 child_id,
                 available_block,
                 percentage_inline,
             )
         } else {
-            crate::intrinsic_sizing::compute_intrinsic_inline_sizes(doc, child_id)
+            crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_layout(doc, child_id)
         };
         if child_style.aspect_ratio.is_none() || !child_logical.sizes.block_size.is_auto() {
             available_inline = crate::intrinsic_sizing::shrink_to_fit_inline_size(
@@ -1754,7 +1761,7 @@ fn layout_grid_child(
         // grid item whose contents establish an inline formatting context.
         // Laying out the Text node as a block would retain its advance for
         // track sizing but produce an empty, zero-height paint fragment.
-        let mut fragment = crate::inline::algorithm::inline_layout_for_children(
+        let mut fragment = crate::inline::algorithm::inline_layout_for_children_with_layout(
             doc,
             child_id,
             &[child_id],
@@ -1778,7 +1785,7 @@ fn layout_grid_child(
         }
         fragment
     } else {
-        block_layout(doc, child_id, &child_space)
+        block_layout_with_layout(doc, child_id, &child_space)
     }
 }
 
@@ -1817,7 +1824,7 @@ fn clamp_container_axis(
 }
 
 fn resolve_container_inline_size(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     node_id: NodeId,
     style: &openui_style::ComputedStyle,
     space: &ConstraintSpace,
@@ -1865,10 +1872,21 @@ fn resolve_container_inline_size(
     {
         let (min, max) = if let Some(fallback) = crate::containment::logical_inline_fallback(style)
         {
-            let contained = fallback + border_padding;
+            let direction = logical.writing_direction;
+            let gutters = crate::scrollbars::for_node(space, node_id)
+                .map_or(crate::scrollbars::intrinsic_insets(doc, node_id), |bars| {
+                    bars.insets
+                })
+                .to_logical(direction);
+            let contained = fallback + border_padding + gutters.inline_sum();
             (contained, contained)
         } else {
-            let intrinsic = compute_grid_intrinsic_sizes(doc, node_id);
+            let intrinsic = crate::scrollbars::intrinsic_sizes_for_layout(
+                doc,
+                node_id,
+                space,
+                compute_grid_intrinsic_sizes_with_layout(doc, node_id),
+            );
             (
                 intrinsic.min_content_inline_size,
                 intrinsic.max_content_inline_size,
@@ -1881,7 +1899,13 @@ fn resolve_container_inline_size(
         }
     } else if preferred.is_auto() {
         if space.available_inline_size.is_indefinite() {
-            compute_grid_intrinsic_sizes(doc, node_id).max_content_inline_size
+            crate::scrollbars::intrinsic_sizes_for_layout(
+                doc,
+                node_id,
+                space,
+                compute_grid_intrinsic_sizes_with_layout(doc, node_id),
+            )
+            .max_content_inline_size
         } else {
             space.available_inline_size
         }
@@ -1966,7 +1990,7 @@ fn resolve_container_block_size(
     size.max_of(border_padding)
 }
 
-fn overflow_from_children(fragment: &mut Fragment, style: &openui_style::ComputedStyle) {
+fn overflow_from_children(doc: &dyn LayoutDocument, fragment: &mut Fragment) {
     let border_box = PhysicalRect::new(PhysicalOffset::zero(), fragment.size);
     let mut overflow = border_box;
     for child in &fragment.children {
@@ -1986,12 +2010,23 @@ fn overflow_from_children(fragment: &mut Fragment, style: &openui_style::Compute
     if overflow != border_box {
         fragment.overflow_rect = Some(overflow);
     }
-    fragment.has_overflow_clip =
-        style.overflow_x != Overflow::Visible || style.overflow_y != Overflow::Visible;
+    fragment.has_overflow_clip = crate::scroll_area::has_overflow_clip(doc, fragment.node_id);
 }
 
 /// Lay out one Grid container.
-pub fn grid_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> Fragment {
+pub(crate) fn grid_layout_with_layout(
+    doc: &dyn LayoutDocument,
+    node_id: NodeId,
+    space: &ConstraintSpace,
+) -> Fragment {
+    crate::scrollbars::layout(doc, node_id, space)
+}
+
+pub(crate) fn grid_layout_contents(
+    doc: &dyn LayoutDocument,
+    node_id: NodeId,
+    space: &ConstraintSpace,
+) -> Fragment {
     let style = &doc.node(node_id).style;
     let logical_box = crate::ResolvedLogicalBox::from_style(style);
     let writing_direction = logical_box.writing_direction;
@@ -2001,11 +2036,19 @@ pub fn grid_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
     let logical_padding = padding.to_logical(writing_direction);
     let border_padding_inline = logical_border.inline_sum() + logical_padding.inline_sum();
     let border_padding_block = logical_border.block_sum() + logical_padding.block_sum();
+    let element_scrollbars = crate::scrollbars::for_node(space, node_id);
+    let scrollbar_insets = element_scrollbars.map_or(BoxStrut::zero(), |bars| bars.insets);
+    let logical_scrollbars = scrollbar_insets.to_logical(writing_direction);
+    let border_scrollbar_padding_inline = border_padding_inline + logical_scrollbars.inline_sum();
+    let border_scrollbar_padding_block = border_padding_block + logical_scrollbars.block_sum();
     let container_inline =
         resolve_container_inline_size(doc, node_id, style, space, border_padding_inline);
-    let content_inline = (container_inline - border_padding_inline).clamp_negative_to_zero();
+    let content_inline =
+        (container_inline - border_scrollbar_padding_inline).clamp_negative_to_zero();
     let column_gap = resolve_gap(&style.column_gap, content_inline);
-    let preliminary_block = if logical_box.sizes.block_size.is_auto() {
+    let preliminary_block = if space.is_fixed_block_size || space.stretch_block_size {
+        (space.available_block_size - border_scrollbar_padding_block).clamp_negative_to_zero()
+    } else if logical_box.sizes.block_size.is_auto() {
         // Size containment substitutes the contain-intrinsic block size for
         // the contents before track sizing. Treat that substituted content
         // box as definite so fr and auto-repeat rows resolve against it.
@@ -2018,9 +2061,9 @@ pub fn grid_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
             INDEFINITE_SIZE,
         );
         if style.box_sizing == BoxSizing::BorderBox {
-            (raw - border_padding_block).clamp_negative_to_zero()
+            (raw - border_scrollbar_padding_block).clamp_negative_to_zero()
         } else {
-            raw
+            (raw - logical_scrollbars.block_sum()).clamp_negative_to_zero()
         }
     };
     let row_gap = resolve_gap(
@@ -2132,8 +2175,8 @@ pub fn grid_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
 
     let intrinsic_content_block = tracks_used_size(&rows.tracks, row_gap);
     let intrinsic_container_block = crate::containment::logical_block_fallback(style)
-        .map_or(intrinsic_content_block, |fallback| fallback)
-        + border_padding_block;
+        .unwrap_or(intrinsic_content_block)
+        + border_scrollbar_padding_block;
     let container_block = resolve_container_block_size(
         style,
         space,
@@ -2141,7 +2184,7 @@ pub fn grid_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
         border_padding_block,
         container_inline,
     );
-    let content_block = (container_block - border_padding_block).clamp_negative_to_zero();
+    let content_block = (container_block - border_scrollbar_padding_block).clamp_negative_to_zero();
     distribute_flexible_tracks(&mut rows.tracks, content_block, row_gap);
 
     let (row_initial, row_between) = content_alignment(
@@ -2157,10 +2200,13 @@ pub fn grid_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
         logical_box.physical_size(LogicalSize::new(container_inline, container_block));
     let converter = WritingModeConverter::new(writing_direction, physical_size);
     let content_origin = LogicalOffset::new(
-        logical_border.inline_start + logical_padding.inline_start,
-        logical_border.block_start + logical_padding.block_start,
+        logical_border.inline_start
+            + logical_padding.inline_start
+            + logical_scrollbars.inline_start,
+        logical_border.block_start + logical_padding.block_start + logical_scrollbars.block_start,
     );
     let mut fragment = Fragment::new_box(node_id, physical_size);
+    fragment.element_scrollbars = element_scrollbars;
     fragment.border = border;
     fragment.padding = padding;
 
@@ -2340,8 +2386,15 @@ pub fn grid_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
     // Direct abspos grid children use their resolved grid area as the static
     // positioning area without occupying tracks.
     let is_root = node_id == doc.root();
-    let establishes_cb = style.position.is_positioned() || is_root;
-    let captures_fixed = is_root || style.establishes_transform_containing_block;
+    let establishes_cb = style.position.is_positioned()
+        || is_root
+        || style.has_transform_containing_block()
+        || style.has_layout_containment()
+        || doc.anonymous_absolute_container(node_id);
+    let captures_fixed = is_root
+        || style.has_transform_containing_block()
+        || style.has_layout_containment()
+        || doc.anonymous_fixed_container(node_id);
     let mut candidates = Vec::new();
     let grid_positioning_geometry = |child_id: NodeId| {
         let child_style = &doc.node(child_id).style;
@@ -2499,7 +2552,10 @@ pub fn grid_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
     if !local_candidates.is_empty() {
         fragment
             .children
-            .extend(layout_out_of_flow_children(doc, &local_candidates));
+            .extend(layout_out_of_flow_children_with_layout(
+                doc,
+                &local_candidates,
+            ));
     }
     fragment.oof_candidates.extend(bubbled_candidates);
 
@@ -2515,8 +2571,7 @@ pub fn grid_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
         .map(|baseline| {
             grid_child_baseline_offset(doc, fragment.children.last().unwrap(), baseline)
         });
-    crate::block::apply_static_scroll_snap(doc, &mut fragment);
-    overflow_from_children(&mut fragment, style);
+    overflow_from_children(doc, &mut fragment);
     fragment
 }
 
@@ -2525,7 +2580,7 @@ fn child_baseline_offset(child: &Fragment, baseline: LayoutUnit) -> LayoutUnit {
 }
 
 fn grid_child_baseline_offset(
-    _doc: &Document,
+    _doc: &dyn LayoutDocument,
     child: &Fragment,
     baseline: LayoutUnit,
 ) -> LayoutUnit {
@@ -2535,15 +2590,23 @@ fn grid_child_baseline_offset(
 /// Grid min/max-content contributions used by sizing, flex, abspos, and
 /// atomic-inline layout. This path never invokes layout on the container
 /// itself, which prevents cyclic Grid/block intrinsic probing.
-pub fn compute_grid_intrinsic_sizes(doc: &Document, node_id: NodeId) -> IntrinsicSizes {
+pub(crate) fn compute_grid_intrinsic_sizes_with_layout(
+    doc: &dyn LayoutDocument,
+    node_id: NodeId,
+) -> IntrinsicSizes {
     let style = &doc.node(node_id).style;
     let border = resolve_border(style);
     let padding = resolve_padding(style, LayoutUnit::zero());
     let writing_direction = style.direction.writing_direction(style.writing_mode);
     let logical_border = border.to_logical(writing_direction);
     let logical_padding = padding.to_logical(writing_direction);
-    let bp_inline = logical_border.inline_sum() + logical_padding.inline_sum();
-    let bp_block = logical_border.block_sum() + logical_padding.block_sum();
+    let logical_scrollbars =
+        crate::scrollbars::intrinsic_insets(doc, node_id).to_logical(writing_direction);
+    let bp_inline = logical_border.inline_sum()
+        + logical_padding.inline_sum()
+        + logical_scrollbars.inline_sum();
+    let bp_block =
+        logical_border.block_sum() + logical_padding.block_sum() + logical_scrollbars.block_sum();
     let column_gap = resolve_gap(&style.column_gap, LayoutUnit::zero());
     let row_gap = resolve_gap(&style.row_gap, LayoutUnit::zero());
     let mut columns = expand_tracks(
@@ -2605,7 +2668,7 @@ pub fn compute_grid_intrinsic_sizes(doc: &Document, node_id: NodeId) -> Intrinsi
     for item in &items {
         let intrinsic = *cache
             .entry(item.node_id)
-            .or_insert_with(|| compute_child_intrinsic_contribution(doc, item.node_id));
+            .or_insert_with(|| compute_child_intrinsic_contribution_with_layout(doc, item.node_id));
         grow_spanning_tracks(
             &mut min_columns.tracks,
             item.column_start,
@@ -2738,7 +2801,7 @@ mod tests {
             false,
         );
         space.fragmentainer_block_size = LayoutUnit::from_i32(100);
-        let fragment = crate::block::block_layout(&doc, grid, &space);
+        let fragment = crate::block::block_layout_with_layout(&doc, grid, &space);
         let item_fragment = fragment
             .children
             .iter()
@@ -2751,4 +2814,13 @@ mod tests {
             LayoutUnit::from_i32(100)
         );
     }
+}
+
+// Public entry points retain the original native Document signatures.
+pub fn grid_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> Fragment {
+    grid_layout_with_layout(doc, node_id, space)
+}
+
+pub fn compute_grid_intrinsic_sizes(doc: &Document, node_id: NodeId) -> IntrinsicSizes {
+    compute_grid_intrinsic_sizes_with_layout(doc, node_id)
 }

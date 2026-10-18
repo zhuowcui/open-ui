@@ -1,5 +1,8 @@
 //! Canonical public property schema and typed declaration values.
 
+#[path = "grid_literal.rs"]
+mod grid_literal;
+
 use crate::{
     AnimationSnapshot, AspectRatio, BackgroundAttachment, BackgroundClip, BackgroundLayer,
     BlockEllipsis, BorderCollapse, BorderImage, BorderStyle, BoxDecorationBreak, BoxShadow,
@@ -16,18 +19,19 @@ use crate::{
     GridTrackSize, HangingPunctuation, HyphenateCharacter, HyphenationLimits, Hyphens,
     InitialLetter, InitialLetterValue, ItemAlignment, ItemPosition, LineBreak, LineClamp,
     LineHeight, LinearGradient, ListStylePosition, ListStyleType, MarginTrim, ObjectFit,
-    ObjectPosition, OpenTypeFeatureList, Overflow, OverflowClipBox, OverflowWrap, Position,
-    PositionArea, QuotePair, Resize, RubyAlign, RubyOverhang, RubyPosition, ScrollMarkerGroup,
-    ScrollSnapAlign, ScrollSnapAxis, ScrollTargetGroup, ScrollbarGutter, ScrollbarWidth,
-    ShapeOutside, StyleColor, TabSize, TableLayout, TextAlign, TextAlignLast, TextAutospace,
-    TextBoxEdge, TextBoxShorthand, TextBoxTrim, TextCombineUpright, TextDecorationLine,
-    TextDecorationShorthand, TextDecorationSkipInk, TextDecorationStyle, TextDecorationThickness,
-    TextEmphasisFill, TextEmphasisMark, TextEmphasisPosition, TextEmphasisShorthand,
-    TextEmphasisStyle, TextJustify, TextOrientation, TextOverflow, TextRendering, TextShadow,
-    TextShadowList, TextSizeAdjust, TextSpacingTrim, TextTransform, TextUnderlinePosition,
-    TextWrap, TextWrapMode, TextWrapShorthand, TextWrapStyle, Transform2D, TypographyValue,
-    UnicodeBidi, VerticalAlign, Visibility, WebkitBoxOrient, WhiteSpace, WhiteSpaceCollapse,
-    WhiteSpaceShorthand, WordBreak, WritingMode,
+    ObjectPosition, OpenTypeFeatureList, Overflow, OverflowAlignment, OverflowClipBox,
+    OverflowWrap, Position, PositionArea, QuotePair, Resize, RubyAlign, RubyOverhang, RubyPosition,
+    ScrollMarkerGroup, ScrollSnapAlign, ScrollSnapAxis, ScrollSnapStop, ScrollSnapStrictness,
+    ScrollTargetGroup, ScrollbarGutter, ScrollbarWidth, ShapeOutside, StyleColor, TabSize,
+    TableLayout, TextAlign, TextAlignLast, TextAutospace, TextBoxEdge, TextBoxShorthand,
+    TextBoxTrim, TextCombineUpright, TextDecorationLine, TextDecorationShorthand,
+    TextDecorationSkipInk, TextDecorationStyle, TextDecorationThickness, TextEmphasisFill,
+    TextEmphasisMark, TextEmphasisPosition, TextEmphasisShorthand, TextEmphasisStyle, TextJustify,
+    TextOrientation, TextOverflow, TextRendering, TextShadow, TextShadowList, TextSizeAdjust,
+    TextSpacingTrim, TextTransform, TextUnderlinePosition, TextWrap, TextWrapMode,
+    TextWrapShorthand, TextWrapStyle, Transform2D, TypographyValue, UnicodeBidi, VerticalAlign,
+    Visibility, WebkitBoxOrient, WhiteSpace, WhiteSpaceCollapse, WhiteSpaceShorthand, WordBreak,
+    WritingMode,
 };
 use openui_geometry::{Length, LengthType, RasterConfiguration};
 
@@ -109,6 +113,20 @@ pub enum LengthValue {
     ViewportHeight(f32),
     ViewportMin(f32),
     ViewportMax(f32),
+    /// Advance measure of the selected font's zero glyph.
+    Ch(f32),
+    /// X-height of the selected font.
+    Ex(f32),
+    /// Used line height of the element.
+    Lh(f32),
+}
+
+/// Owned reference lengths supplied by the selected font and computed style.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct FontRelativeLengthMetrics {
+    pub ch: f32,
+    pub ex: f32,
+    pub lh: f32,
 }
 
 impl LengthValue {
@@ -120,6 +138,12 @@ impl LengthValue {
         Self::Computed(Length::percent(value))
     }
 
+    /// A native length containing a percentage and a fixed pixel offset.
+    /// For example, `calc_percent_px(150.0, -2.0)` means 150% minus 2px.
+    pub const fn calc_percent_px(percent: f32, px_offset: f32) -> Self {
+        Self::Computed(Length::calc_percent_px(percent, px_offset))
+    }
+
     pub const fn auto() -> Self {
         Self::Computed(Length::auto())
     }
@@ -128,7 +152,28 @@ impl LengthValue {
         Self::Computed(Length::none())
     }
 
+    /// Resolve without a selected font. Metric units use missing-font fallback
+    /// values; retained Engine declarations resolve with the actual font instead.
     pub fn resolve(self, viewport: (f32, f32), font_size: f32, root_font_size: f32) -> Length {
+        self.resolve_with_font_metrics(
+            viewport,
+            font_size,
+            root_font_size,
+            FontRelativeLengthMetrics {
+                ch: font_size * 0.5,
+                ex: font_size * 0.5,
+                lh: font_size * 1.2,
+            },
+        )
+    }
+
+    pub fn resolve_with_font_metrics(
+        self,
+        viewport: (f32, f32),
+        font_size: f32,
+        root_font_size: f32,
+        metrics: FontRelativeLengthMetrics,
+    ) -> Length {
         match self {
             Self::Computed(value) => value,
             Self::Em(value) => Length::px(value * font_size),
@@ -137,7 +182,39 @@ impl LengthValue {
             Self::ViewportHeight(value) => Length::px(viewport.1 * value / 100.0),
             Self::ViewportMin(value) => Length::px(viewport.0.min(viewport.1) * value / 100.0),
             Self::ViewportMax(value) => Length::px(viewport.0.max(viewport.1) * value / 100.0),
+            Self::Ch(value) => Length::px(value * metrics.ch),
+            Self::Ex(value) => Length::px(value * metrics.ex),
+            Self::Lh(value) => Length::px(value * metrics.lh),
         }
+    }
+
+    /// Whether this authored length is allowed as a line-height declaration.
+    /// Calculated values are range-checked after their font basis is known.
+    pub fn is_valid_for_line_height(self) -> bool {
+        match self {
+            Self::Computed(length) => match length.length_type() {
+                LengthType::Fixed | LengthType::Percent => {
+                    length.value().is_finite() && length.value() >= 0.0
+                }
+                LengthType::Calculated => {
+                    length.value().is_finite() && length.calc_offset().is_finite()
+                }
+                _ => false,
+            },
+            Self::Em(value)
+            | Self::Rem(value)
+            | Self::ViewportWidth(value)
+            | Self::ViewportHeight(value)
+            | Self::ViewportMin(value)
+            | Self::ViewportMax(value)
+            | Self::Ch(value)
+            | Self::Ex(value)
+            | Self::Lh(value) => value.is_finite() && value >= 0.0,
+        }
+    }
+
+    pub fn depends_on_font_metrics(self) -> bool {
+        matches!(self, Self::Ch(_) | Self::Ex(_) | Self::Lh(_))
     }
 }
 
@@ -224,6 +301,30 @@ pub enum TransformOperation {
     Perspective(LengthValue),
     Matrix(Transform2D),
     Matrix3d(Transform3D),
+    /// Owned matrix suffix evaluated against the actual transform reference
+    /// box after layout. Native callers normally use the existing operations.
+    #[doc(hidden)]
+    Interpolated {
+        from: Box<TransformList>,
+        to: Box<TransformList>,
+        starting_index: usize,
+        progress: f64,
+    },
+    /// Context-free native keyframe sampling retains unresolved font/viewport
+    /// units; Engine unit mapping materializes the same shared kernel later.
+    #[doc(hidden)]
+    PendingInterpolation {
+        from: Box<TransformList>,
+        to: Box<TransformList>,
+        progress: f64,
+    },
+    #[doc(hidden)]
+    PendingAccumulation {
+        underlying: Box<TransformList>,
+        effect: Box<TransformList>,
+    },
+    #[doc(hidden)]
+    Resolved(Box<crate::ResolvedTransformOperation>),
 }
 
 #[derive(Debug, Clone, Default, PartialEq)]
@@ -264,6 +365,10 @@ pub enum StyleValue {
     Length(LengthValue),
     Edges(Edges<LengthValue>),
     Color(Color),
+    /// Owned working color returned by context-free animation sampling.
+    /// Engine resolves dependent keywords only after the final own color.
+    #[doc(hidden)]
+    ColorExpression(crate::AnimationColorExpression),
     Number(f32),
     Integer(i32),
     FlexDirection(FlexDirection),
@@ -281,6 +386,41 @@ pub enum StyleValue {
     PointerEvents(PointerEvents),
     Typography(TypographyValue),
     Renderer(RendererStyleValue),
+}
+
+impl StyleValue {
+    /// Capture own color:currentcolor as the inherited numeric endpoint. Other
+    /// color properties retain their keyword until final color publication.
+    pub fn capture_own_current_color(&self, property: StyleProperty, parent_color: Color) -> Self {
+        if property == StyleProperty::Color {
+            match self {
+                Self::Typography(TypographyValue::StyleColor(StyleColor::CurrentColor)) => {
+                    return Self::Color(parent_color)
+                }
+                Self::ColorExpression(value) => return Self::Color(value.resolve(parent_color)),
+                _ => {}
+            }
+        }
+        self.clone()
+    }
+
+    pub fn depends_on_font_metrics(&self) -> bool {
+        let edges = |value: &Edges<LengthValue>| {
+            [value.top, value.right, value.bottom, value.left]
+                .into_iter()
+                .any(LengthValue::depends_on_font_metrics)
+        };
+        match self {
+            Self::Length(value) => value.depends_on_font_metrics(),
+            Self::Edges(value) => edges(value),
+            Self::Gap(value) => {
+                value.row.depends_on_font_metrics() || value.column.depends_on_font_metrics()
+            }
+            Self::CornerRadii(value) => edges(&value.0),
+            Self::Transform(value) => crate::transform_depends_on_font_metrics(value),
+            _ => false,
+        }
+    }
 }
 
 macro_rules! impl_style_value {
@@ -412,12 +552,35 @@ impl Style {
         &self.declarations
     }
 
+    /// Retain a numeric color or own-color currentcolor inheritance.
+    pub fn color_value(self, value: StyleColor) -> Self {
+        self.with(StyleProperty::Color, value)
+    }
+
+    /// Retain a background currentcolor dependency across native color mutations.
+    pub fn background_color_value(self, value: StyleColor) -> Self {
+        self.with(StyleProperty::BackgroundColor, value)
+    }
+
+    /// Retain a length-valued line-height in native style and pseudo declarations.
+    pub fn line_height_length(self, value: LengthValue) -> Self {
+        self.with(StyleProperty::LineHeight, value)
+    }
+
     fn with(mut self, property: StyleProperty, value: impl Into<StyleValue>) -> Self {
         self.declarations.push(Declaration {
             property,
             value: value.into(),
         });
         self
+    }
+
+    /// Native two-value `scroll-snap-align`, in block then inline order.
+    pub fn scroll_snap_alignment(self, block: ScrollSnapAlign, inline: ScrollSnapAlign) -> Self {
+        self.with_renderer(
+            StyleProperty::ScrollSnapAlign,
+            RendererStyleValue::ScrollSnapAlignPair([block, inline]),
+        )
     }
 
     fn with_renderer(mut self, property: StyleProperty, value: RendererStyleValue) -> Self {
@@ -464,10 +627,14 @@ fn length(input: &str) -> Option<LengthValue> {
                 ("vh", LengthValue::ViewportHeight),
                 ("vmin", LengthValue::ViewportMin),
                 ("vmax", LengthValue::ViewportMax),
+                ("ch", LengthValue::Ch),
+                ("ex", LengthValue::Ex),
+                ("lh", LengthValue::Lh),
             ] {
                 if let Some(number) = input
                     .strip_suffix(suffix)
-                    .and_then(|v| v.trim().parse().ok())
+                    .and_then(|v| v.trim().parse::<f32>().ok())
+                    .filter(|value| value.is_finite())
                 {
                     return Some(make(number));
                 }
@@ -506,21 +673,216 @@ fn edges(input: &str) -> Option<Edges<LengthValue>> {
     }
 }
 
-fn color(input: &str) -> Option<Color> {
-    match input.trim().to_ascii_lowercase().as_str() {
-        "transparent" => Some(Color::TRANSPARENT),
-        "black" => Some(Color::BLACK),
-        "white" => Some(Color::WHITE),
-        "red" => Some(Color::RED),
-        "green" => Some(Color::GREEN),
-        "blue" => Some(Color::BLUE),
-        value if value.starts_with('#') && (value.len() == 7 || value.len() == 9) => {
-            u32::from_str_radix(&value[1..], 16)
-                .ok()
-                .map(|hex| Color::from_hex(hex, value.len() == 9))
+fn fixed_border_spacing(input: &str) -> Option<(Length, Length)> {
+    fn spacing(input: &str) -> Option<Length> {
+        match length(input)? {
+            LengthValue::Computed(value)
+                if value.length_type() == LengthType::Fixed && value.value() >= 0.0 =>
+            {
+                Some(value)
+            }
+            _ => None,
         }
+    }
+    let mut tokens = input.split_whitespace();
+    let horizontal = spacing(tokens.next()?)?;
+    let vertical = match tokens.next() {
+        Some(token) => spacing(token)?,
+        None => horizontal,
+    };
+    tokens.next().is_none().then_some((horizontal, vertical))
+}
+
+fn overflow_literal(input: &str) -> Option<Overflow> {
+    match input {
+        "visible" => Some(Overflow::Visible),
+        "hidden" => Some(Overflow::Hidden),
+        "scroll" => Some(Overflow::Scroll),
+        "auto" => Some(Overflow::Auto),
+        "clip" => Some(Overflow::Clip),
         _ => None,
     }
+}
+
+fn alignment_words(input: &str) -> (OverflowAlignment, Vec<&str>) {
+    let mut words = input.split_whitespace();
+    let mut tokens = Vec::new();
+    let overflow = match words.next() {
+        Some("safe") => OverflowAlignment::Safe,
+        Some("unsafe") => OverflowAlignment::Unsafe,
+        Some(word) => {
+            tokens.push(word);
+            OverflowAlignment::Default
+        }
+        None => OverflowAlignment::Default,
+    };
+    tokens.extend(words);
+    (overflow, tokens)
+}
+
+fn item_alignment_literal(input: &str) -> Option<ItemAlignment> {
+    let (overflow, words) = alignment_words(input);
+    let position = match words.as_slice() {
+        ["auto"] => ItemPosition::Auto,
+        ["normal"] => ItemPosition::Normal,
+        ["stretch"] => ItemPosition::Stretch,
+        ["baseline"] | ["first", "baseline"] => ItemPosition::Baseline,
+        ["last", "baseline"] => ItemPosition::LastBaseline,
+        ["center"] => ItemPosition::Center,
+        ["start"] => ItemPosition::Start,
+        ["end"] => ItemPosition::End,
+        ["self-start"] => ItemPosition::SelfStart,
+        ["self-end"] => ItemPosition::SelfEnd,
+        ["flex-start"] => ItemPosition::FlexStart,
+        ["flex-end"] => ItemPosition::FlexEnd,
+        ["left"] => ItemPosition::Left,
+        ["right"] => ItemPosition::Right,
+        ["legacy"] => ItemPosition::Legacy,
+        _ => return None,
+    };
+    if overflow != OverflowAlignment::Default
+        && matches!(
+            position,
+            ItemPosition::Auto
+                | ItemPosition::Normal
+                | ItemPosition::Stretch
+                | ItemPosition::Baseline
+                | ItemPosition::LastBaseline
+                | ItemPosition::Legacy
+        )
+    {
+        return None;
+    }
+    Some(ItemAlignment::with_overflow(position, overflow))
+}
+
+fn content_alignment_literal(input: &str) -> Option<ContentAlignment> {
+    let (overflow, words) = alignment_words(input);
+    let mut value = match words.as_slice() {
+        ["normal"] => ContentAlignment::default(),
+        ["center"] => ContentAlignment::new(ContentPosition::Center),
+        ["start"] => ContentAlignment::new(ContentPosition::Start),
+        ["end"] => ContentAlignment::new(ContentPosition::End),
+        ["flex-start"] => ContentAlignment::new(ContentPosition::FlexStart),
+        ["flex-end"] => ContentAlignment::new(ContentPosition::FlexEnd),
+        ["left"] => ContentAlignment::new(ContentPosition::Left),
+        ["right"] => ContentAlignment::new(ContentPosition::Right),
+        ["baseline"] | ["first", "baseline"] => ContentAlignment::new(ContentPosition::Baseline),
+        ["last", "baseline"] => ContentAlignment::new(ContentPosition::LastBaseline),
+        ["space-between"] => ContentAlignment::with_distribution(ContentDistribution::SpaceBetween),
+        ["space-around"] => ContentAlignment::with_distribution(ContentDistribution::SpaceAround),
+        ["space-evenly"] => ContentAlignment::with_distribution(ContentDistribution::SpaceEvenly),
+        ["stretch"] => ContentAlignment::with_distribution(ContentDistribution::Stretch),
+        _ => return None,
+    };
+    if overflow != OverflowAlignment::Default
+        && (value.distribution != ContentDistribution::Default
+            || matches!(
+                value.position,
+                ContentPosition::Normal | ContentPosition::Baseline | ContentPosition::LastBaseline
+            ))
+    {
+        return None;
+    }
+    value.overflow = overflow;
+    Some(value)
+}
+
+fn color(input: &str) -> Option<Color> {
+    let input = input.trim();
+    if let Some(hex) = input.strip_prefix('#') {
+        if !hex.bytes().all(|byte| byte.is_ascii_hexdigit()) {
+            return None;
+        }
+        let (value, alpha) = match hex.len() {
+            3 | 4 => {
+                let value = hex
+                    .chars()
+                    .flat_map(|digit| [digit, digit])
+                    .collect::<String>();
+                (u32::from_str_radix(&value, 16).ok()?, hex.len() == 4)
+            }
+            6 | 8 => (u32::from_str_radix(hex, 16).ok()?, hex.len() == 8),
+            _ => return None,
+        };
+        Some(Color::from_hex(value, alpha))
+    } else {
+        rgb_color_literal(input).or_else(|| Color::from_named(input))
+    }
+}
+
+/// Fixed sRGB forms supported by Chromium's pinned fast color parser. Keep
+/// this shared by native declarations and static resource decoding. Context,
+/// calc(), relative colors, missing channels and other color spaces require
+/// the richer color representation and are not accepted by this helper.
+fn rgb_color_literal(input: &str) -> Option<Color> {
+    let (name, body) = input.split_once('(')?;
+    if !name.eq_ignore_ascii_case("rgb") && !name.eq_ignore_ascii_case("rgba") {
+        return None;
+    }
+    let body = body.strip_suffix(')')?;
+    let (channels, alpha): (Vec<&str>, Option<&str>) = if body.contains(',') {
+        let mut values: Vec<_> = body.split(',').map(str::trim).collect();
+        let alpha = match values.len() {
+            3 => None,
+            4 => values.pop(),
+            _ => return None,
+        };
+        (values, alpha)
+    } else {
+        let (channels, alpha) = match body.split_once('/') {
+            Some((channels, alpha)) => (channels, Some(alpha.trim())),
+            None => (body, None),
+        };
+        (channels.split_ascii_whitespace().collect(), alpha)
+    };
+    if channels.len() != 3 {
+        return None;
+    }
+    // The pinned fast path accepts a consistent number or percentage triple.
+    // Mixed-unit modern rgb() is handled by Blink's richer slow parser.
+    let percentage = channels[0].ends_with('%');
+    let mut rgb = [0_u8; 3];
+    for (component, token) in rgb.iter_mut().zip(channels) {
+        if token.ends_with('%') != percentage {
+            return None;
+        }
+        let number = if percentage {
+            token.strip_suffix('%')?
+        } else {
+            token
+        };
+        let value = rgb_decimal(number, false)?;
+        let value = if percentage {
+            value / 100.0 * 255.0
+        } else {
+            value
+        };
+        *component = value.clamp(0.0, 255.0).round() as u8;
+    }
+    let alpha = match alpha {
+        None => 255,
+        Some(token) => (rgb_decimal(token, true)?.clamp(0.0, 1.0) * 255.0).round() as u8,
+    };
+    Some(Color::from_rgba8(rgb[0], rgb[1], rgb[2], alpha))
+}
+
+/// Decimal grammar used by the pinned simple rgb path; reject Rust's NaN/inf
+/// spellings, exponent and plus syntax rather than silently invent CSS tokens.
+fn rgb_decimal(input: &str, allow_leading_point: bool) -> Option<f64> {
+    let unsigned = input.strip_prefix('-').unwrap_or(input);
+    let (whole, fraction) = match unsigned.split_once('.') {
+        Some((whole, fraction)) => (whole, Some(fraction)),
+        None => (unsigned, None),
+    };
+    if (whole.is_empty() && (!allow_leading_point || fraction.is_none()))
+        || !whole.bytes().all(|c| c.is_ascii_digit())
+        || fraction.is_some_and(|part| part.is_empty() || !part.bytes().all(|c| c.is_ascii_digit()))
+    {
+        return None;
+    }
+    let value = input.parse::<f64>().ok()?;
+    value.is_finite().then_some(value)
 }
 
 fn border(input: &str) -> Option<Border> {
@@ -536,10 +898,16 @@ fn border(input: &str) -> Option<Border> {
         return None;
     }
     let style = match parts.next()? {
-        "solid" => BorderStyle::Solid,
+        "none" => BorderStyle::None,
+        "hidden" => BorderStyle::Hidden,
         "dotted" => BorderStyle::Dotted,
         "dashed" => BorderStyle::Dashed,
+        "solid" => BorderStyle::Solid,
         "double" => BorderStyle::Double,
+        "groove" => BorderStyle::Groove,
+        "ridge" => BorderStyle::Ridge,
+        "inset" => BorderStyle::Inset,
+        "outset" => BorderStyle::Outset,
         _ => return None,
     };
     let color = color(parts.next()?)?;
@@ -777,7 +1145,10 @@ fn text_shadows(input: &str) -> Option<TextShadowList> {
     Some(result)
 }
 
-fn normalized_white_space(collapse: WhiteSpaceCollapse, wrap: TextWrapMode) -> crate::WhiteSpace {
+pub(crate) fn normalized_white_space(
+    collapse: WhiteSpaceCollapse,
+    wrap: TextWrapMode,
+) -> crate::WhiteSpace {
     use crate::WhiteSpace as W;
     match (collapse, wrap) {
         (WhiteSpaceCollapse::Collapse, TextWrapMode::Wrap) => W::Normal,
@@ -789,7 +1160,7 @@ fn normalized_white_space(collapse: WhiteSpaceCollapse, wrap: TextWrapMode) -> c
     }
 }
 
-fn normalized_text_wrap(mode: TextWrapMode, style: TextWrapStyle) -> crate::TextWrap {
+pub(crate) fn normalized_text_wrap(mode: TextWrapMode, style: TextWrapStyle) -> crate::TextWrap {
     match mode {
         TextWrapMode::Nowrap => crate::TextWrap::Nowrap,
         TextWrapMode::Wrap => match style {
@@ -1006,6 +1377,13 @@ fn parse_typography_literal(property: StyleProperty, input: &str) -> Option<Styl
                 LengthValue::Computed(value) if value.length_type() == LengthType::Fixed => {
                     LineHeight::Length(value.value())
                 }
+                value if !matches!(value, LengthValue::Computed(_)) => {
+                    let resolved = value.resolve((100.0, 100.0), 16.0, 16.0);
+                    if !resolved.value().is_finite() || resolved.value() < 0.0 {
+                        return None;
+                    }
+                    return Some(StyleValue::Length(value));
+                }
                 _ => return None,
             }
         }),
@@ -1152,7 +1530,11 @@ fn parse_typography_literal(property: StyleProperty, input: &str) -> Option<Styl
             "wavy" => TextDecorationStyle::Wavy,
             _ => return None,
         }),
-        P::TextDecorationColor | P::TextEmphasisColor => {
+        P::Color
+        | P::BackgroundColor
+        | P::TextDecorationColor
+        | P::TextEmphasisColor
+        | P::WebkitTextFillColor => {
             TypographyValue::StyleColor(if input.eq_ignore_ascii_case("currentcolor") {
                 StyleColor::CurrentColor
             } else {
@@ -1553,6 +1935,15 @@ pub fn parse_literal(property: StyleProperty, input: &str) -> Result<StyleValue,
             "table" => Some(Display::Table),
             "list-item" => Some(Display::ListItem),
             "contents" => Some(Display::Contents),
+            "inline-table" => Some(Display::InlineTable),
+            "table-row-group" => Some(Display::TableRowGroup),
+            "table-header-group" => Some(Display::TableHeaderGroup),
+            "table-footer-group" => Some(Display::TableFooterGroup),
+            "table-row" => Some(Display::TableRow),
+            "table-cell" => Some(Display::TableCell),
+            "table-column-group" => Some(Display::TableColumnGroup),
+            "table-column" => Some(Display::TableColumn),
+            "table-caption" => Some(Display::TableCaption),
             _ => None,
         }
         .map(StyleValue::Display),
@@ -1565,21 +1956,33 @@ pub fn parse_literal(property: StyleProperty, input: &str) -> Result<StyleValue,
             _ => None,
         }
         .map(StyleValue::Position),
-        P::Overflow => match input {
-            "visible" => Some(Overflow::Visible),
-            "hidden" => Some(Overflow::Hidden),
-            "scroll" => Some(Overflow::Scroll),
-            "auto" => Some(Overflow::Auto),
-            "clip" => Some(Overflow::Clip),
+        P::Overflow => overflow_literal(input).map(StyleValue::Overflow),
+        P::ScrollbarWidth => match input.trim() {
+            "auto" => Some(ScrollbarWidth::Auto),
+            "thin" => Some(ScrollbarWidth::Thin),
+            "none" => Some(ScrollbarWidth::None),
             _ => None,
         }
-        .map(StyleValue::Overflow),
+        .map(|value| StyleValue::Renderer(RendererStyleValue::ScrollbarWidth(value))),
+        P::ScrollbarGutter => match input.split_whitespace().collect::<Vec<_>>().as_slice() {
+            ["auto"] => Some(ScrollbarGutter::Auto),
+            ["stable"] => Some(ScrollbarGutter::Stable),
+            ["stable", "both-edges"] | ["both-edges", "stable"] => {
+                Some(ScrollbarGutter::StableBothEdges)
+            }
+            _ => None,
+        }
+        .map(|value| StyleValue::Renderer(RendererStyleValue::ScrollbarGutter(value))),
         P::Width
         | P::Height
         | P::MinWidth
         | P::MinHeight
         | P::MaxWidth
         | P::MaxHeight
+        | P::Left
+        | P::Top
+        | P::Right
+        | P::Bottom
         | P::MarginTop
         | P::MarginRight
         | P::MarginBottom
@@ -1595,7 +1998,13 @@ pub fn parse_literal(property: StyleProperty, input: &str) -> Result<StyleValue,
         | P::TextIndent
         | P::TextUnderlineOffset => length(input).map(StyleValue::Length),
         P::Margin | P::Padding => edges(input).map(StyleValue::Edges),
-        P::BackgroundColor | P::Color => color(input).map(StyleValue::Color),
+        P::BackgroundColor | P::Color => {
+            if input.eq_ignore_ascii_case("currentcolor") {
+                Some(StyleColor::CurrentColor.into())
+            } else {
+                color(input).map(StyleValue::Color)
+            }
+        }
         P::Opacity | P::FlexGrow | P::FlexShrink | P::LetterSpacing | P::WordSpacing => {
             if input == "normal" {
                 Some(StyleValue::Number(0.0))
@@ -1626,37 +2035,8 @@ pub fn parse_literal(property: StyleProperty, input: &str) -> Result<StyleValue,
             _ => None,
         }
         .map(StyleValue::FlexWrap),
-        P::AlignItems => match input {
-            "normal" => Some(ItemPosition::Normal),
-            "stretch" => Some(ItemPosition::Stretch),
-            "center" => Some(ItemPosition::Center),
-            "start" => Some(ItemPosition::Start),
-            "end" => Some(ItemPosition::End),
-            "flex-start" => Some(ItemPosition::FlexStart),
-            "flex-end" => Some(ItemPosition::FlexEnd),
-            "baseline" => Some(ItemPosition::Baseline),
-            _ => None,
-        }
-        .map(|v| StyleValue::ItemAlignment(ItemAlignment::new(v))),
-        P::JustifyContent => match input {
-            "normal" => Some(ContentAlignment::default()),
-            "center" => Some(ContentAlignment::new(ContentPosition::Center)),
-            "start" => Some(ContentAlignment::new(ContentPosition::Start)),
-            "end" => Some(ContentAlignment::new(ContentPosition::End)),
-            "flex-start" => Some(ContentAlignment::new(ContentPosition::FlexStart)),
-            "flex-end" => Some(ContentAlignment::new(ContentPosition::FlexEnd)),
-            "space-between" => Some(ContentAlignment::with_distribution(
-                ContentDistribution::SpaceBetween,
-            )),
-            "space-around" => Some(ContentAlignment::with_distribution(
-                ContentDistribution::SpaceAround,
-            )),
-            "space-evenly" => Some(ContentAlignment::with_distribution(
-                ContentDistribution::SpaceEvenly,
-            )),
-            _ => None,
-        }
-        .map(StyleValue::ContentAlignment),
+        P::AlignItems => item_alignment_literal(input).map(StyleValue::ItemAlignment),
+        P::JustifyContent => content_alignment_literal(input).map(StyleValue::ContentAlignment),
         P::Gap => {
             let v: Vec<_> = input
                 .split_whitespace()
@@ -1689,6 +2069,16 @@ pub fn parse_literal(property: StyleProperty, input: &str) -> Result<StyleValue,
         P::Border | P::BorderTop | P::BorderRight | P::BorderBottom | P::BorderLeft => {
             border(input).map(StyleValue::Border)
         }
+        P::BorderTopLeftRadiusX
+        | P::BorderTopLeftRadiusY
+        | P::BorderTopRightRadiusX
+        | P::BorderTopRightRadiusY
+        | P::BorderBottomRightRadiusX
+        | P::BorderBottomRightRadiusY
+        | P::BorderBottomLeftRadiusX
+        | P::BorderBottomLeftRadiusY => length(input)
+            .filter(|value| value.is_valid_for_radius_axis())
+            .map(StyleValue::Length),
         P::BorderRadius => edges(input).map(|v| StyleValue::CornerRadii(CornerRadii(v))),
         P::Cursor => match input {
             "auto" => Some(Cursor::Auto),
@@ -1706,22 +2096,53 @@ pub fn parse_literal(property: StyleProperty, input: &str) -> Result<StyleValue,
             _ => None,
         }
         .map(StyleValue::ListStyle),
-        P::Transform => {
-            if input == "none" {
-                Some(StyleValue::Transform(TransformList::default()))
-            } else {
-                None
-            }
-        }
+        P::Transform => crate::transform_literal::parse(input).map(StyleValue::Transform),
         P::PointerEvents => match input {
             "auto" => Some(PointerEvents::Auto),
             "none" => Some(PointerEvents::None),
             _ => None,
         }
         .map(StyleValue::PointerEvents),
-        _ => parse_typography_literal(property, input),
+        P::BoxSizing => match input {
+            "content-box" => Some(BoxSizing::ContentBox),
+            "border-box" => Some(BoxSizing::BorderBox),
+            _ => None,
+        }
+        .map(|value| StyleValue::Renderer(RendererStyleValue::BoxSizing(value))),
+        P::BorderSpacing => fixed_border_spacing(input)
+            .map(|value| StyleValue::Renderer(RendererStyleValue::BorderSpacing(value))),
+        P::GridTemplateColumns => grid_literal::list(input)
+            .map(|value| StyleValue::Renderer(RendererStyleValue::GridTemplateColumns(value))),
+        P::GridTemplateRows => grid_literal::list(input)
+            .map(|value| StyleValue::Renderer(RendererStyleValue::GridTemplateRows(value))),
+        P::GridAutoColumns => grid_literal::sizes(input)
+            .map(|value| StyleValue::Renderer(RendererStyleValue::GridAutoColumns(value))),
+        P::GridAutoRows => grid_literal::sizes(input)
+            .map(|value| StyleValue::Renderer(RendererStyleValue::GridAutoRows(value))),
+        P::ColumnCount => {
+            if input == "auto" {
+                Some(StyleValue::Renderer(RendererStyleValue::ColumnCount(None)))
+            } else {
+                input
+                    .parse::<u32>()
+                    .ok()
+                    .filter(|count| *count > 0)
+                    .map(|count| StyleValue::Renderer(RendererStyleValue::ColumnCount(Some(count))))
+            }
+        }
+        P::Visibility => match input {
+            "visible" => Some(Visibility::Visible),
+            "hidden" => Some(Visibility::Hidden),
+            "collapse" => Some(Visibility::Collapse),
+            _ => None,
+        }
+        .map(|value| StyleValue::Renderer(RendererStyleValue::Visibility(value))),
+        _ => parse_typography_literal(property, input)
+            .or_else(|| parse_renderer_author_literal(property, input)),
     };
-    result.ok_or_else(|| invalid(property, input))
+    result
+        .filter(|value| !matches!(value, StyleValue::Number(value) if !value.is_finite()))
+        .ok_or_else(|| invalid(property, input))
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -1853,6 +2274,19 @@ fn apply_typography_to_computed(
         (P::TextDecorationThickness, TypographyValue::TextDecorationThickness(value)) => {
             style.fields.text_decoration_thickness = *value
         }
+        (P::Color, TypographyValue::StyleColor(value)) => {
+            // Native Engine captures currentcolor from its effective parent; a
+            // style snapshot already starts with that inherited own color.
+            style.fields.color = value.resolve(&style.fields.color);
+            style.resolve_current_color_dependencies();
+        }
+        (P::BackgroundColor, TypographyValue::StyleColor(value)) => {
+            style.fields.background_current_color = matches!(value, StyleColor::CurrentColor);
+            style.fields.background_color = value.resolve(&style.fields.color);
+        }
+        (P::WebkitTextFillColor, TypographyValue::StyleColor(value)) => {
+            style.fields.text_fill_color = *value
+        }
         (P::TextDecorationColor, TypographyValue::StyleColor(value)) => {
             style.fields.text_decoration_color = *value
         }
@@ -1964,7 +2398,7 @@ fn apply_typography_to_computed(
             style.fields.font_synthesis_weight = value.weight;
             style.fields.font_synthesis_style = value.style;
             style.fields.font_synthesis_small_caps = value.small_caps;
-            style.fields.font_synthesis_position = value.position;
+            // Chromium .50 leaves the independent position longhand intact.
         }
         (P::WhiteSpace, TypographyValue::WhiteSpace(value)) => {
             style.fields.white_space_collapse = value.collapse;
@@ -1989,7 +2423,7 @@ fn apply_typography_to_computed(
             style.fields.text_emphasis_mark = value.style.mark;
             style.fields.text_emphasis_fill = value.style.fill;
             style.fields.text_emphasis_color = value.color;
-            style.fields.text_emphasis_position = value.position;
+            // Chromium .50 text-emphasis does not reset position.
         }
         _ => return false,
     }
@@ -2004,19 +2438,172 @@ pub fn apply_to_computed(
     viewport: (f32, f32),
 ) -> Result<InvalidationClass, PropertyTypeError> {
     use StyleProperty as P;
-    let resolve = |v: LengthValue| v.resolve(viewport, style.fields.font_size, 16.0);
+    let font_size = style.fields.font_size;
+    let resolve = |v: LengthValue| v.resolve(viewport, font_size, 16.0);
     let mismatch = || PropertyTypeError {
         property,
         expected: property.metadata().value_kind,
     };
+    if let Some((corner, axis)) = property.radius_axis_coordinates() {
+        let StyleValue::Length(value) = value else {
+            return Err(mismatch());
+        };
+        if !value.is_valid_for_radius_axis() {
+            return Err(mismatch());
+        }
+        let length = resolve(*value);
+        if !LengthValue::Computed(length).is_valid_for_radius_axis() {
+            return Err(mismatch());
+        }
+        style.set_border_radius_axis_resolved(corner, axis, length);
+        return Ok(property.metadata().invalidation);
+    }
+    let scroll_padding = matches!(
+        property,
+        P::ScrollPaddingTop | P::ScrollPaddingRight | P::ScrollPaddingBottom | P::ScrollPaddingLeft
+    );
+    let scroll_margin = matches!(
+        property,
+        P::ScrollMarginTop | P::ScrollMarginRight | P::ScrollMarginBottom | P::ScrollMarginLeft
+    );
+    if scroll_padding || scroll_margin {
+        let length = match value {
+            StyleValue::Length(value) => resolve(*value),
+            StyleValue::Renderer(
+                RendererStyleValue::ScrollPaddingTop(value)
+                | RendererStyleValue::ScrollPaddingRight(value)
+                | RendererStyleValue::ScrollPaddingBottom(value)
+                | RendererStyleValue::ScrollPaddingLeft(value)
+                | RendererStyleValue::ScrollMarginTop(value)
+                | RendererStyleValue::ScrollMarginRight(value)
+                | RendererStyleValue::ScrollMarginBottom(value)
+                | RendererStyleValue::ScrollMarginLeft(value),
+            ) => *value,
+            _ => return Err(mismatch()),
+        };
+        let allowed = if scroll_margin {
+            length.is_fixed() || (length.is_calculated() && length.value() == 0.0)
+        } else {
+            length.is_auto() || length.is_fixed() || length.is_percent() || length.is_calculated()
+        };
+        if !allowed
+            || !length.value().is_finite()
+            || !length.calc_offset().is_finite()
+            || (scroll_padding && !length.is_calculated() && length.value() < 0.0)
+        {
+            return Err(mismatch());
+        }
+    }
+    if let StyleValue::Color(color) = value {
+        if matches!(
+            property,
+            P::TextDecorationColor | P::TextEmphasisColor | P::WebkitTextFillColor
+        ) {
+            return apply_to_computed(
+                style,
+                property,
+                &StyleValue::Typography(TypographyValue::StyleColor(StyleColor::Resolved(*color))),
+                viewport,
+            );
+        }
+    }
+    if let StyleValue::ColorExpression(expression) = value {
+        if property.metadata().interpolation != InterpolationKind::Color || !expression.is_finite()
+        {
+            return Err(mismatch());
+        }
+        let context = if property == P::TextDecorationColor {
+            style.effective_text_fill_color()
+        } else {
+            style.color
+        };
+        let resolved = expression.resolve(context);
+        let value = if property.metadata().value_kind == ValueKind::Color {
+            StyleValue::Color(resolved)
+        } else {
+            StyleValue::Typography(TypographyValue::StyleColor(StyleColor::Resolved(resolved)))
+        };
+        return apply_to_computed(style, property, &value, viewport);
+    }
+    if let (
+        P::Color,
+        StyleValue::Color(color) | StyleValue::Renderer(RendererStyleValue::Color(color)),
+    ) = (property, value)
+    {
+        style.fields.color = *color;
+        style.resolve_current_color_dependencies();
+        return Ok(property.metadata().invalidation);
+    }
+    if let (
+        P::BackgroundColor,
+        StyleValue::Color(color) | StyleValue::Renderer(RendererStyleValue::BackgroundColor(color)),
+    ) = (property, value)
+    {
+        style.fields.background_current_color = false;
+        style.fields.background_color = *color;
+        return Ok(property.metadata().invalidation);
+    }
+    if let (P::Transform, StyleValue::Renderer(RendererStyleValue::Transform(matrix))) =
+        (property, value)
+    {
+        let list = if *matrix == Transform2D::IDENTITY {
+            TransformList::default()
+        } else {
+            TransformList(vec![TransformOperation::Matrix(*matrix)])
+        };
+        return apply_to_computed(style, property, &StyleValue::Transform(list), viewport);
+    }
+    // Legacy renderer summaries enter the same canonical longhand route.
+    let wrapping = match (property, value) {
+        (P::WhiteSpace, StyleValue::Renderer(RendererStyleValue::WhiteSpace(value))) => {
+            let (collapse, wrap) = match value {
+                WhiteSpace::Normal => (WhiteSpaceCollapse::Collapse, TextWrapMode::Wrap),
+                WhiteSpace::Nowrap => (WhiteSpaceCollapse::Collapse, TextWrapMode::Nowrap),
+                WhiteSpace::Pre => (WhiteSpaceCollapse::Preserve, TextWrapMode::Nowrap),
+                WhiteSpace::PreWrap => (WhiteSpaceCollapse::Preserve, TextWrapMode::Wrap),
+                WhiteSpace::PreLine => (WhiteSpaceCollapse::PreserveBreaks, TextWrapMode::Wrap),
+                WhiteSpace::BreakSpaces => (WhiteSpaceCollapse::BreakSpaces, TextWrapMode::Wrap),
+            };
+            Some(TypographyValue::WhiteSpace(WhiteSpaceShorthand {
+                collapse,
+                wrap,
+            }))
+        }
+        (P::TextWrap, StyleValue::Renderer(RendererStyleValue::TextWrap(value))) => {
+            let (mode, style) = match value {
+                TextWrap::Wrap => (TextWrapMode::Wrap, TextWrapStyle::Auto),
+                TextWrap::Nowrap => (TextWrapMode::Nowrap, TextWrapStyle::Auto),
+                TextWrap::Balance => (TextWrapMode::Wrap, TextWrapStyle::Balance),
+                TextWrap::Pretty => (TextWrapMode::Wrap, TextWrapStyle::Pretty),
+                TextWrap::Stable => (TextWrapMode::Wrap, TextWrapStyle::Stable),
+            };
+            Some(TypographyValue::TextWrap(TextWrapShorthand { mode, style }))
+        }
+        _ => None,
+    };
+    if let Some(wrapping) = wrapping {
+        return apply_to_computed(style, property, &StyleValue::Typography(wrapping), viewport);
+    }
     if let StyleValue::Renderer(value) = value {
         return value
             .apply(style, property)
             .then_some(property.metadata().invalidation)
             .ok_or_else(mismatch);
     }
-    if let StyleValue::Typography(value) = value {
-        return apply_typography_to_computed(style, property, value)
+    if let StyleValue::Typography(typography) = value {
+        if apply_typography_to_computed(style, property, typography) {
+            return Ok(property.metadata().invalidation);
+        }
+        // Numeric/currentcolor StyleColor values also reach border/outline and
+        // column-rule properties through the schema-backed renderer bridge.
+        return RendererStyleValue::from_author_value(property, value, resolve)
+            .is_some_and(|value| value.apply(style, property))
+            .then_some(property.metadata().invalidation)
+            .ok_or_else(mismatch);
+    }
+    if let Some(value) = RendererStyleValue::from_author_value(property, value, resolve) {
+        return value
+            .apply(style, property)
             .then_some(property.metadata().invalidation)
             .ok_or_else(mismatch);
     }
@@ -2071,6 +2658,31 @@ pub fn apply_to_computed(
         (P::RowGap, StyleValue::Length(v)) => style.fields.row_gap = Some(resolve(*v)),
         (P::ColumnGap, StyleValue::Length(v)) => style.fields.column_gap = Some(resolve(*v)),
         (P::FontFamily, StyleValue::FontFamily(v)) => style.fields.font_family = v.clone(),
+        (P::LineHeight, StyleValue::Length(v)) => {
+            if !v.is_valid_for_line_height() {
+                return Err(mismatch());
+            }
+            let length = resolve(*v);
+            let pixels = match length.length_type() {
+                LengthType::Fixed => length.value(),
+                LengthType::Percent => {
+                    style.fields.font_size * (length.value() as i32) as f32 / 100.0
+                }
+                LengthType::Calculated => {
+                    let font =
+                        openui_geometry::LayoutUnit::from_f32(style.fields.font_size).to_f32();
+                    openui_geometry::LayoutUnit::from_f32(
+                        font * length.value() / 100.0 + length.calc_offset(),
+                    )
+                    .to_f32()
+                }
+                _ => return Err(mismatch()),
+            };
+            if !length.value().is_finite() || !pixels.is_finite() || pixels < 0.0 {
+                return Err(mismatch());
+            }
+            style.fields.line_height = LineHeight::Length(pixels);
+        }
         (P::FontSize, StyleValue::Length(v)) => style.fields.font_size = resolve(*v).value(),
         (P::FontWeight, StyleValue::FontWeight(v)) => style.fields.font_weight = *v,
         (P::LetterSpacing, StyleValue::Number(v)) => style.fields.letter_spacing = *v,
@@ -2083,6 +2695,10 @@ pub fn apply_to_computed(
             P::Border | P::BorderTop | P::BorderRight | P::BorderBottom | P::BorderLeft,
             StyleValue::Border(v),
         ) => {
+            if property == P::Border {
+                // .50 includes border-image reset-only longhands in border.
+                style.fields.border_image = None;
+            }
             let targets = match property {
                 P::Border => [true, true, true, true],
                 P::BorderTop => [true, false, false, false],
@@ -2112,66 +2728,30 @@ pub fn apply_to_computed(
             }
         }
         (P::BorderRadius, StyleValue::CornerRadii(v)) => {
-            let px = |value: LengthValue| resolve(value).value();
-            style.fields.border_top_left_radius = (px(v.0.top), px(v.0.top));
-            style.fields.border_top_right_radius = (px(v.0.right), px(v.0.right));
-            style.fields.border_bottom_right_radius = (px(v.0.bottom), px(v.0.bottom));
-            style.fields.border_bottom_left_radius = (px(v.0.left), px(v.0.left));
+            let values = [v.0.top, v.0.right, v.0.bottom, v.0.left].map(resolve);
+            let radii = values.map(|length| (length.value(), length.value()));
+            style.fields.border_top_left_radius = radii[0];
+            style.fields.border_top_right_radius = radii[1];
+            style.fields.border_bottom_right_radius = radii[2];
+            style.fields.border_bottom_left_radius = radii[3];
+            style.fields.border_radius_percent =
+                values.map(|length| (length.is_percent(), length.is_percent()));
+            style.fields.border_radius_lengths = values.map(|length| Some((length, length)));
         }
         (P::ListStyleType, StyleValue::ListStyle(v)) => style.fields.list_style_type = *v,
         (P::Transform, StyleValue::Transform(v)) => {
-            let mut matrix = Transform2D::IDENTITY;
-            for op in &v.0 {
-                match op {
-                    TransformOperation::Matrix(v) => matrix = *v,
-                    TransformOperation::Scale(x, y) => {
-                        matrix.a *= x;
-                        matrix.d *= y;
-                    }
-                    TransformOperation::Scale3d(x, y, _) => {
-                        matrix.a *= x;
-                        matrix.d *= y;
-                    }
-                    TransformOperation::Translate(x, y) => {
-                        matrix.e += resolve(*x).value();
-                        matrix.f += resolve(*y).value();
-                    }
-                    TransformOperation::Translate3d(x, y, _) => {
-                        matrix.e += resolve(*x).value();
-                        matrix.f += resolve(*y).value();
-                    }
-                    TransformOperation::Rotate(deg) => {
-                        let r = deg.to_radians();
-                        let (s, c) = r.sin_cos();
-                        matrix = Transform2D {
-                            a: c,
-                            b: s,
-                            c: -s,
-                            d: c,
-                            e: matrix.e,
-                            f: matrix.f,
-                        };
-                    }
-                    TransformOperation::Rotate3d { x, y, z, degrees } => {
-                        let length = (*x * *x + *y * *y + *z * *z).sqrt();
-                        if length > f32::EPSILON && (*z / length).abs() > 1.0 - 1e-6 {
-                            let r = (*degrees * z.signum()).to_radians();
-                            let (s, c) = r.sin_cos();
-                            matrix = Transform2D {
-                                a: c,
-                                b: s,
-                                c: -s,
-                                d: c,
-                                e: matrix.e,
-                                f: matrix.f,
-                            };
-                        }
-                    }
-                    TransformOperation::Perspective(_) => {}
-                    TransformOperation::Matrix3d(value) => matrix = value.projected_2d(),
-                }
-            }
-            style.fields.transform = matrix;
+            let source =
+                crate::map_transform_lengths(v, &|value| LengthValue::Computed(resolve(value)));
+            let matrix = crate::transform_list_matrix(&source, (0.0, 0.0));
+            // This is the legacy affine view. Box-dependent operations remain
+            // owned; rendering consumes the actual post-layout fragment matrix.
+            style.fields.transform = matrix.compatibility_affine();
+            style.fields.transform_matrix = if crate::transform_depends_on_box(&source) {
+                None
+            } else {
+                Some(matrix)
+            };
+            style.fields.native_transform = Some(source);
         }
         (P::Cursor, StyleValue::Cursor(_)) => {}
         (P::PointerEvents, StyleValue::PointerEvents(v)) => style.fields.pointer_events = *v,
@@ -2182,11 +2762,33 @@ pub fn apply_to_computed(
 
 /// Read a schema value back from a computed style.fields.
 ///
-/// Relative lengths have already been resolved by this point and are returned
-/// as pixel values. This is primarily used to capture an animation's
+/// Font and viewport units have already been resolved. Percentage and calculated
+/// length kinds remain available for actual-box evaluation. This captures an animation's
 /// underlying value without maintaining a second handwritten style model.
 pub fn value_from_computed(style: &ComputedStyle, property: StyleProperty) -> StyleValue {
     use StyleProperty as P;
+    if let Some(value) = style.border_radius_axis_length(property) {
+        return StyleValue::Length(value);
+    }
+    if property == P::BackgroundColor && style.fields.background_current_color {
+        return StyleColor::CurrentColor.into();
+    }
+    if property == P::WebkitTextFillColor {
+        return style.fields.text_fill_color.into();
+    }
+    if property == P::Transform {
+        return StyleValue::Transform(style.fields.native_transform.clone().unwrap_or_else(|| {
+            if style.fields.transform == Transform2D::IDENTITY {
+                TransformList::default()
+            } else {
+                TransformList(vec![TransformOperation::Matrix(style.fields.transform)])
+            }
+        }));
+    }
+    if matches!(property, P::WhiteSpace | P::TextWrap) {
+        // Compatibility summaries cannot represent every modern combination.
+        return typography_from_computed(style, property);
+    }
     if let Some(value) = RendererStyleValue::from_computed(style, property) {
         return StyleValue::Renderer(value);
     }
@@ -2277,17 +2879,37 @@ pub fn value_from_computed(style: &ComputedStyle, property: StyleProperty) -> St
             style.fields.border_left_style,
             style.fields.border_left_color,
         ),
-        P::BorderRadius => StyleValue::CornerRadii(CornerRadii(Edges {
-            top: LengthValue::px(style.fields.border_top_left_radius.0),
-            right: LengthValue::px(style.fields.border_top_right_radius.0),
-            bottom: LengthValue::px(style.fields.border_bottom_right_radius.0),
-            left: LengthValue::px(style.fields.border_bottom_left_radius.0),
-        })),
+        P::BorderRadius => {
+            // The existing circular shorthand carries each horizontal radius.
+            // Keep its length kind; an elliptical pair needs the owned internal
+            // source array rather than this compatibility shorthand.
+            let numeric = [
+                style.fields.border_top_left_radius.0,
+                style.fields.border_top_right_radius.0,
+                style.fields.border_bottom_right_radius.0,
+                style.fields.border_bottom_left_radius.0,
+            ];
+            let values: [LengthValue; 4] = std::array::from_fn(|index| {
+                style.fields.border_radius_lengths[index]
+                    .map(|(x, _)| x)
+                    .unwrap_or_else(|| {
+                        if style.fields.border_radius_percent[index].0 {
+                            Length::percent(numeric[index])
+                        } else {
+                            Length::px(numeric[index])
+                        }
+                    })
+                    .into()
+            });
+            StyleValue::CornerRadii(CornerRadii(Edges {
+                top: values[0],
+                right: values[1],
+                bottom: values[2],
+                left: values[3],
+            }))
+        }
         P::Cursor => StyleValue::Cursor(Cursor::Auto),
         P::ListStyleType => StyleValue::ListStyle(style.fields.list_style_type),
-        P::Transform => StyleValue::Transform(TransformList(vec![TransformOperation::Matrix(
-            style.fields.transform,
-        )])),
         P::PointerEvents => StyleValue::PointerEvents(style.fields.pointer_events),
         _ => typography_from_computed(style, property),
     }
@@ -2482,6 +3104,302 @@ mod tests {
     use super::*;
 
     #[test]
+    fn native_border_collapse_keywords_roundtrip_and_inherit_without_accepting_extra_input() {
+        assert!(StyleProperty::BorderCollapse.metadata().inherited);
+        let mut parent = ComputedStyle::initial();
+        assert_eq!(parent.border_collapse, BorderCollapse::Separate);
+        for (literal, expected) in [
+            ("collapse", BorderCollapse::Collapse),
+            (" separate ", BorderCollapse::Separate),
+            ("\tcollapse\n", BorderCollapse::Collapse),
+        ] {
+            let value = parse_literal(StyleProperty::BorderCollapse, literal).unwrap();
+            assert_eq!(
+                value,
+                StyleValue::Renderer(RendererStyleValue::BorderCollapse(expected))
+            );
+            apply_to_computed(
+                &mut parent,
+                StyleProperty::BorderCollapse,
+                &value,
+                (320.0, 240.0),
+            )
+            .unwrap();
+            assert_eq!(parent.border_collapse, expected);
+            assert_eq!(
+                value_from_computed(&parent, StyleProperty::BorderCollapse),
+                value
+            );
+            let mut child = ComputedStyle::initial();
+            child.inherit_properties_from(&parent);
+            assert_eq!(child.border_collapse, expected);
+            assert_eq!(ComputedStyle::for_pseudo(&parent).border_collapse, expected);
+            assert_eq!(
+                ComputedStyle::for_anonymous_box(&parent).border_collapse,
+                expected
+            );
+        }
+        for literal in [
+            "",
+            "auto",
+            "none",
+            "collapsed",
+            "collapse separate",
+            "collapse; display:none",
+            "collapse trailing",
+        ] {
+            assert!(
+                parse_literal(StyleProperty::BorderCollapse, literal).is_err(),
+                "{literal}"
+            );
+        }
+    }
+
+    #[test]
+    fn native_border_spacing_preserves_owned_axis_values_and_nonnegative_lengths() {
+        for (literal, horizontal, vertical) in [
+            ("0", 0.0, 0.0),
+            ("0px", 0.0, 0.0),
+            ("2.5px", 2.5, 2.5),
+            (" 2.5px\t7.25px ", 2.5, 7.25),
+        ] {
+            let value = parse_literal(StyleProperty::BorderSpacing, literal).unwrap();
+            let expected = (Length::px(horizontal), Length::px(vertical));
+            assert_eq!(
+                value,
+                StyleValue::Renderer(RendererStyleValue::BorderSpacing(expected))
+            );
+            let mut style = ComputedStyle::initial();
+            apply_to_computed(
+                &mut style,
+                StyleProperty::BorderSpacing,
+                &value,
+                (320.0, 240.0),
+            )
+            .unwrap();
+            assert_eq!(style.border_spacing, expected);
+            assert_eq!(
+                value_from_computed(&style, StyleProperty::BorderSpacing),
+                value
+            );
+        }
+        for literal in [
+            "",
+            "-1px",
+            "2px -1px",
+            "2px 3px 4px",
+            "10%",
+            "auto",
+            "none",
+            "NaNpx",
+            "infpx",
+            "2em",
+            "calc(2px)",
+        ] {
+            assert!(
+                parse_literal(StyleProperty::BorderSpacing, literal).is_err(),
+                "{literal}"
+            );
+        }
+    }
+
+    #[test]
+    fn column_count_native_integers_preserve_optional_auto_and_reject_nonpositive_values() {
+        let mut style = ComputedStyle::initial();
+        assert_eq!(style.column_count, None);
+        for count in [1, 65_535, 70_000, i32::MAX] {
+            apply_to_computed(
+                &mut style,
+                StyleProperty::ColumnCount,
+                &StyleValue::Integer(count),
+                (320.0, 240.0),
+            )
+            .unwrap();
+            assert_eq!(style.column_count, Some(count as u32));
+            assert_eq!(
+                value_from_computed(&style, StyleProperty::ColumnCount),
+                StyleValue::Renderer(RendererStyleValue::ColumnCount(Some(count as u32)))
+            );
+            for invalid in [0, -1, i32::MIN] {
+                assert!(apply_to_computed(
+                    &mut style,
+                    StyleProperty::ColumnCount,
+                    &StyleValue::Integer(invalid),
+                    (320.0, 240.0),
+                )
+                .is_err());
+                assert_eq!(style.column_count, Some(count as u32));
+            }
+        }
+        let auto = parse_literal(StyleProperty::ColumnCount, "auto").unwrap();
+        apply_to_computed(
+            &mut style,
+            StyleProperty::ColumnCount,
+            &auto,
+            (320.0, 240.0),
+        )
+        .unwrap();
+        assert_eq!(style.column_count, None);
+        for literal in ["0", "-1"] {
+            assert!(parse_literal(StyleProperty::ColumnCount, literal).is_err());
+        }
+        assert_eq!(
+            parse_literal(StyleProperty::ColumnCount, "70000").unwrap(),
+            StyleValue::Renderer(RendererStyleValue::ColumnCount(Some(70_000)))
+        );
+    }
+
+    #[test]
+    fn fixed_rgb_literals_share_pinned_channel_and_alpha_rounding() {
+        for (literal, expected) in [
+            ("rgb(0, 128, 128)", Color::from_rgba8(0, 128, 128, 255)),
+            ("RGBA(0 128 128)", Color::from_rgba8(0, 128, 128, 255)),
+            ("rgb(100%, 50%, 0%)", Color::from_rgba8(255, 128, 0, 255)),
+            ("rgb(100% 50% 0%)", Color::from_rgba8(255, 128, 0, 255)),
+            (
+                "rgba(12.5, 127.49, 300, .5)",
+                Color::from_rgba8(13, 127, 255, 128),
+            ),
+            ("rgb(-50 255 999 / 0.1)", Color::from_rgba8(0, 255, 255, 26)),
+            ("rgba(0, 0, 0, -2)", Color::from_rgba8(0, 0, 0, 0)),
+            ("rgba(0 0 0 / 2)", Color::from_rgba8(0, 0, 0, 255)),
+            ("#008080", Color::from_rgba8(0, 128, 128, 255)),
+            ("teal", Color::from_rgba8(0, 128, 128, 255)),
+        ] {
+            for property in [StyleProperty::Color, StyleProperty::BackgroundColor] {
+                assert_eq!(
+                    parse_literal(property, literal).unwrap(),
+                    expected.into(),
+                    "{literal}"
+                );
+                let mut style = ComputedStyle::default();
+                apply_to_computed(
+                    &mut style,
+                    property,
+                    &parse_literal(property, literal).unwrap(),
+                    (320.0, 240.0),
+                )
+                .unwrap();
+                let reflected = match property {
+                    StyleProperty::Color => RendererStyleValue::Color(expected),
+                    StyleProperty::BackgroundColor => RendererStyleValue::BackgroundColor(expected),
+                    _ => unreachable!(),
+                };
+                assert_eq!(
+                    value_from_computed(&style, property),
+                    StyleValue::Renderer(reflected),
+                    "{literal}"
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn fixed_rgb_literal_rejects_malformed_and_unrepresented_forms() {
+        for literal in [
+            "rgb(1,2)",
+            "rgb(1,2,3,4,5)",
+            "rgb(1,2,3 / .5)",
+            "rgb(1 2 3 / .5 / .2)",
+            "rgb(1, 2%, 3)",
+            "rgb(1 2% 3)",
+            "rgb(NaN,0,0)",
+            "rgb(inf,0,0)",
+            "rgb(1.,0,0)",
+            "rgb(.5,0,0)",
+            "rgb(+1,0,0)",
+            "rgb(1e2,0,0)",
+            "rgb(1 2 3 / 50%)",
+            "rgb(none 0 0)",
+            "rgb(from teal r g b)",
+            "rgb(calc(1) 2 3)",
+            "rgb (1,2,3)",
+            "rgb(1,2,3) garbage",
+            "color(display-p3 1 0 0)",
+        ] {
+            assert!(
+                parse_literal(StyleProperty::Color, literal).is_err(),
+                "{literal}"
+            );
+        }
+        assert!(matches!(
+            parse_literal(StyleProperty::Color, "currentColor").unwrap(),
+            StyleValue::Typography(TypographyValue::StyleColor(StyleColor::CurrentColor))
+        ));
+    }
+
+    #[test]
+    fn native_snap_values_round_trip_and_preserve_declaration_order() {
+        let mut style = ComputedStyle::initial();
+        let pair = parse_literal(StyleProperty::ScrollSnapAlign, "end start").unwrap();
+        assert_eq!(
+            pair,
+            StyleValue::Renderer(RendererStyleValue::ScrollSnapAlignPair([
+                ScrollSnapAlign::End,
+                ScrollSnapAlign::Start
+            ]))
+        );
+        apply_to_computed(
+            &mut style,
+            StyleProperty::ScrollSnapAlign,
+            &pair,
+            (320.0, 240.0),
+        )
+        .unwrap();
+        assert_eq!(
+            value_from_computed(&style, StyleProperty::ScrollSnapAlign),
+            pair
+        );
+        let scalar = parse_literal(StyleProperty::ScrollSnapAlign, "center").unwrap();
+        apply_to_computed(
+            &mut style,
+            StyleProperty::ScrollSnapAlign,
+            &scalar,
+            (320.0, 240.0),
+        )
+        .unwrap();
+        assert_eq!(style.scroll_snap_align, ScrollSnapAlign::Center);
+        assert_eq!(style.scroll_snap_align_block, None);
+        assert_eq!(style.scroll_snap_align_inline, None);
+        assert_eq!(
+            value_from_computed(&style, StyleProperty::ScrollSnapAlign),
+            scalar
+        );
+        assert!(StyleProperty::ScrollSnapAlign
+            .affects_same_fields_as(StyleProperty::ScrollSnapAlignBlock));
+        assert!(StyleProperty::ScrollSnapAlignInline
+            .affects_same_fields_as(StyleProperty::ScrollSnapAlign));
+        for (property, literal) in [
+            (StyleProperty::ScrollSnapAxis, "block"),
+            (StyleProperty::ScrollSnapStop, "always"),
+            (StyleProperty::ScrollSnapStrictness, "proximity"),
+            (StyleProperty::ScrollSnapAlignBlock, "none"),
+            (StyleProperty::ScrollSnapAlignInline, "end"),
+        ] {
+            let value = parse_literal(property, literal).unwrap();
+            apply_to_computed(&mut style, property, &value, (320.0, 240.0)).unwrap();
+            assert_eq!(value_from_computed(&style, property), value);
+        }
+        assert!(parse_literal(StyleProperty::ScrollSnapAlign, "end start center").is_err());
+        let snapshot = style.scroll_padding_left;
+        assert!(apply_to_computed(
+            &mut style,
+            StyleProperty::ScrollPaddingLeft,
+            &LengthValue::px(-1.0).into(),
+            (320.0, 240.0)
+        )
+        .is_err());
+        assert_eq!(style.scroll_padding_left, snapshot);
+        assert!(apply_to_computed(
+            &mut style,
+            StyleProperty::ScrollMarginLeft,
+            &LengthValue::percent(5.0).into(),
+            (320.0, 240.0)
+        )
+        .is_err());
+    }
+
+    #[test]
     fn schema_lookup_and_metadata_are_stable() {
         assert_eq!(
             StyleProperty::from_css_name("padding"),
@@ -2492,7 +3410,14 @@ mod tests {
         assert_eq!(StyleProperty::TextEmphasis as u16, 124);
         assert_eq!(StyleProperty::TextBox as u16, 125);
         assert_eq!(StyleProperty::ShapeOutside as u16, 237);
-        assert_eq!(PROPERTY_METADATA.len(), 237);
+        assert_eq!(StyleProperty::ScrollPaddingTop as u16, 238);
+        assert_eq!(StyleProperty::ScrollSnapAlignInline as u16, 249);
+        assert_eq!(StyleProperty::WebkitTextFillColor as u16, 250);
+        assert_eq!(PROPERTY_METADATA.len(), 258);
+        assert_eq!(
+            PROPERTY_METADATA.last().unwrap().property,
+            StyleProperty::BorderBottomLeftRadiusY
+        );
         for (index, metadata) in PROPERTY_METADATA.iter().enumerate() {
             let id = u16::try_from(index + 1).unwrap();
             assert_eq!(StyleProperty::from_u16(id), Some(metadata.property));
@@ -2503,10 +3428,125 @@ mod tests {
             assert_eq!(metadata.property.metadata(), metadata);
         }
         assert_eq!(StyleProperty::from_u16(0), None);
-        assert_eq!(StyleProperty::from_u16(238), None);
+        assert_eq!(StyleProperty::from_u16(259), None);
         assert_eq!(
             StyleProperty::Opacity.metadata().invalidation,
             InvalidationClass::Composite
+        );
+    }
+
+    #[test]
+    fn native_fragment_keyword_values_cover_declared_enum_variants() {
+        fn check(property: StyleProperty, literal: &str, expected: RendererStyleValue) {
+            let value = parse_literal(property, literal).unwrap();
+            let mut style = ComputedStyle::initial();
+            apply_to_computed(&mut style, property, &value, (320.0, 240.0)).unwrap();
+            assert_eq!(
+                value_from_computed(&style, property),
+                StyleValue::Renderer(expected)
+            );
+            assert!(parse_literal(property, "invalid-keyword").is_err());
+            assert!(parse_literal(property, "auto; display: none").is_err());
+        }
+        use RendererStyleValue as R;
+        for (literal, variant) in [
+            ("none", BorderStyle::None),
+            ("hidden", BorderStyle::Hidden),
+            ("dotted", BorderStyle::Dotted),
+            ("dashed", BorderStyle::Dashed),
+            ("solid", BorderStyle::Solid),
+            ("double", BorderStyle::Double),
+            ("groove", BorderStyle::Groove),
+            ("ridge", BorderStyle::Ridge),
+            ("inset", BorderStyle::Inset),
+            ("outset", BorderStyle::Outset),
+        ] {
+            check(
+                StyleProperty::BorderTopStyle,
+                literal,
+                R::BorderTopStyle(variant),
+            );
+            check(
+                StyleProperty::BorderRightStyle,
+                literal,
+                R::BorderRightStyle(variant),
+            );
+            check(
+                StyleProperty::BorderBottomStyle,
+                literal,
+                R::BorderBottomStyle(variant),
+            );
+            check(
+                StyleProperty::BorderLeftStyle,
+                literal,
+                R::BorderLeftStyle(variant),
+            );
+            check(
+                StyleProperty::OutlineStyle,
+                literal,
+                R::OutlineStyle(variant),
+            );
+            check(
+                StyleProperty::ColumnRuleStyle,
+                literal,
+                R::ColumnRuleStyle(variant),
+            );
+        }
+        for (literal, variant) in [
+            ("auto", BreakValue::Auto),
+            ("avoid", BreakValue::Avoid),
+            ("avoid-page", BreakValue::AvoidPage),
+            ("avoid-column", BreakValue::AvoidColumn),
+            ("page", BreakValue::Page),
+            ("column", BreakValue::Column),
+            ("left", BreakValue::Left),
+            ("right", BreakValue::Right),
+            ("always", BreakValue::Always),
+        ] {
+            check(StyleProperty::BreakBefore, literal, R::BreakBefore(variant));
+            check(StyleProperty::BreakAfter, literal, R::BreakAfter(variant));
+        }
+        for (literal, variant) in [
+            ("auto", BreakInside::Auto),
+            ("avoid", BreakInside::Avoid),
+            ("avoid-page", BreakInside::AvoidPage),
+            ("avoid-column", BreakInside::AvoidColumn),
+        ] {
+            check(StyleProperty::BreakInside, literal, R::BreakInside(variant));
+        }
+        for (literal, variant) in [
+            ("auto", ColumnFill::Auto),
+            ("balance", ColumnFill::Balance),
+            ("balance-all", ColumnFill::BalanceAll),
+        ] {
+            check(StyleProperty::ColumnFill, literal, R::ColumnFill(variant));
+        }
+        for (literal, variant) in [
+            ("auto", ColumnWrap::Auto),
+            ("wrap", ColumnWrap::Wrap),
+            ("nowrap", ColumnWrap::NoWrap),
+        ] {
+            check(StyleProperty::ColumnWrap, literal, R::ColumnWrap(variant));
+        }
+        check(
+            StyleProperty::ColumnSpan,
+            "none",
+            R::ColumnSpan(ColumnSpan::None),
+        );
+        check(
+            StyleProperty::ColumnSpan,
+            "all",
+            R::ColumnSpan(ColumnSpan::All),
+        );
+        check(
+            StyleProperty::BoxDecorationBreak,
+            "slice",
+            R::BoxDecorationBreak(BoxDecorationBreak::Slice),
+        );
+        check(
+            StyleProperty::BoxDecorationBreak,
+            "clone",
+            R::BoxDecorationBreak(BoxDecorationBreak::Clone),
         );
     }
 
@@ -2657,5 +3697,87 @@ mod tests {
         assert_eq!(style.fields.font_size, 20.0);
         assert_eq!(style.fields.font_kerning, FontKerning::Auto);
         assert!(style.fields.font_feature_settings.is_empty());
+    }
+}
+
+#[cfg(test)]
+mod border_literal_parity_tests {
+    use super::*;
+
+    #[test]
+    fn full_border_literals_preserve_every_native_style_and_typed_field() {
+        let properties = [
+            StyleProperty::Border,
+            StyleProperty::BorderTop,
+            StyleProperty::BorderRight,
+            StyleProperty::BorderBottom,
+            StyleProperty::BorderLeft,
+        ];
+        let observed = [
+            StyleProperty::BorderTopColor,
+            StyleProperty::BorderTopStyle,
+            StyleProperty::BorderTopWidth,
+            StyleProperty::BorderRightColor,
+            StyleProperty::BorderRightStyle,
+            StyleProperty::BorderRightWidth,
+            StyleProperty::BorderBottomColor,
+            StyleProperty::BorderBottomStyle,
+            StyleProperty::BorderBottomWidth,
+            StyleProperty::BorderLeftColor,
+            StyleProperty::BorderLeftStyle,
+            StyleProperty::BorderLeftWidth,
+        ];
+        for (literal, style) in [
+            ("none", BorderStyle::None),
+            ("hidden", BorderStyle::Hidden),
+            ("dotted", BorderStyle::Dotted),
+            ("dashed", BorderStyle::Dashed),
+            ("solid", BorderStyle::Solid),
+            ("double", BorderStyle::Double),
+            ("groove", BorderStyle::Groove),
+            ("ridge", BorderStyle::Ridge),
+            ("inset", BorderStyle::Inset),
+            ("outset", BorderStyle::Outset),
+        ] {
+            for property in properties {
+                let typed = StyleValue::Border(Border {
+                    width: 2.0,
+                    style,
+                    color: Color::from_rgba8(36, 104, 172, 255),
+                });
+                let parsed = parse_literal(property, &format!("2px {literal} #2468ac")).unwrap();
+                assert_eq!(parsed, typed);
+                let mut native = ComputedStyle::initial();
+                let mut from_literal = native.clone();
+                apply_to_computed(&mut native, property, &typed, (320.0, 240.0)).unwrap();
+                apply_to_computed(&mut from_literal, property, &parsed, (320.0, 240.0)).unwrap();
+                for field in observed {
+                    assert_eq!(
+                        value_from_computed(&from_literal, field),
+                        value_from_computed(&native, field)
+                    );
+                }
+            }
+        }
+        assert_eq!(
+            parse_literal(StyleProperty::Border, "0px none transparent").unwrap(),
+            StyleValue::Border(Border {
+                width: 0.0,
+                style: BorderStyle::None,
+                color: Color::TRANSPARENT
+            })
+        );
+        assert_eq!(
+            parse_literal(StyleProperty::Border, "none").unwrap(),
+            StyleValue::Border(Border::NONE)
+        );
+        for invalid in [
+            "2px unknown black",
+            "2px solid black extra",
+            "2px solid",
+            "none; display: none",
+        ] {
+            assert!(parse_literal(StyleProperty::Border, invalid).is_err());
+        }
     }
 }

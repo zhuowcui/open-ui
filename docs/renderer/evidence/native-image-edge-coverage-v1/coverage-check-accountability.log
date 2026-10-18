@@ -1,0 +1,44 @@
+═══════════════════════════════════════════════
+  OPEN UI WPT PIPELINE AUDIT
+═══════════════════════════════════════════════
+
+── Check 1: Pass claims have proof (committed result verification; image verification deferred) ──
+  ✅ All 5731 historical passes have verified committed result metadata
+  Historical comparator: 186 passes report nonzero channel deltas; exact oracle pixels are audited separately
+  ✅ Totals consistent: 5731 pass + 0 fail (incl. 0 render-error) = 5731
+
+── Check 2: Template ↔ summary consistency ──
+  ✅ 5731 frozen templates + 236 audited candidates accounted
+
+── Check 3: Ported tests have Rust code ──
+  ✅ All 5731 summary tests have Rust registry entries and function definitions
+
+── Check 4: WPT mapping coverage + accounting identity ──
+  ✅ All failure categories are from the valid set
+  ✅ All 1706 unported tests have explicit dependency categories
+  ✅ All failing text ports have functional non-text ownership (3154 manifest IDs)
+  ✅ SP14 closure: 2715 baseline exact, 111 W3 runnable, 3934 W4 reason-owned
+  ✅ SP15 closure: 2767 baseline exact, 76 actionable, 54 residual
+  ✅ SP16 closure: 2804 baseline exact, 226 actionable, 550 residual
+  ✅ SP13-R closure: 2823 baseline exact, 351 exact targets, 1018 reason-owned residuals
+  ✅ SP13-P closure: 3,889 runnable, 3,807 exact, 82 residual
+  ✅ Accounting: 5967 ported + 1706 not_ported = 7673 total
+  ✅ Accounting: 5731 pass + 0 fail + 236 audited candidates = 5967 ported
+  ✅ Mapping ↔ immutable summary and candidate audit cross-check passed
+  ✅ Mapping covers 7673 Chromium tests (5967 ported, 1706 not ported)
+         Pass: 5731, Fail: 0
+         Categories: {'needs_javascript': 1676, 'needs_writing_mode': 281, 'needs_generated_content': 241, 'needs_inline_block': 206, 'sp13_multicol': 198, 'needs_advanced_selectors': 154, 'needs_empty_block_margin_collapse': 141, 'needs_visual_effects': 114}
+
+── Check 5: SP12.5 deferred tests consistency ──
+  ✅ All 0 deferred tests exist in summary and are confirmed failing
+  ✅ Deferred count matches SP12.5-PLAN.md (0)
+
+── Check 6: No orphan result directories ──
+  ✅ No orphan result directories
+
+── Check 7: Mapping ↔ deferred classification consistency ──
+  ✅ Mapping and deferred classifications consistent for 0 tests
+
+═══════════════════════════════════════════════
+  AUDIT PASSED: All checks clean ✅
+═══════════════════════════════════════════════

@@ -686428,15 +686428,7 @@ fn css_flexbox_flex_vertical_align_effect(
     );
     doc.set_style(n2, RendererStyleValue::BorderLeftWidth(2));
     doc.set_style(n2, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n2,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(262.0),
-            intrinsic_height: Some(14.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n2, openui_dom::FormControlRole::TextInput);
     doc.set_style(n2, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n2, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n2, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -697774,15 +697766,7 @@ fn css_flexbox_flexbox_baseline_nested_001(
     );
     doc.set_style(n5, RendererStyleValue::BorderLeftWidth(2));
     doc.set_style(n5, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n5,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(262.0),
-            intrinsic_height: Some(14.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n5, openui_dom::FormControlRole::TextInput);
     doc.set_style(n5, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n5, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n5, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -697976,15 +697960,7 @@ fn css_flexbox_flexbox_baseline_nested_001_ref(
     );
     doc.set_style(n4, RendererStyleValue::BorderLeftWidth(2));
     doc.set_style(n4, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n4,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(262.0),
-            intrinsic_height: Some(14.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n4, openui_dom::FormControlRole::TextInput);
     doc.set_style(n4, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n4, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n4, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -727292,7 +727268,9 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001(
         n2,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n2, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n2, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n2, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n2, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n2, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n2, RendererStyleValue::BorderTopWidth(1));
@@ -727306,15 +727284,7 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001(
     );
     doc.set_style(n2, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n2, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n2,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n2, openui_dom::FormControlRole::TextArea);
     doc.set_style(n2, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n2, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n2, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -727344,6 +727314,15 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001(
     doc.set_style(
         n2,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n2,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n2, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n2, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -727491,7 +727470,9 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001(
         n5,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n5, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n5, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n5, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n5, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n5, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n5, RendererStyleValue::BorderTopWidth(1));
@@ -727505,15 +727486,7 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001(
     );
     doc.set_style(n5, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n5, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n5,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n5, openui_dom::FormControlRole::TextArea);
     doc.set_style(n5, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n5, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n5, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -727543,6 +727516,15 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001(
     doc.set_style(
         n5,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n5,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n5, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n5, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -727670,7 +727652,9 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001(
         n7,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n7, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n7, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n7, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n7, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n7, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n7, RendererStyleValue::BorderTopWidth(1));
@@ -727684,15 +727668,7 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001(
     );
     doc.set_style(n7, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n7, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n7,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n7, openui_dom::FormControlRole::TextArea);
     doc.set_style(n7, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n7, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n7, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -727722,6 +727698,15 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001(
     doc.set_style(
         n7,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n7,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n7, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n7, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -727799,7 +727784,9 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001(
         n8,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n8, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n8, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n8, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n8, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n8, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n8, RendererStyleValue::BorderTopWidth(1));
@@ -727813,15 +727800,7 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001(
     );
     doc.set_style(n8, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n8, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n8,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n8, openui_dom::FormControlRole::TextArea);
     doc.set_style(n8, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n8, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n8, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -727851,6 +727830,15 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001(
     doc.set_style(
         n8,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n8,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n8, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n8, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -727982,7 +727970,9 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001(
         n10,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n10, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n10, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n10, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n10, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n10, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n10, RendererStyleValue::BorderTopWidth(1));
@@ -727999,15 +727989,7 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001(
     );
     doc.set_style(n10, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n10, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n10,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n10, openui_dom::FormControlRole::TextArea);
     doc.set_style(n10, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n10, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n10, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -728037,6 +728019,15 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001(
     doc.set_style(
         n10,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n10,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n10, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n10, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -728117,7 +728108,9 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001(
         n11,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n11, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n11, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n11, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n11, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n11, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n11, RendererStyleValue::BorderTopWidth(1));
@@ -728134,15 +728127,7 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001(
     );
     doc.set_style(n11, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n11, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n11,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n11, openui_dom::FormControlRole::TextArea);
     doc.set_style(n11, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n11, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n11, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -728172,6 +728157,15 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001(
     doc.set_style(
         n11,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n11,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n11, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n11, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -728306,7 +728300,9 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001(
         n13,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n13, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n13, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n13, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n13, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n13, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n13, RendererStyleValue::BorderTopWidth(1));
@@ -728323,15 +728319,7 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001(
     );
     doc.set_style(n13, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n13, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n13,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n13, openui_dom::FormControlRole::TextArea);
     doc.set_style(n13, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n13, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n13, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -728361,6 +728349,15 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001(
     doc.set_style(
         n13,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n13,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n13, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n13, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -728441,7 +728438,9 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001(
         n14,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n14, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n14, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n14, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n14, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n14, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n14, RendererStyleValue::BorderTopWidth(1));
@@ -728458,15 +728457,7 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001(
     );
     doc.set_style(n14, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n14, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n14,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n14, openui_dom::FormControlRole::TextArea);
     doc.set_style(n14, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n14, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n14, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -728496,6 +728487,15 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001(
     doc.set_style(
         n14,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n14,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n14, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n14, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -728630,7 +728630,9 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001(
         n16,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n16, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n16, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n16, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n16, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n16, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n16, RendererStyleValue::BorderTopWidth(1));
@@ -728647,15 +728649,7 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001(
     );
     doc.set_style(n16, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n16, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n16,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n16, openui_dom::FormControlRole::TextArea);
     doc.set_style(n16, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n16, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n16, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -728685,6 +728679,15 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001(
     doc.set_style(
         n16,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n16,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n16, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n16, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -728765,7 +728768,9 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001(
         n17,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n17, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n17, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n17, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n17, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n17, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n17, RendererStyleValue::BorderTopWidth(1));
@@ -728782,15 +728787,7 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001(
     );
     doc.set_style(n17, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n17, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n17,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n17, openui_dom::FormControlRole::TextArea);
     doc.set_style(n17, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n17, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n17, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -728820,6 +728817,15 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001(
     doc.set_style(
         n17,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n17,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n17, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n17, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -728955,7 +728961,9 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001(
         n19,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n19, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n19, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n19, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n19, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n19, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n19, RendererStyleValue::BorderTopWidth(1));
@@ -728972,15 +728980,7 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001(
     );
     doc.set_style(n19, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n19, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n19,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n19, openui_dom::FormControlRole::TextArea);
     doc.set_style(n19, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n19, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n19, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -729010,6 +729010,15 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001(
     doc.set_style(
         n19,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n19,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n19, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n19, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -729090,7 +729099,9 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001(
         n20,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n20, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n20, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n20, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n20, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n20, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n20, RendererStyleValue::BorderTopWidth(1));
@@ -729107,15 +729118,7 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001(
     );
     doc.set_style(n20, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n20, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n20,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n20, openui_dom::FormControlRole::TextArea);
     doc.set_style(n20, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n20, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n20, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -729145,6 +729148,15 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001(
     doc.set_style(
         n20,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n20,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n20, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n20, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -729315,7 +729327,9 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001_ref(
         n2,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n2, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n2, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n2, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n2, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n2, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n2, RendererStyleValue::BorderTopWidth(1));
@@ -729329,15 +729343,7 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001_ref(
     );
     doc.set_style(n2, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n2, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n2,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n2, openui_dom::FormControlRole::TextArea);
     doc.set_style(n2, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n2, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n2, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -729366,6 +729372,15 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001_ref(
     doc.set_style(
         n2,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n2,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n2, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n2, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -729509,7 +729524,9 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001_ref(
         n5,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n5, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n5, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n5, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n5, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n5, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n5, RendererStyleValue::BorderTopWidth(1));
@@ -729523,15 +729540,7 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001_ref(
     );
     doc.set_style(n5, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n5, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n5,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n5, openui_dom::FormControlRole::TextArea);
     doc.set_style(n5, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n5, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n5, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -729560,6 +729569,15 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001_ref(
     doc.set_style(
         n5,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n5,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n5, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n5, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -729684,7 +729702,9 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001_ref(
         n7,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n7, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n7, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n7, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n7, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n7, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n7, RendererStyleValue::BorderTopWidth(1));
@@ -729698,15 +729718,7 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001_ref(
     );
     doc.set_style(n7, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n7, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n7,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n7, openui_dom::FormControlRole::TextArea);
     doc.set_style(n7, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n7, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n7, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -729735,6 +729747,15 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001_ref(
     doc.set_style(
         n7,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n7,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n7, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n7, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -729809,7 +729830,9 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001_ref(
         n8,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n8, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n8, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n8, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n8, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n8, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n8, RendererStyleValue::BorderTopWidth(1));
@@ -729823,15 +729846,7 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001_ref(
     );
     doc.set_style(n8, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n8, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n8,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n8, openui_dom::FormControlRole::TextArea);
     doc.set_style(n8, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n8, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n8, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -729860,6 +729875,15 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001_ref(
     doc.set_style(
         n8,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n8,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n8, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n8, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -729982,7 +730006,9 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001_ref(
         n10,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n10, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n10, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n10, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n10, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n10, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n10, RendererStyleValue::BorderTopWidth(1));
@@ -729999,15 +730025,7 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001_ref(
     );
     doc.set_style(n10, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n10, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n10,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n10, openui_dom::FormControlRole::TextArea);
     doc.set_style(n10, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n10, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n10, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -730036,6 +730054,15 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001_ref(
     doc.set_style(
         n10,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n10,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n10, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n10, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -730113,7 +730140,9 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001_ref(
         n11,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n11, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n11, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n11, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n11, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n11, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n11, RendererStyleValue::BorderTopWidth(1));
@@ -730130,15 +730159,7 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001_ref(
     );
     doc.set_style(n11, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n11, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n11,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n11, openui_dom::FormControlRole::TextArea);
     doc.set_style(n11, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n11, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n11, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -730167,6 +730188,15 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001_ref(
     doc.set_style(
         n11,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n11,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n11, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n11, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -730292,7 +730322,9 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001_ref(
         n13,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n13, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n13, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n13, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n13, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n13, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n13, RendererStyleValue::BorderTopWidth(1));
@@ -730309,15 +730341,7 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001_ref(
     );
     doc.set_style(n13, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n13, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n13,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n13, openui_dom::FormControlRole::TextArea);
     doc.set_style(n13, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n13, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n13, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -730346,6 +730370,15 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001_ref(
     doc.set_style(
         n13,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n13,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n13, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n13, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -730423,7 +730456,9 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001_ref(
         n14,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n14, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n14, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n14, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n14, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n14, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n14, RendererStyleValue::BorderTopWidth(1));
@@ -730440,15 +730475,7 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001_ref(
     );
     doc.set_style(n14, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n14, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n14,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n14, openui_dom::FormControlRole::TextArea);
     doc.set_style(n14, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n14, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n14, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -730477,6 +730504,15 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001_ref(
     doc.set_style(
         n14,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n14,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n14, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n14, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -730602,7 +730638,9 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001_ref(
         n16,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n16, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n16, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n16, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n16, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n16, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n16, RendererStyleValue::BorderTopWidth(1));
@@ -730619,15 +730657,7 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001_ref(
     );
     doc.set_style(n16, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n16, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n16,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n16, openui_dom::FormControlRole::TextArea);
     doc.set_style(n16, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n16, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n16, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -730656,6 +730686,15 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001_ref(
     doc.set_style(
         n16,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n16,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n16, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n16, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -730733,7 +730772,9 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001_ref(
         n17,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n17, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n17, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n17, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n17, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n17, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n17, RendererStyleValue::BorderTopWidth(1));
@@ -730750,15 +730791,7 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001_ref(
     );
     doc.set_style(n17, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n17, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n17,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n17, openui_dom::FormControlRole::TextArea);
     doc.set_style(n17, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n17, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n17, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -730787,6 +730820,15 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001_ref(
     doc.set_style(
         n17,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n17,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n17, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n17, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -730912,7 +730954,9 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001_ref(
         n19,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n19, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n19, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n19, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n19, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n19, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n19, RendererStyleValue::BorderTopWidth(1));
@@ -730929,15 +730973,7 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001_ref(
     );
     doc.set_style(n19, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n19, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n19,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n19, openui_dom::FormControlRole::TextArea);
     doc.set_style(n19, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n19, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n19, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -730966,6 +731002,15 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001_ref(
     doc.set_style(
         n19,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n19,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n19, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n19, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -731043,7 +731088,9 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001_ref(
         n20,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n20, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n20, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n20, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n20, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n20, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n20, RendererStyleValue::BorderTopWidth(1));
@@ -731060,15 +731107,7 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001_ref(
     );
     doc.set_style(n20, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n20, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n20,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n20, openui_dom::FormControlRole::TextArea);
     doc.set_style(n20, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n20, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n20, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -731097,6 +731136,15 @@ fn css_flexbox_flexbox_basic_textarea_horiz_001_ref(
     doc.set_style(
         n20,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n20,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n20, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n20, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -731273,7 +731321,9 @@ fn css_flexbox_flexbox_basic_textarea_vert_001(
         n2,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n2, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n2, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n2, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n2, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n2, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n2, RendererStyleValue::BorderTopWidth(1));
@@ -731287,15 +731337,7 @@ fn css_flexbox_flexbox_basic_textarea_vert_001(
     );
     doc.set_style(n2, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n2, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n2,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n2, openui_dom::FormControlRole::TextArea);
     doc.set_style(n2, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n2, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n2, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -731325,6 +731367,15 @@ fn css_flexbox_flexbox_basic_textarea_vert_001(
     doc.set_style(
         n2,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n2,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n2, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n2, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -731475,7 +731526,9 @@ fn css_flexbox_flexbox_basic_textarea_vert_001(
         n5,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n5, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n5, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n5, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n5, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n5, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n5, RendererStyleValue::BorderTopWidth(1));
@@ -731489,15 +731542,7 @@ fn css_flexbox_flexbox_basic_textarea_vert_001(
     );
     doc.set_style(n5, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n5, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n5,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n5, openui_dom::FormControlRole::TextArea);
     doc.set_style(n5, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n5, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n5, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -731527,6 +731572,15 @@ fn css_flexbox_flexbox_basic_textarea_vert_001(
     doc.set_style(
         n5,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n5,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n5, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n5, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -731657,7 +731711,9 @@ fn css_flexbox_flexbox_basic_textarea_vert_001(
         n7,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n7, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n7, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n7, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n7, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n7, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n7, RendererStyleValue::BorderTopWidth(1));
@@ -731671,15 +731727,7 @@ fn css_flexbox_flexbox_basic_textarea_vert_001(
     );
     doc.set_style(n7, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n7, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n7,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n7, openui_dom::FormControlRole::TextArea);
     doc.set_style(n7, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n7, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n7, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -731709,6 +731757,15 @@ fn css_flexbox_flexbox_basic_textarea_vert_001(
     doc.set_style(
         n7,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n7,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n7, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n7, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -731786,7 +731843,9 @@ fn css_flexbox_flexbox_basic_textarea_vert_001(
         n8,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n8, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n8, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n8, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n8, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n8, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n8, RendererStyleValue::BorderTopWidth(1));
@@ -731800,15 +731859,7 @@ fn css_flexbox_flexbox_basic_textarea_vert_001(
     );
     doc.set_style(n8, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n8, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n8,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n8, openui_dom::FormControlRole::TextArea);
     doc.set_style(n8, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n8, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n8, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -731838,6 +731889,15 @@ fn css_flexbox_flexbox_basic_textarea_vert_001(
     doc.set_style(
         n8,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n8,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n8, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n8, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -731972,7 +732032,9 @@ fn css_flexbox_flexbox_basic_textarea_vert_001(
         n10,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n10, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n10, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n10, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n10, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n10, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n10, RendererStyleValue::BorderTopWidth(1));
@@ -731989,15 +732051,7 @@ fn css_flexbox_flexbox_basic_textarea_vert_001(
     );
     doc.set_style(n10, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n10, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n10,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n10, openui_dom::FormControlRole::TextArea);
     doc.set_style(n10, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n10, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n10, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -732027,6 +732081,15 @@ fn css_flexbox_flexbox_basic_textarea_vert_001(
     doc.set_style(
         n10,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n10,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n10, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n10, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -732107,7 +732170,9 @@ fn css_flexbox_flexbox_basic_textarea_vert_001(
         n11,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n11, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n11, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n11, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n11, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n11, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n11, RendererStyleValue::BorderTopWidth(1));
@@ -732124,15 +732189,7 @@ fn css_flexbox_flexbox_basic_textarea_vert_001(
     );
     doc.set_style(n11, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n11, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n11,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n11, openui_dom::FormControlRole::TextArea);
     doc.set_style(n11, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n11, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n11, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -732162,6 +732219,15 @@ fn css_flexbox_flexbox_basic_textarea_vert_001(
     doc.set_style(
         n11,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n11,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n11, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n11, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -732302,7 +732368,9 @@ fn css_flexbox_flexbox_basic_textarea_vert_001(
         n13,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n13, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n13, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n13, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n13, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n13, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n13, RendererStyleValue::BorderTopWidth(1));
@@ -732319,15 +732387,7 @@ fn css_flexbox_flexbox_basic_textarea_vert_001(
     );
     doc.set_style(n13, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n13, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n13,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n13, openui_dom::FormControlRole::TextArea);
     doc.set_style(n13, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n13, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n13, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -732357,6 +732417,15 @@ fn css_flexbox_flexbox_basic_textarea_vert_001(
     doc.set_style(
         n13,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n13,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n13, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n13, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -732437,7 +732506,9 @@ fn css_flexbox_flexbox_basic_textarea_vert_001(
         n14,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n14, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n14, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n14, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n14, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n14, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n14, RendererStyleValue::BorderTopWidth(1));
@@ -732454,15 +732525,7 @@ fn css_flexbox_flexbox_basic_textarea_vert_001(
     );
     doc.set_style(n14, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n14, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n14,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n14, openui_dom::FormControlRole::TextArea);
     doc.set_style(n14, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n14, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n14, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -732492,6 +732555,15 @@ fn css_flexbox_flexbox_basic_textarea_vert_001(
     doc.set_style(
         n14,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n14,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n14, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n14, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -732632,7 +732704,9 @@ fn css_flexbox_flexbox_basic_textarea_vert_001(
         n16,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n16, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n16, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n16, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n16, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n16, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n16, RendererStyleValue::BorderTopWidth(1));
@@ -732649,15 +732723,7 @@ fn css_flexbox_flexbox_basic_textarea_vert_001(
     );
     doc.set_style(n16, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n16, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n16,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n16, openui_dom::FormControlRole::TextArea);
     doc.set_style(n16, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n16, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n16, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -732687,6 +732753,15 @@ fn css_flexbox_flexbox_basic_textarea_vert_001(
     doc.set_style(
         n16,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n16,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n16, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n16, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -732767,7 +732842,9 @@ fn css_flexbox_flexbox_basic_textarea_vert_001(
         n17,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n17, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n17, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n17, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n17, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n17, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n17, RendererStyleValue::BorderTopWidth(1));
@@ -732784,15 +732861,7 @@ fn css_flexbox_flexbox_basic_textarea_vert_001(
     );
     doc.set_style(n17, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n17, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n17,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n17, openui_dom::FormControlRole::TextArea);
     doc.set_style(n17, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n17, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n17, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -732822,6 +732891,15 @@ fn css_flexbox_flexbox_basic_textarea_vert_001(
     doc.set_style(
         n17,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n17,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n17, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n17, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -732963,7 +733041,9 @@ fn css_flexbox_flexbox_basic_textarea_vert_001(
         n19,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n19, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n19, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n19, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n19, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n19, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n19, RendererStyleValue::BorderTopWidth(1));
@@ -732980,15 +733060,7 @@ fn css_flexbox_flexbox_basic_textarea_vert_001(
     );
     doc.set_style(n19, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n19, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n19,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n19, openui_dom::FormControlRole::TextArea);
     doc.set_style(n19, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n19, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n19, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -733018,6 +733090,15 @@ fn css_flexbox_flexbox_basic_textarea_vert_001(
     doc.set_style(
         n19,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n19,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n19, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n19, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -733098,7 +733179,9 @@ fn css_flexbox_flexbox_basic_textarea_vert_001(
         n20,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n20, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n20, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n20, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n20, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n20, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n20, RendererStyleValue::BorderTopWidth(1));
@@ -733115,15 +733198,7 @@ fn css_flexbox_flexbox_basic_textarea_vert_001(
     );
     doc.set_style(n20, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n20, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n20,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n20, openui_dom::FormControlRole::TextArea);
     doc.set_style(n20, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n20, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n20, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -733153,6 +733228,15 @@ fn css_flexbox_flexbox_basic_textarea_vert_001(
     doc.set_style(
         n20,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n20,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n20, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n20, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -733330,7 +733414,9 @@ fn css_flexbox_flexbox_basic_textarea_vert_001_ref(
         n2,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n2, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n2, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n2, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n2, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n2, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n2, RendererStyleValue::BorderTopWidth(1));
@@ -733344,15 +733430,7 @@ fn css_flexbox_flexbox_basic_textarea_vert_001_ref(
     );
     doc.set_style(n2, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n2, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n2,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n2, openui_dom::FormControlRole::TextArea);
     doc.set_style(n2, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n2, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n2, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -733381,6 +733459,15 @@ fn css_flexbox_flexbox_basic_textarea_vert_001_ref(
     doc.set_style(
         n2,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n2,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n2, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n2, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -733566,7 +733653,9 @@ fn css_flexbox_flexbox_basic_textarea_vert_001_ref(
         n6,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n6, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n6, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n6, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n6, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n6, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n6, RendererStyleValue::BorderTopWidth(1));
@@ -733580,15 +733669,7 @@ fn css_flexbox_flexbox_basic_textarea_vert_001_ref(
     );
     doc.set_style(n6, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n6, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n6,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n6, openui_dom::FormControlRole::TextArea);
     doc.set_style(n6, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n6, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n6, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -733617,6 +733698,15 @@ fn css_flexbox_flexbox_basic_textarea_vert_001_ref(
     doc.set_style(
         n6,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n6,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n6, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n6, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -733741,7 +733831,9 @@ fn css_flexbox_flexbox_basic_textarea_vert_001_ref(
         n8,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n8, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n8, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n8, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n8, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n8, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n8, RendererStyleValue::BorderTopWidth(1));
@@ -733755,15 +733847,7 @@ fn css_flexbox_flexbox_basic_textarea_vert_001_ref(
     );
     doc.set_style(n8, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n8, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n8,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n8, openui_dom::FormControlRole::TextArea);
     doc.set_style(n8, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n8, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n8, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -733792,6 +733876,15 @@ fn css_flexbox_flexbox_basic_textarea_vert_001_ref(
     doc.set_style(
         n8,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n8,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n8, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n8, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -733866,7 +733959,9 @@ fn css_flexbox_flexbox_basic_textarea_vert_001_ref(
         n9,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n9, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n9, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n9, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n9, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n9, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n9, RendererStyleValue::BorderTopWidth(1));
@@ -733880,15 +733975,7 @@ fn css_flexbox_flexbox_basic_textarea_vert_001_ref(
     );
     doc.set_style(n9, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n9, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n9,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n9, openui_dom::FormControlRole::TextArea);
     doc.set_style(n9, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n9, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n9, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -733917,6 +734004,15 @@ fn css_flexbox_flexbox_basic_textarea_vert_001_ref(
     doc.set_style(
         n9,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n9,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n9, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n9, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -734042,7 +734138,9 @@ fn css_flexbox_flexbox_basic_textarea_vert_001_ref(
         n11,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n11, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n11, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n11, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n11, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n11, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n11, RendererStyleValue::BorderTopWidth(1));
@@ -734059,15 +734157,7 @@ fn css_flexbox_flexbox_basic_textarea_vert_001_ref(
     );
     doc.set_style(n11, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n11, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n11,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n11, openui_dom::FormControlRole::TextArea);
     doc.set_style(n11, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n11, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n11, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -734096,6 +734186,15 @@ fn css_flexbox_flexbox_basic_textarea_vert_001_ref(
     doc.set_style(
         n11,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n11,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n11, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n11, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -734173,7 +734272,9 @@ fn css_flexbox_flexbox_basic_textarea_vert_001_ref(
         n12,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n12, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n12, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n12, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n12, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n12, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n12, RendererStyleValue::BorderTopWidth(1));
@@ -734190,15 +734291,7 @@ fn css_flexbox_flexbox_basic_textarea_vert_001_ref(
     );
     doc.set_style(n12, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n12, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n12,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n12, openui_dom::FormControlRole::TextArea);
     doc.set_style(n12, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n12, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n12, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -734227,6 +734320,15 @@ fn css_flexbox_flexbox_basic_textarea_vert_001_ref(
     doc.set_style(
         n12,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n12,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n12, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n12, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -734355,7 +734457,9 @@ fn css_flexbox_flexbox_basic_textarea_vert_001_ref(
         n14,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n14, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n14, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n14, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n14, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n14, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n14, RendererStyleValue::BorderTopWidth(1));
@@ -734372,15 +734476,7 @@ fn css_flexbox_flexbox_basic_textarea_vert_001_ref(
     );
     doc.set_style(n14, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n14, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n14,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n14, openui_dom::FormControlRole::TextArea);
     doc.set_style(n14, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n14, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n14, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -734409,6 +734505,15 @@ fn css_flexbox_flexbox_basic_textarea_vert_001_ref(
     doc.set_style(
         n14,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n14,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n14, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n14, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -734486,7 +734591,9 @@ fn css_flexbox_flexbox_basic_textarea_vert_001_ref(
         n15,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n15, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n15, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n15, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n15, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n15, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n15, RendererStyleValue::BorderTopWidth(1));
@@ -734503,15 +734610,7 @@ fn css_flexbox_flexbox_basic_textarea_vert_001_ref(
     );
     doc.set_style(n15, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n15, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n15,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n15, openui_dom::FormControlRole::TextArea);
     doc.set_style(n15, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n15, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n15, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -734540,6 +734639,15 @@ fn css_flexbox_flexbox_basic_textarea_vert_001_ref(
     doc.set_style(
         n15,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n15,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n15, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n15, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -734668,7 +734776,9 @@ fn css_flexbox_flexbox_basic_textarea_vert_001_ref(
         n17,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n17, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n17, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n17, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n17, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n17, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n17, RendererStyleValue::BorderTopWidth(1));
@@ -734685,15 +734795,7 @@ fn css_flexbox_flexbox_basic_textarea_vert_001_ref(
     );
     doc.set_style(n17, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n17, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n17,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n17, openui_dom::FormControlRole::TextArea);
     doc.set_style(n17, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n17, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n17, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -734722,6 +734824,15 @@ fn css_flexbox_flexbox_basic_textarea_vert_001_ref(
     doc.set_style(
         n17,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n17,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n17, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n17, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -734799,7 +734910,9 @@ fn css_flexbox_flexbox_basic_textarea_vert_001_ref(
         n18,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n18, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n18, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n18, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n18, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n18, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n18, RendererStyleValue::BorderTopWidth(1));
@@ -734816,15 +734929,7 @@ fn css_flexbox_flexbox_basic_textarea_vert_001_ref(
     );
     doc.set_style(n18, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n18, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n18,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n18, openui_dom::FormControlRole::TextArea);
     doc.set_style(n18, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n18, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n18, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -734853,6 +734958,15 @@ fn css_flexbox_flexbox_basic_textarea_vert_001_ref(
     doc.set_style(
         n18,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n18,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n18, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n18, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -734981,7 +735095,9 @@ fn css_flexbox_flexbox_basic_textarea_vert_001_ref(
         n20,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n20, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n20, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n20, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n20, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n20, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n20, RendererStyleValue::BorderTopWidth(1));
@@ -734998,15 +735114,7 @@ fn css_flexbox_flexbox_basic_textarea_vert_001_ref(
     );
     doc.set_style(n20, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n20, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n20,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n20, openui_dom::FormControlRole::TextArea);
     doc.set_style(n20, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n20, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n20, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -735035,6 +735143,15 @@ fn css_flexbox_flexbox_basic_textarea_vert_001_ref(
     doc.set_style(
         n20,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n20,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n20, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n20, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -735112,7 +735229,9 @@ fn css_flexbox_flexbox_basic_textarea_vert_001_ref(
         n21,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n21, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n21, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n21, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n21, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n21, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n21, RendererStyleValue::BorderTopWidth(1));
@@ -735129,15 +735248,7 @@ fn css_flexbox_flexbox_basic_textarea_vert_001_ref(
     );
     doc.set_style(n21, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n21, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n21,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n21, openui_dom::FormControlRole::TextArea);
     doc.set_style(n21, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n21, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n21, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -735166,6 +735277,15 @@ fn css_flexbox_flexbox_basic_textarea_vert_001_ref(
     doc.set_style(
         n21,
         RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32)),
+    );
+    doc.set_style(
+        n21,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
     );
     doc.set_style(n21, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n21, RendererStyleValue::BorderTopStyle(BorderStyle::Dotted));
@@ -784985,6 +785105,7 @@ fn css_flexbox_stretch_input_in_column(viewport: ViewportMetrics) -> Result<Engi
         n2,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextInput)),
     );
+    doc.set_node_state(n2, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n2, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
     doc.set_style(n2, RendererStyleValue::BorderTopWidth(2));
     doc.set_style(n2, RendererStyleValue::BorderTopStyle(BorderStyle::Inset));
@@ -784997,15 +785118,7 @@ fn css_flexbox_stretch_input_in_column(viewport: ViewportMetrics) -> Result<Engi
     );
     doc.set_style(n2, RendererStyleValue::BorderLeftWidth(2));
     doc.set_style(n2, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n2,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(262.0),
-            intrinsic_height: Some(14.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n2, openui_dom::FormControlRole::TextInput);
     doc.set_style(n2, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n2, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n2, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -785095,7 +785208,9 @@ fn css_flexbox_stretch_input_in_column(viewport: ViewportMetrics) -> Result<Engi
         n4,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::TextArea)),
     );
+    doc.set_node_state(n4, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n4, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n4, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n4, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n4, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n4, RendererStyleValue::BorderTopWidth(1));
@@ -785109,15 +785224,7 @@ fn css_flexbox_stretch_input_in_column(viewport: ViewportMetrics) -> Result<Engi
     );
     doc.set_style(n4, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n4, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
-    doc.set_node_state(
-        n4,
-        RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
-            resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
-            intrinsic_width: Some(176.0),
-            intrinsic_height: Some(28.0),
-            intrinsic_ratio: None,
-        })),
-    );
+    doc.request_native_control_geometry(n4, openui_dom::FormControlRole::TextArea);
     doc.set_style(n4, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n4, RendererStyleValue::MarginRight(Length::px(0.0)));
     doc.set_style(n4, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -785209,6 +785316,7 @@ fn css_flexbox_stretch_input_in_column(viewport: ViewportMetrics) -> Result<Engi
         n6,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::Button)),
     );
+    doc.set_node_state(n6, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n6, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
     doc.set_style(n6, RendererStyleValue::BorderTopWidth(2));
     doc.set_style(n6, RendererStyleValue::BorderTopStyle(BorderStyle::Inset));
@@ -785241,6 +785349,9 @@ fn css_flexbox_stretch_input_in_column(viewport: ViewportMetrics) -> Result<Engi
     doc.set_style(n6, RendererStyleValue::BoxSizing(BoxSizing::ContentBox));
     doc.set_style(n6, RendererStyleValue::FontSize(13.333333));
     doc.set_style(n6, RendererStyleValue::TextAlign(TextAlign::Center));
+    doc.set_style(n6, RendererStyleValue::WhiteSpace(WhiteSpace::Pre));
+    doc.set_style(n6, RendererStyleValue::OverflowX(Overflow::Clip));
+    doc.set_style(n6, RendererStyleValue::OverflowY(Overflow::Clip));
     doc.set_style(
         n6,
         RendererStyleValue::BackgroundColor(Color::from_rgba8(239, 239, 239, 255)),
@@ -785295,6 +785406,19 @@ fn css_flexbox_stretch_input_in_column(viewport: ViewportMetrics) -> Result<Engi
     doc.set_style(
         n6,
         RendererStyleValue::BorderBottomLeftRadius((2.0_f32, 2.0_f32)),
+    );
+    doc.set_style(
+        n6,
+        RendererStyleValue::BorderRadiusPercent([
+            (false, false),
+            (false, false),
+            (false, false),
+            (false, false),
+        ]),
+    );
+    doc.set_internal_style(
+        n6,
+        RendererInternalStyleValue::NativeButtonTextMetrics(true),
     );
     doc.set_style(
         n6,
@@ -785372,6 +785496,7 @@ fn css_flexbox_stretch_input_in_column(viewport: ViewportMetrics) -> Result<Engi
         n8,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::Select)),
     );
+    doc.set_node_state(n8, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n8, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
     doc.set_style(n8, RendererStyleValue::BorderTopWidth(1));
     doc.set_style(n8, RendererStyleValue::BorderTopStyle(BorderStyle::Inset));
@@ -785384,12 +785509,22 @@ fn css_flexbox_stretch_input_in_column(viewport: ViewportMetrics) -> Result<Engi
     );
     doc.set_style(n8, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n8, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
+    let mut n8_menu_description =
+        openui_text::FontDescription::from_computed_style(doc.computed_style(n8));
+    n8_menu_description.size = 13.333333;
+    let n8_menu_font = openui_text::Font::new_in_collection(
+        n8_menu_description,
+        std::sync::Arc::clone(doc.font_collection()),
+    );
+    let n8_menu_height = n8_menu_font.font_metrics().map_or(13.333333, |metrics| {
+        metrics.int_ascent() + metrics.int_descent()
+    });
     doc.set_node_state(
         n8,
         RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
             resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
             intrinsic_width: Some(20.0),
-            intrinsic_height: Some(16.0),
+            intrinsic_height: Some(n8_menu_height + 2.0),
             intrinsic_ratio: None,
         })),
     );
@@ -785477,6 +785612,7 @@ fn css_flexbox_stretch_input_in_column(viewport: ViewportMetrics) -> Result<Engi
         n10,
         RendererNodeState::FormControl(Some(openui_dom::FormControlRole::Legend)),
     );
+    doc.set_node_state(n10, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n10, RendererStyleValue::Display(Display::Block));
     doc.set_style(n10, RendererStyleValue::MarginTop(Length::px(0.0)));
     doc.set_style(n10, RendererStyleValue::MarginRight(Length::px(0.0)));

@@ -1,0 +1,72 @@
+{
+  "actual_whole_exit_code": 0,
+  "all_native_apis_qualified": false,
+  "all_source_bytes_unchanged": true,
+  "all_targets_tests": {
+    "actual_exit_code": 0,
+    "failed": 0,
+    "ignored": 0,
+    "passed": 8628
+  },
+  "appearance_qualified": false,
+  "broader_all_targets_gate_qualified": true,
+  "compiled_paths_verified": 308,
+  "compiled_records_verified": 514,
+  "complete": true,
+  "current_inode_aliases_verified": [
+    {
+      "current_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/libopenui_ffi.a",
+      "current_sha256": "5f2739be42e1b99cd9fd65a2d1b388f5db5f2c9ca462739078e8198b1c225baf",
+      "prior_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_ffi.a",
+      "prior_sha256": "3c6d209721474a9ee8bd7d6f14c8cfef4c5dcbc363c7b547cf05e5233b4384ed"
+    },
+    {
+      "current_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/libopenui_ffi.rlib",
+      "current_sha256": "e80338b8ce41fe82d78e62d6417857d8c351623b1463b4421da5c204c7373437",
+      "prior_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_ffi.rlib",
+      "prior_sha256": "b47552264c723eeadb43bf65ce062017f839a69dd4f8585b15856ed5015ffc01"
+    },
+    {
+      "current_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/libopenui_ffi.so",
+      "current_sha256": "846941d756b8931afddf79d1c940f23b547a28b763f800b9b1df0392c6403251",
+      "prior_path": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_ffi.so",
+      "prior_sha256": "505d20c49be6bbdc3501b97fcd00ccf0a5833f903af87a383efbf547476bf6a0"
+    }
+  ],
+  "deep_nesting_50_benchmark_passed": true,
+  "fresh_packages_verified": 23,
+  "implementation_integrated": false,
+  "inherited_successful_stage_count": 4,
+  "javascript_executed_by_openui": false,
+  "logs_verified": 112,
+  "main_source": {
+    "clean": true,
+    "commit": "783e11f44b0e1cd0023018d24e667d27f0b91bb8",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "09626c257b1039fb97272f3c71a24ebf3e36fb40df431fa3f3998f02c7933e43",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "native_behavior_exact": 1188,
+  "native_behavior_rows_verified": 1188,
+  "original_stack_limit_and_command_verified": true,
+  "owner_terminal": true,
+  "receipt_sha256": "922215d89a67866c06d259703df833ce0f58d09fbd5934195b8e3fd232825193",
+  "release_qualified": false,
+  "renderer_qualified": false,
+  "repeated_process_pairs_verified": 30,
+  "schema_version": 1,
+  "scoped_native_behavior_qualified": true,
+  "source": {
+    "clean": true,
+    "commit": "a401a8ac8c33cc5e24ed9bb19934061716cd84dd",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "ebebbc58bd6f89eb5f03af1e3eae9cb961463a3f1be749c23315206c03c735f9",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "whole_project_qualified": false,
+  "workspace": {
+    "failed": 0,
+    "ignored": 13,
+    "passed": 8630
+  }
+}

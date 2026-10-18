@@ -1,0 +1,41 @@
+{
+  "branch": "agent/native-intrinsic-snap-full-v1716",
+  "guard_receipt_sha256": "4c761b86cd60dcc8c08fc30aa7ce8314d7af958e03c8411636f6a9363e36baee",
+  "immutable_actual_source_identical_guards_reused": true,
+  "javascript_executed_by_openui": false,
+  "native_owner_not_started": true,
+  "old_full_and_glyph_owners_not_started": true,
+  "originals": {
+    "/tmp/openui-native-intrinsic-snap-build-v1696.py": "c84540d44879402d368e12c4a14b67244521af25fdd1935f715b9587d4ee2867",
+    "/tmp/openui-native-intrinsic-snap-consumer-v1696.py": "6717e9d0683840a2237e9eb659878fa2bcf1c0669661fb07734f3686b7adabac",
+    "/tmp/openui-native-intrinsic-snap-matrices-v1696.py": "69474f214189a9bee65c49e468cf185717c5236eabfda1de5cb406d8b683c2f9",
+    "/tmp/openui-native-intrinsic-snap-pipeline-v1697.py": "7dc44623fa6a334c19c4f7e4bf6d53408cf655c9ea9b7ea46f8e164ef01cf90b",
+    "/tmp/openui-native-text-style-runtime-guard-reuse-v1677.py": "e7e5850bc16cf16180d5e3c5cebfd46a5c2fe5bf5e7fc8f03ad6a407f0337dd8"
+  },
+  "pixel_tolerance": 0,
+  "prior_whole_owners": 42,
+  "probe_sha256": "56aa442731f063858d11a59be990ff7c7d3f86e5717cdd2114710632e010f9bd",
+  "public_native_rust_apis_required": true,
+  "release_qualification": false,
+  "required_build_stages": 13,
+  "required_geometry_states": 38400,
+  "required_native_images": 600,
+  "required_renderer_matrices": 4,
+  "root": "/dev/shm/openui-native-intrinsic-snap-full-727da10e",
+  "schema_version": 1,
+  "scripts": {
+    "/tmp/openui-native-intrinsic-snap-build-v1716.py": "a7f43ba1ddece13f1ffaa5acb29326950b4a8ff7afabc2ef506731a7456be893",
+    "/tmp/openui-native-intrinsic-snap-consumer-v1716.py": "500b5af7dd6a088703a229300411321d18bd768c729dd075a80d0407495b58dc",
+    "/tmp/openui-native-intrinsic-snap-guard-reuse-v1716.py": "020810ec5d070ac8bb318e2853005ca9b6cd339666c1f9b63619ff0eafa401c2",
+    "/tmp/openui-native-intrinsic-snap-matrices-v1716.py": "3cc6d9637461956c2a24bf018f177c9067e936f4d25527e2ffef0cc34f080cd9",
+    "/tmp/openui-native-intrinsic-snap-pipeline-v1717.py": "a6af386e748c2627a49e0a7b152d6365e8427e9ef10fb081d9e71b1b652d520c"
+  },
+  "source": {
+    "clean": true,
+    "commit": "727da10e580c9439f5db83d36bfc3e2340168207",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "7a65e6a0ddd0eb28f3b8a542418b1aab409f4c4d88a6b00efaf2aece46a22ccd",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "whole_owner_lock_preserves_gaps": true
+}

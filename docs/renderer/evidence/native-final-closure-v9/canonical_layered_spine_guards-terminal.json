@@ -1,0 +1,13 @@
+{
+  "tool_session_id": 45739,
+  "actual_exit_code": 0,
+  "reaped": true,
+  "tool_chunk_id": "a0cf7d",
+  "receipt_sha256": "b3904760aacf5dc306e6d1eae0970ad2cef54e314e906820bb777658c91f6fe9",
+  "all_owned_pids_absent": [
+    3598015,
+    3598063
+  ],
+  "native_guard_pass": 5,
+  "qualified": false
+}

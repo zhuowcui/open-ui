@@ -1,0 +1,84 @@
+{
+  "abi": {
+    "added_exports": [
+      "oui_document_dispatch_key_input_v1",
+      "oui_document_dispatch_text_input_v1"
+    ],
+    "current_exports": 109,
+    "frozen_exports_preserved": 84,
+    "layout_sha256": "c478b68b11084e9294fdea20db0d67e0374bff6711971fe29e7e08d34111c80c",
+    "previous_exports_preserved": 107,
+    "struct_layouts_unchanged": true
+  },
+  "base_commit": "822e0462505ada4cc71429a5c56716ff93062c19",
+  "baseline_failure": {
+    "log": "/tmp/openui-native-c-input-baseline-v1.log",
+    "observation": "generic C key event dispatch did not apply textarea newline default; additive APIs use shared native Document defaults",
+    "sha256": "5128ddd5100c30abc5a41f259e05560ff1aa97e159ad9959c4f3ca3fbc1a950e"
+  },
+  "c_abi_consumers": {
+    "cpp_header": 1,
+    "headless_c": 6,
+    "log": "/tmp/openui-native-c-input-c-abi-v1.log",
+    "passed": true,
+    "sha256": "f843cb988f96a685828b0200d7145e99132356e9f09e4e96a20cb7dfb20d37d6"
+  },
+  "javascript_executed": false,
+  "kind": "native_keyboard_text_api_diagnostic",
+  "native_window_diagnostic": {
+    "passed": true,
+    "path": "out/native-input-evidence/normalized-keyboard-v1/diagnostic-x11-software.json",
+    "release_qualification": false,
+    "sha256": "3857e98603198ae978fa3dca4f297ee34b395163cd6639ce346a44962175fe77",
+    "source_clean": false
+  },
+  "public_rust_input": "Document::dispatch_key_input",
+  "python_tests": {
+    "log": "/tmp/openui-native-c-input-python-tests-v1.log",
+    "passed": 244,
+    "sha256": "0e20a6b3fb7756b128cf96cc86f5356d4f04cfacef9c0164370bfc773c17742d"
+  },
+  "release_qualification": false,
+  "remaining_gates": [
+    "complete clean Chromium census",
+    "physical input and IME",
+    "AT-SPI operation",
+    "hardware and release qualification"
+  ],
+  "schema_version": 1,
+  "source_clean": false,
+  "source_files": {
+    "bindings/rust/openui-ffi/src/lib.rs": "ece2086086a165424bf5cfdaa0ecc4ae727eee7fd0a78a4e6ba33cc5dd9c0456",
+    "bindings/rust/openui/src/document.rs": "379581d8cb14b66a2b588aa5e7593e16262ce6d07e62a81c95146b992029934b",
+    "bindings/rust/openui/tests/v02_conformance.rs": "7f334e720f218e447ca4264cae1ab62f822928329c1a9800632825238d99d83f",
+    "examples/c_v02/accessibility.c": "cbb85ed64d1c01aab094735a62dd1ae282e68d4a3ac44eb7c5bbd978cc505ec6",
+    "examples/c_v02/native/window.c": "bfee1cb2abcf994b059f5a40c2c6ace43d5597699b07703d918ce5c6d5fef78b",
+    "include/openui.h": "60e10ac3477bb4a212ec96a266cfc62955b4438648f4fd9ed758908d5329113d"
+  },
+  "tests": {
+    "headless": {
+      "failed": 0,
+      "ignored": 8,
+      "log": "/tmp/openui-native-c-input-headless-tests-v3.log",
+      "passed": 153,
+      "sha256": "105bf046f5ca976a4a70691f7a5e4e6ba7c4665fc5a97415e3a9c3400810fedb",
+      "suites": 5
+    },
+    "linux": {
+      "failed": 0,
+      "ignored": 8,
+      "log": "/tmp/openui-native-c-input-linux-tests-v1.log",
+      "passed": 193,
+      "sha256": "cad1e8c74aeeb1d5a0cc6ccbbc920c58db56f83268400ee4fefcc733d768de16",
+      "suites": 9
+    },
+    "workspace": {
+      "failed": 0,
+      "ignored": 13,
+      "log": "/tmp/openui-native-c-input-workspace-tests-v1.log",
+      "passed": 8491,
+      "sha256": "1929acabd13533fc1efddf4bb173503bd9d2c413bd48f67379ae46c131f86c35",
+      "suites": 147
+    }
+  }
+}

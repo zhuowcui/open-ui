@@ -1,0 +1,526 @@
+{
+  "artifacts": [
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/picture-clean-full-v28/full-summary.json",
+      "sha256": "33663e55425a80d744c52498d57aca1a42d9cb1040c960596f230fa13849f836"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/picture-clean-expanded-v28/expanded-summary.json",
+      "sha256": "b87fa4def932631014795ee26b53d661502dbe12a2314c9eed647c5767ef03b4"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/picture-complete-delta-v41.json",
+      "sha256": "676d7a52f985a2a2f861b7911ae722538b9cdcfed4e6312f6a7c395ed10c3846"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/axis-layers-delta-v39.json",
+      "sha256": "08409c9ead7e1489c858c98b58fbc046f02900b676e14f3c9596ab2fdac79477"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/axis-layers-clean-v39/build.json",
+      "sha256": "7f8d53b01d118b8f26729d31617022f126a31e15f18ec1e7146816c29c61d25c"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/axis-layers-clean-v39/renderer-build-identity.json",
+      "sha256": "7644b19462d8aa566e5f6ca8eb3f3cfff6e6ba26cbdd39491898bdf6255041a8"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/axis-layers-clean-v39/source-before-build.json",
+      "sha256": "54c131b1b9f83035335d44081d9e4d3a37076f6dde4be46d887d4f98d6bdda9b"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/axis-layers-clean-v39/source-after-native.json",
+      "sha256": "54c131b1b9f83035335d44081d9e4d3a37076f6dde4be46d887d4f98d6bdda9b"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/axis-layers-clean-v39-comparison-v1.json",
+      "sha256": "b191bac51062f1070d60c59e5ae2f15113dca991ad7e9183f5944740622848b1"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/direction-guards-v2/axis-layers-clean-v39-comparison-v1.json",
+      "sha256": "d5ef989bc6aa024915bff37cd839b3d15c8374b90d1d2ba515e5d603866dfd59"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/axis-layers-build-v39.log",
+      "sha256": "a3d68bcced2c73e330031194bcc495f21e7398e0a5801be646c8aff1a872bad9"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/axis-layers-pixel-build-v40.log",
+      "sha256": "283bdfddf2515ae086e6309ac0138879d43a77ec4fd3d02fe4fbcd8478bb9924"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/backend-trace-v38/metadata.json",
+      "sha256": "b3c95dd4d9d50c1f3f605acda211a02374ca8eb0df49125c751cacbb1e49bb3e"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/backend-trace-v38/layer-review.json",
+      "sha256": "199dc2084979d4e8a8be0883580ada79781bec4a627d977a10ce9a2a3ebd5aa1"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/primary-opaque-layer-borders-v41.json",
+      "sha256": "cc5e7585341301b9745d6e17bf68943c14399e39b3224b3084561431bef4ce33"
+    },
+    {
+      "path": "docs/renderer/evidence/native-viewport-scroll-v1/axis-layers-prototype-v39.patch",
+      "sha256": "7e2205c6e1e30a07acf78acba0c8cdd812689ae2439a411e761ead15cf7e23cb"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/backend-trace-v38/1.25-300x224-hidden-1000-1000/trace.json",
+      "sha256": "6e8699dde71fc4cc4b7ebd435ec95a9d1345cbf4bf8eb8b732cc6d8da0b87359"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/backend-trace-v38/1.25-300x224-auto-1000-1000/trace.json",
+      "sha256": "217df7adad04bfb9eed2a716125129165f7ec14073df2d02e96d8e6fbd5940fe"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/backend-trace-v38/1.25-256x256-scroll-0-0/trace.json",
+      "sha256": "6d614143cbd0a589a6ffcb47078d59f76dc502aa70948c6424e75bbbcceafdf9"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/backend-trace-v38/1.25-256x256-scroll-1000-1000/trace.json",
+      "sha256": "a4d1820a62ea4d6af7de7212d8db728466e0beef50ec426aecffa8798e3f88fe"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/backend-trace-v38/1.5-300x224-hidden-1000-1000/trace.json",
+      "sha256": "f824548db004ef0fc4afa912945ce73ead4d72690475dbad5acde565ae6e997b"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/backend-trace-v38/1.5-300x224-auto-1000-1000/trace.json",
+      "sha256": "f2ccc398df2dff7842d09ecb6dd5058b5c640c0fa21ebb5a5595ab58ce6804a9"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/backend-trace-v38/1.5-256x256-scroll-0-0/trace.json",
+      "sha256": "d4f59055c309526c8d9ebe8e763377ed6fb618ba419aa9cdad6020494cc360eb"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/backend-trace-v38/1.5-256x256-scroll-1000-1000/trace.json",
+      "sha256": "5ed2aab4dd8de4dac0a5b7a21a868a7993315fc7b485d309e9d13d9eb725eaef"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/raster_source-147.50-v41.cc",
+      "sha256": "86d97cb54a2e3d0f49b5292a23c39a6f6696a542d0c9cc79969db267b527e234"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/clear_for_opaque_raster-147.50-v41.cc",
+      "sha256": "0164616d6d54e8b01d8586007b7e0fca919c557ce9beac53aa24d363276fb928"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/pending_layer-147.50-v41.cc",
+      "sha256": "c9a02edce1923262a187bd68cc7ab16421f5189f6ea5dda7ea44e9dea8a0431d"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/content_layer_client_impl-147.50-v41.cc",
+      "sha256": "4ba929969f86df3fc6e79cf64bd970546ca090762f122d85e4dca269f3368c87"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/tile_based_layer_impl-147.50-v41.h",
+      "sha256": "39ab8f02f773a7b1502c5ccc7235810b33bab83da9d3ae844311033ed150dbfc"
+    }
+  ],
+  "axis_layer_candidate": {
+    "applied_to_umbrella": false,
+    "changed_images": 8,
+    "differing_pixels_removed": 1898,
+    "exact_losses": 0,
+    "focused_and_primitive_status": "running on clean cc056cee; no result claimed",
+    "geometry_callbacks_offsets_dimensions_and_teardown_unchanged": true,
+    "native_exact": 684,
+    "native_reports": [
+      {
+        "cases": 250,
+        "changed": [
+          {
+            "after": 374,
+            "before": 377,
+            "case": "256x256-scroll-0-0",
+            "scale": "1.25"
+          },
+          {
+            "after": 434,
+            "before": 437,
+            "case": "256x256-scroll-1000-1000",
+            "scale": "1.25"
+          },
+          {
+            "after": 374,
+            "before": 377,
+            "case": "256x256-scroll--20--20",
+            "scale": "1.25"
+          },
+          {
+            "after": 434,
+            "before": 437,
+            "case": "256x256-scroll-wheel-1000",
+            "scale": "1.25"
+          },
+          {
+            "after": 392,
+            "before": 863,
+            "case": "256x256-scroll-0-0",
+            "scale": "1.5"
+          },
+          {
+            "after": 391,
+            "before": 863,
+            "case": "256x256-scroll-1000-1000",
+            "scale": "1.5"
+          },
+          {
+            "after": 392,
+            "before": 863,
+            "case": "256x256-scroll--20--20",
+            "scale": "1.5"
+          },
+          {
+            "after": 391,
+            "before": 863,
+            "case": "256x256-scroll-wheel-1000",
+            "scale": "1.5"
+          }
+        ],
+        "exact": 196,
+        "exact_losses": [],
+        "newly_exact": [],
+        "pixel_reduction": 1898,
+        "worse": []
+      },
+      {
+        "cases": 600,
+        "changed": [],
+        "exact": 488,
+        "exact_losses": [],
+        "newly_exact": [],
+        "pixel_reduction": 0,
+        "worse": []
+      }
+    ],
+    "native_total": 850,
+    "newly_exact": 0,
+    "owner": "openui-paint",
+    "patch_path": "docs/renderer/evidence/native-viewport-scroll-v1/axis-layers-prototype-v39.patch",
+    "remaining_native_fractional_failures": 166,
+    "reviewed_root_cause": "A forced scrollbar with no scroll range is an ordinary picture on that axis, even when the other scrollbar is a PaintedScrollbarLayer. Chromium merges its adjacent corner into the ordinary picture. The current shared renderer chooses the path globally for both axes.",
+    "source": {
+      "clean": true,
+      "commit": "cc056ceebf84f2f87b3eaa908e6009b2ba92656f",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "d8b482bec8bb0429d58ccbd432b331f87adda5f65d9ac1bac9e362689c9a413d",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "workspace_and_complete_census_status": "still required"
+  },
+  "clip_repair_complete_original_and_expanded_runs": "Still running on immutable clean 1366b72f; no final result claimed",
+  "completed_pre_repair_censuses": {
+    "all_original_rows_unchanged_from_earlier_574864d0": true,
+    "canonical_result_hashes_and_counts_verified": true,
+    "expanded": {
+      "different": 1633,
+      "errors": 0,
+      "exact": 22095,
+      "profile_result_sha256": "b8d21249c21d25c361dc39a796b25c45737c1be8e63ae0cd9fa7bb1ffd4afa11",
+      "total": 23728
+    },
+    "full": {
+      "different": 1632,
+      "errors": 0,
+      "exact": 21292,
+      "profile_result_sha256": "b2bf9978e6aa4003e57b9f4da10c96baf6f053b9e3a09635b1e32e0f43699903",
+      "total": 22924
+    },
+    "observed_exit_codes": {
+      "expanded": 1,
+      "full": 1
+    },
+    "original_rows_identical_across_runs": 22924,
+    "release_qualification": false,
+    "source": {
+      "clean": true,
+      "commit": "8f45444e9884b7e492585f0ce8692b5ee1af3b43",
+      "harness_sha256": "66acd1462d0ca4b465f061b82c9d03aac30219a55b6a3b248ecac6e0fd132923",
+      "source_tree_sha256": "a55f4a897adccbed84573ae5f07348af6f7779d3d9a9a687cbde95bf97234bbc",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_unchanged_and_clean": true
+  },
+  "eight_new_chromium_traces": {
+    "cases": [
+      {
+        "case": "300x224-hidden-1000-1000",
+        "identical_to_immutable_oracle": true,
+        "input_sha256": "8075f870a659d707a77e9ac54ae866273d0aa97d2db15600b64110c1165f0c5b",
+        "oracle_png_sha256": "059f798d80759390055931b5ce41b0e06694d65fd722413f4b6825c8a16a383f",
+        "renderer_event_names": [
+          "DirectRenderer::DrawFrame",
+          "DirectRenderer::DrawRenderPass",
+          "SoftwareRenderer::BeginDrawingFrame",
+          "SoftwareRenderer::DoDrawQuad",
+          "SoftwareRenderer::FinishDrawingFrame",
+          "SoftwareRenderer::SwapBuffers"
+        ],
+        "scale": "1.25",
+        "trace_sha256": "6e8699dde71fc4cc4b7ebd435ec95a9d1345cbf4bf8eb8b732cc6d8da0b87359",
+        "traced_png_sha256": "059f798d80759390055931b5ce41b0e06694d65fd722413f4b6825c8a16a383f"
+      },
+      {
+        "case": "300x224-auto-1000-1000",
+        "identical_to_immutable_oracle": true,
+        "input_sha256": "c9754a65d41cc854fb57fb5b4957abbce0413544559f76e9706614b0f5df99ed",
+        "oracle_png_sha256": "a04ecfb753c400fac7b00cf3c2f6a36f8628439531fe5f7cb15a74d679429bbe",
+        "renderer_event_names": [
+          "DirectRenderer::DrawFrame",
+          "DirectRenderer::DrawRenderPass",
+          "SoftwareRenderer::BeginDrawingFrame",
+          "SoftwareRenderer::DoDrawQuad",
+          "SoftwareRenderer::FinishDrawingFrame",
+          "SoftwareRenderer::SwapBuffers"
+        ],
+        "scale": "1.25",
+        "trace_sha256": "217df7adad04bfb9eed2a716125129165f7ec14073df2d02e96d8e6fbd5940fe",
+        "traced_png_sha256": "a04ecfb753c400fac7b00cf3c2f6a36f8628439531fe5f7cb15a74d679429bbe"
+      },
+      {
+        "case": "256x256-scroll-0-0",
+        "identical_to_immutable_oracle": true,
+        "input_sha256": "8f082a7d7be573c4371cc5aafdbecba95086677a2189cd5acfe3292fc4862ab0",
+        "oracle_png_sha256": "8dd1c454a4be4ffced7593e2ad1ce8ddf53b0c0d32e1aae134a10b19b6473d3b",
+        "renderer_event_names": [
+          "DirectRenderer::DrawFrame",
+          "DirectRenderer::DrawRenderPass",
+          "SoftwareRenderer::BeginDrawingFrame",
+          "SoftwareRenderer::DoDrawQuad",
+          "SoftwareRenderer::FinishDrawingFrame",
+          "SoftwareRenderer::SwapBuffers"
+        ],
+        "scale": "1.25",
+        "trace_sha256": "6d614143cbd0a589a6ffcb47078d59f76dc502aa70948c6424e75bbbcceafdf9",
+        "traced_png_sha256": "8dd1c454a4be4ffced7593e2ad1ce8ddf53b0c0d32e1aae134a10b19b6473d3b"
+      },
+      {
+        "case": "256x256-scroll-1000-1000",
+        "identical_to_immutable_oracle": true,
+        "input_sha256": "8f082a7d7be573c4371cc5aafdbecba95086677a2189cd5acfe3292fc4862ab0",
+        "oracle_png_sha256": "be3952764fa647d0d9291021754f08c335ca8c1eaa416cf1c92e3b62ef34b353",
+        "renderer_event_names": [
+          "DirectRenderer::DrawFrame",
+          "DirectRenderer::DrawRenderPass",
+          "SoftwareRenderer::BeginDrawingFrame",
+          "SoftwareRenderer::DoDrawQuad",
+          "SoftwareRenderer::FinishDrawingFrame",
+          "SoftwareRenderer::SwapBuffers"
+        ],
+        "scale": "1.25",
+        "trace_sha256": "a4d1820a62ea4d6af7de7212d8db728466e0beef50ec426aecffa8798e3f88fe",
+        "traced_png_sha256": "be3952764fa647d0d9291021754f08c335ca8c1eaa416cf1c92e3b62ef34b353"
+      },
+      {
+        "case": "300x224-hidden-1000-1000",
+        "identical_to_immutable_oracle": true,
+        "input_sha256": "8075f870a659d707a77e9ac54ae866273d0aa97d2db15600b64110c1165f0c5b",
+        "oracle_png_sha256": "47ef0343704b30aba59eb8f2e46725d22d4a128e239b1a7453c3031ae4feee42",
+        "renderer_event_names": [
+          "DirectRenderer::DrawFrame",
+          "DirectRenderer::DrawRenderPass",
+          "SoftwareRenderer::BeginDrawingFrame",
+          "SoftwareRenderer::DoDrawQuad",
+          "SoftwareRenderer::FinishDrawingFrame",
+          "SoftwareRenderer::SwapBuffers"
+        ],
+        "scale": "1.5",
+        "trace_sha256": "f824548db004ef0fc4afa912945ce73ead4d72690475dbad5acde565ae6e997b",
+        "traced_png_sha256": "47ef0343704b30aba59eb8f2e46725d22d4a128e239b1a7453c3031ae4feee42"
+      },
+      {
+        "case": "300x224-auto-1000-1000",
+        "identical_to_immutable_oracle": true,
+        "input_sha256": "c9754a65d41cc854fb57fb5b4957abbce0413544559f76e9706614b0f5df99ed",
+        "oracle_png_sha256": "d3b4ae0e127dcc4badcc4b11c2be4b3fb3426eabf159d419b7ed9bd24418bf94",
+        "renderer_event_names": [
+          "DirectRenderer::DrawFrame",
+          "DirectRenderer::DrawRenderPass",
+          "SoftwareRenderer::BeginDrawingFrame",
+          "SoftwareRenderer::DoDrawQuad",
+          "SoftwareRenderer::FinishDrawingFrame",
+          "SoftwareRenderer::SwapBuffers"
+        ],
+        "scale": "1.5",
+        "trace_sha256": "f2ccc398df2dff7842d09ecb6dd5058b5c640c0fa21ebb5a5595ab58ce6804a9",
+        "traced_png_sha256": "d3b4ae0e127dcc4badcc4b11c2be4b3fb3426eabf159d419b7ed9bd24418bf94"
+      },
+      {
+        "case": "256x256-scroll-0-0",
+        "identical_to_immutable_oracle": true,
+        "input_sha256": "8f082a7d7be573c4371cc5aafdbecba95086677a2189cd5acfe3292fc4862ab0",
+        "oracle_png_sha256": "fd929ce966d66cff4e7a0ab7c342e2320bc4f90f0c341e5172f221f6b483bfde",
+        "renderer_event_names": [
+          "DirectRenderer::DrawFrame",
+          "DirectRenderer::DrawRenderPass",
+          "SoftwareRenderer::BeginDrawingFrame",
+          "SoftwareRenderer::DoDrawQuad",
+          "SoftwareRenderer::FinishDrawingFrame",
+          "SoftwareRenderer::SwapBuffers"
+        ],
+        "scale": "1.5",
+        "trace_sha256": "d4f59055c309526c8d9ebe8e763377ed6fb618ba419aa9cdad6020494cc360eb",
+        "traced_png_sha256": "fd929ce966d66cff4e7a0ab7c342e2320bc4f90f0c341e5172f221f6b483bfde"
+      },
+      {
+        "case": "256x256-scroll-1000-1000",
+        "identical_to_immutable_oracle": true,
+        "input_sha256": "8f082a7d7be573c4371cc5aafdbecba95086677a2189cd5acfe3292fc4862ab0",
+        "oracle_png_sha256": "8077c1b4b3236fad601694408b242ab3089fd5936fca24dc46678fac3f73d3e0",
+        "renderer_event_names": [
+          "DirectRenderer::DrawFrame",
+          "DirectRenderer::DrawRenderPass",
+          "SoftwareRenderer::BeginDrawingFrame",
+          "SoftwareRenderer::DoDrawQuad",
+          "SoftwareRenderer::FinishDrawingFrame",
+          "SoftwareRenderer::SwapBuffers"
+        ],
+        "scale": "1.5",
+        "trace_sha256": "5ed2aab4dd8de4dac0a5b7a21a868a7993315fc7b485d309e9d13d9eb725eaef",
+        "traced_png_sha256": "8077c1b4b3236fad601694408b242ab3089fd5936fca24dc46678fac3f73d3e0"
+      }
+    ],
+    "chromium_binary_sha256": "0ba87684df0afc11faaea40ac57bd2f1d68b67191443b38215a36b90e6f08848",
+    "gpu_feature_status": {
+      "2d_canvas": "disabled_software",
+      "direct_rendering_display_compositor": "disabled_off_ok",
+      "gpu_compositing": "disabled_software",
+      "multiple_raster_threads": "disabled_off",
+      "opengl": "disabled_off",
+      "rasterization": "disabled_software",
+      "raw_draw": "disabled_off_ok",
+      "skia_graphite": "disabled_off",
+      "trees_in_viz": "disabled_off",
+      "video_decode": "disabled_software",
+      "video_encode": "disabled_software",
+      "vulkan": "disabled_off",
+      "webgl": "disabled_off",
+      "webgpu": "disabled_off",
+      "webgpu_on_vk_via_gl_interop": "disabled_off",
+      "webnn": "disabled_off"
+    },
+    "javascript_executed_by_openui": false,
+    "probe_sha256": "2767bcd59bef06fa0c2d80db04d8e8e5c73f860c9aaf0a13edf569d0ffe81415"
+  },
+  "generator_metadata_caveat": "The immutable 8f45444e clone preserves the older 202-field inventory guard and 55-scenario manifest. Main repairs both; these complete pixel reports do not claim all source gates pass on that historical clone.",
+  "hosted_checkpoint": {
+    "checks": [
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37019437174/job/110878461522",
+        "name": "native-sanitizers",
+        "state": "SKIPPED",
+        "workflow": "v0.2 Hardening"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37019437550/job/110878407936",
+        "name": "clang-format",
+        "state": "SUCCESS",
+        "workflow": "Format Check"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37019437014/job/110878404708",
+        "name": "historical-pixel-audit",
+        "state": "SUCCESS",
+        "workflow": "CI"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37019437550/job/110878408195",
+        "name": "gn-format",
+        "state": "SUCCESS",
+        "workflow": "Format Check"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37019437014/job/110878404952",
+        "name": "python-accountability",
+        "state": "SUCCESS",
+        "workflow": "CI"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37019437014/job/110878404227",
+        "name": "rust-parity",
+        "state": "SUCCESS",
+        "workflow": "CI"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37019437174/job/110878405433",
+        "name": "conformance-and-platform",
+        "state": "SUCCESS",
+        "workflow": "v0.2 Hardening"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37019437174/job/110878406550",
+        "name": "msrv",
+        "state": "SKIPPED",
+        "workflow": "v0.2 Hardening"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37019437174/job/110878407444",
+        "name": "miri-handles",
+        "state": "SKIPPED",
+        "workflow": "v0.2 Hardening"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37019437174/job/110878407348",
+        "name": "c-undefined-sanitizer",
+        "state": "SKIPPED",
+        "workflow": "v0.2 Hardening"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37019437174/job/110878407012",
+        "name": "fuzz-smoke",
+        "state": "SKIPPED",
+        "workflow": "v0.2 Hardening"
+      }
+    ],
+    "hardening_skipped_not_passed": 5,
+    "head": "50dc0c1e97449fcdd2c44b7ad8f5575657359bc7",
+    "ordinary_successes": 6
+  },
+  "javascript_executed_by_openui": false,
+  "opaque_layer_edge_investigation": {
+    "finding": "Pinned Chromium selects a background color from large paint chunks and clears boundary texels of opaque rasters with that color before playback. The trace marks the reduced scrolling content layer opaque. This is a candidate explanation for terminal-row/column color differences and requires retained layer bounds, background and clipping data rather than output pixel changes.",
+    "owner": "openui-paint/openui-compositor",
+    "primary_sources": [
+      {
+        "matches_local_147_24": true,
+        "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/raster_source-147.50-v41.cc",
+        "sha256": "86d97cb54a2e3d0f49b5292a23c39a6f6696a542d0c9cc79969db267b527e234",
+        "source_path": "cc/raster/raster_source.cc",
+        "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/cc/raster/raster_source.cc?format=TEXT"
+      },
+      {
+        "matches_local_147_24": true,
+        "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/clear_for_opaque_raster-147.50-v41.cc",
+        "sha256": "0164616d6d54e8b01d8586007b7e0fca919c557ce9beac53aa24d363276fb928",
+        "source_path": "cc/paint/clear_for_opaque_raster.cc",
+        "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/cc/paint/clear_for_opaque_raster.cc?format=TEXT"
+      },
+      {
+        "matches_local_147_24": true,
+        "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/pending_layer-147.50-v41.cc",
+        "sha256": "c9a02edce1923262a187bd68cc7ab16421f5189f6ea5dda7ea44e9dea8a0431d",
+        "source_path": "third_party/blink/renderer/platform/graphics/compositing/pending_layer.cc",
+        "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/third_party/blink/renderer/platform/graphics/compositing/pending_layer.cc?format=TEXT"
+      },
+      {
+        "matches_local_147_24": true,
+        "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/content_layer_client_impl-147.50-v41.cc",
+        "sha256": "4ba929969f86df3fc6e79cf64bd970546ca090762f122d85e4dca269f3368c87",
+        "source_path": "third_party/blink/renderer/platform/graphics/compositing/content_layer_client_impl.cc",
+        "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/third_party/blink/renderer/platform/graphics/compositing/content_layer_client_impl.cc?format=TEXT"
+      },
+      {
+        "matches_local_147_24": true,
+        "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/tile_based_layer_impl-147.50-v41.h",
+        "sha256": "39ab8f02f773a7b1502c5ccc7235810b33bab83da9d3ae844311033ed150dbfc",
+        "source_path": "cc/layers/tile_based_layer_impl.h",
+        "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/cc/layers/tile_based_layer_impl.h?format=TEXT"
+      }
+    ],
+    "status": "primary-source finding; implementation and exact qualification still required"
+  },
+  "release_qualification": false,
+  "schema_version": 1,
+  "scroll_snap_hypothesis": "Rejected: hidden and visible root scrolling both use snapped screen-space translations. No unsnapped-offset patch is applied."
+}

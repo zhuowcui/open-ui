@@ -1,0 +1,218 @@
+{
+  "all_commands_terminal": true,
+  "all_six_native_guards_executed_and_passed_in_hosted_parity": true,
+  "failed_jobs": 0,
+  "javascript_executed_by_openui": false,
+  "job_logs": [
+    {
+      "capture_actual_exit": 0,
+      "conclusion": "success",
+      "executed_steps": 6,
+      "job_id": 112088836889,
+      "name": "clang-format",
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-v1819/112088836889.log",
+      "run_id": 37407697770,
+      "sha256": "c969a2db210594323580c7f89de9734bc461f8a3acd93e58382a2dd8b459ed1c"
+    },
+    {
+      "capture_actual_exit": 0,
+      "conclusion": "success",
+      "executed_steps": 6,
+      "job_id": 112088837124,
+      "name": "gn-format",
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-v1819/112088837124.log",
+      "run_id": 37407697770,
+      "sha256": "452b61dc6c2953b872c4e341527a4d4ed81711fee81427f9033fbcdbb40e67d3"
+    },
+    {
+      "capture_actual_exit": 0,
+      "conclusion": "success",
+      "executed_steps": 10,
+      "job_id": 112088836811,
+      "name": "rust-parity",
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-v1819/112088836811.log",
+      "run_id": 37407697750,
+      "sha256": "bae0e7a4904556394cda4ee44828b77a6ce7df5d49874436af82d3d7cf5b29da"
+    },
+    {
+      "capture_actual_exit": 0,
+      "conclusion": "success",
+      "executed_steps": 6,
+      "job_id": 112088836916,
+      "name": "historical-pixel-audit",
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-v1819/112088836916.log",
+      "run_id": 37407697750,
+      "sha256": "3846eb7c7e61be670521088260b24cf0de94c8bbc92fd3c276af780455324e14"
+    },
+    {
+      "capture_actual_exit": 0,
+      "conclusion": "success",
+      "executed_steps": 14,
+      "job_id": 112088836992,
+      "name": "python-accountability",
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-v1819/112088836992.log",
+      "run_id": 37407697750,
+      "sha256": "cd18a5bb7e0634ebdc723722f818a41d813a98af337e7772ee417f8cc1939794"
+    },
+    {
+      "capture_actual_exit": 0,
+      "conclusion": "success",
+      "executed_steps": 15,
+      "job_id": 112088837213,
+      "name": "conformance-and-platform",
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-v1819/112088837213.log",
+      "run_id": 37407697920,
+      "sha256": "64305af0db7a94a3608a1ff1b1043963f7134b23d2a43c026ab1c14651573dc4"
+    },
+    {
+      "conclusion": "skipped",
+      "executed_steps": 0,
+      "job_id": 112088838038,
+      "name": "c-undefined-sanitizer",
+      "run_id": 37407697920
+    },
+    {
+      "conclusion": "skipped",
+      "executed_steps": 0,
+      "job_id": 112088838166,
+      "name": "native-sanitizers",
+      "run_id": 37407697920
+    },
+    {
+      "conclusion": "skipped",
+      "executed_steps": 0,
+      "job_id": 112088838219,
+      "name": "miri-handles",
+      "run_id": 37407697920
+    },
+    {
+      "conclusion": "skipped",
+      "executed_steps": 0,
+      "job_id": 112088838432,
+      "name": "fuzz-smoke",
+      "run_id": 37407697920
+    },
+    {
+      "conclusion": "skipped",
+      "executed_steps": 0,
+      "job_id": 112088838633,
+      "name": "msrv",
+      "run_id": 37407697920
+    },
+    {
+      "capture_actual_exit": 0,
+      "conclusion": "success",
+      "executed_steps": 7,
+      "job_id": 112088828295,
+      "name": "miri-handles",
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-v1819/112088828295.log",
+      "run_id": 37407693299,
+      "sha256": "b2d5ebf99a9e449bc0c02f1b3957ec727ad8febdc41b9656bc6199cebe181d8c"
+    },
+    {
+      "capture_actual_exit": 0,
+      "conclusion": "success",
+      "executed_steps": 6,
+      "job_id": 112088828421,
+      "name": "native-sanitizers (address)",
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-v1819/112088828421.log",
+      "run_id": 37407693299,
+      "sha256": "8744b124938b0a430f041ad1566b8c737d9820a5eac04fdddd1c88b75038fba2"
+    },
+    {
+      "capture_actual_exit": 0,
+      "conclusion": "success",
+      "executed_steps": 6,
+      "job_id": 112088828422,
+      "name": "native-sanitizers (leak)",
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-v1819/112088828422.log",
+      "run_id": 37407693299,
+      "sha256": "3899e6a572e0b906e7765abbf5b7a2ce53378db26d048b122968a3d977acbd2f"
+    },
+    {
+      "capture_actual_exit": 0,
+      "conclusion": "success",
+      "executed_steps": 6,
+      "job_id": 112088828431,
+      "name": "fuzz-smoke",
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-v1819/112088828431.log",
+      "run_id": 37407693299,
+      "sha256": "6577b5675316f349aa428dc8762f421cbaa52e6d1707dcacdc4072bc03007b27"
+    },
+    {
+      "capture_actual_exit": 0,
+      "conclusion": "success",
+      "executed_steps": 15,
+      "job_id": 112088828474,
+      "name": "conformance-and-platform",
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-v1819/112088828474.log",
+      "run_id": 37407693299,
+      "sha256": "c34d17d4043134b79c5739eece9c00391d4fb71c862b28d124a98f314beb96c5"
+    },
+    {
+      "capture_actual_exit": 0,
+      "conclusion": "success",
+      "executed_steps": 6,
+      "job_id": 112088828545,
+      "name": "c-undefined-sanitizer",
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-v1819/112088828545.log",
+      "run_id": 37407693299,
+      "sha256": "1957d3814c8074b8fa1493326500acc5b43fcb84eda3a626a9d58a7fe33fe715"
+    },
+    {
+      "capture_actual_exit": 0,
+      "conclusion": "success",
+      "executed_steps": 6,
+      "job_id": 112088828573,
+      "name": "msrv",
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-v1819/112088828573.log",
+      "run_id": 37407693299,
+      "sha256": "b0951b5a1671904ce0a5b9d2bbb5d0000c3dd341153387bbf8d8abb62028e982"
+    }
+  ],
+  "native_guard_log_observations": {
+    "default_native_constructors_preserve_rendering_and_configuration": true,
+    "native_raster_selection_survives_callbacks_cloning_and_resize": true,
+    "property::tests::native_fragment_keyword_values_cover_declared_enum_variants": true,
+    "selecting_ganesh_does_not_fall_back_to_cpu_raster": true,
+    "tests::native_fragment_keywords_reach_engine_and_keep_owned_property_identity": true,
+    "window_and_headless_apps_keep_explicit_native_raster_selection": true
+  },
+  "probe_sha256": "c8cba26b535dfe54193b0b14bcb2adc9f1ee22239e8d12661da8dc1fd89e28d1",
+  "release_qualification": false,
+  "schema_version": 1,
+  "skipped_jobs": 5,
+  "skipped_jobs_are_not_release_passes": true,
+  "source": "16187f4f54e1b62ea317a155f620c42f91a38c72",
+  "successful_jobs": 13,
+  "workflows": [
+    {
+      "attempt": 1,
+      "conclusion": "success",
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-v1819/37407697770.json",
+      "run_id": 37407697770,
+      "sha256": "6ff994f9669df6c43e13501c6010b70f7fc727b80eae88cad83881db33ceff46"
+    },
+    {
+      "attempt": 1,
+      "conclusion": "success",
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-v1819/37407697750.json",
+      "run_id": 37407697750,
+      "sha256": "324534d5f1543c33601fc913f2fe74983f063ca829c6f5ab07a94047b4612fc4"
+    },
+    {
+      "attempt": 1,
+      "conclusion": "success",
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-v1819/37407697920.json",
+      "run_id": 37407697920,
+      "sha256": "4f19915440fcf36c46614d264434dc19d1d33baa7829783c85da63518100fa95"
+    },
+    {
+      "attempt": 1,
+      "conclusion": "success",
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-v1819/37407693299.json",
+      "run_id": 37407693299,
+      "sha256": "592696bee98a5a047b7041b392f992e9edbc9c3094afbd68948bd0bc480df21a"
+    }
+  ]
+}

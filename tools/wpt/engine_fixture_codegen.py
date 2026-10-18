@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
-"""Lower legacy porter Rust into immutable, Engine-backed fixtures.
+"""Lower porter Rust into Engine-backed native snapshot builders.
 
-The porter still computes already-resolved values, but emitted Rust never
-receives a mutable DOM node or ComputedStyle. This pass is deterministic and
-also provides the renderer-contract source audit used by CI.
+The porter computes already-resolved values, but emitted Rust never receives
+mutable DOM nodes or computed styles. Native builders are implementation code
+and can be regenerated from unchanged Chromium inputs. Reference pixels and
+historical archive bytes retain their identities. This deterministic pass also
+provides the renderer-contract source audit used by CI.
 """
 
 from __future__ import annotations
@@ -289,7 +291,31 @@ def _builder_bodies(source: str) -> str:
         offset = end + 1
 
 
+def native_control_geometry_request(node: str, role: str) -> str:
+    """One typed, dimension-free request shared by normal and narrow generation."""
+    if not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", node):
+        raise ValueError("native control geometry requires a handle variable")
+    if role not in {"TextInput", "TextArea"}:
+        raise ValueError("native control geometry requires a text-control role")
+    return f"doc.request_native_control_geometry({node}, openui_dom::FormControlRole::{role});"
+
+
+def native_control_geometry_requests(source: str) -> list[tuple[str, str]]:
+    marker = "doc.request_native_control_geometry"
+    pattern = re.compile(
+        r"doc\.request_native_control_geometry\s*\(\s*"
+        r"([A-Za-z_][A-Za-z0-9_]*)\s*,\s*"
+        r"openui_dom::FormControlRole::(TextInput|TextArea)\s*,?\s*\)\s*;"
+    )
+    matches = list(pattern.finditer(source))
+    if source.count(marker) != len(matches):
+        raise ValueError("unsupported native control geometry directive")
+    requests = [(match.group(1), match.group(2)) for match in matches]
+    return requests
+
+
 def engineify_module(source: str) -> str:
+    native_control_geometry_requests(source)
     source = source.replace(
         "use openui_dom::{Document, ElementTag, NodeId};",
         "use openui_dom::ElementTag;\n"

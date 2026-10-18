@@ -1,0 +1,47 @@
+warning: version qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/examples/counter#0.2.0` is ignored, cleaning all versions of `counter` found
+warning: url qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/examples/counter#0.2.0` ignored, cleaning all versions of `counter` found
+warning: version qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/examples/dashboard#0.2.0` is ignored, cleaning all versions of `dashboard` found
+warning: url qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/examples/dashboard#0.2.0` ignored, cleaning all versions of `dashboard` found
+warning: version qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/examples/framework-test#0.2.0` is ignored, cleaning all versions of `framework-test` found
+warning: url qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/examples/framework-test#0.2.0` ignored, cleaning all versions of `framework-test` found
+warning: version qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/examples/hello#0.2.0` is ignored, cleaning all versions of `hello` found
+warning: url qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/examples/hello#0.2.0` ignored, cleaning all versions of `hello` found
+warning: version qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/examples/todo#0.2.0` is ignored, cleaning all versions of `todo` found
+warning: url qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/examples/todo#0.2.0` ignored, cleaning all versions of `todo` found
+warning: version qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/openui#0.2.0` is ignored, cleaning all versions of `openui` found
+warning: url qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/openui#0.2.0` ignored, cleaning all versions of `openui` found
+warning: version qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/openui-compositor#0.2.0` is ignored, cleaning all versions of `openui-compositor` found
+warning: url qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/openui-compositor#0.2.0` ignored, cleaning all versions of `openui-compositor` found
+warning: version qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/openui-dom#0.2.0` is ignored, cleaning all versions of `openui-dom` found
+warning: url qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/openui-dom#0.2.0` ignored, cleaning all versions of `openui-dom` found
+warning: version qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/openui-engine#0.2.0` is ignored, cleaning all versions of `openui-engine` found
+warning: url qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/openui-engine#0.2.0` ignored, cleaning all versions of `openui-engine` found
+warning: version qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/openui-ffi#0.2.0` is ignored, cleaning all versions of `openui-ffi` found
+warning: url qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/openui-ffi#0.2.0` ignored, cleaning all versions of `openui-ffi` found
+warning: version qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/openui-geometry#0.2.0` is ignored, cleaning all versions of `openui-geometry` found
+warning: url qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/openui-geometry#0.2.0` ignored, cleaning all versions of `openui-geometry` found
+warning: version qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/openui-layout#0.2.0` is ignored, cleaning all versions of `openui-layout` found
+warning: url qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/openui-layout#0.2.0` ignored, cleaning all versions of `openui-layout` found
+warning: version qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/openui-macros#0.2.0` is ignored, cleaning all versions of `openui-macros` found
+warning: url qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/openui-macros#0.2.0` ignored, cleaning all versions of `openui-macros` found
+warning: version qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/openui-paint#0.2.0` is ignored, cleaning all versions of `openui-paint` found
+warning: url qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/openui-paint#0.2.0` ignored, cleaning all versions of `openui-paint` found
+warning: version qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/openui-platform#0.2.0` is ignored, cleaning all versions of `openui-platform` found
+warning: url qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/openui-platform#0.2.0` ignored, cleaning all versions of `openui-platform` found
+warning: version qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/openui-style#0.2.0` is ignored, cleaning all versions of `openui-style` found
+warning: url qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/openui-style#0.2.0` ignored, cleaning all versions of `openui-style` found
+warning: version qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/openui-text#0.2.0` is ignored, cleaning all versions of `openui-text` found
+warning: url qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/openui-text#0.2.0` ignored, cleaning all versions of `openui-text` found
+warning: version qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/pixel-compare#0.1.0` is ignored, cleaning all versions of `pixel-compare` found
+warning: url qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/pixel-compare#0.1.0` ignored, cleaning all versions of `pixel-compare` found
+warning: version qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/vendor/bytemuck-v1#bytemuck@1.25.0` is ignored, cleaning all versions of `bytemuck` found
+warning: url qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/vendor/bytemuck-v1#bytemuck@1.25.0` ignored, cleaning all versions of `bytemuck` found
+warning: version qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/vendor/bytemuck_derive-v1#bytemuck_derive@1.10.2` is ignored, cleaning all versions of `bytemuck_derive` found
+warning: url qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/vendor/bytemuck_derive-v1#bytemuck_derive@1.10.2` ignored, cleaning all versions of `bytemuck_derive` found
+warning: version qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/vendor/font-types-v0_11#font-types@0.11.0` is ignored, cleaning all versions of `font-types` found
+warning: url qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/vendor/font-types-v0_11#font-types@0.11.0` ignored, cleaning all versions of `font-types` found
+warning: version qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/vendor/read-fonts-v0_37#read-fonts@0.37.0` is ignored, cleaning all versions of `read-fonts` found
+warning: url qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/vendor/read-fonts-v0_37#read-fonts@0.37.0` ignored, cleaning all versions of `read-fonts` found
+warning: version qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/vendor/skrifa-v0_40#skrifa@0.40.0` is ignored, cleaning all versions of `skrifa` found
+warning: url qualifier in `-p path+file:///home/nero/code/open-ui/bindings/rust/vendor/skrifa-v0_40#skrifa@0.40.0` ignored, cleaning all versions of `skrifa` found
+     Removed 132 files, 399.1MiB total

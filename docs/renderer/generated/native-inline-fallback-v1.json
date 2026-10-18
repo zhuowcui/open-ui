@@ -1,0 +1,468 @@
+{
+  "accepted_renderer_unchanged": true,
+  "all_30_struct_layouts_unchanged": true,
+  "applied_to_umbrella": false,
+  "artifact_bytes": 2872734,
+  "artifact_count": 71,
+  "artifacts": [
+    {
+      "bytes": 3348,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/queue-prepared.json",
+      "sha256": "13732dd2d57c1f3d5af289e522c0493ba452d4afdf81b3eeafa21a2f5a824817"
+    },
+    {
+      "bytes": 6620,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/openui-native-inline-fallback-build-v1575.py",
+      "sha256": "be29fa44f59ef4acd815e8324b80b532464454ff5acc55a8c8fde177b82e7610"
+    },
+    {
+      "bytes": 7847,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/openui-native-inline-fallback-guards-v1575.py",
+      "sha256": "052b75510b60bbbe7c222c7ffd2518e8e07b707dc68ee32ef1d2302cba06ef0b"
+    },
+    {
+      "bytes": 2099,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/openui-native-inline-fallback-matrices-v1575.py",
+      "sha256": "3463210a9c56157778fc664d77672911f305b3fa3cd29860c26ccc6b1d8ef5cd"
+    },
+    {
+      "bytes": 8221,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/openui-native-inline-fallback-pipeline-v1576.py",
+      "sha256": "d6562d1885ebc5fdf4741b786af4fab145a7b1228662cc049852e8d6842d2aa8"
+    },
+    {
+      "bytes": 8388,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/openui-native-inline-fallback-resource-consumer-v1575.py",
+      "sha256": "e01db7a9cc233108dda6a3644d98c741495a1b75767da30d888d8dbd80881280"
+    },
+    {
+      "bytes": 9572,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/openui-native-inline-fallback-transition-consumer-v1575.py",
+      "sha256": "6b02919202197b2c4c47834d5aec94e073985aa74312d22f9e206e51efff0cf7"
+    },
+    {
+      "bytes": 2852,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/openui-native-inline-fallback-checks-v1569.py",
+      "sha256": "e180baa6df686b27fecb5cca97d2dd10b65793f078dc87191691b004f41209a5"
+    },
+    {
+      "bytes": 6874,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/openui-native-inline-fallback-geometry-v1570.py",
+      "sha256": "d7c3a12ac6bf7ada4f0791e206559a884a25fe1d63b0f1964f9a011ed559a983"
+    },
+    {
+      "bytes": 12721,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/openui-native-inline-fallback-retry-prepare-v1575.py",
+      "sha256": "3125074581bd0b398bee5a4f1a5a739cdede6b9c35cff2a4fcd13659b4bf3bbc"
+    },
+    {
+      "bytes": 5388,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/read-only-checks.json",
+      "sha256": "8a385cbe35f25b59fdbc9dab0bdfba55b46d573e419ffea69171d3de85999858"
+    },
+    {
+      "bytes": 81,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/check-renderer.log",
+      "sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691"
+    },
+    {
+      "bytes": 59,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/check-multicol.log",
+      "sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222"
+    },
+    {
+      "bytes": 86,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/check-sp17.log",
+      "sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a"
+    },
+    {
+      "bytes": 121,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/check-sp18.log",
+      "sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763"
+    },
+    {
+      "bytes": 142,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/check-sp20.log",
+      "sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d"
+    },
+    {
+      "bytes": 63,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/check-v02.log",
+      "sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd"
+    },
+    {
+      "bytes": 37,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/check-style.log",
+      "sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1"
+    },
+    {
+      "bytes": 32,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/check-ffi.log",
+      "sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821"
+    },
+    {
+      "bytes": 45,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/check-archive.log",
+      "sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32"
+    },
+    {
+      "bytes": 2867,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/check-accountability.log",
+      "sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1"
+    },
+    {
+      "bytes": 0,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/check-c-syntax.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/check-cpp-syntax.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/check-rust-format.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 87410,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/chromium-geometry.json",
+      "sha256": "e9532bcfdae6a68e50c349b61723606ed0250f383c7b4f480430d8dd01fc6b4a"
+    },
+    {
+      "bytes": 567,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/phase-0.html",
+      "sha256": "18018f310638a126b25f587f829580fc7eade04437c69362902f3073e3513485"
+    },
+    {
+      "bytes": 569,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/phase-0.25.html",
+      "sha256": "85b133d1536176cdbec8e5fc8848d8fb47489ded58efb82221019d85b5ac8ea3"
+    },
+    {
+      "bytes": 567,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/phase-0.5.html",
+      "sha256": "2e845ae4d1dd59587b116535a2cbae5a3bb4270b7e63d356c3fda2002aced93e"
+    },
+    {
+      "bytes": 5985,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/native_inline_fallback.rs",
+      "sha256": "d20b1f82abf7810c313220a1c7978cace66931ed8241e9be0def3cfd567682fa"
+    },
+    {
+      "bytes": 275,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/green-200.png",
+      "sha256": "d49ce16b513fa1b4fcf1431bc2915799ee8effb452820f35e9e6fba251e8cafe"
+    },
+    {
+      "bytes": 8553,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/inline_replaced.c",
+      "sha256": "fd0b563b41b62560d451fc792a8ef0299aab0d911b7b94df9f6b65bb1ec75ce7"
+    },
+    {
+      "bytes": 92,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/inline_replaced.cc",
+      "sha256": "c6f82438c6e16283482c9e94c6be2c1a1b1162915e0a7dcc966ee3ac6ebe9690"
+    },
+    {
+      "bytes": 41260,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/native-api-and-guards.patch",
+      "sha256": "dc0465a03cd85b814871d4d3f0b7e995c2033cbbd247981c305547a5a95dcc2c"
+    },
+    {
+      "bytes": 1520,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/fallback-renderer.patch",
+      "sha256": "ea9fb60e8327c959ccceac4acebe2a2a1779dd3dc712080b0d0875326cb4a732"
+    },
+    {
+      "bytes": 7132,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/owner-at-observation.json",
+      "sha256": "dc3bcecb04a1c3169acd9e5831b63291b9692a3e3ca4f78798053806fdbae634"
+    },
+    {
+      "bytes": 3342,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/superseded-prelaunch-queue.json",
+      "sha256": "b859bef84d6855de70641c4061f85b51d22ee5a530efce9db1ee125878ebc8b6"
+    },
+    {
+      "bytes": 6614,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/superseded-openui-native-inline-fallback-build-v1571.py",
+      "sha256": "a12998379bc1845495b9f84f67b44a0c5f64ea4bb90b21cf08edea355475d574"
+    },
+    {
+      "bytes": 7841,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/superseded-openui-native-inline-fallback-guards-v1571.py",
+      "sha256": "c20f821ecc9192d386116182584c40de8ee54627490c36d331ded34be70820b4"
+    },
+    {
+      "bytes": 2093,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/superseded-openui-native-inline-fallback-matrices-v1571.py",
+      "sha256": "d6a0d06920c1ccacd0e90450cd98b1bd70a0dbb7f25d9889dfcb4d0174df519a"
+    },
+    {
+      "bytes": 8190,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/superseded-openui-native-inline-fallback-pipeline-v1572.py",
+      "sha256": "5a4489ccb9f5ca9b47bbeead3d9c18ff792c52ece9f2db63b3b7151487cb85b5"
+    },
+    {
+      "bytes": 8382,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/superseded-openui-native-inline-fallback-resource-consumer-v1571.py",
+      "sha256": "84b6e6c5c90a74d407c3dc18118bfb74b9410713a4374a4ed678da89c71568cf"
+    },
+    {
+      "bytes": 9465,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/superseded-openui-native-inline-fallback-transition-consumer-v1571.py",
+      "sha256": "dd218d5e5e9953d1715de077607f0e27f5d7c410c42a3ab56d4b0b16be6b916b"
+    },
+    {
+      "bytes": 12349,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/superseded-openui-native-inline-fallback-prepare-v1571.py",
+      "sha256": "9e1d681ddd001a9a087bcecb172a483f29670e3662198f5650fc4e5d17162822"
+    },
+    {
+      "bytes": 22330,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/umbrella-hosted.json",
+      "sha256": "9dfa1b499d2e3cdc198130a87e32ab098fff75bace944abddf8119bc8767d27b"
+    },
+    {
+      "bytes": 8994,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/umbrella-37331496712.json",
+      "sha256": "0a58e26ab777da5b6bfce3ae891fc7b39d6f724a58ee52b12abd0de4da5a7954"
+    },
+    {
+      "bytes": 1409460,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/umbrella-37331496712.log",
+      "sha256": "606c655dcb4b471759b3747ee8be87b88724e59d335353f7e176e10fe151a55f"
+    },
+    {
+      "bytes": 3932,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/umbrella-37331497030.json",
+      "sha256": "37ff934e20e4278c87ba0ce80a0b34a32ccd102291ecdc959e0fa64f5334e514"
+    },
+    {
+      "bytes": 59966,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/umbrella-37331497030.log",
+      "sha256": "69752bca68a4388e1c786aa9aeeeb7845578769351e7bb901a9f5fdf1b85812f"
+    },
+    {
+      "bytes": 6235,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/umbrella-37331497000.json",
+      "sha256": "e8a755aece4b06854cc1573a5512455b243cd71ca1585503e6891275dd0c4b10"
+    },
+    {
+      "bytes": 342722,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/umbrella-37331497000.log",
+      "sha256": "6c6d63f7a8248ec4bb7bcb1f5f069a5a014eac06aa5a55a96ff89676b8455b7f"
+    },
+    {
+      "bytes": 14456,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/raster-retry-build.json",
+      "sha256": "e2d866c3607345fe91d8f89a0bcbc2b995d50b942aef5cfdfab94e0d401b8031"
+    },
+    {
+      "bytes": 39,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/raster-build-clean-workspace.log",
+      "sha256": "46379dfb63383a879008d9d490f101831d170f95cf89d38dee9f2dfe64b80062"
+    },
+    {
+      "bytes": 12173,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/raster-build-raster-boundaries.log",
+      "sha256": "a8ba4f903c670223a86c1268834b5f981caec8e58bc117bc15c5802374e49cc0"
+    },
+    {
+      "bytes": 489875,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/raster-build-workspace.log",
+      "sha256": "aae2db11202a28642af0dd75565d32bedc73a32ebf7b2f4d24e3e5d748587e55"
+    },
+    {
+      "bytes": 9812,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/raster-build-font-build.log",
+      "sha256": "8fc14a35b8d9e5ce4efd5883406842b9bac6ad88ad8bd82717431a6c3db1efec"
+    },
+    {
+      "bytes": 9003,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/raster-build-control-build.log",
+      "sha256": "d18625afcab2ae3211c868bf5a871dd0650c1b075ae964b0d0f26d9bed0d4cf7"
+    },
+    {
+      "bytes": 9003,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/raster-build-fields-build.log",
+      "sha256": "84ae2eb07cf632be554e460b55270d860f066d11c7ed2139b8943a709a4960f9"
+    },
+    {
+      "bytes": 9003,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/raster-build-intrinsic-build.log",
+      "sha256": "6e23459f13fed12cb9203dacaeeeaeee436d8b82a6c287bea8f57abefd436110"
+    },
+    {
+      "bytes": 9003,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/raster-build-static-build.log",
+      "sha256": "a9d22888b9c90144b17878b066af371d70175be3af243bfadffe1bed68c0bbc7"
+    },
+    {
+      "bytes": 9012,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/raster-build-ffi-build.log",
+      "sha256": "b36411085d892d74e4e2d3ebe975f1fc8e2c5b7bdfdea1ff03be661e3b866842"
+    },
+    {
+      "bytes": 11810,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/raster-build-pixel-build.log",
+      "sha256": "dcc6e76d7dc2ec26902e708374dba94b593fefea12a0724e4e1d89c7bbadac17"
+    },
+    {
+      "bytes": 3027,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/raster-build-ffi-consumers.log",
+      "sha256": "8ec6e32e476ba6343e7e0e66aa2710b4f3f47381db9de4ba8c7309beecae4eb1"
+    },
+    {
+      "bytes": 0,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/raster-build-compile-c.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/raster-build-link-c.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 76,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/raster-build-run-c.log",
+      "sha256": "1a956f88b383a0a41422607e6904fcf0af67ac161f8b771f27e08e12f8bb31da"
+    },
+    {
+      "bytes": 0,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/raster-build-compile-cpp.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/raster-build-link-cpp.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 76,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/raster-build-run-cpp.log",
+      "sha256": "1a956f88b383a0a41422607e6904fcf0af67ac161f8b771f27e08e12f8bb31da"
+    },
+    {
+      "bytes": 119913,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/raster-native-controls.json",
+      "sha256": "fc695a7ff35634805a03d53b98d322ac3e4e1d4f2555e6c3d9039c3709cef2f4"
+    },
+    {
+      "bytes": 14912,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/raster-controls-owner.log",
+      "sha256": "ff63cb5651e86c72d10da071e935192f05311fe32f7d74d49d2a5ad5e5b30002"
+    },
+    {
+      "bytes": 8233,
+      "path": "docs/renderer/evidence/native-inline-fallback-v1/openui-native-inline-fallback-preserve-v1578.py",
+      "sha256": "a9bb8e4311c4f2cf9df45edeb90c20baa333d325a1a0f0a0bef0eaf4fc6f93a1"
+    }
+  ],
+  "baseline_commit": "cd99c95278f89fb1590834fe358e93511353b106",
+  "branch": "agent/native-inline-fallback-retry-v1573",
+  "chromium_geometry": {
+    "all_repeated_queries_identical": true,
+    "independent_runs": 2,
+    "initial_and_cleared_bounds_css_px": [
+      20,
+      20,
+      100,
+      100
+    ],
+    "loaded_bounds_css_px": [
+      20,
+      20,
+      300,
+      200
+    ],
+    "ordered_observations": 120,
+    "ordered_states": [
+      "before",
+      "loaded",
+      "cleared",
+      "reattached"
+    ],
+    "origins": [
+      0,
+      0.25,
+      0.5
+    ],
+    "scales": [
+      1,
+      1.25,
+      1.5,
+      2,
+      3
+    ],
+    "screenshots_generated": 0
+  },
+  "current_candidate_exports": 114,
+  "existing_113_exports_preserved": true,
+  "frozen_fixtures_and_manifest_unchanged": true,
+  "javascript_executed_by_openui": false,
+  "native_and_pixel_qualification": {
+    "all_commands_pending": true,
+    "observed_state": "awaiting-all-29-prior-whole-pipelines",
+    "prior_whole_owners": 29,
+    "required_consecutive_chromium_captures": 480,
+    "required_independent_chromium_processes": 240,
+    "required_native_images": 120,
+    "required_stages": 8,
+    "whole_owner": "native-inline-fallback-pipeline-v1576"
+  },
+  "needed_native_operations_not_waived_by_pixel_exclusion": true,
+  "new_release_states_admitted": 0,
+  "observed_at_utc": "2026-10-05T15:44:41.595240+00:00",
+  "old_openui_pixels_are_provenance_only": true,
+  "pixel_tolerance": 0,
+  "prepared_c_api": "oui_element_clear_image",
+  "prepared_rust_api": "Element::clear_image_resource",
+  "promotion_allowed": false,
+  "public_native_rust_api_required": true,
+  "raster_retry": {
+    "build_stage_terminal": true,
+    "build_steps_passed": 17,
+    "chromium_pixel_qualification": false,
+    "controls_stage_terminal": true,
+    "native_controls": {
+      "cases": 60,
+      "contract_checks_passed": 60,
+      "images": 120,
+      "native_control_states": 7680
+    },
+    "source": {
+      "clean": true,
+      "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+      "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+      "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "whole_pipeline_still_pending": true
+  },
+  "read_only_checks_passed": 13,
+  "release_qualification": false,
+  "root_cause_owner": "openui-layout inline replaced versus fallback flow and native image resource lifecycle",
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "7d09f7a159b2c3f211662d20dbf7c7092d6024ed",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "c3ba134419dac78bbc35a1c72f8c390c5ad08b7bd95ff61ad00b533214069c54",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "superseded_prelaunch_queue": {
+    "owner_never_launched": true,
+    "path": "superseded-prelaunch-queue.json",
+    "reason": "Original copied owner metadata said C ABI unchanged despite the append-only export. Fresh source root and probes record the additive ABI and adapted reference function hash accurately."
+  },
+  "umbrella_hosted": {
+    "skipped_jobs": 5,
+    "skips_are_not_passes": true,
+    "source": "59cac2298d4c6a391b7032091a0455f639f2b70a",
+    "successful_jobs": 6,
+    "successful_workflows": 3
+  }
+}
