@@ -1,5 +1,29 @@
 # Open UI current status
 
+## Review checkpoint 17 October 2026
+
+Product work is paused on `codex/native-final-linux-v4314` for a follow-up PR
+based on the existing draft [PR 3](https://github.com/zhuowcui/open-ui/pull/3).
+The branch is the authoritative accepted implementation. Historical experiment
+changes are accounted for by existing commits; newer private renderer
+candidates remain unadopted and are preserved as reference patches.
+
+The [checkpoint and handoff](branch-checkpoint-2026-10-17.md) contains the
+integration inventory, portable evidence, fresh verification and next task.
+Fresh headless workspace verification records **9,401 passed, one failed and
+13 ignored, including doctests**, with exit 101. The failing
+`native_resize_control_clip::actual_native_scrollbar_frames_are_clipped_independently_of_track_and_thumb_ink`
+guard reports changed ink at physical row 57 at scale 1.25; an independent
+rerun reproduces the failure. This blocks the native
+test gate and needs a pinned Chromium comparison before a shared repair or
+an evidence-backed correction to the guard. The PR remains a draft.
+
+Fresh pinned-sysroot verification passes all **164 exports, 41 C consumers and
+35 C++ consumers**, **300 Python tests** and all **seven accountability checks**.
+
+The 15 October source-specific measurements below retain their original scope;
+this checkpoint does not establish a new renderer census or release pass.
+
 ## Product contract
 
 Open UI is a native framework. Applications implement interaction through

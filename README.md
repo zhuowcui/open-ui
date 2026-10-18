@@ -27,6 +27,17 @@ right picture or the Chromium test uses a script. See the
 
 ## Verified status
 
+### Review checkpoint 17 October 2026
+
+Product work is paused for a review checkpoint on
+`codex/native-final-linux-v4314`. This branch contains the accepted
+implementation; the [checkpoint and handoff](docs/progress/branch-checkpoint-2026-10-17.md)
+records how historical experiments were integrated, preserves the later
+unadopted candidates and their evidence, and defines the next bounded repair.
+A fresh native scrollbar clipping guard fails at 1.25× scale and blocks this
+checkpoint's native test gate. Its Chromium comparison is the first follow-up.
+The renderer and release gates below remain open.
+
 ### Current closure work (15 October 2026)
 
 The latest complete private CPU census at clean `ec3883b3` measures

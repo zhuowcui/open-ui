@@ -1,0 +1,2029 @@
+{
+  "accepted_source_commit": "d18d72f76740f200fff9655ced48b5013bc50f2a",
+  "archive": {
+    "bytes": 9616389,
+    "entries": [
+      {
+        "bytes": 8777,
+        "kind": "historical_receipt",
+        "member": "closure-v12/native-authored-projection-complete-chromium-matrices-v4940/receipt.json",
+        "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-authored-projection-complete-chromium-matrices-v4940/receipt.json",
+        "recorded_pin_matches": true,
+        "sha256": "1d0cac2a10ffbd0e945ddafcfddfc058dc069b69386ad1ff956242c00e7cc084"
+      },
+      {
+        "bytes": 638,
+        "kind": "historical_receipt",
+        "member": "closure-v12/native-authored-projection-complete-chromium-matrices-v4940/terminal-v1.json",
+        "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-authored-projection-complete-chromium-matrices-v4940/terminal-v1.json",
+        "recorded_pin_matches": true,
+        "sha256": "d8fff3d2e74af14871bee559b28754711442ff5fa13898f920f7e916c2f3fa30"
+      },
+      {
+        "bytes": 8308,
+        "kind": "historical_receipt",
+        "member": "closure-v12/native-authored-projection-exec-focused-primitive-v4937/receipt.json",
+        "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-authored-projection-exec-focused-primitive-v4937/receipt.json",
+        "recorded_pin_matches": true,
+        "sha256": "0011be9ac24b57112dcb191f928b12d9de679704a7d917bb117155218d94dc24"
+      },
+      {
+        "bytes": 5132,
+        "kind": "historical_receipt",
+        "member": "closure-v12/native-authored-projection-test-corrected-guards-v4935/receipt.json",
+        "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-authored-projection-test-corrected-guards-v4935/receipt.json",
+        "recorded_pin_matches": true,
+        "sha256": "6356d73d291acc7f631690d1c68d3223b8886773e59cd06bead03c5794e5acaa"
+      },
+      {
+        "bytes": 39089,
+        "kind": "historical_receipt",
+        "member": "closure-v12/native-authored-projection-original20-paired-audit-v4923/actual-paired-20-frame-audit-v1.json",
+        "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-authored-projection-original20-paired-audit-v4923/actual-paired-20-frame-audit-v1.json",
+        "recorded_pin_matches": true,
+        "sha256": "f32514086e02d3286720434b2c3e39053031a1ce2bec4082b20e3bbb74143e69"
+      },
+      {
+        "bytes": 10155,
+        "kind": "historical_receipt",
+        "member": "closure-v12/native-authored-projection-scoped-chromium-matrices-v4929/receipt.json",
+        "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-authored-projection-scoped-chromium-matrices-v4929/receipt.json",
+        "recorded_pin_matches": true,
+        "sha256": "c7013032be70adba0ae62bbf3464c689f09dba9d6863eb532fde75f9b62081a3"
+      },
+      {
+        "bytes": 449432,
+        "kind": "historical_receipt",
+        "member": "closure-v12/native-zero-spanner-exposure-chromium-runtime-v4939/receipt.json",
+        "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-zero-spanner-exposure-chromium-runtime-v4939/receipt.json",
+        "recorded_pin_matches": true,
+        "sha256": "038ebe47246cd83867e0ec93ca6fbae0e4b15d8c50f9c249eb8b1126dbfa10d4"
+      },
+      {
+        "bytes": 7623,
+        "kind": "historical_receipt",
+        "member": "closure-v12/native-padded-and-exposure-selected-native-v4955/receipt.json",
+        "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-padded-and-exposure-selected-native-v4955/receipt.json",
+        "recorded_pin_matches": true,
+        "sha256": "5c16e129d272a2b73f75b505d937863893ae100f96525427baa8f1e2a85b6b81"
+      },
+      {
+        "bytes": 759,
+        "kind": "historical_receipt",
+        "member": "closure-v12/native-padded-and-exposure-selected-native-v4955/terminal-v1.json",
+        "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-padded-and-exposure-selected-native-v4955/terminal-v1.json",
+        "recorded_pin_matches": true,
+        "sha256": "663d6590da440af28e638d30da1275d22245fffb560978a8deeb1204e70dc34b"
+      },
+      {
+        "bytes": 53148,
+        "kind": "historical_receipt",
+        "member": "closure-v12/native-hosted-ci-attribution-control-grip-source-v4949/hosted-ci-current-source-attribution-v1.json",
+        "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-hosted-ci-attribution-control-grip-source-v4949/hosted-ci-current-source-attribution-v1.json",
+        "recorded_pin_matches": true,
+        "sha256": "f7613c936e56703f21510c676ad1459034c01f03e81dcd58c15a2c44a5ef1ac6"
+      },
+      {
+        "bytes": 8734,
+        "kind": "historical_receipt",
+        "member": "closure-v12/native-padded-and-exposure-api-corrected-selected-native-v4963/receipt.json",
+        "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-padded-and-exposure-api-corrected-selected-native-v4963/receipt.json",
+        "recorded_pin_matches": true,
+        "sha256": "3eaec396d922c0094951d5d67d368a956bde0d6c45dedf5fd6a8e643c647b83e"
+      },
+      {
+        "bytes": 1216,
+        "kind": "historical_receipt",
+        "member": "closure-v12/native-padded-and-exposure-api-corrected-selected-native-v4963/terminal-v1.json",
+        "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-padded-and-exposure-api-corrected-selected-native-v4963/terminal-v1.json",
+        "recorded_pin_matches": true,
+        "sha256": "b60e1bdfa39224039bfcfb39e6a9bf6b3abcc1f13115baff2a954e2d946fa9dd"
+      },
+      {
+        "bytes": 330182,
+        "kind": "historical_receipt",
+        "member": "closure-v12/native-zero-spanner-native30-complete-audit-v4965/comparison.json",
+        "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-zero-spanner-native30-complete-audit-v4965/comparison.json",
+        "recorded_pin_matches": true,
+        "sha256": "b7729d8ddb7b90490190d8e75743924989ceea2beed1f8217ea21eff032b47a2"
+      },
+      {
+        "bytes": 45504,
+        "kind": "historical_receipt",
+        "member": "closure-v12/native-zero-spanner-native30-complete-audit-v4965/receipt.json",
+        "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-zero-spanner-native30-complete-audit-v4965/receipt.json",
+        "recorded_pin_matches": true,
+        "sha256": "3da2e7b72c319321a586f43cd8f12926b0d32029e3fbb261e79891beb2ba5b86"
+      },
+      {
+        "bytes": 435,
+        "kind": "historical_receipt",
+        "member": "closure-v12/native-zero-spanner-native30-complete-audit-v4965/terminal-v1.json",
+        "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-zero-spanner-native30-complete-audit-v4965/terminal-v1.json",
+        "recorded_pin_matches": true,
+        "sha256": "0576d215893642f08bf5fdb33610c249aedd5a436ca4897973046f873abdea9a"
+      },
+      {
+        "bytes": 11122,
+        "kind": "historical_receipt",
+        "member": "closure-v12/native-zero-guard-and-vertical-native-runtime-v4971/receipt.json",
+        "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-zero-guard-and-vertical-native-runtime-v4971/receipt.json",
+        "recorded_pin_matches": true,
+        "sha256": "8601d58035e53c96bd2efc39ff50a992b3ae27a89610316997e283750c127574"
+      },
+      {
+        "bytes": 402,
+        "kind": "historical_receipt",
+        "member": "closure-v12/native-zero-guard-and-vertical-native-runtime-v4971/terminal-v1.json",
+        "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-zero-guard-and-vertical-native-runtime-v4971/terminal-v1.json",
+        "recorded_pin_matches": true,
+        "sha256": "1957e2c1cf3e61206f5b6e11ade5e3788f18cce7a1a8a974fe9f4ecf7e734f3b"
+      },
+      {
+        "bytes": 126405,
+        "kind": "historical_receipt",
+        "member": "closure-v12/native-vertical-axis-direct-chromium-runtime-v4974/receipt.json",
+        "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-vertical-axis-direct-chromium-runtime-v4974/receipt.json",
+        "recorded_pin_matches": true,
+        "sha256": "6394033780d32018ea4a59f9eb6a3ddc517829e17875860d3e59c82254d8a97d"
+      },
+      {
+        "bytes": 412,
+        "kind": "historical_receipt",
+        "member": "closure-v12/native-vertical-axis-direct-chromium-runtime-v4974/terminal-v1.json",
+        "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-vertical-axis-direct-chromium-runtime-v4974/terminal-v1.json",
+        "recorded_pin_matches": true,
+        "sha256": "0d32c3e36f7426e0b8cece15338b5690bb0329ed7d99d20957a2a078775f4341"
+      },
+      {
+        "bytes": 6468,
+        "kind": "historical_receipt",
+        "member": "closure-v12/native-source-rehydration-v4975/receipt.json",
+        "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-rehydration-v4975/receipt.json",
+        "recorded_pin_matches": true,
+        "sha256": "93396ec403656bbefe22ac430d3c3017259141ae519daa63138431ceba96a358"
+      },
+      {
+        "bytes": 280,
+        "kind": "historical_receipt",
+        "member": "closure-v12/native-source-rehydration-v4975/terminal-v1.json",
+        "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-source-rehydration-v4975/terminal-v1.json",
+        "recorded_pin_matches": true,
+        "sha256": "c9600a4160d36853d68011b31f7cdd73465113f4a04b28ccde12c50c14c8bc1c"
+      },
+      {
+        "bytes": 32706,
+        "kind": "historical_receipt",
+        "member": "closure-v12/native-zero-guard-and-vertical-renderer-build-v4973/guarded-build/receipt.json",
+        "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-zero-guard-and-vertical-renderer-build-v4973/guarded-build/receipt.json",
+        "recorded_pin_matches": true,
+        "sha256": "dc1ba810fbada58819a1183b0cf0e01a527e0f5a019d13c0c6cd4dd9a42163ba"
+      },
+      {
+        "bytes": 7825,
+        "kind": "historical_receipt",
+        "member": "closure-v12/native-zero-spanner-ordinary-guard-source-scroll-v4966/formatted-source-manifest-v4.json",
+        "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-zero-spanner-ordinary-guard-source-scroll-v4966/formatted-source-manifest-v4.json",
+        "recorded_pin_matches": true,
+        "sha256": "8b74541d293166a7b7722ef4cb46979ddaee62684c6a29012510dee125e0c701"
+      },
+      {
+        "bytes": 4818,
+        "kind": "historical_receipt",
+        "member": "closure-v12/native-complete-saved-census-audit-recovery-v4976/source-manifest-v4.json",
+        "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-complete-saved-census-audit-recovery-v4976/source-manifest-v4.json",
+        "recorded_pin_matches": true,
+        "sha256": "dd2935d1137b9e2089abbbecc5e53bf30aeb4af1028bf36cc45aee629358ae86"
+      },
+      {
+        "bytes": 913,
+        "kind": "historical_receipt",
+        "member": "closure-v12/native-complete-saved-census-audit-recovery-v4976/Root-review-and-coordination-policy-v1.json",
+        "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-complete-saved-census-audit-recovery-v4976/Root-review-and-coordination-policy-v1.json",
+        "recorded_pin_matches": true,
+        "sha256": "2859420fed6588cf8632c49b888a8847bbeeb97a06cc5d2a698fb3f16ddc12d8"
+      },
+      {
+        "bytes": 23283,
+        "kind": "historical_receipt",
+        "member": "closure-v12/native-layout-paint-cohort-native-v4978-v2/receipt.json",
+        "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-layout-paint-cohort-native-v4978-v2/receipt.json",
+        "recorded_pin_matches": true,
+        "sha256": "b24d2242d9d456eddcebf4f2c8d9e2aaf22c91beb266ef1d586df8e806f862a5"
+      },
+      {
+        "bytes": 756,
+        "kind": "historical_receipt",
+        "member": "closure-v12/native-layout-paint-cohort-native-v4978-v2/terminal-v1.json",
+        "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-layout-paint-cohort-native-v4978-v2/terminal-v1.json",
+        "recorded_pin_matches": true,
+        "sha256": "7e2dfffa236fecce4e78a1e83251710ca22a0be3969b533014ed5a1f5401d80d"
+      },
+      {
+        "bytes": 578109,
+        "kind": "historical_receipt",
+        "member": "closure-v12/native-normal-phase-chromium-command-runtime-v4976/receipt.json",
+        "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-normal-phase-chromium-command-runtime-v4976/receipt.json",
+        "recorded_pin_matches": true,
+        "sha256": "c7af369ef68e2fd21d2696b89dafd0c67fba9334adaeb3e0608167d577c6a278"
+      },
+      {
+        "bytes": 447,
+        "kind": "historical_receipt",
+        "member": "closure-v12/native-normal-phase-chromium-command-runtime-v4976/terminal-v1.json",
+        "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-normal-phase-chromium-command-runtime-v4976/terminal-v1.json",
+        "recorded_pin_matches": true,
+        "sha256": "12286b3edd2486c66349e432da0d38b7bf442ad11ad777e66005764525386d0f"
+      },
+      {
+        "bytes": 176311,
+        "kind": "historical_receipt",
+        "member": "closure-v12/native-layout-paint-direct-chromium-runtime-v4982/receipt.json",
+        "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-layout-paint-direct-chromium-runtime-v4982/receipt.json",
+        "recorded_pin_matches": true,
+        "sha256": "d61c2037a73bec4705b423ab245af6e54462cfb314043b729434bddaaf050ba5"
+      },
+      {
+        "bytes": 858,
+        "kind": "historical_receipt",
+        "member": "closure-v12/native-layout-paint-direct-chromium-runtime-v4982/terminal-v1.json",
+        "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-layout-paint-direct-chromium-runtime-v4982/terminal-v1.json",
+        "recorded_pin_matches": true,
+        "sha256": "43b606afbe5cbd0ecabe2f1d421cf84ec2a542670295c5787213a761b28570cc"
+      },
+      {
+        "bytes": 32104,
+        "kind": "historical_receipt",
+        "member": "closure-v12/native-layout-paint-cohort-diagnostic-renderer-build-v4980/guarded-build/receipt.json",
+        "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-layout-paint-cohort-diagnostic-renderer-build-v4980/guarded-build/receipt.json",
+        "recorded_pin_matches": true,
+        "sha256": "54e5eaf6353c232dcc3c5f38b6e8ea47f58ae66c468db50bbbf96f5f0a5a0df3"
+      },
+      {
+        "bytes": 525,
+        "kind": "historical_receipt",
+        "member": "closure-v12/native-layout-paint-cohort-diagnostic-renderer-build-v4980/terminal-v1.json",
+        "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-layout-paint-cohort-diagnostic-renderer-build-v4980/terminal-v1.json",
+        "recorded_pin_matches": true,
+        "sha256": "1fc2b0af1598d1fd800a329b34cf1a2c13cdda47c6959ac468e306f1f2def599"
+      },
+      {
+        "bytes": 28213,
+        "kind": "historical_receipt",
+        "member": "closure-v12/native-padded-row-admission-and-clip-guard-runtime-v4981/receipt.json",
+        "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-padded-row-admission-and-clip-guard-runtime-v4981/receipt.json",
+        "recorded_pin_matches": true,
+        "sha256": "e7f31c104e49977aa8415dc3073e122e3f422be31d2469ae39030d17b87b6199"
+      },
+      {
+        "bytes": 1112,
+        "kind": "historical_receipt",
+        "member": "closure-v12/native-padded-row-admission-and-clip-guard-runtime-v4981/terminal-v1.json",
+        "original_path": "/mnt/d/openui-v02-qualification-d174ea0b/native-padded-row-admission-and-clip-guard-runtime-v4981/terminal-v1.json",
+        "recorded_pin_matches": true,
+        "sha256": "c30a912af273ec1a593da8db36cae2e2e9be2bd8853bdc8a00a62362a835cefd"
+      },
+      {
+        "bytes": 209428,
+        "disposition": "preserved_history_not_current_qualification",
+        "kind": "historical_uncommitted_progress",
+        "member": "uncommitted-v10/docs/progress/current-status.md",
+        "original_path": "/home/nero/code/openui-current-status-scroll-v10/docs/progress/current-status.md",
+        "sha256": "1dabc3732690c72090da5b4853178a2bc5e04c23c64d712ff68d53972c54c666"
+      },
+      {
+        "bytes": 2516,
+        "disposition": "preserved_history_not_current_qualification",
+        "kind": "historical_uncommitted_progress",
+        "member": "uncommitted-v10/docs/renderer/evidence/native-final-closure-v10/c4a-control-metadata-measured-summary.json",
+        "original_path": "/home/nero/code/openui-current-status-scroll-v10/docs/renderer/evidence/native-final-closure-v10/c4a-control-metadata-measured-summary.json",
+        "sha256": "ef2136cd89e01ae6d4bd4c5046c7c79bdc3c42badffb0f095afc983340fd5946"
+      },
+      {
+        "bytes": 284,
+        "disposition": "preserved_history_not_current_qualification",
+        "kind": "historical_uncommitted_progress",
+        "member": "uncommitted-v10/docs/renderer/evidence/native-final-closure-v10/c4a-control-metadata-terminal.json",
+        "original_path": "/home/nero/code/openui-current-status-scroll-v10/docs/renderer/evidence/native-final-closure-v10/c4a-control-metadata-terminal.json",
+        "sha256": "6e6574830094ae2cb40230b2db0830331c41de68813e89e343c5d01ada9ba241"
+      },
+      {
+        "bytes": 6082,
+        "disposition": "preserved_history_not_current_qualification",
+        "kind": "historical_uncommitted_progress",
+        "member": "uncommitted-v10/docs/renderer/evidence/native-final-closure-v10/c4a-control-metadata.json.gz",
+        "original_path": "/home/nero/code/openui-current-status-scroll-v10/docs/renderer/evidence/native-final-closure-v10/c4a-control-metadata.json.gz",
+        "sha256": "329ff5d65fd7e4fd89ab9ab38d0055356eb06759ae0f6a6d6210bb98301cd371"
+      },
+      {
+        "bytes": 440,
+        "disposition": "preserved_history_not_current_qualification",
+        "kind": "historical_uncommitted_progress",
+        "member": "uncommitted-v10/docs/renderer/evidence/native-final-closure-v10/c4a-control-metadata369-delta.json",
+        "original_path": "/home/nero/code/openui-current-status-scroll-v10/docs/renderer/evidence/native-final-closure-v10/c4a-control-metadata369-delta.json",
+        "sha256": "545069403fc589fa4df12e9653e9a32432978a7f51a7192fbf975888b92a6d2c"
+      },
+      {
+        "bytes": 222,
+        "disposition": "preserved_history_not_current_qualification",
+        "kind": "historical_uncommitted_progress",
+        "member": "uncommitted-v10/docs/renderer/evidence/native-final-closure-v10/c4a-paragraph-inner-terminal.json",
+        "original_path": "/home/nero/code/openui-current-status-scroll-v10/docs/renderer/evidence/native-final-closure-v10/c4a-paragraph-inner-terminal.json",
+        "sha256": "b7ef4f484caf22cff48360931a7c72bdea08c092c2524eace0c71962112a06f4"
+      },
+      {
+        "bytes": 6731,
+        "disposition": "preserved_history_not_current_qualification",
+        "kind": "historical_uncommitted_progress",
+        "member": "uncommitted-v10/docs/renderer/evidence/native-final-closure-v10/c4a-paragraph-inner.json",
+        "original_path": "/home/nero/code/openui-current-status-scroll-v10/docs/renderer/evidence/native-final-closure-v10/c4a-paragraph-inner.json",
+        "sha256": "2bb4ff4c219a46248032a1a4a3229fe947905784f7de5de125f25644fd26f464"
+      },
+      {
+        "bytes": 10872,
+        "disposition": "preserved_history_not_current_qualification",
+        "kind": "historical_uncommitted_progress",
+        "member": "uncommitted-v10/docs/renderer/evidence/native-final-closure-v10/c4a-paragraph-inner.stdout.gz",
+        "original_path": "/home/nero/code/openui-current-status-scroll-v10/docs/renderer/evidence/native-final-closure-v10/c4a-paragraph-inner.stdout.gz",
+        "sha256": "97c4f56dd6adf6548fe8b4071ea4b43084d25e6efcb65e8091964de9076b1227"
+      },
+      {
+        "bytes": 284,
+        "disposition": "preserved_history_not_current_qualification",
+        "kind": "historical_uncommitted_progress",
+        "member": "uncommitted-v10/docs/renderer/evidence/native-final-closure-v10/c4a-selected-runtime-terminal.json",
+        "original_path": "/home/nero/code/openui-current-status-scroll-v10/docs/renderer/evidence/native-final-closure-v10/c4a-selected-runtime-terminal.json",
+        "sha256": "053bb90794c86620f0910c821c1acd47a59f86e330db596fbddde46258700f35"
+      },
+      {
+        "bytes": 10234,
+        "disposition": "preserved_history_not_current_qualification",
+        "kind": "historical_uncommitted_progress",
+        "member": "uncommitted-v10/docs/renderer/evidence/native-final-closure-v10/c4a-selected-runtime.json",
+        "original_path": "/home/nero/code/openui-current-status-scroll-v10/docs/renderer/evidence/native-final-closure-v10/c4a-selected-runtime.json",
+        "sha256": "1f0109da89431c1cf41ea54b1588cc8a09a24364e8886f4a81d45451c1aecacb"
+      },
+      {
+        "bytes": 902,
+        "disposition": "preserved_history_not_current_qualification",
+        "kind": "historical_uncommitted_progress",
+        "member": "uncommitted-v10/docs/renderer/evidence/native-final-closure-v10/generated-9b-terminal.json",
+        "original_path": "/home/nero/code/openui-current-status-scroll-v10/docs/renderer/evidence/native-final-closure-v10/generated-9b-terminal.json",
+        "sha256": "fa697a63dc28e118522d4d3fabd48725836ab5d53dec6eaecd563c3cddd18bbc"
+      },
+      {
+        "bytes": 13866,
+        "disposition": "preserved_history_not_current_qualification",
+        "kind": "historical_uncommitted_progress",
+        "member": "uncommitted-v10/docs/renderer/evidence/native-final-closure-v10/generated-9b.json",
+        "original_path": "/home/nero/code/openui-current-status-scroll-v10/docs/renderer/evidence/native-final-closure-v10/generated-9b.json",
+        "sha256": "5536d434a67a796d74d8aad3b1caf5e8a4722fa9d59d50029dae9ab4bd3e2a12"
+      },
+      {
+        "bytes": 1865,
+        "disposition": "preserved_history_not_current_qualification",
+        "kind": "historical_uncommitted_progress",
+        "member": "uncommitted-v10/docs/renderer/evidence/native-final-closure-v10/nine-edge-chromium-terminal.json",
+        "original_path": "/home/nero/code/openui-current-status-scroll-v10/docs/renderer/evidence/native-final-closure-v10/nine-edge-chromium-terminal.json",
+        "sha256": "b28d2f8cda5fb5d77768fd0aea9c807fbacda688de60ba687b4e45a0d72b5cbc"
+      },
+      {
+        "bytes": 162309,
+        "disposition": "preserved_history_not_current_qualification",
+        "kind": "historical_uncommitted_progress",
+        "member": "uncommitted-v10/docs/renderer/evidence/native-final-closure-v10/nine-edge-chromium.json.gz",
+        "original_path": "/home/nero/code/openui-current-status-scroll-v10/docs/renderer/evidence/native-final-closure-v10/nine-edge-chromium.json.gz",
+        "sha256": "3bf60738b48e63b7005ddf6667bd47ded2cbe90ccd8fe84fd27b290c3d4e0b81"
+      },
+      {
+        "bytes": 1816,
+        "disposition": "preserved_history_not_current_qualification",
+        "kind": "historical_uncommitted_progress",
+        "member": "uncommitted-v10/docs/renderer/evidence/native-final-closure-v10/nine-edge-native-terminal.json",
+        "original_path": "/home/nero/code/openui-current-status-scroll-v10/docs/renderer/evidence/native-final-closure-v10/nine-edge-native-terminal.json",
+        "sha256": "bfa41f7cda00752569ece5dc1bb396a549fce1420d2dcc93a09c1ea0c7d36a7d"
+      },
+      {
+        "bytes": 12223,
+        "disposition": "preserved_history_not_current_qualification",
+        "kind": "historical_uncommitted_progress",
+        "member": "uncommitted-v10/docs/renderer/evidence/native-final-closure-v10/nine-edge-native.json.gz",
+        "original_path": "/home/nero/code/openui-current-status-scroll-v10/docs/renderer/evidence/native-final-closure-v10/nine-edge-native.json.gz",
+        "sha256": "0ea5de0fbf4f4b66393d7978c01d54a2bf7d350ec4dd7e241926bfe76ee35617"
+      },
+      {
+        "bytes": 767,
+        "disposition": "preserved_history_not_current_qualification",
+        "kind": "historical_uncommitted_progress",
+        "member": "uncommitted-v10/docs/renderer/evidence/native-final-closure-v10/paragraph-chromium-terminal.json",
+        "original_path": "/home/nero/code/openui-current-status-scroll-v10/docs/renderer/evidence/native-final-closure-v10/paragraph-chromium-terminal.json",
+        "sha256": "45ea31405e715c0489afe13b2c7b8f22a2587ac7006456dde71efdfcc50c9563"
+      },
+      {
+        "bytes": 92704,
+        "disposition": "preserved_history_not_current_qualification",
+        "kind": "historical_uncommitted_progress",
+        "member": "uncommitted-v10/docs/renderer/evidence/native-final-closure-v10/paragraph-chromium.json.gz",
+        "original_path": "/home/nero/code/openui-current-status-scroll-v10/docs/renderer/evidence/native-final-closure-v10/paragraph-chromium.json.gz",
+        "sha256": "a25549b1a070f7b68ef255f220ccf664e56753a35fffd74a1c020a173a087c07"
+      },
+      {
+        "bytes": 2808,
+        "disposition": "preserved_history_not_current_qualification",
+        "kind": "historical_uncommitted_progress",
+        "member": "uncommitted-v10/docs/renderer/evidence/native-final-closure-v10/q4-complete-renderer-terminal.json",
+        "original_path": "/home/nero/code/openui-current-status-scroll-v10/docs/renderer/evidence/native-final-closure-v10/q4-complete-renderer-terminal.json",
+        "sha256": "f05e5f6c59c859132d0f6850654b693d0b244b1717251ddbc9f5c8a4d9430158"
+      },
+      {
+        "bytes": 13561,
+        "disposition": "preserved_history_not_current_qualification",
+        "kind": "historical_uncommitted_progress",
+        "member": "uncommitted-v10/docs/renderer/evidence/native-final-closure-v10/q4-complete-renderer.json",
+        "original_path": "/home/nero/code/openui-current-status-scroll-v10/docs/renderer/evidence/native-final-closure-v10/q4-complete-renderer.json",
+        "sha256": "2c32165772d1c440c8ba289394b0cfd6b140a3c0bafe4937c4a2d8402728a11f"
+      },
+      {
+        "bytes": 4489816,
+        "disposition": "preserved_history_not_current_qualification",
+        "kind": "historical_uncommitted_progress",
+        "member": "uncommitted-v10/docs/renderer/evidence/native-final-closure-v10/q4-expanded-summary.json.gz",
+        "original_path": "/home/nero/code/openui-current-status-scroll-v10/docs/renderer/evidence/native-final-closure-v10/q4-expanded-summary.json.gz",
+        "sha256": "27eb112445be50d4ec0098b62f91421e9fca4783f80f51255555161e22ed6729"
+      },
+      {
+        "bytes": 4368907,
+        "disposition": "preserved_history_not_current_qualification",
+        "kind": "historical_uncommitted_progress",
+        "member": "uncommitted-v10/docs/renderer/evidence/native-final-closure-v10/q4-original-summary.json.gz",
+        "original_path": "/home/nero/code/openui-current-status-scroll-v10/docs/renderer/evidence/native-final-closure-v10/q4-original-summary.json.gz",
+        "sha256": "67594f01b7d4033c06f5a54b52a8b7a6e13f81454831db0de141fcbbc7974dd6"
+      },
+      {
+        "bytes": 160542,
+        "disposition": "preserved_history_not_current_qualification",
+        "kind": "historical_uncommitted_progress",
+        "member": "uncommitted-v10/docs/renderer/evidence/native-final-closure-v10/q7-focused-summary.json.gz",
+        "original_path": "/home/nero/code/openui-current-status-scroll-v10/docs/renderer/evidence/native-final-closure-v10/q7-focused-summary.json.gz",
+        "sha256": "fa07ac9a802ac591db5b45f8cc4bb70966ad503aeaa9c5888bd09754eb23d0e0"
+      },
+      {
+        "bytes": 222644,
+        "disposition": "preserved_history_not_current_qualification",
+        "kind": "historical_uncommitted_progress",
+        "member": "uncommitted-v10/docs/renderer/evidence/native-final-closure-v10/q7-primitive-summary.json.gz",
+        "original_path": "/home/nero/code/openui-current-status-scroll-v10/docs/renderer/evidence/native-final-closure-v10/q7-primitive-summary.json.gz",
+        "sha256": "71c09d1aced0399c8e519ebe2d6425a5a7758396160ac58e1eb720fc67ecfcae"
+      },
+      {
+        "bytes": 8541,
+        "disposition": "preserved_history_not_current_qualification",
+        "kind": "historical_uncommitted_progress",
+        "member": "uncommitted-v10/docs/renderer/evidence/native-final-closure-v10/q7-scoped-original-summary.json.gz",
+        "original_path": "/home/nero/code/openui-current-status-scroll-v10/docs/renderer/evidence/native-final-closure-v10/q7-scoped-original-summary.json.gz",
+        "sha256": "9dabc42d110dbaa20939d7810c377537d3e4d337a047641cc5c734749ffeef5b"
+      },
+      {
+        "bytes": 304,
+        "disposition": "preserved_history_not_current_qualification",
+        "kind": "historical_uncommitted_progress",
+        "member": "uncommitted-v10/docs/renderer/evidence/native-final-closure-v10/q7-scoped-renderer-terminal.json",
+        "original_path": "/home/nero/code/openui-current-status-scroll-v10/docs/renderer/evidence/native-final-closure-v10/q7-scoped-renderer-terminal.json",
+        "sha256": "4f66e10e0735eb4ddbf2d2533b555cf43a958cc1f811c747bb6b9221ebf6f0f8"
+      },
+      {
+        "bytes": 9843,
+        "disposition": "preserved_history_not_current_qualification",
+        "kind": "historical_uncommitted_progress",
+        "member": "uncommitted-v10/docs/renderer/evidence/native-final-closure-v10/q7-scoped-renderer.json",
+        "original_path": "/home/nero/code/openui-current-status-scroll-v10/docs/renderer/evidence/native-final-closure-v10/q7-scoped-renderer.json",
+        "sha256": "56a215765b006832633128dd98b2148cce38aa52fca6a9a29f19924149651abd"
+      },
+      {
+        "bytes": 10551,
+        "disposition": "preserved_history_not_current_qualification",
+        "kind": "historical_uncommitted_progress",
+        "member": "uncommitted-v10/docs/renderer/evidence/native-final-closure-v10/viewport-source-checkpoint.json",
+        "original_path": "/home/nero/code/openui-current-status-scroll-v10/docs/renderer/evidence/native-final-closure-v10/viewport-source-checkpoint.json",
+        "sha256": "18609d8680209003360d8401790b94a324c9516541e16f7db286fdb5df38b204"
+      },
+      {
+        "bytes": 2285,
+        "disposition": "preserved_history_not_current_qualification",
+        "kind": "historical_uncommitted_progress",
+        "member": "uncommitted-v10/docs/renderer/evidence/native-final-closure-v10/viewport-source-terminal.json",
+        "original_path": "/home/nero/code/openui-current-status-scroll-v10/docs/renderer/evidence/native-final-closure-v10/viewport-source-terminal.json",
+        "sha256": "7789f4174a5e3b14b9bdbe338292bdb5e024c132584b567a5e755962f0879e36"
+      },
+      {
+        "bytes": 36960,
+        "disposition": "preserved_history_not_current_qualification",
+        "kind": "historical_uncommitted_progress",
+        "member": "uncommitted-v10/docs/renderer/generated/native-final-closure-status-v10.json",
+        "original_path": "/home/nero/code/openui-current-status-scroll-v10/docs/renderer/generated/native-final-closure-status-v10.json",
+        "sha256": "5399f9027b30dd8e7970c38d21b2c805eb6183da78800ed35640cdf9acfb7b49"
+      },
+      {
+        "base_commit": "d18d72f76740f200fff9655ced48b5013bc50f2a",
+        "bytes": 318673,
+        "candidate_commit": "ec3883b35895b222482d103af6b3a294cb8c8bbd",
+        "kind": "unadopted_implementation_delta",
+        "member": "unadopted-candidates/ec3883b3.patch",
+        "scopes": [
+          "bindings/rust",
+          "tools",
+          "examples",
+          "include",
+          "tests"
+        ],
+        "sha256": "05535198e259f725115d3806533d8abf763ebedce7cd04e6d4c9cfa26d4a8c87"
+      },
+      {
+        "base_commit": "d18d72f76740f200fff9655ced48b5013bc50f2a",
+        "bytes": 379147,
+        "candidate_commit": "3de526621a08c6b5d5c652ccc060afe4c577751f",
+        "kind": "unadopted_implementation_delta",
+        "member": "unadopted-candidates/3de52662.patch",
+        "scopes": [
+          "bindings/rust",
+          "tools",
+          "examples",
+          "include",
+          "tests"
+        ],
+        "sha256": "09c20f924fe02fa89f2d257f5a890992697f63ea41932c87300a9ae6f3d01ec5"
+      },
+      {
+        "base_commit": "d18d72f76740f200fff9655ced48b5013bc50f2a",
+        "bytes": 442980,
+        "candidate_commit": "21b96fe787d45b7efb8197c774427d8c0fc8ea44",
+        "kind": "unadopted_implementation_delta",
+        "member": "unadopted-candidates/21b96fe7.patch",
+        "scopes": [
+          "bindings/rust",
+          "tools",
+          "examples",
+          "include",
+          "tests"
+        ],
+        "sha256": "56ba6b806f26b47ef175a5751b46de06058aa9c12c0f74a93ffe5286648c35c3"
+      },
+      {
+        "base_commit": "d18d72f76740f200fff9655ced48b5013bc50f2a",
+        "bytes": 461996,
+        "candidate_commit": "3a8c9fbe069138882747d05c0eeb754564b9f933",
+        "kind": "unadopted_implementation_delta",
+        "member": "unadopted-candidates/3a8c9fbe.patch",
+        "scopes": [
+          "bindings/rust",
+          "tools",
+          "examples",
+          "include",
+          "tests"
+        ],
+        "sha256": "b8dfc6423d36f36edc061c01c40ea6742e07be7130580582d38b435ec5c7ccfe"
+      }
+    ],
+    "path": "docs/progress/evidence/branch-checkpoint-2026-10-17.tar.gz",
+    "sha256": "0026327dc9149aa0f6c1b383bebb41f96aff37847e45346c4aaf1234dace93a2"
+  },
+  "as_of": "2026-10-17",
+  "authoritative_branch": "codex/native-final-linux-v4314",
+  "checkouts": [
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "d18d72f76740f200fff9655ced48b5013bc50f2a",
+      "kind": "worktree",
+      "patch_equivalent_commits": 0,
+      "path": "/home/nero/code/open-ui"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "e555c442e3a99ca1a7c0875a2a711ba5add071a0",
+      "kind": "worktree",
+      "patch_equivalent_commits": 0,
+      "path": "/home/nero/code/open-ui-v02-evidence"
+    },
+    {
+      "amended_or_consolidated_sources": [
+        "4a5b7221598987c7b066a546944e437514d9cc49",
+        "cd3e48ef4919a76fc0c387523ab9ece0d98f0e81",
+        "95075d80c24bb5d2bfdb90f7a7fb8d8c421744b4",
+        "b95fa46e3ad24bd7e023aa7c4d5d2cb1b3000f96",
+        "707fedbe8550701766ed4291677ceee94cd11ad3",
+        "16d75b4684f916e3f206b197aba70b5ff8ec813e",
+        "4598b3665fa011f4b12d5c76d1eb57d11a279aba",
+        "12e549fe5771ce81d020d1dc51ca2e722b712a03",
+        "d3a34cb5ac2da9e79b5c2be59f09517f1661bfe8"
+      ],
+      "disposition": "represented_with_amendments",
+      "head": "2cea3f08ab15165fc215e220fe2b98c991139ed1",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/home/nero/code/open-ui/out/private-native-control-source-v2490"
+    },
+    {
+      "amended_or_consolidated_sources": [
+        "088fba85a8632a713959be3beb68dcaf789a1d2d",
+        "663aac3ac48098c7071558d160784a955fb610cd",
+        "cd6f9d4bfa980fc9daa85f564e77326816b75e1b",
+        "7de4820c959c9a1e9c77bd44012d328adb899f03"
+      ],
+      "disposition": "represented_with_amendments",
+      "head": "0b249f3b1c9f2e441a9dce283166643c03937d91",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/home/nero/code/open-ui/out/private-native-event-cancelability-source-v2604"
+    },
+    {
+      "amended_or_consolidated_sources": [
+        "8bb00ec6a364ea329b394e9572afa4eab72356ba"
+      ],
+      "disposition": "represented_with_amendments",
+      "head": "04ebb9e8caf6a6e60da92e8906325aee41bb7d4c",
+      "kind": "worktree",
+      "patch_equivalent_commits": 3,
+      "path": "/mnt/d/openui-animation-canonicalization-worktree-v4289"
+    },
+    {
+      "amended_or_consolidated_sources": [
+        "8bb00ec6a364ea329b394e9572afa4eab72356ba"
+      ],
+      "disposition": "represented_with_amendments",
+      "head": "8bb00ec6a364ea329b394e9572afa4eab72356ba",
+      "kind": "worktree",
+      "patch_equivalent_commits": 0,
+      "path": "/mnt/d/openui-animation-effect-stack-worktree-v4280"
+    },
+    {
+      "amended_or_consolidated_sources": [
+        "8bb00ec6a364ea329b394e9572afa4eab72356ba"
+      ],
+      "disposition": "represented_with_amendments",
+      "head": "5330fd3eae209a17f0625f671f7dc5d9344515e4",
+      "kind": "worktree",
+      "patch_equivalent_commits": 2,
+      "path": "/mnt/d/openui-animation-transform-ownership-worktree-v4288"
+    },
+    {
+      "amended_or_consolidated_sources": [
+        "8bb00ec6a364ea329b394e9572afa4eab72356ba"
+      ],
+      "disposition": "represented_with_amendments",
+      "head": "07cbdb1b698118b9d596d703259046adc2fd2ce0",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-animation-typed-composition-worktree-v4285"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "233c4aee824df2cf76dfddf5d1e41198940ea98b",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-c-named-timeline-worktree-v4291"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "c7a2203671b38b6578a0d71107c8849cad1d0bc1",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-accessibility-directional-scroll-worktree-scroll-v1"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "54d1c86a3d1c73334ee117eff2de6c1b60046c1f",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-animation-browser-range-worktree-v4284"
+    },
+    {
+      "amended_or_consolidated_sources": [
+        "38a825706620e8dd1844d07a0dea9728b91d1bde"
+      ],
+      "disposition": "represented_with_amendments",
+      "head": "3b0888ecbf24655520b6530c9ad8f06d790ad7d4",
+      "kind": "worktree",
+      "patch_equivalent_commits": 2,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-animation-continuation-worktree-v4288"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "da781883954908b842cbdb00e321945654cc1a02",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-animation-currentcolor-worktree-v4306"
+    },
+    {
+      "amended_or_consolidated_sources": [
+        "c043b8ee40a94a138c9af01ca757e0f3945514e6",
+        "0f646eb53a862ded858baccdf52766c075c729d7"
+      ],
+      "disposition": "represented_with_amendments",
+      "head": "59ec8548d71d1ed393c5a77fe34eef3dfb44fe85",
+      "kind": "worktree",
+      "patch_equivalent_commits": 16,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-animation-easing-pipeline-worktree-v4275"
+    },
+    {
+      "amended_or_consolidated_sources": [
+        "c043b8ee40a94a138c9af01ca757e0f3945514e6",
+        "0f646eb53a862ded858baccdf52766c075c729d7"
+      ],
+      "disposition": "represented_with_amendments",
+      "head": "7f33f0ce096c8590f832ee443fcb4d8f4b371fc3",
+      "kind": "worktree",
+      "patch_equivalent_commits": 14,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-animation-easing-sampler-worktree-v4273"
+    },
+    {
+      "amended_or_consolidated_sources": [
+        "c043b8ee40a94a138c9af01ca757e0f3945514e6",
+        "0f646eb53a862ded858baccdf52766c075c729d7"
+      ],
+      "disposition": "represented_with_amendments",
+      "head": "73fa6a33491f5fe69801071bd44824cf43135440",
+      "kind": "worktree",
+      "patch_equivalent_commits": 13,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-animation-input-worktree-v4268"
+    },
+    {
+      "amended_or_consolidated_sources": [
+        "c043b8ee40a94a138c9af01ca757e0f3945514e6",
+        "0f646eb53a862ded858baccdf52766c075c729d7"
+      ],
+      "disposition": "represented_with_amendments",
+      "head": "44665b6c334e6624b46185105ccaae060f1322e3",
+      "kind": "worktree",
+      "patch_equivalent_commits": 14,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-animation-local-clock-worktree-v4270"
+    },
+    {
+      "amended_or_consolidated_sources": [
+        "38a825706620e8dd1844d07a0dea9728b91d1bde"
+      ],
+      "disposition": "represented_with_amendments",
+      "head": "38a825706620e8dd1844d07a0dea9728b91d1bde",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-animation-named-attachment-worktree-v4286"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "f9c95b8f1c1be5118d60817be32220b201f46eeb",
+      "kind": "worktree",
+      "patch_equivalent_commits": 0,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-animation-named-range-worktree-v4283"
+    },
+    {
+      "amended_or_consolidated_sources": [
+        "c043b8ee40a94a138c9af01ca757e0f3945514e6",
+        "0f646eb53a862ded858baccdf52766c075c729d7"
+      ],
+      "disposition": "represented_with_amendments",
+      "head": "44665b6c334e6624b46185105ccaae060f1322e3",
+      "kind": "worktree",
+      "patch_equivalent_commits": 14,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-animation-scroll-view-worktree-v4274"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "f9c95b8f1c1be5118d60817be32220b201f46eeb",
+      "kind": "worktree",
+      "patch_equivalent_commits": 0,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-animation-scroll-view-worktree-v4274-integrated"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "4ec2ef109b3d1164cf7bb9de14907711496b50d4",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-animation-sticky-worktree-v4292"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "289d03b991ffebed380ae963e98a337f51f267e1",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-animation-timeline-reassignment-worktree-opacity-census-audit-v4588"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "cb61a2c32450fecb1729fd59959860d9327c0935",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-authored-baseline-worktree-opacity-census-audit-v4445"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "3cfb3cd02d2f25e517483455056887bc304b152f",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-authored-style-worktree-opacity-census-audit-v4441"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "3c0ca37373f0b126db3985850f72d9c557e63619",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-balanced-paragraph-capacity-source-table-border-review-v4722/private-worktree"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "222780556dd7f4013563526c6ebe6b5b4bb94625",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-balanced-principal-margin-source-table-border-review-v4712/private-worktree"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "0082441313a891974e82e602953bd48d40e0f1fd",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-balanced-row-materialization-source-table-border-review-v4686/private-worktree"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "df5dad24c82839e2ca21b117a20691a135daf251",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-c-examples-format-worktree-table-border-review-v4433"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "0cb5bc521fff47561bcadd6d83dce8d6a587307c",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-c-normalized-wheel-worktree-opacity-census-audit-v4574"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "efe6e6c93a9292cb3cc8c14afa5af609484aa35c",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-c-property-removal-worktree-opacity-census-audit-v4478"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "d408e80197b60ab862b4222eb0b8d06c2b6af308",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-c-scroll-actions-worktree-opacity-census-audit-v4557"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "9665127a365858e9e2bf1dd8112ae76202eee3cb",
+      "kind": "worktree",
+      "patch_equivalent_commits": 2,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-client-quads-token-worktree-table-border-review-v4434"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "d9abb3d0295ae5e4e2a2aad69433fb2520b6f671",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-client-quads-worktree-table-border-review-v4414"
+    },
+    {
+      "amended_or_consolidated_sources": [
+        "508e38511fcbc39dac311250d4f5840fbe2a7734"
+      ],
+      "disposition": "represented_with_amendments",
+      "head": "3f720ba6691f41680263122846088cb046027368",
+      "kind": "worktree",
+      "patch_equivalent_commits": 19,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-collapsed-cell-worktree-v4210"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "2e601e763065f189b87cf3c66908ce7ac53ea8d0",
+      "kind": "worktree",
+      "patch_equivalent_commits": 4,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-dependency-security-worktree-v4313"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "57b363862b1a4a13869324c6f043d0481ca16ce4",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-document-clock-repair-worktree-opacity-census-audit-v4392"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "d89b747ec1e0c9184f4605ac30ab1e8b39d6bb61",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-document-rewind-guard-worktree-opacity-census-audit-v4411"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "6a8293d26e38902d9a7ad1e9d565a26c42f4cf41",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fieldset-fragmentation-worktree-scroll-v1"
+    },
+    {
+      "amended_or_consolidated_sources": [
+        "ccff69111bb14f2d75571607415df0b9c728db0f"
+      ],
+      "disposition": "represented_with_amendments",
+      "head": "ccff69111bb14f2d75571607415df0b9c728db0f",
+      "kind": "worktree",
+      "patch_equivalent_commits": 0,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fieldset-scroll-owner-worktree-v4299"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "f6743a2a388f84e157befd9cbe5f0b4adb87d23c",
+      "kind": "worktree",
+      "patch_equivalent_commits": 0,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-final-integration-worktree-v4265"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "8f189f5c64eb0cd05e3f7a9f68b5e01038d46ada",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-fragment-promoted-repair-worktree-opacity-census-audit-v4389"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "19e46e5cad9f2e2f43836b978c11ef21723e3c5f",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-generated-consumers-worktree-v4286"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "3887f5335a7d380b2520575c831c5e749364e081",
+      "kind": "worktree",
+      "patch_equivalent_commits": 3,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-image-shader-coverage-worktree-scroll-v1"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "bb3a3bb79e97f425506fb7dd81638570f5984107",
+      "kind": "worktree",
+      "patch_equivalent_commits": 3,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-inline-replaced-producer-worktree-opacity-census-audit-v4426"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "926eff23be41cb13516d6d8260bc01ac7703d3d5",
+      "kind": "worktree",
+      "patch_equivalent_commits": 2,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-layered-resource-guard-worktree-scroll-v1"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "e2ea9ec3dc57ea5c672100ccc7d2e39660c4e103",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-leading-break-boundary-worktree-opacity-census-audit-v4410"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "5516a30c14c43be1a30e77aa8b3621d5b785911b",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-leading-space-repair-worktree-opacity-census-audit-v4393"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "b57367fa8a87c7430b68690dc411c79f8b7242d1",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-materialization-scope-source-table-border-review-v4700/private-worktree"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "2a89749fceb7a7172c46c74d7ffc13ab6541d73d",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-nested-balanced-rows-source-table-border-review-v4651/private-worktree"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "fea919a0cb25b36fab8132a677df058fd3846fc7",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-nested-guard-type-source-table-border-review-v4629/private-worktree"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "9e19daaca62d6fe6f194a15e189d6d67216dc8d5",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-nested-outer-fragmentation-source-table-border-review-v4619/private-worktree"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "848584d91dd77e6aa82c91bd75c28242602b478a",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-nested-runtime-source-table-border-review-v4634/private-worktree"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "458317bac0f7c9b0e3545b37fdb30d5f8926313a",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-opacity-fold-worktree-v4300"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "9d0912dd503d92d67258ab4a25aea530de57263d",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-ordered-mutation-worktree-opacity-census-audit-v4517"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "6c4fdd6fe6daf60a7fcb4fc31ddb0cd284ce5dc2",
+      "kind": "worktree",
+      "patch_equivalent_commits": 0,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-ownership-ci-worktree-v4222"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "460aaecda74f3cec15bdecf4a3ffeb8b31ec25c0",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-paint-program-worktree-table-border-review-v4443"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "4a2d9fcd5558f33a359aa517a66e2b1ea74fbd05",
+      "kind": "worktree",
+      "patch_equivalent_commits": 2,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-principal-source-slice-worktree-table-border-review-v4426"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "362ebde200b4c3f53e74281294ef31d175b6cc56",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-progress-hold-worktree-opacity-census-audit-v4498"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "260c211b987cf1934b3a4fbbb55808b9ff293dfa",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-progress-normalized-phase-worktree-opacity-census-audit-v4538"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "d79d7ca1a3b271a7a4531a1fc1b2d56c159435f0",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-progress-resize-guard-worktree-opacity-census-audit-v4508"
+    },
+    {
+      "amended_or_consolidated_sources": [
+        "127a0d1160fe7c234ecd30ad9220a2e1472cc992"
+      ],
+      "disposition": "represented_with_amendments",
+      "head": "127a0d1160fe7c234ecd30ad9220a2e1472cc992",
+      "kind": "worktree",
+      "patch_equivalent_commits": 0,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-projective-hit-worktree-v4287"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "54ab9bc0a4406a3a41a0257d134041ddecf1dea2",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-public-rewind-guard-worktree-opacity-census-audit-v4421"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "92db51616bd3bda5e526bad3e11f42731eb0a01a",
+      "kind": "worktree",
+      "patch_equivalent_commits": 2,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-radius-axis-worktree-table-border-review-v4501"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "3a999a03eea64ac7778749076fae89c64a6deffa",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-radius-background-phase-worktree-table-border-review-v4511"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "55b16229e918836a7b7be3e7235c7d31e30cb2bc",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-radius-consumer-worktree-table-border-review-v4446"
+    },
+    {
+      "amended_or_consolidated_sources": [
+        "f8877357f92106e173fcdf599490429baf8b9b0a"
+      ],
+      "disposition": "represented_with_amendments",
+      "head": "f8877357f92106e173fcdf599490429baf8b9b0a",
+      "kind": "worktree",
+      "patch_equivalent_commits": 0,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-radius-effect-order-worktree-table-border-review-v4547"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "7c36bbac8a86171d8982841a7b44704136676050",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-radius-runtime-repair-worktree-table-border-review-v4498"
+    },
+    {
+      "amended_or_consolidated_sources": [
+        "f97887da99858b8ff8e5330f5b1d38a70632f932"
+      ],
+      "disposition": "represented_with_amendments",
+      "head": "f97887da99858b8ff8e5330f5b1d38a70632f932",
+      "kind": "worktree",
+      "patch_equivalent_commits": 0,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-recorded-zero-fragment-worktree-opacity-census-audit-v4416"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "404bee168339ae10949d640b7e273bbad86c296d",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-renderer-snapshot-noop-source-table-border-review-v4612/private-worktree"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "c88513956d72609b13c95dd8660cbafc6e77084d",
+      "kind": "worktree",
+      "patch_equivalent_commits": 0,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-retained-layer-worktree-scroll-v1"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "6c97cc9f4d7669defd7437c67ac343ddeaa4815d",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-retained-layer-worktree-scroll-v2"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "c9dce596a9c0a871459f3faa74f06012aa5ed407",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-retained-scene-worktree-v4316"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "13b2fd9442e07378cbd09ff739ecc591132b5444",
+      "kind": "worktree",
+      "patch_equivalent_commits": 2,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-runtime-column-count-worktree-opacity-census-audit-v4350"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "bf926f87e064043d3073db8e5e20741cf6b7532e",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-runtime-font-intrinsic-worktree-v4342"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "2ee1df9c4a395d3212e164726810722f0842cf5f",
+      "kind": "worktree",
+      "patch_equivalent_commits": 2,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-runtime-timing-worktree-opacity-census-audit-v4351"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "768c036966ebe1b89d0f96c0ee1c2c7e6fb3afbe",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-scroll-absolute-timeline-worktree-scroll-v1"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "15dd0bfa0fd9d8710b32c893e066e658ff08d8e4",
+      "kind": "worktree",
+      "patch_equivalent_commits": 2,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-semantic-insertion-worktree-scroll-v1"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "f337894bb90188bb3ebe042eb85ec912f1daefa7",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-table-balance-worktree-table-border-review-v4398"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "f1c62174e4828fd28e378171e1f5aacd466a31de",
+      "kind": "worktree",
+      "patch_equivalent_commits": 2,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-timeline-callback-contract-worktree-opacity-census-audit-v4629"
+    },
+    {
+      "amended_or_consolidated_sources": [
+        "883acf6d944e2f82e7082e0693133af169859bb3"
+      ],
+      "disposition": "represented_with_amendments",
+      "head": "a5f3667328ffddf9b64c45d69077ccae2205518d",
+      "kind": "worktree",
+      "patch_equivalent_commits": 2,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-transform-composition-worktree-v4281"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "a963558e4ee79ded11f850356b942d685967c0f0",
+      "kind": "worktree",
+      "patch_equivalent_commits": 0,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-transform-overflow-refresh-worktree-scroll-v1"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "5a10a4b30cde99619a1115afaff182e2ab8d9508",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-transparent-effect-worktree-scroll-v1"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "1ef1f21a2bc9080b14e331e35cb7f9f0b75d68b4",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-transparent-effect-worktree-scroll-v2"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "cb4e84719e8e91ee2087c75c294285dbb6972220",
+      "kind": "worktree",
+      "patch_equivalent_commits": 2,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-transparent-property-guard-worktree-scroll-v4577"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "5a10a4b30cde99619a1115afaff182e2ab8d9508",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-viewport-paint-capture-worktree-scroll-v1"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "fb809d0d157592a190b2c04e3c5fb9d330d61b4c",
+      "kind": "worktree",
+      "patch_equivalent_commits": 2,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-wbr-intrinsic-worktree-opacity-census-audit-v4423"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "e32ad4c7124e8f9dc932fcd02f19eaf3f1f76157",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-wheel-surface-guard-repair-worktree-opacity-census-audit-v4587"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "62e57313a4bec5743a94fe6bd0ae1a6c94fc0872",
+      "kind": "worktree",
+      "patch_equivalent_commits": 1,
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-whole-ifc-intrinsic-worktree-opacity-census-audit-v4420"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "6761ce2d9c5ba439f6b89d9b1fdae3d3f2b5d084",
+      "kind": "clone",
+      "patch_equivalent_commits": 1,
+      "path": "/home/nero/code/openui-current-status-root-v4672"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "c4a90b0f7b868a794817c503f46fcb9b6c73809b",
+      "kind": "clone",
+      "patch_equivalent_commits": 0,
+      "path": "/home/nero/code/openui-current-status-scroll-v10"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "cdc45b6aa80a6a912b108e353a43ad00c172b041",
+      "kind": "clone",
+      "patch_equivalent_commits": 1,
+      "path": "/home/nero/code/openui-native-control-geometry-opacity-v4652"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "2d868c2ed60e4334894dbadfdf476971d8ceb74d",
+      "kind": "clone",
+      "patch_equivalent_commits": 1,
+      "path": "/home/nero/code/openui-native-control-grip-compile-source-v1"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "686d2a1b909a1bcb14b316e9008a79e611d87ce2",
+      "kind": "clone",
+      "patch_equivalent_commits": 0,
+      "path": "/home/nero/code/openui-native-control-grip-metadata-diagnostic-source-v1"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "cdc45b6aa80a6a912b108e353a43ad00c172b041",
+      "kind": "clone",
+      "patch_equivalent_commits": 1,
+      "path": "/home/nero/code/openui-native-control-grip-opacity-v4681"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "684948aaed317e4772a7f4e926dfeb4c7f0bbc62",
+      "kind": "clone",
+      "patch_equivalent_commits": 1,
+      "path": "/home/nero/code/openui-native-control-grip-readback-setup-source-v1"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "b57c8ccc33909c36db6e023902624aa3d73a70a3",
+      "kind": "clone",
+      "patch_equivalent_commits": 1,
+      "path": "/home/nero/code/openui-native-control-grip-single-producer-source-v1"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "13838d1d88ac91f626e57ce7ffdcf52e16c2c5e9",
+      "kind": "clone",
+      "patch_equivalent_commits": 2,
+      "path": "/home/nero/code/openui-native-control-grip-source-v1"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "e6b8bfc6dd44957287c2ee76433b687d09a0cfee",
+      "kind": "clone",
+      "patch_equivalent_commits": 0,
+      "path": "/home/nero/code/openui-native-control-hardclip-witness-source-v1"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "95271bcf0917227099205720e88c0fc009eeddb9",
+      "kind": "clone",
+      "patch_equivalent_commits": 1,
+      "path": "/home/nero/code/openui-native-oracle-root-v4655"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "3a9ea6a660c55b008761dac9105477bc7143f37d",
+      "kind": "clone",
+      "patch_equivalent_commits": 1,
+      "path": "/home/nero/code/openui-rounded-chromium-oracle-scroll-v4681"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "481f62d7d314f0e08c71ccbbd9fd0042239b411e",
+      "kind": "clone",
+      "patch_equivalent_commits": 1,
+      "path": "/home/nero/code/openui-source-layer-chromium-guard-scroll-v4718"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "7cfb9764b2297091583783c212e4cee8bc8cb2fd",
+      "kind": "clone",
+      "patch_equivalent_commits": 1,
+      "path": "/home/nero/code/openui-source-layer-contract-root-v4660"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "0370da5a374832d16c0ac04c577380ad1244c120",
+      "kind": "clone",
+      "patch_equivalent_commits": 1,
+      "path": "/home/nero/code/openui-source-layer-owner-translation-scroll-v1"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "65e07da9a4f1b00c67b53628e7ca3f28c45d588e",
+      "kind": "clone",
+      "patch_equivalent_commits": 2,
+      "path": "/home/nero/code/openui-source-layer-raster-scroll-v4620"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "6c070d8ee92973f60c4635c4aec935f425fcfc28",
+      "kind": "clone",
+      "patch_equivalent_commits": 1,
+      "path": "/home/nero/code/openui-source-layer-scrollbar-oracles-scroll-v4736"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "f05b885b748126604a00d0fe33460940261e96bd",
+      "kind": "clone",
+      "patch_equivalent_commits": 1,
+      "path": "/home/nero/code/openui-source-layer-structural-guards-scroll-v4690"
+    },
+    {
+      "amended_or_consolidated_sources": [],
+      "disposition": "represented_in_history",
+      "head": "e5bbc6aca10fb85c6b5cd4476293ede999aab643",
+      "kind": "clone",
+      "patch_equivalent_commits": 1,
+      "path": "/home/nero/code/openui-viewport-fixed-overflow-scroll-v4723"
+    }
+  ],
+  "closure_status": {
+    "path": "docs/renderer/generated/native-final-closure-status-v12.json",
+    "qualification": false,
+    "sha256": "ff01d5dac730119d9194ca08ffb99f3a048b401408ed52f77a3584ab4c516ea5"
+  },
+  "integration_resolutions": [
+    {
+      "affected_files": [
+        "bindings/rust/openui-ffi/src/lib.rs",
+        "bindings/rust/openui/examples/native_input_notifications.rs",
+        "bindings/rust/openui/src/events.rs",
+        "bindings/rust/openui/tests/native_input_notifications.rs",
+        "docs/v02/native-input-notifications.md"
+      ],
+      "integration_commit": "c09eb63911d4545505e33de18451a995a9c685fe",
+      "method": "consolidated_integration",
+      "reason": "c09eb639 integrates the completed noncancelable input implementation and Rust/C/C++ consumers; 454c1667 records the later evidence.",
+      "source_commit": "088fba85a8632a713959be3beb68dcaf789a1d2d",
+      "subject": "Draft noncancelable native input notifications and consuming app"
+    },
+    {
+      "affected_files": [
+        "bindings/rust/openui-engine/src/element_dimensions.rs",
+        "bindings/rust/openui-engine/src/lib.rs",
+        "bindings/rust/openui-layout/src/scroll_area.rs",
+        "bindings/rust/openui/src/element.rs",
+        "bindings/rust/openui/tests/v02_conformance.rs",
+        "tools/conformance/v02-scenarios.json"
+      ],
+      "integration_commit": "7aab353eacf9597bc9603d245a23ba178e50cef1",
+      "method": "documented_amended_integration",
+      "reason": "The accepted commit records this original source commit.",
+      "source_commit": "0f646eb53a862ded858baccdf52766c075c729d7",
+      "subject": "feat(native): expose retained integer element dimensions"
+    },
+    {
+      "affected_files": [
+        "bindings/rust/openui-engine/src/hit_geometry.rs",
+        "bindings/rust/openui-engine/src/lib.rs",
+        "bindings/rust/openui-engine/src/scroll_into_view.rs",
+        "bindings/rust/openui-engine/tests/projective_hit_testing.rs"
+      ],
+      "integration_commit": "1692217f688234ddcc26fc297e5db0de58b43d79",
+      "method": "documented_amended_integration",
+      "reason": "The accepted commit records this original source commit.",
+      "source_commit": "127a0d1160fe7c234ecd30ad9220a2e1472cc992",
+      "subject": "Use retained full transforms for native hit and reveal geometry"
+    },
+    {
+      "affected_files": [
+        "tools/wpt/port_wpt.py",
+        "tools/wpt/test_sp20_closure.py"
+      ],
+      "integration_commit": "938315510afd7c226e22d3d1bac7b7c3962c708a",
+      "method": "consolidated_integration",
+      "reason": "93831551 explicitly integrates corrected private controls d3a34cb5; this is an earlier commit in that same private control history. Later e1cba1d1 updates the shared implementation and lowering.",
+      "source_commit": "12e549fe5771ce81d020d1dc51ca2e722b712a03",
+      "subject": "Derive imported native menu-list height from primary font metrics"
+    },
+    {
+      "affected_files": [
+        "bindings/rust/pixel-compare/src/wpt/wpt_css2_floats.rs",
+        "bindings/rust/pixel-compare/src/wpt/wpt_css_break.rs",
+        "bindings/rust/pixel-compare/src/wpt/wpt_css_flexbox.rs",
+        "bindings/rust/pixel-compare/src/wpt/wpt_css_position.rs",
+        "bindings/rust/pixel-compare/src/wpt/wpt_css_sizing.rs"
+      ],
+      "integration_commit": "938315510afd7c226e22d3d1bac7b7c3962c708a",
+      "method": "consolidated_integration",
+      "reason": "93831551 explicitly integrates corrected private controls d3a34cb5; this is an earlier commit in that same private control history. Later e1cba1d1 updates the shared implementation and lowering.",
+      "source_commit": "16d75b4684f916e3f206b197aba70b5ff8ec813e",
+      "subject": "Regenerate textarea lowering with computed Chromium resize defaults"
+    },
+    {
+      "affected_files": [
+        "bindings/rust/openui-engine/src/animation.rs",
+        "bindings/rust/openui-engine/src/animation_timeline.rs",
+        "bindings/rust/openui-engine/src/lib.rs",
+        "bindings/rust/openui-engine/tests/animation_attachment_ranges.rs",
+        "bindings/rust/openui-style/src/animation.rs",
+        "bindings/rust/openui/src/document.rs",
+        "bindings/rust/openui/src/element.rs",
+        "bindings/rust/openui/src/lib.rs",
+        "bindings/rust/openui/tests/native_attachment_ranges.rs",
+        "docs/v02/animations.md"
+      ],
+      "integration_commit": "a171fd0e09fe148dab3f171ceda12f3e568b3ea9",
+      "method": "documented_amended_integration",
+      "reason": "The accepted commit records this original source commit.",
+      "source_commit": "38a825706620e8dd1844d07a0dea9728b91d1bde",
+      "subject": "feat(animation): add native named attachment range lifecycle"
+    },
+    {
+      "affected_files": [
+        "bindings/rust/pixel-compare/src/wpt/wpt_css2_floats.rs",
+        "bindings/rust/pixel-compare/src/wpt/wpt_css_break.rs",
+        "bindings/rust/pixel-compare/src/wpt/wpt_css_flexbox.rs",
+        "bindings/rust/pixel-compare/src/wpt/wpt_css_position.rs",
+        "bindings/rust/pixel-compare/src/wpt/wpt_css_sizing.rs"
+      ],
+      "integration_commit": "938315510afd7c226e22d3d1bac7b7c3962c708a",
+      "method": "consolidated_integration",
+      "reason": "93831551 explicitly integrates corrected private controls d3a34cb5; this is an earlier commit in that same private control history. Later e1cba1d1 updates the shared implementation and lowering.",
+      "source_commit": "4598b3665fa011f4b12d5c76d1eb57d11a279aba",
+      "subject": "Preserve generated Rust source file permissions"
+    },
+    {
+      "affected_files": [
+        "bindings/rust/openui-engine/src/control_geometry.rs",
+        "bindings/rust/openui-engine/src/interaction.rs",
+        "bindings/rust/openui-engine/src/lib.rs"
+      ],
+      "integration_commit": "938315510afd7c226e22d3d1bac7b7c3962c708a",
+      "method": "consolidated_integration",
+      "reason": "93831551 explicitly integrates corrected private controls d3a34cb5; this is an earlier commit in that same private control history. Later e1cba1d1 updates the shared implementation and lowering.",
+      "source_commit": "4a5b7221598987c7b066a546944e437514d9cc49",
+      "subject": "Derive native text-control geometry from fonts and sizing attributes"
+    },
+    {
+      "affected_files": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/flex/mod.rs",
+        "bindings/rust/openui-layout/src/fragment.rs",
+        "bindings/rust/openui-layout/src/grid.rs",
+        "bindings/rust/openui-layout/src/lib.rs",
+        "bindings/rust/openui-layout/src/scroll_area.rs",
+        "bindings/rust/openui-layout/src/scrollbars.rs",
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui/examples/native_scroll_gutters.rs"
+      ],
+      "integration_commit": "be29a1c4fc2d8d2d0148a44c69b18708046db21d",
+      "method": "documented_amended_integration",
+      "reason": "The accepted commit records this original source commit.",
+      "source_commit": "508e38511fcbc39dac311250d4f5840fbe2a7734",
+      "subject": "layout: retain class and viewport overflow ownership with stable gutters"
+    },
+    {
+      "affected_files": [
+        "examples/c_v02/focus_notifications.c"
+      ],
+      "integration_commit": "20849fe7e791e95679b03f6a0972c1983a77e6cf",
+      "method": "consolidated_integration",
+      "reason": "The accepted C focus consumer uses the later hosted clang-format 18.1.3 correction.",
+      "source_commit": "663aac3ac48098c7071558d160784a955fb610cd",
+      "subject": "Format native C focus consumer with the required clang-format 18"
+    },
+    {
+      "affected_files": [
+        "bindings/rust/openui/tests/native_control_geometry.rs"
+      ],
+      "integration_commit": "938315510afd7c226e22d3d1bac7b7c3962c708a",
+      "method": "consolidated_integration",
+      "reason": "93831551 explicitly integrates corrected private controls d3a34cb5; this is an earlier commit in that same private control history. Later e1cba1d1 updates the shared implementation and lowering.",
+      "source_commit": "707fedbe8550701766ed4291677ceee94cd11ad3",
+      "subject": "Use native viewport scale type in control guards"
+    },
+    {
+      "affected_files": [
+        "docs/v02/native-input-notifications.md",
+        "examples/c_v02/input_notifications.c",
+        "examples/c_v02/input_notifications.cc"
+      ],
+      "integration_commit": "c09eb63911d4545505e33de18451a995a9c685fe",
+      "method": "consolidated_integration",
+      "reason": "c09eb639 integrates the completed noncancelable input implementation and Rust/C/C++ consumers; 454c1667 records the later evidence.",
+      "source_commit": "7de4820c959c9a1e9c77bd44012d328adb899f03",
+      "subject": "Preserve native input consumers and measured cancellation evidence"
+    },
+    {
+      "affected_files": [
+        "bindings/rust/openui-engine/src/lib.rs",
+        "bindings/rust/openui-engine/tests/transform_reference_boxes.rs",
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fragment.rs",
+        "bindings/rust/openui-layout/src/lib.rs",
+        "bindings/rust/openui-layout/src/scroll_area.rs",
+        "bindings/rust/openui-layout/src/transform.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/tests/text_paint_tests.rs",
+        "bindings/rust/openui-style/internal-style-fields.csv",
+        "bindings/rust/openui-style/src/computed.rs",
+        "bindings/rust/openui-style/src/lib.rs",
+        "bindings/rust/openui-style/src/property.rs",
+        "bindings/rust/openui-style/src/transform_composition.rs",
+        "bindings/rust/openui/tests/native_transform_composition.rs"
+      ],
+      "integration_commit": "63001f1fec0d9716cdcee7557c5c78f6f37978e6",
+      "method": "documented_amended_integration",
+      "reason": "The accepted commit records this original source commit.",
+      "source_commit": "883acf6d944e2f82e7082e0693133af169859bb3",
+      "subject": "Implement shared typed transforms and actual-box full-matrix routing"
+    },
+    {
+      "affected_files": [
+        "bindings/rust/openui-engine/src/animation.rs",
+        "bindings/rust/openui-engine/src/lib.rs",
+        "bindings/rust/openui-engine/tests/animation_effect_stack.rs",
+        "bindings/rust/openui-style/src/animation.rs",
+        "bindings/rust/openui-style/src/animation_value.rs",
+        "bindings/rust/openui-style/src/lib.rs",
+        "bindings/rust/openui/examples/native_animation_effect_stack.rs"
+      ],
+      "integration_commit": "353b55ed54518bfe7133e3335ae2e01d21a01840",
+      "method": "documented_amended_integration",
+      "reason": "The accepted commit records this original source commit.",
+      "source_commit": "8bb00ec6a364ea329b394e9572afa4eab72356ba",
+      "subject": "Preserve authored animation sources and compose surviving effect stacks"
+    },
+    {
+      "affected_files": [
+        "bindings/rust/openui-engine/src/control_geometry.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "tools/wpt/port_wpt.py"
+      ],
+      "integration_commit": "938315510afd7c226e22d3d1bac7b7c3962c708a",
+      "method": "consolidated_integration",
+      "reason": "93831551 explicitly integrates corrected private controls d3a34cb5; this is an earlier commit in that same private control history. Later e1cba1d1 updates the shared implementation and lowering.",
+      "source_commit": "95075d80c24bb5d2bfdb90f7a7fb8d8c421744b4",
+      "subject": "Respect computed textarea resize and preserve UA defaults in lowering"
+    },
+    {
+      "affected_files": [
+        "bindings/rust/openui-engine/src/lib.rs",
+        "bindings/rust/openui/tests/native_control_geometry.rs",
+        "tools/wpt/test_sp20_closure.py"
+      ],
+      "integration_commit": "938315510afd7c226e22d3d1bac7b7c3962c708a",
+      "method": "consolidated_integration",
+      "reason": "93831551 explicitly integrates corrected private controls d3a34cb5; this is an earlier commit in that same private control history. Later e1cba1d1 updates the shared implementation and lowering.",
+      "source_commit": "b95fa46e3ad24bd7e023aa7c4d5d2cb1b3000f96",
+      "subject": "Guard native control attribute geometry, cloning and resize paint"
+    },
+    {
+      "affected_files": [
+        "bindings/rust/openui-dom/src/tree.rs",
+        "bindings/rust/openui-engine/src/accessibility.rs",
+        "bindings/rust/openui-engine/src/interaction.rs",
+        "bindings/rust/openui-engine/src/lib.rs",
+        "bindings/rust/openui-engine/src/scroll_button.rs",
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui/src/document.rs",
+        "bindings/rust/openui/src/element.rs",
+        "bindings/rust/openui/src/lib.rs",
+        "bindings/rust/openui/src/prelude.rs",
+        "bindings/rust/openui/src/scroll_button.rs",
+        "bindings/rust/openui/tests/v02_conformance.rs",
+        "tools/conformance/v02-scenarios.json"
+      ],
+      "integration_commit": "7e8d7efe13a6c36a133d3a0942f71888f07b8027",
+      "method": "documented_amended_integration",
+      "reason": "The accepted commit records this original source commit.",
+      "source_commit": "c043b8ee40a94a138c9af01ca757e0f3945514e6",
+      "subject": "feat(native): implement retained scroll button ownership and page defaults"
+    },
+    {
+      "affected_files": [
+        "bindings/rust/openui-engine/src/animation_timeline.rs",
+        "bindings/rust/openui-engine/src/element_dimensions.rs",
+        "bindings/rust/openui-engine/src/lib.rs",
+        "bindings/rust/openui-engine/src/scroll_button.rs",
+        "bindings/rust/openui-engine/src/scroll_into_view.rs",
+        "bindings/rust/openui-engine/tests/fieldset_scroll_owner.rs",
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/fragment.rs",
+        "bindings/rust/openui-layout/src/fragment_geometry.rs",
+        "bindings/rust/openui-layout/src/grid.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/layout_context.rs",
+        "bindings/rust/openui-layout/src/lib.rs",
+        "bindings/rust/openui-layout/src/logical_geometry.rs",
+        "bindings/rust/openui-layout/src/out_of_flow.rs",
+        "bindings/rust/openui-layout/src/scroll_area.rs",
+        "bindings/rust/openui-layout/src/scrollbars.rs",
+        "bindings/rust/openui-layout/src/sticky_layout.rs",
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-layout/src/transform.rs",
+        "bindings/rust/openui-layout/src/viewport.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/tests/text_paint_tests.rs",
+        "bindings/rust/openui/src/document.rs",
+        "bindings/rust/openui/tests/native_fieldset_scroll_owner.rs"
+      ],
+      "integration_commit": "6258c8a5f398b4a128ef8788d684b719e275dd73",
+      "method": "documented_amended_integration",
+      "reason": "The accepted commit records this original source commit.",
+      "source_commit": "ccff69111bb14f2d75571607415df0b9c728db0f",
+      "subject": "fix(layout): retain fieldset content scroll ownership"
+    },
+    {
+      "affected_files": [
+        "bindings/rust/openui-engine/src/control_geometry.rs"
+      ],
+      "integration_commit": "938315510afd7c226e22d3d1bac7b7c3962c708a",
+      "method": "consolidated_integration",
+      "reason": "93831551 explicitly integrates corrected private controls d3a34cb5; this is an earlier commit in that same private control history. Later e1cba1d1 updates the shared implementation and lowering.",
+      "source_commit": "cd3e48ef4919a76fc0c387523ab9ece0d98f0e81",
+      "subject": "Use retained Length predicates in native control metrics"
+    },
+    {
+      "affected_files": [
+        "bindings/rust/openui-ffi/src/lib.rs"
+      ],
+      "integration_commit": "c09eb63911d4545505e33de18451a995a9c685fe",
+      "method": "consolidated_integration",
+      "reason": "c09eb639 integrates the completed noncancelable input implementation and Rust/C/C++ consumers; 454c1667 records the later evidence.",
+      "source_commit": "cd6f9d4bfa980fc9daa85f564e77326816b75e1b",
+      "subject": "Correct input callback guard pointer safety"
+    },
+    {
+      "affected_files": [
+        "bindings/rust/pixel-compare/src/wpt/wpt_css_flexbox.rs",
+        "bindings/rust/pixel-compare/src/wpt/wpt_css_position.rs"
+      ],
+      "integration_commit": "938315510afd7c226e22d3d1bac7b7c3962c708a",
+      "method": "consolidated_integration",
+      "reason": "93831551 explicitly integrates corrected private controls d3a34cb5; this is an earlier commit in that same private control history. Later e1cba1d1 updates the shared implementation and lowering.",
+      "source_commit": "d3a34cb5ac2da9e79b5c2be59f09517f1661bfe8",
+      "subject": "Regenerate menu-list controls through shared font metrics lowering"
+    },
+    {
+      "affected_files": [
+        "bindings/rust/openui-engine/src/animation.rs",
+        "bindings/rust/openui-engine/tests/native_radius_axes.rs",
+        "bindings/rust/openui-style/src/radius_axes.rs"
+      ],
+      "integration_commit": "cca4b98b11dbeca7e8caaba94d0bbb58dc00c73e",
+      "method": "documented_amended_integration",
+      "reason": "The accepted commit records this original source commit.",
+      "source_commit": "f8877357f92106e173fcdf599490429baf8b9b0a",
+      "subject": "fix(engine): preserve radius flag publication before legacy pairs"
+    },
+    {
+      "affected_files": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fragment.rs"
+      ],
+      "integration_commit": "d79d60c9f8adaa9c0657202f78fd3659a6a8a07f",
+      "method": "documented_amended_integration",
+      "reason": "The accepted commit records this original source commit.",
+      "source_commit": "f97887da99858b8ff8e5330f5b1d38a70632f932",
+      "subject": "layout: preserve recorded zero fragmentation visual offsets"
+    }
+  ],
+  "outside_scratch_policy": "Uncommitted scratch is not accepted progress; the named historical V10 records are preserved. No external checkout or object-store deletion is authorized.",
+  "prerequisite_branch": "agent/v02-final-closure",
+  "prerequisite_pr": 3,
+  "release_qualified": false,
+  "renderer_qualified": false,
+  "reproduce_committed_patch_comparison": [
+    "git worktree list --porcelain",
+    "git cherry d18d72f7 <checkout-tip>",
+    "git log d18d72f7 --format=%H%n%B",
+    "git show 93831551",
+    "git show c09eb639",
+    "git show 20849fe7"
+  ],
+  "schema_version": 1,
+  "scope": "Committed tips of existing registered worktrees and immediate openui-* sibling clones; named historical progress and V12 evidence.",
+  "summary": {
+    "amended_or_consolidated_commits": 23,
+    "known_checkouts": 108,
+    "preserved_closure_receipts": 35,
+    "preserved_historical_sibling_files": 30,
+    "represented_by_ancestry_or_exact_patch": 89,
+    "represented_with_amendments": 19,
+    "unadopted_candidate_snapshots": 4,
+    "unique_tips": 104,
+    "unresolved_committed_integration_sources": 0
+  },
+  "unadopted_candidates": [
+    {
+      "archive_member": "unadopted-candidates/ec3883b3.patch",
+      "changed_files": [
+        "bindings/rust/openui-engine/src/client_geometry.rs",
+        "bindings/rust/openui-engine/src/compositor_scene.rs",
+        "bindings/rust/openui-engine/src/lib.rs",
+        "bindings/rust/openui-engine/tests/authored_spanner_projection_ownership.rs",
+        "bindings/rust/openui-engine/tests/column_paint_phase_oracles/README.md",
+        "bindings/rust/openui-engine/tests/column_paint_phase_oracles/balance-003-desktop-1280x720-1.25.rgba",
+        "bindings/rust/openui-engine/tests/column_paint_phase_oracles/balance-003-desktop-1920x1080-1.5.rgba",
+        "bindings/rust/openui-engine/tests/column_paint_phase_oracles/balance-003-legacy-800x600-1.rgba",
+        "bindings/rust/openui-engine/tests/column_paint_phase_oracles/balance-003-mobile-375x667-2.rgba",
+        "bindings/rust/openui-engine/tests/column_paint_phase_oracles/oof-018-desktop-1280x720-1.25.rgba",
+        "bindings/rust/openui-engine/tests/column_paint_phase_oracles/oof-018-desktop-1920x1080-1.5.rgba",
+        "bindings/rust/openui-engine/tests/column_paint_phase_oracles/oof-018-legacy-800x600-1.rgba",
+        "bindings/rust/openui-engine/tests/column_paint_phase_oracles/oof-018-mobile-375x667-2.rgba",
+        "bindings/rust/openui-engine/tests/column_paint_phase_oracles/provenance.json",
+        "bindings/rust/openui-engine/tests/fragmented_column_paint_phases.rs",
+        "bindings/rust/openui-engine/tests/fragmented_positioned_decoration_windows.rs",
+        "bindings/rust/openui-engine/tests/nested_multicol_remaining_finalization.rs",
+        "bindings/rust/openui-engine/tests/nested_spanner_decoration_windows.rs",
+        "bindings/rust/openui-layout/src/authored_projection.rs",
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fragment.rs",
+        "bindings/rust/openui-layout/src/lib.rs",
+        "bindings/rust/openui-paint/src/paint_program.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/tests/text_paint_tests.rs"
+      ],
+      "commit": "ec3883b35895b222482d103af6b3a294cb8c8bbd",
+      "production_qualification": false,
+      "reason_not_adopted": "Completed census source; global regression gate remains failed.",
+      "restore_check": "passed_apply_check_and_all_target_blob_bytes"
+    },
+    {
+      "archive_member": "unadopted-candidates/3de52662.patch",
+      "changed_files": [
+        "bindings/rust/openui-engine/src/client_geometry.rs",
+        "bindings/rust/openui-engine/src/compositor_scene.rs",
+        "bindings/rust/openui-engine/src/lib.rs",
+        "bindings/rust/openui-engine/tests/authored_spanner_projection_ownership.rs",
+        "bindings/rust/openui-engine/tests/column_paint_phase_oracles/README.md",
+        "bindings/rust/openui-engine/tests/column_paint_phase_oracles/balance-003-desktop-1280x720-1.25.rgba",
+        "bindings/rust/openui-engine/tests/column_paint_phase_oracles/balance-003-desktop-1920x1080-1.5.rgba",
+        "bindings/rust/openui-engine/tests/column_paint_phase_oracles/balance-003-legacy-800x600-1.rgba",
+        "bindings/rust/openui-engine/tests/column_paint_phase_oracles/balance-003-mobile-375x667-2.rgba",
+        "bindings/rust/openui-engine/tests/column_paint_phase_oracles/oof-018-desktop-1280x720-1.25.rgba",
+        "bindings/rust/openui-engine/tests/column_paint_phase_oracles/oof-018-desktop-1920x1080-1.5.rgba",
+        "bindings/rust/openui-engine/tests/column_paint_phase_oracles/oof-018-legacy-800x600-1.rgba",
+        "bindings/rust/openui-engine/tests/column_paint_phase_oracles/oof-018-mobile-375x667-2.rgba",
+        "bindings/rust/openui-engine/tests/column_paint_phase_oracles/provenance.json",
+        "bindings/rust/openui-engine/tests/fragmented_column_paint_phases.rs",
+        "bindings/rust/openui-engine/tests/fragmented_positioned_decoration_windows.rs",
+        "bindings/rust/openui-engine/tests/nested_multicol_remaining_finalization.rs",
+        "bindings/rust/openui-engine/tests/nested_spanner_decoration_windows.rs",
+        "bindings/rust/openui-engine/tests/split_multicol_padded_continuation.rs",
+        "bindings/rust/openui-layout/src/authored_projection.rs",
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fragment.rs",
+        "bindings/rust/openui-layout/src/lib.rs",
+        "bindings/rust/openui-paint/src/paint_program.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/tests/text_paint_tests.rs"
+      ],
+      "commit": "3de526621a08c6b5d5c652ccc060afe4c577751f",
+      "production_qualification": false,
+      "reason_not_adopted": "Selected vertical repairs; complete qualification remains open.",
+      "restore_check": "passed_apply_check_and_all_target_blob_bytes"
+    },
+    {
+      "archive_member": "unadopted-candidates/21b96fe7.patch",
+      "changed_files": [
+        "bindings/rust/openui-engine/src/client_geometry.rs",
+        "bindings/rust/openui-engine/src/compositor_scene.rs",
+        "bindings/rust/openui-engine/src/lib.rs",
+        "bindings/rust/openui-engine/tests/authored_spanner_projection_ownership.rs",
+        "bindings/rust/openui-engine/tests/column_paint_phase_oracles/README.md",
+        "bindings/rust/openui-engine/tests/column_paint_phase_oracles/balance-003-desktop-1280x720-1.25.rgba",
+        "bindings/rust/openui-engine/tests/column_paint_phase_oracles/balance-003-desktop-1920x1080-1.5.rgba",
+        "bindings/rust/openui-engine/tests/column_paint_phase_oracles/balance-003-legacy-800x600-1.rgba",
+        "bindings/rust/openui-engine/tests/column_paint_phase_oracles/balance-003-mobile-375x667-2.rgba",
+        "bindings/rust/openui-engine/tests/column_paint_phase_oracles/oof-018-desktop-1280x720-1.25.rgba",
+        "bindings/rust/openui-engine/tests/column_paint_phase_oracles/oof-018-desktop-1920x1080-1.5.rgba",
+        "bindings/rust/openui-engine/tests/column_paint_phase_oracles/oof-018-legacy-800x600-1.rgba",
+        "bindings/rust/openui-engine/tests/column_paint_phase_oracles/oof-018-mobile-375x667-2.rgba",
+        "bindings/rust/openui-engine/tests/column_paint_phase_oracles/provenance.json",
+        "bindings/rust/openui-engine/tests/complete_overflow_decoration_phase.rs",
+        "bindings/rust/openui-engine/tests/fragmented_column_paint_phases.rs",
+        "bindings/rust/openui-engine/tests/fragmented_positioned_decoration_windows.rs",
+        "bindings/rust/openui-engine/tests/nested_multicol_remaining_finalization.rs",
+        "bindings/rust/openui-engine/tests/nested_spanner_decoration_windows.rs",
+        "bindings/rust/openui-engine/tests/split_multicol_padded_continuation.rs",
+        "bindings/rust/openui-layout/src/authored_projection.rs",
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fragment.rs",
+        "bindings/rust/openui-layout/src/lib.rs",
+        "bindings/rust/openui-paint/src/paint_program.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/tests/text_paint_tests.rs"
+      ],
+      "commit": "21b96fe787d45b7efb8197c774427d8c0fc8ea44",
+      "production_qualification": false,
+      "reason_not_adopted": "Combined candidate; selected native gate has three failures.",
+      "restore_check": "passed_apply_check_and_all_target_blob_bytes"
+    },
+    {
+      "archive_member": "unadopted-candidates/3a8c9fbe.patch",
+      "changed_files": [
+        "bindings/rust/openui-engine/src/client_geometry.rs",
+        "bindings/rust/openui-engine/src/compositor_scene.rs",
+        "bindings/rust/openui-engine/src/lib.rs",
+        "bindings/rust/openui-engine/tests/authored_spanner_projection_ownership.rs",
+        "bindings/rust/openui-engine/tests/column_paint_phase_oracles/README.md",
+        "bindings/rust/openui-engine/tests/column_paint_phase_oracles/balance-003-desktop-1280x720-1.25.rgba",
+        "bindings/rust/openui-engine/tests/column_paint_phase_oracles/balance-003-desktop-1920x1080-1.5.rgba",
+        "bindings/rust/openui-engine/tests/column_paint_phase_oracles/balance-003-legacy-800x600-1.rgba",
+        "bindings/rust/openui-engine/tests/column_paint_phase_oracles/balance-003-mobile-375x667-2.rgba",
+        "bindings/rust/openui-engine/tests/column_paint_phase_oracles/oof-018-desktop-1280x720-1.25.rgba",
+        "bindings/rust/openui-engine/tests/column_paint_phase_oracles/oof-018-desktop-1920x1080-1.5.rgba",
+        "bindings/rust/openui-engine/tests/column_paint_phase_oracles/oof-018-legacy-800x600-1.rgba",
+        "bindings/rust/openui-engine/tests/column_paint_phase_oracles/oof-018-mobile-375x667-2.rgba",
+        "bindings/rust/openui-engine/tests/column_paint_phase_oracles/provenance.json",
+        "bindings/rust/openui-engine/tests/complete_overflow_decoration_phase.rs",
+        "bindings/rust/openui-engine/tests/fragmented_column_paint_phases.rs",
+        "bindings/rust/openui-engine/tests/fragmented_positioned_decoration_windows.rs",
+        "bindings/rust/openui-engine/tests/nested_multicol_remaining_finalization.rs",
+        "bindings/rust/openui-engine/tests/nested_spanner_decoration_windows.rs",
+        "bindings/rust/openui-engine/tests/split_multicol_padded_continuation.rs",
+        "bindings/rust/openui-layout/src/authored_projection.rs",
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fragment.rs",
+        "bindings/rust/openui-layout/src/lib.rs",
+        "bindings/rust/openui-paint/src/paint_program.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/tests/text_paint_tests.rs"
+      ],
+      "commit": "3a8c9fbe069138882747d05c0eeb754564b9f933",
+      "production_qualification": false,
+      "reason_not_adopted": "Read-only diagnostics; two strict producer tests remain failed.",
+      "restore_check": "passed_apply_check_and_all_target_blob_bytes"
+    }
+  ]
+}

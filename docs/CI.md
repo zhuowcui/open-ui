@@ -6,6 +6,11 @@ attestation identity.
 
 ## Pull-request gates
 
+The CI, Format Check and v0.2 Hardening workflows accept PRs targeting `main`,
+`agent/**` and `codex/**`. A stacked PR therefore receives the normal checks
+while its review diff stays relative to its prerequisite branch. Push-only
+checks remain restricted to `main`.
+
 `.github/workflows/ci.yml` runs:
 
 - formatting and the locked Rust renderer/framework/ABI suites;
