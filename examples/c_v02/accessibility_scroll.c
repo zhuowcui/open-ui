@@ -3,11 +3,11 @@
 #undef NDEBUG
 #endif
 #include <assert.h>
-#include <pthread.h>
 #include <stdio.h>
 #include <string.h>
 
 #include "openui.h"
+#include "portable_thread.h"
 
 static OuiUtf8 text(const char* value) {
   OuiUtf8 result = {(const uint8_t*)value, strlen(value)};
