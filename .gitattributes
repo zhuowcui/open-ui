@@ -1,3 +1,29 @@
+# Check out text files with LF on every platform. Generated contracts,
+# manifests, source identities and oracle cache keys hash file bytes, so a
+# Windows checkout must produce the same bytes as Linux regardless of the
+# local core.autocrlf setting.
+* text=auto eol=lf
+
 # Preserve third-party vendored crate sources byte-for-byte. Some upstream
-# releases contain intentional historical trailing whitespace.
-bindings/rust/vendor/** -whitespace
+# releases contain intentional historical trailing whitespace, and the source
+# inventory pins hash their on-disk bytes.
+bindings/rust/vendor/** -text -whitespace
+
+# Historical accountability tables committed with CRLF or mixed endings keep
+# their stored bytes.
+tools/accountability/data/**/*.csv -text
+
+*.png binary
+*.jpg binary
+*.gz binary
+*.xz binary
+*.rgba binary
+*.bin binary
+*.ttf binary
+*.ttc binary
+*.otf binary
+*.otc binary
+*.woff binary
+*.woff2 binary
+*.mp4 binary
+*.webm binary
