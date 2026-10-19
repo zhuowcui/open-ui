@@ -62,7 +62,8 @@ class DependencySecurityTests(unittest.TestCase):
     def setUp(self) -> None:
         self.temporary = tempfile.TemporaryDirectory()
         self.addCleanup(self.temporary.cleanup)
-        self.base = Path(self.temporary.name)
+        # Resolve 8.3 short names (Windows) so recorded argv paths compare equal.
+        self.base = Path(self.temporary.name).resolve()
         self.root = self.base / "source"
         self.root.mkdir()
         if os.name == "nt":
