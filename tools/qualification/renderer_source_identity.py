@@ -46,7 +46,10 @@ def repository_source_identity(root: Path = ROOT) -> dict[str, object]:
         digest.update(len(content).to_bytes(8, "big"))
         digest.update(content)
     harness_paths = [
-        *sorted((root / "tools/qualification").glob("*.py")),
+        *sorted(
+            (root / "tools/qualification").glob("*.py"),
+            key=lambda path: path.relative_to(root).as_posix(),
+        ),
         root / "tools/accountability/run_all_pixel_comparisons.py",
         root / "bindings/rust/pixel-compare/Cargo.toml",
         root / "bindings/rust/pixel-compare/src/main.rs",
@@ -54,7 +57,8 @@ def repository_source_identity(root: Path = ROOT) -> dict[str, object]:
     ]
     harness = hashlib.sha256()
     for path in harness_paths:
-        relative = str(path.relative_to(root)).encode("utf-8")
+        # POSIX separators keep the identity independent of the build host.
+        relative = path.relative_to(root).as_posix().encode("utf-8")
         content = path.read_bytes()
         harness.update(len(relative).to_bytes(8, "big"))
         harness.update(relative)

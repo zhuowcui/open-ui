@@ -22,12 +22,14 @@ import io
 import json
 import os
 import re
-import resource
 import stat
 import subprocess
 import sys
 import tempfile
 from collections import defaultdict
+
+if os.name != "nt":
+    import resource
 from dataclasses import dataclass
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -866,7 +868,7 @@ def _stage_text(path: str, content: str, mode: int) -> str:
         dir=os.path.dirname(path), prefix=f".{os.path.basename(path)}.", suffix=".tmp"
     )
     try:
-        with os.fdopen(fd, "w", encoding="utf-8") as f:
+        with os.fdopen(fd, "w", encoding="utf-8", newline="") as f:
             f.write(content)
             f.flush()
             os.fsync(f.fileno())
@@ -904,7 +906,8 @@ def _rustfmt_source(source: str, path: str) -> str:
         capture_output=True,
         cwd=os.path.join(PROJECT_ROOT, "bindings", "rust"),
         env=rustfmt_env,
-        preexec_fn=raise_main_stack_limit,
+        # Windows has no rlimits; rustfmt relies on RUST_MIN_STACK there.
+        preexec_fn=None if os.name == "nt" else raise_main_stack_limit,
         check=False,
     )
     if completed.returncode != 0:

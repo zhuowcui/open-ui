@@ -17,6 +17,7 @@ from tools.release import check_dependency_security as security
 
 FAKE_TOOL = r'''import datetime as dt,json,os,subprocess,sys,tomllib
 from pathlib import Path
+sys.stdout.reconfigure(newline='\n')
 case=os.environ.get('OPENUI_FAKE_AUDIT_CASE','success')
 if '--version' in sys.argv:
  name='cargo-audit-audit' if sys.argv[1:2]==['audit'] else 'cargo-audit'
@@ -64,9 +65,16 @@ class DependencySecurityTests(unittest.TestCase):
         self.base = Path(self.temporary.name)
         self.root = self.base / "source"
         self.root.mkdir()
-        self.binary = self.base / "fixture-audit"
-        self.binary.write_text(f"#!{sys.executable}\n" + FAKE_TOOL)
-        self.binary.chmod(0o755)
+        if os.name == "nt":
+            # Windows cannot execute a shebang script; a batch wrapper runs it.
+            script = self.base / "fixture-audit.py"
+            script.write_text(FAKE_TOOL)
+            self.binary = self.base / "fixture-audit.cmd"
+            self.binary.write_text(f'@"{sys.executable}" "{script}" %*\n')
+        else:
+            self.binary = self.base / "fixture-audit"
+            self.binary.write_text(f"#!{sys.executable}\n" + FAKE_TOOL)
+            self.binary.chmod(0o755)
         self.package = {"name": "demo", "version": "1.0.0", "checksum": "a" * 64}
         for name in security.LOCKFILES:
             path = self.root / name
@@ -216,7 +224,8 @@ class DependencySecurityTests(unittest.TestCase):
         self.assertTrue(result["timed_out"])
         self.assertTrue(result["reaped"])
         self.assertNotEqual(result["exit_code"], 0)
-        self.assertFalse(Path(f"/proc/{result['pid']}").exists())
+        if Path("/proc").is_dir():
+            self.assertFalse(Path(f"/proc/{result['pid']}").exists())
 
 
 if __name__ == "__main__":

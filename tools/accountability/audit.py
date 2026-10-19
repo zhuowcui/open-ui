@@ -1340,7 +1340,7 @@ def check_no_orphan_results():
     if os.path.isdir(wpt_results):
         for root, dirs, files in os.walk(wpt_results):
             if "result.json" in files:
-                rel = os.path.relpath(root, RESULTS_DIR)
+                rel = os.path.relpath(root, RESULTS_DIR).replace(os.sep, "/")
                 if rel not in summary_ids:
                     orphans += 1
 
