@@ -151,7 +151,8 @@ jobs:
           npm install --prefix "$parser_root" --no-save --ignore-scripts \
             --no-package-lock --no-audit --no-fund --no-progress acorn@8.14.0
           parser="$parser_root/node_modules/acorn/dist/acorn.mjs"
-          test "$(sha256sum "$parser" | cut -d ' ' -f 1)" = \
+          # Hash stdin: sha256sum escapes output for paths with backslashes.
+          test "$(sha256sum < "$parser" | cut -d ' ' -f 1)" = \
             402f6759c744ea2ca501c1dc4ded8b1c54c9066cc7a741837057dcb68bc64c93
           printf 'CHROMIUM_ACORN=%s\n' "$parser" >> "$GITHUB_ENV"
 
