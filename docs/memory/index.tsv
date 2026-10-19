@@ -62,3 +62,4 @@
 0061	active	sp19 containment container-queries content-visibility intrinsic-sizing fragmentation accountability handoff	SP19 W5 closes containment and container queries	2026-09-08	entries/0061-sp19-w5-closes-containment-and-container-quer.md
 0062	superseded	workflow checkpoint git handoff source-of-truth	Keep checkpoint branch authoritative and resume with focused PRs	2026-10-17	entries/0062-keep-checkpoint-branch-authoritative-and-resume.md
 0063	active	workflow git checkpoint user-preference	Use main as the experimental source of truth with one PR at a time	2026-10-17	entries/0063-use-main-as-the-experimental-source-of-truth-wit.md
+0064	active	windows platform workflow fonts ci	Windows MSVC baseline: LF checkout, DirectWrite generics and the Linux-oracle ledger	2026-10-19	entries/0064-windows-msvc-baseline-lf-checkout-directwrite-ge.md

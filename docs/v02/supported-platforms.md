@@ -347,6 +347,15 @@ parsing, file/date/color picker dialogs, media playback, interactive embedded
 documents, a visual inspector, and a general plugin ecosystem. Needed native
 element operations remain part of the public Rust API contract above.
 
+Windows x64 with MSVC is an experimental development baseline, not a v0.2
+platform promise. The headless workspace, the C ABI DLL and its C/C++
+consumers, and the Python tooling build and run there. Windows text uses
+DirectWrite and will be qualified against the Windows Chrome-for-Testing
+147.0.7727.50 build; until then, tests whose expected values come from the
+Linux FreeType/Fontconfig oracle are ignored on Windows and listed in
+`docs/v02/generated/windows-pending-tests.txt`. A Win32 window, input and
+presentation runtime is pending. See [Windows development](../DEVELOPMENT.md#windows-x64-msvc).
+
 The frozen WPT inventory contains 1,912 test files with JavaScript in their
 Chromium source and 30 nonvisual/crash-harness rows. Test tooling may read a
 script to construct a fixed native Rust fixture for its final visual state;

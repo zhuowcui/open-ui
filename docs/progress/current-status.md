@@ -1,5 +1,21 @@
 # Open UI current status
 
+## Windows development baseline 19 October 2026
+
+At the user's direction, work resumed with one focused PR that makes the
+headless Rust workspace, the C ABI and the Python tooling build and run on
+Windows x64 with MSVC; pinned Chromium stays on Linux in WSL. On Windows the
+workspace builds and **9,393 tests pass**. All **164 exports, 41 C and 35 C++
+consumers** and all **300 Python tests** (six reasoned skips) pass. Eleven
+tests whose expected values come from Linux FreeType or Fontconfig are ignored
+only outside Linux and ledgered. Four Windows failures remain: the known
+scrollbar clip guard, a scrollbar-arrow resampling difference and two WOFF
+registrations that DirectWrite cannot load. Text uses DirectWrite with
+Chromium's Windows generic families and is not yet qualified against Windows
+Chrome-for-Testing. These are local measurements of the branch; Linux results
+and qualification gates are unchanged. See the
+[Windows baseline record](windows-baseline-2026-10-19.md).
+
 ## Experimental integration checkpoint 17 October 2026
 
 `main` is the authoritative experimental implementation. The user directed
