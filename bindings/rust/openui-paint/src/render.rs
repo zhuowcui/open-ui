@@ -1281,7 +1281,8 @@ mod tests {
         });
         doc.append_child(vp, div);
 
-        let path = "/tmp/openui_test_render.png";
+        let path_buf = std::env::temp_dir().join("openui_test_render.png");
+        let path = path_buf.to_str().unwrap();
         render_to_png(
             &doc,
             openui_geometry::ViewportMetrics::from_logical_size(200 as f64, 200 as f64, 1.0)
