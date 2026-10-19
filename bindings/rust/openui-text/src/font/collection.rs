@@ -687,6 +687,11 @@ impl FontCollection {
             })
             .or_else(|| {
                 let mut family = self.system.0.match_family(family_name);
+                if family.count() == 0 {
+                    if let Some(alias) = platform_generic_alias(family_name) {
+                        family = self.system.0.match_family(alias);
+                    }
+                }
                 let count = family.count();
                 let exact = (0..count).find(|&index| family.style(index).0 == requested);
                 exact
@@ -1434,6 +1439,30 @@ pub(crate) fn generic_family_name(generic: GenericFontFamily) -> &'static str {
     }
 }
 
+/// Installed family for a CSS generic name on platforms whose font manager has
+/// no generic aliases. Fontconfig resolves generics itself on Linux. DirectWrite
+/// does not, so Windows uses Chromium's Windows default font settings; these
+/// remain unqualified until compared with Windows Chrome-for-Testing.
+#[cfg(windows)]
+fn platform_generic_alias(name: &str) -> Option<&'static str> {
+    Some(match name {
+        "serif" | "ui-serif" => "Times New Roman",
+        "sans-serif" | "ui-sans-serif" => "Arial",
+        "monospace" | "ui-monospace" => "Consolas",
+        "cursive" => "Comic Sans MS",
+        "fantasy" => "Impact",
+        "system-ui" | "ui-rounded" => "Segoe UI",
+        "math" => "Cambria Math",
+        "emoji" => "Segoe UI Emoji",
+        _ => return None,
+    })
+}
+
+#[cfg(not(windows))]
+fn platform_generic_alias(_name: &str) -> Option<&'static str> {
+    None
+}
+
 pub(crate) fn family_name(family: &FontFamily) -> &str {
     match family {
         FontFamily::Named(name) => name,
@@ -1639,6 +1668,26 @@ mod tests {
                 0xf2, 0x00, 0x15, 0xad,
             ]
         );
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn css_generics_resolve_to_installed_windows_families() {
+        let collection = FontCollection::system();
+        let description = FontDescription::new();
+        for (generic, installed) in [
+            ("sans-serif", "Arial"),
+            ("serif", "Times New Roman"),
+            ("monospace", "Consolas"),
+        ] {
+            let data = collection
+                .resolve_family(generic, &description)
+                .unwrap_or_else(|| panic!("{generic} resolves on Windows"));
+            assert_eq!(data.typeface().family_name(), installed);
+        }
+        assert!(collection
+            .resolve_family("Unregistered Family", &description)
+            .is_none());
     }
 
     #[test]
