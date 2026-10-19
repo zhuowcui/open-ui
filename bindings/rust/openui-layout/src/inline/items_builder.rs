@@ -2500,6 +2500,10 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(
+        not(target_os = "linux"),
+        ignore = "linux-oracle: Fontconfig fallback face selection"
+    )]
     fn mixed_script_fallback_and_vertical_orientation_boundaries_split_runs() {
         let mut doc = Document::new();
         let container = doc.create_node(ElementTag::Div);

@@ -4397,6 +4397,10 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(
+        not(target_os = "linux"),
+        ignore = "linux-oracle: FreeType fractional advance of loaded Ahem"
+    )]
     fn text_intrinsic_preserves_shaped_letter_and_word_spacing() {
         let style = ahem_intrinsic_style().derive(|style| {
             style.letter_spacing = 2.0;
@@ -4417,6 +4421,10 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(
+        not(target_os = "linux"),
+        ignore = "linux-oracle: FreeType fractional advance of loaded Ahem"
+    )]
     fn chromium_atomic_word_fraction_survives_an_integer_raster_font_policy() {
         // native-general-font-chromium-v3824 records 144.015625 at all five
         // required measurement scales, before and after native Ahem aliasing.

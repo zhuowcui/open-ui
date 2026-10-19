@@ -159,6 +159,10 @@ fn platform_fallback_iterates_for_distinct_missing_chars() {
 // ── Issue 4: Synthetic oblique preserved for platform fallback ───────────
 
 #[test]
+#[cfg_attr(
+    not(target_os = "linux"),
+    ignore = "linux-oracle: Fontconfig fallback face selection"
+)]
 fn platform_fallback_preserves_oblique_angle() {
     let mut desc = FontDescription::default();
     desc.style = openui_style::FontStyleEnum::Oblique(14.0);

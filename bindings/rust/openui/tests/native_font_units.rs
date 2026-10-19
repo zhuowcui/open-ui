@@ -5,6 +5,10 @@ use std::{cell::Cell, rc::Rc};
 // preserved in native-font-relative-v1. The application retains the unit; the
 // callback changes only the font, without computing or setting a pixel width.
 #[test]
+#[cfg_attr(
+    not(target_os = "linux"),
+    ignore = "linux-oracle: FreeType Ahem x-height and ex metrics"
+)]
 fn retained_font_units_update_after_native_rust_callbacks() {
     for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
         for (unit, line_height, before_width, after_width) in [
@@ -125,6 +129,10 @@ fn retained_font_units_refresh_after_shared_font_registration() {
 // native-general-font-chromium-v3824. The fixed-width float neighbor also
 // checks that text rounding does not inflate unrelated atomic contents.
 #[test]
+#[cfg_attr(
+    not(target_os = "linux"),
+    ignore = "linux-oracle: FreeType fractional advance of loaded Ahem"
+)]
 fn atomic_intrinsic_text_keeps_chromium_fraction_after_native_font_alias_change() {
     for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
         let fonts = FontCollection::deterministic_test();
