@@ -27,6 +27,14 @@ right picture or the Chromium test uses a script. See the
 
 ## Verified status
 
+### Windows development baseline 19 October 2026
+
+The headless workspace, C ABI and Python tooling also build and run on
+Windows x64 with MSVC, as an experimental development baseline rather than a
+v0.2 platform. Pinned Chromium stays on Linux. Linux-oracle text tests are
+ledgered outside Linux; four Windows failures remain open. See the
+[Windows baseline record](docs/progress/windows-baseline-2026-10-19.md).
+
 ### Experimental integration checkpoint 17 October 2026
 
 `main` is the experimental source of truth. At the user's direction,

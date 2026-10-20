@@ -5,6 +5,7 @@ import io
 from pathlib import Path
 import signal
 import subprocess
+import sys
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -14,6 +15,10 @@ from PIL import Image
 from tools.accountability import run_all_pixel_comparisons as capture
 
 
+@unittest.skipUnless(
+    sys.platform.startswith("linux"),
+    "drives the Linux Chrome-for-Testing oracle, which owns process groups through /proc",
+)
 class CaptureLifecycleTests(unittest.TestCase):
     def exercise(self, case="success"):
         events = []

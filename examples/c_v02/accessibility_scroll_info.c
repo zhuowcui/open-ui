@@ -3,12 +3,12 @@
 #undef NDEBUG
 #endif
 #include <assert.h>
-#include <pthread.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 
 #include "openui.h"
+#include "portable_thread.h"
 
 #if defined(__cplusplus)
 static_assert(sizeof(OuiAccessibilityScrollInfoV1) == 64, "append-only scroll info layout");

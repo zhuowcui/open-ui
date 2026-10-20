@@ -596,6 +596,10 @@ class LedgerTests(unittest.TestCase):
         self.assertEqual(len(targets & residuals), 31)
         self.assertTrue(targets & residuals <= sp13r_closure.LATER_EXACT_PROMOTIONS)
 
+    @unittest.skipIf(
+        sys.platform == "win32",
+        "rustfmt needs a main-thread stack larger than Windows' fixed 1 MiB for these modules",
+    )
     def test_w2b_w4_two_no_write_generations_and_two_splices_match(self):
         with closure.MAPPING_CSV.open(newline="", encoding="utf-8") as stream:
             rows = list(csv.DictReader(stream))

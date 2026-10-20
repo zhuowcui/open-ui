@@ -93,8 +93,8 @@ def physical_dimension(logical: float, scale: float) -> int:
 
 def hash_files(paths: list[Path]) -> dict[str, str]:
     return {
-        str(path.relative_to(ROOT)): digest(path.read_bytes())
-        for path in sorted(paths)
+        path.relative_to(ROOT).as_posix(): digest(path.read_bytes())
+        for path in sorted(paths, key=lambda path: path.relative_to(ROOT).parts)
     }
 
 
@@ -190,7 +190,7 @@ def qualification_contract(javascript_audit: bytes) -> dict[str, object]:
             "pin_sha256": digest(CHROMIUM_VERSION.read_bytes()),
         },
         "historical_openui_archive": {
-            "manifest": str(LEGACY.relative_to(ROOT)),
+            "manifest": LEGACY.relative_to(ROOT).as_posix(),
             "manifest_sha256": LEGACY_SHA256,
             "recorded_chromium_build_identity": legacy["chromium_build_identity"],
             "purpose": "immutable-provenance-and-archive-integrity",
@@ -254,7 +254,7 @@ def qualification_contract(javascript_audit: bytes) -> dict[str, object]:
             ],
         },
         "residuals": {
-            "ownership_path": str(RESIDUAL_OWNERSHIP.relative_to(ROOT)),
+            "ownership_path": RESIDUAL_OWNERSHIP.relative_to(ROOT).as_posix(),
             "ownership_sha256": digest(RESIDUAL_OWNERSHIP.read_bytes()),
             "unknown_ownership": "generator-error",
             "root_cause_enum": [
@@ -294,26 +294,26 @@ def qualification_contract(javascript_audit: bytes) -> dict[str, object]:
             "ambient_system_font_expansion": "forbidden",
         },
         "media_certification": {
-            "first_frame_manifest": str(MEDIA_FIRST_FRAMES.relative_to(ROOT)),
+            "first_frame_manifest": MEDIA_FIRST_FRAMES.relative_to(ROOT).as_posix(),
             "first_frame_manifest_sha256": digest(MEDIA_FIRST_FRAMES.read_bytes()),
             "decoded_transport": "OUIR-v1-sRGB-unpremultiplied-RGBA8",
             "playback": "outside-renderer-contract",
         },
         "suite_manifests": {
             "full": {
-                "path": str(FULL_MANIFEST.relative_to(ROOT)),
+                "path": FULL_MANIFEST.relative_to(ROOT).as_posix(),
                 "sha256": digest(FULL_MANIFEST.read_bytes()),
                 "count": len(full_ids),
                 "evidence": "diagnostic-census",
             },
             "focused": {
-                "path": str(FOCUSED_MANIFEST.relative_to(ROOT)),
+                "path": FOCUSED_MANIFEST.relative_to(ROOT).as_posix(),
                 "sha256": digest(FOCUSED_MANIFEST.read_bytes()),
                 "count": len(focused_ids),
                 "evidence": "qualification-gate",
             },
             "primitive": {
-                "path": str(PRIMITIVE_MANIFEST.relative_to(ROOT)),
+                "path": PRIMITIVE_MANIFEST.relative_to(ROOT).as_posix(),
                 "sha256": digest(PRIMITIVE_MANIFEST.read_bytes()),
                 "count": len(primitive_ids),
                 "evidence": "qualification-gate",
@@ -333,7 +333,7 @@ def qualification_contract(javascript_audit: bytes) -> dict[str, object]:
                 ],
             },
             "expanded": {
-                "path": str(EXPANDED_MANIFEST.relative_to(ROOT)),
+                "path": EXPANDED_MANIFEST.relative_to(ROOT).as_posix(),
                 "sha256": digest(EXPANDED_MANIFEST.read_bytes()),
                 "count": len(expanded_ids),
                 "original_count": len(full_ids),
@@ -366,11 +366,14 @@ def style_inventory() -> dict[str, object]:
     fields = computed_fields()
     consumers = {}
     for area in ("openui-layout/src", "openui-paint/src", "openui-engine/src"):
-        for path in sorted((ROOT / "bindings/rust" / area).rglob("*.rs")):
+        for path in sorted(
+            (ROOT / "bindings/rust" / area).rglob("*.rs"),
+            key=lambda path: path.relative_to(ROOT).parts,
+        ):
             text = path.read_text()
             for field in fields:
                 if re.search(rf"\.{re.escape(field)}\b", text):
-                    consumers.setdefault(field, []).append(str(path.relative_to(ROOT)))
+                    consumers.setdefault(field, []).append(path.relative_to(ROOT).as_posix())
 
     schema = list(csv.DictReader(SCHEMA.read_text().splitlines()))
     mapped: dict[str, dict[str, str]] = {}
@@ -428,7 +431,7 @@ def style_inventory() -> dict[str, object]:
         raise ValueError(f"expected 217 consumed author fields, found {public_count}")
     return {
         "schema_version": 1,
-        "source": str(COMPUTED.relative_to(ROOT)),
+        "source": COMPUTED.relative_to(ROOT).as_posix(),
         "consumer_roots": [
             "bindings/rust/openui-layout/src",
             "bindings/rust/openui-paint/src",
@@ -771,7 +774,7 @@ def main() -> None:
     generated = outputs()
     if args.check:
         drift = [
-            str(path.relative_to(ROOT))
+            path.relative_to(ROOT).as_posix()
             for path, data in generated.items()
             if not path.is_file() or path.read_bytes() != data
         ]

@@ -15,6 +15,13 @@ Open UI launches on Linux (X11/Wayland). This sub-project extends to macOS (Meta
 4. macOS packaging (.app bundle)
 
 ### Phase B: Windows
+
+Status, 19 October 2026: an experimental Windows x64 MSVC build and test
+baseline exists for the headless workspace, C ABI and Python tooling (see
+[development](../DEVELOPMENT.md#windows-x64-msvc)). DirectWrite text
+qualification against Windows Chrome-for-Testing and the items below remain
+open.
+
 5. Windows windowing (HWND, DXGI)
 6. D3D12/D3D11 rendering backend
 7. Windows input, HiDPI, theme integration

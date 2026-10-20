@@ -116,7 +116,7 @@ class Entry:
             tags,
             self.meta.get("title", "").replace("\t", " "),
             self.meta.get("updated", ""),
-            os.path.relpath(self.path, MEM_ROOT),
+            Path(os.path.relpath(self.path, MEM_ROOT)).as_posix(),
         ])
 
     def render(self) -> str:
@@ -161,7 +161,7 @@ def write_index(entries: list[Entry]) -> None:
     MEM_ROOT.mkdir(parents=True, exist_ok=True)
     header = "# id\tstatus\ttags\ttitle\tupdated\tpath\n"
     rows = "\n".join(e.index_row() for e in entries)
-    INDEX_PATH.write_text(header + rows + ("\n" if rows else ""), encoding="utf-8")
+    INDEX_PATH.write_text(header + rows + ("\n" if rows else ""), encoding="utf-8", newline="\n")
 
 
 # ---------------------------------------------------------------------------
@@ -211,7 +211,7 @@ def cmd_add(args) -> int:
         print("error: refusing to write outside the entries directory", file=sys.stderr)
         return 2
     entry = Entry(path, meta, body)
-    path.write_text(entry.render(), encoding="utf-8")
+    path.write_text(entry.render(), encoding="utf-8", newline="\n")
 
     entries = load_entries()
     write_index(entries)
@@ -320,7 +320,7 @@ def cmd_update(args) -> int:
     if args.append:
         e.body = e.body.rstrip() + "\n" + args.append.strip()
     e.meta["updated"] = _today()
-    e.path.write_text(e.render(), encoding="utf-8")
+    e.path.write_text(e.render(), encoding="utf-8", newline="\n")
     write_index(load_entries())
     print(f"updated {eid}")
     return 0

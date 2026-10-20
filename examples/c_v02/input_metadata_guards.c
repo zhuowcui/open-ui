@@ -4,10 +4,11 @@
 #undef NDEBUG
 #endif
 #include <assert.h>
-#include <pthread.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <string.h>
+
+#include "portable_thread.h"
 #ifdef __cplusplus
 static_assert(sizeof(OuiInputEventInfoV1) == 40, "input info layout");
 static_assert(offsetof(OuiInputEventInfoV1, data) == 32, "input data offset");

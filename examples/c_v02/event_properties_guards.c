@@ -4,10 +4,11 @@
 #undef NDEBUG
 #endif
 #include <assert.h>
-#include <pthread.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+
+#include "portable_thread.h"
 
 #define OK(call) assert((call) == OUI_OK)
 #ifdef __cplusplus

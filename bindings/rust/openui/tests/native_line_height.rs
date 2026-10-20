@@ -16,6 +16,10 @@ fn document(scale: f64) -> Document {
 // reference-only-3642 archive. Line-height feeds a retained 2.5lh width; the
 // native callback changes only the parent font, exercising both metric contexts.
 #[test]
+#[cfg_attr(
+    not(target_os = "linux"),
+    ignore = "linux-oracle: FreeType Ahem line metrics"
+)]
 fn relative_line_height_updates_from_native_callbacks_and_inherits_fixed_values() {
     for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
         let document = document(scale);
@@ -98,6 +102,10 @@ fn relative_line_height_updates_from_native_callbacks_and_inherits_fixed_values(
 }
 
 #[test]
+#[cfg_attr(
+    not(target_os = "linux"),
+    ignore = "linux-oracle: FreeType Ahem line metrics"
+)]
 fn relative_line_height_follows_shorthand_order_pseudos_and_animation_cancel() {
     let document = document(1.0);
     let node = Element::create(&document, "div").unwrap();

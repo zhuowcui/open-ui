@@ -36552,6 +36552,10 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(
+        not(target_os = "linux"),
+        ignore = "linux-oracle: Linux DejaVu default-font metrics"
+    )]
     fn consecutive_clearing_break_without_intervening_float_keeps_line_strut() {
         let mut doc = Document::new();
         let vp = doc.root();

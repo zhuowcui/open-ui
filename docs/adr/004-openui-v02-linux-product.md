@@ -84,3 +84,16 @@ a supported application runtime or release dependency. Linux and headless
 closure takes priority over other operating systems and graphics APIs. macOS,
 Windows, mobile platforms, Vulkan, network fetching, media,
 and specialized native pickers remain explicitly deferred.
+
+## Addendum: Windows development baseline (19 October 2026)
+
+This decision is unchanged: v0.2 remains a Linux and headless product, and
+Windows carries no v0.2 compatibility promise. At the user's direction the
+experimental `main` also builds and tests on Windows x64 with MSVC, so that
+Rust, C ABI and tooling work can happen there while pinned Chromium runs on
+Linux in WSL. Linux Open UI stays qualified against the Linux
+Chrome-for-Testing 147.0.7727.50 oracle. Windows Open UI will use DirectWrite
+text and be qualified against Windows Chrome-for-Testing 147.0.7727.50, with a
+Win32 window runtime as later separate work. Until then, Linux-oracle tests are
+ignored only outside Linux and recorded in
+`docs/v02/generated/windows-pending-tests.txt`.

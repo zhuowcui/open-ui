@@ -123,6 +123,52 @@ cargo --config .cargo/config.chromium.toml test --locked -p openui-paint
 Never make this file the default or use it for release artifacts. Hosted CI
 sets an equivalent portable toolchain explicitly.
 
+## Windows x64 MSVC
+
+Windows is an experimental development baseline for the headless workspace,
+the C ABI and the Python tooling. Pinned Chromium references are still
+captured on Linux, in WSL or on a Linux host; Windows text pixels will be
+qualified separately against Windows Chrome-for-Testing 147.0.7727.50.
+
+Install Rust 1.94.1 (`x86_64-pc-windows-msvc`), Visual Studio 2022 Build Tools
+with the C++ workload and Windows SDK, LLVM (clang, libclang and
+`llvm-readobj`), Python 3.12 with `Pillow==12.2.0` and `clang-format==18.1.8`,
+Ninja and Node 22. Enable long paths for the checkout with
+`git config core.longpaths true`. The repository's `.gitattributes` checks out
+LF text regardless of `core.autocrlf`; clone auxiliary sources such as the
+Chromium WPT sparse checkout with `git -c core.autocrlf=false`.
+
+```powershell
+$env:LIBCLANG_PATH = "C:\Program Files\LLVM\bin"
+$env:FORCE_SKIA_BUILD = "1"
+$env:SKIA_NINJA_COMMAND = "ninja"
+$env:RUST_MIN_STACK = "4194304"
+$env:PYTHONUTF8 = "1"
+$env:SKIA_GN_ARGS = 'extra_cflags += [ "-DSK_SUPPORT_LEGACY_CONIC_CHOP", "-DSK_USE_FREETYPE_EMBOLDEN", "-DSK_GAMMA_EXPONENT=1.2", "-DSK_GAMMA_CONTRAST=0.2", "-fno-strict-aliasing", "-msse3" ]'
+cd bindings\rust
+cargo build --workspace --locked
+cargo test --workspace --locked
+cargo build --locked --package openui-ffi
+python ..\..\tools\ffi\verify_abi.py --library <target>\debug\openui_ffi.dll
+python ..\..\tools\ci\check_platform_scoped_tests.py
+```
+
+`PYTHONUTF8=1` is required: the generators read UTF-8 sources and Windows
+otherwise defaults to the ANSI code page. `pixel-compare` finds Python through
+`OPENUI_PYTHON`, then `python3`, `python` and `py -3`, rejecting the Windows
+Store launcher alias. Use a short `CARGO_TARGET_DIR` such as `out\cargo-win`
+to stay below path-length limits inside the Skia build.
+
+Tests whose expected values come from the Linux oracle, its FreeType raster or
+its Fontconfig font resolution are marked
+`#[cfg_attr(not(target_os = "linux"), ignore = "linux-oracle: <reason>")]`.
+They still compile on Windows and still run on Linux, so the Linux gate is
+unchanged. `tools/ci/check_platform_scoped_tests.py` requires the marked set
+to equal `docs/v02/generated/windows-pending-tests.txt` exactly and rejects
+unconditional or malformed markers; `--write` regenerates the ledger. Remove entries
+from the ledger as Windows-native references qualify them; never add a test
+whose expected value is platform-independent.
+
 ## Fuzzing and sanitizers
 
 The isolated `bindings/rust/fuzz` workspace has targets for FFI values, tree

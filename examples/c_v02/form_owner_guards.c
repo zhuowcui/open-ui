@@ -4,10 +4,11 @@
 #undef NDEBUG
 #endif
 #include <assert.h>
-#include <pthread.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+
+#include "portable_thread.h"
 #define OK(call) assert((call) == OUI_OK)
 typedef OuiStatus (*Query)(OuiElement*, OuiElement**);
 static const Query queries[] = {oui_element_associated_form_v1, oui_element_parent_v1};

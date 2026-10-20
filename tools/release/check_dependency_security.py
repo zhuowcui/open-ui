@@ -64,31 +64,38 @@ def write_json(path: Path, value: object) -> None:
     temporary.replace(path)
 
 
+def kill_group(child: subprocess.Popen) -> None:
+    """Forcefully end a child and every process in its group."""
+    if os.name == "nt":
+        subprocess.run(["taskkill", "/T", "/F", "/PID", str(child.pid)], capture_output=True)
+        return
+    try:
+        os.killpg(child.pid, signal.SIGKILL)
+    except ProcessLookupError:
+        pass
+
+
 def command(argv: list[str], cwd: Path, timeout: int = 600) -> dict:
     """Own, wait for, and reap a command, including a timed-out process group."""
+    group = ({"creationflags": subprocess.CREATE_NEW_PROCESS_GROUP} if os.name == "nt"
+             else {"start_new_session": True})
     child = subprocess.Popen(
         argv,
         cwd=cwd,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
-        start_new_session=True,
         env={**os.environ, "GIT_OPTIONAL_LOCKS": "0"},
+        **group,
     )
     timed_out = False
     try:
         stdout, stderr = child.communicate(timeout=timeout)
     except subprocess.TimeoutExpired:
         timed_out = True
-        try:
-            os.killpg(child.pid, signal.SIGKILL)
-        except ProcessLookupError:
-            pass
+        kill_group(child)
         stdout, stderr = child.communicate()
     except BaseException:
-        try:
-            os.killpg(child.pid, signal.SIGKILL)
-        except ProcessLookupError:
-            pass
+        kill_group(child)
         child.communicate()
         raise
     return {
@@ -291,7 +298,7 @@ def audit(root: Path, binary: Path, output: Path) -> dict:
         with tempfile.TemporaryDirectory(prefix="audit-sandbox-", dir=output) as temporary:
             sandbox = Path(temporary)
             (sandbox / ".cargo").mkdir()
-            (sandbox / ".cargo/audit.toml").write_text(CONFIG)
+            (sandbox / ".cargo/audit.toml").write_bytes(CONFIG.encode())
             receipt["config"] = {"text": CONFIG, "sha256": sha256(CONFIG.encode())}
             version = command([str(binary), "--version"], sandbox, 60)
             receipt["commands"].append(version)

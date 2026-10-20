@@ -161,6 +161,10 @@ fn ahem_anonymous_flex_inline_and_table_size_from_shaped_advances() {
 }
 
 #[test]
+#[cfg_attr(
+    not(target_os = "linux"),
+    ignore = "linux-oracle: FreeType fractional advance of loaded Ahem"
+)]
 fn native_spacing_and_text_mutations_recompute_each_text_entry_point() {
     let mut engine = engine_with_families(&["Ahem"]);
     engine

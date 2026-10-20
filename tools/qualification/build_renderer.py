@@ -9,7 +9,6 @@ confirm that every linked renderer crate was compiled from this checkout.
 from __future__ import annotations
 
 import argparse
-import fcntl
 import hashlib
 import json
 import os
@@ -18,6 +17,12 @@ import shutil
 import signal
 import subprocess
 import sys
+import tempfile
+
+if os.name == "nt":
+    import msvcrt
+else:
+    import fcntl
 
 
 RENDERER_PACKAGES = {
@@ -25,6 +30,30 @@ RENDERER_PACKAGES = {
     "openui-dom", "openui-layout", "openui-paint", "openui-compositor",
     "openui-engine",
 }
+
+
+def lock_exclusive(path: Path):
+    """Hold a nonblocking exclusive lock for the lifetime of the returned file."""
+    owner = open(path, "a+")
+    if os.name == "nt":
+        msvcrt.locking(owner.fileno(), msvcrt.LK_NBLCK, 1)
+    else:
+        fcntl.flock(owner, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    return owner
+
+
+def group_options() -> dict:
+    """Start a child in its own process group so the whole build can be ended."""
+    if os.name == "nt":
+        return {"creationflags": subprocess.CREATE_NEW_PROCESS_GROUP}
+    return {"start_new_session": True}
+
+
+def end_group(child: subprocess.Popen, sig: int) -> None:
+    if os.name == "nt":
+        subprocess.run(["taskkill", "/T", "/F", "/PID", str(child.pid)], capture_output=True)
+    else:
+        os.killpg(child.pid, sig)
 
 
 def sha256(path: Path) -> str:
@@ -84,8 +113,8 @@ def build(args: argparse.Namespace) -> dict:
     source = repository_source_identity(root)
     if not source["clean"] and not args.allow_dirty_diagnostics:
         raise ValueError("renderer builds require a clean measured checkout")
-    owner = open("/tmp/openui-native-cargo-raster-owner.lock", "a+")
-    fcntl.flock(owner, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    lock_dir = Path(tempfile.gettempdir()) if os.name == "nt" else Path("/tmp")
+    owner = lock_exclusive(lock_dir / "openui-native-cargo-raster-owner.lock")
     out = args.results_dir.resolve()
     out.mkdir(parents=True, exist_ok=False)
     target = args.target_dir.resolve()
@@ -107,17 +136,17 @@ def build(args: argparse.Namespace) -> dict:
         stderr = out / (name + ".stderr")
         with stdout.open("xb") as output, stderr.open("xb") as errors:
             child = subprocess.Popen(command + tail, cwd=root / "bindings/rust", env=env,
-                                     stdout=output, stderr=errors, start_new_session=True)
+                                     stdout=output, stderr=errors, **group_options())
             report["current_process"] = {"pid": child.pid, "stage": name}
             save()
             try:
                 result = child.wait()
             except BaseException:
-                os.killpg(child.pid, signal.SIGTERM)
+                end_group(child, signal.SIGTERM)
                 try:
                     child.wait(timeout=20)
                 except subprocess.TimeoutExpired:
-                    os.killpg(child.pid, signal.SIGKILL)
+                    end_group(child, signal.SIGKILL)
                     child.wait()
                 raise
             finally:

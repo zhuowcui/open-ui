@@ -6,7 +6,9 @@ experiment exists in the repository.
 
 ## Platforms and graphics
 
-- macOS, Windows, Android, iOS, and browser/WASM execution.
+- macOS, Windows, Android, iOS, and browser/WASM execution. Windows x64 MSVC
+  builds and tests the headless workspace as an experimental development
+  baseline only; it carries no v0.2 compatibility promise.
 - Vulkan, Metal, and Direct3D presentation.
 - Multiple physical-GPU/driver profiles beyond the declared Linux release
   qualification profile.

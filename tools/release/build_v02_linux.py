@@ -13,6 +13,7 @@ import platform
 import re
 import shutil
 import subprocess
+import sys
 import tarfile
 import tempfile
 import tomllib
@@ -85,7 +86,7 @@ def verify_dependency_security() -> Path:
     )
     evidence_root.mkdir(parents=True, exist_ok=True)
     evidence = Path(tempfile.mkdtemp(prefix="openui-dependency-security-", dir=evidence_root)) / "report"
-    run(["python3", "tools/release/check_dependency_security.py", "--output", str(evidence)])
+    run([sys.executable, "tools/release/check_dependency_security.py", "--output", str(evidence)])
     return evidence
 
 
@@ -96,21 +97,24 @@ def write_text(path: Path, value: str, mode: int = 0o644) -> None:
 
 
 def normalize_tree(root: Path, epoch: int) -> None:
+    # Symlinks are skipped, so following is only refused where the platform
+    # supports it; Windows has no lutime equivalent.
+    follow = os.utime not in os.supports_follow_symlinks
     for path in sorted(root.rglob("*"), reverse=True):
         if path.is_symlink():
             continue
         path.chmod(0o755 if path.is_dir() else 0o644)
-        os.utime(path, (epoch, epoch), follow_symlinks=False)
-    os.utime(root, (epoch, epoch), follow_symlinks=False)
+        os.utime(path, (epoch, epoch), follow_symlinks=follow)
+    os.utime(root, (epoch, epoch), follow_symlinks=follow)
 
 
 def verify_source() -> dict:
     for generator in (
-        ["python3", "tools/release/generate_v02_contract.py", "--check"],
-        ["python3", "tools/style/generate_properties.py", "--check"],
-        ["python3", "tools/ffi/generate_ffi.py", "--check"],
-        ["python3", "tools/conformance/verify_v02.py"],
-        ["python3", "tools/performance/verify_v02.py"],
+        [sys.executable, "tools/release/generate_v02_contract.py", "--check"],
+        [sys.executable, "tools/style/generate_properties.py", "--check"],
+        [sys.executable, "tools/ffi/generate_ffi.py", "--check"],
+        [sys.executable, "tools/conformance/verify_v02.py"],
+        [sys.executable, "tools/performance/verify_v02.py"],
     ):
         run(generator)
     metadata = json.loads(

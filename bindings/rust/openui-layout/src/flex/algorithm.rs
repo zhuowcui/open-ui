@@ -6809,6 +6809,10 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(
+        not(target_os = "linux"),
+        ignore = "linux-oracle: Linux DejaVu default-font metrics"
+    )]
     fn vertical_column_cross_margin_reduces_fit_content_before_wrapping() {
         fn content_base(cross_margin: i32) -> LayoutUnit {
             let mut doc = Document::new();
