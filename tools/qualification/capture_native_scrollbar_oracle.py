@@ -17,6 +17,7 @@ import hashlib
 import importlib.util
 import io
 import json
+import math
 from pathlib import Path
 import subprocess
 import sys
@@ -81,10 +82,29 @@ def ink_extent(rgba: bytes, side: int) -> list[int] | None:
     return [min(xs), max(xs) + 1, min(ys), max(ys) + 1] if xs else None
 
 
+def crop_rect(width: int, scale: float) -> list[int]:
+    """Enclosing physical [x, y, width, height] of the box; it bounds all ink."""
+    x0, y0 = math.floor(LEFT * scale), math.floor(TOP * scale)
+    x1, y1 = math.ceil((LEFT + width) * scale), math.ceil((TOP + HEIGHT) * scale)
+    return [x0, y0, x1 - x0, y1 - y0]
+
+
+def crop(rgba: bytes, side: int, rect: list[int]) -> tuple[bytes, bool]:
+    """Crop bytes and whether every pixel outside the crop is opaque white."""
+    x, y, w, h = rect
+    rows = [rgba[(row * side + x) * 4:(row * side + x + w) * 4] for row in range(y, y + h)]
+    outside = bytearray(rgba)
+    for row in range(y, y + h):
+        outside[(row * side + x) * 4:(row * side + x + w) * 4] = b"\xff" * (w * 4)
+    return b"".join(rows), bytes(outside) == b"\xff" * len(outside)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--chrome", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--crops", type=Path,
+                        help="directory for per-case enclosing-box crops and crops.json")
     parser.add_argument("--historical", type=Path,
                         help="earlier capture directory with <case>/repeat-0/chromium.rgba")
     args = parser.parse_args()
@@ -130,6 +150,18 @@ def main() -> int:
                     "rgba_sha256": sha256(rgba), "repeats_exact": True,
                     "ink_extent": ink_extent(rgba, side),
                 }
+                if args.crops:
+                    rect = crop_rect(width, scale)
+                    data, outside_white = crop(rgba, side, rect)
+                    if not outside_white:
+                        raise SystemExit(f"{name}: ink outside the enclosing box crop")
+                    row["crop_xywh"] = rect
+                    if data:
+                        crop_name = f"{style}-w{width}-s{format(scale, 'g').replace('.', '_')}.rgba"
+                        args.crops.mkdir(parents=True, exist_ok=True)
+                        (args.crops / crop_name).write_bytes(data)
+                        row["crop_path"] = crop_name
+                        row["crop_sha256"] = sha256(data)
                 if args.historical:
                     previous = (args.historical / name / "repeat-0/chromium.rgba").read_bytes()
                     row["historical_rgba_exact"] = previous == rgba
