@@ -9,11 +9,14 @@ workspace builds and **9,393 tests pass**. All **164 exports, 41 C and 35 C++
 consumers** and all **300 Python tests** (six reasoned skips) pass. Eleven
 tests whose expected values come from Linux FreeType or Fontconfig are ignored
 only outside Linux and ledgered. Four Windows failures remain: the known
-scrollbar clip guard, a scrollbar-arrow resampling difference and two WOFF
+scrollbar clip guard, a toolchain-dependent scrollbar-arrow difference that
+also fails on Linux with system clang, and two WOFF
 registrations that DirectWrite cannot load. Text uses DirectWrite with
 Chromium's Windows generic families and is not yet qualified against Windows
-Chrome-for-Testing. These are local measurements of the branch; Linux results
-and qualification gates are unchanged. See the
+Chrome-for-Testing. On Linux in WSL with the hosted CI toolchain the same branch
+passes **9,400 tests, with two failures and 13 ignored**; both failures, the clip
+guard and the arrow test, also fail on unmodified `main`. These are local
+measurements of the branch; qualification gates are unchanged. See the
 [Windows baseline record](windows-baseline-2026-10-19.md).
 
 ## Experimental integration checkpoint 17 October 2026

@@ -66,7 +66,7 @@ the Linux oracle.
 | Test | Owner | Observation |
 | --- | --- | --- |
 | `openui-engine::native_resize_control_clip::actual_native_scrollbar_frames_are_clipped_independently_of_track_and_thumb_ink` | overflow-control paint | Same known failure as Linux: ink at physical row 57 for scale 1.25 |
-| `openui-engine::source_layer_raster::original_edge_and_all_eight_controls_keep_real_property_boundaries` | overflow-control paint / Skia build | Viewport scrollbar arrows differ from the pinned Chromium frame at 1.25×, 1.5× and 1.75×: 23, 26 and 32 pixels per mode, 1–8 levels each, in the arrow columns. Linux matches. Cause not yet identified |
+| `openui-engine::source_layer_raster::original_edge_and_all_eight_controls_keep_real_property_boundaries` | overflow-control paint / Skia build | Viewport scrollbar arrows differ from the pinned Chromium frame at 1.25×, 1.5× and 1.75×: 23, 26 and 32 pixels per mode, 1–8 levels each, in the arrow columns. Not Windows-specific: unmodified `main` (`fa370271`) fails identically on Linux with the hosted-style system clang 21 toolchain. The checkpoint's pass used the pinned Chromium toolchain (`.cargo/config.chromium.toml`), so the result depends on the Skia compiler. Cause not yet identified |
 | `openui-text::font::collection::tests::pinned_wpt_font_containers_report_identical_owned_metadata` | `openui-text` font registration | WOFF registration returns `MalformedFont`: rust-skia builds Windows Skia without FreeType and DirectWrite cannot load WOFF/WOFF2 |
 | `openui-ffi::tests::c_font_metadata_matches_pinned_multiformat_fixtures` | `openui-ffi` / `openui-text` | Same WOFF cause through the C ABI (`InvalidArgument`) |
 
@@ -74,6 +74,27 @@ The WOFF repair, decoding web font containers before DirectWrite as Chromium's
 OTS does, and Windows text qualification against Windows Chrome-for-Testing
 147.0.7727.50 belong to the DirectWrite text task. A Win32 window, input and
 presentation runtime is separate later work.
+
+## Linux verification of this branch
+
+The same branch head `2358d36e` was tested on Linux in WSL Ubuntu 26.04 with
+Rust 1.94.1 and the hosted CI environment (system clang 21, `FORCE_SKIA_BUILD=1`,
+the CI `SKIA_GN_ARGS`). Hosted `rust-parity` cannot reach its tests because the
+pre-existing dependency audit fails on new RustSec unmaintained warnings for
+`zbus_names`, `zvariant` and `zvariant_derive` (RUSTSEC-2026-0370 to 0372), as it
+has on `main` since 18 October.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Linux workspace | `cargo --config 'target.x86_64-unknown-linux-gnu.rustflags=[]' test --workspace --locked --no-fail-fast --exclude pixel-compare` | 9,400 passed, 2 failed, 13 ignored across 224 groups; exit 101 |
+| Unmodified `main` control | `git archive fa370271` into `out/`, then `cargo test --locked -p openui-engine --test source_layer_raster` | The same arrow test fails at the same pixel, (991, 8), 163 versus 160 |
+| Linux generator checks | `generate_properties`, `generate_ffi`, `generate_v02_contract`, `generate_sp17_closure` `--check`, ledger checker | Pass on the LF checkout |
+| Renderer source identity | `renderer_source_identity.repository_source_identity()` | Identical digests on Windows and Linux |
+
+The two Linux failures are the known clip guard and the toolchain-dependent
+arrow test. All 11 ledgered tests run and pass on Linux; the ignored count
+equals the checkpoint's 13. The checkpoint's 9,401 / 1 / 13 was measured with
+the pinned Chromium toolchain and is not directly comparable.
 
 ## Linux-oracle ledger
 
