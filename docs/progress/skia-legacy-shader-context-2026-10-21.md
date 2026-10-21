@@ -35,3 +35,15 @@ Hosted builds now use the same Skia defines as the pinned parity profile.
 | --- | --- | --- |
 | Arrow test, Windows | `cargo test --locked -p openui-engine --test source_layer_raster`, with the define | 7/7 pass (it failed without the define) |
 | Linux workspace, WSL, system clang 21 | `cargo --config 'target.x86_64-unknown-linux-gnu.rustflags=[]' test --workspace --locked --no-fail-fast --exclude pixel-compare` | 9,403 passed, 0 failed, 13 ignored |
+| Paired renderer census, expanded suite, WSL | `build_renderer.py` then `run_renderer_matrix.py --suite expanded --jobs 16` for unmodified `main` (`ad491392`) built without and with the define, sharing one Chromium cache | 23,728 comparisons, Chromium identical in all. Exact rises from 21,663 to 21,681: 18 gains, 0 losses, 68 improved, 12 worsened |
+
+The paired census compares the same source with only the Skia define changed.
+Gains are in backgrounds, border radius clipping, replaced overflow and image
+sizing. The 12 worsened comparisons are all at 1.25×: `background-334`,
+`border-image-017` to `-020`, `border-image-slice-001` and `-002` (249 to 311
+pixels each), two radius `background-clip` tests (2 pixels each) and three
+`flexbox-whitespace-handling-001` variants (63 to 65). They remain inexact
+either way. The per-comparison delta is in
+[skia-legacy-shader-context-census-v1.json](evidence/skia-legacy-shader-context-census-v1.json).
+This is a paired measurement of one source tree, not a full qualification
+census.
