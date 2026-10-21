@@ -250,6 +250,19 @@ jobs:
           cargo build --manifest-path bindings/rust/Cargo.toml --locked --package openui-ffi
           python tools/ffi/verify_abi.py --library "$CARGO_TARGET_DIR/debug/openui_ffi.dll"
 
+      - name: Build and smoke the Win32 desktop runtime
+        run: |
+          features="openui-platform/windows openui/windows openui-ffi/windows hello/windows"
+          cargo build --manifest-path bindings/rust/Cargo.toml --locked \
+            --package openui-ffi --package hello --features "$features"
+          cargo test --manifest-path bindings/rust/Cargo.toml --locked --no-fail-fast \
+            --package openui-platform --package openui --package openui-ffi \
+            --features "openui-platform/windows openui/windows openui-ffi/windows"
+          OUI_BACKEND=software OUI_SMOKE_EXIT=1 "$CARGO_TARGET_DIR/debug/hello.exe"
+          python tools/ffi/verify_native_window.py \
+            --library "$CARGO_TARGET_DIR/debug/openui_ffi.dll" \
+            --protocol win32 --backend software
+
       - name: Run the headless workspace tests
         working-directory: bindings/rust
         run: >-
