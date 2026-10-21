@@ -29,9 +29,15 @@ pub(crate) enum HandleKind {
 #[derive(Clone)]
 pub(crate) struct AppState {
     pub document: Rc<DocumentState>,
-    #[cfg(all(feature = "linux", target_os = "linux"))]
+    #[cfg(any(
+        all(feature = "linux", target_os = "linux"),
+        all(feature = "windows", target_os = "windows")
+    ))]
     pub title: String,
-    #[cfg(all(feature = "linux", target_os = "linux"))]
+    #[cfg(any(
+        all(feature = "linux", target_os = "linux"),
+        all(feature = "windows", target_os = "windows")
+    ))]
     pub backend: u32,
     pub running: Cell<bool>,
     pub has_run: Cell<bool>,

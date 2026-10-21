@@ -163,7 +163,10 @@ pub use openui_engine::{
     TextDirection, TextEdging, TextHinting, TextRasterConfiguration, TextUnit, ViewportAuthority,
     ViewportMetrics, ViewportMetricsError,
 };
-#[cfg(all(feature = "linux", target_os = "linux"))]
+#[cfg(any(
+    all(feature = "linux", target_os = "linux"),
+    all(feature = "windows", target_os = "windows")
+))]
 pub use openui_platform::{KeyboardInput, PlatformEvent};
 
 // ─── Re-exports: proc macros ────────────────────────────────

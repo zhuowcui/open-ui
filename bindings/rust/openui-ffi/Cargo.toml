@@ -15,6 +15,7 @@ build = "build.rs"
 [features]
 default = []
 linux = ["openui/linux", "dep:openui-platform", "openui-platform/linux"]
+windows = ["openui/windows", "dep:openui-platform", "openui-platform/windows"]
 
 [lib]
 crate-type = ["rlib", "staticlib", "cdylib"]

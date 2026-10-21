@@ -355,7 +355,7 @@ fn application_view() -> ViewNode {
     ViewNode::Element(root)
 }
 
-#[cfg(feature = "linux")]
+#[cfg(any(feature = "linux", feature = "windows"))]
 fn main() -> Result<(), Error> {
     App::builder()
         .title("Open UI Dashboard")
@@ -364,7 +364,7 @@ fn main() -> Result<(), Error> {
         .run(application_view)
 }
 
-#[cfg(not(feature = "linux"))]
+#[cfg(not(any(feature = "linux", feature = "windows")))]
 fn main() -> Result<(), Error> {
     let mut app = HeadlessApp::new(ViewportMetrics::from_logical_size(1200.0, 800.0, 1.0)?)?;
     app.mount(application_view)?;

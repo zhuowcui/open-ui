@@ -807,9 +807,15 @@ pub extern "C" fn oui_app_create(
         };
         let state = Rc::new(AppState {
             document: new_document(&document_config)?,
-            #[cfg(all(feature = "linux", target_os = "linux"))]
+            #[cfg(any(
+                all(feature = "linux", target_os = "linux"),
+                all(feature = "windows", target_os = "windows")
+            ))]
             title: _title,
-            #[cfg(all(feature = "linux", target_os = "linux"))]
+            #[cfg(any(
+                all(feature = "linux", target_os = "linux"),
+                all(feature = "windows", target_os = "windows")
+            ))]
             backend: config.backend,
             running: Cell::new(false),
             has_run: Cell::new(false),

@@ -7,7 +7,10 @@ use crate::view_node::{mount_view, IntoView};
 use crate::{Document, ScopeId};
 use openui_engine::{EngineOptions, ViewportMetrics};
 use std::cell::Cell;
-#[cfg(all(feature = "linux", target_os = "linux"))]
+#[cfg(any(
+    all(feature = "linux", target_os = "linux"),
+    all(feature = "windows", target_os = "windows")
+))]
 use std::cell::RefCell;
 use std::rc::Rc;
 
@@ -97,11 +100,20 @@ impl AppBuilder {
             options: self.options,
             root_scope: None,
             exit_requested: AppExitHandle::default(),
-            #[cfg(all(feature = "linux", target_os = "linux"))]
+            #[cfg(any(
+                all(feature = "linux", target_os = "linux"),
+                all(feature = "windows", target_os = "windows")
+            ))]
             software_compositor: RefCell::new(openui_compositor::SoftwareCompositor::default()),
-            #[cfg(all(feature = "linux", target_os = "linux"))]
+            #[cfg(any(
+                all(feature = "linux", target_os = "linux"),
+                all(feature = "windows", target_os = "windows")
+            ))]
             platform_event_handler: None,
-            #[cfg(all(feature = "linux", target_os = "linux"))]
+            #[cfg(any(
+                all(feature = "linux", target_os = "linux"),
+                all(feature = "windows", target_os = "windows")
+            ))]
             rendered_generations: Cell::new(None),
         })
     }
@@ -112,11 +124,20 @@ pub struct App {
     options: WindowOptions,
     root_scope: Option<ScopeId>,
     exit_requested: AppExitHandle,
-    #[cfg(all(feature = "linux", target_os = "linux"))]
+    #[cfg(any(
+        all(feature = "linux", target_os = "linux"),
+        all(feature = "windows", target_os = "windows")
+    ))]
     software_compositor: RefCell<openui_compositor::SoftwareCompositor>,
-    #[cfg(all(feature = "linux", target_os = "linux"))]
+    #[cfg(any(
+        all(feature = "linux", target_os = "linux"),
+        all(feature = "windows", target_os = "windows")
+    ))]
     platform_event_handler: Option<Box<dyn FnMut(&openui_platform::PlatformEvent)>>,
-    #[cfg(all(feature = "linux", target_os = "linux"))]
+    #[cfg(any(
+        all(feature = "linux", target_os = "linux"),
+        all(feature = "windows", target_os = "windows")
+    ))]
     rendered_generations: Cell<Option<[u64; 5]>>,
 }
 
@@ -141,11 +162,20 @@ impl App {
             options,
             root_scope: None,
             exit_requested: AppExitHandle::default(),
-            #[cfg(all(feature = "linux", target_os = "linux"))]
+            #[cfg(any(
+                all(feature = "linux", target_os = "linux"),
+                all(feature = "windows", target_os = "windows")
+            ))]
             software_compositor: RefCell::new(openui_compositor::SoftwareCompositor::default()),
-            #[cfg(all(feature = "linux", target_os = "linux"))]
+            #[cfg(any(
+                all(feature = "linux", target_os = "linux"),
+                all(feature = "windows", target_os = "windows")
+            ))]
             platform_event_handler: None,
-            #[cfg(all(feature = "linux", target_os = "linux"))]
+            #[cfg(any(
+                all(feature = "linux", target_os = "linux"),
+                all(feature = "windows", target_os = "windows")
+            ))]
             rendered_generations: Cell::new(None),
         })
     }
@@ -157,7 +187,10 @@ impl App {
     /// Observe platform events after document processing and all engine borrows.
     /// The callback runs on the UI thread, may use retained handles, and ends
     /// when the blocking run returns. It must not start another native run.
-    #[cfg(all(feature = "linux", target_os = "linux"))]
+    #[cfg(any(
+        all(feature = "linux", target_os = "linux"),
+        all(feature = "windows", target_os = "windows")
+    ))]
     pub fn on_platform_event(
         &mut self,
         handler: impl FnMut(&openui_platform::PlatformEvent) + 'static,
@@ -188,7 +221,10 @@ impl App {
     /// Block in the native event loop using the document already attached.
     pub fn run_document(self) -> Result<(), Error> {
         self.document.update_all()?;
-        #[cfg(all(feature = "linux", target_os = "linux"))]
+        #[cfg(any(
+            all(feature = "linux", target_os = "linux"),
+            all(feature = "windows", target_os = "windows")
+        ))]
         {
             let options = openui_platform::WindowOptions {
                 title: self.options.title.clone(),
@@ -202,7 +238,10 @@ impl App {
             };
             openui_platform::run(self, options).map_err(|error| Error::Platform(error.to_string()))
         }
-        #[cfg(not(all(feature = "linux", target_os = "linux")))]
+        #[cfg(not(any(
+            all(feature = "linux", target_os = "linux"),
+            all(feature = "windows", target_os = "windows")
+        )))]
         Err(Error::PlatformUnavailable)
     }
 
@@ -215,7 +254,10 @@ impl App {
     }
 }
 
-#[cfg(all(feature = "linux", target_os = "linux"))]
+#[cfg(any(
+    all(feature = "linux", target_os = "linux"),
+    all(feature = "windows", target_os = "windows")
+))]
 impl openui_platform::PlatformApplication for App {
     fn event(&mut self, event: openui_platform::PlatformEvent) -> Result<(), String> {
         use openui_engine::PointerEventKind;
@@ -426,7 +468,10 @@ impl openui_platform::PlatformApplication for App {
     }
 }
 
-#[cfg(all(feature = "linux", target_os = "linux"))]
+#[cfg(any(
+    all(feature = "linux", target_os = "linux"),
+    all(feature = "windows", target_os = "windows")
+))]
 fn platform_modifiers(value: openui_platform::Modifiers) -> crate::Modifiers {
     let mut result = crate::Modifiers::NONE;
     if value.shift {
@@ -444,7 +489,10 @@ fn platform_modifiers(value: openui_platform::Modifiers) -> crate::Modifiers {
     result
 }
 
-#[cfg(all(feature = "linux", target_os = "linux"))]
+#[cfg(any(
+    all(feature = "linux", target_os = "linux"),
+    all(feature = "windows", target_os = "windows")
+))]
 fn visual_generations(engine: &openui_engine::Engine) -> [u64; 5] {
     let generations = engine.dirty_generations();
     [
@@ -495,11 +543,20 @@ impl HeadlessApp {
                 },
                 root_scope: None,
                 exit_requested: AppExitHandle::default(),
-                #[cfg(all(feature = "linux", target_os = "linux"))]
+                #[cfg(any(
+                    all(feature = "linux", target_os = "linux"),
+                    all(feature = "windows", target_os = "windows")
+                ))]
                 software_compositor: RefCell::new(openui_compositor::SoftwareCompositor::default()),
-                #[cfg(all(feature = "linux", target_os = "linux"))]
+                #[cfg(any(
+                    all(feature = "linux", target_os = "linux"),
+                    all(feature = "windows", target_os = "windows")
+                ))]
                 platform_event_handler: None,
-                #[cfg(all(feature = "linux", target_os = "linux"))]
+                #[cfg(any(
+                    all(feature = "linux", target_os = "linux"),
+                    all(feature = "windows", target_os = "windows")
+                ))]
                 rendered_generations: Cell::new(None),
             },
         })
@@ -583,7 +640,10 @@ mod tests {
         assert!(app.exit_requested());
     }
 
-    #[cfg(all(feature = "linux", target_os = "linux"))]
+    #[cfg(any(
+        all(feature = "linux", target_os = "linux"),
+        all(feature = "windows", target_os = "windows")
+    ))]
     #[test]
     fn platform_observer_can_mutate_and_request_exit_after_render_borrows() {
         use openui_platform::{PlatformApplication, PlatformEvent};
@@ -675,7 +735,10 @@ mod tests {
         assert_ne!(before.pixels(), after.pixels());
     }
 
-    #[cfg(all(feature = "linux", target_os = "linux"))]
+    #[cfg(any(
+        all(feature = "linux", target_os = "linux"),
+        all(feature = "windows", target_os = "windows")
+    ))]
     #[test]
     fn normalized_platform_events_drive_the_headless_reference_path() {
         use openui_platform::{
@@ -710,7 +773,10 @@ mod tests {
         assert_eq!((frame.width, frame.height), (480, 240));
     }
 
-    #[cfg(all(feature = "linux", target_os = "linux"))]
+    #[cfg(any(
+        all(feature = "linux", target_os = "linux"),
+        all(feature = "windows", target_os = "windows")
+    ))]
     #[test]
     fn native_ime_commits_after_empty_preview_and_cancels_on_window_focus_loss() {
         use openui_platform::{PlatformApplication, PlatformEvent};
@@ -744,7 +810,10 @@ mod tests {
         assert_eq!(input.control_value().unwrap().as_deref(), Some("é"));
     }
 
-    #[cfg(all(feature = "linux", target_os = "linux"))]
+    #[cfg(any(
+        all(feature = "linux", target_os = "linux"),
+        all(feature = "windows", target_os = "windows")
+    ))]
     #[test]
     fn cancelled_native_keydown_does_not_insert_committed_text() {
         use openui_platform::{KeyPhase, KeyboardInput, PlatformApplication};
@@ -771,7 +840,10 @@ mod tests {
         assert_eq!(input.control_value().unwrap().as_deref(), Some("callback"));
     }
 
-    #[cfg(all(feature = "linux", target_os = "linux"))]
+    #[cfg(any(
+        all(feature = "linux", target_os = "linux"),
+        all(feature = "windows", target_os = "windows")
+    ))]
     #[test]
     fn native_named_keys_and_noneditable_controls_do_not_receive_text() {
         use openui_platform::{KeyPhase, KeyboardInput, PlatformApplication};
@@ -833,7 +905,10 @@ mod tests {
             .unwrap();
     }
 
-    #[cfg(all(feature = "linux", target_os = "linux"))]
+    #[cfg(any(
+        all(feature = "linux", target_os = "linux"),
+        all(feature = "windows", target_os = "windows")
+    ))]
     #[test]
     fn native_textarea_enter_inserts_one_cancelable_newline() {
         use openui_platform::{KeyPhase, KeyboardInput, PlatformApplication};

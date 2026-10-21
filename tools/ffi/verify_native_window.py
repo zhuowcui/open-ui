@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build and run native C/C++ consumers through the shared Linux application loop."""
+"""Build and run native C/C++ consumers through the shared desktop application loop."""
 from __future__ import annotations
 
 import argparse
@@ -11,7 +11,7 @@ import subprocess
 import tempfile
 from pathlib import Path
 
-from verify_abi import DEFAULT_LIBRARY, INCLUDE, ROOT, compilers
+from verify_abi import DEFAULT_LIBRARY, INCLUDE, ROOT, WINDOWS, compilers
 
 
 def digest(path: Path) -> str:
@@ -22,19 +22,21 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--library", type=Path, default=DEFAULT_LIBRARY)
     parser.add_argument("--backend", choices=("software", "opengl"), default="software")
-    parser.add_argument("--protocol", choices=("x11", "wayland"), required=True)
+    parser.add_argument("--protocol", choices=("x11", "wayland", "win32"), required=True)
     parser.add_argument("--report", type=Path, help="write a source-bound functional smoke report")
     args = parser.parse_args()
     cc, cxx, c_flags, cxx_flags, link_flags = compilers()
     if not cc or not cxx:
         raise SystemExit("a C/C++ compiler is required")
     environment = dict(os.environ)
+    if (args.protocol == "win32") != WINDOWS:
+        raise SystemExit("the win32 protocol runs on Windows; x11 and wayland on Linux")
     if args.protocol == "x11":
         if not environment.get("DISPLAY"):
             raise SystemExit("X11 smoke requires DISPLAY")
         environment.pop("WAYLAND_DISPLAY", None)
         environment.pop("WAYLAND_SOCKET", None)
-    else:
+    elif args.protocol == "wayland":
         if not environment.get("WAYLAND_DISPLAY") or not environment.get("XDG_RUNTIME_DIR"):
             raise SystemExit("Wayland smoke requires WAYLAND_DISPLAY and XDG_RUNTIME_DIR")
         environment.pop("DISPLAY", None)
@@ -59,19 +61,31 @@ def main() -> None:
     }
     with tempfile.TemporaryDirectory(prefix="openui-native-consumers-") as directory:
         temporary = Path(directory)
-        library = temporary / "libopenui.so.0"
-        shutil.copy2(args.library.resolve(), library)
+        if WINDOWS:
+            # The loader finds the DLL beside each consumer executable.
+            library = temporary / args.library.name
+            shutil.copy2(args.library.resolve(), library)
+            import_library = args.library.resolve().with_name(args.library.name + ".lib")
+            link_inputs = [str(import_library)]
+        else:
+            library = temporary / "libopenui.so.0"
+            shutil.copy2(args.library.resolve(), library)
+            link_inputs = ["-fuse-ld=lld", str(library), f"-Wl,-rpath,{temporary}"]
         for suffix, compiler, flags, standard in (
             ("c", cc, c_flags, "c11"), ("cc", cxx, cxx_flags, "c++17")
         ):
             source = ROOT / "examples/c_v02/native" / f"window.{suffix}"
             object_file = temporary / f"window-{suffix}.o"
-            binary = temporary / f"window-{suffix}"
+            binary = temporary / f"window-{suffix}{'.exe' if WINDOWS else ''}"
             subprocess.run([compiler, f"-std={standard}", "-Wall", "-Wextra", "-Werror",
                             *flags, f"-I{INCLUDE}", str(source), "-c", "-o", str(object_file)],
                            check=True)
-            subprocess.run([cxx, *cxx_flags, *link_flags, "-fuse-ld=lld", str(object_file),
-                            str(library), f"-Wl,-rpath,{temporary}", "-o", str(binary)], check=True)
+            if WINDOWS:
+                link = [cxx, *cxx_flags, *link_flags, str(object_file), *link_inputs]
+            else:
+                link = [cxx, *cxx_flags, *link_flags, link_inputs[0], str(object_file),
+                        *link_inputs[1:]]
+            subprocess.run([*link, "-o", str(binary)], check=True)
             consumer = {
                 "source": str(source.relative_to(ROOT)),
                 "source_sha256": digest(source),
