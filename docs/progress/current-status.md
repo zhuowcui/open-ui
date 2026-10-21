@@ -1,5 +1,16 @@
 # Open UI current status
 
+## Win32 desktop runtime 21 October 2026
+
+The native window, input and presentation runtime now also runs on Windows,
+behind a `windows` feature. It shares the winit runtime with Linux, using
+WGL or softbuffer presentation, the Win32 Unicode clipboard and AccessKit's
+UI Automation adapter. On Windows the native C and C++ window consumers pass
+with both the software and OpenGL backends, the `hello` example runs with
+every backend, and the platform, framework and FFI tests pass with the
+feature. IME, drag and drop, UI Automation behavior and packaging remain
+unverified. See the [Win32 runtime record](windows-desktop-runtime-2026-10-21.md).
+
 ## Windows DirectWrite text 21 October 2026
 
 Windows text is now checked against pinned Windows Chrome-for-Testing

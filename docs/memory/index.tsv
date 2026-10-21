@@ -66,3 +66,4 @@
 0065	active	scrollbar paint chromium oracle overflow-controls	Scrollbar frame clips: Chromium paints forced-scrollbar parts pixel-rounded; layout keeps CSS thickness	2026-10-20	entries/0065-scrollbar-frame-clips-chromium-paints-forced-scr.md
 0066	active	ci dependencies security zbus accesskit	Dependency audit is its own CI job; zbus 5 unmaintained notices stay open	2026-10-21	entries/0066-dependency-audit-is-its-own-ci-job-zbus-5-unmain.md
 0067	active	windows fonts directwrite oracle chromium	Windows text oracle: Windows Chrome with NoFontAntialiasing for aliased tests	2026-10-21	entries/0067-windows-text-oracle-windows-chrome-with-nofontan.md
+0068	active	windows platform winit ffi	Win32 desktop runtime shares the winit runtime behind the windows feature	2026-10-21	entries/0068-win32-desktop-runtime-shares-the-winit-runtime-b.md

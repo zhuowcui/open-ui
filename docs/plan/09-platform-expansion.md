@@ -20,7 +20,10 @@ Status, 19 October 2026: an experimental Windows x64 MSVC build and test
 baseline exists for the headless workspace, C ABI and Python tooling (see
 [development](../DEVELOPMENT.md#windows-x64-msvc)). DirectWrite text
 qualification against Windows Chrome-for-Testing and the items below remain
-open.
+open. On 21 October measured Windows text scenarios were checked against
+Windows Chrome-for-Testing, and a Win32 window runtime (winit, WGL and
+softbuffer presentation, Win32 clipboard, AccessKit) is available behind the
+`windows` feature; Direct3D, theme integration and packaging remain open.
 
 5. Windows windowing (HWND, DXGI)
 6. D3D12/D3D11 rendering backend

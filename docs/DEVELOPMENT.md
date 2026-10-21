@@ -169,6 +169,17 @@ remeasures every Windows text scenario; tests that use the deterministic
 aliased raster configuration are measured with Blink's `NoFontAntialiasing`
 feature. Windows decodes WOFF and WOFF2 application fonts before DirectWrite.
 
+The Win32 desktop runtime is behind the `windows` feature, the counterpart
+of `linux`:
+
+```powershell
+cargo run --locked --package hello --features windows
+python ..\..\tools\ffi\verify_native_window.py --library <target>\debug\openui_ffi.dll --protocol win32 --backend software
+```
+
+Build `openui-ffi` with `--features windows` before running the native window
+consumers.
+
 Tests whose expected values come from the Linux oracle, its FreeType raster or
 its Fontconfig font resolution are marked
 `#[cfg_attr(not(target_os = "linux"), ignore = "linux-oracle: <reason>")]`.
