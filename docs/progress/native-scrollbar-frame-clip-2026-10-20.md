@@ -74,3 +74,41 @@ extent, and they are listed in `CHROMIUM_FRAME_RESIDUALS`:
 They concern how the compositor clips or covers fractional box edges, which
 this paint model does not reproduce. Ownership: overflow-control paint and
 compositor clip.
+
+## Verification
+
+All results are local measurements of the branch head `23fe1b57`, except the
+hosted CI rows.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Guard binary, Windows | `cargo test --locked -p openui-engine --test native_resize_control_clip` | 9/9 pass, including the repaired guard and the new exact-frame test |
+| Windows workspace | `cargo test --workspace --locked --no-fail-fast` | 9,395 passed, 3 failed, 24 ignored. The failures are the documented arrow and WOFF tests |
+| Linux workspace, WSL | `cargo --config 'target.x86_64-unknown-linux-gnu.rustflags=[]' test --workspace --locked --no-fail-fast --exclude pixel-compare` | 9,402 passed, 1 failed, 13 ignored. The failure is the toolchain-dependent `source_layer_raster` arrow test, which also fails on `main` |
+| Hosted `windows-msvc` | PR CI | 9,271 passed, 3 failed (the same documented tests), 24 ignored; every other step passes |
+| Hosted `rust-parity` | PR CI | Stops at the pre-existing dependency audit (RUSTSEC-2026-0370 to 0372), as on `main` |
+
+## Paired renderer census
+
+The pinned Chromium toolchain behind the historical totals is not available on
+this host, so the census pairs `main` (`ad491392`) with the branch under one
+toolchain: system clang 21 in WSL, with the hosted CI Skia defines. Each source
+was built with `tools/qualification/build_renderer.py` from a clean comparison
+clone under `out/census-*`, with library provenance verified. Both were then
+measured with `tools/qualification/run_renderer_matrix.py`, sharing one cache
+of fresh Chromium 147.0.7727.50 captures. The
+[census evidence](evidence/native-scrollbar-frame-clip-census-v1.json)
+records the identities, report digests and paired deltas.
+
+| Suite | `main` exact | Branch exact | Native images changed | Errors |
+| --- | ---: | ---: | ---: | ---: |
+| Expanded (original plus additions, four profiles) | 21,663 / 23,728 | 21,663 / 23,728 | 0 | 0 |
+| Focused (40 profiles) | 640 / 640 | 640 / 640 | 0 | 0 |
+| Primitive (40 profiles) | 960 / 960 | 960 / 960 | 0 | 0 |
+
+Chromium pixels are identical in every pair, and no comparison gains, loses,
+improves or worsens. The census corpus contains no forced scrollbar picture
+that this repair reaches, so it neither regresses nor qualifies the change.
+The 50 frame-clip states are its oracle. These same-toolchain counts are not
+comparable to the historical census measured with the pinned toolchain, and
+no renderer or release qualification is claimed.
