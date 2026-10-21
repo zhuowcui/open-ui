@@ -2,7 +2,7 @@
 name = "openui-platform"
 version.workspace = true
 edition.workspace = true
-description = "Feature-gated Linux window and input runtime for Open UI"
+description = "Feature-gated Linux and Windows window and input runtime for Open UI"
 rust-version.workspace = true
 license.workspace = true
 repository.workspace = true
@@ -24,13 +24,25 @@ linux = [
     "dep:winit",
     "dep:x11-clipboard",
 ]
+windows = [
+    "dep:accesskit",
+    "dep:accesskit_winit",
+    "dep:gl",
+    "dep:glutin",
+    "dep:glutin-winit",
+    "dep:raw-window-handle",
+    "dep:softbuffer",
+    "dep:winit",
+    "dep:windows-sys",
+]
 
 [dependencies]
 openui-geometry = { version = "=0.2.0", path = "../openui-geometry" }
 accesskit = { version = "=0.25.0", optional = true }
 
-# The Linux runtime's window, presentation and clipboard backends exist only on
-# Linux targets, so `--all-features` still builds the headless crates elsewhere.
+# Each desktop runtime's window, presentation and clipboard backends exist only
+# on its own target, so `--all-features` still builds the headless crates
+# everywhere.
 [target.'cfg(target_os = "linux")'.dependencies]
 accesskit_winit = { version = "=0.34.0", default-features = false, features = ["accesskit_unix", "async-io", "rwh_06"], optional = true }
 gl = { version = "=0.14.0", optional = true }
@@ -41,6 +53,18 @@ smithay-clipboard = { version = "=0.7.3", optional = true }
 softbuffer = { version = "=0.4.8", default-features = false, features = ["x11", "x11-dlopen", "wayland", "wayland-dlopen"], optional = true }
 winit = { version = "=0.30.13", default-features = false, features = ["rwh_06", "x11", "wayland", "wayland-dlopen"], optional = true }
 x11-clipboard = { version = "=0.9.3", optional = true }
+
+# The Windows runtime shares the winit runtime with WGL presentation, the
+# AccessKit Windows adapter and the Win32 Unicode text clipboard.
+[target.'cfg(target_os = "windows")'.dependencies]
+accesskit_winit = { version = "=0.34.0", default-features = false, features = ["rwh_06"], optional = true }
+gl = { version = "=0.14.0", optional = true }
+glutin = { version = "=0.32.3", default-features = false, features = ["wgl"], optional = true }
+glutin-winit = { version = "=0.5.0", default-features = false, features = ["wgl"], optional = true }
+raw-window-handle = { version = "=0.6.2", optional = true }
+softbuffer = { version = "=0.4.8", default-features = false, optional = true }
+winit = { version = "=0.30.13", default-features = false, features = ["rwh_06"], optional = true }
+windows-sys = { version = "=0.61.2", features = ["Win32_Foundation", "Win32_System_DataExchange", "Win32_System_Memory", "Win32_System_Ole"], optional = true }
 
 [dev-dependencies]
 accesskit = "=0.25.0"

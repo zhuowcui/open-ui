@@ -9,12 +9,16 @@ use glutin::display::{GetGlDisplay, GlDisplay};
 use glutin::prelude::{GlSurface, NotCurrentGlContext};
 use glutin::surface::{Surface as GlutinSurface, SwapInterval, WindowSurface};
 use glutin_winit::{DisplayBuilder, GlWindow};
-use raw_window_handle::{HasDisplayHandle, HasWindowHandle, RawDisplayHandle};
+use raw_window_handle::HasWindowHandle;
+#[cfg(target_os = "linux")]
+use raw_window_handle::{HasDisplayHandle, RawDisplayHandle};
 use softbuffer::{Context as SoftContext, Surface as SoftSurface};
 use std::ffi::CString;
 use std::num::NonZeroU32;
 use std::sync::Arc;
-use std::time::{Duration, Instant};
+#[cfg(target_os = "linux")]
+use std::time::Duration;
+use std::time::Instant;
 use winit::application::ApplicationHandler;
 use winit::dpi::{LogicalPosition, LogicalSize};
 use winit::event::{ElementState, Ime, MouseButton, MouseScrollDelta, TouchPhase, WindowEvent};
@@ -36,8 +40,12 @@ impl From<accesskit_winit::Event> for UserEvent {
 }
 
 enum NativeClipboard {
+    #[cfg(target_os = "linux")]
     Wayland(Box<smithay_clipboard::Clipboard>),
+    #[cfg(target_os = "linux")]
     X11(Box<x11_clipboard::Clipboard>),
+    #[cfg(target_os = "windows")]
+    Windows(crate::windows_clipboard::WindowsClipboard),
 }
 
 enum Presenter {
@@ -467,6 +475,12 @@ fn initialize_presenter(
 }
 
 impl NativeClipboard {
+    #[cfg(target_os = "windows")]
+    fn new(_display: &OwnedDisplayHandle) -> Result<Self, PlatformError> {
+        Ok(Self::Windows(crate::windows_clipboard::WindowsClipboard))
+    }
+
+    #[cfg(target_os = "linux")]
     fn new(display: &OwnedDisplayHandle) -> Result<Self, PlatformError> {
         let handle = display
             .display_handle()
@@ -491,9 +505,13 @@ impl NativeClipboard {
 
     fn load(&self) -> Result<String, PlatformError> {
         match self {
+            #[cfg(target_os = "windows")]
+            Self::Windows(clipboard) => clipboard.load().map_err(PlatformError::Application),
+            #[cfg(target_os = "linux")]
             Self::Wayland(clipboard) => clipboard
                 .load()
                 .map_err(|error| PlatformError::Application(error.to_string())),
+            #[cfg(target_os = "linux")]
             Self::X11(clipboard) => {
                 let atoms = &clipboard.getter.atoms;
                 clipboard
@@ -514,7 +532,11 @@ impl NativeClipboard {
 
     fn store(&self, text: String) {
         match self {
+            #[cfg(target_os = "windows")]
+            Self::Windows(clipboard) => clipboard.store(text),
+            #[cfg(target_os = "linux")]
             Self::Wayland(clipboard) => clipboard.store(text),
+            #[cfg(target_os = "linux")]
             Self::X11(clipboard) => {
                 let atoms = &clipboard.setter.atoms;
                 let _ = clipboard.store(atoms.clipboard, atoms.utf8_string, text.into_bytes());
