@@ -145,6 +145,146 @@ fn changed_pixels_inside(a: &Frame, b: &Frame, border: (f32, f32, f32, f32)) -> 
     changed
 }
 
+/// Pinned Chromium 147.0.7727.50 crops for empty ordinary Divs with the same
+/// forced scrollbar states, captured by
+/// `tools/qualification/capture_native_scrollbar_oracle.py`. Order: Auto then
+/// Thin, widths 1/14/15/16, scales 1/1.25/1.5/1.75/2. Width 0 paints nothing.
+/// Each crop is the box's enclosing physical rectangle; the capture tool
+/// verifies every pixel outside it is white. Digests and provenance are in
+/// `docs/progress/evidence/native-scrollbar-frame-clip-chromium-v1.json`.
+const CHROMIUM_FRAME_CROPS: [&[u8]; 40] = [
+    include_bytes!("native_scrollbar_frame_chromium_oracles/auto-w1-s1.rgba"),
+    include_bytes!("native_scrollbar_frame_chromium_oracles/auto-w1-s1_25.rgba"),
+    include_bytes!("native_scrollbar_frame_chromium_oracles/auto-w1-s1_5.rgba"),
+    include_bytes!("native_scrollbar_frame_chromium_oracles/auto-w1-s1_75.rgba"),
+    include_bytes!("native_scrollbar_frame_chromium_oracles/auto-w1-s2.rgba"),
+    include_bytes!("native_scrollbar_frame_chromium_oracles/auto-w14-s1.rgba"),
+    include_bytes!("native_scrollbar_frame_chromium_oracles/auto-w14-s1_25.rgba"),
+    include_bytes!("native_scrollbar_frame_chromium_oracles/auto-w14-s1_5.rgba"),
+    include_bytes!("native_scrollbar_frame_chromium_oracles/auto-w14-s1_75.rgba"),
+    include_bytes!("native_scrollbar_frame_chromium_oracles/auto-w14-s2.rgba"),
+    include_bytes!("native_scrollbar_frame_chromium_oracles/auto-w15-s1.rgba"),
+    include_bytes!("native_scrollbar_frame_chromium_oracles/auto-w15-s1_25.rgba"),
+    include_bytes!("native_scrollbar_frame_chromium_oracles/auto-w15-s1_5.rgba"),
+    include_bytes!("native_scrollbar_frame_chromium_oracles/auto-w15-s1_75.rgba"),
+    include_bytes!("native_scrollbar_frame_chromium_oracles/auto-w15-s2.rgba"),
+    include_bytes!("native_scrollbar_frame_chromium_oracles/auto-w16-s1.rgba"),
+    include_bytes!("native_scrollbar_frame_chromium_oracles/auto-w16-s1_25.rgba"),
+    include_bytes!("native_scrollbar_frame_chromium_oracles/auto-w16-s1_5.rgba"),
+    include_bytes!("native_scrollbar_frame_chromium_oracles/auto-w16-s1_75.rgba"),
+    include_bytes!("native_scrollbar_frame_chromium_oracles/auto-w16-s2.rgba"),
+    include_bytes!("native_scrollbar_frame_chromium_oracles/thin-w1-s1.rgba"),
+    include_bytes!("native_scrollbar_frame_chromium_oracles/thin-w1-s1_25.rgba"),
+    include_bytes!("native_scrollbar_frame_chromium_oracles/thin-w1-s1_5.rgba"),
+    include_bytes!("native_scrollbar_frame_chromium_oracles/thin-w1-s1_75.rgba"),
+    include_bytes!("native_scrollbar_frame_chromium_oracles/thin-w1-s2.rgba"),
+    include_bytes!("native_scrollbar_frame_chromium_oracles/thin-w14-s1.rgba"),
+    include_bytes!("native_scrollbar_frame_chromium_oracles/thin-w14-s1_25.rgba"),
+    include_bytes!("native_scrollbar_frame_chromium_oracles/thin-w14-s1_5.rgba"),
+    include_bytes!("native_scrollbar_frame_chromium_oracles/thin-w14-s1_75.rgba"),
+    include_bytes!("native_scrollbar_frame_chromium_oracles/thin-w14-s2.rgba"),
+    include_bytes!("native_scrollbar_frame_chromium_oracles/thin-w15-s1.rgba"),
+    include_bytes!("native_scrollbar_frame_chromium_oracles/thin-w15-s1_25.rgba"),
+    include_bytes!("native_scrollbar_frame_chromium_oracles/thin-w15-s1_5.rgba"),
+    include_bytes!("native_scrollbar_frame_chromium_oracles/thin-w15-s1_75.rgba"),
+    include_bytes!("native_scrollbar_frame_chromium_oracles/thin-w15-s2.rgba"),
+    include_bytes!("native_scrollbar_frame_chromium_oracles/thin-w16-s1.rgba"),
+    include_bytes!("native_scrollbar_frame_chromium_oracles/thin-w16-s1_25.rgba"),
+    include_bytes!("native_scrollbar_frame_chromium_oracles/thin-w16-s1_5.rgba"),
+    include_bytes!("native_scrollbar_frame_chromium_oracles/thin-w16-s1_75.rgba"),
+    include_bytes!("native_scrollbar_frame_chromium_oracles/thin-w16-s2.rgba"),
+];
+
+/// Cases whose native frame still differs from Chromium. Their ink stays
+/// inside Chromium's measured extent; the remaining differences are one
+/// partially covered row at the fractional bottom edge (Auto width 16 and Thin
+/// width 1 at 1.25) and one missing column at the enclosing right edge (Auto
+/// width 1 at 1.25, Auto width 15 at 1.75). See
+/// `docs/progress/native-scrollbar-frame-clip-2026-10-20.md`.
+const CHROMIUM_FRAME_RESIDUALS: [(bool, f32, f64); 4] = [
+    (false, 1.0, 1.25),
+    (false, 15.0, 1.75),
+    (false, 16.0, 1.25),
+    (true, 1.0, 1.25),
+];
+
+/// The Chromium frame for a case as packed RGBA, white outside the enclosing
+/// box crop, or `None` for a zero-width box.
+fn chromium_frame(thin: bool, width: f32, scale: f64) -> Option<(Vec<u8>, u32)> {
+    let widths = [1.0, 14.0, 15.0, 16.0];
+    let index = widths.iter().position(|value| *value == width)?;
+    let scale_index = SCALES.iter().position(|value| *value == scale).unwrap();
+    let crop = CHROMIUM_FRAME_CROPS[usize::from(thin) * 20 + index * 5 + scale_index];
+    let side = (160.0 * scale).round() as usize;
+    let s = scale as f32;
+    let (x0, y0) = ((32.0 * s).floor() as usize, (32.0 * s).floor() as usize);
+    let crop_width = ((32.0 + width) * s).ceil() as usize - x0;
+    let crop_height = ((32.0 + 14.0) * s).ceil() as usize - y0;
+    assert_eq!(
+        crop.len(),
+        crop_width * crop_height * 4,
+        "crop size {width}@{scale}"
+    );
+    let mut frame = vec![255; side * side * 4];
+    for row in 0..crop_height {
+        let target = ((y0 + row) * side + x0) * 4;
+        frame[target..target + crop_width * 4]
+            .copy_from_slice(&crop[row * crop_width * 4..(row + 1) * crop_width * 4]);
+    }
+    Some((frame, side as u32))
+}
+
+/// Half-open physical `[x0, x1, y0, y1]` of every non-white Chromium pixel.
+fn chromium_ink_extent(frame: &[u8], side: u32) -> Option<(u32, u32, u32, u32)> {
+    let mut extent: Option<(u32, u32, u32, u32)> = None;
+    for (index, pixel) in frame.chunks(4).enumerate() {
+        if pixel[..3] != [255, 255, 255] {
+            let (x, y) = (index as u32 % side, index as u32 / side);
+            extent = Some(match extent {
+                None => (x, x + 1, y, y + 1),
+                Some((x0, x1, y0, y1)) => (x0.min(x), x1.max(x + 1), y0.min(y), y1.max(y + 1)),
+            });
+        }
+    }
+    extent
+}
+
+fn packed(frame: &Frame) -> Vec<u8> {
+    (0..frame.height as usize)
+        .flat_map(|row| {
+            frame.pixels[row * frame.stride..row * frame.stride + frame.width as usize * 4]
+                .iter()
+                .copied()
+        })
+        .collect()
+}
+
+/// Count changed pixels and require each to lie inside the ink extent that
+/// pinned Chromium measures for the same scrollbar state.
+fn changed_pixels_inside_chromium_ink(
+    a: &Frame,
+    b: &Frame,
+    extent: Option<(u32, u32, u32, u32)>,
+) -> usize {
+    assert_eq!((a.width, a.height, a.stride), (b.width, b.height, b.stride));
+    let mut changed = 0;
+    for y in 0..a.height {
+        for x in 0..a.width {
+            let i = y as usize * a.stride + x as usize * 4;
+            if a.pixels[i..i + 4] != b.pixels[i..i + 4] {
+                changed += 1;
+                let (x0, x1, y0, y1) =
+                    extent.unwrap_or_else(|| panic!("control ink where Chromium paints none"));
+                assert!(
+                    (x0..x1).contains(&x) && (y0..y1).contains(&y),
+                    "control ink at ({x}, {y}) outside Chromium's {extent:?}"
+                );
+            }
+        }
+    }
+    changed
+}
+
 #[test]
 fn tiny_actual_native_boxes_use_computed_resize_admission_and_strict_border_clips() {
     for scale in SCALES {
@@ -430,7 +570,13 @@ fn actual_native_scrollbar_frames_are_clipped_independently_of_track_and_thumb_i
                     }
                 );
                 let present = SoftwareCompositor::default().render(&scene).unwrap();
-                let changed = changed_pixels_inside(&absent, &present, border);
+                // Chromium paints row 57 at 1.25 for this 14px-high box, so a
+                // pixel-centre border rule is not the contract; Chromium's
+                // measured ink extent for the same state is.
+                let thin = style == ScrollbarWidth::Thin;
+                let extent = chromium_frame(thin, width, scale)
+                    .and_then(|(frame, side)| chromium_ink_extent(&frame, side));
+                let changed = changed_pixels_inside_chromium_ink(&absent, &present, extent);
                 if width == 0.0 {
                     assert_eq!(changed, 0);
                 } else {
@@ -661,4 +807,37 @@ fn tiny_thin_arrow_parts_match_complete_pinned_chromium_frames() {
         let actual = SoftwareCompositor::default().render(&scene).unwrap();
         assert_tiny_thin_arrow_chromium_frame(&actual, width, crop, rgba);
     }
+}
+
+#[test]
+fn forced_native_scrollbar_pictures_match_pinned_chromium_frames() {
+    let mut exact = 0;
+    for scale in SCALES {
+        for width in [0.0, 1.0, 14.0, 15.0, 16.0] {
+            for style in [ScrollbarWidth::Auto, ScrollbarWidth::Thin] {
+                let (mut e, n) = fixture(scale, width, 14.0);
+                e.set_renderer_node_state(n, RendererNodeState::Replaced(None))
+                    .unwrap();
+                resize(&mut e, n, Resize::None);
+                set(&mut e, n, RendererStyleValue::ScrollbarWidth(style));
+                set(&mut e, n, RendererStyleValue::OverflowX(Overflow::Scroll));
+                set(&mut e, n, RendererStyleValue::OverflowY(Overflow::Scroll));
+                let native = packed(&frame(&mut e));
+                let thin = style == ScrollbarWidth::Thin;
+                let expected = chromium_frame(thin, width, scale)
+                    .map(|(frame, _)| frame)
+                    .unwrap_or_else(|| vec![255; native.len()]);
+                assert_eq!(native.len(), expected.len());
+                if CHROMIUM_FRAME_RESIDUALS.contains(&(thin, width, scale)) {
+                    continue;
+                }
+                assert!(
+                    native == expected,
+                    "{style:?} width {width} scale {scale}: native frame differs from Chromium"
+                );
+                exact += 1;
+            }
+        }
+    }
+    assert_eq!(exact, 46);
 }

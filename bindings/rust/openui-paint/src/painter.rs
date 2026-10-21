@@ -13168,15 +13168,7 @@ fn paint_native_scrollbars(
             }
             let corner = !horizontal && scrollport.horizontal_scrollbar;
             let outer = native_scrollbar_paint_frame(scrollport, horizontal, vertical_on_left);
-            paint_fluent_scrollbar_picture(
-                canvas,
-                outer,
-                horizontal,
-                corner,
-                style.device_scale_factor as f32,
-                &track,
-                &thumb,
-            );
+            paint_fluent_scrollbar_picture(canvas, outer, horizontal, corner, &track, &thumb);
         }
         canvas.restore();
         return;
@@ -13215,7 +13207,6 @@ fn paint_native_scrollbars(
                 outer,
                 horizontal,
                 scrollport.horizontal_scrollbar && scrollport.vertical_scrollbar,
-                style.device_scale_factor as f32,
                 &track,
                 &thumb,
             );
@@ -13315,12 +13306,19 @@ fn paint_native_scrollbars(
     canvas.restore();
 }
 
+/// Paint a forced scrollbar that Chromium records as an ordinary picture.
+///
+/// The picture's track, corner and arrow parts are rasterized directly under
+/// the device transform without antialiasing, so every part edge rounds to
+/// the nearest physical pixel independently, as in the pinned Chromium frames
+/// (`docs/progress/evidence/native-scrollbar-frame-clip-chromium-v1.json`).
+/// Rasterizing offscreen and resampling at a fractional origin blurred the
+/// arrows and let Thin bars bleed past the box.
 fn paint_fluent_scrollbar_picture(
     canvas: &Canvas,
     outer: Rect,
     horizontal: bool,
     corner: bool,
-    scale: f32,
     track: &Paint,
     thumb: &Paint,
 ) {
@@ -13341,15 +13339,11 @@ fn paint_fluent_scrollbar_picture(
         } else {
             0.0
         };
-    let physical_width = (width * scale).ceil().max(1.0) as i32;
-    let physical_height = (height * scale).ceil().max(1.0) as i32;
-    let Some(mut surface) = surfaces::raster_n32_premul((physical_width, physical_height)) else {
-        return;
-    };
-    let painter = surface.canvas();
-    painter.clear(skia_safe::Color::TRANSPARENT);
-    painter.scale((scale, scale));
-    painter.draw_rect(Rect::from_xywh(0.0, 0.0, width, height), track);
+    canvas.save();
+    canvas.translate((outer.left, outer.top));
+    let mut fill = track.clone();
+    fill.set_anti_alias(false);
+    canvas.draw_rect(Rect::from_xywh(0.0, 0.0, width, height), &fill);
     let button = (18.0 * thickness / 15.0)
         .round()
         .min((length / 2.0).floor());
@@ -13360,27 +13354,8 @@ fn paint_fluent_scrollbar_picture(
         } else {
             Rect::from_xywh(0.0, start, thickness, button)
         };
-        paint_fluent_scrollbar_arrow(painter, rect, horizontal, forward, thumb);
+        paint_fluent_scrollbar_arrow(canvas, rect, horizontal, forward, thumb);
     }
-    let image = surface.image_snapshot();
-    let mut replay = Paint::default();
-    replay
-        .set_anti_alias((outer.left * scale).fract() != 0.0 || (outer.top * scale).fract() != 0.0);
-    canvas.save();
-    canvas.scale((scale.recip(), scale.recip()));
-    let source = Rect::from_xywh(0.0, 0.0, physical_width as f32, physical_height as f32);
-    canvas.draw_image_rect_with_sampling_options(
-        &image,
-        Some((&source, SrcRectConstraint::Strict)),
-        Rect::from_xywh(
-            outer.left * scale,
-            outer.top * scale,
-            physical_width as f32,
-            physical_height as f32,
-        ),
-        SamplingOptions::from(FilterMode::Linear),
-        &replay,
-    );
     canvas.restore();
 }
 
