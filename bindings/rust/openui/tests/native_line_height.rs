@@ -15,11 +15,9 @@ fn document(scale: f64) -> Document {
 // These widths are independent pinned Chromium observations in the immutable
 // reference-only-3642 archive. Line-height feeds a retained 2.5lh width; the
 // native callback changes only the parent font, exercising both metric contexts.
+// Windows values are pinned Windows Chrome-for-Testing observations in
+// docs/progress/evidence/windows-text-oracle-v1.json.
 #[test]
-#[cfg_attr(
-    not(target_os = "linux"),
-    ignore = "linux-oracle: FreeType Ahem line metrics"
-)]
 fn relative_line_height_updates_from_native_callbacks_and_inherits_fixed_values() {
     for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
         let document = document(scale);
@@ -37,7 +35,11 @@ fn relative_line_height_updates_from_native_callbacks_and_inherits_fixed_values(
         let mut nodes = Vec::new();
         for (unit, before, after) in [
             (LengthValue::Ch(2.0), 150.0, 150.0),
-            (LengthValue::Ex(2.0), 121.625, 121.625),
+            (
+                LengthValue::Ex(2.0),
+                if cfg!(windows) { 119.9375 } else { 121.625 },
+                if cfg!(windows) { 119.9375 } else { 121.625 },
+            ),
             (LengthValue::Lh(2.0), 116.953125, 127.1875),
             (LengthValue::Em(1.5), 114.03125, 114.03125),
             (LengthValue::Rem(1.5), 60.0, 60.0),
@@ -101,11 +103,9 @@ fn relative_line_height_updates_from_native_callbacks_and_inherits_fixed_values(
     }
 }
 
+// Windows values are pinned Windows Chrome-for-Testing observations in
+// docs/progress/evidence/windows-text-oracle-v1.json.
 #[test]
-#[cfg_attr(
-    not(target_os = "linux"),
-    ignore = "linux-oracle: FreeType Ahem line metrics"
-)]
 fn relative_line_height_follows_shorthand_order_pseudos_and_animation_cancel() {
     let document = document(1.0);
     let node = Element::create(&document, "div").unwrap();
@@ -121,7 +121,8 @@ fn relative_line_height_follows_shorthand_order_pseudos_and_animation_cancel() {
     node.set_font(shorthand).unwrap();
     assert_eq!(node.bounding_rect().unwrap().unwrap().width, 72.0);
     node.set_line_height_length(LengthValue::Ex(2.5)).unwrap();
-    assert_eq!(node.bounding_rect().unwrap().unwrap().width, 96.0);
+    let ex_width = if cfg!(windows) { 95.03125 } else { 96.0 };
+    assert_eq!(node.bounding_rect().unwrap().unwrap().width, ex_width);
     let pseudo = Style::default().line_height_length(LengthValue::Ch(1.5));
     node.set_pseudo_style(PseudoStyleTarget::FirstLine, &pseudo)
         .unwrap();
@@ -146,14 +147,19 @@ fn relative_line_height_follows_shorthand_order_pseudos_and_animation_cancel() {
         )
         .unwrap();
     document.seek_animation(animation, 500.0).unwrap();
-    assert_eq!(node.bounding_rect().unwrap().unwrap().width, 144.0);
+    let (midpoint, enlarged, cancelled) = if cfg!(windows) {
+        (142.546875, 195.109375, 130.078125)
+    } else {
+        (144.0, 192.0, 128.0)
+    };
+    assert_eq!(node.bounding_rect().unwrap().unwrap().width, midpoint);
     node.set_font_size(LengthValue::px(32.0)).unwrap();
-    assert_eq!(node.bounding_rect().unwrap().unwrap().width, 192.0);
+    assert_eq!(node.bounding_rect().unwrap().unwrap().width, enlarged);
     document.cancel_animation(animation).unwrap();
-    assert_eq!(node.bounding_rect().unwrap().unwrap().width, 128.0);
+    assert_eq!(node.bounding_rect().unwrap().unwrap().width, cancelled);
     let copy = node.clone_subtree().unwrap();
     document.body().append_child(&copy).unwrap();
-    assert_eq!(copy.bounding_rect().unwrap().unwrap().width, 128.0);
+    assert_eq!(copy.bounding_rect().unwrap().unwrap().width, cancelled);
 }
 
 #[test]
