@@ -1,5 +1,17 @@
 # Open UI current status
 
+## Windows DirectWrite text 21 October 2026
+
+Windows text is now checked against pinned Windows Chrome-for-Testing
+147.0.7727.50, measured with new portable tooling. WOFF and WOFF2 application
+fonts load on Windows. Six formerly ledgered text tests take Windows
+expectations from that browser: five pass, and every measured value matches
+Open UI's existing DirectWrite metrics. The sixth, a vertical flex content
+size, exposes a general inline-layout gap: Blink uses the central baseline
+for vertical flow, and Open UI the alphabetic one. The Linux-oracle ledger
+falls from 11 to 5 tests. See the
+[Windows text record](windows-directwrite-text-2026-10-21.md).
+
 ## Native scrollbar frame clip repair 20 October 2026
 
 The checkpoint's failing guard
