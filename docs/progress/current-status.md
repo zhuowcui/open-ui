@@ -1,5 +1,16 @@
 # Open UI current status
 
+## Skia legacy shader context 21 October 2026
+
+Hosted and portable builds now compile Skia with
+`-DSK_ENABLE_LEGACY_SHADERCONTEXT`, as the pinned parity profile always did.
+Its absence, not the compiler toolchain, caused the scrollbar-arrow failure in
+`source_layer_raster`, which now passes on Linux and Windows. A paired
+expanded census of unmodified `main` without and with the define gives 18
+more exact comparisons out of 23,728 (21,663 to 21,681), no losses, 68
+improved and 12 worsened. See the
+[Skia configuration record](skia-legacy-shader-context-2026-10-21.md).
+
 ## Win32 desktop runtime 21 October 2026
 
 The native window, input and presentation runtime now also runs on Windows,

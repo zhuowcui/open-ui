@@ -144,7 +144,7 @@ $env:FORCE_SKIA_BUILD = "1"
 $env:SKIA_NINJA_COMMAND = "ninja"
 $env:RUST_MIN_STACK = "4194304"
 $env:PYTHONUTF8 = "1"
-$env:SKIA_GN_ARGS = 'extra_cflags += [ "-DSK_SUPPORT_LEGACY_CONIC_CHOP", "-DSK_USE_FREETYPE_EMBOLDEN", "-DSK_GAMMA_EXPONENT=1.2", "-DSK_GAMMA_CONTRAST=0.2", "-fno-strict-aliasing", "-msse3" ]'
+$env:SKIA_GN_ARGS = 'extra_cflags += [ "-DSK_SUPPORT_LEGACY_CONIC_CHOP", "-DSK_ENABLE_LEGACY_SHADERCONTEXT", "-DSK_USE_FREETYPE_EMBOLDEN", "-DSK_GAMMA_EXPONENT=1.2", "-DSK_GAMMA_CONTRAST=0.2", "-fno-strict-aliasing", "-msse3" ]'
 cd bindings\rust
 cargo build --workspace --locked
 cargo test --workspace --locked

@@ -103,3 +103,11 @@ Eleven tests are ignored outside Linux and listed in
 depend on FreeType's fractional advance of loaded Ahem, five on FreeType Ahem
 or DejaVu metrics, and two on Fontconfig fallback face selection. They compile
 and run unchanged on Linux.
+
+
+## Correction, 21 October 2026
+
+The `source_layer_raster` arrow failure recorded here is not toolchain-dependent.
+Hosted and portable builds omitted Skia's `-DSK_ENABLE_LEGACY_SHADERCONTEXT`,
+which the pinned parity profile sets. With it the test passes on Linux and
+Windows; see [the Skia configuration record](skia-legacy-shader-context-2026-10-21.md).

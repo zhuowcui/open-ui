@@ -77,3 +77,11 @@ Local measurements of this branch:
 | Windows reference probe | `python tools/qualification/probe_windows_text_oracle.py --output docs/progress/evidence/windows-text-oracle-v1.json` | All six scenarios repeat exactly |
 | Tool and ledger tests | `python -m unittest tools.qualification.test_windows_chrome tools.ci.test_check_platform_scoped_tests`; `python tools/ci/check_platform_scoped_tests.py` | Pass; 5 recorded, ledger exact |
 | Lockfile | `cargo metadata --locked` | Pass; additive change only |
+
+
+## Correction, 21 October 2026
+
+The `source_layer_raster` arrow failure recorded here is not toolchain-dependent.
+Hosted and portable builds omitted Skia's `-DSK_ENABLE_LEGACY_SHADERCONTEXT`,
+which the pinned parity profile sets. With it the test passes on Linux and
+Windows; see [the Skia configuration record](skia-legacy-shader-context-2026-10-21.md).

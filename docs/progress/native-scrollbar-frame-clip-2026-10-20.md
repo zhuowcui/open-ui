@@ -112,3 +112,14 @@ that this repair reaches, so it neither regresses nor qualifies the change.
 The 50 frame-clip states are its oracle. These same-toolchain counts are not
 comparable to the historical census measured with the pinned toolchain, and
 no renderer or release qualification is claimed.
+
+
+## Correction, 21 October 2026
+
+The `source_layer_raster` arrow failure recorded here is not toolchain-dependent.
+Hosted and portable builds omitted Skia's `-DSK_ENABLE_LEGACY_SHADERCONTEXT`,
+which the pinned parity profile sets. With it the test passes on Linux and
+Windows; see [the Skia configuration record](skia-legacy-shader-context-2026-10-21.md).
+
+The paired census above built both sources without that define; it is a
+same-configuration pairing and its zero-change result stands.
