@@ -1,12 +1,21 @@
 //! Feature-gated native platform runtime.
 
-#[cfg(all(feature = "linux", target_os = "linux"))]
-mod linux;
+#[cfg(any(
+    all(feature = "linux", target_os = "linux"),
+    all(feature = "windows", target_os = "windows")
+))]
+mod desktop;
 
-#[cfg(all(feature = "linux", target_os = "linux"))]
-pub use linux::run;
+#[cfg(all(feature = "windows", target_os = "windows"))]
+mod windows_clipboard;
 
-#[cfg(feature = "linux")]
+#[cfg(any(
+    all(feature = "linux", target_os = "linux"),
+    all(feature = "windows", target_os = "windows")
+))]
+pub use desktop::run;
+
+#[cfg(any(feature = "linux", feature = "windows"))]
 pub use accesskit::{ActionRequest, TreeUpdate};
 
 use openui_geometry::ViewportMetrics;
@@ -194,10 +203,10 @@ pub trait PlatformApplication: 'static {
         Ok(CursorIcon::Default)
     }
 
-    #[cfg(feature = "linux")]
+    #[cfg(any(feature = "linux", feature = "windows"))]
     fn accessibility_update(&mut self) -> Result<TreeUpdate, String>;
 
-    #[cfg(feature = "linux")]
+    #[cfg(any(feature = "linux", feature = "windows"))]
     fn accessibility_action(&mut self, request: ActionRequest) -> Result<(), String>;
 }
 
@@ -230,13 +239,13 @@ impl std::fmt::Display for PlatformError {
 
 impl std::error::Error for PlatformError {}
 
-#[cfg(all(test, not(feature = "linux")))]
+#[cfg(all(test, not(any(feature = "linux", feature = "windows"))))]
 mod tests {
     use super::*;
 
     #[test]
     fn headless_build_has_no_native_default_feature() {
-        assert!(!cfg!(feature = "linux"));
+        assert!(!cfg!(feature = "linux") && !cfg!(feature = "windows"));
         assert_eq!(BackendPreference::default(), BackendPreference::Auto);
     }
 }

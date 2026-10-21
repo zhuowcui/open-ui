@@ -103,7 +103,7 @@ fn run_headless(path: &Path) -> Result<(), Error> {
     Ok(())
 }
 
-#[cfg(feature = "linux")]
+#[cfg(any(feature = "linux", feature = "windows"))]
 fn run_window() -> Result<(), Error> {
     let count = create_signal(0_i32);
     let backend = match std::env::var("OUI_BACKEND").as_deref() {
@@ -124,7 +124,7 @@ fn main() -> Result<(), Error> {
     match (args.next().as_deref(), args.next()) {
         (None, None) => run_headless(Path::new("framework-test.png")),
         (Some("--headless"), Some(path)) => run_headless(Path::new(&path)),
-        #[cfg(feature = "linux")]
+        #[cfg(any(feature = "linux", feature = "windows"))]
         (Some("--window"), None) => run_window(),
         _ => Err(Error::InvalidArgument(
             "usage: framework-test [--headless PNG_PATH | --window (with linux feature)]",

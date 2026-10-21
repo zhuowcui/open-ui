@@ -7,6 +7,7 @@ publish = false
 [features]
 default = []
 linux = ["openui/linux"]
+windows = ["openui/windows"]
 
 [dependencies]
 openui = { version = "=0.2.0", path = "../../openui" }

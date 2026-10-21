@@ -76,7 +76,10 @@ fn native_run_config_and_lifecycle_reject_invalid_ownership() {
     assert_eq!(oui_app_request_exit(app), OuiStatus::InvalidHandle);
 }
 
-#[cfg(not(all(feature = "linux", target_os = "linux")))]
+#[cfg(not(any(
+    all(feature = "linux", target_os = "linux"),
+    all(feature = "windows", target_os = "windows")
+)))]
 #[test]
 fn headless_c_build_preserves_app_api_and_reports_native_run_unavailable() {
     let app = create_app();
@@ -85,7 +88,10 @@ fn headless_c_build_preserves_app_api_and_reports_native_run_unavailable() {
     assert_eq!(oui_app_destroy(app), OuiStatus::Ok);
 }
 
-#[cfg(all(feature = "linux", target_os = "linux"))]
+#[cfg(any(
+    all(feature = "linux", target_os = "linux"),
+    all(feature = "windows", target_os = "windows")
+))]
 mod linux {
     use super::*;
     use openui_engine::FocusOrigin;

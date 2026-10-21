@@ -353,8 +353,9 @@ consumers, and the Python tooling build and run there. Windows text uses
 DirectWrite, with WOFF and WOFF2 decoded before loading, and its measured text
 scenarios are checked against the Windows Chrome-for-Testing 147.0.7727.50
 build. Tests whose premise is the Linux FreeType/Fontconfig oracle are ignored
-on Windows and listed in `docs/v02/generated/windows-pending-tests.txt`. A Win32 window, input and
-presentation runtime is pending. See [Windows development](../DEVELOPMENT.md#windows-x64-msvc).
+on Windows and listed in `docs/v02/generated/windows-pending-tests.txt`. The Win32 window, input and
+presentation runtime is available behind the `windows` feature, as an
+experimental counterpart of the Linux runtime. See [Windows development](../DEVELOPMENT.md#windows-x64-msvc).
 
 The frozen WPT inventory contains 1,912 test files with JavaScript in their
 Chromium source and 30 nonvisual/crash-harness rows. Test tooling may read a

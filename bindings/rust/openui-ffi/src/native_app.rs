@@ -232,10 +232,16 @@ thread_local! {
     static NATIVE_RUN_ACTIVE: Cell<bool> = const { Cell::new(false) };
 }
 
-#[cfg(all(feature = "linux", target_os = "linux"))]
+#[cfg(any(
+    all(feature = "linux", target_os = "linux"),
+    all(feature = "windows", target_os = "windows")
+))]
 struct RunGuard(Rc<AppState>);
 
-#[cfg(all(feature = "linux", target_os = "linux"))]
+#[cfg(any(
+    all(feature = "linux", target_os = "linux"),
+    all(feature = "windows", target_os = "windows")
+))]
 impl Drop for RunGuard {
     fn drop(&mut self) {
         self.0.running.set(false);
@@ -284,9 +290,15 @@ pub extern "C" fn oui_app_run(
                 "an app can attempt its native run only once",
             ));
         }
-        #[cfg(not(all(feature = "linux", target_os = "linux")))]
+        #[cfg(not(any(
+            all(feature = "linux", target_os = "linux"),
+            all(feature = "windows", target_os = "windows")
+        )))]
         return Err(native_error(openui::Error::PlatformUnavailable));
-        #[cfg(all(feature = "linux", target_os = "linux"))]
+        #[cfg(any(
+            all(feature = "linux", target_os = "linux"),
+            all(feature = "windows", target_os = "windows")
+        ))]
         {
             let mut application = native_application(&state)?;
             let exit = application.exit_handle();
@@ -337,7 +349,10 @@ pub extern "C" fn oui_app_request_exit(app_handle: *mut OuiApp) -> OuiStatus {
     })
 }
 
-#[cfg(all(feature = "linux", target_os = "linux"))]
+#[cfg(any(
+    all(feature = "linux", target_os = "linux"),
+    all(feature = "windows", target_os = "windows")
+))]
 pub(crate) fn native_application(state: &AppState) -> Result<openui::App, ApiError> {
     let viewport = borrow_engine(&state.document)?.viewport();
     openui::App::from_document(
@@ -355,10 +370,12 @@ pub(crate) fn native_application(state: &AppState) -> Result<openui::App, ApiErr
     .map_err(native_error)
 }
 
-#[cfg(all(feature = "linux", target_os = "linux"))]
+#[cfg(any(
+    all(feature = "linux", target_os = "linux"),
+    all(feature = "windows", target_os = "windows")
+))]
 fn platform_event(event: &openui_platform::PlatformEvent) -> OuiPlatformEvent {
     use openui_platform::{KeyPhase, PlatformEvent, PointerButton, PointerPhase};
-    use std::os::unix::ffi::OsStrExt;
     let mut raw = OuiPlatformEvent {
         struct_size: size_of::<OuiPlatformEvent>() as u32,
         abi_version: OUI_ABI_VERSION,
@@ -508,8 +525,11 @@ fn platform_event(event: &openui_platform::PlatformEvent) -> OuiPlatformEvent {
             } else {
                 12
             };
-            raw.path = path.as_os_str().as_bytes().as_ptr();
-            raw.path_length = path.as_os_str().as_bytes().len();
+            // Native filesystem bytes on Unix; UTF-8 (WTF-8 for unpaired
+            // surrogates) on Windows. Borrowed for the callback's duration.
+            let bytes = path.as_os_str().as_encoded_bytes();
+            raw.path = bytes.as_ptr();
+            raw.path_length = bytes.len();
         }
         PlatformEvent::HoveredFileCancelled => raw.event_type = 13,
         PlatformEvent::Presented {

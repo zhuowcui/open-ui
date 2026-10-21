@@ -80,7 +80,7 @@ fn application_view() -> ViewNode {
     }
 }
 
-#[cfg(feature = "linux")]
+#[cfg(any(feature = "linux", feature = "windows"))]
 fn main() -> Result<(), Error> {
     App::builder()
         .title("Reactive Counter")
@@ -89,7 +89,7 @@ fn main() -> Result<(), Error> {
         .run(application_view)
 }
 
-#[cfg(not(feature = "linux"))]
+#[cfg(not(any(feature = "linux", feature = "windows")))]
 fn main() -> Result<(), Error> {
     let mut app = HeadlessApp::new(ViewportMetrics::from_logical_size(800.0, 600.0, 1.0)?)?;
     app.mount(application_view)?;

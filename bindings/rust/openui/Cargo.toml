@@ -13,6 +13,7 @@ description = "Typed reactive Linux and headless application framework over the 
 [features]
 default = []
 linux = ["dep:openui-platform", "openui-platform/linux"]
+windows = ["dep:openui-platform", "openui-platform/windows"]
 ffi-integration = []
 
 [dependencies]
