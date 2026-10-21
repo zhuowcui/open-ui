@@ -173,7 +173,8 @@ October 2026: the Windows text work also surfaced an inline-layout gap. Blink
 aligns vertical-flow line boxes on the central baseline
 (`ComputedStyle::GetFontBaseline`), while Open UI uses the alphabetic
 baseline. See [the Windows text record](windows-directwrite-text-2026-10-21.md);
-it needs its own census-verified task.
+it needs its own census-verified task. That task is complete; see
+[the central baseline record](vertical-central-baseline-2026-10-21.md).
 
 When feature work resumes, start one focused PR from the latest `main`.
 First resolve the failing native scrollbar frame clip guard, owned by the

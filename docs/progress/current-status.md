@@ -1,5 +1,18 @@
 # Open UI current status
 
+## Central baseline for vertical flow 21 October 2026
+
+Vertical-flow lines now align on Blink's central baseline instead of the
+alphabetic one, with Blink's integer metric split, synthesized atomic
+baselines, flex baseline synthesis and same-writing-mode baseline exposure.
+Text keeps its painted position. The last Windows workspace failure, a vertical
+flex content size, now matches Windows Chrome: the workspace passes with 9,407
+tests on Windows and 9,406 on Linux, none failing. A paired expanded census
+changes 6 of 23,728 comparisons: two improve, and one tentative
+`-webkit-line-clamp` test loses its exact match at 1× and 2×, falling from
+21,681 to 21,679 exact. Its owner is the clamp marker line geometry. See the
+[central baseline record](vertical-central-baseline-2026-10-21.md).
+
 ## Skia legacy shader context 21 October 2026
 
 Hosted and portable builds now compile Skia with

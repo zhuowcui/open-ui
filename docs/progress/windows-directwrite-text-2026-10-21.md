@@ -85,3 +85,9 @@ The `source_layer_raster` arrow failure recorded here is not toolchain-dependent
 Hosted and portable builds omitted Skia's `-DSK_ENABLE_LEGACY_SHADERCONTEXT`,
 which the pinned parity profile sets. With it the test passes on Linux and
 Windows; see [the Skia configuration record](skia-legacy-shader-context-2026-10-21.md).
+
+## Update, 21 October 2026
+
+The vertical flex failure recorded here is fixed by aligning vertical flow on
+Blink's central baseline; the test now passes with Windows Chrome's 18. See
+[the central baseline record](vertical-central-baseline-2026-10-21.md).
