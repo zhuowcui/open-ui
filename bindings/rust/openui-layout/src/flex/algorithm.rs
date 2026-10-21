@@ -4679,16 +4679,22 @@ fn give_items_final_position(
                         // both LTR and RTL containers.
                         LayoutUnit::zero()
                     } else if !is_main_axis_horizontal {
+                        // Blink: LogicalBoxFragment::FirstBaselineOrSynthesize.
+                        // Vertical lines expose their central baseline, and an
+                        // item without one synthesizes it at its middle.
+                        // Sideways vertical-lr text keeps the alphabetic edge,
+                        // which is block-start in flipped lines.
                         match (child_style.writing_mode, child_style.text_orientation) {
-                            (
-                                openui_style::WritingMode::VerticalRl,
-                                openui_style::TextOrientation::Mixed
-                                | openui_style::TextOrientation::Upright,
-                            ) if !line_has_line_clamp => cross_size / 2,
                             (
                                 openui_style::WritingMode::VerticalLr,
                                 openui_style::TextOrientation::Sideways,
                             ) => LayoutUnit::zero(),
+                            (
+                                openui_style::WritingMode::VerticalRl
+                                | openui_style::WritingMode::VerticalLr,
+                                openui_style::TextOrientation::Mixed
+                                | openui_style::TextOrientation::Upright,
+                            ) => frag_baseline.unwrap_or(cross_size / 2),
                             _ => frag_baseline.unwrap_or(cross_size),
                         }
                     } else {
@@ -4758,18 +4764,6 @@ fn give_items_final_position(
             .filter(|data| data.is_baseline_aligned)
             .map(|data| doc.node(items[data.idx].node_id).style.font_size)
             .fold(0.0_f32, f32::max);
-        let vertical_baseline_min_font = item_data
-            .iter()
-            .filter(|data| data.is_baseline_aligned)
-            .map(|data| doc.node(items[data.idx].node_id).style.font_size)
-            .fold(f32::INFINITY, f32::min);
-        let vertical_group_half_leading = if vertical_baseline_min_font.is_finite() {
-            LayoutUnit::from_f32(
-                (vertical_baseline_max_font - vertical_baseline_min_font).max(0.0) / 2.0,
-            )
-        } else {
-            LayoutUnit::zero()
-        };
         let clamped_last_group_at_cross_edge = item_data
             .iter()
             .any(|data| data.clamped_last_baseline_at_cross_edge);
@@ -4940,29 +4934,6 @@ fn give_items_final_position(
                     is_wrap_reverse,
                 )
             };
-
-            if !is_main_axis_horizontal && data.is_baseline_aligned && line_has_line_clamp {
-                // Vertical alphabetic baseline groups center the em-square's
-                // half-leading between differently sized participants. The
-                // correction is along logical block-start, so it naturally
-                // mirrors between vertical-lr and vertical-rl.
-                let individual_half_leading = LayoutUnit::from_f32(
-                    (vertical_baseline_max_font - child_style.font_size).max(0.0) / 2.0,
-                );
-                if item.alignment == ItemPosition::Baseline {
-                    cross_item_offset = cross_item_offset - individual_half_leading;
-                } else if !clamped_last_group_at_cross_edge {
-                    cross_item_offset = cross_item_offset - individual_half_leading;
-                } else if child_style.writing_mode == openui_style::WritingMode::VerticalRl
-                    && data.clamped_last_baseline_at_cross_edge
-                {
-                    cross_item_offset = cross_item_offset - vertical_group_half_leading;
-                } else if child_style.writing_mode == openui_style::WritingMode::VerticalLr
-                    && !data.clamped_last_baseline_at_cross_edge
-                {
-                    cross_item_offset = cross_item_offset + individual_half_leading;
-                }
-            }
 
             // For RTL row flex, physical right margin is the main-start margin.
             let logical_margin = item.margin.to_logical(writing_direction);

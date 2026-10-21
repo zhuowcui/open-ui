@@ -1255,13 +1255,17 @@ fn compute_intrinsic_block_sizes_impl(
         let content_inline_max = max_inline;
 
         // Run inline layout at min-content width to get the block-size when
-        // text wraps as tightly as possible.
-        let min_space = crate::ConstraintSpace::for_block_child(
+        // text wraps as tightly as possible. Lay the lines out in the node's
+        // own writing direction, as block layout does, so vertical lines
+        // measure atomic inlines and line metrics in their logical axes.
+        let direction = style.direction.writing_direction(style.writing_mode);
+        let min_space = crate::ConstraintSpace::for_block_child_with_writing_direction(
             content_inline_min,
             LayoutUnit::max(),
             content_inline_min,
             LayoutUnit::zero(),
             false,
+            direction,
         );
         let min_frag =
             crate::inline::algorithm::inline_layout_with_layout(doc, node_id, &min_space);
@@ -1269,12 +1273,13 @@ fn compute_intrinsic_block_sizes_impl(
 
         // Run inline layout at max-content width to get the block-size when
         // text is laid out as wide as possible (single line if fits).
-        let max_space = crate::ConstraintSpace::for_block_child(
+        let max_space = crate::ConstraintSpace::for_block_child_with_writing_direction(
             content_inline_max,
             LayoutUnit::max(),
             content_inline_max,
             LayoutUnit::zero(),
             false,
+            direction,
         );
         let max_frag =
             crate::inline::algorithm::inline_layout_with_layout(doc, node_id, &max_space);

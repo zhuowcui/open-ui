@@ -5587,8 +5587,16 @@ pub(crate) fn block_layout_contents(
         fragment.last_baseline = last_baseline_result;
 
         // Also scan block children for baselines (handles nested blocks
-        // and block children in mixed content).
+        // and block children in mixed content). Blink's
+        // LogicalBoxFragment::FirstBaseline only exposes a child baseline in
+        // the container's own writing mode.
+        let writing_mode = doc.node(node_id).style.writing_mode;
         for child in &fragment.children {
+            if !child.node_id.is_none()
+                && doc.node(child.node_id).style.writing_mode != writing_mode
+            {
+                continue;
+            }
             if let Some(child_first) = child.first_baseline {
                 if fragment.first_baseline.is_none() {
                     fragment.first_baseline = Some(child.offset.top + child_first);

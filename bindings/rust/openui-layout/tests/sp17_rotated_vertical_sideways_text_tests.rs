@@ -329,3 +329,77 @@ fn auto_sized_flex_padding_projects_once_across_writing_modes() {
         }
     }
 }
+
+fn vertical_line_with_empty_inline_block(writing_mode: WritingMode) -> (LayoutUnit, Vec<f32>) {
+    let mut doc =
+        Document::new_with_font_collection(openui_text::FontCollection::deterministic_test());
+    let block = doc.create_node(ElementTag::Div);
+    let text = doc.create_node(ElementTag::Text);
+    let atomic = doc.create_node(ElementTag::Span);
+    for node in [block, text, atomic] {
+        doc.update_resolved_style(node, |style| {
+            style.update_derived(|computed| computed.writing_mode = writing_mode);
+            style.update_derived(|computed| computed.font_size = 16.0);
+            style.update_derived(|computed| computed.font_family = FontFamilyList::single("Ahem"));
+        });
+    }
+    doc.update_resolved_style(block, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+    });
+    doc.update_resolved_style(text, |style| {
+        style.update_derived(|computed| computed.display = Display::Inline);
+    });
+    doc.update_resolved_style(atomic, |style| {
+        style.update_derived(|computed| computed.display = Display::InlineBlock);
+        // A 30px block-size in vertical flow, with no baseline of its own.
+        style.update_derived(|computed| computed.width = Length::px(30.0));
+        style.update_derived(|computed| computed.height = Length::px(10.0));
+    });
+    doc.node_mut(text).text = Some("X".to_string());
+    // A horizontal flex row sizes the vertical item's width, its block size,
+    // to its line.
+    let container = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(container, |style| {
+        style.update_derived(|computed| computed.display = Display::Flex);
+        style.update_derived(|computed| computed.width = Length::px(500.0));
+        style.update_derived(|computed| computed.height = Length::px(150.0));
+    });
+    doc.append_child(doc.root(), container);
+    doc.append_child(container, block);
+    doc.append_child(block, text);
+    doc.append_child(block, atomic);
+    let fragment = flex_layout(
+        &doc,
+        container,
+        &ConstraintSpace::for_root(lu(800), lu(600)),
+    );
+    let fragment = fragment
+        .children
+        .iter()
+        .find(|fragment| fragment.node_id == block)
+        .expect("vertical flex item");
+    let baselines = text_fragments(fragment)
+        .into_iter()
+        .map(|run| run.baseline_offset)
+        .collect();
+    (fragment.width(), baselines)
+}
+
+// 16px Ahem has integer metrics 13 + 3. Vertical flow aligns on Blink's
+// central baseline, 8 + 8 for the text and 15 + 15 for the synthesized
+// baseline of the empty 30px inline-block, so the line is 30px rather than
+// the alphabetic 30 + 3. Sideways flow keeps the alphabetic baseline.
+#[test]
+fn vertical_flow_aligns_atomic_inlines_on_the_central_baseline() {
+    for writing_mode in [WritingMode::VerticalLr, WritingMode::VerticalRl] {
+        let (block_size, baselines) = vertical_line_with_empty_inline_block(writing_mode);
+        assert_eq!(block_size, lu(30), "{writing_mode:?}");
+        // Text fragments keep their alphabetic geometry around the glyph
+        // baseline: the 1/64 ceiling of Ahem's 12.8px ascent.
+        assert_eq!(baselines, vec![12.8125], "{writing_mode:?}");
+    }
+    for writing_mode in [WritingMode::SidewaysRl, WritingMode::SidewaysLr] {
+        let (block_size, _) = vertical_line_with_empty_inline_block(writing_mode);
+        assert_eq!(block_size, lu(33), "{writing_mode:?}");
+    }
+}

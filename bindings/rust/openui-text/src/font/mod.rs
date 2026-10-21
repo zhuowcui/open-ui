@@ -31,7 +31,7 @@ pub use collection::{
 pub use description::FontDescription;
 pub use fallback::FontFallbackList;
 pub use font::Font;
-pub use metrics::FontMetrics;
+pub use metrics::{FontBaseline, FontMetrics};
 pub use platform::FontPlatformData;
 pub use relative::{
     used_line_height, used_line_height_metrics, FontRelativeLengthResolver, FontRelativeUnit,
