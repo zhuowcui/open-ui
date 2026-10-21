@@ -18,3 +18,8 @@ unicode-script = "0.5"
 unicode-bidi = "0.3"
 unicode-segmentation = "1.10"
 skrifa = { version = "0.40.0" }
+
+# DirectWrite cannot load WOFF or WOFF2 containers. Windows decodes them to
+# sfnt first, as Chromium's OpenType Sanitizer does before the platform scaler.
+[target.'cfg(windows)'.dependencies]
+wuff = "=0.2.9"

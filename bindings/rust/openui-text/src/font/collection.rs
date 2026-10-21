@@ -418,10 +418,11 @@ impl FontCollection {
         if descriptor.face_index != 0 && format != FontContainerFormat::Collection {
             return Err(FontCollectionError::InvalidFaceIndex);
         }
+        let loadable = platform_font_data(&bytes, format)?;
         let typeface = self
             .system
             .0
-            .new_from_data(bytes.as_ref(), Some(descriptor.face_index as usize))
+            .new_from_data(loadable.as_ref(), Some(descriptor.face_index as usize))
             .ok_or_else(|| {
                 if format == FontContainerFormat::Collection {
                     FontCollectionError::InvalidFaceIndex
@@ -1402,6 +1403,33 @@ fn validate_axis(
         return Err(FontCollectionError::InvalidDescriptor(name));
     }
     Ok(())
+}
+
+/// Bytes the platform font manager can load. FreeType reads WOFF and WOFF2
+/// itself; DirectWrite cannot, so Windows decodes them to sfnt first, as
+/// Chromium's OpenType Sanitizer does before handing web fonts to DirectWrite.
+/// Registration keeps the caller's original bytes for identity and scenes.
+#[cfg(windows)]
+fn platform_font_data(
+    bytes: &[u8],
+    format: FontContainerFormat,
+) -> Result<std::borrow::Cow<'_, [u8]>, FontCollectionError> {
+    let decoded = match format {
+        FontContainerFormat::Woff => wuff::decompress_woff1(bytes),
+        FontContainerFormat::Woff2 => wuff::decompress_woff2(bytes),
+        _ => return Ok(std::borrow::Cow::Borrowed(bytes)),
+    };
+    decoded
+        .map(std::borrow::Cow::Owned)
+        .map_err(|_| FontCollectionError::MalformedFont)
+}
+
+#[cfg(not(windows))]
+fn platform_font_data(
+    bytes: &[u8],
+    _format: FontContainerFormat,
+) -> Result<std::borrow::Cow<'_, [u8]>, FontCollectionError> {
+    Ok(std::borrow::Cow::Borrowed(bytes))
 }
 
 fn detect_format(bytes: &[u8]) -> Result<FontContainerFormat, FontCollectionError> {
