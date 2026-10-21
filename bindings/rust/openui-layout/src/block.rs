@@ -36551,11 +36551,10 @@ mod tests {
         );
     }
 
+    // The system sans-serif strut: DejaVu Sans on Linux, Arial on Windows.
+    // Windows values are pinned Windows Chrome-for-Testing observations in
+    // docs/progress/evidence/windows-text-oracle-v1.json.
     #[test]
-    #[cfg_attr(
-        not(target_os = "linux"),
-        ignore = "linux-oracle: Linux DejaVu default-font metrics"
-    )]
     fn consecutive_clearing_break_without_intervening_float_keeps_line_strut() {
         let mut doc = Document::new();
         let vp = doc.root();
@@ -36579,7 +36578,7 @@ mod tests {
         let fragment = block_layout_with_layout(&doc, vp, &space);
         assert_eq!(
             fragment_for_node(&fragment, parent).unwrap().size.height,
-            LayoutUnit::from_i32(39)
+            LayoutUnit::from_i32(if cfg!(windows) { 38 } else { 39 })
         );
     }
 

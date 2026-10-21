@@ -4,11 +4,9 @@ use std::{cell::Cell, rc::Rc};
 // Expected bounds are the independently repeated pinned Chromium observations
 // preserved in native-font-relative-v1. The application retains the unit; the
 // callback changes only the font, without computing or setting a pixel width.
+// Windows values are pinned Windows Chrome-for-Testing observations in
+// docs/progress/evidence/windows-text-oracle-v1.json.
 #[test]
-#[cfg_attr(
-    not(target_os = "linux"),
-    ignore = "linux-oracle: FreeType Ahem x-height and ex metrics"
-)]
 fn retained_font_units_update_after_native_rust_callbacks() {
     for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
         for (unit, line_height, before_width, after_width) in [
@@ -16,8 +14,8 @@ fn retained_font_units_update_after_native_rust_callbacks() {
             (
                 LengthValue::Ex(2.5),
                 LineHeight::Normal,
-                37.40625,
-                40.734375,
+                if cfg!(windows) { 37.484375 } else { 37.40625 },
+                if cfg!(windows) { 39.984375 } else { 40.734375 },
             ),
             (
                 LengthValue::Lh(2.5),
@@ -128,11 +126,9 @@ fn retained_font_units_refresh_after_shared_font_registration() {
 // These bounds are independently repeated pinned Chromium observations from
 // native-general-font-chromium-v3824. The fixed-width float neighbor also
 // checks that text rounding does not inflate unrelated atomic contents.
+// Windows values are pinned Windows Chrome-for-Testing observations in
+// docs/progress/evidence/windows-text-oracle-v1.json. DirectWrite keeps Ahem's integer advance.
 #[test]
-#[cfg_attr(
-    not(target_os = "linux"),
-    ignore = "linux-oracle: FreeType fractional advance of loaded Ahem"
-)]
 fn atomic_intrinsic_text_keeps_chromium_fraction_after_native_font_alias_change() {
     for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
         let fonts = FontCollection::deterministic_test();
@@ -172,7 +168,12 @@ fn atomic_intrinsic_text_keeps_chromium_fraction_after_native_font_alias_change(
         );
         assert_eq!(
             (owned.x, owned.y, owned.width, owned.height),
-            (10.0, 487.0, 144.015625, 16.0),
+            (
+                10.0,
+                487.0,
+                if cfg!(windows) { 144.0 } else { 144.015625 },
+                16.0
+            ),
             "word at {scale}"
         );
         let float_container = Element::create(&document, "div").unwrap();

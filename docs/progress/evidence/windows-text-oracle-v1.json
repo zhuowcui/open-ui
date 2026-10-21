@@ -1,0 +1,450 @@
+{
+  "ahem_sha256": "b719ecb31c5b21fc573c03f6421c74ac63c271a5a3ff841e34f9705fb94b8448",
+  "chrome_sha256": "5a261cd9e0fa71f40fa5df4b9841da4f3311f9175d2e5868c27cb510ccd28505",
+  "chromium_version": "147.0.7727.50",
+  "schema_version": 1,
+  "session_sha256": "1cc4d106b3cd5be872c50d799f023757317acac9f2663dc0bb8ca8c81b85625d",
+  "tests": {
+    "bindings/rust/openui-layout/src/block.rs::consecutive_clearing_break_without_intervening_float_keeps_line_strut": {
+      "chrome_flags": [],
+      "html_sha256": "e0ee906314fc288a4d62197901cf12dcd65dd0afe1e6f5fa69317adda1f2b465",
+      "measurements": {
+        "1": {
+          "height": 38
+        }
+      }
+    },
+    "bindings/rust/openui-layout/src/flex/algorithm.rs::vertical_column_cross_margin_reduces_fit_content_before_wrapping": {
+      "chrome_flags": [],
+      "html_sha256": "f5871541c86f0384cd2d6ab27d7f0119dd9866eec6fe759ab3c93e60d55008d5",
+      "measurements": {
+        "1": {
+          "line_block_size": 18
+        }
+      }
+    },
+    "bindings/rust/openui/tests/native_font_units.rs::atomic_intrinsic_text_keeps_chromium_fraction_after_native_font_alias_change": {
+      "chrome_flags": [
+        "--enable-blink-features=NoFontAntialiasing"
+      ],
+      "html_sha256": "859b2d06ad83d9f7cc351b933d399a42bfdec1600e2bd378671732b1fd38c169",
+      "measurements": {
+        "1": {
+          "word_rect": [
+            10,
+            487,
+            144,
+            16
+          ]
+        },
+        "1.25": {
+          "word_rect": [
+            10,
+            487,
+            144,
+            16
+          ]
+        },
+        "1.5": {
+          "word_rect": [
+            10,
+            487,
+            144,
+            16
+          ]
+        },
+        "2": {
+          "word_rect": [
+            10,
+            487,
+            144,
+            16
+          ]
+        },
+        "3": {
+          "word_rect": [
+            10,
+            487,
+            144,
+            16
+          ]
+        }
+      }
+    },
+    "bindings/rust/openui/tests/native_font_units.rs::retained_font_units_update_after_native_rust_callbacks": {
+      "chrome_flags": [
+        "--enable-blink-features=NoFontAntialiasing"
+      ],
+      "html_sha256": "0d0d482a90e45273b7f1e5033f6df34b7f0dbbdc4a705cfb0a3071359f16409c",
+      "measurements": {
+        "1": {
+          "after": [
+            50,
+            39.984375,
+            61.046875,
+            64.671875
+          ],
+          "before": [
+            47.5,
+            37.484375,
+            56.125,
+            59.421875
+          ]
+        },
+        "1.25": {
+          "after": [
+            50,
+            39.984375,
+            61.046875,
+            64.671875
+          ],
+          "before": [
+            47.5,
+            37.484375,
+            56.125,
+            59.421875
+          ]
+        },
+        "1.5": {
+          "after": [
+            50,
+            39.984375,
+            61.046875,
+            64.671875
+          ],
+          "before": [
+            47.5,
+            37.484375,
+            56.125,
+            59.421875
+          ]
+        },
+        "2": {
+          "after": [
+            50,
+            39.984375,
+            61.046875,
+            64.671875
+          ],
+          "before": [
+            47.5,
+            37.484375,
+            56.125,
+            59.421875
+          ]
+        },
+        "3": {
+          "after": [
+            50,
+            39.984375,
+            61.046875,
+            64.671875
+          ],
+          "before": [
+            47.5,
+            37.484375,
+            56.125,
+            59.421875
+          ]
+        }
+      }
+    },
+    "bindings/rust/openui/tests/native_line_height.rs::relative_line_height_follows_shorthand_order_pseudos_and_animation_cancel": {
+      "chrome_flags": [
+        "--enable-blink-features=NoFontAntialiasing"
+      ],
+      "html_sha256": "4ee9f31b5078ad0f3c3c15044b777b5c0e6c75a1a9f9c9ff81ab5c16e710fc58",
+      "measurements": {
+        "1": {
+          "widths": [
+            80,
+            72,
+            95.03125,
+            142.546875,
+            195.109375,
+            130.078125
+          ]
+        }
+      }
+    },
+    "bindings/rust/openui/tests/native_line_height.rs::relative_line_height_updates_from_native_callbacks_and_inherits_fixed_values": {
+      "chrome_flags": [
+        "--enable-blink-features=NoFontAntialiasing"
+      ],
+      "html_sha256": "b18277caf2b192dac5513ca941d95af0d5c7d334a4aba3607ca54fa3d6a3d399",
+      "measurements": {
+        "1": {
+          "after": [
+            [
+              150,
+              150
+            ],
+            [
+              119.9375,
+              119.9375
+            ],
+            [
+              127.1875,
+              127.1875
+            ],
+            [
+              114.03125,
+              114.03125
+            ],
+            [
+              60,
+              60
+            ],
+            [
+              96.546875,
+              96.546875
+            ]
+          ],
+          "before": [
+            [
+              150,
+              150
+            ],
+            [
+              119.9375,
+              119.9375
+            ],
+            [
+              116.953125,
+              116.953125
+            ],
+            [
+              114.03125,
+              114.03125
+            ],
+            [
+              60,
+              60
+            ],
+            [
+              96.546875,
+              96.546875
+            ]
+          ]
+        },
+        "1.25": {
+          "after": [
+            [
+              150,
+              150
+            ],
+            [
+              119.9375,
+              119.9375
+            ],
+            [
+              127.1875,
+              127.1875
+            ],
+            [
+              114.03125,
+              114.03125
+            ],
+            [
+              60,
+              60
+            ],
+            [
+              96.546875,
+              96.546875
+            ]
+          ],
+          "before": [
+            [
+              150,
+              150
+            ],
+            [
+              119.9375,
+              119.9375
+            ],
+            [
+              116.953125,
+              116.953125
+            ],
+            [
+              114.03125,
+              114.03125
+            ],
+            [
+              60,
+              60
+            ],
+            [
+              96.546875,
+              96.546875
+            ]
+          ]
+        },
+        "1.5": {
+          "after": [
+            [
+              150,
+              150
+            ],
+            [
+              119.9375,
+              119.9375
+            ],
+            [
+              127.1875,
+              127.1875
+            ],
+            [
+              114.03125,
+              114.03125
+            ],
+            [
+              60,
+              60
+            ],
+            [
+              96.546875,
+              96.546875
+            ]
+          ],
+          "before": [
+            [
+              150,
+              150
+            ],
+            [
+              119.9375,
+              119.9375
+            ],
+            [
+              116.953125,
+              116.953125
+            ],
+            [
+              114.03125,
+              114.03125
+            ],
+            [
+              60,
+              60
+            ],
+            [
+              96.546875,
+              96.546875
+            ]
+          ]
+        },
+        "2": {
+          "after": [
+            [
+              150,
+              150
+            ],
+            [
+              119.9375,
+              119.9375
+            ],
+            [
+              127.1875,
+              127.1875
+            ],
+            [
+              114.03125,
+              114.03125
+            ],
+            [
+              60,
+              60
+            ],
+            [
+              96.546875,
+              96.546875
+            ]
+          ],
+          "before": [
+            [
+              150,
+              150
+            ],
+            [
+              119.9375,
+              119.9375
+            ],
+            [
+              116.953125,
+              116.953125
+            ],
+            [
+              114.03125,
+              114.03125
+            ],
+            [
+              60,
+              60
+            ],
+            [
+              96.546875,
+              96.546875
+            ]
+          ]
+        },
+        "3": {
+          "after": [
+            [
+              150,
+              150
+            ],
+            [
+              119.9375,
+              119.9375
+            ],
+            [
+              127.1875,
+              127.1875
+            ],
+            [
+              114.03125,
+              114.03125
+            ],
+            [
+              60,
+              60
+            ],
+            [
+              96.546875,
+              96.546875
+            ]
+          ],
+          "before": [
+            [
+              150,
+              150
+            ],
+            [
+              119.9375,
+              119.9375
+            ],
+            [
+              116.953125,
+              116.953125
+            ],
+            [
+              114.03125,
+              114.03125
+            ],
+            [
+              60,
+              60
+            ],
+            [
+              96.546875,
+              96.546875
+            ]
+          ]
+        }
+      }
+    }
+  },
+  "tool_sha256": "c3354959873de44a3b3e9514604b6494f031990da9c3264b1cdd184efb9b3dbf"
+}

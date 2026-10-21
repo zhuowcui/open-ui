@@ -6808,11 +6808,10 @@ mod tests {
         }
     }
 
+    // The base is the system sans-serif strut: DejaVu Sans on Linux, Arial on
+    // Windows. Windows values are pinned Windows Chrome-for-Testing observations in
+    // docs/progress/evidence/windows-text-oracle-v1.json.
     #[test]
-    #[cfg_attr(
-        not(target_os = "linux"),
-        ignore = "linux-oracle: Linux DejaVu default-font metrics"
-    )]
     fn vertical_column_cross_margin_reduces_fit_content_before_wrapping() {
         fn content_base(cross_margin: i32) -> LayoutUnit {
             let mut doc = Document::new();
@@ -6863,7 +6862,10 @@ mod tests {
 
         let without_margin = content_base(0);
         let with_margin = content_base(20);
-        assert_eq!(without_margin, LayoutUnit::from_i32(19));
+        assert_eq!(
+            without_margin,
+            LayoutUnit::from_i32(if cfg!(windows) { 18 } else { 19 })
+        );
         assert_eq!(with_margin, without_margin * 2);
     }
 

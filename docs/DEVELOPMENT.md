@@ -159,6 +159,16 @@ otherwise defaults to the ANSI code page. `pixel-compare` finds Python through
 Store launcher alias. Use a short `CARGO_TARGET_DIR` such as `out\cargo-win`
 to stay below path-length limits inside the Skia build.
 
+Windows text references come from the pinned Windows Chrome-for-Testing
+147.0.7727.50 `win64` build, unpacked to
+`out/chrome-win/win-147.0.7727.50/chrome-win64/` from
+`https://storage.googleapis.com/chrome-for-testing-public/147.0.7727.50/win64/chrome-win64.zip`.
+`tools/qualification/windows_chrome.py` verifies its SHA-256 before launch.
+`python tools/qualification/probe_windows_text_oracle.py --output <file>`
+remeasures every Windows text scenario; tests that use the deterministic
+aliased raster configuration are measured with Blink's `NoFontAntialiasing`
+feature. Windows decodes WOFF and WOFF2 application fonts before DirectWrite.
+
 Tests whose expected values come from the Linux oracle, its FreeType raster or
 its Fontconfig font resolution are marked
 `#[cfg_attr(not(target_os = "linux"), ignore = "linux-oracle: <reason>")]`.
