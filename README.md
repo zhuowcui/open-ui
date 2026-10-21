@@ -43,9 +43,10 @@ implementation and the history of PR 3 directly into `main`. Future work uses
 one focused PR at a time against `main`, with no PR stack. Feature work remains
 paused at this checkpoint. The [checkpoint and handoff](docs/progress/branch-checkpoint-2026-10-17.md)
 records experiment integration, preserved candidates and the next repair.
-A native scrollbar clipping guard fails at 1.25× scale. The user accepts that
-known failure for this experimental integration; its Chromium comparison is
-the first follow-up. Native, renderer and release qualification remain open.
+The native scrollbar clipping guard that failed at 1.25× scale was repaired
+on 20 October against a fresh pinned Chromium comparison; see the
+[repair record](docs/progress/native-scrollbar-frame-clip-2026-10-20.md).
+Native, renderer and release qualification remain open.
 
 ### Current closure work (15 October 2026)
 

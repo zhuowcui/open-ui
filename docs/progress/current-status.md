@@ -1,5 +1,20 @@
 # Open UI current status
 
+## Native scrollbar frame clip repair 20 October 2026
+
+The checkpoint's failing guard
+`native_resize_control_clip::actual_native_scrollbar_frames_are_clipped_independently_of_track_and_thumb_ink`
+now passes on Linux and Windows. A fresh pinned Chromium capture reproduces
+all 50 historical frames for its states. It shows that the guard's
+pixel-centre rule was wrong (Chromium paints row 57 at 1.25) and that native
+paint was also wrong: forced scrollbar pictures were resampled at fractional
+origins. Paint now rasterizes those parts under the device transform; native
+exactness against the 50 frames rises from **40 to 46**. The guard now holds
+ink to Chromium's measured extent, and a new test compares the 46 exact
+frames. Four documented residual states remain. Layout is unchanged: Chromium
+keeps the CSS scrollbar thickness at every scale. See the
+[repair record](native-scrollbar-frame-clip-2026-10-20.md).
+
 ## Windows development baseline 19 October 2026
 
 At the user's direction, work resumed with one focused PR that makes the

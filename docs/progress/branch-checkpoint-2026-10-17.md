@@ -166,6 +166,10 @@ or PR workflow substitutes for the open renderer and release gates.
 
 ## Next bounded task
 
+Update 20 October 2026: the scrollbar frame clip guard below is resolved, as
+recorded in [the repair record](native-scrollbar-frame-clip-2026-10-20.md).
+The padded multicolumn principal-source continuity task is next.
+
 When feature work resumes, start one focused PR from the latest `main`.
 First resolve the failing native scrollbar frame clip guard, owned by the
 shared overflow-control painting path and its Engine integration test:
