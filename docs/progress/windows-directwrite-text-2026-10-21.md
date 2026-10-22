@@ -91,3 +91,9 @@ Windows; see [the Skia configuration record](skia-legacy-shader-context-2026-10-
 The vertical flex failure recorded here is fixed by aligning vertical flow on
 Blink's central baseline; the test now passes with Windows Chrome's 18. See
 [the central baseline record](vertical-central-baseline-2026-10-21.md).
+
+## Update, 22 October 2026
+
+Text pixels are now compared with Windows Chrome, and the Chromium-parity
+raster policy follows Windows Blink on Windows; see
+[the Windows text raster record](windows-text-raster-policy-2026-10-22.md).
