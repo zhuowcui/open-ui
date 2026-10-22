@@ -33,7 +33,7 @@ but not on Windows:
 | --- | --- | --- |
 | Native theme, all profiles | native controls | As at `legacy-800x600@1`: the range accent is the host's Windows accent color, plus Windows fieldset, button and scroll-button colors |
 | Font fallback and text layout, all profiles | font fallback, inline layout | As at `legacy-800x600@1` |
-| Scale-specific, 17 tests | layout at fractional device scale | Two at 2× (`scroll-buttons-enabled` and its reference, 5 pixels each). Eleven at 1.25×: `flexbox-writing-mode-011` to `013`, `flexbox-align-self-horiz-004` and `block-size-with-min-or-max-content-1*`, where boxes beside 12px and 20px Ahem text sit one device column off. Four at 1.5×. Not yet attributed |
+| Scale-specific, 17 tests | layout at fractional device scale | Two at 2× (`scroll-buttons-enabled` and its reference, 5 pixels each). Eleven at 1.25×: `flexbox-writing-mode-011` to `013`, `flexbox-align-self-horiz-004` and `block-size-with-min-or-max-content-1*`, where boxes beside 12px and 20px Ahem text sit one device column off. Four at 1.5×. Not yet attributed; not caused by the metric rounding (the pre-rounding build `3db12944` shows the same 1.25× differences, 2,363 exact, and rounding loses none) |
 
 The four errors are `css_overflow/overflow-replaced-element-002` and its
 reference at 1.25× and 1.5×. Windows Chrome's screenshots of them never
