@@ -178,7 +178,13 @@ python ..\..\tools\ffi\verify_native_window.py --library <target>\debug\openui_f
 ```
 
 Build `openui-ffi` with `--features windows` before running the native window
-consumers.
+consumers. `tools/platform/verify_windows_uia.ps1` drives the `accessibility`
+example through UI Automation, as a screen reader would:
+
+```powershell
+cargo build --locked --package accessibility --features windows
+pwsh -NoProfile -File ..\..\tools\platform\verify_windows_uia.ps1 -Executable <target>\debug\accessibility.exe
+```
 
 Tests whose expected values come from the Linux oracle, its FreeType raster or
 its Fontconfig font resolution are marked

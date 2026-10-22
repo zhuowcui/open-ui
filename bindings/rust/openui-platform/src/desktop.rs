@@ -80,6 +80,57 @@ impl Drop for OpenGlPresenter {
     }
 }
 
+/// The GL entry points the OpenGL presenter calls that failed to load.
+fn missing_gl_functions() -> Vec<&'static str> {
+    macro_rules! missing {
+        ($($name:ident),* $(,)?) => {{
+            let mut missing = Vec::new();
+            $(if !gl::$name::is_loaded() {
+                missing.push(stringify!($name));
+            })*
+            missing
+        }};
+    }
+    missing!(
+        ActiveTexture,
+        AttachShader,
+        BindBuffer,
+        BindTexture,
+        BindVertexArray,
+        BufferData,
+        Clear,
+        ClearColor,
+        CompileShader,
+        CreateProgram,
+        CreateShader,
+        DeleteBuffers,
+        DeleteProgram,
+        DeleteShader,
+        DeleteTextures,
+        DeleteVertexArrays,
+        DrawArrays,
+        EnableVertexAttribArray,
+        GenBuffers,
+        GenTextures,
+        GenVertexArrays,
+        GetProgramInfoLog,
+        GetProgramiv,
+        GetShaderInfoLog,
+        GetShaderiv,
+        GetUniformLocation,
+        LinkProgram,
+        PixelStorei,
+        ShaderSource,
+        TexImage2D,
+        TexParameteri,
+        TexSubImage2D,
+        Uniform1i,
+        UseProgram,
+        VertexAttribPointer,
+        Viewport,
+    )
+}
+
 impl OpenGlPresenter {
     fn new(
         event_loop: &ActiveEventLoop,
@@ -144,6 +195,16 @@ impl OpenGlPresenter {
                 .ok()
                 .map_or(std::ptr::null(), |name| display.get_proc_address(&name))
         });
+        // A context can be created without the entry points this presenter
+        // uses, for example Windows' GDI OpenGL 1.1 renderer. Report it as an
+        // initialization failure so `Auto` falls back to software presentation.
+        let missing = missing_gl_functions();
+        if !missing.is_empty() {
+            return Err(PlatformError::Initialization(format!(
+                "OpenGL context lacks {}",
+                missing.join(", ")
+            )));
+        }
         let gles = matches!(context.context_api(), ContextApi::Gles(_));
         let (program, texture, vertex_array, vertex_buffer) = initialize_gl_objects(gles)?;
         let _ = surface.set_swap_interval(

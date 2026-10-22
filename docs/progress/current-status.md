@@ -1,5 +1,16 @@
 # Open UI current status
 
+## Windows UI Automation check 21 October 2026
+
+The first operating-system accessibility check: on Windows a UI Automation
+client drives a new `accessibility` example through the same interfaces a
+screen reader uses. It finds the named button, checkbox and text field with
+their control types, moves focus, invokes the button and reads its new name,
+toggles the checkbox, sets the field's value and closes the window. The check
+runs locally and in hosted `windows-msvc` CI. Specific screen readers, IME and
+drag and drop remain unverified. See the
+[UI Automation record](windows-ui-automation-2026-10-21.md).
+
 ## Padded multicolumn principal source 21 October 2026
 
 The checkpoint's padded multicolumn task is complete. The archived candidate's

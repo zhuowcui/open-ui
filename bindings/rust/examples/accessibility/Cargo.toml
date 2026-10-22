@@ -1,0 +1,13 @@
+[package]
+name = "accessibility"
+version = "0.2.0"
+edition = "2024"
+publish = false
+
+[features]
+default = []
+linux = ["openui/linux"]
+windows = ["openui/windows"]
+
+[dependencies]
+openui = { version = "=0.2.0", path = "../../openui" }

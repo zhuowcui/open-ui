@@ -15,6 +15,7 @@ members = [
     "openui-macros",
     "examples/hello",
     "examples/counter",
+    "examples/accessibility",
     "examples/todo",
     "examples/dashboard",
     "examples/framework-test",
