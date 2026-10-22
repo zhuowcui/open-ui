@@ -431,6 +431,14 @@ impl FontPlatformData {
         if let Some(value) = configuration.metric_overrides.line_gap {
             metrics.line_gap = value * size;
         }
+        // Windows Blink keeps `FontMetrics::AscentDescentWithHacks`' rounded
+        // ascent and descent for layout (its fractional path serves canvas
+        // text only). DirectWrite's unrounded GDI-compatible values, such as
+        // Ahem's 13.008 at 16px, would otherwise move text fragment edges.
+        if windows_chromium {
+            metrics.ascent = metrics.ascent.round();
+            metrics.descent = metrics.descent.round();
+        }
         metrics.line_spacing = metrics.ascent + metrics.descent + metrics.line_gap;
         let vertical_metrics = VerticalMetrics::from_typeface(&typeface);
         let applied_font_settings = AppliedPlatformFontSettings::capture(
@@ -763,6 +771,24 @@ mod tests {
         assert!(lcd.sk_font().is_subpixel() && lcd.shaping_font().is_subpixel());
         assert!(!lcd.sk_font().is_linear_metrics());
         assert_eq!(lcd.sk_font().hinting(), FontHinting::Normal);
+        // Layout sees Blink's rounded ascent and descent, not DirectWrite's
+        // 13.008 and 3.008 for 16px Ahem.
+        let rounded = FontPlatformData::with_resolved_configuration(
+            face.clone(),
+            16.0,
+            0.0,
+            skia_safe::font_style::Weight::NORMAL,
+            false,
+            false,
+            false,
+            RasterConfiguration::deterministic_aliased(false),
+            1.0,
+            ResolvedFontConfiguration::default(),
+        );
+        assert_eq!(
+            (rounded.metrics().ascent, rounded.metrics().descent),
+            (13.0, 3.0)
+        );
         // The plain Skia backend keeps the application's requested policy.
         let skia = build(RasterConfiguration::default(), false);
         assert_eq!(skia.sk_font().hinting(), FontHinting::Slight);

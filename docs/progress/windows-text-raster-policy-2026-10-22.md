@@ -83,3 +83,9 @@ Linux:
 | Linux workspace, WSL | `cargo --config 'target.x86_64-unknown-linux-gnu.rustflags=[]' test --workspace --locked --no-fail-fast --exclude pixel-compare` | 9,432 passed, 0 failed, 15 ignored (`main`: 9,431; one new Windows-only test). Run before the provenance test edit, which leaves the Linux assertions unchanged |
 | Windows text comparison | `python tools/qualification/compare_windows_text.py --pixel-compare <release pixel_compare.exe> --linux-summary <summary> --output <report>` for `main` and this change | 2,134 and 2,785 of 2,927 exact; 651 gains, 0 losses |
 | Tool tests | `python -m unittest tools.qualification.test_compare_windows_text` on Windows and in WSL | 6 tests pass |
+
+## Update, 22 October 2026
+
+The suspected text-layout owner is confirmed for two tests: rounding the
+DirectWrite ascent and descent as Blink does fixes them; see
+[the rounded metrics record](windows-rounded-font-metrics-2026-10-22.md).

@@ -1,0 +1,39 @@
+{
+ "base": {
+  "commit": "c1148c25 (main after the Windows text raster policy; measured with the 3db12944 build, identical rendering sources)",
+  "pixel_compare_sha256": "ef619141e0b78ae66fdb616b1221774a7c30d12f685fcfa3bc220d818de133b6",
+  "status_counts": {
+   "different": 142,
+   "exact": 2785
+  }
+ },
+ "changed_nonexact": [],
+ "chrome_sha256": "5a261cd9e0fa71f40fa5df4b9841da4f3311f9175d2e5868c27cb510ccd28505",
+ "chromium_frames_identical_across_runs": 2927,
+ "font_profile": "registered-ahem",
+ "gains": [
+  "wpt/css_break/grid_grid-nested-columns-crash",
+  "wpt/css_multicol/moz-multicol3-column-balancing-break-inside-avoid-1-ref"
+ ],
+ "head": {
+  "browser_restarts": 0,
+  "commit": "windows-rounded-font-metrics branch",
+  "linux_cross_tabulation": {
+   "linux-different:windows-different": 99,
+   "linux-different:windows-exact": 67,
+   "linux-exact:windows-different": 41,
+   "linux-exact:windows-exact": 2720
+  },
+  "pixel_compare_sha256": "9325ef0d285880f833f7056b95ba5ce8cf7d5c852f12fa48278bb1b8aeb867cf",
+  "status_counts": {
+   "different": 140,
+   "exact": 2787
+  }
+ },
+ "kind": "windows_text_comparison_delta",
+ "losses": [],
+ "profile": "legacy-800x600@1",
+ "schema_version": 1,
+ "selected": 2927,
+ "tool": "tools/qualification/compare_windows_text.py"
+}

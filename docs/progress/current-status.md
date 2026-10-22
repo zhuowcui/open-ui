@@ -1,5 +1,12 @@
 # Open UI current status
 
+## Windows rounded font metrics 22 October 2026
+
+On Windows, layout now uses Blink's rounded ascent and descent instead of
+DirectWrite's unrounded values (13.008 for 16px Ahem). Two more Ahem text
+tests match Windows Chrome (2,787 of 2,927), with no losses; Linux is
+unchanged. See the [rounded metrics record](windows-rounded-font-metrics-2026-10-22.md).
+
 ## Windows text raster policy 22 October 2026
 
 Windows text pixels are now measured. A new tool compares the expanded suite's
