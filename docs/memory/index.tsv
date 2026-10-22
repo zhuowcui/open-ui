@@ -68,3 +68,4 @@
 0067	active	windows fonts directwrite oracle chromium	Windows text oracle: Windows Chrome with NoFontAntialiasing for aliased tests	2026-10-21	entries/0067-windows-text-oracle-windows-chrome-with-nofontan.md
 0068	active	windows platform winit ffi	Win32 desktop runtime shares the winit runtime behind the windows feature	2026-10-21	entries/0068-win32-desktop-runtime-shares-the-winit-runtime-b.md
 0069	active	layout inline baseline vertical flex blink	Vertical flow aligns on Blink's central baseline; text stays on its glyph baseline	2026-10-21	entries/0069-vertical-flow-aligns-on-blink-s-central-baseline.md
+0070	active	layout multicol fragmentation positioned checkpoint	Padded multicol principal source: candidate 3a8c9fbe layout adopted, painter deferred	2026-10-21	entries/0070-padded-multicol-principal-source-candidate-3a8c9.md

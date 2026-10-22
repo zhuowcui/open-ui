@@ -263,6 +263,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/authored_projection.rs",
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-paint/src/painter.rs"
       ],
@@ -551,6 +552,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/authored_projection.rs",
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
@@ -568,6 +570,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/authored_projection.rs",
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-paint/src/painter.rs"
       ],
@@ -602,6 +605,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/authored_projection.rs",
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/fragmentation/mod.rs",
         "bindings/rust/openui-layout/src/grid.rs"
@@ -616,6 +620,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/authored_projection.rs",
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/fragmentation/mod.rs",
         "bindings/rust/openui-layout/src/grid.rs"
@@ -630,6 +635,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/authored_projection.rs",
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/grid.rs"
       ],
@@ -686,6 +692,8 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/authored_projection.rs",
+        "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-paint/src/paint_order.rs",
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-engine/src/compositor_scene.rs",
@@ -832,6 +840,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/authored_projection.rs",
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/grid.rs",
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
@@ -971,6 +980,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/authored_projection.rs",
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
@@ -1009,6 +1019,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/authored_projection.rs",
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
@@ -1076,6 +1087,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/authored_projection.rs",
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-paint/src/paint_order.rs",
         "bindings/rust/openui-paint/src/painter.rs",
@@ -1091,6 +1103,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/authored_projection.rs",
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-paint/src/paint_order.rs",
         "bindings/rust/openui-paint/src/painter.rs",
@@ -1211,6 +1224,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/authored_projection.rs",
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
@@ -1658,6 +1672,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/authored_projection.rs",
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/exclusions/float_utils.rs",
         "bindings/rust/openui-layout/src/fieldset.rs",
@@ -2107,6 +2122,8 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/authored_projection.rs",
+        "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-paint/src/paint_order.rs",
         "bindings/rust/openui-paint/src/painter.rs"
       ],
@@ -2266,6 +2283,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/authored_projection.rs",
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/table.rs",
         "bindings/rust/openui-paint/src/paint_order.rs",
@@ -2404,6 +2422,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/authored_projection.rs",
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
@@ -2432,6 +2451,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/authored_projection.rs",
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
@@ -2569,6 +2589,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/authored_projection.rs",
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
@@ -3412,6 +3433,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/authored_projection.rs",
         "bindings/rust/openui-layout/src/bfc_resolution.rs",
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/exclusions/float_utils.rs",
@@ -3459,6 +3481,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/transform.rs",
         "bindings/rust/openui-paint/src/paint_order.rs",
         "bindings/rust/openui-paint/src/painter.rs",
@@ -3605,6 +3628,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/authored_projection.rs",
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/exclusions/float_utils.rs",
         "bindings/rust/openui-layout/src/fieldset.rs",
@@ -3705,6 +3729,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/authored_projection.rs",
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/containment.rs",
         "bindings/rust/openui-layout/src/fieldset.rs",

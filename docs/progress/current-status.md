@@ -1,5 +1,15 @@
 # Open UI current status
 
+## Padded multicolumn principal source 21 October 2026
+
+The checkpoint's padded multicolumn task is complete. The archived candidate's
+two strict producer failures reproduce on `main`; four layout repairs make
+them pass. The candidate's layout producer and engine projection are adopted,
+but not its painter change, whose census gains and losses need a separate
+task. Windows passes 9,432 workspace tests and Linux 9,431, none failing.
+A paired expanded census gains 7 exact comparisons with no losses (21,679 to
+21,686). See the [principal-source record](multicol-principal-source-2026-10-21.md).
+
 ## Central baseline for vertical flow 21 October 2026
 
 Vertical-flow lines now align on Blink's central baseline instead of the

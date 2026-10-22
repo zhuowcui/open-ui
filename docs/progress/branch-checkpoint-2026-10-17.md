@@ -168,7 +168,7 @@ or PR workflow substitutes for the open renderer and release gates.
 
 Update 20 October 2026: the scrollbar frame clip guard below is resolved, as
 recorded in [the repair record](native-scrollbar-frame-clip-2026-10-20.md).
-The padded multicolumn principal-source continuity task is next. Update 21
+The padded multicolumn principal-source continuity task followed; it is complete, see [the principal-source record](multicol-principal-source-2026-10-21.md). Update 21
 October 2026: the Windows text work also surfaced an inline-layout gap. Blink
 aligns vertical-flow line boxes on the central baseline
 (`ComputedStyle::GetFontBaseline`), while Open UI uses the alphabetic
