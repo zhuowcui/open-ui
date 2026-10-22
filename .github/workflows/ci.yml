@@ -269,7 +269,7 @@ jobs:
         run: |
           cargo build --manifest-path bindings/rust/Cargo.toml --locked \
             --package accessibility --features windows
-          pwsh -NoProfile -File tools/platform/verify_windows_uia.ps1 \
+          OUI_BACKEND=software pwsh -NoProfile -File tools/platform/verify_windows_uia.ps1 \
             -Executable "$CARGO_TARGET_DIR/debug/accessibility.exe"
 
       - name: Run the headless workspace tests

@@ -46,7 +46,12 @@ function Find-Named($Root, $Type, [string]$Name) {
     $Root.FindFirst($Scope::Descendants, $condition)
 }
 
-$process = Start-Process -FilePath $Executable -PassThru
+$logDirectory = Join-Path ([System.IO.Path]::GetTempPath()) "openui-uia-$PID"
+New-Item -ItemType Directory -Force -Path $logDirectory | Out-Null
+$stdout = Join-Path $logDirectory 'stdout.txt'
+$stderr = Join-Path $logDirectory 'stderr.txt'
+$process = Start-Process -FilePath $Executable -PassThru -WorkingDirectory $logDirectory `
+    -RedirectStandardOutput $stdout -RedirectStandardError $stderr
 try {
     $byProcess = New-Object System.Windows.Automation.PropertyCondition(
         $Automation::ProcessIdProperty, $process.Id)
@@ -77,15 +82,24 @@ try {
     Wait-For { Find-Named $window $ControlType::Button 'Pressed 2 times' } 'the second invoke' | Out-Null
     $report.checks.invoke = 'two invokes renamed the button to Pressed 2 times'
 
+    $checkbox = Find-Named $window $ControlType::CheckBox 'Remember choice'
     $toggle = $checkbox.GetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern)
     if ($toggle.Current.ToggleState -ne 'Off') { throw "checkbox starts $($toggle.Current.ToggleState)" }
     $toggle.Toggle()
     Wait-For { $toggle.Current.ToggleState -eq 'On' } 'the checkbox to turn on' | Out-Null
     $report.checks.toggle = 'checkbox toggled from Off to On'
 
-    $value = $field.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
-    $value.SetValue('Ada Lovelace')
-    Wait-For { $value.Current.Value -eq 'Ada Lovelace' } 'the text field value' | Out-Null
+    # Re-find the field: tree updates from the earlier operations can leave
+    # a previously found element without a live provider.
+    $field = Find-Named $window $ControlType::Edit 'Name'
+    $field.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).SetValue('Ada Lovelace')
+    Wait-For {
+        $current = Find-Named $window $ControlType::Edit 'Name'
+        $report.observed_value = $current.GetCurrentPattern(
+            [System.Windows.Automation.ValuePattern]::Pattern).Current.Value
+        $report.observed_value -eq 'Ada Lovelace'
+    } 'the text field value' | Out-Null
+    $report.Remove('observed_value')
     $report.checks.value = 'text field value set to Ada Lovelace'
 
     $window.GetCurrentPattern([System.Windows.Automation.WindowPattern]::Pattern).Close()
@@ -95,8 +109,25 @@ try {
     $report.passed = $true
 } catch {
     $report.error = "$_"
+    # Diagnose a missing window: the process state and every top-level UI
+    # Automation element it owns.
+    $report.process_exited = $process.HasExited
+    if ($process.HasExited) { $report.process_exit_code = $process.ExitCode }
+    try {
+        $owned = New-Object System.Windows.Automation.PropertyCondition(
+            $Automation::ProcessIdProperty, $process.Id)
+        $report.top_level_elements = @($Automation::RootElement.FindAll($Scope::Children, $owned) |
+            ForEach-Object { "$($_.Current.ClassName) '$($_.Current.Name)' $($_.Current.FrameworkId)" })
+    } catch {
+        $report.top_level_elements = "unavailable: $_"
+    }
 } finally {
     if (-not $process.HasExited) { $process.Kill() }
+}
+if (-not $report.passed) {
+    foreach ($log in $stdout, $stderr) {
+        if (Test-Path $log) { $report[(Split-Path -Leaf $log)] = Get-Content -Raw $log }
+    }
 }
 $report | ConvertTo-Json -Depth 4
 if (-not $report.passed) { exit 1 }
