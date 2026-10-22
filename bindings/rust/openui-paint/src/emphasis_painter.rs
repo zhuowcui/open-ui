@@ -157,10 +157,17 @@ pub(crate) fn paint_emphasis_marks_tracked(
         let uses_ahem = style.font_family.families.iter().any(
             |family| matches!(family, FontFamily::Named(name) if name.eq_ignore_ascii_case("Ahem")),
         );
-        if aliased && uses_ahem && style.writing_mode.is_horizontal() {
+        if aliased
+            && uses_ahem
+            && style.writing_mode.is_horizontal()
+            && openui_text::GlyphRasterizer::platform()
+                == openui_text::GlyphRasterizer::FreeTypeOrFontations
+        {
             // Chromium's pinned Fontations mask retains the block-start row
             // of a half-em Ahem emphasis glyph. Skia/FreeType's aliased mask
-            // is one row shorter at the same integral CSS origin.
+            // is one row shorter at the same integral CSS origin. Windows
+            // Chromium rasterizes the same glyph with DirectWrite, which
+            // Skia reproduces directly.
             canvas.draw_str(
                 &emphasis_str,
                 Point::new(mark_x, mark_y - 2.75),

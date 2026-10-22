@@ -216,6 +216,7 @@ jobs:
             tools.qualification.test_renderer_matrix \
             tools.qualification.test_summarize_renderer_census \
             tools.qualification.test_windows_chrome \
+            tools.qualification.test_compare_windows_text \
             tools.style.test_generate_properties \
             tools.release.test_v02_packaging \
             tools.release.test_windows_sdk \
@@ -384,6 +385,7 @@ jobs:
             tools.qualification.test_renderer_matrix \
             tools.qualification.test_summarize_renderer_census \
             tools.qualification.test_windows_chrome \
+            tools.qualification.test_compare_windows_text \
             tools.style.test_generate_properties \
             tools.ci.test_check_platform_scoped_tests
 

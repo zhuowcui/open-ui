@@ -19,6 +19,30 @@ use super::render_settings::AppliedPlatformFontSettings;
 use super::source::FontSelectionSource;
 use super::{FontFeatureDefault, FontMetricOverrides};
 
+/// Glyph rasterizer behind Chromium's typefaces on the build target.
+///
+/// Blink's `WebFontTypefaceFactory` instantiates conventional web fonts with
+/// Fontations on Linux and with DirectWrite (`DefaultFontMgr()->makeFromData`)
+/// on Windows; system faces use FreeType and DirectWrite respectively. Paint
+/// replays that reproduce a coverage row of the Linux FreeType/Fontations
+/// aliased masks do not apply to DirectWrite masks.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum GlyphRasterizer {
+    FreeTypeOrFontations,
+    DirectWrite,
+}
+
+impl GlyphRasterizer {
+    /// The rasterizer the target platform's Chromium uses.
+    pub const fn platform() -> Self {
+        if cfg!(windows) {
+            Self::DirectWrite
+        } else {
+            Self::FreeTypeOrFontations
+        }
+    }
+}
+
 /// Face-specific values resolved by `FontCollection` before a platform font
 /// instance is constructed.
 #[derive(Debug, Clone, Default)]
@@ -324,7 +348,19 @@ impl FontPlatformData {
             && !embedded_document_text
             && raster_configuration.author_text.edging == TextEdging::Alias
             && !deterministic_aliased_face;
-        let settings = if native_control_text {
+        let chromium_backend = matches!(
+            raster_configuration.backend,
+            RasterBackend::ChromiumLinux | RasterBackend::GaneshGl
+        );
+        // Windows Blink builds every SkFont in `FontPlatformData::CreateSkFont`
+        // from one process-wide render style: it never applies a per-face or
+        // per-control Fontconfig answer, never sets hinting (SkFont's default
+        // stays) and links subpixel positioning to antialiasing.
+        let windows_chromium =
+            chromium_backend && GlyphRasterizer::platform() == GlyphRasterizer::DirectWrite;
+        let settings = if windows_chromium {
+            raster_configuration.author_text
+        } else if native_control_text {
             raster_configuration.native_text
         } else if embedded_document_text {
             raster_configuration.embedded_text
@@ -333,17 +369,25 @@ impl FontPlatformData {
         } else {
             raster_configuration.author_text
         };
-        let subpixel = settings.subpixel_positioning && !native_button_text_metrics;
+        let subpixel = if windows_chromium {
+            settings.edging != TextEdging::Alias
+        } else {
+            settings.subpixel_positioning
+        } && !native_button_text_metrics;
         sk_font.set_subpixel(subpixel);
-        let hinting = resolve_hinting(
-            settings.hinting,
-            settings.edging,
-            family_name.as_str(),
-            physical_font_size(size, device_scale_factor),
-            device_scale_factor,
-        );
+        let hinting = if windows_chromium {
+            FontHinting::Normal
+        } else {
+            resolve_hinting(
+                settings.hinting,
+                settings.edging,
+                family_name.as_str(),
+                physical_font_size(size, device_scale_factor),
+                device_scale_factor,
+            )
+        };
         sk_font.set_hinting(hinting);
-        sk_font.set_linear_metrics(subpixel);
+        sk_font.set_linear_metrics(subpixel && !windows_chromium);
         sk_font.set_embedded_bitmaps(true);
         match settings.edging {
             TextEdging::Alias => {
@@ -369,11 +413,9 @@ impl FontPlatformData {
         // preference. Keep that metric font separate from the application's
         // explicit raster positioning policy: changing advances must not
         // silently change the owned font used to build paint strikes.
+        // Windows Blink shapes with the same `CreateSkFont` font it paints.
         let mut shaping_font = sk_font.clone();
-        if matches!(
-            raster_configuration.backend,
-            RasterBackend::ChromiumLinux | RasterBackend::GaneshGl
-        ) {
+        if chromium_backend && !windows_chromium {
             shaping_font.set_subpixel(hinting != FontHinting::Full || subpixel);
             shaping_font.set_linear_metrics(subpixel);
         }
@@ -652,6 +694,19 @@ mod tests {
                         1.0,
                         ResolvedFontConfiguration::default(),
                     );
+                    if backend != RasterBackend::Skia
+                        && GlyphRasterizer::platform() == GlyphRasterizer::DirectWrite
+                    {
+                        // Windows Blink: aliased text never positions at
+                        // subpixels, keeps SkFont's default hinting and
+                        // shapes with the font it paints.
+                        assert!(!data.sk_font().is_subpixel());
+                        assert!(!data.sk_font().is_linear_metrics());
+                        assert_eq!(data.sk_font().hinting(), FontHinting::Normal);
+                        assert!(!data.shaping_font().is_subpixel());
+                        assert!(!data.shaping_font().is_linear_metrics());
+                        continue;
+                    }
                     assert_eq!(data.sk_font().is_subpixel(), requested_subpixel);
                     assert_eq!(data.sk_font().is_linear_metrics(), requested_subpixel);
                     assert_eq!(data.shaping_font().is_linear_metrics(), requested_subpixel);
@@ -665,6 +720,53 @@ mod tests {
                 }
             }
         }
+    }
+
+    #[test]
+    fn windows_chromium_text_follows_one_process_wide_render_style() {
+        if GlyphRasterizer::platform() != GlyphRasterizer::DirectWrite {
+            return;
+        }
+        let face = skia_safe::FontMgr::default()
+            .new_from_data(include_bytes!("../../fonts/Ahem.ttf"), None)
+            .unwrap();
+        let build = |configuration: RasterConfiguration, native_control: bool| {
+            FontPlatformData::with_resolved_configuration(
+                face.clone(),
+                18.72,
+                0.0,
+                skia_safe::font_style::Weight::NORMAL,
+                native_control,
+                false,
+                false,
+                configuration,
+                1.0,
+                ResolvedFontConfiguration::default(),
+            )
+        };
+        // The aliased comparison profile reaches native-control text too,
+        // and aliased advances are whole pixels as in Blink's HarfBuzz
+        // callbacks for a non-subpixel SkFont.
+        for native_control in [false, true] {
+            let aliased = build(
+                RasterConfiguration::deterministic_aliased(true),
+                native_control,
+            );
+            assert_eq!(aliased.sk_font().edging(), skia_safe::font::Edging::Alias);
+            assert!(!aliased.shaping_font().is_subpixel());
+        }
+        let lcd = build(RasterConfiguration::chromium_linux_lcd(), false);
+        assert_eq!(
+            lcd.sk_font().edging(),
+            skia_safe::font::Edging::SubpixelAntiAlias
+        );
+        assert!(lcd.sk_font().is_subpixel() && lcd.shaping_font().is_subpixel());
+        assert!(!lcd.sk_font().is_linear_metrics());
+        assert_eq!(lcd.sk_font().hinting(), FontHinting::Normal);
+        // The plain Skia backend keeps the application's requested policy.
+        let skia = build(RasterConfiguration::default(), false);
+        assert_eq!(skia.sk_font().hinting(), FontHinting::Slight);
+        assert!(skia.sk_font().is_subpixel());
     }
 
     #[test]
