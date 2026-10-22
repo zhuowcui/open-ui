@@ -1,5 +1,14 @@
 # Open UI current status
 
+## Windows SDK archive 21 October 2026
+
+`tools/release/build_v02_windows.py` builds a deterministic Windows x64 MSVC
+SDK zip: headers, the `openui_ffi.dll` runtime with import library and PDB, a
+relocatable CMake package, examples, licenses and an SBOM. Its `--smoke` mode
+builds and runs a C consumer through `find_package(OpenUI)` from the extracted
+archive; hosted `windows-msvc` CI runs it. Signing and installers remain out of
+scope. See the [SDK archive record](windows-sdk-package-2026-10-21.md).
+
 ## Windows UI Automation check 21 October 2026
 
 The first operating-system accessibility check: on Windows a UI Automation

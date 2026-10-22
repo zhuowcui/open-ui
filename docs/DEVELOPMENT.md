@@ -186,6 +186,10 @@ cargo build --locked --package accessibility --features windows
 pwsh -NoProfile -File ..\..\tools\platform\verify_windows_uia.ps1 -Executable <target>\debug\accessibility.exe
 ```
 
+`tools/release/build_v02_windows.py --library-dir <target>\debug --smoke`
+packages the DLL, import library, headers and CMake configuration into a
+deterministic zip and builds a C consumer from the extracted archive.
+
 Tests whose expected values come from the Linux oracle, its FreeType raster or
 its Fontconfig font resolution are marked
 `#[cfg_attr(not(target_os = "linux"), ignore = "linux-oracle: <reason>")]`.
