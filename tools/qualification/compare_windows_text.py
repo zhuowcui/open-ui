@@ -99,6 +99,47 @@ def cross_tabulate(results: list[dict[str, object]], linux: dict[str, str]) -> d
     return dict(sorted(counts.items()))
 
 
+class BrowserSession:
+    """One browser at a time; a failed page restarts it and retries once.
+
+    A browser that stops answering (a CDP timeout or a lost connection) is
+    replaced rather than ending the run. A test that fails on a fresh browser
+    too is recorded as an error, never as a comparison result.
+    """
+
+    FAILURES = (OSError, RuntimeError, TimeoutError)
+
+    def __init__(self, factory):
+        self.factory = factory
+        self.context = None
+        self.browser = None
+        self.restarts = 0
+
+    def _start(self):
+        self.context = self.factory()
+        self.browser = self.context.__enter__()
+
+    def close(self) -> None:
+        if self.context is not None:
+            context, self.context, self.browser = self.context, None, None
+            try:
+                context.__exit__(None, None, None)
+            except self.FAILURES:
+                pass
+
+    def run(self, test_id: str, action) -> dict[str, object]:
+        for attempt in range(2):
+            try:
+                if self.browser is None:
+                    self._start()
+                return action(self.browser)
+            except self.FAILURES as error:
+                print(f"browser failure on {test_id} (attempt {attempt + 1}): {error!r}", flush=True)
+                self.close()
+                self.restarts += 1
+        return {"id": test_id, "status": "error", "mismatched_pixels": -1}
+
+
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--pixel-compare", type=Path, required=True)
@@ -137,6 +178,7 @@ def main(argv: list[str] | None = None) -> int:
     faces_css = bundled_font_faces_css()
 
     results: list[dict[str, object]] = []
+    restarts = 0
     with tempfile.TemporaryDirectory(prefix="openui-windows-text-") as temporary:
         work = Path(temporary)
         for sp18 in (False, True):
@@ -144,14 +186,20 @@ def main(argv: list[str] | None = None) -> int:
             if not group:
                 continue
             flags = (f"--enable-blink-features={chrome_features(sp18, runner.SP18_BLINK_FEATURES)}",)
-            with windows_chrome.WindowsChrome(
-                chrome, profile.logical_width, profile.logical_height, profile.scale, flags
-            ) as browser:
+            session = BrowserSession(lambda: windows_chrome.WindowsChrome(
+                chrome, profile.logical_width, profile.logical_height, profile.scale, flags))
+            try:
                 for test_id in group:
-                    results.append(compare_one(
-                        test_id, templates, faces_css, profile, browser, work, args.keep_mismatches))
+                    results.append(session.run(
+                        test_id,
+                        lambda browser: compare_one(
+                            test_id, templates, faces_css, profile, browser, work,
+                            args.keep_mismatches)))
                     print(f"{results[-1]['status']:9} {results[-1]['mismatched_pixels']:7} {test_id}",
                           flush=True)
+            finally:
+                session.close()
+                restarts += session.restarts
 
     results.sort(key=lambda result: str(result["id"]))
     status_counts = Counter(str(result["status"]) for result in results)
@@ -169,6 +217,7 @@ def main(argv: list[str] | None = None) -> int:
         + (" (restricted by --test-id)" if args.test_id else ""),
         "selected": len(results),
         "status_counts": dict(sorted(status_counts.items())),
+        "browser_restarts": restarts,
         "linux_cross_tabulation": cross_tabulate(results, linux) if linux else None,
         "tests": results,
     }

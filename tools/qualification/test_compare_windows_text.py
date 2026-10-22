@@ -57,6 +57,40 @@ class WindowsTextComparisonTests(unittest.TestCase):
         })
         self.assertEqual(tool.linux_statuses(None, "p"), {})
 
+    def test_browser_session_restarts_once_then_records_an_error(self) -> None:
+        events = []
+
+        class Browser:
+            def __init__(self, name):
+                self.name = name
+
+            def __enter__(self):
+                events.append(f"start {self.name}")
+                return self
+
+            def __exit__(self, *_):
+                events.append(f"stop {self.name}")
+
+        names = iter("abcd")
+        session = tool.BrowserSession(lambda: Browser(next(names)))
+        outcomes = iter([TimeoutError(), {"id": "t1", "status": "exact"},
+                         {"id": "t2", "status": "exact"},
+                         RuntimeError(), OSError()])
+
+        def action(browser):
+            outcome = next(outcomes)
+            if isinstance(outcome, Exception):
+                raise outcome
+            return {**outcome, "browser": browser.name}
+
+        self.assertEqual(session.run("t1", action), {"id": "t1", "status": "exact", "browser": "b"})
+        self.assertEqual(session.run("t2", action)["browser"], "b")
+        self.assertEqual(session.run("t3", action),
+                         {"id": "t3", "status": "error", "mismatched_pixels": -1})
+        session.close()
+        self.assertEqual(session.restarts, 3)
+        self.assertEqual(events, ["start a", "stop a", "start b", "stop b", "start c", "stop c"])
+
 
 if __name__ == "__main__":
     unittest.main()

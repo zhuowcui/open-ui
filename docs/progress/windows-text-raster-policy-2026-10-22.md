@@ -36,7 +36,7 @@ emphasis replay did the same.
 | Under the `ChromiumLinux` and `GaneshGl` backends on DirectWrite: author render style for every face, `Normal` hinting, subpixel positioning only with antialiasing, no linear metrics, shaping with the paint font | `openui-text` | `FontPlatformData::with_source_configuration` |
 | Fontations-compatible outlines only for FreeType or Fontations | `openui-text` | `shaping/shape_result.rs` |
 | Ahem block-start and emphasis row replays only for FreeType or Fontations | `openui-paint` | `painter.rs` `replays_aliased_ahem_start_for_raster_policy`, `emphasis_painter.rs` |
-| Windows text comparison tool with unit tests, in both CI unittest lists | qualification tooling | `tools/qualification/compare_windows_text.py`, `test_compare_windows_text.py` |
+| Windows text comparison tool with unit tests, in both CI unittest lists; a page whose browser stops answering is retried once on a fresh browser and otherwise recorded as an error | qualification tooling | `tools/qualification/compare_windows_text.py`, `test_compare_windows_text.py` |
 
 Every behavior change is gated on DirectWrite, so Linux output is unchanged.
 The plain `Skia` backend keeps the application's requested policy on Windows.
@@ -82,4 +82,4 @@ Linux:
 | Windows workspace | `cargo test --workspace --locked --no-fail-fast` | 9,433 passed, 0 failed, 20 ignored (the full run, then the corrected `font_source_provenance` binary rerun) |
 | Linux workspace, WSL | `cargo --config 'target.x86_64-unknown-linux-gnu.rustflags=[]' test --workspace --locked --no-fail-fast --exclude pixel-compare` | 9,432 passed, 0 failed, 15 ignored (`main`: 9,431; one new Windows-only test). Run before the provenance test edit, which leaves the Linux assertions unchanged |
 | Windows text comparison | `python tools/qualification/compare_windows_text.py --pixel-compare <release pixel_compare.exe> --linux-summary <summary> --output <report>` for `main` and this change | 2,134 and 2,785 of 2,927 exact; 651 gains, 0 losses |
-| Tool tests | `python -m unittest tools.qualification.test_compare_windows_text` on Windows and in WSL | 5 tests pass |
+| Tool tests | `python -m unittest tools.qualification.test_compare_windows_text` on Windows and in WSL | 6 tests pass |
