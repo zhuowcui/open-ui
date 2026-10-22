@@ -393,14 +393,15 @@ fn middle_sliced_continuation_preserves_fractional_fragmentainer_edge_coverage()
         pixel(&mut surface, 297, 161),
         pixel(&mut surface, 297, 162),
     ];
+    // An internal guard, not a Chromium observation. Pinned Chrome 147
+    // paints (196, 187, 68) and (199, 202, 135) at the first column's two
+    // rows. Since the principal-source repair, both columns share the same
+    // block-end coverage and the whole frame is closer to Chrome: 2,499
+    // differing pixels instead of 2,708, recorded in
+    // docs/progress/multicol-principal-source-2026-10-21.md.
     assert_eq!(
         edge_pixels,
-        [
-            (192, 128, 64),
-            (168, 104, 114),
-            (192, 128, 64),
-            (160, 64, 96),
-        ]
+        [(192, 128, 64), (160, 64, 96), (192, 128, 64), (160, 64, 96),]
     );
 }
 

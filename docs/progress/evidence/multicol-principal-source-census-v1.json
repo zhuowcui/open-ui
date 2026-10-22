@@ -1,0 +1,175 @@
+{
+ "base": "896015de (tree identical to main a22a5500, central baseline)",
+ "base_commit": "896015def7a9dea0f36d794c96e571141a206d6e",
+ "base_exact": 21679,
+ "build": "WSL Ubuntu 26.04, system clang 21, hosted SKIA_GN_ARGS with -DSK_ENABLE_LEGACY_SHADERCONTEXT",
+ "chromium": "Chrome-for-Testing 147.0.7727.50 linux64, shared cache",
+ "chromium_identical": 23728,
+ "comparisons": 23728,
+ "errors": [],
+ "gains": [
+  {
+   "base": "different",
+   "base_mismatched": 13797,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/multicol-nested-018",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1422,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/inline-skipping-fragmentainer-001",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 19725,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/multicol-nested-018",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 630,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/inline-skipping-fragmentainer-001",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 8750,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/multicol-nested-018",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2520,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/inline-skipping-fragmentainer-001",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 35000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/multicol-nested-018",
+   "profile": "mobile-375x667@2"
+  }
+ ],
+ "head": "7a17f2a1 (base plus this change before rustfmt; formatting changes no behavior)",
+ "head_commit": "7a17f2a150ba939e56d467c1d8b6784e7aa09987",
+ "head_exact": 21686,
+ "improved": [
+  {
+   "base": "different",
+   "base_mismatched": 1174,
+   "head": "different",
+   "head_mismatched": 99,
+   "id": "wpt/css_break/inline-skipping-fragmentainer-001",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 216,
+   "head": "different",
+   "head_mismatched": 196,
+   "id": "wpt/css_multicol/multicol-span-all-children-height-007",
+   "profile": "desktop-1280x720@1.25"
+  }
+ ],
+ "losses": [],
+ "openui_changed": [
+  {
+   "base": "different",
+   "base_mismatched": 1174,
+   "head": "different",
+   "head_mismatched": 99,
+   "id": "wpt/css_break/inline-skipping-fragmentainer-001",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 138,
+   "head": "different",
+   "head_mismatched": 138,
+   "id": "wpt/css_break/out-of-flow-in-multicolumn-018",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 13797,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/multicol-nested-018",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 216,
+   "head": "different",
+   "head_mismatched": 196,
+   "id": "wpt/css_multicol/multicol-span-all-children-height-007",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1422,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/inline-skipping-fragmentainer-001",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 19725,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/multicol-nested-018",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 630,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/inline-skipping-fragmentainer-001",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 8750,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/multicol-nested-018",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2520,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/inline-skipping-fragmentainer-001",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 35000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/multicol-nested-018",
+   "profile": "mobile-375x667@2"
+  }
+ ],
+ "schema": "openui.paired-census-delta.v1",
+ "suite": "expanded",
+ "worsened": []
+}

@@ -505,6 +505,11 @@ pub struct Fragment {
     /// consumers. Paint and hit testing continue to use the actual local box.
     pub box_geometry: Option<FragmentBoxGeometry>,
 
+    /// Immutable authored source/projection identity for retained coordinate carriers.
+    /// Constructors use None; raw children and source geometry remain independent.
+    /// v0.2 Rust struct literals must include authored_projection: None.
+    pub authored_projection: Option<crate::AuthoredProjection>,
+
     /// Sticky source geometry before scroll-dependent visual displacement.
     /// Timeline geometry ignores this displacement, including that of ancestors.
     pub sticky_timeline_geometry: Option<StickyTimelineGeometry>,
@@ -757,6 +762,18 @@ impl Fragment {
         self.fragmentation_visual_offset = self.fragmentation_visual_offsets.total();
     }
 
+    /// Whether this retained carrier owns the authored source projection.
+    /// This does not change raw owns_element_box or child/overflow traversal.
+    pub fn is_authored_projection_owner(&self) -> bool {
+        self.authored_projection
+            .as_ref()
+            .is_none_or(|p| p.is_owner())
+    }
+
+    pub fn owns_authored_projection_box(&self) -> bool {
+        self.owns_element_box() && self.is_authored_projection_owner()
+    }
+
     /// Whether this box contributes geometry and input for its source element.
     ///
     /// Authored viewport boxes preserve the root element's geometry. Text,
@@ -908,6 +925,7 @@ impl Fragment {
             fragmentation_visual_offset: PhysicalOffset::zero(),
             fragmentation_visual_offsets: FragmentVisualOffsets::default(),
             box_geometry: None,
+            authored_projection: None,
             sticky_timeline_geometry: None,
             positioned_fragmentation: None,
             promoted_transform_ancestors: Vec::new(),
@@ -990,6 +1008,7 @@ impl Fragment {
             fragmentation_visual_offset: PhysicalOffset::zero(),
             fragmentation_visual_offsets: FragmentVisualOffsets::default(),
             box_geometry: None,
+            authored_projection: None,
             sticky_timeline_geometry: None,
             positioned_fragmentation: None,
             promoted_transform_ancestors: Vec::new(),

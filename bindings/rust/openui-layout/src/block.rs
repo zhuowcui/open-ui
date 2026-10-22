@@ -1588,6 +1588,7 @@ pub(crate) fn block_layout_with_layout(
         crate::fragment_geometry::populate(&mut fragment);
         crate::scroll_area::populate(doc, &mut fragment);
         populate_sticky_geometry(doc, &mut fragment);
+        crate::authored_projection::finalize(doc, &mut fragment);
     }
     fragment
 }
@@ -11078,6 +11079,61 @@ fn is_in_flow_column_spanner(style: &ComputedStyle) -> bool {
         && style.float == Float::None
 }
 
+/// Border decoration belongs only to a positive overlap with this actual
+/// ancestor source window. Descendant overflow and outlines retain their
+/// existing traversal; this changes no geometry, clip, or break progress.
+/// The caller supplies unshifted direct children before any source rebase.
+fn suppress_unowned_direct_spanner_decorations(
+    fragment: &mut Fragment,
+    doc: &dyn LayoutDocument,
+    source_start: LayoutUnit,
+    source_end: LayoutUnit,
+    writing_direction: WritingDirectionMode,
+) {
+    if source_end <= source_start {
+        return;
+    }
+    for child in &mut fragment.children {
+        if child.kind != FragmentKind::Box
+            || !child.owns_element_box()
+            || child.node_id.is_none()
+            || child.size.height <= LayoutUnit::zero()
+            || child.is_inline_box_fragment
+            || child.positioned_fragmentation.is_some()
+            || child.fragmentation_visual_offset != PhysicalOffset::zero()
+            || !child.promoted_transform_ancestors.is_empty()
+            || !child.decoration_clip_rects.is_empty()
+            || child.decoration_slice.is_some()
+            || child.table_part.is_some()
+        {
+            continue;
+        }
+        let style = &doc.node(child.node_id).style;
+        if !is_in_flow_column_spanner(style)
+            || style.position != Position::Static
+            || style.direction.writing_direction(style.writing_mode) != writing_direction
+            || style.box_decoration_break == BoxDecorationBreak::Clone
+            || style.has_transform()
+            || style.opacity < 1.0
+            || style.filter_blur > 0.0
+            || style.filter_grayscale > 0.0
+            || style.clip_path_inset.is_some()
+            || !style.mask_layers.is_empty()
+            || style.has_paint_containment()
+            || !style.box_shadow.is_empty()
+            || style.border_image.is_some()
+            || node_is_monolithic_for_fragmentation(doc, child.node_id)
+        {
+            continue;
+        }
+        let border_start = child.offset.top;
+        let border_end = border_start + child.size.height;
+        if border_end.min_of(source_end) <= border_start.max_of(source_start) {
+            child.skip_box_decoration = true;
+        }
+    }
+}
+
 fn is_transparent_spanner_wrapper(style: &ComputedStyle, inline_size: LayoutUnit) -> bool {
     if style.display == Display::None
         || style.position.is_absolutely_positioned()
@@ -13933,6 +13989,256 @@ struct MulticolSplitPortion {
     is_first: bool,
     is_last: bool,
     block_end_decoration_consumed: bool,
+    finite_principal_source: bool,
+}
+
+/// A split wrapper can publish finite principal source only when the completed
+/// probe and its ordinary portions represent one definite padding-box domain.
+/// Positioned ink remains a separate source; this does not resize its carriers.
+fn split_portions_have_finite_principal_source(
+    doc: &dyn LayoutDocument,
+    container_id: NodeId,
+    portions: &[MulticolChildInfo],
+    probe: &Fragment,
+    direction: WritingDirectionMode,
+    containing_block_height: LayoutUnit,
+) -> bool {
+    let style = &doc.node(container_id).style;
+    let owner = doc.node(container_id).parent;
+    if owner.is_none() {
+        return false;
+    }
+    let owner_style = &doc.node(owner).style;
+    let Some(owner_algo) = crate::multicol::ColumnLayoutAlgorithm::from_style(owner_style) else {
+        return false;
+    };
+    if owner_algo.column_fill != openui_style::ColumnFill::Auto
+        || owner_algo.column_height.is_some()
+        || owner_algo.column_wrap != openui_style::ColumnWrap::Auto
+        || !owner_style.height.is_auto()
+        || !owner_style.max_height.is_none()
+        || owner_style.box_decoration_break == BoxDecorationBreak::Clone
+        || owner_style.has_transform()
+        || owner_style.opacity < 1.0
+        || owner_style.filter_blur > 0.0
+        || owner_style.filter_grayscale > 0.0
+        || owner_style.clip_path_inset.is_some()
+        || !owner_style.mask_layers.is_empty()
+        || owner_style.has_paint_containment()
+        || owner_style.has_layout_containment()
+        || owner_style.has_block_size_containment()
+    {
+        return false;
+    }
+    if !direction.is_horizontal()
+        || style.direction.writing_direction(style.writing_mode) != direction
+        || style.height.is_auto()
+        || style.box_sizing != BoxSizing::ContentBox
+        || style.display != Display::Block
+        || style.float != Float::None
+        || style.box_decoration_break == BoxDecorationBreak::Clone
+        || style.has_transform()
+        || style.opacity < 1.0
+        || style.filter_blur > 0.0
+        || style.filter_grayscale > 0.0
+        || style.clip_path_inset.is_some()
+        || !style.mask_layers.is_empty()
+        || style.has_paint_containment()
+        || style.has_layout_containment()
+        || style.has_block_size_containment()
+        || !style.box_shadow.is_empty()
+        || style.border_image.is_some()
+        || style.has_outline()
+        || style.effective_border_top() != 0
+        || style.effective_border_bottom() != 0
+        || probe.principal_box_rect.is_some()
+        || probe.offset != PhysicalOffset::zero()
+        || probe.fragmentation_visual_offset != PhysicalOffset::zero()
+        || containing_block_height.is_indefinite()
+        || containing_block_height <= LayoutUnit::zero()
+        || crate::used_overflow_pair(doc.source_document(), container_id)
+            != (Overflow::Visible, Overflow::Visible)
+    {
+        return false;
+    }
+    fn ordinary_flow(
+        doc: &dyn LayoutDocument,
+        node: NodeId,
+        direction: WritingDirectionMode,
+    ) -> bool {
+        let style = &doc.node(node).style;
+        if style.is_out_of_flow() || style.display == Display::None {
+            return true;
+        }
+        if style.display != Display::Block
+            || style.float != Float::None
+            || style.direction.writing_direction(style.writing_mode) != direction
+            || style.box_decoration_break == BoxDecorationBreak::Clone
+            || style.break_before.is_forced()
+            || style.break_after.is_forced()
+            || style.break_before.is_avoid()
+            || style.break_after.is_avoid()
+            || style.break_inside.is_avoid()
+            || style.has_transform()
+            || style.has_paint_containment()
+            || style.has_layout_containment()
+            || style.has_block_size_containment()
+            || crate::multicol::ColumnLayoutAlgorithm::from_style(style).is_some()
+            || node_is_monolithic_for_fragmentation(doc, node)
+        {
+            return false;
+        }
+        doc.children(node)
+            .all(|child| ordinary_flow(doc, child, direction))
+    }
+    if !ordinary_flow(doc, container_id, direction) {
+        return false;
+    }
+    fn positioned_source_is_inside(
+        fragment: &Fragment,
+        container: NodeId,
+        height: LayoutUnit,
+    ) -> bool {
+        if let Some(positioned) = fragment.positioned_fragmentation {
+            if positioned.containing_block_node != container
+                || positioned.has_inline_containing_block
+                || positioned.inline_containing_block_node.is_some()
+                || positioned.fragmentainer_index.is_some()
+                || positioned.containing_block_offset != PhysicalOffset::zero()
+                || positioned.visual_offset != PhysicalOffset::zero()
+                || positioned.continuation_visual_offset != PhysicalOffset::zero()
+                || positioned
+                    .transform_containing_block_source_offset
+                    .is_some()
+                || !fragment.promoted_transform_ancestors.is_empty()
+                || fragment.fragmentation_visual_offset != PhysicalOffset::zero()
+                || fragment.offset.top < LayoutUnit::zero()
+                || fragment.offset.top + fragment.border_box_rect().bottom() > height
+            {
+                return false;
+            }
+            // The solved OOF source is intact. Its independently positioned or
+            // transformed descendants do not add normal principal progress.
+            return true;
+        }
+        fragment
+            .children
+            .iter()
+            .all(|child| positioned_source_is_inside(child, container, height))
+    }
+    if !positioned_source_is_inside(probe, container_id, containing_block_height) {
+        return false;
+    }
+    // The finite source domain belongs to a split containing block. Without
+    // a positioned descendant it owns no solved source, and the ordinary
+    // sequential continuation path stays authoritative.
+    fn has_positioned_source(fragment: &Fragment, container: NodeId) -> bool {
+        fragment
+            .positioned_fragmentation
+            .is_some_and(|positioned| positioned.containing_block_node == container)
+            || fragment
+                .children
+                .iter()
+                .any(|child| has_positioned_source(child, container))
+    }
+    if !has_positioned_source(probe, container_id) {
+        return false;
+    }
+    let mut total_raw = 0_i32;
+    let mut first_count = 0;
+    let mut last_count = 0;
+    let mut portion_count = 0;
+    for info in portions {
+        let Some(split) = &info.split_portion else {
+            continue;
+        };
+        if split.container_id != container_id
+            || info.inline_run.is_some()
+            || info.inline_parent.is_some()
+            || split.portion_height.is_indefinite()
+            || split.portion_height < LayoutUnit::zero()
+        {
+            return false;
+        }
+        portion_count += 1;
+        first_count += usize::from(split.is_first);
+        last_count += usize::from(split.is_last);
+        let Some(next) = total_raw.checked_add(split.portion_height.raw()) else {
+            return false;
+        };
+        total_raw = next;
+        if split.is_first {
+            let Some(next) = total_raw.checked_add(probe.padding.top.raw()) else {
+                return false;
+            };
+            total_raw = next;
+        }
+        if split.is_last && !split.block_end_decoration_consumed {
+            let Some(next) = total_raw.checked_add(probe.padding.bottom.raw()) else {
+                return false;
+            };
+            total_raw = next;
+        }
+    }
+    portion_count > 1
+        && first_count == 1
+        && last_count == 1
+        && total_raw == containing_block_height.raw()
+}
+
+/// First-row remainder and fresh enclosing capacity are one admitted pair.
+/// Both operands are validated before subtraction or capacity publication.
+#[derive(Clone, Copy)]
+struct SplitPrincipalRowCapacities {
+    first: LayoutUnit,
+    fresh: LayoutUnit,
+}
+
+impl SplitPrincipalRowCapacities {
+    fn from_space(
+        first: LayoutUnit,
+        space: &ConstraintSpace,
+        owner_edges: LayoutUnit,
+    ) -> Option<Self> {
+        if first.is_indefinite()
+            || first <= LayoutUnit::zero()
+            || owner_edges != LayoutUnit::zero()
+            || space.fragmentainer_block_size.is_indefinite()
+            || space.fragmentainer_block_size <= LayoutUnit::zero()
+        {
+            return None;
+        }
+        // This field belongs to the next fresh fragmentainer, including when
+        // it is shorter than the current one. Zero is the constructor's unset
+        // value; an indefinite inherited field also supplies no fresh witness.
+        let enclosing = if space.outer_fragmentainer_block_size.is_indefinite()
+            || space.outer_fragmentainer_block_size == LayoutUnit::zero()
+        {
+            space.fragmentainer_block_size
+        } else if space.outer_fragmentainer_block_size > LayoutUnit::zero() {
+            space.outer_fragmentainer_block_size
+        } else {
+            return None;
+        };
+        let fresh = enclosing - owner_edges;
+        Some(Self { first, fresh })
+    }
+
+    fn capacity(self, row: usize) -> LayoutUnit {
+        if row == 0 {
+            self.first
+        } else {
+            self.fresh
+        }
+    }
+
+    fn offset(self, row: usize, gap: LayoutUnit) -> LayoutUnit {
+        if row == 0 {
+            LayoutUnit::zero()
+        } else {
+            self.first + gap + (self.fresh + gap) * LayoutUnit::from_i32(row as i32 - 1)
+        }
+    }
 }
 
 fn assign_split_portion_containing_block_geometry(
@@ -13972,12 +14278,31 @@ fn assign_split_portion_containing_block_geometry(
         .clamp_negative_to_zero()
     };
 
+    let finite_principal_source = split_portions_have_finite_principal_source(
+        doc,
+        container_id,
+        portions,
+        &probe,
+        parent_space.writing_direction,
+        containing_block_height,
+    );
     let mut source_block_offset = LayoutUnit::zero();
     for info in portions {
         if let Some(split) = info.split_portion.as_mut() {
             split.source_block_offset = source_block_offset;
             split.containing_block_height = containing_block_height;
+            split.finite_principal_source = finite_principal_source;
             source_block_offset = source_block_offset + split.portion_height;
+            if finite_principal_source {
+                // These are the actual probe's used padding edges. Spanners
+                // advance physical rows but do not consume this source domain.
+                if split.is_first {
+                    source_block_offset = source_block_offset + probe.padding.top;
+                }
+                if split.is_last && !split.block_end_decoration_consumed {
+                    source_block_offset = source_block_offset + probe.padding.bottom;
+                }
+            }
             continue;
         }
     }
@@ -14170,6 +14495,7 @@ fn split_multicol_child_at_nested_spanners(
                     is_first: portion_index == 0,
                     is_last: false,
                     block_end_decoration_consumed: false,
+                    finite_principal_source: false,
                 }),
             });
             portion_index += 1;
@@ -14247,6 +14573,7 @@ fn split_multicol_child_at_nested_spanners(
                 is_first: portion_index == 0,
                 is_last: true,
                 block_end_decoration_consumed,
+                finite_principal_source: false,
             }),
         });
     }
@@ -15400,6 +15727,461 @@ fn nested_multicol_row_break_before(
         })
         .map(|child| child.offset.top)
         .min()
+}
+
+/// Root-only diagnostic of the actual completed row admission operands.
+/// This never changes a source/capacity/clip or selects a layout path.
+fn trace_completed_split_row_event(
+    original: &Fragment,
+    source_start: LayoutUnit,
+    source_size: LayoutUnit,
+    event: &str,
+) {
+    if std::env::var_os("OPENUI_COMPLETED_SPLIT_ROW_TRACE").is_some() {
+        eprintln!(
+            "COMPLETED_SPLIT_ROW event={event} owner={:?} source_start={:?} source_size={:?}",
+            original.node_id, source_start, source_size
+        );
+    }
+}
+
+fn trace_completed_split_row_input(
+    original: &Fragment,
+    doc: &dyn LayoutDocument,
+    direction: WritingDirectionMode,
+    source_start: LayoutUnit,
+    source_size: LayoutUnit,
+) {
+    if std::env::var_os("OPENUI_COMPLETED_SPLIT_ROW_TRACE").is_none() {
+        return;
+    }
+    trace_completed_split_row_event(original, source_start, source_size, "input");
+    eprintln!("COMPLETED_SPLIT_ROW_SOURCE node={:?} kind={:?} offset={:?} size={:?} owns={} axis={:?} requested_axis={:?} geometry={:?} decoration={:?} multicol={:?} visual={:?} promoted_count={} clip_count={} child_count={}",
+        original.node_id,original.kind,original.offset,original.size,original.owns_element_box(),
+        original.fragmentation_writing_direction,direction,original.box_geometry,original.decoration_slice,
+        original.multicol_fragmentation,original.fragmentation_visual_offset,
+        original.promoted_transform_ancestors.len(),original.decoration_clip_rects.len(),original.children.len());
+    for (index, child) in original.children.iter().enumerate().take(512) {
+        eprintln!("COMPLETED_SPLIT_ROW_CHILD index={index} node={:?} kind={:?} offset={:?} size={:?} has_clip={} block_only={} inline_only={} ink_start={:?} ink_end={:?} axis={:?} first={} last={} skip={} geometry={:?} decoration={:?} child_count={}",
+            child.node_id,child.kind,child.offset,child.size,child.has_overflow_clip,
+            child.block_axis_clip_only,child.inline_axis_clip_only,child.column_block_start_ink_overflow,
+            child.column_block_end_ink_overflow,child.fragmentation_writing_direction,
+            child.is_first_for_node,child.is_last_for_node,child.skip_box_decoration,child.box_geometry,
+            child.decoration_slice,child.children.len());
+        if child.kind != FragmentKind::ColumnBox {
+            continue;
+        }
+        for (cb_index, cb) in child.children.iter().enumerate().take(32) {
+            eprintln!("COMPLETED_SPLIT_ROW_CB index={index} cb_index={cb_index} node={:?} offset={:?} size={:?} first={} last={} padding={:?} border={:?} geometry={:?} decoration={:?} principal={:?} visual={:?} child_count={}",
+                cb.node_id,cb.offset,cb.size,cb.is_first_for_node,cb.is_last_for_node,cb.padding,cb.border,
+                cb.box_geometry,cb.decoration_slice,cb.principal_box_rect,cb.fragmentation_visual_offset,cb.children.len());
+            if !cb.node_id.is_none() {
+                let style = &doc.node(cb.node_id).style;
+                eprintln!("COMPLETED_SPLIT_ROW_CB_STYLE index={index} cb_index={cb_index} parent={:?} height={:?} padding={:?} border_widths={:?} position={:?} overflow={:?}",
+                    doc.node(cb.node_id).parent,style.height,
+                    [style.padding_top,style.padding_right,style.padding_bottom,style.padding_left],
+                    [style.border_top_width,style.border_right_width,style.border_bottom_width,style.border_left_width],
+                    style.position,[style.overflow_x,style.overflow_y]);
+            }
+            for (member_index, member) in cb.children.iter().enumerate().take(128) {
+                eprintln!("COMPLETED_SPLIT_ROW_MEMBER index={index} cb_index={cb_index} member_index={member_index} node={:?} kind={:?} offset={:?} size={:?} positioned={:?} geometry={:?} decoration={:?} visual={:?} promoted_count={} child_count={}",
+                    member.node_id,member.kind,member.offset,member.size,member.positioned_fragmentation,
+                    member.box_geometry,member.decoration_slice,member.fragmentation_visual_offset,
+                    member.promoted_transform_ancestors.len(),member.children.len());
+            }
+            if cb.children.len() > 128 {
+                eprintln!("COMPLETED_SPLIT_ROW_INCOMPLETE reason=member-cap index={index} cb_index={cb_index}");
+            }
+        }
+        if child.children.len() > 32 {
+            eprintln!("COMPLETED_SPLIT_ROW_INCOMPLETE reason=cb-cap index={index}");
+        }
+    }
+    if original.children.len() > 512 {
+        eprintln!("COMPLETED_SPLIT_ROW_INCOMPLETE reason=row-cap");
+    }
+}
+
+/// Project a completed finite split-CB row stream into one ancestor interval.
+///
+/// Principal windows certify the source, while actual ColumnBoxes certify its
+/// physical rows. Raw positioned carriers and their descendants stay intact.
+/// A partial row or unsupported source keeps the existing continuation path.
+fn project_completed_split_principal_rows(
+    original: &Fragment,
+    doc: &dyn LayoutDocument,
+    direction: WritingDirectionMode,
+    source_start: LayoutUnit,
+    source_size: LayoutUnit,
+) -> Option<Vec<Fragment>> {
+    fn ordinary_source(
+        doc: &dyn LayoutDocument,
+        node: NodeId,
+        direction: WritingDirectionMode,
+    ) -> bool {
+        let style = &doc.node(node).style;
+        if style.is_out_of_flow() || style.display == Display::None {
+            return true;
+        }
+        if style.display != Display::Block
+            || style.float != Float::None
+            || style.direction.writing_direction(style.writing_mode) != direction
+            || style.box_decoration_break == BoxDecorationBreak::Clone
+            || style.break_before.is_forced()
+            || style.break_after.is_forced()
+            || style.break_before.is_avoid()
+            || style.break_after.is_avoid()
+            || style.break_inside.is_avoid()
+            || style.has_transform()
+            || style.has_paint_containment()
+            || style.has_layout_containment()
+            || style.has_block_size_containment()
+            || crate::multicol::ColumnLayoutAlgorithm::from_style(style).is_some()
+            || node_is_monolithic_for_fragmentation(doc, node)
+        {
+            return false;
+        }
+        doc.children(node)
+            .all(|child| ordinary_source(doc, child, direction))
+    }
+    trace_completed_split_row_input(original, doc, direction, source_start, source_size);
+    let owner = original.node_id;
+    if owner.is_none()
+        || original.kind != FragmentKind::Box
+        || original.size.width <= LayoutUnit::zero()
+        || !original.owns_element_box()
+        || original.multicol_fragmentation.is_none()
+        || original.positioned_fragmentation.is_some()
+        || original.fragmentation_visual_offset != PhysicalOffset::zero()
+        || !original.promoted_transform_ancestors.is_empty()
+        || !original.decoration_clip_rects.is_empty()
+        || !direction.is_horizontal()
+        || original
+            .fragmentation_writing_direction
+            .is_some_and(|d| d != direction)
+        || source_start.is_indefinite()
+        || source_start < LayoutUnit::zero()
+        || source_size.is_indefinite()
+        || source_size <= LayoutUnit::zero()
+    {
+        trace_completed_split_row_event(original, source_start, source_size, "reject-01");
+        return None;
+    }
+    let source_end = source_start.raw().checked_add(source_size.raw())?;
+    if source_end > original.size.height.raw() {
+        trace_completed_split_row_event(original, source_start, source_size, "reject-02");
+        return None;
+    }
+    let style = &doc.node(owner).style;
+    let algo = crate::multicol::ColumnLayoutAlgorithm::from_style(style)?;
+    if algo.column_fill != openui_style::ColumnFill::Auto
+        || algo.column_height.is_some()
+        || algo.column_wrap != openui_style::ColumnWrap::Auto
+        || !style.height.is_auto()
+        || !style.max_height.is_none()
+        || style.direction.writing_direction(style.writing_mode) != direction
+        || style.box_decoration_break == BoxDecorationBreak::Clone
+        || style.has_transform()
+        || style.opacity < 1.0
+        || style.filter_blur > 0.0
+        || style.filter_grayscale > 0.0
+        || style.clip_path_inset.is_some()
+        || !style.mask_layers.is_empty()
+        || style.has_paint_containment()
+        || style.has_layout_containment()
+        || style.has_block_size_containment()
+        || crate::used_overflow_pair(doc.source_document(), owner)
+            != (Overflow::Visible, Overflow::Visible)
+    {
+        trace_completed_split_row_event(original, source_start, source_size, "reject-03");
+        return None;
+    }
+    let mut container: Option<NodeId> = None;
+    let mut full_extent: Option<LayoutUnit> = None;
+    let mut candidates: Option<Vec<(NodeId, i32, PhysicalSize)>> = None;
+    let mut next_source = 0_i32;
+    let mut column_count = 0usize;
+    let mut spanner_count = 0usize;
+    let mut selected = Vec::new();
+    for child in &original.children {
+        if child.offset.top < LayoutUnit::zero() || child.size.height <= LayoutUnit::zero() {
+            trace_completed_split_row_event(original, source_start, source_size, "reject-04");
+            return None;
+        }
+        let start = child.offset.top.raw();
+        // A final column row keeps its fresh fragmentainer capacity, which can
+        // extend past the multicol's border-box end. Its source membership is
+        // the single principal piece it owns.
+        let owned_height = if child.kind == FragmentKind::ColumnBox && child.children.len() == 1 {
+            child.children[0].size.height.min_of(child.size.height)
+        } else {
+            child.size.height
+        };
+        let end = start.checked_add(owned_height.raw())?;
+        if end > original.size.height.raw() {
+            trace_completed_split_row_event(original, source_start, source_size, "reject-05");
+            return None;
+        }
+        if child.kind == FragmentKind::ColumnBox {
+            column_count += 1;
+            if !child.node_id.is_none()
+                || !child.has_overflow_clip
+                || child.inline_axis_clip_only
+                || child.column_block_start_ink_overflow != LayoutUnit::zero()
+                || child.column_block_end_ink_overflow != LayoutUnit::zero()
+                || child.size.width <= LayoutUnit::zero()
+                || child
+                    .fragmentation_writing_direction
+                    .is_some_and(|d| d != direction)
+                || child.children.len() != 1
+                || child.offset.left < LayoutUnit::zero()
+                || child
+                    .offset
+                    .left
+                    .raw()
+                    .checked_add(child.size.width.raw())?
+                    > original.size.width.raw()
+            {
+                trace_completed_split_row_event(original, source_start, source_size, "reject-06");
+                return None;
+            }
+            let cb = &child.children[0];
+            let geometry = cb.box_geometry?;
+            if cb.node_id.is_none()
+                || cb.kind != FragmentKind::Box
+                || !cb.owns_element_box()
+                || cb.principal_box_rect.is_some()
+                || cb.positioned_fragmentation.is_some()
+                || cb.fragmentation_visual_offset != PhysicalOffset::zero()
+                || !cb.promoted_transform_ancestors.is_empty()
+                || !cb.decoration_clip_rects.is_empty()
+                || cb.offset.top != LayoutUnit::zero()
+                || cb.size.width <= LayoutUnit::zero()
+                || cb.size.height <= LayoutUnit::zero()
+                || cb.size.height > child.size.height
+                || geometry.is_repeated
+                || !geometry.continuation_record
+                || geometry.writing_direction != direction
+                || geometry.block_size != cb.size.height
+                || geometry.consumed_block_size < LayoutUnit::zero()
+                || geometry
+                    .consumed_block_size
+                    .raw()
+                    .checked_add(geometry.block_size.raw())?
+                    > geometry.stitched_size.height.raw()
+                || doc.node(cb.node_id).parent != owner
+            {
+                trace_completed_split_row_event(original, source_start, source_size, "reject-07");
+                return None;
+            }
+            if let Some(previous) = container {
+                if previous != cb.node_id {
+                    trace_completed_split_row_event(
+                        original,
+                        source_start,
+                        source_size,
+                        "reject-08",
+                    );
+                    return None;
+                }
+            } else {
+                let cb_style = &doc.node(cb.node_id).style;
+                if cb_style.height.is_auto()
+                    || cb_style.is_out_of_flow()
+                    || cb_style.box_sizing != BoxSizing::ContentBox
+                    || cb_style.opacity < 1.0
+                    || cb_style.filter_blur > 0.0
+                    || cb_style.filter_grayscale > 0.0
+                    || cb_style.clip_path_inset.is_some()
+                    || !cb_style.mask_layers.is_empty()
+                    || !cb_style.box_shadow.is_empty()
+                    || cb_style.border_image.is_some()
+                    || cb_style.has_outline()
+                    || cb_style.effective_border_top() != 0
+                    || cb_style.effective_border_bottom() != 0
+                    || crate::used_overflow_pair(doc.source_document(), cb.node_id)
+                        != (Overflow::Visible, Overflow::Visible)
+                    || !ordinary_source(doc, cb.node_id, direction)
+                {
+                    trace_completed_split_row_event(
+                        original,
+                        source_start,
+                        source_size,
+                        "reject-09",
+                    );
+                    return None;
+                }
+                container = Some(cb.node_id);
+            }
+            let mut split_origin: Option<LayoutUnit> = None;
+            let mut current_candidates = Vec::new();
+            for positioned in &cb.children {
+                let Some(data) = positioned.positioned_fragmentation else {
+                    if !positioned.node_id.is_none()
+                        && doc.node(positioned.node_id).style.is_out_of_flow()
+                    {
+                        trace_completed_split_row_event(
+                            original,
+                            source_start,
+                            source_size,
+                            "reject-10",
+                        );
+                        return None;
+                    }
+                    continue;
+                };
+                let split = data.split_containing_block_source_offset?;
+                if split < LayoutUnit::zero()
+                    || data.containing_block_node != cb.node_id
+                    || data.has_inline_containing_block
+                    || data.inline_containing_block_node.is_some()
+                    || data.fragmentainer_index.is_some()
+                    || data.containing_block_offset.left != LayoutUnit::zero()
+                    || data.visual_offset != PhysicalOffset::zero()
+                    || data.continuation_visual_offset != PhysicalOffset::zero()
+                    || data.transform_containing_block_source_offset.is_some()
+                    || positioned.fragmentation_visual_offset != PhysicalOffset::zero()
+                    || !positioned.promoted_transform_ancestors.is_empty()
+                    || positioned.box_geometry.is_some()
+                    || positioned.decoration_slice.is_some()
+                    || data.containing_block_size.height.is_indefinite()
+                    || data.containing_block_size.height <= LayoutUnit::zero()
+                {
+                    trace_completed_split_row_event(
+                        original,
+                        source_start,
+                        source_size,
+                        "reject-11",
+                    );
+                    return None;
+                }
+                if split_origin.is_some_and(|previous| previous != split)
+                    || full_extent
+                        .is_some_and(|previous| previous != data.containing_block_size.height)
+                {
+                    trace_completed_split_row_event(
+                        original,
+                        source_start,
+                        source_size,
+                        "reject-12",
+                    );
+                    return None;
+                }
+                split_origin = Some(split);
+                full_extent = Some(data.containing_block_size.height);
+                if crate::relative::compute_relative_offset(
+                    &doc.node(cb.node_id).style,
+                    data.containing_block_size.width,
+                    data.containing_block_size.height,
+                ) != PhysicalOffset::zero()
+                {
+                    trace_completed_split_row_event(
+                        original,
+                        source_start,
+                        source_size,
+                        "reject-13",
+                    );
+                    return None;
+                }
+                let solved_start = positioned
+                    .offset
+                    .top
+                    .raw()
+                    .checked_add(geometry.consumed_block_size.raw())?
+                    .checked_sub(data.containing_block_offset.top.raw())?;
+                if solved_start < 0
+                    || positioned.size.height.is_indefinite()
+                    || positioned.size.height < LayoutUnit::zero()
+                    || solved_start.checked_add(positioned.size.height.raw())?
+                        > data.containing_block_size.height.raw()
+                {
+                    trace_completed_split_row_event(
+                        original,
+                        source_start,
+                        source_size,
+                        "reject-14",
+                    );
+                    return None;
+                }
+                current_candidates.push((positioned.node_id, solved_start, positioned.size));
+            }
+            if current_candidates.is_empty() {
+                trace_completed_split_row_event(original, source_start, source_size, "reject-15");
+                return None;
+            }
+            if let Some(previous) = &candidates {
+                if *previous != current_candidates {
+                    trace_completed_split_row_event(
+                        original,
+                        source_start,
+                        source_size,
+                        "reject-16",
+                    );
+                    return None;
+                }
+            } else {
+                candidates = Some(current_candidates);
+            }
+            let start = split_origin?
+                .raw()
+                .checked_add(geometry.consumed_block_size.raw())?;
+            if start != next_source {
+                trace_completed_split_row_event(original, source_start, source_size, "reject-17");
+                return None;
+            }
+            next_source = start.checked_add(geometry.block_size.raw())?;
+            if next_source > full_extent?.raw() {
+                trace_completed_split_row_event(original, source_start, source_size, "reject-18");
+                return None;
+            }
+        } else {
+            if child.node_id.is_none()
+                || child.kind != FragmentKind::Box
+                || !child.owns_element_box()
+                || !is_in_flow_column_spanner(&doc.node(child.node_id).style)
+                || !child.children.is_empty()
+                || doc.children(child.node_id).next().is_some()
+                || doc.node(child.node_id).style.display != Display::Block
+                || doc.node(child.node_id).style.has_transform()
+                || doc.node(child.node_id).style.opacity < 1.0
+                || doc.node(child.node_id).style.filter_blur > 0.0
+                || doc.node(child.node_id).style.filter_grayscale > 0.0
+                || doc.node(child.node_id).style.clip_path_inset.is_some()
+                || !doc.node(child.node_id).style.mask_layers.is_empty()
+                || !doc.node(child.node_id).style.box_shadow.is_empty()
+                || doc.node(child.node_id).style.border_image.is_some()
+                || doc.node(child.node_id).style.has_outline()
+                || !child.is_first_for_node
+                || !child.is_last_for_node
+                || child.skip_box_decoration
+                || child.positioned_fragmentation.is_some()
+                || child.fragmentation_visual_offset != PhysicalOffset::zero()
+                || !child.promoted_transform_ancestors.is_empty()
+                || !child.decoration_clip_rects.is_empty()
+            {
+                trace_completed_split_row_event(original, source_start, source_size, "reject-19");
+                return None;
+            }
+            spanner_count += 1;
+        }
+        // Each actual complete row/spanner belongs to one ancestor source
+        // interval. A crossing interval needs its existing break-token path.
+        if start < source_end && end > source_start.raw() {
+            if start < source_start.raw() || end > source_end {
+                trace_completed_split_row_event(original, source_start, source_size, "reject-20");
+                return None;
+            }
+            let mut projection = child.clone();
+            projection.offset.top = projection.offset.top - source_start;
+            selected.push(projection);
+        }
+    }
+    if column_count < 2 || spanner_count == 0 || next_source != full_extent?.raw() {
+        trace_completed_split_row_event(original, source_start, source_size, "reject-21");
+        return None;
+    }
+    trace_completed_split_row_event(original, source_start, source_size, "accept");
+    Some(selected)
 }
 
 /// A forced break on an inner spanner terminates the fragmentainer that owns
@@ -18580,6 +19362,27 @@ fn linearize_nested_multicol_oversized_inline_flow(
     true
 }
 
+/// Apply the same completed-source conversion before outer distribution and
+/// after a nested remaining-capacity relayout replaces that measured source.
+/// The logical child owner comes from the caller's children_info entry; an
+/// anonymous physical helper is not a new source owner.
+fn linearize_eligible_nested_multicol_inline_flow(
+    fragment: &mut Fragment,
+    doc: &dyn LayoutDocument,
+    child_node_id: NodeId,
+    child_style: &ComputedStyle,
+) -> bool {
+    if crate::multicol::ColumnLayoutAlgorithm::from_style(child_style).is_some()
+        && child_style.height.is_auto()
+        && !subtree_has_in_flow_spanner_descendant(doc, child_node_id)
+        && !subtree_has_flex_descendant(doc, child_node_id)
+    {
+        linearize_nested_multicol_oversized_inline_flow(fragment, doc)
+    } else {
+        false
+    }
+}
+
 /// Materialize the first deferred line-group token of a nested multicol.
 ///
 /// The short remainder of an outer fragmentainer may distribute a leading
@@ -20685,6 +21488,7 @@ fn layout_multicol(
                             is_first: portion_index == 0,
                             is_last: false, // a before-spanner portion is never last
                             block_end_decoration_consumed: false,
+                            finite_principal_source: false,
                         }),
                     });
                     portion_index += 1;
@@ -20789,6 +21593,7 @@ fn layout_multicol(
                         is_first: portion_index == 0,
                         is_last: true,
                         block_end_decoration_consumed,
+                        finite_principal_source: false,
                     }),
                 });
             } else if !current_group.is_empty() || current_group_content > LayoutUnit::zero() {
@@ -20809,6 +21614,7 @@ fn layout_multicol(
                         is_first: true,
                         is_last: true,
                         block_end_decoration_consumed: false,
+                        finite_principal_source: false,
                     }),
                 });
             }
@@ -21053,6 +21859,7 @@ fn layout_multicol(
     };
 
     // Process children in groups separated by spanners.
+    let mut split_continuation_fragmentainer_block_size = None;
     let mut group_start = 0;
     // Track OOF static positions: for each OOF child, record the column
     // position where it would have appeared in normal flow.
@@ -21485,10 +22292,18 @@ fn layout_multicol(
                         LayoutUnit::zero()
                     };
 
+                    // The final portion distributes the larger of its
+                    // principal border box, through its block-end padding
+                    // and border, and its in-flow content, which can
+                    // overflow a definite box without carrying those edges.
                     let distribution_block_size =
                         if split.is_last && !container_style.height.is_auto() {
-                            (wrapper.size.height - c_pad_bottom - c_border_bottom)
-                                .clamp_negative_to_zero()
+                            (split.paint_height
+                                + c_border_top
+                                + c_pad_top
+                                + c_pad_bottom
+                                + c_border_bottom)
+                                .max_of(effective_h + c_border_top + c_pad_top)
                         } else {
                             wrapper.size.height
                         };
@@ -23778,10 +24593,18 @@ fn layout_multicol(
                             LayoutUnit::zero()
                         };
 
+                        // The final portion distributes the larger of its
+                        // principal border box, through its block-end padding
+                        // and border, and its in-flow content, which can
+                        // overflow a definite box without carrying those edges.
                         let distribution_block_size =
                             if split.is_last && !container_style.height.is_auto() {
-                                (wrapper.size.height - c_pad_bottom - c_border_bottom)
-                                    .clamp_negative_to_zero()
+                                (split.paint_height
+                                    + c_border_top
+                                    + c_pad_top
+                                    + c_pad_bottom
+                                    + c_border_bottom)
+                                    .max_of(effective_h + c_border_top + c_pad_top)
                             } else {
                                 wrapper.size.height
                             };
@@ -24114,8 +24937,17 @@ fn layout_multicol(
             // their existing fragmentation path. An oversized avoided unit
             // also retains its indivisible overflow rather than acquiring
             // synthetic complete rows.
+            let finite_split_group = algo.column_fill == ColumnFill::Auto
+                && known_auto_row_capacity.is_some()
+                && col_block_sizes.len() == 1
+                && children_info[group_start].inline_run.is_none()
+                && children_info[group_start].inline_parent.is_none()
+                && children_info[group_start]
+                    .split_portion
+                    .as_ref()
+                    .is_some_and(|split| split.finite_principal_source);
             let sequential_outer_rows = auto_wraps_outer_fragments
-                && !subtree_has_in_flow_spanner_descendant(doc, node_id)
+                && (!subtree_has_in_flow_spanner_descendant(doc, node_id) || finite_split_group)
                 && (col_block_sizes.len() == 1
                     || col_parallel_fragmentation_sizes.iter().all(Option::is_none))
                 && col_fragmentation_sizes
@@ -24143,6 +24975,21 @@ fn layout_multicol(
                         || positioned_uses_outer_fragmentainer
                         || (auto_wraps_outer_fragments
                             && subtree_has_positioned_descendant(doc, node_id))));
+            let split_row_capacities = if finite_split_group
+                && sequential_outer_rows
+                && wraps_rows
+                && known_auto_row_capacity.is_some()
+                && algo.column_fill == ColumnFill::Auto
+                && algo.column_height.is_none()
+                && algo.column_wrap == openui_style::ColumnWrap::Auto
+            {
+                SplitPrincipalRowCapacities::from_space(column_height, space, border_padding_block)
+            } else {
+                None
+            };
+            if let Some(capacities) = split_row_capacities {
+                split_continuation_fragmentainer_block_size = Some(capacities.fresh);
+            }
             let constrained_balanced_rows = (sequential_outer_rows
                 && matches!(
                     algo.column_fill,
@@ -24281,6 +25128,9 @@ fn layout_multicol(
             let col_extra_block_offset_for = |idx: usize| -> LayoutUnit {
                 if wraps_rows && !positions.is_empty() {
                     let row = idx / positions.len();
+                    if let Some(capacities) = split_row_capacities {
+                        return capacities.offset(row, algo.row_gap);
+                    }
                     wrapped_auto_row_offsets
                         .as_ref()
                         .and_then(|offsets| offsets.get(row).copied())
@@ -24299,6 +25149,9 @@ fn layout_multicol(
                 }
             };
             let column_capacity_for = |idx: usize| -> LayoutUnit {
+                if let Some(capacities) = split_row_capacities {
+                    return capacities.capacity(idx / positions.len().max(1));
+                }
                 if let Some(height) = wrapped_auto_row_heights
                     .as_ref()
                     .and_then(|heights| heights.get(idx / positions.len().max(1)))
@@ -24562,13 +25415,12 @@ fn layout_multicol(
                 {
                     defer_crossing_direct_monolithic_float(&mut child_frag, doc, column_height);
                 }
-                if crate::multicol::ColumnLayoutAlgorithm::from_style(child_style).is_some()
-                    && child_style.height.is_auto()
-                    && !subtree_has_in_flow_spanner_descendant(doc, child_node_id)
-                    && !subtree_has_flex_descendant(doc, child_node_id)
-                {
-                    linearize_nested_multicol_oversized_inline_flow(&mut child_frag, doc);
-                }
+                let measured_flow_linearized = linearize_eligible_nested_multicol_inline_flow(
+                    &mut child_frag,
+                    doc,
+                    child_node_id,
+                    child_style,
+                );
                 let forced_descendant_flow_height = if (matches!(
                     algo.column_fill,
                     ColumnFill::Balance | ColumnFill::BalanceAll
@@ -24831,6 +25683,10 @@ fn layout_multicol(
                     && resolved.count > 1
                     && child_height.raw() > column_height.raw()
                     && child_style.position.is_positioned()
+                    && !children_info[group_start + i]
+                        .split_portion
+                        .as_ref()
+                        .is_some_and(|split| split.finite_principal_source)
                     && doc
                         .children(child_node_id)
                         .any(|gc| doc.node(gc).style.position.is_absolutely_positioned())
@@ -25081,7 +25937,32 @@ fn layout_multicol(
                         &mut child_frag,
                         space.writing_direction,
                     );
+                    // Replacing the raw nested result must not discard the
+                    // source-token conversion performed before distribution.
+                    // A measured flow that was not converted keeps its rows,
+                    // and so do columns holding block-level boxes, whose
+                    // own fragments carry their decoration.
+                    if measured_flow_linearized
+                        && child_frag
+                            .children
+                            .iter()
+                            .filter(|column| column.kind == FragmentKind::ColumnBox)
+                            .flat_map(|column| column.children.iter())
+                            .all(|line| line.node_id.is_none() && line.kind == FragmentKind::Box)
+                    {
+                        linearize_eligible_nested_multicol_inline_flow(
+                            &mut child_frag,
+                            doc,
+                            child_node_id,
+                            child_style,
+                        );
+                    }
                     materialize_nested_unbreakable_inline_continuation(&mut child_frag, doc);
+                    // These margins were resolved against the owning outer
+                    // column. The nested layout's narrower inline constraint
+                    // does not replace that parent used-box geometry.
+                    child_frag.margin.left = resolved_margin_left;
+                    child_frag.margin.right = resolved_margin_right;
                     child_height = child_frag.size.height;
                     if fragment_subtree_has_owned_multicol_overflow(&child_frag, doc) {
                         // Overflow inner columns are continuation rows in the
@@ -28683,6 +29564,39 @@ fn layout_multicol(
                                 (child_height - repeating_table_sections.block_size())
                                     .clamp_negative_to_zero()
                             };
+                        if crate::multicol::ColumnLayoutAlgorithm::from_style(child_style).is_some()
+                            && !child_style.height.is_auto()
+                            && !is_clone
+                            && child_style.position == Position::Static
+                            && child_style.float == Float::None
+                            && child_style
+                                .direction
+                                .writing_direction(child_style.writing_mode)
+                                == space.writing_direction
+                            && !child_style.has_transform()
+                            && child_style.opacity >= 1.0
+                            && child_style.filter_blur <= 0.0
+                            && child_style.filter_grayscale <= 0.0
+                            && child_style.clip_path_inset.is_none()
+                            && child_style.mask_layers.is_empty()
+                            && !child_style.has_paint_containment()
+                            && child_style.box_shadow.is_empty()
+                            && child_style.border_image.is_none()
+                            && !child_style.has_outline()
+                            && child_frag.principal_box_rect.is_none()
+                            && child_frag.multicol_fragmentation.is_some()
+                            && crate::used_overflow_pair(doc.source_document(), child_node_id)
+                                == (Overflow::Visible, Overflow::Visible)
+                            && !subtree_has_positioned_descendant(doc, child_node_id)
+                            && !subtree_has_forced_break_descendant(doc, child_node_id)
+                        {
+                            crate::authored_projection::seed_coordinate_sources(
+                                &mut child_frag,
+                                doc,
+                                node_id,
+                                space.writing_direction,
+                            );
+                        }
                         let mut content_consumed = LayoutUnit::zero();
                         let mut stitched_consumed = LayoutUnit::zero();
                         let mut nested_repeated_table_first_capacity = None;
@@ -29908,7 +30822,17 @@ fn layout_multicol(
                                     && doc.children(child_node_id).any(|table_child| {
                                         doc.node(table_child).style.display == Display::TableCell
                                     });
-                            let mut visual_part_height = if table_has_parallel_cell_flow
+                            let finite_split_principal_piece = children_info[group_start + i]
+                                .split_portion
+                                .as_ref()
+                                .is_some_and(|split| split.finite_principal_source)
+                                && !is_clone;
+                            let mut visual_part_height = if finite_split_principal_piece {
+                                // The selected source interval already owns its
+                                // padding. Capacity and OOF ink do not add another
+                                // original edge or grow a short final principal.
+                                part_height
+                            } else if table_has_parallel_cell_flow
                                 && repeating_table_sections.is_empty()
                                 && part_height > avail
                             {
@@ -30169,6 +31093,46 @@ fn layout_multicol(
 
                             let mut part = child_frag.clone();
                             part.size.height = visual_part_height;
+                            // This clone still holds the original direct-child
+                            // source operands. A definite parallel-axis nested
+                            // multicol resumes the ordinary consumed interval;
+                            // special positioned, translated, cloned and forced
+                            // flows keep their existing ownership paths.
+                            if child_is_multicol
+                                && !child_style.height.is_auto()
+                                && child_has_direct_spanner
+                                && !is_clone
+                                && child_style.position == Position::Static
+                                && child_style.float == Float::None
+                                && child_style
+                                    .direction
+                                    .writing_direction(child_style.writing_mode)
+                                    == space.writing_direction
+                                && !child_style.has_transform()
+                                && child_style.opacity >= 1.0
+                                && child_style.filter_blur <= 0.0
+                                && child_style.filter_grayscale <= 0.0
+                                && child_style.clip_path_inset.is_none()
+                                && child_style.mask_layers.is_empty()
+                                && !child_style.has_paint_containment()
+                                && child_style.box_shadow.is_empty()
+                                && child_style.border_image.is_none()
+                                && visual_part_height == content_in_part
+                                && child_frag.principal_box_rect.is_none()
+                                && child_frag.multicol_fragmentation.is_some()
+                                && !child_has_bottom_aligned_abspos
+                                && discarded_fragment_start_margin == LayoutUnit::zero()
+                                && !child_has_positioned_descendant
+                                && !subtree_has_forced_break_descendant(doc, child_node_id)
+                            {
+                                suppress_unowned_direct_spanner_decorations(
+                                    &mut part,
+                                    doc,
+                                    content_consumed,
+                                    content_consumed + content_in_part,
+                                    space.writing_direction,
+                                );
+                            }
                             if let Some(source_box) = child_frag.principal_box_rect {
                                 // Visible child flow may outlive the containing box.
                                 // Slice the independently owned border box without
@@ -31792,7 +32756,20 @@ fn layout_multicol(
                                 }
                                 part.children.extend(overflow_paint);
                             }
-                            if child_is_fragmentable_multicol
+                            let completed_split_rows = child_is_fragmentable_multicol
+                                .then(|| {
+                                    project_completed_split_principal_rows(
+                                        &child_frag,
+                                        doc,
+                                        space.writing_direction,
+                                        content_consumed,
+                                        content_in_part,
+                                    )
+                                })
+                                .flatten();
+                            if let Some(rows) = completed_split_rows {
+                                part.children = rows;
+                            } else if child_is_fragmentable_multicol
                                 && content_consumed > LayoutUnit::zero()
                             {
                                 let sliced_direct_spanner_sequence = slice_direct_spanner_sequence(
@@ -32203,6 +33180,17 @@ fn layout_multicol(
                                 } else {
                                     content_consumed + content_in_part < source_content_end
                                 },
+                            );
+                            crate::authored_projection::record_coordinate_window(
+                                &mut part,
+                                content_consumed,
+                                content_consumed + content_in_part,
+                                content_height,
+                                !child_is_fragmentable_multicol
+                                    && visual_part_height == content_in_part
+                                    && discarded_fragment_start_margin == LayoutUnit::zero()
+                                    && !child_has_bottom_aligned_abspos
+                                    && !child_has_positioned_descendant,
                             );
                             stitched_consumed = stitched_consumed + owned_block_size;
                             per_col_children[part_col_idx].push(part);
@@ -33298,7 +34286,11 @@ fn layout_multicol(
                     if known_auto_row_capacity.is_some() || positioned_only_empty_group {
                         // Cropping a short principal contribution must not shrink
                         // the anonymous column's independent source capacity.
-                        column_height
+                        if split_row_capacities.is_some() {
+                            column_capacity_for(ci)
+                        } else {
+                            column_height
+                        }
                     } else if style.height.is_auto()
                         && style.max_height.is_none()
                         && !subtree_has_in_flow_spanner_descendant(doc, node_id)
@@ -33977,6 +34969,7 @@ fn layout_multicol(
                     .max_of(repeated_table_progress_block_end_overflow)
                     .max_of(outline_block_overflow);
                 col_box.children = col_children;
+                crate::authored_projection::record_column_boundary(&mut col_box);
                 result_children.push(col_box);
             }
 
@@ -34194,6 +35187,11 @@ fn layout_multicol(
             spanner_frag.offset = PhysicalOffset::new(
                 content_edge_x + resolved_spanner_margin_left,
                 content_edge_y + total_block_offset + spanner_visual_offset,
+            );
+            crate::authored_projection::record_direct_spanner_source(
+                &mut spanner_frag,
+                node_id,
+                space.writing_direction,
             );
             for mut candidate in spanner_oof {
                 candidate.static_position.left =
@@ -34974,9 +35972,12 @@ fn layout_multicol(
     );
     container.multicol_fragmentation = Some(crate::fragment::MulticolFragmentationData {
         fragmentainer_block_size: positioned_fragmentainer_height,
-        continuation_fragmentainer_block_size: space
-            .outer_fragmentainer_block_size
-            .max_of(positioned_fragmentainer_height),
+        continuation_fragmentainer_block_size: split_continuation_fragmentainer_block_size
+            .unwrap_or_else(|| {
+                space
+                    .outer_fragmentainer_block_size
+                    .max_of(positioned_fragmentainer_height)
+            }),
         column_inline_start: content_edge_x
             + positions
                 .first()
@@ -38100,5 +39101,465 @@ mod fragmented_grid_source_window_tests {
             px(30),
             &[]
         ));
+    }
+}
+
+#[cfg(test)]
+mod split_principal_source_admission_tests {
+    use super::*;
+    use openui_dom::{Document, ElementTag};
+
+    #[test]
+    fn next_fresh_capacity_is_owned_even_when_shorter_than_current() {
+        let lu = LayoutUnit::from_i32;
+        let mut space = ConstraintSpace::for_root(lu(120), lu(120));
+        space.fragmentainer_block_size = lu(120);
+        space.outer_fragmentainer_block_size = lu(60);
+        let pair = SplitPrincipalRowCapacities::from_space(lu(100), &space, lu(0)).unwrap();
+        assert_eq!(pair.capacity(0), lu(100));
+        assert_eq!(pair.capacity(1), lu(60));
+        assert_eq!(pair.offset(2, lu(0)), lu(160));
+        for absent in [lu(0), openui_geometry::INDEFINITE_SIZE] {
+            space.outer_fragmentainer_block_size = absent;
+            let pair = SplitPrincipalRowCapacities::from_space(lu(20), &space, lu(0)).unwrap();
+            assert_eq!(pair.fresh, lu(120));
+        }
+        space.outer_fragmentainer_block_size = lu(-2);
+        assert!(SplitPrincipalRowCapacities::from_space(lu(20), &space, lu(0)).is_none());
+        space.outer_fragmentainer_block_size = lu(60);
+        assert!(SplitPrincipalRowCapacities::from_space(lu(0), &space, lu(0)).is_none());
+        assert!(SplitPrincipalRowCapacities::from_space(lu(20), &space, lu(1)).is_none());
+        space.fragmentainer_block_size = openui_geometry::INDEFINITE_SIZE;
+        assert!(SplitPrincipalRowCapacities::from_space(lu(20), &space, lu(0)).is_none());
+    }
+
+    #[test]
+    fn split_probe_source_rejects_unowned_origins_and_non_auto_row_policies() {
+        let lu = LayoutUnit::from_i32;
+        let mut doc = Document::new();
+        let owner = doc.create_node(ElementTag::Div);
+        let cb = doc.create_node(ElementTag::Div);
+        let positioned = doc.create_node(ElementTag::Div);
+        doc.append_child(owner, cb);
+        doc.append_child(cb, positioned);
+        doc.update_resolved_style(owner, |style| {
+            style.display = Display::Block;
+            style.column_count = Some(2);
+            style.column_fill = openui_style::ColumnFill::Auto;
+        });
+        doc.update_resolved_style(cb, |style| {
+            style.display = Display::Block;
+            style.height = Length::px(20.0);
+            style.padding_top = Length::px(4.0);
+            style.position = Position::Relative;
+            style.box_sizing = BoxSizing::ContentBox;
+        });
+        doc.update_resolved_style(positioned, |style| style.position = Position::Absolute);
+        let make_portion = |first, last| MulticolChildInfo {
+            id: cb,
+            is_spanner: false,
+            inline_run: None,
+            inline_parent: None,
+            split_portion: Some(MulticolSplitPortion {
+                container_id: cb,
+                child_ids: Vec::new(),
+                positioned_child_ids: Vec::new(),
+                source_block_offset: lu(0),
+                containing_block_height: lu(24),
+                portion_height: lu(10),
+                paint_height: lu(10),
+                is_first: first,
+                is_last: last,
+                block_end_decoration_consumed: false,
+                finite_principal_source: false,
+            }),
+        };
+        let portions = vec![make_portion(true, false), make_portion(false, true)];
+        let direction = doc
+            .node(cb)
+            .style
+            .direction
+            .writing_direction(doc.node(cb).style.writing_mode);
+        let mut probe = Fragment::new_box(cb, PhysicalSize::new(lu(20), lu(24)));
+        probe.padding.top = lu(4);
+        let mut child = Fragment::new_box(positioned, PhysicalSize::new(lu(20), lu(12)));
+        child.offset.top = lu(2);
+        child.positioned_fragmentation = Some(crate::fragment::PositionedFragmentationData {
+            static_position: PhysicalOffset::zero(),
+            static_position_horizontal_edge: crate::out_of_flow::StaticPositionEdge::Start,
+            static_position_vertical_edge: crate::out_of_flow::StaticPositionEdge::Start,
+            containing_block_offset: PhysicalOffset::zero(),
+            containing_block_node: cb,
+            containing_block_size: probe.size,
+            has_inline_containing_block: false,
+            inline_containing_block_node: None,
+            block_in_inline_static_advance: lu(0),
+            visual_offset: PhysicalOffset::zero(),
+            continuation_visual_offset: PhysicalOffset::zero(),
+            transform_containing_block_source_offset: None,
+            fragmentainer_index: None,
+            split_containing_block_source_offset: None,
+        });
+        probe.children.push(child);
+        let admits = |doc: &Document, probe: &Fragment| {
+            split_portions_have_finite_principal_source(
+                doc,
+                cb,
+                &portions,
+                probe,
+                direction,
+                lu(24),
+            )
+        };
+        assert!(admits(&doc, &probe));
+        probe.children[0]
+            .positioned_fragmentation
+            .as_mut()
+            .unwrap()
+            .containing_block_offset
+            .top = lu(4);
+        assert!(!admits(&doc, &probe));
+        probe.children[0]
+            .positioned_fragmentation
+            .as_mut()
+            .unwrap()
+            .containing_block_offset
+            .top = lu(0);
+        probe.offset.top = lu(3);
+        assert!(!admits(&doc, &probe));
+        probe.offset.top = lu(0);
+        for fill in [
+            openui_style::ColumnFill::Balance,
+            openui_style::ColumnFill::BalanceAll,
+        ] {
+            doc.update_resolved_style(owner, |style| style.column_fill = fill);
+            assert!(!admits(&doc, &probe));
+        }
+        doc.update_resolved_style(owner, |style| {
+            style.column_fill = openui_style::ColumnFill::Auto
+        });
+        assert!(admits(&doc, &probe));
+        doc.update_resolved_style(cb, |style| {
+            style.transform = openui_style::Transform2D {
+                e: 1.0,
+                ..openui_style::Transform2D::IDENTITY
+            };
+        });
+        assert!(!admits(&doc, &probe));
+    }
+}
+
+#[cfg(test)]
+mod completed_split_principal_row_projection_tests {
+    use super::*;
+
+    fn source_rows() -> (Document, Fragment, WritingDirectionMode) {
+        let lu = LayoutUnit::from_i32;
+        let mut doc = Document::new();
+        let owner = doc.create_node(ElementTag::Div);
+        let cb = doc.create_node(ElementTag::Div);
+        let before = doc.create_node(ElementTag::Div);
+        let spanner = doc.create_node(ElementTag::Div);
+        let positioned = doc.create_node(ElementTag::Div);
+        let ink = doc.create_node(ElementTag::Div);
+        doc.append_child(owner, cb);
+        for child in [before, spanner, positioned] {
+            doc.append_child(cb, child);
+        }
+        doc.append_child(positioned, ink);
+        doc.update_resolved_style(owner, |style| {
+            style.display = Display::Block;
+            style.column_count = Some(2);
+            style.column_fill = openui_style::ColumnFill::Auto;
+        });
+        doc.update_resolved_style(cb, |style| {
+            style.display = Display::Block;
+            style.position = Position::Relative;
+            style.height = Length::px(140.0);
+            style.box_sizing = BoxSizing::ContentBox;
+        });
+        doc.update_resolved_style(before, |style| {
+            style.display = Display::Block;
+            style.height = Length::px(40.0);
+        });
+        doc.update_resolved_style(spanner, |style| {
+            style.display = Display::Block;
+            style.column_span = ColumnSpan::All;
+            style.height = Length::px(7.0);
+        });
+        doc.update_resolved_style(positioned, |style| {
+            style.display = Display::Block;
+            style.position = Position::Absolute;
+            style.top = Length::px(5.0);
+            style.bottom = Length::px(5.0);
+        });
+        doc.update_resolved_style(ink, |style| {
+            style.display = Display::Block;
+            style.transform = openui_style::Transform2D {
+                e: 3.0,
+                f: -1.0,
+                ..openui_style::Transform2D::IDENTITY
+            };
+        });
+        let direction = doc
+            .node(owner)
+            .style
+            .direction
+            .writing_direction(doc.node(owner).style.writing_mode);
+        let mut whole = Fragment::new_box(owner, PhysicalSize::new(lu(40), lu(107)));
+        whole.multicol_fragmentation = Some(crate::fragment::MulticolFragmentationData {
+            fragmentainer_block_size: lu(20),
+            continuation_fragmentainer_block_size: lu(50),
+            column_inline_start: lu(0),
+            column_block_start: lu(0),
+            column_inline_stride: lu(20),
+            declared_column_count: 2,
+        });
+        for (top, left, capacity, origin, portion, consumed, principal) in [
+            (0, 0, 20, 0, 40, 0, 20),
+            (0, 20, 20, 0, 40, 20, 20),
+            (27, 0, 30, 40, 100, 0, 30),
+            (27, 20, 30, 40, 100, 30, 30),
+            (57, 0, 50, 40, 100, 60, 40),
+        ] {
+            let mut piece = Fragment::new_box(cb, PhysicalSize::new(lu(20), lu(portion)));
+            crate::fragment_geometry::capture_source(&mut piece, direction);
+            piece.size.height = lu(principal);
+            piece.is_first_for_node = consumed == 0;
+            piece.is_last_for_node = consumed + principal == portion;
+            piece.decoration_slice = Some(crate::fragment::DecorationSlice {
+                source_block_offset: lu(consumed),
+                source_block_size: lu(portion),
+            });
+            crate::fragment_geometry::record_piece(
+                &mut piece,
+                direction,
+                lu(consumed),
+                lu(principal),
+                consumed + principal < portion,
+            );
+            let mut child = Fragment::new_box(positioned, PhysicalSize::new(lu(20), lu(130)));
+            child.offset.top = lu(5 - origin - consumed);
+            child.positioned_fragmentation = Some(crate::fragment::PositionedFragmentationData {
+                static_position: PhysicalOffset::zero(),
+                static_position_horizontal_edge: crate::out_of_flow::StaticPositionEdge::Start,
+                static_position_vertical_edge: crate::out_of_flow::StaticPositionEdge::Start,
+                containing_block_offset: PhysicalOffset::new(lu(0), lu(-origin)),
+                containing_block_node: cb,
+                containing_block_size: PhysicalSize::new(lu(20), lu(140)),
+                has_inline_containing_block: false,
+                inline_containing_block_node: None,
+                block_in_inline_static_advance: lu(0),
+                visual_offset: PhysicalOffset::zero(),
+                continuation_visual_offset: PhysicalOffset::zero(),
+                transform_containing_block_source_offset: None,
+                fragmentainer_index: None,
+                split_containing_block_source_offset: Some(lu(origin)),
+            });
+            let mut leaf = Fragment::new_box(ink, PhysicalSize::new(lu(8), lu(6)));
+            leaf.offset = PhysicalOffset::new(lu(2), lu(3));
+            child.children.push(leaf);
+            piece.children.push(child);
+            let mut column =
+                Fragment::new_box(NodeId::NONE, PhysicalSize::new(lu(20), lu(capacity)));
+            column.kind = FragmentKind::ColumnBox;
+            column.offset = PhysicalOffset::new(lu(left), lu(top));
+            column.has_overflow_clip = true;
+            column.block_axis_clip_only = true;
+            column.children.push(piece);
+            whole.children.push(column);
+        }
+        let mut span = Fragment::new_box(spanner, PhysicalSize::new(lu(40), lu(7)));
+        span.offset.top = lu(20);
+        whole.children.insert(2, span);
+        (doc, whole, direction)
+    }
+
+    #[test]
+    fn ancestor_intervals_keep_all_owned_columns_once_without_raw_oof_resizing() {
+        let lu = LayoutUnit::from_i32;
+        let (doc, original, direction) = source_rows();
+        let before = format!("{:?}", original);
+        let first =
+            project_completed_split_principal_rows(&original, &doc, direction, lu(0), lu(57))
+                .unwrap();
+        let last =
+            project_completed_split_principal_rows(&original, &doc, direction, lu(57), lu(50))
+                .unwrap();
+        assert_eq!(first.len(), 5);
+        assert_eq!(last.len(), 1);
+        assert_eq!(first[0].offset.left, lu(0));
+        assert_eq!(first[1].offset.left, lu(20));
+        assert_eq!(first[3].offset.left, lu(0));
+        assert_eq!(first[4].offset.left, lu(20));
+        assert_eq!(last[0].offset.top, lu(0));
+        assert_eq!(last[0].size.height, lu(50));
+        let actual: Vec<_> = first
+            .iter()
+            .chain(last.iter())
+            .filter(|f| f.kind == FragmentKind::ColumnBox)
+            .map(|column| {
+                let cb = &column.children[0];
+                let child = &cb.children[0];
+                let g = cb.box_geometry.unwrap();
+                assert_eq!(child.size.height, lu(130));
+                assert_eq!(child.children.len(), 1);
+                assert_eq!(child.children[0].size, PhysicalSize::new(lu(8), lu(6)));
+                assert_eq!(child.children[0].offset, PhysicalOffset::new(lu(2), lu(3)));
+                assert_eq!(child.decoration_slice, None);
+                assert_eq!(child.box_geometry, None);
+                (
+                    child
+                        .positioned_fragmentation
+                        .unwrap()
+                        .split_containing_block_source_offset
+                        .unwrap()
+                        + g.consumed_block_size,
+                    g.block_size,
+                )
+            })
+            .collect();
+        assert_eq!(
+            actual,
+            vec![
+                (lu(0), lu(20)),
+                (lu(20), lu(20)),
+                (lu(40), lu(30)),
+                (lu(70), lu(30)),
+                (lu(100), lu(40))
+            ]
+        );
+        assert_eq!(
+            format!("{:?}", original),
+            before,
+            "projecting must not mutate the complete source"
+        );
+    }
+
+    #[test]
+    fn partial_rows_missing_source_and_replayed_windows_keep_legacy_route() {
+        let lu = LayoutUnit::from_i32;
+        let (doc, original, direction) = source_rows();
+        for (start, size) in [(0, 10), (0, 21), (57, 25), (0, 0), (-1, 10), (107, 1)] {
+            assert!(project_completed_split_principal_rows(
+                &original,
+                &doc,
+                direction,
+                lu(start),
+                lu(size)
+            )
+            .is_none());
+        }
+        let mut missing = original.clone();
+        missing.children[0].children[0].box_geometry = None;
+        assert!(
+            project_completed_split_principal_rows(&missing, &doc, direction, lu(0), lu(57))
+                .is_none()
+        );
+        let mut replayed = original.clone();
+        replayed.children.push(original.children[0].clone());
+        assert!(
+            project_completed_split_principal_rows(&replayed, &doc, direction, lu(0), lu(57))
+                .is_none()
+        );
+        let mut exhausted = original.clone();
+        exhausted.children[0].children[0]
+            .box_geometry
+            .as_mut()
+            .unwrap()
+            .block_size = lu(0);
+        assert!(
+            project_completed_split_principal_rows(&exhausted, &doc, direction, lu(0), lu(57))
+                .is_none()
+        );
+    }
+
+    #[test]
+    fn non_auto_axes_and_changed_cb_ownership_do_not_acquire_row_projection() {
+        let lu = LayoutUnit::from_i32;
+        let (mut doc, original, direction) = source_rows();
+        for fill in [
+            openui_style::ColumnFill::Balance,
+            openui_style::ColumnFill::BalanceAll,
+        ] {
+            doc.update_resolved_style(original.node_id, |style| style.column_fill = fill);
+            assert!(project_completed_split_principal_rows(
+                &original,
+                &doc,
+                direction,
+                lu(0),
+                lu(57)
+            )
+            .is_none());
+        }
+        doc.update_resolved_style(original.node_id, |style| {
+            style.column_fill = openui_style::ColumnFill::Auto
+        });
+        assert!(
+            project_completed_split_principal_rows(&original, &doc, direction, lu(0), lu(57))
+                .is_some()
+        );
+        let mut foreign = original.clone();
+        foreign.children[0].children[0].children[0]
+            .positioned_fragmentation
+            .as_mut()
+            .unwrap()
+            .containing_block_node = original.node_id;
+        assert!(
+            project_completed_split_principal_rows(&foreign, &doc, direction, lu(0), lu(57))
+                .is_none()
+        );
+        let vertical =
+            openui_style::Direction::Ltr.writing_direction(openui_style::WritingMode::VerticalRl);
+        assert!(
+            project_completed_split_principal_rows(&original, &doc, vertical, lu(0), lu(57))
+                .is_none()
+        );
+    }
+    #[test]
+    fn unowned_column_ink_and_nonleaf_spanners_keep_the_existing_route() {
+        let lu = LayoutUnit::from_i32;
+        let (mut doc, original, direction) = source_rows();
+        let before = format!("{:?}", original);
+        for variant in 0..4 {
+            let mut changed = original.clone();
+            let last = changed.children.last_mut().unwrap();
+            assert_eq!(last.kind, FragmentKind::ColumnBox);
+            match variant {
+                0 => last.has_overflow_clip = false,
+                1 => last.inline_axis_clip_only = true,
+                2 => last.column_block_start_ink_overflow = LayoutUnit::from_raw(1),
+                _ => last.column_block_end_ink_overflow = LayoutUnit::from_raw(1),
+            }
+            let raw = format!("{:?}", changed);
+            assert!(project_completed_split_principal_rows(
+                &changed,
+                &doc,
+                direction,
+                lu(0),
+                lu(57),
+            )
+            .is_none());
+            assert_eq!(format!("{:?}", changed), raw);
+        }
+        let spanner = original.children[2].node_id;
+        let leaf = original.children[0].children[0].children[0].children[0].clone();
+        let mut retained_ink = original.clone();
+        retained_ink.children[2].children.push(leaf);
+        assert!(project_completed_split_principal_rows(
+            &retained_ink,
+            &doc,
+            direction,
+            lu(0),
+            lu(57),
+        )
+        .is_none());
+        let authored_child = doc.create_node(ElementTag::Div);
+        doc.append_child(spanner, authored_child);
+        assert!(
+            project_completed_split_principal_rows(&original, &doc, direction, lu(0), lu(57),)
+                .is_none()
+        );
+        assert_eq!(format!("{:?}", original), before);
     }
 }

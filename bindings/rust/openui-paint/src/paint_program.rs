@@ -546,7 +546,7 @@ pub(crate) fn record_fragment_property(
     record_property_owner(
         canvas,
         fragment.node_id,
-        fragment.owns_element_box(),
+        fragment.owns_authored_projection_box(),
         layout_scope_role(fragment),
         decision,
     );
@@ -576,7 +576,7 @@ fn layout_scope_role(fragment: &Fragment) -> PaintLayoutScopeRole {
         Some(openui_layout::AnonymousLayoutBox::FieldsetContent { .. })
     ) {
         PaintLayoutScopeRole::FieldsetContent
-    } else if fragment.owns_element_box() {
+    } else if fragment.owns_authored_projection_box() {
         PaintLayoutScopeRole::AuthoredBox
     } else if fragment.table_part.is_some() {
         PaintLayoutScopeRole::TableHelper
@@ -761,7 +761,7 @@ impl<'a> PaintOwnerScope<'a> {
     fn with_phase(canvas: &'a Canvas, fragment: &Fragment, phase: PaintOwnerPhase) -> Self {
         let owner = PaintProgramOwner {
             node_id: fragment.node_id,
-            owns_element_box: fragment.owns_element_box(),
+            owns_element_box: fragment.owns_authored_projection_box(),
         };
         let role = layout_scope_role(fragment);
         matching(canvas, |capture| {

@@ -318,7 +318,7 @@ impl Engine {
         let mut child_parent = layout_parent;
         // Ordinary borrowed helpers do not create authored effects or scroll
         // owners. Explicit delegated content boxes are handled separately.
-        if fragment.owns_element_box() {
+        if fragment.owns_authored_projection_box() {
             let handle = self
                 .node_slots
                 .get(&fragment.node_id)
