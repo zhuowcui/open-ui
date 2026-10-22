@@ -60,3 +60,11 @@ Win32 IME composition, drag and drop, and UI Automation behavior are compiled
 and wired through the shared runtime, but no consumer exercises them yet.
 High-DPI per-monitor changes and Windows packaging are also unverified. These
 are not claimed.
+
+## Update, 21 October 2026
+
+UI Automation behavior is now exercised: a UI Automation client finds, focuses,
+invokes, toggles, sets values on and closes a native Open UI window, locally and
+in hosted `windows-msvc` CI. See [the UI Automation record](windows-ui-automation-2026-10-21.md).
+IME composition, drag and drop, per-monitor DPI changes and packaging remain
+unverified.
