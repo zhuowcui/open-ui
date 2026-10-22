@@ -33,7 +33,8 @@ struct SourceWorld {
 }
 
 fn owns_box(document: &Document, fragment: &Fragment) -> bool {
-    fragment.owns_element_box() && document.node(fragment.node_id).tag != ElementTag::Text
+    fragment.owns_authored_projection_box()
+        && document.node(fragment.node_id).tag != ElementTag::Text
 }
 
 fn translated(offset: (f64, f64), physical: PhysicalOffset) -> (f64, f64) {

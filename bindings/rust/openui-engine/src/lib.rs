@@ -282,6 +282,7 @@ struct HitClip {
     clip_x: bool,
     clip_y: bool,
     radii: [(f32, f32); 4],
+    structural_projection: Option<openui_layout::AuthoredProjection>,
 }
 
 impl HitClip {
@@ -2548,7 +2549,27 @@ impl Engine {
     fn update_once(&mut self) -> Result<&SceneSnapshot, EngineError> {
         self.synchronize_font_collection()?;
         if !self.dirty.layout && self.dirty.visual() {
-            self.refresh_retained_scroll_overflow();
+            fn source_policy_changed(document: &NativeDocument, fragment: &Fragment) -> bool {
+                fragment
+                    .authored_projection
+                    .as_ref()
+                    .is_some_and(|record| record.source_eligibility_changed(document, fragment))
+                    || fragment
+                        .children
+                        .iter()
+                        .any(|child| source_policy_changed(document, child))
+            }
+            if self
+                .latest_fragment
+                .as_ref()
+                .is_some_and(|fragment| source_policy_changed(&self.document, fragment))
+            {
+                // A source-policy transition returns to the actual producer.
+                // This check does not run for idle scenes or geometry reads.
+                self.mark_dirty(InvalidationClass::Layout);
+            } else {
+                self.refresh_retained_scroll_overflow();
+            }
         }
         if !self.dirty.layout && self.latest_fragment.is_some() {
             self.refresh_scroll_button_states();
@@ -2926,7 +2947,7 @@ impl Engine {
             // clips, but authored effects belong to the element's own box.
             let node_style =
                 (!fragment.node_id.is_none()).then(|| &document.node(fragment.node_id).style);
-            let owns_box = fragment.owns_element_box()
+            let owns_box = fragment.owns_authored_projection_box()
                 && document.node(fragment.node_id).tag != ElementTag::Text;
             let world =
                 if let Some(style) = node_style.filter(|style| owns_box && style.has_transform()) {
@@ -2953,7 +2974,23 @@ impl Engine {
             // Geometry queries still retain all of the layout rectangles.
             let subtree_hittable = ancestry_hittable && world.is_invertible();
             let world_to_local = subtree_hittable.then(|| box_world.inverse()).flatten();
-            let mut own_clips = inherited_clips.to_vec();
+            let mut own_clips: Vec<_> = inherited_clips
+                .iter()
+                .filter(|clip| {
+                    let may_cross = owns_box
+                        && node_style.is_some_and(|style| style.has_transform())
+                        && fragment
+                            .authored_projection
+                            .as_ref()
+                            .is_some_and(|projection| {
+                                clip.structural_projection.as_ref().is_some_and(|boundary| {
+                                    projection.crosses_structural_boundary(boundary)
+                                })
+                            });
+                    !may_cross
+                })
+                .cloned()
+                .collect();
             if let Some(style) = node_style {
                 if let Some(inset) = style.clip_path_inset.filter(|_| owns_box) {
                     let resolve = |length: &openui_geometry::Length, size: f32| {
@@ -2980,6 +3017,7 @@ impl Engine {
                             clip_x: true,
                             clip_y: true,
                             radii: [(0.0, 0.0); 4],
+                            structural_projection: None,
                         });
                     }
                 }
@@ -3009,6 +3047,20 @@ impl Engine {
                     paint_offset,
                     openui_paint::OverflowClipContourPurpose::DirectFragmentHit,
                 );
+                let structural_projection = fragment
+                    .authored_projection
+                    .as_ref()
+                    .filter(|projection| {
+                        projection.is_structural_boundary()
+                            && fragment.owns_element_box()
+                            && openui_layout::used_overflow_pair(document, fragment.node_id)
+                                == (
+                                    openui_style::Overflow::Visible,
+                                    openui_style::Overflow::Visible,
+                                )
+                            && !effective.has_paint_containment()
+                    })
+                    .cloned();
                 let push_contour = |rect: (f32, f32, f32, f32),
                                     axes: (bool, bool),
                                     radii: [(f32, f32); 4],
@@ -3026,6 +3078,7 @@ impl Engine {
                             clip_x: axes.0,
                             clip_y: axes.1,
                             radii,
+                            structural_projection: structural_projection.clone(),
                         });
                     }
                 };

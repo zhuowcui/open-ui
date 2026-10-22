@@ -2,6 +2,7 @@
 //!
 //! SP9: block layout. SP10: flexbox layout. SP12: full block layout + floats.
 
+mod authored_projection;
 pub mod bfc_resolution;
 pub mod block;
 mod constraint_space;
@@ -11,6 +12,7 @@ pub mod exclusions;
 pub mod flex;
 mod fragment;
 mod fragment_geometry;
+pub use authored_projection::AuthoredProjection;
 pub mod fragmentation;
 pub mod grid;
 pub mod inflow_position;
@@ -50,8 +52,9 @@ pub use flex::flex_layout;
 pub use fragment::{
     resolve_text_run_orientation, AnonymousLayoutBox, DecorationSlice, Fragment,
     FragmentBoxGeometry, FragmentBoxOwnership, FragmentKind, FragmentTablePart,
-    FragmentVisualOffsets, PromotedTransformAncestor, StickyTimelineGeometry,
-    TableColumnBackgroundPositioning, TextRunOrientation, ViewportScrollport,
+    FragmentVisualOffsets, PositionedFragmentationData, PromotedTransformAncestor,
+    StickyTimelineGeometry, TableColumnBackgroundPositioning, TextRunOrientation,
+    ViewportScrollport,
 };
 pub use fragmentation::{
     BlockBreakToken, BreakAppeal, BreakToken, FragmentainerSpace, InlineBreakToken,
