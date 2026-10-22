@@ -68,3 +68,5 @@ invokes, toggles, sets values on and closes a native Open UI window, locally and
 in hosted `windows-msvc` CI. See [the UI Automation record](windows-ui-automation-2026-10-21.md).
 IME composition, drag and drop, per-monitor DPI changes and packaging remain
 unverified.
+
+Packaging is now checked as well: see [the SDK archive record](windows-sdk-package-2026-10-21.md).

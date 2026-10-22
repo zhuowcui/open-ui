@@ -218,6 +218,7 @@ jobs:
             tools.qualification.test_windows_chrome \
             tools.style.test_generate_properties \
             tools.release.test_v02_packaging \
+            tools.release.test_windows_sdk \
             tools.release.test_dependency_security
 
       - name: Verify immutable closure ledgers byte for byte
@@ -274,6 +275,11 @@ jobs:
           # Hosted runners have no hardware OpenGL; Auto must fall back.
           pwsh -NoProfile -File tools/platform/verify_windows_uia.ps1 \
             -Executable "$CARGO_TARGET_DIR/debug/accessibility.exe" -TimeoutSeconds 120
+
+      - name: Build and smoke the Windows SDK archive
+        run: |
+          python tools/release/build_v02_windows.py \
+            --library-dir "$CARGO_TARGET_DIR/debug" --output "$RUNNER_TEMP/sdk" --smoke
 
       - name: Run the headless workspace tests
         working-directory: bindings/rust
@@ -396,7 +402,7 @@ jobs:
           python3 tools/ffi/generate_form_owner_cases.py --check
           python3 tools/ffi/generate_control_keyboard_cases.py --check
           python3 tools/release/build_v02_linux.py --verify-source
-          python3 -m unittest tools.release.test_v02_packaging
+          python3 -m unittest tools.release.test_v02_packaging tools.release.test_windows_sdk
           python3 tools/conformance/verify_v02.py
           python3 tools/performance/verify_v02.py
           python3 tools/performance/verify_v02.py \
