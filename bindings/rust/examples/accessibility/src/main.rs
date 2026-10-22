@@ -30,9 +30,15 @@ fn application_view() -> ViewNode {
 
 #[cfg(any(feature = "linux", feature = "windows"))]
 fn main() -> Result<(), Error> {
+    let backend = match std::env::var("OUI_BACKEND").as_deref() {
+        Ok("opengl") => BackendPreference::OpenGl,
+        Ok("software") => BackendPreference::Software,
+        _ => BackendPreference::Auto,
+    };
     App::builder()
         .title("Open UI accessibility")
         .size(LogicalSize::new(480.0, 320.0))
+        .backend(backend)
         .build()?
         .run(application_view)
 }

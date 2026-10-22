@@ -271,6 +271,9 @@ jobs:
             --package accessibility --features windows
           OUI_BACKEND=software pwsh -NoProfile -File tools/platform/verify_windows_uia.ps1 \
             -Executable "$CARGO_TARGET_DIR/debug/accessibility.exe" -TimeoutSeconds 120
+          # Hosted runners have no hardware OpenGL; Auto must fall back.
+          pwsh -NoProfile -File tools/platform/verify_windows_uia.ps1 \
+            -Executable "$CARGO_TARGET_DIR/debug/accessibility.exe" -TimeoutSeconds 120
 
       - name: Run the headless workspace tests
         working-directory: bindings/rust
