@@ -36,8 +36,8 @@ pub use transform::apply_text_transform;
 
 pub use font::features::collect_font_features;
 pub use font::{
-    used_line_height, used_line_height_metrics, Font, FontAxisRange, FontCache, FontCollection,
-    FontCollectionError, FontCollectionStats, FontContainerFormat, FontDescription,
+    used_line_height, used_line_height_metrics, Font, FontAxisRange, FontBaseline, FontCache,
+    FontCollection, FontCollectionError, FontCollectionStats, FontContainerFormat, FontDescription,
     FontFaceDescriptor, FontFaceHandle, FontFaceInfo, FontFallbackList, FontFeatureDefault,
     FontMetricOverrides, FontMetrics, FontPaletteBase, FontPaletteEntryOverride, FontPaletteHandle,
     FontPaletteValuesDescriptor, FontPlatformData, FontRelativeLengthResolver, FontRelativeUnit,

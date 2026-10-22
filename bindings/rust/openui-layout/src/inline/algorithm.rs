@@ -18,8 +18,8 @@ use openui_style::{
     WhiteSpace,
 };
 use openui_text::{
-    used_line_height, used_line_height_metrics, Font, FontMetrics, ShapeResult, TextShaper,
-    UsedLineHeightMetrics,
+    used_line_height, used_line_height_metrics, Font, FontBaseline, FontMetrics, ShapeResult,
+    TextShaper, UsedLineHeightMetrics,
 };
 use std::collections::{HashMap, HashSet};
 use std::sync::Arc;
@@ -712,7 +712,15 @@ fn inline_block_last_line_baseline(
             return Some(baseline);
         }
     }
+    // Blink only exposes a descendant baseline in the box's own writing mode.
+    let writing_mode =
+        (!fragment.node_id.is_none()).then(|| doc.node(fragment.node_id).style.writing_mode);
     for child in fragment.children.iter().rev() {
+        if !child.node_id.is_none()
+            && writing_mode.is_some_and(|mode| doc.node(child.node_id).style.writing_mode != mode)
+        {
+            continue;
+        }
         // A block-in-inline reconstruction may place a synthetic anonymous
         // line around a block that owns the actual last in-flow line box.
         // Prefer that descendant baseline; the wrapper's synthesized atomic
@@ -1043,6 +1051,7 @@ fn materialize_inline_line_child(
     parent_metrics: &FontMetrics,
     parent_font_size: f32,
     snap_block_edges: bool,
+    font_baseline: FontBaseline,
 ) -> Fragment {
     match child {
         InlineLineChild::Fragment(index) => flat_fragments[index]
@@ -1055,7 +1064,11 @@ fn materialize_inline_line_child(
                 style_to_font_description(style),
                 Arc::clone(&items_data.font_collection),
             );
-            let metrics = font.font_metrics().copied().unwrap_or_default();
+            let metrics = font
+                .font_metrics()
+                .copied()
+                .unwrap_or_default()
+                .relative_to_baseline(font_baseline);
             let mut children: Vec<Fragment> = record
                 .children
                 .iter()
@@ -1074,6 +1087,7 @@ fn materialize_inline_line_child(
                         &metrics,
                         style.font_size,
                         snap_block_edges,
+                        font_baseline,
                     ),
                 })
                 .collect();
@@ -1285,6 +1299,45 @@ fn compute_line_height_metrics(
     font_size: f32,
 ) -> UsedLineHeightMetrics {
     used_line_height_metrics(metrics, line_height, font_size)
+}
+
+/// The baseline that aligns every line box of this inline formatting context.
+///
+/// Blink: `InlineLayoutAlgorithm` passes the container's
+/// `ComputedStyle::GetFontBaseline()` to every box state on the line.
+fn ifc_font_baseline(style: &ComputedStyle) -> FontBaseline {
+    FontBaseline::for_orientation(openui_style::font_orientation(
+        style.writing_mode,
+        style.text_orientation,
+    ))
+}
+
+/// Synthesized baseline metrics of an atomic inline without a baseline.
+///
+/// Blink: `LogicalBoxFragment::BaselineMetrics` synthesizes the alphabetic
+/// baseline at the margin-box end and the central baseline at its middle,
+/// `(size - size / 2, size / 2)` in layout units.
+fn synthesized_atomic_metrics(
+    margin_box_size: LayoutUnit,
+    baseline: FontBaseline,
+) -> (LayoutUnit, LayoutUnit) {
+    match baseline {
+        FontBaseline::Alphabetic => (margin_box_size, LayoutUnit::zero()),
+        FontBaseline::Central => {
+            let descent = margin_box_size / 2;
+            (margin_box_size - descent, descent)
+        }
+    }
+}
+
+/// Offset from the line baseline to a text run's alphabetic glyph baseline.
+///
+/// Blink places a run's top at the line baseline minus the run's ascent for
+/// the formatting context's baseline, then paints glyphs at that top plus the
+/// primary font's integer alphabetic `Ascent()`. Text, hyphen, ellipsis and
+/// marker fragments keep their alphabetic geometry around that glyph baseline.
+fn glyph_baseline_offset(alphabetic: &FontMetrics, line: &FontMetrics) -> LayoutUnit {
+    LayoutUnit::from_f32(alphabetic.int_ascent() - line.int_ascent())
 }
 
 fn unite_text_run_metrics<'a>(
@@ -3868,6 +3921,10 @@ fn create_line_box(
             });
 
     // === STEP 1: Compute strut (minimum line height from block's font) ===
+    // Every metric on the line is measured from the formatting context's
+    // baseline: alphabetic, or central in vertical flow.
+    let ifc_baseline = ifc_font_baseline(block_style);
+    let block_metrics = &block_metrics.relative_to_baseline(ifc_baseline);
     let strut = compute_line_height_metrics(
         block_metrics,
         &block_style.line_height,
@@ -3993,7 +4050,8 @@ fn create_line_box(
                 let font = doc.resolve_font(font_desc);
                 let primary_metrics = font.font_metrics().copied().unwrap_or_default();
                 let metrics =
-                    text_line_metrics(primary_metrics, style, item, item_result, items_data);
+                    text_line_metrics(primary_metrics, style, item, item_result, items_data)
+                        .relative_to_baseline(ifc_baseline);
                 let item_lh =
                     compute_line_height_metrics(&metrics, &style.line_height, style.font_size);
                 let emphasis_extent = if style.writing_mode.is_horizontal()
@@ -4158,6 +4216,13 @@ fn create_line_box(
                 let margin_bottom =
                     resolve_margin_or_padding(block_end_margin, percentage_base).to_f32();
                 let margin_box_height = item_height + margin_top + margin_bottom;
+                let (synthesized_ascent, synthesized_descent) = {
+                    let (ascent, descent) = synthesized_atomic_metrics(
+                        LayoutUnit::from_f32(margin_box_height),
+                        ifc_baseline,
+                    );
+                    (ascent.to_f32(), descent.to_f32())
+                };
                 let baseline_from_top =
                     ruby_base_metrics.map(|(_, baseline)| baseline).or_else(|| {
                         atomic_layout_results[step2_idx]
@@ -4174,7 +4239,11 @@ fn create_line_box(
                                 } else if child_direction.is_horizontal()
                                     != space.writing_direction.is_horizontal()
                                 {
-                                    Some(result.size.height)
+                                    // Blink synthesizes the baseline of an
+                                    // orthogonal box. The alphabetic path keeps
+                                    // its border-box end.
+                                    (ifc_baseline == FontBaseline::Alphabetic)
+                                        .then_some(result.size.height)
                                 } else if style.display == Display::InlineBlock
                                     && uses_deterministic_text_profile(style)
                                     && style.overflow_x == openui_style::Overflow::Visible
@@ -4232,8 +4301,8 @@ fn create_line_box(
                     }
                     VerticalAlign::Length(px) => {
                         // Shift from baseline by px (negative = down).
-                        let shifted_ascent = (margin_box_height + px).max(0.0);
-                        let shifted_descent = (-px).max(0.0);
+                        let shifted_ascent = (synthesized_ascent + px).max(0.0);
+                        let shifted_descent = (synthesized_descent - px).max(0.0);
                         line_ascent = line_ascent.max(shifted_ascent);
                         line_descent = line_descent.max(shifted_descent);
                     }
@@ -4245,8 +4314,8 @@ fn create_line_box(
                         let element_line_height =
                             used_line_height(&metrics, &style.line_height, style.font_size);
                         let shift = element_line_height * pct / 100.0;
-                        let shifted_ascent = (margin_box_height + shift).max(0.0);
-                        let shifted_descent = (-shift).max(0.0);
+                        let shifted_ascent = (synthesized_ascent + shift).max(0.0);
+                        let shifted_descent = (synthesized_descent - shift).max(0.0);
                         line_ascent = line_ascent.max(shifted_ascent);
                         line_descent = line_descent.max(shifted_descent);
                     }
@@ -4271,8 +4340,8 @@ fn create_line_box(
                             .copied()
                             .unwrap_or(block_style.font_size);
                         let sub_offset = keyword_baseline_shift(parent_font_size, 5);
-                        line_ascent = line_ascent.max((margin_box_height - sub_offset).max(0.0));
-                        line_descent = line_descent.max(sub_offset);
+                        line_ascent = line_ascent.max((synthesized_ascent - sub_offset).max(0.0));
+                        line_descent = line_descent.max(synthesized_descent + sub_offset);
                     }
                     VerticalAlign::Super => {
                         // Raised by super_offset above the baseline.
@@ -4281,9 +4350,11 @@ fn create_line_box(
                             .copied()
                             .unwrap_or(block_style.font_size);
                         let super_offset = keyword_baseline_shift(parent_font_size, 3);
-                        line_ascent = line_ascent.max(margin_box_height + super_offset);
-                        // Item bottom is at super_offset above baseline → 0 descent.
-                        line_descent = line_descent.max(0.0);
+                        line_ascent = line_ascent.max(synthesized_ascent + super_offset);
+                        // The raised item extends below the baseline only by
+                        // the part of its synthesized descent left over.
+                        line_descent =
+                            line_descent.max((synthesized_descent - super_offset).max(0.0));
                     }
                     _ => {
                         if let Some(baseline) = baseline_from_top {
@@ -4291,10 +4362,11 @@ fn create_line_box(
                             line_descent =
                                 line_descent.max((item_height - baseline).max(0.0) + margin_bottom);
                         } else {
-                            // Baseline-aligned: margin-box bottom sits on baseline.
-                            // For empty inline-blocks: baseline = bottom margin edge.
-                            line_ascent = line_ascent.max(margin_box_height);
-                            line_descent = line_descent.max(0.0);
+                            // Baseline-aligned on the synthesized baseline:
+                            // the margin-box end (alphabetic) or middle
+                            // (central).
+                            line_ascent = line_ascent.max(synthesized_ascent);
+                            line_descent = line_descent.max(synthesized_descent);
                         }
                     }
                 }
@@ -4306,7 +4378,11 @@ fn create_line_box(
                 let style = &items_data.styles[item.style_index];
                 let font_desc = style_to_font_description(style);
                 let font = doc.resolve_font(font_desc);
-                let metrics = font.font_metrics().copied().unwrap_or_default();
+                let metrics = font
+                    .font_metrics()
+                    .copied()
+                    .unwrap_or_default()
+                    .relative_to_baseline(ifc_baseline);
                 let item_lh =
                     compute_line_height_metrics(&metrics, &style.line_height, style.font_size);
                 let emphasis_extent = if style.writing_mode.is_horizontal()
@@ -4404,7 +4480,11 @@ fn create_line_box(
                     } else {
                         let font_desc = style_to_font_description(style);
                         let font = doc.resolve_font(font_desc);
-                        let metrics = font.font_metrics().copied().unwrap_or_default();
+                        let metrics = font
+                            .font_metrics()
+                            .copied()
+                            .unwrap_or_default()
+                            .relative_to_baseline(ifc_baseline);
                         compute_line_height_metrics(&metrics, &style.line_height, style.font_size)
                     };
                     line_ascent = line_ascent.max(item_lh.ascent);
@@ -4725,8 +4805,9 @@ fn create_line_box(
                 let font_desc = style_to_font_description(style);
                 let font = doc.resolve_font(font_desc);
                 let primary_metrics = font.font_metrics().copied().unwrap_or_default();
-                let metrics =
+                let alphabetic_metrics =
                     text_line_metrics(primary_metrics, style, item, item_result, items_data);
+                let metrics = alphabetic_metrics.relative_to_baseline(ifc_baseline);
 
                 let element_line_height =
                     used_line_height(&metrics, &style.line_height, style.font_size);
@@ -4766,8 +4847,10 @@ fn create_line_box(
                 };
 
                 // Text top = baseline position - font ascent, adjusted for shift.
-                let text_top =
-                    baseline - LayoutUnit::from_f32_ceil(metrics.ascent - effective_shift);
+                let glyph_baseline =
+                    baseline + glyph_baseline_offset(&alphabetic_metrics, &metrics);
+                let text_top = glyph_baseline
+                    - LayoutUnit::from_f32_ceil(alphabetic_metrics.ascent - effective_shift);
 
                 // Compute sub-range shape result for the line portion.
                 // When text wraps, the item_result's text_range may be a subset
@@ -4876,7 +4959,9 @@ fn create_line_box(
                     }
                 }
 
-                let text_height = LayoutUnit::from_f32_ceil(metrics.ascent + metrics.descent);
+                let text_height = LayoutUnit::from_f32_ceil(
+                    alphabetic_metrics.ascent + alphabetic_metrics.descent,
+                );
 
                 let mut text_fragment =
                     Fragment::new_box(item.node_id, PhysicalSize::new(item_width, text_height));
@@ -4895,7 +4980,7 @@ fn create_line_box(
                 text_fragment.offset = PhysicalOffset::new(inline_offset, text_top);
                 // Store the baseline offset (distance from fragment top to baseline)
                 // so paint can use it directly instead of recomputing from metrics.
-                text_fragment.baseline_offset = (baseline - text_top).to_f32();
+                text_fragment.baseline_offset = (glyph_baseline - text_top).to_f32();
                 // Use justified shape result if justification was applied,
                 // otherwise use the sub-range shape result for this line portion.
                 text_fragment.shape_result = justified_shape.or(line_shape_result);
@@ -4955,7 +5040,11 @@ fn create_line_box(
                 // Push this inline element's font metrics for nested content.
                 let font_desc = style_to_font_description(style);
                 let font = doc.resolve_font(font_desc);
-                let metrics = font.font_metrics().copied().unwrap_or_default();
+                let metrics = font
+                    .font_metrics()
+                    .copied()
+                    .unwrap_or_default()
+                    .relative_to_baseline(ifc_baseline);
                 inline_metrics_stack.push(metrics);
                 inline_font_size_stack.push(style.font_size);
                 // Track that this box opened on this line (is_first = true).
@@ -5055,6 +5144,8 @@ fn create_line_box(
                 let margin_top_lu = resolve_margin_or_padding(block_start_margin, percentage_base);
                 let margin_bottom_lu = resolve_margin_or_padding(block_end_margin, percentage_base);
                 let margin_box_height_lu = margin_top_lu + item_height + margin_bottom_lu;
+                let (_, synthesized_descent_lu) =
+                    synthesized_atomic_metrics(margin_box_height_lu, ifc_baseline);
                 let baseline_from_top =
                     atomic_layout_results[step4_idx]
                         .as_ref()
@@ -5069,7 +5160,8 @@ fn create_line_box(
                             } else if child_direction.is_horizontal()
                                 != space.writing_direction.is_horizontal()
                             {
-                                Some(result.size.height)
+                                (ifc_baseline == FontBaseline::Alphabetic)
+                                    .then_some(result.size.height)
                             } else if style.display == Display::InlineBlock
                                 && uses_deterministic_text_profile(style)
                                 && style.overflow_x == openui_style::Overflow::Visible
@@ -5135,7 +5227,7 @@ fn create_line_box(
                             .unwrap_or(block_style.font_size);
                         let shift =
                             LayoutUnit::from_f32(keyword_baseline_shift(parent_font_size, 5));
-                        baseline + shift - item_height - margin_bottom_lu
+                        baseline + synthesized_descent_lu + shift - item_height - margin_bottom_lu
                     }
                     VerticalAlign::Super => {
                         let parent_font_size = inline_font_size_stack
@@ -5144,12 +5236,12 @@ fn create_line_box(
                             .unwrap_or(block_style.font_size);
                         let shift =
                             LayoutUnit::from_f32(keyword_baseline_shift(parent_font_size, 3));
-                        baseline - shift - item_height - margin_bottom_lu
+                        baseline + synthesized_descent_lu - shift - item_height - margin_bottom_lu
                     }
                     VerticalAlign::Length(px) => {
                         // Positive length shifts up from baseline.
                         let shift = LayoutUnit::from_f32(px);
-                        baseline - item_height - margin_bottom_lu - shift
+                        baseline + synthesized_descent_lu - item_height - margin_bottom_lu - shift
                     }
                     VerticalAlign::Percentage(pct) => {
                         // Percentage of the element's own line-height (CSS 2.2 §10.8.1).
@@ -5159,7 +5251,7 @@ fn create_line_box(
                         let element_line_height =
                             used_line_height(&metrics, &style.line_height, style.font_size);
                         let shift = LayoutUnit::from_f32(element_line_height * pct / 100.0);
-                        baseline - item_height - margin_bottom_lu - shift
+                        baseline + synthesized_descent_lu - item_height - margin_bottom_lu - shift
                     }
                     _ => {
                         // Baseline (default): align the atomic inline's exported
@@ -5168,7 +5260,7 @@ fn create_line_box(
                         if let Some(item_baseline) = baseline_from_top {
                             baseline - item_baseline
                         } else {
-                            baseline - item_height - margin_bottom_lu
+                            baseline + synthesized_descent_lu - item_height - margin_bottom_lu
                         }
                     }
                 };
@@ -5278,14 +5370,21 @@ fn create_line_box(
     if let Some((ref hyphen_sr, hyphen_width, ref hyphen_style, ref hyphen_text)) =
         hyphen_shape_data
     {
-        let hyphen_metrics = {
+        let hyphen_alphabetic_metrics = {
             let hyphen_font_desc = style_to_font_description(hyphen_style);
             let hyphen_font = doc.resolve_font(hyphen_font_desc);
             hyphen_font.font_metrics().copied().unwrap_or_default()
         };
-        let hyphen_height =
-            LayoutUnit::from_f32_ceil(hyphen_metrics.ascent + hyphen_metrics.descent);
-        let hyphen_top = baseline - LayoutUnit::from_f32_ceil(hyphen_metrics.ascent);
+        let hyphen_baseline = baseline
+            + glyph_baseline_offset(
+                &hyphen_alphabetic_metrics,
+                &hyphen_alphabetic_metrics.relative_to_baseline(ifc_baseline),
+            );
+        let hyphen_height = LayoutUnit::from_f32_ceil(
+            hyphen_alphabetic_metrics.ascent + hyphen_alphabetic_metrics.descent,
+        );
+        let hyphen_top =
+            hyphen_baseline - LayoutUnit::from_f32_ceil(hyphen_alphabetic_metrics.ascent);
 
         let mut hyphen_fragment = Fragment::new_text(
             NodeId::NONE,
@@ -5294,7 +5393,7 @@ fn create_line_box(
             hyphen_text.clone(),
         );
         hyphen_fragment.inherited_style = Some(hyphen_style.clone());
-        hyphen_fragment.baseline_offset = (baseline - hyphen_top).to_f32();
+        hyphen_fragment.baseline_offset = (hyphen_baseline - hyphen_top).to_f32();
         hyphen_fragment.text_run_orientation =
             resolve_text_run_orientation(hyphen_style, hyphen_text);
 
@@ -5341,10 +5440,18 @@ fn create_line_box(
             openui_text::TextDirection::Ltr,
         );
         let ellipsis_width = LayoutUnit::from_f32(ellipsis_sr.width);
-        let ellipsis_metrics = ellipsis_font.font_metrics().copied().unwrap_or_default();
-        let ellipsis_height =
-            LayoutUnit::from_f32_ceil(ellipsis_metrics.ascent + ellipsis_metrics.descent);
-        let ellipsis_top = baseline - LayoutUnit::from_f32_ceil(ellipsis_metrics.ascent);
+        let ellipsis_alphabetic_metrics = ellipsis_font.font_metrics().copied().unwrap_or_default();
+        let ellipsis_baseline = baseline
+            + glyph_baseline_offset(
+                &ellipsis_alphabetic_metrics,
+                &ellipsis_alphabetic_metrics.relative_to_baseline(ifc_baseline),
+            );
+        let ellipsis_height = LayoutUnit::from_f32_ceil(
+            ellipsis_alphabetic_metrics.ascent + ellipsis_alphabetic_metrics.descent,
+        );
+        let ellipsis_top =
+            ellipsis_baseline - LayoutUnit::from_f32_ceil(ellipsis_alphabetic_metrics.ascent);
+        let ellipsis_baseline_offset = (ellipsis_baseline - ellipsis_top).to_f32();
 
         if line_info.ellipsis_at_start {
             // RTL: place ellipsis at the left edge, shift content right.
@@ -5362,7 +5469,7 @@ fn create_line_box(
                 PhysicalOffset::new(text_align_offset + physical_text_indent, ellipsis_top);
             ellipsis_fragment.inherited_style = Some(block_style.clone());
             ellipsis_fragment.is_line_clamp_marker = line_info.ellipsis_is_line_clamp;
-            ellipsis_fragment.baseline_offset = (baseline - ellipsis_top).to_f32();
+            ellipsis_fragment.baseline_offset = ellipsis_baseline_offset;
             ellipsis_fragment.text_run_orientation =
                 resolve_text_run_orientation(block_style, ellipsis_text);
             let child_index = children.len();
@@ -5387,7 +5494,7 @@ fn create_line_box(
             );
             ellipsis_fragment.inherited_style = Some(block_style.clone());
             ellipsis_fragment.is_line_clamp_marker = line_info.ellipsis_is_line_clamp;
-            ellipsis_fragment.baseline_offset = (baseline - ellipsis_top).to_f32();
+            ellipsis_fragment.baseline_offset = ellipsis_baseline_offset;
             ellipsis_fragment.text_run_orientation =
                 resolve_text_run_orientation(block_style, ellipsis_text);
             let child_index = children.len();
@@ -5420,6 +5527,7 @@ fn create_line_box(
                 block_style.font_size,
                 block_style.line_clamp == openui_style::LineClamp::None
                     && space.line_clamp_context.is_none(),
+                ifc_baseline,
             )
         })
         .collect();
@@ -6474,7 +6582,11 @@ pub(crate) fn append_clamp_marker_to_last_line(
     let width = LayoutUnit::from_f32(shape.width);
     let metrics = font.font_metrics().copied().unwrap_or_default();
     let height = LayoutUnit::from_f32_ceil(metrics.ascent + metrics.descent);
-    let baseline = LayoutUnit::from_f32(line.baseline_offset);
+    let baseline = LayoutUnit::from_f32(line.baseline_offset)
+        + glyph_baseline_offset(
+            &metrics,
+            &metrics.relative_to_baseline(ifc_font_baseline(fallback_style)),
+        );
     let top = baseline - LayoutUnit::from_f32_ceil(metrics.ascent);
     let inline_end = line
         .children

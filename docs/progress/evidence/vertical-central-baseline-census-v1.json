@@ -1,0 +1,120 @@
+{
+ "base": "db121c39 (main with the Skia legacy shader context define)",
+ "base_commit": "db121c39ae9bc3edbe555f579a8dd2c1fd591746",
+ "base_exact": 21681,
+ "build": "WSL Ubuntu 26.04, system clang 21, hosted SKIA_GN_ARGS with -DSK_ENABLE_LEGACY_SHADERCONTEXT",
+ "chromium": "Chrome-for-Testing 147.0.7727.50 linux64, shared cache",
+ "chromium_identical": 23728,
+ "comparisons": 23728,
+ "errors": [],
+ "gains": [],
+ "head": "896015de (tree identical to the central-baseline commit)",
+ "head_commit": "896015def7a9dea0f36d794c96e571141a206d6e",
+ "head_exact": 21679,
+ "improved": [
+  {
+   "base": "different",
+   "base_mismatched": 33872,
+   "head": "different",
+   "head_mismatched": 12400,
+   "id": "wpt/css_sizing/vert-block-size-small-or-larger-than-container-with-min-or-max-content-1",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 33872,
+   "head": "different",
+   "head_mismatched": 12400,
+   "id": "wpt/css_sizing/vert-block-size-small-or-larger-than-container-with-min-or-max-content-1-ref",
+   "profile": "mobile-375x667@2"
+  }
+ ],
+ "losses": [
+  {
+   "base": "exact",
+   "base_mismatched": 0,
+   "head": "different",
+   "head_mismatched": 1886,
+   "id": "wpt/css_flexbox/alignment_flex-align-baseline-line-clamp-003.tentative",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "exact",
+   "base_mismatched": 0,
+   "head": "different",
+   "head_mismatched": 7544,
+   "id": "wpt/css_flexbox/alignment_flex-align-baseline-line-clamp-003.tentative",
+   "profile": "mobile-375x667@2"
+  }
+ ],
+ "openui_changed": [
+  {
+   "base": "different",
+   "base_mismatched": 24,
+   "head": "different",
+   "head_mismatched": 3323,
+   "id": "wpt/css_flexbox/alignment_flex-align-baseline-line-clamp-003.tentative",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 50,
+   "head": "different",
+   "head_mismatched": 9148,
+   "id": "wpt/css_flexbox/alignment_flex-align-baseline-line-clamp-003.tentative",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "exact",
+   "base_mismatched": 0,
+   "head": "different",
+   "head_mismatched": 1886,
+   "id": "wpt/css_flexbox/alignment_flex-align-baseline-line-clamp-003.tentative",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "exact",
+   "base_mismatched": 0,
+   "head": "different",
+   "head_mismatched": 7544,
+   "id": "wpt/css_flexbox/alignment_flex-align-baseline-line-clamp-003.tentative",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 33872,
+   "head": "different",
+   "head_mismatched": 12400,
+   "id": "wpt/css_sizing/vert-block-size-small-or-larger-than-container-with-min-or-max-content-1",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 33872,
+   "head": "different",
+   "head_mismatched": 12400,
+   "id": "wpt/css_sizing/vert-block-size-small-or-larger-than-container-with-min-or-max-content-1-ref",
+   "profile": "mobile-375x667@2"
+  }
+ ],
+ "schema": "openui.paired-census-delta.v1",
+ "suite": "expanded",
+ "worsened": [
+  {
+   "base": "different",
+   "base_mismatched": 24,
+   "head": "different",
+   "head_mismatched": 3323,
+   "id": "wpt/css_flexbox/alignment_flex-align-baseline-line-clamp-003.tentative",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 50,
+   "head": "different",
+   "head_mismatched": 9148,
+   "id": "wpt/css_flexbox/alignment_flex-align-baseline-line-clamp-003.tentative",
+   "profile": "desktop-1920x1080@1.5"
+  }
+ ]
+}

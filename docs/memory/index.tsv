@@ -67,3 +67,4 @@
 0066	active	ci dependencies security zbus accesskit	Dependency audit is its own CI job; zbus 5 unmaintained notices stay open	2026-10-21	entries/0066-dependency-audit-is-its-own-ci-job-zbus-5-unmain.md
 0067	active	windows fonts directwrite oracle chromium	Windows text oracle: Windows Chrome with NoFontAntialiasing for aliased tests	2026-10-21	entries/0067-windows-text-oracle-windows-chrome-with-nofontan.md
 0068	active	windows platform winit ffi	Win32 desktop runtime shares the winit runtime behind the windows feature	2026-10-21	entries/0068-win32-desktop-runtime-shares-the-winit-runtime-b.md
+0069	active	layout inline baseline vertical flex blink	Vertical flow aligns on Blink's central baseline; text stays on its glyph baseline	2026-10-21	entries/0069-vertical-flow-aligns-on-blink-s-central-baseline.md

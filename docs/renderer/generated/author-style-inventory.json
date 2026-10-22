@@ -3262,6 +3262,7 @@
       "consumers": [
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/fragment.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/items_builder.rs"
       ],
       "css_name": "text-orientation",

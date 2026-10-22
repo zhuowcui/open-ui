@@ -103,8 +103,101 @@ impl FontMetrics {
     }
 }
 
+/// The baseline that an inline formatting context aligns its content to.
+///
+/// Blink: `FontBaseline` as chosen by `ComputedStyle::GetFontBaseline()`.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub enum FontBaseline {
+    /// The alphabetic baseline of horizontal and sideways text.
+    #[default]
+    Alphabetic,
+    /// The ideographic central baseline of vertical flow.
+    Central,
+}
+
+impl FontBaseline {
+    /// Vertical flow, except sideways text, uses the central baseline.
+    ///
+    /// Blink: `ComputedStyle::GetFontBaseline()`, which tests
+    /// `FontDescription::IsVerticalAnyUpright()`.
+    #[inline]
+    pub fn for_orientation(orientation: openui_style::FontOrientation) -> Self {
+        if orientation.uses_vertical_metrics() {
+            Self::Central
+        } else {
+            Self::Alphabetic
+        }
+    }
+}
+
+impl FontMetrics {
+    /// Express ascent and descent relative to `baseline`.
+    ///
+    /// Blink: `FontMetrics::GetFontHeight(baseline_type)`. The central
+    /// baseline splits the integer height `Height() = IntAscent +
+    /// IntDescent` as `Height() - Height() / 2` above and `Height() / 2`
+    /// below. Other metrics stay relative to the alphabetic baseline.
+    pub fn relative_to_baseline(self, baseline: FontBaseline) -> Self {
+        match baseline {
+            FontBaseline::Alphabetic => self,
+            FontBaseline::Central => {
+                let height = self.int_ascent() as i32 + self.int_descent() as i32;
+                let descent = height / 2;
+                Self {
+                    ascent: (height - descent) as f32,
+                    descent: descent as f32,
+                    ..self
+                }
+            }
+        }
+    }
+}
+
 impl Default for FontMetrics {
     fn default() -> Self {
         Self::zero()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn metrics(ascent: f32, descent: f32) -> FontMetrics {
+        FontMetrics {
+            ascent,
+            descent,
+            x_height: 8.0,
+            ..FontMetrics::zero()
+        }
+    }
+
+    #[test]
+    fn central_baseline_splits_the_integer_height_with_the_odd_pixel_above() {
+        // Arial 16px: IntAscent 14 + IntDescent 3 = 17 -> 9 above, 8 below.
+        let central = metrics(14.484, 3.391).relative_to_baseline(FontBaseline::Central);
+        assert_eq!((central.ascent, central.descent), (9.0, 8.0));
+        assert_eq!(central.x_height, 8.0);
+        // DejaVu Sans 16px: 15 + 4 = 19 -> 10 above, 9 below.
+        let central = metrics(14.85, 3.77).relative_to_baseline(FontBaseline::Central);
+        assert_eq!((central.ascent, central.descent), (10.0, 9.0));
+        let alphabetic = metrics(14.484, 3.391);
+        assert_eq!(
+            alphabetic.relative_to_baseline(FontBaseline::Alphabetic),
+            alphabetic
+        );
+    }
+
+    #[test]
+    fn only_vertical_upright_or_mixed_orientation_uses_the_central_baseline() {
+        use openui_style::FontOrientation;
+        for (orientation, expected) in [
+            (FontOrientation::Horizontal, FontBaseline::Alphabetic),
+            (FontOrientation::VerticalRotated, FontBaseline::Alphabetic),
+            (FontOrientation::VerticalMixed, FontBaseline::Central),
+            (FontOrientation::VerticalUpright, FontBaseline::Central),
+        ] {
+            assert_eq!(FontBaseline::for_orientation(orientation), expected);
+        }
     }
 }
