@@ -553,7 +553,12 @@ impl ShapeResult {
             } else {
                 source_font
             };
-            let compatible_font = (raster_policy != TextRasterPolicy::Skia)
+            // Windows Chromium rasterizes these faces with DirectWrite, the
+            // scaler behind `source_font`; only Linux Chromium substitutes
+            // Fontations outlines.
+            let compatible_font = (raster_policy != TextRasterPolicy::Skia
+                && crate::font::GlyphRasterizer::platform()
+                    == crate::font::GlyphRasterizer::FreeTypeOrFontations)
                 .then(|| {
                     fontations_compatible_font(compatible_source_font, &run.glyphs, raster_policy)
                 })

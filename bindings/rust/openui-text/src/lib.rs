@@ -41,7 +41,7 @@ pub use font::{
     FontFaceDescriptor, FontFaceHandle, FontFaceInfo, FontFallbackList, FontFeatureDefault,
     FontMetricOverrides, FontMetrics, FontPaletteBase, FontPaletteEntryOverride, FontPaletteHandle,
     FontPaletteValuesDescriptor, FontPlatformData, FontRelativeLengthResolver, FontRelativeUnit,
-    FontStyleRange, FontUnicodeRange, UsedLineHeightMetrics,
+    FontStyleRange, FontUnicodeRange, GlyphRasterizer, UsedLineHeightMetrics,
 };
 pub use font::{
     AppliedPlatformFontSettings, AppliedSkFontSettings, FontFaceSourceInfo, FontInstantiation,

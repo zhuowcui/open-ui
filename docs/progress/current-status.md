@@ -1,5 +1,16 @@
 # Open UI current status
 
+## Windows text raster policy 22 October 2026
+
+Windows text pixels are now measured. A new tool compares the expanded suite's
+2,927 Ahem text tests at `legacy-800x600@1` with Windows Chrome. Open UI's
+Chromium-parity text now follows Windows Blink on Windows: DirectWrite glyphs
+with SkFont's default hinting, whole-pixel aliased advances, one render style
+for every face, and no replay of Linux FreeType mask rows. Windows exact
+comparisons rise from 2,134 to 2,785 with no losses; Linux is unchanged. The
+142 remaining differences are native theme colors, Windows font fallback and
+text layout. See the [Windows text raster record](windows-text-raster-policy-2026-10-22.md).
+
 ## Windows SDK archive 21 October 2026
 
 `tools/release/build_v02_windows.py` builds a deterministic Windows x64 MSVC

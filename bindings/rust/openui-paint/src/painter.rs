@@ -408,6 +408,13 @@ fn replays_aliased_ahem_start_for_raster_policy(
     } else {
         style.raster_configuration.author_text
     };
+    // The replayed row belongs to Linux FreeType/Fontations masks; Windows
+    // Chromium's DirectWrite masks never carry it.
+    if openui_text::GlyphRasterizer::platform()
+        != openui_text::GlyphRasterizer::FreeTypeOrFontations
+    {
+        return false;
+    }
     // Fitted monochrome outlines already contain their block-start row.
     // Applying the legacy unhinted-mask replay draws an extra physical row.
     if text_raster.edging == TextEdging::Alias && text_raster.hinting != TextHinting::None {
@@ -25215,12 +25222,18 @@ mod tests {
             (3.0, true),
         ] {
             style.update_derived(|computed| computed.device_scale_factor = scale);
+            // DirectWrite masks (Windows Chromium) never carry the row.
+            let linux_masks = openui_text::GlyphRasterizer::platform()
+                == openui_text::GlyphRasterizer::FreeTypeOrFontations;
             assert_eq!(
                 replays_aliased_ahem_start_for_raster_policy(&style, false),
-                expected,
+                expected && linux_masks,
                 "scale={scale}"
             );
-            assert!(replays_aliased_ahem_start_for_raster_policy(&style, true));
+            assert_eq!(
+                replays_aliased_ahem_start_for_raster_policy(&style, true),
+                linux_masks
+            );
         }
     }
 

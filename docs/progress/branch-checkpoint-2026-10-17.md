@@ -175,6 +175,9 @@ aligns vertical-flow line boxes on the central baseline
 baseline. See [the Windows text record](windows-directwrite-text-2026-10-21.md);
 it needs its own census-verified task. That task is complete; see
 [the central baseline record](vertical-central-baseline-2026-10-21.md).
+Update 22 October 2026: Windows text pixels are measured and the Windows
+raster policy follows Windows Blink; see
+[the Windows text raster record](windows-text-raster-policy-2026-10-22.md).
 
 When feature work resumes, start one focused PR from the latest `main`.
 First resolve the failing native scrollbar frame clip guard, owned by the

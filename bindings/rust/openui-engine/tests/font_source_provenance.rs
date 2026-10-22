@@ -431,7 +431,12 @@ fn actual_source_and_shaping_settings_distinguish_metric_positioning() {
         assert_eq!(applied.device_scale_factor().to_bits(), 1.25_f64.to_bits());
         assert!(!snapshot.subpixel());
         assert!(!snapshot.linear_metrics());
-        assert_eq!(applied.shaping_font().subpixel(), !full_hinting);
+        // Linux Blink force-enables subpixel shaping metrics unless the
+        // hinting is full; Windows Blink shapes with its aliased paint font.
+        assert_eq!(
+            applied.shaping_font().subpixel(),
+            !full_hinting && !windows_chromium()
+        );
         assert!(!applied.shaping_font().linear_metrics());
         assert_eq!(applied.shaping_font().hinting(), actual.hinting());
         assert!(applied.query_result().is_none());
@@ -445,14 +450,24 @@ fn actual_source_and_shaping_settings_distinguish_metric_positioning() {
     assert!(applied.native_control_text());
     assert!(applied.native_button_text_metrics());
     assert!(!applied.embedded_document_text());
+    // Windows Blink applies one process-wide render style to every face,
+    // native-control labels included.
     assert_eq!(
         applied.selected_raster_configuration(),
-        description.raster_configuration.native_text
+        if windows_chromium() {
+            description.raster_configuration.author_text
+        } else {
+            description.raster_configuration.native_text
+        }
     );
     assert!(!applied.source_font().subpixel());
     assert!(!applied.source_font().linear_metrics());
-    assert!(applied.shaping_font().subpixel());
+    assert_eq!(applied.shaping_font().subpixel(), !windows_chromium());
     assert!(!applied.shaping_font().linear_metrics());
+}
+
+fn windows_chromium() -> bool {
+    openui_text::GlyphRasterizer::platform() == openui_text::GlyphRasterizer::DirectWrite
 }
 
 #[test]

@@ -71,3 +71,4 @@
 0070	active	layout multicol fragmentation positioned checkpoint	Padded multicol principal source: candidate 3a8c9fbe layout adopted, painter deferred	2026-10-21	entries/0070-padded-multicol-principal-source-candidate-3a8c9.md
 0071	active	windows accessibility uia accesskit ci	Windows UI Automation check drives the accessibility example	2026-10-21	entries/0071-windows-ui-automation-check-drives-the-accessibi.md
 0072	active	windows release packaging cmake ffi	Windows SDK archive: build_v02_windows.py with a find_package smoke	2026-10-21	entries/0072-windows-sdk-archive-build-v02-windows-py-with-a.md
+0073	active	windows text raster directwrite qualification	Windows text raster policy follows Windows Blink; compare_windows_text.py measures it	2026-10-22	entries/0073-windows-text-raster-policy-follows-windows-blink.md
