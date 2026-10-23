@@ -73,3 +73,8 @@ stays deferred.
 | --- | --- | --- |
 | Four paired expanded censuses | `out/wsl-paint-census.sh` (clone commits `de28b52c`, `2abb5457`, `22950dee`, `7198b239`) | Counts above; Chromium identical in 23,728 of 23,728 comparisons each |
 | Loss reproduction on Windows | `pixel_compare render wpt/css_break/out-of-flow-in-multicolumn-053 … --raster-config chromium-linux-lcd` with the whole-candidate build | Column 69 is `(0,128,95)` with the candidate and `(0,128,0)` on `main` |
+
+## Update, 23 October 2026
+
+The painter is adopted with four Blink layer-order repairs and no census
+losses; see [the column paint phases record](column-paint-phases-2026-10-23.md).

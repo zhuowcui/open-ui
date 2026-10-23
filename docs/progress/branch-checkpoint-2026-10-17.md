@@ -181,6 +181,8 @@ raster policy follows Windows Blink; see
 The deferred candidate painter change is measured and its main loss attributed;
 reordering its positioned phases to Blink's per-layer fragment iteration is the
 next painter task, see [the painter variants record](painter-candidate-variants-2026-10-22.md).
+Update 23 October 2026: that task is complete, see
+[the column paint phases record](column-paint-phases-2026-10-23.md).
 
 When feature work resumes, start one focused PR from the latest `main`.
 First resolve the failing native scrollbar frame clip guard, owned by the

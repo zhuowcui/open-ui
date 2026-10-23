@@ -1,0 +1,363 @@
+{
+  "schema_version": 1,
+  "writer_pid": 3855914,
+  "reference_bytes_changed": false,
+  "cropping_is_lossless_RGBA_only": true,
+  "outside_white_verified_every_pixel": true,
+  "inputs": [
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-column-paint-order-source-v4805/bindings/rust/openui-engine/tests/nested_multicol_balance_continuations.rs",
+      "sha256": "05395c5ac809738e9cfd58e529c6d749d6216e57b941259f6bda7a958635eba6",
+      "bytes": 24818
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-multicol-phase-source-table-border-review-v4817/css_break_out_of_flow_in_multicolumn_018.source.rs",
+      "sha256": "d4aca5f15b5849a6999743fa4e7ee3bf91bc0f262b6531c238f1b59e1b05b7ff",
+      "bytes": 11534
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-column-paint-order-source-v4805/oracle-provenance.json",
+      "sha256": "895dabd3eb465dbf4998a5950929d00fb17490e22bf842b8c55c4d49c63d2fbc",
+      "bytes": 3257
+    },
+    {
+      "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-positioned-column-chromium-command-capture-v4814/receipt.json",
+      "sha256": "ca0a9f6eae78f0e8a249fe80efde918bbca7c5d3fe3b467cd15ce99e578a443c",
+      "bytes": 96865
+    }
+  ],
+  "assets": [
+    {
+      "profile": "legacy-800x600@1",
+      "actual_png": "/mnt/d/openui-v02-qualification-d174ea0b/native-multicol-chromium-command-capture-v4801/legacy-800x600@1-multicol-fill-balance-003-0/layer-0-replay.png",
+      "png_sha256": "35130109c608e33c601e3e0eece3f2140b25d140b62ac0d958f04852adef618f",
+      "full_rgba_sha256": "c3bd607098b2ca40bf0371e0f83bd8fdf565243090cd037c6c3d5a75bda8f722",
+      "asset": "bindings/rust/openui-engine/tests/column_paint_phase_oracles/balance-003-legacy-800x600-1.rgba",
+      "crop": [
+        20,
+        20,
+        120,
+        120
+      ],
+      "asset_sha256": "9f9bb129f99271262c63bd91dc9580ab74d62af87ba165ba6a1aa4862bc8c829",
+      "outside_crop_white_verified": true,
+      "case": "balance003",
+      "source_asset": {
+        "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-column-paint-order-source-v4805/bindings/rust/openui-engine/tests/nested_multicol_chromium_oracles/balance-003-legacy-800x600-1.rgba",
+        "sha256": "9f9bb129f99271262c63bd91dc9580ab74d62af87ba165ba6a1aa4862bc8c829",
+        "bytes": 40000
+      },
+      "full_physical_size": [
+        800,
+        600
+      ],
+      "source_png": {
+        "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-multicol-chromium-command-capture-v4801/legacy-800x600@1-multicol-fill-balance-003-0/layer-0-replay.png",
+        "sha256": "35130109c608e33c601e3e0eece3f2140b25d140b62ac0d958f04852adef618f",
+        "bytes": 11865
+      },
+      "source_receipt": "/mnt/d/openui-v02-qualification-d174ea0b/native-column-paint-order-source-v4805/oracle-provenance.json",
+      "lossless_RGBA_copy": true
+    },
+    {
+      "profile": "mobile-375x667@2",
+      "actual_png": "/mnt/d/openui-v02-qualification-d174ea0b/native-multicol-chromium-command-capture-v4801/mobile-375x667@2-multicol-fill-balance-003-0/layer-0-replay.png",
+      "png_sha256": "7c86c3970751b0a363ab7dfc9332cf9884b3ec4b9c097f6fd9e2a657e0b13e4b",
+      "full_rgba_sha256": "003451be61b83ae8f7893ed1500b93b42d2da147f8a75b7d0294e397accc25e7",
+      "asset": "bindings/rust/openui-engine/tests/column_paint_phase_oracles/balance-003-mobile-375x667-2.rgba",
+      "crop": [
+        40,
+        40,
+        240,
+        240
+      ],
+      "asset_sha256": "1d5b1db3c9b33840cbe8110ac4a00008e4d6e561fd0a2604cce575f029678759",
+      "outside_crop_white_verified": true,
+      "case": "balance003",
+      "source_asset": {
+        "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-column-paint-order-source-v4805/bindings/rust/openui-engine/tests/nested_multicol_chromium_oracles/balance-003-mobile-375x667-2.rgba",
+        "sha256": "1d5b1db3c9b33840cbe8110ac4a00008e4d6e561fd0a2604cce575f029678759",
+        "bytes": 160000
+      },
+      "full_physical_size": [
+        750,
+        1334
+      ],
+      "source_png": {
+        "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-multicol-chromium-command-capture-v4801/mobile-375x667@2-multicol-fill-balance-003-0/layer-0-replay.png",
+        "sha256": "7c86c3970751b0a363ab7dfc9332cf9884b3ec4b9c097f6fd9e2a657e0b13e4b",
+        "bytes": 24829
+      },
+      "source_receipt": "/mnt/d/openui-v02-qualification-d174ea0b/native-column-paint-order-source-v4805/oracle-provenance.json",
+      "lossless_RGBA_copy": true
+    },
+    {
+      "profile": "desktop-1280x720@1.25",
+      "actual_png": "/mnt/d/openui-v02-qualification-d174ea0b/native-multicol-chromium-command-capture-v4801/desktop-1280x720@1.25-multicol-fill-balance-003-0/layer-0-replay.png",
+      "png_sha256": "8a3afa22508b2aa497895fc035d25c05938199e611aca419d6caba09d203cefb",
+      "full_rgba_sha256": "90c104e2843ec483515095a2405c8b3e80bf596b3c8824b72094a37dc2b63143",
+      "asset": "bindings/rust/openui-engine/tests/column_paint_phase_oracles/balance-003-desktop-1280x720-1.25.rgba",
+      "crop": [
+        25,
+        25,
+        150,
+        275
+      ],
+      "asset_sha256": "e379797ce52b31576fa06b3bc1072e2929e31a44a7d84a710deaf2cffaee364e",
+      "outside_crop_white_verified": true,
+      "case": "balance003",
+      "source_asset": {
+        "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-column-paint-order-source-v4805/bindings/rust/openui-engine/tests/nested_multicol_chromium_oracles/balance-003-desktop-1280x720-1.25.rgba",
+        "sha256": "e379797ce52b31576fa06b3bc1072e2929e31a44a7d84a710deaf2cffaee364e",
+        "bytes": 125000
+      },
+      "full_physical_size": [
+        1600,
+        900
+      ],
+      "source_png": {
+        "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-multicol-chromium-command-capture-v4801/desktop-1280x720@1.25-multicol-fill-balance-003-0/layer-0-replay.png",
+        "sha256": "8a3afa22508b2aa497895fc035d25c05938199e611aca419d6caba09d203cefb",
+        "bytes": 31510
+      },
+      "source_receipt": "/mnt/d/openui-v02-qualification-d174ea0b/native-column-paint-order-source-v4805/oracle-provenance.json",
+      "lossless_RGBA_copy": true
+    },
+    {
+      "profile": "desktop-1920x1080@1.5",
+      "actual_png": "/mnt/d/openui-v02-qualification-d174ea0b/native-multicol-chromium-command-capture-v4801/desktop-1920x1080@1.5-multicol-fill-balance-003-0/layer-0-replay.png",
+      "png_sha256": "a8a41c8460b78465d4f56fbf606c0961ba66fee18250f2e044de53951a7137f6",
+      "full_rgba_sha256": "4dd3886170d5274ec357beb01fba2b797b2b8911e4c38eaa5b4cc3dbc33e8c55",
+      "asset": "bindings/rust/openui-engine/tests/column_paint_phase_oracles/balance-003-desktop-1920x1080-1.5.rgba",
+      "crop": [
+        30,
+        30,
+        180,
+        330
+      ],
+      "asset_sha256": "5350a3403d56cbd4c25ef2536aeef138f453b48916845260fd5ba73ab2a13a5d",
+      "outside_crop_white_verified": true,
+      "case": "balance003",
+      "source_asset": {
+        "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-column-paint-order-source-v4805/bindings/rust/openui-engine/tests/nested_multicol_chromium_oracles/balance-003-desktop-1920x1080-1.5.rgba",
+        "sha256": "5350a3403d56cbd4c25ef2536aeef138f453b48916845260fd5ba73ab2a13a5d",
+        "bytes": 180000
+      },
+      "full_physical_size": [
+        2880,
+        1620
+      ],
+      "source_png": {
+        "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-multicol-chromium-command-capture-v4801/desktop-1920x1080@1.5-multicol-fill-balance-003-0/layer-0-replay.png",
+        "sha256": "a8a41c8460b78465d4f56fbf606c0961ba66fee18250f2e044de53951a7137f6",
+        "bytes": 95159
+      },
+      "source_receipt": "/mnt/d/openui-v02-qualification-d174ea0b/native-column-paint-order-source-v4805/oracle-provenance.json",
+      "lossless_RGBA_copy": true
+    },
+    {
+      "case": "oof018",
+      "profile": "legacy-800x600@1",
+      "asset": "bindings/rust/openui-engine/tests/column_paint_phase_oracles/oof-018-legacy-800x600-1.rgba",
+      "asset_sha256": "9f9bb129f99271262c63bd91dc9580ab74d62af87ba165ba6a1aa4862bc8c829",
+      "crop": [
+        20,
+        20,
+        120,
+        120
+      ],
+      "full_physical_size": [
+        800,
+        600
+      ],
+      "source_receipt": "/mnt/d/openui-v02-qualification-d174ea0b/native-positioned-column-chromium-command-capture-v4814/receipt.json",
+      "source_receipt_sha256": "ca0a9f6eae78f0e8a249fe80efde918bbca7c5d3fe3b467cd15ce99e578a443c",
+      "source_jobs": [
+        {
+          "job_id": "legacy-800x600@1-out-of-flow-in-multicolumn-018-0",
+          "source_png": {
+            "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-positioned-column-chromium-command-capture-v4814/legacy-800x600@1-out-of-flow-in-multicolumn-018-0/layer-0-replay.png",
+            "sha256": "35130109c608e33c601e3e0eece3f2140b25d140b62ac0d958f04852adef618f",
+            "bytes": 11865
+          },
+          "full_rgba_sha256": "c3bd607098b2ca40bf0371e0f83bd8fdf565243090cd037c6c3d5a75bda8f722",
+          "original_oracle": {
+            "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-chromium-matrices-v4447/cache/chromium-oracle/3f/3ffd08352393d87cf4c79f2e16eca527e7c368b3775c1b7eb3f7ffd339f52e39.json",
+            "sha256": "e5856625c571f3571c66114f6af7639bfa8b62db59de1c534edbd6641f0b4b8f"
+          }
+        },
+        {
+          "job_id": "legacy-800x600@1-out-of-flow-in-multicolumn-018-1",
+          "source_png": {
+            "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-positioned-column-chromium-command-capture-v4814/legacy-800x600@1-out-of-flow-in-multicolumn-018-1/layer-0-replay.png",
+            "sha256": "35130109c608e33c601e3e0eece3f2140b25d140b62ac0d958f04852adef618f",
+            "bytes": 11865
+          },
+          "full_rgba_sha256": "c3bd607098b2ca40bf0371e0f83bd8fdf565243090cd037c6c3d5a75bda8f722",
+          "original_oracle": {
+            "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-chromium-matrices-v4447/cache/chromium-oracle/3f/3ffd08352393d87cf4c79f2e16eca527e7c368b3775c1b7eb3f7ffd339f52e39.json",
+            "sha256": "e5856625c571f3571c66114f6af7639bfa8b62db59de1c534edbd6641f0b4b8f"
+          }
+        }
+      ],
+      "independent_repeats_RGBA_exact": true,
+      "outside_crop_white_verified": true,
+      "lossless_RGBA_copy": true
+    },
+    {
+      "case": "oof018",
+      "profile": "mobile-375x667@2",
+      "asset": "bindings/rust/openui-engine/tests/column_paint_phase_oracles/oof-018-mobile-375x667-2.rgba",
+      "asset_sha256": "1d5b1db3c9b33840cbe8110ac4a00008e4d6e561fd0a2604cce575f029678759",
+      "crop": [
+        40,
+        40,
+        240,
+        240
+      ],
+      "full_physical_size": [
+        750,
+        1334
+      ],
+      "source_receipt": "/mnt/d/openui-v02-qualification-d174ea0b/native-positioned-column-chromium-command-capture-v4814/receipt.json",
+      "source_receipt_sha256": "ca0a9f6eae78f0e8a249fe80efde918bbca7c5d3fe3b467cd15ce99e578a443c",
+      "source_jobs": [
+        {
+          "job_id": "mobile-375x667@2-out-of-flow-in-multicolumn-018-0",
+          "source_png": {
+            "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-positioned-column-chromium-command-capture-v4814/mobile-375x667@2-out-of-flow-in-multicolumn-018-0/layer-0-replay.png",
+            "sha256": "7c86c3970751b0a363ab7dfc9332cf9884b3ec4b9c097f6fd9e2a657e0b13e4b",
+            "bytes": 24829
+          },
+          "full_rgba_sha256": "003451be61b83ae8f7893ed1500b93b42d2da147f8a75b7d0294e397accc25e7",
+          "original_oracle": {
+            "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-chromium-matrices-v4447/cache/chromium-oracle/29/294691dbdf4f7576ebeda71c708dd478b9dabfe5ada47914569a211203bf6892.json",
+            "sha256": "73266d67a8e71795191494988c417c49c4de691b7aa7e729a78d2d9eb866a4b9"
+          }
+        },
+        {
+          "job_id": "mobile-375x667@2-out-of-flow-in-multicolumn-018-1",
+          "source_png": {
+            "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-positioned-column-chromium-command-capture-v4814/mobile-375x667@2-out-of-flow-in-multicolumn-018-1/layer-0-replay.png",
+            "sha256": "7c86c3970751b0a363ab7dfc9332cf9884b3ec4b9c097f6fd9e2a657e0b13e4b",
+            "bytes": 24829
+          },
+          "full_rgba_sha256": "003451be61b83ae8f7893ed1500b93b42d2da147f8a75b7d0294e397accc25e7",
+          "original_oracle": {
+            "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-chromium-matrices-v4447/cache/chromium-oracle/29/294691dbdf4f7576ebeda71c708dd478b9dabfe5ada47914569a211203bf6892.json",
+            "sha256": "73266d67a8e71795191494988c417c49c4de691b7aa7e729a78d2d9eb866a4b9"
+          }
+        }
+      ],
+      "independent_repeats_RGBA_exact": true,
+      "outside_crop_white_verified": true,
+      "lossless_RGBA_copy": true
+    },
+    {
+      "case": "oof018",
+      "profile": "desktop-1280x720@1.25",
+      "asset": "bindings/rust/openui-engine/tests/column_paint_phase_oracles/oof-018-desktop-1280x720-1.25.rgba",
+      "asset_sha256": "a4b6dd1942715d4a09e117489c93978154baa5ae460cb30422d736595db0e801",
+      "crop": [
+        25,
+        25,
+        150,
+        150
+      ],
+      "full_physical_size": [
+        1600,
+        900
+      ],
+      "source_receipt": "/mnt/d/openui-v02-qualification-d174ea0b/native-positioned-column-chromium-command-capture-v4814/receipt.json",
+      "source_receipt_sha256": "ca0a9f6eae78f0e8a249fe80efde918bbca7c5d3fe3b467cd15ce99e578a443c",
+      "source_jobs": [
+        {
+          "job_id": "desktop-1280x720@1.25-out-of-flow-in-multicolumn-018-0",
+          "source_png": {
+            "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-positioned-column-chromium-command-capture-v4814/desktop-1280x720@1.25-out-of-flow-in-multicolumn-018-0/layer-0-replay.png",
+            "sha256": "0d381a4158dd8f41c81be473ff677e44ebf727a0c765e6d3551032895200b698",
+            "bytes": 31600
+          },
+          "full_rgba_sha256": "ee75a9397f67c6a53c789e3b8657715e05d8b3c82822fe1dbf60cf3c2ab541dc",
+          "original_oracle": {
+            "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-chromium-matrices-v4447/cache/chromium-oracle/a6/a69b7606f3238743b5fa5a6b7c23cb7e5a92a8e9315d0104181f57beb561c572.json",
+            "sha256": "abd3539aded4d2e98ac2290737205eb8954287be3b97da381b5c207134afc59f"
+          }
+        },
+        {
+          "job_id": "desktop-1280x720@1.25-out-of-flow-in-multicolumn-018-1",
+          "source_png": {
+            "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-positioned-column-chromium-command-capture-v4814/desktop-1280x720@1.25-out-of-flow-in-multicolumn-018-1/layer-0-replay.png",
+            "sha256": "0d381a4158dd8f41c81be473ff677e44ebf727a0c765e6d3551032895200b698",
+            "bytes": 31600
+          },
+          "full_rgba_sha256": "ee75a9397f67c6a53c789e3b8657715e05d8b3c82822fe1dbf60cf3c2ab541dc",
+          "original_oracle": {
+            "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-chromium-matrices-v4447/cache/chromium-oracle/a6/a69b7606f3238743b5fa5a6b7c23cb7e5a92a8e9315d0104181f57beb561c572.json",
+            "sha256": "abd3539aded4d2e98ac2290737205eb8954287be3b97da381b5c207134afc59f"
+          }
+        }
+      ],
+      "independent_repeats_RGBA_exact": true,
+      "outside_crop_white_verified": true,
+      "lossless_RGBA_copy": true
+    },
+    {
+      "case": "oof018",
+      "profile": "desktop-1920x1080@1.5",
+      "asset": "bindings/rust/openui-engine/tests/column_paint_phase_oracles/oof-018-desktop-1920x1080-1.5.rgba",
+      "asset_sha256": "ca68ba0a5c36053da71e92a40e564c3e330b956fbb349f63b1c8b0b6442f2eca",
+      "crop": [
+        30,
+        30,
+        180,
+        180
+      ],
+      "full_physical_size": [
+        2880,
+        1620
+      ],
+      "source_receipt": "/mnt/d/openui-v02-qualification-d174ea0b/native-positioned-column-chromium-command-capture-v4814/receipt.json",
+      "source_receipt_sha256": "ca0a9f6eae78f0e8a249fe80efde918bbca7c5d3fe3b467cd15ce99e578a443c",
+      "source_jobs": [
+        {
+          "job_id": "desktop-1920x1080@1.5-out-of-flow-in-multicolumn-018-0",
+          "source_png": {
+            "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-positioned-column-chromium-command-capture-v4814/desktop-1920x1080@1.5-out-of-flow-in-multicolumn-018-0/layer-0-replay.png",
+            "sha256": "260260331e4ea712f89c26e0539999fe9568166307c5c6dbb0cd3dcceecadd4c",
+            "bytes": 95157
+          },
+          "full_rgba_sha256": "efc6b7cd04bbaf7a2886c017d1f74937040909f88304ec4bbabe4d8537699bc4",
+          "original_oracle": {
+            "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-chromium-matrices-v4447/cache/chromium-oracle/cf/cf4985a13305d1f8f3c62bb4f49d5f1b937382b5ae18dfb4a7148b210e64b4b7.json",
+            "sha256": "5106f0fe0dabb7728d250d91c75281f0ddf18239dcab75e83571f9dce9f19331"
+          }
+        },
+        {
+          "job_id": "desktop-1920x1080@1.5-out-of-flow-in-multicolumn-018-1",
+          "source_png": {
+            "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-positioned-column-chromium-command-capture-v4814/desktop-1920x1080@1.5-out-of-flow-in-multicolumn-018-1/layer-0-replay.png",
+            "sha256": "260260331e4ea712f89c26e0539999fe9568166307c5c6dbb0cd3dcceecadd4c",
+            "bytes": 95157
+          },
+          "full_rgba_sha256": "efc6b7cd04bbaf7a2886c017d1f74937040909f88304ec4bbabe4d8537699bc4",
+          "original_oracle": {
+            "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-chromium-matrices-v4447/cache/chromium-oracle/cf/cf4985a13305d1f8f3c62bb4f49d5f1b937382b5ae18dfb4a7148b210e64b4b7.json",
+            "sha256": "5106f0fe0dabb7728d250d91c75281f0ddf18239dcab75e83571f9dce9f19331"
+          }
+        }
+      ],
+      "independent_repeats_RGBA_exact": true,
+      "outside_crop_white_verified": true,
+      "lossless_RGBA_copy": true
+    }
+  ],
+  "native_browser_SKP_execution_by_author": false,
+  "candidate_qualification": false,
+  "limits": [
+    "No inferred exact result for the new guard or candidate.",
+    "No synthetic ideal edge or tolerance is used.",
+    "Grid009 ownership correction is a separate layout checkpoint.",
+    "No 1.75 Chromium frame is fabricated from the four captured profiles."
+  ]
+}

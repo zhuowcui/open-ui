@@ -1,5 +1,12 @@
 # Open UI current status
 
+## Column paint phases adopted 23 October 2026
+
+The deferred candidate painter is adopted with four repairs that follow
+Blink's layer paint order across fragments. A paired expanded census goes
+from 21,686 to 21,699 exact comparisons, with 13 gains and no losses. See the
+[column paint phases record](column-paint-phases-2026-10-23.md).
+
 ## Candidate painter variants measured 22 October 2026
 
 Paired Linux censuses measured the deferred candidate painter change against
