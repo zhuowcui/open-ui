@@ -112,7 +112,7 @@
    "profile": "mobile-375x667@2"
   }
  ],
- "head": "candidate 3a8c9fbe painter with the three Blink layer-order repairs; census clone commit 2c1f01ec (painter-fix9), formatted and committed as c3dda692",
+ "head": "candidate 3a8c9fbe painter with four Blink layer-order repairs; census clone commit 5d3d1afa (painter-fixed2, the committed painter)",
  "head_exact": 21699,
  "improved": [
   {
@@ -141,6 +141,7 @@
   }
  ],
  "intermediate": {
+  "broad_fixed_admission_clone_commit": "1881825a (identical delta)",
   "exact": 21693,
   "first_repair_only_clone_commit": "3d135226",
   "gains": 13,
@@ -193,29 +194,93 @@
     "id": "wpt/css_break/fieldset-001",
     "profile": "desktop-1920x1080@1.5"
    }
-  ]
+  ],
+  "three_repairs": {
+   "exact": 21699,
+   "gains": 13,
+   "losses": 0,
+   "worsened": [
+    {
+     "base": "different",
+     "base_mismatched": 15750,
+     "head": "different",
+     "head_mismatched": 23500,
+     "id": "wpt/css_break/out-of-flow-in-multicolumn-037",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base": "different",
+     "base_mismatched": 15750,
+     "head": "different",
+     "head_mismatched": 23500,
+     "id": "wpt/css_break/out-of-flow-in-multicolumn-039",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base": "different",
+     "base_mismatched": 275,
+     "head": "different",
+     "head_mismatched": 276,
+     "id": "wpt/css_multicol/spanner-fragmentation-002",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base": "different",
+     "base_mismatched": 22500,
+     "head": "different",
+     "head_mismatched": 33750,
+     "id": "wpt/css_break/out-of-flow-in-multicolumn-037",
+     "profile": "desktop-1920x1080@1.5"
+    },
+    {
+     "base": "different",
+     "base_mismatched": 22500,
+     "head": "different",
+     "head_mismatched": 33750,
+     "id": "wpt/css_break/out-of-flow-in-multicolumn-039",
+     "profile": "desktop-1920x1080@1.5"
+    },
+    {
+     "base": "different",
+     "base_mismatched": 10000,
+     "head": "different",
+     "head_mismatched": 15000,
+     "id": "wpt/css_break/out-of-flow-in-multicolumn-037",
+     "profile": "legacy-800x600@1"
+    },
+    {
+     "base": "different",
+     "base_mismatched": 10000,
+     "head": "different",
+     "head_mismatched": 15000,
+     "id": "wpt/css_break/out-of-flow-in-multicolumn-039",
+     "profile": "legacy-800x600@1"
+    },
+    {
+     "base": "different",
+     "base_mismatched": 40000,
+     "head": "different",
+     "head_mismatched": 60000,
+     "id": "wpt/css_break/out-of-flow-in-multicolumn-037",
+     "profile": "mobile-375x667@2"
+    },
+    {
+     "base": "different",
+     "base_mismatched": 40000,
+     "head": "different",
+     "head_mismatched": 60000,
+     "id": "wpt/css_break/out-of-flow-in-multicolumn-039",
+     "profile": "mobile-375x667@2"
+    }
+   ]
+  },
+  "three_repairs_clone_commit": "2c1f01ec"
  },
  "kind": "paired_expanded_census_delta",
  "losses": [],
- "openui_changed": 31,
+ "openui_changed": 23,
  "schema_version": 1,
  "worsened": [
-  {
-   "base": "different",
-   "base_mismatched": 15750,
-   "head": "different",
-   "head_mismatched": 23500,
-   "id": "wpt/css_break/out-of-flow-in-multicolumn-037",
-   "profile": "desktop-1280x720@1.25"
-  },
-  {
-   "base": "different",
-   "base_mismatched": 15750,
-   "head": "different",
-   "head_mismatched": 23500,
-   "id": "wpt/css_break/out-of-flow-in-multicolumn-039",
-   "profile": "desktop-1280x720@1.25"
-  },
   {
    "base": "different",
    "base_mismatched": 275,
@@ -223,54 +288,6 @@
    "head_mismatched": 276,
    "id": "wpt/css_multicol/spanner-fragmentation-002",
    "profile": "desktop-1280x720@1.25"
-  },
-  {
-   "base": "different",
-   "base_mismatched": 22500,
-   "head": "different",
-   "head_mismatched": 33750,
-   "id": "wpt/css_break/out-of-flow-in-multicolumn-037",
-   "profile": "desktop-1920x1080@1.5"
-  },
-  {
-   "base": "different",
-   "base_mismatched": 22500,
-   "head": "different",
-   "head_mismatched": 33750,
-   "id": "wpt/css_break/out-of-flow-in-multicolumn-039",
-   "profile": "desktop-1920x1080@1.5"
-  },
-  {
-   "base": "different",
-   "base_mismatched": 10000,
-   "head": "different",
-   "head_mismatched": 15000,
-   "id": "wpt/css_break/out-of-flow-in-multicolumn-037",
-   "profile": "legacy-800x600@1"
-  },
-  {
-   "base": "different",
-   "base_mismatched": 10000,
-   "head": "different",
-   "head_mismatched": 15000,
-   "id": "wpt/css_break/out-of-flow-in-multicolumn-039",
-   "profile": "legacy-800x600@1"
-  },
-  {
-   "base": "different",
-   "base_mismatched": 40000,
-   "head": "different",
-   "head_mismatched": 60000,
-   "id": "wpt/css_break/out-of-flow-in-multicolumn-037",
-   "profile": "mobile-375x667@2"
-  },
-  {
-   "base": "different",
-   "base_mismatched": 40000,
-   "head": "different",
-   "head_mismatched": 60000,
-   "id": "wpt/css_break/out-of-flow-in-multicolumn-039",
-   "profile": "mobile-375x667@2"
   }
  ]
 }

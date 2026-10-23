@@ -9405,12 +9405,18 @@ fn fragmented_positioned_phase_is_simple(fragment: &Fragment, doc: &Document) ->
     if style.z_index.is_none() && has_inline_positioned_descendant(fragment, doc) {
         return false;
     }
-    matches!(
+    // A fixed box that layout fragmented through a multicol has a transform
+    // containing block inside that fragmentation context and paints like an
+    // absolute one. A viewport-fixed box is never fragmented and stays out.
+    let fragmented_fixed = style.position == openui_style::Position::Fixed
+        && fragment.positioned_fragmentation.is_some();
+    (matches!(
         style.position,
         openui_style::Position::Absolute
             | openui_style::Position::Relative
             | openui_style::Position::Sticky
-    ) && style.z_index.unwrap_or(0) >= 0
+    ) || fragmented_fixed)
+        && style.z_index.unwrap_or(0) >= 0
         && (style.display == Display::Block || style.display.is_grid())
         && style.float == openui_style::Float::None
         && style.visibility == Visibility::Visible

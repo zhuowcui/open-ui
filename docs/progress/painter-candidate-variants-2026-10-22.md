@@ -76,5 +76,5 @@ stays deferred.
 
 ## Update, 23 October 2026
 
-The painter is adopted with three Blink layer-order repairs and no census
+The painter is adopted with four Blink layer-order repairs and no census
 losses; see [the column paint phases record](column-paint-phases-2026-10-23.md).
