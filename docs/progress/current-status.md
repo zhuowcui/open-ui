@@ -1,5 +1,13 @@
 # Open UI current status
 
+## Windows text across the census profiles 22 October 2026
+
+The 2,927 Ahem text tests are now measured against Windows Chrome at all four
+census profiles: 10,336 of 11,708 comparisons are exact. Every profile has
+more exact tests than the Linux census of the same tests. Seventeen
+scale-specific differences are not yet attributed. See the
+[profiles record](windows-text-profiles-2026-10-22.md).
+
 ## Windows rounded font metrics 22 October 2026
 
 On Windows, layout now uses Blink's rounded ascent and descent instead of
