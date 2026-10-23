@@ -178,6 +178,9 @@ it needs its own census-verified task. That task is complete; see
 Update 22 October 2026: Windows text pixels are measured and the Windows
 raster policy follows Windows Blink; see
 [the Windows text raster record](windows-text-raster-policy-2026-10-22.md).
+The deferred candidate painter change is measured and its main loss attributed;
+reordering its positioned phases to Blink's per-layer fragment iteration is the
+next painter task, see [the painter variants record](painter-candidate-variants-2026-10-22.md).
 
 When feature work resumes, start one focused PR from the latest `main`.
 First resolve the failing native scrollbar frame clip guard, owned by the
