@@ -44,7 +44,7 @@ use skia_safe::{
 };
 
 use std::cell::RefCell;
-use std::collections::{BTreeMap, BTreeSet, HashSet};
+use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
 use unicode_segmentation::UnicodeSegmentation;
 
 type Canvas = dyn crate::paint_record::PaintCanvas;
@@ -682,6 +682,28 @@ fn collect_overflowing_monolithic_column_fragments<'a>(
     }
 }
 
+/// The ordinary ColumnBox path reconstructs this first decoration using its
+/// complete source extent before installing the fragmentainer content clip.
+/// A sliced normal prepaint cannot fulfill or claim that replay obligation.
+fn needs_complete_overflow_decoration_replay(fragment: &Fragment, doc: &Document) -> bool {
+    !fragment.node_id.is_none()
+        && fragment.kind == FragmentKind::Box
+        && fragment.is_first_for_node
+        && (doc.node(fragment.node_id).tag == ElementTag::Fieldset
+            || fragment_has_overflowing_in_flow_monolithic_descendant(
+                fragment,
+                doc,
+                LayoutUnit::zero(),
+                fragment_physical_block_extent(fragment),
+                fragment_block_axis_is_x(fragment),
+            ))
+        && (!doc.node(fragment.node_id).style.max_height.is_none()
+            || doc.node(fragment.node_id).style.height.is_fixed())
+        && fragment
+            .decoration_slice
+            .is_some_and(|slice| slice.source_block_size > fragment_physical_block_extent(fragment))
+}
+
 fn collect_overflowing_max_block_decorations<'a>(
     fragment: &'a Fragment,
     doc: &Document,
@@ -693,26 +715,38 @@ fn collect_overflowing_max_block_decorations<'a>(
             parent_offset.left + child.offset.left,
             parent_offset.top + child.offset.top,
         );
-        if !child.node_id.is_none()
-            && child.kind == FragmentKind::Box
-            && child.is_first_for_node
-            && (doc.node(child.node_id).tag == ElementTag::Fieldset
-                || fragment_has_overflowing_in_flow_monolithic_descendant(
-                    child,
-                    doc,
-                    LayoutUnit::zero(),
-                    fragment_physical_block_extent(child),
-                    fragment_block_axis_is_x(child),
-                ))
-            && (!doc.node(child.node_id).style.max_height.is_none()
-                || doc.node(child.node_id).style.height.is_fixed())
-            && child.decoration_slice.is_some_and(|slice| {
-                slice.source_block_size > fragment_physical_block_extent(child)
-            })
-        {
+        if needs_complete_overflow_decoration_replay(child, doc) {
             result.push((child, child_offset));
         }
         collect_overflowing_max_block_decorations(child, doc, child_offset, result);
+    }
+}
+
+/// Match the ordinary complete-replay caller's ownership, without assigning
+/// that obligation to an unclipped column. Pointer identity stays local to
+/// this raw subtree and this prepaint invocation.
+fn collect_complete_column_decoration_replays(
+    fragment: &Fragment,
+    doc: &Document,
+    inside_clipped_column: bool,
+    output: &mut HashSet<usize>,
+) {
+    let owns_complete_replay = inside_clipped_column
+        || (fragment.kind == FragmentKind::ColumnBox && fragment.has_overflow_clip);
+    // A fieldset whose rendered legend extends its first decoration keeps
+    // the shared column-root decoration; only the ColumnBox replay would
+    // otherwise repaint the same first slice.
+    let replay_keeps_shared_decoration = !fragment.node_id.is_none()
+        && doc.node(fragment.node_id).tag == ElementTag::Fieldset
+        && doc.fieldset_rendered_legend(fragment.node_id).is_some();
+    if owns_complete_replay
+        && !replay_keeps_shared_decoration
+        && needs_complete_overflow_decoration_replay(fragment, doc)
+    {
+        output.insert(fragment as *const Fragment as usize);
+    }
+    for child in &fragment.children {
+        collect_complete_column_decoration_replays(child, doc, owns_complete_replay, output);
     }
 }
 
@@ -833,14 +867,14 @@ fn source_paint_context(
     crate::source_layer_program::PaintSourceContextInput {
         owner: crate::PaintProgramOwner {
             node_id: fragment.node_id,
-            owns_element_box: fragment.owns_element_box(),
+            owns_element_box: fragment.owns_authored_projection_box(),
         },
         layout_role: if matches!(
             fragment.anonymous_layout_box,
             Some(openui_layout::AnonymousLayoutBox::FieldsetContent { .. })
         ) {
             crate::PaintLayoutScopeRole::FieldsetContent
-        } else if fragment.owns_element_box() {
+        } else if fragment.owns_authored_projection_box() {
             crate::PaintLayoutScopeRole::AuthoredBox
         } else if fragment.kind == FragmentKind::Text {
             crate::PaintLayoutScopeRole::TextRun
@@ -912,6 +946,22 @@ fn paint_fragment_tracked(
             .table_part
             .is_some_and(|part| part.column_range().is_some())
     {
+        return;
+    }
+    if !fragment.is_authored_projection_owner() {
+        let child_offset = PhysicalOffset::new(
+            offset.left + fragment.offset.left,
+            offset.top + fragment.offset.top,
+        );
+        paint_children_with_stacking_order(
+            canvas,
+            &fragment.children,
+            doc,
+            child_offset,
+            false,
+            false,
+            Some(fragment),
+        );
         return;
     }
     // Default transform-style:flat ends inherited depth at each actual box.
@@ -6504,6 +6554,14 @@ enum StackingEntry<'a> {
     Direct(usize),
     Descendant(&'a Fragment, PhysicalOffset),
     DescendantWithClip(&'a Fragment, PhysicalOffset, Rect),
+    // Transient column phase ownership; no retained Fragment state is added.
+    FragmentedPositioned(&'a Fragment, PhysicalOffset, Option<Rect>),
+    FragmentedPositionedWithDecorationWindow(
+        &'a Fragment,
+        PhysicalOffset,
+        Option<Rect>,
+        SplitPositionedDecorationWindow,
+    ),
 }
 
 struct FragmentedInlineOofEntry<'a> {
@@ -6945,6 +7003,94 @@ fn fragmented_flex_has_internal_four_way_junction(fragment: &Fragment) -> bool {
     false
 }
 
+/// Source paint order is separate from arena allocation. Grid/Flex item
+/// producers publish order-modified in-flow items and a separate OOF list.
+/// Generated pseudo nodes use the same real sibling links as ordinary nodes.
+fn stacking_source_children(doc: &Document, node: NodeId) -> Vec<NodeId> {
+    let style = &doc.node(node).style;
+    if !style.display.is_flex() && !style.display.is_grid() {
+        return doc.children(node).collect();
+    }
+    fn flatten(doc: &Document, node: NodeId, output: &mut Vec<NodeId>) {
+        for child in doc.children(node) {
+            match doc.node(child).style.display {
+                Display::None => {}
+                Display::Contents => flatten(doc, child, output),
+                _ => output.push(child),
+            }
+        }
+    }
+    let mut flat = Vec::new();
+    flatten(doc, node, &mut flat);
+    let (mut items, positioned): (Vec<_>, Vec<_>) = flat
+        .into_iter()
+        .partition(|child| !doc.node(*child).style.position.is_absolutely_positioned());
+    items.sort_by_key(|child| doc.node(*child).style.order);
+    items.extend(positioned);
+    items
+}
+
+/// Give every projection of a source node the same actual source rank.
+/// Equal ranks retain the original continuation order through the stable
+/// sort. Correct retained Flex item order takes precedence over raw DOM order.
+/// If a source is detached, use the actual retained tree. Unrepresented
+/// metadata leaves the caller's stream stable within z; it cannot manufacture
+/// a source order from numeric node identities.
+fn assign_stacking_source_order<'a>(
+    doc: &Document,
+    children: &'a [Fragment],
+    negative: &mut [(i32, usize, StackingEntry<'a>)],
+    non_negative: &mut [(i32, usize, StackingEntry<'a>)],
+    retained_item_order: bool,
+) -> bool {
+    if negative.len() <= 1 && non_negative.len() <= 1 {
+        return true;
+    }
+    let wanted: HashSet<_> = negative
+        .iter()
+        .chain(non_negative.iter())
+        .map(|(_, _, entry)| stacking_entry_fragment(entry, children).node_id)
+        .collect();
+    if wanted.contains(&NodeId::NONE) {
+        return false;
+    }
+    let mut ranks = HashMap::new();
+    if !retained_item_order {
+        let mut pending = vec![doc.root()];
+        while let Some(node) = pending.pop() {
+            if wanted.contains(&node) {
+                let next = ranks.len();
+                ranks.entry(node).or_insert(next);
+                if ranks.len() == wanted.len() {
+                    break;
+                }
+            }
+            pending.extend(stacking_source_children(doc, node).into_iter().rev());
+        }
+    }
+    if ranks.len() != wanted.len() {
+        ranks.clear();
+        let mut pending: Vec<_> = children.iter().rev().collect();
+        while let Some(fragment) = pending.pop() {
+            if wanted.contains(&fragment.node_id) {
+                let next = ranks.len();
+                ranks.entry(fragment.node_id).or_insert(next);
+                if ranks.len() == wanted.len() {
+                    break;
+                }
+            }
+            pending.extend(fragment.children.iter().rev());
+        }
+    }
+    if ranks.len() != wanted.len() {
+        return false;
+    }
+    for (_, order, entry) in negative.iter_mut().chain(non_negative.iter_mut()) {
+        *order = ranks[&stacking_entry_fragment(entry, children).node_id];
+    }
+    true
+}
+
 fn paint_children_with_stacking_order(
     canvas: &Canvas,
     children: &[Fragment],
@@ -7087,9 +7233,35 @@ fn paint_children_with_stacking_order(
         }
     }
 
-    // Sort by z-index (stable sort preserves document order for equal z-index)
-    negative_z.sort_by_key(|&(z, order, _)| (z, order));
-    non_negative_z.sort_by_key(|&(z, order, _)| (z, order));
+    if let Some(owner) = table_owner.filter(|owner| owner.owns_element_box()) {
+        for &index in &in_flow {
+            collect_authored_source_projection_transforms(
+                &children[index],
+                doc,
+                offset,
+                owner.node_id,
+                &mut non_negative_z,
+                &mut hoisted_ptrs,
+            );
+        }
+    }
+
+    // One current source key joins direct and hoisted entries. Stable ties
+    // retain each node's real continuation order; arena IDs are identities.
+    if assign_stacking_source_order(
+        doc,
+        children,
+        &mut negative_z,
+        &mut non_negative_z,
+        parent_is_flex,
+    ) {
+        negative_z.sort_by_key(|&(z, order, _)| (z, order));
+        non_negative_z.sort_by_key(|&(z, order, _)| (z, order));
+    } else {
+        // Incomplete source metadata cannot justify invented numeric order.
+        negative_z.sort_by_key(|&(z, _, _)| z);
+        non_negative_z.sort_by_key(|&(z, _, _)| z);
+    }
 
     // Register hoisted fragments in HOIST_SKIP so Phase 2 skips them.
     if !hoisted_ptrs.is_empty() {
@@ -7516,7 +7688,86 @@ fn paint_children_with_stacking_order(
                     .any(|(_, _, entry)| {
                         !stacking_entry_fragment(entry, children).children.is_empty()
                     });
-            if simple_group {
+            let owns_fragmented_phase = non_negative_z[positioned_index..group_end]
+                .iter()
+                .all(|(_, _, entry)| fragmented_positioned_entry_parts(entry).is_some());
+            if owns_fragmented_phase {
+                // Retained coordinate projections can expose the same opaque
+                // decoration twice. Preserve the existing per-node coverage
+                // accounting in its later phase, without deduplicating child
+                // ink or modifying principal/source intervals.
+                let mut painted_solid_coverage = Vec::new();
+                for (_, _, entry) in &non_negative_z[positioned_index..group_end] {
+                    let (fragment, parent_offset, clip, window) =
+                        fragmented_positioned_entry_parts(entry)
+                            .expect("homogeneous fragmented positioned phase");
+                    // A source window can retain child ink without owning
+                    // this box's decoration. Its later child traversal still
+                    // runs; the decoration phase must honor that ownership.
+                    if fragment.skip_box_decoration {
+                        continue;
+                    }
+                    let offset = PhysicalOffset::new(
+                        parent_offset.left + fragment.offset.left,
+                        parent_offset.top + fragment.offset.top,
+                    );
+                    if window.is_some_and(SplitPositionedDecorationWindow::is_empty) {
+                        prepainted.push(fragment as *const Fragment as usize);
+                        continue;
+                    }
+                    let view = window.map(|window| window.decoration_view(fragment));
+                    let paint_fragment = view.as_ref().unwrap_or(fragment);
+                    let paint_offset =
+                        window.map_or(offset, |window| window.decoration_offset(offset));
+                    let decoration = SharedColumnDecoration {
+                        fragment: paint_fragment,
+                        offset: paint_offset,
+                        clips: clip
+                            .map(|rect| SharedColumnClip {
+                                rect: outward_snap_rect_to_physical(
+                                    rect,
+                                    doc.device_scale_factor(),
+                                ),
+                                antialias: false,
+                                translate_with_relative: true,
+                            })
+                            .into_iter()
+                            .collect(),
+                        ancestor_node_ids: Vec::new(),
+                        starts_at_shared_edge: false,
+                    };
+                    let coverage = can_coalesce_identical_solid_decoration(&decoration, style)
+                        .then(|| clipped_decoration_coverage_rect(&decoration))
+                        .flatten();
+                    let duplicate = coverage.is_some_and(|rect| {
+                        painted_solid_coverage
+                            .iter()
+                            .any(|painted| same_physical_decoration_rect(*painted, rect))
+                    });
+                    if !duplicate {
+                        canvas.save();
+                        for clip in &decoration.clips {
+                            canvas.clip_rect(clip.rect, ClipOp::Intersect, clip.antialias);
+                        }
+                        paint_fragment_box_decoration(
+                            canvas,
+                            paint_fragment,
+                            doc,
+                            style,
+                            paint_offset,
+                            1.0,
+                        );
+                        canvas.restore();
+                        if let Some(rect) = coverage {
+                            painted_solid_coverage.push(rect);
+                        }
+                    }
+                    prepainted.push(fragment as *const Fragment as usize);
+                }
+                PREPAINTED_BOX_DECORATIONS.with(|fragments| {
+                    fragments.borrow_mut().extend(prepainted.iter().copied());
+                });
+            } else if simple_group {
                 for (_, _, entry) in &non_negative_z[positioned_index..group_end] {
                     let fragment = stacking_entry_fragment(entry, children);
                     if let StackingEntry::DescendantWithClip(_, _, clip_rect) = entry {
@@ -7530,7 +7781,14 @@ fn paint_children_with_stacking_order(
                     let parent_offset = match entry {
                         StackingEntry::Direct(_) => offset,
                         StackingEntry::Descendant(_, parent_offset)
-                        | StackingEntry::DescendantWithClip(_, parent_offset, _) => *parent_offset,
+                        | StackingEntry::DescendantWithClip(_, parent_offset, _)
+                        | StackingEntry::FragmentedPositioned(_, parent_offset, _)
+                        | StackingEntry::FragmentedPositionedWithDecorationWindow(
+                            _,
+                            parent_offset,
+                            _,
+                            _,
+                        ) => *parent_offset,
                     };
                     paint_fragment_box_decoration(
                         canvas,
@@ -7713,6 +7971,7 @@ fn prepaint_collapsed_table_backgrounds(
     let used_style = paint_style_with_used_overflow(fragment, source_style, doc);
     let style = used_style.as_ref().unwrap_or(source_style);
     if fragment.kind == FragmentKind::Box
+        && fragment.is_authored_projection_owner()
         && (style.visibility == Visibility::Visible
             || fragment
                 .table_part
@@ -7840,6 +8099,7 @@ fn prepaint_in_flow_block_decorations(
             || is_formatting_helper(fragment)
             || fragment.kind != FragmentKind::Box
             || fragment.skip_box_decoration
+            || !fragment.is_authored_projection_owner()
             || fragment.paint_background_color_override.is_some()
             || doc.canvas_background_source() == Some(fragment.node_id)
         {
@@ -8018,80 +8278,6 @@ fn same_physical_decoration_rect(first: Rect, second: Rect) -> bool {
         && (first.bottom - second.bottom).abs() <= EPSILON
 }
 
-fn shared_spanner_four_way_junctions(
-    column_decorations: &[Vec<SharedColumnDecoration<'_>>],
-    node_order: &[usize],
-    doc: &Document,
-) -> Vec<(Rect, Color)> {
-    const EPSILON: f32 = 1.0 / 1024.0;
-    let scale = doc.device_scale_factor();
-    let snapping = RasterSnapping::new(scale);
-    let candidates: Vec<_> = column_decorations
-        .iter()
-        .flatten()
-        .filter_map(|decoration| {
-            let node_id = decoration.fragment.node_id.index();
-            if !node_order.contains(&node_id) {
-                return None;
-            }
-            let style = &doc.node(decoration.fragment.node_id).style;
-            let belongs_to_spanner = style.column_span == openui_style::ColumnSpan::All
-                || decoration.ancestor_node_ids.iter().any(|ancestor| {
-                    doc.node(*ancestor).style.column_span == openui_style::ColumnSpan::All
-                });
-            (belongs_to_spanner && can_coalesce_identical_solid_decoration(decoration, style))
-                .then(|| {
-                    clipped_decoration_coverage_rect(decoration)
-                        .map(|rect| (rect, style.background_color))
-                })
-                .flatten()
-        })
-        .collect();
-
-    let mut junctions = Vec::new();
-    for &(top_left, color) in &candidates {
-        let x = top_left.right;
-        let y = top_left.bottom;
-        let x_phase = (f64::from(x) * scale).rem_euclid(1.0);
-        let y_phase = (f64::from(y) * scale).rem_euclid(1.0);
-        if (x_phase - 0.5).abs() > 1.0e-6 || (y_phase - 0.5).abs() > 1.0e-6 {
-            continue;
-        }
-        let has_top_right = candidates.iter().any(|(rect, peer_color)| {
-            *peer_color == color
-                && (rect.left - x).abs() <= EPSILON
-                && (rect.bottom - y).abs() <= EPSILON
-        });
-        let has_bottom_left = candidates.iter().any(|(rect, peer_color)| {
-            *peer_color == color
-                && (rect.right - x).abs() <= EPSILON
-                && (rect.top - y).abs() <= EPSILON
-        });
-        let has_bottom_right = candidates.iter().any(|(rect, peer_color)| {
-            *peer_color == color
-                && (rect.left - x).abs() <= EPSILON
-                && (rect.top - y).abs() <= EPSILON
-        });
-        if !(has_top_right && has_bottom_left && has_bottom_right) {
-            continue;
-        }
-        let physical_x = snapping.physical_coordinate(x, PhysicalSnap::Floor);
-        let physical_y = snapping.physical_coordinate(y, PhysicalSnap::Floor);
-        let cell = Rect::from_ltrb(
-            physical_x as f32 / scale as f32,
-            physical_y as f32 / scale as f32,
-            (physical_x + 1) as f32 / scale as f32,
-            (physical_y + 1) as f32 / scale as f32,
-        );
-        if !junctions.iter().any(|(existing, existing_color)| {
-            *existing_color == color && same_physical_decoration_rect(*existing, cell)
-        }) {
-            junctions.push((cell, color));
-        }
-    }
-    junctions
-}
-
 fn physical_axis_coverage_may_overlap(
     first_start: f32,
     first_end: f32,
@@ -8146,6 +8332,29 @@ fn collect_shared_column_decorations<'a>(
     is_column_root: bool,
     output: &mut Vec<SharedColumnDecoration<'a>>,
 ) {
+    // A deferred owner paints its complete descendant phases later; this
+    // enclosing in-flow row cannot collect its subtree's backgrounds.
+    if HOIST_SKIP.with(|fragments| {
+        fragments
+            .borrow()
+            .contains(&(fragment as *const Fragment as usize))
+    }) {
+        return;
+    }
+    // An out-of-flow box is its own paint layer: Blink paints it, and every
+    // background in its subtree, after the in-flow phases of all of the
+    // enclosing layer's fragments. It cannot join this in-flow row even when
+    // its stacking entry was not hoisted.
+    if !is_column_root
+        && !fragment.node_id.is_none()
+        && !is_formatting_helper(fragment)
+        && matches!(
+            doc.node(fragment.node_id).style.position,
+            openui_style::Position::Absolute | openui_style::Position::Fixed
+        )
+    {
+        return;
+    }
     let fragment_offset = PhysicalOffset::new(
         parent_offset.left + fragment.offset.left,
         parent_offset.top + fragment.offset.top,
@@ -8255,7 +8464,6 @@ fn collect_shared_column_decorations<'a>(
             style.display.is_grid() && style.position != openui_style::Position::Static;
         let eligible = fragment.kind == FragmentKind::Box
             && (is_column_root || style.display == Display::Block || positioned_grid)
-            && !fragment.skip_box_decoration
             && style.visibility == Visibility::Visible
             && style.opacity >= 1.0
             && !style_has_transform(style)
@@ -8266,6 +8474,9 @@ fn collect_shared_column_decorations<'a>(
             && !HOIST_SKIP.with(|fragments| fragments.borrow().contains(&pointer))
             && !PREPAINTED_BOX_DECORATIONS.with(|fragments| fragments.borrow().contains(&pointer));
         if eligible {
+            // Logical projections retain this owner's block-background
+            // phase topology even when a source window owns no decoration.
+            // Only emission below consults skip_box_decoration.
             output.push(SharedColumnDecoration {
                 fragment,
                 offset: fragment_offset,
@@ -8626,17 +8837,10 @@ fn prepaint_shared_column_root_decorations(
     {
         return (Vec::new(), Vec::new());
     }
-    // Decorations belong to logical boxes, not to anonymous columns. Paint
-    // every continuation of one box before advancing to the next box's paint
-    // phase. At a fractional shared column edge this distinction is visible:
-    // column-major R,G,R,G compositing does not produce the same coverage as
-    // source-major R,R,G,G compositing. A unique column-root decoration that
-    // physically meets a later sliced continuation joins that phase as well;
-    // leaving it in column-major painting would reverse their DOM order in
-    // the shared coverage cell. Nested decorations retain their ancestor's
-    // phase, and cloned decorations retain their per-fragment paint phase. A
-    // unique descendant beginning at the shared edge is grouped separately
-    // by `starts_at_shared_edge` for the same source-order reason.
+    // This list contains only non-deferred block backgrounds of the current
+    // owner. Traverse actual fragmentainers within that phase. Positioned
+    // owners are dispatched separately through their stacking entries; their
+    // own background and descendant phases cannot be flattened into this row.
     let mut node_order = Vec::new();
     for decorations in &column_decorations {
         for (decoration_index, decoration) in decorations.iter().enumerate() {
@@ -8687,81 +8891,106 @@ fn prepaint_shared_column_root_decorations(
         }
     }
 
+    let mut complete_column_replays = HashSet::new();
+    for column in &columns {
+        collect_complete_column_decoration_replays(
+            column,
+            doc,
+            false,
+            &mut complete_column_replays,
+        );
+    }
     let mut prepainted = Vec::new();
     let mut prepainted_rules = Vec::new();
-    let spanner_junctions =
-        shared_spanner_four_way_junctions(&column_decorations, &node_order, doc);
-    for node_id in node_order {
-        let mut painted_solid_coverage = Vec::new();
-        for decorations in &column_decorations {
-            for decoration in decorations
-                .iter()
-                .filter(|decoration| decoration.fragment.node_id.index() == node_id)
-            {
-                let fragment = decoration.fragment;
-                let style = &doc.node(fragment.node_id).style;
-                let solid_coverage = can_coalesce_identical_solid_decoration(decoration, style)
-                    .then(|| clipped_decoration_coverage_rect(decoration))
-                    .flatten();
-                let duplicate_solid_coverage = solid_coverage.is_some_and(|coverage| {
-                    painted_solid_coverage
-                        .iter()
-                        .any(|painted| same_physical_decoration_rect(*painted, coverage))
-                });
-                let pointer = fragment as *const Fragment as usize;
-                if duplicate_solid_coverage {
-                    // Coordinate replay can expose the same opaque slice
-                    // through two nested fragmentainers. It is one logical
-                    // box decoration; painting it twice compounds fractional
-                    // edge coverage at their shared physical boundary.
-                    prepainted.push(pointer);
-                    continue;
-                }
-                canvas.save();
-                for clip in &decoration.clips {
-                    canvas.clip_rect(clip.rect, ClipOp::Intersect, clip.antialias);
-                }
-                paint_fragment_box_decoration(canvas, fragment, doc, style, decoration.offset, 1.0);
-                prepaint_direct_shared_column_rules(
-                    canvas,
-                    fragment,
-                    doc,
-                    decoration.offset,
-                    &mut prepainted_rules,
-                );
-                prepainted.push(pointer);
-                canvas.restore();
-                if let Some(coverage) = solid_coverage {
-                    painted_solid_coverage.push(coverage);
-                }
+    // Blink paints a layer's phases across all of its fragments: in-flow
+    // backgrounds column by column, then each positioned owner's own
+    // background in every column, then that owner's descendants column by
+    // column. Positioned owners therefore never interleave with in-flow
+    // backgrounds of a later column.
+    let layer_owner = |decoration: &SharedColumnDecoration<'_>| {
+        decoration
+            .ancestor_node_ids
+            .iter()
+            .copied()
+            .chain(std::iter::once(decoration.fragment.node_id))
+            .find(|node_id| doc.node(*node_id).style.position != openui_style::Position::Static)
+    };
+    let mut ordered: Vec<&SharedColumnDecoration<'_>> = Vec::new();
+    let mut owners = Vec::new();
+    for decorations in &column_decorations {
+        for decoration in decorations
+            .iter()
+            .filter(|decoration| node_order.contains(&decoration.fragment.node_id.index()))
+        {
+            match layer_owner(decoration) {
+                None => ordered.push(decoration),
+                Some(owner) if !owners.contains(&owner) => owners.push(owner),
+                Some(_) => {}
             }
         }
     }
-    for (cell, color) in spanner_junctions {
-        // Four independently rasterized quarter-covered corners leave a
-        // symmetric junction slightly lighter on Chromium's analytic
-        // display-item path than four CPU-Skia SrcOver masks. Resolve that
-        // primitive junction while it is still vector paint, before tile
-        // assembly. The eight-bit analytic mask stores the additional
-        // midpoint sample as 28/255 coverage.
-        let mut paint = Paint::default();
-        paint.set_style(PaintStyle::Fill);
-        paint.set_anti_alias(false);
-        let channel_up = |component: f32| {
-            if component <= 0.0 || component >= 1.0 {
-                component.clamp(0.0, 1.0)
-            } else {
-                (((component * 255.0).round() + 8.0).min(255.0)) / 255.0
+    for owner in owners {
+        for own in [true, false] {
+            for decorations in &column_decorations {
+                ordered.extend(decorations.iter().filter(|decoration| {
+                    node_order.contains(&decoration.fragment.node_id.index())
+                        && layer_owner(decoration) == Some(owner)
+                        && (decoration.fragment.node_id == owner) == own
+                }));
             }
-        };
-        let packed_color = Color {
-            r: channel_up(color.r),
-            g: channel_up(color.g),
-            b: channel_up(color.b),
-            a: color.a,
-        };
-        set_paint_css_color_with_alpha(&mut paint, &packed_color, 28.0 / 255.0);
-        canvas.draw_rect(cell, &paint);
+        }
+    }
+    let mut painted_solid_coverage: BTreeMap<usize, Vec<Rect>> = BTreeMap::new();
+    {
+        for decoration in ordered {
+            let fragment = decoration.fragment;
+            // Phase membership follows retained logical topology. A source
+            // window without decoration must not claim paint coverage or
+            // prepainted ownership; its later children and outlines remain
+            // in their existing traversal.
+            if fragment.skip_box_decoration
+                || !fragment.is_authored_projection_owner()
+                || complete_column_replays.contains(&(fragment as *const Fragment as usize))
+            {
+                continue;
+            }
+            let node_id = fragment.node_id.index();
+            let style = &doc.node(fragment.node_id).style;
+            let solid_coverage = can_coalesce_identical_solid_decoration(decoration, style)
+                .then(|| clipped_decoration_coverage_rect(decoration))
+                .flatten();
+            let coverage_for_node = painted_solid_coverage.entry(node_id).or_default();
+            let duplicate_solid_coverage = solid_coverage.is_some_and(|coverage| {
+                coverage_for_node
+                    .iter()
+                    .any(|painted| same_physical_decoration_rect(*painted, coverage))
+            });
+            let pointer = fragment as *const Fragment as usize;
+            if duplicate_solid_coverage {
+                // Coordinate replay can expose the same opaque slice
+                // through two nested fragmentainers. Preserve its existing
+                // ownership accounting while retaining fragmentainer order.
+                prepainted.push(pointer);
+                continue;
+            }
+            canvas.save();
+            for clip in &decoration.clips {
+                canvas.clip_rect(clip.rect, ClipOp::Intersect, clip.antialias);
+            }
+            paint_fragment_box_decoration(canvas, fragment, doc, style, decoration.offset, 1.0);
+            prepaint_direct_shared_column_rules(
+                canvas,
+                fragment,
+                doc,
+                decoration.offset,
+                &mut prepainted_rules,
+            );
+            prepainted.push(pointer);
+            canvas.restore();
+            if let Some(coverage) = solid_coverage {
+                coverage_for_node.push(coverage);
+            }
+        }
     }
     (prepainted, prepainted_rules)
 }
@@ -8788,6 +9017,62 @@ fn paint_stacking_entry(
             paint_fragment_tracked(canvas, fragment, doc, *parent_offset);
             canvas.restore();
         }
+        StackingEntry::FragmentedPositioned(fragment, parent_offset, clip) => {
+            canvas.save();
+            if let Some(clip) = clip {
+                canvas.clip_rect(
+                    outward_snap_rect_to_physical(*clip, doc.device_scale_factor()),
+                    ClipOp::Intersect,
+                    false,
+                );
+            }
+            paint_fragment_tracked(canvas, fragment, doc, *parent_offset);
+            canvas.restore();
+        }
+        StackingEntry::FragmentedPositionedWithDecorationWindow(
+            fragment,
+            parent_offset,
+            clip,
+            window,
+        ) => {
+            canvas.save();
+            if let Some(clip) = clip {
+                canvas.clip_rect(
+                    outward_snap_rect_to_physical(*clip, doc.device_scale_factor()),
+                    ClipOp::Intersect,
+                    false,
+                );
+            }
+            let pointer = *fragment as *const Fragment as usize;
+            let already_prepainted =
+                PREPAINTED_BOX_DECORATIONS.with(|set| set.borrow().contains(&pointer));
+            let mut inserted = false;
+            if !already_prepainted && !fragment.skip_box_decoration {
+                if !window.is_empty() {
+                    let view = window.decoration_view(fragment);
+                    let offset = PhysicalOffset::new(
+                        parent_offset.left + fragment.offset.left,
+                        parent_offset.top + fragment.offset.top,
+                    );
+                    paint_fragment_box_decoration(
+                        canvas,
+                        &view,
+                        doc,
+                        &doc.node(fragment.node_id).style,
+                        window.decoration_offset(offset),
+                        1.0,
+                    );
+                }
+                inserted = PREPAINTED_BOX_DECORATIONS.with(|set| set.borrow_mut().insert(pointer));
+            }
+            paint_fragment_tracked(canvas, fragment, doc, *parent_offset);
+            if inserted {
+                PREPAINTED_BOX_DECORATIONS.with(|set| {
+                    set.borrow_mut().remove(&pointer);
+                });
+            }
+            canvas.restore();
+        }
     }
 }
 
@@ -8798,7 +9083,9 @@ fn stacking_entry_fragment<'a>(
     match entry {
         StackingEntry::Direct(index) => &children[*index],
         StackingEntry::Descendant(fragment, _)
-        | StackingEntry::DescendantWithClip(fragment, _, _) => fragment,
+        | StackingEntry::DescendantWithClip(fragment, _, _)
+        | StackingEntry::FragmentedPositioned(fragment, _, _)
+        | StackingEntry::FragmentedPositionedWithDecorationWindow(fragment, _, _, _) => fragment,
     }
 }
 
@@ -8806,7 +9093,9 @@ fn stacking_entry_pointer(entry: &StackingEntry<'_>) -> Option<usize> {
     match entry {
         StackingEntry::Direct(_) => None,
         StackingEntry::Descendant(fragment, _)
-        | StackingEntry::DescendantWithClip(fragment, _, _) => {
+        | StackingEntry::DescendantWithClip(fragment, _, _)
+        | StackingEntry::FragmentedPositioned(fragment, _, _)
+        | StackingEntry::FragmentedPositionedWithDecorationWindow(fragment, _, _, _) => {
             Some(*fragment as *const Fragment as usize)
         }
     }
@@ -8950,6 +9239,14 @@ fn collect_positioned_z_auto_descendants<'a>(
                 non_negative_z,
                 hoisted_ptrs,
             );
+            collect_fragmented_positioned_phase(
+                child,
+                doc,
+                frag_offset,
+                column_clip,
+                non_negative_z,
+                hoisted_ptrs,
+            );
             continue;
         }
 
@@ -9055,6 +9352,623 @@ fn collect_positioned_z_auto_descendants<'a>(
                 );
             }
         }
+    }
+}
+
+/// This transient phase carries physical clips through horizontal source
+/// intervals. A vertical authored box or conflicting retained axis keeps its
+/// existing paint traversal until this phase has axis-correct ownership.
+/// Unknown legacy carrier metadata does not change horizontal admission.
+fn fragmented_positioned_phase_has_horizontal_axes(fragment: &Fragment, doc: &Document) -> bool {
+    fragment
+        .fragmentation_writing_direction
+        .is_none_or(|direction| direction.is_horizontal())
+        && fragment
+            .box_geometry
+            .is_none_or(|geometry| geometry.writing_direction.is_horizontal())
+        && (fragment.node_id.is_none()
+            || doc
+                .node(fragment.node_id)
+                .style
+                .writing_mode
+                .is_horizontal())
+}
+
+/// Simple positioned owners have a later painting phase even with z:auto.
+/// Unsupported effect, displacement, inline and clone contexts retain their
+/// existing atomic paths. No draw is selected by its color, size or DPR.
+fn fragmented_positioned_phase_is_simple(fragment: &Fragment, doc: &Document) -> bool {
+    if !fragmented_positioned_phase_has_horizontal_axes(fragment, doc)
+        || fragment.kind != FragmentKind::Box
+        || !fragment.owns_element_box()
+        || fragment.node_id.is_none()
+        || fragment.is_inline_box_fragment
+        || has_inline_ancestor(doc, fragment.node_id)
+        || fragment.fragmentation_visual_offset != PhysicalOffset::zero()
+        || !fragment.promoted_transform_ancestors.is_empty()
+        || !fragment.decoration_clip_rects.is_empty()
+        || fragment.table_part.is_some()
+        || fragment
+            .positioned_fragmentation
+            .as_ref()
+            .is_some_and(|data| data.inline_containing_block_node.is_some())
+    {
+        return false;
+    }
+    let node = doc.node(fragment.node_id);
+    let style = &node.style;
+    // A z:auto owner's positioned descendants paint as later layers of the
+    // ancestor stacking context, after every fragment of this owner. The
+    // phase can hoist only block-level ones; an owner that would keep an
+    // inline positioned descendant inside its per-fragment paint must keep
+    // the ordinary path, or later fragments' ink would land over it.
+    if style.z_index.is_none() && has_inline_positioned_descendant(fragment, doc) {
+        return false;
+    }
+    matches!(
+        style.position,
+        openui_style::Position::Absolute
+            | openui_style::Position::Relative
+            | openui_style::Position::Sticky
+    ) && style.z_index.unwrap_or(0) >= 0
+        && (style.display == Display::Block || style.display.is_grid())
+        && style.float == openui_style::Float::None
+        && style.visibility == Visibility::Visible
+        && style.opacity >= 1.0
+        && !style_has_transform(style)
+        && style.filter_blur <= 0.0
+        && style.filter_grayscale <= 0.0
+        && style.clip_path_inset.is_none()
+        && style.mask_layers.is_empty()
+        && !style.has_paint_containment()
+        && !style.has_border_radius()
+        && style.box_decoration_break != openui_style::BoxDecorationBreak::Clone
+        && style.overflow_x == Overflow::Visible
+        && style.overflow_y == Overflow::Visible
+        && node.replaced.is_none()
+        && node.form_control.is_none()
+}
+
+/// Whether a positioned descendant in this stacking scope is inline-level or
+/// has an inline ancestor, which the fragmented positioned phase cannot hoist.
+fn has_inline_positioned_descendant(fragment: &Fragment, doc: &Document) -> bool {
+    fragment.children.iter().any(|child| {
+        if !child.node_id.is_none() && !is_formatting_helper(child) {
+            let style = &doc.node(child.node_id).style;
+            if style.position != openui_style::Position::Static
+                && (child.is_inline_box_fragment
+                    || style.display.is_inline_level()
+                    || has_inline_ancestor(doc, child.node_id))
+            {
+                return true;
+            }
+            if is_fragment_stacking_context(child, doc) {
+                return false;
+            }
+        }
+        has_inline_positioned_descendant(child, doc)
+    })
+}
+
+/// A decoration view of one retained split-CB source projection. The source
+/// Fragment and its children stay in their original positioning coordinates.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+struct SplitPositionedDecorationWindow {
+    source_offset: LayoutUnit,
+    source_size: LayoutUnit,
+    block_size: LayoutUnit,
+}
+
+impl SplitPositionedDecorationWindow {
+    fn is_empty(self) -> bool {
+        self.block_size == LayoutUnit::zero()
+    }
+
+    fn decoration_view(self, fragment: &Fragment) -> Fragment {
+        let mut view = fragment.clone();
+        view.size.height = self.block_size;
+        if self.source_offset != LayoutUnit::zero() || self.block_size != self.source_size {
+            view.decoration_slice = Some(openui_layout::DecorationSlice {
+                source_block_offset: self.source_offset,
+                source_block_size: self.source_size,
+            });
+        }
+        view.is_first_for_node = self.source_offset == LayoutUnit::zero();
+        view.is_last_for_node = self.source_offset + self.block_size == self.source_size;
+        view
+    }
+
+    fn decoration_offset(self, offset: PhysicalOffset) -> PhysicalOffset {
+        PhysicalOffset::new(offset.left, offset.top + self.source_offset)
+    }
+}
+
+/// Resolve only source geometry that the split-CB producer actually retained.
+/// A pristine fragmentainer capacity is not the principal source budget, and
+/// negative local child offsets do not identify the start of its own source.
+fn owned_split_positioned_decoration_window(
+    fragment: &Fragment,
+    containing_block: &Fragment,
+    doc: &Document,
+) -> Option<SplitPositionedDecorationWindow> {
+    let positioned = fragment.positioned_fragmentation?;
+    let split_source = positioned.split_containing_block_source_offset?;
+    let geometry = containing_block.box_geometry?;
+    if !fragmented_positioned_phase_is_simple(fragment, doc)
+        || !containing_block.owns_element_box()
+        || containing_block.node_id != positioned.containing_block_node
+        || positioned.fragmentainer_index.is_some()
+        || positioned.has_inline_containing_block
+        || positioned.inline_containing_block_node.is_some()
+        || positioned.block_in_inline_static_advance != LayoutUnit::zero()
+        || positioned.visual_offset != PhysicalOffset::zero()
+        || positioned.continuation_visual_offset != PhysicalOffset::zero()
+        || positioned
+            .transform_containing_block_source_offset
+            .is_some()
+        || fragment.box_geometry.is_some()
+        || fragment.decoration_slice.is_some()
+        || fragment.decoration_paint_block_size.is_some()
+        || !fragment.is_first_for_node
+        || !fragment.is_last_for_node
+        || fragment.has_overflow_clip
+        || !geometry.continuation_record
+        || geometry.is_repeated
+        || !geometry.writing_direction.is_horizontal()
+        || fragment
+            .fragmentation_writing_direction
+            .is_some_and(|direction| !direction.is_horizontal())
+        || containing_block
+            .fragmentation_writing_direction
+            .is_some_and(|direction| !direction.is_horizontal())
+        || geometry.source_border != openui_geometry::BoxStrut::zero()
+        || geometry.source_padding != openui_geometry::BoxStrut::zero()
+        || geometry.source_border_box_rect.x() != LayoutUnit::zero()
+        || geometry.source_border_box_rect.y() != LayoutUnit::zero()
+    {
+        return None;
+    }
+    let style = &doc.node(fragment.node_id).style;
+    let cb_style = &doc.node(containing_block.node_id).style;
+    // A portion split around a spanner can have zero captured padding after
+    // its original start edge was removed. Require the original computed CB
+    // padding to be zero independently of the unavailable percentage basis;
+    // a partial projection cannot establish that basis from its own width.
+    let original_padding_is_zero = [
+        cb_style.padding_top,
+        cb_style.padding_right,
+        cb_style.padding_bottom,
+        cb_style.padding_left,
+    ]
+    .into_iter()
+    .all(|padding| {
+        padding.is_specified() && padding.value() == 0.0 && padding.calc_offset() == 0.0
+    });
+    if style.position != Position::Absolute
+        || !original_padding_is_zero
+        || cb_style.effective_border_top() != 0
+        || cb_style.effective_border_right() != 0
+        || cb_style.effective_border_bottom() != 0
+        || cb_style.effective_border_left() != 0
+        || !style.writing_mode.is_horizontal()
+        || !cb_style.writing_mode.is_horizontal()
+        || cb_style.box_decoration_break == openui_style::BoxDecorationBreak::Clone
+        || !style.box_shadow.is_empty()
+        || !style.background_layers.is_empty()
+        || style.background_linear_gradient.is_some()
+        || style.background_clip != BackgroundClip::BorderBox
+        || style.border_image.is_some()
+        || fragment.border != openui_geometry::BoxStrut::zero()
+        || style.effective_border_top() != 0
+        || style.effective_border_right() != 0
+        || style.effective_border_bottom() != 0
+        || style.effective_border_left() != 0
+        || doc.node(fragment.node_id).tag == ElementTag::Fieldset
+    {
+        return None;
+    }
+    let consumed = geometry.consumed_block_size;
+    let extent = geometry.block_size;
+    let cb_source_size = positioned.containing_block_size.height;
+    let child_source_size = fragment.size.height;
+    if consumed < LayoutUnit::zero()
+        || extent <= LayoutUnit::zero()
+        || consumed + extent > geometry.source_size.height
+        || split_source < LayoutUnit::zero()
+        || cb_source_size <= LayoutUnit::zero()
+        || child_source_size <= LayoutUnit::zero()
+    {
+        return None;
+    }
+    let child_start = fragment.offset.top + consumed - positioned.containing_block_offset.top;
+    let child_end = child_start + child_source_size;
+    let window_start = split_source + consumed;
+    let window_end = window_start + extent;
+    // Genuine source before or beyond the CB remains on its parallel-flow
+    // path. The finite CB projection cannot replace that source ownership.
+    if child_start < LayoutUnit::zero() || child_end > cb_source_size || window_end > cb_source_size
+    {
+        return None;
+    }
+    let start = window_start.max_of(child_start);
+    let end = window_end.min_of(child_end);
+    let block_size = (end - start).clamp_negative_to_zero();
+    Some(SplitPositionedDecorationWindow {
+        source_offset: if block_size == LayoutUnit::zero() {
+            LayoutUnit::zero()
+        } else {
+            start - child_start
+        },
+        source_size: child_source_size,
+        block_size,
+    })
+}
+
+fn fragmented_positioned_entry_parts<'a>(
+    entry: &StackingEntry<'a>,
+) -> Option<(
+    &'a Fragment,
+    PhysicalOffset,
+    Option<Rect>,
+    Option<SplitPositionedDecorationWindow>,
+)> {
+    match entry {
+        StackingEntry::FragmentedPositioned(fragment, offset, clip) => {
+            Some((*fragment, *offset, *clip, None))
+        }
+        StackingEntry::FragmentedPositionedWithDecorationWindow(fragment, offset, clip, window) => {
+            Some((*fragment, *offset, *clip, Some(*window)))
+        }
+        _ => None,
+    }
+}
+
+/// Intersect structural clips without turning an empty source window into
+/// an inverted rectangle that a downstream canvas can sort into visible ink.
+/// Canonicalize empty clips before outward physical snapping: a zero extent
+/// at a fractional coordinate can otherwise acquire a device pixel.
+fn intersect_fragmented_phase_clip(inherited: Option<Rect>, owned: Rect) -> Rect {
+    let intersection = inherited.map_or(owned, |parent| {
+        Rect::from_ltrb(
+            parent.left.max(owned.left),
+            parent.top.max(owned.top),
+            parent.right.min(owned.right),
+            parent.bottom.min(owned.bottom),
+        )
+    });
+    if intersection.left < intersection.right && intersection.top < intersection.bottom {
+        intersection
+    } else {
+        Rect::from_ltrb(0.0, 0.0, 0.0, 0.0)
+    }
+}
+
+/// Keep admission of extra child ink identical to the ordinary owned clip.
+fn owned_fragmentation_clip_expands_for_child(
+    fragment: &Fragment,
+    child: &Fragment,
+    doc: &Document,
+) -> bool {
+    if let Some(positioned) = child.positioned_fragmentation {
+        positioned.fragmentainer_index.is_none()
+            && child.decoration_slice.is_none()
+            && !child.node_id.is_none()
+            && doc.node(child.node_id).style.top.is_fixed()
+            && doc.node(child.node_id).style.top.value() < 0.0
+            && if fragment_block_axis_is_x(fragment) {
+                child.offset.left < LayoutUnit::zero()
+            } else {
+                child.offset.top < LayoutUnit::zero()
+            }
+    } else {
+        // An in-flow opacity stacking context is composited as one
+        // unit after its fragmented ancestor. Its ink may cross
+        // the ancestor's principal-box slice, while the enclosing
+        // ColumnBox still clips it at the fragmentainer edge.
+        fragment.decoration_paint_block_size.is_some()
+            && !child.node_id.is_none()
+            && doc.node(child.node_id).style.opacity < 1.0
+    }
+}
+
+/// An anonymous column and an authored continuation do not own the same
+/// clip geometry. Carry only an owned block clip whose remaining ordinary
+/// paint operations are representable by one hard rectangle.
+fn fragmented_positioned_scope_clip(
+    fragment: &Fragment,
+    doc: &Document,
+    offset: PhysicalOffset,
+    inherited_clip: Option<Rect>,
+) -> Option<Rect> {
+    if fragment.kind == FragmentKind::ColumnBox {
+        return Some(column_fragmentainer_clip_rect(
+            fragment,
+            offset,
+            doc.device_scale_factor(),
+        ));
+    }
+    if fragment.kind != FragmentKind::Box
+        || !fragment.owns_element_box()
+        || fragment.node_id.is_none()
+        || !fragment.has_overflow_clip
+        || !fragment.block_axis_clip_only
+        || fragment.inline_axis_clip_only
+        || fragment.table_part.is_some()
+        || doc.node(fragment.node_id).tag == ElementTag::Fieldset
+        || fragment.column_block_start_ink_overflow != LayoutUnit::zero()
+        || fragment.column_block_end_ink_overflow != LayoutUnit::zero()
+    {
+        return None;
+    }
+    let source_style = &doc.node(fragment.node_id).style;
+    let used_style = paint_style_with_used_overflow(fragment, source_style, doc);
+    let style = used_style.as_ref().unwrap_or(source_style);
+    if paint_overflow_pair(fragment, style, doc) != (Overflow::Visible, Overflow::Visible)
+        || style.has_paint_containment()
+        || style.has_border_radius()
+        || style.resize != openui_style::Resize::None
+        || fragment.element_scrollbars.is_some()
+        || antialias_rectangular_overflow_clip(fragment, doc, style)
+        || descendant_outline_outset(fragment, doc) != 0.0
+        || fragment
+            .children
+            .iter()
+            .any(|child| owned_fragmentation_clip_expands_for_child(fragment, child, doc))
+    {
+        return None;
+    }
+    let (rect, _, _) = overflow_clip_base_geometry(fragment, doc, offset, style);
+    if !rect.is_finite() || rect.is_empty() {
+        return None;
+    }
+    if let Some(inherited) = inherited_clip {
+        // Ordinary scopes snap independently. Touching or disjoint logical
+        // rectangles can still share a physical cell after outward snapping;
+        // flattening them through the shared empty intersection would lose it.
+        if !inherited.is_finite()
+            || inherited.left.max(rect.left) >= inherited.right.min(rect.right)
+            || inherited.top.max(rect.top) >= inherited.bottom.min(rect.bottom)
+        {
+            return None;
+        }
+    }
+    let mut outlines = Vec::new();
+    collect_fragmented_descendant_outline_owners(
+        &fragment.children,
+        doc,
+        offset,
+        rect,
+        fragment_block_axis_is_x(fragment),
+        &mut outlines,
+    );
+    if !outlines.is_empty() {
+        return None;
+    }
+    // Entries intersect logical hard scopes and perform one final outward
+    // snap. Snapping an already rounded f32 carrier again can add a cell.
+    // For the admitted nonempty same-context intersection, max/min commutes
+    // with the ordinary per-scope floor/ceil operation.
+    let final_rect = outward_snap_rect_to_physical(rect, doc.device_scale_factor());
+    let node = doc.node(fragment.node_id);
+    let (scroll_x, scroll_y) = if fragment.owns_scroll_box() {
+        (node.scroll_left, node.scroll_top)
+    } else {
+        (0.0, 0.0)
+    };
+    if element_scroll_paint_translation(fragment, doc, scroll_x, scroll_y) != (0.0, 0.0)
+        || has_composited_scroll_contents(fragment, style)
+        || needs_fractional_cpu_scroll_backing(fragment, style, final_rect)
+    {
+        return None;
+    }
+    Some(rect)
+}
+
+/// Collect owned positioned entries across the retained fragmentainer subtree.
+/// Anonymous columns carry clips and offsets, never their owner's CSS position.
+/// Spanners stay where layout retained them, without reassignment to a
+/// positioned DOM ancestor from which they were extracted.
+fn collect_fragmented_positioned_phase<'a>(
+    fragment: &'a Fragment,
+    doc: &Document,
+    parent_offset: PhysicalOffset,
+    inherited_clip: Option<Rect>,
+    non_negative_z: &mut Vec<(i32, usize, StackingEntry<'a>)>,
+    hoisted_ptrs: &mut Vec<usize>,
+) {
+    if !fragmented_positioned_phase_has_horizontal_axes(fragment, doc) {
+        return;
+    }
+    if HOIST_SKIP.with(|skip| {
+        skip.borrow()
+            .contains(&(fragment as *const Fragment as usize))
+    }) {
+        return;
+    }
+    let fragment_offset = PhysicalOffset::new(
+        parent_offset.left + fragment.offset.left,
+        parent_offset.top + fragment.offset.top,
+    );
+    if is_formatting_helper(fragment) && fragment.has_overflow_clip {
+        return;
+    }
+    if !fragment.node_id.is_none() && !is_formatting_helper(fragment) {
+        let style = &doc.node(fragment.node_id).style;
+        if style.opacity < 1.0
+            || style.float != openui_style::Float::None
+            || style_has_transform(style)
+            || style.filter_blur > 0.0
+            || style.filter_grayscale > 0.0
+            || style.clip_path_inset.is_some()
+            || !style.mask_layers.is_empty()
+            || style.has_paint_containment()
+            || style.has_border_radius()
+            || style.overflow_x != Overflow::Visible
+            || style.overflow_y != Overflow::Visible
+            || style.display.is_inline_level()
+            || fragment.is_inline_box_fragment
+            || has_inline_ancestor(doc, fragment.node_id)
+            || style.display.is_table_internal()
+            || style.display.is_table_wrapper()
+            || ((style.display.is_flex() || style.display.is_grid())
+                && style.position == openui_style::Position::Static)
+            || style.box_decoration_break == openui_style::BoxDecorationBreak::Clone
+            || fragment.fragmentation_visual_offset != PhysicalOffset::zero()
+            || !fragment.promoted_transform_ancestors.is_empty()
+            || !fragment.decoration_clip_rects.is_empty()
+        {
+            return;
+        }
+    }
+    let mut clip = inherited_clip;
+    if fragment.has_overflow_clip {
+        // Only structural fragmentainer clips can be carried by this entry.
+        // Authored/effect clips above retain their existing atomic path.
+        if fragment.kind != FragmentKind::ColumnBox
+            && !fragment.block_axis_clip_only
+            && !fragment.inline_axis_clip_only
+        {
+            return;
+        }
+        let Some(mut owned_clip) =
+            fragmented_positioned_scope_clip(fragment, doc, fragment_offset, clip)
+        else {
+            // Leave descendants in this owner's ordinary clip scope. The
+            // already enrolled owner, if any, still traverses them normally.
+            return;
+        };
+        if fragment.inline_axis_clip_only && !fragment.is_first_for_node {
+            let snapping = RasterSnapping::new(doc.device_scale_factor());
+            if fragment_block_axis_is_x(fragment) {
+                owned_clip.top = snapping.logical_coordinate(owned_clip.top, PhysicalSnap::Ceil);
+            } else {
+                owned_clip.left = snapping.logical_coordinate(owned_clip.left, PhysicalSnap::Ceil);
+            }
+        }
+        clip = Some(intersect_fragmented_phase_clip(clip, owned_clip));
+    }
+    for child in &fragment.children {
+        if HOIST_SKIP.with(|skip| skip.borrow().contains(&(child as *const Fragment as usize))) {
+            continue;
+        }
+        if child.node_id.is_none() || is_formatting_helper(child) {
+            collect_fragmented_positioned_phase(
+                child,
+                doc,
+                fragment_offset,
+                clip,
+                non_negative_z,
+                hoisted_ptrs,
+            );
+            continue;
+        }
+        let style = &doc.node(child.node_id).style;
+        if fragmented_positioned_phase_is_simple(child, doc) {
+            let pointer = child as *const Fragment as usize;
+            let entry = if let Some(window) =
+                owned_split_positioned_decoration_window(child, fragment, doc)
+            {
+                StackingEntry::FragmentedPositionedWithDecorationWindow(
+                    child,
+                    fragment_offset,
+                    clip,
+                    window,
+                )
+            } else {
+                StackingEntry::FragmentedPositioned(child, fragment_offset, clip)
+            };
+            non_negative_z.push((style.z_index.unwrap_or(0), child.node_id.index(), entry));
+            hoisted_ptrs.push(pointer);
+            // A z:auto positioned owner is not a stacking context. Its
+            // positioned descendants keep the ancestor stacking stage;
+            // ordinary and atomic descendants stay with their owner.
+            if style.z_index.is_none() {
+                collect_fragmented_positioned_phase(
+                    child,
+                    doc,
+                    fragment_offset,
+                    clip,
+                    non_negative_z,
+                    hoisted_ptrs,
+                );
+            }
+        } else if style.position == openui_style::Position::Static
+            && !is_fragment_stacking_context(child, doc)
+        {
+            collect_fragmented_positioned_phase(
+                child,
+                doc,
+                fragment_offset,
+                clip,
+                non_negative_z,
+                hoisted_ptrs,
+            );
+        }
+    }
+}
+
+/// An immutable producer record selects the actual owning source projection.
+/// Cross only that source's layout-generated scopes. Existing authored effects
+/// and used overflow boundaries remain in their original caller scope.
+fn collect_authored_source_projection_transforms<'a>(
+    fragment: &'a Fragment,
+    doc: &Document,
+    parent_offset: PhysicalOffset,
+    producer: openui_dom::NodeId,
+    entries: &mut Vec<(i32, usize, StackingEntry<'a>)>,
+    hoisted: &mut Vec<usize>,
+) {
+    let offset = PhysicalOffset::new(
+        parent_offset.left + fragment.offset.left,
+        parent_offset.top + fragment.offset.top,
+    );
+    if !fragment.node_id.is_none() {
+        let style = &doc.node(fragment.node_id).style;
+        let projection = fragment.authored_projection.as_ref();
+        if projection.is_some_and(|p| {
+            p.is_materialized_copy() && p.producer() == Some(producer) && p.is_owner()
+        }) && style_has_transform(style)
+        {
+            let pointer = fragment as *const Fragment as usize;
+            if !hoisted.contains(&pointer) {
+                entries.push((
+                    style.z_index.unwrap_or(0),
+                    0,
+                    StackingEntry::Descendant(fragment, parent_offset),
+                ));
+                hoisted.push(pointer);
+            }
+            return;
+        }
+        let (x, y) = paint_overflow_pair(fragment, style, doc);
+        if x != Overflow::Visible
+            || y != Overflow::Visible
+            || style.has_paint_containment()
+            || style.opacity < 1.0
+            || style.filter_blur > 0.0
+            || style.filter_grayscale > 0.0
+            || style.clip_path_inset.is_some()
+            || !style.mask_layers.is_empty()
+            || style_has_transform(style)
+            || style.position != openui_style::Position::Static
+        {
+            return;
+        }
+        if fragment.has_overflow_clip && !projection.is_some_and(|p| p.is_structural_boundary()) {
+            return;
+        }
+    } else if fragment.has_overflow_clip
+        && !fragment
+            .authored_projection
+            .as_ref()
+            .is_some_and(|p| p.is_structural_boundary())
+    {
+        return;
+    }
+    for child in &fragment.children {
+        collect_authored_source_projection_transforms(
+            child, doc, offset, producer, entries, hoisted,
+        );
     }
 }
 
@@ -11399,28 +12313,7 @@ fn paint_with_overflow_clip(
         let descendant_extent = fragment
             .children
             .iter()
-            .filter(|child| {
-                if let Some(positioned) = child.positioned_fragmentation {
-                    positioned.fragmentainer_index.is_none()
-                        && child.decoration_slice.is_none()
-                        && !child.node_id.is_none()
-                        && doc.node(child.node_id).style.top.is_fixed()
-                        && doc.node(child.node_id).style.top.value() < 0.0
-                        && if fragment_block_axis_is_x(fragment) {
-                            child.offset.left < LayoutUnit::zero()
-                        } else {
-                            child.offset.top < LayoutUnit::zero()
-                        }
-                } else {
-                    // An in-flow opacity stacking context is composited as one
-                    // unit after its fragmented ancestor. Its ink may cross
-                    // the ancestor's principal-box slice, while the enclosing
-                    // ColumnBox still clips it at the fragmentainer edge.
-                    fragment.decoration_paint_block_size.is_some()
-                        && !child.node_id.is_none()
-                        && doc.node(child.node_id).style.opacity < 1.0
-                }
-            })
+            .filter(|child| owned_fragmentation_clip_expands_for_child(fragment, child, doc))
             .map(|child| {
                 let start = if fragment_block_axis_is_x(fragment) {
                     (offset.left + child.offset.left).to_f32()
@@ -18393,6 +19286,9 @@ fn paint_fragment_box_decoration(
     mut abs_offset: PhysicalOffset,
     opacity_multiplier: f32,
 ) {
+    if !fragment.is_authored_projection_owner() {
+        return;
+    }
     if fragment
         .table_part
         .is_some_and(|part| part.column_range().is_some())
@@ -26676,6 +27572,1874 @@ mod tests {
                     assert_eq!(&pixels[(5 * 64 + 4) * 4..][..4], &[0, 255, 0, 255]);
                 }
             }
+        }
+    }
+
+    #[test]
+    fn fragmented_phase_admission_preserves_atomic_source_boundaries() {
+        let mut doc = Document::new();
+        let owner = doc.create_node(ElementTag::Div);
+        doc.append_child(doc.root(), owner);
+        doc.update_resolved_style(owner, |style| {
+            style.display = Display::Block;
+            style.position = openui_style::Position::Relative;
+        });
+        let size = PhysicalSize::new(LayoutUnit::from_i32(25), LayoutUnit::from_i32(100));
+        let mut fragment = Fragment::new_box(owner, size);
+        assert!(fragmented_positioned_phase_is_simple(&fragment, &doc));
+
+        fragment.box_ownership = openui_layout::FragmentBoxOwnership::LayoutHelper;
+        assert!(!fragmented_positioned_phase_is_simple(&fragment, &doc));
+        fragment.box_ownership = openui_layout::FragmentBoxOwnership::AuthoredElement;
+        fragment.is_inline_box_fragment = true;
+        assert!(!fragmented_positioned_phase_is_simple(&fragment, &doc));
+        fragment.is_inline_box_fragment = false;
+        fragment.fragmentation_visual_offset =
+            PhysicalOffset::new(LayoutUnit::from_i32(1), LayoutUnit::zero());
+        assert!(!fragmented_positioned_phase_is_simple(&fragment, &doc));
+        fragment.fragmentation_visual_offset = PhysicalOffset::zero();
+
+        doc.update_resolved_style(owner, |style| {
+            style.box_decoration_break = openui_style::BoxDecorationBreak::Clone;
+        });
+        assert!(!fragmented_positioned_phase_is_simple(&fragment, &doc));
+        doc.update_resolved_style(owner, |style| {
+            style.box_decoration_break = openui_style::BoxDecorationBreak::Slice;
+            style.opacity = 0.5;
+        });
+        assert!(!fragmented_positioned_phase_is_simple(&fragment, &doc));
+        doc.update_resolved_style(owner, |style| {
+            style.opacity = 1.0;
+            style.overflow_y = Overflow::Hidden;
+        });
+        assert!(!fragmented_positioned_phase_is_simple(&fragment, &doc));
+        doc.update_resolved_style(owner, |style| {
+            style.overflow_y = Overflow::Visible;
+            style.z_index = Some(-1);
+        });
+        assert!(!fragmented_positioned_phase_is_simple(&fragment, &doc));
+        doc.update_resolved_style(owner, |style| {
+            style.position = openui_style::Position::Absolute;
+            style.z_index = Some(1);
+        });
+        assert!(fragmented_positioned_phase_is_simple(&fragment, &doc));
+        doc.update_resolved_style(owner, |style| {
+            style.position = openui_style::Position::Fixed;
+        });
+        assert!(!fragmented_positioned_phase_is_simple(&fragment, &doc));
+
+        let inline = doc.create_node(ElementTag::Span);
+        doc.append_child(doc.root(), inline);
+        doc.update_resolved_style(inline, |style| style.display = Display::Inline);
+        let inline_descendant = doc.create_node(ElementTag::Div);
+        doc.append_child(inline, inline_descendant);
+        doc.update_resolved_style(inline_descendant, |style| {
+            style.display = Display::Block;
+            style.position = openui_style::Position::Relative;
+        });
+        assert!(!fragmented_positioned_phase_is_simple(
+            &Fragment::new_box(inline_descendant, size),
+            &doc,
+        ));
+    }
+
+    #[test]
+    fn fragmented_phase_follows_retained_spanner_parent_and_ancestor_clip() {
+        let mut doc = Document::new();
+        let normal = doc.create_node(ElementTag::Div);
+        let relative = doc.create_node(ElementTag::Div);
+        let positioned = doc.create_node(ElementTag::Div);
+        let spanner = doc.create_node(ElementTag::Div);
+        doc.append_child(doc.root(), normal);
+        doc.append_child(normal, relative);
+        doc.append_child(relative, positioned);
+        // Layout extracts this normal-flow spanner from its DOM parent.
+        doc.append_child(relative, spanner);
+        for node in [normal, relative, positioned, spanner] {
+            doc.update_resolved_style(node, |style| style.display = Display::Block);
+        }
+        doc.update_resolved_style(relative, |style| {
+            style.position = openui_style::Position::Relative;
+        });
+        doc.update_resolved_style(positioned, |style| {
+            style.position = openui_style::Position::Absolute;
+        });
+        doc.update_resolved_style(spanner, |style| {
+            style.column_span = openui_style::ColumnSpan::All;
+        });
+        let size = |width, height| {
+            PhysicalSize::new(LayoutUnit::from_i32(width), LayoutUnit::from_i32(height))
+        };
+        let mut relative_fragment = Fragment::new_box(relative, size(25, 90));
+        relative_fragment
+            .children
+            .push(Fragment::new_box(positioned, size(25, 360)));
+        let mut normal_fragment = Fragment::new_box(normal, size(50, 100));
+        normal_fragment.children.push(relative_fragment);
+        let mut spanner_fragment = Fragment::new_box(spanner, size(50, 20));
+        spanner_fragment.offset.top = LayoutUnit::from_i32(90);
+        normal_fragment.children.push(spanner_fragment);
+        let mut column = Fragment::new_box(NodeId::NONE, size(100, 100));
+        column.kind = FragmentKind::ColumnBox;
+        column.has_overflow_clip = true;
+        column.children.push(normal_fragment);
+
+        let mut entries = Vec::new();
+        let mut hoisted = Vec::new();
+        collect_fragmented_positioned_phase(
+            &column,
+            &doc,
+            PhysicalOffset::zero(),
+            None,
+            &mut entries,
+            &mut hoisted,
+        );
+        let nodes: Vec<_> = entries
+            .iter()
+            .map(|(_, _, entry)| {
+                let StackingEntry::FragmentedPositioned(fragment, _, Some(clip)) = entry else {
+                    panic!("owned positioned entry must retain its ancestor clip");
+                };
+                assert_eq!(*clip, Rect::from_xywh(0.0, 0.0, 100.0, 100.0));
+                fragment.node_id
+            })
+            .collect();
+        assert_eq!(nodes, [relative, positioned]);
+        assert_eq!(hoisted.len(), 2);
+        let previous = HOIST_SKIP.with(|skip| skip.replace(hoisted.into_iter().collect()));
+        let mut nested_entries = Vec::new();
+        let mut nested_hoists = Vec::new();
+        collect_fragmented_positioned_phase(
+            &column,
+            &doc,
+            PhysicalOffset::zero(),
+            None,
+            &mut nested_entries,
+            &mut nested_hoists,
+        );
+        assert!(
+            nested_entries.is_empty(),
+            "an outer phase already owns these positioned records"
+        );
+        assert!(nested_hoists.is_empty());
+        let mut normal_decorations = Vec::new();
+        collect_shared_column_decorations(
+            &column,
+            &doc,
+            PhysicalOffset::zero(),
+            &[],
+            &[],
+            true,
+            &mut normal_decorations,
+        );
+        HOIST_SKIP.with(|skip| skip.replace(previous));
+        let normal_nodes: Vec<_> = normal_decorations
+            .iter()
+            .map(|decoration| decoration.fragment.node_id)
+            .collect();
+        assert_eq!(normal_nodes, [normal, spanner]);
+        assert_eq!(normal_decorations[1].offset.top, LayoutUnit::from_i32(90));
+
+        // A static atomic Grid keeps the descendant foreground with its
+        // existing owner; the conservative new phase cannot cross it.
+        doc.update_resolved_style(normal, |style| style.display = Display::Grid);
+        let mut atomic_entries = Vec::new();
+        let mut atomic_hoists = Vec::new();
+        collect_fragmented_positioned_phase(
+            &column,
+            &doc,
+            PhysicalOffset::zero(),
+            None,
+            &mut atomic_entries,
+            &mut atomic_hoists,
+        );
+        assert!(atomic_entries.is_empty());
+        assert!(atomic_hoists.is_empty());
+    }
+
+    #[test]
+    fn stacking_source_order_uses_live_links_and_stable_continuation_identity() {
+        let mut doc = Document::new();
+        let a = doc.create_node(ElementTag::Div);
+        let b = doc.create_node(ElementTag::Div);
+        doc.append_child(doc.root(), a);
+        doc.append_child(doc.root(), b);
+        let size = PhysicalSize::new(LayoutUnit::from_i32(20), LayoutUnit::from_i32(20));
+        let children = [Fragment::new_box(a, size), Fragment::new_box(b, size)];
+        let mut second_a = Fragment::new_box(a, size);
+        second_a.offset.left = LayoutUnit::from_i32(100);
+        assert!(doc.detach(b));
+        doc.insert_before(a, b);
+        let mut entries = vec![
+            (0, a.index(), StackingEntry::Direct(0)),
+            (
+                0,
+                b.index(),
+                StackingEntry::Descendant(&children[1], PhysicalOffset::zero()),
+            ),
+            (
+                0,
+                a.index(),
+                StackingEntry::FragmentedPositioned(&second_a, PhysicalOffset::zero(), None),
+            ),
+        ];
+        assert!(assign_stacking_source_order(
+            &doc,
+            &children,
+            &mut [],
+            &mut entries,
+            false
+        ));
+        entries.sort_by_key(|&(z, order, _)| (z, order));
+        assert_eq!(
+            entries
+                .iter()
+                .map(|(_, _, entry)| stacking_entry_fragment(entry, &children).node_id)
+                .collect::<Vec<_>>(),
+            [b, a, a]
+        );
+        assert!(matches!(entries[1].2, StackingEntry::Direct(0)));
+        assert!(matches!(
+            entries[2].2,
+            StackingEntry::FragmentedPositioned(..)
+        ));
+
+        // Detached standalone fragments still have a valid retained source
+        // stream; numeric allocation is not a fallback painting policy.
+        let detached_a = doc.create_node(ElementTag::Div);
+        let detached_b = doc.create_node(ElementTag::Div);
+        let retained = [
+            Fragment::new_box(detached_b, size),
+            Fragment::new_box(detached_a, size),
+        ];
+        let mut entries = vec![
+            (0, detached_a.index(), StackingEntry::Direct(1)),
+            (0, detached_b.index(), StackingEntry::Direct(0)),
+        ];
+        assert!(assign_stacking_source_order(
+            &doc,
+            &retained,
+            &mut [],
+            &mut entries,
+            false
+        ));
+        entries.sort_by_key(|&(z, order, _)| (z, order));
+        assert_eq!(
+            entries
+                .iter()
+                .map(|(_, _, entry)| stacking_entry_fragment(entry, &retained).node_id)
+                .collect::<Vec<_>>(),
+            [detached_b, detached_a]
+        );
+
+        // Flex's producer already supplied its order-modified item ordinal.
+        // The retained array wins over a different current raw sibling list.
+        let retained = [Fragment::new_box(a, size), Fragment::new_box(b, size)];
+        let mut entries = vec![
+            (0, 1, StackingEntry::Direct(1)),
+            (0, 0, StackingEntry::Direct(0)),
+        ];
+        assert!(assign_stacking_source_order(
+            &doc,
+            &retained,
+            &mut [],
+            &mut entries,
+            true
+        ));
+        entries.sort_by_key(|&(z, order, _)| (z, order));
+        assert_eq!(
+            entries
+                .iter()
+                .map(|(_, _, entry)| stacking_entry_fragment(entry, &retained).node_id)
+                .collect::<Vec<_>>(),
+            [a, b]
+        );
+    }
+
+    #[test]
+    fn fragmented_positioned_phase_keeps_skipped_decorations_and_live_child_ink_distinct() {
+        let mut doc = Document::new();
+        let normal = doc.create_node(ElementTag::Div);
+        let owner = doc.create_node(ElementTag::Div);
+        let child = doc.create_node(ElementTag::Div);
+        doc.append_child(doc.root(), normal);
+        doc.append_child(normal, owner);
+        doc.append_child(owner, child);
+        for node in [normal, owner, child] {
+            doc.update_resolved_style(node, |style| style.display = Display::Block);
+        }
+        doc.update_resolved_style(owner, |style| {
+            style.position = Position::Relative;
+            style.background_color = Color::BLACK;
+        });
+        doc.update_resolved_style(child, |style| style.background_color = Color::GREEN);
+        let size = |width, height| {
+            PhysicalSize::new(LayoutUnit::from_i32(width), LayoutUnit::from_i32(height))
+        };
+        for skip_first in [false, true] {
+            let mut normal_fragment = Fragment::new_box(normal, size(40, 20));
+            for index in 0..2 {
+                let mut projection = Fragment::new_box(owner, size(20, 20));
+                projection.skip_box_decoration = index == 0 && skip_first;
+                let mut child_fragment = Fragment::new_box(child, size(4, 4));
+                child_fragment.offset =
+                    PhysicalOffset::new(LayoutUnit::from_i32(2), LayoutUnit::from_i32(2));
+                projection.children.push(child_fragment);
+                let mut column = Fragment::new_box(NodeId::NONE, size(20, 20));
+                column.kind = FragmentKind::ColumnBox;
+                column.offset.left = LayoutUnit::from_i32(index * 20);
+                column.has_overflow_clip = true;
+                column.children.push(projection);
+                normal_fragment.children.push(column);
+            }
+            let mut surface = surfaces::raster_n32_premul((40, 20)).unwrap();
+            surface.canvas().clear(skia_safe::Color::WHITE);
+            let count = surface.canvas().save_count();
+            let matrix = surface.canvas().local_to_device_as_3x3();
+            let clip = surface.canvas().device_clip_bounds();
+            paint_children_with_stacking_order(
+                surface.canvas(),
+                &[normal_fragment],
+                &doc,
+                PhysicalOffset::zero(),
+                true,
+                false,
+                None,
+            );
+            assert_eq!(surface.canvas().save_count(), count);
+            assert_eq!(surface.canvas().local_to_device_as_3x3(), matrix);
+            assert_eq!(surface.canvas().device_clip_bounds(), clip);
+            let pixels = surface_bytes(&mut surface);
+            for y in 0..20 {
+                for x in 0..40 {
+                    let local_x = x % 20;
+                    let child_ink = (2..6).contains(&local_x) && (2..6).contains(&y);
+                    let expected = if child_ink {
+                        [0, 128, 0, 255]
+                    } else if x < 20 && skip_first {
+                        [255, 255, 255, 255]
+                    } else {
+                        [0, 0, 0, 255]
+                    };
+                    assert_eq!(&pixels[(y * 40 + x) * 4..][..4], expected);
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn fragmented_phase_clip_intersection_preserves_empty_and_positive_windows() {
+        let empty = Rect::from_ltrb(0.0, 0.0, 0.0, 0.0);
+        let parent = Rect::from_ltrb(1.25, 2.375, 9.25, 10.375);
+        let overlap = Rect::from_ltrb(5.25, 6.375, 13.25, 14.375);
+        assert_eq!(intersect_fragmented_phase_clip(None, parent), parent);
+        assert_eq!(
+            intersect_fragmented_phase_clip(Some(parent), overlap),
+            Rect::from_ltrb(5.25, 6.375, 9.25, 10.375),
+        );
+        for owned in [
+            Rect::from_ltrb(11.25, 2.375, 13.25, 10.375),
+            Rect::from_ltrb(1.25, 12.375, 9.25, 14.375),
+            Rect::from_ltrb(9.25, 2.375, 13.25, 10.375),
+            Rect::from_ltrb(1.25, 10.375, 9.25, 14.375),
+            Rect::from_ltrb(5.25, 6.375, 5.25, 8.375),
+            Rect::from_ltrb(5.25, 6.375, 7.25, 6.375),
+        ] {
+            let clipped = intersect_fragmented_phase_clip(Some(parent), owned);
+            assert_eq!(clipped, empty);
+            assert_eq!(
+                intersect_fragmented_phase_clip(Some(clipped), overlap),
+                empty
+            );
+            for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
+                assert_eq!(outward_snap_rect_to_physical(clipped, scale), empty);
+            }
+        }
+        for owned in [
+            Rect::from_ltrb(5.25, 6.375, 5.25, 8.375),
+            Rect::from_ltrb(5.25, 6.375, 7.25, 6.375),
+        ] {
+            assert_eq!(intersect_fragmented_phase_clip(None, owned), empty);
+        }
+    }
+
+    #[test]
+    fn fragmented_phase_nested_empty_clips_keep_child_ink_and_canvas_state_owned() {
+        // Native N32 storage is not an RGBA byte contract. Observe the
+        // same unchanged drawing/state assertions through explicit RGBA.
+        let rgba_bytes = |surface: &mut skia_safe::Surface| {
+            let info = ImageInfo::new((64, 64), ColorType::RGBA8888, AlphaType::Premul, None);
+            let mut pixels = vec![0_u8; 64 * 64 * 4];
+            assert!(surface.image_snapshot().read_pixels(
+                &info,
+                &mut pixels,
+                64 * 4,
+                (0, 0),
+                skia_safe::image::CachingHint::Allow,
+            ));
+            pixels
+        };
+        let mut doc = Document::new();
+        let normal = doc.create_node(ElementTag::Div);
+        let owner = doc.create_node(ElementTag::Div);
+        let child = doc.create_node(ElementTag::Div);
+        doc.append_child(doc.root(), normal);
+        doc.append_child(normal, owner);
+        doc.append_child(owner, child);
+        for node in [normal, owner, child] {
+            doc.update_resolved_style(node, |style| style.display = Display::Block);
+        }
+        doc.update_resolved_style(owner, |style| {
+            style.position = Position::Relative;
+            style.background_color = Color::BLACK;
+        });
+        doc.update_resolved_style(child, |style| style.background_color = Color::GREEN);
+        let size = |width, height| {
+            PhysicalSize::new(LayoutUnit::from_i32(width), LayoutUnit::from_i32(height))
+        };
+        let config = doc.raster_configuration();
+        for scale in [1.0_f64, 1.25, 1.5, 1.75, 2.0] {
+            doc.set_raster_context(config, scale);
+            for (x, y, visible) in [
+                (10.0, 0.0, false),
+                (0.0, 10.0, false),
+                (8.0, 0.0, false),
+                (0.0, 8.0, false),
+                (2.0, 0.0, true),
+                (0.0, 2.0, true),
+            ] {
+                for skip_decoration in [false, true] {
+                    reset_picture_paint_state();
+                    set_paint_viewport_size(32.0, 32.0);
+                    let mut projection = Fragment::new_box(owner, size(8, 8));
+                    projection.skip_box_decoration = skip_decoration;
+                    let mut child_fragment = Fragment::new_box(child, size(2, 2));
+                    child_fragment.offset =
+                        PhysicalOffset::new(LayoutUnit::from_i32(2), LayoutUnit::from_i32(2));
+                    projection.children.push(child_fragment);
+                    let mut inner = Fragment::new_box(NodeId::NONE, size(8, 8));
+                    inner.kind = FragmentKind::ColumnBox;
+                    inner.has_overflow_clip = true;
+                    inner.offset =
+                        PhysicalOffset::new(LayoutUnit::from_f64(x), LayoutUnit::from_f64(y));
+                    inner.children.push(projection);
+                    let mut outer = Fragment::new_box(NodeId::NONE, size(8, 8));
+                    outer.kind = FragmentKind::ColumnBox;
+                    outer.has_overflow_clip = true;
+                    outer.offset = PhysicalOffset::new(
+                        LayoutUnit::from_f64(8.25),
+                        LayoutUnit::from_f64(8.375),
+                    );
+                    outer.children.push(inner);
+                    let mut normal_fragment = Fragment::new_box(normal, size(32, 32));
+                    normal_fragment.children.push(outer);
+                    let mut entries = Vec::new();
+                    let mut hoisted = Vec::new();
+                    collect_fragmented_positioned_phase(
+                        &normal_fragment,
+                        &doc,
+                        PhysicalOffset::zero(),
+                        None,
+                        &mut entries,
+                        &mut hoisted,
+                    );
+                    assert_eq!(entries.len(), 1);
+                    let StackingEntry::FragmentedPositioned(fragment, _, Some(clip)) = entries[0].2
+                    else {
+                        panic!("retained owner must carry an explicit structural clip");
+                    };
+                    assert_eq!(fragment.node_id, owner);
+                    assert_eq!(fragment.children.len(), 1);
+                    assert_eq!(clip.is_empty(), !visible);
+                    if !visible {
+                        assert_eq!(clip, Rect::from_ltrb(0.0, 0.0, 0.0, 0.0));
+                    }
+                    let mut surface = surfaces::raster_n32_premul((64, 64)).unwrap();
+                    surface.canvas().clear(skia_safe::Color::WHITE);
+                    surface.canvas().scale((scale as f32, scale as f32));
+                    surface.canvas().translate((0.375, 0.125));
+                    let saves = surface.canvas().save_count();
+                    let matrix = surface.canvas().local_to_device_as_3x3();
+                    let device_clip = surface.canvas().device_clip_bounds();
+                    paint_children_with_stacking_order(
+                        surface.canvas(),
+                        &[normal_fragment],
+                        &doc,
+                        PhysicalOffset::zero(),
+                        true,
+                        false,
+                        None,
+                    );
+                    assert_eq!(surface.canvas().save_count(), saves);
+                    assert_eq!(surface.canvas().local_to_device_as_3x3(), matrix);
+                    assert_eq!(surface.canvas().device_clip_bounds(), device_clip);
+                    let pixels = rgba_bytes(&mut surface);
+                    if !visible {
+                        assert!(pixels
+                            .chunks_exact(4)
+                            .all(|pixel| pixel == [255, 255, 255, 255]));
+                    } else {
+                        // The actual child remains in its later traversal,
+                        // including when the owner has no decoration.
+                        // The decoration producer rounds logical border
+                        // edges before mapping them through the Canvas. A
+                        // whole device cell inside that used border box
+                        // observes opaque child ink rather than an AA edge.
+                        let used_child_border = Rect::from_ltrb(
+                            LayoutUnit::from_f64(8.25 + x + 2.0).round().to_f32(),
+                            LayoutUnit::from_f64(8.375 + y + 2.0).round().to_f32(),
+                            LayoutUnit::from_f64(8.25 + x + 4.0).round().to_f32(),
+                            LayoutUnit::from_f64(8.375 + y + 4.0).round().to_f32(),
+                        );
+                        let (painted_border, border_stays_rect) =
+                            matrix.map_rect(used_child_border);
+                        let (structural_clip, clip_stays_rect) =
+                            matrix.map_rect(outward_snap_rect_to_physical(clip, scale));
+                        assert!(border_stays_rect && clip_stays_rect);
+                        let px = painted_border.left.ceil() as usize;
+                        let py = painted_border.top.ceil() as usize;
+                        assert!(px < 64 && py < 64);
+                        for window in [painted_border, structural_clip] {
+                            assert!(
+                                px as f32 >= window.left
+                                    && py as f32 >= window.top
+                                    && px as f32 + 1.0 <= window.right
+                                    && py as f32 + 1.0 <= window.bottom,
+                                "whole child cell unavailable scale={scale} x={x} y={y} skip={skip_decoration} px={px} py={py} window={window:?}"
+                            );
+                        }
+                        assert_eq!(&pixels[(py * 64 + px) * 4..][..4], &[0, 128, 0, 255]);
+                        assert!(pixels
+                            .chunks_exact(4)
+                            .any(|pixel| pixel != [255, 255, 255, 255]));
+                    }
+                    // A later sibling remains drawable after an empty child
+                    // clip; no state can leak out of the retained traversal.
+                    let mut sibling = Paint::default();
+                    sibling.set_color(skia_safe::Color::RED);
+                    sibling.set_anti_alias(false);
+                    surface
+                        .canvas()
+                        .draw_rect(Rect::from_xywh(0.0, 0.0, 3.0, 3.0), &sibling);
+                    let pixels = rgba_bytes(&mut surface);
+                    let px = ((1.0 + 0.375) * scale).floor() as usize;
+                    let py = ((1.0 + 0.125) * scale).floor() as usize;
+                    assert_eq!(&pixels[(py * 64 + px) * 4..][..4], &[255, 0, 0, 255]);
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn retained_normal_phase_topology_survives_source_suppression_and_live_siblings() {
+        let mut doc = Document::new();
+        let owner = doc.create_node(ElementTag::Div);
+        let early = doc.create_node(ElementTag::Div);
+        let later = doc.create_node(ElementTag::Div);
+        let child = doc.create_node(ElementTag::Div);
+        let parking = doc.create_node(ElementTag::Div);
+        doc.append_child(doc.root(), owner);
+        doc.append_child(doc.root(), parking);
+        doc.append_child(owner, early);
+        doc.append_child(owner, later);
+        doc.append_child(early, child);
+        for node in [owner, early, later, child, parking] {
+            doc.update_resolved_style(node, |style| style.display = Display::Block);
+        }
+        doc.update_resolved_style(early, |style| style.background_color = Color::RED);
+        doc.update_resolved_style(later, |style| style.background_color = Color::BLUE);
+        doc.update_resolved_style(child, |style| {
+            style.background_color = Color::GREEN;
+            style.transform.e = 1.0;
+            style.transform.f = 1.0;
+        });
+        let size = |width, height| {
+            PhysicalSize::new(LayoutUnit::from_i32(width), LayoutUnit::from_i32(height))
+        };
+        let config = doc.raster_configuration();
+        for scale in [1.0_f64, 1.25, 1.5, 1.75, 2.0] {
+            doc.set_raster_context(config, scale);
+            for outline in [false, true] {
+                doc.update_resolved_style(early, |style| {
+                    style.outline_style = if outline {
+                        BorderStyle::Solid
+                    } else {
+                        BorderStyle::None
+                    };
+                    style.outline_width = if outline { 1 } else { 0 };
+                    style.outline_color = StyleColor::Resolved(Color::BLACK);
+                });
+                let render = |doc: &Document, suppress: bool| {
+                    reset_picture_paint_state();
+                    set_paint_viewport_size(60.0, 20.0);
+                    let mut columns = Vec::new();
+                    for index in 0..3 {
+                        let mut wrapper = Fragment::new_box(owner, size(20, 20));
+                        for node in doc.children(owner) {
+                            if node == early {
+                                let mut projection = Fragment::new_box(early, size(20, 12));
+                                projection.offset.top = LayoutUnit::from_i32((1 - index) * 20);
+                                projection.skip_box_decoration = suppress && index != 1;
+                                let mut foreground = Fragment::new_box(child, size(3, 3));
+                                foreground.offset = PhysicalOffset::new(
+                                    LayoutUnit::from_i32(2),
+                                    LayoutUnit::from_i32(7),
+                                );
+                                projection.children.push(foreground);
+                                wrapper.children.push(projection);
+                            } else if node == later && index > 0 {
+                                let mut projection = Fragment::new_box(later, size(20, 12));
+                                projection.offset.top =
+                                    LayoutUnit::from_i32(if index == 1 { 8 } else { 0 });
+                                wrapper.children.push(projection);
+                            }
+                        }
+                        let mut column = Fragment::new_box(NodeId::NONE, size(20, 20));
+                        column.kind = FragmentKind::ColumnBox;
+                        column.has_overflow_clip = true;
+                        column.offset.left = LayoutUnit::from_i32(index * 20);
+                        column.children.push(wrapper);
+                        columns.push(column);
+                    }
+                    let mut surface = surfaces::raster_n32_premul((120, 40)).unwrap();
+                    surface.canvas().clear(skia_safe::Color::WHITE);
+                    surface.canvas().scale((scale as f32, scale as f32));
+                    let saves = surface.canvas().save_count();
+                    let matrix = surface.canvas().local_to_device_as_3x3();
+                    let clip = surface.canvas().device_clip_bounds();
+                    paint_children_with_stacking_order(
+                        surface.canvas(),
+                        &columns,
+                        doc,
+                        PhysicalOffset::zero(),
+                        true,
+                        false,
+                        None,
+                    );
+                    assert_eq!(surface.canvas().save_count(), saves);
+                    assert_eq!(surface.canvas().local_to_device_as_3x3(), matrix);
+                    assert_eq!(surface.canvas().device_clip_bounds(), clip);
+                    let info =
+                        ImageInfo::new((120, 40), ColorType::RGBA8888, AlphaType::Premul, None);
+                    let mut pixels = vec![0_u8; 120 * 40 * 4];
+                    assert!(surface.image_snapshot().read_pixels(
+                        &info,
+                        &mut pixels,
+                        120 * 4,
+                        (0, 0),
+                        skia_safe::image::CachingHint::Allow,
+                    ));
+                    pixels
+                };
+                let sample = |pixels: &[u8], x: f64, y: f64| {
+                    let x = (x * scale).floor() as usize;
+                    let y = (y * scale).floor() as usize;
+                    <[u8; 4]>::try_from(&pixels[(y * 120 + x) * 4..][..4]).unwrap()
+                };
+                let first = render(&doc, false);
+                assert_eq!(
+                    render(&doc, true),
+                    first,
+                    "source suppression scale={scale} outline={outline}"
+                );
+                assert_eq!(
+                    render(&doc, true),
+                    first,
+                    "repeat scale={scale} outline={outline}"
+                );
+                assert_eq!(sample(&first, 30.0, 10.0), [0, 0, 255, 255]);
+                assert_eq!(sample(&first, 24.5, 9.5), [0, 128, 0, 255]);
+
+                assert!(doc.detach(later));
+                doc.insert_before(early, later);
+                assert_eq!(doc.children(owner).collect::<Vec<_>>(), [later, early]);
+                let reordered = render(&doc, false);
+                assert_eq!(render(&doc, true), reordered);
+                assert_ne!(reordered, first, "live source order must change overlap");
+                assert_eq!(sample(&reordered, 30.0, 10.0), [255, 0, 0, 255]);
+                assert_eq!(sample(&reordered, 24.5, 9.5), [0, 128, 0, 255]);
+
+                assert!(doc.detach(early));
+                doc.append_child(parking, early);
+                let detached = render(&doc, false);
+                assert_eq!(render(&doc, true), detached);
+                assert_eq!(sample(&detached, 30.0, 10.0), [0, 0, 255, 255]);
+                assert_eq!(sample(&detached, 24.5, 9.5), [0, 0, 255, 255]);
+                assert!(doc.detach(early));
+                doc.insert_before(later, early);
+                assert_eq!(doc.children(owner).collect::<Vec<_>>(), [early, later]);
+                assert_eq!(render(&doc, false), first);
+                assert_eq!(render(&doc, true), first);
+            }
+        }
+    }
+}
+
+#[cfg(test)]
+mod split_positioned_decoration_window_tests {
+    use super::*;
+    use openui_geometry::PhysicalRect;
+    use openui_layout::{FragmentBoxGeometry, PositionedFragmentationData};
+
+    fn lu(n: i32) -> LayoutUnit {
+        LayoutUnit::from_i32(n)
+    }
+
+    fn source_fixture(
+        split: i32,
+        consumed: i32,
+        inset: i32,
+        child_height: i32,
+    ) -> (Document, Fragment, Fragment) {
+        let mut doc = Document::new();
+        let parent_id = doc.create_node(ElementTag::Div);
+        let child_id = doc.create_node(ElementTag::Div);
+        let ink_id = doc.create_node(ElementTag::Div);
+        doc.append_child(doc.root(), parent_id);
+        doc.append_child(parent_id, child_id);
+        doc.append_child(child_id, ink_id);
+        doc.update_resolved_style(parent_id, |style| {
+            style.display = Display::Block;
+            style.position = Position::Relative;
+        });
+        doc.update_resolved_style(child_id, |style| {
+            style.display = Display::Block;
+            style.position = Position::Absolute;
+            style.background_color = Color::RED;
+        });
+        let direction = Direction::Ltr.writing_direction(openui_style::WritingMode::HorizontalTb);
+        // The physical final fragment is deliberately larger than its owned
+        // source piece. The window comes from the record, not that capacity.
+        let mut parent = Fragment::new_box(parent_id, PhysicalSize::new(lu(20), lu(120)));
+        let source_size = PhysicalSize::new(lu(20), lu(200));
+        parent.box_geometry = Some(FragmentBoxGeometry {
+            source_size,
+            source_fragment_size: source_size,
+            source_border_box_rect: PhysicalRect::new(PhysicalOffset::zero(), source_size),
+            source_border: BoxStrut::zero(),
+            source_padding: BoxStrut::zero(),
+            stitched_size: source_size,
+            writing_direction: direction,
+            inline_size: lu(20),
+            block_size: lu(100),
+            consumed_block_size: lu(consumed),
+            has_next: consumed == 0,
+            is_repeated: false,
+            continuation_record: true,
+        });
+        let mut child = Fragment::new_box(child_id, PhysicalSize::new(lu(20), lu(child_height)));
+        child.offset.top = lu(inset - split - consumed);
+        child.positioned_fragmentation = Some(PositionedFragmentationData {
+            static_position: PhysicalOffset::zero(),
+            static_position_horizontal_edge: openui_layout::out_of_flow::StaticPositionEdge::Start,
+            static_position_vertical_edge: openui_layout::out_of_flow::StaticPositionEdge::Start,
+            containing_block_offset: PhysicalOffset::new(LayoutUnit::zero(), lu(-split)),
+            containing_block_node: parent_id,
+            containing_block_size: PhysicalSize::new(lu(20), lu(400)),
+            has_inline_containing_block: false,
+            inline_containing_block_node: None,
+            block_in_inline_static_advance: LayoutUnit::zero(),
+            visual_offset: PhysicalOffset::zero(),
+            continuation_visual_offset: PhysicalOffset::zero(),
+            transform_containing_block_source_offset: None,
+            fragmentainer_index: None,
+            split_containing_block_source_offset: Some(lu(split)),
+        });
+        let mut ink = Fragment::new_box(ink_id, PhysicalSize::new(lu(8), lu(16)));
+        ink.offset = PhysicalOffset::new(lu(2), lu(3));
+        child.children.push(ink);
+        (doc, parent, child)
+    }
+
+    #[test]
+    fn split_positioned_windows_preserve_the_complete_background_source_and_child_coordinates() {
+        for (split, consumed, start, extent, first, last) in [
+            (0, 0, 0, 88, true, false),
+            (0, 100, 88, 100, false, false),
+            (200, 0, 188, 100, false, false),
+            (200, 100, 288, 88, false, true),
+        ] {
+            let (doc, parent, child) = source_fixture(split, consumed, 12, 376);
+            let window = owned_split_positioned_decoration_window(&child, &parent, &doc).unwrap();
+            assert_eq!(window.source_offset, lu(start));
+            assert_eq!(window.block_size, lu(extent));
+            assert_eq!(window.source_size, lu(376));
+            let view = window.decoration_view(&child);
+            assert_eq!(view.size, PhysicalSize::new(lu(20), lu(extent)));
+            assert_eq!(
+                (view.is_first_for_node, view.is_last_for_node),
+                (first, last)
+            );
+            let original_offset = PhysicalOffset::new(lu(10), lu(30 - split - consumed + 12));
+            let view_offset = window.decoration_offset(original_offset);
+            let piece = Rect::from_xywh(
+                view_offset.left.to_f32(),
+                view_offset.top.to_f32(),
+                view.size.width.to_f32(),
+                view.size.height.to_f32(),
+            );
+            assert_eq!(
+                decoration_source_rect(&view, piece),
+                Rect::from_xywh(10.0, original_offset.top.to_f32(), 20.0, 376.0),
+                "the positioning area stays at the original child source"
+            );
+            let coverage = SharedColumnDecoration {
+                fragment: &view,
+                offset: view_offset,
+                clips: Vec::new(),
+                ancestor_node_ids: Vec::new(),
+                starts_at_shared_edge: false,
+            };
+            assert_eq!(clipped_decoration_coverage_rect(&coverage), Some(piece));
+            assert_eq!(child.size.height, lu(376));
+            assert_eq!(child.offset.top, lu(12 - split - consumed));
+            assert_eq!(child.decoration_slice, None);
+            assert!(child.is_first_for_node && child.is_last_for_node);
+            assert_eq!(view.children[0].offset, child.children[0].offset);
+            assert_eq!(view.children[0].size, child.children[0].size);
+            assert_eq!(view.children[0].offset, PhysicalOffset::new(lu(2), lu(3)));
+        }
+    }
+
+    #[test]
+    fn empty_split_positioned_windows_retain_children_and_unsupported_sources_retain_the_old_path()
+    {
+        let (mut doc, parent, child) = source_fixture(200, 0, 12, 40);
+        let window = owned_split_positioned_decoration_window(&child, &parent, &doc).unwrap();
+        assert!(window.is_empty());
+        assert_eq!(child.children.len(), 1);
+        assert_eq!(child.size.height, lu(40));
+        for case in 0..8 {
+            let mut cb = parent.clone();
+            let mut part = child.clone();
+            match case {
+                0 => cb.box_geometry = None,
+                1 => cb.box_geometry.as_mut().unwrap().is_repeated = true,
+                2 => cb.box_geometry.as_mut().unwrap().source_padding.top = lu(1),
+                3 => {
+                    part.positioned_fragmentation
+                        .as_mut()
+                        .unwrap()
+                        .containing_block_node = NodeId::NONE
+                }
+                4 => part.size.height = lu(420),
+                5 => {
+                    part.fragmentation_writing_direction = Some(
+                        Direction::Ltr.writing_direction(openui_style::WritingMode::VerticalRl),
+                    )
+                }
+                6 => part.border.top = lu(1),
+                7 => {
+                    part.positioned_fragmentation
+                        .as_mut()
+                        .unwrap()
+                        .split_containing_block_source_offset = None
+                }
+                _ => unreachable!(),
+            }
+            assert!(
+                owned_split_positioned_decoration_window(&part, &cb, &doc).is_none(),
+                "case={case}"
+            );
+            assert_eq!(part.children[0].offset, PhysicalOffset::new(lu(2), lu(3)));
+        }
+        doc.update_resolved_style(child.node_id, |style| {
+            style.box_decoration_break = openui_style::BoxDecorationBreak::Clone;
+        });
+        assert!(owned_split_positioned_decoration_window(&child, &parent, &doc).is_none());
+    }
+    #[test]
+    fn source_position_dependent_backgrounds_preserve_the_original_snapped_reference() {
+        let (mut doc, parent, mut child) = source_fixture(0, 100, 12, 376);
+        child.offset.top = child.offset.top + LayoutUnit::from_f32(0.25);
+        child.size.height = child.size.height + LayoutUnit::from_f32(0.25);
+        let window = owned_split_positioned_decoration_window(&child, &parent, &doc).unwrap();
+        assert_eq!(window.source_offset, LayoutUnit::from_f32(87.75));
+        let original_offset = PhysicalOffset::new(lu(10), LayoutUnit::from_f32(-57.75));
+        let view = window.decoration_view(&child);
+        let view_offset = window.decoration_offset(original_offset);
+        let snapped_piece = Rect::from_ltrb(
+            view_offset.left.round().to_f32(),
+            view_offset.top.round().to_f32(),
+            (view_offset.left + view.size.width).round().to_f32(),
+            (view_offset.top + view.size.height).round().to_f32(),
+        );
+        let original_reference = Rect::from_ltrb(
+            original_offset.left.round().to_f32(),
+            original_offset.top.round().to_f32(),
+            (original_offset.left + child.size.width).round().to_f32(),
+            (original_offset.top + child.size.height).round().to_f32(),
+        );
+        // The existing source reconstruction is sufficient for a solid
+        // border-box fill, but is not an invariant shader positioning area.
+        assert_ne!(
+            decoration_source_rect(&view, snapped_piece),
+            original_reference
+        );
+        let gradient = openui_style::LinearGradient {
+            angle_degrees: 180.0,
+            repeating: false,
+            stops: vec![
+                openui_style::LinearGradientStop {
+                    color: Color::RED,
+                    position: openui_style::GradientStopPosition::Percent(0.0),
+                },
+                openui_style::LinearGradientStop {
+                    color: Color::BLUE,
+                    position: openui_style::GradientStopPosition::Percent(100.0),
+                },
+            ],
+        };
+        doc.update_resolved_style(child.node_id, |style| {
+            style.background_linear_gradient = Some(gradient.clone());
+        });
+        assert!(owned_split_positioned_decoration_window(&child, &parent, &doc).is_none());
+        doc.update_resolved_style(child.node_id, |style| {
+            style.background_linear_gradient = None;
+            style.background_layers = vec![BackgroundLayer::new(CssImage::LinearGradient(
+                openui_style::CssLinearGradient {
+                    angle_degrees: 180.0,
+                    corner_direction: None,
+                    repeating: false,
+                    color_space: GradientColorSpace::Srgb,
+                    stops: vec![
+                        openui_style::GradientStop {
+                            color: StyleColor::Resolved(Color::RED),
+                            position: openui_style::GradientStopPosition::Percent(0.0),
+                        },
+                        openui_style::GradientStop {
+                            color: StyleColor::Resolved(Color::BLUE),
+                            position: openui_style::GradientStopPosition::Percent(100.0),
+                        },
+                    ],
+                },
+            ))];
+        });
+        assert!(owned_split_positioned_decoration_window(&child, &parent, &doc).is_none());
+        for clip in [
+            BackgroundClip::PaddingBox,
+            BackgroundClip::ContentBox,
+            BackgroundClip::Text,
+        ] {
+            doc.update_resolved_style(child.node_id, |style| {
+                style.background_layers.clear();
+                style.background_clip = clip;
+            });
+            assert!(owned_split_positioned_decoration_window(&child, &parent, &doc).is_none());
+        }
+        doc.update_resolved_style(child.node_id, |style| {
+            style.background_clip = BackgroundClip::BorderBox
+        });
+        assert_eq!(
+            owned_split_positioned_decoration_window(&child, &parent, &doc),
+            Some(window)
+        );
+        assert_eq!(child.children[0].offset, PhysicalOffset::new(lu(2), lu(3)));
+    }
+
+    #[test]
+    fn original_containing_block_edges_survive_split_projection_admission() {
+        use openui_geometry::Length;
+        // This is the later split portion: its own captured edges are zero,
+        // while the original element may still have a used padding or border.
+        for side in 0..4 {
+            for padding in [
+                Length::px(4.0),
+                Length::percent(2.0),
+                Length::calc_percent_px(0.0, 1.25),
+                Length::calc_percent_px(1.0, -1.0),
+                Length::auto(),
+            ] {
+                let (mut doc, parent, child) = source_fixture(200, 0, 12, 376);
+                assert_eq!(
+                    parent.box_geometry.unwrap().source_padding,
+                    BoxStrut::zero()
+                );
+                assert_eq!(parent.padding, BoxStrut::zero());
+                let original = owned_split_positioned_decoration_window(&child, &parent, &doc)
+                    .expect("zero-edge source control must enter the finite view");
+                let raw = (
+                    child.offset,
+                    child.size,
+                    child.children[0].offset,
+                    child.children[0].size,
+                );
+                doc.update_resolved_style(parent.node_id, |style| match side {
+                    0 => style.padding_top = padding,
+                    1 => style.padding_right = padding,
+                    2 => style.padding_bottom = padding,
+                    3 => style.padding_left = padding,
+                    _ => unreachable!(),
+                });
+                assert!(
+                    owned_split_positioned_decoration_window(&child, &parent, &doc).is_none(),
+                    "source snapshot zero is insufficient: side={side} padding={padding:?}"
+                );
+                assert_eq!(
+                    (
+                        child.offset,
+                        child.size,
+                        child.children[0].offset,
+                        child.children[0].size
+                    ),
+                    raw,
+                    "falling back must retain child source and coordinates"
+                );
+                for zero in [
+                    Length::zero(),
+                    Length::percent(0.0),
+                    Length::calc_percent_px(0.0, 0.0),
+                ] {
+                    doc.update_resolved_style(parent.node_id, |style| match side {
+                        0 => style.padding_top = zero,
+                        1 => style.padding_right = zero,
+                        2 => style.padding_bottom = zero,
+                        3 => style.padding_left = zero,
+                        _ => unreachable!(),
+                    });
+                    assert_eq!(
+                        owned_split_positioned_decoration_window(&child, &parent, &doc),
+                        Some(original)
+                    );
+                }
+            }
+            for border_style in [BorderStyle::None, BorderStyle::Hidden, BorderStyle::Solid] {
+                let (mut doc, parent, child) = source_fixture(200, 0, 12, 376);
+                let original =
+                    owned_split_positioned_decoration_window(&child, &parent, &doc).unwrap();
+                assert_eq!(parent.box_geometry.unwrap().source_border, BoxStrut::zero());
+                doc.update_resolved_style(parent.node_id, |style| match side {
+                    0 => {
+                        style.border_top_width = 2;
+                        style.border_top_style = border_style;
+                    }
+                    1 => {
+                        style.border_right_width = 2;
+                        style.border_right_style = border_style;
+                    }
+                    2 => {
+                        style.border_bottom_width = 2;
+                        style.border_bottom_style = border_style;
+                    }
+                    3 => {
+                        style.border_left_width = 2;
+                        style.border_left_style = border_style;
+                    }
+                    _ => unreachable!(),
+                });
+                let selected = owned_split_positioned_decoration_window(&child, &parent, &doc);
+                if border_style == BorderStyle::Solid {
+                    assert_eq!(
+                        selected, None,
+                        "removed visible source edge must retain the old path"
+                    );
+                } else {
+                    assert_eq!(
+                        selected,
+                        Some(original),
+                        "none/hidden have zero used border widths"
+                    );
+                }
+                assert_eq!(child.size.height, lu(376));
+                assert_eq!(child.offset.top, lu(-188));
+                assert_eq!(child.children.len(), 1);
+                assert_eq!(child.children[0].offset, PhysicalOffset::new(lu(2), lu(3)));
+            }
+        }
+    }
+}
+
+#[cfg(test)]
+mod authored_projection_prepaint_accounting_guards {
+    use super::*;
+
+    fn lu(value: i32) -> LayoutUnit {
+        LayoutUnit::from_i32(value)
+    }
+
+    fn layout_source(scale: f64, zero: bool) -> (Document, Vec<Fragment>) {
+        let mut doc = Document::new_with_raster_configuration(
+            openui_text::FontCollection::deterministic_test(),
+            openui_geometry::RasterConfiguration::deterministic_aliased(false),
+            scale,
+        );
+        fn element(doc: &mut Document, parent: NodeId) -> NodeId {
+            let node = doc.create_node(ElementTag::Div);
+            doc.append_child(parent, node);
+            doc.update_resolved_style(node, |style| {
+                style.display = Display::Block;
+                style.box_sizing = openui_style::BoxSizing::ContentBox;
+                style.scrollbar_width = openui_style::ScrollbarWidth::None;
+            });
+            node
+        }
+        let root = doc.root();
+        doc.update_resolved_style(root, |style| {
+            style.background_color = Color::WHITE;
+            style.scrollbar_width = openui_style::ScrollbarWidth::None;
+        });
+        let body = element(&mut doc, root);
+        doc.update_resolved_style(body, |style| {
+            style.padding_top = openui_geometry::Length::px(20.0);
+            style.padding_right = openui_geometry::Length::px(20.0);
+            style.padding_bottom = openui_geometry::Length::px(20.0);
+            style.padding_left = openui_geometry::Length::px(20.0);
+        });
+        let outer = element(&mut doc, body);
+        doc.update_resolved_style(outer, |style| {
+            style.width = openui_geometry::Length::px(400.0);
+            style.height = openui_geometry::Length::px(110.0);
+            style.column_count = Some(2);
+            style.column_rule_width = 6;
+            style.column_rule_style = BorderStyle::Solid;
+        });
+        let inner = element(&mut doc, outer);
+        doc.update_resolved_style(inner, |style| {
+            style.height = openui_geometry::Length::px(270.0);
+            style.column_count = Some(2);
+            style.column_rule_width = 3;
+            style.column_rule_style = BorderStyle::Solid;
+            style.background_color = Color::from_rgba8(144, 238, 144, 255);
+            style.border_top_width = 10;
+            style.border_right_width = 10;
+            style.border_bottom_width = 10;
+            style.border_left_width = 10;
+            style.border_top_style = BorderStyle::Solid;
+            style.border_right_style = BorderStyle::Solid;
+            style.border_bottom_style = BorderStyle::Solid;
+            style.border_left_style = BorderStyle::Solid;
+        });
+        let before = element(&mut doc, inner);
+        doc.update_resolved_style(before, |style| {
+            style.height = openui_geometry::Length::px(200.0);
+            style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        });
+        let span = element(&mut doc, inner);
+        doc.update_resolved_style(span, |style| {
+            style.column_span = openui_style::ColumnSpan::All;
+            style.height = openui_geometry::Length::px(if zero { 0.0 } else { 50.0 });
+            style.background_color = Color::from_rgba8(173, 216, 230, 255);
+        });
+        let after = element(&mut doc, inner);
+        doc.update_resolved_style(after, |style| {
+            style.height = openui_geometry::Length::px(240.0);
+            style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        });
+        let child = element(&mut doc, span);
+        doc.update_resolved_style(child, |style| {
+            style.width = openui_geometry::Length::px(20.0);
+            style.height = openui_geometry::Length::px(20.0);
+            style.background_color = Color::from_rgba8(255, 0, 255, 255);
+        });
+        let space = openui_layout::ConstraintSpace::for_root(lu(800), lu(600));
+        let layout = openui_layout::block_layout(&doc, root, &space);
+        fn collect(fragment: &Fragment, node: NodeId, copies: &mut Vec<Fragment>) {
+            if fragment.node_id == node && fragment.owns_element_box() {
+                copies.push(fragment.clone());
+            }
+            for child in &fragment.children {
+                collect(child, node, copies);
+            }
+        }
+        let mut copies = Vec::new();
+        collect(&layout, span, &mut copies);
+        assert_eq!(copies.len(), 3);
+        assert_eq!(
+            copies
+                .iter()
+                .map(Fragment::is_authored_projection_owner)
+                .collect::<Vec<_>>(),
+            [false, true, false],
+        );
+        assert!(copies.iter().all(|copy| copy
+            .authored_projection
+            .as_ref()
+            .unwrap()
+            .is_materialized_copy()));
+        (doc, copies)
+    }
+
+    fn rgba(surface: &mut skia_safe::Surface, dimensions: (i32, i32)) -> Vec<u8> {
+        let info = skia_safe::ImageInfo::new(
+            dimensions,
+            skia_safe::ColorType::RGBA8888,
+            skia_safe::AlphaType::Premul,
+            None,
+        );
+        let mut pixels: Vec<u8> = vec![0; dimensions.0 as usize * dimensions.1 as usize * 4];
+        assert!(surface.image_snapshot().read_pixels(
+            &info,
+            &mut pixels,
+            dimensions.0 as usize * 4,
+            (0, 0),
+            skia_safe::image::CachingHint::Allow,
+        ));
+        pixels
+    }
+
+    #[test]
+    fn overlapping_retained_source_copies_claim_only_owner_coverage_and_keep_zero_children() {
+        for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
+            for zero in [false, true] {
+                let (doc, mut copies) = layout_source(scale, zero);
+                // Reposition actual immutable layout-produced records to share
+                // coverage. No fake ownership record or source-window edit is
+                // used; raw topology and child geometry remain intact.
+                for copy in &mut copies {
+                    copy.offset = PhysicalOffset::zero();
+                    copy.skip_box_decoration = false;
+                    assert_eq!(copy.children.len(), 1);
+                }
+                let mut columns = Vec::new();
+                for copy in copies {
+                    let mut column =
+                        Fragment::new_box(NodeId::NONE, PhysicalSize::new(lu(64), lu(64)));
+                    column.kind = FragmentKind::ColumnBox;
+                    column.children.push(copy);
+                    columns.push(column);
+                }
+                let columns_ref = columns.clone();
+                let dimensions = ((64.0 * scale) as i32, (64.0 * scale) as i32);
+                let mut actual = surfaces::raster_n32_premul(dimensions).unwrap();
+                actual.canvas().clear(skia_safe::Color::WHITE);
+                actual.canvas().scale((scale as f32, scale as f32));
+                let saved = (
+                    actual.canvas().save_count(),
+                    actual.canvas().local_to_device_as_3x3(),
+                    actual.canvas().device_clip_bounds(),
+                );
+                let (prepainted, rules) = prepaint_shared_column_root_decorations(
+                    actual.canvas(),
+                    &columns_ref,
+                    &doc,
+                    PhysicalOffset::zero(),
+                );
+                assert!(rules.is_empty());
+                let owner = &columns_ref[1].children[0];
+                assert!(prepainted.contains(&(owner as *const Fragment as usize)));
+                for index in [0, 2] {
+                    let nonowner = &columns_ref[index].children[0];
+                    assert!(!prepainted.contains(&(nonowner as *const Fragment as usize)));
+                    assert!(
+                        !prepainted.contains(&(&nonowner.children[0] as *const Fragment as usize))
+                    );
+                }
+                assert_eq!(
+                    (
+                        actual.canvas().save_count(),
+                        actual.canvas().local_to_device_as_3x3(),
+                        actual.canvas().device_clip_bounds()
+                    ),
+                    saved,
+                );
+                let mut expected = surfaces::raster_n32_premul(dimensions).unwrap();
+                expected.canvas().clear(skia_safe::Color::WHITE);
+                expected.canvas().scale((scale as f32, scale as f32));
+                for fragment in [owner, &owner.children[0]] {
+                    paint_fragment_box_decoration(
+                        expected.canvas(),
+                        fragment,
+                        &doc,
+                        &doc.node(fragment.node_id).style,
+                        fragment.offset,
+                        1.0,
+                    );
+                }
+                assert!(
+                    rgba(&mut actual, dimensions) == rgba(&mut expected, dimensions),
+                    "scale={scale} zero={zero} complete owner/child coverage"
+                );
+            }
+        }
+    }
+    #[test]
+    fn complete_overflow_decoration_admission_keeps_source_and_child_classes() {
+        let mut doc = Document::new();
+        let owner = doc.create_node(ElementTag::Div);
+        let image = doc.create_node(ElementTag::Image);
+        let ordinary = doc.create_node(ElementTag::Div);
+        doc.append_child(doc.root(), owner);
+        doc.append_child(owner, image);
+        doc.append_child(owner, ordinary);
+        doc.update_resolved_style(owner, |style| {
+            style.display = Display::Block;
+            style.max_height = openui_geometry::Length::px(40.0);
+        });
+        doc.update_resolved_style(image, |style| style.display = Display::Block);
+        doc.update_resolved_style(ordinary, |style| style.display = Display::Block);
+        let size = |width, height| {
+            PhysicalSize::new(LayoutUnit::from_i32(width), LayoutUnit::from_i32(height))
+        };
+        let mut source = Fragment::new_box(owner, size(42, 30));
+        source.decoration_slice = Some(openui_layout::DecorationSlice {
+            source_block_offset: LayoutUnit::zero(),
+            source_block_size: LayoutUnit::from_i32(45),
+        });
+        source.children.push(Fragment::new_box(image, size(16, 80)));
+        assert!(needs_complete_overflow_decoration_replay(&source, &doc));
+        let raw = (
+            source.offset,
+            source.size,
+            source.decoration_slice,
+            source.children[0].offset,
+            source.children[0].size,
+        );
+        source.children[0].size.height = LayoutUnit::from_i32(20);
+        assert!(!needs_complete_overflow_decoration_replay(&source, &doc));
+        source.children[0].size.height = LayoutUnit::from_i32(80);
+        source.children[0].node_id = ordinary;
+        assert!(!needs_complete_overflow_decoration_replay(&source, &doc));
+        source.children[0].node_id = image;
+        source.is_first_for_node = false;
+        assert!(!needs_complete_overflow_decoration_replay(&source, &doc));
+        source.is_first_for_node = true;
+        source.decoration_slice.as_mut().unwrap().source_block_size = source.size.height;
+        assert!(!needs_complete_overflow_decoration_replay(&source, &doc));
+        source.decoration_slice.as_mut().unwrap().source_block_size = LayoutUnit::from_i32(45);
+        doc.update_resolved_style(owner, |style| {
+            style.max_height = openui_geometry::Length::none();
+            style.height = openui_geometry::Length::px(40.0);
+        });
+        assert!(needs_complete_overflow_decoration_replay(&source, &doc));
+        let mut outer = Fragment::new_box(NodeId::NONE, size(100, 30));
+        outer.kind = FragmentKind::ColumnBox;
+        outer.children.push(source.clone());
+        let mut owned = HashSet::new();
+        collect_complete_column_decoration_replays(&outer, &doc, false, &mut owned);
+        assert!(owned.is_empty(), "unclipped column owns no complete replay");
+        outer.has_overflow_clip = true;
+        collect_complete_column_decoration_replays(&outer, &doc, false, &mut owned);
+        assert_eq!(owned.len(), 1);
+        assert!(owned.contains(&(&outer.children[0] as *const Fragment as usize)));
+        let mut inner = outer.clone();
+        outer.has_overflow_clip = false;
+        outer.children.clear();
+        inner.has_overflow_clip = true;
+        outer.children.push(inner);
+        owned.clear();
+        collect_complete_column_decoration_replays(&outer, &doc, false, &mut owned);
+        assert_eq!(owned.len(), 1);
+        assert!(owned.contains(&(&outer.children[0].children[0] as *const Fragment as usize)));
+        assert_eq!(
+            (
+                source.offset,
+                source.size,
+                source.decoration_slice,
+                source.children[0].offset,
+                source.children[0].size
+            ),
+            raw
+        );
+    }
+    fn owned_block_scope_source(scale: f64) -> (Document, Fragment, NodeId) {
+        let lu = LayoutUnit::from_i32;
+        let mut doc = Document::new_with_raster_configuration(
+            openui_text::FontCollection::deterministic_test(),
+            openui_geometry::RasterConfiguration::deterministic_aliased(false),
+            scale,
+        );
+        let normal = doc.create_node(ElementTag::Div);
+        let owner = doc.create_node(ElementTag::Div);
+        let relative = doc.create_node(ElementTag::Div);
+        let green = doc.create_node(ElementTag::Div);
+        doc.append_child(doc.root(), normal);
+        doc.append_child(normal, owner);
+        doc.append_child(owner, relative);
+        doc.append_child(relative, green);
+        for node in [normal, owner, relative, green] {
+            doc.update_resolved_style(node, |style| style.display = Display::Block);
+        }
+        doc.update_resolved_style(owner, |style| style.position = Position::Absolute);
+        doc.update_resolved_style(relative, |style| style.position = Position::Relative);
+        doc.update_resolved_style(green, |style| {
+            style.position = Position::Absolute;
+            style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        });
+        let size = |w, h| PhysicalSize::new(lu(w), lu(h));
+        let mut ink = Fragment::new_box(green, size(12, 400));
+        ink.offset = PhysicalOffset::zero();
+        let mut child = Fragment::new_box(relative, size(25, 400));
+        child.offset.top = lu(-40);
+        child.children.push(ink);
+        let mut owned = Fragment::new_box(owner, size(25, 100));
+        owned.offset = PhysicalOffset::new(lu(20), lu(20));
+        owned.has_overflow_clip = true;
+        owned.block_axis_clip_only = true;
+        owned.decoration_slice = Some(openui_layout::DecorationSlice {
+            source_block_offset: lu(0),
+            source_block_size: lu(400),
+        });
+        owned.children.push(child);
+        let mut column = Fragment::new_box(NodeId::NONE, size(100, 100));
+        column.kind = FragmentKind::ColumnBox;
+        column.block_axis_clip_only = true;
+        // The ordinary owner supplies the real boundary. Manufacturing an
+        // anonymous outer clip would hide the ownership error.
+        column.has_overflow_clip = false;
+        column.children.push(owned);
+        let mut root = Fragment::new_box(normal, size(100, 100));
+        root.children.push(column);
+        (doc, root, owner)
+    }
+
+    #[test]
+    fn positioned_owned_block_clip_matches_ordinary_scope_and_live_raster() {
+        for scale in [1.0_f64, 1.25, 1.5, 1.75, 2.0] {
+            for fraction in [0.0, 0.375] {
+                let (doc, root, _) = owned_block_scope_source(scale);
+                let offset = PhysicalOffset::new(
+                    LayoutUnit::from_f64(fraction),
+                    LayoutUnit::from_f64(fraction),
+                );
+                let owner = &root.children[0].children[0];
+                let owner_offset = PhysicalOffset::new(
+                    offset.left + owner.offset.left,
+                    offset.top + owner.offset.top,
+                );
+                let carried =
+                    fragmented_positioned_scope_clip(owner, &doc, owner_offset, None).unwrap();
+                let (ordinary, _, _) = overflow_clip_base_geometry(
+                    owner,
+                    &doc,
+                    owner_offset,
+                    &doc.node(owner.node_id).style,
+                );
+                assert_eq!(carried, ordinary);
+                assert!(
+                    column_fragmentainer_clip_rect(owner, owner_offset, scale).top < carried.top
+                );
+                let raw = format!("{:?}", root);
+                let dimensions = ((128.0 * scale).ceil() as i32, (160.0 * scale).ceil() as i32);
+                let mut surface = surfaces::raster_n32_premul(dimensions).unwrap();
+                surface.canvas().clear(skia_safe::Color::WHITE);
+                surface.canvas().scale((scale as f32, scale as f32));
+                let saved = (
+                    surface.canvas().save_count(),
+                    surface.canvas().local_to_device_as_3x3(),
+                    surface.canvas().device_clip_bounds(),
+                );
+                let skip = HOIST_SKIP.with(|s| s.borrow().clone());
+                paint_children_with_stacking_order(
+                    surface.canvas(),
+                    std::slice::from_ref(&root),
+                    &doc,
+                    offset,
+                    true,
+                    false,
+                    None,
+                );
+                assert_eq!(
+                    (
+                        surface.canvas().save_count(),
+                        surface.canvas().local_to_device_as_3x3(),
+                        surface.canvas().device_clip_bounds()
+                    ),
+                    saved
+                );
+                assert_eq!(HOIST_SKIP.with(|s| s.borrow().clone()), skip);
+                assert_eq!(format!("{:?}", root), raw);
+                let info = skia_safe::ImageInfo::new(
+                    dimensions,
+                    skia_safe::ColorType::RGBA8888,
+                    skia_safe::AlphaType::Premul,
+                    None,
+                );
+                let stride = dimensions.0 as usize * 4;
+                let mut pixels = vec![0_u8; stride * dimensions.1 as usize];
+                assert!(surface.image_snapshot().read_pixels(
+                    &info,
+                    &mut pixels,
+                    stride,
+                    (0, 0),
+                    skia_safe::image::CachingHint::Allow
+                ));
+                let final_clip = outward_snap_rect_to_physical(carried, scale);
+                let (device_clip, stays_rect) = saved.1.map_rect(final_clip);
+                assert!(stays_rect);
+                let mut visible = 0;
+                for y in 0..dimensions.1 as usize {
+                    for x in 0..dimensions.0 as usize {
+                        if pixels[y * stride + x * 4..][..4] != [255, 255, 255, 255] {
+                            visible += 1;
+                            assert!(
+                                y as f32 >= device_clip.top.floor()
+                                    && (y as f32) < device_clip.bottom.ceil(),
+                                "owned clip crossed: scale={scale} fraction={fraction} x={x} y={y}"
+                            );
+                        }
+                    }
+                }
+                assert!(visible > 0, "live child must still paint");
+                let x = ((25.0 + fraction) * scale).floor() as usize;
+                let y = ((30.0 + fraction) * scale).floor() as usize;
+                assert_eq!(&pixels[y * stride + x * 4..][..4], &[0, 128, 0, 255]);
+            }
+        }
+    }
+
+    #[test]
+    fn unrepresentable_owned_scope_keeps_descendants_with_ordinary_owner() {
+        let (mut doc, root, owner) = owned_block_scope_source(1.25);
+        for variant in 0..3 {
+            let mut changed = root.clone();
+            let owned = &mut changed.children[0].children[0];
+            match variant {
+                0 => owned.inline_axis_clip_only = true,
+                1 => owned.column_block_start_ink_overflow = LayoutUnit::from_raw(1),
+                _ => {
+                    owned.decoration_paint_block_size = Some(LayoutUnit::from_i32(100));
+                    doc.update_resolved_style(owned.children[0].node_id, |style| {
+                        style.opacity = 0.5
+                    });
+                }
+            }
+            let raw = format!("{:?}", changed);
+            let mut entries = Vec::new();
+            let mut hoisted = Vec::new();
+            collect_fragmented_positioned_phase(
+                &changed.children[0],
+                &doc,
+                PhysicalOffset::zero(),
+                None,
+                &mut entries,
+                &mut hoisted,
+            );
+            assert_eq!(entries.len(), 1);
+            assert_eq!(stacking_entry_fragment(&entries[0].2, &[]).node_id, owner);
+            assert_eq!(
+                hoisted.len(),
+                1,
+                "descendants must remain in their owner's real scope"
+            );
+            assert_eq!(format!("{:?}", changed), raw);
+        }
+    }
+
+    #[test]
+    fn fractional_touching_owned_scopes_keep_independent_ordinary_clips() {
+        fn rgba(surface: &mut skia_safe::Surface, dimensions: (i32, i32)) -> Vec<u8> {
+            let info = skia_safe::ImageInfo::new(
+                dimensions,
+                skia_safe::ColorType::RGBA8888,
+                skia_safe::AlphaType::Premul,
+                None,
+            );
+            let stride = dimensions.0 as usize * 4;
+            let mut pixels = vec![0; stride * dimensions.1 as usize];
+            assert!(surface.image_snapshot().read_pixels(
+                &info,
+                &mut pixels,
+                stride,
+                (0, 0),
+                skia_safe::image::CachingHint::Allow,
+            ));
+            pixels
+        }
+        let mut physically_overlapping_cases = 0;
+        // Ordinary client geometry first rounds its edge to a CSS integer.
+        // Exercise every integer translation within the four-CSS-pixel period
+        // of these quarter-step scales; a fractional offset alone may still
+        // round to a source edge aligned on every supplied physical grid.
+        for (scale, block_translation) in [1.0_f64, 1.25, 1.5, 1.75, 2.0]
+            .into_iter()
+            .flat_map(|scale| (0..4).map(move |block_translation| (scale, block_translation)))
+        {
+            let (doc, root, owner_node) = owned_block_scope_source(scale);
+            let offset = PhysicalOffset::new(
+                LayoutUnit::from_f64(0.375),
+                LayoutUnit::from_i32(block_translation) + LayoutUnit::from_f64(0.375),
+            );
+            let owner = &root.children[0].children[0];
+            let owner_offset = PhysicalOffset::new(
+                offset.left + owner.offset.left,
+                offset.top + owner.offset.top,
+            );
+            let (ordinary, _, _) = overflow_clip_base_geometry(
+                owner,
+                &doc,
+                owner_offset,
+                &doc.node(owner.node_id).style,
+            );
+            let overlapping = Rect::from_ltrb(0.0, 0.0, 100.0, ordinary.top + 10.0);
+            assert!(
+                fragmented_positioned_scope_clip(owner, &doc, owner_offset, Some(overlapping),)
+                    .is_some()
+            );
+            let nonfinite = Rect::from_ltrb(0.0, 0.0, 100.0, f32::INFINITY);
+            assert!(
+                fragmented_positioned_scope_clip(owner, &doc, owner_offset, Some(nonfinite),)
+                    .is_none()
+            );
+            for gap in [0.0_f32, 0.0625] {
+                let inherited = Rect::from_ltrb(0.0, 0.0, 100.0, ordinary.top - gap);
+                assert!(fragmented_positioned_scope_clip(
+                    owner,
+                    &doc,
+                    owner_offset,
+                    Some(inherited),
+                )
+                .is_none());
+                let raw = format!("{:?}", root);
+                let original_skip = HOIST_SKIP.with(|skip| skip.borrow().clone());
+                let mut entries = Vec::new();
+                let mut hoisted = Vec::new();
+                collect_fragmented_positioned_phase(
+                    &root.children[0],
+                    &doc,
+                    offset,
+                    Some(inherited),
+                    &mut entries,
+                    &mut hoisted,
+                );
+                assert_eq!(entries.len(), 1, "scale={scale} gap={gap}");
+                assert_eq!(
+                    stacking_entry_fragment(&entries[0].2, &[]).node_id,
+                    owner_node
+                );
+                assert_eq!(hoisted, vec![owner as *const Fragment as usize]);
+                match &entries[0].2 {
+                    StackingEntry::FragmentedPositioned(fragment, parent_offset, clip) => {
+                        assert!(std::ptr::eq(*fragment, owner));
+                        assert_eq!(*parent_offset, offset);
+                        assert_eq!(*clip, Some(inherited));
+                    }
+                    _ => panic!("fallback must retain the ordinary owner and inherited scope"),
+                }
+                let dimensions = ((128.0 * scale).ceil() as i32, (160.0 * scale).ceil() as i32);
+                let mut actual = surfaces::raster_n32_premul(dimensions).unwrap();
+                actual.canvas().clear(skia_safe::Color::WHITE);
+                actual.canvas().scale((scale as f32, scale as f32));
+                let saved = (
+                    actual.canvas().save_count(),
+                    actual.canvas().local_to_device_as_3x3(),
+                    actual.canvas().device_clip_bounds(),
+                );
+                paint_stacking_entry(actual.canvas(), &entries[0].2, &[], &doc, offset);
+                assert_eq!(
+                    (
+                        actual.canvas().save_count(),
+                        actual.canvas().local_to_device_as_3x3(),
+                        actual.canvas().device_clip_bounds(),
+                    ),
+                    saved,
+                );
+                let mut expected = surfaces::raster_n32_premul(dimensions).unwrap();
+                expected.canvas().clear(skia_safe::Color::WHITE);
+                expected.canvas().scale((scale as f32, scale as f32));
+                expected.canvas().save();
+                expected.canvas().clip_rect(
+                    outward_snap_rect_to_physical(inherited, scale),
+                    ClipOp::Intersect,
+                    false,
+                );
+                paint_fragment_tracked(expected.canvas(), owner, &doc, offset);
+                expected.canvas().restore();
+                let actual_pixels = rgba(&mut actual, dimensions);
+                assert_eq!(
+                    actual_pixels,
+                    rgba(&mut expected, dimensions),
+                    "scale={scale} gap={gap}"
+                );
+                let mut physical_overlap = outward_snap_rect_to_physical(inherited, scale);
+                if physical_overlap.intersect(outward_snap_rect_to_physical(ordinary, scale)) {
+                    physically_overlapping_cases += 1;
+                    assert!(actual_pixels.chunks_exact(4).any(|pixel| pixel != [255, 255, 255, 255]),
+                        "ordinary child ink at the shared physical boundary must survive: scale={scale} gap={gap}");
+                }
+                assert_eq!(HOIST_SKIP.with(|skip| skip.borrow().clone()), original_skip);
+                assert_eq!(format!("{:?}", root), raw);
+            }
+        }
+        assert!(
+            physically_overlapping_cases > 0,
+            "exercise snapped boundary overlap"
+        );
+    }
+}
+
+#[cfg(test)]
+mod fragmented_positioned_phase_axis_tests {
+    use super::*;
+    use openui_geometry::BoxStrut;
+    use openui_layout::FragmentBoxGeometry;
+    use openui_style::{Direction, WritingMode};
+
+    fn size(width: i32, height: i32) -> PhysicalSize {
+        PhysicalSize::new(LayoutUnit::from_i32(width), LayoutUnit::from_i32(height))
+    }
+
+    fn source(mode: WritingMode, direction: Direction) -> (Document, Fragment) {
+        let mut doc = Document::new();
+        let owner = doc.create_node(ElementTag::Div);
+        let relative = doc.create_node(ElementTag::Div);
+        let absolute = doc.create_node(ElementTag::Div);
+        for (node, position) in [
+            (owner, Position::Static),
+            (relative, Position::Relative),
+            (absolute, Position::Absolute),
+        ] {
+            doc.node_mut(node).style.update_derived(|style| {
+                style.display = Display::Block;
+                style.position = position;
+                style.writing_mode = mode;
+                style.direction = direction;
+            });
+        }
+        doc.append_child(owner, relative);
+        doc.append_child(relative, absolute);
+        let mut positioned = Fragment::new_box(relative, size(20, 20));
+        positioned.offset = PhysicalOffset::new(LayoutUnit::from_i32(4), LayoutUnit::from_i32(6));
+        let mut descendant = Fragment::new_box(absolute, size(4, 5));
+        descendant.offset = PhysicalOffset::new(LayoutUnit::from_i32(3), LayoutUnit::from_i32(2));
+        positioned.children.push(descendant);
+        let mut column = Fragment::new_box(openui_dom::NodeId::NONE, size(20, 30));
+        column.kind = FragmentKind::ColumnBox;
+        column.offset = PhysicalOffset::new(LayoutUnit::from_i32(12), LayoutUnit::from_i32(7));
+        column.has_overflow_clip = true;
+        column.block_axis_clip_only = true;
+        column.fragmentation_writing_direction = Some(direction.writing_direction(mode));
+        column.children.push(positioned);
+        let mut root = Fragment::new_box(owner, size(40, 50));
+        root.children.push(column);
+        (doc, root)
+    }
+
+    fn principal_geometry(fragment: &Fragment, mode: WritingMode) -> FragmentBoxGeometry {
+        FragmentBoxGeometry {
+            source_size: fragment.size,
+            source_fragment_size: fragment.size,
+            source_border_box_rect: fragment.border_box_rect(),
+            source_border: BoxStrut::zero(),
+            source_padding: BoxStrut::zero(),
+            stitched_size: fragment.size,
+            writing_direction: Direction::Ltr.writing_direction(mode),
+            inline_size: fragment.size.width,
+            block_size: fragment.size.height,
+            consumed_block_size: LayoutUnit::zero(),
+            has_next: false,
+            is_repeated: false,
+            continuation_record: false,
+        }
+    }
+
+    #[test]
+    fn authored_vertical_sources_keep_raw_children_and_legacy_phase() {
+        for mode in [
+            WritingMode::HorizontalTb,
+            WritingMode::VerticalLr,
+            WritingMode::VerticalRl,
+        ] {
+            for direction in [Direction::Ltr, Direction::Rtl] {
+                let (doc, root) = source(mode, direction);
+                let positioned = &root.children[0].children[0];
+                let before = format!("{root:#?}");
+                let mut entries = Vec::new();
+                let mut hoisted = Vec::new();
+                collect_fragmented_positioned_phase(
+                    &root,
+                    &doc,
+                    PhysicalOffset::zero(),
+                    None,
+                    &mut entries,
+                    &mut hoisted,
+                );
+                assert_eq!(format!("{root:#?}"), before);
+                assert_eq!(root.children[0].children[0].children.len(), 1);
+                assert_eq!(
+                    fragmented_positioned_phase_is_simple(positioned, &doc),
+                    mode.is_horizontal()
+                );
+                if mode.is_horizontal() {
+                    assert_eq!(entries.len(), 2);
+                    assert_eq!(
+                        hoisted,
+                        vec![
+                            positioned as *const Fragment as usize,
+                            &positioned.children[0] as *const Fragment as usize
+                        ]
+                    );
+                    let nodes: Vec<_> = entries
+                        .iter()
+                        .map(|(_, _, entry)| stacking_entry_fragment(entry, &[]).node_id)
+                        .collect();
+                    assert_eq!(
+                        nodes,
+                        vec![positioned.node_id, positioned.children[0].node_id]
+                    );
+                    assert!(entries
+                        .iter()
+                        .all(|(_, _, entry)| fragmented_positioned_entry_parts(entry)
+                            .unwrap()
+                            .2
+                            .is_some()));
+                } else {
+                    assert!(entries.is_empty());
+                    assert!(hoisted.is_empty());
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn retained_vertical_axes_cannot_cross_a_horizontal_phase() {
+        for mode in [WritingMode::VerticalLr, WritingMode::VerticalRl] {
+            for record_on_column in [true, false] {
+                let (doc, mut root) = source(WritingMode::HorizontalTb, Direction::Ltr);
+                let target = if record_on_column {
+                    &mut root.children[0]
+                } else {
+                    &mut root.children[0].children[0]
+                };
+                target.fragmentation_writing_direction =
+                    Some(Direction::Ltr.writing_direction(mode));
+                let before = format!("{root:#?}");
+                let mut entries = Vec::new();
+                let mut hoisted = Vec::new();
+                collect_fragmented_positioned_phase(
+                    &root,
+                    &doc,
+                    PhysicalOffset::zero(),
+                    None,
+                    &mut entries,
+                    &mut hoisted,
+                );
+                assert!(entries.is_empty());
+                assert!(hoisted.is_empty());
+                assert_eq!(format!("{root:#?}"), before);
+            }
+        }
+    }
+
+    #[test]
+    fn principal_axis_metadata_and_absent_legacy_metadata_remain_distinct() {
+        for mode in [
+            WritingMode::HorizontalTb,
+            WritingMode::VerticalLr,
+            WritingMode::VerticalRl,
+        ] {
+            let (doc, mut root) = source(WritingMode::HorizontalTb, Direction::Ltr);
+            let positioned = &mut root.children[0].children[0];
+            // An ordinary legacy source is still eligible before metadata is attached.
+            assert!(fragmented_positioned_phase_is_simple(positioned, &doc));
+            positioned.box_geometry = Some(principal_geometry(positioned, mode));
+            assert_eq!(
+                fragmented_positioned_phase_is_simple(positioned, &doc),
+                mode.is_horizontal()
+            );
+            let before = format!("{root:#?}");
+            let mut entries = Vec::new();
+            let mut hoisted = Vec::new();
+            collect_fragmented_positioned_phase(
+                &root,
+                &doc,
+                PhysicalOffset::zero(),
+                None,
+                &mut entries,
+                &mut hoisted,
+            );
+            assert_eq!(entries.len(), if mode.is_horizontal() { 2 } else { 0 });
+            assert_eq!(hoisted.len(), entries.len());
+            assert_eq!(format!("{root:#?}"), before);
         }
     }
 }
