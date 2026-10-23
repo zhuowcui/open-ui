@@ -1,0 +1,706 @@
+{
+ "base_commit": "de28b52c",
+ "base_exact": 21686,
+ "candidate": "3a8c9fbe painter.rs, hunks against main de28b52c via out/hunk_bisect.py (PR 15 platform-gate hunks kept as on main)",
+ "chromium": "Chrome-for-Testing 147.0.7727.50 linux64, shared cache",
+ "command": "build_renderer.py; run_renderer_matrix.py --suite expanded --jobs 16 (WSL Ubuntu 26.04)",
+ "groups": {
+  "decoration_replay": [
+   2,
+   3,
+   4,
+   15,
+   20,
+   21,
+   22,
+   23,
+   24
+  ],
+  "positioned_phases": [
+   8,
+   9,
+   10,
+   11,
+   12,
+   25,
+   26,
+   27,
+   28,
+   29,
+   30
+  ]
+ },
+ "kind": "painter_candidate_variant_census",
+ "schema_version": 1,
+ "variants": {
+  "all": {
+   "chromium_identical": 23728,
+   "clone_commit": "7198b239",
+   "comparisons": 23728,
+   "exact": 21690,
+   "gains": [
+    {
+     "base_mismatched": 8138,
+     "head_mismatched": 0,
+     "id": "wpt/css_break/fieldset-002",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 138,
+     "head_mismatched": 0,
+     "id": "wpt/css_break/out-of-flow-in-multicolumn-018",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 32,
+     "head_mismatched": 0,
+     "id": "wpt/css_break/out-of-flow-in-multicolumn-074",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 50,
+     "head_mismatched": 0,
+     "id": "wpt/css_break/out-of-flow-in-multicolumn-079",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 50,
+     "head_mismatched": 0,
+     "id": "wpt/css_break/out-of-flow-in-multicolumn-080",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 125,
+     "head_mismatched": 0,
+     "id": "wpt/css_break/overflow-clip-003",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 375,
+     "head_mismatched": 0,
+     "id": "wpt/css_break/overflow-clip-008",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 125,
+     "head_mismatched": 0,
+     "id": "wpt/css_multicol/multicol-fill-balance-003",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 196,
+     "head_mismatched": 0,
+     "id": "wpt/css_multicol/multicol-span-all-children-height-007",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 38,
+     "head_mismatched": 0,
+     "id": "wpt/css_break/out-of-flow-in-multicolumn-074",
+     "profile": "desktop-1920x1080@1.5"
+    },
+    {
+     "base_mismatched": 300,
+     "head_mismatched": 0,
+     "id": "wpt/css_break/overflow-clip-008",
+     "profile": "desktop-1920x1080@1.5"
+    },
+    {
+     "base_mismatched": 5000,
+     "head_mismatched": 0,
+     "id": "wpt/css_break/fieldset-002",
+     "profile": "legacy-800x600@1"
+    },
+    {
+     "base_mismatched": 20000,
+     "head_mismatched": 0,
+     "id": "wpt/css_break/fieldset-002",
+     "profile": "mobile-375x667@2"
+    }
+   ],
+   "improved": 3,
+   "losses": [
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 138,
+     "id": "wpt/css_break/fieldset-004",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 125,
+     "id": "wpt/css_break/overflow-clip-014",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 63,
+     "id": "wpt/css_break/overflow-clip-015",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 63,
+     "id": "wpt/css_break/overflow-clip-016",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 38,
+     "id": "wpt/css_break/overflow-clip-017",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 1104,
+     "id": "wpt/css_break/fieldset-001",
+     "profile": "desktop-1920x1080@1.5"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 450,
+     "id": "wpt/css_break/out-of-flow-in-multicolumn-053",
+     "profile": "desktop-1920x1080@1.5"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 100,
+     "id": "wpt/css_break/out-of-flow-in-multicolumn-053",
+     "profile": "legacy-800x600@1"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 200,
+     "id": "wpt/css_break/out-of-flow-in-multicolumn-053",
+     "profile": "mobile-375x667@2"
+    }
+   ],
+   "openui_changed": 41,
+   "worsened": 14
+  },
+  "deco": {
+   "chromium_identical": 23728,
+   "clone_commit": "22950dee",
+   "comparisons": 23728,
+   "exact": 21683,
+   "gains": [
+    {
+     "base_mismatched": 8138,
+     "head_mismatched": 0,
+     "id": "wpt/css_break/fieldset-002",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 125,
+     "head_mismatched": 0,
+     "id": "wpt/css_break/overflow-clip-003",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 375,
+     "head_mismatched": 0,
+     "id": "wpt/css_break/overflow-clip-008",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 125,
+     "head_mismatched": 0,
+     "id": "wpt/css_multicol/multicol-fill-balance-003",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 196,
+     "head_mismatched": 0,
+     "id": "wpt/css_multicol/multicol-span-all-children-height-007",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 300,
+     "head_mismatched": 0,
+     "id": "wpt/css_break/overflow-clip-008",
+     "profile": "desktop-1920x1080@1.5"
+    },
+    {
+     "base_mismatched": 5000,
+     "head_mismatched": 0,
+     "id": "wpt/css_break/fieldset-002",
+     "profile": "legacy-800x600@1"
+    },
+    {
+     "base_mismatched": 20000,
+     "head_mismatched": 0,
+     "id": "wpt/css_break/fieldset-002",
+     "profile": "mobile-375x667@2"
+    }
+   ],
+   "improved": 5,
+   "losses": [
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 138,
+     "id": "wpt/css_break/fieldset-004",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 125,
+     "id": "wpt/css_break/grid_grid-item-008",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 125,
+     "id": "wpt/css_break/grid_grid-item-009",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 75,
+     "id": "wpt/css_break/out-of-flow-in-multicolumn-077",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 75,
+     "id": "wpt/css_break/out-of-flow-in-multicolumn-078",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 125,
+     "id": "wpt/css_break/out-of-flow-in-multicolumn-paint-order-003",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 125,
+     "id": "wpt/css_break/overflow-clip-014",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 63,
+     "id": "wpt/css_break/overflow-clip-015",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 63,
+     "id": "wpt/css_break/overflow-clip-016",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 38,
+     "id": "wpt/css_break/overflow-clip-017",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 1104,
+     "id": "wpt/css_break/fieldset-001",
+     "profile": "desktop-1920x1080@1.5"
+    }
+   ],
+   "openui_changed": 34,
+   "worsened": 8
+  },
+  "pos": {
+   "chromium_identical": 23728,
+   "clone_commit": "2abb5457",
+   "comparisons": 23728,
+   "exact": 21630,
+   "gains": [
+    {
+     "base_mismatched": 32,
+     "head_mismatched": 0,
+     "id": "wpt/css_break/out-of-flow-in-multicolumn-074",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 75,
+     "head_mismatched": 0,
+     "id": "wpt/css_break/table_section-with-overflow-000",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 196,
+     "head_mismatched": 0,
+     "id": "wpt/css_multicol/multicol-span-all-children-height-007",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 38,
+     "head_mismatched": 0,
+     "id": "wpt/css_break/out-of-flow-in-multicolumn-074",
+     "profile": "desktop-1920x1080@1.5"
+    }
+   ],
+   "improved": 1,
+   "losses": [
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 9375,
+     "id": "wpt/css_break/flexbox_monolithic-overflow-001.tentative",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 9375,
+     "id": "wpt/css_break/flexbox_monolithic-overflow-002.tentative",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 6275,
+     "id": "wpt/css_break/flexbox_monolithic-overflow-003.tentative",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 6275,
+     "id": "wpt/css_break/flexbox_monolithic-overflow-004.tentative",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 6250,
+     "id": "wpt/css_break/monolithic-overflow-001.tentative",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 6250,
+     "id": "wpt/css_break/monolithic-overflow-002.tentative",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 6275,
+     "id": "wpt/css_break/monolithic-overflow-003.tentative",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 6275,
+     "id": "wpt/css_break/monolithic-overflow-004.tentative",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 375,
+     "id": "wpt/css_break/table_specified-block-size-003",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 375,
+     "id": "wpt/css_break/table_specified-block-size-004",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 375,
+     "id": "wpt/css_break/table_specified-block-size-005",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 437,
+     "id": "wpt/css_break/table_specified-block-size-006",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 125,
+     "id": "wpt/css_break/table_specified-block-size-008",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 18750,
+     "id": "wpt/css_break/table_table-border-001",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 33337,
+     "id": "wpt/css_break/table_table-border-008",
+     "profile": "desktop-1280x720@1.25"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 1127,
+     "id": "wpt/css_break/block-max-height-004",
+     "profile": "desktop-1920x1080@1.5"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 1127,
+     "id": "wpt/css_break/block-max-height-004-ref",
+     "profile": "desktop-1920x1080@1.5"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 13500,
+     "id": "wpt/css_break/flexbox_monolithic-overflow-001.tentative",
+     "profile": "desktop-1920x1080@1.5"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 13500,
+     "id": "wpt/css_break/flexbox_monolithic-overflow-002.tentative",
+     "profile": "desktop-1920x1080@1.5"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 9000,
+     "id": "wpt/css_break/flexbox_monolithic-overflow-003.tentative",
+     "profile": "desktop-1920x1080@1.5"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 9000,
+     "id": "wpt/css_break/flexbox_monolithic-overflow-004.tentative",
+     "profile": "desktop-1920x1080@1.5"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 9000,
+     "id": "wpt/css_break/monolithic-overflow-001.tentative",
+     "profile": "desktop-1920x1080@1.5"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 9000,
+     "id": "wpt/css_break/monolithic-overflow-002.tentative",
+     "profile": "desktop-1920x1080@1.5"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 9000,
+     "id": "wpt/css_break/monolithic-overflow-003.tentative",
+     "profile": "desktop-1920x1080@1.5"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 9000,
+     "id": "wpt/css_break/monolithic-overflow-004.tentative",
+     "profile": "desktop-1920x1080@1.5"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 3375,
+     "id": "wpt/css_break/monolithic-overflow-006.tentative",
+     "profile": "desktop-1920x1080@1.5"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 450,
+     "id": "wpt/css_break/out-of-flow-in-multicolumn-053",
+     "profile": "desktop-1920x1080@1.5"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 300,
+     "id": "wpt/css_break/table_specified-block-size-003",
+     "profile": "desktop-1920x1080@1.5"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 300,
+     "id": "wpt/css_break/table_specified-block-size-004",
+     "profile": "desktop-1920x1080@1.5"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 300,
+     "id": "wpt/css_break/table_specified-block-size-005",
+     "profile": "desktop-1920x1080@1.5"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 300,
+     "id": "wpt/css_break/table_specified-block-size-006",
+     "profile": "desktop-1920x1080@1.5"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 27000,
+     "id": "wpt/css_break/table_table-border-001",
+     "profile": "desktop-1920x1080@1.5"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 465,
+     "id": "wpt/css_break/block-max-height-004",
+     "profile": "legacy-800x600@1"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 465,
+     "id": "wpt/css_break/block-max-height-004-ref",
+     "profile": "legacy-800x600@1"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 6000,
+     "id": "wpt/css_break/flexbox_monolithic-overflow-001.tentative",
+     "profile": "legacy-800x600@1"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 6000,
+     "id": "wpt/css_break/flexbox_monolithic-overflow-002.tentative",
+     "profile": "legacy-800x600@1"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 4000,
+     "id": "wpt/css_break/flexbox_monolithic-overflow-003.tentative",
+     "profile": "legacy-800x600@1"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 4000,
+     "id": "wpt/css_break/flexbox_monolithic-overflow-004.tentative",
+     "profile": "legacy-800x600@1"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 4000,
+     "id": "wpt/css_break/monolithic-overflow-001.tentative",
+     "profile": "legacy-800x600@1"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 4000,
+     "id": "wpt/css_break/monolithic-overflow-002.tentative",
+     "profile": "legacy-800x600@1"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 4000,
+     "id": "wpt/css_break/monolithic-overflow-003.tentative",
+     "profile": "legacy-800x600@1"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 4000,
+     "id": "wpt/css_break/monolithic-overflow-004.tentative",
+     "profile": "legacy-800x600@1"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 1500,
+     "id": "wpt/css_break/monolithic-overflow-006.tentative",
+     "profile": "legacy-800x600@1"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 100,
+     "id": "wpt/css_break/out-of-flow-in-multicolumn-053",
+     "profile": "legacy-800x600@1"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 12000,
+     "id": "wpt/css_break/table_table-border-001",
+     "profile": "legacy-800x600@1"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 21000,
+     "id": "wpt/css_break/table_table-border-008",
+     "profile": "legacy-800x600@1"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 1860,
+     "id": "wpt/css_break/block-max-height-004",
+     "profile": "mobile-375x667@2"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 1860,
+     "id": "wpt/css_break/block-max-height-004-ref",
+     "profile": "mobile-375x667@2"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 24000,
+     "id": "wpt/css_break/flexbox_monolithic-overflow-001.tentative",
+     "profile": "mobile-375x667@2"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 24000,
+     "id": "wpt/css_break/flexbox_monolithic-overflow-002.tentative",
+     "profile": "mobile-375x667@2"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 16000,
+     "id": "wpt/css_break/flexbox_monolithic-overflow-003.tentative",
+     "profile": "mobile-375x667@2"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 16000,
+     "id": "wpt/css_break/flexbox_monolithic-overflow-004.tentative",
+     "profile": "mobile-375x667@2"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 16000,
+     "id": "wpt/css_break/monolithic-overflow-001.tentative",
+     "profile": "mobile-375x667@2"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 16000,
+     "id": "wpt/css_break/monolithic-overflow-002.tentative",
+     "profile": "mobile-375x667@2"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 16000,
+     "id": "wpt/css_break/monolithic-overflow-003.tentative",
+     "profile": "mobile-375x667@2"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 16000,
+     "id": "wpt/css_break/monolithic-overflow-004.tentative",
+     "profile": "mobile-375x667@2"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 6000,
+     "id": "wpt/css_break/monolithic-overflow-006.tentative",
+     "profile": "mobile-375x667@2"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 200,
+     "id": "wpt/css_break/out-of-flow-in-multicolumn-053",
+     "profile": "mobile-375x667@2"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 48000,
+     "id": "wpt/css_break/table_table-border-001",
+     "profile": "mobile-375x667@2"
+    },
+    {
+     "base_mismatched": 0,
+     "head_mismatched": 53000,
+     "id": "wpt/css_break/table_table-border-008",
+     "profile": "mobile-375x667@2"
+    }
+   ],
+   "openui_changed": 90,
+   "worsened": 13
+  }
+ }
+}

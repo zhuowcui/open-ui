@@ -1,5 +1,14 @@
 # Open UI current status
 
+## Candidate painter variants measured 22 October 2026
+
+Paired Linux censuses measured the deferred candidate painter change against
+`main` (21,686 exact). The whole change reaches 21,690, with 13 gains and 9
+losses; either half alone loses more. The main loss comes from painting
+positioned descendants grouped per outer column, where Blink paints each
+layer across all its fragments. The painter change stays deferred until that
+order is changed. See the [painter variants record](painter-candidate-variants-2026-10-22.md).
+
 ## Windows text across the census profiles 22 October 2026
 
 The 2,927 Ahem text tests are now measured against Windows Chrome at all four
