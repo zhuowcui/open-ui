@@ -1,0 +1,276 @@
+{
+ "base": "main de28b52c (rendering sources identical to 02c3fcea)",
+ "base_exact": 21686,
+ "build": "WSL Ubuntu 26.04, build_renderer.py, run_renderer_matrix.py --suite expanded --jobs 16",
+ "chromium": "Chrome-for-Testing 147.0.7727.50 linux64, shared cache",
+ "chromium_identical": 23728,
+ "comparisons": 23728,
+ "errors": [],
+ "gains": [
+  {
+   "base": "different",
+   "base_mismatched": 8138,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/fieldset-002",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 138,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/out-of-flow-in-multicolumn-018",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 32,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/out-of-flow-in-multicolumn-074",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 50,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/out-of-flow-in-multicolumn-079",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 50,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/out-of-flow-in-multicolumn-080",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 125,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/overflow-clip-003",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 375,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/overflow-clip-008",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 125,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/multicol-fill-balance-003",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 196,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/multicol-span-all-children-height-007",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 38,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/out-of-flow-in-multicolumn-074",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 300,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/overflow-clip-008",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 5000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/fieldset-002",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 20000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/fieldset-002",
+   "profile": "mobile-375x667@2"
+  }
+ ],
+ "head": "candidate 3a8c9fbe painter with the three Blink layer-order repairs; census clone commit 2c1f01ec (painter-fix9), formatted and committed as c3dda692",
+ "head_exact": 21699,
+ "improved": [
+  {
+   "base": "different",
+   "base_mismatched": 96,
+   "head": "different",
+   "head_mismatched": 71,
+   "id": "wpt/css_multicol/column-height-024",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2016,
+   "head": "different",
+   "head_mismatched": 2015,
+   "id": "wpt/css_multicol/spanner-fragmentation-006",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 11850,
+   "head": "different",
+   "head_mismatched": 600,
+   "id": "wpt/css_break/fieldset-002",
+   "profile": "desktop-1920x1080@1.5"
+  }
+ ],
+ "intermediate": {
+  "exact": 21693,
+  "first_repair_only_clone_commit": "3d135226",
+  "gains": 13,
+  "losses": [
+   {
+    "base": "exact",
+    "base_mismatched": 0,
+    "head": "different",
+    "head_mismatched": 138,
+    "id": "wpt/css_break/fieldset-004",
+    "profile": "desktop-1280x720@1.25"
+   },
+   {
+    "base": "exact",
+    "base_mismatched": 0,
+    "head": "different",
+    "head_mismatched": 125,
+    "id": "wpt/css_break/overflow-clip-014",
+    "profile": "desktop-1280x720@1.25"
+   },
+   {
+    "base": "exact",
+    "base_mismatched": 0,
+    "head": "different",
+    "head_mismatched": 63,
+    "id": "wpt/css_break/overflow-clip-015",
+    "profile": "desktop-1280x720@1.25"
+   },
+   {
+    "base": "exact",
+    "base_mismatched": 0,
+    "head": "different",
+    "head_mismatched": 63,
+    "id": "wpt/css_break/overflow-clip-016",
+    "profile": "desktop-1280x720@1.25"
+   },
+   {
+    "base": "exact",
+    "base_mismatched": 0,
+    "head": "different",
+    "head_mismatched": 38,
+    "id": "wpt/css_break/overflow-clip-017",
+    "profile": "desktop-1280x720@1.25"
+   },
+   {
+    "base": "exact",
+    "base_mismatched": 0,
+    "head": "different",
+    "head_mismatched": 1104,
+    "id": "wpt/css_break/fieldset-001",
+    "profile": "desktop-1920x1080@1.5"
+   }
+  ]
+ },
+ "kind": "paired_expanded_census_delta",
+ "losses": [],
+ "openui_changed": 31,
+ "schema_version": 1,
+ "worsened": [
+  {
+   "base": "different",
+   "base_mismatched": 15750,
+   "head": "different",
+   "head_mismatched": 23500,
+   "id": "wpt/css_break/out-of-flow-in-multicolumn-037",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 15750,
+   "head": "different",
+   "head_mismatched": 23500,
+   "id": "wpt/css_break/out-of-flow-in-multicolumn-039",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 275,
+   "head": "different",
+   "head_mismatched": 276,
+   "id": "wpt/css_multicol/spanner-fragmentation-002",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 22500,
+   "head": "different",
+   "head_mismatched": 33750,
+   "id": "wpt/css_break/out-of-flow-in-multicolumn-037",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 22500,
+   "head": "different",
+   "head_mismatched": 33750,
+   "id": "wpt/css_break/out-of-flow-in-multicolumn-039",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 10000,
+   "head": "different",
+   "head_mismatched": 15000,
+   "id": "wpt/css_break/out-of-flow-in-multicolumn-037",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 10000,
+   "head": "different",
+   "head_mismatched": 15000,
+   "id": "wpt/css_break/out-of-flow-in-multicolumn-039",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 40000,
+   "head": "different",
+   "head_mismatched": 60000,
+   "id": "wpt/css_break/out-of-flow-in-multicolumn-037",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 40000,
+   "head": "different",
+   "head_mismatched": 60000,
+   "id": "wpt/css_break/out-of-flow-in-multicolumn-039",
+   "profile": "mobile-375x667@2"
+  }
+ ]
+}
