@@ -74,3 +74,4 @@
 0073	active	windows text raster directwrite qualification	Windows text raster policy follows Windows Blink; compare_windows_text.py measures it	2026-10-22	entries/0073-windows-text-raster-policy-follows-windows-blink.md
 0074	active	windows text metrics directwrite layout	Windows layout uses Blink's rounded ascent and descent	2026-10-22	entries/0074-windows-layout-uses-blink-s-rounded-ascent-and-des.md
 0075	active	paint multicol fragmentation positioned census	Candidate painter positioned phases must follow Blink per-layer fragment order	2026-10-22	entries/0075-candidate-painter-positioned-phases-must-follow-bl.md
+0076	active	windows native-controls paint accent qualification	Native form-control accent follows the platform accent (Windows DWM)	2026-10-24	entries/0076-native-form-control-accent-follows-the-platform-a.md

@@ -3673,7 +3673,7 @@ fn paint_checkable_control(
     let accent = if disabled {
         Color::from_rgba8(118, 118, 118, 77)
     } else {
-        Color::from_rgba8(0, 117, 255, 255)
+        doc.form_control_accent()
     };
     let border = if checked {
         accent
@@ -5106,11 +5106,7 @@ fn paint_progress_control(
         .clamp(0.0, 1.0);
     canvas.save();
     canvas.clip_rrect(track_shape, ClipOp::Intersect, true);
-    set_paint_css_color_with_alpha(
-        &mut paint,
-        &Color::from_rgba8(0, 117, 255, 255),
-        opacity_multiplier,
-    );
+    set_paint_css_color_with_alpha(&mut paint, &doc.form_control_accent(), opacity_multiplier);
     canvas.draw_rect(
         Rect::from_ltrb(x, y, (x + width * fraction).floor(), y + track_height),
         &paint,
@@ -5237,11 +5233,7 @@ fn paint_range_control(
             ClipOp::Intersect,
             true,
         );
-        set_paint_css_color_with_alpha(
-            &mut paint,
-            &Color::from_rgba8(0, 117, 255, 255),
-            opacity_multiplier,
-        );
+        set_paint_css_color_with_alpha(&mut paint, &doc.form_control_accent(), opacity_multiplier);
         canvas.draw_rrect(track_rrect, &paint);
         canvas.restore();
 
@@ -5267,11 +5259,7 @@ fn paint_range_control(
     let thumb_top = (y + (height - 16.0) / 2.0).round();
     let thumb_rect = Rect::from_xywh(thumb_left + 0.5, thumb_top + 0.5, 15.0, 15.0);
     paint.set_style(PaintStyle::Fill);
-    set_paint_css_color_with_alpha(
-        &mut paint,
-        &Color::from_rgba8(0, 117, 255, 255),
-        opacity_multiplier,
-    );
+    set_paint_css_color_with_alpha(&mut paint, &doc.form_control_accent(), opacity_multiplier);
 
     // Use one analytic rounded-rectangle primitive at every size, phase, and
     // scale. Backend policy belongs to raster configuration, never to

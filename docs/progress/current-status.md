@@ -1,5 +1,14 @@
 # Open UI current status
 
+## Platform form-control accent 24 October 2026
+
+Native checkboxes, radios and range sliders follow the operating system's
+accent color, as Chromium's native theme does. On Windows, Open UI reads the
+DWM accent, and `pixel_compare` and the Windows comparison take it
+explicitly. With the host's default accent, Windows exact comparisons rise
+from 10,369 to 10,399 with no losses; Linux is unchanged. See the
+[accent record](windows-form-control-accent-2026-10-24.md).
+
 ## Windows linear font metrics 23 October 2026
 
 Windows layout now receives the same linear font metrics Linux layout

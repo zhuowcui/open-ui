@@ -226,6 +226,14 @@ impl App {
             all(feature = "windows", target_os = "windows")
         ))]
         {
+            // Follow the operating system's form-control accent, as
+            // Chromium's native theme does.
+            let accent = openui_platform::system_accent_color()
+                .map(|[r, g, b]| openui_style::Color::from_rgba8(r, g, b, 255));
+            self.document.with_engine_mut(|engine| {
+                engine.set_platform_accent_color(accent);
+                Ok(())
+            })?;
             let options = openui_platform::WindowOptions {
                 title: self.options.title.clone(),
                 width: self.options.size.width,

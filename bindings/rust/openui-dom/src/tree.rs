@@ -342,6 +342,12 @@ pub struct Document {
     font_collection: std::sync::Arc<openui_text::FontCollection>,
     raster_configuration: RasterConfiguration,
     device_scale_factor: f64,
+    platform_accent_color: Option<Color>,
+}
+
+/// Chromium's default form-control accent when the platform supplies none.
+pub fn default_form_control_accent() -> Color {
+    Color::from_rgba8(0, 117, 255, 255)
 }
 
 impl Document {
@@ -372,6 +378,7 @@ impl Document {
             font_collection,
             raster_configuration,
             device_scale_factor,
+            platform_accent_color: None,
         };
         let root_id = doc.create_node(ElementTag::Viewport);
         doc.root = root_id;
@@ -456,6 +463,27 @@ impl Document {
 
     pub fn device_scale_factor(&self) -> f64 {
         self.device_scale_factor
+    }
+
+    /// Accent of checked native form controls and range progress.
+    ///
+    /// Chromium's native theme uses the operating system's accent (its
+    /// `user_color`) when the platform provides one, as Windows does, and
+    /// its default blue otherwise.
+    pub fn form_control_accent(&self) -> Color {
+        self.platform_accent_color
+            .unwrap_or_else(default_form_control_accent)
+    }
+
+    /// The platform accent the native theme follows, if any.
+    pub fn platform_accent_color(&self) -> Option<Color> {
+        self.platform_accent_color
+    }
+
+    /// Set or clear the platform accent. Callers own paint invalidation.
+    #[doc(hidden)]
+    pub fn set_platform_accent_color(&mut self, color: Option<Color>) {
+        self.platform_accent_color = color.map(|color| Color { a: 1.0, ..color });
     }
 
     /// Update the engine-owned raster context after a viewport scale change.
@@ -1331,6 +1359,27 @@ impl<'a> Iterator for ChildIter<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn form_control_accent_follows_the_platform_accent() {
+        let mut doc = Document::new();
+        assert_eq!(
+            doc.form_control_accent(),
+            Color::from_rgba8(0, 117, 255, 255)
+        );
+        doc.set_platform_accent_color(Some(Color::from_rgba8(0, 120, 212, 10)));
+        // The native theme draws form-control accents opaque.
+        assert_eq!(
+            doc.form_control_accent(),
+            Color::from_rgba8(0, 120, 212, 255)
+        );
+        doc.set_platform_accent_color(None);
+        assert_eq!(doc.platform_accent_color(), None);
+        assert_eq!(
+            doc.form_control_accent(),
+            Color::from_rgba8(0, 117, 255, 255)
+        );
+    }
 
     fn root_aware_document() -> (Document, NodeId, NodeId) {
         let mut doc = Document::new();

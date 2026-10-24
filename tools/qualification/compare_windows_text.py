@@ -99,6 +99,26 @@ def cross_tabulate(results: list[dict[str, object]], linux: dict[str, str]) -> d
     return dict(sorted(counts.items()))
 
 
+def accent_from_dwm_value(value: int) -> str:
+    r"""`HKCU\Software\Microsoft\Windows\DWM\AccentColor` is 0xAABBGGRR."""
+    red, green, blue = value & 0xFF, (value >> 8) & 0xFF, (value >> 16) & 0xFF
+    return f"{red:02x}{green:02x}{blue:02x}"
+
+
+def host_accent_color() -> str | None:
+    """The accent Windows Chrome's native theme reads, or None elsewhere."""
+    try:
+        import winreg
+    except ImportError:
+        return None
+    try:
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Software\Microsoft\Windows\DWM") as key:
+            value, _ = winreg.QueryValueEx(key, "AccentColor")
+    except OSError:
+        return None
+    return accent_from_dwm_value(int(value))
+
+
 class BrowserSession:
     """One browser at a time; a failed page restarts it and retries once.
 
@@ -150,6 +170,9 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--test-id", action="append", default=[],
                         help="restrict to these selected IDs (repeatable)")
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--accent-color",
+                        help="RRGGBB form-control accent for Open UI; default: the host's DWM accent, "
+                             "which Windows Chrome's native theme follows")
     parser.add_argument("--keep-mismatches", type=Path,
                         help="directory for Chrome and Open UI PNGs of mismatched tests")
     return parser.parse_args(argv)
@@ -175,6 +198,7 @@ def main(argv: list[str] | None = None) -> int:
             raise SystemExit("not selected registered-Ahem tests: " + ", ".join(unknown))
         ids = [test_id for test_id in ids if test_id in set(args.test_id)]
     linux = linux_statuses(args.linux_summary, profile.name)
+    accent = args.accent_color or host_accent_color()
     faces_css = bundled_font_faces_css()
 
     results: list[dict[str, object]] = []
@@ -194,7 +218,7 @@ def main(argv: list[str] | None = None) -> int:
                         test_id,
                         lambda browser: compare_one(
                             test_id, templates, faces_css, profile, browser, work,
-                            args.keep_mismatches)))
+                            args.keep_mismatches, accent)))
                     print(f"{results[-1]['status']:9} {results[-1]['mismatched_pixels']:7} {test_id}",
                           flush=True)
             finally:
@@ -218,6 +242,7 @@ def main(argv: list[str] | None = None) -> int:
         "selected": len(results),
         "status_counts": dict(sorted(status_counts.items())),
         "browser_restarts": restarts,
+        "accent_color": accent,
         "linux_cross_tabulation": cross_tabulate(results, linux) if linux else None,
         "tests": results,
     }
@@ -228,8 +253,19 @@ def main(argv: list[str] | None = None) -> int:
     return 0
 
 
+def openui_command(pixel_compare: str, test_id: str, output: Path, configuration: str,
+                   profile, accent: str | None) -> list[str]:
+    backend, text = configuration.split(":", 1)
+    command = [pixel_compare, "render", test_id, str(output), "--raster-config", text,
+               "--backend", backend, "--viewport", f"{profile.logical_width}x{profile.logical_height}",
+               "--scale", str(profile.scale)]
+    if accent:
+        command += ["--accent-color", accent]
+    return command
+
+
 def compare_one(test_id, templates, faces_css, profile, browser, work: Path,
-                keep: Path | None) -> dict[str, object]:
+                keep: Path | None, accent: str | None = None) -> dict[str, object]:
     runner = matrix.pixel_runner
     template = re.sub(r"<!\[CDATA\[|\]\]>", "", templates[test_id])
     page = work / "test.html"
@@ -243,7 +279,15 @@ def compare_one(test_id, templates, faces_css, profile, browser, work: Path,
     openui_png = work / "openui.png"
     openui_png.unlink(missing_ok=True)
     result: dict[str, object] = {"id": test_id, "raster_configuration": configuration}
-    if not matrix.render_openui_with_configuration(test_id, openui_png, configuration, profile):
+    try:
+        completed = subprocess.run(
+            openui_command(runner.PIXEL_COMPARE, test_id, openui_png, configuration, profile, accent),
+            env=runner.openui_environment(False), capture_output=True,
+            timeout=runner.RASTER_TIMEOUT_SECONDS)
+        rendered = completed.returncode == 0 and openui_png.is_file()
+    except (OSError, subprocess.SubprocessError):
+        rendered = False
+    if not rendered:
         return {**result, "status": "error", "mismatched_pixels": -1}
     mismatched, chrome_rgba, openui_rgba = matrix.compare_images(chrome_png, openui_png)
     result.update({
