@@ -1,5 +1,12 @@
 # Open UI current status
 
+## Windows fieldset groove shades 24 October 2026
+
+The default fieldset border's theme grays follow the platform: Windows Chrome
+paints them one level lighter than Linux. Windows exact comparisons rise from
+10,399 to 10,414 with no losses, and 61 more improve. See the
+[groove shades record](windows-fieldset-groove-shades-2026-10-24.md).
+
 ## Platform form-control accent 24 October 2026
 
 Native checkboxes, radios and range sliders follow the operating system's
