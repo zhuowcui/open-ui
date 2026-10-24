@@ -1,5 +1,13 @@
 # Open UI current status
 
+## Flex baseline groups in every writing mode 24 October 2026
+
+Flex lines now size baseline-sharing groups in vertical writing modes and
+with line-clamped items, as Blink does. This fixes the `line-clamp-003`
+residual left by the central baseline change, whose owner was flex line
+sizing rather than the clamp marker. The census goes from 21,699 to 21,701
+exact with no losses. See the [flex baseline record](flex-baseline-group-2026-10-24.md).
+
 ## Windows fieldset groove shades 24 October 2026
 
 The default fieldset border's theme grays follow the platform: Windows Chrome

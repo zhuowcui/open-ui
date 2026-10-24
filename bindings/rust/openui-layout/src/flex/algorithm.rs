@@ -3742,13 +3742,6 @@ fn compute_line_cross_sizes(
         let mut max_baseline_ascent = LayoutUnit::zero();
         let mut max_baseline_descent = LayoutUnit::zero();
         let mut has_baseline_group = false;
-        // Legacy line-clamped boxes already expose their retained baseline
-        // through the final-placement path below. Re-laying one out during
-        // hypothetical cross sizing can observe an unclamped continuation and
-        // spuriously enlarge the whole baseline-sharing group.
-        let line_has_line_clamp = line.item_indices.iter().any(|&idx| {
-            doc.node(items[idx].node_id).style.line_clamp != openui_style::LineClamp::None
-        });
 
         for &idx in &line.item_indices {
             let item = &items[idx];
@@ -3844,11 +3837,12 @@ fn compute_line_cross_sizes(
                 ItemPosition::Baseline | ItemPosition::LastBaseline
             ) && !has_cross_auto_margins;
 
-            if is_baseline_aligned
-                && !is_column
-                && space.writing_direction.is_horizontal()
-                && !line_has_line_clamp
-            {
+            // Blink sizes a baseline-sharing line in every writing mode
+            // (`FlexLayoutAlgorithm` max major ascent plus descent). A clamped
+            // item's last baseline is capped at its retained cross edge, as
+            // the final placement below does, so an unclamped continuation
+            // cannot enlarge the group.
+            if is_baseline_aligned && !is_column {
                 let child_direction = child_style
                     .direction
                     .writing_direction(child_style.writing_mode);
@@ -3871,16 +3865,48 @@ fn compute_line_cross_sizes(
                 }
                 let child_fragment = layout_flex_item(doc, item.node_id, &child_space);
                 let synthesized = clamped_cross_bb;
+                let is_line_clamped = child_style.line_clamp != openui_style::LineClamp::None;
+                if is_line_clamped
+                    && child_fragment.first_baseline.is_none()
+                    && child_fragment.last_baseline.is_none()
+                {
+                    // A clamped item without content lines keeps the legacy
+                    // measurement: its synthesized edge does not size the
+                    // shared line.
+                    continue;
+                }
+                let fragment_baseline = if item.alignment == ItemPosition::LastBaseline {
+                    let baseline = child_fragment
+                        .last_baseline
+                        .or(child_fragment.first_baseline);
+                    if is_line_clamped {
+                        baseline.map(|baseline| baseline.min_of(synthesized))
+                    } else {
+                        baseline
+                    }
+                } else {
+                    child_fragment.first_baseline
+                };
+                // Synthesize exactly as final placement does.
                 let cross_baseline =
                     if child_direction.is_horizontal() != space.writing_direction.is_horizontal() {
                         synthesized
-                    } else if item.alignment == ItemPosition::LastBaseline {
-                        child_fragment
-                            .last_baseline
-                            .or(child_fragment.first_baseline)
-                            .unwrap_or(synthesized)
+                    } else if !is_main_axis_horizontal {
+                        match (child_style.writing_mode, child_style.text_orientation) {
+                            (
+                                openui_style::WritingMode::VerticalLr,
+                                openui_style::TextOrientation::Sideways,
+                            ) => LayoutUnit::zero(),
+                            (
+                                openui_style::WritingMode::VerticalRl
+                                | openui_style::WritingMode::VerticalLr,
+                                openui_style::TextOrientation::Mixed
+                                | openui_style::TextOrientation::Upright,
+                            ) => fragment_baseline.unwrap_or(synthesized / 2),
+                            _ => fragment_baseline.unwrap_or(synthesized),
+                        }
                     } else {
-                        child_fragment.first_baseline.unwrap_or(synthesized)
+                        fragment_baseline.unwrap_or(synthesized)
                     };
                 let logical_margin = item.margin.to_logical(space.writing_direction);
                 let ascent = logical_margin.block_start + cross_baseline;

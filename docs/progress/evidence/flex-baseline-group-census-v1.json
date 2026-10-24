@@ -1,0 +1,54 @@
+{
+ "base": "main (Linux rendering of 0a74d934..30e8f7ff; census clone commit 5d3d1afa)",
+ "base_exact": 21699,
+ "chromium": "Chrome-for-Testing 147.0.7727.50 linux64, shared cache",
+ "chromium_identical": 23728,
+ "comparisons": 23728,
+ "gains": [
+  {
+   "base": "different",
+   "base_mismatched": 1886,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/alignment_flex-align-baseline-line-clamp-003.tentative",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 7544,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/alignment_flex-align-baseline-line-clamp-003.tentative",
+   "profile": "mobile-375x667@2"
+  }
+ ],
+ "head": "flex baseline-group sizing change; census clone commit fc9335e7",
+ "head_exact": 21701,
+ "improved": [
+  {
+   "base": "different",
+   "base_mismatched": 3323,
+   "head": "different",
+   "head_mismatched": 24,
+   "id": "wpt/css_flexbox/alignment_flex-align-baseline-line-clamp-003.tentative",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 9148,
+   "head": "different",
+   "head_mismatched": 50,
+   "id": "wpt/css_flexbox/alignment_flex-align-baseline-line-clamp-003.tentative",
+   "profile": "desktop-1920x1080@1.5"
+  }
+ ],
+ "intermediate": {
+  "first_attempt": "lost baseline-synthesis-003/004 at every profile; sizing synthesized vertical baselines at the cross edge",
+  "first_attempt_clone_commit": "e21094a4"
+ },
+ "kind": "paired_expanded_census_delta",
+ "losses": [],
+ "openui_changed": 4,
+ "schema_version": 1,
+ "worsened": []
+}

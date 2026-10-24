@@ -86,3 +86,9 @@ crash test.
 Native form controls and failed images that export a synthesized text
 baseline, and ruby annotation layout, still assume the alphabetic baseline in
 vertical flow.
+
+## Update, 24 October 2026
+
+The `line-clamp-003` residual is fixed. Its owner was flex line cross sizing
+for vertical and clamped baseline groups, not the clamp marker; see
+[the flex baseline record](flex-baseline-group-2026-10-24.md).
