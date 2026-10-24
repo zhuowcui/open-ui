@@ -3875,21 +3875,38 @@ fn compute_line_cross_sizes(
                     // shared line.
                     continue;
                 }
+                let fragment_baseline = if item.alignment == ItemPosition::LastBaseline {
+                    let baseline = child_fragment
+                        .last_baseline
+                        .or(child_fragment.first_baseline);
+                    if is_line_clamped {
+                        baseline.map(|baseline| baseline.min_of(synthesized))
+                    } else {
+                        baseline
+                    }
+                } else {
+                    child_fragment.first_baseline
+                };
+                // Synthesize exactly as final placement does.
                 let cross_baseline =
                     if child_direction.is_horizontal() != space.writing_direction.is_horizontal() {
                         synthesized
-                    } else if item.alignment == ItemPosition::LastBaseline {
-                        let baseline = child_fragment
-                            .last_baseline
-                            .or(child_fragment.first_baseline)
-                            .unwrap_or(synthesized);
-                        if is_line_clamped {
-                            baseline.min_of(synthesized)
-                        } else {
-                            baseline
+                    } else if !is_main_axis_horizontal {
+                        match (child_style.writing_mode, child_style.text_orientation) {
+                            (
+                                openui_style::WritingMode::VerticalLr,
+                                openui_style::TextOrientation::Sideways,
+                            ) => LayoutUnit::zero(),
+                            (
+                                openui_style::WritingMode::VerticalRl
+                                | openui_style::WritingMode::VerticalLr,
+                                openui_style::TextOrientation::Mixed
+                                | openui_style::TextOrientation::Upright,
+                            ) => fragment_baseline.unwrap_or(synthesized / 2),
+                            _ => fragment_baseline.unwrap_or(synthesized),
                         }
                     } else {
-                        child_fragment.first_baseline.unwrap_or(synthesized)
+                        fragment_baseline.unwrap_or(synthesized)
                     };
                 let logical_margin = item.margin.to_logical(space.writing_direction);
                 let ascent = logical_margin.block_start + cross_baseline;
