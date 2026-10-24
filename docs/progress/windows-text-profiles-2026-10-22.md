@@ -48,3 +48,8 @@ dropped connection, recovered on retry.
 | --- | --- |
 | Four profile runs with the release build of the `main` rendering sources | Complete; counts above |
 | Chrome identity | `chrome.exe` SHA-256 recorded in the evidence |
+
+## Update, 23 October 2026
+
+Most scale-specific differences are attributed to Windows font metrics and
+fixed; see [the linear metrics record](windows-linear-font-metrics-2026-10-23.md).

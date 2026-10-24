@@ -1,5 +1,14 @@
 # Open UI current status
 
+## Windows linear font metrics 23 October 2026
+
+Windows layout now receives the same linear font metrics Linux layout
+receives, instead of DirectWrite's grid-fitted values rounded at the CSS size.
+Across the four profiles, Windows exact Ahem comparisons rise from 10,342 to
+10,369 (33 gains, 6 losses). Four losses now match Linux Open UI's existing
+differences exactly; two come from DirectWrite hinting at a 648px strike.
+See the [linear metrics record](windows-linear-font-metrics-2026-10-23.md).
+
 ## Column paint phases adopted 23 October 2026
 
 The deferred candidate painter is adopted with four repairs that follow

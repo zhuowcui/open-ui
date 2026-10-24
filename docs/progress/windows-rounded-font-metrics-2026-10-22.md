@@ -59,3 +59,8 @@ same setting; that is separate native-control work.
 | Windows text comparison | `python tools/qualification/compare_windows_text.py --pixel-compare <release pixel_compare.exe> --linux-summary <summary> --output <report>` | 2,787 of 2,927 exact; 2 gains, 0 losses |
 | Windows workspace | `cargo test --workspace --locked --no-fail-fast` | 9,433 passed, 0 failed, 20 ignored |
 | Linux workspace, WSL | `cargo --config 'target.x86_64-unknown-linux-gnu.rustflags=[]' test --workspace --locked --no-fail-fast --exclude pixel-compare` | 9,432 passed, 0 failed, 15 ignored |
+
+## Update, 23 October 2026
+
+The CSS-size rounding is replaced by linear metrics, which keep both gains
+above; see [the linear metrics record](windows-linear-font-metrics-2026-10-23.md).
