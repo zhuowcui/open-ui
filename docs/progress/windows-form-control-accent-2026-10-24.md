@@ -61,3 +61,8 @@ them needs system colors resolved per platform at runtime.
 | Linux workspace, WSL | `cargo --config 'target.x86_64-unknown-linux-gnu.rustflags=[]' test --workspace --locked --no-fail-fast --exclude pixel-compare` | 9,456 passed, 0 failed, 15 ignored |
 | Windows feature build | `cargo build -p openui --features windows`; `cargo test -p openui-platform --features windows --lib` | Pass; 7 tests |
 | Tool tests | `python -m unittest tools.qualification.test_compare_windows_text` | 8 tests pass |
+
+## Update, 24 October 2026
+
+The fieldset greys are not baked system colors but the fixed theme grays of
+the default black groove; see [the groove shades record](windows-fieldset-groove-shades-2026-10-24.md).
