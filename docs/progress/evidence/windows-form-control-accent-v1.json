@@ -1,0 +1,115 @@
+{
+ "base": "main 1dbc7ce3 without an accent (release pixel_compare; the linear-metrics runs)",
+ "head": "platform form-control accent branch with --accent-color 0078d4 (the host DWM accent)",
+ "host_dwm_accent": "0xFFD47800 (RGB 0,120,212, the Windows default)",
+ "kind": "windows_text_comparison_delta",
+ "profiles": [
+  {
+   "base_status": {
+    "different": 133,
+    "exact": 2794
+   },
+   "chromium_frames_identical": 2927,
+   "gains": [
+    "wpt/css_break/flexbox_slider-in-multicol-crash",
+    "wpt/css_flexbox/flexitem-stretch-range",
+    "wpt/css_sizing/range-percent-intrinsic-size-2",
+    "wpt/css_sizing/range-percent-intrinsic-size-2-ref",
+    "wpt/css_sizing/range-percent-intrinsic-size-2a",
+    "wpt/css_sizing/range-percent-intrinsic-size-2a-ref"
+   ],
+   "head_pixel_compare_sha256": "054b83b07977a3738c9ea7ce8d9d64e114a71218218a2e4a47bc75afe575ae50",
+   "head_status": {
+    "different": 127,
+    "exact": 2800
+   },
+   "losses": [],
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base_status": {
+    "different": 225,
+    "exact": 2702
+   },
+   "chromium_frames_identical": 2927,
+   "gains": [
+    "wpt/css_break/flexbox_slider-in-multicol-crash",
+    "wpt/css_flexbox/flexitem-stretch-range",
+    "wpt/css_sizing/range-percent-intrinsic-size-1",
+    "wpt/css_sizing/range-percent-intrinsic-size-1-ref",
+    "wpt/css_sizing/range-percent-intrinsic-size-2",
+    "wpt/css_sizing/range-percent-intrinsic-size-2-ref",
+    "wpt/css_sizing/range-percent-intrinsic-size-2a",
+    "wpt/css_sizing/range-percent-intrinsic-size-2a-ref"
+   ],
+   "head_pixel_compare_sha256": "054b83b07977a3738c9ea7ce8d9d64e114a71218218a2e4a47bc75afe575ae50",
+   "head_status": {
+    "different": 217,
+    "exact": 2710
+   },
+   "losses": [],
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base_status": {
+    "different": 550,
+    "error": 2,
+    "exact": 2375
+   },
+   "chromium_frames_identical": 2926,
+   "gains": [
+    "wpt/css_break/flexbox_slider-in-multicol-crash",
+    "wpt/css_flexbox/flexitem-stretch-range",
+    "wpt/css_sizing/range-percent-intrinsic-size-1",
+    "wpt/css_sizing/range-percent-intrinsic-size-1-ref",
+    "wpt/css_sizing/range-percent-intrinsic-size-2",
+    "wpt/css_sizing/range-percent-intrinsic-size-2-ref",
+    "wpt/css_sizing/range-percent-intrinsic-size-2a",
+    "wpt/css_sizing/range-percent-intrinsic-size-2a-ref"
+   ],
+   "head_pixel_compare_sha256": "054b83b07977a3738c9ea7ce8d9d64e114a71218218a2e4a47bc75afe575ae50",
+   "head_status": {
+    "different": 542,
+    "error": 2,
+    "exact": 2383
+   },
+   "losses": [],
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base_status": {
+    "different": 427,
+    "error": 2,
+    "exact": 2498
+   },
+   "chromium_frames_identical": 2927,
+   "gains": [
+    "wpt/css_break/flexbox_slider-in-multicol-crash",
+    "wpt/css_flexbox/flexitem-stretch-range",
+    "wpt/css_sizing/range-percent-intrinsic-size-1",
+    "wpt/css_sizing/range-percent-intrinsic-size-1-ref",
+    "wpt/css_sizing/range-percent-intrinsic-size-2",
+    "wpt/css_sizing/range-percent-intrinsic-size-2-ref",
+    "wpt/css_sizing/range-percent-intrinsic-size-2a",
+    "wpt/css_sizing/range-percent-intrinsic-size-2a-ref"
+   ],
+   "head_pixel_compare_sha256": "054b83b07977a3738c9ea7ce8d9d64e114a71218218a2e4a47bc75afe575ae50",
+   "head_status": {
+    "different": 419,
+    "error": 2,
+    "exact": 2506
+   },
+   "losses": [],
+   "profile": "desktop-1920x1080@1.5"
+  }
+ ],
+ "schema_version": 1,
+ "selected_per_profile": 2927,
+ "tool": "tools/qualification/compare_windows_text.py",
+ "totals": {
+  "base_exact": 10369,
+  "gains": 30,
+  "head_exact": 10399,
+  "losses": 0
+ }
+}

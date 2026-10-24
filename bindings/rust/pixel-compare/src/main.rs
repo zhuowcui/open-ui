@@ -32,6 +32,8 @@ const LEGACY_SCALE: f64 = 1.0;
 
 static ACTIVE_VIEWPORT: OnceLock<ViewportMetrics> = OnceLock::new();
 static ACTIVE_RASTER_CONFIGURATION: OnceLock<RasterConfiguration> = OnceLock::new();
+/// Platform form-control accent for the whole render (`--accent-color`).
+static ACTIVE_ACCENT_COLOR: OnceLock<Option<openui_style::Color>> = OnceLock::new();
 
 /// Narrow fixture-construction facade. Every mutation is immediately routed
 /// through a public `Engine` API; it intentionally exposes neither the native
@@ -51,6 +53,9 @@ impl FixtureEngine {
                 raster_configuration: active_raster_configuration(),
             },
         )?;
+        if let Some(accent) = ACTIVE_ACCENT_COLOR.get().copied().flatten() {
+            inner.set_platform_accent_color(Some(accent));
+        }
         // The immutable capture styles hide webkit scrollbar pseudo-elements.
         // Standard non-auto width/color declarations take precedence over
         // those pseudo-elements in Chromium. Resolve that capture policy in
@@ -335,7 +340,50 @@ fn parse_logical_size(value: &str) -> Result<(f64, f64), String> {
     Ok((width, height))
 }
 
+/// Split `--accent-color RRGGBB` (the platform accent Chromium's native theme
+/// follows) from the viewport options.
+fn split_accent_option(
+    options: &[String],
+) -> Result<(Option<openui_style::Color>, Vec<String>), String> {
+    let mut accent = None;
+    let mut rest = Vec::new();
+    let mut index = 0;
+    while index < options.len() {
+        if options[index] == "--accent-color" {
+            let value = options
+                .get(index + 1)
+                .ok_or_else(|| "--accent-color requires RRGGBB".to_string())?;
+            if value.len() != 6 || !value.chars().all(|c| c.is_ascii_hexdigit()) {
+                return Err(format!("invalid accent color {value:?}; expected RRGGBB"));
+            }
+            let channel = |at: usize| u8::from_str_radix(&value[at..at + 2], 16).unwrap();
+            accent = Some(openui_style::Color::from_rgba8(
+                channel(0),
+                channel(2),
+                channel(4),
+                255,
+            ));
+            index += 2;
+        } else {
+            rest.push(options[index].clone());
+            index += 1;
+        }
+    }
+    Ok((accent, rest))
+}
+
 fn install_viewport(options: &[String]) -> ViewportMetrics {
+    let (accent, options) = split_accent_option(options).unwrap_or_else(|error| {
+        eprintln!("Invalid render profile: {error}");
+        std::process::exit(2);
+    });
+    let options = options.as_slice();
+    if let Err(existing) = ACTIVE_ACCENT_COLOR.set(accent) {
+        if existing != accent {
+            eprintln!("A process may render only one accent color");
+            std::process::exit(2);
+        }
+    }
     let (viewport, raster_configuration) =
         parse_viewport_options(options).unwrap_or_else(|error| {
             eprintln!("Invalid render profile: {error}");
@@ -5143,5 +5191,19 @@ mod profile_tests {
         .unwrap();
         assert_eq!(configuration, RasterConfiguration::chromium_linux_ganesh());
         assert!(parse_viewport_options(&["--backend".into(), "auto".into()]).is_err());
+        let (accent, rest) = split_accent_option(&[
+            "--viewport".into(),
+            "800x600".into(),
+            "--accent-color".into(),
+            "0078d4".into(),
+        ])
+        .unwrap();
+        assert_eq!(
+            accent,
+            Some(openui_style::Color::from_rgba8(0, 120, 212, 255))
+        );
+        assert_eq!(rest, vec!["--viewport".to_string(), "800x600".to_string()]);
+        assert!(split_accent_option(&["--accent-color".into(), "blue".into()]).is_err());
+        assert_eq!(split_accent_option(&[]).unwrap().0, None);
     }
 }

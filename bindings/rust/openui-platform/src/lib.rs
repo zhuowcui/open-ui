@@ -239,6 +239,61 @@ impl std::fmt::Display for PlatformError {
 
 impl std::error::Error for PlatformError {}
 
+/// Decode `HKCU\Software\Microsoft\Windows\DWM\AccentColor` (0xAABBGGRR)
+/// into RGB.
+pub fn accent_from_dwm_value(value: u32) -> [u8; 3] {
+    [value as u8, (value >> 8) as u8, (value >> 16) as u8]
+}
+
+/// The operating system's accent color, which Chromium's native theme uses for
+/// form controls. Windows reports the DWM accent; other platforms report none,
+/// so documents keep Chromium's default accent.
+pub fn system_accent_color() -> Option<[u8; 3]> {
+    #[cfg(all(feature = "windows", target_os = "windows"))]
+    {
+        use windows_sys::Win32::System::Registry::{
+            RegGetValueW, HKEY_CURRENT_USER, RRF_RT_REG_DWORD,
+        };
+        let wide = |text: &str| {
+            text.encode_utf16()
+                .chain(std::iter::once(0))
+                .collect::<Vec<u16>>()
+        };
+        let key = wide(r"Software\Microsoft\Windows\DWM");
+        let name = wide("AccentColor");
+        let mut value = 0u32;
+        let mut size = std::mem::size_of::<u32>() as u32;
+        // SAFETY: the key and value names are NUL-terminated UTF-16 buffers
+        // and the output buffer is a u32 whose size is passed in `size`.
+        let status = unsafe {
+            RegGetValueW(
+                HKEY_CURRENT_USER,
+                key.as_ptr(),
+                name.as_ptr(),
+                RRF_RT_REG_DWORD,
+                std::ptr::null_mut(),
+                (&mut value as *mut u32).cast(),
+                &mut size,
+            )
+        };
+        if status == 0 {
+            return Some(accent_from_dwm_value(value));
+        }
+    }
+    None
+}
+
+#[cfg(test)]
+mod accent_tests {
+    #[test]
+    fn dwm_accent_value_is_abgr() {
+        assert_eq!(
+            super::accent_from_dwm_value(0xFFD4_7800),
+            [0x00, 0x78, 0xd4]
+        );
+    }
+}
+
 #[cfg(all(test, not(any(feature = "linux", feature = "windows"))))]
 mod tests {
     use super::*;

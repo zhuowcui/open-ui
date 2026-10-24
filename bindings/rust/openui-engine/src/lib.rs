@@ -614,6 +614,20 @@ impl Engine {
         Ok(())
     }
 
+    /// Follow the platform's form-control accent, as Chromium's native theme
+    /// follows the operating system's accent color (Windows) when one is
+    /// available. `None` restores Chromium's default blue.
+    pub fn set_platform_accent_color(&mut self, color: Option<Color>) {
+        if self.document.platform_accent_color() == color.map(|color| Color { a: 1.0, ..color }) {
+            return;
+        }
+        self.document.set_platform_accent_color(color);
+        self.dirty.paint = true;
+        self.dirty.compositing = true;
+        self.dirty_generations.paint += 1;
+        self.dirty_generations.compositing += 1;
+    }
+
     fn recompute_authored_styles(&mut self) -> Result<(), EngineError> {
         let roots: Vec<_> = self
             .slots

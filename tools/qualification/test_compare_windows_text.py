@@ -91,6 +91,18 @@ class WindowsTextComparisonTests(unittest.TestCase):
         self.assertEqual(session.restarts, 3)
         self.assertEqual(events, ["start a", "stop a", "start b", "stop b", "start c", "stop c"])
 
+    def test_dwm_accent_value_is_abgr(self) -> None:
+        self.assertEqual(tool.accent_from_dwm_value(0xFFD47800), "0078d4")
+
+    def test_openui_command_passes_the_accent_only_when_known(self) -> None:
+        class Profile:
+            logical_width, logical_height, scale = 800, 600, 1.0
+        base = tool.openui_command("pc", "t", Path("o.png"), "cpu-skia:deterministic-alias", Profile, None)
+        self.assertEqual(base[-2:], ["--scale", "1.0"])
+        with_accent = tool.openui_command("pc", "t", Path("o.png"), "cpu-skia:default", Profile, "0078d4")
+        self.assertEqual(with_accent[-2:], ["--accent-color", "0078d4"])
+        self.assertIn("default", with_accent)
+
 
 if __name__ == "__main__":
     unittest.main()
