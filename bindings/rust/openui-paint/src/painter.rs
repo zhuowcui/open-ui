@@ -21092,13 +21092,15 @@ fn paint_native_fieldset_corner_samples(
     let mut paint = Paint::default();
     paint.set_style(PaintStyle::Fill);
     paint.set_anti_alias(false);
+    let (dark, corner, light) = PLATFORM_GROOVE_SHADES;
     for (sample_x, sample_y, gray) in [
-        (x, y, 155),
-        (x + width - 1.0, y, 197),
-        (x + width - 2.0, y + 1.0, 197),
-        (x, y + height - 1.0, 197),
-        (x + width - 1.0, y + height - 1.0, 239),
+        (x, y, dark),
+        (x + width - 1.0, y, corner),
+        (x + width - 2.0, y + 1.0, corner),
+        (x, y + height - 1.0, corner),
+        (x + width - 1.0, y + height - 1.0, light),
     ] {
+        let gray = gray as u8;
         set_paint_css_color(&mut paint, &Color::from_rgba8(gray, gray, gray, 255));
         canvas.draw_rect(Rect::from_xywh(sample_x, sample_y, 1.0, 1.0), &paint);
     }
@@ -24787,6 +24789,15 @@ fn lighten_color(color: &Color4f) -> Color4f {
     *color
 }
 
+/// Dark, corner and light grays Chromium's theme paints for the default black
+/// `currentColor` groove of a fieldset. Windows Chrome measures each one level
+/// lighter than the Linux theme at every census profile.
+const PLATFORM_GROOVE_SHADES: (f32, f32, f32) = if cfg!(windows) {
+    (156.0, 198.0, 240.0)
+} else {
+    (155.0, 197.0, 239.0)
+};
+
 /// Chromium's Linux theme preserves the traditional raised/recessed gray
 /// pair for an omitted border color resolving through black `currentColor`.
 /// Explicit colors continue through the CSS color shading path above.
@@ -24797,7 +24808,7 @@ fn shade_3d_dark(
 ) -> Color4f {
     if uses_platform_current_color {
         let shade = if corrected_platform_tone {
-            155.0
+            PLATFORM_GROOVE_SHADES.0
         } else {
             154.0
         } / 255.0;
@@ -24814,7 +24825,7 @@ fn shade_3d_light(
 ) -> Color4f {
     if uses_platform_current_color {
         let shade = if corrected_platform_tone {
-            239.0
+            PLATFORM_GROOVE_SHADES.2
         } else {
             238.0
         } / 255.0;

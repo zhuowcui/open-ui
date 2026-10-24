@@ -1,0 +1,414 @@
+{
+ "base": "main d9cb0c26 with the host accent 0078d4 (release pixel_compare)",
+ "head": "Windows fieldset groove shades on d9cb0c26 (release pixel_compare)",
+ "kind": "windows_text_comparison_delta",
+ "profiles": [
+  {
+   "base_status": {
+    "different": 127,
+    "exact": 2800
+   },
+   "chromium_frames_identical": 2927,
+   "gains": [
+    "wpt/css_display/display-contents-dynamic-generated-content-fieldset-001-ref",
+    "wpt/css_flexbox/fieldset-baseline-alignment",
+    "wpt/css_flexbox/fieldset-baseline-alignment-ref",
+    "wpt/css_multicol/multicol-span-all-fieldset-001",
+    "wpt/css_multicol/multicol-span-all-fieldset-001-ref",
+    "wpt/css_multicol/multicol-span-all-fieldset-002-ref",
+    "wpt/css_multicol/multicol-span-all-fieldset-003",
+    "wpt/css_multicol/multicol-span-all-fieldset-003-ref",
+    "wpt/css_overflow/line-clamp_webkit-line-clamp-027",
+    "wpt/css_overflow/scroll-markers_scroll-marker-group-011",
+    "wpt/css_overflow/scroll-markers_scroll-marker-group-011-ref",
+    "wpt/css_sizing/aspect-ratio_fieldset-element-001",
+    "wpt/css_sizing/aspect-ratio_fieldset-element-001-ref",
+    "wpt/css_sizing/aspect-ratio_fieldset-element-002",
+    "wpt/css_sizing/aspect-ratio_fieldset-element-002-ref"
+   ],
+   "head_pixel_compare_sha256": "158ed5a178da8a4f01d283e397ecd14f1557c08c110e74324cf302bc5de757b6",
+   "head_status": {
+    "different": 112,
+    "exact": 2815
+   },
+   "improved": [
+    {
+     "base": 1848,
+     "head": 256,
+     "id": "wpt/css_multicol/multicol-span-all-fieldset-002"
+    },
+    {
+     "base": 1571,
+     "head": 635,
+     "id": "wpt/css_position/position-absolute-semi-replaced-stretch-other"
+    },
+    {
+     "base": 1571,
+     "head": 635,
+     "id": "wpt/css_position/position-absolute-semi-replaced-stretch-other-ref"
+    },
+    {
+     "base": 1032,
+     "head": 30,
+     "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-014"
+    }
+   ],
+   "losses": [],
+   "profile": "legacy-800x600@1",
+   "worsened": []
+  },
+  {
+   "base_status": {
+    "different": 217,
+    "exact": 2710
+   },
+   "chromium_frames_identical": 2927,
+   "gains": [],
+   "head_pixel_compare_sha256": "158ed5a178da8a4f01d283e397ecd14f1557c08c110e74324cf302bc5de757b6",
+   "head_status": {
+    "different": 217,
+    "exact": 2710
+   },
+   "improved": [
+    {
+     "base": 5360,
+     "head": 16,
+     "id": "wpt/css_display/display-contents-dynamic-generated-content-fieldset-001-ref"
+    },
+    {
+     "base": 1456,
+     "head": 16,
+     "id": "wpt/css_flexbox/fieldset-baseline-alignment"
+    },
+    {
+     "base": 1456,
+     "head": 16,
+     "id": "wpt/css_flexbox/fieldset-baseline-alignment-ref"
+    },
+    {
+     "base": 5292,
+     "head": 8,
+     "id": "wpt/css_multicol/multicol-span-all-fieldset-001"
+    },
+    {
+     "base": 5292,
+     "head": 8,
+     "id": "wpt/css_multicol/multicol-span-all-fieldset-001-ref"
+    },
+    {
+     "base": 6144,
+     "head": 1032,
+     "id": "wpt/css_multicol/multicol-span-all-fieldset-002"
+    },
+    {
+     "base": 5248,
+     "head": 8,
+     "id": "wpt/css_multicol/multicol-span-all-fieldset-002-ref"
+    },
+    {
+     "base": 5120,
+     "head": 8,
+     "id": "wpt/css_multicol/multicol-span-all-fieldset-003"
+    },
+    {
+     "base": 5120,
+     "head": 8,
+     "id": "wpt/css_multicol/multicol-span-all-fieldset-003-ref"
+    },
+    {
+     "base": 6112,
+     "head": 16,
+     "id": "wpt/css_overflow/line-clamp_webkit-line-clamp-027"
+    },
+    {
+     "base": 6080,
+     "head": 16,
+     "id": "wpt/css_overflow/scroll-markers_scroll-marker-group-011"
+    },
+    {
+     "base": 6080,
+     "head": 16,
+     "id": "wpt/css_overflow/scroll-markers_scroll-marker-group-011-ref"
+    },
+    {
+     "base": 5463,
+     "head": 1735,
+     "id": "wpt/css_position/position-absolute-semi-replaced-stretch-other"
+    },
+    {
+     "base": 5463,
+     "head": 1735,
+     "id": "wpt/css_position/position-absolute-semi-replaced-stretch-other-ref"
+    },
+    {
+     "base": 1261,
+     "head": 16,
+     "id": "wpt/css_sizing/aspect-ratio_fieldset-element-001"
+    },
+    {
+     "base": 2720,
+     "head": 16,
+     "id": "wpt/css_sizing/aspect-ratio_fieldset-element-001-ref"
+    },
+    {
+     "base": 1261,
+     "head": 16,
+     "id": "wpt/css_sizing/aspect-ratio_fieldset-element-002"
+    },
+    {
+     "base": 1261,
+     "head": 16,
+     "id": "wpt/css_sizing/aspect-ratio_fieldset-element-002-ref"
+    },
+    {
+     "base": 4128,
+     "head": 136,
+     "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-014"
+    }
+   ],
+   "losses": [],
+   "profile": "mobile-375x667@2",
+   "worsened": []
+  },
+  {
+   "base_status": {
+    "different": 542,
+    "error": 2,
+    "exact": 2383
+   },
+   "chromium_frames_identical": 2927,
+   "gains": [],
+   "head_pixel_compare_sha256": "158ed5a178da8a4f01d283e397ecd14f1557c08c110e74324cf302bc5de757b6",
+   "head_status": {
+    "different": 542,
+    "error": 2,
+    "exact": 2383
+   },
+   "improved": [
+    {
+     "base": 3112,
+     "head": 1558,
+     "id": "wpt/css_display/display-contents-dynamic-generated-content-fieldset-001-ref"
+    },
+    {
+     "base": 260,
+     "head": 185,
+     "id": "wpt/css_flexbox/fieldset-baseline-alignment"
+    },
+    {
+     "base": 260,
+     "head": 185,
+     "id": "wpt/css_flexbox/fieldset-baseline-alignment-ref"
+    },
+    {
+     "base": 1934,
+     "head": 64,
+     "id": "wpt/css_multicol/multicol-span-all-fieldset-001"
+    },
+    {
+     "base": 1934,
+     "head": 64,
+     "id": "wpt/css_multicol/multicol-span-all-fieldset-001-ref"
+    },
+    {
+     "base": 2316,
+     "head": 552,
+     "id": "wpt/css_multicol/multicol-span-all-fieldset-002"
+    },
+    {
+     "base": 1938,
+     "head": 132,
+     "id": "wpt/css_multicol/multicol-span-all-fieldset-002-ref"
+    },
+    {
+     "base": 2066,
+     "head": 306,
+     "id": "wpt/css_multicol/multicol-span-all-fieldset-003"
+    },
+    {
+     "base": 2066,
+     "head": 306,
+     "id": "wpt/css_multicol/multicol-span-all-fieldset-003-ref"
+    },
+    {
+     "base": 4656,
+     "head": 1681,
+     "id": "wpt/css_overflow/line-clamp_webkit-line-clamp-027"
+    },
+    {
+     "base": 4652,
+     "head": 131,
+     "id": "wpt/css_overflow/scroll-markers_scroll-marker-group-011"
+    },
+    {
+     "base": 4652,
+     "head": 131,
+     "id": "wpt/css_overflow/scroll-markers_scroll-marker-group-011-ref"
+    },
+    {
+     "base": 3054,
+     "head": 2121,
+     "id": "wpt/css_position/position-absolute-semi-replaced-stretch-other"
+    },
+    {
+     "base": 3054,
+     "head": 2121,
+     "id": "wpt/css_position/position-absolute-semi-replaced-stretch-other-ref"
+    },
+    {
+     "base": 462,
+     "head": 291,
+     "id": "wpt/css_sizing/aspect-ratio_fieldset-element-001"
+    },
+    {
+     "base": 440,
+     "head": 100,
+     "id": "wpt/css_sizing/aspect-ratio_fieldset-element-001-ref"
+    },
+    {
+     "base": 462,
+     "head": 291,
+     "id": "wpt/css_sizing/aspect-ratio_fieldset-element-002"
+    },
+    {
+     "base": 462,
+     "head": 291,
+     "id": "wpt/css_sizing/aspect-ratio_fieldset-element-002-ref"
+    },
+    {
+     "base": 944,
+     "head": 940,
+     "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-014"
+    }
+   ],
+   "losses": [],
+   "profile": "desktop-1280x720@1.25",
+   "worsened": []
+  },
+  {
+   "base_status": {
+    "different": 419,
+    "error": 2,
+    "exact": 2506
+   },
+   "chromium_frames_identical": 2927,
+   "gains": [],
+   "head_pixel_compare_sha256": "158ed5a178da8a4f01d283e397ecd14f1557c08c110e74324cf302bc5de757b6",
+   "head_status": {
+    "different": 419,
+    "error": 2,
+    "exact": 2506
+   },
+   "improved": [
+    {
+     "base": 11288,
+     "head": 17,
+     "id": "wpt/css_display/display-contents-dynamic-generated-content-fieldset-001-ref"
+    },
+    {
+     "base": 386,
+     "head": 20,
+     "id": "wpt/css_flexbox/fieldset-baseline-alignment"
+    },
+    {
+     "base": 386,
+     "head": 20,
+     "id": "wpt/css_flexbox/fieldset-baseline-alignment-ref"
+    },
+    {
+     "base": 2432,
+     "head": 20,
+     "id": "wpt/css_multicol/multicol-span-all-fieldset-001"
+    },
+    {
+     "base": 2432,
+     "head": 20,
+     "id": "wpt/css_multicol/multicol-span-all-fieldset-001-ref"
+    },
+    {
+     "base": 3021,
+     "head": 645,
+     "id": "wpt/css_multicol/multicol-span-all-fieldset-002"
+    },
+    {
+     "base": 2471,
+     "head": 45,
+     "id": "wpt/css_multicol/multicol-span-all-fieldset-002-ref"
+    },
+    {
+     "base": 2400,
+     "head": 20,
+     "id": "wpt/css_multicol/multicol-span-all-fieldset-003"
+    },
+    {
+     "base": 2400,
+     "head": 20,
+     "id": "wpt/css_multicol/multicol-span-all-fieldset-003-ref"
+    },
+    {
+     "base": 11571,
+     "head": 21,
+     "id": "wpt/css_overflow/line-clamp_webkit-line-clamp-027"
+    },
+    {
+     "base": 13354,
+     "head": 1816,
+     "id": "wpt/css_overflow/scroll-markers_scroll-marker-group-011"
+    },
+    {
+     "base": 11684,
+     "head": 146,
+     "id": "wpt/css_overflow/scroll-markers_scroll-marker-group-011-ref"
+    },
+    {
+     "base": 5579,
+     "head": 4184,
+     "id": "wpt/css_position/position-absolute-semi-replaced-stretch-other"
+    },
+    {
+     "base": 5579,
+     "head": 4184,
+     "id": "wpt/css_position/position-absolute-semi-replaced-stretch-other-ref"
+    },
+    {
+     "base": 601,
+     "head": 18,
+     "id": "wpt/css_sizing/aspect-ratio_fieldset-element-001"
+    },
+    {
+     "base": 909,
+     "head": 18,
+     "id": "wpt/css_sizing/aspect-ratio_fieldset-element-001-ref"
+    },
+    {
+     "base": 601,
+     "head": 18,
+     "id": "wpt/css_sizing/aspect-ratio_fieldset-element-002"
+    },
+    {
+     "base": 601,
+     "head": 18,
+     "id": "wpt/css_sizing/aspect-ratio_fieldset-element-002-ref"
+    },
+    {
+     "base": 1878,
+     "head": 387,
+     "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-014"
+    }
+   ],
+   "losses": [],
+   "profile": "desktop-1920x1080@1.5",
+   "worsened": []
+  }
+ ],
+ "schema_version": 1,
+ "selected_per_profile": 2927,
+ "tool": "tools/qualification/compare_windows_text.py",
+ "totals": {
+  "base_exact": 10399,
+  "gains": 15,
+  "head_exact": 10414,
+  "improved": 61,
+  "losses": 0
+ }
+}
