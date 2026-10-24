@@ -436,8 +436,21 @@ impl FontPlatformData {
         // text only). DirectWrite's unrounded GDI-compatible values, such as
         // Ahem's 13.008 at 16px, would otherwise move text fragment edges.
         if windows_chromium {
-            metrics.ascent = metrics.ascent.round();
-            metrics.descent = metrics.descent.round();
+            // Layout applies Blink's integer metric rounding (`int_ascent`,
+            // the central split, half-leading) to linear design-unit metrics,
+            // as FreeType reports them on Linux. DirectWrite's default
+            // GDI-compatible metrics are already grid-fitted (16px Ahem:
+            // 13.008, 12px: 9.996), so rounding them again moves fragment
+            // edges by up to half a device pixel at fractional scales.
+            let mut linear = sk_font.clone();
+            linear.set_linear_metrics(true);
+            let (_, linear_metrics) = linear.metrics();
+            if configuration.metric_overrides.ascent.is_none() {
+                metrics.ascent = -linear_metrics.ascent;
+            }
+            if configuration.metric_overrides.descent.is_none() {
+                metrics.descent = linear_metrics.descent;
+            }
         }
         metrics.line_spacing = metrics.ascent + metrics.descent + metrics.line_gap;
         let vertical_metrics = VerticalMetrics::from_typeface(&typeface);
@@ -771,9 +784,9 @@ mod tests {
         assert!(lcd.sk_font().is_subpixel() && lcd.shaping_font().is_subpixel());
         assert!(!lcd.sk_font().is_linear_metrics());
         assert_eq!(lcd.sk_font().hinting(), FontHinting::Normal);
-        // Layout sees Blink's rounded ascent and descent, not DirectWrite's
-        // 13.008 and 3.008 for 16px Ahem.
-        let rounded = FontPlatformData::with_resolved_configuration(
+        // Layout receives linear metrics, as on Linux, not DirectWrite's
+        // grid-fitted 13.008 and 3.008 for 16px Ahem.
+        let linear = FontPlatformData::with_resolved_configuration(
             face.clone(),
             16.0,
             0.0,
@@ -782,13 +795,11 @@ mod tests {
             false,
             false,
             RasterConfiguration::deterministic_aliased(false),
-            1.0,
+            1.25,
             ResolvedFontConfiguration::default(),
         );
-        assert_eq!(
-            (rounded.metrics().ascent, rounded.metrics().descent),
-            (13.0, 3.0)
-        );
+        assert!((linear.metrics().ascent - 12.8).abs() < 1.0e-4);
+        assert!((linear.metrics().descent - 3.2).abs() < 1.0e-4);
         // The plain Skia backend keeps the application's requested policy.
         let skia = build(RasterConfiguration::default(), false);
         assert_eq!(skia.sk_font().hinting(), FontHinting::Slight);

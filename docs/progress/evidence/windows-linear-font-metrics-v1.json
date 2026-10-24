@@ -1,0 +1,173 @@
+{
+ "base": "main 0a74d934 (release pixel_compare)",
+ "head": "linear DirectWrite metrics on main 0a74d934 (release pixel_compare)",
+ "kind": "windows_text_comparison_delta",
+ "linux_reference": "private central4 expanded census of 896015de",
+ "profiles": [
+  {
+   "base_pixel_compare_sha256": "c39b1199e6ac312cde9daa8ff3e2c927647f29c099862d72e110a78177e914e6",
+   "base_status": {
+    "different": 139,
+    "exact": 2788
+   },
+   "chromium_frames_identical": 2927,
+   "gains": [
+    "wpt/css_overflow/line-clamp_line-clamp-027",
+    "wpt/css_overflow/scroll-markers_scroll-buttons-enabled-vertical-ltr",
+    "wpt/css_overflow/scroll-markers_scroll-buttons-enabled-vertical-ltr-ref",
+    "wpt/css_sizing/vert-block-size-small-or-larger-than-container-with-min-or-max-content-2-ref",
+    "wpt/css_sizing/vert-block-size-small-or-larger-than-container-with-min-or-max-content-2a",
+    "wpt/css_sizing/vert-block-size-small-or-larger-than-container-with-min-or-max-content-2b"
+   ],
+   "head_pixel_compare_sha256": "bf0f01adc3af3ad13b5e85ffe1690e7cc531d33fa8c7b9171416738dc46dc4a2",
+   "head_status": {
+    "different": 133,
+    "exact": 2794
+   },
+   "losses": [],
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base_pixel_compare_sha256": "c39b1199e6ac312cde9daa8ff3e2c927647f29c099862d72e110a78177e914e6",
+   "base_status": {
+    "different": 228,
+    "exact": 2699
+   },
+   "chromium_frames_identical": 2927,
+   "gains": [
+    "wpt/css_overflow/line-clamp_line-clamp-027",
+    "wpt/css_sizing/vert-block-size-small-or-larger-than-container-with-min-or-max-content-2-ref",
+    "wpt/css_sizing/vert-block-size-small-or-larger-than-container-with-min-or-max-content-2a",
+    "wpt/css_sizing/vert-block-size-small-or-larger-than-container-with-min-or-max-content-2b"
+   ],
+   "head_pixel_compare_sha256": "bf0f01adc3af3ad13b5e85ffe1690e7cc531d33fa8c7b9171416738dc46dc4a2",
+   "head_status": {
+    "different": 225,
+    "exact": 2702
+   },
+   "losses": [
+    {
+     "head_mismatched": 224,
+     "id": "wpt/css_multicol/moz-multicol3-column-balancing-break-inside-avoid-1-ref",
+     "linux": [
+      "different",
+      224
+     ]
+    }
+   ],
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base_pixel_compare_sha256": "c39b1199e6ac312cde9daa8ff3e2c927647f29c099862d72e110a78177e914e6",
+   "base_status": {
+    "different": 558,
+    "error": 2,
+    "exact": 2367
+   },
+   "chromium_frames_identical": 2925,
+   "gains": [
+    "wpt/css_flexbox/flexbox-writing-mode-011",
+    "wpt/css_flexbox/flexbox-writing-mode-011-ref",
+    "wpt/css_flexbox/flexbox-writing-mode-012",
+    "wpt/css_flexbox/flexbox-writing-mode-012-ref",
+    "wpt/css_flexbox/flexbox-writing-mode-013",
+    "wpt/css_flexbox/flexbox-writing-mode-013-ref",
+    "wpt/css_overflow/line-clamp_line-clamp-027",
+    "wpt/css_sizing/vert-block-size-small-or-larger-than-container-with-min-or-max-content-2-ref",
+    "wpt/css_sizing/vert-block-size-small-or-larger-than-container-with-min-or-max-content-2a",
+    "wpt/css_sizing/vert-block-size-small-or-larger-than-container-with-min-or-max-content-2b"
+   ],
+   "head_pixel_compare_sha256": "bf0f01adc3af3ad13b5e85ffe1690e7cc531d33fa8c7b9171416738dc46dc4a2",
+   "head_status": {
+    "different": 550,
+    "error": 2,
+    "exact": 2375
+   },
+   "losses": [
+    {
+     "head_mismatched": 40,
+     "id": "wpt/css_overflow/line-clamp_line-clamp-auto-with-ruby-003",
+     "linux": [
+      "different",
+      40
+     ]
+    },
+    {
+     "head_mismatched": 80,
+     "id": "wpt/css_overflow/line-clamp_line-clamp-auto-with-ruby-005.tentative",
+     "linux": [
+      "different",
+      80
+     ]
+    }
+   ],
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base_pixel_compare_sha256": "c39b1199e6ac312cde9daa8ff3e2c927647f29c099862d72e110a78177e914e6",
+   "base_status": {
+    "different": 437,
+    "error": 2,
+    "exact": 2488
+   },
+   "chromium_frames_identical": 2927,
+   "gains": [
+    "wpt/css2_floats/crashtests_firefox-bug-1904409",
+    "wpt/css_flexbox/auto-margins-003",
+    "wpt/css_multicol/multicol-dynamic-add-004-ref",
+    "wpt/css_multicol/multicol-span-all-dynamic-add-013",
+    "wpt/css_multicol/multicol-span-all-dynamic-add-013-ref",
+    "wpt/css_multicol/table_table-cell-content-change-001",
+    "wpt/css_overflow/line-clamp_line-clamp-027",
+    "wpt/css_overflow/overflow-auto-scrollbar-gutter-intrinsic-003-ref",
+    "wpt/css_overflow/scroll-markers_scroll-buttons-enabled-vertical-ltr-ref",
+    "wpt/css_position/static-position_vlr-ltr-ltr",
+    "wpt/css_sizing/vert-block-size-small-or-larger-than-container-with-min-or-max-content-2-ref",
+    "wpt/css_sizing/vert-block-size-small-or-larger-than-container-with-min-or-max-content-2a",
+    "wpt/css_sizing/vert-block-size-small-or-larger-than-container-with-min-or-max-content-2b"
+   ],
+   "head_pixel_compare_sha256": "bf0f01adc3af3ad13b5e85ffe1690e7cc531d33fa8c7b9171416738dc46dc4a2",
+   "head_status": {
+    "different": 427,
+    "error": 2,
+    "exact": 2498
+   },
+   "losses": [
+    {
+     "head_mismatched": 1152,
+     "id": "wpt/css_position/static-position_vlr-rtl-rtl",
+     "linux": [
+      "different",
+      1152
+     ]
+    },
+    {
+     "head_mismatched": 10368,
+     "id": "wpt/css_position/sticky_position-sticky-fixed-ancestor-002",
+     "linux": [
+      "exact",
+      0
+     ]
+    },
+    {
+     "head_mismatched": 10368,
+     "id": "wpt/css_position/sticky_position-sticky-fixed-ancestor-003",
+     "linux": [
+      "exact",
+      0
+     ]
+    }
+   ],
+   "profile": "desktop-1920x1080@1.5"
+  }
+ ],
+ "schema_version": 1,
+ "selected_per_profile": 2927,
+ "tool": "tools/qualification/compare_windows_text.py",
+ "totals": {
+  "base_exact": 10342,
+  "gains": 33,
+  "head_exact": 10369,
+  "losses": 6
+ }
+}
