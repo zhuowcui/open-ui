@@ -3865,6 +3865,16 @@ fn compute_line_cross_sizes(
                 }
                 let child_fragment = layout_flex_item(doc, item.node_id, &child_space);
                 let synthesized = clamped_cross_bb;
+                let is_line_clamped = child_style.line_clamp != openui_style::LineClamp::None;
+                if is_line_clamped
+                    && child_fragment.first_baseline.is_none()
+                    && child_fragment.last_baseline.is_none()
+                {
+                    // A clamped item without content lines keeps the legacy
+                    // measurement: its synthesized edge does not size the
+                    // shared line.
+                    continue;
+                }
                 let cross_baseline =
                     if child_direction.is_horizontal() != space.writing_direction.is_horizontal() {
                         synthesized
@@ -3873,7 +3883,7 @@ fn compute_line_cross_sizes(
                             .last_baseline
                             .or(child_fragment.first_baseline)
                             .unwrap_or(synthesized);
-                        if child_style.line_clamp != openui_style::LineClamp::None {
+                        if is_line_clamped {
                             baseline.min_of(synthesized)
                         } else {
                             baseline
