@@ -414,9 +414,17 @@ impl FontPlatformData {
         // explicit raster positioning policy: changing advances must not
         // silently change the owned font used to build paint strikes.
         // Windows Blink shapes with the same `CreateSkFont` font it paints.
+        //
+        // Linux Chromium resolves full hinting whenever Fontconfig disables
+        // antialiasing (`ui/gfx/font_render_params_linux.cc`), so aliased
+        // text is never force-positioned at subpixels and its HarfBuzz
+        // advances round to whole pixels (`SkFontGetGlyphWidthForHarfBuzz`).
+        // The raster hinting of the paint strike stays as configured.
         let mut shaping_font = sk_font.clone();
         if chromium_backend && !windows_chromium {
-            shaping_font.set_subpixel(hinting != FontHinting::Full || subpixel);
+            let chromium_full_hinting =
+                hinting == FontHinting::Full || settings.edging == TextEdging::Alias;
+            shaping_font.set_subpixel(!chromium_full_hinting || subpixel);
             shaping_font.set_linear_metrics(subpixel);
         }
 
@@ -731,7 +739,11 @@ mod tests {
                     assert_eq!(data.sk_font().is_subpixel(), requested_subpixel);
                     assert_eq!(data.sk_font().is_linear_metrics(), requested_subpixel);
                     assert_eq!(data.shaping_font().is_linear_metrics(), requested_subpixel);
-                    let force = backend != RasterBackend::Skia && hinting != TextHinting::Full;
+                    // Aliased Linux Chromium text resolves full hinting, so its
+                    // shaping font is never force-positioned at subpixels.
+                    let force = backend != RasterBackend::Skia
+                        && hinting != TextHinting::Full
+                        && configuration.author_text.edging != TextEdging::Alias;
                     assert_eq!(
                         data.shaping_font().is_subpixel(),
                         force || requested_subpixel
