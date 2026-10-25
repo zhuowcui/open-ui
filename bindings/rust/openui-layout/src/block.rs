@@ -5636,6 +5636,8 @@ fn suppress_nested_principal_decoration_duplicates(fragment: &mut Fragment) {
         // paint a zero-sized decoration and suppress the visible grid.
         // An explicitly anonymous content box has its own layout/scroll role;
         // it never receives the authored wrapper's border or background.
+        // Anonymous table sections, rows and cells borrow their table's node
+        // but are table parts, not a separately sized grid box.
         if has_node
             && fragment.anonymous_layout_box.is_none()
             && !consumes_delegation
@@ -5643,6 +5645,14 @@ fn suppress_nested_principal_decoration_duplicates(fragment: &mut Fragment) {
                 child.kind == FragmentKind::Box
                     && child.node_id == fragment.node_id
                     && child.anonymous_layout_box.is_none()
+                    && !matches!(
+                        child.table_part,
+                        Some(
+                            crate::FragmentTablePart::Section
+                                | crate::FragmentTablePart::Row
+                                | crate::FragmentTablePart::Cell { .. }
+                        )
+                    )
             })
         {
             fragment.skip_box_decoration = true;

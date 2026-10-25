@@ -1,0 +1,800 @@
+{
+ "base_commit": "d85cd62671f9118ba0b72db061df28c9ad64d5da",
+ "base_exact": 21701,
+ "chromium_identical": 23728,
+ "comparisons": 23728,
+ "errors": [],
+ "gains": [
+  {
+   "base": "different",
+   "base_mismatched": 7875,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_break-after-table-cell",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 7875,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_break-after-table-cell-child",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 7875,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_break-before-table-cell",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 7875,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_break-before-table-cell-child",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 75,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_section-with-overflow-000",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 15625,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-fixed-min-width-2",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 15625,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-fixed-min-width-3",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 7875,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-min-content-height-1.tentative",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 7875,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-min-content-height-2.tentative",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 15625,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-min-height-1",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 15625,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-stretch-cross-size-4",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 8000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_overflow/line-clamp_line-clamp-032",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 15625,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/stretch_fixed-table-1",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 11250,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_break-after-table-cell",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 11250,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_break-after-table-cell-child",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 11250,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_break-before-table-cell",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 11250,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_break-before-table-cell-child",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 22500,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-fixed-min-width-2",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 22500,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-fixed-min-width-3",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 11250,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-min-content-height-1.tentative",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 11250,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-min-content-height-2.tentative",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 22500,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-min-height-1",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 22500,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-stretch-cross-size-4",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 11400,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_overflow/line-clamp_line-clamp-032",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 22500,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/stretch_fixed-table-1",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 5000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_break-after-table-cell",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 5000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_break-after-table-cell-child",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 5000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_break-before-table-cell",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 5000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_break-before-table-cell-child",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 10000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-fixed-min-width-2",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 10000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-fixed-min-width-3",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 5000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-min-content-height-1.tentative",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 5000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-min-content-height-2.tentative",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 10000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-min-height-1",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 10000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-stretch-cross-size-4",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 5000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_overflow/line-clamp_line-clamp-032",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 10000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/stretch_fixed-table-1",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 20000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_break-after-table-cell",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 20000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_break-after-table-cell-child",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 20000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_break-before-table-cell",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 20000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_break-before-table-cell-child",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 40000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-fixed-min-width-2",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 40000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-fixed-min-width-3",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 20000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-min-content-height-1.tentative",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 20000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-min-content-height-2.tentative",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 40000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-min-height-1",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 40000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-stretch-cross-size-4",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 20000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_overflow/line-clamp_line-clamp-032",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 40000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/stretch_fixed-table-1",
+   "profile": "mobile-375x667@2"
+  }
+ ],
+ "head_commit": "accfd7e6cd5b6e6dd13f58b2a71ca3c6dd623340",
+ "head_exact": 21750,
+ "improved": [],
+ "losses": [],
+ "openui_changed": [
+  {
+   "base": "different",
+   "base_mismatched": 7875,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_break-after-table-cell",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 7875,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_break-after-table-cell-child",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 7875,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_break-before-table-cell",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 7875,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_break-before-table-cell-child",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 75,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_section-with-overflow-000",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 15625,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-fixed-min-width-2",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 15625,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-fixed-min-width-3",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 7875,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-min-content-height-1.tentative",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 7875,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-min-content-height-2.tentative",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 15625,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-min-height-1",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 15625,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-stretch-cross-size-4",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 8000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_overflow/line-clamp_line-clamp-032",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 15625,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/stretch_fixed-table-1",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 11250,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_break-after-table-cell",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 11250,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_break-after-table-cell-child",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 11250,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_break-before-table-cell",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 11250,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_break-before-table-cell-child",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 22500,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-fixed-min-width-2",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 22500,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-fixed-min-width-3",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 11250,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-min-content-height-1.tentative",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 11250,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-min-content-height-2.tentative",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 22500,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-min-height-1",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 22500,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-stretch-cross-size-4",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 11400,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_overflow/line-clamp_line-clamp-032",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 22500,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/stretch_fixed-table-1",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 5000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_break-after-table-cell",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 5000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_break-after-table-cell-child",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 5000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_break-before-table-cell",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 5000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_break-before-table-cell-child",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 10000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-fixed-min-width-2",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 10000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-fixed-min-width-3",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 5000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-min-content-height-1.tentative",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 5000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-min-content-height-2.tentative",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 10000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-min-height-1",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 10000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-stretch-cross-size-4",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 5000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_overflow/line-clamp_line-clamp-032",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 10000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/stretch_fixed-table-1",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 20000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_break-after-table-cell",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 20000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_break-after-table-cell-child",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 20000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_break-before-table-cell",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 20000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_break-before-table-cell-child",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 40000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-fixed-min-width-2",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 40000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-fixed-min-width-3",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 20000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-min-content-height-1.tentative",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 20000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-min-content-height-2.tentative",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 40000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-min-height-1",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 40000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/table-as-item-stretch-cross-size-4",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 20000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_overflow/line-clamp_line-clamp-032",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 40000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/stretch_fixed-table-1",
+   "profile": "mobile-375x667@2"
+  }
+ ],
+ "worsened": []
+}

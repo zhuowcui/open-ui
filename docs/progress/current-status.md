@@ -1,5 +1,13 @@
 # Open UI current status
 
+## Table decoration with anonymous parts 25 October 2026
+
+Tables whose direct children are cells or blocks keep their background and
+border. Their anonymous rows borrow the table's node, and block layout had
+mistaken them for a captioned table's inner grid. The census goes from
+21,701 to 21,750 exact with no losses. See the
+[table decoration record](table-anonymous-part-decoration-2026-10-25.md).
+
 ## Mixed-style border side fill 25 October 2026
 
 Solid sides of mixed-style borders now fill antialiased under Blink's hard
