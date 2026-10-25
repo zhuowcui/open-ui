@@ -1,5 +1,13 @@
 # Open UI current status
 
+## Mixed-style border side fill 25 October 2026
+
+Solid sides of mixed-style borders now fill antialiased under Blink's hard
+miter clip, as `DrawSolidBoxSide` does, instead of a hard fill plus a
+coverage replay. Nine census comparisons improve and none worsen; exact
+counts are unchanged at 21,701. See the
+[border side record](border-side-antialiased-fill-2026-10-25.md).
+
 ## Flex baseline groups in every writing mode 24 October 2026
 
 Flex lines now size baseline-sharing groups in vertical writing modes and

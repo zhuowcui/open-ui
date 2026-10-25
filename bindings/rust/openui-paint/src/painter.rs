@@ -23301,50 +23301,6 @@ fn paint_borders(
             }
         }
 
-        // CPU Skia snaps the axis-aligned edges of opaque trapezoid fills,
-        // even when their CSS edge lands between device pixels. Replay solid
-        // side rectangles through the shared physical-coverage path, in the
-        // same side order, so the inner and outer border contours retain the
-        // fractional row or column that Chromium rasterizes.
-        if !chromium_solid_border && (style.device_scale_factor - 1.0).abs() > f64::EPSILON {
-            if bt > 0.0 && style.border_top_style == BorderStyle::Solid {
-                paint_device_coverage_rect(
-                    canvas,
-                    Rect::from_xywh(x + bl, y, (w - bl - br).max(0.0), bt),
-                    &style.border_top_color.resolve(inherited_color),
-                    1.0,
-                    style.device_scale_factor,
-                );
-            }
-            if bb > 0.0 && style.border_bottom_style == BorderStyle::Solid {
-                paint_device_coverage_rect(
-                    canvas,
-                    Rect::from_xywh(x + bl, y + h - bb, (w - bl - br).max(0.0), bb),
-                    &style.border_bottom_color.resolve(inherited_color),
-                    1.0,
-                    style.device_scale_factor,
-                );
-            }
-            if br > 0.0 && style.border_right_style == BorderStyle::Solid {
-                paint_device_coverage_rect(
-                    canvas,
-                    Rect::from_xywh(x + w - br, y + bt, br, (h - bt - bb).max(0.0)),
-                    &style.border_right_color.resolve(inherited_color),
-                    1.0,
-                    style.device_scale_factor,
-                );
-            }
-            if bl > 0.0 && style.border_left_style == BorderStyle::Solid {
-                paint_device_coverage_rect(
-                    canvas,
-                    Rect::from_xywh(x, y + bt, bl, (h - bt - bb).max(0.0)),
-                    &style.border_left_color.resolve(inherited_color),
-                    1.0,
-                    style.device_scale_factor,
-                );
-            }
-        }
-
         // Fix corner diagonal pixels: Chrome's Skia achieves exact complementary
         // coverage at shared miter edges (no white bleed-through). Standard SrcOver
         // compositing leaves ~25% background showing. Fix by overwriting diagonal
@@ -24391,9 +24347,11 @@ fn paint_border_side_path(
                 antialias_solid_miter,
             );
 
+            // Blink fills the side rectangle antialiased (`DrawSolidBoxSide`);
+            // the miter clip above decides which edge pixels survive.
             let mut paint = Paint::default();
             paint.set_style(PaintStyle::Fill);
-            paint.set_anti_alias(false);
+            paint.set_anti_alias(true);
             set_paint_css_color(&mut paint, &resolved);
             canvas.draw_rect(rect, &paint);
             canvas.restore();
