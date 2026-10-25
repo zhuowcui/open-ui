@@ -197,16 +197,11 @@ const CHROMIUM_FRAME_CROPS: [&[u8]; 40] = [
 
 /// Cases whose native frame still differs from Chromium. Their ink stays
 /// inside Chromium's measured extent; the remaining differences are one
-/// partially covered row at the fractional bottom edge (Auto width 16 and Thin
-/// width 1 at 1.25) and one missing column at the enclosing right edge (Auto
-/// width 1 at 1.25, Auto width 15 at 1.75). See
-/// `docs/progress/native-scrollbar-frame-clip-2026-10-20.md`.
-const CHROMIUM_FRAME_RESIDUALS: [(bool, f32, f64); 4] = [
-    (false, 1.0, 1.25),
-    (false, 15.0, 1.75),
-    (false, 16.0, 1.25),
-    (true, 1.0, 1.25),
-];
+/// `#fdfdfd` row at the fractional bottom edge (Auto width 16 and Thin width 1
+/// at 1.25) and one missing column at the enclosing right edge (Auto width 15
+/// at 1.75). See `docs/progress/scrollbar-two-axis-clip-2026-10-24.md`.
+const CHROMIUM_FRAME_RESIDUALS: [(bool, f32, f64); 3] =
+    [(false, 15.0, 1.75), (false, 16.0, 1.25), (true, 1.0, 1.25)];
 
 /// The Chromium frame for a case as packed RGBA, white outside the enclosing
 /// box crop, or `None` for a zero-width box.
@@ -839,5 +834,5 @@ fn forced_native_scrollbar_pictures_match_pinned_chromium_frames() {
             }
         }
     }
-    assert_eq!(exact, 46);
+    assert_eq!(exact, 47);
 }

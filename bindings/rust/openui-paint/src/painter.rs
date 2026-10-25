@@ -2709,6 +2709,9 @@ struct OverflowControlsFrameGeometry {
     corner: Option<IRect>,
     controls_bounds: Option<IRect>,
     border_clip: Option<Rect>,
+    /// The control frames leave the border box both horizontally and
+    /// vertically.
+    protrudes_both_axes: bool,
 }
 
 impl OverflowControlsFrameGeometry {
@@ -2754,18 +2757,17 @@ impl OverflowControlsFrameGeometry {
                 ),
             });
         }
-        let border_clip = controls_bounds
-            .filter(|bounds| {
-                bounds.left < border_box.left
-                    || bounds.top < border_box.top
-                    || bounds.right > border_box.right
-                    || bounds.bottom > border_box.bottom
-            })
-            .map(|_| snapped_border_contour_rect(input.current_offset, input.stitched_size, false));
+        let protrudes_x = controls_bounds
+            .is_some_and(|bounds| bounds.left < border_box.left || bounds.right > border_box.right);
+        let protrudes_y = controls_bounds
+            .is_some_and(|bounds| bounds.top < border_box.top || bounds.bottom > border_box.bottom);
+        let border_clip = (protrudes_x || protrudes_y)
+            .then(|| snapped_border_contour_rect(input.current_offset, input.stitched_size, false));
         Self {
             corner,
             controls_bounds,
             border_clip,
+            protrudes_both_axes: protrudes_x && protrudes_y,
         }
     }
 }
@@ -2788,6 +2790,34 @@ impl<'a> OverflowControlsClipScope<'a> {
             canvas.clip_rect(clip, ClipOp::Intersect, false);
         }
         scope
+    }
+}
+
+impl<'a> OverflowControlsClipScope<'a> {
+    /// When the control frames leave the box in both axes, Chromium keeps
+    /// every device pixel the border box touches: at 1.25 a right edge at
+    /// 41.25 keeps column 41. Recording happens in CSS pixels; the
+    /// presentation transform applies `device_scale` later.
+    fn new_enclosing_device(canvas: &'a Canvas, clip: Option<Rect>, device_scale: f64) -> Self {
+        let scale = device_scale as f32;
+        let clip = clip.map(|clip| {
+            if !scale.is_finite() || scale <= 0.0 {
+                return clip;
+            }
+            let matrix = canvas.local_to_device_as_3x3();
+            let (page, _) = matrix.map_rect(clip);
+            let enclosing = Rect::from_ltrb(
+                (page.left * scale).floor() / scale,
+                (page.top * scale).floor() / scale,
+                (page.right * scale).ceil() / scale,
+                (page.bottom * scale).ceil() / scale,
+            );
+            matrix
+                .invert()
+                .map(|inverse| inverse.map_rect(enclosing).0)
+                .unwrap_or(clip)
+        });
+        Self::new(canvas, clip)
     }
 }
 
@@ -3089,6 +3119,11 @@ mod overflow_controls_frame_guards {
             protruding.border_clip,
             Some(Rect::from_xywh(0.0, 0.0, 14.0, 20.0))
         );
+        assert!(!contained.protrudes_both_axes);
+        assert!(!protruding.protrudes_both_axes);
+        let both = OverflowControlsFrameGeometry::resolve(input(14.0, 14.0));
+        assert_eq!(both.corner, Some(IRect::from_xywh(-1, -1, 15, 15)));
+        assert!(both.protrudes_both_axes);
         // An entire scrollbar FRAME protrudes even when its thumb or motif
         // would fit. Admission must not inspect painted ink.
         operands = input(100.0, 100.0);
@@ -3101,6 +3136,7 @@ mod overflow_controls_frame_guards {
         assert!(bar.corner.is_none());
         assert_eq!(bar.controls_bounds, Some(IRect::from_xywh(-1, 85, 100, 15)));
         assert!(bar.border_clip.is_some());
+        assert!(!bar.protrudes_both_axes);
         operands.horizontal.as_mut().unwrap().rect = IRect::from_xywh(-1, 85, 0, 15);
         assert!(OverflowControlsFrameGeometry::resolve(operands)
             .border_clip
@@ -13990,13 +14026,18 @@ fn paint_element_scrollbars(
     let style = fragment.layout_style(&doc.node(fragment.node_id).style);
     // Source-owned continuation offsets are not retained yet. Resolve this
     // checkpoint only for an actual first-and-last unsliced owned box.
-    let clip = if overflow_controls_have_monolithic_offset(fragment) {
+    let geometry = overflow_controls_have_monolithic_offset(fragment).then(|| {
         native_overflow_controls_geometry(fragment, style, offset, Some(scrollport), false)
-            .border_clip
+    });
+    let clip = geometry.and_then(|geometry| geometry.border_clip);
+    // Measured Chromium frames keep the partially covered edge pixels only
+    // when the bars leave the box in both axes; a bar that protrudes in one
+    // axis stops at the snapped edge.
+    let _controls_clip = if geometry.is_some_and(|geometry| geometry.protrudes_both_axes) {
+        OverflowControlsClipScope::new_enclosing_device(canvas, clip, doc.device_scale_factor())
     } else {
-        None
+        OverflowControlsClipScope::new(canvas, clip)
     };
-    let _controls_clip = OverflowControlsClipScope::new(canvas, clip);
     paint_native_scrollbars(
         canvas,
         fragment,
