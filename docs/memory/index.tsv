@@ -76,4 +76,5 @@
 0075	active	paint multicol fragmentation positioned census	Candidate painter positioned phases must follow Blink per-layer fragment order	2026-10-23	entries/0075-candidate-painter-positioned-phases-must-follow-bl.md
 0076	active	windows native-controls paint accent qualification	Native form-control accent follows the platform accent (Windows DWM)	2026-10-24	entries/0076-native-form-control-accent-follows-the-platform-a.md
 0077	active	layout flex baseline line-clamp vertical	Flex baseline groups are sized in every writing mode	2026-10-24	entries/0077-flex-baseline-groups-are-sized-in-every-writing-m.md
-0078	active	paint scrollbar clip device-scale chromium-oracle	Scrollbar edge pixels follow two-axis protrusion	2026-10-24	entries/0078-scrollbar-edge-pixels-follow-two-axis-protrusion.md
+0078	superseded	paint scrollbar clip device-scale chromium-oracle	Scrollbar edge pixels follow two-axis protrusion	2026-10-25	entries/0078-scrollbar-edge-pixels-follow-two-axis-protrusion.md
+0079	active	paint scrollbar compositing cc device-scale chromium-oracle tracing	Forced scrollbars follow Chromium scroller compositing	2026-10-25	entries/0079-forced-scrollbars-follow-chromium-scroller-compositing.md

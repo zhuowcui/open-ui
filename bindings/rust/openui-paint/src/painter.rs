@@ -2709,9 +2709,6 @@ struct OverflowControlsFrameGeometry {
     corner: Option<IRect>,
     controls_bounds: Option<IRect>,
     border_clip: Option<Rect>,
-    /// The control frames leave the border box both horizontally and
-    /// vertically.
-    protrudes_both_axes: bool,
 }
 
 impl OverflowControlsFrameGeometry {
@@ -2757,17 +2754,18 @@ impl OverflowControlsFrameGeometry {
                 ),
             });
         }
-        let protrudes_x = controls_bounds
-            .is_some_and(|bounds| bounds.left < border_box.left || bounds.right > border_box.right);
-        let protrudes_y = controls_bounds
-            .is_some_and(|bounds| bounds.top < border_box.top || bounds.bottom > border_box.bottom);
-        let border_clip = (protrudes_x || protrudes_y)
-            .then(|| snapped_border_contour_rect(input.current_offset, input.stitched_size, false));
+        let border_clip = controls_bounds
+            .filter(|bounds| {
+                bounds.left < border_box.left
+                    || bounds.top < border_box.top
+                    || bounds.right > border_box.right
+                    || bounds.bottom > border_box.bottom
+            })
+            .map(|_| snapped_border_contour_rect(input.current_offset, input.stitched_size, false));
         Self {
             corner,
             controls_bounds,
             border_clip,
-            protrudes_both_axes: protrudes_x && protrudes_y,
         }
     }
 }
@@ -2781,43 +2779,43 @@ struct OverflowControlsClipScope<'a> {
 
 impl<'a> OverflowControlsClipScope<'a> {
     fn new(canvas: &'a Canvas, clip: Option<Rect>) -> Self {
+        Self::with_antialias(canvas, clip, false)
+    }
+
+    fn with_antialias(canvas: &'a Canvas, clip: Option<Rect>, antialias: bool) -> Self {
         let scope = Self {
             canvas,
             saved_count: clip.map(|_| canvas.save_count()),
         };
         if let Some(clip) = clip {
             canvas.save();
-            canvas.clip_rect(clip, ClipOp::Intersect, false);
+            canvas.clip_rect(clip, ClipOp::Intersect, antialias);
         }
         scope
     }
 }
 
 impl<'a> OverflowControlsClipScope<'a> {
-    /// When the control frames leave the box in both axes, Chromium keeps
-    /// every device pixel the border box touches: at 1.25 a right edge at
-    /// 41.25 keeps column 41. Recording happens in CSS pixels; the
-    /// presentation transform applies `device_scale` later.
-    fn new_enclosing_device(canvas: &'a Canvas, clip: Option<Rect>, device_scale: f64) -> Self {
+    /// The device pixels a recording-space rectangle touches, mapped back to
+    /// recording space. Recording happens in CSS pixels; the presentation
+    /// transform applies `device_scale` later.
+    fn enclosing_device_rect(canvas: &Canvas, rect: Rect, device_scale: f64) -> Rect {
         let scale = device_scale as f32;
-        let clip = clip.map(|clip| {
-            if !scale.is_finite() || scale <= 0.0 {
-                return clip;
-            }
-            let matrix = canvas.local_to_device_as_3x3();
-            let (page, _) = matrix.map_rect(clip);
-            let enclosing = Rect::from_ltrb(
-                (page.left * scale).floor() / scale,
-                (page.top * scale).floor() / scale,
-                (page.right * scale).ceil() / scale,
-                (page.bottom * scale).ceil() / scale,
-            );
-            matrix
-                .invert()
-                .map(|inverse| inverse.map_rect(enclosing).0)
-                .unwrap_or(clip)
-        });
-        Self::new(canvas, clip)
+        if !scale.is_finite() || scale <= 0.0 {
+            return rect;
+        }
+        let matrix = canvas.local_to_device_as_3x3();
+        let (page, _) = matrix.map_rect(rect);
+        let enclosing = Rect::from_ltrb(
+            (page.left * scale).floor() / scale,
+            (page.top * scale).floor() / scale,
+            (page.right * scale).ceil() / scale,
+            (page.bottom * scale).ceil() / scale,
+        );
+        matrix
+            .invert()
+            .map(|inverse| inverse.map_rect(enclosing).0)
+            .unwrap_or(rect)
     }
 }
 
@@ -2843,39 +2841,125 @@ fn native_textarea_can_resize(style: &ComputedStyle) -> bool {
     style.is_scroll_container() && style.resize != openui_style::Resize::None
 }
 
+/// An element scroller's placement operands: its computed borders and the
+/// paint offset of its border box.
+#[derive(Clone, Copy, Debug)]
+struct ElementScrollbarPlacement {
+    border: BoxStrut,
+    offset: PhysicalOffset,
+}
+
+/// A scrollbar frame in border-box coordinates.
+///
+/// Element scrollers follow Blink's integer geometry: the frames are laid out
+/// in `PixelSnappedBorderBoxSize` at the rounded paint offset
+/// (`PaintLayerScrollableArea::RectForVerticalScrollbar`,
+/// `RectForHorizontalScrollbar`, `CornerRect`, and
+/// `ScrollableAreaPainter::PaintScrollbar`). The vertical bar ends at the far
+/// edge and the horizontal bar at the bottom, so a bar thicker than the box
+/// leaves it on the start or top side. A bar with no room keeps zero length
+/// with its end at the corner, where the corner picture continues it.
+/// Viewport scrollbars keep their client anchoring.
 fn native_scrollbar_frame(
     scrollport: openui_layout::ViewportScrollport,
+    element: Option<ElementScrollbarPlacement>,
     horizontal: bool,
     vertical_on_left: bool,
 ) -> openui_geometry::PhysicalRect {
     let client = scrollport.client_rect;
     let thickness = scrollport.scrollbar_thickness;
-    if horizontal {
-        openui_geometry::PhysicalRect::new(
-            PhysicalOffset::new(client.x(), client.y() + client.height()),
-            PhysicalSize::new(client.width(), thickness),
+    let Some(ElementScrollbarPlacement { border, offset }) = element else {
+        return if horizontal {
+            openui_geometry::PhysicalRect::new(
+                PhysicalOffset::new(client.x(), client.y() + client.height()),
+                PhysicalSize::new(client.width(), thickness),
+            )
+        } else {
+            openui_geometry::PhysicalRect::new(
+                PhysicalOffset::new(
+                    if vertical_on_left {
+                        client.x() - thickness
+                    } else {
+                        client.x() + client.width()
+                    },
+                    client.y(),
+                ),
+                PhysicalSize::new(thickness, client.height()),
+            )
+        };
+    };
+    let snap = |size: LayoutUnit, origin: LayoutUnit| {
+        (origin.fraction() + size).round_i32() - origin.fraction().round_i32()
+    };
+    let layout_box = scrollport.layout_box_rect;
+    let width = snap(layout_box.width(), offset.left);
+    let height = snap(layout_box.height(), offset.top);
+    let (left, top, right, bottom) = (
+        border.left.to_i32(),
+        border.top.to_i32(),
+        border.right.to_i32(),
+        border.bottom.to_i32(),
+    );
+    let thick = thickness.to_i32();
+    let vertical_thickness = if scrollport.vertical_scrollbar {
+        thick
+    } else {
+        0
+    };
+    let horizontal_thickness = if scrollport.horizontal_scrollbar {
+        thick
+    } else {
+        0
+    };
+    let has_corner = scrollport.vertical_scrollbar && scrollport.horizontal_scrollbar;
+    let (x, y, w, h) = if horizontal {
+        let start = left
+            + if vertical_on_left {
+                vertical_thickness
+            } else {
+                0
+            };
+        let length = width - left - right - if has_corner { vertical_thickness } else { 0 };
+        let x = if length < 0 && !vertical_on_left {
+            start + length
+        } else {
+            start
+        };
+        (
+            x,
+            height - bottom - horizontal_thickness,
+            length.max(0),
+            horizontal_thickness,
         )
     } else {
-        openui_geometry::PhysicalRect::new(
-            PhysicalOffset::new(
-                if vertical_on_left {
-                    client.x() - thickness
-                } else {
-                    client.x() + client.width()
-                },
-                client.y(),
-            ),
-            PhysicalSize::new(thickness, client.height()),
-        )
-    }
+        let x = if vertical_on_left {
+            left
+        } else {
+            width - right - vertical_thickness
+        };
+        let length = height - top - bottom - if has_corner { horizontal_thickness } else { 0 };
+        let y = if length < 0 { top + length } else { top };
+        (x, y, vertical_thickness, length.max(0))
+    };
+    // Express the integer frame relative to the unsnapped border-box origin.
+    let shift_x = offset.left.round() - offset.left;
+    let shift_y = offset.top.round() - offset.top;
+    openui_geometry::PhysicalRect::new(
+        PhysicalOffset::new(
+            LayoutUnit::from_i32(x) + shift_x,
+            LayoutUnit::from_i32(y) + shift_y,
+        ),
+        PhysicalSize::new(LayoutUnit::from_i32(w), LayoutUnit::from_i32(h)),
+    )
 }
 
 fn native_scrollbar_paint_frame(
     scrollport: openui_layout::ViewportScrollport,
+    border: Option<ElementScrollbarPlacement>,
     horizontal: bool,
     vertical_on_left: bool,
 ) -> Rect {
-    let frame = native_scrollbar_frame(scrollport, horizontal, vertical_on_left);
+    let frame = native_scrollbar_frame(scrollport, border, horizontal, vertical_on_left);
     Rect::from_xywh(
         (frame.x() - scrollport.client_rect.x()).to_f32(),
         (frame.y() - scrollport.client_rect.y()).to_f32(),
@@ -2886,11 +2970,16 @@ fn native_scrollbar_paint_frame(
 
 fn snapped_native_scrollbar_frame(
     scrollport: openui_layout::ViewportScrollport,
+    border: Option<BoxStrut>,
     horizontal: bool,
     vertical_on_left: bool,
     first_offset: PhysicalOffset,
 ) -> OverflowControlFrame {
-    let frame = native_scrollbar_frame(scrollport, horizontal, vertical_on_left);
+    let border = border.map(|border| ElementScrollbarPlacement {
+        border,
+        offset: first_offset,
+    });
+    let frame = native_scrollbar_frame(scrollport, border, horizontal, vertical_on_left);
     let snapped = snapped_border_contour_rect(
         PhysicalOffset::new(first_offset.left + frame.x(), first_offset.top + frame.y()),
         PhysicalSize::new(frame.width(), frame.height()),
@@ -2941,10 +3030,26 @@ fn native_overflow_controls_geometry(
     let vertical_on_left = style.writing_mode.is_horizontal() && style.direction == Direction::Rtl;
     let horizontal = scrollport
         .filter(|port| port.horizontal_scrollbar)
-        .map(|port| snapped_native_scrollbar_frame(port, true, vertical_on_left, offset));
+        .map(|port| {
+            snapped_native_scrollbar_frame(
+                port,
+                Some(computed_control_borders(style)),
+                true,
+                vertical_on_left,
+                offset,
+            )
+        });
     let vertical = scrollport
         .filter(|port| port.vertical_scrollbar)
-        .map(|port| snapped_native_scrollbar_frame(port, false, vertical_on_left, offset));
+        .map(|port| {
+            snapped_native_scrollbar_frame(
+                port,
+                Some(computed_control_borders(style)),
+                false,
+                vertical_on_left,
+                offset,
+            )
+        });
     // Native textarea is monolithic (node_is_monolithic_for_fragmentation).
     // The admitted first-and-last unsliced box has its real first/current
     // offset here. A continuation requires an independent first-offset producer.
@@ -3082,6 +3187,111 @@ fn paint_textarea_resize_grip(
 mod overflow_controls_frame_guards {
     use super::*;
 
+    /// An empty forced-scrollbar box with both bars, as the pinned fixture.
+    fn forced_port(width: f32, height: f32, thickness: i32) -> openui_layout::ViewportScrollport {
+        let lu = LayoutUnit::from_f32;
+        let t = LayoutUnit::from_i32(thickness);
+        let client_width = (lu(width) - t).clamp_negative_to_zero();
+        let client_height = (lu(height) - t).clamp_negative_to_zero();
+        let client = openui_geometry::PhysicalRect::new(
+            PhysicalOffset::zero(),
+            PhysicalSize::new(client_width, client_height),
+        );
+        openui_layout::ViewportScrollport {
+            layout_box_rect: openui_geometry::PhysicalRect::new(
+                PhysicalOffset::zero(),
+                PhysicalSize::new(lu(width), lu(height)),
+            ),
+            client_rect: client,
+            content_rect: client,
+            horizontal_scrollbar: true,
+            vertical_scrollbar: true,
+            scrollbar_thickness: t,
+            overflow_x: openui_style::Overflow::Scroll,
+            overflow_y: openui_style::Overflow::Scroll,
+            negative_x: false,
+            negative_y: false,
+        }
+    }
+
+    fn composited(width: f32, height: f32, thickness: i32, scale: f64) -> bool {
+        let port = forced_port(width, height, thickness);
+        scroller_is_composited(
+            port.layout_box_rect.size,
+            BoxStrut::zero(),
+            port,
+            (port.overflow_x, port.overflow_y),
+            scale,
+        )
+    }
+
+    #[test]
+    fn scroller_compositing_follows_blink_overflow_and_lcd_text_preference() {
+        // Measured with Chrome 147 layer traces (scrollbar-nine-patch record).
+        for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
+            // An empty client box composites at every scale.
+            assert!(composited(1.0, 14.0, 15, scale));
+            assert!(composited(15.0, 14.0, 15, scale));
+            assert!(composited(14.0, 15.0, 15, scale));
+            assert!(composited(14.6, 14.0, 15, scale));
+            assert!(composited(1.0, 10.0, 10, scale));
+            // An exact fit has no overflow; half a pixel short rounds away.
+            assert!(!composited(15.0, 15.0, 15, scale));
+            assert!(!composited(15.0, 14.6, 15, scale));
+            assert!(!composited(16.0, 16.0, 15, scale));
+        }
+        // A non-empty client box composites only when LCD text is not
+        // preferred.
+        for (width, height) in [(16.0, 14.0), (1.0, 16.0), (30.0, 14.0), (15.2, 14.0)] {
+            assert!(!composited(width, height, 15, 1.25), "{width}x{height}");
+            assert!(composited(width, height, 15, 1.5), "{width}x{height}");
+        }
+        assert!(!composited(1.0, 11.0, 10, 1.0));
+        assert!(composited(1.0, 11.0, 10, 2.0));
+    }
+
+    #[test]
+    fn element_scrollbar_frames_use_blink_integer_geometry() {
+        let placement = |left: f32| {
+            Some(ElementScrollbarPlacement {
+                border: BoxStrut::zero(),
+                offset: PhysicalOffset::new(LayoutUnit::from_f32(left), LayoutUnit::zero()),
+            })
+        };
+        let frame = |port, element, horizontal| {
+            let rect: openui_geometry::PhysicalRect =
+                native_scrollbar_frame(port, element, horizontal, false);
+            (
+                rect.x().to_f32(),
+                rect.y().to_f32(),
+                rect.width().to_f32(),
+                rect.height().to_f32(),
+            )
+        };
+        // A thin bar wider than its 1px box ends at the far edge.
+        let thin = forced_port(1.0, 14.0, 10);
+        assert_eq!(frame(thin, placement(32.0), false), (-9.0, 0.0, 10.0, 4.0));
+        // A box shorter than the horizontal bar keeps the bar's bottom on its
+        // own bottom edge; the empty vertical bar ends at the corner.
+        let short = forced_port(16.0, 14.0, 15);
+        assert_eq!(frame(short, placement(32.0), true), (0.0, -1.0, 1.0, 15.0));
+        assert_eq!(frame(short, placement(32.0), false), (1.0, -1.0, 15.0, 0.0));
+        // Fractional sizes use the pixel-snapped border box: 15.6 snaps to 16.
+        let fractional = forced_port(15.6, 15.0, 15);
+        assert_eq!(
+            frame(fractional, placement(32.0), false),
+            (1.0, 0.0, 15.0, 0.0)
+        );
+        // A fractional paint offset rounds; the frame is expressed relative to
+        // the unsnapped origin.
+        assert_eq!(
+            frame(short, placement(32.25), false),
+            (0.75, -1.0, 15.0, 0.0)
+        );
+        // Viewport scrollbars keep client anchoring.
+        assert_eq!(frame(short, None, false), (1.0, 0.0, 15.0, 0.0));
+    }
+
     fn input(width: f32, height: f32) -> OverflowControlsFrameInputs {
         OverflowControlsFrameInputs {
             stitched_size: PhysicalSize::new(
@@ -3119,11 +3329,6 @@ mod overflow_controls_frame_guards {
             protruding.border_clip,
             Some(Rect::from_xywh(0.0, 0.0, 14.0, 20.0))
         );
-        assert!(!contained.protrudes_both_axes);
-        assert!(!protruding.protrudes_both_axes);
-        let both = OverflowControlsFrameGeometry::resolve(input(14.0, 14.0));
-        assert_eq!(both.corner, Some(IRect::from_xywh(-1, -1, 15, 15)));
-        assert!(both.protrudes_both_axes);
         // An entire scrollbar FRAME protrudes even when its thumb or motif
         // would fit. Admission must not inspect painted ink.
         operands = input(100.0, 100.0);
@@ -3136,7 +3341,6 @@ mod overflow_controls_frame_guards {
         assert!(bar.corner.is_none());
         assert_eq!(bar.controls_bounds, Some(IRect::from_xywh(-1, 85, 100, 15)));
         assert!(bar.border_clip.is_some());
-        assert!(!bar.protrudes_both_axes);
         operands.horizontal.as_mut().unwrap().rect = IRect::from_xywh(-1, 85, 0, 15);
         assert!(OverflowControlsFrameGeometry::resolve(operands)
             .border_clip
@@ -14011,7 +14215,9 @@ pub(crate) fn paint_viewport_scrollbars(
         doc.document_element().unwrap_or(fragment.node_id)
     };
     let style = &doc.node(source).style;
-    paint_native_scrollbars(canvas, fragment, doc, offset, scrollport, style, false);
+    paint_native_scrollbars(
+        canvas, fragment, doc, offset, scrollport, style, false, None,
+    );
 }
 
 fn paint_element_scrollbars(
@@ -14030,13 +14236,25 @@ fn paint_element_scrollbars(
         native_overflow_controls_geometry(fragment, style, offset, Some(scrollport), false)
     });
     let clip = geometry.and_then(|geometry| geometry.border_clip);
-    // Measured Chromium frames keep the partially covered edge pixels only
-    // when the bars leave the box in both axes; a bar that protrudes in one
-    // axis stops at the snapped edge.
-    let _controls_clip = if geometry.is_some_and(|geometry| geometry.protrudes_both_axes) {
-        OverflowControlsClipScope::new_enclosing_device(canvas, clip, doc.device_scale_factor())
-    } else {
-        OverflowControlsClipScope::new(canvas, clip)
+    let scale = doc.device_scale_factor();
+    // Blink installs OverflowControlsClip only when the control frames leave
+    // the snapped border box. How Chromium applies it depends on whether the
+    // scroller is composited.
+    let _controls_clip = match clip {
+        Some(border) if overflow_controls_composited(fragment, style, scrollport, scale) => {
+            // The controls then cover the whole box and form their own opaque
+            // tile layer: cc fills its partially covered edge texels with the
+            // layer color (RasterSource::ClearForOpaqueRaster, or a solid
+            // color quad), and the clip becomes an enclosing scissor.
+            let enclosing = OverflowControlsClipScope::enclosing_device_rect(canvas, border, scale);
+            let scope = OverflowControlsClipScope::new(canvas, Some(enclosing));
+            canvas.draw_rect(enclosing, &native_scrollbar_track_paint(style));
+            scope
+        }
+        // In the page layer the snapped clip is replayed antialiased
+        // (PaintChunksToCcLayer), so a half-covered edge pixel is blended.
+        Some(_) => OverflowControlsClipScope::with_antialias(canvas, clip, true),
+        None => OverflowControlsClipScope::new(canvas, None),
     };
     paint_native_scrollbars(
         canvas,
@@ -14046,7 +14264,79 @@ fn paint_element_scrollbars(
         scrollport,
         style,
         style.writing_mode.is_horizontal() && style.direction == Direction::Rtl,
+        Some(computed_control_borders(style)),
     );
+}
+
+/// The Fluent track color, or the author's `scrollbar-color` track.
+fn native_scrollbar_track_paint(style: &ComputedStyle) -> Paint {
+    let mut track = Paint::default();
+    track.set_color(skia_safe::Color::from_rgb(252, 252, 252));
+    if let Some(color) = style.scrollbar_track_color {
+        set_paint_css_color(&mut track, &color);
+    }
+    track
+}
+
+/// Whether Chromium composites this scroller, and so its overflow controls.
+/// A scroll node exists when the area scrolls overflow
+/// (`PaintLayerScrollableArea::HasHorizontalOverflow` and
+/// `HasVerticalOverflow`, which compare against unclamped client sizes). It is
+/// composited when LCD text is not preferred, at device scale 1.5 or more
+/// (`WidgetBase::ComputeLCDTextPreference`), or when an opaque background can
+/// cover its contents, which an empty scroll area always allows
+/// (`PaintArtifactCompositor::ComputeNeedsCompositedScrolling`).
+fn overflow_controls_composited(
+    fragment: &Fragment,
+    style: &ComputedStyle,
+    scrollport: openui_layout::ViewportScrollport,
+    device_scale: f64,
+) -> bool {
+    scroller_is_composited(
+        fragment.size,
+        computed_control_borders(style),
+        scrollport,
+        (style.overflow_x, style.overflow_y),
+        device_scale,
+    )
+}
+
+fn scroller_is_composited(
+    size: PhysicalSize,
+    border: BoxStrut,
+    scrollport: openui_layout::ViewportScrollport,
+    (overflow_x, overflow_y): (openui_style::Overflow, openui_style::Overflow),
+    device_scale: f64,
+) -> bool {
+    let vertical = if scrollport.vertical_scrollbar {
+        scrollport.scrollbar_thickness
+    } else {
+        LayoutUnit::zero()
+    };
+    let horizontal = if scrollport.horizontal_scrollbar {
+        scrollport.scrollbar_thickness
+    } else {
+        LayoutUnit::zero()
+    };
+    let client_width = size.width - border.left - border.right - vertical;
+    let client_height = size.height - border.top - border.bottom - horizontal;
+    let scroll_width = scrollport
+        .content_rect
+        .width()
+        .max(client_width.clamp_negative_to_zero());
+    let scroll_height = scrollport
+        .content_rect
+        .height()
+        .max(client_height.clamp_negative_to_zero());
+    let overflows_x =
+        overflow_x.is_scrollable() && scroll_width.round_i32() > client_width.round_i32();
+    let overflows_y =
+        overflow_y.is_scrollable() && scroll_height.round_i32() > client_height.round_i32();
+    if !(overflows_x || overflows_y) {
+        return false;
+    }
+    device_scale >= 1.5
+        || (scroll_width == LayoutUnit::zero() && scroll_height == LayoutUnit::zero())
 }
 
 fn paint_native_scrollbars(
@@ -14057,7 +14347,9 @@ fn paint_native_scrollbars(
     scrollport: openui_layout::ViewportScrollport,
     style: &ComputedStyle,
     vertical_on_left: bool,
+    frame_border: Option<BoxStrut>,
 ) {
+    let frame_border = frame_border.map(|border| ElementScrollbarPlacement { border, offset });
     let thickness = scrollport.scrollbar_thickness.to_f32();
     let client_width = scrollport.client_rect.width().to_f32();
     let client_height = scrollport.client_rect.height().to_f32();
@@ -14078,11 +14370,6 @@ fn paint_native_scrollbars(
         (offset.left + scrollport.client_rect.x()).to_f32(),
         (offset.top + scrollport.client_rect.y()).to_f32(),
     ));
-    let vertical_x = if vertical_on_left {
-        -thickness
-    } else {
-        client_width
-    };
     let user_scrollable = (scrollport.horizontal_scrollbar
         && scrollport.content_rect.width().to_f32() > client_width)
         || (scrollport.vertical_scrollbar
@@ -14102,7 +14389,12 @@ fn paint_native_scrollbars(
                 continue;
             }
             let corner = !horizontal && scrollport.horizontal_scrollbar;
-            let outer = native_scrollbar_paint_frame(scrollport, horizontal, vertical_on_left);
+            let outer = native_scrollbar_paint_frame(
+                scrollport,
+                frame_border,
+                horizontal,
+                vertical_on_left,
+            );
             paint_fluent_scrollbar_picture(canvas, outer, horizontal, corner, &track, &thumb);
         }
         canvas.restore();
@@ -14136,7 +14428,12 @@ fn paint_native_scrollbars(
             // A forced bar with no range remains an ordinary picture even
             // when the other axis uses a PaintedScrollbarLayer. Its adjacent
             // corner shares that picture's raster and composition transform.
-            let outer = native_scrollbar_paint_frame(scrollport, horizontal, vertical_on_left);
+            let outer = native_scrollbar_paint_frame(
+                scrollport,
+                frame_border,
+                horizontal,
+                vertical_on_left,
+            );
             paint_fluent_scrollbar_picture(
                 canvas,
                 outer,
@@ -14175,7 +14472,8 @@ fn paint_native_scrollbars(
         };
         let raw_thickness = (9.0 * proportion).round();
         let thumb_thickness = raw_thickness - (thickness - raw_thickness) % 2.0;
-        let outer = native_scrollbar_paint_frame(scrollport, horizontal, vertical_on_left);
+        let outer =
+            native_scrollbar_paint_frame(scrollport, frame_border, horizontal, vertical_on_left);
         paint_fluent_scrollbar_track(
             canvas,
             outer,
@@ -14185,17 +14483,19 @@ fn paint_native_scrollbars(
             &track,
             &thumb,
         );
+        // The thumb is placed in its scrollbar frame, which for an element
+        // scroller is Blink's integer frame.
         let thumb_rect = if horizontal {
             Rect::from_xywh(
-                button + position,
-                client_height + (thickness - thumb_thickness) / 2.0,
+                outer.left + button + position,
+                outer.top + (thickness - thumb_thickness) / 2.0,
                 thumb_length,
                 thumb_thickness,
             )
         } else {
             Rect::from_xywh(
-                vertical_x + (thickness - thumb_thickness) / 2.0,
-                button + position,
+                outer.left + (thickness - thumb_thickness) / 2.0,
+                outer.top + button + position,
                 thumb_thickness,
                 thumb_length,
             )
@@ -14233,8 +14533,12 @@ fn paint_native_scrollbars(
         // Preserve their coverage when its physical origin is fractional.
         let mut corner = track.clone();
         corner.set_anti_alias(true);
+        let vertical =
+            native_scrollbar_paint_frame(scrollport, frame_border, false, vertical_on_left);
+        let horizontal =
+            native_scrollbar_paint_frame(scrollport, frame_border, true, vertical_on_left);
         canvas.draw_rect(
-            Rect::from_xywh(vertical_x, client_height, thickness, thickness),
+            Rect::from_xywh(vertical.left, horizontal.top, thickness, thickness),
             &corner,
         );
     }
