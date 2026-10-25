@@ -26,17 +26,20 @@ that integration does not turn failing checks green or waive release gates.
 - the Windows MSVC headless build, tests, ledger and C ABI checks
   (`windows-msvc`);
 - the reviewed-lockfile dependency audit (`dependency-security`), a separate
-  job so an advisory never hides the Rust test results. It accepts no
-  exemptions and denies warnings, so it fails while any dependency carries an
-  open RustSec advisory; the release workflow keeps the same gate before any
+  job so an advisory never hides the Rust test results. It denies warnings
+  and accepts only the dated, reviewed exemptions in
+  `tools/release/check_dependency_security.py`, so it fails on any other open
+  RustSec advisory; the release workflow keeps the same gate before any
   artifact is built.
 
-Since 16 October 2026, `dependency-security` fails on informational
-unmaintained notices RUSTSEC-2026-0370, 0371 and 0372 for `zvariant`,
-`zbus_names` and `zvariant_derive`. They were merged into `zbus` 6.0 that day,
-but every published `accesskit_unix`, `accesskit_atspi_common` and `atspi`
-release still requires `zbus` 5. The failure stays open until that AT-SPI
-chain moves to `zbus` 6 (which requires Rust 1.89, above the 1.85 MSRV).
+Since 16 October 2026, RustSec has published informational unmaintained
+notices RUSTSEC-2026-0370, 0371 and 0372 for `zvariant`, `zbus_names` and
+`zvariant_derive`, which merged into `zbus` 6.0. Every published
+`accesskit_unix`, `accesskit_atspi_common` and `atspi` release still requires
+`zbus` 5 (and `zbus` 6 requires Rust 1.89, above the 1.85 MSRV). On
+25 October 2026 these three notices received a reviewed exemption that
+expires on 25 January 2027 and fails the gate once it is unused; see
+[the review record](progress/dependency-audit-zbus-exemption-2026-10-25.md).
 
 `.github/workflows/hardening.yml` additionally runs the 43-scenario application
 suite, Linux C API tests, and real Rust/C/C++ windows under Xvfb with software

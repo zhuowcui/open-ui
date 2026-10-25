@@ -28,7 +28,10 @@ python3 tools/release/check_dependency_security.py \
 
 Use a new output directory outside the checkout. The checker uses an isolated
 explicit configuration, a freshly fetched official RustSec database, no ignored
-advisories or target/severity filters, and `--deny warnings`. It also fetches
+advisories or target/severity filters, and `--deny warnings`. It accepts only
+the dated, reviewed `unmaintained` notices in its `REVIEWED_EXEMPTIONS` list,
+matched by advisory and crate. Expired or unused exemptions fail; see
+[the zbus review](../progress/dependency-audit-zbus-exemption-2026-10-25.md). It also fetches
 the official sparse registry entry for every locked crates.io version and
 checks its checksum and yank status. This separate completeness check is
 required because cargo-audit can omit yank checks after an index-fetch error.

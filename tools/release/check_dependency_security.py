@@ -2,7 +2,9 @@
 """Audit the reviewed Rust lockfiles without changing release inputs.
 
 Install cargo-audit 0.22.2 separately with Rust 1.94.1. This checker never
-installs tools, changes dependencies, or accepts advisory exemptions.
+installs tools or changes dependencies. cargo-audit runs with no ignores and
+denies warnings; the only accepted findings are the dated, reviewed
+`REVIEWED_EXEMPTIONS` below, matched here against the full report.
 """
 
 from __future__ import annotations
@@ -32,6 +34,28 @@ AUDIT_TOOLCHAIN = "1.94.1"
 ADVISORY_URL = "https://github.com/RustSec/advisory-db"
 REGISTRY_SOURCE = "registry+https://github.com/rust-lang/crates.io-index"
 LOCKFILES = ("bindings/rust/Cargo.lock", "bindings/rust/fuzz/Cargo.lock")
+
+# Reviewed exemptions. Each accepts one advisory for one package as an
+# informational `unmaintained` notice only; vulnerabilities and every other
+# warning kind always fail. An exemption stops applying after `expires`, and
+# one that no audited lockfile reports fails the gate, so it is removed as
+# soon as the dependency moves. Review record:
+# docs/progress/dependency-audit-zbus-exemption-2026-10-25.md
+ZBUS_UPSTREAM = (
+    "Merged into zbus 6.0. Open UI reaches zbus 5 only through AccessKit's "
+    "Linux AT-SPI chain: the newest accesskit_unix (0.24.0, 2026-09-25) "
+    "requires atspi ^0.29 and zbus ^5.19, and the newest atspi (0.30.0, "
+    "2026-05-06) requires zbus ^5.5 (crates.io, checked 2026-10-25). "
+    "zbus 6 also needs Rust 1.89 against the 1.85 MSRV."
+)
+REVIEWED_EXEMPTIONS = (
+    {"id": "RUSTSEC-2026-0370", "package": "zvariant", "kind": "unmaintained",
+     "reviewed": "2026-10-25", "expires": "2027-01-25", "upstream": ZBUS_UPSTREAM},
+    {"id": "RUSTSEC-2026-0371", "package": "zbus_names", "kind": "unmaintained",
+     "reviewed": "2026-10-25", "expires": "2027-01-25", "upstream": ZBUS_UPSTREAM},
+    {"id": "RUSTSEC-2026-0372", "package": "zvariant_derive", "kind": "unmaintained",
+     "reviewed": "2026-10-25", "expires": "2027-01-25", "upstream": ZBUS_UPSTREAM},
+)
 CONFIG = """[advisories]
 ignore = []
 
@@ -280,12 +304,34 @@ def validate_report(raw: str, packages: int, now: dt.datetime) -> dict:
     return report
 
 
+def classify_warnings(warnings: dict, today: dt.date) -> tuple[list[dict], list[dict]]:
+    """Split report warnings into reviewed-exempt and failing entries."""
+    exempt, failing = [], []
+    for group, entries in warnings.items():
+        for entry in entries:
+            advisory = entry.get("advisory") or {}
+            package = entry.get("package") or {}
+            row = {"group": group, "kind": entry.get("kind"), "id": advisory.get("id"),
+                   "package": package.get("name"), "version": package.get("version")}
+            match = next((exemption for exemption in REVIEWED_EXEMPTIONS
+                          if group == exemption["kind"] and row["kind"] == exemption["kind"]
+                          and row["id"] == exemption["id"] and row["package"] == exemption["package"]), None)
+            if match and today <= dt.date.fromisoformat(match["expires"]):
+                exempt.append(row)
+            else:
+                if match:
+                    row["error"] = f"reviewed exemption expired on {match['expires']}"
+                failing.append(row)
+    return exempt, failing
+
+
 def audit(root: Path, binary: Path, output: Path) -> dict:
     output.mkdir(parents=True, exist_ok=False)
     receipt = {"schema_version": 1, "required_audit_version": AUDIT_VERSION, "required_installation_toolchain": AUDIT_TOOLCHAIN,
                "started_utc": dt.datetime.now(dt.timezone.utc).isoformat(), "locks": [], "commands": [],
                "errors": [], "execution_complete": False, "advisory_complete": False,
-               "yanked_complete": False, "passed": False}
+               "yanked_complete": False, "passed": False,
+               "reviewed_exemptions": [dict(exemption) for exemption in REVIEWED_EXEMPTIONS]}
     write_json(output / "receipt.json", receipt)
     before_source = before_locks = None
     try:
@@ -324,8 +370,13 @@ def audit(root: Path, binary: Path, output: Path) -> dict:
                     if revision != report["database"]["last-commit"] or origin.rstrip("/").removesuffix(".git") != ADVISORY_URL:
                         raise ValueError("advisory database does not match the reported official revision")
                     row["complete"] = not result["timed_out"]
-                    row["passed"] = (row["complete"] and result["exit_code"] == 0 and not report["vulnerabilities"]["found"]
-                                     and not any(report["warnings"].values()))
+                    exempt, failing = classify_warnings(report["warnings"], dt.datetime.now(dt.timezone.utc).date())
+                    row["exempted_warnings"], row["failing_warnings"] = exempt, failing
+                    # --deny warnings exits 1 for exempt notices too; accept that
+                    # status only when every reported warning is exempt.
+                    status_ok = result["exit_code"] == 0 or (result["exit_code"] == 1 and exempt and not failing)
+                    row["passed"] = (row["complete"] and status_ok and not report["vulnerabilities"]["found"]
+                                     and not failing)
                     if not row["passed"]:
                         row["errors"].append("cargo-audit reported findings or failed")
                 except Exception as error:
@@ -336,6 +387,12 @@ def audit(root: Path, binary: Path, output: Path) -> dict:
             receipt["registry_completed_versions"] = sum(len(row.get("versions", [])) for row in receipt["registry"] if row["complete"])
             receipt["execution_complete"] = True
             receipt["advisory_complete"] = len(receipt["locks"]) == len(LOCKFILES) and all(row["complete"] for row in receipt["locks"])
+            if receipt["advisory_complete"]:
+                reported = {row["id"] for lock in receipt["locks"] for row in lock.get("exempted_warnings", [])}
+                reported |= {row["id"] for lock in receipt["locks"] for row in lock.get("failing_warnings", [])}
+                for exemption in REVIEWED_EXEMPTIONS:
+                    if exemption["id"] not in reported:
+                        receipt["errors"].append(f"reviewed exemption {exemption['id']} is no longer reported; remove it")
             receipt["yanked_complete"] = all(row["complete"] for row in receipt["registry"])
             if sha256(binary.read_bytes()) != receipt["binary"]["sha256"]:
                 raise ValueError("audit executable changed during execution")

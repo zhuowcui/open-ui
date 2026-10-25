@@ -40,6 +40,15 @@ report={'database':{'advisory-count':1,'last-commit':revision,'last-updated':dt.
  'vulnerabilities':{'found':False,'count':0,'list':[]},'warnings':{}}
 if case=='finding':report['vulnerabilities']={'found':True,'count':1,'list':[{'advisory':{'id':'RUSTSEC-TEST'}}]}
 if case=='warning':report['warnings']={'unsound':[{'package':'fixture'}]}
+def notice(kind,package,advisory):
+ return {'kind':kind,'package':{'name':package,'version':'5.9.0'},'advisory':{'id':advisory}}
+zbus=[notice('unmaintained','zvariant','RUSTSEC-2026-0370'),notice('unmaintained','zbus_names','RUSTSEC-2026-0371'),notice('unmaintained','zvariant_derive','RUSTSEC-2026-0372')]
+if case=='zbus':report['warnings']={'unmaintained':zbus}
+if case=='zbus-partial':report['warnings']={'unmaintained':zbus[:2]}
+if case=='zbus-plus-other':report['warnings']={'unmaintained':zbus+[notice('unmaintained','other','RUSTSEC-2099-0001')]}
+if case=='zbus-wrong-package':report['warnings']={'unmaintained':zbus[1:]+[notice('unmaintained','other','RUSTSEC-2026-0370')]}
+if case=='zbus-unsound':report['warnings']={'unmaintained':zbus[1:],'unsound':[notice('unsound','zvariant','RUSTSEC-2026-0370')]}
+if case=='zbus-vulnerability':report['warnings']={'unmaintained':zbus};report['vulnerabilities']={'found':True,'count':1,'list':[{'advisory':{'id':'RUSTSEC-2026-0370'}}]}
 if case=='ignored':report['settings']['ignore']=['RUSTSEC-TEST']
 if case=='filter':report['settings']['target_os']=['linux']
 if case=='severity':report['settings']['severity']='critical'
@@ -54,7 +63,7 @@ if case=='invalid-json':print('{');sys.exit(0)
 if case=='duplicate-json':print('{"settings":{},'+json.dumps(report)[1:]);sys.exit(0)
 print(json.dumps(report))
 if case=='self-tail':print('synthetic tool advisory tail')
-sys.exit(1 if case in ('status','finding','warning') else 0)
+sys.exit(1 if case in ('status','finding','warning') or case.startswith('zbus') else 0)
 '''
 
 
@@ -94,12 +103,12 @@ class DependencySecurityTests(unittest.TestCase):
         return {"url": url, "final_url": url, "status": 200, "response_exceeds_bound": False,
                 "headers": {}, "raw": json.dumps(row).encode() + b"\n"}
 
-    def run_audit(self, case: str = "success", fetch=None) -> dict:
+    def run_audit(self, case: str = "success", fetch=None, exemptions=()) -> dict:
         self.output_count += 1
         self.output = self.base / f"evidence-{self.output_count}"
         with patch.dict(os.environ, {"OPENUI_FAKE_AUDIT_CASE": case}), patch.object(
             security, "fetch_registry", side_effect=fetch or self.registry_response
-        ):
+        ), patch.object(security, "REVIEWED_EXEMPTIONS", tuple(exemptions)):
             result = security.audit(self.root, self.binary, self.output)
         self.assertTrue(all(row["reaped"] for row in result["commands"]))
         self.assertEqual(json.loads((self.output / "receipt.json").read_text()), result)
@@ -137,6 +146,34 @@ class DependencySecurityTests(unittest.TestCase):
                 self.assertFalse(result["passed"])
                 self.assertFalse(result["advisory_complete"])
                 self.assertEqual(len(result["locks"]), 2)
+
+    def test_reviewed_zbus_notices_pass_only_as_exact_unmaintained_notices(self) -> None:
+        reviewed = security.REVIEWED_EXEMPTIONS
+        self.assertEqual([row["id"] for row in reviewed],
+                         ["RUSTSEC-2026-0370", "RUSTSEC-2026-0371", "RUSTSEC-2026-0372"])
+        self.assertTrue(all(row["kind"] == "unmaintained" and row["reviewed"] and row["upstream"] for row in reviewed))
+        result = self.run_audit("zbus", exemptions=reviewed)
+        self.assertTrue(result["passed"], result["errors"] + result["finding_errors"])
+        self.assertEqual(len(result["locks"][0]["exempted_warnings"]), 3)
+        self.assertEqual(result["reviewed_exemptions"], [dict(row) for row in reviewed])
+        config = json.loads((self.output / "observed-config.json").read_text())
+        self.assertEqual(config["advisories"]["ignore"], [])
+        for case in ("zbus-plus-other", "zbus-wrong-package", "zbus-unsound", "zbus-vulnerability"):
+            with self.subTest(case=case):
+                self.assertFalse(self.run_audit(case, exemptions=reviewed)["passed"])
+        # Without the reviewed list the same notices fail.
+        self.assertFalse(self.run_audit("zbus")["passed"])
+
+    def test_unused_or_expired_exemptions_fail_the_gate(self) -> None:
+        reviewed = security.REVIEWED_EXEMPTIONS
+        result = self.run_audit("zbus-partial", exemptions=reviewed)
+        self.assertFalse(result["passed"])
+        self.assertTrue(any("RUSTSEC-2026-0372 is no longer reported" in error for error in result["errors"]))
+        self.assertFalse(self.run_audit(exemptions=reviewed)["passed"])
+        expired = [dict(row, expires="2026-01-01") for row in reviewed]
+        result = self.run_audit("zbus", exemptions=expired)
+        self.assertFalse(result["passed"])
+        self.assertTrue(all("expired" in row["error"] for row in result["locks"][0]["failing_warnings"]))
 
     def test_version_mismatch_stops_before_any_registry_or_lock_audit(self) -> None:
         def unexpected(_):
