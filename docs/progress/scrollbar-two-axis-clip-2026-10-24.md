@@ -92,3 +92,8 @@ leaves white.
 | Overflow-controls guards | `cargo test --locked -p openui-paint --lib overflow_controls` | 8 pass |
 | Paired expanded census, WSL | `build_renderer.py`; `run_renderer_matrix.py --suite expanded --jobs 16`, `fc9335e7` against `501d27dc` | 21,701 to 21,701 exact; 0 Open UI images change in 23,728 comparisons; Chromium identical ([evidence](evidence/scrollbar-two-axis-clip-census-v1.json)) |
 | Windows workspace | `cargo test --workspace --locked --no-fail-fast` | 9,457 passed, 0 failed, 20 ignored |
+
+## Update, 25 October 2026
+
+The two-axis rule approximated Chromium's composited-scroller path, and the
+three residuals are now exact. See [the compositing model record](scrollbar-compositing-model-2026-10-25.md).
