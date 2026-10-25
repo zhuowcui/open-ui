@@ -123,3 +123,27 @@ Windows; see [the Skia configuration record](skia-legacy-shader-context-2026-10-
 
 The paired census above built both sources without that define; it is a
 same-configuration pairing and its zero-change result stands.
+
+## Update, 24 October 2026
+
+Windows Chrome-for-Testing 147.0.7727.50 reproduces the residual pixels
+exactly (row 57 of Auto width 16 at 1.25 is `#fdfdfd`). Varying the box on
+that browser rules out fractional edge coverage as the cause:
+
+| Probe at 1.25 | Observation |
+| --- | --- |
+| Auto width 16, bottom edge at 57.25, 57.5 and 57.75 | Row 57 is `#fdfdfd` (253) in all three |
+| Auto widths 1, 1.2 and 1.4, right edge at 41.25, 41.5 and 41.75 | Column 41 is fully `#fcfcfc` (252) in all three |
+| Thin width 1 | Pixel (40, 57) is 253; column 41 is white |
+
+Neither edge value depends on where the box edge falls within the pixel, so
+they do not come from an antialiased clip. Chromium's theme paints tracks and
+corners as whole-pixel rectangles without antialiasing
+(`ui/native_theme/native_theme_fluent.cc`, `PaintScrollbarTrack`,
+`PaintScrollbarCorner`). The values therefore come from how the scrollbar
+layers are rounded and composited. Reproducing them needs a model of
+Chromium's scrollbar layer compositing. Capturing the layer command log with
+DevTools `LayerTree` was not possible: headless software compositing emits no
+`layerTreeDidChange`. The four states stay listed in
+`CHROMIUM_FRAME_RESIDUALS`.
+
