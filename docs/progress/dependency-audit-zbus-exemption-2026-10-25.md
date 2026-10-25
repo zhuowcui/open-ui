@@ -54,7 +54,7 @@ applies there too.
 | --- | --- | --- |
 | Checker tests | `python -m unittest tools.release.test_dependency_security` | 14 pass |
 | The real PR 26 report classified by the new logic | `classify_warnings` on the run `40175208020` artifact | production: three exempt, none failing; fuzz: none |
-| `dependency-security` CI job | this PR | CI |
+| `dependency-security` CI job | PR 27, run `40177089214` | Passed; the other CI jobs passed too |
 
 ## Review
 
