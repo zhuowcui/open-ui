@@ -78,3 +78,4 @@
 0077	active	layout flex baseline line-clamp vertical	Flex baseline groups are sized in every writing mode	2026-10-24	entries/0077-flex-baseline-groups-are-sized-in-every-writing-m.md
 0078	superseded	paint scrollbar clip device-scale chromium-oracle	Scrollbar edge pixels follow two-axis protrusion	2026-10-25	entries/0078-scrollbar-edge-pixels-follow-two-axis-protrusion.md
 0079	active	paint scrollbar compositing cc device-scale chromium-oracle tracing	Forced scrollbars follow Chromium scroller compositing	2026-10-25	entries/0079-forced-scrollbars-follow-chromium-scroller-compositing.md
+0080	active	layout table decoration anonymous census	Anonymous table parts borrow the table node	2026-10-25	entries/0080-anonymous-table-parts-borrow-the-table-node.md
