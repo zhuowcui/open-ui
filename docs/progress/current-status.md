@@ -1,5 +1,13 @@
 # Open UI current status
 
+## Whole-pixel advances for aliased Linux text 25 October 2026
+
+Aliased Linux text now shapes with whole-pixel advances, as Chromium does
+when Fontconfig disables antialiasing (full hinting, no subpixel
+positioning). Fractional-size Ahem no longer drifts. The census goes from
+21,750 to 21,984 exact: 239 gains and 5 documented losses in two owners. See
+the [aliased advance record](aliased-text-whole-pixel-advances-2026-10-25.md).
+
 ## Table decoration with anonymous parts 25 October 2026
 
 Tables whose direct children are cells or blocks keep their background and
