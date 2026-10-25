@@ -147,3 +147,5 @@ DevTools `LayerTree` was not possible: headless software compositing emits no
 `layerTreeDidChange`. The four states stay listed in
 `CHROMIUM_FRAME_RESIDUALS`.
 
+Auto width 1 at 1.25 is now exact; the other three remain. See
+[the two-axis clip record](scrollbar-two-axis-clip-2026-10-24.md).

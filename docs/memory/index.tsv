@@ -64,7 +64,7 @@
 0063	active	workflow git checkpoint user-preference	Use main as the experimental source of truth with one PR at a time	2026-10-17	entries/0063-use-main-as-the-experimental-source-of-truth-wit.md
 0064	active	windows platform workflow fonts ci	Windows MSVC baseline: LF checkout, DirectWrite generics and the Linux-oracle ledger	2026-10-19	entries/0064-windows-msvc-baseline-lf-checkout-directwrite-ge.md
 0065	active	scrollbar paint chromium oracle overflow-controls	Scrollbar frame clips: Chromium paints forced-scrollbar parts pixel-rounded; layout keeps CSS thickness	2026-10-21	entries/0065-scrollbar-frame-clips-chromium-paints-forced-scr.md
-0066	active	ci dependencies security zbus accesskit	Dependency audit is its own CI job; zbus 5 unmaintained notices stay open	2026-10-21	entries/0066-dependency-audit-is-its-own-ci-job-zbus-5-unmain.md
+0066	active	ci dependencies security zbus accesskit	Dependency audit is its own CI job; zbus 5 unmaintained notices stay open	2026-10-22	entries/0066-dependency-audit-is-its-own-ci-job-zbus-5-unmain.md
 0067	active	windows fonts directwrite oracle chromium	Windows text oracle: Windows Chrome with NoFontAntialiasing for aliased tests	2026-10-21	entries/0067-windows-text-oracle-windows-chrome-with-nofontan.md
 0068	active	windows platform winit ffi	Win32 desktop runtime shares the winit runtime behind the windows feature	2026-10-21	entries/0068-win32-desktop-runtime-shares-the-winit-runtime-b.md
 0069	active	layout inline baseline vertical flex blink	Vertical flow aligns on Blink's central baseline; text stays on its glyph baseline	2026-10-21	entries/0069-vertical-flow-aligns-on-blink-s-central-baseline.md
@@ -72,7 +72,8 @@
 0071	active	windows accessibility uia accesskit ci	Windows UI Automation check drives the accessibility example	2026-10-21	entries/0071-windows-ui-automation-check-drives-the-accessibi.md
 0072	active	windows release packaging cmake ffi	Windows SDK archive: build_v02_windows.py with a find_package smoke	2026-10-21	entries/0072-windows-sdk-archive-build-v02-windows-py-with-a.md
 0073	active	windows text raster directwrite qualification	Windows text raster policy follows Windows Blink; compare_windows_text.py measures it	2026-10-22	entries/0073-windows-text-raster-policy-follows-windows-blink.md
-0074	active	windows text metrics directwrite layout	Windows layout uses Blink's rounded ascent and descent	2026-10-22	entries/0074-windows-layout-uses-blink-s-rounded-ascent-and-des.md
-0075	active	paint multicol fragmentation positioned census	Candidate painter positioned phases must follow Blink per-layer fragment order	2026-10-22	entries/0075-candidate-painter-positioned-phases-must-follow-bl.md
+0074	active	windows text metrics directwrite layout	Windows layout uses Blink's rounded ascent and descent	2026-10-23	entries/0074-windows-layout-uses-blink-s-rounded-ascent-and-des.md
+0075	active	paint multicol fragmentation positioned census	Candidate painter positioned phases must follow Blink per-layer fragment order	2026-10-23	entries/0075-candidate-painter-positioned-phases-must-follow-bl.md
 0076	active	windows native-controls paint accent qualification	Native form-control accent follows the platform accent (Windows DWM)	2026-10-24	entries/0076-native-form-control-accent-follows-the-platform-a.md
 0077	active	layout flex baseline line-clamp vertical	Flex baseline groups are sized in every writing mode	2026-10-24	entries/0077-flex-baseline-groups-are-sized-in-every-writing-m.md
+0078	active	paint scrollbar clip device-scale chromium-oracle	Scrollbar edge pixels follow two-axis protrusion	2026-10-24	entries/0078-scrollbar-edge-pixels-follow-two-axis-protrusion.md

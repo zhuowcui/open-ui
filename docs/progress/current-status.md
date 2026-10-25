@@ -166,6 +166,8 @@ ink to Chromium's measured extent, and a new test compares the 46 exact
 frames. Four documented residual states remain. Layout is unchanged: Chromium
 keeps the CSS scrollbar thickness at every scale. See the
 [repair record](native-scrollbar-frame-clip-2026-10-20.md).
+On 24 October a two-axis edge clip raised exactness to **47 of 50**; three
+residual states remain. See [the two-axis clip record](scrollbar-two-axis-clip-2026-10-24.md).
 
 ## Windows development baseline 19 October 2026
 
