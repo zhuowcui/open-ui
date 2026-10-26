@@ -1,0 +1,80 @@
+{
+ "base_commit": "33204b702dc1833e84ef7480bd0ad877539aa29c",
+ "base_exact": 22065,
+ "chromium_identical": 23728,
+ "comparisons": 23728,
+ "errors": [],
+ "gains": [
+  {
+   "base": "different",
+   "base_mismatched": 2500,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/fieldset-as-item-overflow",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 3600,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/fieldset-as-item-overflow",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1500,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/fieldset-as-item-overflow",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 6000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/fieldset-as-item-overflow",
+   "profile": "mobile-375x667@2"
+  }
+ ],
+ "head_commit": "8a6b1490f639930b8751fb2bd628a7b878b04e10",
+ "head_exact": 22069,
+ "improved": [],
+ "losses": [],
+ "openui_changed": [
+  {
+   "base": "different",
+   "base_mismatched": 2500,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/fieldset-as-item-overflow",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 3600,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/fieldset-as-item-overflow",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1500,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/fieldset-as-item-overflow",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 6000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/fieldset-as-item-overflow",
+   "profile": "mobile-375x667@2"
+  }
+ ],
+ "worsened": []
+}

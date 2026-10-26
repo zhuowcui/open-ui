@@ -61,6 +61,11 @@ pub(crate) fn content_style(style: &ComputedStyle) -> ComputedStyle {
         content.overflow_x = style.overflow_x;
         content.overflow_y = style.overflow_y;
         content.unicode_bidi = style.unicode_bidi;
+        // An anonymous box takes its scrollbar style from its parent
+        // (`PaintLayerScrollableArea` `ScrollbarStyleSource`).
+        content.scrollbar_width = style.scrollbar_width;
+        content.scrollbar_thumb_color = style.scrollbar_thumb_color;
+        content.scrollbar_track_color = style.scrollbar_track_color;
     })
 }
 

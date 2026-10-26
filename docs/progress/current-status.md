@@ -1,5 +1,13 @@
 # Open UI current status
 
+## Fieldset content scrollbar style 26 October 2026
+
+A fieldset's anonymous content box, its scroll container, now takes the
+fieldset's scrollbar width and colours, as Blink's anonymous boxes take their
+parent's scrollbar style. A hidden-scrollbar fieldset had drawn a classic
+scrollbar. The census goes from 22,065 to 22,069 exact with no losses. See the
+[fieldset scrollbar record](fieldset-content-scrollbar-source-2026-10-26.md).
+
 ## Vertical table flex item size 26 October 2026
 
 A vertical-writing table flex item now keeps its laid-out size instead of the
