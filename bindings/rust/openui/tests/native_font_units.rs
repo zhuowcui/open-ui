@@ -174,12 +174,7 @@ fn atomic_intrinsic_text_keeps_chromium_fraction_after_native_font_alias_change(
         );
         assert_eq!(
             (owned.x, owned.y, owned.width, owned.height),
-            (
-                10.0,
-                487.0,
-                144.0,
-                16.0
-            ),
+            (10.0, 487.0, 144.0, 16.0),
             "word at {scale}"
         );
         let float_container = Element::create(&document, "div").unwrap();
