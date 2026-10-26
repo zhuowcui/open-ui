@@ -1,5 +1,12 @@
 # Open UI current status
 
+## Captioned table wrapper clip 26 October 2026
+
+A captioned table wrapper now clips at its own border box. It had taken the
+inner grid's border from the retained client rectangle and cut the caption at
+a fragmentation boundary. The census goes from 21,992 to 22,021 exact with no
+losses. See the [wrapper clip record](captioned-table-wrapper-clip-2026-10-26.md).
+
 ## Nested column rules beside empty columns 26 October 2026
 
 A nested multicol sliced by an outer fragmentainer no longer paints a column
