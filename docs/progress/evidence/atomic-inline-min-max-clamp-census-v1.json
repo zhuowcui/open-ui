@@ -1,0 +1,80 @@
+{
+ "base_commit": "392e3d52dd18671cd70e1bccb4c87e46f69ec14b",
+ "base_exact": 22057,
+ "chromium_identical": 23728,
+ "comparisons": 23728,
+ "errors": [],
+ "gains": [
+  {
+   "base": "different",
+   "base_mismatched": 4481,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/intrinsic-size-min-content-box-sizing",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 6122,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/intrinsic-size-min-content-box-sizing",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2520,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/intrinsic-size-min-content-box-sizing",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 10080,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/intrinsic-size-min-content-box-sizing",
+   "profile": "mobile-375x667@2"
+  }
+ ],
+ "head_commit": "a18118c1d8cc6a31c8523d5ec9fa3448bed6c44d",
+ "head_exact": 22061,
+ "improved": [],
+ "losses": [],
+ "openui_changed": [
+  {
+   "base": "different",
+   "base_mismatched": 4481,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/intrinsic-size-min-content-box-sizing",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 6122,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/intrinsic-size-min-content-box-sizing",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2520,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/intrinsic-size-min-content-box-sizing",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 10080,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/intrinsic-size-min-content-box-sizing",
+   "profile": "mobile-375x667@2"
+  }
+ ],
+ "worsened": []
+}
