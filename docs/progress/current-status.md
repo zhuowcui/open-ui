@@ -1,5 +1,13 @@
 # Open UI current status
 
+## Flex row break propagation 26 October 2026
+
+A single-line row flex container now joins its items' break-before and
+break-after values, as Blink does. Three multicol special cases that cloned an
+abspos box into the next column, and stood in for that propagation, are
+removed. The census goes from 22,021 to 22,035 exact with no losses. See the
+[flex break record](flex-row-break-propagation-2026-10-26.md).
+
 ## Table part backgrounds in anonymous cells 26 October 2026
 
 A row or section now paints its background into an anonymous cell, as Blink
