@@ -1,0 +1,80 @@
+{
+ "base_commit": "a18118c1d8cc6a31c8523d5ec9fa3448bed6c44d",
+ "base_exact": 22061,
+ "chromium_identical": 23728,
+ "comparisons": 23728,
+ "errors": [],
+ "gains": [
+  {
+   "base": "different",
+   "base_mismatched": 15625,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/ortho-table-item-001",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 22500,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/ortho-table-item-001",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 10000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/ortho-table-item-001",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 40000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/ortho-table-item-001",
+   "profile": "mobile-375x667@2"
+  }
+ ],
+ "head_commit": "33204b702dc1833e84ef7480bd0ad877539aa29c",
+ "head_exact": 22065,
+ "improved": [],
+ "losses": [],
+ "openui_changed": [
+  {
+   "base": "different",
+   "base_mismatched": 15625,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/ortho-table-item-001",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 22500,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/ortho-table-item-001",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 10000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/ortho-table-item-001",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 40000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/ortho-table-item-001",
+   "profile": "mobile-375x667@2"
+  }
+ ],
+ "worsened": []
+}

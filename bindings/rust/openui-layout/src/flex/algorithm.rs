@@ -4614,8 +4614,11 @@ fn give_items_final_position(
             // discovered by final child layout: flexing the logical inline
             // size can wrap vertical text into additional columns, increasing
             // its physical width after the hypothetical cross-size pass.
+            // A table's block size is at least its rows' extent, so its laid-
+            // out fragment, not the flexed size, is authoritative there.
             if !axis_mapping.child_writing_direction.is_horizontal()
                 && !child_style.display.is_flex()
+                && !child_style.display.is_table_wrapper()
                 && (!cross_size_is_auto || should_stretch)
             {
                 child_fragment.size = axis_mapping.physical_size(final_main, cross_size_for_child);

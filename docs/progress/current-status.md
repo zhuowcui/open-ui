@@ -1,5 +1,13 @@
 # Open UI current status
 
+## Vertical table flex item size 26 October 2026
+
+A vertical-writing table flex item now keeps its laid-out size instead of the
+flexed size, because a table's block size is at least its rows' extent. A
+flex-shrunk vertical table had lost its own box and background. The census
+goes from 22,061 to 22,065 exact with no losses. See the
+[vertical table item record](flex-vertical-table-item-size-2026-10-26.md).
+
 ## Atomic inline min and max in intrinsic sizing 26 October 2026
 
 An atomic inline's contribution to its container's intrinsic inline size is
