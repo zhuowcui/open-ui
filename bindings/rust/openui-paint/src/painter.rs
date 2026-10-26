@@ -19260,22 +19260,33 @@ fn paint_table_part_background_in_cell(
     cell_offset: PhysicalOffset,
     opacity_multiplier: f32,
 ) {
+    // An anonymous cell has no node; it inherits from the part that
+    // generated it, and still receives that part's background.
+    let anonymous_cell = cell.node_id.is_none();
+    let cell_style = if anonymous_cell {
+        style
+    } else {
+        &doc.node(cell.node_id).style
+    };
     if cell.is_hidden_for_paint
-        || cell.node_id.is_none()
-        || doc.node(cell.node_id).style.visibility != Visibility::Visible
-        || doc.canvas_background_source() == Some(cell.node_id)
+        || cell_style.visibility != Visibility::Visible
+        || (!anonymous_cell && doc.canvas_background_source() == Some(cell.node_id))
     {
         return;
     }
     let _used_border_clip = collapsed_cell_background_clip(canvas, cell, doc, cell_offset);
-    let cell_style = &doc.node(cell.node_id).style;
     // Background outsets come from the positioning part, not the cell's own
     // borders/padding (BoxBackgroundPaintContext::BorderOutsets/PaddingOutsets).
     // The additional collapsed used-border clip above remains cell-owned.
-    let mut fill_geometry = Fragment::new_box(cell.node_id, cell.size);
+    let fill_node = if anonymous_cell {
+        part.node_id
+    } else {
+        cell.node_id
+    };
+    let mut fill_geometry = Fragment::new_box(fill_node, cell.size);
     fill_geometry.border = part.border;
     fill_geometry.padding = part.padding;
-    fill_geometry.ignore_border_radius = cell.ignore_border_radius;
+    fill_geometry.ignore_border_radius = cell.ignore_border_radius || anonymous_cell;
     fill_geometry.collapsed_table_border_participant = true;
     let cell_rect = Rect::from_xywh(
         cell_offset.left.to_f32(),
@@ -19357,7 +19368,7 @@ fn paint_table_part_background_in_cell(
             fill.background_linear_gradient = None;
         });
         canvas.save();
-        if cell_style.has_border_radius() && !cell.ignore_border_radius {
+        if cell_style.has_border_radius() && !fill_geometry.ignore_border_radius {
             let radii = background_clip_radii(cell_style, Some(&fill_geometry), cell_rect, clip);
             canvas.clip_rrect(RRect::new_rect_radii(clip, &radii), ClipOp::Intersect, true);
         }

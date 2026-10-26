@@ -1,0 +1,273 @@
+{
+ "base_commit": "86506085514af82bb12664557fb4279f10988880",
+ "base_exact": 22021,
+ "chromium_identical": 23728,
+ "comparisons": 23728,
+ "errors": [],
+ "gains": [
+  {
+   "base": "different",
+   "base_mismatched": 13331,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_overflow-scroll-row",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 13331,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_overflow-scroll-section",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 11250,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_sections-and-captions-mixed-order",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 16000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_specified-block-size-007",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 19125,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_overflow-scroll-row",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 19125,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_overflow-scroll-section",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 8500,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_overflow-scroll-row",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 8500,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_overflow-scroll-section",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 7160,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_sections-and-captions-mixed-order",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 10000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_specified-block-size-007",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 34000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_overflow-scroll-row",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 34000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_overflow-scroll-section",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 28640,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_sections-and-captions-mixed-order",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 40000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_specified-block-size-007",
+   "profile": "mobile-375x667@2"
+  }
+ ],
+ "head_commit": "034abe84e624803667e727a7deb8ed086d02af2b",
+ "head_exact": 22035,
+ "improved": [
+  {
+   "base": "different",
+   "base_mismatched": 16122,
+   "head": "different",
+   "head_mismatched": 264,
+   "id": "wpt/css_break/table_sections-and-captions-mixed-order",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 22800,
+   "head": "different",
+   "head_mismatched": 129,
+   "id": "wpt/css_break/table_specified-block-size-007",
+   "profile": "desktop-1920x1080@1.5"
+  }
+ ],
+ "losses": [],
+ "openui_changed": [
+  {
+   "base": "different",
+   "base_mismatched": 13331,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_overflow-scroll-row",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 13331,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_overflow-scroll-section",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 11250,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_sections-and-captions-mixed-order",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 16000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_specified-block-size-007",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 19125,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_overflow-scroll-row",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 19125,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_overflow-scroll-section",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 16122,
+   "head": "different",
+   "head_mismatched": 264,
+   "id": "wpt/css_break/table_sections-and-captions-mixed-order",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 22800,
+   "head": "different",
+   "head_mismatched": 129,
+   "id": "wpt/css_break/table_specified-block-size-007",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 8500,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_overflow-scroll-row",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 8500,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_overflow-scroll-section",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 7160,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_sections-and-captions-mixed-order",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 10000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_specified-block-size-007",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 34000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_overflow-scroll-row",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 34000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_overflow-scroll-section",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 28640,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_sections-and-captions-mixed-order",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 40000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_specified-block-size-007",
+   "profile": "mobile-375x667@2"
+  }
+ ],
+ "worsened": []
+}

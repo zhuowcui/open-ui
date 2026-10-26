@@ -1,5 +1,12 @@
 # Open UI current status
 
+## Table part backgrounds in anonymous cells 26 October 2026
+
+A row or section now paints its background into an anonymous cell, as Blink
+does. The anonymous cell had been skipped because it has no node. The census
+goes from 22,021 to 22,035 exact with no losses. See the
+[anonymous cell record](anonymous-cell-part-background-2026-10-26.md).
+
 ## Captioned table wrapper clip 26 October 2026
 
 A captioned table wrapper now clips at its own border box. It had taken the
