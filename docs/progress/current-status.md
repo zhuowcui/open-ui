@@ -1,5 +1,12 @@
 # Open UI current status
 
+## Nested column rules beside empty columns 26 October 2026
+
+A nested multicol sliced by an outer fragmentainer no longer paints a column
+rule beside a column that is empty in that slice, as Blink's column rule
+painter does. The census goes from 21,984 to 21,992 exact with no losses. See
+the [column rule record](nested-multicol-empty-column-rules-2026-10-26.md).
+
 ## Whole-pixel advances for aliased Linux text 25 October 2026
 
 Aliased Linux text now shapes with whole-pixel advances, as Chromium does
