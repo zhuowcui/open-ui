@@ -1,0 +1,721 @@
+{
+ "base_commit": "ed948ac8d977e7570c04c7b10ce3cea4977bf3dc",
+ "base_exact": 21992,
+ "chromium_identical": 23728,
+ "comparisons": 23728,
+ "errors": [],
+ "gains": [
+  {
+   "base": "different",
+   "base_mismatched": 756,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-border-002",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 300,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-border-003",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 800,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-border-004",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1140,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_repeated-section_header-after-break.tentative",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1125,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-border-002",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 450,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-border-003",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1140,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-border-004",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 500,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_repeated-section_header-after-break.tentative",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 500,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-border-002",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 200,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-border-003",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 500,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-border-004",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 510,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-collapsed-borders-paint-at-boundary.tentative",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 515,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-collapsed-borders-paint-htb-ltr",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 510,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-collapsed-borders-paint-vlr-rtl",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 515,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-collapsed-borders-paint-vrl-ltr",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-grid-paint-htb-ltr",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-grid-paint-vlr-rtl",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-grid-paint-vrl-rtl",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_repeated-section_header-after-break.tentative",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-border-002",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 800,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-border-003",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-border-004",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2040,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-collapsed-borders-paint-at-boundary.tentative",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2060,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-collapsed-borders-paint-htb-ltr",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2040,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-collapsed-borders-paint-vlr-rtl",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2060,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-collapsed-borders-paint-vrl-ltr",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 4000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-grid-paint-htb-ltr",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 4000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-grid-paint-vlr-rtl",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 4000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-grid-paint-vrl-rtl",
+   "profile": "mobile-375x667@2"
+  }
+ ],
+ "head_commit": "86506085514af82bb12664557fb4279f10988880",
+ "head_exact": 22021,
+ "improved": [
+  {
+   "base": "different",
+   "base_mismatched": 894,
+   "head": "different",
+   "head_mismatched": 94,
+   "id": "wpt/css_break/table_repeated-section_header-after-break.tentative",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1036,
+   "head": "different",
+   "head_mismatched": 269,
+   "id": "wpt/css_break/table_table-collapsed-borders-paint-at-boundary.tentative",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1031,
+   "head": "different",
+   "head_mismatched": 257,
+   "id": "wpt/css_break/table_table-collapsed-borders-paint-htb-ltr",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1127,
+   "head": "different",
+   "head_mismatched": 360,
+   "id": "wpt/css_break/table_table-collapsed-borders-paint-vlr-rtl",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1134,
+   "head": "different",
+   "head_mismatched": 360,
+   "id": "wpt/css_break/table_table-collapsed-borders-paint-vrl-ltr",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2832,
+   "head": "different",
+   "head_mismatched": 1332,
+   "id": "wpt/css_break/table_table-grid-paint-htb-ltr",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2832,
+   "head": "different",
+   "head_mismatched": 1332,
+   "id": "wpt/css_break/table_table-grid-paint-vlr-rtl",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2832,
+   "head": "different",
+   "head_mismatched": 1332,
+   "id": "wpt/css_break/table_table-grid-paint-vrl-rtl",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1553,
+   "head": "different",
+   "head_mismatched": 322,
+   "id": "wpt/css_break/table_table-collapsed-borders-paint-at-boundary.tentative",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1548,
+   "head": "different",
+   "head_mismatched": 308,
+   "id": "wpt/css_break/table_table-collapsed-borders-paint-htb-ltr",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1661,
+   "head": "different",
+   "head_mismatched": 430,
+   "id": "wpt/css_break/table_table-collapsed-borders-paint-vlr-rtl",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1671,
+   "head": "different",
+   "head_mismatched": 431,
+   "id": "wpt/css_break/table_table-collapsed-borders-paint-vrl-ltr",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 3840,
+   "head": "different",
+   "head_mismatched": 1590,
+   "id": "wpt/css_break/table_table-grid-paint-htb-ltr",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 3840,
+   "head": "different",
+   "head_mismatched": 1590,
+   "id": "wpt/css_break/table_table-grid-paint-vlr-rtl",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 3840,
+   "head": "different",
+   "head_mismatched": 1590,
+   "id": "wpt/css_break/table_table-grid-paint-vrl-rtl",
+   "profile": "desktop-1920x1080@1.5"
+  }
+ ],
+ "losses": [],
+ "openui_changed": [
+  {
+   "base": "different",
+   "base_mismatched": 894,
+   "head": "different",
+   "head_mismatched": 94,
+   "id": "wpt/css_break/table_repeated-section_header-after-break.tentative",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 756,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-border-002",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 300,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-border-003",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 800,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-border-004",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1036,
+   "head": "different",
+   "head_mismatched": 269,
+   "id": "wpt/css_break/table_table-collapsed-borders-paint-at-boundary.tentative",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1031,
+   "head": "different",
+   "head_mismatched": 257,
+   "id": "wpt/css_break/table_table-collapsed-borders-paint-htb-ltr",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1127,
+   "head": "different",
+   "head_mismatched": 360,
+   "id": "wpt/css_break/table_table-collapsed-borders-paint-vlr-rtl",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1134,
+   "head": "different",
+   "head_mismatched": 360,
+   "id": "wpt/css_break/table_table-collapsed-borders-paint-vrl-ltr",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2832,
+   "head": "different",
+   "head_mismatched": 1332,
+   "id": "wpt/css_break/table_table-grid-paint-htb-ltr",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2832,
+   "head": "different",
+   "head_mismatched": 1332,
+   "id": "wpt/css_break/table_table-grid-paint-vlr-rtl",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2832,
+   "head": "different",
+   "head_mismatched": 1332,
+   "id": "wpt/css_break/table_table-grid-paint-vrl-rtl",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1140,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_repeated-section_header-after-break.tentative",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1125,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-border-002",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 450,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-border-003",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1140,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-border-004",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1553,
+   "head": "different",
+   "head_mismatched": 322,
+   "id": "wpt/css_break/table_table-collapsed-borders-paint-at-boundary.tentative",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1548,
+   "head": "different",
+   "head_mismatched": 308,
+   "id": "wpt/css_break/table_table-collapsed-borders-paint-htb-ltr",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1661,
+   "head": "different",
+   "head_mismatched": 430,
+   "id": "wpt/css_break/table_table-collapsed-borders-paint-vlr-rtl",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1671,
+   "head": "different",
+   "head_mismatched": 431,
+   "id": "wpt/css_break/table_table-collapsed-borders-paint-vrl-ltr",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 3840,
+   "head": "different",
+   "head_mismatched": 1590,
+   "id": "wpt/css_break/table_table-grid-paint-htb-ltr",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 3840,
+   "head": "different",
+   "head_mismatched": 1590,
+   "id": "wpt/css_break/table_table-grid-paint-vlr-rtl",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 3840,
+   "head": "different",
+   "head_mismatched": 1590,
+   "id": "wpt/css_break/table_table-grid-paint-vrl-rtl",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 500,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_repeated-section_header-after-break.tentative",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 500,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-border-002",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 200,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-border-003",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 500,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-border-004",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 510,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-collapsed-borders-paint-at-boundary.tentative",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 515,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-collapsed-borders-paint-htb-ltr",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 510,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-collapsed-borders-paint-vlr-rtl",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 515,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-collapsed-borders-paint-vrl-ltr",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-grid-paint-htb-ltr",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-grid-paint-vlr-rtl",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-grid-paint-vrl-rtl",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_repeated-section_header-after-break.tentative",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-border-002",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 800,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-border-003",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-border-004",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2040,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-collapsed-borders-paint-at-boundary.tentative",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2060,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-collapsed-borders-paint-htb-ltr",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2040,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-collapsed-borders-paint-vlr-rtl",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2060,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-collapsed-borders-paint-vrl-ltr",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 4000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-grid-paint-htb-ltr",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 4000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-grid-paint-vlr-rtl",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 4000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table_table-grid-paint-vrl-rtl",
+   "profile": "mobile-375x667@2"
+  }
+ ],
+ "worsened": []
+}

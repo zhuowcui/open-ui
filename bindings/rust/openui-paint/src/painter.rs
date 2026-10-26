@@ -11108,16 +11108,28 @@ fn paint_list_marker(
 /// continuation boxes and reserved gutters. Anonymous structure retains its
 /// own explicit clip geometry. Returns `(x, y, width, height)`.
 pub fn compute_clip_rect(fragment: &Fragment, offset: PhysicalOffset) -> (f32, f32, f32, f32) {
+    // A captioned table wrapper delegates its border to the table grid
+    // (`FragmentTablePart::GridDecoration`) and has none of its own, so its
+    // clip must not cut a caption at the grid's border.
+    let delegates_border_to_grid = fragment
+        .children
+        .iter()
+        .any(|child| child.table_part == Some(openui_layout::FragmentTablePart::GridDecoration));
     let retained_client = fragment
         .owns_layout_box()
         .then_some(fragment.scroll_area)
         .flatten()
+        .filter(|_| !delegates_border_to_grid)
         .map(|area| area.client_rect);
     let client = retained_client.unwrap_or_else(|| {
         let insets = fragment
             .element_scrollbars
             .map_or(openui_geometry::BoxStrut::zero(), |s| s.insets);
-        let border = openui_layout::ScrollArea::used_border(fragment);
+        let border = if delegates_border_to_grid {
+            openui_geometry::BoxStrut::zero()
+        } else {
+            openui_layout::ScrollArea::used_border(fragment)
+        };
         let border_box = fragment.border_box_rect();
         openui_geometry::PhysicalRect::new(
             PhysicalOffset::new(
