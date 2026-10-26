@@ -13525,24 +13525,8 @@ fn apply_column_flex_fragmentation_breaks(
         let global_top = container_block_start + adjusted_top;
         let remainder = global_top.raw().rem_euclid(fragmentainer_block_size.raw());
 
-        // When a positive start margin places a forced-break item exactly on
-        // a fragmentainer boundary, the margin has already consumed the
-        // preceding fragmentainer. The item's decoration fills the following
-        // forced fragment instead of inserting another shared line gap.
-        let forced_point_already_inserted_gap = forced_gaps
-            .iter()
-            .any(|(gap_line, point, _)| *gap_line == line_key && *point == original_top.raw());
         let child_margins =
             resolve_margins_in_parent_axes(child_style, flex_inline_size, flex_writing_direction);
-        let margin_top = child_margins.top;
-        if child_style.break_before.is_forced()
-            && !forced_point_already_inserted_gap
-            && remainder == 0
-            && margin_top > LayoutUnit::zero()
-        {
-            child.size.height = child.size.height + fragmentainer_block_size;
-            inserted_break_space = true;
-        }
 
         // If an avoided item begins partway through a fragmentainer and
         // crosses its end, start it in the next one when it can fit there.
