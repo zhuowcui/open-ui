@@ -2987,6 +2987,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-paint/src/painter.rs"
       ],
       "css_name": "scrollbar-thumb-color",
@@ -2999,6 +3000,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-paint/src/render.rs"
       ],
@@ -3012,6 +3014,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/scrollbars.rs",
         "bindings/rust/openui-layout/src/viewport.rs",
         "bindings/rust/openui-paint/src/painter.rs",
