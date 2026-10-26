@@ -1,5 +1,13 @@
 # Open UI current status
 
+## Column flex forced breaks per line 26 October 2026
+
+A forced break in a column-flex line now moves only that line, from where its
+earlier content ended, as Blink's per-line offset adjustment does. Open UI had
+applied every forced gap to all parallel lines. The census goes from 22,065 to
+22,070 exact with no losses. See the
+[column flex break record](column-flex-per-line-forced-breaks-2026-10-26.md).
+
 ## Fieldset content scrollbar style 26 October 2026
 
 A fieldset's anonymous content box, its scroll container, now takes the
