@@ -1731,6 +1731,42 @@ impl<'a> InlineItemsBuilder<'a> {
             };
             (min, max)
         });
+        // The box's own minimum and maximum inline sizes bound its intrinsic
+        // contribution (Blink `ComputeMinAndMaxContentContribution`). The
+        // item stores content-box measures.
+        let intrinsic = if is_orthogonal {
+            intrinsic
+        } else {
+            let (min_size, max_size) = if child_direction.is_horizontal() {
+                (&style.min_width, &style.max_width)
+            } else {
+                (&style.min_height, &style.max_height)
+            };
+            let content_box = |length: &openui_geometry::Length| {
+                length.is_fixed().then(|| {
+                    if style.box_sizing == openui_style::BoxSizing::BorderBox {
+                        (length.value() - own_inline_edges).max(0.0)
+                    } else {
+                        length.value()
+                    }
+                })
+            };
+            let (lower, upper) = (content_box(min_size), content_box(max_size));
+            if lower.is_none() && upper.is_none() {
+                intrinsic
+            } else {
+                let (mut min, mut max) = intrinsic.unwrap_or((0.0, 0.0));
+                if let Some(upper) = upper {
+                    min = min.min(upper);
+                    max = max.min(upper);
+                }
+                if let Some(lower) = lower {
+                    min = min.max(lower);
+                    max = max.max(lower);
+                }
+                Some((min, max))
+            }
+        };
 
         self.items.push(InlineItem {
             item_type: InlineItemType::AtomicInline,
