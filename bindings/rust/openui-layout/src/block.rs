@@ -8856,6 +8856,22 @@ fn parallel_table_edge_break(
 /// `break-before` on the first in-flow child of a block propagates up
 /// to the block itself. Walk down the first-child chain and return
 /// the first forced break-before found, or Auto.
+/// Whether every in-flow child's break value at the container's edge is
+/// joined into the container's own. Grid items all start the first row here.
+/// Blink joins the break values of every item in a flex row and propagates
+/// the first row's break-before and the last row's break-after to the
+/// container (`FlexLayoutAlgorithm`, `row_break_between_outputs`); every item
+/// of a single-line row flex container is in both rows.
+fn joins_child_break_values(style: &ComputedStyle) -> bool {
+    style.display == Display::Grid
+        || (style.display == Display::Flex
+            && matches!(
+                style.flex_direction,
+                openui_style::FlexDirection::Row | openui_style::FlexDirection::RowReverse
+            )
+            && style.flex_wrap == openui_style::FlexWrap::Nowrap)
+}
+
 pub(crate) fn propagated_break_before(doc: &dyn LayoutDocument, node_id: NodeId) -> BreakValue {
     let style = &doc.node(node_id).style;
     if style.break_before.is_forced() {
@@ -8872,7 +8888,7 @@ pub(crate) fn propagated_break_before(doc: &dyn LayoutDocument, node_id: NodeId)
             return edge_break;
         }
     }
-    if style.display == Display::Grid {
+    if joins_child_break_values(style) {
         let mut avoided = None;
         for child_id in doc.children(node_id) {
             let child_style = &doc.node(child_id).style;
@@ -11025,7 +11041,7 @@ pub(crate) fn propagated_break_after(doc: &dyn LayoutDocument, node_id: NodeId) 
             return edge_break;
         }
     }
-    if style.display == Display::Grid {
+    if joins_child_break_values(style) {
         let mut avoided = None;
         for child_id in doc.children(node_id) {
             let child_style = &doc.node(child_id).style;
@@ -35458,10 +35474,6 @@ fn layout_multicol(
                 && !child_style.flex_direction.is_column()
                 && child_style.flex_wrap != openui_style::FlexWrap::Nowrap
         });
-        let has_row_flex_child = children_info.iter().any(|info| {
-            let child_style = &doc.node(info.id).style;
-            child_style.display == Display::Flex && !child_style.flex_direction.is_column()
-        });
         let has_oversized_direct_flex_child = children_info.iter().any(|info| {
             let child_style = &doc.node(info.id).style;
             child_style.display == Display::Flex
@@ -35506,24 +35518,6 @@ fn layout_multicol(
                     && doc.children(info.id).any(|gc| {
                         resolve_margin_or_padding(&doc.node(gc).style.margin_bottom, column_width)
                             .raw()
-                            > 0
-                    })
-            });
-        let has_auto_height_wrapped_row_flex_child_with_row_gap =
-            children_info.iter().any(|info| {
-                let child_style = &doc.node(info.id).style;
-                child_style.display == Display::Flex
-                    && child_style.height.is_auto()
-                    && !child_style.flex_direction.is_column()
-                    && child_style.flex_wrap != openui_style::FlexWrap::Nowrap
-                    && child_style.row_gap.as_ref().is_some_and(|gap| {
-                        resolve_length(
-                            gap,
-                            fixed_oof_fragmentainer_height,
-                            LayoutUnit::zero(),
-                            LayoutUnit::zero(),
-                        )
-                        .raw()
                             > 0
                     })
             });
@@ -35803,77 +35797,6 @@ fn layout_multicol(
                             .raw();
                     if suppress_static_abspos_after_oversized_flex {
                         continue;
-                    } else if frag_style.position == Position::Absolute
-                        && frag_style.left.is_auto()
-                        && !frag_style.top.is_auto()
-                        && algo.column_fill == ColumnFill::Auto
-                        && has_explicit_height
-                        && !fixed_oof_wraps_rows
-                        && resolved.count == 2
-                        && algo.column_gap == LayoutUnit::zero()
-                        && frag.offset.left == content_edge_x
-                        && frag.size.width.raw() > column_width.raw()
-                        && frag.size.height.raw() > 0
-                        && frag.size.height.raw() < fixed_oof_fragmentainer_height.raw()
-                    {
-                        let top_inset = resolve_length(
-                            &frag_style.top,
-                            fixed_oof_fragmentainer_height,
-                            LayoutUnit::zero(),
-                            LayoutUnit::zero(),
-                        );
-                        if top_inset.raw() > frag.size.height.raw()
-                            && top_inset.raw() <= fixed_oof_fragmentainer_height.raw()
-                        {
-                            let mut continuation = frag.clone();
-                            continuation.offset.left = content_edge_x + column_width;
-                            continuation.offset.top = content_edge_y + top_inset - frag.size.height;
-                            continuation.size.width = column_width;
-                            continuation.size.height = frag.size.height;
-                            continuation.is_first_for_node = false;
-                            result_children.push(continuation);
-                        }
-                    } else if frag_style.position == Position::Absolute
-                        && !frag_style.left.is_auto()
-                        && !frag_style.top.is_auto()
-                        && algo.column_fill == ColumnFill::Auto
-                        && has_explicit_height
-                        && !fixed_oof_wraps_rows
-                        && resolved.count == 2
-                        && algo.column_gap == LayoutUnit::zero()
-                        && frag.offset.left == content_edge_x
-                        && frag.size.width == column_width
-                        && frag.size.height.raw() > 0
-                        && frag.size.height.raw() <= fixed_oof_fragmentainer_height.raw()
-                        && has_auto_height_wrapped_row_flex_child_with_row_gap
-                        && frag.offset.top.raw() > content_edge_y.raw()
-                        && (frag.offset.top + frag.size.height).raw()
-                            <= (content_edge_y + fixed_oof_fragmentainer_height).raw()
-                    {
-                        let mut continuation = frag.clone();
-                        continuation.offset.left = content_edge_x + column_width;
-                        continuation.is_first_for_node = false;
-                        result_children.push(continuation);
-                    } else if frag_style.position == Position::Absolute
-                        && frag_style.left.is_auto()
-                        && frag_style.top.is_auto()
-                        && algo.column_fill == ColumnFill::Auto
-                        && has_explicit_height
-                        && !fixed_oof_wraps_rows
-                        && resolved.count == 2
-                        && algo.column_gap == LayoutUnit::zero()
-                        && has_row_flex_child
-                        && frag.offset.left == content_edge_x
-                        && frag.offset.top.raw() > content_edge_y.raw()
-                        && frag.size.width == column_width
-                        && frag.size.height.raw() > 0
-                        && (frag.offset.top + frag.size.height).raw()
-                            == (content_edge_y + fixed_oof_fragmentainer_height).raw()
-                    {
-                        let mut continuation = frag.clone();
-                        continuation.offset.left = content_edge_x + column_width;
-                        continuation.is_first_for_node = false;
-                        result_children.push(continuation);
                     }
                 }
                 result_children.push(frag);
