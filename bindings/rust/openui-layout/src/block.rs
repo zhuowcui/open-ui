@@ -11144,6 +11144,52 @@ fn suppress_unowned_direct_spanner_decorations(
     }
 }
 
+/// Blink paints a column rule only between two column fragments of the same
+/// fragment (`ColumnRulePainter`). When an ancestor fragmentainer slices a
+/// nested multicol, a slice whose column holds no content in its block range
+/// has no column fragment there, so the rule beside it is not painted.
+fn retain_rules_between_content_columns(part: &mut Fragment) {
+    let slice_height = part.size.height;
+    let columns: Vec<(LayoutUnit, LayoutUnit, bool)> = part
+        .children
+        .iter()
+        .filter(|child| child.kind == FragmentKind::ColumnBox)
+        .map(|column| {
+            let has_content = column.children.iter().any(|content| {
+                let top = content.offset.top;
+                let bottom = top + content.size.height;
+                bottom > LayoutUnit::zero() && top < slice_height
+            });
+            (
+                column.offset.left,
+                column.offset.left + column.size.width,
+                has_content,
+            )
+        })
+        .collect();
+    if columns.len() < 2 {
+        return;
+    }
+    part.children.retain(|child| {
+        if child.kind != FragmentKind::ColumnRule {
+            return true;
+        }
+        let center = child.offset.left + child.size.width / 2;
+        let before = columns
+            .iter()
+            .filter(|(_, right, _)| *right <= center)
+            .max_by_key(|(_, right, _)| right.raw());
+        let after = columns
+            .iter()
+            .filter(|(left, _, _)| *left >= center)
+            .min_by_key(|(left, _, _)| left.raw());
+        match (before, after) {
+            (Some(before), Some(after)) => before.2 && after.2,
+            _ => true,
+        }
+    });
+}
+
 fn is_transparent_spanner_wrapper(style: &ComputedStyle, inline_size: LayoutUnit) -> bool {
     if style.display == Display::None
         || style.position.is_absolutely_positioned()
@@ -32895,6 +32941,9 @@ fn layout_multicol(
                                     rule.size.height = visual_part_height;
                                 }
                                 part.children.extend(rules);
+                            }
+                            if child_is_multicol {
+                                retain_rules_between_content_columns(&mut part);
                             }
                             if child_is_multicol && part.is_last_for_node {
                                 // Column rules occupy the multicol content box.
