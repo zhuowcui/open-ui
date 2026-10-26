@@ -44,5 +44,5 @@ comparison changes. Chromium is identical in every comparison. Rows are in the
 | --- | --- | --- |
 | Paired expanded census | `build_renderer.py`; `run_renderer_matrix.py --suite expanded --jobs 16` | 22,061 to 22,065 exact; 4 gains, 0 losses |
 | Layout tests | `cargo test --locked -p openui-layout` | 5,928 passed, 0 failed |
-| Renderer contract | `generate_renderer_contract.py --check` | passes after rebasing onto PR 36 |
+| Renderer contract | `generate_renderer_contract.py --check` | passes |
 | Windows workspace | `cargo test --workspace --locked --no-fail-fast`, with the `windows-msvc` CI environment | 9,459 passed, 0 failed, 20 ignored |
