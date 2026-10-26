@@ -123,11 +123,17 @@ fn retained_font_units_refresh_after_shared_font_registration() {
     assert_eq!(element.computed_style().unwrap().width, before.width);
 }
 
-// These bounds are independently repeated pinned Chromium observations from
-// native-general-font-chromium-v3824. The fixed-width float neighbor also
-// checks that text rounding does not inflate unrelated atomic contents.
-// Windows values are pinned Windows Chrome-for-Testing observations in
-// docs/progress/evidence/windows-text-oracle-v1.json. DirectWrite keeps Ahem's integer advance.
+// The aliased raster configuration models Chromium text whose Fontconfig
+// disables antialiasing: Linux Chromium then resolves full hinting and
+// rounds each HarfBuzz advance to a whole pixel, so nine 16px Ahem glyphs
+// span exactly 144px (docs/progress/aliased-text-whole-pixel-advances-2026-10-25.md).
+// The earlier pinned observation of 144.015625 (native-general-font-chromium-v3824)
+// loaded Ahem through @font-face, which Blink renders with the default
+// antialiased style instead. Windows values are pinned Windows
+// Chrome-for-Testing observations in
+// docs/progress/evidence/windows-text-oracle-v1.json. The fixed-width float
+// neighbor also checks that text rounding does not inflate unrelated atomic
+// contents.
 #[test]
 fn atomic_intrinsic_text_keeps_chromium_fraction_after_native_font_alias_change() {
     for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
@@ -168,12 +174,7 @@ fn atomic_intrinsic_text_keeps_chromium_fraction_after_native_font_alias_change(
         );
         assert_eq!(
             (owned.x, owned.y, owned.width, owned.height),
-            (
-                10.0,
-                487.0,
-                if cfg!(windows) { 144.0 } else { 144.015625 },
-                16.0
-            ),
+            (10.0, 487.0, 144.0, 16.0),
             "word at {scale}"
         );
         let float_container = Element::create(&document, "div").unwrap();

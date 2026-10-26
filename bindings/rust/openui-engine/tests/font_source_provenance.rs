@@ -431,12 +431,10 @@ fn actual_source_and_shaping_settings_distinguish_metric_positioning() {
         assert_eq!(applied.device_scale_factor().to_bits(), 1.25_f64.to_bits());
         assert!(!snapshot.subpixel());
         assert!(!snapshot.linear_metrics());
-        // Linux Blink force-enables subpixel shaping metrics unless the
-        // hinting is full; Windows Blink shapes with its aliased paint font.
-        assert_eq!(
-            applied.shaping_font().subpixel(),
-            !full_hinting && !windows_chromium()
-        );
+        // Linux Chromium resolves full hinting for aliased text, so Blink
+        // does not force subpixel shaping metrics; Windows Blink shapes with
+        // its aliased paint font.
+        assert!(!applied.shaping_font().subpixel());
         assert!(!applied.shaping_font().linear_metrics());
         assert_eq!(applied.shaping_font().hinting(), actual.hinting());
         assert!(applied.query_result().is_none());
