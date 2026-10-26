@@ -1,0 +1,145 @@
+{
+ "base_commit": "806adda38a88110080fce47c45ddab4be0920290",
+ "base_exact": 22035,
+ "chromium_identical": 23728,
+ "comparisons": 23728,
+ "errors": [],
+ "gains": [
+  {
+   "base": "different",
+   "base_mismatched": 15625,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/intrinsic-percent-replaced-029.tentative",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 15625,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/intrinsic-percent-replaced-030.tentative",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 22500,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/intrinsic-percent-replaced-029.tentative",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 22500,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/intrinsic-percent-replaced-030.tentative",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 10000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/intrinsic-percent-replaced-029.tentative",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 10000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/intrinsic-percent-replaced-030.tentative",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 40000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/intrinsic-percent-replaced-029.tentative",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 40000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/intrinsic-percent-replaced-030.tentative",
+   "profile": "mobile-375x667@2"
+  }
+ ],
+ "head_commit": "392e3d52dd18671cd70e1bccb4c87e46f69ec14b",
+ "head_exact": 22057,
+ "improved": [],
+ "losses": [],
+ "note": "Base is the flex-row-break-propagation census (806adda3), which predates PR 33. The 14 gains and 2 improvements from PR 33's anonymous-cell table painting (listed in anonymous-cell-part-background-census-v1.json) are removed from these lists; base_exact and head_exact are the raw run totals.",
+ "openui_changed": [
+  {
+   "base": "different",
+   "base_mismatched": 15625,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/intrinsic-percent-replaced-029.tentative",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 15625,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/intrinsic-percent-replaced-030.tentative",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 22500,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/intrinsic-percent-replaced-029.tentative",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 22500,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/intrinsic-percent-replaced-030.tentative",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 10000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/intrinsic-percent-replaced-029.tentative",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 10000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/intrinsic-percent-replaced-030.tentative",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 40000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/intrinsic-percent-replaced-029.tentative",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 40000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/intrinsic-percent-replaced-030.tentative",
+   "profile": "mobile-375x667@2"
+  }
+ ],
+ "worsened": []
+}
