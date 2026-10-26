@@ -1,5 +1,13 @@
 # Open UI current status
 
+## Orthogonal atomic inline min-content 26 October 2026
+
+An orthogonal atomic inline now contributes its block size to its container's
+min-content inline size as well as its max-content. A `min-content` container
+had collapsed an orthogonal canvas with a percentage block size. The census
+gains 8 comparisons with no losses. See the
+[orthogonal min-content record](orthogonal-atomic-min-content-2026-10-26.md).
+
 ## Flex row break propagation 26 October 2026
 
 A single-line row flex container now joins its items' break-before and

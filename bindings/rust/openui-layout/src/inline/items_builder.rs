@@ -1692,9 +1692,10 @@ impl<'a> InlineItemsBuilder<'a> {
                 // flex row shrink below the sum of its definite item widths.
                 flex_intrinsic_min.unwrap_or(0.0)
             } else if is_orthogonal {
-                // Preserve orthogonal atomic paths' established completed-
-                // fragment measure and zero min-content fallback.
-                0.0
+                // An orthogonal box contributes its block size, measured as
+                // the completed fragment above, to both intrinsic endpoints
+                // (Blink `ComputeMinAndMaxContentContribution`).
+                max
             } else {
                 let sizes = crate::intrinsic_sizing::compute_logical_intrinsic_inline_sizes(
                     self.doc, node_id,
