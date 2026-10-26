@@ -38,6 +38,8 @@ is the part Blink's source determines.
 | --- | --- | --- |
 | On Linux Chromium backends, aliased text shapes with a non-subpixel font, so HarfBuzz advances round to whole pixels; the paint strike keeps its configured raster hinting | `openui-text` | `font/platform.rs` `with_source_configuration` |
 | The shaping-font unit test expects no forced subpixel positioning for aliased configurations | `openui-text` | same file, tests |
+| `atomic_intrinsic_text_keeps_chromium_fraction_after_native_font_alias_change` expects 144px for nine 16px aliased Ahem glyphs on every platform. Its earlier 144.015625 was a Chromium observation of an `@font-face` Ahem, which Blink renders with the default antialiased style rather than the aliased Fontconfig rule this configuration models | `openui` | `tests/native_font_units.rs` |
+| `actual_source_and_shaping_settings_distinguish_metric_positioning` expects no forced subpixel shaping font for aliased text | `openui-engine` | `tests/font_source_provenance.rs` |
 
 Windows text is unchanged (its shaping already uses the paint font).
 
@@ -77,4 +79,5 @@ small amounts.
 | --- | --- | --- |
 | Paired expanded census | `build_renderer.py`; `run_renderer_matrix.py --suite expanded --jobs 16` | 21,750 to 21,984 exact; 239 gains, 5 losses |
 | Linux unit tests, WSL | `cargo test --locked -p openui-text -p openui-layout -p openui-paint --lib` | 346, 749 and 252 pass |
+| Linux font tests, WSL | `cargo test --locked -p openui --test native_font_units -p openui-engine --test font_source_provenance` | 3 and 8 pass |
 | Windows workspace | `cargo test --workspace --locked --no-fail-fast` | 9,459 passed, 0 failed, 20 ignored |
