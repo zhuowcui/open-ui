@@ -1,5 +1,13 @@
 # Open UI current status
 
+## Atomic inline min and max in intrinsic sizing 26 October 2026
+
+An atomic inline's contribution to its container's intrinsic inline size is
+now bounded by its own fixed min and max inline sizes. A shrink-to-fit wrapper
+had ignored `min-width` on a `width: min-content` child. The census goes from
+22,057 to 22,061 exact with no losses. See the
+[atomic inline clamp record](atomic-inline-min-max-clamp-2026-10-26.md).
+
 ## Orthogonal atomic inline min-content 26 October 2026
 
 An orthogonal atomic inline now contributes its block size to its container's
