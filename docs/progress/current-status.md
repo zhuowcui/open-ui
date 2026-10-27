@@ -1,5 +1,14 @@
 # Open UI current status
 
+## Abspos in a stacked nested multicol row 27 October 2026
+
+An abspos box laid out in a later row of an auto-height nested multicol now
+resumes in the outer slice that shows that row, as Chrome 147 paints it.
+Open UI had left it in the first slice, clipped. The census goes from 22,093
+to 22,097 exact with no losses. The fixed-position `-037` to `-039` cases on
+the same path remain open. See the
+[stacked nested row record](nested-multicol-stacked-abspos-2026-10-27.md).
+
 ## Overflow columns after a forced column flex break 27 October 2026
 
 A balanced multicol with a definite height now creates overflow columns for
