@@ -33539,6 +33539,7 @@ fn layout_multicol(
                                         || col_idx + 1 < resolved.count as usize;
                                 let forced_column_flex_has_next_declared_column =
                                     !(algo.column_fill != ColumnFill::Auto
+                                        && !has_explicit_height
                                         && child_style.display == Display::Flex
                                         && child_style.flex_direction.is_column()
                                         && subtree_has_forced_break_descendant(doc, child_node_id))

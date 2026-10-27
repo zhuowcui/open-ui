@@ -1,0 +1,53 @@
+{
+ "chromium": "147.0.7727.50",
+ "command": "python tools/qualification/probe_column_flex_balanced_overflow.py",
+ "measure": "client rects [x, y, width, height] of the 300px third column flex item, multicol at (0, 0)",
+ "results": {
+  "height-100": [
+   [
+    25,
+    50,
+    25,
+    50
+   ],
+   [
+    50,
+    0,
+    25,
+    100
+   ],
+   [
+    75,
+    0,
+    25,
+    100
+   ],
+   [
+    100,
+    0,
+    25,
+    50
+   ]
+  ],
+  "height-auto": [
+   [
+    25,
+    50,
+    25,
+    66.671875
+   ],
+   [
+    50,
+    0,
+    25,
+    116.671875
+   ],
+   [
+    75,
+    0,
+    25,
+    116.65625
+   ]
+  ]
+ }
+}

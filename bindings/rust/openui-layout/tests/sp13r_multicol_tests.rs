@@ -4892,6 +4892,67 @@ fn ordinary_spanner_wrapper_materializes_leaf_source_slices() {
     assert!(column_fragments.len() >= 2);
 }
 
+/// Lays out `flexbox_single-line-column-flex-fragmentation-018`'s content: a
+/// four-column balanced multicol, 100px square, holding a 25px column
+/// flexbox whose items are 50, 50 and 300px tall, with `break-before: column`
+/// on the second. Returns the multicol fragment and the flex and third item
+/// ids.
+fn forced_break_column_flex_in_balanced_multicol() -> (Fragment, NodeId, NodeId) {
+    let mut doc = Document::new();
+    let multicol = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(multicol, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+        style.update_derived(|computed| computed.width = Length::px(100.0));
+        style.update_derived(|computed| computed.height = Length::px(100.0));
+        style.update_derived(|computed| computed.column_count = Some(4));
+        style.update_derived(|computed| computed.column_gap = Some(Length::px(0.0)));
+    });
+    doc.append_child(doc.root(), multicol);
+    let flex = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(flex, |style| style.display = Display::Flex);
+    doc.update_resolved_style(flex, |style| style.flex_direction = FlexDirection::Column);
+    doc.update_resolved_style(flex, |style| style.width = Length::px(25.0));
+    doc.append_child(multicol, flex);
+    for (index, item_height) in [50.0, 50.0, 300.0].into_iter().enumerate() {
+        let item = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(item, |style| style.height = Length::px(item_height));
+        if index == 1 {
+            doc.update_resolved_style(item, |style| style.break_before = BreakValue::Column);
+        }
+        doc.append_child(flex, item);
+    }
+    let third = doc.children(flex).nth(2).expect("third item");
+    let space = ConstraintSpace::for_block_child(lu(100), lu(600), lu(100), lu(600), false);
+    (block_layout(&doc, multicol, &space), flex, third)
+}
+
+#[test]
+fn forced_column_flex_break_in_definite_balanced_multicol_creates_overflow_column() {
+    // The forced break moves the 300px third item to 150..450 in the flex's
+    // fragmented flow. Chrome 147 gives it a last fragment (100, 0, 25, 50) in
+    // a fifth, overflow column (`probe_column_flex_balanced_overflow.py`).
+    let (fragment, flex, third) = forced_break_column_flex_in_balanced_multicol();
+    let columns: Vec<&Fragment> = fragment
+        .children
+        .iter()
+        .filter(|child| child.kind == FragmentKind::ColumnBox)
+        .collect();
+    assert_eq!(columns.len(), 5);
+    assert_eq!(columns[4].offset.left, lu(100));
+    let item = columns[4]
+        .children
+        .iter()
+        .find(|child| child.node_id == flex)
+        .and_then(|flex_fragment| {
+            flex_fragment
+                .children
+                .iter()
+                .find(|child| child.node_id == third)
+        })
+        .expect("third item in the overflow column");
+    assert_eq!(item.offset.top + item.size.height, lu(50));
+}
+
 #[test]
 fn avoided_column_flex_break_keeps_last_item_height_in_overflow_column() {
     // The avoided break moves the second and third items 50px down, so the
