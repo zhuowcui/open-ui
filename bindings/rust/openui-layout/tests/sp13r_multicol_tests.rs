@@ -4996,3 +4996,96 @@ fn avoided_column_flex_break_keeps_last_item_height_in_overflow_column() {
         .expect("third item");
     assert_eq!(item.offset.top + item.size.height, lu(50));
 }
+
+#[test]
+fn abspos_in_stacked_nested_multicol_row_resumes_in_the_ancestor_continuation() {
+    // `out-of-flow-in-multicolumn-016`: an auto-height two-column multicol
+    // nested in a 100px tall one stacks a second column row for the outer
+    // multicol's second column. The 200px abspos box inside that row's
+    // relative box must be painted there, not left in the first slice.
+    let mut doc = Document::new();
+    let multicol = |doc: &mut Document, width: f32, height: Option<f32>| {
+        let node = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(node, |style| {
+            style.update_derived(|computed| computed.display = Display::Block);
+            style.update_derived(|computed| computed.width = Length::px(width));
+            if let Some(height) = height {
+                style.update_derived(|computed| computed.height = Length::px(height));
+            }
+            style.update_derived(|computed| computed.column_count = Some(2));
+            style.update_derived(|computed| computed.column_gap = Some(Length::px(0.0)));
+            style.update_derived(|computed| computed.column_fill = ColumnFill::Auto);
+        });
+        node
+    };
+    let block = |doc: &mut Document, height: f32| {
+        let node = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(node, |style| {
+            style.update_derived(|computed| computed.display = Display::Block);
+            style.update_derived(|computed| computed.height = Length::px(height));
+        });
+        node
+    };
+    let outer = multicol(&mut doc, 300.0, Some(100.0));
+    doc.append_child(doc.root(), outer);
+    let inner = multicol(&mut doc, 100.0, None);
+    doc.update_resolved_style(inner, |style| {
+        style.update_derived(|computed| computed.position = Position::Relative);
+        style.update_derived(|computed| computed.left = Length::px(-150.0));
+    });
+    doc.append_child(outer, inner);
+    let spacer = block(&mut doc, 200.0);
+    doc.append_child(inner, spacer);
+    let relative = block(&mut doc, 200.0);
+    doc.update_resolved_style(relative, |style| {
+        style.update_derived(|computed| computed.position = Position::Relative);
+    });
+    doc.append_child(inner, relative);
+    let abspos = block(&mut doc, 200.0);
+    doc.update_resolved_style(abspos, |style| {
+        style.update_derived(|computed| computed.position = Position::Absolute);
+        style.update_derived(|computed| computed.width = Length::px(50.0));
+        style.update_derived(|computed| computed.top = Length::px(0.0));
+    });
+    doc.append_child(relative, abspos);
+
+    let space = ConstraintSpace::for_block_child(lu(300), lu(600), lu(300), lu(600), false);
+    let fragment = block_layout(&doc, outer, &space);
+    let inner_slices: Vec<&Fragment> = fragment
+        .children
+        .iter()
+        .filter(|child| child.kind == FragmentKind::ColumnBox)
+        .map(|column| {
+            column
+                .children
+                .iter()
+                .find(|child| child.node_id == inner)
+                .expect("inner multicol slice")
+        })
+        .collect();
+    assert_eq!(inner_slices.len(), 2);
+    assert!(inner_slices[0]
+        .children
+        .iter()
+        .all(|child| child.node_id != abspos));
+    let resumed = inner_slices[1];
+    assert!(resumed
+        .children
+        .iter()
+        .filter(|child| child.kind == FragmentKind::ColumnBox)
+        .all(|column| column.offset.top == lu(0)));
+    let mut abspos_rects: Vec<(i32, i32, i32)> = resumed
+        .children
+        .iter()
+        .filter(|child| child.node_id == abspos)
+        .map(|child| {
+            (
+                child.offset.left.to_i32(),
+                child.offset.top.to_i32(),
+                child.size.height.to_i32(),
+            )
+        })
+        .collect();
+    abspos_rects.sort_unstable();
+    assert_eq!(abspos_rects, vec![(0, 0, 100), (50, 0, 100)]);
+}
