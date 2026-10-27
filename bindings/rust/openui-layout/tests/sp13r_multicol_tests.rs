@@ -2328,24 +2328,26 @@ fn forced_column_flex_break_splits_crossing_parallel_item() {
         multicol,
         &ConstraintSpace::for_block_child(lu(100), lu(600), lu(100), lu(600), false),
     );
+    // Blink keeps a forced break in its own column-flex line
+    // (`FlexLine::item_offset_adjustment`). The parallel line's 100px item
+    // fills the first column whole, as Chrome paints
+    // `flexbox_multi-line-column-flex-fragmentation-021`.
     let column_fragments = columns(&fragment);
     assert_eq!(column_fragments.len(), 5);
-    let first = find_node(column_fragments[0], crossing).expect("leading item fragment");
+    let first = find_node(column_fragments[0], crossing).expect("parallel item fragment");
     assert_eq!(first.offset.top, lu(0));
     assert_eq!(first.size.height, lu(100));
+    assert!(first.is_last_for_node);
     let second_flex = find_node(column_fragments[1], flex).expect("second flex continuation");
-    let second = second_flex
+    assert!(second_flex
         .children
         .iter()
-        .find(|child| {
-            child.node_id == crossing && child.offset.top == lu(0) && child.size.height == lu(50)
-        })
-        .expect("continued item fragment");
-    assert!(!second.is_first_for_node);
+        .filter(|child| child.node_id == crossing)
+        .all(|child| child.offset.top + child.size.height <= lu(0)));
 }
 
 #[test]
-fn forced_column_flex_item_after_full_start_margin_fills_next_fragment() {
+fn forced_column_flex_item_after_full_start_margin_moves_past_next_fragment() {
     let mut doc = Document::new();
     let multicol = doc.create_node(ElementTag::Div);
     doc.update_resolved_style(multicol, |style| {
@@ -2377,12 +2379,16 @@ fn forced_column_flex_item_after_full_start_margin_fills_next_fragment() {
         multicol,
         &ConstraintSpace::for_block_child(lu(60), lu(600), lu(60), lu(600), false),
     );
+    // The item's offset gives it container separation, so its forced break
+    // is taken at the line start and its margin is kept in the next column
+    // (Blink `FlexLayoutAlgorithm`), as Chrome paints the second line of
+    // `flexbox_multi-line-column-flex-fragmentation-039`.
     let column_fragments = columns(&fragment);
     assert_eq!(column_fragments.len(), 3);
-    let second_flex = find_node(column_fragments[1], flex).expect("second flex continuation");
-    let forced = find_node(second_flex, item).expect("forced item fragment");
+    let third_flex = find_node(column_fragments[2], flex).expect("third flex continuation");
+    let forced = find_node(third_flex, item).expect("forced item fragment");
     assert_eq!(forced.offset.top, lu(0));
-    assert_eq!(forced.size.height, lu(150));
+    assert_eq!(forced.size.height, lu(50));
 }
 
 #[test]

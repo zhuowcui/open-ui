@@ -13245,12 +13245,21 @@ fn apply_column_flex_fragmentation_breaks(
         }
     }
 
-    // A forced break in one parallel flex line establishes a fragmentainer
-    // boundary for the entire flex container.  Apply the resulting gap at
-    // the same main-axis coordinate in every line; otherwise the line that
-    // did not carry the declaration is sliced one fragment too early and
-    // leaves a hole beside the forced line.
-    let mut forced_points_by_line: Vec<(i32, Vec<i32>)> = Vec::new();
+    // Blink lays column-flex lines out as parallel flows and keeps an offset
+    // adjustment per line (`FlexLine::item_offset_adjustment`). A forced break
+    // before an item moves the rest of that line to the next fragmentainer,
+    // measured from where the line's earlier content ended, and keeps the
+    // item's own margin. The first item of a line at the line start has no
+    // container separation, so its forced break instead joins the container's
+    // break-before and moves every line (`row_break_between_outputs`).
+    struct LineForcedPoints {
+        key: i32,
+        content_end: LayoutUnit,
+        has_item: bool,
+        points: Vec<(i32, bool)>,
+    }
+    let mut forced_lines: Vec<LineForcedPoints> = Vec::new();
+    let mut container_forced_break = false;
     for child in &fragment.children {
         if child.node_id.is_none() {
             continue;
@@ -13260,43 +13269,88 @@ fn apply_column_flex_fragmentation_breaks(
             continue;
         }
         let line_key = child.offset.left.raw();
-        let line_index = forced_points_by_line
+        let line_index = forced_lines
             .iter()
-            .position(|(key, _)| *key == line_key)
+            .position(|line| line.key == line_key)
             .unwrap_or_else(|| {
-                forced_points_by_line.push((line_key, Vec::new()));
-                forced_points_by_line.len() - 1
+                forced_lines.push(LineForcedPoints {
+                    key: line_key,
+                    content_end: LayoutUnit::zero(),
+                    has_item: false,
+                    points: Vec::new(),
+                });
+                forced_lines.len() - 1
             });
-        let forced_points = &mut forced_points_by_line[line_index].1;
+        let line = &mut forced_lines[line_index];
+        let margins = resolve_margins_in_parent_axes(
+            child_style,
+            fragment.size.width,
+            flex_writing_direction,
+        );
         if propagated_break_before(doc, child.node_id).is_forced() {
-            forced_points.push(child.offset.top.raw());
+            if !line.has_item && child.offset.top <= LayoutUnit::zero() {
+                container_forced_break = true;
+            } else if margins.top < LayoutUnit::zero() {
+                // The negative-margin pass above already anchored this item
+                // at its forced fragmentainer boundary.
+                line.points.push((child.offset.top.raw(), false));
+            } else {
+                line.points.push((
+                    line.content_end.raw(),
+                    line.content_end == LayoutUnit::zero(),
+                ));
+            }
         }
+        let child_bottom = child.offset.top + child.size.height;
         if propagated_break_after(doc, child.node_id).is_forced() {
-            forced_points.push((child.offset.top + child.size.height).raw());
+            line.points.push((child_bottom.raw(), false));
         }
+        line.content_end = child_bottom + margins.bottom;
+        line.has_item = true;
     }
 
-    let line_keys: Vec<i32> = forced_points_by_line.iter().map(|(key, _)| *key).collect();
-    let mut forced_points: Vec<i32> = forced_points_by_line
-        .into_iter()
-        .flat_map(|(_, points)| points)
-        .collect();
-    forced_points.sort_unstable();
-    forced_points.dedup();
     let mut forced_gaps = Vec::new();
-    let mut cumulative_forced_shift = LayoutUnit::zero();
-    for point in forced_points {
-        let adjusted_global =
-            container_block_start + LayoutUnit::from_raw(point) + cumulative_forced_shift;
-        let remainder = adjusted_global
+    let mut container_shift = LayoutUnit::zero();
+    if container_forced_break {
+        let remainder = container_block_start
             .raw()
             .rem_euclid(fragmentainer_block_size.raw());
         if remainder != 0 {
-            let gap = LayoutUnit::from_raw(fragmentainer_block_size.raw() - remainder);
-            for line_key in &line_keys {
-                forced_gaps.push((*line_key, point, gap));
+            container_shift = LayoutUnit::from_raw(fragmentainer_block_size.raw() - remainder);
+            for line in &forced_lines {
+                forced_gaps.push((line.key, 0, container_shift));
             }
-            cumulative_forced_shift = cumulative_forced_shift + gap;
+        }
+    }
+    for line in forced_lines {
+        let mut points = line.points;
+        points.sort_unstable();
+        points.dedup_by(|later, earlier| {
+            if later.0 == earlier.0 {
+                earlier.1 |= later.1;
+                true
+            } else {
+                false
+            }
+        });
+        let mut cumulative_forced_shift = container_shift;
+        for (point, at_line_start) in points {
+            let adjusted_global =
+                container_block_start + LayoutUnit::from_raw(point) + cumulative_forced_shift;
+            let remainder = adjusted_global
+                .raw()
+                .rem_euclid(fragmentainer_block_size.raw());
+            let gap = if remainder != 0 {
+                LayoutUnit::from_raw(fragmentainer_block_size.raw() - remainder)
+            } else if at_line_start {
+                fragmentainer_block_size
+            } else {
+                LayoutUnit::zero()
+            };
+            if gap > LayoutUnit::zero() {
+                forced_gaps.push((line.key, point, gap));
+                cumulative_forced_shift = cumulative_forced_shift + gap;
+            }
         }
     }
 
@@ -13471,24 +13525,8 @@ fn apply_column_flex_fragmentation_breaks(
         let global_top = container_block_start + adjusted_top;
         let remainder = global_top.raw().rem_euclid(fragmentainer_block_size.raw());
 
-        // When a positive start margin places a forced-break item exactly on
-        // a fragmentainer boundary, the margin has already consumed the
-        // preceding fragmentainer. The item's decoration fills the following
-        // forced fragment instead of inserting another shared line gap.
-        let forced_point_already_inserted_gap = forced_gaps
-            .iter()
-            .any(|(gap_line, point, _)| *gap_line == line_key && *point == original_top.raw());
         let child_margins =
             resolve_margins_in_parent_axes(child_style, flex_inline_size, flex_writing_direction);
-        let margin_top = child_margins.top;
-        if child_style.break_before.is_forced()
-            && !forced_point_already_inserted_gap
-            && remainder == 0
-            && margin_top > LayoutUnit::zero()
-        {
-            child.size.height = child.size.height + fragmentainer_block_size;
-            inserted_break_space = true;
-        }
 
         // If an avoided item begins partway through a fragmentainer and
         // crosses its end, start it in the next one when it can fit there.
