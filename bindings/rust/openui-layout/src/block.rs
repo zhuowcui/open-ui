@@ -17297,16 +17297,41 @@ fn resume_nested_multicol_positioned_row(fragment: &mut Fragment, source_block_o
         .min()
         .unwrap_or(0);
     let first_logical_row = first_logical_index / declared_columns;
-    let source_row_offset = if first_logical_index == 0 {
+    let (source_row_offset, stacked_block_shift) = if first_logical_index == 0 {
         // When positioned flow starts within a later normal-flow row, source
         // offsets are already local to that row. Resume them at the ancestor
-        // slice containing the first logical continuation.
-        first_sequence_index / declared_columns
+        // slice containing the first logical continuation. An auto-height
+        // nested multicol stacks its rows and restarts the logical indices in
+        // each, so the continuations' untranslated block offset gives the row
+        // they were laid out in.
+        let stacked_row = fragment
+            .children
+            .iter()
+            .filter_map(|child| {
+                let positioned = child.positioned_fragmentation?;
+                child.decoration_slice?;
+                let flow_top = child.offset.top
+                    - positioned.visual_offset.top
+                    - positioned.continuation_visual_offset.top;
+                Some((flow_top.raw() / geometry.fragmentainer_block_size.raw()).max(0) as usize)
+            })
+            .min()
+            .unwrap_or(0);
+        let sequence_row = first_sequence_index / declared_columns;
+        if stacked_row > sequence_row {
+            // The stacked row is resumed at the ancestor slice's block-start.
+            (
+                stacked_row,
+                geometry.fragmentainer_block_size * stacked_row as i32,
+            )
+        } else {
+            (sequence_row, LayoutUnit::zero())
+        }
     } else {
         // Compact continuation offsets begin at zero even when authored
         // insets place the first positioned slice in a later logical row.
         // Anchor that compact row to the same ancestor source row.
-        first_logical_row
+        (first_logical_row, LayoutUnit::zero())
     };
     let Some(target_row) = target_row.checked_sub(source_row_offset) else {
         fragment.children.retain(|child| {
@@ -17333,6 +17358,7 @@ fn resume_nested_multicol_positioned_row(fragment: &mut Fragment, source_block_o
         }
         child.offset.left =
             child.offset.left - geometry.column_inline_stride * retained_logical_start as i32;
+        child.offset.top = child.offset.top - stacked_block_shift;
         true
     });
 }
@@ -32258,6 +32284,32 @@ fn layout_multicol(
                                         &mut part,
                                         content_consumed,
                                     );
+                                }
+                            }
+                            if has_positioned_continuation_rows
+                                && content_consumed > LayoutUnit::zero()
+                            {
+                                // An auto-height nested multicol stacks the
+                                // column rows it creates for each ancestor
+                                // fragmentainer. The positioned path does not
+                                // shift this slice's content, so move a row
+                                // that starts at or below the consumed offset
+                                // to the slice's block-start.
+                                let row_top = part
+                                    .children
+                                    .iter()
+                                    .filter(|c| c.kind == FragmentKind::ColumnBox)
+                                    .map(|c| c.offset.top)
+                                    .min();
+                                if row_top.is_some_and(|top| top >= content_consumed) {
+                                    for c in &mut part.children {
+                                        if matches!(
+                                            c.kind,
+                                            FragmentKind::ColumnBox | FragmentKind::ColumnRule
+                                        ) {
+                                            c.offset.top = c.offset.top - content_consumed;
+                                        }
+                                    }
                                 }
                             }
                             // Shift child content up by the amount already consumed.
