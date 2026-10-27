@@ -1065,7 +1065,7 @@ fn following_box_uses_space_after_a_fragmented_overflow_box() {
 }
 
 #[test]
-fn static_inline_position_after_full_columns_starts_in_overflow_column() {
+fn static_inline_position_after_full_columns_stays_in_last_column() {
     let mut doc = Document::new();
     let multicol = doc.create_node(ElementTag::Div);
     doc.update_resolved_style(multicol, |style| {
@@ -1102,7 +1102,10 @@ fn static_inline_position_after_full_columns_starts_in_overflow_column() {
         .iter()
         .find(|child| child.node_id == abspos)
         .expect("out-of-flow fragment");
-    assert_eq!(positioned.offset.left, lu(100));
+    // The hypothetical box sits at the block-end of the fourth column, before
+    // any overflow column. Chrome 147 paints this `top: 0` box at x 75.
+    assert_eq!(positioned.offset.left, lu(75));
+    assert_eq!(positioned.offset.top, lu(0));
 }
 
 #[test]

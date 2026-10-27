@@ -33743,14 +33743,11 @@ fn layout_multicol(
                                     if logical_end > LayoutUnit::zero()
                                         && logical_end.raw().rem_euclid(column_height.raw()) == 0
                                     {
-                                        if oof_style.position == Position::Absolute
-                                            && oof_style.top.is_auto()
-                                        {
-                                            // An absolute box's static block
-                                            // position has backward affinity at
-                                            // the exact end edge of a fragmented
-                                            // flex box. Explicit block-start
-                                            // insets do not use this static edge.
+                                        if oof_style.position == Position::Absolute {
+                                            // An absolute box's static position
+                                            // has backward affinity at the exact
+                                            // end edge of a fragmented flex box,
+                                            // whatever its insets.
                                             (quotient.saturating_sub(1), column_height)
                                         } else {
                                             // Other static positions at an
@@ -33766,14 +33763,14 @@ fn layout_multicol(
                                 };
                                 (child_start_col_idx + column_delta, block_offset)
                             });
-                        // A bottom-aligned abspos belongs to the fragment that
-                        // owns the preceding block-end edge. Other static
-                        // positions at that exact edge start in the following
-                        // (possibly overflow) column.
+                        // An abspos at the exact block-end edge of a column
+                        // belongs to that column, even when following content
+                        // starts in the next one: Blink lays the hypothetical
+                        // box out before the break. Chrome 147 places such a
+                        // box at the column end with `top` auto and keeps its
+                        // inline position with `top` or `bottom` set.
                         let block_end_owned_by_previous_column = oof_style.position
                             == Position::Absolute
-                            && oof_style.top.is_auto()
-                            && !oof_style.bottom.is_auto()
                             && col_block_offset == column_height;
                         let viewport_fixed_static_at_column_end = oof_style.position
                             == Position::Fixed
@@ -35603,19 +35600,6 @@ fn layout_multicol(
                                 .is_avoid()
                         }))
             });
-        let has_nowrap_row_flex_child_with_trailing_margin_and_following_child =
-            children_info.iter().enumerate().any(|(idx, info)| {
-                let child_style = &doc.node(info.id).style;
-                child_style.display == Display::Flex
-                    && !child_style.flex_direction.is_column()
-                    && child_style.flex_wrap == openui_style::FlexWrap::Nowrap
-                    && idx + 1 < children_info.len()
-                    && doc.children(info.id).any(|gc| {
-                        resolve_margin_or_padding(&doc.node(gc).style.margin_bottom, column_width)
-                            .raw()
-                            > 0
-                    })
-            });
         let direct_oof_static_position = |child_style: &ComputedStyle,
                                           static_pos: PhysicalOffset|
          -> PhysicalOffset {
@@ -35670,9 +35654,6 @@ fn layout_multicol(
                         );
                     }
                     return static_pos;
-                }
-                if has_nowrap_row_flex_child_with_trailing_margin_and_following_child {
-                    return PhysicalOffset::new(content_edge_x, static_pos.top);
                 }
             }
             static_pos
