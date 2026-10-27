@@ -27186,6 +27186,17 @@ fn layout_multicol(
                 } else {
                     child_height
                 };
+                let column_flex_first_item_top = |fragment: &Fragment| {
+                    fragment
+                        .children
+                        .iter()
+                        .filter(|item| {
+                            !item.node_id.is_none() && !doc.node(item.node_id).style.is_out_of_flow()
+                        })
+                        .map(|item| item.offset.top)
+                        .min()
+                };
+                let column_flex_first_item_top_before = column_flex_first_item_top(&child_frag);
                 let column_flex_break_visual_height = if child_style.display == Display::Flex
                     && child_style.flex_direction.is_column()
                     && column_height > LayoutUnit::zero()
@@ -27239,6 +27250,25 @@ fn layout_multicol(
                 };
                 let column_flex_break_extension =
                     (column_flex_break_visual_height - child_height).clamp_negative_to_zero();
+                // When the break pass moves every line, as a forced break
+                // before a line's first item does, Blink breaks before the
+                // flexbox itself (`row_break_between_outputs`). A definite
+                // flexbox then starts, and ends, that much later.
+                let column_flex_leading_break_shift = if child_style.display == Display::Flex
+                    && child_style.flex_direction.is_column()
+                {
+                    match (
+                        column_flex_first_item_top_before,
+                        column_flex_first_item_top(&child_frag),
+                    ) {
+                        (Some(before), Some(after)) => {
+                            (after - before).clamp_negative_to_zero().min_of(column_flex_break_extension)
+                        }
+                        _ => LayoutUnit::zero(),
+                    }
+                } else {
+                    LayoutUnit::zero()
+                };
                 // A row flexbox whose item border boxes all end inside its
                 // first fragmentainer finishes there: only trailing item
                 // margin crosses the fragmentainer end, and Blink truncates
@@ -33583,8 +33613,12 @@ fn layout_multicol(
                         {
                             // Forced/avoided breaks change the fixed flexbox's
                             // fragmented ink, not the static flow position of
-                            // its following sibling.
-                            let logical_end = child_start_block_offset + pos_margin + child_height;
+                            // its following sibling, except for a break before
+                            // the flexbox itself.
+                            let logical_end = child_start_block_offset
+                                + pos_margin
+                                + column_flex_leading_break_shift
+                                + child_height;
                             let column_delta =
                                 (logical_end.raw() / column_height.raw()).max(0) as usize;
                             col_idx = child_start_col_idx + column_delta;
@@ -33810,7 +33844,7 @@ fn layout_multicol(
                                     + if child_style.height.is_auto() {
                                         column_flex_break_extension
                                     } else {
-                                        LayoutUnit::zero()
+                                        column_flex_leading_break_shift
                                     };
                                 if row_flex_finishes_in_first_fragmentainer {
                                     // The static position is the flexbox's

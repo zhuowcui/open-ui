@@ -2326,7 +2326,13 @@ fn avoided_column_flex_items_resume_from_shared_break_offsets() {
 }
 
 #[test]
-fn forced_column_flex_break_extends_ink_but_not_fixed_static_flow() {
+fn forced_break_before_column_flex_line_start_moves_definite_flexbox() {
+    // The second line's first item has `break-before: column`, which Blink
+    // joins into the flexbox's own break-before. The 350px flexbox moves from
+    // 50px into the first column to the second column, so the following block
+    // starts 50px into the fifth column. Chrome 147 places it at (80, 50), with
+    // or without `break-before: avoid` on the first item
+    // (`flexbox_multi-line-column-flex-fragmentation-025`).
     let mut doc = Document::new();
     let multicol = doc.create_node(ElementTag::Div);
     doc.update_resolved_style(multicol, |style| {
@@ -2387,7 +2393,7 @@ fn forced_column_flex_break_extends_ink_but_not_fixed_static_flow() {
         lu(0)
     );
     let following = find_node(column_fragments[4], after).expect("following block");
-    assert_eq!(following.offset.top, lu(0));
+    assert_eq!(following.offset.top, lu(50));
 }
 
 #[test]
@@ -4926,3 +4932,4 @@ fn avoided_column_flex_break_keeps_last_item_height_in_overflow_column() {
         .expect("third item");
     assert_eq!(item.offset.top + item.size.height, lu(50));
 }
+
