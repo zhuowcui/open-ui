@@ -12733,6 +12733,9 @@ fn apply_row_flex_fragmentation_breaks(
     let mut cumulative_shift = LayoutUnit::zero();
     let mut previous_line_bottom: Option<LayoutUnit> = None;
     let mut previous_line_has_forced_descendant = false;
+    // The previous line's item indices and fragmented global block-start,
+    // and whether it was the container's first line.
+    let mut previous_line: Option<(Vec<usize>, LayoutUnit, bool)> = None;
     let mut fragmented_bottom = LayoutUnit::zero();
     for (line_top, line_bottom, indices) in lines {
         let line_height = line_bottom - line_top;
@@ -12792,6 +12795,65 @@ fn apply_row_flex_fragmentation_breaks(
                     let delta = boundary - adjusted_global_top;
                     cumulative_shift = cumulative_shift + delta;
                     adjusted_global_top = boundary;
+                }
+            }
+        }
+
+        // Blink joins the break-after of every item in the previous row with
+        // the break-before of every item in this row. When that row boundary
+        // coincides with a fragmentainer boundary and the joined value avoids
+        // a column break, the earlier boundary before the previous row is the
+        // better breakpoint (`FlexLayoutAlgorithm`, `row_break_between`).
+        if !forces_before
+            && adjusted_global_top
+                .raw()
+                .rem_euclid(fragmentainer_block_size.raw())
+                == 0
+            && previous_line_bottom == Some(adjusted_global_top)
+        {
+            if let Some((previous_indices, previous_top, previous_is_first)) = &previous_line {
+                let avoids_column = |value: BreakValue| {
+                    matches!(value, BreakValue::Avoid | BreakValue::AvoidColumn)
+                };
+                let item_ids = |line: &[usize]| {
+                    line.iter()
+                        .map(|index| fragment.children[*index].node_id)
+                        .filter(|id| !id.is_none() && !doc.node(*id).style.is_out_of_flow())
+                        .collect::<Vec<_>>()
+                };
+                let previous_ids = item_ids(previous_indices);
+                let current_ids = item_ids(&indices);
+                let any_forced = previous_ids
+                    .iter()
+                    .any(|id| propagated_break_after(doc, *id).is_forced())
+                    || current_ids
+                        .iter()
+                        .any(|id| propagated_break_before(doc, *id).is_forced());
+                let avoids_between = previous_ids
+                    .iter()
+                    .any(|id| avoids_column(propagated_break_after(doc, *id)))
+                    || current_ids
+                        .iter()
+                        .any(|id| avoids_column(propagated_break_before(doc, *id)));
+                let previous_remainder = previous_top
+                    .raw()
+                    .rem_euclid(fragmentainer_block_size.raw());
+                if !any_forced
+                    && avoids_between
+                    && !*previous_is_first
+                    && previous_remainder != 0
+                    && (adjusted_global_top - *previous_top) <= fragmentainer_block_size
+                {
+                    let delta =
+                        LayoutUnit::from_raw(fragmentainer_block_size.raw() - previous_remainder);
+                    for index in previous_indices {
+                        let child = &mut fragment.children[*index];
+                        child.offset.top = child.offset.top + delta;
+                        fragmented_bottom =
+                            fragmented_bottom.max_of(child.offset.top + child.size.height);
+                    }
+                    cumulative_shift = cumulative_shift + delta;
+                    adjusted_global_top = adjusted_global_top + delta;
                 }
             }
         }
@@ -12912,7 +12974,7 @@ fn apply_row_flex_fragmentation_breaks(
         }
         if !fragment.node_id.is_none() {
             let container_align_items = doc.node(fragment.node_id).style.align_items.position;
-            for index in indices {
+            for &index in &indices {
                 let child = &mut fragment.children[index];
                 if child.node_id.is_none() {
                     continue;
@@ -12944,6 +13006,7 @@ fn apply_row_flex_fragmentation_breaks(
         fragmented_bottom = fragmented_bottom.max_of(adjusted_bottom);
         previous_line_bottom = Some(container_block_start + adjusted_bottom);
         previous_line_has_forced_descendant = line_has_forced_descendant;
+        previous_line = Some((indices, adjusted_global_top, previous_line.is_none()));
     }
 
     // Keep auto-size decoration in the same coordinate space as the shifted
@@ -35506,12 +35569,6 @@ fn layout_multicol(
                 LayoutUnit::zero()
             }
         };
-        let has_wrapped_row_flex_child = children_info.iter().any(|info| {
-            let child_style = &doc.node(info.id).style;
-            child_style.display == Display::Flex
-                && !child_style.flex_direction.is_column()
-                && child_style.flex_wrap != openui_style::FlexWrap::Nowrap
-        });
         let has_oversized_direct_flex_child = children_info.iter().any(|info| {
             let child_style = &doc.node(info.id).style;
             child_style.display == Display::Flex
@@ -35614,22 +35671,8 @@ fn layout_multicol(
                     }
                     return static_pos;
                 }
-                if !has_wrapped_row_flex_child {
-                    if has_nowrap_row_flex_child_with_trailing_margin_and_following_child {
-                        return PhysicalOffset::new(content_edge_x, static_pos.top);
-                    }
-                    return static_pos;
-                }
-                let local_flow_top = static_pos.top - content_edge_y + top_inset;
-                if local_flow_top.raw() >= fixed_oof_fragmentainer_height.raw()
-                    && static_pos.left == content_edge_x
-                {
-                    let column_delta =
-                        (local_flow_top.raw() / fixed_oof_fragmentainer_height.raw()) as usize;
-                    return PhysicalOffset::new(
-                        static_pos.left + final_col_inline_offset_for(column_delta),
-                        static_pos.top,
-                    );
+                if has_nowrap_row_flex_child_with_trailing_margin_and_following_child {
+                    return PhysicalOffset::new(content_edge_x, static_pos.top);
                 }
             }
             static_pos
