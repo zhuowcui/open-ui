@@ -13244,6 +13244,28 @@ fn apply_column_flex_fragmentation_breaks(
             let remainder = global_pair_top
                 .raw()
                 .rem_euclid(fragmentainer_block_size.raw());
+            let global_current_top = container_block_start + current.offset.top;
+            if pair_start > 0
+                && remainder != 0
+                && global_current_top
+                    .raw()
+                    .rem_euclid(fragmentainer_block_size.raw())
+                    == 0
+                && global_current_top - global_pair_top <= fragmentainer_block_size
+            {
+                // The boundary falls on the fragmentainer edge, so the break
+                // would be taken there. Blink rejects that avoided breakpoint
+                // for the earlier one before the previous item, which then
+                // starts the next fragmentainer with the current item
+                // (`FlexLayoutAlgorithm` break appeal, Chromium 147).
+                let gap = LayoutUnit::from_raw(fragmentainer_block_size.raw() - remainder);
+                for index in &indices[pair_start..] {
+                    fragment.children[*index].offset.top =
+                        fragment.children[*index].offset.top + gap;
+                }
+                negative_forced_assignment = true;
+                continue;
+            }
             let fragmentainer_end =
                 global_pair_top - LayoutUnit::from_raw(remainder) + fragmentainer_block_size;
             if remainder == 0
@@ -27164,6 +27186,18 @@ fn layout_multicol(
                 } else {
                     child_height
                 };
+                let column_flex_first_item_top = |fragment: &Fragment| {
+                    fragment
+                        .children
+                        .iter()
+                        .filter(|item| {
+                            !item.node_id.is_none()
+                                && !doc.node(item.node_id).style.is_out_of_flow()
+                        })
+                        .map(|item| item.offset.top)
+                        .min()
+                };
+                let column_flex_first_item_top_before = column_flex_first_item_top(&child_frag);
                 let column_flex_break_visual_height = if child_style.display == Display::Flex
                     && child_style.flex_direction.is_column()
                     && column_height > LayoutUnit::zero()
@@ -27217,6 +27251,57 @@ fn layout_multicol(
                 };
                 let column_flex_break_extension =
                     (column_flex_break_visual_height - child_height).clamp_negative_to_zero();
+                // When the break pass moves every line, as a forced break
+                // before a line's first item does, Blink breaks before the
+                // flexbox itself (`row_break_between_outputs`). A definite
+                // flexbox then starts, and ends, that much later.
+                let column_flex_leading_break_shift = if child_style.display == Display::Flex
+                    && child_style.flex_direction.is_column()
+                {
+                    match (
+                        column_flex_first_item_top_before,
+                        column_flex_first_item_top(&child_frag),
+                    ) {
+                        (Some(before), Some(after)) => (after - before)
+                            .clamp_negative_to_zero()
+                            .min_of(column_flex_break_extension),
+                        _ => LayoutUnit::zero(),
+                    }
+                } else {
+                    LayoutUnit::zero()
+                };
+                // A row flexbox whose item border boxes all end inside its
+                // first fragmentainer finishes there: only trailing item
+                // margin crosses the fragmentainer end, and Blink truncates
+                // that margin at the break.
+                let row_flex_finishes_in_first_fragmentainer = child_style.display == Display::Flex
+                    && !child_style.flex_direction.is_column()
+                    && child_style.height.is_auto()
+                    && column_height > LayoutUnit::zero()
+                    && child_start_block_offset + pos_margin + child_height > column_height
+                    && {
+                        let items_end = child_frag
+                            .children
+                            .iter()
+                            .filter(|item| {
+                                !item.node_id.is_none()
+                                    && !doc
+                                        .node(item.node_id)
+                                        .style
+                                        .position
+                                        .is_absolutely_positioned()
+                            })
+                            .fold(LayoutUnit::zero(), |end, item| {
+                                end.max_of(item.offset.top + item.size.height)
+                            });
+                        items_end > LayoutUnit::zero()
+                            && child_start_block_offset
+                                + pos_margin
+                                + items_end
+                                + child_frag.padding.bottom
+                                + child_frag.border.bottom
+                                <= column_height
+                    };
                 let direct_float_fragmentation_height = if child_style.float != Float::None {
                     fragment_in_flow_block_bottom(&child_frag, doc).max_of(child_frag.size.height)
                 } else {
@@ -32587,10 +32672,22 @@ fn layout_multicol(
                                                 // rounded fragmentainer has room left.
                                                 && !child_has_fragmentable_in_flow_overflow
                                             {
-                                                let needed_fragment_height = (content_shift
+                                                let mut needed_fragment_height = (content_shift
                                                     - original_child_top)
                                                     .clamp_negative_to_zero()
                                                     + visual_part_height;
+                                                if column_flex_break_extension > LayoutUnit::zero()
+                                                {
+                                                    // Break space ends the flexbox's
+                                                    // fragmented flow; its items do not
+                                                    // grow past that end.
+                                                    needed_fragment_height = needed_fragment_height
+                                                        .min_of(
+                                                            child_height
+                                                                + column_flex_break_extension
+                                                                - original_child_top,
+                                                        );
+                                                }
                                                 c.size.height =
                                                     c.size.height.max_of(needed_fragment_height);
                                             }
@@ -33516,8 +33613,12 @@ fn layout_multicol(
                         {
                             // Forced/avoided breaks change the fixed flexbox's
                             // fragmented ink, not the static flow position of
-                            // its following sibling.
-                            let logical_end = child_start_block_offset + pos_margin + child_height;
+                            // its following sibling, except for a break before
+                            // the flexbox itself.
+                            let logical_end = child_start_block_offset
+                                + pos_margin
+                                + column_flex_leading_break_shift
+                                + child_height;
                             let column_delta =
                                 (logical_end.raw() / column_height.raw()).max(0) as usize;
                             col_idx = child_start_col_idx + column_delta;
@@ -33733,8 +33834,23 @@ fn layout_multicol(
                         let flex_origin_block_end = (child_style.display == Display::Flex
                             && col_idx > child_start_col_idx)
                             .then(|| {
-                                let logical_end =
-                                    child_start_block_offset + pos_margin + child_height;
+                                // An auto-height flexbox's fragments also
+                                // consume the space its forced and avoided
+                                // breaks leave; a definite one ends at its
+                                // authored size.
+                                let logical_end = child_start_block_offset
+                                    + pos_margin
+                                    + child_height
+                                    + if child_style.height.is_auto() {
+                                        column_flex_break_extension
+                                    } else {
+                                        column_flex_leading_break_shift
+                                    };
+                                if row_flex_finishes_in_first_fragmentainer {
+                                    // The static position is the flexbox's
+                                    // unfragmented end in its first column.
+                                    return (child_start_col_idx, logical_end);
+                                }
                                 let (column_delta, block_offset) = if column_height
                                     > LayoutUnit::zero()
                                 {
@@ -33743,14 +33859,11 @@ fn layout_multicol(
                                     if logical_end > LayoutUnit::zero()
                                         && logical_end.raw().rem_euclid(column_height.raw()) == 0
                                     {
-                                        if oof_style.position == Position::Absolute
-                                            && oof_style.top.is_auto()
-                                        {
-                                            // An absolute box's static block
-                                            // position has backward affinity at
-                                            // the exact end edge of a fragmented
-                                            // flex box. Explicit block-start
-                                            // insets do not use this static edge.
+                                        if oof_style.position == Position::Absolute {
+                                            // An absolute box's static position
+                                            // has backward affinity at the exact
+                                            // end edge of a fragmented flex box,
+                                            // whatever its insets.
                                             (quotient.saturating_sub(1), column_height)
                                         } else {
                                             // Other static positions at an
@@ -33766,14 +33879,14 @@ fn layout_multicol(
                                 };
                                 (child_start_col_idx + column_delta, block_offset)
                             });
-                        // A bottom-aligned abspos belongs to the fragment that
-                        // owns the preceding block-end edge. Other static
-                        // positions at that exact edge start in the following
-                        // (possibly overflow) column.
+                        // An abspos at the exact block-end edge of a column
+                        // belongs to that column, even when following content
+                        // starts in the next one: Blink lays the hypothetical
+                        // box out before the break. Chrome 147 places such a
+                        // box at the column end with `top` auto and keeps its
+                        // inline position with `top` or `bottom` set.
                         let block_end_owned_by_previous_column = oof_style.position
                             == Position::Absolute
-                            && oof_style.top.is_auto()
-                            && !oof_style.bottom.is_auto()
                             && col_block_offset == column_height;
                         let viewport_fixed_static_at_column_end = oof_style.position
                             == Position::Fixed
@@ -35603,19 +35716,6 @@ fn layout_multicol(
                                 .is_avoid()
                         }))
             });
-        let has_nowrap_row_flex_child_with_trailing_margin_and_following_child =
-            children_info.iter().enumerate().any(|(idx, info)| {
-                let child_style = &doc.node(info.id).style;
-                child_style.display == Display::Flex
-                    && !child_style.flex_direction.is_column()
-                    && child_style.flex_wrap == openui_style::FlexWrap::Nowrap
-                    && idx + 1 < children_info.len()
-                    && doc.children(info.id).any(|gc| {
-                        resolve_margin_or_padding(&doc.node(gc).style.margin_bottom, column_width)
-                            .raw()
-                            > 0
-                    })
-            });
         let direct_oof_static_position = |child_style: &ComputedStyle,
                                           static_pos: PhysicalOffset|
          -> PhysicalOffset {
@@ -35670,9 +35770,6 @@ fn layout_multicol(
                         );
                     }
                     return static_pos;
-                }
-                if has_nowrap_row_flex_child_with_trailing_margin_and_following_child {
-                    return PhysicalOffset::new(content_edge_x, static_pos.top);
                 }
             }
             static_pos

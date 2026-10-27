@@ -1065,7 +1065,7 @@ fn following_box_uses_space_after_a_fragmented_overflow_box() {
 }
 
 #[test]
-fn static_inline_position_after_full_columns_starts_in_overflow_column() {
+fn static_inline_position_after_full_columns_stays_in_last_column() {
     let mut doc = Document::new();
     let multicol = doc.create_node(ElementTag::Div);
     doc.update_resolved_style(multicol, |style| {
@@ -1102,7 +1102,123 @@ fn static_inline_position_after_full_columns_starts_in_overflow_column() {
         .iter()
         .find(|child| child.node_id == abspos)
         .expect("out-of-flow fragment");
-    assert_eq!(positioned.offset.left, lu(100));
+    // The hypothetical box sits at the block-end of the fourth column, before
+    // any overflow column. Chrome 147 paints this `top: 0` box at x 75.
+    assert_eq!(positioned.offset.left, lu(75));
+    assert_eq!(positioned.offset.top, lu(0));
+}
+
+/// A 100x100 four-column `column-fill: auto` multicol holding `flex`, then an
+/// abspos box with auto insets. Returns the abspos box's offset.
+fn abspos_after_flex_offset(build_flex: impl FnOnce(&mut Document, NodeId)) -> (i32, i32) {
+    let mut doc = Document::new();
+    let multicol = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(multicol, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+        style.update_derived(|computed| computed.position = Position::Relative);
+        style.update_derived(|computed| computed.width = Length::px(100.0));
+        style.update_derived(|computed| computed.height = Length::px(100.0));
+        style.update_derived(|computed| computed.column_count = Some(4));
+        style.update_derived(|computed| computed.column_gap = Some(Length::px(0.0)));
+        style.update_derived(|computed| computed.column_fill = ColumnFill::Auto);
+    });
+    doc.append_child(doc.root(), multicol);
+    let flex = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(flex, |style| style.display = Display::Flex);
+    doc.append_child(multicol, flex);
+    build_flex(&mut doc, flex);
+    let abspos = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(abspos, |style| {
+        style.update_derived(|computed| computed.position = Position::Absolute);
+        style.update_derived(|computed| computed.width = Length::px(25.0));
+        style.update_derived(|computed| computed.height = Length::px(20.0));
+    });
+    doc.append_child(multicol, abspos);
+
+    let space = ConstraintSpace::for_block_child(lu(100), lu(600), lu(100), lu(600), false);
+    let fragment = block_layout(&doc, multicol, &space);
+    let positioned = fragment
+        .children
+        .iter()
+        .find(|child| child.node_id == abspos)
+        .expect("out-of-flow fragment");
+    (
+        positioned.offset.left.to_i32(),
+        positioned.offset.top.to_i32(),
+    )
+}
+
+/// Column flex items 50, 50 and 300 tall, with `break-before: avoid` on the
+/// third. The avoided break pushes the second item into the second column.
+fn avoided_break_column_flex(doc: &mut Document, flex: NodeId, height: Option<f32>) {
+    doc.update_resolved_style(flex, |style| style.flex_direction = FlexDirection::Column);
+    doc.update_resolved_style(flex, |style| style.width = Length::px(25.0));
+    if let Some(height) = height {
+        doc.update_resolved_style(flex, |style| style.height = Length::px(height));
+    }
+    for (index, item_height) in [50.0, 50.0, 300.0].into_iter().enumerate() {
+        let item = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(item, |style| style.height = Length::px(item_height));
+        if index == 2 {
+            doc.update_resolved_style(item, |style| style.break_before = BreakValue::Avoid);
+        }
+        doc.append_child(flex, item);
+    }
+}
+
+#[test]
+fn static_position_after_auto_column_flex_follows_break_shift() {
+    // The avoided break moves 50px of content down, so the flex ends 50px
+    // into a fifth (overflow) column. Chrome 147 places the box at (100, 50).
+    let offset = abspos_after_flex_offset(|doc, flex| avoided_break_column_flex(doc, flex, None));
+    assert_eq!(offset, (100, 50));
+}
+
+#[test]
+fn static_position_after_auto_column_flex_follows_forced_break() {
+    // `break-before: column` on the second item moves it and the third item
+    // down 50px. Chrome 147 places the box at (100, 50).
+    let offset = abspos_after_flex_offset(|doc, flex| {
+        doc.update_resolved_style(flex, |style| style.flex_direction = FlexDirection::Column);
+        doc.update_resolved_style(flex, |style| style.width = Length::px(25.0));
+        for (index, item_height) in [50.0, 50.0, 300.0].into_iter().enumerate() {
+            let item = doc.create_node(ElementTag::Div);
+            doc.update_resolved_style(item, |style| style.height = Length::px(item_height));
+            if index == 1 {
+                doc.update_resolved_style(item, |style| style.break_before = BreakValue::Column);
+            }
+            doc.append_child(flex, item);
+        }
+    });
+    assert_eq!(offset, (100, 50));
+}
+
+#[test]
+fn static_position_after_definite_column_flex_uses_authored_end() {
+    // A 400px flex box ends at the end of the fourth column whatever its
+    // items do. Chrome 147 places the box at (75, 100).
+    let offset =
+        abspos_after_flex_offset(|doc, flex| avoided_break_column_flex(doc, flex, Some(400.0)));
+    assert_eq!(offset, (75, 100));
+}
+
+#[test]
+fn static_position_after_row_flex_trailing_margin_stays_in_first_column() {
+    // The item's border box fits in the first column; only its 150px bottom
+    // margin crosses the column end. The flex finishes in the first column,
+    // and Chrome 147 places the box there at its unfragmented end, (0, 200).
+    let offset = abspos_after_flex_offset(|doc, flex| {
+        let item = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(item, |style| style.display = Display::Block);
+        doc.update_resolved_style(item, |style| style.margin_bottom = Length::px(150.0));
+        doc.append_child(flex, item);
+        let content = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(content, |style| style.display = Display::Block);
+        doc.update_resolved_style(content, |style| style.width = Length::px(25.0));
+        doc.update_resolved_style(content, |style| style.height = Length::px(50.0));
+        doc.append_child(item, content);
+    });
+    assert_eq!(offset, (0, 200));
 }
 
 #[test]
@@ -2213,7 +2329,13 @@ fn avoided_column_flex_items_resume_from_shared_break_offsets() {
 }
 
 #[test]
-fn forced_column_flex_break_extends_ink_but_not_fixed_static_flow() {
+fn forced_break_before_column_flex_line_start_moves_definite_flexbox() {
+    // The second line's first item has `break-before: column`, which Blink
+    // joins into the flexbox's own break-before. The 350px flexbox moves from
+    // 50px into the first column to the second column, so the following block
+    // starts 50px into the fifth column. Chrome 147 places it at (80, 50), with
+    // or without `break-before: avoid` on the first item
+    // (`flexbox_multi-line-column-flex-fragmentation-025`).
     let mut doc = Document::new();
     let multicol = doc.create_node(ElementTag::Div);
     doc.update_resolved_style(multicol, |style| {
@@ -2274,7 +2396,7 @@ fn forced_column_flex_break_extends_ink_but_not_fixed_static_flow() {
         lu(0)
     );
     let following = find_node(column_fragments[4], after).expect("following block");
-    assert_eq!(following.offset.top, lu(0));
+    assert_eq!(following.offset.top, lu(50));
 }
 
 #[test]
@@ -4768,4 +4890,48 @@ fn ordinary_spanner_wrapper_materializes_leaf_source_slices() {
         assert_eq!(leaf.is_last_for_node, index == 1);
     }
     assert!(column_fragments.len() >= 2);
+}
+
+#[test]
+fn avoided_column_flex_break_keeps_last_item_height_in_overflow_column() {
+    // The avoided break moves the second and third items 50px down, so the
+    // 300px third item ends 50px into the fifth (overflow) column, as in
+    // `flexbox_single-line-column-flex-fragmentation-016`. It must not grow to
+    // fill that column.
+    let mut doc = Document::new();
+    let multicol = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(multicol, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+        style.update_derived(|computed| computed.width = Length::px(100.0));
+        style.update_derived(|computed| computed.height = Length::px(100.0));
+        style.update_derived(|computed| computed.column_count = Some(4));
+        style.update_derived(|computed| computed.column_gap = Some(Length::px(0.0)));
+        style.update_derived(|computed| computed.column_fill = ColumnFill::Auto);
+    });
+    doc.append_child(doc.root(), multicol);
+    let flex = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(flex, |style| style.display = Display::Flex);
+    doc.append_child(multicol, flex);
+    avoided_break_column_flex(&mut doc, flex, None);
+    let third = doc.children(flex).nth(2).expect("third item");
+
+    let space = ConstraintSpace::for_block_child(lu(100), lu(600), lu(100), lu(600), false);
+    let fragment = block_layout(&doc, multicol, &space);
+    let columns: Vec<&Fragment> = fragment
+        .children
+        .iter()
+        .filter(|child| child.kind == FragmentKind::ColumnBox)
+        .collect();
+    assert_eq!(columns.len(), 5);
+    let flex_fragment = columns[4]
+        .children
+        .iter()
+        .find(|child| child.node_id == flex)
+        .expect("flex continuation");
+    let item = flex_fragment
+        .children
+        .iter()
+        .find(|child| child.node_id == third)
+        .expect("third item");
+    assert_eq!(item.offset.top + item.size.height, lu(50));
 }

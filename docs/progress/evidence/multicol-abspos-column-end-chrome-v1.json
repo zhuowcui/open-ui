@@ -1,0 +1,335 @@
+{
+ "chromium": "147.0.7727.50",
+ "command": "python tools/qualification/probe_multicol_abspos_static.py",
+ "measure": "client rects (x, y) of #x, CSS px, Windows Chrome-for-Testing at scale 1: the 25x20 abspos box, or the block after the flexbox in the flex-line-forced cases",
+ "results": {
+  "initial": {
+   "block-100-top-10": [
+    [
+     0,
+     10
+    ]
+   ],
+   "block-100-top-10-then-50": [
+    [
+     0,
+     10
+    ]
+   ],
+   "block-100-top-auto": [
+    [
+     0,
+     100
+    ]
+   ],
+   "block-100-top-auto-then-50": [
+    [
+     0,
+     100
+    ]
+   ],
+   "block-150-top-10": [
+    [
+     25,
+     10
+    ]
+   ],
+   "block-200-top-0": [
+    [
+     25,
+     0
+    ]
+   ],
+   "block-200-top-0-then-50": [
+    [
+     25,
+     0
+    ]
+   ],
+   "block-400-top-0": [
+    [
+     75,
+     0
+    ]
+   ],
+   "block-400-top-auto": [
+    [
+     75,
+     100
+    ]
+   ],
+   "column-flex-400-top-0": [
+    [
+     75,
+     0
+    ]
+   ],
+   "column-flex-400-top-auto": [
+    [
+     75,
+     100
+    ]
+   ],
+   "column-flex-avoid-after-h400-top-0": [
+    [
+     75,
+     0
+    ]
+   ],
+   "column-flex-avoid-after-h400-top-auto": [
+    [
+     75,
+     100
+    ]
+   ],
+   "column-flex-avoid-after-top-0": [
+    [
+     100,
+     0
+    ]
+   ],
+   "column-flex-avoid-after-top-auto": [
+    [
+     100,
+     50
+    ]
+   ],
+   "column-flex-avoid-before-h400-top-0": [
+    [
+     75,
+     0
+    ]
+   ],
+   "column-flex-avoid-before-h400-top-auto": [
+    [
+     75,
+     100
+    ]
+   ],
+   "column-flex-avoid-before-top-0": [
+    [
+     100,
+     0
+    ]
+   ],
+   "column-flex-avoid-before-top-auto": [
+    [
+     100,
+     50
+    ]
+   ],
+   "column-flex-forced-h400-top-0": [
+    [
+     75,
+     0
+    ]
+   ],
+   "column-flex-forced-h400-top-auto": [
+    [
+     75,
+     100
+    ]
+   ],
+   "column-flex-forced-top-0": [
+    [
+     100,
+     0
+    ]
+   ],
+   "column-flex-forced-top-auto": [
+    [
+     100,
+     50
+    ]
+   ],
+   "flex-line-forced-avoid-first-following-block": [
+    [
+     80,
+     50
+    ]
+   ],
+   "flex-line-forced-following-block": [
+    [
+     80,
+     50
+    ]
+   ],
+   "row-flex-trailing-margin-top-50": [
+    [
+     0,
+     50
+    ]
+   ],
+   "row-flex-trailing-margin-top-auto": [
+    [
+     0,
+     200
+    ]
+   ]
+  },
+  "multicol": {
+   "block-100-top-10": [
+    [
+     0,
+     10
+    ]
+   ],
+   "block-100-top-10-then-50": [
+    [
+     0,
+     10
+    ]
+   ],
+   "block-100-top-auto": [
+    [
+     0,
+     100
+    ]
+   ],
+   "block-100-top-auto-then-50": [
+    [
+     0,
+     100
+    ]
+   ],
+   "block-150-top-10": [
+    [
+     25,
+     10
+    ]
+   ],
+   "block-200-top-0": [
+    [
+     25,
+     0
+    ]
+   ],
+   "block-200-top-0-then-50": [
+    [
+     25,
+     0
+    ]
+   ],
+   "block-400-top-0": [
+    [
+     75,
+     0
+    ]
+   ],
+   "block-400-top-auto": [
+    [
+     75,
+     100
+    ]
+   ],
+   "column-flex-400-top-0": [
+    [
+     75,
+     0
+    ]
+   ],
+   "column-flex-400-top-auto": [
+    [
+     75,
+     100
+    ]
+   ],
+   "column-flex-avoid-after-h400-top-0": [
+    [
+     75,
+     0
+    ]
+   ],
+   "column-flex-avoid-after-h400-top-auto": [
+    [
+     75,
+     100
+    ]
+   ],
+   "column-flex-avoid-after-top-0": [
+    [
+     100,
+     0
+    ]
+   ],
+   "column-flex-avoid-after-top-auto": [
+    [
+     100,
+     50
+    ]
+   ],
+   "column-flex-avoid-before-h400-top-0": [
+    [
+     75,
+     0
+    ]
+   ],
+   "column-flex-avoid-before-h400-top-auto": [
+    [
+     75,
+     100
+    ]
+   ],
+   "column-flex-avoid-before-top-0": [
+    [
+     100,
+     0
+    ]
+   ],
+   "column-flex-avoid-before-top-auto": [
+    [
+     100,
+     50
+    ]
+   ],
+   "column-flex-forced-h400-top-0": [
+    [
+     75,
+     0
+    ]
+   ],
+   "column-flex-forced-h400-top-auto": [
+    [
+     75,
+     100
+    ]
+   ],
+   "column-flex-forced-top-0": [
+    [
+     100,
+     0
+    ]
+   ],
+   "column-flex-forced-top-auto": [
+    [
+     100,
+     50
+    ]
+   ],
+   "flex-line-forced-avoid-first-following-block": [
+    [
+     80,
+     50
+    ]
+   ],
+   "flex-line-forced-following-block": [
+    [
+     80,
+     50
+    ]
+   ],
+   "row-flex-trailing-margin-top-50": [
+    [
+     0,
+     50
+    ]
+   ],
+   "row-flex-trailing-margin-top-auto": [
+    [
+     0,
+     200
+    ]
+   ]
+  }
+ }
+}
