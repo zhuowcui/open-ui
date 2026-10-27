@@ -1142,7 +1142,10 @@ fn abspos_after_flex_offset(build_flex: impl FnOnce(&mut Document, NodeId)) -> (
         .iter()
         .find(|child| child.node_id == abspos)
         .expect("out-of-flow fragment");
-    (positioned.offset.left.to_i32(), positioned.offset.top.to_i32())
+    (
+        positioned.offset.left.to_i32(),
+        positioned.offset.top.to_i32(),
+    )
 }
 
 /// Column flex items 50, 50 and 300 tall, with `break-before: avoid` on the
@@ -4932,4 +4935,3 @@ fn avoided_column_flex_break_keeps_last_item_height_in_overflow_column() {
         .expect("third item");
     assert_eq!(item.offset.top + item.size.height, lu(50));
 }
-

@@ -27191,7 +27191,8 @@ fn layout_multicol(
                         .children
                         .iter()
                         .filter(|item| {
-                            !item.node_id.is_none() && !doc.node(item.node_id).style.is_out_of_flow()
+                            !item.node_id.is_none()
+                                && !doc.node(item.node_id).style.is_out_of_flow()
                         })
                         .map(|item| item.offset.top)
                         .min()
@@ -27261,9 +27262,9 @@ fn layout_multicol(
                         column_flex_first_item_top_before,
                         column_flex_first_item_top(&child_frag),
                     ) {
-                        (Some(before), Some(after)) => {
-                            (after - before).clamp_negative_to_zero().min_of(column_flex_break_extension)
-                        }
+                        (Some(before), Some(after)) => (after - before)
+                            .clamp_negative_to_zero()
+                            .min_of(column_flex_break_extension),
                         _ => LayoutUnit::zero(),
                     }
                 } else {
@@ -27273,8 +27274,7 @@ fn layout_multicol(
                 // first fragmentainer finishes there: only trailing item
                 // margin crosses the fragmentainer end, and Blink truncates
                 // that margin at the break.
-                let row_flex_finishes_in_first_fragmentainer = child_style.display
-                    == Display::Flex
+                let row_flex_finishes_in_first_fragmentainer = child_style.display == Display::Flex
                     && !child_style.flex_direction.is_column()
                     && child_style.height.is_auto()
                     && column_height > LayoutUnit::zero()
