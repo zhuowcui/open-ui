@@ -1,5 +1,14 @@
 # Open UI current status
 
+## Overflow columns after a forced column flex break 27 October 2026
+
+A balanced multicol with a definite height now creates overflow columns for
+a column flexbox whose forced break pushes content past the declared
+columns, as Chrome 147 does. Open UI had dropped that content. The census
+goes from 22,090 to 22,093 exact with no losses. An auto-height case where
+Open UI balances the columns differently remains open. See the
+[balanced overflow record](column-flex-balanced-overflow-2026-10-27.md).
+
 ## Abspos at a column end and fragmented flexbox ends 27 October 2026
 
 An abspos box whose static position falls at a column's exact block-end now
