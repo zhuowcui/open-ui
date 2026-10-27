@@ -70,10 +70,10 @@ comparison. Rows are in the
 ## Remaining failures
 
 `out-of-flow-in-multicolumn-037`, `-038` and `-039` take the same positioned
-continuation path. Each paints its fixed-position green square 50px right of
-Chrome's at 1x, so each still differs over the whole square. Their owner is
-the inline mapping of fixed continuations in a nested multicol in
-`openui-layout` `block.rs`. They are not diagnosed here.
+continuation path. At 1x, `-037` paints its fixed-position green square 50px
+right of Chrome's; `-038` and `-039` differ over the same 150x100 region. The
+likely owner is the inline mapping of fixed continuations in a nested
+multicol in `openui-layout` `block.rs`. They are not diagnosed here.
 
 ## Verification
 
