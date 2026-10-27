@@ -5176,3 +5176,78 @@ fn abspos_in_transformed_stacked_nested_row_maps_through_that_row() {
         vec![Vec::new(), Vec::new(), full_row.clone(), full_row]
     );
 }
+
+#[test]
+fn spanner_overflow_in_nested_multicol_continuation_is_not_block_clipped() {
+    // `spanner-fragmentation-004`: a 50px spanner in a nested balanced
+    // multicol holds 200px of content. The nested multicol ends in the outer
+    // multicol's first column, and the spanner's last 100px block resumes in
+    // the second. That continuation clips only its inline overflow; its
+    // block extent belongs to the outer column, which already clips it.
+    let mut doc = Document::new();
+    let block = |doc: &mut Document, height: f32| {
+        let node = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(node, |style| {
+            style.update_derived(|computed| computed.display = Display::Block);
+            style.update_derived(|computed| computed.height = Length::px(height));
+        });
+        node
+    };
+    let outer = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(outer, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+        style.update_derived(|computed| computed.width = Length::px(100.0));
+        style.update_derived(|computed| computed.height = Length::px(100.0));
+        style.update_derived(|computed| computed.column_count = Some(2));
+        style.update_derived(|computed| computed.column_gap = Some(Length::px(0.0)));
+        style.update_derived(|computed| computed.column_fill = ColumnFill::Auto);
+    });
+    doc.append_child(doc.root(), outer);
+    let inner = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(inner, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+        style.update_derived(|computed| computed.column_count = Some(2));
+        style.update_derived(|computed| computed.column_gap = Some(Length::px(0.0)));
+    });
+    doc.append_child(outer, inner);
+    let spanner = block(&mut doc, 50.0);
+    doc.update_resolved_style(spanner, |style| style.column_span = ColumnSpan::All);
+    doc.append_child(inner, spanner);
+    for height in [50.0, 50.0] {
+        let child = block(&mut doc, height);
+        doc.append_child(spanner, child);
+    }
+    let tail = block(&mut doc, 100.0);
+    doc.append_child(spanner, tail);
+    let second_spanner = block(&mut doc, 10.0);
+    doc.update_resolved_style(second_spanner, |style| style.column_span = ColumnSpan::All);
+    doc.append_child(inner, second_spanner);
+    let content = block(&mut doc, 80.0);
+    doc.append_child(inner, content);
+
+    let space = ConstraintSpace::for_block_child(lu(100), lu(600), lu(100), lu(600), false);
+    let fragment = block_layout(&doc, outer, &space);
+    let columns: Vec<&Fragment> = fragment
+        .children
+        .iter()
+        .filter(|child| child.kind == FragmentKind::ColumnBox)
+        .collect();
+    assert_eq!(columns.len(), 2);
+    let continuation = columns[1]
+        .children
+        .iter()
+        .find(|child| child.node_id == inner)
+        .expect("nested multicol continuation");
+    assert!(continuation.has_overflow_clip);
+    assert!(continuation.inline_axis_clip_only);
+    assert!(!continuation.block_axis_clip_only);
+    let tail_tops: Vec<i32> = continuation
+        .children
+        .iter()
+        .filter(|child| child.node_id == spanner && !child.is_first_for_node)
+        .flat_map(|slice| slice.children.iter())
+        .filter(|child| child.node_id == tail)
+        .map(|child| child.offset.top.to_i32())
+        .collect();
+    assert_eq!(tail_tops, vec![0]);
+}
