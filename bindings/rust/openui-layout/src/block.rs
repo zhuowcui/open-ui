@@ -17575,8 +17575,6 @@ fn fragment_direct_positioned_children_in_multicol(
         in_fragmented_clipping_containing_block: bool,
         in_fragmented_flex_containing_block: bool,
         preserve_fragmented_flex_oof: bool,
-        owner_is_nested_multicol: bool,
-        nested_row_inline_advance: LayoutUnit,
         in_nested_multicol: bool,
         writing_direction: WritingDirectionMode,
         inline_boxes: &std::collections::HashMap<NodeId, Vec<(PhysicalOffset, PhysicalSize, bool)>>,
@@ -17928,8 +17926,6 @@ fn fragment_direct_positioned_children_in_multicol(
                         },
                         in_fragmented_flex_containing_block,
                         preserve_fragmented_flex_oof,
-                        owner_is_nested_multicol,
-                        nested_row_inline_advance,
                         in_nested_multicol,
                         writing_direction,
                         inline_boxes,
@@ -17955,22 +17951,6 @@ fn fragment_direct_positioned_children_in_multicol(
                     if positioned.containing_block_node == transform_node {
                         positioned.transform_containing_block_source_offset =
                             Some(transform_source);
-                    }
-                    if owner_is_nested_multicol
-                        && writing_direction.is_horizontal()
-                        && fragmentainer_height > LayoutUnit::zero()
-                        && positioned.containing_block_node == transform_node
-                        && transform_source.top >= fragmentainer_block_start + fragmentainer_height
-                    {
-                        // The inner mapper consumes this physical block
-                        // overflow while selecting slices. Preserve the
-                        // equivalent row advance only when those slices are
-                        // reconstructed.
-                        let source_rows = (transform_source.top - fragmentainer_block_start).raw()
-                            / fragmentainer_height.raw();
-                        positioned.continuation_visual_offset.left =
-                            positioned.continuation_visual_offset.left
-                                + nested_row_inline_advance * source_rows;
                     }
                 }
                 positioned.static_position = PhysicalOffset::new(
@@ -18143,8 +18123,6 @@ fn fragment_direct_positioned_children_in_multicol(
                     }),
                 in_fragmented_flex_containing_block || is_fragmented_flex_containing_block,
                 preserve_fragmented_flex_oof || preserves_line_owned_positioned_children,
-                owner_is_nested_multicol,
-                nested_row_inline_advance,
                 // Positioned descendants must remain below an opacity
                 // stacking context so the complete subtree is composited as
                 // one group. Promoting them beside that ancestor loses its
@@ -18258,8 +18236,6 @@ fn fragment_direct_positioned_children_in_multicol(
         false,
         false,
         preserve_fragmented_flex_oof,
-        preserve_fragmented_flex_oof,
-        (resolved.width + column_gap) * resolved.count as i32,
         false,
         writing_direction,
         &inline_boxes,
@@ -18325,10 +18301,15 @@ fn fragment_direct_positioned_children_in_multicol(
             fragmented.push(fragment);
             continue;
         };
+        // A containing block promoted from a transformed ancestor keeps its
+        // own block offset as the transform source, which locates its row.
+        let containing_block_row_top = positioned
+            .transform_containing_block_source_offset
+            .map_or(positioned.containing_block_offset.top, |source| source.top);
         let (row_top, row_visual_height) = column_rows
             .iter()
             .copied()
-            .filter(|(top, _)| *top <= positioned.containing_block_offset.top)
+            .filter(|(top, _)| *top <= containing_block_row_top)
             .max_by_key(|(top, _)| top.raw())
             .unwrap_or((base_content_edge_y, fragmentainer_height));
         let fragmentainer_height = if row_top == base_content_edge_y {
