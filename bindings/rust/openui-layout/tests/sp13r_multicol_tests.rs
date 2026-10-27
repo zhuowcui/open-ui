@@ -4882,3 +4882,47 @@ fn ordinary_spanner_wrapper_materializes_leaf_source_slices() {
     }
     assert!(column_fragments.len() >= 2);
 }
+
+#[test]
+fn avoided_column_flex_break_keeps_last_item_height_in_overflow_column() {
+    // The avoided break moves the second and third items 50px down, so the
+    // 300px third item ends 50px into the fifth (overflow) column, as in
+    // `flexbox_single-line-column-flex-fragmentation-016`. It must not grow to
+    // fill that column.
+    let mut doc = Document::new();
+    let multicol = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(multicol, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+        style.update_derived(|computed| computed.width = Length::px(100.0));
+        style.update_derived(|computed| computed.height = Length::px(100.0));
+        style.update_derived(|computed| computed.column_count = Some(4));
+        style.update_derived(|computed| computed.column_gap = Some(Length::px(0.0)));
+        style.update_derived(|computed| computed.column_fill = ColumnFill::Auto);
+    });
+    doc.append_child(doc.root(), multicol);
+    let flex = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(flex, |style| style.display = Display::Flex);
+    doc.append_child(multicol, flex);
+    avoided_break_column_flex(&mut doc, flex, None);
+    let third = doc.children(flex).nth(2).expect("third item");
+
+    let space = ConstraintSpace::for_block_child(lu(100), lu(600), lu(100), lu(600), false);
+    let fragment = block_layout(&doc, multicol, &space);
+    let columns: Vec<&Fragment> = fragment
+        .children
+        .iter()
+        .filter(|child| child.kind == FragmentKind::ColumnBox)
+        .collect();
+    assert_eq!(columns.len(), 5);
+    let flex_fragment = columns[4]
+        .children
+        .iter()
+        .find(|child| child.node_id == flex)
+        .expect("flex continuation");
+    let item = flex_fragment
+        .children
+        .iter()
+        .find(|child| child.node_id == third)
+        .expect("third item");
+    assert_eq!(item.offset.top + item.size.height, lu(50));
+}

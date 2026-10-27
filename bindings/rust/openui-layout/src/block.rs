@@ -32642,10 +32642,22 @@ fn layout_multicol(
                                                 // rounded fragmentainer has room left.
                                                 && !child_has_fragmentable_in_flow_overflow
                                             {
-                                                let needed_fragment_height = (content_shift
+                                                let mut needed_fragment_height = (content_shift
                                                     - original_child_top)
                                                     .clamp_negative_to_zero()
                                                     + visual_part_height;
+                                                if column_flex_break_extension > LayoutUnit::zero()
+                                                {
+                                                    // Break space ends the flexbox's
+                                                    // fragmented flow; its items do not
+                                                    // grow past that end.
+                                                    needed_fragment_height = needed_fragment_height
+                                                        .min_of(
+                                                            child_height
+                                                                + column_flex_break_extension
+                                                                - original_child_top,
+                                                        );
+                                                }
                                                 c.size.height =
                                                     c.size.height.max_of(needed_fragment_height);
                                             }
