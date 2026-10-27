@@ -1,5 +1,14 @@
 # Open UI current status
 
+## Avoided breaks between row flex lines 26 October 2026
+
+When the boundary between two multi-line row flex lines falls on a column
+edge and avoids a break, Open UI now breaks before the previous line, as
+Blink's joined row break values do. An abspos special case that had covered
+for the missing rule is removed. The census goes from 22,069 to 22,073 exact
+with no losses. See the
+[row flex avoid record](flex-row-avoid-between-lines-2026-10-26.md).
+
 ## Column flex forced breaks per line 26 October 2026
 
 A forced break in a column-flex line now moves only that line, from where its

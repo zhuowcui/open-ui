@@ -2347,6 +2347,91 @@ fn forced_column_flex_break_splits_crossing_parallel_item() {
 }
 
 #[test]
+fn avoid_between_row_flex_lines_breaks_before_previous_line() {
+    // `flexbox_multi-line-row-flex-fragmentation-033` (break-before) and
+    // `-035` (break-after): the boundary between the second and third flex
+    // lines falls on the column edge and avoids a break, so Blink breaks
+    // before the second line instead (`FlexLayoutAlgorithm`,
+    // `row_break_between`).
+    for avoid_after in [false, true] {
+        let mut doc = Document::new();
+        let multicol = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(multicol, |style| {
+            style.update_derived(|computed| computed.display = Display::Block);
+            style.update_derived(|computed| computed.width = Length::px(100.0));
+            style.update_derived(|computed| computed.height = Length::px(100.0));
+            style.update_derived(|computed| computed.column_count = Some(2));
+            style.update_derived(|computed| computed.column_gap = Some(Length::px(0.0)));
+            style.update_derived(|computed| computed.column_fill = ColumnFill::Auto);
+        });
+        doc.append_child(doc.root(), multicol);
+
+        let leading = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(leading, |style| style.display = Display::Block);
+        doc.update_resolved_style(leading, |style| style.height = Length::px(50.0));
+        doc.append_child(multicol, leading);
+
+        let flex = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(flex, |style| {
+            style.update_derived(|computed| computed.display = Display::Flex);
+            style.update_derived(|computed| computed.flex_wrap = FlexWrap::Wrap);
+        });
+        doc.append_child(multicol, flex);
+
+        let mut items = Vec::new();
+        for index in 0..3 {
+            let item = doc.create_node(ElementTag::Div);
+            doc.update_resolved_style(item, |style| style.display = Display::Block);
+            doc.update_resolved_style(item, |style| style.width = Length::px(50.0));
+            doc.append_child(flex, item);
+            let wraps_child = (index == 1 && avoid_after) || (index == 2 && !avoid_after);
+            if wraps_child {
+                let child = doc.create_node(ElementTag::Div);
+                doc.update_resolved_style(child, |style| style.display = Display::Block);
+                let height = if index == 2 { 75.0 } else { 25.0 };
+                doc.update_resolved_style(child, |style| style.height = Length::px(height));
+                if avoid_after {
+                    doc.update_resolved_style(child, |style| style.break_after = BreakValue::Avoid);
+                } else {
+                    doc.update_resolved_style(child, |style| {
+                        style.break_before = BreakValue::Avoid
+                    });
+                }
+                doc.append_child(item, child);
+            } else {
+                let height = if index == 2 { 75.0 } else { 25.0 };
+                doc.update_resolved_style(item, |style| style.height = Length::px(height));
+            }
+            items.push(item);
+        }
+
+        let fragment = block_layout(
+            &doc,
+            multicol,
+            &ConstraintSpace::for_block_child(lu(100), lu(600), lu(100), lu(600), false),
+        );
+        let column_fragments = columns(&fragment);
+        assert_eq!(column_fragments.len(), 2, "avoid_after={avoid_after}");
+        // Each column holds a clipped flex fragment that starts 50px into the
+        // first column, so a flex-relative top of 50 is the next column edge.
+        let first_item = find_node(column_fragments[0], items[0]).expect("first line");
+        assert_eq!(first_item.offset.top, lu(0));
+        assert_eq!(first_item.size.height, lu(25));
+        let pushed = find_node(column_fragments[0], items[1]).expect("second line");
+        assert_eq!(
+            pushed.offset.top,
+            lu(50),
+            "second line must start at the next column (avoid_after={avoid_after})"
+        );
+        let second_item = find_node(column_fragments[1], items[1]).expect("second line");
+        assert_eq!(second_item.offset.top, lu(0));
+        let third_item = find_node(column_fragments[1], items[2]).expect("third line");
+        assert_eq!(third_item.offset.top, lu(25));
+        assert_eq!(third_item.size.height, lu(75));
+    }
+}
+
+#[test]
 fn forced_column_flex_item_after_full_start_margin_moves_past_next_fragment() {
     let mut doc = Document::new();
     let multicol = doc.create_node(ElementTag::Div);
