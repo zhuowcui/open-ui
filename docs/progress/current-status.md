@@ -1,5 +1,20 @@
 # Open UI current status
 
+## Abspos at a column end and fragmented flexbox ends 27 October 2026
+
+An abspos box whose static position falls at a column's exact block-end now
+stays in that column whatever its insets, as Chrome 147 measures. Fragmented
+flexboxes now end where Blink ends them:
+
+- an auto-height column flexbox includes its break space
+- a definite one moves with a break before itself
+- a row flexbox whose items end in its first column finishes there
+
+An avoided break on a column flex item boundary at a column edge now breaks
+before the previous item. The census goes from 22,078 to 22,090 exact with
+no losses. See the
+[column end record](multicol-abspos-column-end-2026-10-27.md).
+
 ## Avoided breaks between row flex lines 26 October 2026
 
 When the boundary between two multi-line row flex lines falls on a column
