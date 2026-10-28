@@ -31351,7 +31351,17 @@ fn layout_multicol(
                             {
                                 part_height.max_of(avail)
                             } else if expand_fragment_visual_height {
-                                if sequential_outer_rows && wraps_rows {
+                                if sequential_outer_rows
+                                    && wraps_rows
+                                    && content_in_part == remaining_content
+                                {
+                                    // The final source interval of a block
+                                    // ends where its content ends. Growing
+                                    // it to the row capacity would make the
+                                    // nested multicol consume a complete
+                                    // further row in its ancestor.
+                                    part_height
+                                } else if sequential_outer_rows && wraps_rows {
                                     // `available_block_size` belongs to the
                                     // first ancestor slice. Later owned rows
                                     // use their selected local capacity; an
