@@ -29144,6 +29144,17 @@ fn layout_multicol(
                                 overflow_consumed = overflow_consumed + column_height;
                                 overflow_col_idx += 1;
                             }
+                            if let Some(break_top) = forced_overflow_break_top {
+                                // In-flow children from the forced break on
+                                // belong to the continuations cloned above.
+                                if let Some(first_fragment) = per_col_children[col_idx].last_mut() {
+                                    first_fragment.children.retain(|child| {
+                                        child.offset.top < break_top
+                                            || (!child.node_id.is_none()
+                                                && doc.node(child.node_id).style.is_out_of_flow())
+                                    });
+                                }
+                            }
                         }
                     }
                 } else {
