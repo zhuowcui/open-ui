@@ -29409,7 +29409,11 @@ fn layout_multicol(
                             };
                         let truncated_block_end_margin = if algo.column_fill == ColumnFill::Auto
                             && child_style.height.is_auto()
-                            && establishes_new_fc_for_node(doc, child_node_id)
+                            // A fieldset's anonymous content box is a new
+                            // formatting context, so its last child's margin
+                            // stays inside the fieldset.
+                            && (establishes_new_fc_for_node(doc, child_node_id)
+                                || doc.node(child_node_id).tag == ElementTag::Fieldset)
                             && i + 1 < group_end - group_start
                             && {
                                 let next_id = children_info[group_start + i + 1].id;
