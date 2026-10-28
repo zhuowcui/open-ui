@@ -1,5 +1,13 @@
 # Open UI current status
 
+## A forced overflow child before its break 28 October 2026
+
+When a forced break inside a fixed-height box sends a child into the next
+column as visible overflow, the first column no longer paints that child
+too. `block-in-inline-000` is now exact at 1.25x, and the census gains it
+with no losses. See the
+[forced overflow record](forced-overflow-first-fragment-2026-10-28.md).
+
 ## A visible overflow continuation's own box 28 October 2026
 
 When a box's visible overflow continues into the next column of a multicol,
