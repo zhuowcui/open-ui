@@ -5900,3 +5900,95 @@ fn forced_overflow_child_is_not_painted_before_its_break() {
         (vec![line], vec![line, forced])
     );
 }
+
+#[test]
+fn positioned_boxes_in_a_translated_inline_containing_block_keep_their_inline_offsets() {
+    // `out-of-flow-in-multicolumn-090`: a relatively positioned span (top
+    // 100px, left 50px) with a filter contains an abspos box (top 100px, left
+    // 50px) and, through a relative block (top 100px, left 50px), a fixedpos
+    // box at its static position. Both 50x200 boxes start at flow offset 100,
+    // 50px into the second 50px column, and the span's translation moves them
+    // 50px right and 100px down. Their slices therefore sit at x 150 and 200,
+    // y 100, where Chrome paints them.
+    let mut doc =
+        Document::new_with_font_collection(openui_text::FontCollection::deterministic_test());
+    let multicol = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(multicol, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+        style.update_derived(|computed| computed.width = Length::px(100.0));
+        style.update_derived(|computed| computed.height = Length::px(100.0));
+        style.update_derived(|computed| computed.column_count = Some(2));
+        style.update_derived(|computed| computed.column_gap = Some(Length::px(0.0)));
+        style.update_derived(|computed| computed.column_fill = ColumnFill::Auto);
+    });
+    doc.append_child(doc.root(), multicol);
+    let relative = |doc: &mut Document, node: NodeId| {
+        doc.update_resolved_style(node, |style| {
+            style.update_derived(|computed| computed.position = Position::Relative);
+            style.update_derived(|computed| computed.top = Length::px(100.0));
+            style.update_derived(|computed| computed.left = Length::px(50.0));
+        });
+    };
+    let span = doc.create_node(ElementTag::Span);
+    doc.update_resolved_style(span, |style| {
+        style.update_derived(|computed| computed.display = Display::Inline);
+        style.update_derived(|computed| computed.establishes_transform_containing_block = true);
+    });
+    relative(&mut doc, span);
+    doc.append_child(multicol, span);
+    let sized_box = |doc: &mut Document, position: Position| {
+        let node = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(node, |style| {
+            style.update_derived(|computed| computed.display = Display::Block);
+            style.update_derived(|computed| computed.position = position);
+            style.update_derived(|computed| computed.width = Length::px(50.0));
+            style.update_derived(|computed| computed.height = Length::px(200.0));
+        });
+        node
+    };
+    let absolute = sized_box(&mut doc, Position::Absolute);
+    doc.update_resolved_style(absolute, |style| {
+        style.update_derived(|computed| computed.top = Length::px(100.0));
+        style.update_derived(|computed| computed.left = Length::px(50.0));
+    });
+    doc.append_child(span, absolute);
+    let relative_block = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(relative_block, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+    });
+    relative(&mut doc, relative_block);
+    doc.append_child(span, relative_block);
+    let wrapper = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(wrapper, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+        style.update_derived(|computed| computed.position = Position::Absolute);
+    });
+    doc.append_child(relative_block, wrapper);
+    let fixed = sized_box(&mut doc, Position::Fixed);
+    doc.append_child(wrapper, fixed);
+
+    let fragment = block_layout(
+        &doc,
+        multicol,
+        &ConstraintSpace::for_block_child(lu(100), lu(600), lu(100), lu(600), false),
+    );
+    fn slices(fragment: &Fragment, node: NodeId, origin: (i32, i32), out: &mut Vec<(i32, i32)>) {
+        let at = (
+            origin.0 + fragment.offset.left.to_i32(),
+            origin.1 + fragment.offset.top.to_i32(),
+        );
+        if fragment.node_id == node && fragment.size.height > LayoutUnit::zero() {
+            out.push(at);
+        }
+        for child in &fragment.children {
+            slices(child, node, at, out);
+        }
+    }
+    for node in [absolute, fixed] {
+        let mut out = Vec::new();
+        for child in &fragment.children {
+            slices(child, node, (0, 0), &mut out);
+        }
+        assert_eq!(out, vec![(150, 100), (200, 100)], "{node:?}");
+    }
+}

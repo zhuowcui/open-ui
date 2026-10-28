@@ -1,5 +1,13 @@
 # Open UI current status
 
+## Positioned insets in a translated inline containing block 28 October 2026
+
+In a multicol, the absolute and fixed descendants of a relatively positioned
+inline with a filter now keep their block and inline insets and their static
+inline offsets. The census goes from 22,163 to 22,167 exact with no losses.
+See the
+[translated inline containing block record](translated-inline-containing-block-insets-2026-10-28.md).
+
 ## A wrapped column flex item's negative margin after its forced break 28 October 2026
 
 In a multi-line column flexbox inside a multicol, a forced-break item with a
