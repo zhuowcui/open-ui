@@ -1,5 +1,14 @@
 # Open UI current status
 
+## A wrapped column flex item's negative margin after its forced break 28 October 2026
+
+In a multi-line column flexbox inside a multicol, a forced-break item with a
+negative start margin now starts after its break and keeps the margin there.
+Only that column's clip extends above the multicol, and the column before the
+break no longer paints the item. The census goes from 22,158 to 22,163 exact
+with no losses. See the
+[column flex negative margin record](column-flex-negative-forced-margin-2026-10-28.md).
+
 ## A forced overflow child before its break 28 October 2026
 
 When a forced break inside a fixed-height box sends a child into the next

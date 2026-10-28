@@ -13069,8 +13069,9 @@ fn apply_column_flex_fragmentation_breaks(
     let flex_is_single_line = !fragment.node_id.is_none()
         && doc.node(fragment.node_id).style.flex_wrap == openui_style::FlexWrap::Nowrap;
 
-    let mut line_flow_bottoms: Vec<(i32, LayoutUnit)> = Vec::new();
+    let mut line_flow_bottoms: Vec<(i32, LayoutUnit, LayoutUnit)> = Vec::new();
     let mut negative_forced_assignment = false;
+    let mut anchored_negative_items: Vec<NodeId> = Vec::new();
     for child in &mut fragment.children {
         if child.node_id.is_none() || doc.node(child.node_id).style.is_out_of_flow() {
             continue;
@@ -13078,11 +13079,13 @@ fn apply_column_flex_fragmentation_breaks(
         let line_key = child.offset.left.raw();
         let line_index = line_flow_bottoms
             .iter()
-            .position(|(key, _)| *key == line_key)
+            .position(|(key, _, _)| *key == line_key)
             .unwrap_or_else(|| {
-                line_flow_bottoms.push((line_key, LayoutUnit::zero()));
+                line_flow_bottoms.push((line_key, LayoutUnit::zero(), LayoutUnit::zero()));
                 line_flow_bottoms.len() - 1
             });
+        let line_shift = line_flow_bottoms[line_index].2;
+        child.offset.top = child.offset.top + line_shift;
         let previous_bottom = line_flow_bottoms[line_index].1;
         let child_style = &doc.node(child.node_id).style;
         let margin_top = resolve_margins_in_parent_axes(
@@ -13107,6 +13110,31 @@ fn apply_column_flex_fragmentation_breaks(
                     LayoutUnit::from_raw(fragmentainer_block_size.raw() - remainder)
                 };
             child.offset.top = next_boundary - container_block_start;
+            negative_forced_assignment = true;
+        } else if !flex_is_single_line
+            && propagated_break_before(doc, child.node_id).is_forced()
+            && margin_top < LayoutUnit::zero()
+            && previous_bottom > LayoutUnit::zero()
+            && previous_bottom > child.offset.top
+        {
+            // In a multi-line column flexbox each line is a parallel flow.
+            // The forced break moves the rest of this line to the
+            // fragmentainer after the line's earlier content, and the item
+            // keeps its negative margin there, so it starts above that
+            // fragmentainer (`FlexLine::item_offset_adjustment`).
+            let previous_global = container_block_start + previous_bottom;
+            let remainder = previous_global
+                .raw()
+                .rem_euclid(fragmentainer_block_size.raw());
+            let next_boundary = if remainder == 0 {
+                previous_global
+            } else {
+                previous_global + LayoutUnit::from_raw(fragmentainer_block_size.raw() - remainder)
+            };
+            let anchored_top = next_boundary - container_block_start + margin_top;
+            line_flow_bottoms[line_index].2 = line_shift + (anchored_top - child.offset.top);
+            child.offset.top = anchored_top;
+            anchored_negative_items.push(child.node_id);
             negative_forced_assignment = true;
         }
         line_flow_bottoms[line_index].1 =
@@ -13373,7 +13401,9 @@ fn apply_column_flex_fragmentation_breaks(
             flex_writing_direction,
         );
         if propagated_break_before(doc, child.node_id).is_forced() {
-            if !line.has_item && child.offset.top <= LayoutUnit::zero() {
+            if anchored_negative_items.contains(&child.node_id) {
+                // Already moved past its forced break above.
+            } else if !line.has_item && child.offset.top <= LayoutUnit::zero() {
                 container_forced_break = true;
             } else if margins.top < LayoutUnit::zero() {
                 // The negative-margin pass above already anchored this item
@@ -34759,6 +34789,34 @@ fn layout_multicol(
                 } else {
                     col_box_height
                 };
+                // A forced column-flex item with a negative margin starts in
+                // the fragmentainer after its break, and its margin pulls its
+                // ink above that fragmentainer only. A column whose end the
+                // item's margin box does not precede holds none of it.
+                for child in &mut col_children {
+                    if child.node_id.is_none() {
+                        continue;
+                    }
+                    let child_style = &doc.node(child.node_id).style;
+                    if child_style.display != Display::Flex
+                        || !child_style.flex_direction.is_column()
+                    {
+                        continue;
+                    }
+                    let child_top = child.offset.top;
+                    child.children.retain(|item| {
+                        if item.node_id.is_none() {
+                            return true;
+                        }
+                        let item_style = &doc.node(item.node_id).style;
+                        let margin_top =
+                            resolve_margin_or_padding(&item_style.margin_top, column_width);
+                        !(margin_top < LayoutUnit::zero()
+                            && !item_style.is_out_of_flow()
+                            && propagated_break_before(doc, item.node_id).is_forced()
+                            && child_top + item.offset.top - margin_top >= col_box_height)
+                    });
+                }
                 let negative_forced_flex_item_top = |fragment: &Fragment| {
                     fragment
                         .children
@@ -34768,11 +34826,17 @@ fn layout_multicol(
                                 return None;
                             }
                             let item_style = &doc.node(item.node_id).style;
+                            let margin_top =
+                                resolve_margin_or_padding(&item_style.margin_top, column_width);
+                            // Only the fragmentainer that the forced break
+                            // starts the item in holds the ink its negative
+                            // margin pulls above. A later continuation's
+                            // more negative top is already consumed source.
                             (item.offset.top < LayoutUnit::zero()
                                 && propagated_break_before(doc, item.node_id).is_forced()
-                                && resolve_margin_or_padding(&item_style.margin_top, column_width)
-                                    < LayoutUnit::zero())
-                            .then_some(item.offset.top)
+                                && margin_top < LayoutUnit::zero()
+                                && item.offset.top >= margin_top)
+                                .then_some(item.offset.top)
                         })
                         .min()
                 };
