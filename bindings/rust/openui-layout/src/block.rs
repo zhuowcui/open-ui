@@ -25177,7 +25177,12 @@ fn layout_multicol(
                         || positioned_uses_outer_fragmentainer
                         || (auto_wraps_outer_fragments
                             && subtree_has_positioned_descendant(doc, node_id))));
-            let split_row_capacities = if finite_split_group
+            // A nested auto-filled row that starts after progress in its
+            // outer fragmentainer is shorter than the rows that follow it.
+            // Each later row starts a fresh outer fragmentainer and receives
+            // its full block size.
+            let split_row_capacities = if (finite_split_group
+                || space.outer_fragmentainer_block_size > column_height)
                 && sequential_outer_rows
                 && wraps_rows
                 && known_auto_row_capacity.is_some()
