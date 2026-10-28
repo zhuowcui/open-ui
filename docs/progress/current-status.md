@@ -1,5 +1,12 @@
 # Open UI current status
 
+## A block's final slice in a nested multicol row 28 October 2026
+
+The final source slice of a block in a nested auto-filled multicol now ends
+with the block's content instead of growing to the full row. The census goes
+from 22,126 to 22,130 exact with no losses. See the
+[nested final row record](nested-multicol-final-row-2026-10-28.md).
+
 ## Later rows of a nested auto-filled multicol 28 October 2026
 
 A nested auto-filled multicol whose first row is shortened by earlier
