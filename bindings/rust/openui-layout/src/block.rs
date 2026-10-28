@@ -27413,7 +27413,16 @@ fn layout_multicol(
                                 + child_frag.border.bottom
                                 <= column_height
                     };
-                let direct_float_fragmentation_height = if child_style.float != Float::None {
+                let direct_float_fragmentation_height = if child_style.float != Float::None
+                    && crate::multicol::ColumnLayoutAlgorithm::from_style(child_style).is_some()
+                {
+                    // A floated multicol fragments its content in its own
+                    // columns. Monolithic content overflowing one of those
+                    // columns is overflow, not more of the float to continue
+                    // in the next outer fragmentainer; owned overflow columns
+                    // are already counted in `child_height`.
+                    child_height.max_of(child_frag.size.height)
+                } else if child_style.float != Float::None {
                     fragment_in_flow_block_bottom(&child_frag, doc).max_of(child_frag.size.height)
                 } else {
                     child_height

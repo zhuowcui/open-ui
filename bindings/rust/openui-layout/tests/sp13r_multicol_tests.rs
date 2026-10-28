@@ -5992,3 +5992,54 @@ fn positioned_boxes_in_a_translated_inline_containing_block_keep_their_inline_of
         assert_eq!(out, vec![(150, 100), (200, 100)], "{node:?}");
     }
 }
+
+#[test]
+fn floated_multicol_with_overflowing_monolithic_child_does_not_continue() {
+    // `nested-floated-multicol-with-monolithic-child`: a one-column 100px
+    // auto-filled multicol holds a right float with a 10px top margin. The
+    // float is itself an auto-height one-column multicol around a 100px
+    // `contain: size` block. The float's column takes the 90px left in the
+    // outer column; the monolithic block overflows it there, and the float
+    // ends without a continuation in a second outer column.
+    let mut doc = Document::new();
+    let outer = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(outer, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+        style.update_derived(|computed| computed.width = Length::px(100.0));
+        style.update_derived(|computed| computed.height = Length::px(100.0));
+        style.update_derived(|computed| computed.column_count = Some(1));
+        style.update_derived(|computed| computed.column_fill = ColumnFill::Auto);
+    });
+    doc.append_child(doc.root(), outer);
+    let float = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(float, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+        style.update_derived(|computed| computed.float = Float::Right);
+        style.update_derived(|computed| computed.width = Length::px(100.0));
+        style.update_derived(|computed| computed.margin_top = Length::px(10.0));
+        style.update_derived(|computed| computed.column_count = Some(1));
+        style.update_derived(|computed| computed.column_fill = ColumnFill::Auto);
+    });
+    doc.append_child(outer, float);
+    let monolithic = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(monolithic, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+        style.update_derived(|computed| computed.height = Length::px(100.0));
+        style.update_derived(|computed| computed.contain = Containment::SIZE);
+    });
+    doc.append_child(float, monolithic);
+
+    let fragment = block_layout(
+        &doc,
+        outer,
+        &ConstraintSpace::for_block_child(lu(100), lu(600), lu(100), lu(600), false),
+    );
+    let parts = find_nodes(&fragment, float);
+    assert_eq!(
+        parts
+            .iter()
+            .map(|part| (part.offset.top, part.size.height))
+            .collect::<Vec<_>>(),
+        vec![(lu(10), lu(90))]
+    );
+}
