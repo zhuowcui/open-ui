@@ -1,0 +1,80 @@
+{
+ "base_commit": "f382fbe9a0afa4a39c877c1aaf7d7f13844c6a0b",
+ "base_exact": 22130,
+ "chromium_identical": 23728,
+ "comparisons": 23728,
+ "errors": [],
+ "gains": [
+  {
+   "base": "different",
+   "base_mismatched": 5650,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/multicol-nested-column-rule-003",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 8100,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/multicol-nested-column-rule-003",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 3600,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/multicol-nested-column-rule-003",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 14400,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/multicol-nested-column-rule-003",
+   "profile": "mobile-375x667@2"
+  }
+ ],
+ "head_commit": "24fbc96656cc5c5fcecdf69cab7043c4130eba1e",
+ "head_exact": 22134,
+ "improved": [],
+ "losses": [],
+ "openui_changed": [
+  {
+   "base": "different",
+   "base_mismatched": 5650,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/multicol-nested-column-rule-003",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 8100,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/multicol-nested-column-rule-003",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 3600,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/multicol-nested-column-rule-003",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 14400,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/multicol-nested-column-rule-003",
+   "profile": "mobile-375x667@2"
+  }
+ ],
+ "worsened": []
+}
