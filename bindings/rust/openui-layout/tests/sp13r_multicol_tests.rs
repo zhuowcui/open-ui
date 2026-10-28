@@ -5089,3 +5089,90 @@ fn abspos_in_stacked_nested_multicol_row_resumes_in_the_ancestor_continuation() 
     abspos_rects.sort_unstable();
     assert_eq!(abspos_rects, vec![(0, 0, 100), (50, 0, 100)]);
 }
+
+#[test]
+fn abspos_in_transformed_stacked_nested_row_maps_through_that_row() {
+    // `out-of-flow-in-multicolumn-037` without its fixed box: an auto-height
+    // two-column multicol nested in a 100px tall one stacks four rows. A
+    // transformed container starts in the third row and holds a 400px abspos
+    // box, so the box fills the third and fourth rows, in the outer
+    // multicol's third and fourth columns, at the inner columns' origins.
+    let mut doc = Document::new();
+    let multicol = |doc: &mut Document, width: f32, height: Option<f32>| {
+        let node = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(node, |style| {
+            style.update_derived(|computed| computed.display = Display::Block);
+            style.update_derived(|computed| computed.width = Length::px(width));
+            if let Some(height) = height {
+                style.update_derived(|computed| computed.height = Length::px(height));
+            }
+            style.update_derived(|computed| computed.column_count = Some(2));
+            style.update_derived(|computed| computed.column_gap = Some(Length::px(0.0)));
+            style.update_derived(|computed| computed.column_fill = ColumnFill::Auto);
+        });
+        node
+    };
+    let block = |doc: &mut Document, height: f32| {
+        let node = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(node, |style| {
+            style.update_derived(|computed| computed.display = Display::Block);
+            style.update_derived(|computed| computed.height = Length::px(height));
+        });
+        node
+    };
+    let outer = multicol(&mut doc, 100.0, Some(100.0));
+    doc.append_child(doc.root(), outer);
+    let inner = multicol(&mut doc, 50.0, None);
+    doc.update_resolved_style(inner, |style| {
+        style.update_derived(|computed| computed.margin_left = Length::px(-100.0));
+    });
+    doc.append_child(outer, inner);
+    let spacer = block(&mut doc, 400.0);
+    doc.append_child(inner, spacer);
+    let transformed = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(transformed, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+        style.update_derived(|computed| computed.establishes_transform_containing_block = true);
+    });
+    doc.append_child(inner, transformed);
+    let content = block(&mut doc, 400.0);
+    doc.append_child(transformed, content);
+    let abspos = block(&mut doc, 400.0);
+    doc.update_resolved_style(abspos, |style| {
+        style.update_derived(|computed| computed.position = Position::Absolute);
+        style.update_derived(|computed| computed.width = Length::px(25.0));
+        style.update_derived(|computed| computed.top = Length::px(0.0));
+    });
+    doc.append_child(transformed, abspos);
+
+    let space = ConstraintSpace::for_block_child(lu(100), lu(600), lu(100), lu(600), false);
+    let fragment = block_layout(&doc, outer, &space);
+    let abspos_by_column: Vec<Vec<(i32, i32, i32)>> = fragment
+        .children
+        .iter()
+        .filter(|child| child.kind == FragmentKind::ColumnBox)
+        .map(|column| {
+            let mut rects: Vec<(i32, i32, i32)> = column
+                .children
+                .iter()
+                .filter(|child| child.node_id == inner)
+                .flat_map(|slice| slice.children.iter())
+                .filter(|child| child.node_id == abspos)
+                .map(|child| {
+                    (
+                        child.offset.left.to_i32(),
+                        child.offset.top.to_i32(),
+                        child.size.height.to_i32(),
+                    )
+                })
+                .collect();
+            rects.sort_unstable();
+            rects
+        })
+        .collect();
+    let full_row = vec![(0, 0, 100), (25, 0, 100)];
+    assert_eq!(
+        abspos_by_column,
+        vec![Vec::new(), Vec::new(), full_row.clone(), full_row]
+    );
+}

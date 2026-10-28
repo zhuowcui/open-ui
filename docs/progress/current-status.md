@@ -1,5 +1,14 @@
 # Open UI current status
 
+## Fixed boxes in a transformed stacked nested multicol row 27 October 2026
+
+A fixed box whose containing block is a transformed box in an auto-height
+nested multicol now takes its column row from the transformed box's own
+block offset, as Chrome 147 paints it. The census goes from 22,097 to 22,103
+exact with no losses. `-038` keeps a one-column edge blend at 1.25x and 1.5x,
+and `-039`, with static-position boxes, remains open. See the
+[transformed row record](nested-multicol-transformed-row-2026-10-27.md).
+
 ## Abspos in a stacked nested multicol row 27 October 2026
 
 An abspos box laid out in a later row of an auto-height nested multicol now
