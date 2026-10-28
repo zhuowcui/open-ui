@@ -5573,3 +5573,78 @@ fn fieldset_trailing_child_margin_is_truncated_before_a_forced_break() {
         .collect();
     assert_eq!(columns, vec![vec![fieldset], vec![forced]]);
 }
+
+#[test]
+fn positioned_continuation_of_nested_multicol_omits_slices_already_placed() {
+    // `out-of-flow-in-multicolumn-047`: a 100px square auto-filled two-column
+    // multicol holds a relatively positioned two-column auto-filled multicol.
+    // That inner multicol holds a 50x100 abspos at `top: 100px` and a 200px
+    // relative block with a 25x200 abspos. The inner multicol fits the first
+    // outer column, where its columns hold both slices of the 25x200 abspos.
+    // The second outer column continues only the abspos at `top: 100px`.
+    let mut doc = Document::new();
+    let multicol = |doc: &mut Document, width: f32| {
+        let node = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(node, |style| {
+            style.update_derived(|computed| computed.display = Display::Block);
+            style.update_derived(|computed| computed.width = Length::px(width));
+            style.update_derived(|computed| computed.column_count = Some(2));
+            style.update_derived(|computed| computed.column_gap = Some(Length::px(0.0)));
+            style.update_derived(|computed| computed.column_fill = ColumnFill::Auto);
+        });
+        node
+    };
+    let absolute = |doc: &mut Document, width: f32, height: f32| {
+        let node = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(node, |style| {
+            style.update_derived(|computed| computed.display = Display::Block);
+            style.update_derived(|computed| computed.position = Position::Absolute);
+            style.update_derived(|computed| computed.width = Length::px(width));
+            style.update_derived(|computed| computed.height = Length::px(height));
+        });
+        node
+    };
+    let outer = multicol(&mut doc, 100.0);
+    doc.update_resolved_style(outer, |style| {
+        style.update_derived(|computed| computed.height = Length::px(100.0));
+    });
+    doc.append_child(doc.root(), outer);
+    let inner = multicol(&mut doc, 50.0);
+    doc.update_resolved_style(inner, |style| {
+        style.update_derived(|computed| computed.position = Position::Relative);
+    });
+    doc.append_child(outer, inner);
+    let lower = absolute(&mut doc, 50.0, 100.0);
+    doc.update_resolved_style(lower, |style| {
+        style.update_derived(|computed| computed.top = Length::px(100.0));
+    });
+    doc.append_child(inner, lower);
+    let relative = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(relative, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+        style.update_derived(|computed| computed.position = Position::Relative);
+        style.update_derived(|computed| computed.height = Length::px(200.0));
+    });
+    doc.append_child(inner, relative);
+    let tall = absolute(&mut doc, 25.0, 200.0);
+    doc.append_child(relative, tall);
+
+    let space = ConstraintSpace::for_block_child(lu(100), lu(600), lu(100), lu(600), false);
+    let fragment = block_layout(&doc, outer, &space);
+    let columns: Vec<&Fragment> = fragment
+        .children
+        .iter()
+        .filter(|child| child.kind == FragmentKind::ColumnBox)
+        .collect();
+    let continuation = columns[1]
+        .children
+        .iter()
+        .find(|child| child.node_id == inner)
+        .expect("nested multicol continuation");
+    let nodes: Vec<NodeId> = continuation
+        .children
+        .iter()
+        .map(|child| child.node_id)
+        .collect();
+    assert_eq!(nodes, vec![lower]);
+}
