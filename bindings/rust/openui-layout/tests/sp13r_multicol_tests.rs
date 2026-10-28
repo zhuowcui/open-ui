@@ -5707,3 +5707,61 @@ fn visible_overflow_continuation_does_not_keep_the_source_principal_box() {
         (100, 100)
     );
 }
+
+#[test]
+fn monolithic_overflow_continuation_keeps_the_source_box() {
+    // `monolithic-with-overflow`: in a 50px tall auto-filled two-column
+    // multicol, a 50px block fills the first column. A zero-height
+    // `contain: size` block follows with 50px of children. Its overflow is
+    // monolithic, so its continuation in the second column keeps the
+    // zero-height source box that clips those children.
+    let mut doc = Document::new();
+    let block = |doc: &mut Document, height: f32| {
+        let node = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(node, |style| {
+            style.update_derived(|computed| computed.display = Display::Block);
+            style.update_derived(|computed| computed.height = Length::px(height));
+        });
+        node
+    };
+    let outer = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(outer, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+        style.update_derived(|computed| computed.width = Length::px(100.0));
+        style.update_derived(|computed| computed.height = Length::px(50.0));
+        style.update_derived(|computed| computed.column_count = Some(2));
+        style.update_derived(|computed| computed.column_gap = Some(Length::px(0.0)));
+        style.update_derived(|computed| computed.column_fill = ColumnFill::Auto);
+    });
+    doc.append_child(doc.root(), outer);
+    let first = block(&mut doc, 50.0);
+    doc.append_child(outer, first);
+    let monolithic = block(&mut doc, 0.0);
+    doc.update_resolved_style(monolithic, |style| {
+        style.update_derived(|computed| computed.contain = Containment::SIZE);
+    });
+    doc.append_child(outer, monolithic);
+    for _ in 0..2 {
+        let child = block(&mut doc, 25.0);
+        doc.append_child(monolithic, child);
+    }
+    let last = block(&mut doc, 100.0);
+    doc.update_resolved_style(last, |style| {
+        style.update_derived(|computed| computed.contain = Containment::SIZE);
+    });
+    doc.append_child(outer, last);
+
+    let space = ConstraintSpace::for_block_child(lu(100), lu(600), lu(50), lu(600), false);
+    let fragment = block_layout(&doc, outer, &space);
+    let columns: Vec<&Fragment> = fragment
+        .children
+        .iter()
+        .filter(|child| child.kind == FragmentKind::ColumnBox)
+        .collect();
+    let continuation = columns[1]
+        .children
+        .iter()
+        .find(|child| child.node_id == monolithic)
+        .expect("monolithic overflow continuation");
+    assert_eq!(continuation.border_box_rect().size.height.to_i32(), 0);
+}
