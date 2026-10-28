@@ -5450,3 +5450,77 @@ fn nested_auto_filled_final_row_contributes_only_its_content() {
         .collect();
     assert_eq!(second, vec![(true, 0, 25), (false, 25, 75)]);
 }
+
+#[test]
+fn nested_balanced_rows_resume_after_descendant_forced_breaks() {
+    // `multicol-nested-column-rule-003` without its rules: a 100px tall
+    // auto-filled two-column multicol holds a balanced two-column multicol
+    // whose one child holds 10px, 10px and 200px blocks, the first two with
+    // `break-after: column`. The forced breaks end the first nested row after
+    // 20px of source, so the second row balances the 200px block into two
+    // 100px columns.
+    let mut doc = Document::new();
+    let multicol = |doc: &mut Document, fill: ColumnFill| {
+        let node = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(node, |style| {
+            style.update_derived(|computed| computed.display = Display::Block);
+            style.update_derived(|computed| computed.column_count = Some(2));
+            style.update_derived(|computed| computed.column_gap = Some(Length::px(0.0)));
+            style.update_derived(|computed| computed.column_fill = fill);
+        });
+        node
+    };
+    let block = |doc: &mut Document, height: f32| {
+        let node = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(node, |style| {
+            style.update_derived(|computed| computed.display = Display::Block);
+            style.update_derived(|computed| computed.height = Length::px(height));
+        });
+        node
+    };
+    let outer = multicol(&mut doc, ColumnFill::Auto);
+    doc.update_resolved_style(outer, |style| {
+        style.update_derived(|computed| computed.width = Length::px(100.0));
+        style.update_derived(|computed| computed.height = Length::px(100.0));
+    });
+    doc.append_child(doc.root(), outer);
+    let inner = multicol(&mut doc, ColumnFill::Balance);
+    doc.append_child(outer, inner);
+    let wrapper = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(wrapper, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+    });
+    doc.append_child(inner, wrapper);
+    for height in [10.0, 10.0] {
+        let node = block(&mut doc, height);
+        doc.update_resolved_style(node, |style| {
+            style.update_derived(|computed| computed.break_after = BreakValue::Column);
+        });
+        doc.append_child(wrapper, node);
+    }
+    let tail = block(&mut doc, 200.0);
+    doc.append_child(wrapper, tail);
+
+    let space = ConstraintSpace::for_block_child(lu(100), lu(600), lu(100), lu(600), false);
+    let fragment = block_layout(&doc, outer, &space);
+    let columns: Vec<&Fragment> = fragment
+        .children
+        .iter()
+        .filter(|child| child.kind == FragmentKind::ColumnBox)
+        .collect();
+    let continuation = columns[1]
+        .children
+        .iter()
+        .find(|child| child.node_id == inner)
+        .expect("nested multicol continuation");
+    let rows: Vec<i32> = continuation
+        .children
+        .iter()
+        .filter(|child| child.kind == FragmentKind::ColumnBox)
+        .map(|row| row.size.height.to_i32())
+        .collect();
+    assert_eq!(
+        (continuation.size.height.to_i32(), rows),
+        (100, vec![100, 100])
+    );
+}

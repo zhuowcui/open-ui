@@ -25203,7 +25203,11 @@ fn layout_multicol(
                     ColumnFill::Balance | ColumnFill::BalanceAll
                 )
                 && !has_spanner_after
-                && !subtree_has_positioned_descendant(doc, node_id))
+                && !subtree_has_positioned_descendant(doc, node_id)
+                // The row estimate sees each principal child as one unit. A
+                // forced break inside a child ends its column early, so the
+                // estimate would assume later rows have less source left.
+                && !subtree_has_forced_break_descendant(doc, node_id))
             .then(|| {
                 let sequential_fragmentation_sizes = col_fragmentation_sizes
                     .iter()
