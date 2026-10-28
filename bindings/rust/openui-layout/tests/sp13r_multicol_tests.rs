@@ -5251,3 +5251,59 @@ fn spanner_overflow_in_nested_multicol_continuation_is_not_block_clipped() {
         .collect();
     assert_eq!(tail_tops, vec![0]);
 }
+
+#[test]
+fn nested_multicol_with_leading_monolithic_row_starts_in_the_next_outer_column() {
+    // `multicol-nested-024`: a 150px tall auto-filled two-column multicol
+    // holds a 100px block and then a balanced two-column multicol of three
+    // 100px size-contained blocks. Only 50px remain after the block, so the
+    // nested multicol's leading monolithic block would overflow the first
+    // column. Chrome starts the nested multicol in the second column.
+    let mut doc = Document::new();
+    let block = |doc: &mut Document, height: f32| {
+        let node = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(node, |style| {
+            style.update_derived(|computed| computed.display = Display::Block);
+            style.update_derived(|computed| computed.height = Length::px(height));
+        });
+        node
+    };
+    let outer = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(outer, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+        style.update_derived(|computed| computed.width = Length::px(100.0));
+        style.update_derived(|computed| computed.height = Length::px(150.0));
+        style.update_derived(|computed| computed.column_count = Some(2));
+        style.update_derived(|computed| computed.column_gap = Some(Length::px(0.0)));
+        style.update_derived(|computed| computed.column_fill = ColumnFill::Auto);
+    });
+    doc.append_child(doc.root(), outer);
+    let leading = block(&mut doc, 100.0);
+    doc.append_child(outer, leading);
+    let inner = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(inner, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+        style.update_derived(|computed| computed.column_count = Some(2));
+        style.update_derived(|computed| computed.column_gap = Some(Length::px(0.0)));
+    });
+    doc.append_child(outer, inner);
+    for _ in 0..3 {
+        let item = block(&mut doc, 100.0);
+        doc.update_resolved_style(item, |style| {
+            style.update_derived(|computed| computed.contain = Containment::SIZE);
+        });
+        doc.append_child(inner, item);
+    }
+
+    let space = ConstraintSpace::for_block_child(lu(100), lu(600), lu(150), lu(600), false);
+    let fragment = block_layout(&doc, outer, &space);
+    let inner_columns: Vec<usize> = fragment
+        .children
+        .iter()
+        .filter(|child| child.kind == FragmentKind::ColumnBox)
+        .enumerate()
+        .filter(|(_, column)| column.children.iter().any(|child| child.node_id == inner))
+        .map(|(index, _)| index)
+        .collect();
+    assert_eq!(inner_columns, vec![1, 2]);
+}

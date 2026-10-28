@@ -26359,6 +26359,37 @@ fn layout_multicol(
                     }
                 }
 
+                // A nested multicol after earlier progress in this column may
+                // find more space in the next one. Blink's column layout
+                // (`may_have_more_space_in_next_outer_fragmentainer`) pushes
+                // a row whose leading monolithic content would overflow the
+                // remaining space there, rather than letting it overflow.
+                if algo.column_fill == ColumnFill::Auto
+                    && col_block_offset > LayoutUnit::zero()
+                    && !column_height.is_indefinite()
+                    && child_style.height.is_auto()
+                    && child_style.overflow_x == Overflow::Visible
+                    && child_style.overflow_y == Overflow::Visible
+                    && crate::multicol::ColumnLayoutAlgorithm::from_style(child_style).is_some()
+                {
+                    let leading_unit = leading_monolithic_descendant_extent(doc, &child_frag)
+                        .map(|(extent, _)| extent);
+                    if let Some(leading_unit) = leading_unit {
+                        if margin_space + leading_unit > col_remaining
+                            && leading_unit <= column_capacity_for(col_idx + 1)
+                        {
+                            max_col_content = max_col_content.max_of(col_block_offset);
+                            col_idx += 1;
+                            col_block_offset = LayoutUnit::zero();
+                            col_remaining = column_capacity_for(col_idx);
+                            prev_margin_bottom = LayoutUnit::zero();
+                            prev_fixed_child_visual_overflow = false;
+                            prev_fixed_child_descendant_visual_overflow = false;
+                            col_started_by_forced_break = false;
+                        }
+                    }
+                }
+
                 // A float establishes a monolithic formatting context. Its
                 // zero normal-flow advance must not make it appear to fit in
                 // the tail of a fragmentainer when its actual margin box does

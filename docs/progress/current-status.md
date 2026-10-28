@@ -1,5 +1,13 @@
 # Open UI current status
 
+## A nested multicol row with leading monolithic content 28 October 2026
+
+An auto-height nested multicol after earlier content in an auto-filled
+column now starts in the next column when its leading monolithic content
+cannot fit the remaining space, following Blink's column layout. The census
+goes from 22,114 to 22,118 exact with no losses. See the
+[nested monolithic row record](nested-multicol-monolithic-push-2026-10-28.md).
+
 ## Spanner overflow in a resumed nested multicol 28 October 2026
 
 A nested multicol whose spanner content overflows into the next outer column
