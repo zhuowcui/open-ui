@@ -1,5 +1,13 @@
 # Open UI current status
 
+## A visible overflow continuation's own box 28 October 2026
+
+When a box's visible overflow continues into the next column of a multicol,
+the continuation is no longer clipped to the source box's border box. The
+census goes from 22,138 to 22,153 exact with no losses, and
+`block-in-inline-000` keeps a seam difference at 1.25x. See the
+[overflow continuation record](overflow-continuation-principal-box-2026-10-28.md).
+
 ## Placed positioned slices in a nested multicol continuation 28 October 2026
 
 The positioned overflow continuation of a nested multicol no longer repeats
