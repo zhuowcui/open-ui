@@ -1,0 +1,96 @@
+{
+ "base_commit": "089bc85f449879a28d6b08c0c9ddaa495b1d68ce",
+ "base_exact": 22153,
+ "chromium_identical": 23728,
+ "comparisons": 23728,
+ "errors": [],
+ "gains": [
+  {
+   "base": "different",
+   "base_mismatched": 167,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/block-in-inline-000",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 4125,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/out-of-flow-in-multicolumn-047",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 5700,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/out-of-flow-in-multicolumn-047",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2500,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/out-of-flow-in-multicolumn-047",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 10000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/out-of-flow-in-multicolumn-047",
+   "profile": "mobile-375x667@2"
+  }
+ ],
+ "head_commit": "25b9382000355fc6ef70dee2013820f13b25ae15",
+ "head_exact": 22158,
+ "improved": [],
+ "losses": [],
+ "openui_changed": [
+  {
+   "base": "different",
+   "base_mismatched": 167,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/block-in-inline-000",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 4125,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/out-of-flow-in-multicolumn-047",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 5700,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/out-of-flow-in-multicolumn-047",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2500,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/out-of-flow-in-multicolumn-047",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 10000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/out-of-flow-in-multicolumn-047",
+   "profile": "mobile-375x667@2"
+  }
+ ],
+ "worsened": []
+}
