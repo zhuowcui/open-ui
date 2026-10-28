@@ -1,5 +1,12 @@
 # Open UI current status
 
+## Later rows of a nested auto-filled multicol 28 October 2026
+
+A nested auto-filled multicol whose first row is shortened by earlier
+content in the outer column now gives each later row the full outer
+fragmentainer. The census goes from 22,118 to 22,126 exact with no losses.
+See the [nested fresh rows record](nested-multicol-fresh-rows-2026-10-28.md).
+
 ## A nested multicol row with leading monolithic content 28 October 2026
 
 An auto-height nested multicol after earlier content in an auto-filled
