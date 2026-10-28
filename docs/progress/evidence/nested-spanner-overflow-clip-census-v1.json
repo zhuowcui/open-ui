@@ -1,0 +1,281 @@
+{
+ "base_commit": "9d82b235444bcb17dbc99c76475a2cb2cec5d24a",
+ "base_exact": 22103,
+ "chromium_identical": 23728,
+ "comparisons": 23728,
+ "errors": [],
+ "gains": [
+  {
+   "base": "different",
+   "base_mismatched": 11250,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/spanner-fragmentation-004",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 9030,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/spanner-fragmentation-005",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 9000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/spanner-fragmentation-008",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 5000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/spanner-fragmentation-004",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 4000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/spanner-fragmentation-005",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1250,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/spanner-fragmentation-006",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 4000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/spanner-fragmentation-008",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 20000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/spanner-fragmentation-004",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 16000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/spanner-fragmentation-005",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 5000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/spanner-fragmentation-006",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 16000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/spanner-fragmentation-008",
+   "profile": "mobile-375x667@2"
+  }
+ ],
+ "head_commit": "1e3b28447eae90c6d819c9c9581418bc1f0c39c1",
+ "head_exact": 22114,
+ "improved": [
+  {
+   "base": "different",
+   "base_mismatched": 7875,
+   "head": "different",
+   "head_mismatched": 125,
+   "id": "wpt/css_multicol/spanner-fragmentation-004",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 6325,
+   "head": "different",
+   "head_mismatched": 75,
+   "id": "wpt/css_multicol/spanner-fragmentation-005",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2015,
+   "head": "different",
+   "head_mismatched": 375,
+   "id": "wpt/css_multicol/spanner-fragmentation-006",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 6300,
+   "head": "different",
+   "head_mismatched": 125,
+   "id": "wpt/css_multicol/spanner-fragmentation-008",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2850,
+   "head": "different",
+   "head_mismatched": 300,
+   "id": "wpt/css_multicol/spanner-fragmentation-006",
+   "profile": "desktop-1920x1080@1.5"
+  }
+ ],
+ "losses": [],
+ "openui_changed": [
+  {
+   "base": "different",
+   "base_mismatched": 125,
+   "head": "different",
+   "head_mismatched": 125,
+   "id": "wpt/css_multicol/multicol-nested-017",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 7875,
+   "head": "different",
+   "head_mismatched": 125,
+   "id": "wpt/css_multicol/spanner-fragmentation-004",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 6325,
+   "head": "different",
+   "head_mismatched": 75,
+   "id": "wpt/css_multicol/spanner-fragmentation-005",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2015,
+   "head": "different",
+   "head_mismatched": 375,
+   "id": "wpt/css_multicol/spanner-fragmentation-006",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 6300,
+   "head": "different",
+   "head_mismatched": 125,
+   "id": "wpt/css_multicol/spanner-fragmentation-008",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 11250,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/spanner-fragmentation-004",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 9030,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/spanner-fragmentation-005",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2850,
+   "head": "different",
+   "head_mismatched": 300,
+   "id": "wpt/css_multicol/spanner-fragmentation-006",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 9000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/spanner-fragmentation-008",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 5000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/spanner-fragmentation-004",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 4000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/spanner-fragmentation-005",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1250,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/spanner-fragmentation-006",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 4000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/spanner-fragmentation-008",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 20000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/spanner-fragmentation-004",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 16000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/spanner-fragmentation-005",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 5000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/spanner-fragmentation-006",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 16000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/spanner-fragmentation-008",
+   "profile": "mobile-375x667@2"
+  }
+ ],
+ "worsened": []
+}

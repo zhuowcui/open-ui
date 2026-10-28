@@ -1,5 +1,14 @@
 # Open UI current status
 
+## Spanner overflow in a resumed nested multicol 28 October 2026
+
+A nested multicol whose spanner content overflows into the next outer column
+now paints that overflow, as Chrome 147 does. Its resumed part clips only
+its inline axis; a clip on both axes had hidden the whole column. The census
+goes from 22,103 to 22,114 exact with no losses. Seam coverage at 1.25x and
+1.5x remains. See the
+[nested spanner overflow record](nested-spanner-overflow-clip-2026-10-28.md).
+
 ## Fixed boxes in a transformed stacked nested multicol row 27 October 2026
 
 A fixed box whose containing block is a transformed box in an auto-height

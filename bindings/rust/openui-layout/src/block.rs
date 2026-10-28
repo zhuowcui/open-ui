@@ -32060,8 +32060,12 @@ fn layout_multicol(
                                 // that row were already exposed by the prior
                                 // fragment and must not escape the nested
                                 // continuation's border box a second time.
+                                // The block axis belongs to the ancestor
+                                // column: a spanner's overflow tail resumes
+                                // here and must stay visible.
                                 part.has_overflow_clip = true;
                                 part.block_axis_clip_only = false;
+                                part.inline_axis_clip_only = true;
                             }
 
                             let part_col_idx = if row_flex_forced_fragmentainer_flow {
