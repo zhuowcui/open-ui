@@ -2469,6 +2469,80 @@ fn forced_column_flex_break_splits_crossing_parallel_item() {
 }
 
 #[test]
+fn forced_negative_margin_item_of_wrapped_column_flex_starts_after_its_break() {
+    // `flexbox_multi-line-column-flex-fragmentation-032`: line 1 holds a
+    // 150px item and a `break-before: column` item with a -50px margin. Each
+    // line is a parallel flow (`FlexLine::item_offset_adjustment`), so the
+    // forced item starts in the third column after the line's 150px content
+    // and keeps its margin there: its border box begins 50px above that
+    // column. Only that column extends above the multicol, and the second
+    // column holds none of the forced item.
+    let mut doc = Document::new();
+    let multicol = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(multicol, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+        style.update_derived(|computed| computed.width = Length::px(100.0));
+        style.update_derived(|computed| computed.height = Length::px(100.0));
+        style.update_derived(|computed| computed.column_count = Some(5));
+        style.update_derived(|computed| computed.column_gap = Some(Length::px(0.0)));
+        style.update_derived(|computed| computed.column_fill = ColumnFill::Auto);
+    });
+    doc.append_child(doc.root(), multicol);
+    let flex = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(flex, |style| {
+        style.update_derived(|computed| computed.display = Display::Flex);
+        style.update_derived(|computed| computed.flex_direction = FlexDirection::Column);
+        style.update_derived(|computed| computed.flex_wrap = FlexWrap::Wrap);
+        style.update_derived(|computed| computed.height = Length::px(500.0));
+    });
+    doc.append_child(multicol, flex);
+    let mut items = Vec::new();
+    for (height, forced, margin_top) in [
+        (150.0, false, 0.0),
+        (350.0, true, -50.0),
+        (150.0, false, 0.0),
+        (300.0, true, 0.0),
+    ] {
+        let item = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(item, |style| {
+            style.update_derived(|computed| computed.display = Display::Block);
+            style.update_derived(|computed| computed.width = Length::px(10.0));
+            style.update_derived(|computed| computed.height = Length::px(height));
+            style.update_derived(|computed| computed.margin_top = Length::px(margin_top));
+            if forced {
+                style.update_derived(|computed| computed.break_before = BreakValue::Column);
+            }
+        });
+        doc.append_child(flex, item);
+        items.push(item);
+    }
+
+    let fragment = block_layout(
+        &doc,
+        multicol,
+        &ConstraintSpace::for_block_child(lu(100), lu(600), lu(100), lu(600), false),
+    );
+    let column_fragments = columns(&fragment);
+    assert_eq!(
+        column_fragments
+            .iter()
+            .map(|column| column.offset.top)
+            .collect::<Vec<_>>(),
+        vec![lu(0), lu(0), lu(-50), lu(0), lu(0)]
+    );
+    let forced_top = |column: &Fragment| {
+        let flex_part = find_node(column, flex).expect("flex continuation");
+        flex_part
+            .children
+            .iter()
+            .find(|child| child.node_id == items[1])
+            .map(|item| column.offset.top + flex_part.offset.top + item.offset.top)
+    };
+    assert_eq!(forced_top(column_fragments[1]), None);
+    assert_eq!(forced_top(column_fragments[2]), Some(lu(-50)));
+}
+
+#[test]
 fn avoid_between_row_flex_lines_breaks_before_previous_line() {
     // `flexbox_multi-line-row-flex-fragmentation-033` (break-before) and
     // `-035` (break-after): the boundary between the second and third flex
