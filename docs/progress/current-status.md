@@ -1,5 +1,14 @@
 # Open UI current status
 
+## A fieldset's trailing child margin at a column end 28 October 2026
+
+In an auto-filled multicol, the bottom margin of a fieldset's last child is
+now truncated at the column end before a forced column break, as for other
+new formatting contexts. The census goes from 22,134 to 22,138 exact with no
+losses. The record also lists the remaining fragmentation failures surveyed
+with their owners. See the
+[fieldset trailing margin record](fieldset-trailing-margin-2026-10-28.md).
+
 ## Nested balanced rows after descendant forced breaks 28 October 2026
 
 A balanced multicol nested in an auto-filled multicol now sizes its later

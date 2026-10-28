@@ -5524,3 +5524,52 @@ fn nested_balanced_rows_resume_after_descendant_forced_breaks() {
         (100, vec![100, 100])
     );
 }
+
+#[test]
+fn fieldset_trailing_child_margin_is_truncated_before_a_forced_break() {
+    // `trailing-child-margin-002`: in a 100px tall auto-filled two-column
+    // multicol, a fieldset holds a 70px block with a 50px bottom margin. The
+    // margin crosses the column end and is truncated there, so the fieldset
+    // ends in the first column and the following `break-before: column`
+    // block fills the second.
+    let mut doc = Document::new();
+    let outer = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(outer, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+        style.update_derived(|computed| computed.width = Length::px(100.0));
+        style.update_derived(|computed| computed.height = Length::px(100.0));
+        style.update_derived(|computed| computed.column_count = Some(2));
+        style.update_derived(|computed| computed.column_gap = Some(Length::px(0.0)));
+        style.update_derived(|computed| computed.column_fill = ColumnFill::Auto);
+    });
+    doc.append_child(doc.root(), outer);
+    let fieldset = doc.create_node(ElementTag::Fieldset);
+    doc.update_resolved_style(fieldset, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+    });
+    doc.append_child(outer, fieldset);
+    let content = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(content, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+        style.update_derived(|computed| computed.height = Length::px(70.0));
+        style.update_derived(|computed| computed.margin_bottom = Length::px(50.0));
+    });
+    doc.append_child(fieldset, content);
+    let forced = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(forced, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+        style.update_derived(|computed| computed.height = Length::px(100.0));
+        style.update_derived(|computed| computed.break_before = BreakValue::Column);
+    });
+    doc.append_child(outer, forced);
+
+    let space = ConstraintSpace::for_block_child(lu(100), lu(600), lu(100), lu(600), false);
+    let fragment = block_layout(&doc, outer, &space);
+    let columns: Vec<Vec<NodeId>> = fragment
+        .children
+        .iter()
+        .filter(|child| child.kind == FragmentKind::ColumnBox)
+        .map(|column| column.children.iter().map(|child| child.node_id).collect())
+        .collect();
+    assert_eq!(columns, vec![vec![fieldset], vec![forced]]);
+}
