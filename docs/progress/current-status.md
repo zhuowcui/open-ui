@@ -1,5 +1,12 @@
 # Open UI current status
 
+## Placed positioned slices in a nested multicol continuation 28 October 2026
+
+The positioned overflow continuation of a nested multicol no longer repeats
+the positioned slices that the inner multicol already placed in an earlier
+outer column. The census goes from 22,138 to 22,142 exact with no losses. See
+the [nested positioned slice record](nested-oof-slice-continuation-2026-10-28.md).
+
 ## A fieldset's trailing child margin at a column end 28 October 2026
 
 In an auto-filled multicol, the bottom margin of a fieldset's last child is

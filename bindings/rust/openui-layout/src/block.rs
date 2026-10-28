@@ -28949,9 +28949,16 @@ fn layout_multicol(
                                     // for a direct positioned descendant must
                                     // not replay that source in the next outer
                                     // fragmentainer.
+                                    // Positioned slices that the inner
+                                    // multicol placed within those consumed
+                                    // columns are complete there as well.
                                     overflow_part.children.retain(|child| {
                                         child.kind != FragmentKind::ColumnBox
                                             && child.kind != FragmentKind::ColumnRule
+                                            && !(child.positioned_fragmentation.is_some()
+                                                && child.decoration_slice.is_some()
+                                                && child.offset.top + child.size.height
+                                                    <= overflow_child_shift)
                                     });
                                 }
                                 if monolithic_overflow_break_top.is_some() {
