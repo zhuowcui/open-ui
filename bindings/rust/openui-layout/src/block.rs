@@ -18781,6 +18781,8 @@ fn fragment_direct_positioned_children_in_multicol(
                     doc.node(target).style.position == Position::Relative
                         && logical_record.visual_translation != PhysicalOffset::zero()
                         && logical_record.containing_block_size.width == LayoutUnit::zero()
+                        && logical_record.block_start_inset.is_none()
+                        && logical_record.block_end_inset.is_none()
                 });
             if translated_empty_inline_cb {
                 source_flow
@@ -19119,7 +19121,39 @@ fn fragment_direct_positioned_children_in_multicol(
         } else {
             fragment.offset.left - content_edge_x - inline_offset(containing_column)
         };
-        if inline_transform_containing_block.is_some() {
+        if inline_transform_containing_block.is_some()
+            && logical_record.visual_translation != PhysicalOffset::zero()
+            && logical_record.inline_start_inset.is_some()
+        {
+            // A relative inline containing block's translation is applied to
+            // the slices below. The inline inset resolves from the containing
+            // block's source edge in its own column, even when the inset
+            // reaches past that column's inline end.
+            let source_containing_block_left = logical_record.containing_block_offset.left
+                - logical_record.visual_translation.left;
+            let source_column = column_index(source_containing_block_left);
+            inline_local = fragment.offset.left
+                - logical_record.visual_translation.left
+                - content_edge_x
+                - inline_offset(source_column);
+        } else if inline_transform_containing_block.is_some()
+            && logical_record.visual_translation != PhysicalOffset::zero()
+            && uses_static_inline_position
+            && positioned.inline_containing_block_node.is_some()
+        {
+            // The static position lies in the column that holds the box's
+            // source block start. Its local inline offset may reach that
+            // column's inline end, so it must not select a column itself.
+            let static_column = if logical_record.source_block_start.raw() > 0 {
+                (logical_record.source_block_start.raw() / fragmentainer_height.raw()) as usize
+            } else {
+                0
+            };
+            inline_local = logical_record.static_anchor.left
+                - logical_record.visual_translation.left
+                - content_edge_x
+                - inline_offset(static_column);
+        } else if inline_transform_containing_block.is_some() {
             let fragment_column = column_index(fragment.offset.left);
             inline_local = fragment.offset.left - content_edge_x - inline_offset(fragment_column);
         } else if let Some(transform_source) = positioned
