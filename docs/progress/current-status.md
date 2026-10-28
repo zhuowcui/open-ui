@@ -1,5 +1,12 @@
 # Open UI current status
 
+## Nested balanced rows after descendant forced breaks 28 October 2026
+
+A balanced multicol nested in an auto-filled multicol now sizes its later
+rows from the source left after forced breaks inside its content. The census
+goes from 22,130 to 22,134 exact with no losses. See the
+[nested forced rows record](nested-multicol-forced-rows-2026-10-28.md).
+
 ## A block's final slice in a nested multicol row 28 October 2026
 
 The final source slice of a block in a nested auto-filled multicol now ends
