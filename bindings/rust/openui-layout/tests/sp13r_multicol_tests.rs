@@ -5648,3 +5648,62 @@ fn positioned_continuation_of_nested_multicol_omits_slices_already_placed() {
         .collect();
     assert_eq!(nodes, vec![lower]);
 }
+
+#[test]
+fn visible_overflow_continuation_does_not_keep_the_source_principal_box() {
+    // `block-in-inline-000` without the inline: in a 100px square auto-filled
+    // two-column multicol, a 50px block holds a 16px block and then a 100px
+    // block with `break-before: column`. The forced block overflows the 50px
+    // block and continues in the second column. That continuation's own box
+    // is its fragmentainer slice, which must hold the whole 100px block.
+    let mut doc = Document::new();
+    let block = |doc: &mut Document, height: f32| {
+        let node = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(node, |style| {
+            style.update_derived(|computed| computed.display = Display::Block);
+            style.update_derived(|computed| computed.height = Length::px(height));
+        });
+        node
+    };
+    let outer = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(outer, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+        style.update_derived(|computed| computed.width = Length::px(100.0));
+        style.update_derived(|computed| computed.height = Length::px(100.0));
+        style.update_derived(|computed| computed.column_count = Some(2));
+        style.update_derived(|computed| computed.column_gap = Some(Length::px(0.0)));
+        style.update_derived(|computed| computed.column_fill = ColumnFill::Auto);
+    });
+    doc.append_child(doc.root(), outer);
+    let owner = block(&mut doc, 50.0);
+    doc.append_child(outer, owner);
+    let line = block(&mut doc, 16.0);
+    doc.append_child(owner, line);
+    let forced = block(&mut doc, 100.0);
+    doc.update_resolved_style(forced, |style| {
+        style.update_derived(|computed| computed.break_before = BreakValue::Column);
+    });
+    doc.append_child(owner, forced);
+    let after = block(&mut doc, 50.0);
+    doc.append_child(outer, after);
+
+    let space = ConstraintSpace::for_block_child(lu(100), lu(600), lu(100), lu(600), false);
+    let fragment = block_layout(&doc, outer, &space);
+    let columns: Vec<&Fragment> = fragment
+        .children
+        .iter()
+        .filter(|child| child.kind == FragmentKind::ColumnBox)
+        .collect();
+    let continuation = columns[1]
+        .children
+        .iter()
+        .find(|child| child.node_id == owner)
+        .expect("overflow continuation");
+    assert_eq!(
+        (
+            continuation.size.height.to_i32(),
+            continuation.border_box_rect().size.height.to_i32()
+        ),
+        (100, 100)
+    );
+}

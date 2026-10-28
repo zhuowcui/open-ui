@@ -28992,6 +28992,15 @@ fn layout_multicol(
                                             .min_of(overflow_part_height),
                                     );
                                 }
+                                // The cloned principal box is the source
+                                // fragment's border box. A fragmentable
+                                // continuation's clip covers its
+                                // fragmentainer slice, and its decoration
+                                // size limits the background. A monolithic
+                                // box's overflow stays clipped to its box.
+                                if !node_is_monolithic_for_fragmentation(doc, child_node_id) {
+                                    overflow_part.principal_box_rect = None;
+                                }
                                 overflow_part.has_overflow_clip = true;
                                 overflow_part.block_axis_clip_only = child_style.overflow_x
                                     == Overflow::Visible
