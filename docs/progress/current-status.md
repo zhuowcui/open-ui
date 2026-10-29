@@ -1,5 +1,13 @@
 # Open UI current status
 
+## A floated multicol with overflowing monolithic content 28 October 2026
+
+A floated multicol inside a multicol now ends at its own block size when
+monolithic content overflows its inner column, instead of continuing into a
+further outer column. The census goes from 22,167 to 22,171 exact with no
+losses. See the
+[floated multicol record](floated-multicol-monolithic-overflow-2026-10-28.md).
+
 ## Positioned insets in a translated inline containing block 28 October 2026
 
 In a multicol, the absolute and fixed descendants of a relatively positioned
