@@ -93,3 +93,4 @@ attributed in this change.
 | Paint and fixture crates on Windows | `cargo test --locked -p openui-paint -p pixel-compare`, with the `windows-msvc` CI environment | 1,264 passed, 0 failed |
 | Porter test | `python tools/wpt/test_sp13p_paint_closure.py` | 9 tests OK |
 | Renderer contract | `generate_renderer_contract.py --check` | passes |
+| Windows workspace | `cargo test --workspace --locked --no-fail-fast`, with the `windows-msvc` CI environment | 9,484 passed, 0 failed, 20 ignored |
