@@ -143,6 +143,15 @@ fn read_i16(data: &[u8], offset: usize) -> Option<i16> {
     read_u16(data, offset).map(|value| value as i16)
 }
 
+/// Blink's Linux subpixel-positioning borrow in
+/// `FontMetrics::AscentDescentWithHacks`: after rounding, a descent that
+/// rounded down takes one pixel from the ascent. The unrounded values move by
+/// the same pixel, so their rounding gives Blink's integer metrics and their
+/// sum is unchanged.
+fn linux_subpixel_ascent_borrow(ascent: f32, descent: f32) -> Option<(f32, f32)> {
+    (descent.round() < descent && ascent.round() >= 1.0).then(|| (ascent - 1.0, descent + 1.0))
+}
+
 fn resolve_hinting(
     requested_hinting: TextHinting,
     requested_edging: TextEdging,
@@ -458,6 +467,27 @@ impl FontPlatformData {
             }
             if configuration.metric_overrides.descent.is_none() {
                 metrics.descent = linear_metrics.descent;
+            }
+        }
+        // Linux Chromium turns on subpixel positioning above a device scale
+        // of 1, and then requests no hinting (`gfx::GetFontRenderParams`).
+        // Blink's `FontMetrics::AscentDescentWithHacks` reads that same render
+        // style: when the descent rounded down, it moves one pixel from the
+        // ascent to the descent. That raises the baseline by one CSS pixel
+        // and keeps the content area. Fontconfig disables subpixel
+        // positioning for aliased text.
+        if chromium_backend
+            && !windows_chromium
+            && device_scale_factor > 1.0
+            && settings.edging != TextEdging::Alias
+        {
+            if let Some((ascent, descent)) =
+                linux_subpixel_ascent_borrow(metrics.ascent, metrics.descent)
+            {
+                metrics.ascent = ascent;
+                metrics.descent = descent;
+                sk_font.set_hinting(FontHinting::None);
+                shaping_font.set_hinting(FontHinting::None);
             }
         }
         metrics.line_spacing = metrics.ascent + metrics.descent + metrics.line_gap;
@@ -816,6 +846,26 @@ mod tests {
         let skia = build(RasterConfiguration::default(), false);
         assert_eq!(skia.sk_font().hinting(), FontHinting::Slight);
         assert!(skia.sk_font().is_subpixel());
+    }
+
+    #[test]
+    fn linux_subpixel_borrow_moves_a_pixel_only_when_descent_rounds_down() {
+        // DejaVu Sans Mono at 10px: 9.28 and 2.36 round to 9 and 2, then
+        // borrow to 8 and 3, as Chrome 147 paints at 2x.
+        let (ascent, descent) = linux_subpixel_ascent_borrow(9.28, 2.36).unwrap();
+        assert_eq!((ascent.round(), descent.round()), (8.0, 3.0));
+        assert!((ascent + descent - 11.64).abs() < 1.0e-4);
+        // At 13px the descent 3.07 also rounds down.
+        let (ascent, descent) = linux_subpixel_ascent_borrow(12.06, 3.07).unwrap();
+        assert_eq!((ascent.round(), descent.round()), (11.0, 4.0));
+        // At 11px, 12px and 16px it rounds up, so nothing moves.
+        assert_eq!(linux_subpixel_ascent_borrow(10.21, 2.59), None);
+        assert_eq!(linux_subpixel_ascent_borrow(11.14, 2.83), None);
+        assert_eq!(linux_subpixel_ascent_borrow(14.85, 3.78), None);
+        // Integral metrics, such as Ahem at 10px, never borrow.
+        assert_eq!(linux_subpixel_ascent_borrow(8.0, 2.0), None);
+        // Blink needs a rounded ascent of at least 1 to borrow from.
+        assert_eq!(linux_subpixel_ascent_borrow(0.4, 0.3), None);
     }
 
     #[test]
