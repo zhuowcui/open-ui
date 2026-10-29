@@ -5124,6 +5124,17 @@ def _packaged_resource(source: str, base: Path | None = None) -> tuple[str, str,
     return filename, label, mime, sha, _resource_dimensions(path, data, mime)
 
 
+def _forgiving_base64_decode(payload: str) -> bytes | None:
+    """Decode a data: URL payload as WHATWG forgiving-base64 does."""
+    import base64
+    text = re.sub(r'[\t\n\f\r ]', '', urllib.parse.unquote(payload))
+    if len(text) % 4 == 0:
+        text = text[:-2] if text.endswith('==') else text[:-1] if text.endswith('=') else text
+    if len(text) % 4 == 1 or not re.fullmatch(r'[A-Za-z0-9+/]*', text):
+        return None
+    return base64.b64decode(text + '=' * (-len(text) % 4))
+
+
 def _data_url_resource(source: str) -> tuple[str, str, str, tuple[float, float] | None, bytes] | None:
     if not source.startswith('data:'):
         return None
@@ -5131,11 +5142,12 @@ def _data_url_resource(source: str) -> tuple[str, str, str, tuple[float, float] 
     if not comma:
         return None
     mime = header[5:].split(';', 1)[0] or 'text/plain'
-    try:
-        import base64
-        data = base64.b64decode(payload) if ';base64' in header else urllib.parse.unquote_to_bytes(payload)
-    except Exception:
-        return None
+    if ';base64' in header:
+        data = _forgiving_base64_decode(payload)
+        if data is None:
+            return None
+    else:
+        data = urllib.parse.unquote_to_bytes(payload)
     sha = hashlib.sha256(data).hexdigest()
     return f'data:{mime};sha256={sha}', mime, sha, _resource_dimensions(Path('inline'), data, mime), data
 
@@ -5617,8 +5629,9 @@ def _css_image_rust(
             return None
         mime = header[5:].split(';', 1)[0] or 'text/plain'
         if ';base64' in header:
-            import base64
-            data = base64.b64decode(payload)
+            data = _forgiving_base64_decode(payload)
+            if data is None:
+                return None
         else:
             data = urllib.parse.unquote_to_bytes(payload)
         if mime == 'image/svg+xml':

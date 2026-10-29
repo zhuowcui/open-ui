@@ -7928,6 +7928,24 @@ fn css_backgrounds_background_repeat_round_empty_crash(viewport: ViewportMetrics
     doc.set_style(n1, RendererStyleValue::PaddingLeft(Length::px(0.0)));
     doc.set_style(n1, RendererStyleValue::BoxSizing(BoxSizing::ContentBox));
     doc.set_style(n1, RendererStyleValue::BorderRightStyle(BorderStyle::Solid));
+    let n1_background_image_0 = doc.register_image_resource(
+        "data:image/gif;sha256=744f5a1918e8c6b152955f4419ce372c819a887375c5a396225490bcdd39b4b3",
+        "image/gif",
+        "744f5a1918e8c6b152955f4419ce372c819a887375c5a396225490bcdd39b4b3",
+        vec![71, 73, 70, 56, 57, 97, 16, 0, 16, 0, 196, 0, 0, 228, 71, 28, 229, 82, 42, 231, 95, 58, 233, 107, 72, 234, 119, 88, 236, 131, 102, 238, 144, 118, 240, 156, 132, 241, 168, 149, 243, 180, 163, 245, 193, 179, 247, 205, 193, 248, 217, 209, 250, 229, 223, 252, 242, 239, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 33, 249, 4, 9, 0, 0, 16, 0, 44, 0, 0, 0, 0, 16, 0, 16, 0, 0, 5, 85, 32, 36, 142, 100, 105, 66, 64, 10, 44, 39, 169, 174, 237, 248, 178, 101, 226, 170, 52, 164, 232, 64, 96, 236, 51, 200, 65, 0, 56, 20, 94, 129, 128, 138, 168, 82, 190, 158, 80, 2, 116, 10, 24, 136, 20, 135, 1, 84, 96, 176, 149, 12, 80, 171, 41, 65, 53, 148, 22, 175, 1, 88, 133, 32, 57, 83, 34, 102, 249, 26, 109, 161, 7, 68, 165, 4, 32, 116, 82],
+    );
+    doc.set_style(n1, RendererStyleValue::BackgroundLayers(vec![BackgroundLayer {
+        image: CssImage::Raster(n1_background_image_0),
+        repeat_x: BackgroundRepeat::Round,
+        repeat_y: BackgroundRepeat::Round,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }]));
+    doc.set_style(n1, RendererStyleValue::BackgroundLinearGradient(None));
     doc.append_child(vp, n1);
     Ok(doc.into_engine())
 }

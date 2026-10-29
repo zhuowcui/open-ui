@@ -181,8 +181,10 @@ pub fn decode_image_resource(doc: &Document, id: ImageResourceId) -> Result<Imag
     }
 
     let mut image = match resource.mime_type.as_str() {
-        "image/png" | "image/jpeg" => Image::from_encoded(Data::new_copy(&resource.bytes))
-            .ok_or_else(|| format!("failed to decode raster resource {}", resource.source))?,
+        "image/png" | "image/jpeg" | "image/gif" => {
+            Image::from_encoded(Data::new_copy(&resource.bytes))
+                .ok_or_else(|| format!("failed to decode raster resource {}", resource.source))?
+        }
         "image/x-openui-rgba8" => decode_rgba8_resource(resource)?,
         "image/svg+xml" => {
             let svg = parsed_svg_resource(resource)?;
@@ -1606,6 +1608,10 @@ fn physical_quantized_image_patch_with_color_order(
                     * sampling_source.height(),
         )
     });
+    // Blink draws a single background tile with DrawImage and its default
+    // kClampToSourceRect, so sampling stays inside the visible subset.
+    let strict_source_domain =
+        strict_source_domain.or(single_tile_subset.then_some(sampling_source));
     let min_x = strict_source_domain
         .map_or(source.left, |domain| domain.left)
         .floor()
