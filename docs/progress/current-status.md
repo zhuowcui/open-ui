@@ -1,5 +1,13 @@
 # Open UI current status
 
+## An inline box's background through a clamped single tile 28 October 2026
+
+An empty inline box with an opaque border now paints its GIF background,
+and a background image drawn as one tile samples only its visible part, as
+Blink's `DrawImage` clamp does. The census goes from 22,188 to 22,189 exact
+with 7 more comparisons improved and no losses. See the
+[inline background record](inline-background-single-tile-2026-10-28.md).
+
 ## A bleed layer that holds only its rounded border 28 October 2026
 
 A rounded box with a translucent solid border and a background image that

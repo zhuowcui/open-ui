@@ -17269,9 +17269,11 @@ fn paint_background_layers(
             );
         }
         let mut square_opaque_border_bleed_clip = false;
+        // Inline boxes paint their fill layers with kBackgroundBleedNone.
         if clip_override.is_none()
             && layer.clip == BackgroundClip::BorderBox
             && style.border_image.is_none()
+            && !fragment.is_some_and(|fragment| fragment.is_inline_box_fragment)
             && (!style.has_border_radius()
                 || fragment.is_some_and(|fragment| fragment.ignore_border_radius))
         {
@@ -17316,16 +17318,14 @@ fn paint_background_layers(
                 );
             }
         }
-        if area.width() <= 0.0
-            || area.height() <= 0.0
-            || clip.width() <= 0.0
-            || clip.height() <= 0.0
-        {
+        // An empty positioning area still paints: Blink's destination is the
+        // painting area, and only `round` needs a nonempty positioning area.
+        if clip.width() <= 0.0 || clip.height() <= 0.0 {
             continue;
         }
         let (mut tile_width, mut tile_height) = layer_image_size(doc, layer, area);
         let authored_tile_size = (tile_width, tile_height);
-        if layer.repeat_x == BackgroundRepeat::Round && tile_width > 0.0 {
+        if layer.repeat_x == BackgroundRepeat::Round && area.width() > 0.0 && tile_width > 0.0 {
             let count = (area.width() / tile_width).round().max(1.0);
             let adjusted = area.width() / count;
             if layer.repeat_y != BackgroundRepeat::Round
@@ -17336,7 +17336,7 @@ fn paint_background_layers(
             }
             tile_width = adjusted;
         }
-        if layer.repeat_y == BackgroundRepeat::Round && tile_height > 0.0 {
+        if layer.repeat_y == BackgroundRepeat::Round && area.height() > 0.0 && tile_height > 0.0 {
             let count = (area.height() / tile_height).round().max(1.0);
             let adjusted = area.height() / count;
             if layer.repeat_x != BackgroundRepeat::Round
