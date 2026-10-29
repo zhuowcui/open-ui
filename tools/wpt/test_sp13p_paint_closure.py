@@ -90,6 +90,25 @@ class Sp13PPaintClosureTests(unittest.TestCase):
         self.assertEqual(emitted.count("BackgroundLayer {"), 1)
         self.assertIn("origin: BackgroundClip::BorderBox", emitted)
 
+    def test_unpadded_base64_data_url_background_is_decoded(self):
+        previous = port_wpt.EMIT_PAINT_LAYERS
+        port_wpt.set_paint_layer_emission(True)
+        try:
+            # Forgiving-base64 accepts a payload without its trailing "=".
+            styles = port_wpt.parse_inline_styles(
+                "background-image:url(data:image/gif;base64,R0lGODlhAQABAIAAAP8AAP8AACwAAAAAAQABAAACAkQBADs);"
+                "background-repeat:round round"
+            )
+            lines, _ = port_wpt.generate_style_code(styles, "n", 16.0)
+        finally:
+            port_wpt.set_paint_layer_emission(previous)
+        emitted = "\n".join(lines)
+        self.assertIn('"image/gif"', emitted)
+        self.assertEqual(emitted.count("BackgroundLayer {"), 1)
+        self.assertIsNone(port_wpt._forgiving_base64_decode("abcde"))
+        self.assertEqual(port_wpt._forgiving_base64_decode("YQ"), b"a")
+        self.assertEqual(port_wpt._forgiving_base64_decode("Y Q=="), b"a")
+
     def test_flex_alignment_fixtures_retain_complete_gradient_shorthands(self):
         rust_path = (
             ROOT

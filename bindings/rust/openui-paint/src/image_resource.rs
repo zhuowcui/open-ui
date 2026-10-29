@@ -3120,6 +3120,64 @@ mod tests {
     }
 
     #[test]
+    fn single_tile_background_samples_only_its_visible_subset() {
+        // Columns 0-2 are red, columns 3-15 blue. A 3px-wide clip at 1.5x
+        // shows source columns [0, 3); the half-covered edge pixel centre
+        // maps to x = 3.0, which DrawImage clamps to the subset's last texel.
+        let mut bytes = Vec::new();
+        for column in 0..16 {
+            bytes.extend_from_slice(if column < 3 {
+                &[0, 0, 255, 255]
+            } else {
+                &[255, 0, 0, 255]
+            });
+        }
+        let image = skia_safe::images::raster_from_data(
+            &ImageInfo::new_n32_premul((16, 1), None),
+            Data::new_copy(&bytes),
+            64,
+        )
+        .expect("retain decoded image");
+        let (patch, aligned, analytic_clip) = physical_quantized_image_patch(
+            &image,
+            Rect::from_xywh(0.0, 0.0, 16.0, 1.0),
+            Rect::from_xywh(20.0, 20.0, 16.0, 16.0),
+            1.5,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            Some((20.0, 20.0)),
+            false,
+            false,
+            false,
+            true,
+            true,
+            false,
+            Some(Rect::from_xywh(20.0, 20.0, 3.0, 16.0)),
+        )
+        .expect("single-tile patch");
+        assert!(analytic_clip.is_some());
+        let mut pixels = vec![0_u8; patch.width() as usize * patch.height() as usize * 4];
+        assert!(patch.read_pixels(
+            &ImageInfo::new_n32_premul((patch.width(), patch.height()), None),
+            &mut pixels,
+            patch.width() as usize * 4,
+            (0, 0),
+            CachingHint::Allow,
+        ));
+        let edge = (34 - (aligned.left * 1.5).round() as usize) * 4;
+        let row = 8 * patch.width() as usize * 4;
+        assert_eq!(pixels[row + edge], 0, "edge pixel mixes the hidden column");
+        assert!(
+            pixels[row + edge + 2] > 0,
+            "edge pixel keeps the visible column"
+        );
+    }
+
+    #[test]
     fn full_precision_repeated_background_retains_inverse_transform_phase() {
         let image = skia_safe::images::raster_from_data(
             &ImageInfo::new_n32_premul((2, 1), None),
