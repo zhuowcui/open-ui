@@ -1,5 +1,15 @@
 # Open UI current status
 
+## Linux subpixel positioning borrows a pixel from the ascent 29 October 2026
+
+Above a device scale of 1 on Linux, antialiased text whose descent rounds
+down moves one pixel from its ascent to its descent, as Blink's
+`AscentDescentWithHacks` does. That raises 10px and 13px DejaVu text by
+one CSS pixel. The paint-only 10px offset is removed. The census goes
+from 22,189 to 22,232 exact with 35 more comparisons improved and no
+losses. See the
+[ascent borrow record](linux-subpixel-ascent-borrow-2026-10-29.md).
+
 ## An inline box's background through a clamped single tile 28 October 2026
 
 An empty inline box with an opaque border now paints its GIF background,
