@@ -50,28 +50,6 @@ fn chromium_lcd_raster_x(device_x: f32, font_size: f32) -> f32 {
     }
 }
 
-fn chromium_lcd_strike_y_offset(
-    device_scale: f32,
-    edging: Edging,
-    hinting: FontHinting,
-    font_size: f32,
-    family: &str,
-) -> f32 {
-    // Chromium's retained 10px no-hint LCD strike keeps its origin one
-    // logical pixel above Skia's direct scaled replay. Ahem is a synthetic
-    // geometric face and does not use this outline-strike origin.
-    if (device_scale - 1.0).abs() > f32::EPSILON
-        && edging == Edging::SubpixelAntiAlias
-        && hinting == FontHinting::None
-        && (font_size - 10.0).abs() < f32::EPSILON
-        && !family.eq_ignore_ascii_case("Ahem")
-    {
-        1.0
-    } else {
-        0.0
-    }
-}
-
 struct SkiaPathPen(PathBuilder);
 
 impl Default for SkiaPathPen {
@@ -604,18 +582,8 @@ impl ShapeResult {
                     }
                     chromium_lcd_raster_x(device_x, source_font.size()) - origin
                 });
-                positions_out[i] = Point::new(
-                    raster_x * device_scale,
-                    (run.offsets[i].1
-                        - chromium_lcd_strike_y_offset(
-                            device_scale,
-                            source_font.edging(),
-                            source_font.hinting(),
-                            source_font.size(),
-                            &source_font.typeface().family_name(),
-                        ))
-                        * device_scale,
-                );
+                positions_out[i] =
+                    Point::new(raster_x * device_scale, run.offsets[i].1 * device_scale);
                 x += run.advances[i];
             }
             run_x = x;
@@ -983,8 +951,7 @@ impl std::fmt::Debug for ShapeResultRun {
 
 #[cfg(test)]
 mod tests {
-    use super::{chromium_lcd_raster_x, chromium_lcd_strike_y_offset};
-    use skia_safe::{font::Edging, FontHinting};
+    use super::chromium_lcd_raster_x;
 
     #[test]
     fn fontations_keeps_the_resolved_variable_font_instance() {
@@ -1067,61 +1034,5 @@ mod tests {
         assert_eq!(chromium_lcd_raster_x(269.390_625, 10.0), 269.390_625);
         assert_eq!(chromium_lcd_raster_x(269.374_97, 10.0), 269.374_97);
         assert_eq!(chromium_lcd_raster_x(269.384_77, 20.0), 269.384_77);
-    }
-
-    #[test]
-    fn chromium_lcd_strike_y_offset_is_limited_to_scaled_10px_outline_faces() {
-        assert_eq!(
-            chromium_lcd_strike_y_offset(
-                1.25,
-                Edging::SubpixelAntiAlias,
-                FontHinting::None,
-                10.0,
-                "DejaVu Sans Mono",
-            ),
-            1.0
-        );
-        for (scale, edging, hinting, size, family) in [
-            (
-                1.0,
-                Edging::SubpixelAntiAlias,
-                FontHinting::None,
-                10.0,
-                "DejaVu Sans Mono",
-            ),
-            (
-                1.25,
-                Edging::AntiAlias,
-                FontHinting::None,
-                10.0,
-                "DejaVu Sans Mono",
-            ),
-            (
-                1.25,
-                Edging::SubpixelAntiAlias,
-                FontHinting::Slight,
-                10.0,
-                "DejaVu Sans Mono",
-            ),
-            (
-                1.25,
-                Edging::SubpixelAntiAlias,
-                FontHinting::None,
-                16.0,
-                "DejaVu Sans",
-            ),
-            (
-                1.25,
-                Edging::SubpixelAntiAlias,
-                FontHinting::None,
-                10.0,
-                "aHeM",
-            ),
-        ] {
-            assert_eq!(
-                chromium_lcd_strike_y_offset(scale, edging, hinting, size, family),
-                0.0
-            );
-        }
     }
 }
