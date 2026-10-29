@@ -360,7 +360,23 @@ fn compute_inline_sequence_intrinsic_sizes(
     let container_style = &doc.node(node_id).style;
     let mut data = InlineItemsBuilder::collect_with_layout(doc, node_id);
     data.shape_for_base_style(container_style);
+    measure_block_in_inline_items(doc, &mut data);
     compute_inline_items_intrinsic_sizes(&data, container_style, false)
+}
+
+/// Record each block-in-inline item's outer intrinsic inline contribution,
+/// so the flattened inline measure can place it on a line of its own.
+fn measure_block_in_inline_items(doc: &dyn LayoutDocument, data: &mut InlineItemsData) {
+    for item in &mut data.items {
+        if item.item_type != InlineItemType::BlockInInline || item.node_id.is_none() {
+            continue;
+        }
+        let sizes = compute_child_intrinsic_contribution_with_layout(doc, item.node_id);
+        item.intrinsic_inline_size = Some((
+            sizes.min_content_inline_size.to_f32(),
+            sizes.max_content_inline_size.to_f32(),
+        ));
+    }
 }
 
 /// Measure shaped logical items through one CSS break/whitespace scanner.
@@ -851,8 +867,32 @@ fn compute_inline_items_intrinsic_sizes(
                 }
             }
             InlineItemType::BlockInInline => {
-                leading_collapsible_whitespace = false;
-                min_leading_collapsible_whitespace = false;
+                if let Some((block_min, block_max)) = item.intrinsic_inline_size {
+                    // A block-level box inside an inline interrupts the line:
+                    // the content before and after it lies on separate lines,
+                    // and the block contributes its own outer min- and
+                    // max-content sizes on a line of its own.
+                    leading_collapsible_whitespace = true;
+                    min_leading_collapsible_whitespace = true;
+                    soft_break_pending = false;
+                    soft_break_after_pending_edges = false;
+                    last_content_was_text = false;
+                    pending_min_collapsible_space = LayoutUnit::zero();
+                    commit_forced_line(
+                        &mut min_segment,
+                        &mut min_content,
+                        &mut pending_open_edges,
+                        &mut stack,
+                        &mut max_line,
+                        &mut max_content,
+                        &mut pending_collapsible_space,
+                    );
+                    min_content = min_content.max_of(LayoutUnit::from_f32(block_min));
+                    max_content = max_content.max_of(LayoutUnit::from_f32(block_max));
+                } else {
+                    leading_collapsible_whitespace = false;
+                    min_leading_collapsible_whitespace = false;
+                }
             }
         }
     }
@@ -1246,6 +1286,7 @@ fn compute_intrinsic_block_sizes_impl(
             // text child would trim an interior space. Keep the source-order
             // float-row accumulator above when floats require that route.
             inline_data.shape_for_base_style(style);
+            measure_block_in_inline_items(doc, &mut inline_data);
             let inline_sizes = compute_inline_items_intrinsic_sizes(&inline_data, style, false);
             min_inline = inline_sizes.min;
             max_inline = inline_sizes.max;

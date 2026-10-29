@@ -335,3 +335,58 @@ fn block_in_inline_with_padding() {
         "Total height should exceed 50px"
     );
 }
+
+#[test]
+fn block_in_inline_contributes_its_width_to_a_shrink_to_fit_container() {
+    // `table-cell-padding-block-in-inline-crash`: a shrink-to-fit container
+    // (a float, or an anonymous table cell) whose only content is an inline
+    // holding a block-level box takes that block's width. The block lies on a
+    // line of its own, so text before and after it does not add to it.
+    for wrapper_kind in ["float", "cell"] {
+        let mut doc = Document::new();
+        let root = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(root, |style| {
+            style.display = Display::Block;
+            style.width = Length::px(400.0);
+        });
+        doc.append_child(doc.root(), root);
+        let wrapper = doc.create_node(ElementTag::Div);
+        let content_parent = if wrapper_kind == "float" {
+            doc.update_resolved_style(wrapper, |style| {
+                style.display = Display::Block;
+                style.float = openui_style::Float::Left;
+            });
+            doc.append_child(root, wrapper);
+            wrapper
+        } else {
+            doc.update_resolved_style(wrapper, |style| style.display = Display::Table);
+            doc.append_child(root, wrapper);
+            let row = doc.create_node(ElementTag::Div);
+            doc.update_resolved_style(row, |style| style.display = Display::TableRow);
+            doc.append_child(wrapper, row);
+            let cell = doc.create_node(ElementTag::Div);
+            doc.update_resolved_style(cell, |style| style.display = Display::TableCell);
+            doc.append_child(row, cell);
+            cell
+        };
+        let span = doc.create_node(ElementTag::Span);
+        doc.update_resolved_style(span, |style| style.display = Display::Inline);
+        doc.append_child(content_parent, span);
+        let block = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(block, |style| {
+            style.display = Display::Block;
+            style.width = Length::px(100.0);
+            style.height = Length::px(10.0);
+        });
+        doc.append_child(span, block);
+
+        let frag = block_layout(&doc, root, &space(400, 600));
+        fn find(fragment: &openui_layout::Fragment, node: NodeId) -> Option<LayoutUnit> {
+            if fragment.node_id == node {
+                return Some(fragment.size.width);
+            }
+            fragment.children.iter().find_map(|child| find(child, node))
+        }
+        assert_eq!(find(&frag, wrapper), Some(lu(100.0)), "{wrapper_kind}");
+    }
+}
