@@ -1,0 +1,145 @@
+{
+ "base_commit": "fc678b3e554d374dc357753c0ce24119737b947d",
+ "base_exact": 22188,
+ "chromium_identical": 23728,
+ "comparisons": 23728,
+ "errors": [],
+ "gains": [
+  {
+   "base": "different",
+   "base_mismatched": 247,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/background-clip_clip-content-box_with_position",
+   "profile": "desktop-1920x1080@1.5"
+  }
+ ],
+ "head_commit": "dee14f6beb4c4d6ac7caed00f8da7c76e79d85a7",
+ "head_exact": 22189,
+ "improved": [
+  {
+   "base": "different",
+   "base_mismatched": 1811,
+   "head": "different",
+   "head_mismatched": 1705,
+   "id": "wpt/css_backgrounds/background-clip_clip-content-box",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 3088,
+   "head": "different",
+   "head_mismatched": 2799,
+   "id": "wpt/css_backgrounds/background-clip_clip-content-box_with_position",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 11,
+   "head": "different",
+   "head_mismatched": 5,
+   "id": "wpt/css_backgrounds/background-repeat-round-empty-crash",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 142,
+   "head": "different",
+   "head_mismatched": 10,
+   "id": "wpt/css_backgrounds/background-clip_clip-content-box",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 15,
+   "head": "different",
+   "head_mismatched": 2,
+   "id": "wpt/css_backgrounds/background-repeat-round-empty-crash",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2701,
+   "head": "different",
+   "head_mismatched": 2303,
+   "id": "wpt/css_backgrounds/background-clip_clip-content-box",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 3724,
+   "head": "different",
+   "head_mismatched": 3387,
+   "id": "wpt/css_backgrounds/background-clip_clip-content-box_with_position",
+   "profile": "mobile-375x667@2"
+  }
+ ],
+ "losses": [],
+ "openui_changed": [
+  {
+   "base": "different",
+   "base_mismatched": 1811,
+   "head": "different",
+   "head_mismatched": 1705,
+   "id": "wpt/css_backgrounds/background-clip_clip-content-box",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 3088,
+   "head": "different",
+   "head_mismatched": 2799,
+   "id": "wpt/css_backgrounds/background-clip_clip-content-box_with_position",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 11,
+   "head": "different",
+   "head_mismatched": 5,
+   "id": "wpt/css_backgrounds/background-repeat-round-empty-crash",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 142,
+   "head": "different",
+   "head_mismatched": 10,
+   "id": "wpt/css_backgrounds/background-clip_clip-content-box",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 247,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/background-clip_clip-content-box_with_position",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 15,
+   "head": "different",
+   "head_mismatched": 2,
+   "id": "wpt/css_backgrounds/background-repeat-round-empty-crash",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2701,
+   "head": "different",
+   "head_mismatched": 2303,
+   "id": "wpt/css_backgrounds/background-clip_clip-content-box",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 3724,
+   "head": "different",
+   "head_mismatched": 3387,
+   "id": "wpt/css_backgrounds/background-clip_clip-content-box_with_position",
+   "profile": "mobile-375x667@2"
+  }
+ ],
+ "worsened": []
+}
