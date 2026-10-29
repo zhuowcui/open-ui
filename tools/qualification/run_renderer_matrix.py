@@ -19,6 +19,7 @@ import subprocess
 import sys
 import tempfile
 import threading
+import time
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -219,6 +220,10 @@ def qualification_policy_matches(monochrome_raster_config: str | None) -> bool:
     return monochrome_raster_config is None
 
 
+# Bounded retries of a cache entry replacement held open on DrvFs.
+CACHE_REPLACE_ATTEMPTS = 40
+
+
 def cached_result(cache_dir: Path, identity: dict[str, object]) -> dict[str, object] | None:
     key = canonical_sha256(identity)
     path = cache_dir / key[:2] / f"{key}.json"
@@ -251,7 +256,19 @@ def store_cached_result(
         ) + "\n",
         encoding="utf-8",
     )
-    temporary.replace(path)
+    # On Windows-backed filesystems (WSL DrvFs), replacing a file fails with
+    # EACCES while another process holds it open, for example a concurrent
+    # reader or an on-access scanner that opened the new file. The hold is
+    # brief, so retry a bounded number of times before giving up.
+    for attempt in range(CACHE_REPLACE_ATTEMPTS):
+        try:
+            temporary.replace(path)
+            return
+        except PermissionError:
+            if attempt + 1 == CACHE_REPLACE_ATTEMPTS:
+                temporary.unlink(missing_ok=True)
+                raise
+            time.sleep(min(0.05 * (attempt + 1), 0.5))
 
 
 def chromium_oracle_identity(
