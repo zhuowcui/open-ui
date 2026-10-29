@@ -475,11 +475,16 @@ impl FontPlatformData {
         // style: when the descent rounded down, it moves one pixel from the
         // ascent to the descent. That raises the baseline by one CSS pixel
         // and keeps the content area. Fontconfig disables subpixel
-        // positioning for aliased text.
+        // positioning for aliased text, including a pinned deterministic
+        // face drawn as control text (a `::scroll-button` label in Ahem):
+        // Chromium asks Fontconfig per face, not per control.
+        let fontconfig_aliased_face = raster_configuration.author_text.edging == TextEdging::Alias
+            && deterministic_aliased_face;
         if chromium_backend
             && !windows_chromium
             && device_scale_factor > 1.0
             && settings.edging != TextEdging::Alias
+            && !fontconfig_aliased_face
         {
             if let Some((ascent, descent)) =
                 linux_subpixel_ascent_borrow(metrics.ascent, metrics.descent)
@@ -866,6 +871,46 @@ mod tests {
         assert_eq!(linux_subpixel_ascent_borrow(8.0, 2.0), None);
         // Blink needs a rounded ascent of at least 1 to borrow from.
         assert_eq!(linux_subpixel_ascent_borrow(0.4, 0.3), None);
+    }
+
+    #[test]
+    fn linux_subpixel_borrow_skips_faces_fontconfig_aliases() {
+        if GlyphRasterizer::platform() == GlyphRasterizer::DirectWrite {
+            return;
+        }
+        let face = skia_safe::FontMgr::default()
+            .new_from_data(include_bytes!("../../fonts/Ahem.ttf"), None)
+            .unwrap();
+        let build = |configuration: RasterConfiguration, native_control: bool| {
+            FontPlatformData::with_resolved_configuration(
+                face.clone(),
+                16.0,
+                0.0,
+                skia_safe::font_style::Weight::NORMAL,
+                native_control,
+                false,
+                false,
+                configuration,
+                2.0,
+                ResolvedFontConfiguration::default(),
+            )
+        };
+        // 16px Ahem: 12.8 and 3.2, so the descent rounds down. Under LCD
+        // author text at 2x Blink moves a pixel to the descent.
+        let lcd = build(RasterConfiguration::chromium_linux_lcd(), false);
+        assert!((lcd.metrics().ascent - 11.8).abs() < 1.0e-4);
+        assert!((lcd.metrics().descent - 4.2).abs() < 1.0e-4);
+        // The aliased comparison Fontconfig disables antialiasing for Ahem,
+        // so Chromium has no subpixel positioning to borrow under, even for
+        // a control label whose own profile is LCD.
+        for native_control in [false, true] {
+            let aliased = build(
+                RasterConfiguration::deterministic_aliased(false),
+                native_control,
+            );
+            assert!((aliased.metrics().ascent - 12.8).abs() < 1.0e-4);
+            assert!((aliased.metrics().descent - 3.2).abs() < 1.0e-4);
+        }
     }
 
     #[test]
