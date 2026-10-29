@@ -1,5 +1,12 @@
 # Open UI current status
 
+## A block-in-inline box in its container's intrinsic size 28 October 2026
+
+A shrink-to-fit container whose content is an inline holding a block-level
+box, such as a float or a table cell, now takes that block's width instead
+of 0. The census goes from 22,171 to 22,174 exact with no losses. See the
+[block-in-inline intrinsic size record](block-in-inline-intrinsic-size-2026-10-28.md).
+
 ## A floated multicol with overflowing monolithic content 28 October 2026
 
 A floated multicol inside a multicol now ends at its own block size when
