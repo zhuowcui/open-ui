@@ -5669,6 +5669,35 @@ def _css_image_rust(
     return [line], f'CssImage::Raster({resource_var})'
 
 
+EMPTY_SHA256 = hashlib.sha256(b'').hexdigest()
+
+
+def _unavailable_url_image_rust(value: str, resource_var: str) -> tuple[list[str], str] | None:
+    """Keep an author url() image that the oracle document cannot load.
+
+    The Chromium template retains the original relative URL, which does not
+    resolve where the oracle page is served, so Chromium paints nothing for it.
+    The declared layer still selects Blink's background bleed avoidance for a
+    rounded border. Register it as a resource without bytes, which paint treats
+    as an image that cannot be rendered.
+    """
+    url = re.match(r'(?is)^url\(\s*(.*?)\s*\)$', value.strip())
+    if not url:
+        return None
+    source = url.group(1).strip()
+    if len(source) >= 2 and source[0] == source[-1] and source[0] in ('"', "'"):
+        source = source[1:-1]
+    if not source or source.startswith('data:'):
+        return None
+    mime = mimetypes.guess_type(source)[0] or 'application/octet-stream'
+    line = (
+        f'let {resource_var} = doc.register_image_resource('
+        f'{json.dumps("unavailable:" + source)}, {json.dumps(mime)}, '
+        f'{json.dumps(EMPTY_SHA256)}, Vec::new());'
+    )
+    return [line], f'CssImage::Raster({resource_var})'
+
+
 def _split_css_slash(value: str) -> tuple[str, str | None]:
     depth = 0
     quote = None
@@ -5905,6 +5934,10 @@ def _background_layers_rust(styles: dict, s: str, font_size: float) -> list[str]
         parsed = _css_image_rust(
             layer['image'], f'{prefix}_background_image_{index}', font_size
         )
+        if parsed is None:
+            parsed = _unavailable_url_image_rust(
+                layer['image'], f'{prefix}_background_image_{index}'
+            )
         if parsed is None:
             continue
         image_prereqs, image = parsed

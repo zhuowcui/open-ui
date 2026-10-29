@@ -20549,6 +20549,38 @@ fn paint_box_decoration_background(
         // The fill's background-clip chooses its contour; bleed avoidance
         // groups the background and translucent border independently of it.
         && (has_nonzero_uniform_border || same_solid_visible_border);
+    // cc folds SaveLayerAlpha -> one drawing op -> Restore into that op. The
+    // bleed layer holds a single draw when no background fill can render (an
+    // image that failed to load still selects the layer) and the border takes
+    // BoxBorderPainter's fast path: one solid uniform-color DrawPath around a
+    // renderable inner contour. Chromium then paints that path straight
+    // through the outer clip without an intermediate layer.
+    let bleed_layer_erases_content_corner = use_layer
+        && effective_background_clip == BackgroundClip::ContentBox
+        && style.border_top_color.resolve(&style.color).is_opaque()
+        && fragment_radii
+            .iter()
+            .filter(|r| r.x > 0.0 && r.y > 0.0)
+            .count()
+            == 1
+        && radii_exceed_rect(&border_inner_rect, &border_inner_radii);
+    let bleed_layer_holds_only_border = use_layer
+        && !bleed_layer_erases_content_corner
+        // A fieldset clips out its legend gap before drawing the border; that
+        // clip separates the draw from the layer and keeps the layer.
+        && doc.node(fragment.node_id).tag != ElementTag::Fieldset
+        && !fragment.collapsed_table_border_participant
+        && !fragment.paint_border_after_children
+        && style.background_color.is_transparent()
+        && style.background_linear_gradient.is_none()
+        && style.box_shadow.iter().all(|shadow| !shadow.inset)
+        && has_nonzero_uniform_border
+        && style.border_top_style == BorderStyle::Solid
+        && !radii_exceed_rect(&border_inner_rect, &border_inner_radii)
+        && style.background_layers.iter().all(|layer| {
+            matches!(layer.image, CssImage::Raster(id)
+                if crate::image_resource::decode_image_resource(doc, id).is_err())
+        });
     if use_layer {
         canvas.save();
         canvas.clip_rrect(
@@ -20556,7 +20588,11 @@ fn paint_box_decoration_background(
             ClipOp::Intersect,
             true,
         );
-        canvas.save_layer_alpha_f(border_box_rect, 1.0);
+        if bleed_layer_holds_only_border {
+            canvas.save();
+        } else {
+            canvas.save_layer_alpha_f(border_box_rect, 1.0);
+        }
     }
 
     // ── 2. Background color ──────────────────────────────────────────
@@ -21182,16 +21218,7 @@ fn paint_box_decoration_background(
         let inner_rect = border_inner_rect;
         let inner_radii = border_inner_radii;
         let border_color = style.border_top_color.resolve(&style.color);
-        let single_outer_corner = outer_radii
-            .iter()
-            .filter(|r| r.x > 0.0 && r.y > 0.0)
-            .count()
-            == 1;
-        if effective_background_clip == BackgroundClip::ContentBox
-            && border_color.is_opaque()
-            && single_outer_corner
-            && radii_exceed_rect(&inner_rect, &inner_radii)
-        {
+        if bleed_layer_erases_content_corner {
             let mut erase = Paint::default();
             erase.set_style(PaintStyle::Fill);
             erase.set_anti_alias(false);
