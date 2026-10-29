@@ -1,0 +1,64 @@
+{
+ "base_commit": "98a8b143d4641c173a7bc729671bd9872f627b27",
+ "base_exact": 22171,
+ "chromium_identical": 23728,
+ "comparisons": 23728,
+ "errors": [],
+ "gains": [
+  {
+   "base": "different",
+   "base_mismatched": 11200,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table-cell-padding-block-in-inline-crash",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 19584,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table-cell-padding-block-in-inline-crash",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 4096,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table-cell-padding-block-in-inline-crash",
+   "profile": "legacy-800x600@1"
+  }
+ ],
+ "head_commit": "2aa6f582de38d022d0089d7466c9c8b625e03a19",
+ "head_exact": 22174,
+ "improved": [],
+ "losses": [],
+ "openui_changed": [
+  {
+   "base": "different",
+   "base_mismatched": 11200,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table-cell-padding-block-in-inline-crash",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 19584,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table-cell-padding-block-in-inline-crash",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 4096,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/table-cell-padding-block-in-inline-crash",
+   "profile": "legacy-800x600@1"
+  }
+ ],
+ "worsened": []
+}
