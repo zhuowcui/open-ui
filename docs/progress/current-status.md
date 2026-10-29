@@ -1,5 +1,13 @@
 # Open UI current status
 
+## Renderer cache replacement on a Windows-backed checkout 28 October 2026
+
+The renderer matrix retries a cache entry replacement that WSL's DrvFs
+refuses while the file is briefly held open, so census runs against a
+checkout on the Windows drive no longer abort on it. Renderer output is
+unchanged. See the
+[renderer cache retry record](renderer-cache-replace-retry-2026-10-28.md).
+
 ## A block-in-inline box in its container's intrinsic size 28 October 2026
 
 A shrink-to-fit container whose content is an inline holding a block-level

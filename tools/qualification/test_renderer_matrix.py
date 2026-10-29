@@ -82,6 +82,41 @@ class ContentAddressedPngTests(unittest.TestCase):
             self.assertEqual(list(cache.rglob("*.tmp")), [])
 
 
+class CachedResultPublicationTests(unittest.TestCase):
+    identity = {"schema_version": 2, "test": "a"}
+    result = {"id": "a", "status": "exact"}
+
+    def test_transient_permission_error_is_retried(self):
+        original = pathlib.Path.replace
+        calls = []
+
+        def flaky_replace(path, target):
+            calls.append(target)
+            if len(calls) < 3:
+                raise PermissionError(13, "Permission denied")
+            return original(path, target)
+
+        with tempfile.TemporaryDirectory() as directory:
+            cache = pathlib.Path(directory)
+            with patch.object(MATRIX.Path, "replace", flaky_replace),                     patch.object(MATRIX.time, "sleep"):
+                MATRIX.store_cached_result(cache, self.identity, self.result)
+            self.assertEqual(len(calls), 3)
+            self.assertEqual(MATRIX.cached_result(cache, self.identity), self.result)
+            self.assertEqual(list(cache.rglob("*.tmp")), [])
+
+    def test_persistent_permission_error_fails_without_leaving_temporary(self):
+        with tempfile.TemporaryDirectory() as directory:
+            cache = pathlib.Path(directory)
+            with patch.object(
+                MATRIX.Path, "replace", side_effect=PermissionError(13, "Permission denied")
+            ), patch.object(MATRIX.time, "sleep") as sleep:
+                with self.assertRaises(PermissionError):
+                    MATRIX.store_cached_result(cache, self.identity, self.result)
+            self.assertEqual(sleep.call_count, MATRIX.CACHE_REPLACE_ATTEMPTS - 1)
+            self.assertIsNone(MATRIX.cached_result(cache, self.identity))
+            self.assertEqual(list(cache.rglob("*.tmp")), [])
+
+
 class RendererBuildIdentityTests(unittest.TestCase):
     def setUp(self):
         self.source = {
