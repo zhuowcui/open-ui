@@ -1,5 +1,13 @@
 # Open UI current status
 
+## A bleed layer that holds only its rounded border 28 October 2026
+
+A rounded box with a translucent solid border and a background image that
+cannot load now paints its border straight through the rounded clip, as
+cc's folding of a single-op layer does in Chrome. The census goes from
+22,174 to 22,188 exact with no losses. See the
+[bleed layer record](bleed-layer-unloaded-image-2026-10-28.md).
+
 ## Renderer cache replacement on a Windows-backed checkout 28 October 2026
 
 The renderer matrix retries a cache entry replacement that WSL's DrvFs

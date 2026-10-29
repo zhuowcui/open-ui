@@ -70,6 +70,26 @@ class Sp13PPaintClosureTests(unittest.TestCase):
         self.assertIn("BackgroundRepeat::Space", emitted)
         self.assertIn("BackgroundClip::ContentBox", emitted)
 
+    def test_unloadable_url_background_layer_is_kept_without_bytes(self):
+        previous = port_wpt.EMIT_PAINT_LAYERS
+        port_wpt.set_paint_layer_emission(True)
+        try:
+            styles = port_wpt.parse_inline_styles(
+                'background-image:url("support/not-packaged.png");'
+                "background-repeat:no-repeat;background-origin:border-box"
+            )
+            lines, _ = port_wpt.generate_style_code(styles, "n", 16.0)
+        finally:
+            port_wpt.set_paint_layer_emission(previous)
+        emitted = "\n".join(lines)
+        self.assertIn(
+            'register_image_resource("unavailable:support/not-packaged.png", '
+            f'"image/png", "{hashlib.sha256(b"").hexdigest()}", Vec::new())',
+            emitted,
+        )
+        self.assertEqual(emitted.count("BackgroundLayer {"), 1)
+        self.assertIn("origin: BackgroundClip::BorderBox", emitted)
+
     def test_flex_alignment_fixtures_retain_complete_gradient_shorthands(self):
         rust_path = (
             ROOT

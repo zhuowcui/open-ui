@@ -41728,6 +41728,24 @@ fn css_backgrounds_background_clip_clip_border_box_with_radius(viewport: Viewpor
     doc.set_style(n6, RendererStyleValue::BorderTopRightRadius((60.0_f32, 60.0_f32)));
     doc.set_style(n6, RendererStyleValue::BorderBottomRightRadius((60.0_f32, 60.0_f32)));
     doc.set_style(n6, RendererStyleValue::BorderBottomLeftRadius((60.0_f32, 60.0_f32)));
+    let n6_background_image_0 = doc.register_image_resource(
+        "unavailable:../support/css3.png",
+        "image/png",
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        Vec::new(),
+    );
+    doc.set_style(n6, RendererStyleValue::BackgroundLayers(vec![BackgroundLayer {
+        image: CssImage::Raster(n6_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }]));
+    doc.set_style(n6, RendererStyleValue::BackgroundLinearGradient(None));
     doc.append_child(n5, n6);
     let n7 = doc.create_node(ElementTag::Text);
     doc.set_style(n7, RendererStyleValue::FontSize(21.333333333333332));
@@ -41778,6 +41796,24 @@ fn css_backgrounds_background_clip_clip_border_box_with_radius(viewport: Viewpor
     doc.set_style(n8, RendererStyleValue::BorderTopRightRadius((60.0_f32, 60.0_f32)));
     doc.set_style(n8, RendererStyleValue::BorderBottomRightRadius((60.0_f32, 60.0_f32)));
     doc.set_style(n8, RendererStyleValue::BorderBottomLeftRadius((60.0_f32, 60.0_f32)));
+    let n8_background_image_0 = doc.register_image_resource(
+        "unavailable:../support/css3.png",
+        "image/png",
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        Vec::new(),
+    );
+    doc.set_style(n8, RendererStyleValue::BackgroundLayers(vec![BackgroundLayer {
+        image: CssImage::Raster(n8_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }]));
+    doc.set_style(n8, RendererStyleValue::BackgroundLinearGradient(None));
     doc.append_child(n5, n8);
     let n9 = doc.create_node(ElementTag::Text);
     doc.set_style(n9, RendererStyleValue::FontSize(21.333333333333332));
@@ -45129,6 +45165,24 @@ fn css_backgrounds_background_origin_origin_border_box_with_radius(viewport: Vie
     doc.set_style(n1, RendererStyleValue::BorderTopRightRadius((60.0_f32, 60.0_f32)));
     doc.set_style(n1, RendererStyleValue::BorderBottomRightRadius((60.0_f32, 60.0_f32)));
     doc.set_style(n1, RendererStyleValue::BorderBottomLeftRadius((60.0_f32, 60.0_f32)));
+    let n1_background_image_0 = doc.register_image_resource(
+        "unavailable:support/yellow-orange-blue-160x160.png",
+        "image/png",
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        Vec::new(),
+    );
+    doc.set_style(n1, RendererStyleValue::BackgroundLayers(vec![BackgroundLayer {
+        image: CssImage::Raster(n1_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::BorderBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }]));
+    doc.set_style(n1, RendererStyleValue::BackgroundLinearGradient(None));
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.set_style(n2, RendererStyleValue::Display(Display::Block));
@@ -45160,6 +45214,24 @@ fn css_backgrounds_background_origin_origin_border_box_with_radius(viewport: Vie
     doc.set_style(n2, RendererStyleValue::BorderTopRightRadius((60.0_f32, 60.0_f32)));
     doc.set_style(n2, RendererStyleValue::BorderBottomRightRadius((60.0_f32, 60.0_f32)));
     doc.set_style(n2, RendererStyleValue::BorderBottomLeftRadius((60.0_f32, 60.0_f32)));
+    let n2_background_image_0 = doc.register_image_resource(
+        "unavailable:support/yellow-orange-blue-160x160.png",
+        "image/png",
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        Vec::new(),
+    );
+    doc.set_style(n2, RendererStyleValue::BackgroundLayers(vec![BackgroundLayer {
+        image: CssImage::Raster(n2_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::BorderBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }]));
+    doc.set_style(n2, RendererStyleValue::BackgroundLinearGradient(None));
     doc.append_child(vp, n2);
     Ok(doc.into_engine())
 }
@@ -45386,6 +45458,24 @@ fn css_backgrounds_background_origin_origin_content_box_with_radius(viewport: Vi
     doc.set_style(n1, RendererStyleValue::BorderTopRightRadius((60.0_f32, 60.0_f32)));
     doc.set_style(n1, RendererStyleValue::BorderBottomRightRadius((60.0_f32, 60.0_f32)));
     doc.set_style(n1, RendererStyleValue::BorderBottomLeftRadius((60.0_f32, 60.0_f32)));
+    let n1_background_image_0 = doc.register_image_resource(
+        "unavailable:support/yellow-orange-blue-160x160.png",
+        "image/png",
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        Vec::new(),
+    );
+    doc.set_style(n1, RendererStyleValue::BackgroundLayers(vec![BackgroundLayer {
+        image: CssImage::Raster(n1_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::ContentBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }]));
+    doc.set_style(n1, RendererStyleValue::BackgroundLinearGradient(None));
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.set_style(n2, RendererStyleValue::Display(Display::Block));
@@ -45417,6 +45507,24 @@ fn css_backgrounds_background_origin_origin_content_box_with_radius(viewport: Vi
     doc.set_style(n2, RendererStyleValue::BorderTopRightRadius((60.0_f32, 60.0_f32)));
     doc.set_style(n2, RendererStyleValue::BorderBottomRightRadius((60.0_f32, 60.0_f32)));
     doc.set_style(n2, RendererStyleValue::BorderBottomLeftRadius((60.0_f32, 60.0_f32)));
+    let n2_background_image_0 = doc.register_image_resource(
+        "unavailable:support/yellow-orange-blue-160x160.png",
+        "image/png",
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        Vec::new(),
+    );
+    doc.set_style(n2, RendererStyleValue::BackgroundLayers(vec![BackgroundLayer {
+        image: CssImage::Raster(n2_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::ContentBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }]));
+    doc.set_style(n2, RendererStyleValue::BackgroundLinearGradient(None));
     doc.append_child(vp, n2);
     Ok(doc.into_engine())
 }
@@ -45643,6 +45751,24 @@ fn css_backgrounds_background_origin_origin_padding_box_with_radius(viewport: Vi
     doc.set_style(n1, RendererStyleValue::BorderTopRightRadius((60.0_f32, 60.0_f32)));
     doc.set_style(n1, RendererStyleValue::BorderBottomRightRadius((60.0_f32, 60.0_f32)));
     doc.set_style(n1, RendererStyleValue::BorderBottomLeftRadius((60.0_f32, 60.0_f32)));
+    let n1_background_image_0 = doc.register_image_resource(
+        "unavailable:support/yellow-orange-blue-160x160.png",
+        "image/png",
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        Vec::new(),
+    );
+    doc.set_style(n1, RendererStyleValue::BackgroundLayers(vec![BackgroundLayer {
+        image: CssImage::Raster(n1_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }]));
+    doc.set_style(n1, RendererStyleValue::BackgroundLinearGradient(None));
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.set_style(n2, RendererStyleValue::Display(Display::Block));
@@ -45674,6 +45800,24 @@ fn css_backgrounds_background_origin_origin_padding_box_with_radius(viewport: Vi
     doc.set_style(n2, RendererStyleValue::BorderTopRightRadius((60.0_f32, 60.0_f32)));
     doc.set_style(n2, RendererStyleValue::BorderBottomRightRadius((60.0_f32, 60.0_f32)));
     doc.set_style(n2, RendererStyleValue::BorderBottomLeftRadius((60.0_f32, 60.0_f32)));
+    let n2_background_image_0 = doc.register_image_resource(
+        "unavailable:support/yellow-orange-blue-160x160.png",
+        "image/png",
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        Vec::new(),
+    );
+    doc.set_style(n2, RendererStyleValue::BackgroundLayers(vec![BackgroundLayer {
+        image: CssImage::Raster(n2_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }]));
+    doc.set_style(n2, RendererStyleValue::BackgroundLinearGradient(None));
     doc.append_child(vp, n2);
     Ok(doc.into_engine())
 }
