@@ -25288,7 +25288,7 @@ mod tests {
     use openui_geometry::PhysicalSize;
     use openui_style::{
         BoxShadow, ConicGradient, CssLinearGradient, Direction, GradientStop, ImageResourceId,
-        WritingMode,
+        RadialGradient, WritingMode,
     };
 
     fn surface_bytes(surface: &mut skia_safe::Surface) -> Vec<u8> {
@@ -27415,6 +27415,89 @@ mod tests {
             surface_bytes(&mut surface)
         };
         assert_eq!(render(true), render(false));
+    }
+
+    #[test]
+    fn radial_end_radii_follow_blink_side_and_corner() {
+        let point = Point::new(10.0, 20.0);
+        // RadiusToCorner: a circle reaches its corner's Euclidean distance.
+        let distance = 9000.0_f64.sqrt() as f32;
+        assert_eq!(
+            radial_gradient_end_radii(
+                &RadialGradientSize::FarthestCorner,
+                true,
+                point,
+                (100.0, 50.0)
+            ),
+            (distance, distance)
+        );
+        // RadiusToSide: a circle takes the nearer of the nearest sides.
+        assert_eq!(
+            radial_gradient_end_radii(&RadialGradientSize::ClosestSide, true, point, (100.0, 50.0)),
+            (10.0, 10.0)
+        );
+        // EllipseRadius keeps the side radii's aspect ratio through the corner.
+        let aspect_ratio = 100.0_f32 / 75.0;
+        let a = (100.0_f32 * 100.0 + 75.0 * 75.0 * aspect_ratio * aspect_ratio).sqrt();
+        assert_eq!(
+            radial_gradient_end_radii(
+                &RadialGradientSize::FarthestCorner,
+                false,
+                Point::new(100.0, 75.0),
+                (200.0, 150.0)
+            ),
+            (a, a / aspect_ratio)
+        );
+    }
+
+    #[test]
+    fn radial_length_stops_follow_the_horizontal_radius() {
+        // Blink measures radial stop lengths along the end shape's horizontal
+        // radius, so a 10px stop in a 20x40 ellipse sits 10px from the
+        // centre horizontally.
+        let red = Color::from_rgba8(255, 0, 0, 255);
+        let lime = Color::from_rgba8(0, 255, 0, 255);
+        let stop = |color: Color, position: f32| GradientStop {
+            color: StyleColor::Resolved(color),
+            position: GradientStopPosition::Px(position),
+        };
+        let mut style = ComputedStyle::default();
+        style.update_derived(|style| {
+            style
+                .background_layers
+                .push(BackgroundLayer::new(CssImage::RadialGradient(
+                    RadialGradient {
+                        repeating: false,
+                        color_space: GradientColorSpace::Srgb,
+                        shape: RadialGradientShape::Ellipse,
+                        size: RadialGradientSize::ClosestSide,
+                        center_x: BackgroundPosition::Percent(50.0),
+                        center_y: BackgroundPosition::Percent(50.0),
+                        stops: vec![
+                            stop(red, 0.0),
+                            stop(red, 9.0),
+                            stop(lime, 11.0),
+                            stop(lime, 20.0),
+                        ],
+                    },
+                )));
+        });
+        let mut surface = surfaces::raster_n32_premul((40, 80)).expect("surface");
+        surface.canvas().clear(skia_safe::Color::WHITE);
+        paint_background_layers(
+            surface.canvas(),
+            &Document::new(),
+            None,
+            &style,
+            Rect::from_xywh(0.0, 0.0, 40.0, 80.0),
+            1.0,
+            None,
+            false,
+        );
+        let pixels = surface_bytes(&mut surface);
+        let pixel = |x: usize| &pixels[(40 * 40 + x) * 4..][..4];
+        assert_eq!(pixel(20 + 7), &[0, 0, 255, 255], "inside 9px");
+        assert_eq!(pixel(20 + 13), &[0, 255, 0, 255], "outside 11px");
     }
 
     #[test]
