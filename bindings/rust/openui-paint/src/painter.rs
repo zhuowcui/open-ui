@@ -27283,6 +27283,48 @@ mod tests {
     }
 
     #[test]
+    fn will_change_transform_rasters_an_opacity_group_on_transparency() {
+        // contain-strict-with-opacity-and-oof: a red then a green box inside
+        // opacity 0.2. Chrome rasters the will-change:transform layer into a
+        // transparent tile, then draws that tile over white.
+        for (will_change, expected) in [(true, [204, 230, 204, 255]), (false, [203, 229, 203, 255])]
+        {
+            let mut doc = Document::new();
+            let layer = doc.create_node(ElementTag::Div);
+            let group = doc.create_node(ElementTag::Div);
+            let cover = doc.create_node(ElementTag::Div);
+            doc.append_child(doc.root(), layer);
+            doc.append_child(layer, group);
+            doc.append_child(group, cover);
+            doc.update_resolved_style(layer, |style| style.will_change_transform = will_change);
+            doc.update_resolved_style(group, |style| {
+                style.opacity = 0.2;
+                style.background_color = Color::from_rgba8(255, 0, 0, 255);
+            });
+            doc.update_resolved_style(cover, |style| {
+                style.background_color = Color::from_rgba8(0, 128, 0, 255);
+            });
+            let size = PhysicalSize::new(LayoutUnit::from_i32(12), LayoutUnit::from_i32(12));
+            let mut fragment = Fragment::new_box(layer, size);
+            let mut inner = Fragment::new_box(group, size);
+            inner.children.push(Fragment::new_box(cover, size));
+            fragment.children.push(inner);
+
+            let mut surface = surfaces::raster_n32_premul((16, 16)).expect("surface");
+            surface.canvas().clear(skia_safe::Color::WHITE);
+            let save_count = surface.canvas().save_count();
+            paint_fragment_tracked(surface.canvas(), &fragment, &doc, PhysicalOffset::zero());
+            assert_eq!(surface.canvas().save_count(), save_count);
+            let pixels = surface_bytes(&mut surface);
+            assert_eq!(
+                &pixels[(6 * 16 + 6) * 4..][..4],
+                &expected,
+                "will-change {will_change}"
+            );
+        }
+    }
+
+    #[test]
     fn opaque_single_pixel_raster_repetition_fills_scaled_canvas() {
         let mut doc = Document::new();
         let image = doc.register_image_resource(
