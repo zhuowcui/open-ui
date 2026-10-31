@@ -17251,11 +17251,11 @@ fn paint_background_layers(
         }
         let mut clip =
             clip_override.unwrap_or_else(|| background_box_rect(layer.clip, border_rect, fragment));
-        if clip_override.is_none()
+        let local_scrollport_clip = clip_override.is_none()
             && fragment.is_none_or(|fragment| fragment.owns_element_box())
             && style.is_scroll_container()
-            && layer.attachment == BackgroundAttachment::Local
-        {
+            && layer.attachment == BackgroundAttachment::Local;
+        if local_scrollport_clip {
             // A local image scrolls with the element's contents and is exposed
             // through the scrollport. Its effective painting area cannot
             // extend beneath the border (notably through double-border gaps),
@@ -17504,6 +17504,28 @@ fn paint_background_layers(
                 } else {
                     half_open_physical_clip_rect(clip, style.device_scale_factor)
                 };
+            // Blink applies no clip to a border-box image layer: the image is
+            // drawn with antialiasing into its CSS-snapped destination, so its
+            // fractional device edges keep partial coverage. A non-AA clip
+            // rounded outward to whole device pixels leaves that coverage to
+            // the draw instead of cutting it at the pixel centre. A local
+            // image in a scroller is clipped by the scrollport instead.
+            let border_box_raster = layer.clip == BackgroundClip::BorderBox
+                && !local_scrollport_clip
+                && matches!(layer.image, CssImage::Raster(_));
+            let hard_clip = if border_box_raster && !antialias_transformed_clip {
+                let scale = style.device_scale_factor.max(f64::EPSILON);
+                let out =
+                    |edge: f32, f: fn(f64) -> f64| (f(f64::from(edge) * scale) / scale) as f32;
+                Rect::from_ltrb(
+                    out(hard_clip.left, f64::floor),
+                    out(hard_clip.top, f64::floor),
+                    out(hard_clip.right, f64::ceil),
+                    out(hard_clip.bottom, f64::ceil),
+                )
+            } else {
+                hard_clip
+            };
             canvas.clip_rect(hard_clip, ClipOp::Intersect, antialias_transformed_clip);
         }
         let repeated_constant_gradient = matches!(
@@ -27287,6 +27309,56 @@ mod tests {
         let pixels = surface_bytes(&mut surface);
         assert_eq!(&pixels[(30 * 64 + 30) * 4..][..4], &[0, 128, 0, 255]);
         assert_eq!(&pixels[(62 * 64 + 62) * 4..][..4], &[255, 255, 255, 255]);
+    }
+
+    #[test]
+    fn border_box_raster_keeps_fractional_device_edge_coverage() {
+        // At 1.25x a box at CSS x=38 starts at device x=47.5. Blink draws a
+        // border-box image layer without a clip, antialiased into its
+        // destination, so device column 47 keeps half coverage.
+        let mut doc = Document::new();
+        let image = doc.register_image_resource(
+            "css-backgrounds/support/aqua-yellow-32x32.png",
+            "image/png",
+            "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+            include_bytes!(concat!(
+                env!("CARGO_MANIFEST_DIR"),
+                "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+            ))
+            .to_vec(),
+        );
+        let mut style = ComputedStyle::default();
+        style.update_derived(|style| {
+            style.device_scale_factor = 1.25;
+            style
+                .background_layers
+                .push(BackgroundLayer::new(CssImage::Raster(image)));
+        });
+        let mut surface = surfaces::raster_n32_premul((96, 96)).expect("surface");
+        surface.canvas().clear(skia_safe::Color::WHITE);
+        surface.canvas().scale((1.25, 1.25));
+        let save_count = surface.canvas().save_count();
+        paint_background_layers(
+            surface.canvas(),
+            &doc,
+            None,
+            &style,
+            Rect::from_xywh(38.0, 38.0, 32.0, 32.0),
+            1.0,
+            None,
+            false,
+        );
+        assert_eq!(surface.canvas().save_count(), save_count);
+        let pixels = surface_bytes(&mut surface);
+        let at =
+            |x: usize, y: usize| <[u8; 4]>::try_from(&pixels[(y * 96 + x) * 4..][..4]).unwrap();
+        for y in [50, 60, 70, 80] {
+            let edge = at(47, y);
+            let inside = at(48, y);
+            assert_eq!(at(46, y), [255, 255, 255, 255]);
+            assert_ne!(edge, [255, 255, 255, 255], "row {y}");
+            assert_ne!(edge, inside, "row {y}");
+        }
     }
 
     #[test]

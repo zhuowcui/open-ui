@@ -1,5 +1,13 @@
 # Open UI current status
 
+## Fractional device edges of a border-box raster background 30 October 2026
+
+A raster background clipped to the border box keeps partial coverage where
+its edge falls inside a device pixel, because Blink applies no clip to a
+border-box layer and draws the image antialiased. 22 comparisons at 1.25x
+and 1.5x improve, and the census stays at 22,232 exact with no losses. See
+the [border-box raster clip record](background-border-box-raster-clip-2026-10-30.md).
+
 ## Linux subpixel positioning borrows a pixel from the ascent 29 October 2026
 
 Above a device scale of 1 on Linux, antialiased text whose descent rounds
