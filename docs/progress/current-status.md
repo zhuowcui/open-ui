@@ -1,5 +1,14 @@
 # Open UI current status
 
+## Radial gradient shaders in the tile's own space 31 October 2026
+
+A radial gradient background is built in its tile's coordinates and mapped
+onto the tile with a local matrix, as Blink's `GradientGeneratedImage::Draw`
+does. Its end shape is sized with Blink's side and corner arithmetic, and
+its length stops are measured along the horizontal radius. The census goes
+from 22,236 to 22,241 exact with no losses and no comparison worse. See the
+[radial gradient record](radial-gradient-tile-space-2026-10-31.md).
+
 ## A will-change:transform layer rastered on transparency 31 October 2026
 
 A box with `will-change: transform` paints its contents into a transparent
