@@ -22536,36 +22536,34 @@ fn paint_borders(
     }
 
     let square_double_line_width = (bt / 3.0).round().max(1.0).min(bt * 0.5);
-    let physical_contour_is_integral = [x, y, x + w, y + h, bt, square_double_line_width]
-        .into_iter()
-        .all(|edge| {
-            let physical = f64::from(edge) * style.device_scale_factor;
-            (physical - physical.round()).abs() <= 1.0e-5
-        });
     if uniform
         && style.border_top_style == BorderStyle::Double
         && !has_border_radius
         && bt >= 2.0
         && w > bt * 2.0
         && h > bt * 2.0
-        && physical_contour_is_integral
     {
         // A uniform square double border is two complete rectangular rings.
         // Painting four independently miter-clipped sides leaves the inner
         // corner's diagonal unowned, exposing the box background through the
         // nominally solid stripe. Keep each ring one draw operation so a
         // translucent border color is composited only once at the corners.
+        // Each ring has equal sides and square corners, so Blink's
+        // GraphicsContext::FillDRRect strokes it as a rect whose stroke width
+        // is the ring width, rather than filling the difference of two rects.
         let line_width = square_double_line_width;
-        let rect_at_inset = |inset: f32| {
-            let rect = Rect::from_xywh(x + inset, y + inset, w - inset * 2.0, h - inset * 2.0);
-            RRect::new_rect_radii(rect, &[Point::new(0.0, 0.0); 4])
-        };
         let mut paint = Paint::default();
-        paint.set_style(PaintStyle::Fill);
+        paint.set_style(PaintStyle::Stroke);
+        paint.set_stroke_width(line_width);
         paint.set_anti_alias(true);
         set_paint_css_color(&mut paint, &style.border_top_color.resolve(inherited_color));
-        canvas.draw_drrect(rect_at_inset(0.0), rect_at_inset(line_width), &paint);
-        canvas.draw_drrect(rect_at_inset(bt - line_width), rect_at_inset(bt), &paint);
+        for outer_inset in [0.0, bt - line_width] {
+            let inset = outer_inset + line_width * 0.5;
+            canvas.draw_rect(
+                Rect::from_xywh(x + inset, y + inset, w - inset * 2.0, h - inset * 2.0),
+                &paint,
+            );
+        }
         return;
     }
 
