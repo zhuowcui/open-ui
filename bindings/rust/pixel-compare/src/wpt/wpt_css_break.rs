@@ -184792,6 +184792,7 @@ fn css_break_table_oof_in_cell_with_alignment_002(
         n4,
         RendererInternalStyleValue::EstablishesTransformContainingBlock(true),
     );
+    doc.set_internal_style(n4, RendererInternalStyleValue::WillChangeTransform(true));
     doc.set_style(n4, RendererStyleValue::Width(Length::px(50.0)));
     doc.set_style(n4, RendererStyleValue::Height(Length::px(50.0)));
     doc.set_style(n4, RendererStyleValue::BackgroundColor(Color::RED));
@@ -269685,6 +269686,7 @@ fn css_break_contain_strict_with_opacity_and_oof(
         n5,
         RendererInternalStyleValue::EstablishesTransformContainingBlock(true),
     );
+    doc.set_internal_style(n5, RendererInternalStyleValue::WillChangeTransform(true));
     doc.set_style(n5, RendererStyleValue::Contain(Containment::STRICT));
     doc.set_style(n5, RendererStyleValue::Width(Length::px(100.0)));
     doc.set_style(n5, RendererStyleValue::Height(Length::px(100.0)));
@@ -269931,6 +269933,7 @@ fn css_break_contain_strict_with_opacity_and_oof_ref(
         n3,
         RendererInternalStyleValue::EstablishesTransformContainingBlock(true),
     );
+    doc.set_internal_style(n3, RendererInternalStyleValue::WillChangeTransform(true));
     doc.set_style(n3, RendererStyleValue::Contain(Containment::STRICT));
     doc.set_style(n3, RendererStyleValue::Width(Length::px(100.0)));
     doc.set_style(n3, RendererStyleValue::Height(Length::px(100.0)));

@@ -116225,6 +116225,7 @@ fn css_position_sticky_position_sticky_scroll_reposition_ref(
         n1,
         RendererInternalStyleValue::EstablishesTransformContainingBlock(true),
     );
+    doc.set_internal_style(n1, RendererInternalStyleValue::WillChangeTransform(true));
     doc.set_style(
         n1,
         RendererStyleValue::FontFamily(FontFamilyList {

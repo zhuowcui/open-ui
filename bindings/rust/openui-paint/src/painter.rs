@@ -1717,6 +1717,19 @@ fn paint_fragment_contents(
         canvas.save();
         concat_transform_matrix(canvas, matrix);
     }
+    // will-change:transform makes the box a composited layer. cc rasters its
+    // contents into transparent tiles and draws them over the content below,
+    // so a group inside it blends with transparency, not with the page. The
+    // tiles are rastered in the layer's own space; a rotated or skewed layer
+    // antialiases its edges only when the tiles are drawn, which drawing the
+    // box directly reproduces, so only an axis-aligned layer gets the group.
+    let has_composited_layer = fragment.owns_element_box()
+        && style.will_change_transform
+        && !suppress_transform
+        && canvas.local_to_device_as_3x3().rect_stays_rect();
+    if has_composited_layer {
+        canvas.save_layer_alpha_f(None, 1.0);
+    }
     let has_clip_path = fragment.owns_element_box() && style.clip_path_inset.is_some();
     if let Some(inset) = style.clip_path_inset.as_ref().filter(|_| has_clip_path) {
         crate::paint_program::record_fragment_property(
@@ -2160,6 +2173,9 @@ fn paint_fragment_contents(
         canvas.restore();
     }
     if has_clip_path {
+        canvas.restore();
+    }
+    if has_composited_layer {
         canvas.restore();
     }
     if has_transform {
@@ -27269,6 +27285,85 @@ mod tests {
             // 0.5 yield #7ebf7e. F16 instead yields #80bf80 at full coverage.
             assert_eq!(&pixels[(6 * 40 + 6) * 4..][..4], &[126, 191, 126, 255]);
         }
+    }
+
+    #[test]
+    fn will_change_transform_rasters_an_opacity_group_on_transparency() {
+        // contain-strict-with-opacity-and-oof: a red then a green box inside
+        // opacity 0.2. Chrome rasters the will-change:transform layer into a
+        // transparent tile, then draws that tile over white.
+        for (will_change, expected) in [(true, [204, 230, 204, 255]), (false, [203, 229, 203, 255])]
+        {
+            let mut doc = Document::new();
+            let layer = doc.create_node(ElementTag::Div);
+            let group = doc.create_node(ElementTag::Div);
+            let cover = doc.create_node(ElementTag::Div);
+            doc.append_child(doc.root(), layer);
+            doc.append_child(layer, group);
+            doc.append_child(group, cover);
+            doc.update_resolved_style(layer, |style| style.will_change_transform = will_change);
+            doc.update_resolved_style(group, |style| {
+                style.opacity = 0.2;
+                style.background_color = Color::from_rgba8(255, 0, 0, 255);
+            });
+            doc.update_resolved_style(cover, |style| {
+                style.background_color = Color::from_rgba8(0, 128, 0, 255);
+            });
+            let size = PhysicalSize::new(LayoutUnit::from_i32(12), LayoutUnit::from_i32(12));
+            let mut fragment = Fragment::new_box(layer, size);
+            let mut inner = Fragment::new_box(group, size);
+            inner.children.push(Fragment::new_box(cover, size));
+            fragment.children.push(inner);
+
+            let mut surface = surfaces::raster_n32_premul((16, 16)).expect("surface");
+            surface.canvas().clear(skia_safe::Color::WHITE);
+            let save_count = surface.canvas().save_count();
+            paint_fragment_tracked(surface.canvas(), &fragment, &doc, PhysicalOffset::zero());
+            assert_eq!(surface.canvas().save_count(), save_count);
+            let pixels = surface_bytes(&mut surface);
+            assert_eq!(
+                &pixels[(6 * 16 + 6) * 4..][..4],
+                &expected,
+                "will-change {will_change}"
+            );
+        }
+    }
+
+    #[test]
+    fn rotated_will_change_layer_keeps_direct_edge_coverage() {
+        // transform-007: cc rasters a rotated layer in its own space and
+        // antialiases the rotated edges as it draws the tiles, so the frame
+        // equals drawing the rotated boxes directly onto the page.
+        let render = |will_change: bool| {
+            let mut doc = Document::new();
+            let layer = doc.create_node(ElementTag::Div);
+            let group = doc.create_node(ElementTag::Div);
+            doc.append_child(doc.root(), layer);
+            doc.append_child(layer, group);
+            doc.update_resolved_style(layer, |style| {
+                style.will_change_transform = will_change;
+                style.background_color = Color::from_rgba8(255, 105, 180, 255);
+            });
+            doc.update_resolved_style(group, |style| {
+                style.opacity = 0.5;
+                style.background_color = Color::from_rgba8(0, 255, 0, 255);
+            });
+            let size = PhysicalSize::new(LayoutUnit::from_i32(20), LayoutUnit::from_i32(20));
+            let mut fragment = Fragment::new_box(layer, size);
+            fragment.children.push(Fragment::new_box(group, size));
+
+            let mut surface = surfaces::raster_n32_premul((40, 40)).expect("surface");
+            surface.canvas().clear(skia_safe::Color::WHITE);
+            surface
+                .canvas()
+                .rotate(25.0, Some(skia_safe::Point::new(20.0, 20.0)));
+            surface.canvas().translate((10.0, 10.0));
+            let save_count = surface.canvas().save_count();
+            paint_fragment_tracked(surface.canvas(), &fragment, &doc, PhysicalOffset::zero());
+            assert_eq!(surface.canvas().save_count(), save_count);
+            surface_bytes(&mut surface)
+        };
+        assert_eq!(render(true), render(false));
     }
 
     #[test]
