@@ -51,7 +51,7 @@ without the change: the corner pixel (12, 12) is then white.
 ## Measurement
 
 This is a paired expanded census in WSL. The base is `6b6e7ff5`, whose
-rendering equals `main` at the border-image merge. The head is `c57ad017`;
+rendering equals `main` at `7812d53d`. The head is `c57ad017`;
 the following commit adds only the unit test. Both use one shared Chromium
 cache, and Chromium is identical in every comparison.
 
