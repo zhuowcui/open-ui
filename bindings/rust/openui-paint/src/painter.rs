@@ -27546,6 +27546,79 @@ mod tests {
     }
 
     #[test]
+    fn linear_end_points_follow_blink_end_points_from_angle() {
+        let gradient =
+            |angle_degrees: f32, corner_direction: Option<(f32, f32)>| CssLinearGradient {
+                angle_degrees,
+                corner_direction,
+                repeating: false,
+                color_space: GradientColorSpace::Srgb,
+                stops: Vec::new(),
+            };
+        let (start, end) = linear_gradient_end_points(&gradient(90.0, None), 40.0, 20.0);
+        assert_eq!((start, end), (Point::new(0.0, 0.0), Point::new(40.0, 0.0)));
+        // 45deg in a 40x20 box: the line passes through the centre and its
+        // perpendiculars touch the top-right and bottom-left corners.
+        let (start, end) = linear_gradient_end_points(&gradient(45.0, None), 40.0, 20.0);
+        let length = (end.x - start.x).hypot(end.y - start.y);
+        assert!((length - 60.0 * std::f32::consts::FRAC_1_SQRT_2).abs() < 1e-3);
+        assert!(((start.x + end.x) / 2.0 - 20.0).abs() < 1e-4);
+        assert!(((start.y + end.y) / 2.0 - 10.0).abs() < 1e-4);
+        // `to bottom right` in a 40x20 box is 90deg plus atan(40 / 20).
+        let (start, end) = linear_gradient_end_points(&gradient(0.0, Some((1.0, 1.0))), 40.0, 20.0);
+        let angle = (end.x - start.x).atan2(-(end.y - start.y)).to_degrees();
+        assert!((angle - (90.0 + 2.0_f32.atan().to_degrees())).abs() < 1e-3);
+    }
+
+    #[test]
+    fn linear_out_of_range_stops_extend_the_gradient_line() {
+        // Blink normalizes `red -100%, lime 200%` over [0, 1] and moves the
+        // line's ends to the stops, so the box's left edge is a third of the
+        // way from red to lime rather than red.
+        let red = Color::from_rgba8(255, 0, 0, 255);
+        let lime = Color::from_rgba8(0, 255, 0, 255);
+        let mut style = ComputedStyle::default();
+        style.update_derived(|style| {
+            style
+                .background_layers
+                .push(BackgroundLayer::new(CssImage::LinearGradient(
+                    CssLinearGradient {
+                        angle_degrees: 90.0,
+                        corner_direction: None,
+                        repeating: false,
+                        color_space: GradientColorSpace::Srgb,
+                        stops: vec![
+                            GradientStop {
+                                color: StyleColor::Resolved(red),
+                                position: GradientStopPosition::Percent(-100.0),
+                            },
+                            GradientStop {
+                                color: StyleColor::Resolved(lime),
+                                position: GradientStopPosition::Percent(200.0),
+                            },
+                        ],
+                    },
+                )));
+        });
+        let mut surface = surfaces::raster_n32_premul((30, 10)).expect("surface");
+        surface.canvas().clear(skia_safe::Color::WHITE);
+        paint_background_layers(
+            surface.canvas(),
+            &Document::new(),
+            None,
+            &style,
+            Rect::from_xywh(0.0, 0.0, 30.0, 10.0),
+            1.0,
+            None,
+            false,
+        );
+        let pixels = surface_bytes(&mut surface);
+        let left = &pixels[(5 * 30) * 4..][..4];
+        assert!((160..=180).contains(&left[2]), "red {left:?}");
+        assert!((76..=96).contains(&left[1]), "green {left:?}");
+    }
+
+    #[test]
     fn opaque_single_pixel_raster_repetition_fills_scaled_canvas() {
         let mut doc = Document::new();
         let image = doc.register_image_resource(
