@@ -1,5 +1,15 @@
 # Open UI current status
 
+## Square double borders as stroked rings 31 October 2026
+
+A uniform double border with square corners is painted at every device
+scale as two stroked rects, one per ring, as Blink's
+`GraphicsContext::FillDRRect` does for a simple ring. At 1.25x and 1.5x it
+was painted as four mitered sides before. The census goes from 22,262 to
+22,291 exact, with 6 more comparisons improved, no losses and no comparison
+worse. See the
+[double border record](double-border-stroked-rings-2026-10-31.md).
+
 ## Border-image pieces in Blink's order 31 October 2026
 
 A border image's nine pieces are painted in Blink's `NinePiece` order, and
