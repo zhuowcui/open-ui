@@ -1,0 +1,128 @@
+{
+ "base_commit": "55663999dd9a7fac74fb8bae4247fb8c30f7c1da",
+ "base_exact": 22232,
+ "chromium_identical": 23728,
+ "comparisons": 23728,
+ "errors": [],
+ "gains": [
+  {
+   "base": "different",
+   "base_mismatched": 15625,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/contain-strict-with-opacity-and-oof",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 22374,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/contain-strict-with-opacity-and-oof",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 10000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/contain-strict-with-opacity-and-oof",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 40000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/contain-strict-with-opacity-and-oof",
+   "profile": "mobile-375x667@2"
+  }
+ ],
+ "head_commit": "2e196ef9ee49d4892287920888107bfb11996f12",
+ "head_exact": 22236,
+ "improved": [],
+ "losses": [],
+ "openui_changed": [
+  {
+   "base": "different",
+   "base_mismatched": 15625,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/contain-strict-with-opacity-and-oof",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 597,
+   "head": "different",
+   "head_mismatched": 597,
+   "id": "wpt/css_break/transform-000",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 597,
+   "head": "different",
+   "head_mismatched": 597,
+   "id": "wpt/css_break/transform-001",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 502,
+   "head": "different",
+   "head_mismatched": 502,
+   "id": "wpt/css_break/transform-002",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 597,
+   "head": "different",
+   "head_mismatched": 597,
+   "id": "wpt/css_break/transform-003",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 597,
+   "head": "different",
+   "head_mismatched": 597,
+   "id": "wpt/css_break/transform-004",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 502,
+   "head": "different",
+   "head_mismatched": 502,
+   "id": "wpt/css_break/transform-005",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 22374,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/contain-strict-with-opacity-and-oof",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 10000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/contain-strict-with-opacity-and-oof",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 40000,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_break/contain-strict-with-opacity-and-oof",
+   "profile": "mobile-375x667@2"
+  }
+ ],
+ "worsened": []
+}

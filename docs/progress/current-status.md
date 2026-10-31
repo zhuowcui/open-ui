@@ -1,5 +1,15 @@
 # Open UI current status
 
+## A will-change:transform layer rastered on transparency 31 October 2026
+
+A box with `will-change: transform` paints its contents into a transparent
+group drawn over the page, as cc rasters a composited layer into
+transparent tiles. Rotated and skewed layers are still drawn directly,
+because cc antialiases their edges only when it draws the tiles. The
+census goes from 22,232 to 22,236 exact with no losses and no comparison
+worse. See the
+[composited layer record](composited-layer-transparent-raster-2026-10-31.md).
+
 ## Fractional device edges of a border-box raster background 30 October 2026
 
 A raster background clipped to the border box keeps partial coverage where
