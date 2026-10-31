@@ -18264,41 +18264,18 @@ fn draw_border_image_patch(
     let mut paint = Paint::default();
     paint.set_anti_alias(true);
     paint.set_alpha_f(opacity_multiplier);
-    if !wrap_x && !wrap_y && source_scale == 1.0 && image.color_type() != ColorType::RGBAF16 {
-        if let Ok((patch, aligned_destination, analytic_clip)) =
-            crate::image_resource::physical_quantized_image_patch(
-                image,
-                source,
-                destination,
-                device_scale,
-                false,
-                false,
-                false,
-                false,
-                false,
-                false,
-                None,
-                false,
-                false,
-                false,
-                true,
-                true,
-                false,
-                Some(destination),
-            )
-        {
-            if let Some((_sampling_source, analytic_destination)) = analytic_clip {
-                draw_physical_patch_with_analytic_bounds(
-                    canvas,
-                    &patch,
-                    aligned_destination,
-                    analytic_destination,
-                    device_scale,
-                    opacity_multiplier,
-                );
-                return;
-            }
-        }
+    if !wrap_x && !wrap_y {
+        // NinePieceImagePainter draws a corner, or a piece stretched on both
+        // axes, with GraphicsContext::DrawImage: one antialiased image rect,
+        // clamped to the source rect and sampled linearly.
+        canvas.draw_image_rect_with_sampling_options(
+            image,
+            Some((&source, SrcRectConstraint::Strict)),
+            destination,
+            SamplingOptions::from(FilterMode::Linear),
+            &paint,
+        );
+        return;
     }
     if wrap_x || wrap_y {
         let local_source = Rect::from_xywh(0.0, 0.0, source.width(), source.height());
@@ -18918,8 +18895,21 @@ fn paint_border_image(
         outer.bottom,
     ];
 
-    for row in 0..3 {
-        for column in 0..3 {
+    // NinePieceImagePainter paints in NinePiece order: the left column, the
+    // right column, then the top, bottom and middle pieces.
+    const PIECES: [(usize, usize); 9] = [
+        (0, 0),
+        (0, 2),
+        (0, 1),
+        (2, 0),
+        (2, 2),
+        (2, 1),
+        (1, 0),
+        (1, 2),
+        (1, 1),
+    ];
+    for (column, row) in PIECES {
+        {
             if row == 1 && column == 1 && !border_image.fill {
                 continue;
             }
@@ -27616,6 +27606,61 @@ mod tests {
         let left = &pixels[(5 * 30) * 4..][..4];
         assert!((160..=180).contains(&left[2]), "red {left:?}");
         assert!((76..=96).contains(&left[1]), "green {left:?}");
+    }
+
+    #[test]
+    fn border_image_seams_blend_like_blink_nine_piece_painter() {
+        // border-image-017 at 1.25x: green pieces over red meet on half
+        // device pixels. Chrome's capture has 63, 96, 0 where the top-left
+        // corner meets the top edge, and 46, 104, 0 where the left edge meets
+        // the bottom-left corner. The corner is one image rect, and the
+        // bottom-left corner is painted before the left edge.
+        let mut doc = Document::new();
+        let image = doc.register_image_resource(
+            "css-backgrounds/support/60x60-green.png",
+            "image/png",
+            "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+            include_bytes!(concat!(
+                env!("CARGO_MANIFEST_DIR"),
+                "/../../../tools/accountability/data/wpt_assets/sp13p/60x60-green.png"
+            ))
+            .to_vec(),
+        );
+        let mut style = ComputedStyle::default();
+        style.update_derived(|style| {
+            style.device_scale_factor = 1.25;
+            style.border_top_width = 15;
+            style.border_right_width = 20;
+            style.border_bottom_width = 35;
+            style.border_left_width = 30;
+            style.border_top_style = BorderStyle::Solid;
+            style.border_right_style = BorderStyle::Solid;
+            style.border_bottom_style = BorderStyle::Solid;
+            style.border_left_style = BorderStyle::Solid;
+            style.border_image = Some(BorderImage {
+                source: CssImage::Raster(image),
+                slice: std::array::from_fn(|_| BorderImageLength::Number(20.0)),
+                fill: false,
+                width: std::array::from_fn(|_| BorderImageLength::Number(1.0)),
+                outset: std::array::from_fn(|_| BorderImageLength::Number(0.0)),
+                repeat_x: BorderImageRepeat::Repeat,
+                repeat_y: BorderImageRepeat::Repeat,
+            });
+        });
+        let mut surface = surfaces::raster_n32_premul((125, 125)).expect("surface");
+        surface.canvas().clear(skia_safe::Color::RED);
+        surface.canvas().scale((1.25, 1.25));
+        assert!(paint_border_image(
+            surface.canvas(),
+            &doc,
+            &style,
+            Rect::from_xywh(0.0, 0.0, 100.0, 100.0),
+            1.0,
+        ));
+        let pixels = surface_bytes(&mut surface);
+        let pixel = |x: usize, y: usize| &pixels[(y * 125 + x) * 4..][..4];
+        assert_eq!(pixel(37, 5), &[0, 96, 63, 255], "corner and top edge");
+        assert_eq!(pixel(10, 81), &[0, 104, 46, 255], "left edge and corner");
     }
 
     #[test]
