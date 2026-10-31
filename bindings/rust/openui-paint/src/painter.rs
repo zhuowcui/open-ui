@@ -1717,6 +1717,14 @@ fn paint_fragment_contents(
         canvas.save();
         concat_transform_matrix(canvas, matrix);
     }
+    // will-change:transform makes the box a composited layer. cc rasters its
+    // contents into transparent tiles and draws them over the content below,
+    // so a group inside it blends with transparency, not with the page.
+    let has_composited_layer =
+        fragment.owns_element_box() && style.will_change_transform && !suppress_transform;
+    if has_composited_layer {
+        canvas.save_layer_alpha_f(None, 1.0);
+    }
     let has_clip_path = fragment.owns_element_box() && style.clip_path_inset.is_some();
     if let Some(inset) = style.clip_path_inset.as_ref().filter(|_| has_clip_path) {
         crate::paint_program::record_fragment_property(
@@ -2160,6 +2168,9 @@ fn paint_fragment_contents(
         canvas.restore();
     }
     if has_clip_path {
+        canvas.restore();
+    }
+    if has_composited_layer {
         canvas.restore();
     }
     if has_transform {
