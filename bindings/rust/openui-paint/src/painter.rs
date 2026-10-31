@@ -27609,6 +27609,61 @@ mod tests {
     }
 
     #[test]
+    fn border_image_seams_blend_like_blink_nine_piece_painter() {
+        // border-image-017 at 1.25x: green pieces over red meet on half
+        // device pixels. Chrome's capture has 63, 96, 0 where the top-left
+        // corner meets the top edge, and 46, 104, 0 where the left edge meets
+        // the bottom-left corner. The corner is one image rect, and the
+        // bottom-left corner is painted before the left edge.
+        let mut doc = Document::new();
+        let image = doc.register_image_resource(
+            "css-backgrounds/support/60x60-green.png",
+            "image/png",
+            "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+            include_bytes!(concat!(
+                env!("CARGO_MANIFEST_DIR"),
+                "/../../../tools/accountability/data/wpt_assets/sp13p/60x60-green.png"
+            ))
+            .to_vec(),
+        );
+        let mut style = ComputedStyle::default();
+        style.update_derived(|style| {
+            style.device_scale_factor = 1.25;
+            style.border_top_width = 15;
+            style.border_right_width = 20;
+            style.border_bottom_width = 35;
+            style.border_left_width = 30;
+            style.border_top_style = BorderStyle::Solid;
+            style.border_right_style = BorderStyle::Solid;
+            style.border_bottom_style = BorderStyle::Solid;
+            style.border_left_style = BorderStyle::Solid;
+            style.border_image = Some(BorderImage {
+                source: CssImage::Raster(image),
+                slice: std::array::from_fn(|_| BorderImageLength::Number(20.0)),
+                fill: false,
+                width: std::array::from_fn(|_| BorderImageLength::Number(1.0)),
+                outset: std::array::from_fn(|_| BorderImageLength::Number(0.0)),
+                repeat_x: BorderImageRepeat::Repeat,
+                repeat_y: BorderImageRepeat::Repeat,
+            });
+        });
+        let mut surface = surfaces::raster_n32_premul((125, 125)).expect("surface");
+        surface.canvas().clear(skia_safe::Color::RED);
+        surface.canvas().scale((1.25, 1.25));
+        assert!(paint_border_image(
+            surface.canvas(),
+            &doc,
+            &style,
+            Rect::from_xywh(0.0, 0.0, 100.0, 100.0),
+            1.0,
+        ));
+        let pixels = surface_bytes(&mut surface);
+        let pixel = |x: usize, y: usize| &pixels[(y * 125 + x) * 4..][..4];
+        assert_eq!(pixel(37, 5), &[0, 96, 63, 255], "corner and top edge");
+        assert_eq!(pixel(10, 81), &[0, 104, 46, 255], "left edge and corner");
+    }
+
+    #[test]
     fn opaque_single_pixel_raster_repetition_fills_scaled_canvas() {
         let mut doc = Document::new();
         let image = doc.register_image_resource(
