@@ -1,0 +1,161 @@
+{
+ "base_commit": "2e196ef9ee49d4892287920888107bfb11996f12",
+ "base_exact": 22236,
+ "chromium_identical": 23728,
+ "comparisons": 23728,
+ "errors": [],
+ "gains": [
+  {
+   "base": "different",
+   "base_mismatched": 1,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/background-attachment-fixed-inside-transform-1",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/background-attachment-fixed-inside-transform-1-ref",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/intrinsic-percent-replaced-023",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 3,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/background-attachment-fixed-inside-transform-1",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 3,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/background-attachment-fixed-inside-transform-1-ref",
+   "profile": "legacy-800x600@1"
+  }
+ ],
+ "head_commit": "74cf25f0c0e42b686b6f9deeb37fb03650c710f8",
+ "head_exact": 22241,
+ "improved": [
+  {
+   "base": "different",
+   "base_mismatched": 11,
+   "head": "different",
+   "head_mismatched": 5,
+   "id": "wpt/css_backgrounds/background-image-centered",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 11,
+   "head": "different",
+   "head_mismatched": 5,
+   "id": "wpt/css_backgrounds/background-image-centered-ref",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2,
+   "head": "different",
+   "head_mismatched": 1,
+   "id": "wpt/css_backgrounds/background-image-gradient-currentcolor-radial-repaint-ref",
+   "profile": "mobile-375x667@2"
+  }
+ ],
+ "losses": [],
+ "openui_changed": [
+  {
+   "base": "different",
+   "base_mismatched": 1,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/background-attachment-fixed-inside-transform-1",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/background-attachment-fixed-inside-transform-1-ref",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1,
+   "head": "different",
+   "head_mismatched": 1,
+   "id": "wpt/css_backgrounds/background-attachment-fixed-inside-transform-1",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1,
+   "head": "different",
+   "head_mismatched": 1,
+   "id": "wpt/css_backgrounds/background-attachment-fixed-inside-transform-1-ref",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/intrinsic-percent-replaced-023",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 3,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/background-attachment-fixed-inside-transform-1",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 3,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/background-attachment-fixed-inside-transform-1-ref",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 11,
+   "head": "different",
+   "head_mismatched": 5,
+   "id": "wpt/css_backgrounds/background-image-centered",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 11,
+   "head": "different",
+   "head_mismatched": 5,
+   "id": "wpt/css_backgrounds/background-image-centered-ref",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2,
+   "head": "different",
+   "head_mismatched": 1,
+   "id": "wpt/css_backgrounds/background-image-gradient-currentcolor-radial-repaint-ref",
+   "profile": "mobile-375x667@2"
+  }
+ ],
+ "worsened": []
+}

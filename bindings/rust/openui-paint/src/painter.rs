@@ -15537,6 +15537,62 @@ fn resolve_background_length(length: &openui_geometry::Length, basis: f32, auto:
     }
 }
 
+/// Blink's `RadiusToSide` and `RadiusToCorner` (`css_gradient_value.cc`):
+/// the end shape radii of a sized radial gradient, from its centre `point`
+/// relative to a gradient box of `size`.
+fn radial_gradient_end_radii(
+    size: &RadialGradientSize,
+    circle: bool,
+    point: Point,
+    (width, height): (f32, f32),
+) -> (f32, f32) {
+    let compare = |farthest: bool, a: f32, b: f32| if farthest { a > b } else { a < b };
+    let to_side = |farthest: bool| {
+        let pick = |a: f32, b: f32| if compare(farthest, a, b) { a } else { b };
+        let dx = pick(point.x.abs(), (point.x - width).abs());
+        let dy = pick(point.y.abs(), (point.y - height).abs());
+        if circle {
+            let r = pick(dx, dy);
+            (r, r)
+        } else {
+            (dx, dy)
+        }
+    };
+    let to_corner = |farthest: bool| {
+        let corners = [(0.0, 0.0), (width, 0.0), (width, height), (0.0, height)];
+        let length = |(x, y): (f32, f32)| {
+            let (dx, dy) = (f64::from(point.x - x), f64::from(point.y - y));
+            (dx * dx + dy * dy).sqrt() as f32
+        };
+        let mut corner = corners[0];
+        let mut distance = length(corner);
+        for &candidate in &corners[1..] {
+            let candidate_distance = length(candidate);
+            if compare(farthest, candidate_distance, distance) {
+                corner = candidate;
+                distance = candidate_distance;
+            }
+        }
+        if circle {
+            return (distance, distance);
+        }
+        let (side_x, side_y) = to_side(farthest);
+        let aspect_ratio = side_x / side_y;
+        if !aspect_ratio.is_finite() || aspect_ratio == 0.0 {
+            return (0.0, 0.0);
+        }
+        let (x, y) = (corner.0 - point.x, corner.1 - point.y);
+        let a = (x * x + y * y * aspect_ratio * aspect_ratio).sqrt();
+        (a, a / aspect_ratio)
+    };
+    match size {
+        RadialGradientSize::ClosestSide => to_side(false),
+        RadialGradientSize::FarthestSide => to_side(true),
+        RadialGradientSize::ClosestCorner => to_corner(false),
+        _ => to_corner(true),
+    }
+}
+
 fn resolve_background_position(
     position: BackgroundPosition,
     area_start: f32,
@@ -16949,43 +17005,35 @@ fn paint_css_image_tile(
                 resolve_background_position(gradient.center_x, tile.left, tile.width(), 0.0);
             let mut cy =
                 resolve_background_position(gradient.center_y, tile.top, tile.height(), 0.0);
-            let left = (cx - tile.left).abs();
-            let right = (tile.right - cx).abs();
-            let top = (cy - tile.top).abs();
-            let bottom = (tile.bottom - cy).abs();
-            let (mut rx, mut ry) = match &gradient.size {
-                RadialGradientSize::ClosestSide => (left.min(right), top.min(bottom)),
-                RadialGradientSize::FarthestSide => (left.max(right), top.max(bottom)),
-                RadialGradientSize::ClosestCorner => {
-                    let scale = 2.0_f32.sqrt();
-                    (left.min(right) * scale, top.min(bottom) * scale)
+            let (rx, ry) = match &gradient.size {
+                RadialGradientSize::Explicit(x, y) => {
+                    let rx = resolve_background_length(x, tile.width(), tile.width() * 0.5);
+                    let ry = resolve_background_length(y, tile.height(), tile.height() * 0.5);
+                    if gradient.shape == RadialGradientShape::Circle {
+                        (rx.max(ry), rx.max(ry))
+                    } else {
+                        (rx, ry)
+                    }
                 }
-                RadialGradientSize::FarthestCorner => {
-                    let scale = 2.0_f32.sqrt();
-                    (left.max(right) * scale, top.max(bottom) * scale)
-                }
-                RadialGradientSize::Explicit(x, y) => (
-                    resolve_background_length(x, tile.width(), tile.width() * 0.5),
-                    resolve_background_length(y, tile.height(), tile.height() * 0.5),
+                size => radial_gradient_end_radii(
+                    size,
+                    gradient.shape == RadialGradientShape::Circle,
+                    Point::new(cx - tile.left, cy - tile.top),
+                    (tile.width(), tile.height()),
                 ),
             };
-            if gradient.shape == RadialGradientShape::Circle {
-                let radius = rx.max(ry);
-                rx = radius;
-                ry = radius;
-            }
             if rx <= 0.0 || ry <= 0.0 {
                 return;
             }
             let mut hinted_stops =
-                resolved_gradient_stops_with_hints(&gradient.stops, rx.max(ry), &style.color);
+                resolved_gradient_stops_with_hints(&gradient.stops, rx, &style.color);
             if !gradient.repeating {
                 if let Some(stops) = hinted_stops.as_mut() {
                     clamp_negative_radial_gradient_stops(stops);
                 }
             }
             let mut positions = hinted_stops.as_ref().map_or_else(
-                || css_gradient_positions(&gradient.stops, rx.max(ry)),
+                || css_gradient_positions(&gradient.stops, rx),
                 |stops| stops.iter().map(|stop| stop.position).collect(),
             );
             let has_hard_stop = positions
@@ -17000,7 +17048,7 @@ fn paint_css_image_tile(
                 cx -= device_quantum;
                 cy -= device_quantum;
                 for position in &mut positions {
-                    *position -= device_quantum / rx.max(ry);
+                    *position -= device_quantum / rx;
                 }
             }
             let mut radius = 1.0;
@@ -17016,24 +17064,25 @@ fn paint_css_image_tile(
                     mode = TileMode::Repeat;
                 }
             }
+            // GradientGeneratedImage::Draw builds the shader in the tile's own
+            // space and maps it to the tile with a local matrix.
+            let center = Point::new(cx - tile.left, cy - tile.top);
+            let tile_matrix = Matrix::translate((tile.left, tile.top));
             if (rx - ry).abs() < 0.001 {
-                // Keep circular radial gradients in device coordinates. This
-                // is the path Blink/Skia use for circles and, importantly,
-                // preserves their hard-stop boundary classification without
-                // an avoidable unit-circle inverse transform.
+                // A circle needs no elliptical scale.
                 let mut paint = Paint::default();
                 paint.set_anti_alias(antialias_tile_edge);
                 paint.set_dither(true);
                 if let Some(stops) = hinted_stops.as_ref() {
                     let colors = resolved_gradient_colors4f(stops, opacity_multiplier);
                     paint.set_shader(gradient_shader::two_point_conical_with_interpolation(
-                        (Point::new(cx, cy), 0.0),
-                        (Point::new(cx, cy), rx * radius),
+                        (center, 0.0),
+                        (center, rx * radius),
                         (colors.as_slice(), None),
                         positions.as_slice(),
                         mode,
                         skia_hinted_gradient_interpolation(gradient.color_space),
-                        None,
+                        Some(&tile_matrix),
                     ));
                 } else if gradient.color_space == GradientColorSpace::Srgb {
                     let colors = hinted_stops.as_ref().map_or_else(
@@ -17041,15 +17090,15 @@ fn paint_css_image_tile(
                         |stops| resolved_gradient_colors(stops, opacity_multiplier),
                     );
                     paint.set_shader(gradient_shader::two_point_conical(
-                        Point::new(cx, cy),
+                        center,
                         0.0,
-                        Point::new(cx, cy),
+                        center,
                         rx * radius,
                         colors.as_slice(),
                         positions.as_slice(),
                         mode,
                         None,
-                        None,
+                        Some(&tile_matrix),
                     ));
                 } else {
                     let colors = hinted_stops.as_ref().map_or_else(
@@ -17057,28 +17106,30 @@ fn paint_css_image_tile(
                         |stops| resolved_gradient_colors4f(stops, opacity_multiplier),
                     );
                     paint.set_shader(gradient_shader::two_point_conical_with_interpolation(
-                        (Point::new(cx, cy), 0.0),
-                        (Point::new(cx, cy), rx * radius),
+                        (center, 0.0),
+                        (center, rx * radius),
                         (colors.as_slice(), None),
                         positions.as_slice(),
                         mode,
                         skia_gradient_interpolation(gradient.color_space),
-                        None,
+                        Some(&tile_matrix),
                     ));
                 }
                 canvas.draw_rect(paint_bounds.unwrap_or(tile), &paint);
                 return;
             }
-            let mut local_matrix = Matrix::new_identity();
-            local_matrix.pre_scale((1.0, ry / rx), Some(Point::new(cx, cy)));
+            // RadialGradient scales by the reciprocal of the end shape's
+            // aspect ratio about the centre.
+            let mut local_matrix = tile_matrix;
+            local_matrix.pre_scale((1.0, 1.0 / (rx / ry)), Some(center));
             let mut paint = Paint::default();
             paint.set_anti_alias(antialias_tile_edge);
             paint.set_dither(true);
             if let Some(stops) = hinted_stops.as_ref() {
                 let colors = resolved_gradient_colors4f(stops, opacity_multiplier);
                 paint.set_shader(gradient_shader::two_point_conical_with_interpolation(
-                    (Point::new(cx, cy), 0.0),
-                    (Point::new(cx, cy), rx * radius),
+                    (center, 0.0),
+                    (center, rx * radius),
                     (colors.as_slice(), None),
                     positions.as_slice(),
                     mode,
@@ -17091,9 +17142,9 @@ fn paint_css_image_tile(
                     |stops| resolved_gradient_colors(stops, opacity_multiplier),
                 );
                 paint.set_shader(gradient_shader::two_point_conical(
-                    Point::new(cx, cy),
+                    center,
                     0.0,
-                    Point::new(cx, cy),
+                    center,
                     rx * radius,
                     colors.as_slice(),
                     positions.as_slice(),
@@ -17107,8 +17158,8 @@ fn paint_css_image_tile(
                     |stops| resolved_gradient_colors4f(stops, opacity_multiplier),
                 );
                 paint.set_shader(gradient_shader::two_point_conical_with_interpolation(
-                    (Point::new(cx, cy), 0.0),
-                    (Point::new(cx, cy), rx * radius),
+                    (center, 0.0),
+                    (center, rx * radius),
                     (colors.as_slice(), None),
                     positions.as_slice(),
                     mode,
@@ -25237,7 +25288,7 @@ mod tests {
     use openui_geometry::PhysicalSize;
     use openui_style::{
         BoxShadow, ConicGradient, CssLinearGradient, Direction, GradientStop, ImageResourceId,
-        WritingMode,
+        RadialGradient, WritingMode,
     };
 
     fn surface_bytes(surface: &mut skia_safe::Surface) -> Vec<u8> {
@@ -27364,6 +27415,89 @@ mod tests {
             surface_bytes(&mut surface)
         };
         assert_eq!(render(true), render(false));
+    }
+
+    #[test]
+    fn radial_end_radii_follow_blink_side_and_corner() {
+        let point = Point::new(10.0, 20.0);
+        // RadiusToCorner: a circle reaches its corner's Euclidean distance.
+        let distance = 9000.0_f64.sqrt() as f32;
+        assert_eq!(
+            radial_gradient_end_radii(
+                &RadialGradientSize::FarthestCorner,
+                true,
+                point,
+                (100.0, 50.0)
+            ),
+            (distance, distance)
+        );
+        // RadiusToSide: a circle takes the nearer of the nearest sides.
+        assert_eq!(
+            radial_gradient_end_radii(&RadialGradientSize::ClosestSide, true, point, (100.0, 50.0)),
+            (10.0, 10.0)
+        );
+        // EllipseRadius keeps the side radii's aspect ratio through the corner.
+        let aspect_ratio = 100.0_f32 / 75.0;
+        let a = (100.0_f32 * 100.0 + 75.0 * 75.0 * aspect_ratio * aspect_ratio).sqrt();
+        assert_eq!(
+            radial_gradient_end_radii(
+                &RadialGradientSize::FarthestCorner,
+                false,
+                Point::new(100.0, 75.0),
+                (200.0, 150.0)
+            ),
+            (a, a / aspect_ratio)
+        );
+    }
+
+    #[test]
+    fn radial_length_stops_follow_the_horizontal_radius() {
+        // Blink measures radial stop lengths along the end shape's horizontal
+        // radius, so a 10px stop in a 20x40 ellipse sits 10px from the
+        // centre horizontally.
+        let red = Color::from_rgba8(255, 0, 0, 255);
+        let lime = Color::from_rgba8(0, 255, 0, 255);
+        let stop = |color: Color, position: f32| GradientStop {
+            color: StyleColor::Resolved(color),
+            position: GradientStopPosition::Px(position),
+        };
+        let mut style = ComputedStyle::default();
+        style.update_derived(|style| {
+            style
+                .background_layers
+                .push(BackgroundLayer::new(CssImage::RadialGradient(
+                    RadialGradient {
+                        repeating: false,
+                        color_space: GradientColorSpace::Srgb,
+                        shape: RadialGradientShape::Ellipse,
+                        size: RadialGradientSize::ClosestSide,
+                        center_x: BackgroundPosition::Percent(50.0),
+                        center_y: BackgroundPosition::Percent(50.0),
+                        stops: vec![
+                            stop(red, 0.0),
+                            stop(red, 9.0),
+                            stop(lime, 11.0),
+                            stop(lime, 20.0),
+                        ],
+                    },
+                )));
+        });
+        let mut surface = surfaces::raster_n32_premul((40, 80)).expect("surface");
+        surface.canvas().clear(skia_safe::Color::WHITE);
+        paint_background_layers(
+            surface.canvas(),
+            &Document::new(),
+            None,
+            &style,
+            Rect::from_xywh(0.0, 0.0, 40.0, 80.0),
+            1.0,
+            None,
+            false,
+        );
+        let pixels = surface_bytes(&mut surface);
+        let pixel = |x: usize| &pixels[(40 * 40 + x) * 4..][..4];
+        assert_eq!(pixel(20 + 7), &[0, 0, 255, 255], "inside 9px");
+        assert_eq!(pixel(20 + 13), &[0, 255, 0, 255], "outside 11px");
     }
 
     #[test]
