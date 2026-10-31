@@ -1,5 +1,15 @@
 # Open UI current status
 
+## Linear gradient shaders in the tile's own space 31 October 2026
+
+A linear gradient background is built in its tile's coordinates and mapped
+onto the tile with a local matrix, as Blink's `GradientGeneratedImage::Draw`
+does. Its line follows Blink's `EndPointsFromAngle`, and out-of-range stops
+are normalized as Blink's `NormalizeAndAddStops` does. The census goes from
+22,241 to 22,243 exact, with 17 more comparisons improved, no losses and no
+comparison worse. See the
+[linear gradient record](linear-gradient-tile-space-2026-10-31.md).
+
 ## Radial gradient shaders in the tile's own space 31 October 2026
 
 A radial gradient background is built in its tile's coordinates and mapped

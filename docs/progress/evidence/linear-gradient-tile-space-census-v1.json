@@ -1,0 +1,321 @@
+{
+ "base_commit": "74cf25f0c0e42b686b6f9deeb37fb03650c710f8",
+ "base_exact": 22241,
+ "chromium_identical": 23728,
+ "comparisons": 23728,
+ "errors": [],
+ "gains": [
+  {
+   "base": "different",
+   "base_mismatched": 39,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/background-repeat-space-2",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 39,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/background-repeat-space-2-ref",
+   "profile": "mobile-375x667@2"
+  }
+ ],
+ "head_commit": "020627d5416fbb1c533760acf280ba2988918612",
+ "head_exact": 22243,
+ "improved": [
+  {
+   "base": "different",
+   "base_mismatched": 205,
+   "head": "different",
+   "head_mismatched": 196,
+   "id": "wpt/css_backgrounds/background-repeat-space-6",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 3386,
+   "head": "different",
+   "head_mismatched": 3272,
+   "id": "wpt/css_backgrounds/background-repeat-space-6-ref",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 250,
+   "head": "different",
+   "head_mismatched": 217,
+   "id": "wpt/css_backgrounds/background-repeat-space-7",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 3711,
+   "head": "different",
+   "head_mismatched": 3626,
+   "id": "wpt/css_backgrounds/background-repeat-space-7-ref",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1094,
+   "head": "different",
+   "head_mismatched": 1008,
+   "id": "wpt/css_break/table_table-col-paint-vrl-rtl",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1095,
+   "head": "different",
+   "head_mismatched": 1008,
+   "id": "wpt/css_break/table_table-row-paint-vrl-rtl",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1182,
+   "head": "different",
+   "head_mismatched": 1008,
+   "id": "wpt/css_break/table_table-section-paint-vrl-rtl",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 122,
+   "head": "different",
+   "head_mismatched": 38,
+   "id": "wpt/css_backgrounds/background-repeat-space-1-ref",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 252,
+   "head": "different",
+   "head_mismatched": 54,
+   "id": "wpt/css_backgrounds/background-repeat-space-1a",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 252,
+   "head": "different",
+   "head_mismatched": 54,
+   "id": "wpt/css_backgrounds/background-repeat-space-1b",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 252,
+   "head": "different",
+   "head_mismatched": 54,
+   "id": "wpt/css_backgrounds/background-repeat-space-1c",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 168,
+   "head": "different",
+   "head_mismatched": 36,
+   "id": "wpt/css_backgrounds/background-repeat-space-3",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 35,
+   "head": "different",
+   "head_mismatched": 27,
+   "id": "wpt/css_backgrounds/background-repeat-space-3-ref",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 252,
+   "head": "different",
+   "head_mismatched": 54,
+   "id": "wpt/css_backgrounds/background-repeat-space-4",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 142,
+   "head": "different",
+   "head_mismatched": 9,
+   "id": "wpt/css_backgrounds/background-repeat-space-4-ref",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 252,
+   "head": "different",
+   "head_mismatched": 54,
+   "id": "wpt/css_backgrounds/background-repeat-space-5",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 94,
+   "head": "different",
+   "head_mismatched": 15,
+   "id": "wpt/css_backgrounds/background-repeat-space-5-ref",
+   "profile": "mobile-375x667@2"
+  }
+ ],
+ "losses": [],
+ "openui_changed": [
+  {
+   "base": "different",
+   "base_mismatched": 205,
+   "head": "different",
+   "head_mismatched": 196,
+   "id": "wpt/css_backgrounds/background-repeat-space-6",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 3386,
+   "head": "different",
+   "head_mismatched": 3272,
+   "id": "wpt/css_backgrounds/background-repeat-space-6-ref",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 250,
+   "head": "different",
+   "head_mismatched": 217,
+   "id": "wpt/css_backgrounds/background-repeat-space-7",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 3711,
+   "head": "different",
+   "head_mismatched": 3626,
+   "id": "wpt/css_backgrounds/background-repeat-space-7-ref",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1094,
+   "head": "different",
+   "head_mismatched": 1008,
+   "id": "wpt/css_break/table_table-col-paint-vrl-rtl",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1095,
+   "head": "different",
+   "head_mismatched": 1008,
+   "id": "wpt/css_break/table_table-row-paint-vrl-rtl",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1182,
+   "head": "different",
+   "head_mismatched": 1008,
+   "id": "wpt/css_break/table_table-section-paint-vrl-rtl",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 122,
+   "head": "different",
+   "head_mismatched": 38,
+   "id": "wpt/css_backgrounds/background-repeat-space-1-ref",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 252,
+   "head": "different",
+   "head_mismatched": 54,
+   "id": "wpt/css_backgrounds/background-repeat-space-1a",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 252,
+   "head": "different",
+   "head_mismatched": 54,
+   "id": "wpt/css_backgrounds/background-repeat-space-1b",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 252,
+   "head": "different",
+   "head_mismatched": 54,
+   "id": "wpt/css_backgrounds/background-repeat-space-1c",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 39,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/background-repeat-space-2",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 39,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/background-repeat-space-2-ref",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 168,
+   "head": "different",
+   "head_mismatched": 36,
+   "id": "wpt/css_backgrounds/background-repeat-space-3",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 35,
+   "head": "different",
+   "head_mismatched": 27,
+   "id": "wpt/css_backgrounds/background-repeat-space-3-ref",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 252,
+   "head": "different",
+   "head_mismatched": 54,
+   "id": "wpt/css_backgrounds/background-repeat-space-4",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 142,
+   "head": "different",
+   "head_mismatched": 9,
+   "id": "wpt/css_backgrounds/background-repeat-space-4-ref",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 252,
+   "head": "different",
+   "head_mismatched": 54,
+   "id": "wpt/css_backgrounds/background-repeat-space-5",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 94,
+   "head": "different",
+   "head_mismatched": 15,
+   "id": "wpt/css_backgrounds/background-repeat-space-5-ref",
+   "profile": "mobile-375x667@2"
+  }
+ ],
+ "worsened": []
+}

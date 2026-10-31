@@ -16298,6 +16298,60 @@ fn generated_image_backing_scale(
     }
 }
 
+/// Blink's linear gradient line in a gradient box of `width` by `height`:
+/// `EndPointsFromAngle`, with a corner direction lowered to its angle as
+/// `CSSLinearGradientValue::CreateGradient` does.
+fn linear_gradient_end_points(
+    gradient: &openui_style::CssLinearGradient,
+    width: f32,
+    height: f32,
+) -> (Point, Point) {
+    let angle = match gradient.corner_direction {
+        Some((horizontal, vertical)) => {
+            let rise = if vertical > 0.0 { -width } else { width };
+            let run = if horizontal < 0.0 { -height } else { height };
+            90.0 - rise.atan2(run) * 180.0 / std::f32::consts::PI
+        }
+        None => gradient.angle_degrees,
+    };
+    let mut angle = angle % 360.0;
+    if angle < 0.0 {
+        angle += 360.0;
+    }
+    if angle == 0.0 {
+        return (Point::new(0.0, height), Point::new(0.0, 0.0));
+    }
+    if angle == 90.0 {
+        return (Point::new(0.0, 0.0), Point::new(width, 0.0));
+    }
+    if angle == 180.0 {
+        return (Point::new(0.0, 0.0), Point::new(0.0, height));
+    }
+    if angle == 270.0 {
+        return (Point::new(width, 0.0), Point::new(0.0, 0.0));
+    }
+    let slope = ((90.0 - angle) * std::f32::consts::PI / 180.0).tan();
+    let perpendicular_slope = -1.0 / slope;
+    let half_height = height / 2.0;
+    let half_width = width / 2.0;
+    let (corner_x, corner_y) = if angle < 90.0 {
+        (half_width, half_height)
+    } else if angle < 180.0 {
+        (half_width, -half_height)
+    } else if angle < 270.0 {
+        (-half_width, -half_height)
+    } else {
+        (-half_width, half_height)
+    };
+    let c = corner_y - perpendicular_slope * corner_x;
+    let end_x = c / (slope - perpendicular_slope);
+    let end_y = perpendicular_slope * end_x + c;
+    (
+        Point::new(half_width - end_x, half_height + end_y),
+        Point::new(half_width + end_x, half_height - end_y),
+    )
+}
+
 fn linear_gradient_direction(angle_degrees: f32) -> Point {
     let radians = angle_degrees.to_radians();
     let mut x = radians.sin();
@@ -16908,30 +16962,15 @@ fn paint_css_image_tile(
             if gradient.stops.len() < 2 {
                 return;
             }
-            let direction = if let Some((horizontal, vertical)) = gradient.corner_direction {
-                let x = horizontal / tile.width();
-                let y = vertical / tile.height();
-                let length = (x * x + y * y).sqrt();
-                Point::new(x / length, y / length)
-            } else {
-                linear_gradient_direction(gradient.angle_degrees)
-            };
-            let line_length = tile.width() * direction.x.abs() + tile.height() * direction.y.abs();
+            // CSSLinearGradientValue::CreateGradient places the gradient line in
+            // the tile's own space; GradientGeneratedImage::Draw maps that
+            // space to the tile with a local matrix.
+            let (start, end) = linear_gradient_end_points(gradient, tile.width(), tile.height());
+            let delta = (end.x - start.x, end.y - start.y);
+            let line_length = f64::from(delta.0).hypot(f64::from(delta.1)) as f32;
             if line_length <= 0.0 {
                 return;
             }
-            let center = Point::new(
-                (tile.left + tile.right) * 0.5,
-                (tile.top + tile.bottom) * 0.5,
-            );
-            let start = Point::new(
-                center.x - direction.x * line_length * 0.5,
-                center.y - direction.y * line_length * 0.5,
-            );
-            let end = Point::new(
-                center.x + direction.x * line_length * 0.5,
-                center.y + direction.y * line_length * 0.5,
-            );
             let hinted_stops =
                 resolved_gradient_stops_with_hints(&gradient.stops, line_length, &style.color);
             let mut positions = hinted_stops.as_ref().map_or_else(
@@ -16940,21 +16979,27 @@ fn paint_css_image_tile(
             );
             let mut shader_start = start;
             let mut shader_end = end;
-            let mut mode = TileMode::Clamp;
-            if gradient.repeating {
-                let first = positions.first().copied().unwrap_or_default() * line_length;
-                let last = positions.last().copied().unwrap_or(1.0) * line_length;
-                if last > first {
-                    for position in &mut positions {
-                        *position = (*position * line_length - first) / (last - first);
-                    }
-                    shader_start =
-                        Point::new(start.x + direction.x * first, start.y + direction.y * first);
-                    shader_end =
-                        Point::new(start.x + direction.x * last, start.y + direction.y * last);
-                    mode = TileMode::Repeat;
+            let mode = if gradient.repeating {
+                TileMode::Repeat
+            } else {
+                TileMode::Clamp
+            };
+            let first = positions.first().copied().unwrap_or_default();
+            let last = positions.last().copied().unwrap_or(1.0);
+            // RequiresStopsNormalization and NormalizeAndAddStops: a repeating
+            // or out-of-range stop list is redistributed over [0, 1] and the
+            // line moved to the first and last stops.
+            if (gradient.repeating || first < 0.0 || last > 1.0)
+                && (last - first).max(0.0) >= f32::EPSILON
+            {
+                let span = last - first;
+                for position in &mut positions {
+                    *position = (*position - first) / span;
                 }
+                shader_start = Point::new(start.x + delta.0 * first, start.y + delta.1 * first);
+                shader_end = Point::new(start.x + delta.0 * last, start.y + delta.1 * last);
             }
+            let tile_matrix = Matrix::translate((tile.left, tile.top));
             let mut paint = Paint::default();
             paint.set_anti_alias(antialias_tile_edge);
             paint.set_dither(true);
@@ -16966,7 +17011,7 @@ fn paint_css_image_tile(
                     positions.as_slice(),
                     mode,
                     skia_hinted_gradient_interpolation(gradient.color_space),
-                    None,
+                    Some(&tile_matrix),
                 ));
             } else if gradient.color_space == GradientColorSpace::Srgb {
                 let colors = hinted_stops.as_ref().map_or_else(
@@ -16979,7 +17024,7 @@ fn paint_css_image_tile(
                     positions.as_slice(),
                     mode,
                     None,
-                    None,
+                    Some(&tile_matrix),
                 ));
             } else {
                 let colors = hinted_stops.as_ref().map_or_else(
@@ -16992,7 +17037,7 @@ fn paint_css_image_tile(
                     positions.as_slice(),
                     mode,
                     skia_gradient_interpolation(gradient.color_space),
-                    None,
+                    Some(&tile_matrix),
                 ));
             }
             canvas.draw_rect(paint_bounds.unwrap_or(tile), &paint);
@@ -27498,6 +27543,79 @@ mod tests {
         let pixel = |x: usize| &pixels[(40 * 40 + x) * 4..][..4];
         assert_eq!(pixel(20 + 7), &[0, 0, 255, 255], "inside 9px");
         assert_eq!(pixel(20 + 13), &[0, 255, 0, 255], "outside 11px");
+    }
+
+    #[test]
+    fn linear_end_points_follow_blink_end_points_from_angle() {
+        let gradient =
+            |angle_degrees: f32, corner_direction: Option<(f32, f32)>| CssLinearGradient {
+                angle_degrees,
+                corner_direction,
+                repeating: false,
+                color_space: GradientColorSpace::Srgb,
+                stops: Vec::new(),
+            };
+        let (start, end) = linear_gradient_end_points(&gradient(90.0, None), 40.0, 20.0);
+        assert_eq!((start, end), (Point::new(0.0, 0.0), Point::new(40.0, 0.0)));
+        // 45deg in a 40x20 box: the line passes through the centre and its
+        // perpendiculars touch the top-right and bottom-left corners.
+        let (start, end) = linear_gradient_end_points(&gradient(45.0, None), 40.0, 20.0);
+        let length = (end.x - start.x).hypot(end.y - start.y);
+        assert!((length - 60.0 * std::f32::consts::FRAC_1_SQRT_2).abs() < 1e-3);
+        assert!(((start.x + end.x) / 2.0 - 20.0).abs() < 1e-4);
+        assert!(((start.y + end.y) / 2.0 - 10.0).abs() < 1e-4);
+        // `to bottom right` in a 40x20 box is 90deg plus atan(40 / 20).
+        let (start, end) = linear_gradient_end_points(&gradient(0.0, Some((1.0, 1.0))), 40.0, 20.0);
+        let angle = (end.x - start.x).atan2(-(end.y - start.y)).to_degrees();
+        assert!((angle - (90.0 + 2.0_f32.atan().to_degrees())).abs() < 1e-3);
+    }
+
+    #[test]
+    fn linear_out_of_range_stops_extend_the_gradient_line() {
+        // Blink normalizes `red -100%, lime 200%` over [0, 1] and moves the
+        // line's ends to the stops, so the box's left edge is a third of the
+        // way from red to lime rather than red.
+        let red = Color::from_rgba8(255, 0, 0, 255);
+        let lime = Color::from_rgba8(0, 255, 0, 255);
+        let mut style = ComputedStyle::default();
+        style.update_derived(|style| {
+            style
+                .background_layers
+                .push(BackgroundLayer::new(CssImage::LinearGradient(
+                    CssLinearGradient {
+                        angle_degrees: 90.0,
+                        corner_direction: None,
+                        repeating: false,
+                        color_space: GradientColorSpace::Srgb,
+                        stops: vec![
+                            GradientStop {
+                                color: StyleColor::Resolved(red),
+                                position: GradientStopPosition::Percent(-100.0),
+                            },
+                            GradientStop {
+                                color: StyleColor::Resolved(lime),
+                                position: GradientStopPosition::Percent(200.0),
+                            },
+                        ],
+                    },
+                )));
+        });
+        let mut surface = surfaces::raster_n32_premul((30, 10)).expect("surface");
+        surface.canvas().clear(skia_safe::Color::WHITE);
+        paint_background_layers(
+            surface.canvas(),
+            &Document::new(),
+            None,
+            &style,
+            Rect::from_xywh(0.0, 0.0, 30.0, 10.0),
+            1.0,
+            None,
+            false,
+        );
+        let pixels = surface_bytes(&mut surface);
+        let left = &pixels[(5 * 30) * 4..][..4];
+        assert!((160..=180).contains(&left[2]), "red {left:?}");
+        assert!((76..=96).contains(&left[1]), "green {left:?}");
     }
 
     #[test]
