@@ -1,5 +1,15 @@
 # Open UI current status
 
+## Border-image pieces in Blink's order 31 October 2026
+
+A border image's nine pieces are painted in Blink's `NinePiece` order, and
+a corner, or a piece stretched on both axes, is drawn as one antialiased
+image rect, as Blink's `NinePieceImagePainter` does. Seams on half device
+pixels then blend as Chrome's do. The census goes from 22,243 to 22,262
+exact, with 6 more comparisons improved, no losses and no comparison worse.
+Tiled pieces and the seam with a content `<img>` remain. See the
+[border-image record](border-image-blink-pieces-2026-10-31.md).
+
 ## Linear gradient shaders in the tile's own space 31 October 2026
 
 A linear gradient background is built in its tile's coordinates and mapped
