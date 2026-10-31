@@ -18264,41 +18264,18 @@ fn draw_border_image_patch(
     let mut paint = Paint::default();
     paint.set_anti_alias(true);
     paint.set_alpha_f(opacity_multiplier);
-    if !wrap_x && !wrap_y && source_scale == 1.0 && image.color_type() != ColorType::RGBAF16 {
-        if let Ok((patch, aligned_destination, analytic_clip)) =
-            crate::image_resource::physical_quantized_image_patch(
-                image,
-                source,
-                destination,
-                device_scale,
-                false,
-                false,
-                false,
-                false,
-                false,
-                false,
-                None,
-                false,
-                false,
-                false,
-                true,
-                true,
-                false,
-                Some(destination),
-            )
-        {
-            if let Some((_sampling_source, analytic_destination)) = analytic_clip {
-                draw_physical_patch_with_analytic_bounds(
-                    canvas,
-                    &patch,
-                    aligned_destination,
-                    analytic_destination,
-                    device_scale,
-                    opacity_multiplier,
-                );
-                return;
-            }
-        }
+    if !wrap_x && !wrap_y {
+        // NinePieceImagePainter draws a corner, or a piece stretched on both
+        // axes, with GraphicsContext::DrawImage: one antialiased image rect,
+        // clamped to the source rect and sampled linearly.
+        canvas.draw_image_rect_with_sampling_options(
+            image,
+            Some((&source, SrcRectConstraint::Strict)),
+            destination,
+            SamplingOptions::from(FilterMode::Linear),
+            &paint,
+        );
+        return;
     }
     if wrap_x || wrap_y {
         let local_source = Rect::from_xywh(0.0, 0.0, source.width(), source.height());
@@ -18918,8 +18895,21 @@ fn paint_border_image(
         outer.bottom,
     ];
 
-    for row in 0..3 {
-        for column in 0..3 {
+    // NinePieceImagePainter paints in NinePiece order: the left column, the
+    // right column, then the top, bottom and middle pieces.
+    const PIECES: [(usize, usize); 9] = [
+        (0, 0),
+        (0, 2),
+        (0, 1),
+        (2, 0),
+        (2, 2),
+        (2, 1),
+        (1, 0),
+        (1, 2),
+        (1, 1),
+    ];
+    for (column, row) in PIECES {
+        {
             if row == 1 && column == 1 && !border_image.fill {
                 continue;
             }
