@@ -23324,13 +23324,28 @@ fn paint_borders(
                 style.border_left_color.resolve(inherited_color),
             ),
         };
-        let corner_is_unmitered = |side: BorderSide, adjacent: BorderSide| {
+        // BorderStyleHasUnmatchedColorsAtCorner: the 3D styles shade the top
+        // and left differently from the bottom and right, so their colors
+        // differ at the top-right and bottom-left corners.
+        let unmatched_3d_corner = |border_style: BorderStyle, side: BorderSide, adjacent| {
+            matches!(
+                border_style,
+                BorderStyle::Inset | BorderStyle::Groove | BorderStyle::Ridge | BorderStyle::Outset
+            ) && matches!(
+                (side, adjacent),
+                (BorderSide::Top, BorderSide::Right)
+                    | (BorderSide::Right, BorderSide::Top)
+                    | (BorderSide::Bottom, BorderSide::Left)
+                    | (BorderSide::Left, BorderSide::Bottom)
+            )
+        };
+        let corner_miter = |side: BorderSide, adjacent: BorderSide| {
             let (_, side_style, side_color) = side_style_and_color(side);
             let (adjacent_width, adjacent_style, adjacent_color) = side_style_and_color(adjacent);
             if adjacent_width <= 0.0
                 || matches!(adjacent_style, BorderStyle::None | BorderStyle::Hidden)
             {
-                return true;
+                return BorderMiter::None;
             }
             let dotted_or_dashed = |border_style: BorderStyle| {
                 matches!(border_style, BorderStyle::Dotted | BorderStyle::Dashed)
@@ -23338,10 +23353,13 @@ fn paint_borders(
             let fills_border_area =
                 !dotted_or_dashed(adjacent_style) && adjacent_style != BorderStyle::Double;
             if fills_border_area && side_paint_index(adjacent) > side_paint_index(side) {
-                return true;
+                return BorderMiter::None;
             }
-            if adjacent_color.a <= 0.0 || adjacent_color != side_color {
-                return false;
+            if adjacent_color.a <= 0.0
+                || adjacent_color != side_color
+                || unmatched_3d_corner(side_style, side, adjacent)
+            {
+                return BorderMiter::Soft;
             }
             let styles_require_miter = side_style == BorderStyle::Double
                 || matches!(
@@ -23350,12 +23368,82 @@ fn paint_borders(
                 )
                 || dotted_or_dashed(side_style) != dotted_or_dashed(adjacent_style)
                 || side_style != adjacent_style;
-            !styles_require_miter
+            if styles_require_miter {
+                BorderMiter::Hard
+            } else {
+                BorderMiter::None
+            }
+        };
+        let corner_is_unmitered = |side: BorderSide, adjacent: BorderSide| {
+            corner_miter(side, adjacent) == BorderMiter::None
+        };
+        let is_3d_border_style = |border_style: BorderStyle| {
+            matches!(
+                border_style,
+                BorderStyle::Groove | BorderStyle::Ridge | BorderStyle::Inset | BorderStyle::Outset
+            )
+        };
+        // The miters at the start and end of a side's points, which run outer
+        // start, outer end, inner end, inner start: the corners at top-left,
+        // top-right, bottom-right and bottom-left begin the top, right, bottom
+        // and left sides. ClipBorderSidePolygon swaps the bottom and left
+        // sides' miters so that each lands on its own corner.
+        let side_miters = |side: BorderSide| match side {
+            BorderSide::Top => [
+                corner_miter(side, BorderSide::Left),
+                corner_miter(side, BorderSide::Right),
+            ],
+            BorderSide::Right => [
+                corner_miter(side, BorderSide::Top),
+                corner_miter(side, BorderSide::Bottom),
+            ],
+            BorderSide::Bottom => [
+                corner_miter(side, BorderSide::Right),
+                corner_miter(side, BorderSide::Left),
+            ],
+            BorderSide::Left => [
+                corner_miter(side, BorderSide::Bottom),
+                corner_miter(side, BorderSide::Top),
+            ],
+        };
+        let three_d_miters = |side: BorderSide| {
+            let (_, side_style, _) = side_style_and_color(side);
+            (is_3d_border_style(side_style) && !platform_3d_fieldset_coverage)
+                .then(|| side_miters(side))
         };
         // Points run outer start, outer end, inner end, inner start. Only the
-        // stroked and double styles are adjusted; their clip owns the miter.
+        // stroked, double and 3D styles are adjusted; their clip owns the
+        // miter.
         let blink_side_clip = |side: BorderSide, points: [(f32, f32); 4]| {
             let (_, side_style, _) = side_style_and_color(side);
+            if is_3d_border_style(side_style) && !platform_3d_fieldset_coverage {
+                // Blink's edge quad joins the outer and inner border rects'
+                // corners; an unmitered end runs to the side's bounding box.
+                let [start, end] = side_miters(side);
+                let mut points = match side {
+                    BorderSide::Top => [(ox0, oy0), (ox1, oy0), (ix1, iy0), (ix0, iy0)],
+                    BorderSide::Right => [(ox1, oy0), (ox1, oy1), (ix1, iy1), (ix1, iy0)],
+                    BorderSide::Bottom => [(ox1, oy1), (ox0, oy1), (ix0, iy1), (ix1, iy1)],
+                    BorderSide::Left => [(ox0, oy1), (ox0, oy0), (ix0, iy0), (ix0, iy1)],
+                };
+                let (outer_start, outer_end) = (points[0], points[1]);
+                let horizontal = matches!(side, BorderSide::Top | BorderSide::Bottom);
+                if start == BorderMiter::None {
+                    if horizontal {
+                        points[3].0 = outer_start.0;
+                    } else {
+                        points[3].1 = outer_start.1;
+                    }
+                }
+                if end == BorderMiter::None {
+                    if horizontal {
+                        points[2].0 = outer_end.0;
+                    } else {
+                        points[2].1 = outer_end.1;
+                    }
+                }
+                return points;
+            }
             if !matches!(
                 side_style,
                 BorderStyle::Dotted | BorderStyle::Dashed | BorderStyle::Double
@@ -23426,6 +23514,7 @@ fn paint_borders(
                     chromium_solid_border,
                     authored_uniform_3d_outer_edge,
                     platform_3d_fieldset_coverage,
+                    three_d_miters(BorderSide::Top),
                     style.device_scale_factor,
                 );
             }
@@ -23455,6 +23544,7 @@ fn paint_borders(
                     chromium_solid_border,
                     authored_uniform_3d_outer_edge,
                     platform_3d_fieldset_coverage,
+                    three_d_miters(BorderSide::Bottom),
                     style.device_scale_factor,
                 );
             }
@@ -23527,6 +23617,7 @@ fn paint_borders(
                     chromium_solid_border,
                     authored_uniform_3d_outer_edge,
                     platform_3d_fieldset_coverage,
+                    three_d_miters(BorderSide::Right),
                     style.device_scale_factor,
                 );
             }
@@ -23579,6 +23670,7 @@ fn paint_borders(
                     chromium_solid_border,
                     authored_uniform_3d_outer_edge,
                     platform_3d_fieldset_coverage,
+                    three_d_miters(BorderSide::Left),
                     style.device_scale_factor,
                 );
             }
@@ -23601,6 +23693,7 @@ fn paint_borders(
                 iy0,
                 ix1,
                 iy1,
+                platform_3d_fieldset_coverage,
             );
         }
         if clip_per_side_outer {
@@ -23705,6 +23798,16 @@ fn paint_same_color_solid_border(
     }
 
     canvas.draw_path(&path.detach(), &paint);
+}
+
+/// How Blink's `BoxBorderPainter::ComputeMiter` joins a border side to an
+/// adjacent side: not at all, with an antialiased clip, or with an aliased
+/// one.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum BorderMiter {
+    None,
+    Soft,
+    Hard,
 }
 
 /// Physical side of a border box, used for side-dependent shading
@@ -24279,6 +24382,7 @@ fn fix_corner_miter_pixels(
     iy0: f32,
     ix1: f32,
     iy1: f32,
+    platform_3d_fieldset_coverage: bool,
 ) {
     let device_scale = style.device_scale_factor.max(f64::EPSILON) as f32;
     let physical_floor = |coordinate: f32| (coordinate * device_scale).floor() as i32;
@@ -24373,14 +24477,18 @@ fn fix_corner_miter_pixels(
         );
     }
 
-    // Uniform 3D borders have one shaded-color transition at the top-right
-    // and bottom-left miters. Resolve the shared diagonal pixels to the exact
-    // premultiplied average, matching a single complementary coverage pass.
+    // The platform fieldset's uniform 3D border has one shaded-color
+    // transition at the top-right and bottom-left miters. Resolve the shared
+    // diagonal pixels to the exact premultiplied average, matching a single
+    // complementary coverage pass. Authored 3D sides take Blink's corner
+    // miters instead.
     let style_3d = style.border_top_style;
-    let uniform_3d = matches!(
-        style_3d,
-        BorderStyle::Groove | BorderStyle::Ridge | BorderStyle::Inset | BorderStyle::Outset
-    ) && style.border_right_style == style_3d
+    let uniform_3d = platform_3d_fieldset_coverage
+        && matches!(
+            style_3d,
+            BorderStyle::Groove | BorderStyle::Ridge | BorderStyle::Inset | BorderStyle::Outset
+        )
+        && style.border_right_style == style_3d
         && style.border_bottom_style == style_3d
         && style.border_left_style == style_3d
         && style.border_top_color == style.border_right_color
@@ -24575,6 +24683,7 @@ fn paint_border_side_path(
     direct_solid_fill: bool,
     preserve_horizontal_outer_edge: bool,
     platform_3d_fieldset_coverage: bool,
+    three_d_miters: Option<[BorderMiter; 2]>,
     device_scale: f64,
 ) {
     if width <= 0.0 {
@@ -24649,7 +24758,46 @@ fn paint_border_side_path(
             let max_y = points.iter().map(|p| p.1).fold(f32::NEG_INFINITY, f32::max);
             let rect = Rect::from_ltrb(min_x, min_y, max_x, max_y);
 
-            if clip_to_miter {
+            // MitersRequireClipping leaves an inset or outset side unclipped
+            // when it has no hard miter. DrawSolidBoxSide then fills the
+            // quad mitered at its soft corners, antialiased (FillQuad).
+            if let Some(miters) = three_d_miters {
+                let has_soft_miter = miters.contains(&BorderMiter::Soft);
+                if has_soft_miter
+                    && !miters.contains(&BorderMiter::Hard)
+                    && matches!(border_style, BorderStyle::Inset | BorderStyle::Outset)
+                {
+                    let base = Color4f::new(resolved.r, resolved.g, resolved.b, resolved.a);
+                    let platform_current_color = matches!(border_color, StyleColor::CurrentColor)
+                        && resolved.r == 0.0
+                        && resolved.g == 0.0
+                        && resolved.b == 0.0;
+                    let leading_side = matches!(side, BorderSide::Top | BorderSide::Left);
+                    let shaded = if leading_side == (border_style == BorderStyle::Inset) {
+                        shade_3d_dark(&base, platform_current_color, false)
+                    } else {
+                        shade_3d_light(&base, platform_current_color, false)
+                    };
+                    let mut quad = PathBuilder::new();
+                    quad.move_to(Point::new(points[0].0, points[0].1));
+                    for point in &points[1..] {
+                        quad.line_to(Point::new(point.0, point.1));
+                    }
+                    quad.close();
+                    let mut paint = Paint::new(shaded, None);
+                    paint.set_style(PaintStyle::Fill);
+                    paint.set_anti_alias(true);
+                    canvas.draw_path(&quad.detach(), &paint);
+                    return;
+                }
+            }
+
+            // An authored 3D side takes its clip from Blink's corner miters:
+            // none when neither corner has one.
+            let clips = three_d_miters.map_or(clip_to_miter, |miters| {
+                miters.iter().any(|miter| *miter != BorderMiter::None)
+            });
+            if clips {
                 canvas.save();
                 // The side painter below owns analytic coverage for both the
                 // outer and inner axis-aligned edges. A center-sampled hard
@@ -24750,27 +24898,41 @@ fn paint_border_side_path(
                     clip_points[2].0 = snapped_inner;
                     clip_points[3].0 = snapped_inner;
                 }
-                let mut clip_path = PathBuilder::new();
-                clip_path.move_to(Point::new(clip_points[0].0, clip_points[0].1));
-                clip_path.line_to(Point::new(clip_points[1].0, clip_points[1].1));
-                if preserve_horizontal_outer_edge
-                    && matches!(side, BorderSide::Top | BorderSide::Bottom)
-                {
-                    clip_path.line_to(Point::new(clip_points[1].0, clip_points[2].1));
+                if let Some([start_miter, end_miter]) = three_d_miters {
+                    clip_blink_3d_side_miters(
+                        canvas,
+                        points,
+                        &clip_points,
+                        start_miter,
+                        end_miter,
+                        device_scale,
+                    );
+                } else {
+                    let mut clip_path = PathBuilder::new();
+                    clip_path.move_to(Point::new(clip_points[0].0, clip_points[0].1));
+                    clip_path.line_to(Point::new(clip_points[1].0, clip_points[1].1));
+                    if preserve_horizontal_outer_edge
+                        && matches!(side, BorderSide::Top | BorderSide::Bottom)
+                    {
+                        clip_path.line_to(Point::new(clip_points[1].0, clip_points[2].1));
+                    }
+                    clip_path.line_to(Point::new(clip_points[2].0, clip_points[2].1));
+                    clip_path.line_to(Point::new(clip_points[3].0, clip_points[3].1));
+                    clip_path.close();
+                    canvas.clip_path(
+                        &clip_path.detach(),
+                        ClipOp::Intersect,
+                        (is_3d_style
+                            && ((!uses_platform_3d_current_color
+                                && matches!(
+                                    border_style,
+                                    BorderStyle::Groove | BorderStyle::Ridge
+                                )
+                                && matches!(side, BorderSide::Left | BorderSide::Right))
+                                || (uses_platform_3d_current_color && side == BorderSide::Left)))
+                            || (border_style == BorderStyle::Dotted && antialias_stroked_miter),
+                    );
                 }
-                clip_path.line_to(Point::new(clip_points[2].0, clip_points[2].1));
-                clip_path.line_to(Point::new(clip_points[3].0, clip_points[3].1));
-                clip_path.close();
-                canvas.clip_path(
-                    &clip_path.detach(),
-                    ClipOp::Intersect,
-                    (is_3d_style
-                        && ((!uses_platform_3d_current_color
-                            && matches!(border_style, BorderStyle::Groove | BorderStyle::Ridge)
-                            && matches!(side, BorderSide::Left | BorderSide::Right))
-                            || (uses_platform_3d_current_color && side == BorderSide::Left)))
-                        || (border_style == BorderStyle::Dotted && antialias_stroked_miter),
-                );
             }
 
             paint_border_side(
@@ -24785,10 +24947,140 @@ fn paint_border_side_path(
                 platform_3d_fieldset_coverage,
                 device_scale,
             );
-            if clip_to_miter {
+            if clips {
                 canvas.restore();
             }
         }
+    }
+}
+
+/// Clip an authored 3D border side as Blink's
+/// `BoxBorderPainter::ClipBorderSidePolygon` does, or as its mitered quad
+/// covers when Blink does not clip. `points` run outer start,
+/// outer end, inner end, inner start, and an end without a miter already runs
+/// to the side's bounding box. Equal miters share one clip of the side's quad.
+/// Different miters each get a clip that follows the miter at its own end and
+/// the bounding box elsewhere, extended 0.1px past that end so the two
+/// overlap. A soft miter's clip is antialiased; a hard miter's is not.
+///
+/// `widened` holds the same points moved along the side's normal so the clip
+/// takes in the outer and inner edge cells. Each end's points slide along its
+/// miter line to those normal coordinates, which keeps the miter's diagonal
+/// where Blink puts it.
+fn clip_blink_3d_side_miters(
+    canvas: &Canvas,
+    miter_points: &[(f32, f32); 4],
+    widened: &[(f32, f32); 4],
+    start_miter: BorderMiter,
+    end_miter: BorderMiter,
+    device_scale: f64,
+) {
+    let horizontal = (miter_points[0].1 - miter_points[1].1).abs() <= f32::EPSILON;
+    let normal = |point: (f32, f32)| if horizontal { point.1 } else { point.0 };
+    // The point on the line from `outer` to `inner` at normal coordinate
+    // `target`.
+    let on_miter_line = |outer: (f32, f32), inner: (f32, f32), target: f32| {
+        let span = normal(inner) - normal(outer);
+        if span.abs() <= f32::EPSILON {
+            return outer;
+        }
+        let t = (target - normal(outer)) / span;
+        let point = (
+            outer.0 + t * (inner.0 - outer.0),
+            outer.1 + t * (inner.1 - outer.1),
+        );
+        if horizontal {
+            (point.0, target)
+        } else {
+            (target, point.1)
+        }
+    };
+    let [outer_start, outer_end, inner_end, inner_start] = *miter_points;
+    let clip_polygon = |polygon: [(f32, f32); 4], miter: BorderMiter| {
+        let mut path = PathBuilder::new();
+        path.move_to(Point::new(polygon[0].0, polygon[0].1));
+        for point in &polygon[1..] {
+            path.line_to(Point::new(point.0, point.1));
+        }
+        path.close();
+        canvas.clip_path(
+            &path.detach(),
+            ClipOp::Intersect,
+            miter == BorderMiter::Soft,
+        );
+    };
+    // MitersRequireClipping: a 3D side is clipped only for a hard miter.
+    // Otherwise DrawLineForBoxSide fills the side as one antialiased quad
+    // mitered at its soft corners. This antialiased clip follows those miter
+    // lines one device pixel past both edges, so that only the side painter's
+    // own coverage shapes the edges.
+    if start_miter != BorderMiter::Hard && end_miter != BorderMiter::Hard {
+        if start_miter == BorderMiter::None && end_miter == BorderMiter::None {
+            return;
+        }
+        let device_pixel = 1.0 / device_scale.max(f64::EPSILON) as f32;
+        let outward = (normal(outer_start) - normal(inner_start)).signum() * device_pixel;
+        let outer = normal(outer_start) + outward;
+        let inner = normal(inner_start) - outward;
+        clip_polygon(
+            [
+                on_miter_line(outer_start, inner_start, outer),
+                on_miter_line(outer_end, inner_end, outer),
+                on_miter_line(outer_end, inner_end, inner),
+                on_miter_line(outer_start, inner_start, inner),
+            ],
+            BorderMiter::Soft,
+        );
+        return;
+    }
+    let points = &[
+        on_miter_line(outer_start, inner_start, normal(widened[0])),
+        on_miter_line(outer_end, inner_end, normal(widened[1])),
+        on_miter_line(outer_end, inner_end, normal(widened[2])),
+        on_miter_line(outer_start, inner_start, normal(widened[3])),
+    ];
+    if start_miter == end_miter {
+        clip_polygon(*points, start_miter);
+        return;
+    }
+    let [outer_start, outer_end, inner_end, inner_start] = *points;
+    // The extension points from the side's end towards its start.
+    const EXTENSION: f32 = 0.1;
+    let extension = if horizontal {
+        ((outer_start.0 - outer_end.0).signum() * EXTENSION, 0.0)
+    } else {
+        (0.0, (outer_start.1 - outer_end.1).signum() * EXTENSION)
+    };
+    let along_with_inner = |along: (f32, f32), inner: (f32, f32)| {
+        if horizontal {
+            (along.0, inner.1)
+        } else {
+            (inner.0, along.1)
+        }
+    };
+    let shift =
+        |point: (f32, f32), sign: f32| (point.0 + sign * extension.0, point.1 + sign * extension.1);
+    if start_miter != BorderMiter::None {
+        clip_polygon(
+            [
+                shift(outer_start, 1.0),
+                shift(inner_start, 1.0),
+                along_with_inner(outer_end, inner_end),
+                outer_end,
+            ],
+            start_miter,
+        );
+    }
+    if end_miter != BorderMiter::None {
+        clip_polygon(
+            [
+                outer_start,
+                along_with_inner(outer_start, inner_start),
+                shift(inner_end, -1.0),
+                shift(outer_end, -1.0),
+            ],
+            end_miter,
+        );
     }
 }
 
@@ -27128,6 +27420,79 @@ mod tests {
     }
 
     #[test]
+    fn inset_border_takes_blinks_corner_miters_at_fractional_scale() {
+        // background-margin-iframe-root-ref at 1.25x: the iframe's 2px inset
+        // currentColor border, from (20, 20) to (324, 174). Blink paints the
+        // top and bottom whole, since the later sides overdraw their corners,
+        // then fills the right and left sides as quads mitered only at their
+        // soft top-right and bottom-left corners. Chrome's capture.
+        let mut surface = surfaces::raster_n32_premul((410, 222)).expect("surface");
+        surface.canvas().clear(skia_safe::Color::WHITE);
+        surface.canvas().scale((1.25, 1.25));
+        let mut style = ComputedStyle::default();
+        style.update_derived(|computed| {
+            computed.device_scale_factor = 1.25;
+            computed.color = Color::BLACK;
+            computed.border_top_width = 2;
+            computed.border_right_width = 2;
+            computed.border_bottom_width = 2;
+            computed.border_left_width = 2;
+            computed.border_top_style = BorderStyle::Inset;
+            computed.border_right_style = BorderStyle::Inset;
+            computed.border_bottom_style = BorderStyle::Inset;
+            computed.border_left_style = BorderStyle::Inset;
+            computed.border_top_color = StyleColor::CurrentColor;
+            computed.border_right_color = StyleColor::CurrentColor;
+            computed.border_bottom_color = StyleColor::CurrentColor;
+            computed.border_left_color = StyleColor::CurrentColor;
+        });
+        let mut fragment = Fragment::new_box(NodeId::NONE, PhysicalSize::zero());
+        fragment.border = openui_geometry::BoxStrut::new(
+            LayoutUnit::from_i32(2),
+            LayoutUnit::from_i32(2),
+            LayoutUnit::from_i32(2),
+            LayoutUnit::from_i32(2),
+        );
+        fragment.is_first_for_node = true;
+        fragment.is_last_for_node = true;
+        paint_borders(
+            surface.canvas(),
+            &fragment,
+            &style,
+            20.0,
+            20.0,
+            304.0,
+            154.0,
+            false,
+            false,
+            false,
+        );
+
+        let pixels = surface_bytes(&mut surface);
+        let pixel_at = |x: usize, y: usize| &pixels[(y * 410 + x) * 4..][..4];
+        assert_eq!(
+            pixel_at(404, 25),
+            [196, 196, 196, 255],
+            "top-right diagonal"
+        );
+        assert_eq!(
+            pixel_at(25, 216),
+            [164, 164, 164, 255],
+            "bottom-left, mostly left"
+        );
+        assert_eq!(
+            pixel_at(26, 216),
+            [228, 228, 228, 255],
+            "bottom-left, mostly bottom"
+        );
+        assert_eq!(
+            pixel_at(25, 217),
+            [234, 234, 234, 255],
+            "bottom-left outer row"
+        );
+    }
+
+    #[test]
     fn fractional_uniform_double_border_strokes_two_rings_like_blink() {
         // border-image-repeat-004 at 1.25x falls back to a 40px double red
         // border whose edges lie on half device pixels. Blink's FillDRRect
@@ -28375,6 +28740,7 @@ mod tests {
             false,
             false,
             false,
+            None,
             1.25,
         );
 
