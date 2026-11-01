@@ -1,5 +1,14 @@
 # Open UI current status
 
+## Border side corners left unmitered as Blink leaves them 31 October 2026
+
+A dotted, dashed or double border side is clipped at a corner only where
+Blink's `BoxBorderPainter::ComputeMiter` gives that corner a miter. Next to
+a side with no width, or a solid side that paints later and covers the
+corner, it runs to the border box's edge. The census goes from 22,291 to
+22,292 exact, with 9 more comparisons improved, no losses and no comparison
+worse. See the [corner miter record](border-corner-miters-2026-10-31.md).
+
 ## Square double borders as stroked rings 31 October 2026
 
 A uniform double border with square corners is painted at every device
