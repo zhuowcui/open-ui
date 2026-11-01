@@ -22536,36 +22536,34 @@ fn paint_borders(
     }
 
     let square_double_line_width = (bt / 3.0).round().max(1.0).min(bt * 0.5);
-    let physical_contour_is_integral = [x, y, x + w, y + h, bt, square_double_line_width]
-        .into_iter()
-        .all(|edge| {
-            let physical = f64::from(edge) * style.device_scale_factor;
-            (physical - physical.round()).abs() <= 1.0e-5
-        });
     if uniform
         && style.border_top_style == BorderStyle::Double
         && !has_border_radius
         && bt >= 2.0
         && w > bt * 2.0
         && h > bt * 2.0
-        && physical_contour_is_integral
     {
         // A uniform square double border is two complete rectangular rings.
         // Painting four independently miter-clipped sides leaves the inner
         // corner's diagonal unowned, exposing the box background through the
         // nominally solid stripe. Keep each ring one draw operation so a
         // translucent border color is composited only once at the corners.
+        // Each ring has equal sides and square corners, so Blink's
+        // GraphicsContext::FillDRRect strokes it as a rect whose stroke width
+        // is the ring width, rather than filling the difference of two rects.
         let line_width = square_double_line_width;
-        let rect_at_inset = |inset: f32| {
-            let rect = Rect::from_xywh(x + inset, y + inset, w - inset * 2.0, h - inset * 2.0);
-            RRect::new_rect_radii(rect, &[Point::new(0.0, 0.0); 4])
-        };
         let mut paint = Paint::default();
-        paint.set_style(PaintStyle::Fill);
+        paint.set_style(PaintStyle::Stroke);
+        paint.set_stroke_width(line_width);
         paint.set_anti_alias(true);
         set_paint_css_color(&mut paint, &style.border_top_color.resolve(inherited_color));
-        canvas.draw_drrect(rect_at_inset(0.0), rect_at_inset(line_width), &paint);
-        canvas.draw_drrect(rect_at_inset(bt - line_width), rect_at_inset(bt), &paint);
+        for outer_inset in [0.0, bt - line_width] {
+            let inset = outer_inset + line_width * 0.5;
+            canvas.draw_rect(
+                Rect::from_xywh(x + inset, y + inset, w - inset * 2.0, h - inset * 2.0),
+                &paint,
+            );
+        }
         return;
     }
 
@@ -26961,6 +26959,74 @@ mod tests {
         let pixel_at = |x: usize, y: usize| &pixels[(y * 80 + x) * 4..][..4];
         assert_eq!(pixel_at(67, 67), [0, 0, 255, 255]);
         assert_eq!(pixel_at(65, 65), [255, 0, 0, 255]);
+    }
+
+    #[test]
+    fn fractional_uniform_double_border_strokes_two_rings_like_blink() {
+        // border-image-repeat-004 at 1.25x falls back to a 40px double red
+        // border whose edges lie on half device pixels. Blink's FillDRRect
+        // strokes each ring as a rect; four miter-clipped sides instead leave
+        // the corner diagonals white. Chrome's capture, offset by 100px.
+        let mut surface = surfaces::raster_n32_premul((250, 250)).expect("surface");
+        surface.canvas().clear(skia_safe::Color::WHITE);
+        surface.canvas().scale((1.25, 1.25));
+        let mut style = ComputedStyle::default();
+        style.update_derived(|computed| {
+            computed.device_scale_factor = 1.25;
+            computed.border_top_width = 40;
+            computed.border_right_width = 40;
+            computed.border_bottom_width = 40;
+            computed.border_left_width = 40;
+            computed.border_top_style = BorderStyle::Double;
+            computed.border_right_style = BorderStyle::Double;
+            computed.border_bottom_style = BorderStyle::Double;
+            computed.border_left_style = BorderStyle::Double;
+            computed.border_top_color = StyleColor::Resolved(Color::RED);
+            computed.border_right_color = StyleColor::Resolved(Color::RED);
+            computed.border_bottom_color = StyleColor::Resolved(Color::RED);
+            computed.border_left_color = StyleColor::Resolved(Color::RED);
+        });
+        let mut fragment = Fragment::new_box(NodeId::NONE, PhysicalSize::zero());
+        fragment.border = openui_geometry::BoxStrut::new(
+            LayoutUnit::from_i32(40),
+            LayoutUnit::from_i32(40),
+            LayoutUnit::from_i32(40),
+            LayoutUnit::from_i32(40),
+        );
+        fragment.is_first_for_node = true;
+        fragment.is_last_for_node = true;
+        paint_borders(
+            surface.canvas(),
+            &fragment,
+            &style,
+            10.0,
+            10.0,
+            180.0,
+            180.0,
+            false,
+            false,
+            false,
+        );
+
+        let pixels = surface_bytes(&mut surface);
+        let pixel_at = |x: usize, y: usize| &pixels[(y * 250 + x) * 4..][..4];
+        assert_eq!(pixel_at(12, 12), [191, 191, 255, 255], "outer corner");
+        assert_eq!(pixel_at(13, 13), [0, 0, 255, 255], "outer ring diagonal");
+        assert_eq!(
+            pixel_at(28, 28),
+            [16, 16, 255, 255],
+            "outer ring inner corner"
+        );
+        assert_eq!(
+            pixel_at(46, 46),
+            [111, 111, 255, 255],
+            "inner ring outer corner"
+        );
+        assert_eq!(
+            pixel_at(62, 62),
+            [63, 63, 255, 255],
+            "inner ring inner corner"
+        );
     }
 
     // ── Issue 7 (R26): large borders don't produce invalid paint geometry ──

@@ -1,0 +1,577 @@
+{
+ "base_commit": "6b6e7ff585fbcf7fe0c0f804e254c1393aab94ab",
+ "base_exact": 22262,
+ "chromium_identical": 23728,
+ "comparisons": 23728,
+ "errors": [],
+ "gains": [
+  {
+   "base": "different",
+   "base_mismatched": 833,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/background-repeat-space-padding-box",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 836,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/background_repeat_space_border_box",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 836,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/background_repeat_space_content_box",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 19,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/border-image-outset-001",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 14,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/border-image-outset-002",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 56,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/border-image-repeat-002",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 88,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/border-image-repeat-004",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 14,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/border-image-repeat-round",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 10,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/border-image-round-and-stretch",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 67,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/border-image-slice-004",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 67,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/border-image-slice-006",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 14,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/border-image-slice-percentage",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 154,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/border-image-width-001",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 45,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/box-shadow-039",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 30,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/box-shadow-040",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 44,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/box-shadow-042",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 386,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/ttwf-css3background-border-style-double",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 33,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/background-attachment-local-scrolling",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 6,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/background-repeat-space-padding-box",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 18,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/background_repeat_space_border_box",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 18,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/background_repeat_space_content_box",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 12,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/border-image-outset-001",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 15,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/border-image-outset-002",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 27,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/border-image-repeat-002",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 27,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/border-image-repeat-004",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 15,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/border-image-repeat-round",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 4,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/border-image-round-and-stretch",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 15,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/border-image-slice-percentage",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 9,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/ttwf-css3background-border-style-double",
+   "profile": "desktop-1920x1080@1.5"
+  }
+ ],
+ "head_commit": "c57ad0173adc99b66cf9acba5b54794976deafe5",
+ "head_exact": 22291,
+ "improved": [
+  {
+   "base": "different",
+   "base_mismatched": 954,
+   "head": "different",
+   "head_mismatched": 926,
+   "id": "wpt/css_backgrounds/background-attachment-local-scrolling",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 216,
+   "head": "different",
+   "head_mismatched": 187,
+   "id": "wpt/css_backgrounds/background-clip_clip-border-area-ref",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 133,
+   "head": "different",
+   "head_mismatched": 90,
+   "id": "wpt/css_backgrounds/box-shadow-041",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 126,
+   "head": "different",
+   "head_mismatched": 118,
+   "id": "wpt/css_backgrounds/ttwf-css3background-border-style-values",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 182,
+   "head": "different",
+   "head_mismatched": 149,
+   "id": "wpt/css_backgrounds/background-clip_clip-border-area-ref",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1413,
+   "head": "different",
+   "head_mismatched": 1394,
+   "id": "wpt/css_backgrounds/ttwf-css3background-border-style-values",
+   "profile": "desktop-1920x1080@1.5"
+  }
+ ],
+ "losses": [],
+ "openui_changed": [
+  {
+   "base": "different",
+   "base_mismatched": 954,
+   "head": "different",
+   "head_mismatched": 926,
+   "id": "wpt/css_backgrounds/background-attachment-local-scrolling",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 216,
+   "head": "different",
+   "head_mismatched": 187,
+   "id": "wpt/css_backgrounds/background-clip_clip-border-area-ref",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 833,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/background-repeat-space-padding-box",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 836,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/background_repeat_space_border_box",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 836,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/background_repeat_space_content_box",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 19,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/border-image-outset-001",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 14,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/border-image-outset-002",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 56,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/border-image-repeat-002",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 88,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/border-image-repeat-004",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 14,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/border-image-repeat-round",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 10,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/border-image-round-and-stretch",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 67,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/border-image-slice-004",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 67,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/border-image-slice-006",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 14,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/border-image-slice-percentage",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 154,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/border-image-width-001",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 45,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/box-shadow-039",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 30,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/box-shadow-040",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 133,
+   "head": "different",
+   "head_mismatched": 90,
+   "id": "wpt/css_backgrounds/box-shadow-041",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 44,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/box-shadow-042",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 386,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/ttwf-css3background-border-style-double",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 126,
+   "head": "different",
+   "head_mismatched": 118,
+   "id": "wpt/css_backgrounds/ttwf-css3background-border-style-values",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 33,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/background-attachment-local-scrolling",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 182,
+   "head": "different",
+   "head_mismatched": 149,
+   "id": "wpt/css_backgrounds/background-clip_clip-border-area-ref",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 6,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/background-repeat-space-padding-box",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 18,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/background_repeat_space_border_box",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 18,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/background_repeat_space_content_box",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 12,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/border-image-outset-001",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 15,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/border-image-outset-002",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 27,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/border-image-repeat-002",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 27,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/border-image-repeat-004",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 15,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/border-image-repeat-round",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 4,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/border-image-round-and-stretch",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 15,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/border-image-slice-percentage",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 9,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/ttwf-css3background-border-style-double",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1413,
+   "head": "different",
+   "head_mismatched": 1394,
+   "id": "wpt/css_backgrounds/ttwf-css3background-border-style-values",
+   "profile": "desktop-1920x1080@1.5"
+  }
+ ],
+ "worsened": []
+}
