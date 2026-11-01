@@ -27073,6 +27073,61 @@ mod tests {
     }
 
     #[test]
+    fn dotted_side_is_unmitered_where_a_later_solid_side_overdraws_it() {
+        // ttwf-css3background-border-style at 1x: a 5px black border, solid
+        // top, dotted right, dashed bottom and double left. Blink paints the
+        // dotted right side before the solid top, so ComputeMiter leaves its
+        // top corner unmitered and the first dot is clipped only by the
+        // side's bounding box. Chrome's capture, at the box's top-right.
+        let mut surface = surfaces::raster_n32_premul((200, 200)).expect("surface");
+        surface.canvas().clear(skia_safe::Color::WHITE);
+        let mut style = ComputedStyle::default();
+        style.update_derived(|computed| {
+            computed.device_scale_factor = 1.0;
+            computed.border_top_width = 5;
+            computed.border_right_width = 5;
+            computed.border_bottom_width = 5;
+            computed.border_left_width = 5;
+            computed.border_top_style = BorderStyle::Solid;
+            computed.border_right_style = BorderStyle::Dotted;
+            computed.border_bottom_style = BorderStyle::Dashed;
+            computed.border_left_style = BorderStyle::Double;
+            computed.border_top_color = StyleColor::Resolved(Color::BLACK);
+            computed.border_right_color = StyleColor::Resolved(Color::BLACK);
+            computed.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+            computed.border_left_color = StyleColor::Resolved(Color::BLACK);
+        });
+        let mut fragment = Fragment::new_box(NodeId::NONE, PhysicalSize::zero());
+        fragment.border = openui_geometry::BoxStrut::new(
+            LayoutUnit::from_i32(5),
+            LayoutUnit::from_i32(5),
+            LayoutUnit::from_i32(5),
+            LayoutUnit::from_i32(5),
+        );
+        fragment.is_first_for_node = true;
+        fragment.is_last_for_node = true;
+        paint_borders(
+            surface.canvas(),
+            &fragment,
+            &style,
+            20.0,
+            20.0,
+            160.0,
+            160.0,
+            false,
+            false,
+            false,
+        );
+
+        let pixels = surface_bytes(&mut surface);
+        let pixel_at = |x: usize, y: usize| &pixels[(y * 200 + x) * 4..][..4];
+        assert_eq!(pixel_at(179, 21), [56, 56, 56, 255], "first dot above");
+        assert_eq!(pixel_at(179, 22), [10, 10, 10, 255], "first dot centre");
+        assert_eq!(pixel_at(179, 23), [49, 49, 49, 255], "first dot below");
+        assert_eq!(pixel_at(176, 24), [60, 60, 60, 255], "first dot inside");
+    }
+
+    #[test]
     fn fractional_uniform_double_border_strokes_two_rings_like_blink() {
         // border-image-repeat-004 at 1.25x falls back to a 40px double red
         // border whose edges lie on half device pixels. Blink's FillDRRect
