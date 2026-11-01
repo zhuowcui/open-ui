@@ -23294,6 +23294,111 @@ fn paint_borders(
                 .then(style_a.cmp(&style_b))
                 .then(side_a.cmp(&side_b))
         });
+        // Blink's BoxBorderPainter::ComputeMiter decides each corner of a
+        // straight side separately. A corner gets no miter when the adjacent
+        // side is absent, or is a filled style that paints later and so
+        // overdraws it, or shares this side's color and style. The side's clip
+        // then runs to its bounding box at that corner
+        // (ClipBorderSidePolygon), instead of stopping at the diagonal.
+        let side_paint_index =
+            |side: BorderSide| paint_order.iter().position(|s| *s == side).unwrap_or(0);
+        let side_style_and_color = |side: BorderSide| match side {
+            BorderSide::Top => (
+                bt,
+                style.border_top_style,
+                style.border_top_color.resolve(inherited_color),
+            ),
+            BorderSide::Right => (
+                br,
+                style.border_right_style,
+                style.border_right_color.resolve(inherited_color),
+            ),
+            BorderSide::Bottom => (
+                bb,
+                style.border_bottom_style,
+                style.border_bottom_color.resolve(inherited_color),
+            ),
+            BorderSide::Left => (
+                bl,
+                style.border_left_style,
+                style.border_left_color.resolve(inherited_color),
+            ),
+        };
+        let corner_is_unmitered = |side: BorderSide, adjacent: BorderSide| {
+            let (_, side_style, side_color) = side_style_and_color(side);
+            let (adjacent_width, adjacent_style, adjacent_color) = side_style_and_color(adjacent);
+            if adjacent_width <= 0.0
+                || matches!(adjacent_style, BorderStyle::None | BorderStyle::Hidden)
+            {
+                return true;
+            }
+            let dotted_or_dashed = |border_style: BorderStyle| {
+                matches!(border_style, BorderStyle::Dotted | BorderStyle::Dashed)
+            };
+            let fills_border_area =
+                !dotted_or_dashed(adjacent_style) && adjacent_style != BorderStyle::Double;
+            if fills_border_area && side_paint_index(adjacent) > side_paint_index(side) {
+                return true;
+            }
+            if adjacent_color.a <= 0.0 || adjacent_color != side_color {
+                return false;
+            }
+            let styles_require_miter = side_style == BorderStyle::Double
+                || matches!(
+                    adjacent_style,
+                    BorderStyle::Double | BorderStyle::Groove | BorderStyle::Ridge
+                )
+                || dotted_or_dashed(side_style) != dotted_or_dashed(adjacent_style)
+                || side_style != adjacent_style;
+            !styles_require_miter
+        };
+        // Points run outer start, outer end, inner end, inner start. Only the
+        // stroked and double styles are adjusted; their clip owns the miter.
+        let blink_side_clip = |side: BorderSide, points: [(f32, f32); 4]| {
+            let (_, side_style, _) = side_style_and_color(side);
+            if !matches!(
+                side_style,
+                BorderStyle::Dotted | BorderStyle::Dashed | BorderStyle::Double
+            ) {
+                return points;
+            }
+            let mut points = points;
+            match side {
+                BorderSide::Top => {
+                    if corner_is_unmitered(side, BorderSide::Right) {
+                        points[2].0 = ox1;
+                    }
+                    if corner_is_unmitered(side, BorderSide::Left) {
+                        points[3].0 = ox0;
+                    }
+                }
+                BorderSide::Bottom => {
+                    if corner_is_unmitered(side, BorderSide::Left) {
+                        points[2].0 = ox0;
+                    }
+                    if corner_is_unmitered(side, BorderSide::Right) {
+                        points[3].0 = ox1;
+                    }
+                }
+                BorderSide::Right => {
+                    if corner_is_unmitered(side, BorderSide::Bottom) {
+                        points[2].1 = oy1;
+                    }
+                    if corner_is_unmitered(side, BorderSide::Top) {
+                        points[3].1 = oy0;
+                    }
+                }
+                BorderSide::Left => {
+                    if corner_is_unmitered(side, BorderSide::Top) {
+                        points[2].1 = oy0;
+                    }
+                    if corner_is_unmitered(side, BorderSide::Bottom) {
+                        points[3].1 = oy1;
+                    }
+                }
+            }
+            points
+        };
         for side in paint_order {
             // Top border: outer-top-left → outer-top-right → inner-top-right → inner-top-left
             if side == BorderSide::Top && bt > 0.0 {
@@ -23311,7 +23416,7 @@ fn paint_borders(
                     &style.border_top_color,
                     inherited_color,
                     bt,
-                    &top_points,
+                    &blink_side_clip(BorderSide::Top, top_points),
                     BorderSide::Top,
                     adjust_dashed_gap,
                     !matching_stroked_sides,
@@ -23340,7 +23445,7 @@ fn paint_borders(
                     &style.border_bottom_color,
                     inherited_color,
                     bb,
-                    &bottom_points,
+                    &blink_side_clip(BorderSide::Bottom, bottom_points),
                     BorderSide::Bottom,
                     adjust_dashed_gap,
                     !matching_stroked_sides,
@@ -23368,28 +23473,31 @@ fn paint_borders(
                     &style.border_right_color,
                     inherited_color,
                     br,
-                    &[
-                        (ox1, oy0),
-                        (ox1, oy1),
-                        (
-                            ix1,
-                            if authored_uniform_3d {
-                                oy1
-                            } else if !chromium_solid_border || right_bottom_miter {
-                                iy1
-                            } else {
-                                oy1
-                            },
-                        ),
-                        (
-                            ix1,
-                            if !chromium_solid_border || right_top_miter {
-                                iy0
-                            } else {
-                                oy0
-                            },
-                        ),
-                    ],
+                    &blink_side_clip(
+                        BorderSide::Right,
+                        [
+                            (ox1, oy0),
+                            (ox1, oy1),
+                            (
+                                ix1,
+                                if authored_uniform_3d {
+                                    oy1
+                                } else if !chromium_solid_border || right_bottom_miter {
+                                    iy1
+                                } else {
+                                    oy1
+                                },
+                            ),
+                            (
+                                ix1,
+                                if !chromium_solid_border || right_top_miter {
+                                    iy0
+                                } else {
+                                    oy0
+                                },
+                            ),
+                        ],
+                    ),
                     BorderSide::Right,
                     adjust_dashed_gap,
                     !matching_stroked_sides
@@ -23437,28 +23545,31 @@ fn paint_borders(
                     &style.border_left_color,
                     inherited_color,
                     bl,
-                    &[
-                        (ox0, oy1),
-                        (ox0, oy0),
-                        (
-                            ix0,
-                            if authored_uniform_3d {
-                                oy0
-                            } else if !chromium_solid_border || left_top_miter {
-                                iy0
-                            } else {
-                                oy0
-                            },
-                        ),
-                        (
-                            ix0,
-                            if !chromium_solid_border || left_bottom_miter {
-                                iy1
-                            } else {
-                                oy1
-                            },
-                        ),
-                    ],
+                    &blink_side_clip(
+                        BorderSide::Left,
+                        [
+                            (ox0, oy1),
+                            (ox0, oy0),
+                            (
+                                ix0,
+                                if authored_uniform_3d {
+                                    oy0
+                                } else if !chromium_solid_border || left_top_miter {
+                                    iy0
+                                } else {
+                                    oy0
+                                },
+                            ),
+                            (
+                                ix0,
+                                if !chromium_solid_border || left_bottom_miter {
+                                    iy1
+                                } else {
+                                    oy1
+                                },
+                            ),
+                        ],
+                    ),
                     BorderSide::Left,
                     adjust_dashed_gap,
                     !matching_stroked_sides,
