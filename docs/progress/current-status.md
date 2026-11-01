@@ -1,5 +1,16 @@
 # Open UI current status
 
+## 3D border sides with Blink's corner miters 31 October 2026
+
+A groove, ridge, inset or outset border side gives each corner no miter, a
+soft miter or a hard miter by Blink's `BoxBorderPainter::ComputeMiter`
+rules. It is clipped only for a hard miter, and otherwise an inset or
+outset side is filled as one antialiased quad. The even blend Open UI
+painted over 3D corner diagonals now applies only to the platform fieldset
+border. The census goes from 22,292 to 22,304 exact, with 10 more
+comparisons improved, no losses and no comparison worse. See the
+[3D border record](border-3d-miters-2026-10-31.md).
+
 ## Border side corners left unmitered as Blink leaves them 31 October 2026
 
 A dotted, dashed or double border side is clipped at a corner only where
