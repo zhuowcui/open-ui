@@ -27420,6 +27420,79 @@ mod tests {
     }
 
     #[test]
+    fn inset_border_takes_blinks_corner_miters_at_fractional_scale() {
+        // background-margin-iframe-root-ref at 1.25x: the iframe's 2px inset
+        // currentColor border, from (20, 20) to (324, 174). Blink paints the
+        // top and bottom whole, since the later sides overdraw their corners,
+        // then fills the right and left sides as quads mitered only at their
+        // soft top-right and bottom-left corners. Chrome's capture.
+        let mut surface = surfaces::raster_n32_premul((410, 222)).expect("surface");
+        surface.canvas().clear(skia_safe::Color::WHITE);
+        surface.canvas().scale((1.25, 1.25));
+        let mut style = ComputedStyle::default();
+        style.update_derived(|computed| {
+            computed.device_scale_factor = 1.25;
+            computed.color = Color::BLACK;
+            computed.border_top_width = 2;
+            computed.border_right_width = 2;
+            computed.border_bottom_width = 2;
+            computed.border_left_width = 2;
+            computed.border_top_style = BorderStyle::Inset;
+            computed.border_right_style = BorderStyle::Inset;
+            computed.border_bottom_style = BorderStyle::Inset;
+            computed.border_left_style = BorderStyle::Inset;
+            computed.border_top_color = StyleColor::CurrentColor;
+            computed.border_right_color = StyleColor::CurrentColor;
+            computed.border_bottom_color = StyleColor::CurrentColor;
+            computed.border_left_color = StyleColor::CurrentColor;
+        });
+        let mut fragment = Fragment::new_box(NodeId::NONE, PhysicalSize::zero());
+        fragment.border = openui_geometry::BoxStrut::new(
+            LayoutUnit::from_i32(2),
+            LayoutUnit::from_i32(2),
+            LayoutUnit::from_i32(2),
+            LayoutUnit::from_i32(2),
+        );
+        fragment.is_first_for_node = true;
+        fragment.is_last_for_node = true;
+        paint_borders(
+            surface.canvas(),
+            &fragment,
+            &style,
+            20.0,
+            20.0,
+            304.0,
+            154.0,
+            false,
+            false,
+            false,
+        );
+
+        let pixels = surface_bytes(&mut surface);
+        let pixel_at = |x: usize, y: usize| &pixels[(y * 410 + x) * 4..][..4];
+        assert_eq!(
+            pixel_at(404, 25),
+            [196, 196, 196, 255],
+            "top-right diagonal"
+        );
+        assert_eq!(
+            pixel_at(25, 216),
+            [164, 164, 164, 255],
+            "bottom-left, mostly left"
+        );
+        assert_eq!(
+            pixel_at(26, 216),
+            [228, 228, 228, 255],
+            "bottom-left, mostly bottom"
+        );
+        assert_eq!(
+            pixel_at(25, 217),
+            [234, 234, 234, 255],
+            "bottom-left outer row"
+        );
+    }
+
+    #[test]
     fn fractional_uniform_double_border_strokes_two_rings_like_blink() {
         // border-image-repeat-004 at 1.25x falls back to a 40px double red
         // border whose edges lie on half device pixels. Blink's FillDRRect
