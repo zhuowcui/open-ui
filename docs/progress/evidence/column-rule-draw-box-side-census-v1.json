@@ -1,0 +1,48 @@
+{
+ "base_commit": "446e554fc2dfd891d2a03161a433fc63674f0625",
+ "base_exact": 22308,
+ "chromium_identical": 23728,
+ "comparisons": 23728,
+ "errors": [],
+ "gains": [],
+ "head_commit": "a79e9af1bcd12a31fe42764f054e4f94b942cb10",
+ "head_exact": 22308,
+ "improved": [
+  {
+   "base": "different",
+   "base_mismatched": 868,
+   "head": "different",
+   "head_mismatched": 806,
+   "id": "wpt/css_multicol/multicol-rule-inset-000",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 868,
+   "head": "different",
+   "head_mismatched": 806,
+   "id": "wpt/css_multicol/multicol-rule-ridge-000",
+   "profile": "desktop-1280x720@1.25"
+  }
+ ],
+ "losses": [],
+ "openui_changed": [
+  {
+   "base": "different",
+   "base_mismatched": 868,
+   "head": "different",
+   "head_mismatched": 806,
+   "id": "wpt/css_multicol/multicol-rule-inset-000",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 868,
+   "head": "different",
+   "head_mismatched": 806,
+   "id": "wpt/css_multicol/multicol-rule-ridge-000",
+   "profile": "desktop-1280x720@1.25"
+  }
+ ],
+ "worsened": []
+}
