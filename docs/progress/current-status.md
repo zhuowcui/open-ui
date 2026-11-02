@@ -1,5 +1,14 @@
 # Open UI current status
 
+## Grayscale glyph masks without Skia's A8 gamma 2 November 2026
+
+Skia is built without `SK_GAMMA_APPLY_TO_A8`, as Chromium's `//skia`
+builds it, so a grayscale FreeType glyph mask, including subpixel text
+above 48 device pixels, keeps its raw coverage instead of the gamma and
+contrast preblend. The census goes from 22,308 to 22,323 exact, with 3 more
+comparisons improved, no losses and no comparison worse. See the
+[glyph mask record](glyph-mask-a8-gamma-2026-11-02.md).
+
 ## Solid and 3D column rules as Blink's DrawBoxSide 1 November 2026
 
 A solid, groove, ridge, inset or outset column rule is painted as Blink's

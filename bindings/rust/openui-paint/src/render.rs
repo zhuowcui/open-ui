@@ -838,6 +838,50 @@ mod tests {
     use openui_style::*;
 
     #[test]
+    #[cfg_attr(
+        not(target_os = "linux"),
+        ignore = "linux-oracle: FreeType grayscale glyph mask coverage"
+    )]
+    fn large_grayscale_glyph_mask_keeps_raw_coverage_as_chromium_skia() {
+        // Chromium's //skia leaves SK_GAMMA_APPLY_TO_A8 undefined on Linux,
+        // so FreeType drops the text gamma and contrast preblend from a
+        // grayscale mask. Text above 48 device pixels falls back from LCD to
+        // such a mask. multicol-rule-none-000 at 1.25x: 50px Ahem's bottom
+        // edge lies at 87.5 device pixels, over a black background edge that
+        // covers the same half pixel. Chrome's capture is 63; with the
+        // preblend the mask is thinner and the pixel is 64.
+        let mut surface =
+            create_raster_surface(64, 100, RasterConfiguration::chromium_linux_lcd(), true)
+                .expect("surface");
+        let canvas = surface.canvas();
+        canvas.clear(SkColor::WHITE);
+        canvas.save();
+        canvas.scale((1.25, 1.25));
+        let mut background = Paint::new(skia_safe::Color4f::new(0.0, 0.0, 0.0, 1.0), None);
+        background.set_anti_alias(true);
+        canvas.draw_rect(Rect::from_ltrb(0.0, 20.0, 50.0, 70.0), &background);
+        canvas.restore();
+        let typeface = skia_safe::FontMgr::new()
+            .new_from_data(include_bytes!("../../openui-text/fonts/Ahem.ttf"), None)
+            .expect("Ahem");
+        let mut font = skia_safe::Font::from_typeface(&typeface, 62.5);
+        font.set_edging(skia_safe::font::Edging::SubpixelAntiAlias);
+        font.set_hinting(skia_safe::FontHinting::None);
+        font.set_subpixel(true);
+        let blob = skia_safe::TextBlob::from_str("X", &font).expect("blob");
+        let text = Paint::new(skia_safe::Color4f::new(0.0, 0.0, 0.0, 1.0), None);
+        canvas.draw_text_blob(&blob, (0.0, 75.0), &text);
+        let image = surface.image_snapshot();
+        let pixels = image.peek_pixels().expect("pixels");
+        assert_eq!(pixels.get_color((40, 86)), SkColor::BLACK, "glyph interior");
+        assert_eq!(
+            pixels.get_color((40, 87)),
+            SkColor::from_rgb(63, 63, 63),
+            "half-covered bottom edge"
+        );
+    }
+
+    #[test]
     fn viewport_control_recording_survives_document_mutation_and_drop() {
         let mut document = Document::new();
         let root = document.root();
