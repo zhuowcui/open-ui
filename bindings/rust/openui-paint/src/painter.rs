@@ -23406,6 +23406,17 @@ fn paint_borders(
                 corner_miter(side, BorderSide::Top),
             ],
         };
+        // BoxBorderPainter::MitersRequireClipping: a dotted, dashed or double
+        // side with no miter at either corner is drawn unclipped, so a dot's
+        // round cap or a dash keeps its coverage past the side's inner edge.
+        let side_clips = |side: BorderSide, clip_to_miter: bool| {
+            let (_, side_style, _) = side_style_and_color(side);
+            clip_to_miter
+                && !(matches!(
+                    side_style,
+                    BorderStyle::Dotted | BorderStyle::Dashed | BorderStyle::Double
+                ) && side_miters(side) == [BorderMiter::None, BorderMiter::None])
+        };
         let three_d_miters = |side: BorderSide| {
             let (_, side_style, _) = side_style_and_color(side);
             (is_3d_border_style(side_style) && !platform_3d_fieldset_coverage)
@@ -23552,7 +23563,7 @@ fn paint_borders(
                     &blink_side_clip(BorderSide::Top, top_points),
                     BorderSide::Top,
                     adjust_dashed_gap,
-                    !matching_stroked_sides,
+                    side_clips(BorderSide::Top, !matching_stroked_sides),
                     !all_side_colors_match,
                     antialias_solid_miters,
                     direct_analytic_solid_miters,
@@ -23582,7 +23593,7 @@ fn paint_borders(
                     &blink_side_clip(BorderSide::Bottom, bottom_points),
                     BorderSide::Bottom,
                     adjust_dashed_gap,
-                    !matching_stroked_sides,
+                    side_clips(BorderSide::Bottom, !matching_stroked_sides),
                     !all_side_colors_match,
                     antialias_solid_miters,
                     direct_analytic_solid_miters,
@@ -23635,17 +23646,20 @@ fn paint_borders(
                     ),
                     BorderSide::Right,
                     adjust_dashed_gap,
-                    !matching_stroked_sides
-                        && !(style.border_right_style == BorderStyle::Dotted
-                            && bt > 0.0
-                            && bb > 0.0
-                            && style.border_top_style == BorderStyle::Solid
-                            && style.border_bottom_style == BorderStyle::Solid
-                            && style.border_top_color.resolve(inherited_color).is_opaque()
-                            && style
-                                .border_bottom_color
-                                .resolve(inherited_color)
-                                .is_opaque()),
+                    side_clips(
+                        BorderSide::Right,
+                        !matching_stroked_sides
+                            && !(style.border_right_style == BorderStyle::Dotted
+                                && bt > 0.0
+                                && bb > 0.0
+                                && style.border_top_style == BorderStyle::Solid
+                                && style.border_bottom_style == BorderStyle::Solid
+                                && style.border_top_color.resolve(inherited_color).is_opaque()
+                                && style
+                                    .border_bottom_color
+                                    .resolve(inherited_color)
+                                    .is_opaque()),
+                    ),
                     !(style.border_right_style == BorderStyle::Dotted
                         && ((bt > 0.0
                             && matches!(
@@ -23708,7 +23722,7 @@ fn paint_borders(
                     ),
                     BorderSide::Left,
                     adjust_dashed_gap,
-                    !matching_stroked_sides,
+                    side_clips(BorderSide::Left, !matching_stroked_sides),
                     !all_side_colors_match,
                     antialias_solid_miters,
                     direct_analytic_solid_miters,
@@ -28084,6 +28098,73 @@ mod tests {
             (30, 50, [0, 255, 0, 255], "light outer half"),
             (31, 50, [0, 144, 0, 255], "half boundary"),
             (32, 50, [0, 171, 0, 255], "dark inner half"),
+        ] {
+            assert_eq!(pixel_at(x, y), expected, "{part} at ({x}, {y})");
+        }
+    }
+
+    #[test]
+    fn unmitered_dotted_side_is_not_clipped_to_its_inner_edge() {
+        // multicol-rule-dotted-000-ref at 1.25x: a span with only a 10px lime
+        // dotted left border over a black background, moved (200, 60) up and
+        // left, which keeps its device-pixel phase. Neither corner has a
+        // miter, so Blink's MitersRequireClipping leaves the side unclipped
+        // and each dot keeps its full coverage of device column 37, past the
+        // inner edge at 37.5. Chrome's capture, offset by (250, 75), shows
+        // 55 and 32 there once the span's black Ahem text covers half of the
+        // column: 111 and 65 under a glyph edge of coverage 128. A clip at
+        // the inner edge halves them.
+        let info = ImageInfo::new((48, 100), ColorType::RGBA8888, AlphaType::Premul, None);
+        let mut surface = surfaces::raster(&info, None, None).expect("surface");
+        surface.canvas().clear(skia_safe::Color::WHITE);
+        surface.canvas().scale((1.25, 1.25));
+        let mut black = Paint::new(Color4f::new(0.0, 0.0, 0.0, 1.0), None);
+        black.set_anti_alias(true);
+        surface
+            .canvas()
+            .draw_rect(Rect::from_ltrb(0.0, 20.0, 38.0, 70.0), &black);
+        let mut style = ComputedStyle::default();
+        style.update_derived(|computed| {
+            computed.device_scale_factor = 1.25;
+            computed.border_left_width = 10;
+            computed.border_left_style = BorderStyle::Dotted;
+            computed.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+        });
+        let mut fragment = Fragment::new_box(NodeId::NONE, PhysicalSize::zero());
+        fragment.border = openui_geometry::BoxStrut::new(
+            LayoutUnit::zero(),
+            LayoutUnit::zero(),
+            LayoutUnit::zero(),
+            LayoutUnit::from_i32(10),
+        );
+        fragment.is_first_for_node = true;
+        fragment.is_last_for_node = true;
+        paint_borders(
+            surface.canvas(),
+            &fragment,
+            &style,
+            20.0,
+            20.0,
+            18.0,
+            50.0,
+            false,
+            false,
+            false,
+        );
+
+        let pixels = surface_bytes(&mut surface);
+        let pixel_at = |x: usize, y: usize| &pixels[(y * 48 + x) * 4..][..4];
+        for (x, y, expected, part) in [
+            (37, 31, [0, 111, 0, 255], "dot centre row at the inner edge"),
+            (
+                37,
+                29,
+                [0, 65, 0, 255],
+                "dot above centre at the inner edge",
+            ),
+            (35, 27, [0, 251, 0, 255], "upper right of the dot"),
+            (27, 35, [0, 253, 0, 255], "lower left of the dot"),
+            (25, 28, [0, 93, 0, 255], "outer edge"),
         ] {
             assert_eq!(pixel_at(x, y), expected, "{part} at ({x}, {y})");
         }
