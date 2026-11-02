@@ -27934,6 +27934,92 @@ mod tests {
     }
 
     #[test]
+    fn groove_border_paints_blinks_integer_halves_at_fractional_scale() {
+        // ttwf-css3background-border-style-values at 1.25x: a 5px black
+        // currentColor groove around a blue 110px box, moved from (985, 45)
+        // to (5, 5), which keeps its device-pixel phase. Blink cuts each side
+        // into integer halves, clips the right side at its soft top and hard
+        // bottom miters and the left side at its hard top and soft bottom
+        // miters. Chrome's capture, offset by (1225, 50), at pixels the
+        // background covers fully.
+        let info = ImageInfo::new((188, 188), ColorType::RGBA8888, AlphaType::Premul, None);
+        let mut surface = surfaces::raster(&info, None, None).expect("surface");
+        surface.canvas().clear(skia_safe::Color::WHITE);
+        surface.canvas().scale((1.25, 1.25));
+        let mut background = Paint::new(Color4f::new(0.0, 0.0, 1.0, 1.0), None);
+        background.set_anti_alias(true);
+        surface
+            .canvas()
+            .draw_rect(Rect::from_xywh(5.0, 5.0, 110.0, 110.0), &background);
+        let mut style = ComputedStyle::default();
+        style.update_derived(|computed| {
+            computed.device_scale_factor = 1.25;
+            computed.color = Color::BLACK;
+            computed.border_top_width = 5;
+            computed.border_right_width = 5;
+            computed.border_bottom_width = 5;
+            computed.border_left_width = 5;
+            computed.border_top_style = BorderStyle::Groove;
+            computed.border_right_style = BorderStyle::Groove;
+            computed.border_bottom_style = BorderStyle::Groove;
+            computed.border_left_style = BorderStyle::Groove;
+            computed.border_top_color = StyleColor::CurrentColor;
+            computed.border_right_color = StyleColor::CurrentColor;
+            computed.border_bottom_color = StyleColor::CurrentColor;
+            computed.border_left_color = StyleColor::CurrentColor;
+        });
+        let mut fragment = Fragment::new_box(NodeId::NONE, PhysicalSize::zero());
+        fragment.border = openui_geometry::BoxStrut::new(
+            LayoutUnit::from_i32(5),
+            LayoutUnit::from_i32(5),
+            LayoutUnit::from_i32(5),
+            LayoutUnit::from_i32(5),
+        );
+        fragment.is_first_for_node = true;
+        fragment.is_last_for_node = true;
+        paint_borders(
+            surface.canvas(),
+            &fragment,
+            &style,
+            5.0,
+            5.0,
+            110.0,
+            110.0,
+            false,
+            false,
+            false,
+        );
+
+        let pixels = surface_bytes(&mut surface);
+        let pixel_at = |x: usize, y: usize| &pixels[(y * 188 + x) * 4..][..4];
+        for (x, y, expected, part) in [
+            (
+                142,
+                7,
+                [196, 196, 196, 255],
+                "top-right outer half diagonal",
+            ),
+            (141, 8, [185, 185, 185, 255], "top-right half boundary"),
+            (
+                139,
+                10,
+                [196, 196, 196, 255],
+                "top-right inner half diagonal",
+            ),
+            (
+                138,
+                11,
+                [196, 196, 196, 255],
+                "top-right inner half diagonal",
+            ),
+            (12, 138, [155, 155, 155, 255], "bottom-left inner edge"),
+            (11, 139, [156, 156, 156, 255], "bottom-left inner half"),
+        ] {
+            assert_eq!(pixel_at(x, y), expected, "{part} at ({x}, {y})");
+        }
+    }
+
+    #[test]
     fn fractional_uniform_double_border_strokes_two_rings_like_blink() {
         // border-image-repeat-004 at 1.25x falls back to a 40px double red
         // border whose edges lie on half device pixels. Blink's FillDRRect
