@@ -1,5 +1,14 @@
 # Open UI current status
 
+## Solid and 3D column rules as Blink's DrawBoxSide 1 November 2026
+
+A solid, groove, ridge, inset or outset column rule is painted as Blink's
+`BoxFragmentPainter::PaintColumnRules` paints it, through `DrawBoxSide`
+with no adjacent widths: one antialiased rect in CSS pixels for a solid
+rule, and one per integer half for a groove or ridge rule. The census stays
+at 22,308 exact, with 2 comparisons improved, no losses and no comparison
+worse. See the [column rule record](column-rule-draw-box-side-2026-11-01.md).
+
 ## 3D border sides as Blink's integer halves 1 November 2026
 
 A straight, opaque groove, ridge, inset or outset border side is painted as
