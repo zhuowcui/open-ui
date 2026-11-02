@@ -24384,14 +24384,38 @@ fn paint_column_rule(
         BorderStyle::Outset => BorderStyle::Groove,
         other => other,
     };
-    if rule_style == BorderStyle::Solid {
-        let color = style.column_rule_color.resolve(&style.color);
-        draw_css_coverage_rect(
+    // `BoxFragmentPainter::PaintColumnRules` passes the pixel-snapped rule to
+    // `BoxBorderPainter::DrawBoxSide` as a left side, or a top side in a
+    // vertical writing mode, with no adjacent widths. A solid rule, and each
+    // integer half of a groove or ridge rule, is then one antialiased rect in
+    // CSS pixels under the device scale.
+    if matches!(
+        rule_style,
+        BorderStyle::Solid | BorderStyle::Groove | BorderStyle::Ridge
+    ) {
+        let resolved = style.column_rule_color.resolve(&style.color);
+        let color = Color4f::new(resolved.r, resolved.g, resolved.b, resolved.a);
+        let platform_current_color = matches!(style.column_rule_color, StyleColor::CurrentColor)
+            && resolved.r == 0.0
+            && resolved.g == 0.0
+            && resolved.b == 0.0;
+        let side = if style.writing_mode.is_horizontal() {
+            BorderSide::Left
+        } else {
+            BorderSide::Top
+        };
+        draw_blink_line_for_box_side(
             canvas,
-            rect,
-            &color,
-            style.device_scale_factor,
-            PhysicalCoveragePacking::Default,
+            (x as i32, y as i32, right as i32, bottom as i32),
+            side,
+            rule_style,
+            (
+                color,
+                shade_3d_dark(&color, platform_current_color, false),
+                shade_3d_light(&color, platform_current_color, false),
+            ),
+            0,
+            0,
         );
         return;
     }
@@ -28014,6 +28038,52 @@ mod tests {
             ),
             (12, 138, [155, 155, 155, 255], "bottom-left inner edge"),
             (11, 139, [156, 156, 156, 255], "bottom-left inner half"),
+        ] {
+            assert_eq!(pixel_at(x, y), expected, "{part} at ({x}, {y})");
+        }
+    }
+
+    #[test]
+    fn inset_column_rule_paints_blinks_ridge_halves_at_fractional_scale() {
+        // multicol-rule-inset-000 at 1.25x: a 10px lime inset rule, painted
+        // as a ridge, over a black multicol background, moved 200px left,
+        // which keeps its device-pixel phase. Blink fills each integer half
+        // as one antialiased rect, so the half boundary at 281.25 device
+        // pixels blends the light half under the dark one. Chrome's
+        // capture, offset by (250, 0).
+        let info = ImageInfo::new((48, 100), ColorType::RGBA8888, AlphaType::Premul, None);
+        let mut surface = surfaces::raster(&info, None, None).expect("surface");
+        surface.canvas().clear(skia_safe::Color::WHITE);
+        surface.canvas().scale((1.25, 1.25));
+        let mut background = Paint::new(Color4f::new(0.0, 0.0, 0.0, 1.0), None);
+        background.set_anti_alias(true);
+        surface
+            .canvas()
+            .draw_rect(Rect::from_ltrb(0.0, 20.0, 38.0, 70.0), &background);
+        let mut style = ComputedStyle::default();
+        style.update_derived(|computed| {
+            computed.device_scale_factor = 1.25;
+            computed.column_rule_width = 10;
+            computed.column_rule_style = BorderStyle::Inset;
+            computed.column_rule_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+        });
+        let fragment = Fragment::new_box(
+            NodeId::NONE,
+            PhysicalSize::new(LayoutUnit::from_i32(10), LayoutUnit::from_i32(50)),
+        );
+        paint_column_rule(
+            surface.canvas(),
+            &fragment,
+            &style,
+            PhysicalOffset::new(LayoutUnit::from_i32(20), LayoutUnit::from_i32(20)),
+        );
+
+        let pixels = surface_bytes(&mut surface);
+        let pixel_at = |x: usize, y: usize| &pixels[(y * 48 + x) * 4..][..4];
+        for (x, y, expected, part) in [
+            (30, 50, [0, 255, 0, 255], "light outer half"),
+            (31, 50, [0, 144, 0, 255], "half boundary"),
+            (32, 50, [0, 171, 0, 255], "dark inner half"),
         ] {
             assert_eq!(pixel_at(x, y), expected, "{part} at ({x}, {y})");
         }
