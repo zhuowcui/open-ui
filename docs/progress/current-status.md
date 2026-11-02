@@ -1,5 +1,13 @@
 # Open UI current status
 
+## Unclipped unmitered dotted, dashed and double sides 2 November 2026
+
+A dotted, dashed or double border side with no miter at either corner is
+drawn without a clip, as Blink's `BoxBorderPainter::MitersRequireClipping`
+decides. A dot's round cap then keeps its full coverage past the side's
+inner edge. The census goes from 22,323 to 22,335 exact. No comparison is
+lost or worse. See the [unmitered side record](unmitered-dotted-side-2026-11-02.md).
+
 ## Grayscale glyph masks without Skia's A8 gamma 2 November 2026
 
 Skia is built without `SK_GAMMA_APPLY_TO_A8`, as Chromium's `//skia`
