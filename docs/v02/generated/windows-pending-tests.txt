@@ -5,4 +5,5 @@ bindings/rust/openui-engine/tests/intrinsic_text_shaping.rs::native_spacing_and_
 bindings/rust/openui-layout/src/inline/items_builder.rs::mixed_script_fallback_and_vertical_orientation_boundaries_split_runs	Fontconfig fallback face selection
 bindings/rust/openui-layout/src/intrinsic_sizing.rs::chromium_atomic_word_fraction_survives_an_integer_raster_font_policy	FreeType fractional advance of loaded Ahem
 bindings/rust/openui-layout/src/intrinsic_sizing.rs::text_intrinsic_preserves_shaped_letter_and_word_spacing	FreeType fractional advance of loaded Ahem
+bindings/rust/openui-paint/src/render.rs::large_grayscale_glyph_mask_keeps_raw_coverage_as_chromium_skia	FreeType grayscale glyph mask coverage
 bindings/rust/openui-text/tests/sp11_round27_fix_tests.rs::platform_fallback_preserves_oblique_angle	Fontconfig fallback face selection
