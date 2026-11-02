@@ -6546,12 +6546,25 @@ fn paint_replaced_content(
                 ),
                 (aligned_destination.left, aligned_destination.top),
             );
-            paint.set_anti_alias(false);
+            let skia_rect_fill =
+                crate::image_resource::replaced_image_patch_draws_as_skia_rect_fill(
+                    full_precision_replaced,
+                    physical_replaced_coverage_bounds,
+                );
             paint.set_shader(patch.to_shader(
                 (TileMode::Clamp, TileMode::Clamp),
                 SamplingOptions::from(FilterMode::Nearest),
                 &local_matrix,
             ));
+            if skia_rect_fill {
+                // The patch keeps full samples; Skia's antialiased rect fill
+                // applies the edge coverage, as Blink's drawImageRect does.
+                paint.set_anti_alias(true);
+                canvas.draw_rect(destination, &paint);
+                canvas.restore();
+                return;
+            }
+            paint.set_anti_alias(false);
             canvas.draw_rect(aligned_destination, &paint);
             if draw_image.color_space().is_some() {
                 if let Ok((corner_patch, corner_destination)) =
