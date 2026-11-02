@@ -23487,7 +23487,52 @@ fn paint_borders(
             }
             points
         };
+        // A straight, opaque authored 3D side follows Blink's
+        // PaintOneBorderSide directly. Its miters come in Blink's order of
+        // adjacent sides. Rounded borders take Blink's curved-side path, and
+        // translucent sides paint inside an opacity layer, so both keep the
+        // path below.
+        let paint_blink_3d_side = |side: BorderSide| {
+            let (width, side_style, color) = side_style_and_color(side);
+            if width <= 0.0
+                || !is_3d_border_style(side_style)
+                || platform_3d_fieldset_coverage
+                || has_border_radius
+                || color.a < 1.0
+            {
+                return false;
+            }
+            let (adjacent1, adjacent2) = match side {
+                BorderSide::Top | BorderSide::Bottom => (BorderSide::Left, BorderSide::Right),
+                BorderSide::Left | BorderSide::Right => (BorderSide::Top, BorderSide::Bottom),
+            };
+            let border_color = match side {
+                BorderSide::Top => &style.border_top_color,
+                BorderSide::Right => &style.border_right_color,
+                BorderSide::Bottom => &style.border_bottom_color,
+                BorderSide::Left => &style.border_left_color,
+            };
+            let platform_current_color = matches!(border_color, StyleColor::CurrentColor)
+                && color.r == 0.0
+                && color.g == 0.0
+                && color.b == 0.0;
+            paint_blink_3d_border_side(
+                canvas,
+                side,
+                side_style,
+                Color4f::new(color.r, color.g, color.b, color.a),
+                platform_current_color,
+                Rect::from_ltrb(ox0, oy0, ox1, oy1),
+                Rect::from_ltrb(ix0, iy0, ix1, iy1),
+                [bt, br, bb, bl].map(|width| width.round() as i32),
+                [corner_miter(side, adjacent1), corner_miter(side, adjacent2)],
+            );
+            true
+        };
         for side in paint_order {
+            if paint_blink_3d_side(side) {
+                continue;
+            }
             // Top border: outer-top-left → outer-top-right → inner-top-right → inner-top-left
             if side == BorderSide::Top && bt > 0.0 {
                 let top_points =
@@ -25081,6 +25126,402 @@ fn clip_blink_3d_side_miters(
             ],
             end_miter,
         );
+    }
+}
+
+/// Paint one straight authored 3D border side as Blink's
+/// `BoxBorderPainter::PaintOneBorderSide` does.
+///
+/// `outer` and `inner` are the border rects, `widths` the top, right, bottom
+/// and left edge widths, and `miters` the corner miters at the side's
+/// adjacent sides in Blink's order: left then right for the top and bottom,
+/// top then bottom for the left and right. A hard miter clips the side
+/// (`ClipBorderSidePolygon`) and removes both miters; a remaining soft miter
+/// is drawn by `DrawLineForBoxSide` as a mitered quad. The side rect is the
+/// rounded outer rect cut to the edge width, and every half or stripe is an
+/// integer rect in this coordinate space, filled antialiased.
+fn paint_blink_3d_border_side(
+    canvas: &Canvas,
+    side: BorderSide,
+    border_style: BorderStyle,
+    color: Color4f,
+    platform_current_color: bool,
+    outer: Rect,
+    inner: Rect,
+    widths: [i32; 4],
+    miters: [BorderMiter; 2],
+) {
+    let [top_width, right_width, bottom_width, left_width] = widths;
+    let (left, top) = (outer.left.round() as i32, outer.top.round() as i32);
+    let (right, bottom) = (outer.right.round() as i32, outer.bottom.round() as i32);
+    let (x1, y1, x2, y2, adjacent_widths) = match side {
+        BorderSide::Top => (left, top, right, top + top_width, [left_width, right_width]),
+        BorderSide::Bottom => (
+            left,
+            bottom - bottom_width,
+            right,
+            bottom,
+            [left_width, right_width],
+        ),
+        BorderSide::Left => (
+            left,
+            top,
+            left + left_width,
+            bottom,
+            [top_width, bottom_width],
+        ),
+        BorderSide::Right => (
+            right - right_width,
+            top,
+            right,
+            bottom,
+            [top_width, bottom_width],
+        ),
+    };
+    let [mut miter1, mut miter2] = miters;
+    let should_clip = miter1 == BorderMiter::Hard || miter2 == BorderMiter::Hard;
+    if should_clip {
+        canvas.save();
+        clip_blink_border_side_polygon(canvas, side, outer, inner, miter1, miter2);
+        miter1 = BorderMiter::None;
+        miter2 = BorderMiter::None;
+    }
+    let dark = shade_3d_dark(&color, platform_current_color, false);
+    let light = shade_3d_light(&color, platform_current_color, false);
+    draw_blink_line_for_box_side(
+        canvas,
+        (x1, y1, x2, y2),
+        side,
+        border_style,
+        (color, dark, light),
+        if miter1 != BorderMiter::None {
+            adjacent_widths[0]
+        } else {
+            0
+        },
+        if miter2 != BorderMiter::None {
+            adjacent_widths[1]
+        } else {
+            0
+        },
+    );
+    if should_clip {
+        canvas.restore();
+    }
+}
+
+/// Blink's `ClipBorderSidePolygon` for a side of a rect border. The edge
+/// quad joins the outer and inner rects' corners. Equal miters clip to that
+/// quad. Different miters each clip to a quad that follows the miter at its
+/// own end and the side's bounding box elsewhere, extended 0.1px past its
+/// end so that the two overlap. The bottom and left sides swap their miters
+/// so that each lands on its own corner. A soft miter's clip is antialiased.
+fn clip_blink_border_side_polygon(
+    canvas: &Canvas,
+    side: BorderSide,
+    outer: Rect,
+    inner: Rect,
+    first_miter: BorderMiter,
+    second_miter: BorderMiter,
+) {
+    const EXTENSION_LENGTH: f32 = 0.1;
+    let inner_points = [
+        (inner.left, inner.top),
+        (inner.right, inner.top),
+        (inner.right, inner.bottom),
+        (inner.left, inner.bottom),
+    ];
+    let outer_points = [
+        (outer.left, outer.top),
+        (outer.right, outer.top),
+        (outer.right, outer.bottom),
+        (outer.left, outer.bottom),
+    ];
+    let (edge_quad, horizontal, extension, first_miter, second_miter) = match side {
+        BorderSide::Top => (
+            [
+                outer_points[0],
+                inner_points[0],
+                inner_points[1],
+                outer_points[1],
+            ],
+            true,
+            (-EXTENSION_LENGTH, 0.0),
+            first_miter,
+            second_miter,
+        ),
+        BorderSide::Left => (
+            [
+                outer_points[3],
+                inner_points[3],
+                inner_points[0],
+                outer_points[0],
+            ],
+            false,
+            (0.0, EXTENSION_LENGTH),
+            second_miter,
+            first_miter,
+        ),
+        BorderSide::Bottom => (
+            [
+                outer_points[2],
+                inner_points[2],
+                inner_points[3],
+                outer_points[3],
+            ],
+            true,
+            (EXTENSION_LENGTH, 0.0),
+            second_miter,
+            first_miter,
+        ),
+        BorderSide::Right => (
+            [
+                outer_points[1],
+                inner_points[1],
+                inner_points[2],
+                outer_points[2],
+            ],
+            false,
+            (0.0, -EXTENSION_LENGTH),
+            first_miter,
+            second_miter,
+        ),
+    };
+    let (bound1, bound2) = if horizontal {
+        (
+            (edge_quad[0].0, edge_quad[1].1),
+            (edge_quad[3].0, edge_quad[2].1),
+        )
+    } else {
+        (
+            (edge_quad[1].0, edge_quad[0].1),
+            (edge_quad[2].0, edge_quad[3].1),
+        )
+    };
+    let clip = |polygon: [(f32, f32); 4], miter: BorderMiter| {
+        let mut path = PathBuilder::new();
+        path.move_to(Point::new(polygon[0].0, polygon[0].1));
+        for point in &polygon[1..] {
+            path.line_to(Point::new(point.0, point.1));
+        }
+        path.close();
+        canvas.clip_path(
+            &path.detach(),
+            ClipOp::Intersect,
+            miter == BorderMiter::Soft,
+        );
+    };
+    if first_miter == second_miter {
+        clip(edge_quad, first_miter);
+        return;
+    }
+    // FindIntersection: where the miter line meets the bounding box's inner
+    // edge, or the origin when they are parallel.
+    let intersection = |p1: (f32, f32), p2: (f32, f32)| {
+        let (d1, d2) = (bound1, bound2);
+        let denominator = (p1.0 - p2.0) * (d1.1 - d2.1) - (p1.1 - p2.1) * (d1.0 - d2.0);
+        if denominator.abs() <= f32::EPSILON {
+            return (0.0, 0.0);
+        }
+        let t = ((p1.0 - d1.0) * (d1.1 - d2.1) - (p1.1 - d1.1) * (d1.0 - d2.0)) / denominator;
+        (p1.0 + t * (p2.0 - p1.0), p1.1 + t * (p2.1 - p1.1))
+    };
+    let shift =
+        |point: (f32, f32), sign: f32| (point.0 + sign * extension.0, point.1 + sign * extension.1);
+    if first_miter != BorderMiter::None {
+        clip(
+            [
+                shift(edge_quad[0], 1.0),
+                shift(intersection(edge_quad[0], edge_quad[1]), 1.0),
+                bound2,
+                edge_quad[3],
+            ],
+            first_miter,
+        );
+    }
+    if second_miter != BorderMiter::None {
+        clip(
+            [
+                edge_quad[0],
+                bound1,
+                shift(intersection(edge_quad[2], edge_quad[3]), -1.0),
+                shift(edge_quad[3], -1.0),
+            ],
+            second_miter,
+        );
+    }
+}
+
+/// Blink's `DrawLineForBoxSide` for the 3D styles and the solid style they
+/// reduce to. Groove and ridge split into an outer and an inner half
+/// (`DrawRidgeOrGrooveBoxSide`), inset and outset take the side's shade
+/// (`CalculateInsetOutsetColor`), and a solid side fills its rect, or its quad
+/// mitered by the adjacent widths (`DrawSolidBoxSide`). `colors` holds the
+/// authored color and its dark and light shades.
+fn draw_blink_line_for_box_side(
+    canvas: &Canvas,
+    (x1, y1, x2, y2): (i32, i32, i32, i32),
+    side: BorderSide,
+    border_style: BorderStyle,
+    colors: (Color4f, Color4f, Color4f),
+    adjacent_width1: i32,
+    adjacent_width2: i32,
+) {
+    let (thickness, length) = match side {
+        BorderSide::Top | BorderSide::Bottom => (y2 - y1, x2 - x1),
+        BorderSide::Left | BorderSide::Right => (x2 - x1, y2 - y1),
+    };
+    if length <= 0 || thickness <= 0 {
+        return;
+    }
+    // BorderEdge::EffectiveStyle: a groove or ridge thinner than two pixels
+    // is solid.
+    let border_style =
+        if matches!(border_style, BorderStyle::Groove | BorderStyle::Ridge) && thickness < 2 {
+            BorderStyle::Solid
+        } else {
+            border_style
+        };
+    let (color, dark, light) = colors;
+    match border_style {
+        BorderStyle::Groove | BorderStyle::Ridge => {
+            let (s1, s2) = if border_style == BorderStyle::Groove {
+                (BorderStyle::Inset, BorderStyle::Outset)
+            } else {
+                (BorderStyle::Outset, BorderStyle::Inset)
+            };
+            let big_half = |width: i32| (if width > 0 { width + 1 } else { width - 1 }) / 2;
+            let (a1, a2) = (adjacent_width1, adjacent_width2);
+            let (big1, big2) = (big_half(a1), big_half(a2));
+            let half = |rect: (i32, i32, i32, i32), half_style, w1, w2| {
+                draw_blink_line_for_box_side(canvas, rect, side, half_style, colors, w1, w2);
+            };
+            match side {
+                BorderSide::Top => {
+                    let mid = (y1 + y2 + 1) / 2;
+                    half(
+                        (x1 + (-a1).max(0) / 2, y1, x2 - (-a2).max(0) / 2, mid),
+                        s1,
+                        big1,
+                        big2,
+                    );
+                    half(
+                        (x1 + (a1 + 1).max(0) / 2, mid, x2 - (a2 + 1).max(0) / 2, y2),
+                        s2,
+                        a1 / 2,
+                        a2 / 2,
+                    );
+                }
+                BorderSide::Left => {
+                    let mid = (x1 + x2 + 1) / 2;
+                    half(
+                        (x1, y1 + (-a1).max(0) / 2, mid, y2 - (-a2).max(0) / 2),
+                        s1,
+                        big1,
+                        big2,
+                    );
+                    half(
+                        (mid, y1 + (a1 + 1).max(0) / 2, x2, y2 - (a2 + 1).max(0) / 2),
+                        s2,
+                        a1 / 2,
+                        a2 / 2,
+                    );
+                }
+                BorderSide::Bottom => {
+                    let mid = (y1 + y2 + 1) / 2;
+                    half(
+                        (x1 + a1.max(0) / 2, y1, x2 - a2.max(0) / 2, mid),
+                        s2,
+                        big1,
+                        big2,
+                    );
+                    half(
+                        (
+                            x1 + (-a1 + 1).max(0) / 2,
+                            mid,
+                            x2 - (-a2 + 1).max(0) / 2,
+                            y2,
+                        ),
+                        s1,
+                        a1 / 2,
+                        a2 / 2,
+                    );
+                }
+                BorderSide::Right => {
+                    let mid = (x1 + x2 + 1) / 2;
+                    half(
+                        (x1, y1 + a1.max(0) / 2, mid, y2 - a2.max(0) / 2),
+                        s2,
+                        big1,
+                        big2,
+                    );
+                    half(
+                        (
+                            mid,
+                            y1 + (-a1 + 1).max(0) / 2,
+                            x2,
+                            y2 - (-a2 + 1).max(0) / 2,
+                        ),
+                        s1,
+                        a1 / 2,
+                        a2 / 2,
+                    );
+                }
+            }
+        }
+        BorderStyle::Inset | BorderStyle::Outset | BorderStyle::Solid => {
+            let fill = if border_style == BorderStyle::Solid {
+                color
+            } else if matches!(side, BorderSide::Top | BorderSide::Left)
+                == (border_style == BorderStyle::Inset)
+            {
+                dark
+            } else {
+                light
+            };
+            let (x1, y1, x2, y2) = (x1 as f32, y1 as f32, x2 as f32, y2 as f32);
+            let mut paint = Paint::new(fill, None);
+            paint.set_style(PaintStyle::Fill);
+            paint.set_anti_alias(true);
+            if adjacent_width1 == 0 && adjacent_width2 == 0 {
+                canvas.draw_rect(Rect::from_ltrb(x1, y1, x2, y2), &paint);
+                return;
+            }
+            let (a1, a2) = (adjacent_width1 as f32, adjacent_width2 as f32);
+            let quad = match side {
+                BorderSide::Top => [
+                    (x1 + (-a1).max(0.0), y1),
+                    (x1 + a1.max(0.0), y2),
+                    (x2 - a2.max(0.0), y2),
+                    (x2 - (-a2).max(0.0), y1),
+                ],
+                BorderSide::Bottom => [
+                    (x1 + a1.max(0.0), y1),
+                    (x1 + (-a1).max(0.0), y2),
+                    (x2 - (-a2).max(0.0), y2),
+                    (x2 - a2.max(0.0), y1),
+                ],
+                BorderSide::Left => [
+                    (x1, y1 + (-a1).max(0.0)),
+                    (x1, y2 - (-a2).max(0.0)),
+                    (x2, y2 - a2.max(0.0)),
+                    (x2, y1 + a1.max(0.0)),
+                ],
+                BorderSide::Right => [
+                    (x1, y1 + a1.max(0.0)),
+                    (x1, y2 - a2.max(0.0)),
+                    (x2, y2 - (-a2).max(0.0)),
+                    (x2, y1 + (-a1).max(0.0)),
+                ],
+            };
+            let mut path = PathBuilder::new();
+            path.move_to(Point::new(quad[0].0, quad[0].1));
+            for point in &quad[1..] {
+                path.line_to(Point::new(point.0, point.1));
+            }
+            canvas.draw_path(&path.detach(), &paint);
+        }
+        _ => {}
     }
 }
 
