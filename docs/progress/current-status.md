@@ -1,5 +1,15 @@
 # Open UI current status
 
+## 3D border sides as Blink's integer halves 1 November 2026
+
+A straight, opaque groove, ridge, inset or outset border side is painted as
+Blink's `BoxBorderPainter::PaintOneBorderSide` paints it: in CSS pixels
+under the device scale, from integer side rects, clipped by
+`ClipBorderSidePolygon` at a hard miter, with groove and ridge split at
+Blink's integer midpoint. The census goes from 22,304 to 22,308 exact, with
+3 more comparisons improved, no losses and no comparison worse. See the
+[integer halves record](border-3d-integer-halves-2026-11-01.md).
+
 ## 3D border sides with Blink's corner miters 31 October 2026
 
 A groove, ridge, inset or outset border side gives each corner no miter, a

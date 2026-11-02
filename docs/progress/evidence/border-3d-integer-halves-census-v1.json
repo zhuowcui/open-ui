@@ -1,0 +1,129 @@
+{
+ "base_commit": "46195d6e68bcaa7f8a4404128ca681bedb1a9968",
+ "base_exact": 22304,
+ "chromium_identical": 23728,
+ "comparisons": 23728,
+ "errors": [],
+ "gains": [
+  {
+   "base": "different",
+   "base_mismatched": 30,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/ttwf-css3background-border-style-values",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 662,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/multicol-dynamic-change-inside-break-inside-avoid-001-ref",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_overflow/line-clamp_webkit-line-clamp-013",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 333,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/ttwf-css3background-border-style-values",
+   "profile": "desktop-1920x1080@1.5"
+  }
+ ],
+ "head_commit": "446e554fc2dfd891d2a03161a433fc63674f0625",
+ "head_exact": 22308,
+ "improved": [
+  {
+   "base": "different",
+   "base_mismatched": 930,
+   "head": "different",
+   "head_mismatched": 868,
+   "id": "wpt/css_multicol/multicol-rule-inset-000",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 930,
+   "head": "different",
+   "head_mismatched": 868,
+   "id": "wpt/css_multicol/multicol-rule-ridge-000",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1364,
+   "head": "different",
+   "head_mismatched": 1240,
+   "id": "wpt/css_multicol/multicol-rule-ridge-000-ref",
+   "profile": "desktop-1280x720@1.25"
+  }
+ ],
+ "losses": [],
+ "openui_changed": [
+  {
+   "base": "different",
+   "base_mismatched": 30,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/ttwf-css3background-border-style-values",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 662,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/multicol-dynamic-change-inside-break-inside-avoid-001-ref",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 930,
+   "head": "different",
+   "head_mismatched": 868,
+   "id": "wpt/css_multicol/multicol-rule-inset-000",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 930,
+   "head": "different",
+   "head_mismatched": 868,
+   "id": "wpt/css_multicol/multicol-rule-ridge-000",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1364,
+   "head": "different",
+   "head_mismatched": 1240,
+   "id": "wpt/css_multicol/multicol-rule-ridge-000-ref",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_overflow/line-clamp_webkit-line-clamp-013",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 333,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/ttwf-css3background-border-style-values",
+   "profile": "desktop-1920x1080@1.5"
+  }
+ ],
+ "worsened": []
+}
