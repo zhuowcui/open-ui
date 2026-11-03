@@ -1,0 +1,161 @@
+{
+ "base_commit": "547fcbac4e30ff42dd9c655ec1127c3f9c616637",
+ "base_exact": 22382,
+ "chromium_identical": 23728,
+ "comparisons": 23728,
+ "errors": [],
+ "gains": [
+  {
+   "base": "different",
+   "base_mismatched": 1720,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/box-sizing-replaced-002",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1720,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/box-sizing-replaced-002-ref",
+   "profile": "mobile-375x667@2"
+  }
+ ],
+ "head_commit": "eb3f2a51b0d4386871ef4fc8e184eb212bbe6c24",
+ "head_exact": 22384,
+ "improved": [
+  {
+   "base": "different",
+   "base_mismatched": 359,
+   "head": "different",
+   "head_mismatched": 3,
+   "id": "wpt/css_backgrounds/box-shadow_box-shadow-blur-definition-001",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 364,
+   "head": "different",
+   "head_mismatched": 4,
+   "id": "wpt/css_sizing/box-sizing-replaced-001",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 364,
+   "head": "different",
+   "head_mismatched": 4,
+   "id": "wpt/css_sizing/box-sizing-replaced-001-ref",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 733,
+   "head": "different",
+   "head_mismatched": 3,
+   "id": "wpt/css_sizing/box-sizing-replaced-002",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 733,
+   "head": "different",
+   "head_mismatched": 3,
+   "id": "wpt/css_sizing/box-sizing-replaced-002-ref",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 887,
+   "head": "different",
+   "head_mismatched": 3,
+   "id": "wpt/css_sizing/box-sizing-replaced-003",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 887,
+   "head": "different",
+   "head_mismatched": 3,
+   "id": "wpt/css_sizing/box-sizing-replaced-003-ref",
+   "profile": "desktop-1920x1080@1.5"
+  }
+ ],
+ "losses": [],
+ "openui_changed": [
+  {
+   "base": "different",
+   "base_mismatched": 359,
+   "head": "different",
+   "head_mismatched": 3,
+   "id": "wpt/css_backgrounds/box-shadow_box-shadow-blur-definition-001",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 364,
+   "head": "different",
+   "head_mismatched": 4,
+   "id": "wpt/css_sizing/box-sizing-replaced-001",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 364,
+   "head": "different",
+   "head_mismatched": 4,
+   "id": "wpt/css_sizing/box-sizing-replaced-001-ref",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 733,
+   "head": "different",
+   "head_mismatched": 3,
+   "id": "wpt/css_sizing/box-sizing-replaced-002",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 733,
+   "head": "different",
+   "head_mismatched": 3,
+   "id": "wpt/css_sizing/box-sizing-replaced-002-ref",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 887,
+   "head": "different",
+   "head_mismatched": 3,
+   "id": "wpt/css_sizing/box-sizing-replaced-003",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 887,
+   "head": "different",
+   "head_mismatched": 3,
+   "id": "wpt/css_sizing/box-sizing-replaced-003-ref",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1720,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/box-sizing-replaced-002",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1720,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/box-sizing-replaced-002-ref",
+   "profile": "mobile-375x667@2"
+  }
+ ],
+ "worsened": []
+}
