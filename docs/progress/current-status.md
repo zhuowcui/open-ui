@@ -1,5 +1,15 @@
 # Open UI current status
 
+## Aliased Ahem is grid-fitted as in Chromium 3 November 2026
+
+An aliased Ahem glyph whose device size fits Skia's 256 px glyph atlas is
+drawn from its strong-hinted outline, as Chromium draws it, even though
+Fontconfig turns hinting off for it. The layout-phase row replays that
+approximated this are removed. A single-line text input clips its text to
+the inner editor's line box. The census goes from 22,390 to 22,435 exact,
+with 75 more comparisons improved, no losses and 4 comparisons worse. See
+the [Ahem grid-fit record](ahem-grid-fit-2026-11-03.md).
+
 ## A table without columns has no border spacing 3 November 2026
 
 A table grid with no columns applies no border spacing in either axis, and
