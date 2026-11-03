@@ -4157,12 +4157,28 @@ fn paint_text_input_control(
             &selection_paint,
         );
     }
+    // Blink's single-line inner editor is one line tall and clips its own
+    // overflow. Glyph ink above or below that line box, such as the
+    // grid-fitted Ahem row above the ascent, stays hidden even when the
+    // input's padding box would show it.
+    canvas.save();
+    canvas.clip_rect(
+        Rect::from_ltrb(
+            content_left,
+            line_top,
+            content_right,
+            line_top + line_height,
+        ),
+        ClipOp::Intersect,
+        false,
+    );
     crate::text_painter::paint_text_tracked(
         canvas,
         &shaped,
         (content_left, line_top + line_metrics.ascent),
         &text_style,
     );
+    canvas.restore();
     if focused && selection_start == selection_end && !showing_placeholder {
         let mut caret = Paint::default();
         caret.set_style(PaintStyle::Stroke);
@@ -15257,30 +15273,7 @@ fn paint_text_fragment(
             && replays_aliased_ahem_start_for_raster_policy(style, deterministic_text_profile)
             && !inside_block_content_alignment
             && (!parent_has_visible_border || style.font_size < 20.0)
-            && (replays_native_small_ahem_start
-                || (style.font_size >= 16.0
-                    && (((style.font_size - style.font_size.round()).abs() < 0.01
-                        && ((!inside_line_clamp
-                            // Ordinary non-clamped runs at 24px and above already
-                            // include the complete block-start row. A first-letter run
-                            // is positioned from its enlarged pseudo line box and keeps
-                            // the smaller-strike behavior.
-                            && (style.font_size < 24.0 || style.is_first_letter_pseudo)
-                            && should_replay_ahem_preceding_row(
-                                abs_offset.top,
-                                style.device_scale_factor,
-                            ))
-                            || (inside_line_clamp
-                                && should_replay_line_clamp_ahem_preceding_row(
-                                    abs_offset.top,
-                                    style.font_size,
-                                    style.device_scale_factor,
-                                ))))
-                        || chromium_fractional_strike_retains_preceding_row(
-                            origin.1,
-                            style.font_size,
-                            style.device_scale_factor,
-                        ))))
+            && replays_native_small_ahem_start
         {
             // When the aliased Ahem ink origin crosses the half-pixel device
             // threshold, Chromium's FreeType mask retains the block-start
@@ -15331,45 +15324,6 @@ fn paint_text_fragment(
     if rotated {
         canvas.restore();
     }
-}
-
-fn should_replay_ahem_preceding_row(offset: LayoutUnit, device_scale: f64) -> bool {
-    let css_phase_at_or_after_half =
-        offset.raw().rem_euclid(LayoutUnit::from_i32(1).raw()) >= LayoutUnit::from_f32(0.5).raw();
-    if css_phase_at_or_after_half {
-        return true;
-    }
-
-    // Integral magnification preserves the aliased CSS mask and can expose a
-    // preceding row when that mask crosses a device half-pixel. Fractional
-    // magnification selects a distinct physical strike which already advances
-    // that row; applying this second trigger there paints one row too many.
-    let integral_scale = (device_scale - device_scale.round()).abs() <= f64::EPSILON;
-    integral_scale && (f64::from(offset.to_f32()) * device_scale).rem_euclid(1.0) >= 0.5
-}
-
-/// Chromium's aliased physical strike keeps the inclusive block-start cell
-/// when its 4/5-em ascent is fractional but lies before the half-cell raster
-/// threshold. Skia rounds that ascent down and advances the mask by one row.
-/// This derives from strike metrics and is independent of test geometry.
-fn chromium_fractional_strike_retains_preceding_row(
-    _baseline: f32,
-    font_size: f32,
-    device_scale: f64,
-) -> bool {
-    if !device_scale.is_finite()
-        || device_scale <= 0.0
-        || (device_scale - device_scale.round()).abs() <= f64::EPSILON
-    {
-        return false;
-    }
-    let physical_strike = f64::from(font_size) * device_scale;
-    let strike_phase = physical_strike.rem_euclid(1.0);
-    let ascent_phase = (physical_strike * 0.8).rem_euclid(1.0);
-    strike_phase > 1.0e-6
-        && strike_phase < 1.0 - 1.0e-6
-        && ascent_phase > 1.0e-6
-        && ascent_phase < 0.5 - 1.0e-6
 }
 
 /// Return the logical translation that selects Chromium's device cell for a
@@ -15448,25 +15402,6 @@ fn paint_rotated_aliased_terminal_edges(
         );
         canvas.restore();
     }
-}
-
-fn should_replay_line_clamp_ahem_preceding_row(
-    offset: LayoutUnit,
-    font_size: f32,
-    device_scale: f64,
-) -> bool {
-    let integral_scale = (device_scale - device_scale.round()).abs() <= f64::EPSILON;
-    // Ahem's 24px outline still uses Chromium's small-strike line-clamp
-    // path: integral magnification above the unit strike retains the inclusive
-    // block-start cell, while fractional physical strikes and the unscaled
-    // outline already select the complete mask. Only outlines larger than
-    // 24px switch that ownership to fractional magnification.
-    let strike_uses_device_phase = if font_size <= 24.0 {
-        integral_scale && (font_size < 24.0 || device_scale > 1.0)
-    } else {
-        !integral_scale
-    };
-    strike_uses_device_phase && (f64::from(offset.to_f32()) * device_scale).rem_euclid(1.0) >= 0.5
 }
 
 fn snap_aliased_ahem_keyword_baseline(
@@ -27107,18 +27042,7 @@ mod tests {
     }
 
     #[test]
-    fn ahem_preceding_row_trigger_distinguishes_css_and_integral_device_phases() {
-        let offset = LayoutUnit::from_f32(223.1875);
-        assert!(!should_replay_ahem_preceding_row(offset, 1.0));
-        assert!(!should_replay_ahem_preceding_row(offset, 1.25));
-        assert!(!should_replay_ahem_preceding_row(offset, 1.5));
-        assert!(!should_replay_ahem_preceding_row(offset, 2.0));
-        assert!(should_replay_ahem_preceding_row(offset, 3.0));
-        assert!(should_replay_ahem_preceding_row(
-            LayoutUnit::from_f32(223.5),
-            1.25
-        ));
-
+    fn rotated_aliased_inline_shift_follows_the_physical_strike() {
         for (scale, expected_physical_shift) in
             [(1.0, 1.0), (1.25, 1.75), (1.5, 2.5), (2.0, 2.5), (3.0, 4.0)]
         {
@@ -27136,72 +27060,6 @@ mod tests {
             0.0,
             "larger strong-aliased strikes already expose Chromium's block-axis origin"
         );
-
-        let clamped_offset = LayoutUnit::from_f32(21.1875);
-        assert!(!should_replay_line_clamp_ahem_preceding_row(
-            clamped_offset,
-            16.0,
-            1.25
-        ));
-        assert!(!should_replay_line_clamp_ahem_preceding_row(
-            clamped_offset,
-            16.0,
-            1.5
-        ));
-        assert!(!should_replay_line_clamp_ahem_preceding_row(
-            clamped_offset,
-            16.0,
-            2.0
-        ));
-        assert!(should_replay_line_clamp_ahem_preceding_row(
-            clamped_offset,
-            16.0,
-            3.0
-        ));
-
-        let boundary_strike_offset = LayoutUnit::from_f32(95.796875);
-        assert!(!should_replay_line_clamp_ahem_preceding_row(
-            boundary_strike_offset,
-            24.0,
-            1.25
-        ));
-        assert!(!should_replay_line_clamp_ahem_preceding_row(
-            boundary_strike_offset,
-            24.0,
-            1.5
-        ));
-        assert!(!should_replay_line_clamp_ahem_preceding_row(
-            boundary_strike_offset,
-            24.0,
-            1.0
-        ));
-        assert!(should_replay_line_clamp_ahem_preceding_row(
-            boundary_strike_offset,
-            24.0,
-            2.0
-        ));
-
-        let large_clamped_offset = LayoutUnit::from_f32(20.390625);
-        assert!(!should_replay_line_clamp_ahem_preceding_row(
-            large_clamped_offset,
-            32.0,
-            1.25
-        ));
-        assert!(should_replay_line_clamp_ahem_preceding_row(
-            large_clamped_offset,
-            32.0,
-            1.5
-        ));
-        assert!(!should_replay_line_clamp_ahem_preceding_row(
-            large_clamped_offset,
-            32.0,
-            2.0
-        ));
-        assert!(!should_replay_line_clamp_ahem_preceding_row(
-            large_clamped_offset,
-            32.0,
-            3.0
-        ));
     }
 
     #[test]
@@ -27463,19 +27321,6 @@ mod tests {
         );
         let pixels = surface_bytes(&mut surface);
         assert_eq!(&pixels[(337 * 400 + 212) * 4..][..4], [64, 160, 64, 255]);
-    }
-
-    #[test]
-    fn fractional_ahem_strike_retains_row_from_ascent_phase() {
-        assert!(!chromium_fractional_strike_retains_preceding_row(
-            0.0, 18.72, 1.25
-        ));
-        assert!(chromium_fractional_strike_retains_preceding_row(
-            0.0, 18.72, 1.5
-        ));
-        assert!(!chromium_fractional_strike_retains_preceding_row(
-            0.0, 18.72, 2.0
-        ));
     }
 
     #[test]

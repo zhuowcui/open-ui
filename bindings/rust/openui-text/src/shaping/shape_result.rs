@@ -80,6 +80,10 @@ impl OutlinePen for SkiaPathPen {
     }
 }
 
+/// Skia's `kSkSideTooBigForAtlas`: a glyph whose device text size exceeds
+/// this is drawn from its unhinted path instead of a hinted mask.
+const SKIA_MAX_ATLAS_GLYPH_SIZE: f32 = 256.0;
+
 fn fontations_compatible_font(
     source_font: &skia_safe::Font,
     glyphs: &[u16],
@@ -124,7 +128,18 @@ fn fontations_compatible_font(
         }
         // An explicitly unhinted resolved strike must keep its original
         // outline. Monochrome coverage alone does not enable outline fitting.
-        TextRasterPolicy::ChromiumAuthorAliased if source_font.hinting() == FontHinting::None => {
+        // Chromium's aliased Ahem strike is the exception: it is grid-fitted
+        // even when Fontconfig asks for no hinting, and its rows and columns
+        // equal the strong-hinted outline. Skia draws a glyph larger than its
+        // atlas limit as an unhinted path, so that fitting stops there.
+        TextRasterPolicy::ChromiumAuthorAliased
+            if source_font.hinting() == FontHinting::None
+                && !(source_font
+                    .typeface()
+                    .family_name()
+                    .eq_ignore_ascii_case("Ahem")
+                    && size <= SKIA_MAX_ATLAS_GLYPH_SIZE) =>
+        {
             return None;
         }
         TextRasterPolicy::ChromiumAliased | TextRasterPolicy::ChromiumAuthorAliased => {
@@ -952,6 +967,38 @@ impl std::fmt::Debug for ShapeResultRun {
 #[cfg(test)]
 mod tests {
     use super::chromium_lcd_raster_x;
+
+    #[test]
+    fn aliased_ahem_is_grid_fitted_up_to_skias_atlas_limit() {
+        use skia_safe::{Font, FontHinting, FontMgr};
+
+        // Chromium 147 draws an aliased Ahem square one row taller than its
+        // font size when that size is 3 mod 5 and the glyph fits Skia's
+        // atlas, and exactly its font size once Skia draws it as a path.
+        let bytes = include_bytes!("../../fonts/Ahem.ttf");
+        let face = FontMgr::default().new_from_data(bytes, None).unwrap();
+        let x = face.unichar_to_glyph('X' as i32);
+        for (size, rows) in [(13.0, 14.0), (18.0, 19.0), (20.0, 20.0), (253.0, 254.0)] {
+            let mut source = Font::from_typeface(&face, size);
+            source.set_hinting(FontHinting::None);
+            let fitted = super::fontations_compatible_font(
+                &source,
+                &[x],
+                super::TextRasterPolicy::ChromiumAuthorAliased,
+            )
+            .unwrap();
+            let bounds = fitted.get_path(x).unwrap().bounds().round();
+            assert_eq!(bounds.height() as f32, rows, "Ahem at {size}px");
+        }
+        let mut path_sized = Font::from_typeface(&face, 258.0);
+        path_sized.set_hinting(FontHinting::None);
+        assert!(super::fontations_compatible_font(
+            &path_sized,
+            &[x],
+            super::TextRasterPolicy::ChromiumAuthorAliased,
+        )
+        .is_none());
+    }
 
     #[test]
     fn fontations_keeps_the_resolved_variable_font_instance() {
