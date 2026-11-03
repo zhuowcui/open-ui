@@ -828,6 +828,41 @@ fn physical_axis_coverage(
     }
 }
 
+/// Whether a replaced image patch keeps its full samples for the caller to
+/// draw as an antialiased rect at the fractional destination.
+///
+/// Blink paints an unclipped replaced image with one antialiased
+/// `drawImageRect`, which Skia's bitmap device draws as a rect filled with
+/// the image shader. The rect fill lerps each partly covered edge pixel
+/// toward the shaded color, so the result depends on the device color
+/// below. Baking the coverage into the patch and compositing it source-over
+/// is one level off over a colored device. A clip owns the edge otherwise,
+/// and full-precision (JPEG) sampling keeps its own edge model.
+pub fn replaced_image_patch_draws_as_skia_rect_fill(
+    full_precision_sampling: bool,
+    coverage_bounds: Option<Rect>,
+) -> bool {
+    !full_precision_sampling && coverage_bounds.is_none()
+}
+
+/// `SkFixedToFDot8(SkScalarToFixed(value))`: Skia's analytic rect fill rounds
+/// each device edge to 1/256 of a pixel.
+fn skia_fdot8(value: f32) -> i32 {
+    ((value * 65536.0) as i32 + 0x80) >> 8
+}
+
+/// Whether `antifilldot8` (`SkScan_Antihair.cpp`) gives the pixel nonzero
+/// coverage on one axis of an antialiased rect without a clip. A span inside
+/// one pixel has coverage `R - L - 1`.
+fn skia_rect_axis_touches(pixel: i32, start: f32, end: f32) -> bool {
+    let (start, end) = (skia_fdot8(start), skia_fdot8(end));
+    if start >= end || pixel < start >> 8 || pixel > (end - 1) >> 8 {
+        false
+    } else {
+        start >> 8 != (end - 1) >> 8 || end - start > 1
+    }
+}
+
 pub(crate) fn combine_physical_axis_coverage(horizontal: u32, vertical: u32) -> u32 {
     match (horizontal, vertical) {
         (255, coverage) | (coverage, 255) => coverage,
@@ -1672,6 +1707,15 @@ fn physical_quantized_image_patch_with_color_order(
         && physical_destination.top.rem_euclid(1.0).abs() <= 1.0e-5
         && sampling_source.top.rem_euclid(1.0).abs() <= 1.0e-5;
     let single_axis_background_repeat = !replaced && (coverage_repeats_x ^ coverage_repeats_y);
+    // The caller draws this patch as an antialiased rect at the fractional
+    // destination, so Skia applies the edge coverage. See
+    // `replaced_image_patch_draws_as_skia_rect_fill`.
+    let skia_rect_edges = replaced
+        && !legacy_float_matrix
+        && replaced_image_patch_draws_as_skia_rect_fill(
+            full_precision_sampling,
+            sampling_coverage_bounds,
+        );
     for target_y in 0..height {
         let device_y = f64::from(physical_top + target_y) + 0.5;
         let source_y = if let Some(axis) = legacy_y {
@@ -1770,6 +1814,15 @@ fn physical_quantized_image_patch_with_color_order(
                 // returned below; baking coverage here changes integer
                 // interpolation order at the leading and trailing pixels.
                 255
+            } else if skia_rect_edges {
+                // Keep the full sample wherever Skia's rect fill touches.
+                if skia_rect_axis_touches(destination_x, coverage_left, coverage_right)
+                    && skia_rect_axis_touches(destination_y, coverage_top, coverage_bottom)
+                {
+                    255
+                } else {
+                    0
+                }
             } else {
                 combine_physical_axis_coverage(
                     physical_axis_coverage(
@@ -1934,7 +1987,13 @@ fn physical_quantized_image_patch_with_color_order(
                 // color channels with nearest premultiplication while alpha
                 // closes a non-empty fractional span upward. Replaying these
                 // pixels without another AA contour avoids double coverage.
-                let value = if !legacy_float_matrix
+                let value = if skia_rect_edges {
+                    if geometric_coverage == 0 {
+                        0
+                    } else {
+                        value
+                    }
+                } else if !legacy_float_matrix
                     && (replaced || coverage_bounds.is_some())
                     && geometric_coverage < 255
                 {
@@ -1999,7 +2058,7 @@ fn physical_quantized_image_patch_with_color_order(
         }
     }
 
-    if color_managed_replaced {
+    if color_managed_replaced && !skia_rect_edges {
         // Chromium converts a color-managed replaced image before applying a
         // one-axis edge mask, but converts the already-premultiplied sample at
         // the intersection of two analytic edges. Keep those two color-space
@@ -3269,6 +3328,149 @@ mod tests {
             CachingHint::Allow,
         ));
         assert_eq!(&pixels[row_bytes..row_bytes + 4], &[0, 0, 254, 255]);
+    }
+
+    fn unclipped_replaced_patch(image: &Image, destination: Rect) -> (Image, Rect) {
+        let (patch, aligned, _) = physical_quantized_image_patch(
+            image,
+            Rect::from_xywh(0.0, 0.0, 15.0, 15.0),
+            destination,
+            1.25,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            None,
+            true,
+            false,
+            false,
+            false,
+            false,
+            false,
+            None,
+        )
+        .expect("sample an unclipped replaced image");
+        (patch, aligned)
+    }
+
+    fn solid_image(color: skia_safe::Color4f) -> Image {
+        let mut surface = skia_safe::surfaces::raster_n32_premul((15, 15)).expect("swatch");
+        surface.canvas().clear(color);
+        surface.image_snapshot()
+    }
+
+    fn patch_texel(patch: &Image, x: usize) -> [u8; 4] {
+        let mut pixels = vec![0_u8; patch.width() as usize * 4];
+        assert!(patch.read_pixels(
+            &ImageInfo::new(
+                (patch.width(), 1),
+                skia_safe::ColorType::RGBA8888,
+                skia_safe::AlphaType::Premul,
+                None,
+            ),
+            &mut pixels,
+            patch.width() as usize * 4,
+            (0, 0),
+            CachingHint::Allow,
+        ));
+        pixels[x * 4..x * 4 + 4].try_into().unwrap()
+    }
+
+    /// Replay the painter's unclipped replaced image draw on a 1.25x canvas.
+    fn draw_unclipped_replaced(canvas: &skia_safe::Canvas, image: &Image, destination: Rect) {
+        let (patch, aligned) = unclipped_replaced_patch(image, destination);
+        let mut paint = skia_safe::Paint::default();
+        paint.set_shader(patch.to_shader(
+            (skia_safe::TileMode::Clamp, skia_safe::TileMode::Clamp),
+            skia_safe::SamplingOptions::from(skia_safe::FilterMode::Nearest),
+            &skia_safe::Matrix::scale_translate(
+                (
+                    aligned.width() / patch.width() as f32,
+                    aligned.height() / patch.height() as f32,
+                ),
+                (aligned.left, aligned.top),
+            ),
+        ));
+        paint.set_anti_alias(true);
+        canvas.draw_rect(destination, &paint);
+    }
+
+    fn device_pixel(surface: &mut skia_safe::Surface, x: i32) -> [u8; 4] {
+        let mut pixels = [0_u8; 4];
+        assert!(surface.read_pixels(
+            &ImageInfo::new(
+                (1, 1),
+                skia_safe::ColorType::RGBA8888,
+                skia_safe::AlphaType::Premul,
+                None,
+            ),
+            &mut pixels,
+            4,
+            (x, 10),
+        ));
+        pixels
+    }
+
+    #[test]
+    fn unclipped_replaced_image_patch_keeps_full_edge_samples() {
+        // At 1.25x, CSS 69..82 is device 86.25..102.5. The rect fill owns
+        // the coverage of pixels 86 and 102, so the patch keeps the full
+        // sample there.
+        assert!(replaced_image_patch_draws_as_skia_rect_fill(false, None));
+        let destination = Rect::from_ltrb(69.0, 0.0, 82.0, 40.0);
+        let (patch, _) = unclipped_replaced_patch(
+            &solid_image(skia_safe::Color4f::new(1.0, 1.0, 1.0, 1.0)),
+            destination,
+        );
+        assert_eq!(patch.width(), 17);
+        assert_eq!(patch_texel(&patch, 0), [255, 255, 255, 255]);
+        assert_eq!(patch_texel(&patch, 16), [255, 255, 255, 255]);
+        let (patch, _) = unclipped_replaced_patch(
+            &solid_image(skia_safe::Color4f::new(1.0, 1.0, 1.0, 128.0 / 255.0)),
+            destination,
+        );
+        assert_eq!(patch_texel(&patch, 16), [128, 128, 128, 128]);
+    }
+
+    #[test]
+    fn unclipped_replaced_image_edges_lerp_over_the_device_like_chromium() {
+        // multicol-rule-color-001-ref at 1.25x: a blue image's right edge
+        // covers the first quarter of gray device pixel 101. Chromium gives
+        // (143, 143, 207); coverage baked into the patch gives (144, 144, 208).
+        // The surfaces are taller than one row: a rect fill clipped to a
+        // single scanline scales its edge coverage by 255/256.
+        let mut surface = skia_safe::surfaces::raster_n32_premul((110, 20)).expect("device");
+        surface
+            .canvas()
+            .clear(skia_safe::Color::from_rgb(192, 192, 192));
+        surface.canvas().scale((1.25, 1.25));
+        draw_unclipped_replaced(
+            surface.canvas(),
+            &solid_image(skia_safe::Color4f::new(0.0, 0.0, 1.0, 1.0)),
+            Rect::from_ltrb(69.0, 0.0, 81.0, 40.0),
+        );
+        assert_eq!(device_pixel(&mut surface, 101), [143, 143, 207, 255]);
+
+        // multicol-count-computed-003-ref at 1.25x: device pixel 156 is a
+        // quarter blue, then three quarters yellow, over white. Chromium
+        // gives (239, 239, 62); coverage baked into the patch gives
+        // (238, 238, 62).
+        let mut surface = skia_safe::surfaces::raster_n32_premul((200, 20)).expect("device");
+        surface.canvas().clear(skia_safe::Color::WHITE);
+        surface.canvas().scale((1.25, 1.25));
+        draw_unclipped_replaced(
+            surface.canvas(),
+            &solid_image(skia_safe::Color4f::new(0.0, 0.0, 1.0, 1.0)),
+            Rect::from_ltrb(120.0, 0.0, 125.0, 40.0),
+        );
+        draw_unclipped_replaced(
+            surface.canvas(),
+            &solid_image(skia_safe::Color4f::new(1.0, 1.0, 0.0, 1.0)),
+            Rect::from_ltrb(125.0, 0.0, 160.0, 40.0),
+        );
+        assert_eq!(device_pixel(&mut surface, 156), [239, 239, 62, 255]);
     }
 
     #[test]
