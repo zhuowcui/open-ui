@@ -1,5 +1,14 @@
 # Open UI current status
 
+## A table without columns has no border spacing 3 November 2026
+
+A table grid with no columns applies no border spacing in either axis, and
+a table with no rows adds no block spacing gaps, as Blink does. A
+caption-only table is as wide as its caption. The census goes from 22,384
+to 22,390 exact, with 2 more comparisons improved, no losses and no
+comparison worse. See the
+[table spacing record](table-without-columns-spacing-2026-11-03.md).
+
 ## Replaced image sampling through Chromium's shader spans 3 November 2026
 
 A replaced image's bilinear sample positions come from the matrix Skia
