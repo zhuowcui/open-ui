@@ -13,6 +13,8 @@ Linux AT-SPI backend.
 | --- | --- | --- |
 | `cargo update -p async-executor --precise 1.14.1` moves the one locked version and checksum. No other package changes. 1.14.1 requires Rust 1.63, within the 1.85 MSRV. | release tooling | `bindings/rust/Cargo.lock` |
 
+| `generate_v02_contract.py` rewrites the dependency policy's `lockfile_sha256` for the new lockfile. | release tooling | `docs/v02/generated/dependency-policy.json` |
+
 The gate is unchanged. The fuzz lockfile does not contain the crate.
 
 ## Verification
@@ -21,3 +23,4 @@ The gate is unchanged. The fuzz lockfile does not contain the crate.
 | --- | --- | --- |
 | Dependency security | CI `dependency-security` job | checked on this PR |
 | Renderer contract | `generate_renderer_contract.py --check` | passes |
+| v0.2 generated contract | `generate_v02_contract.py --check` | `generated=4 drift=0` |
