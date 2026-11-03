@@ -896,6 +896,21 @@ fn sum_tracks(tracks: &[TrackContribution], max_content: bool) -> LayoutUnit {
     })
 }
 
+/// The border spacing of a table grid. Blink applies none in either axis to
+/// a table without columns: a caption-only or empty table is as wide as its
+/// caption or its border and padding, and its rows add no block spacing.
+fn resolved_grid_spacing(
+    doc: &dyn LayoutDocument,
+    table_id: NodeId,
+    base: LayoutUnit,
+    column_count: usize,
+) -> (LayoutUnit, LayoutUnit) {
+    if column_count == 0 {
+        return (LayoutUnit::zero(), LayoutUnit::zero());
+    }
+    resolved_spacing(doc, table_id, base)
+}
+
 fn resolved_spacing(
     doc: &dyn LayoutDocument,
     table_id: NodeId,
@@ -949,7 +964,8 @@ pub(crate) fn compute_table_intrinsic_sizes_with_layout(
         writing_direction,
         resolved.as_ref(),
     );
-    let (inline_spacing, block_spacing) = resolved_spacing(doc, table_id, LayoutUnit::zero());
+    let (inline_spacing, block_spacing) =
+        resolved_grid_spacing(doc, table_id, LayoutUnit::zero(), column_count);
     let border = resolved.as_ref().map_or_else(
         || logical_border(style, writing_direction),
         |grid| {
@@ -1021,7 +1037,12 @@ pub(crate) fn compute_table_intrinsic_sizes_with_layout(
             row_max[row] = row_max[row].max_of(share_max);
         }
     }
-    let block_gaps = block_spacing * LayoutUnit::from_i32((model.rows.len() + 1) as i32);
+    let block_gap_count = if model.rows.is_empty() {
+        0
+    } else {
+        model.rows.len() + 1
+    };
+    let block_gaps = block_spacing * LayoutUnit::from_i32(block_gap_count as i32);
     let min_block = row_min.into_iter().fold(LayoutUnit::zero(), |a, b| a + b)
         + block_gaps
         + vertical_edges
@@ -1691,8 +1712,12 @@ pub(crate) fn table_layout_contents(
         writing_direction,
         resolved.as_ref(),
     );
-    let (inline_spacing, block_spacing) =
-        resolved_spacing(doc, table_id, space.percentage_resolution_inline_size);
+    let (inline_spacing, block_spacing) = resolved_grid_spacing(
+        doc,
+        table_id,
+        space.percentage_resolution_inline_size,
+        column_count,
+    );
     let grid_width = resolve_table_grid_width(
         doc,
         table_id,
@@ -1929,16 +1954,11 @@ pub(crate) fn table_layout_contents(
     let border_box_width = if space.is_fixed_inline_size || space.stretch_inline_size {
         grid_border_box_width
     } else {
-        // A caption-only table uses CAPMIN plus the table grid's structural
-        // edge spacing. Populated auto tables keep their grid preferred width,
-        // with CAPMIN acting only as a floor; the caption's max-content width
-        // does not stretch the table to the available column measure.
-        let caption_floor = if column_count == 0 {
-            caption_min_outer_width + grid_border_box_width
-        } else {
-            caption_min_outer_width
-        };
-        grid_border_box_width.max_of(caption_floor)
+        // An auto table keeps its grid preferred width, with CAPMIN acting
+        // only as a floor; the caption's max-content width does not stretch
+        // the table to the available column measure. A caption-only table's
+        // grid is its border and padding alone.
+        grid_border_box_width.max_of(caption_min_outer_width)
     };
 
     let mut top_captions = Vec::new();
@@ -3140,6 +3160,56 @@ mod tests {
         assert_eq!(model.column_group_sources.len(), 1);
         assert_eq!(model.column_group_sources[0].node_id, group);
         assert_eq!(model.column_group_sources[0].span, 3);
+    }
+
+    #[test]
+    fn table_without_columns_has_no_border_spacing() {
+        // Chromium 147 lays out these tables with `border-spacing: 10px 7px`
+        // at 0x0, 0x10 (an empty 10px row) and the caption's 30px width.
+        let mut doc = Document::new();
+        let table = |doc: &mut Document| {
+            let table = doc.create_node(ElementTag::Table);
+            doc.append_child(doc.root(), table);
+            doc.update_resolved_style(table, |style| {
+                style.display = Display::Table;
+                style.border_collapse = BorderCollapse::Separate;
+                style.border_spacing = (Length::px(10.0), Length::px(7.0));
+            });
+            table
+        };
+        let empty = table(&mut doc);
+        let with_row = table(&mut doc);
+        let group = doc.create_node(ElementTag::TableBody);
+        let row = doc.create_node(ElementTag::TableRow);
+        doc.append_child(with_row, group);
+        doc.append_child(group, row);
+        doc.update_resolved_style(group, |style| style.display = Display::TableRowGroup);
+        doc.update_resolved_style(row, |style| {
+            style.display = Display::TableRow;
+            style.height = Length::px(10.0);
+        });
+        let with_caption = table(&mut doc);
+        let caption = doc.create_node(ElementTag::Div);
+        doc.append_child(with_caption, caption);
+        doc.update_resolved_style(caption, |style| {
+            style.display = Display::TableCaption;
+            style.width = Length::px(30.0);
+            style.height = Length::px(16.0);
+        });
+        let space = ConstraintSpace::for_root(LayoutUnit::from_i32(200), LayoutUnit::from_i32(200));
+        for (table, width, height) in [(empty, 0, 0), (with_row, 0, 10), (with_caption, 30, 16)] {
+            let fragment = table_layout_with_layout(&doc, table, &space);
+            assert_eq!(
+                fragment.size,
+                PhysicalSize::new(LayoutUnit::from_i32(width), LayoutUnit::from_i32(height)),
+            );
+            let sizes = compute_table_intrinsic_sizes_with_layout(&doc, table);
+            assert_eq!(sizes.min_content_inline_size, LayoutUnit::from_i32(width));
+        }
+        assert_eq!(
+            compute_table_intrinsic_sizes_with_layout(&doc, empty).min_content_block_size,
+            LayoutUnit::zero(),
+        );
     }
 
     #[test]
