@@ -1,5 +1,15 @@
 # Open UI current status
 
+## Unclipped replaced images as Skia's rect fill 2 November 2026
+
+A replaced image that no clip bounds keeps its full samples and is drawn
+through one antialiased rect fill at its fractional destination, as Blink's
+`drawImageRect` is. Skia's legacy shader blitter then blends each partly
+covered edge pixel toward the image, which baked coverage composited
+source-over could not reproduce. The census goes from 22,335 to 22,382
+exact, with 6 more comparisons improved, no losses and no comparison worse.
+See the [replaced image record](replaced-image-rect-fill-2026-11-02.md).
+
 ## Unclipped unmitered dotted, dashed and double sides 2 November 2026
 
 A dotted, dashed or double border side with no miter at either corner is
