@@ -1,5 +1,15 @@
 # Open UI current status
 
+## Replaced image sampling through Chromium's shader spans 3 November 2026
+
+A replaced image's bilinear sample positions come from the matrix Skia
+composes from Blink's CSS destination, source rect, device scale and tile
+origin, inverted in `f32`. They restart where Chromium's legacy shader
+restarts: at each antialiased rect edge column, at each compositor tile
+origin and every 127 pixels. The census goes from 22,382 to 22,384 exact,
+with 7 more comparisons improved, no losses and no comparison worse. See
+the [replaced image sampling record](replaced-image-span-matrix-2026-11-03.md).
+
 ## Unclipped replaced images as Skia's rect fill 2 November 2026
 
 A replaced image that no clip bounds keeps its full samples and is drawn

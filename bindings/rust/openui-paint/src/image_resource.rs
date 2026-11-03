@@ -737,6 +737,11 @@ pub enum ImagePatchPhase {
     Replaced,
 }
 
+/// Pixels per `SkBitmapProcShader` legacy `shadeSpan` chunk for a bilinear
+/// scale-translate matrix: `maxCountForBufferSize` turns the 128-word buffer
+/// into `(512 - 4) / 2` coordinates, two per bilinear pixel.
+const LEGACY_BILERP_SPAN_CHUNK: i32 = 127;
+
 fn compositor_raster_tile_origin(device_pixel: i32) -> i32 {
     // Chromium's 256px software-raster tiles overlap their predecessor by two
     // texels. Coverage switches to the next tile after the first 255 pixels,
@@ -934,79 +939,71 @@ fn replaced_sample_fixed(
         source_extent,
         destination_start,
         destination_extent,
+        1.0,
         destination_start.round() as i32 + target_index,
         accumulate_scanline,
-        false,
     )
 }
 
+/// Return the first device pixel of the legacy shader span that samples
+/// `pixel` along one axis of an antialiased replaced-image rect.
+///
+/// `SkScan::AntiFillRect` blits a partly covered edge column on its own and
+/// the interior from `ceil(left)` to `floor(right)`. The raster tile clips
+/// the interior at its origin, and `SkBitmapProcShader` maps the first pixel
+/// of every `LEGACY_BILERP_SPAN_CHUNK` pixels again.
+fn legacy_shader_span_start(device_start: f32, device_end: f32, pixel: i32) -> i32 {
+    let (left, right) = (skia_fdot8(device_start), skia_fdot8(device_end));
+    let interior_start = (left + 0xff) >> 8;
+    let interior_end = right >> 8;
+    if left >> 8 == (right - 1) >> 8 || pixel < interior_start || pixel >= interior_end {
+        return pixel;
+    }
+    let span_start = interior_start.max(compositor_raster_tile_origin(pixel));
+    span_start + (pixel - span_start) / LEGACY_BILERP_SPAN_CHUNK * LEGACY_BILERP_SPAN_CHUNK
+}
+
+/// Return the 32.32 source coordinate, less half a texel, that Chromium's
+/// legacy bilinear shader samples for one device pixel of a replaced image.
+///
+/// Blink draws `drawImageRect(src, dst)` with `dst` in CSS pixels, under the
+/// raster tile's device scale and translation. Skia concatenates
+/// `RectToRect(src, dst)` with that matrix and inverts it in `f32`, so the
+/// step is the reciprocal of `device_scale * (dst / src)`, not of the
+/// physical extent over the source. A cached mip decode is drawn the same
+/// way with its scaled source rect. The step then accumulates from the first
+/// pixel of each shader span.
 fn replaced_sample_fixed_at(
     source_start: f32,
     source_extent: f32,
     destination_start: f32,
     destination_extent: f32,
+    device_scale: f32,
     destination_pixel: i32,
     accumulate_scanline: bool,
-    mip_decoded: bool,
 ) -> i64 {
     const FIXED_ONE: f32 = 4_294_967_296.0;
     const FILTER_BIAS: i64 = 1_i64 << 31;
 
-    let exact_sample = f64::from(source_start)
-        + (f64::from(destination_pixel) + 0.5 - f64::from(destination_start))
-            * f64::from(source_extent)
-            / f64::from(destination_extent)
-        - 0.5;
-    let inverse_scale = f64::from(source_extent) / f64::from(destination_extent);
-    if accumulate_scanline
-        && !mip_decoded
-        && (f64::from(destination_start).rem_euclid(1.0) - 0.25).abs() <= 1.0e-9
-        && inverse_scale >= 0.5
-        && (exact_sample.fract().abs() - 0.5).abs() <= 1.0e-9
-    {
-        // The compositor records this quarter-device-pixel origin before its
-        // direct-source scanline step is reduced to 32.32. Preserve an exact
-        // half-texel tie here: accumulating the truncated step otherwise
-        // closes later ties to 7/16 instead of the packed bilinear path's
-        // 8/16. Cached mip decodes retain the accumulated phase used while
-        // constructing the decode and therefore deliberately stay below.
-        return ((exact_sample.floor() as i64) << 32) + FILTER_BIAS;
-    }
-
     let tile_origin = compositor_raster_tile_origin(destination_pixel);
-    let coverage_start = tile_origin;
+    let local_scale = destination_extent / source_extent;
+    let local_translate = destination_start - source_start * local_scale;
+    let device_scale_axis = device_scale * local_scale;
+    let device_translate = device_scale * local_translate + -(tile_origin as f32);
+    let inverse_scale = 1.0_f32 / device_scale_axis;
+    let inverse_translate = -device_translate * inverse_scale;
     let segment_start = if accumulate_scanline {
-        (destination_start.round() as i32).max(coverage_start)
+        let device_start = destination_start * device_scale;
+        let device_end = (destination_start + destination_extent) * device_scale;
+        legacy_shader_span_start(device_start, device_end, destination_pixel)
     } else {
         destination_pixel
     };
-    let inverse_scale = 1.0_f32 / (destination_extent / source_extent);
-    let local_destination = destination_start - tile_origin as f32;
-    let inverse_translate = source_start - local_destination * inverse_scale;
     let mapped_start = (segment_start - tile_origin) as f32 + 0.5;
     let mapped_start = mapped_start * inverse_scale + inverse_translate;
     let fixed_start = (mapped_start * FIXED_ONE) as i64 - FILTER_BIAS;
     let fixed_step = (inverse_scale * FIXED_ONE) as i64;
-    let fixed = fixed_start + fixed_step * (destination_pixel - segment_start) as i64;
-    if accumulate_scanline
-        && mip_decoded
-        && (f64::from(destination_start).rem_euclid(1.0) - 0.25).abs() <= 1.0e-9
-        && inverse_scale >= 0.5
-        && (exact_sample.fract().abs() - 0.5).abs() <= 1.0e-9
-    {
-        const FIXED_FRACTION_MASK: i64 = (1_i64 << 32) - 1;
-        const MIP_MATRIX_CLOSURE_QUANTUM: i64 = 1_i64 << 12;
-        let fraction = fixed & FIXED_FRACTION_MASK;
-        if (FILTER_BIAS..FILTER_BIAS + MIP_MATRIX_CLOSURE_QUANTUM).contains(&fraction) {
-            // The composed mip-to-device matrix discards its lowest fixed
-            // translation quantum before the packed four-bit phase is read.
-            // Preserve that predecessor closure only while accumulated drift
-            // remains inside the discarded quantum; later scanline samples
-            // have genuinely crossed the half-texel boundary.
-            return fixed - (fraction - FILTER_BIAS) - 1;
-        }
-    }
-    fixed
+    fixed_start + fixed_step * i64::from(destination_pixel - segment_start)
 }
 
 /// Return the low/high texel and four-bit weight used by Skia's normalized
@@ -1510,7 +1507,7 @@ fn physical_quantized_image_patch_with_color_order(
     coverage_repeats_y: bool,
     repeat_origin: Option<(f32, f32)>,
     replaced: bool,
-    replaced_mip_decoded: bool,
+    _replaced_mip_decoded: bool,
     full_precision_sampling: bool,
     close_exact_phase_to_predecessor: bool,
     optimize_single_tile: bool,
@@ -1737,11 +1734,11 @@ fn physical_quantized_image_patch_with_color_order(
             replaced_sample_fixed_at(
                 sampling_source.top,
                 sampling_source.height(),
-                physical_destination.top,
-                physical_destination.height(),
+                sampling_destination.top,
+                sampling_destination.height(),
+                device_scale,
                 physical_top + target_y,
                 false,
-                replaced_mip_decoded,
             )
         });
         let repeated_fixed_y = wrap_y.then(|| {
@@ -1867,11 +1864,11 @@ fn physical_quantized_image_patch_with_color_order(
                 replaced_sample_fixed_at(
                     sampling_source.left,
                     sampling_source.width(),
-                    physical_destination.left,
-                    physical_destination.width(),
+                    sampling_destination.left,
+                    sampling_destination.width(),
+                    device_scale,
                     physical_left + target_x,
                     true,
-                    replaced_mip_decoded,
                 )
             });
             let repeated_fixed_x = wrap_x.then(|| {
@@ -3020,27 +3017,56 @@ mod tests {
     }
 
     #[test]
-    fn replaced_sample_preserves_direct_and_mip_half_phase_closure() {
-        let weight = |source_extent, destination_start, destination_pixel, mip_decoded| {
+    fn replaced_sample_follows_chromium_composed_matrix_and_shader_spans() {
+        let weight = |device_scale: f32, source_extent, css_start, pixel| {
             let fixed = replaced_sample_fixed_at(
                 0.0,
                 source_extent,
-                destination_start,
-                93.75,
-                destination_pixel,
+                css_start,
+                75.0,
+                device_scale,
+                pixel,
                 true,
-                mip_decoded,
             );
             ((fixed >> 28) & 0xf) as u32
         };
 
-        // A direct source closes an exact half phase upward even after the
-        // destination has crossed multiple compositor raster tiles.
-        assert_eq!(weight(300.0, 366.25, 377, false), 8);
-        // The first half phase in the mip matrix's discarded fixed quantum
-        // closes downward; accumulated drift later crosses the tie normally.
-        assert_eq!(weight(125.0, 1276.25, 1287, true), 7);
-        assert_eq!(weight(125.0, 1276.25, 1317, true), 8);
+        // A quarter-pixel origin starts its interior span at ceil(left), so an
+        // exact half phase after several raster tiles still closes upward.
+        assert_eq!(weight(1.25, 300.0, 293.0, 377), 8);
+        // A 125px mip decode at 1.25x: 1.25 * (75 / 125) rounds above 0.75 in
+        // f32, so the step falls short of 4/3 and an early tie closes
+        // downward. A later tie has crossed it.
+        assert_eq!(weight(1.25, 125.0, 1021.0, 1287), 7);
+        assert_eq!(weight(1.25, 125.0, 1021.0, 1317), 8);
+        // box-sizing-replaced-002 at 1.5x, a 250px source decoded at 125px
+        // from x = 1876.5: Chrome closes the ties at 1885 and 1921 upward and
+        // at 1930 and 1984 downward.
+        assert_eq!(weight(1.5, 125.0, 1251.0, 1885), 8);
+        assert_eq!(weight(1.5, 125.0, 1251.0, 1921), 8);
+        assert_eq!(weight(1.5, 125.0, 1251.0, 1930), 7);
+        assert_eq!(weight(1.5, 125.0, 1251.0, 1984), 7);
+        // At 2x a 25px source drawn 6x from x = 504 enters the raster tile at
+        // 508. The shader maps pixel 635, 127 pixels later, again, which
+        // moves the exact 12/16 ties from 637 on to 11/16.
+        assert_eq!(weight(2.0, 25.0, 252.0, 631), 12);
+        assert_eq!(weight(2.0, 25.0, 252.0, 634), 4);
+        assert_eq!(weight(2.0, 25.0, 252.0, 637), 11);
+        assert_eq!(weight(2.0, 25.0, 252.0, 640), 3);
+    }
+
+    #[test]
+    fn legacy_shader_spans_split_at_edges_tiles_and_buffer_chunks() {
+        // Partly covered edge columns are their own spans.
+        assert_eq!(legacy_shader_span_start(1876.5, 1989.0, 1876), 1876);
+        assert_eq!(legacy_shader_span_start(1876.5, 1989.0, 1877), 1877);
+        assert_eq!(legacy_shader_span_start(1876.5, 1989.0, 1988), 1877);
+        assert_eq!(legacy_shader_span_start(10.25, 20.5, 20), 20);
+        // The interior restarts at a raster tile origin and every 127 pixels.
+        assert_eq!(legacy_shader_span_start(504.0, 654.0, 508), 504);
+        assert_eq!(legacy_shader_span_start(504.0, 654.0, 509), 508);
+        assert_eq!(legacy_shader_span_start(504.0, 654.0, 634), 508);
+        assert_eq!(legacy_shader_span_start(504.0, 654.0, 635), 635);
     }
 
     #[test]
