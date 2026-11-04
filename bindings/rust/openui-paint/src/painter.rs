@@ -27700,6 +27700,65 @@ mod tests {
     }
 
     #[test]
+    fn platform_fieldset_groove_corners_follow_blinks_3d_sides_at_2x() {
+        // aspect-ratio/fieldset-element-001 at 2x: the default 2px groove of
+        // a fieldset over a yellow background. Both dark outer halves meet
+        // at the top-left corner, so its diagonal is covered without a seam.
+        // At the top-right the light right side is clipped by an
+        // antialiased miter over the dark top, so the corner stays gray.
+        let mut surface = surfaces::raster_n32_premul((80, 60)).expect("surface");
+        surface.canvas().clear(skia_safe::Color::WHITE);
+        surface.canvas().scale((2.0, 2.0));
+        let mut yellow = Paint::default();
+        yellow.set_color(skia_safe::Color::YELLOW);
+        surface
+            .canvas()
+            .draw_rect(Rect::from_xywh(5.0, 5.0, 30.0, 20.0), &yellow);
+        let mut style = ComputedStyle::default();
+        style.update_derived(|computed| {
+            computed.device_scale_factor = 2.0;
+            computed.border_top_width = 2;
+            computed.border_right_width = 2;
+            computed.border_bottom_width = 2;
+            computed.border_left_width = 2;
+            computed.border_top_style = BorderStyle::Groove;
+            computed.border_right_style = BorderStyle::Groove;
+            computed.border_bottom_style = BorderStyle::Groove;
+            computed.border_left_style = BorderStyle::Groove;
+        });
+        let mut fragment = Fragment::new_box(NodeId::NONE, PhysicalSize::zero());
+        fragment.border = openui_geometry::BoxStrut::new(
+            LayoutUnit::from_i32(2),
+            LayoutUnit::from_i32(2),
+            LayoutUnit::from_i32(2),
+            LayoutUnit::from_i32(2),
+        );
+        fragment.is_first_for_node = true;
+        fragment.is_last_for_node = true;
+        paint_borders(
+            surface.canvas(),
+            &fragment,
+            &style,
+            5.0,
+            5.0,
+            30.0,
+            20.0,
+            false,
+            true,
+            true,
+        );
+
+        let pixels = surface_bytes(&mut surface);
+        let pixel_at = |x: usize, y: usize| &pixels[(y * 80 + x) * 4..][..4];
+        let dark = PLATFORM_GROOVE_SHADES.0 as u8;
+        assert_eq!(pixel_at(10, 10), [dark, dark, dark, 255]);
+        assert_eq!(pixel_at(11, 11), [dark, dark, dark, 255]);
+        let top_right = pixel_at(69, 10);
+        assert_eq!(top_right[0], top_right[2], "{top_right:?}");
+        assert!(top_right[0] > dark, "{top_right:?}");
+    }
+
+    #[test]
     fn dotted_side_is_unmitered_where_a_later_solid_side_overdraws_it() {
         // ttwf-css3background-border-style at 1x: a 5px black border, solid
         // top, dotted right, dashed bottom and double left. Blink paints the
