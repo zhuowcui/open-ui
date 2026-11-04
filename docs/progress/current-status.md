@@ -1,5 +1,14 @@
 # Open UI current status
 
+## A platform fieldset groove is drawn through Blink's 3D sides 4 November 2026
+
+The default groove border of a straight, opaque fieldset is painted by
+Blink's 3D side path with the theme's measured grays. Matching corners
+have no seam, and mixed corners take an antialiased miter. The 1x corner
+replay is removed. The census goes from 22,440 to 22,473 exact, with 21
+more comparisons improved, no losses and 3 comparisons worse. See the
+[fieldset 3D border record](fieldset-blink-3d-2026-11-04.md).
+
 ## A repeated scanline's half-texel tie follows Skia's f32 inverse 3 November 2026
 
 A repeated raster background that samples exactly half a texel settles the

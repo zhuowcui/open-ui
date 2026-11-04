@@ -1,0 +1,930 @@
+{
+ "base_commit": "cc62ca61465acfda28edd1820ff204a12c688294",
+ "base_exact": 22440,
+ "chromium_identical": 23728,
+ "comparisons": 23728,
+ "errors": [],
+ "gains": [
+  {
+   "base": "different",
+   "base_mismatched": 1558,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_display/display-contents-dynamic-generated-content-fieldset-001-ref",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 16,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/fieldset-baseline-alignment",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 16,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/fieldset-baseline-alignment-ref",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 16,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_overflow/line-clamp_webkit-line-clamp-027",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1563,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_overflow/scroll-markers_scroll-marker-group-011",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1563,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_overflow/scroll-markers_scroll-marker-group-011-ref",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 17,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_display/display-contents-dynamic-generated-content-fieldset-001-ref",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 20,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/fieldset-baseline-alignment",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 20,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/fieldset-baseline-alignment-ref",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 20,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/multicol-span-all-fieldset-001",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 20,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/multicol-span-all-fieldset-001-ref",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 20,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/multicol-span-all-fieldset-003",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 20,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/multicol-span-all-fieldset-003-ref",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 21,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_overflow/line-clamp_webkit-line-clamp-027",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 18,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/aspect-ratio_fieldset-element-001",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 18,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/aspect-ratio_fieldset-element-001-ref",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 18,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/aspect-ratio_fieldset-element-002",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 18,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/aspect-ratio_fieldset-element-002-ref",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 16,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_display/display-contents-dynamic-generated-content-fieldset-001-ref",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 16,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/fieldset-baseline-alignment",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 16,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/fieldset-baseline-alignment-ref",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 8,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/multicol-span-all-fieldset-001",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 8,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/multicol-span-all-fieldset-001-ref",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 8,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/multicol-span-all-fieldset-002-ref",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 8,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/multicol-span-all-fieldset-003",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 8,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/multicol-span-all-fieldset-003-ref",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 16,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_overflow/line-clamp_webkit-line-clamp-027",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 16,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_overflow/scroll-markers_scroll-marker-group-011",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 16,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_overflow/scroll-markers_scroll-marker-group-011-ref",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 16,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/aspect-ratio_fieldset-element-001",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 16,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/aspect-ratio_fieldset-element-001-ref",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 16,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/aspect-ratio_fieldset-element-002",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 16,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/aspect-ratio_fieldset-element-002-ref",
+   "profile": "mobile-375x667@2"
+  }
+ ],
+ "head_commit": "fba061f9ea348a75bf7dc780515f1c4fec676389",
+ "head_exact": 22473,
+ "improved": [
+  {
+   "base": "different",
+   "base_mismatched": 20,
+   "head": "different",
+   "head_mismatched": 2,
+   "id": "wpt/css_multicol/multicol-span-all-fieldset-001",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 20,
+   "head": "different",
+   "head_mismatched": 2,
+   "id": "wpt/css_multicol/multicol-span-all-fieldset-001-ref",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 482,
+   "head": "different",
+   "head_mismatched": 464,
+   "id": "wpt/css_multicol/multicol-span-all-fieldset-002",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 62,
+   "head": "different",
+   "head_mismatched": 44,
+   "id": "wpt/css_multicol/multicol-span-all-fieldset-002-ref",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 236,
+   "head": "different",
+   "head_mismatched": 218,
+   "id": "wpt/css_multicol/multicol-span-all-fieldset-003",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 236,
+   "head": "different",
+   "head_mismatched": 218,
+   "id": "wpt/css_multicol/multicol-span-all-fieldset-003-ref",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2008,
+   "head": "different",
+   "head_mismatched": 1984,
+   "id": "wpt/css_position/position-absolute-semi-replaced-stretch-other",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2008,
+   "head": "different",
+   "head_mismatched": 1984,
+   "id": "wpt/css_position/position-absolute-semi-replaced-stretch-other-ref",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 268,
+   "head": "different",
+   "head_mismatched": 3,
+   "id": "wpt/css_sizing/aspect-ratio_fieldset-element-001-ref",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 551,
+   "head": "different",
+   "head_mismatched": 72,
+   "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-014",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 645,
+   "head": "different",
+   "head_mismatched": 625,
+   "id": "wpt/css_multicol/multicol-span-all-fieldset-002",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 45,
+   "head": "different",
+   "head_mismatched": 25,
+   "id": "wpt/css_multicol/multicol-span-all-fieldset-002-ref",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1816,
+   "head": "different",
+   "head_mismatched": 1796,
+   "id": "wpt/css_overflow/scroll-markers_scroll-marker-group-011",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 146,
+   "head": "different",
+   "head_mismatched": 126,
+   "id": "wpt/css_overflow/scroll-markers_scroll-marker-group-011-ref",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 4182,
+   "head": "different",
+   "head_mismatched": 3894,
+   "id": "wpt/css_position/position-absolute-semi-replaced-stretch-other",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 4182,
+   "head": "different",
+   "head_mismatched": 3894,
+   "id": "wpt/css_position/position-absolute-semi-replaced-stretch-other-ref",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 387,
+   "head": "different",
+   "head_mismatched": 92,
+   "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-014",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1032,
+   "head": "different",
+   "head_mismatched": 1024,
+   "id": "wpt/css_multicol/multicol-span-all-fieldset-002",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1735,
+   "head": "different",
+   "head_mismatched": 1719,
+   "id": "wpt/css_position/position-absolute-semi-replaced-stretch-other",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1735,
+   "head": "different",
+   "head_mismatched": 1719,
+   "id": "wpt/css_position/position-absolute-semi-replaced-stretch-other-ref",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 136,
+   "head": "different",
+   "head_mismatched": 120,
+   "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-014",
+   "profile": "mobile-375x667@2"
+  }
+ ],
+ "losses": [],
+ "openui_changed": [
+  {
+   "base": "different",
+   "base_mismatched": 1558,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_display/display-contents-dynamic-generated-content-fieldset-001-ref",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 16,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/fieldset-baseline-alignment",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 16,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/fieldset-baseline-alignment-ref",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 20,
+   "head": "different",
+   "head_mismatched": 2,
+   "id": "wpt/css_multicol/multicol-span-all-fieldset-001",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 20,
+   "head": "different",
+   "head_mismatched": 2,
+   "id": "wpt/css_multicol/multicol-span-all-fieldset-001-ref",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 482,
+   "head": "different",
+   "head_mismatched": 464,
+   "id": "wpt/css_multicol/multicol-span-all-fieldset-002",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 62,
+   "head": "different",
+   "head_mismatched": 44,
+   "id": "wpt/css_multicol/multicol-span-all-fieldset-002-ref",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 236,
+   "head": "different",
+   "head_mismatched": 218,
+   "id": "wpt/css_multicol/multicol-span-all-fieldset-003",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 236,
+   "head": "different",
+   "head_mismatched": 218,
+   "id": "wpt/css_multicol/multicol-span-all-fieldset-003-ref",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 16,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_overflow/line-clamp_webkit-line-clamp-027",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1563,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_overflow/scroll-markers_scroll-marker-group-011",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1563,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_overflow/scroll-markers_scroll-marker-group-011-ref",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2008,
+   "head": "different",
+   "head_mismatched": 1984,
+   "id": "wpt/css_position/position-absolute-semi-replaced-stretch-other",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2008,
+   "head": "different",
+   "head_mismatched": 1984,
+   "id": "wpt/css_position/position-absolute-semi-replaced-stretch-other-ref",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 269,
+   "head": "different",
+   "head_mismatched": 398,
+   "id": "wpt/css_sizing/aspect-ratio_fieldset-element-001",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 268,
+   "head": "different",
+   "head_mismatched": 3,
+   "id": "wpt/css_sizing/aspect-ratio_fieldset-element-001-ref",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 269,
+   "head": "different",
+   "head_mismatched": 398,
+   "id": "wpt/css_sizing/aspect-ratio_fieldset-element-002",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 269,
+   "head": "different",
+   "head_mismatched": 398,
+   "id": "wpt/css_sizing/aspect-ratio_fieldset-element-002-ref",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 551,
+   "head": "different",
+   "head_mismatched": 72,
+   "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-014",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 17,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_display/display-contents-dynamic-generated-content-fieldset-001-ref",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 20,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/fieldset-baseline-alignment",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 20,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/fieldset-baseline-alignment-ref",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 20,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/multicol-span-all-fieldset-001",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 20,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/multicol-span-all-fieldset-001-ref",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 645,
+   "head": "different",
+   "head_mismatched": 625,
+   "id": "wpt/css_multicol/multicol-span-all-fieldset-002",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 45,
+   "head": "different",
+   "head_mismatched": 25,
+   "id": "wpt/css_multicol/multicol-span-all-fieldset-002-ref",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 20,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/multicol-span-all-fieldset-003",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 20,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/multicol-span-all-fieldset-003-ref",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 21,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_overflow/line-clamp_webkit-line-clamp-027",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1816,
+   "head": "different",
+   "head_mismatched": 1796,
+   "id": "wpt/css_overflow/scroll-markers_scroll-marker-group-011",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 146,
+   "head": "different",
+   "head_mismatched": 126,
+   "id": "wpt/css_overflow/scroll-markers_scroll-marker-group-011-ref",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 4182,
+   "head": "different",
+   "head_mismatched": 3894,
+   "id": "wpt/css_position/position-absolute-semi-replaced-stretch-other",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 4182,
+   "head": "different",
+   "head_mismatched": 3894,
+   "id": "wpt/css_position/position-absolute-semi-replaced-stretch-other-ref",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 18,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/aspect-ratio_fieldset-element-001",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 18,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/aspect-ratio_fieldset-element-001-ref",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 18,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/aspect-ratio_fieldset-element-002",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 18,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/aspect-ratio_fieldset-element-002-ref",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 387,
+   "head": "different",
+   "head_mismatched": 92,
+   "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-014",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 16,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_display/display-contents-dynamic-generated-content-fieldset-001-ref",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 16,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/fieldset-baseline-alignment",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 16,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_flexbox/fieldset-baseline-alignment-ref",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 8,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/multicol-span-all-fieldset-001",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 8,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/multicol-span-all-fieldset-001-ref",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1032,
+   "head": "different",
+   "head_mismatched": 1024,
+   "id": "wpt/css_multicol/multicol-span-all-fieldset-002",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 8,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/multicol-span-all-fieldset-002-ref",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 8,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/multicol-span-all-fieldset-003",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 8,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_multicol/multicol-span-all-fieldset-003-ref",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 16,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_overflow/line-clamp_webkit-line-clamp-027",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 16,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_overflow/scroll-markers_scroll-marker-group-011",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 16,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_overflow/scroll-markers_scroll-marker-group-011-ref",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1735,
+   "head": "different",
+   "head_mismatched": 1719,
+   "id": "wpt/css_position/position-absolute-semi-replaced-stretch-other",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1735,
+   "head": "different",
+   "head_mismatched": 1719,
+   "id": "wpt/css_position/position-absolute-semi-replaced-stretch-other-ref",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 16,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/aspect-ratio_fieldset-element-001",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 16,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/aspect-ratio_fieldset-element-001-ref",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 16,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/aspect-ratio_fieldset-element-002",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 16,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/aspect-ratio_fieldset-element-002-ref",
+   "profile": "mobile-375x667@2"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 136,
+   "head": "different",
+   "head_mismatched": 120,
+   "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-014",
+   "profile": "mobile-375x667@2"
+  }
+ ],
+ "worsened": [
+  {
+   "base": "different",
+   "base_mismatched": 269,
+   "head": "different",
+   "head_mismatched": 398,
+   "id": "wpt/css_sizing/aspect-ratio_fieldset-element-001",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 269,
+   "head": "different",
+   "head_mismatched": 398,
+   "id": "wpt/css_sizing/aspect-ratio_fieldset-element-002",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 269,
+   "head": "different",
+   "head_mismatched": 398,
+   "id": "wpt/css_sizing/aspect-ratio_fieldset-element-002-ref",
+   "profile": "desktop-1280x720@1.25"
+  }
+ ]
+}
