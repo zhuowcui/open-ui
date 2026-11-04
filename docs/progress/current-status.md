@@ -1,5 +1,14 @@
 # Open UI current status
 
+## A single border-box gradient tile keeps its fractional edges 3 November 2026
+
+A background layer with one generated tile and `background-clip:
+border-box` is drawn antialiased into its CSS-snapped tile without a hard
+clip, as Blink draws it. Its fractional device edges keep their partial
+coverage. The census stays at 22,437 exact, with 13 comparisons improved,
+no losses and none worse. See the
+[gradient tile edge record](gradient-tile-edge-2026-11-03.md).
+
 ## A fitted aliased Ahem run keeps its subpixel phases 3 November 2026
 
 The strong-hinted outline used for an aliased Ahem run keeps the resolved

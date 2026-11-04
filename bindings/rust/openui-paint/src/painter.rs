@@ -17526,6 +17526,35 @@ fn paint_background_layers(
             && xs.len() == 1
             && ys.len() == 1
             && clip_override.is_none();
+        // Blink draws a single generated tile into its CSS-snapped destination
+        // intersected with a border-box painting area, with antialiasing and
+        // no clip. Under a fractional device scale the destination's edges
+        // keep partial coverage, which a clip snapped to pixel centres drops.
+        let fractional_physical_tile_edge = xs.len() == 1
+            && ys.len() == 1
+            && [
+                xs[0],
+                ys[0],
+                xs[0] + tile_width,
+                ys[0] + tile_height,
+                clip.left,
+                clip.top,
+                clip.right,
+                clip.bottom,
+            ]
+            .into_iter()
+            .any(|edge| (f64::from(edge) * style.device_scale_factor).rem_euclid(1.0) > 1.0e-6);
+        let border_box_generated_tile_owns_edges = generated_image
+            && !direct_generated_image_owns_rect_clip
+            && resample_from.is_none()
+            && fractional_physical_tile_edge
+            && layer.clip == BackgroundClip::BorderBox
+            && clip_override.is_none()
+            && !local_scrollport_clip
+            && !canvas_background
+            && !antialias_transformed_clip
+            && !square_opaque_border_bleed_clip
+            && !style.has_border_radius();
         let repeated_generated_rect_clip = generated_image
             && resample_from.is_some()
             && matches!(
@@ -17556,6 +17585,7 @@ fn paint_background_layers(
         } else if !rectangular_transformed_clip
             && !physical_raster_patch_owns_rect_clip
             && !direct_generated_image_owns_rect_clip
+            && !border_box_generated_tile_owns_edges
             && !physical_generated_image_owns_rect_clip
         {
             let hard_clip =
@@ -17954,10 +17984,12 @@ fn paint_background_layers(
                     Some(Point::new(image_left, image_top)),
                     (layer.repeat_x == BackgroundRepeat::Space && xs.len() > 1)
                         || (layer.repeat_y == BackgroundRepeat::Space && ys.len() > 1),
-                    generated_image && fractional_physical_tile,
+                    (generated_image && fractional_physical_tile)
+                        || border_box_generated_tile_owns_edges,
                     opacity_multiplier,
                     resample_from,
-                    rectangular_transformed_clip.then_some(clipped_tile),
+                    (rectangular_transformed_clip || border_box_generated_tile_owns_edges)
+                        .then_some(clipped_tile),
                     Some(clip),
                     !square_opaque_border_bleed_clip,
                 );
@@ -28883,6 +28915,62 @@ mod tests {
             assert_eq!(at(46, y), [255, 255, 255, 255]);
             assert_ne!(edge, [255, 255, 255, 255], "row {y}");
             assert_ne!(edge, inside, "row {y}");
+        }
+    }
+
+    #[test]
+    fn border_box_gradient_keeps_fractional_device_edge_coverage() {
+        // At 1.25x a 32px box at CSS x=38 spans device x 47.5 to 87.5. Blink
+        // draws its single gradient tile antialiased into that destination,
+        // so device columns 47 and 87 keep half coverage. A clip snapped to
+        // pixel centres would leave column 47 white and fill column 87.
+        let doc = Document::new();
+        let gradient = CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 90.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(255, 0, 0, 255)),
+                    position: GradientStopPosition::Percent(0.0),
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Percent(100.0),
+                },
+            ],
+        });
+        let mut style = ComputedStyle::default();
+        style.update_derived(|style| {
+            style.device_scale_factor = 1.25;
+            style.background_layers.push(BackgroundLayer::new(gradient));
+        });
+        let mut surface = surfaces::raster_n32_premul((96, 96)).expect("surface");
+        surface.canvas().clear(skia_safe::Color::WHITE);
+        surface.canvas().scale((1.25, 1.25));
+        let save_count = surface.canvas().save_count();
+        paint_background_layers(
+            surface.canvas(),
+            &doc,
+            None,
+            &style,
+            Rect::from_xywh(38.0, 38.0, 32.0, 32.0),
+            1.0,
+            None,
+            false,
+        );
+        assert_eq!(surface.canvas().save_count(), save_count);
+        let pixels = surface_bytes(&mut surface);
+        let at =
+            |x: usize, y: usize| <[u8; 4]>::try_from(&pixels[(y * 96 + x) * 4..][..4]).unwrap();
+        for y in [50, 60, 70, 80] {
+            assert_eq!(at(46, y), [255, 255, 255, 255]);
+            assert_eq!(at(88, y), [255, 255, 255, 255]);
+            for (edge, inside) in [(47, 48), (87, 86)] {
+                assert_ne!(at(edge, y), [255, 255, 255, 255], "column {edge}, row {y}");
+                assert_ne!(at(edge, y), at(inside, y), "column {edge}, row {y}");
+            }
         }
     }
 
