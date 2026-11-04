@@ -4780,7 +4780,6 @@ fn paint_direct_native_text_control_theme(
             ((abs_offset.top + fragment.size.height).to_f32() * scale).floor() / scale,
         )
     });
-    let fill_bounds = Rect::from_ltrb(left, top, right, bottom);
     let border_bounds = Rect::from_ltrb(left + 0.5, top + 0.5, right - 0.5, bottom - 0.5);
     let alpha = (255.0 * opacity_multiplier).round() as u8;
 
@@ -4794,6 +4793,15 @@ fn paint_direct_native_text_control_theme(
         Color::WHITE
     } else {
         *background_color
+    };
+    // `NativeThemeBase::PaintTextField` insets the snapped rect by half its
+    // 1px border, then fills and strokes that one rounded rect, so the
+    // default face stays inside the ring's rounded corners. An author face
+    // keeps the full fill of its coverage-blended contour.
+    let fill_bounds = if paint.is_anti_alias() {
+        Rect::from_ltrb(left, top, right, bottom)
+    } else {
+        border_bounds
     };
     set_paint_css_color_with_alpha(&mut paint, &fill, opacity_multiplier);
     if let Some(clip) = outline_clip {
@@ -27756,6 +27764,46 @@ mod tests {
         let top_right = pixel_at(69, 10);
         assert_eq!(top_right[0], top_right[2], "{top_right:?}");
         assert!(top_right[0] > dark, "{top_right:?}");
+    }
+
+    #[test]
+    fn native_text_field_face_stays_inside_its_rounded_ring_at_2x() {
+        // floats-wrap-bfc-outside-001 at 2x: a default textarea over lime.
+        // NativeThemeBase fills and strokes one rect inset by half the 1px
+        // border, so the lime backdrop shows in the five cells of each
+        // corner outside the ring, and the white face starts inside it.
+        let mut surface = surfaces::raster_n32_premul((60, 50)).expect("surface");
+        surface
+            .canvas()
+            .clear(skia_safe::Color::from_rgb(0, 255, 0));
+        surface.canvas().scale((2.0, 2.0));
+        let fragment = Fragment::new_box(
+            NodeId::NONE,
+            PhysicalSize::new(LayoutUnit::from_i32(20), LayoutUnit::from_i32(16)),
+        );
+        paint_direct_native_text_control_theme(
+            surface.canvas(),
+            &fragment,
+            PhysicalOffset::new(LayoutUnit::from_i32(5), LayoutUnit::from_i32(5)),
+            1.0,
+            2.0,
+            false,
+            &Color::TRANSPARENT,
+        );
+
+        let pixels = surface_bytes(&mut surface);
+        let pixel_at =
+            |x: usize, y: usize| <[u8; 4]>::try_from(&pixels[(y * 60 + x) * 4..][..4]).unwrap();
+        let lime = [0, 255, 0, 255];
+        let ring = [118, 118, 118, 255];
+        let face = [255, 255, 255, 255];
+        for (x, y) in [(10, 10), (11, 10), (12, 10), (10, 11), (10, 12)] {
+            assert_eq!(pixel_at(x, y), lime, "({x}, {y})");
+        }
+        assert_eq!(pixel_at(13, 10), ring);
+        assert_eq!(pixel_at(11, 11), ring);
+        assert_eq!(pixel_at(13, 13), face);
+        assert_eq!(pixel_at(20, 15), face);
     }
 
     #[test]

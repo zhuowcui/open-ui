@@ -1,5 +1,15 @@
 # Open UI current status
 
+## A native text field's face stays inside its rounded ring 4 November 2026
+
+The default white face of a native text field or menu list is filled on
+the same rounded rect as its 1px ring, inset by half the border, as
+`NativeThemeBase::PaintTextField` does. The backdrop now shows in the
+corner cells outside the ring at scaled devices. The census goes from
+22,480 to 22,487 exact, with 6 more comparisons improved, no losses and
+none worse. See the
+[text field face record](native-text-field-face-2026-11-04.md).
+
 ## A partly covered image row restarts its scanline every 100 pixels 4 November 2026
 
 An image's partly covered top or bottom row restarts its bilinear sample
