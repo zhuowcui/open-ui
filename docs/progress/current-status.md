@@ -1,5 +1,14 @@
 # Open UI current status
 
+## A repeated scanline's half-texel tie follows Skia's f32 inverse 3 November 2026
+
+A repeated raster background that samples exactly half a texel settles the
+tie as Chromium's legacy repeating shader does, from an f32 inverse of the
+tile matrix and a 32.32 step per pixel, instead of always closing it to
+7/16. The census goes from 22,437 to 22,440 exact, with no losses and no
+comparison worse. See the
+[repeat scanline tie record](repeat-scanline-tie-2026-11-03.md).
+
 ## A single border-box gradient tile keeps its fractional edges 3 November 2026
 
 A background layer with one generated tile and `background-clip:
