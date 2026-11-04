@@ -21457,7 +21457,6 @@ fn paint_fieldset_borders(
         .and_then(|legend_id| find_rendered_legend(fragment, legend_id, PhysicalOffset::zero()))
     else {
         paint_borders(canvas, fragment, style, x, y, w, h, use_layer, true, true);
-        paint_native_fieldset_corner_samples(canvas, style, x, y, w, h);
         return;
     };
     let legend_id = legend.node_id;
@@ -21553,56 +21552,7 @@ fn paint_fieldset_borders(
         true,
         true,
     );
-    paint_native_fieldset_corner_samples(canvas, style, x, y + border_top, w, border_height);
     canvas.restore();
-}
-
-/// Replay the unit-scale corner cells of Chromium's default 2px groove
-/// fieldset border. The platform painter assigns the two groove shades
-/// asymmetrically at the four junctions; generic polygon splitting leaves
-/// five cells owned by the canvas or by the wrong shade.
-fn paint_native_fieldset_corner_samples(
-    canvas: &Canvas,
-    style: &ComputedStyle,
-    x: f32,
-    y: f32,
-    width: f32,
-    height: f32,
-) {
-    if (style.device_scale_factor - 1.0).abs() > f64::EPSILON
-        || style.effective_border_top() != 2
-        || style.effective_border_right() != 2
-        || style.effective_border_bottom() != 2
-        || style.effective_border_left() != 2
-        || style.border_top_style != BorderStyle::Groove
-        || style.border_right_style != BorderStyle::Groove
-        || style.border_bottom_style != BorderStyle::Groove
-        || style.border_left_style != BorderStyle::Groove
-        || style.border_top_color.resolve(&style.color) != Color::BLACK
-        || style.border_right_color.resolve(&style.color) != Color::BLACK
-        || style.border_bottom_color.resolve(&style.color) != Color::BLACK
-        || style.border_left_color.resolve(&style.color) != Color::BLACK
-        || width < 2.0
-        || height < 2.0
-    {
-        return;
-    }
-
-    let mut paint = Paint::default();
-    paint.set_style(PaintStyle::Fill);
-    paint.set_anti_alias(false);
-    let (dark, corner, light) = PLATFORM_GROOVE_SHADES;
-    for (sample_x, sample_y, gray) in [
-        (x, y, dark),
-        (x + width - 1.0, y, corner),
-        (x + width - 2.0, y + 1.0, corner),
-        (x, y + height - 1.0, corner),
-        (x + width - 1.0, y + height - 1.0, light),
-    ] {
-        let gray = gray as u8;
-        set_paint_css_color(&mut paint, &Color::from_rgba8(gray, gray, gray, 255));
-        canvas.draw_rect(Rect::from_xywh(sample_x, sample_y, 1.0, 1.0), &paint);
-    }
 }
 
 /// A lone opaque curved solid or double edge follows BoxBorderPainter's complex
@@ -21732,6 +21682,20 @@ fn paint_borders(
     // slicing semantics, including clone.
     let (bt, br, bb, bl) = sliced_physical_border_widths(fragment, style);
     let has_border_radius = style.has_border_radius() && !fragment.ignore_border_radius;
+    // A straight, opaque platform fieldset border takes Blink's 3D side path
+    // below with the theme's shades. Only rounded or translucent ones keep
+    // the platform coverage path.
+    let platform_fieldset_tone = platform_3d_fieldset_coverage;
+    let platform_3d_fieldset_coverage = platform_3d_fieldset_coverage
+        && (has_border_radius
+            || [
+                &style.border_top_color,
+                &style.border_right_color,
+                &style.border_bottom_color,
+                &style.border_left_color,
+            ]
+            .iter()
+            .any(|color| color.resolve(&style.color).a < 1.0));
 
     // No borders to paint
     if bt == 0.0 && br == 0.0 && bb == 0.0 && bl == 0.0 {
@@ -23513,6 +23477,7 @@ fn paint_borders(
                 side_style,
                 Color4f::new(color.r, color.g, color.b, color.a),
                 platform_current_color,
+                platform_fieldset_tone,
                 Rect::from_ltrb(ox0, oy0, ox1, oy1),
                 Rect::from_ltrb(ix0, iy0, ix1, iy1),
                 [bt, br, bb, bl].map(|width| width.round() as i32),
@@ -25164,6 +25129,7 @@ fn paint_blink_3d_border_side(
     border_style: BorderStyle,
     color: Color4f,
     platform_current_color: bool,
+    corrected_platform_tone: bool,
     outer: Rect,
     inner: Rect,
     widths: [i32; 4],
@@ -25204,8 +25170,8 @@ fn paint_blink_3d_border_side(
         miter1 = BorderMiter::None;
         miter2 = BorderMiter::None;
     }
-    let dark = shade_3d_dark(&color, platform_current_color, false);
-    let light = shade_3d_light(&color, platform_current_color, false);
+    let dark = shade_3d_dark(&color, platform_current_color, corrected_platform_tone);
+    let light = shade_3d_light(&color, platform_current_color, corrected_platform_tone);
     draw_blink_line_for_box_side(
         canvas,
         (x1, y1, x2, y2),
@@ -26126,13 +26092,13 @@ fn lighten_color(color: &Color4f) -> Color4f {
     *color
 }
 
-/// Dark, corner and light grays Chromium's theme paints for the default black
+/// Dark and light grays Chromium's theme paints for the default black
 /// `currentColor` groove of a fieldset. Windows Chrome measures each one level
 /// lighter than the Linux theme at every census profile.
-const PLATFORM_GROOVE_SHADES: (f32, f32, f32) = if cfg!(windows) {
-    (156.0, 198.0, 240.0)
+const PLATFORM_GROOVE_SHADES: (f32, f32) = if cfg!(windows) {
+    (156.0, 240.0)
 } else {
-    (155.0, 197.0, 239.0)
+    (155.0, 239.0)
 };
 
 /// Chromium's Linux theme preserves the traditional raised/recessed gray
@@ -26162,7 +26128,7 @@ fn shade_3d_light(
 ) -> Color4f {
     if uses_platform_current_color {
         let shade = if corrected_platform_tone {
-            PLATFORM_GROOVE_SHADES.2
+            PLATFORM_GROOVE_SHADES.1
         } else {
             238.0
         } / 255.0;
