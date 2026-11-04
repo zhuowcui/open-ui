@@ -27770,7 +27770,7 @@ mod tests {
     fn native_text_field_face_stays_inside_its_rounded_ring_at_2x() {
         // floats-wrap-bfc-outside-001 at 2x: a default textarea over lime.
         // NativeThemeBase fills and strokes one rect inset by half the 1px
-        // border, so the lime backdrop shows in the three cells of each
+        // border, so the lime backdrop shows in the five cells of each
         // corner outside the ring, and the white face starts inside it.
         let mut surface = surfaces::raster_n32_premul((60, 50)).expect("surface");
         surface
