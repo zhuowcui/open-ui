@@ -1,5 +1,13 @@
 # Open UI current status
 
+## A fitted aliased Ahem run keeps its subpixel phases 3 November 2026
+
+The strong-hinted outline used for an aliased Ahem run keeps the resolved
+font's subpixel positioning, so a glyph at a fractional device x origin is
+no longer rounded a column early. The census goes from 22,435 to 22,437
+exact, with no losses and no comparison worse. See the
+[Ahem subpixel phase record](ahem-subpixel-phase-2026-11-03.md).
+
 ## Aliased Ahem is grid-fitted as in Chromium 3 November 2026
 
 An aliased Ahem glyph whose device size fits Skia's 256 px glyph atlas is

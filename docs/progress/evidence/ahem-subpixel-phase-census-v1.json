@@ -1,0 +1,48 @@
+{
+ "base_commit": "d127794ff54b4aa8e813e70577813ba59aa194ad",
+ "base_exact": 22435,
+ "chromium_identical": 23728,
+ "comparisons": 23728,
+ "errors": [],
+ "gains": [
+  {
+   "base": "different",
+   "base_mismatched": 48,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/range-percent-intrinsic-size-1",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 48,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/range-percent-intrinsic-size-1-ref",
+   "profile": "desktop-1920x1080@1.5"
+  }
+ ],
+ "head_commit": "a46b489da073717bad8bd95912ce18d42c927cf6",
+ "head_exact": 22437,
+ "improved": [],
+ "losses": [],
+ "openui_changed": [
+  {
+   "base": "different",
+   "base_mismatched": 48,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/range-percent-intrinsic-size-1",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 48,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/range-percent-intrinsic-size-1-ref",
+   "profile": "desktop-1920x1080@1.5"
+  }
+ ],
+ "worsened": []
+}
