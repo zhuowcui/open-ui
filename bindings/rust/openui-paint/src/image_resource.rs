@@ -742,6 +742,10 @@ pub enum ImagePatchPhase {
 /// into `(512 - 4) / 2` coordinates, two per bilinear pixel.
 const LEGACY_BILERP_SPAN_CHUNK: i32 = 127;
 
+/// Pixels per `blitAntiH` run when `SkScan::AntiFillRect` blits a partly
+/// covered row: `call_hline_blitter` sends at most `HLINE_STACK_BUFFER`.
+const ANTI_FILL_RECT_HLINE_RUN: i32 = 100;
+
 fn compositor_raster_tile_origin(device_pixel: i32) -> i32 {
     // Chromium's 256px software-raster tiles overlap their predecessor by two
     // texels. Coverage switches to the next tile after the first 255 pixels,
@@ -942,6 +946,7 @@ fn replaced_sample_fixed(
         1.0,
         destination_start.round() as i32 + target_index,
         accumulate_scanline,
+        false,
     )
 }
 
@@ -951,8 +956,15 @@ fn replaced_sample_fixed(
 /// `SkScan::AntiFillRect` blits a partly covered edge column on its own and
 /// the interior from `ceil(left)` to `floor(right)`. The raster tile clips
 /// the interior at its origin, and `SkBitmapProcShader` maps the first pixel
-/// of every `LEGACY_BILERP_SPAN_CHUNK` pixels again.
-fn legacy_shader_span_start(device_start: f32, device_end: f32, pixel: i32) -> i32 {
+/// of every `LEGACY_BILERP_SPAN_CHUNK` pixels again. A partly covered row
+/// (see `anti_fill_rect_partial_row`) reaches the shader in runs of
+/// `ANTI_FILL_RECT_HLINE_RUN` pixels instead.
+fn legacy_shader_span_start(
+    device_start: f32,
+    device_end: f32,
+    pixel: i32,
+    partial_row: bool,
+) -> i32 {
     let (left, right) = (skia_fdot8(device_start), skia_fdot8(device_end));
     let interior_start = (left + 0xff) >> 8;
     let interior_end = right >> 8;
@@ -960,7 +972,29 @@ fn legacy_shader_span_start(device_start: f32, device_end: f32, pixel: i32) -> i
         return pixel;
     }
     let span_start = interior_start.max(compositor_raster_tile_origin(pixel));
-    span_start + (pixel - span_start) / LEGACY_BILERP_SPAN_CHUNK * LEGACY_BILERP_SPAN_CHUNK
+    let chunk = if partial_row {
+        ANTI_FILL_RECT_HLINE_RUN
+    } else {
+        LEGACY_BILERP_SPAN_CHUNK
+    };
+    span_start + (pixel - span_start) / chunk * chunk
+}
+
+/// Return whether `SkScan::AntiFillRect` blits device row `pixel` of a rect
+/// from `device_start` to `device_end` as one partly covered scanline.
+///
+/// `antifilldot8` sends a rect one row high, and a top or bottom row with a
+/// fractional 24.8 edge, through `do_scanline`. Full rows go through
+/// `blitRect`.
+fn anti_fill_rect_partial_row(device_start: f32, device_end: f32, pixel: i32) -> bool {
+    let (top, bottom) = (skia_fdot8(device_start), skia_fdot8(device_end));
+    if top >= bottom {
+        return false;
+    }
+    if top >> 8 == (bottom - 1) >> 8 {
+        return pixel == top >> 8;
+    }
+    (top & 0xff != 0 && pixel == top >> 8) || (bottom & 0xff != 0 && pixel == bottom >> 8)
 }
 
 /// Return the 32.32 source coordinate, less half a texel, that Chromium's
@@ -981,6 +1015,7 @@ fn replaced_sample_fixed_at(
     device_scale: f32,
     destination_pixel: i32,
     accumulate_scanline: bool,
+    partial_row: bool,
 ) -> i64 {
     const FIXED_ONE: f32 = 4_294_967_296.0;
     const FILTER_BIAS: i64 = 1_i64 << 31;
@@ -995,7 +1030,7 @@ fn replaced_sample_fixed_at(
     let segment_start = if accumulate_scanline {
         let device_start = destination_start * device_scale;
         let device_end = (destination_start + destination_extent) * device_scale;
-        legacy_shader_span_start(device_start, device_end, destination_pixel)
+        legacy_shader_span_start(device_start, device_end, destination_pixel, partial_row)
     } else {
         destination_pixel
     };
@@ -1026,6 +1061,8 @@ struct LegacyRepeatScanline {
     /// Device extent of the rect that the shader fills.
     fill_start: f32,
     fill_end: f32,
+    /// Whether the fill blits this row as one partly covered scanline.
+    partial_row: bool,
 }
 
 impl LegacyRepeatScanline {
@@ -1048,7 +1085,8 @@ impl LegacyRepeatScanline {
         let inverse_translate = -translate * inverse_scale;
         let normalized_scale = inverse_scale / extent;
         let normalized_translate = inverse_translate / extent;
-        let span_start = legacy_shader_span_start(self.fill_start, self.fill_end, pixel);
+        let span_start =
+            legacy_shader_span_start(self.fill_start, self.fill_end, pixel, self.partial_row);
         let mapped =
             ((span_start - tile_origin) as f32 + 0.5) * normalized_scale + normalized_translate;
         let filter_one = (1_i64 << 16) / i64::from(source_extent);
@@ -1776,8 +1814,18 @@ fn physical_quantized_image_patch_with_color_order(
                 device_scale,
                 physical_top + target_y,
                 false,
+                false,
             )
         });
+        // Skia blits a partly covered top or bottom row in shorter runs, so
+        // the horizontal scanline restarts more often there.
+        let replaced_partial_row = anti_fill_rect_partial_row(
+            sampling_destination.top * device_scale,
+            sampling_destination.bottom * device_scale,
+            physical_top + target_y,
+        );
+        let fill_partial_row =
+            anti_fill_rect_partial_row(coverage_top, coverage_bottom, physical_top + target_y);
         let repeated_fixed_y = wrap_y.then(|| {
             repeated_subrect_sample_fixed_at(
                 min_y,
@@ -1906,6 +1954,7 @@ fn physical_quantized_image_patch_with_color_order(
                     device_scale,
                     physical_left + target_x,
                     true,
+                    replaced_partial_row,
                 )
             });
             let repeated_fixed_x = wrap_x.then(|| {
@@ -1919,6 +1968,7 @@ fn physical_quantized_image_patch_with_color_order(
                         device_scale,
                         fill_start: coverage_left,
                         fill_end: coverage_right,
+                        partial_row: fill_partial_row,
                     });
                 repeated_subrect_sample_fixed_at(
                     min_x,
@@ -3048,6 +3098,7 @@ mod tests {
             device_scale,
             fill_start,
             fill_end,
+            partial_row: false,
         };
         assert_eq!(
             repeated_subrect_sample_fixed_at(
@@ -3099,6 +3150,7 @@ mod tests {
                 device_scale,
                 pixel,
                 true,
+                false,
             );
             ((fixed >> 28) & 0xf) as u32
         };
@@ -3130,15 +3182,43 @@ mod tests {
     #[test]
     fn legacy_shader_spans_split_at_edges_tiles_and_buffer_chunks() {
         // Partly covered edge columns are their own spans.
-        assert_eq!(legacy_shader_span_start(1876.5, 1989.0, 1876), 1876);
-        assert_eq!(legacy_shader_span_start(1876.5, 1989.0, 1877), 1877);
-        assert_eq!(legacy_shader_span_start(1876.5, 1989.0, 1988), 1877);
-        assert_eq!(legacy_shader_span_start(10.25, 20.5, 20), 20);
+        assert_eq!(legacy_shader_span_start(1876.5, 1989.0, 1876, false), 1876);
+        assert_eq!(legacy_shader_span_start(1876.5, 1989.0, 1877, false), 1877);
+        assert_eq!(legacy_shader_span_start(1876.5, 1989.0, 1988, false), 1877);
+        assert_eq!(legacy_shader_span_start(10.25, 20.5, 20, false), 20);
         // The interior restarts at a raster tile origin and every 127 pixels.
-        assert_eq!(legacy_shader_span_start(504.0, 654.0, 508), 504);
-        assert_eq!(legacy_shader_span_start(504.0, 654.0, 509), 508);
-        assert_eq!(legacy_shader_span_start(504.0, 654.0, 634), 508);
-        assert_eq!(legacy_shader_span_start(504.0, 654.0, 635), 635);
+        assert_eq!(legacy_shader_span_start(504.0, 654.0, 508, false), 504);
+        assert_eq!(legacy_shader_span_start(504.0, 654.0, 509, false), 508);
+        assert_eq!(legacy_shader_span_start(504.0, 654.0, 634, false), 508);
+        assert_eq!(legacy_shader_span_start(504.0, 654.0, 635, false), 635);
+        // A partly covered row reaches the shader in 100-pixel runs from the
+        // interior start, or from the raster tile origin that clips it.
+        assert_eq!(legacy_shader_span_start(339.75, 452.25, 439, true), 340);
+        assert_eq!(legacy_shader_span_start(339.75, 452.25, 440, true), 440);
+        assert_eq!(legacy_shader_span_start(339.75, 452.25, 451, true), 440);
+        assert_eq!(legacy_shader_span_start(339.75, 452.25, 452, true), 452);
+        assert_eq!(legacy_shader_span_start(339.75, 452.25, 339, true), 339);
+        assert_eq!(legacy_shader_span_start(2309.5, 2422.5, 2409, true), 2310);
+        assert_eq!(legacy_shader_span_start(2309.5, 2422.5, 2410, true), 2410);
+        assert_eq!(legacy_shader_span_start(504.0, 654.0, 607, true), 508);
+        assert_eq!(legacy_shader_span_start(504.0, 654.0, 608, true), 608);
+    }
+
+    #[test]
+    fn anti_fill_rect_blits_only_fractional_edge_rows_as_scanlines() {
+        // Fractional top and bottom edges are partly covered rows.
+        assert!(anti_fill_rect_partial_row(60.75, 180.75, 60));
+        assert!(!anti_fill_rect_partial_row(60.75, 180.75, 61));
+        assert!(!anti_fill_rect_partial_row(60.75, 180.75, 179));
+        assert!(anti_fill_rect_partial_row(60.75, 180.75, 180));
+        // Integral edges are full rows of `blitRect`.
+        assert!(!anti_fill_rect_partial_row(60.0, 180.0, 60));
+        assert!(!anti_fill_rect_partial_row(60.0, 180.0, 179));
+        assert!(!anti_fill_rect_partial_row(60.0, 180.0, 180));
+        // A rect inside one device row is one scanline.
+        assert!(anti_fill_rect_partial_row(60.0, 60.5, 60));
+        assert!(anti_fill_rect_partial_row(60.0, 61.0, 60));
+        assert!(!anti_fill_rect_partial_row(60.0, 61.0, 61));
     }
 
     #[test]

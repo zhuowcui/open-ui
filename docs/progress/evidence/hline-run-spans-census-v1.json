@@ -1,0 +1,128 @@
+{
+ "base_commit": "fba061f9ea348a75bf7dc780515f1c4fec676389",
+ "base_exact": 22473,
+ "chromium_identical": 23728,
+ "comparisons": 23728,
+ "errors": [],
+ "gains": [
+  {
+   "base": "different",
+   "base_mismatched": 3,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/box-shadow_box-shadow-blur-definition-001",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 4,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/box-sizing-replaced-001",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 4,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/box-sizing-replaced-001-ref",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 3,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/box-sizing-replaced-002",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 3,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/box-sizing-replaced-002-ref",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 3,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/box-sizing-replaced-003",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 3,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/box-sizing-replaced-003-ref",
+   "profile": "desktop-1920x1080@1.5"
+  }
+ ],
+ "head_commit": "9bebead6c9ac2442db3b4a9e72f74027e51b4cc2",
+ "head_exact": 22480,
+ "improved": [],
+ "losses": [],
+ "openui_changed": [
+  {
+   "base": "different",
+   "base_mismatched": 3,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/box-shadow_box-shadow-blur-definition-001",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 4,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/box-sizing-replaced-001",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 4,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/box-sizing-replaced-001-ref",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 3,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/box-sizing-replaced-002",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 3,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/box-sizing-replaced-002-ref",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 3,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/box-sizing-replaced-003",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 3,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_sizing/box-sizing-replaced-003-ref",
+   "profile": "desktop-1920x1080@1.5"
+  }
+ ],
+ "worsened": []
+}

@@ -1,5 +1,14 @@
 # Open UI current status
 
+## A partly covered image row restarts its scanline every 100 pixels 4 November 2026
+
+An image's partly covered top or bottom row restarts its bilinear sample
+position every 100 pixels, as `SkScan::AntiFillRect` hands such a row to
+the shader in `call_hline_blitter` runs. Full rows keep the 127-pixel
+shader chunks. The census goes from 22,473 to 22,480 exact, with no
+losses and no comparison worse. See the
+[partial row run record](hline-run-spans-2026-11-04.md).
+
 ## A platform fieldset groove is drawn through Blink's 3D sides 4 November 2026
 
 The default groove border of a straight, opaque fieldset is painted by
