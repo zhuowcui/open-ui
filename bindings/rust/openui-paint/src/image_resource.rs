@@ -1015,6 +1015,49 @@ fn replaced_sample_fixed_at(
 /// then recover the source texel and packed interpolation weight. Performing
 /// the equivalent arithmetic directly in source-pixel space loses observable
 /// borrows at exact integer and half-texel phases.
+/// One axis of the repeating bitmap shader that Chromium's legacy software
+/// raster fills a background with, in the CSS pixels Blink records it in.
+#[derive(Clone, Copy, Debug)]
+struct LegacyRepeatScanline {
+    /// CSS origin and extent of one repeated tile.
+    tile_start: f32,
+    tile_extent: f32,
+    device_scale: f32,
+    /// Device extent of the rect that the shader fills.
+    fill_start: f32,
+    fill_end: f32,
+}
+
+impl LegacyRepeatScanline {
+    /// Return the 16.16 normalized coordinate, less half a texel, that the
+    /// shader reaches at `pixel`.
+    ///
+    /// Skia concatenates the tile's `translate * scale` local matrix with
+    /// the raster tile's device matrix, inverts it in `f32`, and divides it
+    /// by the image extent. The first pixel of each shader span is mapped
+    /// through that matrix and later pixels add its scale in 32.32 fixed
+    /// point, so a half-texel tie closes up or down with the rounding of
+    /// the `f32` inverse.
+    fn fixed_16(self, source_extent: i32, pixel: i32) -> i64 {
+        const FIXED_32_ONE: f64 = 4_294_967_296.0;
+        let tile_origin = compositor_raster_tile_origin(pixel);
+        let extent = source_extent as f32;
+        let scale = self.device_scale * (self.tile_extent / extent);
+        let translate = self.device_scale * self.tile_start - tile_origin as f32;
+        let inverse_scale = 1.0_f32 / scale;
+        let inverse_translate = -translate * inverse_scale;
+        let normalized_scale = inverse_scale / extent;
+        let normalized_translate = inverse_translate / extent;
+        let span_start = legacy_shader_span_start(self.fill_start, self.fill_end, pixel);
+        let mapped =
+            ((span_start - tile_origin) as f32 + 0.5) * normalized_scale + normalized_translate;
+        let filter_one = (1_i64 << 16) / i64::from(source_extent);
+        let start = (f64::from(mapped) * FIXED_32_ONE) as i64 - (filter_one >> 1) * (1_i64 << 16);
+        let step = (f64::from(normalized_scale) * FIXED_32_ONE) as i64;
+        (start + step * i64::from(pixel - span_start)) >> 16
+    }
+}
+
 fn repeated_subrect_sample_fixed_at(
     source_start: i32,
     source_extent: i32,
@@ -1022,7 +1065,7 @@ fn repeated_subrect_sample_fixed_at(
     destination_extent: f32,
     destination_pixel: i32,
     rebase_across_raster_tiles: bool,
-    accumulate_scanline: bool,
+    scanline: Option<LegacyRepeatScanline>,
 ) -> (i32, i32, u32) {
     const FIXED_16_ONE: i64 = 1_i64 << 16;
     const FIXED_32_ONE: f32 = 4_294_967_296.0;
@@ -1045,31 +1088,25 @@ fn repeated_subrect_sample_fixed_at(
         return (source_start + source_extent - 1, source_start, weight);
     }
 
-    let normalized_scale = 1.0_f32 / destination_extent;
-    let normalized_translate = -destination_start / destination_extent;
-    let normalized = (destination_pixel as f32 + 0.5) * normalized_scale + normalized_translate;
     let filter_one = FIXED_16_ONE / i64::from(source_extent);
-    let fixed_32 = (normalized * FIXED_32_ONE) as i64 - (filter_one >> 1) * FIXED_16_ONE;
-    let fixed_16 = fixed_32 >> 16;
+    // The horizontal bitmap proc advances each scanline from its span start.
+    // Vertical sampling evaluates the matrix directly at each row.
+    let fixed_16 = scanline.map_or_else(
+        || {
+            let normalized_scale = 1.0_f32 / destination_extent;
+            let normalized_translate = -destination_start / destination_extent;
+            let normalized =
+                (destination_pixel as f32 + 0.5) * normalized_scale + normalized_translate;
+            ((normalized * FIXED_32_ONE) as i64 - (filter_one >> 1) * FIXED_16_ONE) >> 16
+        },
+        |scanline| scanline.fixed_16(source_extent, destination_pixel),
+    );
     let tile = |fixed: i64| -> i32 {
         ((((fixed & 0xffff) * i64::from(source_extent)) >> 16) as i32).clamp(0, source_extent - 1)
     };
     let low = source_start + tile(fixed_16);
     let high = source_start + tile(fixed_16 + filter_one);
-    let mut weight = (((fixed_16 & 0xffff) * i64::from(source_extent)) >> 12) as u32 & 0xf;
-    let source_sample = repeat_phase * f64::from(source_extent) - 0.5;
-    let translated_scanline = f64::from(destination_start).rem_euclid(1.0) > 1.0e-9;
-    if accumulate_scanline
-        && translated_scanline
-        && ((source_sample - source_sample.floor()) - 0.5).abs() <= 1.0e-9
-        && weight == 8
-    {
-        // The horizontal bitmap proc advances a translated scanline through
-        // its packed fixed-point step. At an exact half-texel phase that
-        // accumulation closes to the predecessor; vertical sampling evaluates
-        // the matrix directly and retains the ordinary 8/16 tie.
-        weight = 7;
-    }
+    let weight = (((fixed_16 & 0xffff) * i64::from(source_extent)) >> 12) as u32 & 0xf;
     (low, high, weight)
 }
 
@@ -1106,7 +1143,7 @@ fn repeated_sample_fixed_at(
         destination_extent,
         destination_pixel,
         true,
-        true,
+        None,
     )
 }
 
@@ -1749,7 +1786,7 @@ fn physical_quantized_image_patch_with_color_order(
                 physical_destination.height(),
                 physical_top + target_y,
                 rebase_repeat_y_across_raster_tiles,
-                false,
+                None,
             )
         });
         let closes_y_to_predecessor = close_exact_phase_to_predecessor
@@ -1872,11 +1909,17 @@ fn physical_quantized_image_patch_with_color_order(
                 )
             });
             let repeated_fixed_x = wrap_x.then(|| {
-                // A round-adjusted tile at a physical half-pixel origin keeps
-                // the exact 8/16 horizontal tie. Other repeated paths retain
-                // the accumulated scanline phase when a half-texel tie occurs.
-                let round_half_origin = !rebase_repeat_x_across_raster_tiles
-                    && (physical_destination.left.rem_euclid(1.0) - 0.5).abs() <= 1.0e-5;
+                // A clipped repeat fill advances each scanline from its span
+                // start, which decides a half-texel tie by the rounding of
+                // Skia's f32 inverse matrix.
+                let scanline = (close_exact_phase_to_predecessor && coverage_bounds.is_some())
+                    .then_some(LegacyRepeatScanline {
+                        tile_start: repeat_origin.map_or(sampling_destination.left, |(x, _)| x),
+                        tile_extent: sampling_destination.width(),
+                        device_scale,
+                        fill_start: coverage_left,
+                        fill_end: coverage_right,
+                    });
                 repeated_subrect_sample_fixed_at(
                     min_x,
                     max_x - min_x + 1,
@@ -1884,9 +1927,7 @@ fn physical_quantized_image_patch_with_color_order(
                     physical_destination.width(),
                     physical_left + target_x,
                     rebase_repeat_x_across_raster_tiles,
-                    close_exact_phase_to_predecessor
-                        && coverage_bounds.is_some()
-                        && !round_half_origin,
+                    scanline,
                 )
             });
             let closes_x_to_predecessor = close_exact_phase_to_predecessor
@@ -2996,14 +3037,45 @@ mod tests {
     }
 
     #[test]
-    fn translated_repeated_scanline_closes_half_texel_to_predecessor() {
+    fn repeated_scanline_closes_half_texel_with_its_f32_inverse() {
+        // A 32px image in a 36px tile at CSS x 21. At 1.25x the f32 inverse
+        // step accumulates below the half-texel tie at device x 37 and closes
+        // it to 7/16. At 1.5x it accumulates above the tie at device x 58 and
+        // keeps 8/16, as Chromium draws `background-repeat-round-1-ref`.
+        let scanline = |device_scale: f32, fill_start: f32, fill_end: f32| LegacyRepeatScanline {
+            tile_start: 21.0,
+            tile_extent: 36.0,
+            device_scale,
+            fill_start,
+            fill_end,
+        };
         assert_eq!(
-            repeated_subrect_sample_fixed_at(0, 32, 26.25, 45.0, 37, false, true),
+            repeated_subrect_sample_fixed_at(
+                0,
+                32,
+                26.25,
+                45.0,
+                37,
+                false,
+                Some(scanline(1.25, 25.0, 117.5)),
+            ),
             (7, 8, 7)
         );
         assert_eq!(
-            repeated_subrect_sample_fixed_at(0, 32, 26.25, 45.0, 37, false, false),
+            repeated_subrect_sample_fixed_at(0, 32, 26.25, 45.0, 37, false, None),
             (7, 8, 8)
+        );
+        assert_eq!(
+            repeated_subrect_sample_fixed_at(
+                0,
+                32,
+                31.5,
+                54.0,
+                58,
+                false,
+                Some(scanline(1.5, 30.0, 141.0)),
+            ),
+            (15, 16, 8)
         );
     }
 
