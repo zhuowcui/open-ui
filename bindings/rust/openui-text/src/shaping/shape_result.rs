@@ -174,10 +174,14 @@ fn fontations_compatible_font(
         TextRasterPolicy::ChromiumNativeControl | TextRasterPolicy::ChromiumAuthorLcd
     );
     let embedded_document = raster_policy == TextRasterPolicy::ChromiumEmbeddedDocument;
-    // Ordinary author monochrome strikes use integer glyph positions.
-    // Rotated/ruby strikes retain their fractional local positions before
-    // the paint transform maps them into the device axes.
-    font.set_subpixel(raster_policy != TextRasterPolicy::ChromiumAuthorAliased);
+    // Ordinary author monochrome strikes use integer glyph positions unless
+    // the resolved font positions glyphs at subpixel phases; the fitted
+    // outline keeps that choice. Rotated/ruby strikes retain their
+    // fractional local positions before the paint transform maps them into
+    // the device axes.
+    font.set_subpixel(
+        raster_policy != TextRasterPolicy::ChromiumAuthorAliased || source_font.is_subpixel(),
+    );
     font.set_linear_metrics(native_control);
     font.set_edging(if native_control {
         Edging::SubpixelAntiAlias
@@ -990,6 +994,16 @@ mod tests {
             let bounds = fitted.get_path(x).unwrap().bounds().round();
             assert_eq!(bounds.height() as f32, rows, "Ahem at {size}px");
         }
+        let mut subpixel = Font::from_typeface(&face, 16.0);
+        subpixel.set_hinting(FontHinting::None);
+        subpixel.set_subpixel(true);
+        let fitted = super::fontations_compatible_font(
+            &subpixel,
+            &[x],
+            super::TextRasterPolicy::ChromiumAuthorAliased,
+        )
+        .unwrap();
+        assert!(fitted.is_subpixel(), "a subpixel source keeps its phases");
         let mut path_sized = Font::from_typeface(&face, 258.0);
         path_sized.set_hinting(FontHinting::None);
         assert!(super::fontations_compatible_font(
