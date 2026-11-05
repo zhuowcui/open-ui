@@ -405,6 +405,7 @@ fn install_viewport(options: &[String]) -> ViewportMetrics {
 }
 
 fn main() {
+    openui_paint::initialize_skia();
     let args: Vec<String> = std::env::args().collect();
 
     match args.get(1).map(|s| s.as_str()) {

@@ -643,6 +643,7 @@ fn record_fragment_impl(
 
 /// Rasterize an immutable recording using the exact headless tiling policy.
 pub fn rasterize_picture(recording: &RecordedPicture) -> Result<Surface, String> {
+    crate::initialize_skia();
     let width = i32::try_from(recording.viewport.physical_width())
         .map_err(|_| "physical viewport width exceeds Skia limit".to_string())?;
     let height = i32::try_from(recording.viewport.physical_height())

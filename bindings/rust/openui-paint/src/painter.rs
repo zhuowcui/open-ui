@@ -929,6 +929,7 @@ pub fn paint_fragment(
     doc: &Document,
     offset: PhysicalOffset,
 ) {
+    crate::initialize_skia();
     paint_fragment_tracked(canvas, fragment, doc, offset);
 }
 
@@ -16209,6 +16210,17 @@ fn background_image_paint_bounds(
     bounds
 }
 
+/// Moves a repeating pattern's origin by whole tile steps to the first tile
+/// that starts at or after `start`, as Blink's
+/// `BackgroundImageGeometry::ComputePhase` reduces the phase modulo one step.
+fn reduced_pattern_phase(origin: f32, start: f32, step: f32, repeats: bool) -> f32 {
+    if !repeats || !(step > 0.0) || !origin.is_finite() || !start.is_finite() {
+        return origin;
+    }
+    let steps = ((f64::from(origin) - f64::from(start)) / f64::from(step)).floor();
+    (f64::from(origin) - steps * f64::from(step)) as f32
+}
+
 fn uses_spaced_background_shader(
     repeat_x: BackgroundRepeat,
     repeat_y: BackgroundRepeat,
@@ -17748,7 +17760,33 @@ fn paint_background_layers(
                     ),
                 }
                 if let Some(picture) = recorder.finish_recording_as_picture(None) {
-                    let matrix = Matrix::scale_translate((scale_x, scale_y), (origin_x, origin_y));
+                    // The positioning area determines the phase and spacing,
+                    // but background-clip determines the painting bounds.
+                    // Repetitions before and after the positioning area can
+                    // therefore paint beneath a border. When `space` falls
+                    // back to a single image, background-position can place
+                    // that image partly outside the positioning area too.
+                    let bounds = background_image_paint_bounds(
+                        clip,
+                        image_left,
+                        image_top,
+                        tile_width,
+                        tile_height,
+                        x_repeats,
+                        y_repeats,
+                    );
+                    // Blink's tiling phase is the paint rect's origin plus
+                    // the tile offset reduced modulo one tile step, so the
+                    // shader's origin is the first tile at or after the paint
+                    // rect's origin. Equivalent phases a whole step apart map a tile
+                    // edge's half-pixel sample to different bilinear weights.
+                    let matrix = Matrix::scale_translate(
+                        (scale_x, scale_y),
+                        (
+                            reduced_pattern_phase(origin_x, bounds.left, x_period, x_repeats),
+                            reduced_pattern_phase(origin_y, bounds.top, y_period, y_repeats),
+                        ),
+                    );
                     let mut paint = Paint::default();
                     paint.set_anti_alias(true);
                     paint.set_alpha_f(opacity_multiplier);
@@ -17774,21 +17812,6 @@ fn paint_background_layers(
                         &matrix,
                         None,
                     ));
-                    // The positioning area determines the phase and spacing,
-                    // but background-clip determines the painting bounds.
-                    // Repetitions before and after the positioning area can
-                    // therefore paint beneath a border. When `space` falls
-                    // back to a single image, background-position can place
-                    // that image partly outside the positioning area too.
-                    let bounds = background_image_paint_bounds(
-                        clip,
-                        image_left,
-                        image_top,
-                        tile_width,
-                        tile_height,
-                        x_repeats,
-                        y_repeats,
-                    );
                     if bounds.width() > 0.0 && bounds.height() > 0.0 {
                         canvas.draw_rect(bounds, &paint);
                     }
@@ -28428,6 +28451,20 @@ mod tests {
     }
 
     #[test]
+    fn spaced_pattern_phase_is_reduced_to_the_paint_rect_origin() {
+        // `space` with 30px tiles and a 35px step, positioned at a padding box
+        // that starts 35px into the border box. Blink's phase is the border
+        // box origin plus the offset reduced modulo the step.
+        assert_eq!(reduced_pattern_phase(55.0, 20.0, 35.0, true), 20.0);
+        assert_eq!(reduced_pattern_phase(56.0, 20.0, 35.0, true), 21.0);
+        assert_eq!(reduced_pattern_phase(10.0, 20.0, 35.0, true), 45.0);
+        assert_eq!(reduced_pattern_phase(20.0, 20.0, 35.0, true), 20.0);
+        // A non-repeating axis keeps its authored origin.
+        assert_eq!(reduced_pattern_phase(55.0, 20.0, 35.0, false), 55.0);
+        assert_eq!(reduced_pattern_phase(55.0, 20.0, 0.0, true), 55.0);
+    }
+
+    #[test]
     fn background_shader_paints_to_clip_not_positioning_area() {
         let clip = Rect::from_ltrb(0.0, 0.0, 146.0, 146.0);
         let repeated = background_image_paint_bounds(clip, 20.0, 20.0, 32.0, 32.0, true, true);
@@ -28874,6 +28911,69 @@ mod tests {
         let pixel = |x: usize| &pixels[(40 * 40 + x) * 4..][..4];
         assert_eq!(pixel(20 + 7), &[0, 0, 255, 255], "inside 9px");
         assert_eq!(pixel(20 + 13), &[0, 255, 0, 255], "outside 11px");
+    }
+
+    #[test]
+    fn repeating_radial_gradient_rounds_as_skia_fma_stages_do() {
+        // `repeating-radial-gradient(blue, green 20px)` centred in a 200x150
+        // box at (30, 30). Once Skia is initialized, as Chromium initializes
+        // it, a CPU with AVX2 and FMA evaluates the gradient with fused
+        // multiply-adds. At these two pixels the dithered value sits on a
+        // rounding boundary, and Chromium's levels differ by one from the
+        // baseline stages.
+        #[cfg(target_arch = "x86_64")]
+        let fma_stages = std::arch::is_x86_feature_detected!("avx2")
+            && std::arch::is_x86_feature_detected!("fma");
+        #[cfg(not(target_arch = "x86_64"))]
+        let fma_stages = false;
+        if !fma_stages {
+            return;
+        }
+        let stop = |color: Color, position: GradientStopPosition| GradientStop {
+            color: StyleColor::Resolved(color),
+            position,
+        };
+        let mut style = ComputedStyle::default();
+        style.update_derived(|style| {
+            style
+                .background_layers
+                .push(BackgroundLayer::new(CssImage::RadialGradient(
+                    RadialGradient {
+                        repeating: true,
+                        color_space: GradientColorSpace::Srgb,
+                        shape: RadialGradientShape::Ellipse,
+                        size: RadialGradientSize::FarthestCorner,
+                        center_x: BackgroundPosition::Percent(50.0),
+                        center_y: BackgroundPosition::Percent(50.0),
+                        stops: vec![
+                            stop(
+                                Color::from_rgba8(0, 0, 255, 255),
+                                GradientStopPosition::Auto,
+                            ),
+                            stop(
+                                Color::from_rgba8(0, 128, 0, 255),
+                                GradientStopPosition::Px(20.0),
+                            ),
+                        ],
+                    },
+                )));
+        });
+        let mut surface = surfaces::raster_n32_premul((260, 210)).expect("surface");
+        surface.canvas().clear(skia_safe::Color::WHITE);
+        paint_background_layers(
+            surface.canvas(),
+            &Document::new(),
+            None,
+            &style,
+            Rect::from_xywh(30.0, 30.0, 200.0, 150.0),
+            1.0,
+            None,
+            false,
+        );
+        let pixels = surface_bytes(&mut surface);
+        let pixel = |x: usize, y: usize| pixels[(260 * y + x) * 4..][..4].to_vec();
+        assert_eq!(pixel(128, 39), [162, 47, 0, 255]);
+        assert_eq!(pixel(84, 107), [184, 36, 0, 255]);
     }
 
     #[test]

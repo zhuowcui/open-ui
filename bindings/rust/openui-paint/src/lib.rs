@@ -41,3 +41,27 @@ pub use render::{
 };
 pub use source_layer_program::*;
 pub use surface_program::*;
+
+/// Installs Skia's CPU-specific raster stages, as Chromium does at startup
+/// through `SkGraphics::Init`. Without it Skia keeps its baseline SSE
+/// stages, while Chromium runs the AVX2 and FMA stages on a CPU that has
+/// them, and their rounding differs. Painting and rasterizing call this
+/// before drawing, and it is safe to call again.
+pub fn initialize_skia() {
+    static INIT: std::sync::Once = std::sync::Once::new();
+    INIT.call_once(skia_safe::graphics::init);
+}
+
+// The unit tests draw through internal painters as well as `paint_fragment`,
+// so this binary initializes Skia when it loads, before any test runs, and no
+// result depends on test order.
+#[cfg(test)]
+#[used]
+#[cfg_attr(target_os = "linux", link_section = ".init_array")]
+#[cfg_attr(target_os = "windows", link_section = ".CRT$XCU")]
+static INITIALIZE_SKIA_FOR_TESTS: extern "C" fn() = {
+    extern "C" fn initialize() {
+        initialize_skia();
+    }
+    initialize
+};
