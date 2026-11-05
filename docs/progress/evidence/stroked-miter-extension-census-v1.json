@@ -1,0 +1,161 @@
+{
+ "base_commit": "4fda9cf840535e487c91209e7b1ce38f80fbf024",
+ "base_exact": 22487,
+ "chromium_identical": 23728,
+ "comparisons": 23728,
+ "errors": [],
+ "gains": [
+  {
+   "base": "different",
+   "base_mismatched": 1,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/ttwf-css3background-border-style-shorthand-missing-left",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 3,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/ttwf-css3background-border-style-shorthand-missing-left",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/ttwf-css3background-border-style",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/ttwf-css3background-border-style-shorthand",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/ttwf-css3background-border-style-shorthand-missing-left",
+   "profile": "legacy-800x600@1"
+  }
+ ],
+ "head_commit": "7a33d7dd8f6f7f3e2c53cb468c7c80537798d279",
+ "head_exact": 22492,
+ "improved": [
+  {
+   "base": "different",
+   "base_mismatched": 6,
+   "head": "different",
+   "head_mismatched": 5,
+   "id": "wpt/css_backgrounds/ttwf-css3background-border-style",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 6,
+   "head": "different",
+   "head_mismatched": 5,
+   "id": "wpt/css_backgrounds/ttwf-css3background-border-style-shorthand",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 6,
+   "head": "different",
+   "head_mismatched": 3,
+   "id": "wpt/css_backgrounds/ttwf-css3background-border-style",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 6,
+   "head": "different",
+   "head_mismatched": 3,
+   "id": "wpt/css_backgrounds/ttwf-css3background-border-style-shorthand",
+   "profile": "desktop-1920x1080@1.5"
+  }
+ ],
+ "losses": [],
+ "openui_changed": [
+  {
+   "base": "different",
+   "base_mismatched": 6,
+   "head": "different",
+   "head_mismatched": 5,
+   "id": "wpt/css_backgrounds/ttwf-css3background-border-style",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 6,
+   "head": "different",
+   "head_mismatched": 5,
+   "id": "wpt/css_backgrounds/ttwf-css3background-border-style-shorthand",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 1,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/ttwf-css3background-border-style-shorthand-missing-left",
+   "profile": "desktop-1280x720@1.25"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 6,
+   "head": "different",
+   "head_mismatched": 3,
+   "id": "wpt/css_backgrounds/ttwf-css3background-border-style",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 6,
+   "head": "different",
+   "head_mismatched": 3,
+   "id": "wpt/css_backgrounds/ttwf-css3background-border-style-shorthand",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 3,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/ttwf-css3background-border-style-shorthand-missing-left",
+   "profile": "desktop-1920x1080@1.5"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/ttwf-css3background-border-style",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/ttwf-css3background-border-style-shorthand",
+   "profile": "legacy-800x600@1"
+  },
+  {
+   "base": "different",
+   "base_mismatched": 2,
+   "head": "exact",
+   "head_mismatched": 0,
+   "id": "wpt/css_backgrounds/ttwf-css3background-border-style-shorthand-missing-left",
+   "profile": "legacy-800x600@1"
+  }
+ ],
+ "worsened": []
+}
