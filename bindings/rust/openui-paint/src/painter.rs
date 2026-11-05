@@ -16210,6 +16210,17 @@ fn background_image_paint_bounds(
     bounds
 }
 
+/// Moves a repeating pattern's origin by whole tile steps to the first tile
+/// that starts at or after `start`, as Blink's
+/// `BackgroundImageGeometry::ComputePhase` reduces the phase modulo one step.
+fn reduced_pattern_phase(origin: f32, start: f32, step: f32, repeats: bool) -> f32 {
+    if !repeats || !(step > 0.0) || !origin.is_finite() || !start.is_finite() {
+        return origin;
+    }
+    let steps = ((f64::from(origin) - f64::from(start)) / f64::from(step)).floor();
+    (f64::from(origin) - steps * f64::from(step)) as f32
+}
+
 fn uses_spaced_background_shader(
     repeat_x: BackgroundRepeat,
     repeat_y: BackgroundRepeat,
@@ -17749,7 +17760,33 @@ fn paint_background_layers(
                     ),
                 }
                 if let Some(picture) = recorder.finish_recording_as_picture(None) {
-                    let matrix = Matrix::scale_translate((scale_x, scale_y), (origin_x, origin_y));
+                    // The positioning area determines the phase and spacing,
+                    // but background-clip determines the painting bounds.
+                    // Repetitions before and after the positioning area can
+                    // therefore paint beneath a border. When `space` falls
+                    // back to a single image, background-position can place
+                    // that image partly outside the positioning area too.
+                    let bounds = background_image_paint_bounds(
+                        clip,
+                        image_left,
+                        image_top,
+                        tile_width,
+                        tile_height,
+                        x_repeats,
+                        y_repeats,
+                    );
+                    // Blink's tiling phase is the paint rect's origin plus
+                    // the tile offset reduced modulo one tile step, so the
+                    // shader's origin is the first tile at or after the paint
+                    // rect's origin. Equivalent phases a whole step apart map a tile
+                    // edge's half-pixel sample to different bilinear weights.
+                    let matrix = Matrix::scale_translate(
+                        (scale_x, scale_y),
+                        (
+                            reduced_pattern_phase(origin_x, bounds.left, x_period, x_repeats),
+                            reduced_pattern_phase(origin_y, bounds.top, y_period, y_repeats),
+                        ),
+                    );
                     let mut paint = Paint::default();
                     paint.set_anti_alias(true);
                     paint.set_alpha_f(opacity_multiplier);
@@ -17775,21 +17812,6 @@ fn paint_background_layers(
                         &matrix,
                         None,
                     ));
-                    // The positioning area determines the phase and spacing,
-                    // but background-clip determines the painting bounds.
-                    // Repetitions before and after the positioning area can
-                    // therefore paint beneath a border. When `space` falls
-                    // back to a single image, background-position can place
-                    // that image partly outside the positioning area too.
-                    let bounds = background_image_paint_bounds(
-                        clip,
-                        image_left,
-                        image_top,
-                        tile_width,
-                        tile_height,
-                        x_repeats,
-                        y_repeats,
-                    );
                     if bounds.width() > 0.0 && bounds.height() > 0.0 {
                         canvas.draw_rect(bounds, &paint);
                     }
@@ -28426,6 +28448,20 @@ mod tests {
             ),
             70.0
         );
+    }
+
+    #[test]
+    fn spaced_pattern_phase_is_reduced_to_the_paint_rect_origin() {
+        // `space` with 30px tiles and a 35px step, positioned at a padding box
+        // that starts 35px into the border box. Blink's phase is the border
+        // box origin plus the offset reduced modulo the step.
+        assert_eq!(reduced_pattern_phase(55.0, 20.0, 35.0, true), 20.0);
+        assert_eq!(reduced_pattern_phase(56.0, 20.0, 35.0, true), 21.0);
+        assert_eq!(reduced_pattern_phase(10.0, 20.0, 35.0, true), 45.0);
+        assert_eq!(reduced_pattern_phase(20.0, 20.0, 35.0, true), 20.0);
+        // A non-repeating axis keeps its authored origin.
+        assert_eq!(reduced_pattern_phase(55.0, 20.0, 35.0, false), 55.0);
+        assert_eq!(reduced_pattern_phase(55.0, 20.0, 0.0, true), 55.0);
     }
 
     #[test]
