@@ -929,6 +929,7 @@ pub fn paint_fragment(
     doc: &Document,
     offset: PhysicalOffset,
 ) {
+    crate::initialize_skia();
     paint_fragment_tracked(canvas, fragment, doc, offset);
 }
 
@@ -28874,6 +28875,69 @@ mod tests {
         let pixel = |x: usize| &pixels[(40 * 40 + x) * 4..][..4];
         assert_eq!(pixel(20 + 7), &[0, 0, 255, 255], "inside 9px");
         assert_eq!(pixel(20 + 13), &[0, 255, 0, 255], "outside 11px");
+    }
+
+    #[test]
+    fn repeating_radial_gradient_rounds_as_skia_fma_stages_do() {
+        // `repeating-radial-gradient(blue, green 20px)` centred in a 200x150
+        // box at (30, 30). Once Skia is initialized, as Chromium initializes
+        // it, a CPU with AVX2 and FMA evaluates the gradient with fused
+        // multiply-adds. At these two pixels the dithered value sits on a
+        // rounding boundary, and Chromium's levels differ by one from the
+        // baseline stages.
+        #[cfg(target_arch = "x86_64")]
+        let fma_stages = std::arch::is_x86_feature_detected!("avx2")
+            && std::arch::is_x86_feature_detected!("fma");
+        #[cfg(not(target_arch = "x86_64"))]
+        let fma_stages = false;
+        if !fma_stages {
+            return;
+        }
+        let stop = |color: Color, position: GradientStopPosition| GradientStop {
+            color: StyleColor::Resolved(color),
+            position,
+        };
+        let mut style = ComputedStyle::default();
+        style.update_derived(|style| {
+            style
+                .background_layers
+                .push(BackgroundLayer::new(CssImage::RadialGradient(
+                    RadialGradient {
+                        repeating: true,
+                        color_space: GradientColorSpace::Srgb,
+                        shape: RadialGradientShape::Ellipse,
+                        size: RadialGradientSize::FarthestCorner,
+                        center_x: BackgroundPosition::Percent(50.0),
+                        center_y: BackgroundPosition::Percent(50.0),
+                        stops: vec![
+                            stop(
+                                Color::from_rgba8(0, 0, 255, 255),
+                                GradientStopPosition::Auto,
+                            ),
+                            stop(
+                                Color::from_rgba8(0, 128, 0, 255),
+                                GradientStopPosition::Px(20.0),
+                            ),
+                        ],
+                    },
+                )));
+        });
+        let mut surface = surfaces::raster_n32_premul((260, 210)).expect("surface");
+        surface.canvas().clear(skia_safe::Color::WHITE);
+        paint_background_layers(
+            surface.canvas(),
+            &Document::new(),
+            None,
+            &style,
+            Rect::from_xywh(30.0, 30.0, 200.0, 150.0),
+            1.0,
+            None,
+            false,
+        );
+        let pixels = surface_bytes(&mut surface);
+        let pixel = |x: usize, y: usize| pixels[(260 * y + x) * 4..][..4].to_vec();
+        assert_eq!(pixel(128, 39), [162, 47, 0, 255]);
+        assert_eq!(pixel(84, 107), [184, 36, 0, 255]);
     }
 
     #[test]
