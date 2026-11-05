@@ -1,5 +1,14 @@
 # Open UI current status
 
+## Skia's CPU-specific raster stages are installed as Chromium installs them 4 November 2026
+
+Open UI calls `SkGraphics::Init` before painting, as Chromium does at
+startup, so Skia runs its AVX2 and FMA raster stages where the CPU has
+them. A spaced pattern's shader phase is reduced to the paint rect's
+origin, as `BackgroundImageGeometry::ComputePhase` does. The census goes
+from 22,492 to 22,516 exact, with 30 more comparisons improved, no losses
+and none worse. See the [Skia CPU opts record](skia-cpu-opts-2026-11-04.md).
+
 ## A stroked side's clip runs past its one mitered corner 4 November 2026
 
 A dotted, dashed or double side whose two corner miters differ is clipped
