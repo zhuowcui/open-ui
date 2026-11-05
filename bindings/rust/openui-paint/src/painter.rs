@@ -23374,6 +23374,14 @@ fn paint_borders(
             (is_3d_border_style(side_style) && !platform_3d_fieldset_coverage)
                 .then(|| side_miters(side))
         };
+        let stroked_miters = |side: BorderSide| {
+            let (_, side_style, _) = side_style_and_color(side);
+            matches!(
+                side_style,
+                BorderStyle::Dotted | BorderStyle::Dashed | BorderStyle::Double
+            )
+            .then(|| side_miters(side))
+        };
         // Points run outer start, outer end, inner end, inner start. Only the
         // stroked, double and 3D styles are adjusted; their clip owns the
         // miter.
@@ -23524,6 +23532,7 @@ fn paint_borders(
                     authored_uniform_3d_outer_edge,
                     platform_3d_fieldset_coverage,
                     three_d_miters(BorderSide::Top),
+                    stroked_miters(BorderSide::Top),
                     style.device_scale_factor,
                 );
             }
@@ -23554,6 +23563,7 @@ fn paint_borders(
                     authored_uniform_3d_outer_edge,
                     platform_3d_fieldset_coverage,
                     three_d_miters(BorderSide::Bottom),
+                    stroked_miters(BorderSide::Bottom),
                     style.device_scale_factor,
                 );
             }
@@ -23630,6 +23640,7 @@ fn paint_borders(
                     authored_uniform_3d_outer_edge,
                     platform_3d_fieldset_coverage,
                     three_d_miters(BorderSide::Right),
+                    stroked_miters(BorderSide::Right),
                     style.device_scale_factor,
                 );
             }
@@ -23683,6 +23694,7 @@ fn paint_borders(
                     authored_uniform_3d_outer_edge,
                     platform_3d_fieldset_coverage,
                     three_d_miters(BorderSide::Left),
+                    stroked_miters(BorderSide::Left),
                     style.device_scale_factor,
                 );
             }
@@ -24720,6 +24732,7 @@ fn paint_border_side_path(
     preserve_horizontal_outer_edge: bool,
     platform_3d_fieldset_coverage: bool,
     three_d_miters: Option<[BorderMiter; 2]>,
+    stroked_miters: Option<[BorderMiter; 2]>,
     device_scale: f64,
 ) {
     if width <= 0.0 {
@@ -24944,6 +24957,37 @@ fn paint_border_side_path(
                         device_scale,
                     );
                 } else {
+                    // ClipBorderSidePolygon clips a side whose two miters
+                    // differ once per miter, each clip running 0.1px past its
+                    // own end so the two overlap. The extended end also moves
+                    // the clip's device bounds, which Skia's dashing and
+                    // coverage of an endpoint dot follow.
+                    if let Some([start_miter, end_miter]) = stroked_miters {
+                        if start_miter != end_miter {
+                            const EXTENSION: f32 = 0.1;
+                            let horizontal = matches!(side, BorderSide::Top | BorderSide::Bottom);
+                            let along = |point: &mut (f32, f32), offset: f32| {
+                                if horizontal {
+                                    point.0 += offset;
+                                } else {
+                                    point.1 += offset;
+                                }
+                            };
+                            let direction = if horizontal {
+                                (clip_points[1].0 - clip_points[0].0).signum()
+                            } else {
+                                (clip_points[1].1 - clip_points[0].1).signum()
+                            };
+                            if start_miter != BorderMiter::None {
+                                along(&mut clip_points[0], -direction * EXTENSION);
+                                along(&mut clip_points[3], -direction * EXTENSION);
+                            }
+                            if end_miter != BorderMiter::None {
+                                along(&mut clip_points[1], direction * EXTENSION);
+                                along(&mut clip_points[2], direction * EXTENSION);
+                            }
+                        }
+                    }
                     let mut clip_path = PathBuilder::new();
                     clip_path.move_to(Point::new(clip_points[0].0, clip_points[0].1));
                     clip_path.line_to(Point::new(clip_points[1].0, clip_points[1].1));
@@ -27862,6 +27906,65 @@ mod tests {
     }
 
     #[test]
+    fn dotted_side_clip_runs_past_its_one_mitered_corner() {
+        // The same border at its bottom-right corner. The dotted right side
+        // is mitered only against the dashed bottom, so ClipBorderSidePolygon
+        // clips it once, 0.1px past that corner. The extended clip bounds
+        // keep Skia's coverage of the last dot. Chrome's capture.
+        let mut surface = surfaces::raster_n32_premul((200, 200)).expect("surface");
+        surface.canvas().clear(skia_safe::Color::WHITE);
+        let mut style = ComputedStyle::default();
+        style.update_derived(|computed| {
+            computed.device_scale_factor = 1.0;
+            computed.border_top_width = 5;
+            computed.border_right_width = 5;
+            computed.border_bottom_width = 5;
+            computed.border_left_width = 5;
+            computed.border_top_style = BorderStyle::Solid;
+            computed.border_right_style = BorderStyle::Dotted;
+            computed.border_bottom_style = BorderStyle::Dashed;
+            computed.border_left_style = BorderStyle::Double;
+            computed.border_top_color = StyleColor::Resolved(Color::BLACK);
+            computed.border_right_color = StyleColor::Resolved(Color::BLACK);
+            computed.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+            computed.border_left_color = StyleColor::Resolved(Color::BLACK);
+        });
+        let mut fragment = Fragment::new_box(NodeId::NONE, PhysicalSize::zero());
+        fragment.border = openui_geometry::BoxStrut::new(
+            LayoutUnit::from_i32(5),
+            LayoutUnit::from_i32(5),
+            LayoutUnit::from_i32(5),
+            LayoutUnit::from_i32(5),
+        );
+        fragment.is_first_for_node = true;
+        fragment.is_last_for_node = true;
+        paint_borders(
+            surface.canvas(),
+            &fragment,
+            &style,
+            20.0,
+            20.0,
+            160.0,
+            160.0,
+            false,
+            false,
+            false,
+        );
+
+        let pixels = surface_bytes(&mut surface);
+        let pixel_at = |x: usize, y: usize| &pixels[(y * 200 + x) * 4..][..4];
+        assert_eq!(pixel_at(179, 175), [177, 177, 177, 255], "last dot top");
+        assert_eq!(
+            pixel_at(179, 176),
+            [35, 35, 35, 255],
+            "last dot above centre"
+        );
+        assert_eq!(pixel_at(179, 177), [13, 13, 13, 255], "last dot centre");
+        assert_eq!(pixel_at(179, 178), [72, 72, 72, 255], "last dot below");
+        assert_eq!(pixel_at(179, 179), [0, 0, 0, 255], "dashed corner");
+    }
+
+    #[test]
     fn inset_border_takes_blinks_corner_miters_at_fractional_scale() {
         // background-margin-iframe-root-ref at 1.25x: the iframe's 2px inset
         // currentColor border, from (20, 20) to (324, 174). Blink paints the
@@ -29437,6 +29540,7 @@ mod tests {
             false,
             false,
             false,
+            None,
             None,
             1.25,
         );
