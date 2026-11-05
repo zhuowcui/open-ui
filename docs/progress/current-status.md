@@ -1,5 +1,14 @@
 # Open UI current status
 
+## A stroked side's clip runs past its one mitered corner 4 November 2026
+
+A dotted, dashed or double side whose two corner miters differ is clipped
+once per mitered corner, each clip running 0.1px past its own end, as
+`BoxBorderPainter::ClipBorderSidePolygon` does. The endpoint dot next to
+a hard miter now takes Chromium's coverage. The census goes from 22,487
+to 22,492 exact, with 4 more comparisons improved, no losses and none
+worse. See the [stroked miter record](stroked-miter-extension-2026-11-04.md).
+
 ## A native text field's face stays inside its rounded ring 4 November 2026
 
 The default white face of a native text field or menu list is filled on
