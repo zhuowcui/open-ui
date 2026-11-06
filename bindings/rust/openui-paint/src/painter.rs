@@ -17618,12 +17618,21 @@ fn paint_background_layers(
             // drawn with antialiasing into its CSS-snapped destination, so its
             // fractional device edges keep partial coverage. A non-AA clip
             // rounded outward to whole device pixels leaves that coverage to
-            // the draw instead of cutting it at the pixel centre. A local
-            // image in a scroller is clipped by the scrollport instead.
-            let border_box_raster = layer.clip == BackgroundClip::BorderBox
+            // the draw instead of cutting it at the pixel centre. A spaced
+            // pattern of any image is one antialiased shader draw, as
+            // `Image::DrawPattern` and `GeneratedImage::DrawPattern` draw it,
+            // so its edges keep their coverage too. A local image in a
+            // scroller is clipped by the scrollport instead.
+            let border_box_antialiased_draw = layer.clip == BackgroundClip::BorderBox
                 && !local_scrollport_clip
-                && matches!(layer.image, CssImage::Raster(_));
-            let hard_clip = if border_box_raster && !antialias_transformed_clip {
+                && (matches!(layer.image, CssImage::Raster(_))
+                    || uses_spaced_background_shader(
+                        layer.repeat_x,
+                        layer.repeat_y,
+                        xs.len(),
+                        ys.len(),
+                    ));
+            let hard_clip = if border_box_antialiased_draw && !antialias_transformed_clip {
                 let scale = style.device_scale_factor.max(f64::EPSILON);
                 let out =
                     |edge: f32, f: fn(f64) -> f64| (f(f64::from(edge) * scale) / scale) as f32;
@@ -28462,6 +28471,64 @@ mod tests {
         // A non-repeating axis keeps its authored origin.
         assert_eq!(reduced_pattern_phase(55.0, 20.0, 35.0, false), 55.0);
         assert_eq!(reduced_pattern_phase(55.0, 20.0, 0.0, true), 55.0);
+    }
+
+    #[test]
+    fn spaced_pattern_keeps_its_fractional_border_box_edge() {
+        // `gradient-repeat-spaced-with-borders` at 1.5x: 30px spaced radial
+        // tiles at 20, 55, 90 and 125 fill a border box from 20 to 155, the
+        // last two beneath a transparent border. Without a fragment the
+        // positioning area is the border box, which places the tiles the
+        // same way. The box's right and bottom edges fall at 232.5 device
+        // px, and Chromium's antialiased pattern draw half covers column
+        // and row 232.
+        let stop = |color: Color, percent: f32| GradientStop {
+            color: StyleColor::Resolved(color),
+            position: GradientStopPosition::Percent(percent),
+        };
+        let mut layer = BackgroundLayer::new(CssImage::RadialGradient(RadialGradient {
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            shape: RadialGradientShape::Ellipse,
+            size: RadialGradientSize::FarthestCorner,
+            center_x: BackgroundPosition::Percent(50.0),
+            center_y: BackgroundPosition::Percent(50.0),
+            stops: vec![
+                stop(Color::TRANSPARENT, 50.0),
+                stop(Color::from_rgba8(0x33, 0x66, 0xcc, 255), 50.0),
+            ],
+        }));
+        layer.size = BackgroundSize::Explicit(
+            openui_geometry::Length::px(30.0),
+            openui_geometry::Length::px(30.0),
+        );
+        layer.repeat_x = BackgroundRepeat::Space;
+        layer.repeat_y = BackgroundRepeat::Space;
+        let mut style = ComputedStyle::default();
+        style.update_derived(|style| {
+            style.device_scale_factor = 1.5;
+            style.background_layers.push(layer);
+        });
+        let mut surface = surfaces::raster_n32_premul((260, 260)).expect("surface");
+        surface.canvas().clear(skia_safe::Color::WHITE);
+        surface.canvas().scale((1.5, 1.5));
+        paint_background_layers(
+            surface.canvas(),
+            &Document::new(),
+            None,
+            &style,
+            Rect::from_xywh(20.0, 20.0, 135.0, 135.0),
+            1.0,
+            None,
+            false,
+        );
+        let pixels = surface_bytes(&mut surface);
+        let pixel = |x: usize, y: usize| pixels[(260 * y + x) * 4..][..4].to_vec();
+        assert_eq!(pixel(231, 100), [204, 102, 51, 255]);
+        assert_eq!(pixel(232, 100), [243, 219, 207, 255]);
+        assert_eq!(pixel(100, 232), [243, 219, 207, 255]);
+        assert_eq!(pixel(232, 232), [252, 247, 244, 255]);
+        assert_eq!(pixel(233, 100), [255, 255, 255, 255]);
     }
 
     #[test]
