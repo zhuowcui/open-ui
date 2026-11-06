@@ -1,5 +1,14 @@
 # Open UI current status
 
+## A spaced pattern keeps its fractional border-box edge 5 November 2026
+
+A spaced background pattern on a border-box layer is clipped outward to
+whole device pixels, so its fractional right and bottom edge keeps the
+antialiased coverage that `Image::DrawPattern` gives it. The census goes
+from 22,516 to 22,517 exact, with 12 more comparisons improved, no losses
+and none worse. See the
+[spaced pattern extent record](spaced-pattern-extent-2026-11-05.md).
+
 ## Skia's CPU-specific raster stages are installed as Chromium installs them 4 November 2026
 
 Open UI calls `SkGraphics::Init` before painting, as Chromium does at
