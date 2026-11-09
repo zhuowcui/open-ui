@@ -1,5 +1,14 @@
 # Open UI current status
 
+## CSS Grid is measured in a coverage suite 9 November 2026
+
+The WPT `css-grid` area is ported into a coverage suite separate from the
+census and measured against Chromium for the first time: 2,218 of 4,204
+comparisons are exact (52.8%). 39 tests panic in grid area placement, two
+float-only references grow memory without bound and are not measured, and
+most other differences are large layout differences. The census numbers are
+unchanged. See the [grid coverage record](grid-coverage-2026-11-09.md).
+
 ## A spaced pattern keeps its fractional border-box edge 5 November 2026
 
 A spaced background pattern on a border-box layer is clipped outward to
