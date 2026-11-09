@@ -39,6 +39,9 @@ PRIMITIVE_IDS = ROOT / "tools/qualification/manifests/primitive-raster.json"
 EXPANDED_IDS = ROOT / "tools/qualification/manifests/expanded-v35.json"
 RESIDUAL_OWNERSHIP = ROOT / "tools/qualification/residual-ownership-v2.json"
 TEMPLATES = ROOT / "tools/accountability/data/wpt_ported/all_wpt_templates.json"
+# Coverage suites measure WPT areas outside the census. Each area keeps its
+# own templates and manifest under tools/coverage/<module>/.
+COVERAGE_DIR = ROOT / "tools/coverage"
 ACCOUNTABILITY = ROOT / "tools/accountability"
 sys.path.insert(0, str(ACCOUNTABILITY))
 import run_all_pixel_comparisons as pixel_runner  # noqa: E402
@@ -441,7 +444,7 @@ def profile_from_entry(entry: dict[str, object], name: str | None = None) -> Pro
 
 
 def contract_profiles(contract: dict[str, object], suite: str) -> list[Profile]:
-    if suite in {"full", "expanded"}:
+    if suite in {"full", "expanded", "coverage"}:
         entries = contract["qualification_profiles"]
         assert isinstance(entries, list)
         return [profile_from_entry(entry) for entry in entries]
@@ -499,9 +502,23 @@ def select_profiles(profiles: list[Profile], requested: list[str]) -> list[Profi
     return [by_name[name] for name in requested]
 
 
+def coverage_ids() -> set[str]:
+    """Coverage tests are ported with deterministic Ahem text retained."""
+    ids: set[str] = set()
+    for path in sorted(COVERAGE_DIR.glob("*/manifest.json")):
+        ids |= set(load_ids(path))
+    return ids
+
+
 def load_templates() -> dict[str, str]:
     result = dict(pixel_runner.HTML_TEMPLATES)
     result.update(json.loads(TEMPLATES.read_text(encoding="utf-8")))
+    for path in sorted(COVERAGE_DIR.glob("*/templates.json")):
+        coverage = json.loads(path.read_text(encoding="utf-8"))
+        overlap = sorted(set(coverage) & set(result))
+        if overlap:
+            raise ValueError(f"coverage templates repeat census IDs: {overlap[:3]}")
+        result.update(coverage)
     return result
 
 
@@ -780,7 +797,7 @@ def run_profile(
 ) -> dict[str, object]:
     profile_dir = results_dir / profile.name
     profile_dir.mkdir(parents=True, exist_ok=True)
-    text_ids = set(load_ids(Path(pixel_runner.TEXT_PORTED_LIST)))
+    text_ids = set(load_ids(Path(pixel_runner.TEXT_PORTED_LIST))) | coverage_ids()
     real_font_ids = set(load_ids(Path(pixel_runner.REAL_FONT_LIST)))
     freetype_ids = set(load_ids(Path(pixel_runner.FREETYPE_TEXT_LIST)))
     sp18_ids = set(load_ids(Path(pixel_runner.SP18_TARGET_LIST)))
@@ -827,7 +844,10 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--suite",
-        choices=("full", "expanded", "focused", "primitive", "residual", "residual-cross"),
+        choices=(
+            "full", "expanded", "focused", "primitive", "residual", "residual-cross",
+            "coverage",
+        ),
         required=True,
     )
     parser.add_argument("--profile", action="append", default=[])

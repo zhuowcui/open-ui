@@ -212,6 +212,7 @@ jobs:
             tools.wpt.test_sp18_closure \
             tools.wpt.test_sp19_closure \
             tools.wpt.test_sp20_closure \
+            tools.wpt.test_port_coverage_area \
             tools.qualification.test_build_renderer \
             tools.qualification.test_renderer_matrix \
             tools.qualification.test_summarize_renderer_census \
@@ -231,6 +232,7 @@ jobs:
           python tools/wpt/generate_sp17_closure.py --check
           python tools/wpt/generate_sp18_closure.py --check
           python tools/wpt/generate_sp20_closure.py --check
+          python tools/wpt/port_coverage_area.py --check css-grid css_grid
           python tools/release/generate_v02_contract.py --check
           python tools/style/generate_properties.py --check
           python tools/ffi/generate_ffi.py --check
@@ -382,6 +384,7 @@ jobs:
             tools.wpt.test_sp18_closure \
             tools.wpt.test_sp19_closure \
             tools.wpt.test_sp20_closure \
+            tools.wpt.test_port_coverage_area \
             tools.qualification.test_build_renderer \
             tools.qualification.test_renderer_matrix \
             tools.qualification.test_summarize_renderer_census \
@@ -400,6 +403,7 @@ jobs:
           python3 tools/wpt/generate_sp17_closure.py --check
           python3 tools/wpt/generate_sp18_closure.py --check
           python3 tools/wpt/generate_sp20_closure.py --check
+          python3 tools/wpt/port_coverage_area.py --check css-grid css_grid
           python3 tools/release/generate_v02_contract.py --check
           python3 tools/style/generate_properties.py --check
           python3 tools/ffi/generate_ffi.py --check

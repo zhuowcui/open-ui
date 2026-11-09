@@ -9,6 +9,7 @@ pub mod wpt_css_box;
 pub mod wpt_css_break;
 pub mod wpt_css_display;
 pub mod wpt_css_flexbox;
+pub mod wpt_css_grid;
 pub mod wpt_css_multicol;
 pub mod wpt_css_overflow;
 pub mod wpt_css_position;
@@ -29,5 +30,7 @@ pub fn all_wpt_registry() -> Vec<(
     all.extend(wpt_css_display::css_display_registry());
     all.extend(wpt_css_box::css_box_registry());
     all.extend(wpt_css_backgrounds::css_backgrounds_registry());
+    // Coverage suite outside the census: tools/coverage/css_grid.
+    all.extend(wpt_css_grid::css_grid_registry());
     all
 }
