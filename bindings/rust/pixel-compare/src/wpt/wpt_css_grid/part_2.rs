@@ -56465,6 +56465,8 @@ fn css_grid_alignment_replaced_alignment_with_aspect_ratio_006(viewport: Viewpor
         doc.set_style(n2, RendererStyleValue::OverflowX(Overflow::Clip));
         doc.set_style(n2, RendererStyleValue::OverflowY(Overflow::Clip));
         doc.set_style(n2, RendererStyleValue::OverflowClipBox(OverflowClipBox::ContentBox));
+        let n2_image = doc.register_image_resource("css/css-grid/alignment/support/50x50-green.png", "image/png", "8bbf929ebb1f244747d0a91214a393364d92d807b8f9fd7b6bd4964665a936ee", include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../tools/accountability/data/wpt_assets/sp20/8bbf929ebb1f244747d0a91214a393364d92d807b8f9fd7b6bd4964665a936ee.png")).as_slice().to_vec());
+        doc.set_node_state(n2, RendererNodeState::Replaced(Some(openui_dom::ReplacedContent { resource: openui_dom::ReplacedResourceKind::Image(n2_image), intrinsic_width: Some(50.0), intrinsic_height: Some(50.0), intrinsic_ratio: Some((50.0, 50.0)) })));
         doc.set_style(n2, RendererStyleValue::MarginTop(Length::px(0.0)));
         doc.set_style(n2, RendererStyleValue::MarginRight(Length::px(0.0)));
         doc.set_style(n2, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -56534,6 +56536,8 @@ fn css_grid_alignment_replaced_alignment_with_aspect_ratio_007(viewport: Viewpor
         doc.set_style(n2, RendererStyleValue::OverflowX(Overflow::Clip));
         doc.set_style(n2, RendererStyleValue::OverflowY(Overflow::Clip));
         doc.set_style(n2, RendererStyleValue::OverflowClipBox(OverflowClipBox::ContentBox));
+        let n2_image = doc.register_image_resource("css/css-grid/alignment/support/50x50-green.png", "image/png", "8bbf929ebb1f244747d0a91214a393364d92d807b8f9fd7b6bd4964665a936ee", include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../tools/accountability/data/wpt_assets/sp20/8bbf929ebb1f244747d0a91214a393364d92d807b8f9fd7b6bd4964665a936ee.png")).as_slice().to_vec());
+        doc.set_node_state(n2, RendererNodeState::Replaced(Some(openui_dom::ReplacedContent { resource: openui_dom::ReplacedResourceKind::Image(n2_image), intrinsic_width: Some(50.0), intrinsic_height: Some(50.0), intrinsic_ratio: Some((50.0, 50.0)) })));
         doc.set_style(n2, RendererStyleValue::MarginTop(Length::px(0.0)));
         doc.set_style(n2, RendererStyleValue::MarginRight(Length::px(0.0)));
         doc.set_style(n2, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -56603,6 +56607,8 @@ fn css_grid_alignment_replaced_alignment_with_aspect_ratio_008(viewport: Viewpor
         doc.set_style(n2, RendererStyleValue::OverflowX(Overflow::Clip));
         doc.set_style(n2, RendererStyleValue::OverflowY(Overflow::Clip));
         doc.set_style(n2, RendererStyleValue::OverflowClipBox(OverflowClipBox::ContentBox));
+        let n2_image = doc.register_image_resource("css/css-grid/alignment/support/50x50-green.png", "image/png", "8bbf929ebb1f244747d0a91214a393364d92d807b8f9fd7b6bd4964665a936ee", include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../tools/accountability/data/wpt_assets/sp20/8bbf929ebb1f244747d0a91214a393364d92d807b8f9fd7b6bd4964665a936ee.png")).as_slice().to_vec());
+        doc.set_node_state(n2, RendererNodeState::Replaced(Some(openui_dom::ReplacedContent { resource: openui_dom::ReplacedResourceKind::Image(n2_image), intrinsic_width: Some(50.0), intrinsic_height: Some(50.0), intrinsic_ratio: Some((50.0, 50.0)) })));
         doc.set_style(n2, RendererStyleValue::MarginTop(Length::px(0.0)));
         doc.set_style(n2, RendererStyleValue::MarginRight(Length::px(0.0)));
         doc.set_style(n2, RendererStyleValue::MarginBottom(Length::px(0.0)));
@@ -56670,6 +56676,8 @@ fn css_grid_alignment_replaced_alignment_with_aspect_ratio_009(viewport: Viewpor
         doc.set_style(n2, RendererStyleValue::OverflowX(Overflow::Clip));
         doc.set_style(n2, RendererStyleValue::OverflowY(Overflow::Clip));
         doc.set_style(n2, RendererStyleValue::OverflowClipBox(OverflowClipBox::ContentBox));
+        let n2_image = doc.register_image_resource("css/css-grid/alignment/support/50x50-green.png", "image/png", "8bbf929ebb1f244747d0a91214a393364d92d807b8f9fd7b6bd4964665a936ee", include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../tools/accountability/data/wpt_assets/sp20/8bbf929ebb1f244747d0a91214a393364d92d807b8f9fd7b6bd4964665a936ee.png")).as_slice().to_vec());
+        doc.set_node_state(n2, RendererNodeState::Replaced(Some(openui_dom::ReplacedContent { resource: openui_dom::ReplacedResourceKind::Image(n2_image), intrinsic_width: Some(50.0), intrinsic_height: Some(50.0), intrinsic_ratio: Some((50.0, 50.0)) })));
         doc.set_style(n2, RendererStyleValue::MarginTop(Length::px(0.0)));
         doc.set_style(n2, RendererStyleValue::MarginRight(Length::px(0.0)));
         doc.set_style(n2, RendererStyleValue::MarginBottom(Length::px(0.0)));

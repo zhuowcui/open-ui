@@ -51,13 +51,13 @@ HEADER = [
 
 
 def wpt_css_root() -> Path:
+    # The porter embeds root-relative and support images from
+    # CHROMIUM_WPT_ROOT, so the output depends on it. Require it rather than
+    # silently port tests whose images would then be missing.
+    if not os.environ.get("CHROMIUM_WPT_ROOT") or not port_wpt.WPT_SOURCE_ROOT.is_dir():
+        raise SystemExit("CHROMIUM_WPT_ROOT must name the pinned Chromium WPT checkout")
     return Path(
-        os.path.expanduser(
-            os.environ.get(
-                "CHROMIUM_WPT_CSS",
-                "~/chromium/src/third_party/blink/web_tests/external/wpt/css",
-            )
-        )
+        os.environ.get("CHROMIUM_WPT_CSS", str(port_wpt.WPT_SOURCE_ROOT / "css"))
     )
 
 
