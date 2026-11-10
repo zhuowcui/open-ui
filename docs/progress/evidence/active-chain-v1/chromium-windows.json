@@ -1,0 +1,120 @@
+{
+ "chromium": "147.0.7727.50",
+ "platform": "windows",
+ "viewport": [
+  200,
+  200,
+  1.0
+ ],
+ "steps": [
+  {
+   "step": "press inner",
+   "events": [
+    [
+     "press",
+     30,
+     30
+    ]
+   ],
+   "active": [
+    "html",
+    "body",
+    "outer",
+    "middle",
+    "inner"
+   ]
+  },
+  {
+   "step": "move to sibling while pressed",
+   "events": [
+    [
+     "move",
+     150,
+     30
+    ]
+   ],
+   "active": [
+    "html",
+    "body",
+    "outer",
+    "middle",
+    "inner"
+   ]
+  },
+  {
+   "step": "release over sibling",
+   "events": [
+    [
+     "release",
+     150,
+     30
+    ]
+   ],
+   "active": []
+  },
+  {
+   "step": "press enabled button",
+   "events": [
+    [
+     "move",
+     40,
+     125
+    ],
+    [
+     "press",
+     40,
+     125
+    ]
+   ],
+   "active": [
+    "html",
+    "body",
+    "controls",
+    "enabled"
+   ]
+  },
+  {
+   "step": "release enabled button",
+   "events": [
+    [
+     "release",
+     40,
+     125
+    ]
+   ],
+   "active": []
+  },
+  {
+   "step": "press disabled button",
+   "events": [
+    [
+     "move",
+     130,
+     125
+    ],
+    [
+     "press",
+     130,
+     125
+    ]
+   ],
+   "active": [
+    "html",
+    "body",
+    "controls",
+    "disabled"
+   ]
+  },
+  {
+   "step": "release disabled button",
+   "events": [
+    [
+     "release",
+     130,
+     125
+    ]
+   ],
+   "active": []
+  }
+ ]
+}
