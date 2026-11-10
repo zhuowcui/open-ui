@@ -1006,6 +1006,260 @@ fn maximize_fixed_max_tracks(
     }
 }
 
+/// A track's max track sizing function, as the growth limit steps of CSS
+/// Grid track sizing see it.
+#[derive(Clone, Copy, PartialEq)]
+enum MaxSizing {
+    Fixed(LayoutUnit),
+    Flexible,
+    MinContent,
+    /// `auto` or `max-content`.
+    MaxContent,
+    /// `fit-content(<limit>)`; `None` when a percentage limit cannot resolve,
+    /// which Blink treats as `max-content`.
+    FitContent(Option<LayoutUnit>),
+}
+
+fn max_sizing(track: Track, percentage_base: LayoutUnit) -> MaxSizing {
+    let max = match track.sizing {
+        GridTrackSize::Breadth(breadth) => breadth,
+        GridTrackSize::MinMax { max, .. } => max,
+    };
+    match max {
+        GridTrackBreadth::Length(length) => fixed_track_length(length, percentage_base)
+            .map_or(MaxSizing::MaxContent, MaxSizing::Fixed),
+        GridTrackBreadth::Flex(_) => MaxSizing::Flexible,
+        GridTrackBreadth::MinContent => MaxSizing::MinContent,
+        GridTrackBreadth::Auto | GridTrackBreadth::MaxContent => MaxSizing::MaxContent,
+        GridTrackBreadth::FitContent(length) => {
+            MaxSizing::FitContent(fixed_track_length(length, percentage_base))
+        }
+    }
+}
+
+/// Blink's `ExtraSpaceShare` for one-track sets: each growable track in
+/// `order` takes an equal share of what is left, capped by its growth
+/// potential (`None` is unbounded). Shares are truncated in layout units and
+/// the last growable track takes the remainder.
+fn equal_extra_space_shares(
+    extra: &mut LayoutUnit,
+    order: &[usize],
+    potential: impl Fn(usize) -> Option<LayoutUnit>,
+    increases: &mut [LayoutUnit],
+) {
+    let mut growable = order
+        .iter()
+        .filter(|index| potential(**index) != Some(LayoutUnit::zero()))
+        .count() as i32;
+    for &index in order {
+        if growable == 0 {
+            break;
+        }
+        let limit = potential(index);
+        if limit == Some(LayoutUnit::zero()) {
+            continue;
+        }
+        let mut share = if growable == 1 {
+            *extra
+        } else {
+            *extra / growable
+        };
+        growable -= 1;
+        if let Some(limit) = limit {
+            share = share.min_of(limit);
+        }
+        *extra = *extra - share;
+        increases[index] = increases[index] + share;
+    }
+}
+
+/// Sort track indices by growth potential, smallest first and unbounded
+/// last, keeping the source order of ties.
+fn sort_by_growth_potential(order: &mut [usize], potential: impl Fn(usize) -> Option<LayoutUnit>) {
+    order.sort_by(|left, right| match (potential(*left), potential(*right)) {
+        (Some(left), Some(right)) => left.raw().cmp(&right.raw()),
+        (Some(_), None) => std::cmp::Ordering::Less,
+        (None, Some(_)) => std::cmp::Ordering::Greater,
+        (None, None) => std::cmp::Ordering::Equal,
+    });
+}
+
+/// Resolve each track's growth limit, following Blink's
+/// `ResolveIntrinsicTrackSizes` for the two maximum steps: items not spanning
+/// a flexible track, grouped by span, first raise intrinsic maximums by their
+/// min-content contribution, then `auto`, `max-content` and `fit-content`
+/// maximums by their max-content contribution. The base sizes are the ones
+/// `size_intrinsic_tracks` already resolved. A limit that stays infinite
+/// becomes the base size, and no limit is below its base size.
+fn intrinsic_growth_limits(
+    doc: &dyn LayoutDocument,
+    items: &[GridItem],
+    tracks: &[Track],
+    columns: bool,
+    gap: LayoutUnit,
+    percentage_base: LayoutUnit,
+    cache: &mut HashMap<NodeId, IntrinsicSizes>,
+) -> Vec<LayoutUnit> {
+    let sizing: Vec<MaxSizing> = tracks
+        .iter()
+        .map(|track| max_sizing(*track, percentage_base))
+        .collect();
+    let mut limits: Vec<Option<LayoutUnit>> = tracks
+        .iter()
+        .zip(&sizing)
+        .map(|(track, sizing)| match sizing {
+            MaxSizing::Fixed(value) => Some(value.max_of(track.base)),
+            _ => None,
+        })
+        .collect();
+
+    // (span, start, end, min-content contribution, max-content contribution)
+    let mut contributions = Vec::new();
+    for item in items {
+        let (start, span) = if columns {
+            (item.column_start, item.column_span)
+        } else {
+            (item.row_start, item.row_span)
+        };
+        let end = (start + span).min(tracks.len());
+        if start >= end
+            || sizing[start..end]
+                .iter()
+                .any(|sizing| *sizing == MaxSizing::Flexible)
+        {
+            continue;
+        }
+        let intrinsic = *cache
+            .entry(item.node_id)
+            .or_insert_with(|| compute_child_intrinsic_contribution_with_layout(doc, item.node_id));
+        let cyclic = cyclic_ratio_contribution(doc, item.node_id, columns);
+        let min = cyclic.unwrap_or_else(|| axis_contribution(intrinsic, columns, false));
+        let max = cyclic.unwrap_or_else(|| axis_contribution(intrinsic, columns, true));
+        contributions.push((span, start, end, min, max));
+    }
+    contributions.sort_by_key(|contribution| contribution.0);
+
+    let count = tracks.len();
+    let mut group_start = 0;
+    while group_start < contributions.len() {
+        let span = contributions[group_start].0;
+        let group_end = contributions[group_start..]
+            .iter()
+            .position(|contribution| contribution.0 != span)
+            .map_or(contributions.len(), |offset| group_start + offset);
+        let group = &contributions[group_start..group_end];
+        let mut infinitely_growable = vec![false; count];
+        for max_content_step in [false, true] {
+            let mut planned: Vec<Option<LayoutUnit>> = vec![None; count];
+            for &(_, start, end, min, max) in group {
+                let definite = |index: usize| limits[index].unwrap_or(tracks[index].base);
+                let applies = |sizing: MaxSizing| {
+                    if max_content_step {
+                        matches!(sizing, MaxSizing::MaxContent | MaxSizing::FitContent(_))
+                    } else {
+                        !matches!(sizing, MaxSizing::Fixed(_) | MaxSizing::Flexible)
+                    }
+                };
+                let mut order: Vec<usize> = (start..end)
+                    .filter(|index| applies(sizing[*index]))
+                    .collect();
+                if order.is_empty() {
+                    continue;
+                }
+                for &index in &order {
+                    planned[index].get_or_insert(LayoutUnit::zero());
+                }
+                let spanned = (start..end)
+                    .map(definite)
+                    .fold(LayoutUnit::zero(), |sum, value| sum + value)
+                    + gap * (end - start - 1) as i32;
+                let contribution = if max_content_step { max } else { min };
+                let mut extra = (contribution - spanned).clamp_negative_to_zero();
+                if extra <= LayoutUnit::zero() {
+                    continue;
+                }
+                let mut increases = vec![LayoutUnit::zero(); count];
+                // The potential of a growth limit ignoring "infinitely
+                // growable": unbounded, except a `fit-content` limit.
+                let beyond = |index: usize, incurred: LayoutUnit| match sizing[index] {
+                    MaxSizing::FitContent(Some(cap)) => {
+                        Some((cap - definite(index) - incurred).clamp_negative_to_zero())
+                    }
+                    _ => None,
+                };
+                sort_by_growth_potential(&mut order, |index| beyond(index, LayoutUnit::zero()));
+                // Up to limits: only a limit that is still infinite, or was
+                // infinite before this group's intrinsic maximum step, grows.
+                equal_extra_space_shares(
+                    &mut extra,
+                    &order,
+                    |index| {
+                        if limits[index].is_some() && !infinitely_growable[index] {
+                            Some(LayoutUnit::zero())
+                        } else {
+                            beyond(index, LayoutUnit::zero())
+                        }
+                    },
+                    &mut increases,
+                );
+                // Beyond limits: every affected track, up to `fit-content`.
+                if extra > LayoutUnit::zero() {
+                    let incurred = increases.clone();
+                    equal_extra_space_shares(
+                        &mut extra,
+                        &order,
+                        |index| beyond(index, incurred[index]),
+                        &mut increases,
+                    );
+                }
+                for &index in &order {
+                    let planned = planned[index].as_mut().unwrap();
+                    *planned = (*planned).max_of(increases[index]);
+                }
+            }
+            for index in 0..count {
+                let was_infinite = limits[index].is_none();
+                infinitely_growable[index] = false;
+                if let Some(increase) = planned[index] {
+                    infinitely_growable[index] = !max_content_step && was_infinite;
+                    limits[index] = Some(limits[index].unwrap_or(tracks[index].base) + increase);
+                }
+            }
+        }
+        group_start = group_end;
+    }
+
+    limits
+        .into_iter()
+        .zip(tracks)
+        .map(|(limit, track)| limit.unwrap_or(track.base).max_of(track.base))
+        .collect()
+}
+
+/// CSS Grid track sizing's maximize step for a definite available size, as
+/// Blink's `MaximizeTracks`: distribute the free space equally to the base
+/// sizes of all tracks, freezing each at its growth limit.
+fn maximize_tracks(
+    tracks: &mut [Track],
+    limits: &[LayoutUnit],
+    available: LayoutUnit,
+    gap: LayoutUnit,
+) {
+    let mut free = (available - tracks_used_size(tracks, gap)).clamp_negative_to_zero();
+    if free <= LayoutUnit::zero() {
+        return;
+    }
+    let potential =
+        |index: usize| Some((limits[index] - tracks[index].base).clamp_negative_to_zero());
+    let mut order: Vec<usize> = (0..tracks.len()).collect();
+    sort_by_growth_potential(&mut order, potential);
+    let mut increases = vec![LayoutUnit::zero(); tracks.len()];
+    equal_extra_space_shares(&mut free, &order, potential, &mut increases);
+    for (track, increase) in tracks.iter_mut().zip(increases) {
+        track.base = track.base + increase;
+    }
+}
+
 fn size_row_tracks_from_layout(
     doc: &dyn LayoutDocument,
     items: &[GridItem],
@@ -2121,12 +2375,27 @@ pub(crate) fn grid_layout_contents(
         content_inline,
         &mut intrinsic_cache,
     );
-    maximize_fixed_max_tracks(
-        &mut columns.tracks,
-        content_inline,
-        column_gap,
-        content_inline,
-    );
+    if content_inline.is_indefinite() {
+        maximize_fixed_max_tracks(
+            &mut columns.tracks,
+            content_inline,
+            column_gap,
+            content_inline,
+        );
+    } else {
+        // An `auto` column beside a `1fr` column grows toward its max-content
+        // contribution here, before the flexible tracks take what is left.
+        let limits = intrinsic_growth_limits(
+            doc,
+            &items,
+            &columns.tracks,
+            true,
+            column_gap,
+            content_inline,
+            &mut intrinsic_cache,
+        );
+        maximize_tracks(&mut columns.tracks, &limits, content_inline, column_gap);
+    }
     distribute_flexible_tracks(&mut columns.tracks, content_inline, column_gap);
     collapse_empty_auto_fit_tracks(&mut columns.tracks, &items, true);
     // Column-axis content alignment is part of the inline track result seen
@@ -2705,6 +2974,57 @@ mod tests {
             INDEFINITE_SIZE,
             false,
         )
+    }
+
+    fn auto_track(base: i32) -> Track {
+        let mut track = Track::new(
+            GridTrackSize::Breadth(GridTrackBreadth::Auto),
+            LayoutUnit::from_i32(500),
+            false,
+        );
+        track.base = LayoutUnit::from_i32(base);
+        track
+    }
+
+    #[test]
+    fn maximize_fills_the_smallest_growth_potential_first_then_auto_tracks_stretch() {
+        // Two `auto` columns at their min-content bases of 50px, with
+        // max-content growth limits of 100px and 300px, in 500px. Blink's
+        // MaximizeTracks gives the first track 50px and the second 250px;
+        // StretchAutoTracks then splits the last 100px equally.
+        let mut tracks = vec![auto_track(50), auto_track(50)];
+        let limits = [LayoutUnit::from_i32(100), LayoutUnit::from_i32(300)];
+        maximize_tracks(
+            &mut tracks,
+            &limits,
+            LayoutUnit::from_i32(500),
+            LayoutUnit::zero(),
+        );
+        assert_eq!(tracks[0].base, LayoutUnit::from_i32(100));
+        assert_eq!(tracks[1].base, LayoutUnit::from_i32(300));
+        content_alignment(
+            ContentAlignment::default(),
+            LayoutUnit::from_i32(500),
+            &mut tracks,
+            LayoutUnit::zero(),
+        );
+        assert_eq!(tracks[0].base, LayoutUnit::from_i32(150));
+        assert_eq!(tracks[1].base, LayoutUnit::from_i32(350));
+    }
+
+    #[test]
+    fn maximize_stops_at_the_free_space() {
+        let mut tracks = vec![auto_track(50), auto_track(50)];
+        let limits = [LayoutUnit::from_i32(100), LayoutUnit::from_i32(300)];
+        maximize_tracks(
+            &mut tracks,
+            &limits,
+            LayoutUnit::from_i32(180),
+            LayoutUnit::zero(),
+        );
+        // 80px free: 40px each, under both limits.
+        assert_eq!(tracks[0].base, LayoutUnit::from_i32(90));
+        assert_eq!(tracks[1].base, LayoutUnit::from_i32(90));
     }
 
     #[test]

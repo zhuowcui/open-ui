@@ -1,0 +1,83 @@
+# An `auto` grid column grows to its max-content width before `fr` columns, 10 November 2026
+
+In a grid container with a definite inline size, columns now go through
+the maximize step of CSS Grid track sizing: each column grows toward its
+growth limit before flexible columns take the remaining space. An `auto`
+column beside a `1fr` column is now as wide as its item's max-content width,
+as in Chromium, not its min-content width. The components track found this
+in the shadcn card header (`grid-template-columns: 1fr auto`), whose action
+text wrapped onto two lines in Open UI.
+
+## Finding
+
+`grid_layout_contents` in `openui-layout/src/grid.rs` keeps one size per
+track, its base size. With a definite container inline size,
+`size_intrinsic_tracks` gives an `auto` column only its items' minimum
+contributions. The only maximize step, `maximize_fixed_max_tracks`, grows
+`minmax(..., <length>)` tracks. `distribute_flexible_tracks` then gives all
+the remaining space to the `1fr` column, and the `auto` column stays at its
+min-content width. Without a flexible column, content alignment then shares
+the free space equally between `auto` columns, whatever their max-content
+widths.
+
+Chromium 147 follows the specification's track sizing algorithm in
+`GridTrackSizingAlgorithm::ComputeUsedTrackSizes`
+(`third_party/blink/renderer/core/layout/grid/grid_track_sizing_algorithm.cc`):
+
+1. `ResolveIntrinsicTrackSizes` takes the items that do not span a flexible
+   track, grouped by span size. For each group, after the base size steps,
+   it raises the growth limits of tracks with an intrinsic maximum by the
+   items' min-content contributions (`kForIntrinsicMaximums`). It then
+   raises the limits of `auto`, `max-content` and `fit-content` maximums by
+   the max-content contributions (`kForMaxContentMaximums`), as
+   `GridLayoutAlgorithm::ContributionSizeForGridItem` selects them.
+   `DistributeExtraSpaceToSets` gives each track an equal share, smallest
+   growth potential first; a limit that was finite before the group's first
+   maximum step grows only after every "infinitely growable" track is
+   filled.
+2. `SetIndefiniteGrowthLimitsToBaseSize`.
+3. `MaximizeTracks` distributes the free space (the available size less
+   the tracks and gutters) equally to all base sizes, each frozen at its
+   growth limit.
+4. `ExpandFlexibleTracks`.
+5. `StretchAutoTracks` shares what is left equally among `auto` maximums.
+
+These sources were read at 147.0.7727.24, the local source checkout, which
+is on the same branch as the pinned 147.0.7727.50.
+
+## Change
+
+| Change | Owner | Source |
+| --- | --- | --- |
+| `intrinsic_growth_limits` resolves a growth limit for each column, following the two maximum steps above, from the base sizes `size_intrinsic_tracks` already resolved. | `openui-layout` | `bindings/rust/openui-layout/src/grid.rs` |
+| `maximize_tracks` is Blink's `MaximizeTracks`, using the same share arithmetic as `DistributeExtraSpaceToSets` (truncated layout units, smallest potential first, the last growable track takes the remainder). | `openui-layout` | same |
+| With a definite container inline size, columns use these two steps in place of `maximize_fixed_max_tracks`. With an indefinite inline size, and for rows, nothing changes. | `openui-layout` | same |
+
+Rows are not changed: `size_row_tracks_from_layout` already gives a row the
+laid-out block size of its items, which for block contributions is both the
+min-content and the max-content contribution.
+
+## Verification
+
+| Check | Command | Result |
+| --- | --- | --- |
+| `1fr auto` with wrappable text; two `auto` columns | `cargo test -p openui-layout --test grid_auto_track_max_tests` (Windows) | 2 passed. With the old path restored, both fail: the `auto` column is 26.69px (min-content), not 58.92px (max-content), and the narrow `auto` column is 146px, not 113.77px |
+| Maximize arithmetic: smallest potential first, then stretch; free space limit | `cargo test -p openui-layout --lib grid::tests` (Windows) | 4 passed |
+| Layout crate | `cargo test -p openui-layout --no-fail-fast` (Windows) | 5,955 passed, 0 failed |
+| Generators | `generate_properties.py --check`; `generate_v02_contract.py --check`; `generate_renderer_contract.py --check` | no drift |
+| `cargo fmt --all --check` | in `bindings/rust` | pass |
+
+The text tests live in `openui-layout/tests/`, not in `grid.rs`: the
+renderer contract counts a style field named in a source file as consumed
+there, and `grid.rs` does not read `font_size` or `line_height`.
+
+CENSUS
+
+## Not done here
+
+- Base sizes still come from the existing `size_intrinsic_tracks`, not
+  from Blink's per-group base size steps; growth limits are computed after
+  all base sizes. A multi-span item can still differ from Chromium.
+- Items that span a flexible track are left out of the growth limits, as in
+  Blink, but their base size handling is unchanged.
+- Under an indefinite inline size, the existing path is unchanged.
