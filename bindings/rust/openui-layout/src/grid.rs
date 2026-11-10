@@ -439,8 +439,15 @@ fn place_items(
 ) -> Vec<GridItem> {
     let mut occupied = HashSet::new();
     let mut result = Vec::new();
+    // The step 4 auto-placement cursor. As in Blink's
+    // `GridPlacement::RunAutoPlacementAlgorithm`, it starts at the first
+    // row and column once steps 1 and 2 are done; items placed in those
+    // steps do not move it.
     let mut cursor_row = 0usize;
     let mut cursor_column = 0usize;
+    // Step 2's sparse cursors: the end line of the last item locked to each
+    // track of the auto-flow axis (Blink's `minor_cursors`).
+    let mut locked_cursors: HashMap<usize, usize> = HashMap::new();
     let column_flow = style.grid_auto_flow.direction == GridAutoFlowDirection::Column;
     let dense = style.grid_auto_flow.dense;
     let explicit_columns = columns.tracks.len();
@@ -513,14 +520,25 @@ fn place_items(
             |value| value.span,
         );
 
+        // Step 1 (both axes definite) and step 2 (locked to a track of the
+        // auto-flow axis) leave the step 4 cursor alone.
+        let step_four = match (column, row) {
+            (Some(_), Some(_)) => false,
+            (Some(_), None) => !column_flow,
+            (None, Some(_)) => column_flow,
+            (None, None) => true,
+        };
+        let step_two = !step_four && (column.is_none() || row.is_none());
         let (column, row) = match (column, row) {
             (Some(column), Some(row)) => (column, row),
-            (Some(column), None) => {
-                // In column auto-flow this is the dedicated one-axis
-                // placement phase: each column-definite item searches from
-                // the first row independently. In row auto-flow it remains
-                // part of the cursor-driven sparse scan.
-                let mut candidate = if column_flow || dense { 0 } else { cursor_row };
+            (Some(column), None) if column_flow => {
+                // Step 2 in column auto-flow: the item is locked to its
+                // column and searches down from that column's sparse cursor.
+                let mut candidate = if dense {
+                    0
+                } else {
+                    locked_cursors.get(&column.start).copied().unwrap_or(0)
+                };
                 loop {
                     let row = AxisRange {
                         start: candidate,
@@ -532,16 +550,60 @@ fn place_items(
                     candidate += 1;
                 }
             }
-            (None, Some(row)) => {
-                // Transpose of the case above. Row-definite items in row
-                // auto-flow do not inherit the previous item's column
-                // cursor; two items in different explicit rows may both use
-                // the first column.
-                let mut candidate = if !column_flow || dense {
+            (Some(column), None) => {
+                // Step 4 in row auto-flow, a definite column: the cursor
+                // moves to the item's column, and to the next row first if
+                // that column is behind the cursor (Blink's
+                // `AutoPlacementCursor::MoveToMinorLine`). The item then
+                // moves down until it fits.
+                if dense {
+                    cursor_row = 0;
+                    cursor_column = 0;
+                }
+                if column.start < cursor_column {
+                    cursor_row += 1;
+                }
+                let mut candidate = cursor_row;
+                loop {
+                    let row = AxisRange {
+                        start: candidate,
+                        span: row_span,
+                    };
+                    if cells_free(&occupied, column, row) {
+                        break (column, row);
+                    }
+                    candidate += 1;
+                }
+            }
+            (None, Some(row)) if !column_flow => {
+                // Step 2 in row auto-flow: the item is locked to its row and
+                // searches across from that row's sparse cursor.
+                let mut candidate = if dense {
                     0
                 } else {
-                    cursor_column
+                    locked_cursors.get(&row.start).copied().unwrap_or(0)
                 };
+                loop {
+                    let column = AxisRange {
+                        start: candidate,
+                        span: column_span,
+                    };
+                    if cells_free(&occupied, column, row) {
+                        break (column, row);
+                    }
+                    candidate += 1;
+                }
+            }
+            (None, Some(row)) => {
+                // Transpose of the definite-column step 4 case above.
+                if dense {
+                    cursor_row = 0;
+                    cursor_column = 0;
+                }
+                if row.start < cursor_row {
+                    cursor_column += 1;
+                }
+                let mut candidate = cursor_column;
                 loop {
                     let column = AxisRange {
                         start: candidate,
@@ -596,13 +658,19 @@ fn place_items(
             }
         };
         occupy(&mut occupied, column, row);
-        if !dense {
+        if step_four {
             cursor_column = column.start;
             cursor_row = row.start;
             if column_flow {
                 cursor_row += row.span;
             } else {
                 cursor_column += column.span;
+            }
+        } else if step_two && !dense {
+            if column_flow {
+                locked_cursors.insert(column.start, row.start + row.span);
+            } else {
+                locked_cursors.insert(row.start, column.start + column.span);
             }
         }
         result.push(GridItem {
