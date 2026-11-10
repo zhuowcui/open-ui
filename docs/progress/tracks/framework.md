@@ -15,7 +15,7 @@ The order and verification of each PR are in
 | 2 | `openui-cli` skeleton: `new`, `dev`, `build`, `doctor` | Merged (#93) |
 | 3 | Multi-window runtime | Merged (#96) |
 | 4 | Async runtime integrated with the UI thread and signals | Merged (#98) |
-| 5 | Clipboard service | In review |
+| 5 | Clipboard service | Merged (#99) |
 | 6 | File dialogs | In review |
 | 7 | App menu | Not started |
 | 8 | HTTP client | Not started |
