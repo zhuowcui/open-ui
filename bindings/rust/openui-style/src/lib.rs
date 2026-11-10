@@ -11,6 +11,9 @@ mod authored_style;
 mod color;
 mod color_function;
 mod computed;
+#[cfg(feature = "constructor-tokens")]
+#[doc(hidden)]
+pub mod constructor_tokens;
 mod enums;
 mod font_types;
 mod layout_systems;

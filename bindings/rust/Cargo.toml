@@ -3,6 +3,7 @@ resolver = "2"
 members = [
     "openui-geometry",
     "openui-style",
+    "openui-style-derive",
     "openui-dom",
     "openui-layout",
     "openui-paint",

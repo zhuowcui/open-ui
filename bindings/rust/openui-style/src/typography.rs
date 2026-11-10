@@ -49,6 +49,10 @@ impl LanguageTag {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum FontKerning {
     Auto = 0,
     Normal = 1,
@@ -63,6 +67,10 @@ impl Default for FontKerning {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum FontVariantEmoji {
     Normal = 0,
     Text = 1,
@@ -77,6 +85,10 @@ impl Default for FontVariantEmoji {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum FontSizeAdjust {
     None,
     ExHeight(f32),
@@ -95,6 +107,10 @@ impl Default for FontSizeAdjust {
 
 /// Four-byte OpenType language-system override, or `normal`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct FontLanguageOverride(pub Option<[u8; 4]>);
 
 impl FontLanguageOverride {
@@ -111,6 +127,10 @@ impl FontLanguageOverride {
 
 /// Validated OpenType feature list. Later duplicate tags win, matching CSS.
 #[derive(Debug, Clone, PartialEq, Default)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct OpenTypeFeatureList(pub Vec<FontFeature>);
 
 impl OpenTypeFeatureList {
@@ -126,6 +146,10 @@ impl OpenTypeFeatureList {
 
 /// Validated OpenType variation-axis list.
 #[derive(Debug, Clone, PartialEq, Default)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct FontVariationList(pub Vec<FontVariation>);
 
 impl FontVariationList {
@@ -146,6 +170,10 @@ impl FontVariationList {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct HyphenateCharacter(pub Option<String>);
 
 impl HyphenateCharacter {
@@ -158,6 +186,10 @@ impl HyphenateCharacter {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct HyphenationLimits {
     pub word: u8,
     pub before: u8,
@@ -188,6 +220,10 @@ impl Default for HyphenationLimits {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum WhiteSpaceCollapse {
     Collapse = 0,
     Preserve = 1,
@@ -203,6 +239,10 @@ impl Default for WhiteSpaceCollapse {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum TextWrapMode {
     Wrap = 0,
     Nowrap = 1,
@@ -216,6 +256,10 @@ impl Default for TextWrapMode {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum TextWrapStyle {
     Auto = 0,
     Balance = 1,
@@ -231,6 +275,10 @@ impl Default for TextWrapStyle {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum TextAutospace {
     NoAutospace = 0,
     Normal = 1,
@@ -244,6 +292,10 @@ impl Default for TextAutospace {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum TextSpacingTrim {
     Normal = 0,
     SpaceAll = 1,
@@ -258,6 +310,10 @@ impl Default for TextSpacingTrim {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum TextSizeAdjust {
     Auto,
     None,
@@ -272,6 +328,10 @@ impl Default for TextSizeAdjust {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum RubyOverhang {
     Auto = 0,
     None = 1,
@@ -285,6 +345,10 @@ impl Default for RubyOverhang {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum TextBoxTrim {
     None = 0,
     TrimStart = 1,
@@ -299,18 +363,30 @@ impl Default for TextBoxTrim {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct TextBoxEdge {
     pub over: TextBoxEdgeKeyword,
     pub under: TextBoxEdgeKeyword,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct TextBoxShorthand {
     pub trim: TextBoxTrim,
     pub edge: TextBoxEdge,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum InitialLetterValue {
     #[default]
     Normal,
@@ -319,6 +395,10 @@ pub enum InitialLetterValue {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum TextBoxEdgeKeyword {
     Auto = 0,
     Text = 1,
@@ -339,6 +419,10 @@ impl Default for TextBoxEdge {
 }
 
 #[derive(Debug, Clone, PartialEq, Default)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct TextShadowList(pub Vec<crate::TextShadow>);
 
 impl TextShadowList {
@@ -361,6 +445,10 @@ impl TextShadowList {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct TextEmphasisStyle {
     pub mark: TextEmphasisMark,
     pub fill: TextEmphasisFill,
@@ -378,6 +466,10 @@ impl Default for TextEmphasisStyle {
 /// Atomic computed value for the `font-synthesis` shorthand.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 /// The independent position longhand is not reset by the Chromium .50 shorthand.
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct FontSynthesisShorthand {
     pub weight: FontSynthesis,
     pub style: FontSynthesis,
@@ -410,6 +502,10 @@ impl Default for FontSynthesisShorthand {
 
 /// Atomic computed value for the `font-variant` shorthand.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct FontVariantShorthand {
     pub ligatures: FontVariantLigatures,
     pub caps: FontVariantCaps,
@@ -438,6 +534,10 @@ impl Default for FontVariantShorthand {
 /// value requires the mandatory size and family components, so a partial
 /// shorthand can never enter the declaration list.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct FontShorthand {
     pub style: FontStyleEnum,
     pub variant_caps: FontVariantCaps,
@@ -463,18 +563,30 @@ impl FontShorthand {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct WhiteSpaceShorthand {
     pub collapse: WhiteSpaceCollapse,
     pub wrap: TextWrapMode,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct TextWrapShorthand {
     pub mode: TextWrapMode,
     pub style: TextWrapStyle,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct TextDecorationShorthand {
     pub line: TextDecorationLine,
     pub style: TextDecorationStyle,
@@ -495,6 +607,10 @@ impl Default for TextDecorationShorthand {
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 /// Chromium .50 applies style/color; position remains an independent longhand.
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct TextEmphasisShorthand {
     pub style: TextEmphasisStyle,
     pub color: StyleColor,
@@ -514,6 +630,10 @@ impl Default for TextEmphasisShorthand {
 
 /// The typography-specific payload behind `StyleValue`.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum TypographyValue {
     Direction(crate::Direction),
     FontKerning(FontKerning),

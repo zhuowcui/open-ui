@@ -3,6 +3,7 @@
 use proc_macro::TokenStream;
 
 mod component;
+mod typed_style_cases;
 mod view;
 
 /// JSX-like declarative UI macro.
@@ -75,4 +76,15 @@ pub fn view(input: TokenStream) -> TokenStream {
 #[proc_macro_attribute]
 pub fn component(attr: TokenStream, input: TokenStream) -> TokenStream {
     component::component_macro(attr.into(), input.into()).into()
+}
+
+/// Test support, not public API: every property's initial value that
+/// `parse_literal` accepts, plus every line of `typed_style_corpus.txt`,
+/// parsed at compile time and emitted as
+/// `(StyleProperty, literal, constructed StyleValue)` tuples. The tests
+/// compare each constructed value with the runtime parse of its literal.
+#[doc(hidden)]
+#[proc_macro]
+pub fn __typed_style_literal_cases(input: TokenStream) -> TokenStream {
+    typed_style_cases::expand(input.into()).into()
 }

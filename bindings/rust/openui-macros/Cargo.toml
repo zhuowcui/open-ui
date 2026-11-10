@@ -17,4 +17,4 @@ proc-macro = true
 proc-macro2 = "1"
 quote = "1"
 syn = { version = "2", features = ["full", "extra-traits"] }
-openui-style = { version = "=0.2.0", path = "../openui-style" }
+openui-style = { version = "=0.2.0", path = "../openui-style", features = ["constructor-tokens"] }

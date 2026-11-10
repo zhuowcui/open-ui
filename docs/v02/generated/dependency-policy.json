@@ -1,6 +1,6 @@
 {
   "license_policy": "Apache-2.0, MIT, BSD, ISC, Unicode, FTL, or separately reviewed",
-  "lockfile_sha256": "dfe2cda912ad11e1052b3acd4a66b807ca577f314c089c25a7a01fc2781e85da",
+  "lockfile_sha256": "77df6c08974b42db99d163e305060e98892bdefa593deaddfa242e228b4ccfa0",
   "msrv": "1.85",
   "prerelease_dependencies": [],
   "schema_version": 1,
