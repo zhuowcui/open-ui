@@ -1811,6 +1811,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "openui-cli"
+version = "0.2.0"
+dependencies = [
+ "serde_json",
+]
+
+[[package]]
 name = "openui-compositor"
 version = "0.2.0"
 dependencies = [

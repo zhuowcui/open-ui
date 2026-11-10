@@ -14,6 +14,10 @@ use std::cell::Cell;
 use std::cell::RefCell;
 use std::rc::Rc;
 
+/// Environment variable naming a PNG file: when set, [`App::run`] renders
+/// the first frame there instead of opening a window.
+pub const RENDER_PNG_ENV: &str = "OPENUI_RENDER_PNG";
+
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct LogicalSize {
     pub width: f64,
@@ -219,8 +223,17 @@ impl App {
     }
 
     /// Block in the native event loop using the document already attached.
+    ///
+    /// When `OPENUI_RENDER_PNG` names a file, render the first frame there
+    /// without opening a window and return. Smoke tests and the CLI use this
+    /// to check an app's output on machines without a display. It uses the
+    /// default form-control accent, so the image does not depend on the
+    /// system theme.
     pub fn run_document(self) -> Result<(), Error> {
         self.document.update_all()?;
+        if let Some(path) = std::env::var_os(RENDER_PNG_ENV) {
+            return self.render_first_frame_to(path);
+        }
         #[cfg(any(
             all(feature = "linux", target_os = "linux"),
             all(feature = "windows", target_os = "windows")
@@ -251,6 +264,11 @@ impl App {
             all(feature = "windows", target_os = "windows")
         )))]
         Err(Error::PlatformUnavailable)
+    }
+
+    fn render_first_frame_to(&self, path: impl AsRef<std::path::Path>) -> Result<(), Error> {
+        self.document.begin_frame(0.0)?;
+        self.document.render_to_png(path)
     }
 
     pub fn request_exit(&self) {
@@ -632,6 +650,33 @@ mod tests {
         assert_eq!((first.width(), first.height()), (64, 64));
         assert_eq!(first.pixels(), second.pixels());
         assert!(first.pixels().iter().any(|channel| *channel != 255));
+    }
+
+    #[test]
+    fn render_png_hook_matches_the_headless_first_frame() {
+        let red_box = || {
+            view! {
+                <div style:width="32px" style:height="16px" style:background-color="red">
+                    "native"
+                </div>
+            }
+        };
+        let mut app = App::builder()
+            .size(LogicalSize::new(64.0, 48.0))
+            .build()
+            .unwrap();
+        app.mount(red_box).unwrap();
+        let path =
+            std::env::temp_dir().join(format!("openui-render-png-hook-{}.png", std::process::id()));
+        app.render_first_frame_to(&path).unwrap();
+        let written = std::fs::read(&path).unwrap();
+        let _ = std::fs::remove_file(&path);
+
+        let mut headless =
+            HeadlessApp::new(ViewportMetrics::from_logical_size(64.0, 48.0, 1.0).unwrap()).unwrap();
+        headless.mount(red_box).unwrap();
+        assert_eq!(written, headless.render_png_at(0.0).unwrap());
+        assert!(written.starts_with(b"\x89PNG\r\n\x1a\n"));
     }
 
     #[test]

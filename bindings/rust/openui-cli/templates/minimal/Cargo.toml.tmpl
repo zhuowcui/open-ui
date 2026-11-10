@@ -1,0 +1,30 @@
+[package]
+name = "{{crate_name}}"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+{{framework_dependency}}
+
+# Read by the `openui` CLI: `build` copies `assets`, `dev` watches it and
+# any extra `watch` paths.
+[package.metadata.openui]
+assets = "assets"
+watch = []
+
+# Fast incremental builds: the app stays unoptimized while the framework it
+# depends on runs optimized.
+[profile.dev.package."*"]
+opt-level = 2
+
+# On Linux, rust-skia compiles Skia at this package's opt-level, which is
+# part of the rendering configuration. Keep it equal in every profile so dev
+# and release builds draw the same pixels.
+[profile.dev.package.skia-bindings]
+opt-level = 3
+
+[profile.release.package.skia-bindings]
+opt-level = 3
+
+{{patch_table}}
