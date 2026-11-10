@@ -641,6 +641,15 @@ impl Style {
     }
 }
 
+/// A `Style` holds its declarations in order; `style!` builds one this way.
+impl FromIterator<Declaration> for Style {
+    fn from_iter<I: IntoIterator<Item = Declaration>>(declarations: I) -> Self {
+        Self {
+            declarations: declarations.into_iter().collect(),
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct LiteralError(pub String);
 
