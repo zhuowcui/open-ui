@@ -42,6 +42,8 @@ single-quoted strings.
 | Touched crates | `cargo test -p openui-style -p openui-style-derive -p openui-macros -p openui` (Windows) | 427 passed, 0 failed |
 | Generators | `generate_properties.py --check`; `generate_v02_contract.py --check`; `generate_renderer_contract.py --check` | no drift |
 | `cargo fmt --all --check` | in `bindings/rust` | pass |
+| Paired expanded census | `build_renderer.py`; `run_renderer_matrix.py --suite expanded --jobs 16`, with the CI `SKIA_GN_ARGS` | 22,517 to 22,517 exact; 0 of 23,728 Open UI images changed |
+| CSS Grid coverage | `run_renderer_matrix.py --suite coverage --ids-file tools/coverage/css_grid/manifest.json --jobs 16`, compared per test with the baseline | 2,218 to 2,218 exact; 0 of 4,204 measured Open UI images changed |
 
 `openui/tests/style_macro.rs` builds each block with `style!` and compares
 it, by `PartialEq` and by `Debug` text, with a `Style` of the same
@@ -54,7 +56,23 @@ expansion tests in `openui-macros` cover the error paths. There is no
 compile-fail harness in the workspace, so these tests call the expansion
 function directly.
 
-CENSUS
+The paired expanded census in WSL has no change. The base is `9d7bccf6`,
+the census base the [typed style constructors](typed-style-constructors-2026-11-09.md)
+record also uses; the head is `9141ebbd`, this change. Both are built with
+the CI `SKIA_GN_ARGS` and share one Chromium cache. Chromium and Open UI
+are each identical in all 23,728 comparisons: 22,517 exact before and
+after, with nothing gained or lost. No census fixture goes through
+`style!`, so this checks that the runtime crates are unchanged when the
+`constructor-tokens` feature is off. The delta is in the
+[census evidence](evidence/style-macro-census-v1.json).
+
+The CSS Grid coverage suite has no change either
+([coverage evidence](evidence/style-macro-coverage-v1.json)). The base is
+`04d1eeab`, the recorded coverage baseline; the head is `9141ebbd`. In all
+4,204 measured comparisons the status and the Open UI image are unchanged:
+2,218 exact before and after. The two references that the baseline lists
+as unmeasured, whose renderer memory is unbounded, are left out of both
+runs.
 
 ## Not done here
 
