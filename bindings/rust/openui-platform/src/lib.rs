@@ -84,6 +84,37 @@ pub enum WindowCommand {
     Close(WindowId),
     Focus(WindowId),
     SetTitle(WindowId, String),
+    /// Show `entries` as the window's native menu bar, replacing any
+    /// earlier one; empty entries remove it. Ignored where
+    /// [`NATIVE_MENU_BAR`] is false.
+    SetMenu(WindowId, Vec<MenuEntry>),
+}
+
+/// Whether [`WindowCommand::SetMenu`] shows a native menu bar: on Windows
+/// with the `menu` feature. Elsewhere the app draws its own.
+pub const NATIVE_MENU_BAR: bool = cfg!(all(feature = "menu", target_os = "windows"));
+
+/// One entry of a native menu bar.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum MenuEntry {
+    Submenu {
+        /// `&` marks the mnemonic letter; `&&` is a literal ampersand.
+        label: String,
+        enabled: bool,
+        entries: Vec<MenuEntry>,
+    },
+    /// Selecting it calls [`PlatformApplication::menu_selected`] with `id`.
+    Item {
+        id: u32,
+        label: String,
+        /// Shown beside the label, such as `Ctrl+N`. The app matches its
+        /// own shortcuts; the menu only displays them.
+        accelerator: Option<String>,
+        enabled: bool,
+        /// `Some` for a check item.
+        checked: Option<bool>,
+    },
+    Separator,
 }
 
 impl std::fmt::Debug for WindowCommand {
@@ -100,6 +131,11 @@ impl std::fmt::Debug for WindowCommand {
                 .debug_tuple("SetTitle")
                 .field(id)
                 .field(title)
+                .finish(),
+            Self::SetMenu(id, entries) => formatter
+                .debug_tuple("SetMenu")
+                .field(id)
+                .field(entries)
                 .finish(),
         }
     }
@@ -156,16 +192,16 @@ impl NativeWindow {
         })
     }
 
-    #[cfg(target_os = "windows")]
-    pub(crate) fn win32(self) -> Option<isize> {
+    /// The window's `HWND`, on Windows.
+    pub fn win32(self) -> Option<isize> {
         match self.0 {
             NativeHandle::Win32(hwnd) => Some(hwnd),
             _ => None,
         }
     }
 
-    #[cfg(target_os = "linux")]
-    pub(crate) fn x11(self) -> Option<u64> {
+    /// The window's X11 window id, on X11.
+    pub fn x11(self) -> Option<u64> {
         match self.0 {
             NativeHandle::X11(window) => Some(window),
             _ => None,
@@ -380,6 +416,11 @@ pub struct SoftwareFrame {
 /// Application-side contract used by the owned native event loop.
 pub trait PlatformApplication: 'static {
     fn event(&mut self, event: PlatformEvent) -> Result<(), String>;
+
+    /// The user chose the item `id` of this window's native menu bar.
+    fn menu_selected(&mut self, _id: u32) -> Result<(), String> {
+        Ok(())
+    }
     fn render(&mut self, time_ms: f64) -> Result<SoftwareFrame, String>;
     fn exit_requested(&self) -> bool;
 

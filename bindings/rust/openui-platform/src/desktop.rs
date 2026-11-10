@@ -39,6 +39,12 @@ enum UserEvent {
     DevExit,
     /// A [`LoopWaker`] was woken: run the controller's queued UI tasks.
     Wake,
+    /// A native menu item was chosen.
+    #[cfg_attr(not(all(feature = "menu", target_os = "windows")), allow(dead_code))]
+    Menu {
+        window: crate::WindowId,
+        item: u32,
+    },
 }
 
 /// Set by `openui dev` for the apps it runs.
@@ -720,6 +726,9 @@ struct WindowState {
     presented_frames: u64,
     /// The last frame round this window drew in.
     drawn_round: u64,
+    /// The native menu bar, kept alive while it is attached.
+    #[cfg(all(feature = "menu", target_os = "windows"))]
+    menu: Option<muda::Menu>,
 }
 
 impl WindowState {
@@ -751,6 +760,8 @@ impl WindowState {
                 ime: ImeState::default(),
                 presented_frames: 0,
                 drawn_round: 0,
+                #[cfg(all(feature = "menu", target_os = "windows"))]
+                menu: None,
             },
             status,
         ))
@@ -769,6 +780,37 @@ impl WindowState {
         self.application
             .event(event)
             .map_err(PlatformError::Application)
+    }
+
+    /// Replace the window's native menu bar with `entries`.
+    #[cfg(all(feature = "menu", target_os = "windows"))]
+    fn set_menu(&mut self, entries: &[crate::MenuEntry]) -> Result<(), PlatformError> {
+        let hwnd = match self.window.window_handle().map(|handle| handle.as_raw()) {
+            Ok(raw_window_handle::RawWindowHandle::Win32(handle)) => handle.hwnd.get(),
+            _ => {
+                return Err(PlatformError::Window(
+                    "the window has no Win32 handle".into(),
+                ))
+            }
+        };
+        if let Some(previous) = self.menu.take() {
+            // SAFETY: `hwnd` is this window's live handle, which `previous`
+            // was attached to.
+            let _ = unsafe { previous.remove_for_hwnd(hwnd as _) };
+        }
+        if entries.is_empty() {
+            return Ok(());
+        }
+        let menu = muda::Menu::new();
+        for entry in entries {
+            native_menu::append_to_menu(&menu, self.id, entry)?;
+        }
+        // SAFETY: `hwnd` is this window's live handle; the menu is removed
+        // or dropped with this state before the window is destroyed.
+        unsafe { menu.init_for_hwnd(hwnd as _) }
+            .map_err(|error| PlatformError::Window(error.to_string()))?;
+        self.menu = Some(menu);
+        Ok(())
     }
 
     fn resized(&self, width: u32, height: u32) -> PlatformEvent {
@@ -1185,6 +1227,15 @@ impl<C: WindowController> Runtime<C> {
                     self.windows[index].options.title = title;
                 }
             }
+            #[cfg(all(feature = "menu", target_os = "windows"))]
+            WindowCommand::SetMenu(id, entries) => {
+                if let Some(index) = self.index_of_id(id) {
+                    let result = self.windows[index].set_menu(&entries);
+                    self.check(event_loop, result);
+                }
+            }
+            #[cfg(not(all(feature = "menu", target_os = "windows")))]
+            WindowCommand::SetMenu(..) => {}
         }
     }
 
@@ -1276,6 +1327,21 @@ impl<C: WindowController> ApplicationHandler<UserEvent> for Runtime<C> {
                 }
                 self.apply_commands(event_loop);
                 self.exit_if_requested(event_loop);
+            }
+            UserEvent::Menu { window, item } => {
+                let Some(index) = self.index_of_id(window) else {
+                    return;
+                };
+                let state = &mut self.windows[index];
+                let result = state
+                    .application
+                    .menu_selected(item)
+                    .map_err(PlatformError::Application);
+                state.request_redraw();
+                if self.check(event_loop, result) {
+                    self.apply_commands(event_loop);
+                    self.exit_if_requested(event_loop);
+                }
             }
             UserEvent::DevExit => {
                 for state in &mut self.windows {
@@ -1417,6 +1483,8 @@ pub fn run_windows<C: WindowController>(mut controller: C) -> Result<(), Platfor
     // before the display connection it was created from closes.
     let weak: std::rc::Weak<NativeClipboard> = Rc::downgrade(&clipboard);
     controller.clipboard(Clipboard::new(weak));
+    #[cfg(all(feature = "menu", target_os = "windows"))]
+    native_menu::route_events_to(proxy.clone());
     let mut runtime = Runtime {
         windows: Vec::new(),
         controller,
@@ -1434,6 +1502,117 @@ pub fn run_windows<C: WindowController>(mut controller: C) -> Result<(), Platfor
         .run_app(&mut runtime)
         .map_err(|error| PlatformError::Initialization(error.to_string()))?;
     runtime.error.map_or(Ok(()), Err)
+}
+
+/// Native menu bars built with muda. Item ids carry the window id, so a
+/// choice reaches the window whose menu it came from.
+#[cfg(all(feature = "menu", target_os = "windows"))]
+mod native_menu {
+    use super::UserEvent;
+    use crate::{MenuEntry, PlatformError, WindowId};
+    use muda::{CheckMenuItem, IsMenuItem, MenuId, MenuItem, PredefinedMenuItem, Submenu};
+    use std::sync::Mutex;
+    use winit::event_loop::EventLoopProxy;
+
+    fn failed(error: muda::Error) -> PlatformError {
+        PlatformError::Window(format!("native menu: {error}"))
+    }
+
+    fn item_id(window: WindowId, item: u32) -> MenuId {
+        MenuId::new(format!("{}:{item}", window.0))
+    }
+
+    fn parse_id(id: &MenuId) -> Option<(WindowId, u32)> {
+        let (window, item) = id.as_ref().split_once(':')?;
+        Some((WindowId(window.parse().ok()?), item.parse().ok()?))
+    }
+
+    /// A label with its accelerator text, which Windows right-aligns after
+    /// a tab.
+    fn label_with_accelerator(label: &str, accelerator: Option<&str>) -> String {
+        match accelerator {
+            Some(accelerator) => format!("{label}\t{accelerator}"),
+            None => label.to_owned(),
+        }
+    }
+
+    fn build(window: WindowId, entry: &MenuEntry) -> Result<Box<dyn IsMenuItem>, PlatformError> {
+        Ok(match entry {
+            MenuEntry::Submenu {
+                label,
+                enabled,
+                entries,
+            } => {
+                let submenu = Submenu::new(label, *enabled);
+                for entry in entries {
+                    submenu
+                        .append(build(window, entry)?.as_ref())
+                        .map_err(failed)?;
+                }
+                Box::new(submenu)
+            }
+            MenuEntry::Item {
+                id,
+                label,
+                accelerator,
+                enabled,
+                checked: None,
+            } => Box::new(MenuItem::with_id(
+                item_id(window, *id),
+                label_with_accelerator(label, accelerator.as_deref()),
+                *enabled,
+                None,
+            )),
+            MenuEntry::Item {
+                id,
+                label,
+                accelerator,
+                enabled,
+                checked: Some(checked),
+            } => Box::new(CheckMenuItem::with_id(
+                item_id(window, *id),
+                label_with_accelerator(label, accelerator.as_deref()),
+                *enabled,
+                *checked,
+                None,
+            )),
+            MenuEntry::Separator => Box::new(PredefinedMenuItem::separator()),
+        })
+    }
+
+    pub(super) fn append_to_menu(
+        menu: &muda::Menu,
+        window: WindowId,
+        entry: &MenuEntry,
+    ) -> Result<(), PlatformError> {
+        menu.append(build(window, entry)?.as_ref()).map_err(failed)
+    }
+
+    /// Deliver menu choices to this loop. muda calls the handler from the
+    /// window procedure, on the event-loop thread.
+    pub(super) fn route_events_to(proxy: EventLoopProxy<UserEvent>) {
+        let proxy = Mutex::new(proxy);
+        muda::MenuEvent::set_event_handler(Some(move |event: muda::MenuEvent| {
+            if let Some((window, item)) = parse_id(&event.id) {
+                if let Ok(proxy) = proxy.lock() {
+                    let _ = proxy.send_event(UserEvent::Menu { window, item });
+                }
+            }
+        }));
+    }
+
+    #[cfg(test)]
+    mod tests {
+        use super::*;
+
+        #[test]
+        fn item_ids_round_trip_with_their_window() {
+            let id = item_id(WindowId(7), 42);
+            assert_eq!(parse_id(&id), Some((WindowId(7), 42)));
+            assert_eq!(parse_id(&MenuId::new("other")), None);
+            assert_eq!(label_with_accelerator("New", Some("Ctrl+N")), "New\tCtrl+N");
+        }
+    }
 }
 
 /// Under `openui dev`, exit when the parent closes stdin. Reading blocks a
@@ -1515,6 +1694,18 @@ fn key_code(key: &Key) -> i32 {
         Key::Named(NamedKey::Delete) => 46,
         Key::Named(NamedKey::Backspace) => 8,
         Key::Named(NamedKey::Escape) => 27,
+        Key::Named(NamedKey::F1) => 112,
+        Key::Named(NamedKey::F2) => 113,
+        Key::Named(NamedKey::F3) => 114,
+        Key::Named(NamedKey::F4) => 115,
+        Key::Named(NamedKey::F5) => 116,
+        Key::Named(NamedKey::F6) => 117,
+        Key::Named(NamedKey::F7) => 118,
+        Key::Named(NamedKey::F8) => 119,
+        Key::Named(NamedKey::F9) => 120,
+        Key::Named(NamedKey::F10) => 121,
+        Key::Named(NamedKey::F11) => 122,
+        Key::Named(NamedKey::F12) => 123,
         // Character code points collide with the navigation/control codes.
         // Letters and digits keep their conventional codes; other characters
         // carry their identity in key_text and committed text.

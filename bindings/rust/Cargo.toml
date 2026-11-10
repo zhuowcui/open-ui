@@ -24,6 +24,7 @@ members = [
     "examples/tasks",
     "examples/clipboard",
     "examples/dialogs",
+    "examples/menus",
     "pixel-compare",
 ]
 exclude = ["fuzz", "vendor/zbus_xml-v5_1"]

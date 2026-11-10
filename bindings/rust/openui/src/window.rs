@@ -313,6 +313,8 @@ pub(crate) enum Request {
     Close(u64),
     Focus(u64),
     SetTitle(u64, String),
+    #[cfg(feature = "menu")]
+    SetMenu(u64, Vec<openui_platform::MenuEntry>),
 }
 
 struct Entry {
@@ -391,6 +393,24 @@ pub(crate) fn close_requested(id: u64) -> bool {
         forget(id);
     }
     close == Close::Allow
+}
+
+/// Show `entries` as window `id`'s native menu bar.
+#[cfg(feature = "menu")]
+pub(crate) fn request_menu(id: u64, entries: Vec<openui_platform::MenuEntry>) {
+    with_registry(|registry| registry.queue.push(Request::SetMenu(id, entries)));
+}
+
+/// Close the window with `key` as its close button would: its close handler
+/// may keep it open.
+#[cfg(feature = "menu")]
+pub(crate) fn request_close(key: &WindowKey) {
+    let Some(id) = id_of(key) else {
+        return;
+    };
+    if close_requested(id) {
+        with_registry(|registry| registry.queue.push(Request::Close(id)));
+    }
 }
 
 /// Forget a window the event loop closed.

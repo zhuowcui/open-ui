@@ -16,12 +16,44 @@ The order and verification of each PR are in
 | 3 | Multi-window runtime | Merged (#96) |
 | 4 | Async runtime integrated with the UI thread and signals | Merged (#98) |
 | 5 | Clipboard service | Merged (#99) |
-| 6 | File dialogs | In review |
-| 7 | App menu | Not started |
+| 6 | File dialogs | Merged (#100) |
+| 7 | App menu | Part 1 in review (model, shortcuts, roles, Windows menu bar); Linux menu bar next |
 | 8 | HTTP client | Not started |
 | 9 | `default` template and test utilities | Not started |
 
 ## Log
+
+### 10 November 2026: app menu, part 1
+
+Change: `openui::menu` (`menu` feature) declares a typed menu bar:
+`Menu`, `MenuItem` (accelerator, reactive `enabled` and `checked`,
+`on_select`), `Role` (Quit, Close Window, Undo, Redo, Cut, Copy, Paste,
+Select All, About) and `Accelerator`. `AppSpec::menu(build)` gives every
+window the menu; an effect in the window's root scope re-resolves it when
+the signals it reads change. Accelerators are matched before the focused
+document sees the key. Edit roles leave their shortcuts to the document,
+which already handles them, so key behaviour is unchanged. On Windows,
+`openui-platform` shows the menu natively with muda 0.19.3
+(`WindowCommand::SetMenu`, `PlatformApplication::menu_selected`). muda adds
+four crates: muda, keyboard-types, crossbeam-channel and png, all MIT or
+Apache-2.0 and MSRV 1.73 or lower. The runtime now reports F1 to F12 key
+codes. The drawn Linux menu bar is the next PR; until then Linux has the
+shortcuts and roles without a visible bar.
+
+Verification:
+
+- `cargo test -p openui --features "windows menu" --lib menu` (also on
+  Linux): resolution to entries, ids, reactive state, accelerator matching,
+  and platform labels and shortcuts.
+- Windows: `cargo test -p openui-platform --features "windows menu" --test
+  menu` reads the native bar through Win32 (labels, accelerator text,
+  disabled, checked, separators), posts item commands and sees them reach
+  the window's app, then replaces and removes the bar.
+- Windows, end to end on the `menus` example: View > Large Text toggles its
+  check mark and enables Reset Text Size reactively, File > New Window opens
+  a window with the same menu, Close Window closes it and Exit ends the app.
+- `menus` smoke passes on Windows (software, auto) and WSL (software,
+  OpenGL).
 
 ### 9 November 2026: file dialogs
 
