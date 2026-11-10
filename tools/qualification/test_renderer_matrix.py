@@ -251,6 +251,31 @@ class RendererMatrixTests(unittest.TestCase):
         self.assertEqual(full[2].physical_width, 1600)
         self.assertEqual(focused[-1].physical_height, 4320)
 
+    def test_coverage_suite_uses_census_profiles_and_its_own_templates(self):
+        full = MATRIX.contract_profiles(self.contract, "full")
+        self.assertEqual(MATRIX.contract_profiles(self.contract, "coverage"), full)
+        self.assertIsNone(MATRIX.suite_manifest_path("coverage"))
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            (root / "demo").mkdir()
+            (root / "demo/templates.json").write_text(
+                json.dumps({"wpt/demo/a": "<div></div>"}), encoding="utf-8"
+            )
+            with patch.object(MATRIX, "COVERAGE_DIR", root):
+                self.assertEqual(MATRIX.load_templates()["wpt/demo/a"], "<div></div>")
+            (root / "demo/manifest.json").write_text(
+                json.dumps(["wpt/demo/a"]), encoding="utf-8"
+            )
+            with patch.object(MATRIX, "COVERAGE_DIR", root):
+                self.assertEqual(MATRIX.coverage_ids(), {"wpt/demo/a"})
+            census_id = next(iter(json.loads(MATRIX.TEMPLATES.read_text(encoding="utf-8"))))
+            (root / "demo/templates.json").write_text(
+                json.dumps({census_id: "<div></div>"}), encoding="utf-8"
+            )
+            with patch.object(MATRIX, "COVERAGE_DIR", root):
+                with self.assertRaises(ValueError):
+                    MATRIX.load_templates()
+
     def test_profile_selection_is_ordered_and_fail_closed(self):
         profiles = MATRIX.contract_profiles(self.contract, "full")
         selected = MATRIX.select_profiles(

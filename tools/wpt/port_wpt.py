@@ -8512,7 +8512,8 @@ def generate_single_style(
 
     if prop == 'order':
         try:
-            return f"{s}.order = {int(val)};"
+            # Blink parses a CSS <integer> clamped to the int range.
+            return f"{s}.order = {max(-2**31, min(2**31 - 1, int(val)))};"
         except ValueError:
             pass
 
