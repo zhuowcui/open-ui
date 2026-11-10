@@ -463,6 +463,7 @@ pub enum StyleProperty {{
 /// v0.2 property surface. Variants are property-bound; the paired snap value
 /// writes both logical alignments through the existing align property.
 #[derive(Debug, Clone)]
+#[cfg_attr(feature = "constructor-tokens", derive(crate::constructor_tokens::ConstructorTokens))]
 pub enum RendererStyleValue {{
 {renderer_variants}
 }}

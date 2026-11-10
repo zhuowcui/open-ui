@@ -29,6 +29,7 @@ SUPPORTED_TARGETS = {
 }
 PUBLIC_CRATES = (
     "openui-geometry",
+    "openui-style-derive",
     "openui-style",
     "openui-dom",
     "openui-text",
