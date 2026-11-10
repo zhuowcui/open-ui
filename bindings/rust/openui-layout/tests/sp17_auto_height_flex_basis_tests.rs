@@ -252,3 +252,56 @@ fn auto_height_flex_item_includes_border_padding_and_one_break_line() {
     assert_eq!(item_fragment.height(), lu(30));
     assert_eq!(fragment.height(), lu(42));
 }
+
+/// A column item's automatic minimum height comes from a layout at its cross
+/// size, as Blink's `BlockSizeFunc(SizeType::kContent)`, not from a layout at
+/// its min-content width. Text that fits the item's width stays on one line.
+fn column_text_item_height(basis: Length, grow: f32) -> (LayoutUnit, LayoutUnit) {
+    let mut doc = Document::new();
+    let container = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(container, |style| {
+        style.update_derived(|computed| computed.display = Display::Flex);
+        style.update_derived(|computed| computed.flex_direction = FlexDirection::Column);
+        style.update_derived(|computed| computed.width = Length::px(300.0));
+    });
+    doc.append_child(doc.root(), container);
+
+    let item = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(item, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+        style.update_derived(|computed| computed.flex_grow = grow);
+        style.update_derived(|computed| computed.flex_basis = basis);
+        style.update_derived(|computed| computed.font_size = 20.0);
+        style.update_derived(|computed| computed.line_height = LineHeight::Length(20.0));
+    });
+    doc.append_child(container, item);
+
+    let text = doc.create_node(ElementTag::Text);
+    doc.update_resolved_style(text, |style| style.font_size = 20.0);
+    doc.update_resolved_style(text, |style| style.line_height = LineHeight::Length(20.0));
+    doc.node_mut(text).text = Some("XX XX XX".to_string());
+    doc.append_child(item, text);
+
+    let fragment = flex_layout(
+        &doc,
+        container,
+        &ConstraintSpace::for_root(lu(300), lu(300)),
+    );
+    (fragment_for(&fragment, item).height(), fragment.height())
+}
+
+#[test]
+fn column_auto_minimum_measures_text_at_the_stretched_width() {
+    assert_eq!(
+        column_text_item_height(Length::auto(), 0.0),
+        (lu(20), lu(20))
+    );
+}
+
+#[test]
+fn column_auto_minimum_with_a_zero_basis_measures_text_at_the_stretched_width() {
+    assert_eq!(
+        column_text_item_height(Length::percent(0.0), 1.0),
+        (lu(20), lu(20))
+    );
+}

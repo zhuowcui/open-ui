@@ -1825,7 +1825,6 @@ fn resolve_flex_basis(
                 child_percentage_inline,
                 child_percentage_block,
                 true,
-                space,
                 resolved_alignment,
             );
             // resolve_content_based_size returns the AR-derived content size
@@ -1890,7 +1889,6 @@ fn resolve_flex_basis(
                 child_percentage_inline,
                 child_percentage_block,
                 true,
-                space,
                 resolved_alignment,
             ),
             true,
@@ -2051,7 +2049,6 @@ fn resolve_flex_basis(
             child_percentage_inline,
             child_percentage_block,
             false,
-            space,
             resolved_alignment,
         ),
         true,
@@ -2122,7 +2119,6 @@ fn resolve_content_based_size(
     child_percentage_inline: LayoutUnit,
     child_percentage_block: LayoutUnit,
     replaces_main_size: bool,
-    _space: &ConstraintSpace,
     resolved_alignment: ItemPosition,
 ) -> LayoutUnit {
     let axis_mapping = FlexItemAxisMapping::new(child_style, is_column, is_main_axis_horizontal);
@@ -3313,9 +3309,6 @@ fn resolve_main_axis_min_max(
                 }
                 cs
             } else {
-                let intrinsic = crate::intrinsic_sizing::compute_intrinsic_block_sizes_with_layout(
-                    doc, child_id,
-                );
                 let has_definite_inline_constraint = child_style.width.is_fixed()
                     || child_style.min_width.is_fixed()
                     || (!child_style.max_width.is_none()
@@ -3326,16 +3319,45 @@ fn resolve_main_axis_min_max(
                 // line contribution. Preserve the fragmentation-sensitive
                 // min-content block contribution for unconstrained horizontal
                 // IFCs so measuring an auto minimum does not invent height.
-                let intrinsic_block = if axis_mapping.child_writing_direction.is_horizontal()
-                    && !axis_mapping.child_writing_direction.is_rtl()
-                    && !has_definite_inline_constraint
-                    && !has_semantic_break_in_inline_flow(doc, child_id)
-                {
-                    intrinsic.min_content_block_size
+                let unconstrained_inline_flow =
+                    axis_mapping.child_writing_direction.is_horizontal()
+                        && !axis_mapping.child_writing_direction.is_rtl()
+                        && !has_definite_inline_constraint
+                        && !has_semantic_break_in_inline_flow(doc, child_id);
+                let mut cs = if is_column && unconstrained_inline_flow {
+                    // A column item's content size suggestion is its block
+                    // size laid out in the flex basis space, at its stretched
+                    // or fit-content cross size, as Blink's
+                    // `BlockSizeFunc(SizeType::kContent)` in
+                    // `FlexLayoutAlgorithm::ConstructAndAppendFlexItems`.
+                    // A min-content-width layout would wrap text the item
+                    // does not wrap. Blink takes the layout's
+                    // `IntrinsicBlockSize()`, which ignores the item's own
+                    // block size, so the measurement replaces it with `auto`.
+                    resolve_content_based_size(
+                        doc,
+                        child_id,
+                        child_style,
+                        is_column,
+                        is_main_axis_horizontal,
+                        main_axis_border_padding,
+                        pct_inline,
+                        pct_block,
+                        true,
+                        resolved_alignment,
+                    )
                 } else {
-                    intrinsic.max_content_block_size
+                    let intrinsic =
+                        crate::intrinsic_sizing::compute_intrinsic_block_sizes_with_layout(
+                            doc, child_id,
+                        );
+                    let intrinsic_block = if unconstrained_inline_flow {
+                        intrinsic.min_content_block_size
+                    } else {
+                        intrinsic.max_content_block_size
+                    };
+                    (intrinsic_block - main_axis_border_padding).clamp_negative_to_zero()
                 };
-                let mut cs = (intrinsic_block - main_axis_border_padding).clamp_negative_to_zero();
                 // Same AR transfer for row flex (cross = block)
                 if !is_basis_from_content || doc.node(child_id).replaced.is_some() {
                     if let Some(ref ar) = effective_aspect_ratio {
@@ -6835,16 +6857,6 @@ mod tests {
                 doc.append_child(item, atomic);
             }
 
-            let direction = doc
-                .node(item)
-                .style
-                .direction
-                .writing_direction(WritingMode::VerticalLr);
-            let space = ConstraintSpace::for_root_with_writing_direction(
-                LayoutUnit::from_i32(200),
-                LayoutUnit::from_i32(100),
-                direction,
-            );
             resolve_content_based_size(
                 &doc,
                 item,
@@ -6855,7 +6867,6 @@ mod tests {
                 LayoutUnit::from_i32(200),
                 LayoutUnit::from_i32(100),
                 false,
-                &space,
                 ItemPosition::Stretch,
             )
         }
