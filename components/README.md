@@ -10,7 +10,7 @@ RFC under `docs/alpha/rfcs/`. Measured results are in
 | Path | What it is |
 | --- | --- |
 | `Cargo.toml` | A separate Cargo workspace over `bindings/rust/openui`, repeating that workspace's patches. |
-| `openui-components/` | The components, with inline styles and sRGB stand-ins for the theme tokens (`src/theme.rs`), and the bundled fonts (`src/fonts.rs`). |
+| `openui-components/` | The components (separator, button, badge, card, label), with inline styles (`src/css.rs`) and sRGB stand-ins for the theme tokens (`src/theme.rs`), and the bundled fonts (`src/fonts.rs`). |
 | `assets/` | Geist, Geist Mono, Inter and Lucide icons, copied unmodified from the locked npm packages by `reference/build.mjs`, with their licenses and `manifest.json`. |
 | `reference-render/` | `openui-components-reference`, which renders each fixture with Open UI. |
 | `reference/` | Pinned shadcn/ui sources and the Node build of the static reference pages. |
@@ -76,6 +76,16 @@ python3 components/harness/reference_harness.py fonts \
   --output components/evidence/fonts-v1.json
 ```
 
+Compare each fixture element's border box with Chromium's
+`getBoundingClientRect`, to tell layout differences from paint
+differences. It is a diagnostic: it writes no evidence unless `--output` is
+given, and boxes count as the same within half a layout unit (1/128 px):
+
+```bash
+python3 components/harness/reference_harness.py geometry \
+  --renderer "$CARGO_TARGET_DIR/release/openui-components-reference"
+```
+
 `--fixture` and `--profile` select a subset; such a run is marked
 `"complete": false` in its evidence. Images and diffs are written under
 `out/components-reference/`. Captures are small: one browser per comparison,
@@ -88,8 +98,23 @@ the sRGB color Chromium computes for it, kept as the unclamped floats
 Chromium serializes (`evidence/theme-tokens-v1.json`): Chromium paints from
 those floats, so rounding them to 8 bits first would change blended pixels.
 Out-of-gamut tokens (`destructive` and the chart colors) have channels
-outside [0, 1]. These are marked STAND-IN in the source and are to be
-replaced by typed theme tokens.
+outside [0, 1]. Tailwind's opacity modifier (`bg-input/30`, which compiles
+to `color-mix(in oklab, var(--input) 30%, transparent)`) is the token with
+its alpha scaled (`css::with_opacity`), and `Theme::dark` stands in for the
+`.dark` class that switches Tailwind's `dark:` variants. These are marked
+STAND-IN in the source and are to be replaced by typed theme tokens.
+
+## Styles
+
+Components set the computed values of Tailwind's compiled classes
+(`reference/pages/reference.css`) declaration by declaration, after
+preflight's reset (`box-sizing: border-box; margin: 0; padding: 0;
+border: 0 solid`); see `openui-components/src/css.rs`. Where Open UI's
+style literals cannot express a value, the typed value is set instead:
+`box-shadow`, `width: fit-content`, `container-type`, `container-name`
+and grid placement. `border` is set as longhands, and `line-height`
+lengths stand for Tailwind's `calc()` ratios (`text-sm` is 14px over
+20px).
 
 ## Fonts and icons
 
