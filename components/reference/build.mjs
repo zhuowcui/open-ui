@@ -1,14 +1,17 @@
-// Build the shadcn/ui reference pages.
+// Build the shadcn/ui reference pages and the bundled assets.
 //
-//   node build.mjs           write pages/ from the pinned sources
-//   node build.mjs --check   rebuild in memory and fail if pages/ differs
+//   node build.mjs           write pages/ and ../assets/ from the pinned sources
+//   node build.mjs --check   rebuild in memory and fail if either differs
 //
-// Inputs are pinned: package-lock.json fixes React, Radix, Tailwind and
-// the other packages, and shadcn/ holds the shadcn/ui sources vendored from
-// one commit (see shadcn/SOURCE.md). Each fixture is rendered with React's
-// static renderer and wrapped in a page that links pages/reference.css,
-// which Tailwind compiles from shadcn/globals.css with source detection
-// limited to the generated pages.
+// Inputs are pinned: package-lock.json fixes React, Radix, Tailwind, the
+// fonts, the icons and the other packages, and shadcn/ holds the shadcn/ui
+// sources vendored from one commit (see shadcn/SOURCE.md). Each fixture is
+// rendered with React's static renderer and wrapped in a page that links
+// pages/reference.css, which Tailwind compiles from shadcn/globals.css plus
+// the bundled fonts' @font-face rules, with source detection limited to the
+// generated pages. The font
+// and icon files are copied unmodified from their npm packages into
+// ../assets/, which both the pages and the Rust components load.
 
 import { spawnSync } from "node:child_process"
 import { createHash } from "node:crypto"
@@ -21,7 +24,37 @@ import * as esbuild from "esbuild"
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url))
 const PAGES = path.join(ROOT, "pages")
+const ASSETS = path.join(ROOT, "..", "assets")
 const THEMES = ["light", "dark"]
+
+// The Lucide icons the new-york-v4 UI components import from lucide-react,
+// as lucide-static file names (shadcn 4.23.0, apps/v4/registry/new-york-v4/ui).
+const LUCIDE_ICONS = [
+  "arrow-down", "arrow-left", "arrow-right", "check", "chevron-down",
+  "chevron-left", "chevron-right", "chevron-up", "circle", "circle-check",
+  "grip-vertical", "info", "loader-2", "minus", "more-horizontal",
+  "octagon-x", "panel-left", "search", "triangle-alert", "x",
+]
+
+// Each bundled file: its path under ../assets, its npm package and the path
+// inside that package. Files are copied byte for byte.
+const ASSET_FILES = [
+  ["fonts/geist/Geist-Variable.woff2", "geist", "dist/fonts/geist-sans/Geist-Variable.woff2"],
+  ["fonts/geist/GeistMono-Variable.woff2", "geist", "dist/fonts/geist-mono/GeistMono-Variable.woff2"],
+  ["fonts/geist/OFL.txt", "geist", "LICENSE.txt"],
+  ["fonts/inter/InterVariable.woff2", "inter-ui", "variable/InterVariable.woff2"],
+  ["fonts/inter/OFL.txt", "inter-ui", "LICENSE.txt"],
+  ["icons/lucide/LICENSE", "lucide-static", "LICENSE"],
+  ...LUCIDE_ICONS.map((name) => [`icons/lucide/${name}.svg`, "lucide-static", `icons/${name}.svg`]),
+]
+
+// The faces fonts.css declares. Open UI registers the same files with the
+// same descriptors (openui-components/src/fonts.rs checks this list).
+const FONT_FACES = [
+  { family: "Geist", file: "fonts/geist/Geist-Variable.woff2", weight: [100, 900], style: "normal" },
+  { family: "Geist Mono", file: "fonts/geist/GeistMono-Variable.woff2", weight: [100, 900], style: "normal" },
+  { family: "Inter", file: "fonts/inter/InterVariable.woff2", weight: [100, 900], style: "normal" },
+]
 
 // shadcn/globals.css stays byte-identical to the pinned source. These are
 // the only lines the build replaces: the package imports become the
@@ -37,6 +70,61 @@ const ENTRY_IMPORTS = [
   '@import "tw-animate-css";',
   '@import "./shadcn/tailwind.css";',
 ]
+
+// Appended to the Tailwind entry after shadcn/globals.css. shadcn's docs
+// load Geist and Geist Mono with next/font as --font-sans and --font-mono;
+// these rules load the same families from the bundled files instead.
+// `font-display: block` keeps a capture from painting a fallback face, and
+// there is no fallback family: a missing glyph shows up as a mismatch.
+function fontCss() {
+  const faces = FONT_FACES.map(
+    ({ family, file, weight, style }) =>
+      "@font-face {\n" +
+      `  font-family: "${family}";\n` +
+      `  font-style: ${style};\n` +
+      `  font-weight: ${weight[0]} ${weight[1]};\n` +
+      "  font-display: block;\n" +
+      `  src: url("../../assets/${file}") format("woff2");\n` +
+      "}\n"
+  )
+  const theme =
+    "@theme {\n" +
+    '  --font-sans: "Geist";\n' +
+    '  --font-mono: "Geist Mono";\n' +
+    '  --font-inter: "Inter";\n' +
+    "}\n"
+  return "\n/* Bundled fonts (components/reference/build.mjs). */\n" + faces.join("") + theme
+}
+
+function packageVersion(name) {
+  const manifest = path.join(ROOT, "node_modules", name, "package.json")
+  return JSON.parse(fs.readFileSync(manifest, "utf8")).version
+}
+
+// The bundled files and ../assets/manifest.json, keyed by path under ../assets.
+function buildAssets() {
+  const files = new Map()
+  const entries = []
+  for (const [file, pkg, source] of ASSET_FILES) {
+    const bytes = fs.readFileSync(path.join(ROOT, "node_modules", pkg, source))
+    files.set(file, bytes)
+    entries.push({
+      file,
+      package: `${pkg}@${packageVersion(pkg)}`,
+      source,
+      sha256: createHash("sha256").update(bytes).digest("hex"),
+    })
+  }
+  const manifest = {
+    schema: "openui-components-assets-v1",
+    note: "Generated by components/reference/build.mjs; files are unmodified copies from the npm packages pinned by components/reference/package-lock.json.",
+    font_faces: FONT_FACES,
+    lucide_icons: LUCIDE_ICONS,
+    files: entries,
+  }
+  files.set("manifest.json", Buffer.from(JSON.stringify(manifest, null, 2) + "\n"))
+  return files
+}
 
 function page({ id, theme, title, body }) {
   const htmlClass = theme === "dark" ? ' class="dark"' : ""
@@ -116,7 +204,8 @@ function compileCss(scratch, pages) {
       throw new Error(`shadcn/globals.css line ${index + 1} is not ${expected}`)
     }
   }
-  const entry = [...ENTRY_IMPORTS, ...lines.slice(GLOBALS_IMPORTS.length)].join("\n")
+  const entry =
+    [...ENTRY_IMPORTS, ...lines.slice(GLOBALS_IMPORTS.length)].join("\n") + fontCss()
   // Tailwind resolves the entry's relative paths from the entry file, so
   // stage the vendored CSS and the pages beside it.
   fs.mkdirSync(path.join(scratch, "shadcn"))
@@ -201,27 +290,56 @@ async function build() {
   }
 }
 
+function listFiles(directory, prefix = "") {
+  if (!fs.existsSync(directory)) return []
+  return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) =>
+    entry.isDirectory()
+      ? listFiles(path.join(directory, entry.name), `${prefix}${entry.name}/`)
+      : [`${prefix}${entry.name}`]
+  )
+}
+
+// Names of files under `directory` that differ from `outputs`.
+function staleFiles(directory, outputs, label) {
+  const stale = []
+  for (const name of listFiles(directory)) {
+    if (!outputs.has(name)) stale.push(`extra ${label}/${name}`)
+  }
+  for (const [name, content] of outputs) {
+    const file = path.join(directory, name)
+    if (!fs.existsSync(file)) stale.push(`missing ${label}/${name}`)
+    else if (!fs.readFileSync(file).equals(Buffer.from(content))) {
+      stale.push(`differs ${label}/${name}`)
+    }
+  }
+  return stale
+}
+
+function writeFiles(directory, outputs) {
+  fs.rmSync(directory, { recursive: true, force: true })
+  for (const [name, content] of outputs) {
+    const file = path.join(directory, name)
+    fs.mkdirSync(path.dirname(file), { recursive: true })
+    fs.writeFileSync(file, content)
+  }
+}
+
 const check = process.argv.includes("--check")
 const pages = await build()
+const assets = buildAssets()
 if (check) {
-  const expected = new Set(pages.keys())
-  const actual = fs.existsSync(PAGES) ? fs.readdirSync(PAGES) : []
-  const stale = []
-  for (const name of actual) if (!expected.has(name)) stale.push(`extra ${name}`)
-  for (const [name, text] of pages) {
-    const file = path.join(PAGES, name)
-    if (!fs.existsSync(file)) stale.push(`missing ${name}`)
-    else if (fs.readFileSync(file, "utf8") !== text) stale.push(`differs ${name}`)
-  }
+  const stale = [
+    ...staleFiles(PAGES, pages, "pages"),
+    ...staleFiles(ASSETS, assets, "../assets"),
+  ]
   if (stale.length) {
-    console.error(`reference pages are stale:\n  ${stale.join("\n  ")}`)
+    console.error(`reference pages or assets are stale:\n  ${stale.join("\n  ")}`)
     console.error("run `node build.mjs` in components/reference")
     process.exit(1)
   }
-  console.log(`reference pages are current (${pages.size} files)`)
+  console.log(`reference pages and assets are current (${pages.size} pages, ${assets.size} assets)`)
 } else {
-  fs.rmSync(PAGES, { recursive: true, force: true })
-  fs.mkdirSync(PAGES)
-  for (const [name, text] of pages) fs.writeFileSync(path.join(PAGES, name), text)
-  console.log(`wrote ${pages.size} files to pages/`)
+  writeFiles(PAGES, pages)
+  writeFiles(ASSETS, assets)
+  console.log(`wrote ${pages.size} files to pages/ and ${assets.size} to ../assets/`)
 }

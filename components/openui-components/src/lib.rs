@@ -6,9 +6,11 @@
 //! with shadcn/ui rendered by Chromium; see `components/README.md` for the
 //! harness and `docs/progress/tracks/components.md` for measured results.
 
+pub mod fonts;
 mod separator;
 mod theme;
 
+pub use fonts::register_fonts;
 pub use separator::{Orientation, Separator, SeparatorProps};
 pub use theme::Theme;
 

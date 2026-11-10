@@ -10,7 +10,8 @@ RFC under `docs/alpha/rfcs/`. Measured results are in
 | Path | What it is |
 | --- | --- |
 | `Cargo.toml` | A separate Cargo workspace over `bindings/rust/openui`, repeating that workspace's patches. |
-| `openui-components/` | The components, with inline styles and sRGB stand-ins for the theme tokens (`src/theme.rs`). |
+| `openui-components/` | The components, with inline styles and sRGB stand-ins for the theme tokens (`src/theme.rs`), and the bundled fonts (`src/fonts.rs`). |
+| `assets/` | Geist, Geist Mono, Inter and Lucide icons, copied unmodified from the locked npm packages by `reference/build.mjs`, with their licenses and `manifest.json`. |
 | `reference-render/` | `openui-components-reference`, which renders each fixture with Open UI. |
 | `reference/` | Pinned shadcn/ui sources and the Node build of the static reference pages. |
 | `reference/pages/` | The generated pages, committed so captures need no Node. |
@@ -67,6 +68,14 @@ python3 components/harness/reference_harness.py tokens \
   --output components/evidence/theme-tokens-v1.json
 ```
 
+Record which faces Chromium draws the font fixtures with; it fails if any
+line uses a fallback instead of the bundled web font:
+
+```bash
+python3 components/harness/reference_harness.py fonts \
+  --output components/evidence/fonts-v1.json
+```
+
 `--fixture` and `--profile` select a subset; such a run is marked
 `"complete": false` in its evidence. Images and diffs are written under
 `out/components-reference/`. Captures are small: one browser per comparison,
@@ -75,9 +84,20 @@ four at a time by default. Do not run them during a full census.
 ## Stand-ins
 
 Until the engine parses `oklch()` and custom properties, each theme token is
-the sRGB color Chromium computes for it, rounded to 8 bits per channel, with
-its alpha kept exact (`evidence/theme-tokens-v1.json`). For out-of-gamut
-tokens (`destructive` and the chart colors) the stand-in clamps each
-channel; whether that is what Chromium paints is known only once a fixture
-using the token is measured. These are marked STAND-IN in the source and are
-to be replaced by typed theme tokens.
+the sRGB color Chromium computes for it, kept as the unclamped floats
+Chromium serializes (`evidence/theme-tokens-v1.json`): Chromium paints from
+those floats, so rounding them to 8 bits first would change blended pixels.
+Out-of-gamut tokens (`destructive` and the chart colors) have channels
+outside [0, 1]. These are marked STAND-IN in the source and are to be
+replaced by typed theme tokens.
+
+## Fonts and icons
+
+The reference pages use Geist as `--font-sans` and Geist Mono as
+`--font-mono`, as the shadcn/ui site does, plus Inter as `--font-inter`.
+The `@font-face` rules come from `FONT_FACES` in `reference/build.mjs`;
+`openui_components::fonts::register_fonts` registers the same files with the
+same descriptors, and a test checks both against `assets/manifest.json`.
+Lucide icons are bundled for the components that use them, but Open UI's
+static SVG decoder draws only `<rect>` shapes so far, so no icon is rendered
+yet.

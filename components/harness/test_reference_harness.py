@@ -56,6 +56,46 @@ class TokenTests(unittest.TestCase):
             )
 
 
+class FontTests(unittest.TestCase):
+    def record(self, status: str = "loaded", fonts: list | None = None) -> dict:
+        used = fonts if fonts is not None else [
+            {"familyName": "Geist", "isCustomFont": True, "glyphCount": 30}
+        ]
+        return {
+            "document_fonts": [{"family": "Geist", "status": status},
+                               {"family": "Inter", "status": "unloaded"}],
+            "lines": [{"element": "<p>Sphinx</p>", "fonts": used}],
+        }
+
+    def test_a_line_in_one_loaded_web_font_passes(self) -> None:
+        self.assertEqual(harness.font_problems("Geist", self.record()), [])
+
+    def test_unloaded_face_or_fallback_glyphs_fail(self) -> None:
+        self.assertEqual(len(harness.font_problems("Geist", self.record("unloaded"))), 1)
+        fallback = [{"familyName": "Geist", "isCustomFont": True, "glyphCount": 29},
+                    {"familyName": "DejaVu Sans", "isCustomFont": False, "glyphCount": 1}]
+        self.assertEqual(len(harness.font_problems("Geist", self.record(fonts=fallback))), 1)
+        system = [{"familyName": "DejaVu Sans", "isCustomFont": False, "glyphCount": 30}]
+        self.assertEqual(len(harness.font_problems("Geist", self.record(fonts=system))), 1)
+
+    def test_font_fixtures_are_in_the_reference_manifest(self) -> None:
+        manifest = harness.load_manifest()
+        fonts = {f["id"].rsplit("-", 1)[0] for f in manifest["fixtures"]
+                 if f["component"] == "font"}
+        self.assertEqual(fonts, set(harness.FONT_FIXTURES))
+
+
+class AssetTests(unittest.TestCase):
+    def test_bundled_files_match_the_assets_manifest(self) -> None:
+        manifest = json.loads(harness.ASSETS_MANIFEST.read_text(encoding="utf-8"))
+        self.assertEqual(manifest["schema"], "openui-components-assets-v1")
+        for entry in manifest["files"]:
+            path = harness.ASSETS_MANIFEST.parent / entry["file"]
+            self.assertEqual(harness.sha256_file(path), entry["sha256"], entry["file"])
+        icons = {e["file"] for e in manifest["files"] if e["file"].endswith(".svg")}
+        self.assertEqual(icons, {f"icons/lucide/{n}.svg" for n in manifest["lucide_icons"]})
+
+
 class ComparisonTests(unittest.TestCase):
     def setUp(self) -> None:
         self.directory = tempfile.TemporaryDirectory()

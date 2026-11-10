@@ -8,6 +8,7 @@ IDs with the public `openui` crate. Both are rasterized at the census
 profiles and compared pixel for pixel.
 
     reference_harness.py tokens --output components/evidence/theme-tokens-v1.json
+    reference_harness.py fonts --output components/evidence/fonts-v1.json
     reference_harness.py compare --renderer PATH --evidence components/evidence/reference-v1.json
 
 Run it on Linux (WSL here) with the pinned Chrome-for-Testing 147. Chromium
@@ -49,6 +50,8 @@ RASTER_CONFIGURATION = "chromium-linux-lcd"
 FONT_PROFILE = "registered-real-font"
 RESULTS_SCHEMA = "openui-components-reference-results-v1"
 TOKENS_SCHEMA = "openui-components-theme-tokens-v1"
+FONTS_SCHEMA = "openui-components-fonts-v1"
+ASSETS_MANIFEST = ROOT / "components/assets/manifest.json"
 
 sys.path.insert(0, str(ROOT / "tools/accountability"))
 import run_all_pixel_comparisons as pixel_runner  # noqa: E402
@@ -273,6 +276,98 @@ def command_tokens(args: argparse.Namespace) -> int:
     return 0
 
 
+# ── Fonts ───────────────────────────────────────────────────────────────
+
+# Each font fixture and the bundled family its lines must be drawn with.
+FONT_FIXTURES = {
+    "font-geist": "Geist",
+    "font-geist-mono": "Geist Mono",
+    "font-inter": "Inter",
+}
+
+FONTS_READY_SCRIPT = r"""
+new Promise(resolve => {
+  const done = () => document.fonts.ready.then(() => resolve(
+    [...document.fonts].map(face => ({family: face.family, status: face.status}))));
+  if (document.readyState === 'complete') done();
+  else addEventListener('load', done, {once: true});
+})
+"""
+
+
+def platform_fonts(client, page: Path) -> dict[str, object]:
+    """The faces Chromium used for each text line of a font fixture page."""
+    client.command("Page.navigate", {"url": "file:" + urllib.request.pathname2url(str(page))})
+    faces = client.command(
+        "Runtime.evaluate",
+        {"expression": FONTS_READY_SCRIPT, "awaitPromise": True, "returnByValue": True},
+    ).get("result", {}).get("value")
+    client.command("DOM.enable")
+    client.command("CSS.enable")
+    root = client.command("DOM.getDocument", {"depth": -1})["root"]["nodeId"]
+    nodes = client.command(
+        "DOM.querySelectorAll", {"nodeId": root, "selector": "main p"}
+    )["nodeIds"]
+    lines = []
+    for node in nodes:
+        used = client.command("CSS.getPlatformFontsForNode", {"nodeId": node})["fonts"]
+        text = client.command("DOM.getOuterHTML", {"nodeId": node})["outerHTML"]
+        lines.append({"element": text, "fonts": used})
+    return {"document_fonts": faces, "lines": lines}
+
+
+def font_problems(family: str, record: dict[str, object]) -> list[str]:
+    """Why a page's text was not drawn entirely with `family`'s bundled face."""
+    problems = []
+    loaded = [f for f in record["document_fonts"] if f["family"] == family]
+    if not loaded or any(f["status"] != "loaded" for f in loaded):
+        problems.append(f"{family} is not loaded: {record['document_fonts']}")
+    if not record["lines"]:
+        problems.append("no text lines")
+    for line in record["lines"]:
+        used = line["fonts"]
+        if len(used) != 1 or not used[0]["isCustomFont"]:
+            problems.append(f"{line['element']} uses {used}")
+    return problems
+
+
+def command_fonts(args: argparse.Namespace) -> int:
+    manifest = load_manifest()
+    version = chromium_version(args.chrome)
+    if version != EXPECTED_CHROMIUM:
+        raise SystemExit(f"Chromium {version} is not the pinned {EXPECTED_CHROMIUM}")
+    pages = {f["id"]: f for f in manifest["fixtures"] if f["component"] == "font"}
+    expected_pages = {f"{base}-{theme}" for base in FONT_FIXTURES for theme in manifest["themes"]}
+    if set(pages) != expected_pages:
+        raise SystemExit(f"font fixtures {sorted(pages)} are not {sorted(expected_pages)}")
+    records = []
+    problems = []
+    with chromium_page(args.chrome) as client:
+        for page_id in sorted(pages):
+            family = FONT_FIXTURES[page_id.rsplit("-", 1)[0]]
+            record = platform_fonts(client, PAGES / pages[page_id]["page"])
+            records.append({"fixture": page_id, "family": family, **record})
+            problems += [f"{page_id}: {p}" for p in font_problems(family, record)]
+    evidence = {
+        "schema": FONTS_SCHEMA,
+        "chromium": {"version": version, "binary_sha256": sha256_file(args.chrome)},
+        "reference_manifest_sha256": sha256_file(MANIFEST),
+        "assets_manifest_sha256": sha256_file(ASSETS_MANIFEST),
+        "method": (
+            "CDP CSS.getPlatformFontsForNode for each `main p` of the font fixture "
+            "pages after document.fonts.ready; every line must use exactly one "
+            "web font (isCustomFont) and the family's FontFace must be loaded"
+        ),
+        "problems": problems,
+        "pages": records,
+    }
+    write_json(args.output, evidence)
+    print(f"wrote {len(records)} pages to {args.output}; {len(problems)} problems")
+    for problem in problems:
+        print(f"  {problem}")
+    return 1 if problems else 0
+
+
 # ── Pixel comparison ────────────────────────────────────────────────────
 
 
@@ -481,6 +576,11 @@ def main(argv: list[str] | None = None) -> int:
     tokens.add_argument("--chrome", type=Path, default=DEFAULT_CHROME)
     tokens.add_argument("--output", type=Path, required=True)
     tokens.set_defaults(func=command_tokens)
+
+    fonts = sub.add_parser("fonts", help="record the faces Chromium uses for the font fixtures")
+    fonts.add_argument("--chrome", type=Path, default=DEFAULT_CHROME)
+    fonts.add_argument("--output", type=Path, required=True)
+    fonts.set_defaults(func=command_fonts)
 
     compare = sub.add_parser("compare", help="compare Open UI fixtures with the reference pages")
     compare.add_argument("--chrome", type=Path, default=DEFAULT_CHROME)

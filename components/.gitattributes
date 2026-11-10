@@ -2,3 +2,6 @@
 # every platform.
 * text=auto eol=lf
 *.png binary
+# Bundled fonts, icons and licenses are unmodified copies of the npm package
+# files (some use CRLF); git must not convert them.
+assets/** binary

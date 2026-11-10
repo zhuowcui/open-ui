@@ -36,6 +36,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22.18.0
+          # The pinned tree includes the font and icon packages; cache the
+          # downloaded tarballs, keyed by the lock file.
+          cache: npm
+          cache-dependency-path: components/reference/package-lock.json
 
       - uses: actions/setup-python@v5
         with:
@@ -48,7 +52,7 @@ jobs:
         working-directory: components/reference
         run: npm ci --no-audit --no-fund
 
-      - name: Reference pages are current
+      - name: Reference pages and bundled assets are current
         working-directory: components/reference
         run: node build.mjs --check
 

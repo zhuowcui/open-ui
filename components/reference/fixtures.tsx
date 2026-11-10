@@ -5,8 +5,8 @@
 // the dark theme; the build appends `-light` or `-dark` to the ID.
 //
 // A fixture's markup sits inside the page's `<main data-fixture>` element,
-// which has `p-4` (16px padding). Keep fixtures free of text until the
-// fonts are bundled (C4), so these measure box geometry and color only.
+// which has `p-4` (16px padding). Text uses the bundled fonts: Geist is the
+// page's sans-serif face (`--font-sans`), as on the shadcn/ui site.
 
 import * as React from "react"
 
@@ -19,7 +19,37 @@ export type Fixture = {
   render: () => React.ReactElement
 }
 
+// Three `text-sm` lines at the weights shadcn's components use (400, 500,
+// 600), each short enough not to wrap at the 375px profile in any face.
+function FontSpecimen({ className }: { className: string }) {
+  return (
+    <div className={`flex flex-col gap-1 text-sm ${className}`}>
+      <p>Sphinx of black quartz, judge my vow.</p>
+      <p className="font-medium">Pack my box with five dozen jugs.</p>
+      <p className="font-semibold">{"0123456789 +-=*/ &@#%?!"}</p>
+    </div>
+  )
+}
+
 export const fixtures: Fixture[] = [
+  {
+    id: "font-geist",
+    component: "font",
+    description: "Geist (--font-sans) at text-sm, weights 400, 500 and 600",
+    render: () => <FontSpecimen className="font-sans" />,
+  },
+  {
+    id: "font-geist-mono",
+    component: "font",
+    description: "Geist Mono (--font-mono) at text-sm, weights 400, 500 and 600",
+    render: () => <FontSpecimen className="font-mono" />,
+  },
+  {
+    id: "font-inter",
+    component: "font",
+    description: "Inter (--font-inter) at text-sm, weights 400, 500 and 600",
+    render: () => <FontSpecimen className="font-inter" />,
+  },
   {
     id: "separator-horizontal",
     component: "separator",

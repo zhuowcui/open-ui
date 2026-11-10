@@ -1,0 +1,331 @@
+{
+  "schema": "openui-components-fonts-v1",
+  "chromium": {
+    "version": "147.0.7727.50",
+    "binary_sha256": "0ba87684df0afc11faaea40ac57bd2f1d68b67191443b38215a36b90e6f08848"
+  },
+  "reference_manifest_sha256": "4a587bfae5d220dae42fe14d3b995a3840a84aa01e938f8935cd6332d9df7e72",
+  "assets_manifest_sha256": "b1393f1573f64bcc397064f014a56ef2ad838df65834214167ab9bd8f158c8cf",
+  "method": "CDP CSS.getPlatformFontsForNode for each `main p` of the font fixture pages after document.fonts.ready; every line must use exactly one web font (isCustomFont) and the family's FontFace must be loaded",
+  "problems": [],
+  "pages": [
+    {
+      "fixture": "font-geist-dark",
+      "family": "Geist",
+      "document_fonts": [
+        {
+          "family": "Geist",
+          "status": "loaded"
+        },
+        {
+          "family": "Geist Mono",
+          "status": "unloaded"
+        },
+        {
+          "family": "Inter",
+          "status": "unloaded"
+        }
+      ],
+      "lines": [
+        {
+          "element": "<p>Sphinx of black quartz, judge my vow.</p>",
+          "fonts": [
+            {
+              "familyName": "Geist",
+              "postScriptName": "Geist-Regular",
+              "isCustomFont": true,
+              "glyphCount": 37
+            }
+          ]
+        },
+        {
+          "element": "<p class=\"font-medium\">Pack my box with five dozen jugs.</p>",
+          "fonts": [
+            {
+              "familyName": "Geist",
+              "postScriptName": "Geist-Regular",
+              "isCustomFont": true,
+              "glyphCount": 32
+            }
+          ]
+        },
+        {
+          "element": "<p class=\"font-semibold\">0123456789 +-=*/ &amp;@#%?!</p>",
+          "fonts": [
+            {
+              "familyName": "Geist",
+              "postScriptName": "Geist-Regular",
+              "isCustomFont": true,
+              "glyphCount": 23
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "fixture": "font-geist-light",
+      "family": "Geist",
+      "document_fonts": [
+        {
+          "family": "Geist",
+          "status": "loaded"
+        },
+        {
+          "family": "Geist Mono",
+          "status": "unloaded"
+        },
+        {
+          "family": "Inter",
+          "status": "unloaded"
+        }
+      ],
+      "lines": [
+        {
+          "element": "<p>Sphinx of black quartz, judge my vow.</p>",
+          "fonts": [
+            {
+              "familyName": "Geist",
+              "postScriptName": "Geist-Regular",
+              "isCustomFont": true,
+              "glyphCount": 37
+            }
+          ]
+        },
+        {
+          "element": "<p class=\"font-medium\">Pack my box with five dozen jugs.</p>",
+          "fonts": [
+            {
+              "familyName": "Geist",
+              "postScriptName": "Geist-Regular",
+              "isCustomFont": true,
+              "glyphCount": 32
+            }
+          ]
+        },
+        {
+          "element": "<p class=\"font-semibold\">0123456789 +-=*/ &amp;@#%?!</p>",
+          "fonts": [
+            {
+              "familyName": "Geist",
+              "postScriptName": "Geist-Regular",
+              "isCustomFont": true,
+              "glyphCount": 23
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "fixture": "font-geist-mono-dark",
+      "family": "Geist Mono",
+      "document_fonts": [
+        {
+          "family": "Geist",
+          "status": "unloaded"
+        },
+        {
+          "family": "Geist Mono",
+          "status": "loaded"
+        },
+        {
+          "family": "Inter",
+          "status": "unloaded"
+        }
+      ],
+      "lines": [
+        {
+          "element": "<p>Sphinx of black quartz, judge my vow.</p>",
+          "fonts": [
+            {
+              "familyName": "Geist Mono",
+              "postScriptName": "GeistMono-Regular",
+              "isCustomFont": true,
+              "glyphCount": 37
+            }
+          ]
+        },
+        {
+          "element": "<p class=\"font-medium\">Pack my box with five dozen jugs.</p>",
+          "fonts": [
+            {
+              "familyName": "Geist Mono",
+              "postScriptName": "GeistMono-Regular",
+              "isCustomFont": true,
+              "glyphCount": 33
+            }
+          ]
+        },
+        {
+          "element": "<p class=\"font-semibold\">0123456789 +-=*/ &amp;@#%?!</p>",
+          "fonts": [
+            {
+              "familyName": "Geist Mono",
+              "postScriptName": "GeistMono-Regular",
+              "isCustomFont": true,
+              "glyphCount": 23
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "fixture": "font-geist-mono-light",
+      "family": "Geist Mono",
+      "document_fonts": [
+        {
+          "family": "Geist",
+          "status": "unloaded"
+        },
+        {
+          "family": "Geist Mono",
+          "status": "loaded"
+        },
+        {
+          "family": "Inter",
+          "status": "unloaded"
+        }
+      ],
+      "lines": [
+        {
+          "element": "<p>Sphinx of black quartz, judge my vow.</p>",
+          "fonts": [
+            {
+              "familyName": "Geist Mono",
+              "postScriptName": "GeistMono-Regular",
+              "isCustomFont": true,
+              "glyphCount": 37
+            }
+          ]
+        },
+        {
+          "element": "<p class=\"font-medium\">Pack my box with five dozen jugs.</p>",
+          "fonts": [
+            {
+              "familyName": "Geist Mono",
+              "postScriptName": "GeistMono-Regular",
+              "isCustomFont": true,
+              "glyphCount": 33
+            }
+          ]
+        },
+        {
+          "element": "<p class=\"font-semibold\">0123456789 +-=*/ &amp;@#%?!</p>",
+          "fonts": [
+            {
+              "familyName": "Geist Mono",
+              "postScriptName": "GeistMono-Regular",
+              "isCustomFont": true,
+              "glyphCount": 23
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "fixture": "font-inter-dark",
+      "family": "Inter",
+      "document_fonts": [
+        {
+          "family": "Geist",
+          "status": "unloaded"
+        },
+        {
+          "family": "Geist Mono",
+          "status": "unloaded"
+        },
+        {
+          "family": "Inter",
+          "status": "loaded"
+        }
+      ],
+      "lines": [
+        {
+          "element": "<p>Sphinx of black quartz, judge my vow.</p>",
+          "fonts": [
+            {
+              "familyName": "Inter Variable",
+              "postScriptName": "InterVariable",
+              "isCustomFont": true,
+              "glyphCount": 37
+            }
+          ]
+        },
+        {
+          "element": "<p class=\"font-medium\">Pack my box with five dozen jugs.</p>",
+          "fonts": [
+            {
+              "familyName": "Inter Variable",
+              "postScriptName": "InterVariable",
+              "isCustomFont": true,
+              "glyphCount": 33
+            }
+          ]
+        },
+        {
+          "element": "<p class=\"font-semibold\">0123456789 +-=*/ &amp;@#%?!</p>",
+          "fonts": [
+            {
+              "familyName": "Inter Variable",
+              "postScriptName": "InterVariable",
+              "isCustomFont": true,
+              "glyphCount": 23
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "fixture": "font-inter-light",
+      "family": "Inter",
+      "document_fonts": [
+        {
+          "family": "Geist",
+          "status": "unloaded"
+        },
+        {
+          "family": "Geist Mono",
+          "status": "unloaded"
+        },
+        {
+          "family": "Inter",
+          "status": "loaded"
+        }
+      ],
+      "lines": [
+        {
+          "element": "<p>Sphinx of black quartz, judge my vow.</p>",
+          "fonts": [
+            {
+              "familyName": "Inter Variable",
+              "postScriptName": "InterVariable",
+              "isCustomFont": true,
+              "glyphCount": 37
+            }
+          ]
+        },
+        {
+          "element": "<p class=\"font-medium\">Pack my box with five dozen jugs.</p>",
+          "fonts": [
+            {
+              "familyName": "Inter Variable",
+              "postScriptName": "InterVariable",
+              "isCustomFont": true,
+              "glyphCount": 33
+            }
+          ]
+        },
+        {
+          "element": "<p class=\"font-semibold\">0123456789 +-=*/ &amp;@#%?!</p>",
+          "fonts": [
+            {
+              "familyName": "Inter Variable",
+              "postScriptName": "InterVariable",
+              "isCustomFont": true,
+              "glyphCount": 23
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "schema": "openui-components-reference-v1",
-  "package_lock_sha256": "c5c47a703f23f238faa6cf66f1b61cbb2786a16789ed6cd624588bc40bf9fc29",
+  "package_lock_sha256": "93d1a093da22d87d8db2de61a7bf5e049600097974ce23d157a567c5c02a906f",
   "themes": [
     "light",
     "dark"
@@ -40,6 +40,48 @@
   ],
   "fixtures": [
     {
+      "id": "font-geist-dark",
+      "component": "font",
+      "theme": "dark",
+      "description": "Geist (--font-sans) at text-sm, weights 400, 500 and 600",
+      "page": "font-geist-dark.html"
+    },
+    {
+      "id": "font-geist-light",
+      "component": "font",
+      "theme": "light",
+      "description": "Geist (--font-sans) at text-sm, weights 400, 500 and 600",
+      "page": "font-geist-light.html"
+    },
+    {
+      "id": "font-geist-mono-dark",
+      "component": "font",
+      "theme": "dark",
+      "description": "Geist Mono (--font-mono) at text-sm, weights 400, 500 and 600",
+      "page": "font-geist-mono-dark.html"
+    },
+    {
+      "id": "font-geist-mono-light",
+      "component": "font",
+      "theme": "light",
+      "description": "Geist Mono (--font-mono) at text-sm, weights 400, 500 and 600",
+      "page": "font-geist-mono-light.html"
+    },
+    {
+      "id": "font-inter-dark",
+      "component": "font",
+      "theme": "dark",
+      "description": "Inter (--font-inter) at text-sm, weights 400, 500 and 600",
+      "page": "font-inter-dark.html"
+    },
+    {
+      "id": "font-inter-light",
+      "component": "font",
+      "theme": "light",
+      "description": "Inter (--font-inter) at text-sm, weights 400, 500 and 600",
+      "page": "font-inter-light.html"
+    },
+    {
       "id": "separator-horizontal-dark",
       "component": "separator",
       "theme": "dark",
@@ -69,7 +111,13 @@
     }
   ],
   "files": {
-    "reference.css": "baeae54a5e3dde02b7f0302f71fe60cbdc3b88939b2ba0ca11591deb08784e9b",
+    "font-geist-dark.html": "7e407b617c9db706f8934b42b9551613256c76adad5882b4ee6abfb3b6d7f61e",
+    "font-geist-light.html": "343ffae438160934786d9371f0bf0e00c3046284996a45c2998a4f1d8aa987b6",
+    "font-geist-mono-dark.html": "99ce00d0959494d6a02dfae8783eff22103dbbb6e05365e8339c9b8e0379f018",
+    "font-geist-mono-light.html": "b9e4118ad2650ce5b3ddc395d83d2bbd9fd826d08ad152d54a7e63e3e4a99cba",
+    "font-inter-dark.html": "2e72817dddd6a3a56de8f9c435a66b6c820f2f69494f3403f17e71016a69a845",
+    "font-inter-light.html": "b38198e53ea22302ea4e9544a07890abfe2cff9dd3744fc55e2e86afd857a9e6",
+    "reference.css": "bf8a1517ff11dea1e9abf6beeff0f212243cd01710eac1165d051912d7242d8d",
     "separator-horizontal-dark.html": "95bb49a8da4d9903a341e96b4890c17ab2d98ff0622a3b2d457ed0c81b86e2f1",
     "separator-horizontal-light.html": "ec9863927c8c7769f6a2c9797d5686f91cd230c6250d4002d05f0cce324d05d4",
     "separator-vertical-dark.html": "b979361064bbe3019425876d3fad7bf1a160e84011cf80a6bf49862946f35f7f",
