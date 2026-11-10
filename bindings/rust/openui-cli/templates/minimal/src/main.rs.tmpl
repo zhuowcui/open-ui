@@ -1,0 +1,38 @@
+// Release builds open no console window on Windows.
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+
+use openui::prelude::*;
+
+fn main() -> Result<(), Error> {
+    App::builder()
+        .title("{{name}}")
+        .size(LogicalSize::new(640.0, 400.0))
+        .build()?
+        .run(app)
+}
+
+/// The root view. Edit it while `openui dev` runs: the app rebuilds and
+/// restarts on save.
+fn app() -> ViewNode {
+    let count = create_signal(0_i32);
+    view! {
+        <div
+            style:display="flex"
+            style:flex-direction="column"
+            style:align-items="center"
+            style:justify-content="center"
+            style:gap="16px"
+            style:min-height="100vh"
+            style:font-family="sans-serif"
+        >
+            <h1 style:font-size="24px">"{{name}}"</h1>
+            <button
+                style:padding="8px 20px"
+                style:font-size="16px"
+                on:click={move |_| count.set(count.get() + 1)}
+            >
+                {format!("Clicked {} times", count.get())}
+            </button>
+        </div>
+    }
+}

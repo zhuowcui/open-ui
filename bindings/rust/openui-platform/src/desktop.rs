@@ -31,7 +31,13 @@ use winit::window::{CursorIcon as WinitCursorIcon, Window, WindowAttributes, Win
 #[derive(Debug)]
 enum UserEvent {
     Accessibility(accesskit_winit::Event),
+    /// The `openui dev` parent closed the app's stdin: exit as if the window
+    /// were closed, so the app shuts down through its normal path.
+    DevExit,
 }
+
+/// Set by `openui dev` for the apps it runs.
+const DEV_ENV: &str = "OPENUI_DEV";
 
 impl From<accesskit_winit::Event> for UserEvent {
     fn from(event: accesskit_winit::Event) -> Self {
@@ -897,6 +903,10 @@ impl<A: PlatformApplication> ApplicationHandler<UserEvent> for Runtime<A> {
     fn user_event(&mut self, event_loop: &ActiveEventLoop, event: UserEvent) {
         match event {
             UserEvent::Accessibility(event) => self.handle_accessibility_event(event_loop, event),
+            UserEvent::DevExit => {
+                let _ = self.send(event_loop, PlatformEvent::CloseRequested);
+                event_loop.exit();
+            }
         }
     }
 
@@ -1152,6 +1162,9 @@ pub fn run<A: PlatformApplication>(
     let display = event_loop.owned_display_handle();
     let clipboard = NativeClipboard::new(&display)?;
     let proxy = event_loop.create_proxy();
+    if std::env::var_os(DEV_ENV).is_some() {
+        watch_dev_stdin(proxy.clone())?;
+    }
     let mut runtime = Runtime {
         application,
         options,
@@ -1173,6 +1186,19 @@ pub fn run<A: PlatformApplication>(
         .run_app(&mut runtime)
         .map_err(|error| PlatformError::Initialization(error.to_string()))?;
     runtime.error.map_or(Ok(()), Err)
+}
+
+/// Under `openui dev`, exit when the parent closes stdin. Reading blocks a
+/// helper thread only; it ends with the process.
+fn watch_dev_stdin(proxy: EventLoopProxy<UserEvent>) -> Result<(), PlatformError> {
+    std::thread::Builder::new()
+        .name("openui-dev-stdin".into())
+        .spawn(move || {
+            let _ = std::io::copy(&mut std::io::stdin().lock(), &mut std::io::sink());
+            let _ = proxy.send_event(UserEvent::DevExit);
+        })
+        .map(drop)
+        .map_err(|error| PlatformError::Initialization(error.to_string()))
 }
 
 fn pointer_button(button: MouseButton) -> PointerButton {

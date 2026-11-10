@@ -14,6 +14,10 @@ description = "Typed reactive Linux and headless application framework over the 
 default = []
 linux = ["dep:openui-platform", "openui-platform/linux"]
 windows = ["dep:openui-platform", "openui-platform/windows"]
+# The native runtime of the host: Win32 on Windows, X11 and Wayland on Linux.
+# Platform code is gated on both the feature and the target, so enabling
+# both platform features selects the host one.
+desktop = ["linux", "windows"]
 ffi-integration = []
 
 [dependencies]

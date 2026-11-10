@@ -1,0 +1,22 @@
+[package]
+name = "openui-cli"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+categories = ["command-line-utilities", "gui"]
+keywords.workspace = true
+description = "Create, run and build Open UI desktop apps"
+# The CLI embeds the workspace manifest and lockfile, which are outside this
+# package, so it installs from the repository (`cargo install --git`) until
+# the crates are published under the product name.
+publish = false
+
+[[bin]]
+name = "openui"
+path = "src/main.rs"
+
+[dependencies]
+serde_json = "=1.0.149"
