@@ -467,7 +467,10 @@ impl Engine {
         };
         let activation = match kind {
             PointerEventKind::Down => {
-                if let Some(target) = target.filter(|node| !self.is_disabled(*node)) {
+                // As in Blink's `Document::UpdateActiveState`, the pressed
+                // element becomes active even when it is disabled; only its
+                // activation on release checks the disabled state.
+                if let Some(target) = target {
                     self.active_pointers.insert(pointer_id, target);
                 }
                 None
@@ -1327,12 +1330,18 @@ impl Engine {
         Ok(self.hover_paths.values().any(|path| path.contains(&handle)))
     }
 
+    /// `:active` covers the pressed element and its inclusive ancestors, as
+    /// Blink's `Document::UpdateActiveState` sets it on press. The chain is
+    /// the pressed element's, so moving the pointer while pressed does not
+    /// change it.
     pub fn is_active(&self, handle: NodeHandle) -> Result<bool, EngineError> {
         self.resolve(handle)?;
-        Ok(self
-            .active_pointers
-            .values()
-            .any(|active| *active == handle))
+        for active in self.active_pointers.values() {
+            if self.path_to_root(*active)?.contains(&handle) {
+                return Ok(true);
+            }
+        }
+        Ok(false)
     }
 
     pub(crate) fn initialize_control(&mut self, handle: NodeHandle, tag: ElementTag) {
