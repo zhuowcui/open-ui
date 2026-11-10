@@ -71,7 +71,16 @@ The unit tests in `color_function_tests.rs` pin the derived matrices,
 parse clamps, rejections, percentage normalization and hue methods, and
 agree with an independent float32 emulation of the Chromium source.
 
-CENSUS_PLACEHOLDER
+The paired expanded census in WSL has no change. The base is `9d7bccf6`,
+the head of the [spaced pattern](spaced-pattern-extent-2026-11-05.md)
+census; `main` has changed no renderer code since. The head is
+`bbb4bcb1`, this change. Both are built with the CI `SKIA_GN_ARGS` and
+share one Chromium cache. Chromium is identical in all 23,728
+comparisons, and Open UI's output is identical in all 23,728: 22,517
+exact before and after, with nothing gained, lost, improved or worse. No
+census test uses these functions, and every existing color stays inside
+[0, 1], so the paint change cannot alter them. The delta is in the
+[census evidence](evidence/color-functions-census-v1.json).
 
 ### Remaining failures and limits
 
@@ -99,5 +108,6 @@ CENSUS_PLACEHOLDER
 | Chromium oracle, Windows | `python tools/qualification/capture_color_function_oracle.py --platform windows --chrome E:\open-ui\out\chrome-win\win-147.0.7727.50\chrome-win64\chrome.exe` | 54 swatches, identical to Linux |
 | Native swatches, Windows | `cargo test -p openui --test native_color_functions`, with the `windows-msvc` CI environment | 54 of 54 exact |
 | Style unit tests | `cargo test -p openui-style` | 105 passed |
+| Paired expanded census | `build_renderer.py`; `run_renderer_matrix.py --suite expanded --jobs 16`, with the CI `SKIA_GN_ARGS` | 22,517 to 22,517 exact; 0 of 23,728 Open UI images changed |
 | Renderer contract | `generate_renderer_contract.py --check` | passes |
 | Format | `cargo fmt --all --check` | passes |

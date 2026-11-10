@@ -119,8 +119,8 @@ computed style before declarations apply. CSS-wide keywords (`inherit`,
 token values cascade and inherit per element like custom properties. Tailwind
 v4 composes values through internal variables (`--tw-ring-shadow`,
 `--tw-shadow` and others), so token expressions must allow several token slots
-and fallbacks in one value. RFC 0002 (A2) specifies tokens; this RFC only fixes
-where they sit.
+and fallbacks in one value. A later engine RFC (A2 tokens) specifies them;
+this RFC only fixes where they sit.
 
 With no sheet adopted, resolution is exactly today's path: the census and
 coverage fixtures use no sheets, so they cannot change (D4).
