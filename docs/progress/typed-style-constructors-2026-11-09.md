@@ -50,6 +50,7 @@ tests fail; restored, they pass.
 | Generators | `generate_properties.py --check`; `generate_v02_contract.py --check` | no drift |
 | `cargo fmt --all --check` | in `bindings/rust` | pass |
 | Paired expanded census | `build_renderer.py`; `run_renderer_matrix.py --suite expanded --jobs 16`, with the CI `SKIA_GN_ARGS` | 22,517 to 22,517 exact; 0 of 23,728 Open UI images changed |
+| CSS Grid coverage | `run_renderer_matrix.py --suite coverage --ids-file tools/coverage/css_grid/manifest.json --jobs 16`, compared per test with the baseline | 2,218 to 2,218 exact; 0 of 4,204 measured Open UI images changed |
 
 The paired expanded census in WSL has no change. The base is `9d7bccf6`,
 the census base the [color functions](color-functions-2026-11-09.md)
@@ -61,7 +62,13 @@ so this checks that the runtime crates are unchanged when the
 `constructor-tokens` feature is off. The delta is in the
 [census evidence](evidence/typed-style-constructors-census-v1.json).
 
-COVERAGE
+The CSS Grid coverage suite has no change either
+([coverage evidence](evidence/typed-style-constructors-coverage-v1.json)).
+The base is `04d1eeab`, the recorded coverage baseline; the head is
+`132a706a`, this change plus this record. In all 4,204 measured
+comparisons the status and the Open UI image are unchanged: 2,218 exact
+before and after. The two references that the baseline lists as
+unmeasured, whose renderer memory is unbounded, are left out of both runs.
 
 ## Findings while building the corpus
 
