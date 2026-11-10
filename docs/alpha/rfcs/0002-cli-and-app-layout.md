@@ -91,8 +91,11 @@ final name it installs with
 2. Start the app with `OPENUI_DEV=1`, `OPENUI_DEV_STATE=<target>/openui-dev/state.json`
    and a piped stdin.
 3. Watch `src/`, `assets/`, `build.rs`, `Cargo.toml` and any
-   `[package.metadata.openui] watch` paths with `notify`, debounced by 150 ms,
-   ignoring `target/` and editor temporaries.
+   `[package.metadata.openui] watch` paths by polling modification times
+   every 250 ms, settling for 150 ms after the last change, ignoring `target/`
+   and editor temporaries. An app's source tree is small enough that polling
+   costs little and needs no dependency. The CLI's dependencies (clap 4.6,
+   serde_json, toml) are all already locked, so it adds no new crates.
 4. On change, rebuild. If the build fails, keep the running app and print the
    errors. If it succeeds, stop the app and start the new binary. Changes
    during a build queue exactly one further build.
@@ -377,6 +380,10 @@ the file by hand, because other tracks change the lockfile too.
 - **arboard for the clipboard.** Unneeded: the runtime already has a working
   text clipboard on all three window systems, and arboard's Wayland support
   depends on the data-control protocol, which not every compositor offers.
+- **notify for the `dev` watcher.** Deferred: the newest notify within MSRV
+  1.85 (`=8.2.1`, with notify-debouncer-full `=0.7.0`) is CC0-1.0, outside
+  the listed licenses, and polling is enough for an app's source tree. If
+  large projects need it, adopting notify needs a license review first.
 - **`cargo-generate` for templates.** Rejected: heavy dependency tree for what
   is a handful of files with four placeholders.
 - **Hot reload of Rust code (subsecond-style patching).** Deferred: platform
@@ -385,16 +392,9 @@ the file by hand, because other tracks change the lockfile too.
 
 ## Open questions
 
-1. **notify's license.** The `dev` watcher's best fit, notify `=8.2.1` with
-   notify-debouncer-full `=0.7.0` (newer notify needs Rust 1.88), is
-   CC0-1.0, which is outside the listed licenses. It is a dev-time dependency
-   of the CLI only and is never linked into apps. Proposal: record a license
-   review in the CLI PR, in the style of the zbus exemption record; if that is
-   not acceptable, the CLI polls file modification times instead, with no
-   dependency.
-2. **The framework dependency of generated apps.** A git tag pin until crates
+1. **The framework dependency of generated apps.** A git tag pin until crates
    are published under the final name (D5, D6); the CLI PR uses `main` until
    the first alpha tag exists.
-3. **Linux menu bar look.** The drawn menu bar needs a visual design. alpha.1
+2. **Linux menu bar look.** The drawn menu bar needs a visual design. alpha.1
    uses a plain, system-neutral style; the components track may restyle it
    later through the public API.
