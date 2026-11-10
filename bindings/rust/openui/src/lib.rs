@@ -98,6 +98,8 @@ mod app_spec;
 pub mod clipboard;
 #[cfg(all(feature = "dialog", any(target_os = "linux", target_os = "windows")))]
 pub mod dialog;
+#[cfg(feature = "http")]
+pub mod http;
 #[cfg(feature = "menu")]
 pub mod menu;
 #[cfg(feature = "menu")]

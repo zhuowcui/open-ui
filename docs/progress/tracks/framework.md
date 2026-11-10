@@ -17,11 +17,55 @@ The order and verification of each PR are in
 | 4 | Async runtime integrated with the UI thread and signals | Merged (#98) |
 | 5 | Clipboard service | Merged (#99) |
 | 6 | File dialogs | Merged (#100) |
-| 7 | App menu | Part 1 merged (#101); part 2 (drawn menu bar) in review |
-| 8 | HTTP client | Not started |
+| 7 | App menu | Merged (#101, #103) |
+| 8 | HTTP client | In review |
 | 9 | `default` template and test utilities | Not started |
 
 ## Log
+
+### 10 November 2026: HTTP client
+
+Change: `openui::http` (`http` feature, which enables `async`) sends
+requests with `get`, `post`, `put`, `patch` and `delete`, or through a
+`Client` built with a timeout, connect timeout, default headers, user agent,
+redirect limit and body limit (10 MiB by default). A `Request` adds
+headers, percent-encoded query pairs, a timeout and a raw, text or JSON
+body. `send().await` runs it on the blocking pool; `send_blocking()` runs it
+on the calling thread. A `Response` holds the status, final URL, headers and
+whole body, with `text`, `json` and `error_for_status`; every status is a
+response until that call. Errors are a small `http::Error` enum (invalid
+URL, host not found, connect, timeout, TLS, protocol, body too large,
+status, decode, I/O).
+
+It uses ureq 3.5.1 with rustls 0.23.46 on the ring provider, passed to
+ureq explicitly so a process-wide provider set by another crate cannot
+change it, and rustls-platform-verifier, so certificates are checked
+against the Windows certificate store and the Linux system bundle. The
+lockfile gains 24 entries: 15 are built on Windows and 17 on Linux, all
+MIT, Apache-2.0, ISC or BSD-3-Clause with MSRV 1.85 or lower. The rest are
+macOS, Android or wasm32 dependencies that are locked but never built,
+including `webpki-root-certs` (CDLA-Permissive-2.0, wasm32 only). ureq's
+`json` feature is not used: it names `cookie_store` weakly, which makes
+Cargo lock cookie_store, url and ICU 2 (Rust 1.88) without building them;
+JSON goes through serde_json instead. New example: `fetch`.
+
+Verification:
+
+- `cargo test -p openui --features http --lib http --test http` (Windows):
+  query encoding and status handling; against a local server, a GET sends
+  its query, client and request headers and user agent and reads status,
+  headers and body; a JSON POST round-trips; a 404 is a response until
+  `error_for_status`; a stalled server times out, an oversized body fails,
+  a closed port and an invalid URL fail; `https` to a plain server fails in
+  TLS; a UI task awaits a request and sets a signal under
+  `HeadlessApp::run_until_idle`.
+- The same 9 tests pass on Linux (WSL2, `--features "linux http"`).
+- With `OPENUI_NETWORK_TESTS=1` (local only, not CI), `https://example.com/`
+  verifies against the system roots and a self-signed host is rejected as a
+  TLS error, on Windows and on WSL2.
+- The `fetch` smoke fetches from a server inside the example and exits
+  (Windows: software and auto; WSLg: software and OpenGL). CI runs the tests in `rust-parity` and
+  `windows-msvc` and the smoke on Windows, X11 and Wayland.
 
 ### 10 November 2026: app menu, part 2 (drawn menu bar)
 

@@ -104,7 +104,7 @@ jobs:
         working-directory: bindings/rust
         run: |
           cargo build --locked --package multi-window --package tasks --package clipboard --package dialogs \
-            --package menus --features linux
+            --package menus --package fetch --features linux
           for backend in software opengl; do
             for test in multi_window wake clipboard; do
               xvfb-run --auto-servernum env OPENUI_REQUIRE_DISPLAY=1 OUI_BACKEND="$backend" \
@@ -116,6 +116,8 @@ jobs:
               | grep -F 'Ok("Open UI clipboard example")'
             xvfb-run --auto-servernum env OUI_BACKEND="$backend" OUI_SMOKE_EXIT=1 target/debug/dialogs
             xvfb-run --auto-servernum env OUI_BACKEND="$backend" OUI_SMOKE_EXIT=1 target/debug/menus
+            xvfb-run --auto-servernum env OUI_BACKEND="$backend" OUI_SMOKE_EXIT=1 timeout 120 target/debug/fetch \
+              | grep -F 'fetch: 200'
           done
       - name: Speak the desktop portal's file chooser protocol, with a zenity fallback
         working-directory: bindings/rust
@@ -143,6 +145,8 @@ jobs:
           done
           env -u DISPLAY WAYLAND_DISPLAY=wayland-openui OUI_BACKEND=software OUI_SMOKE_EXIT=1 target/debug/multi-window
           env -u DISPLAY WAYLAND_DISPLAY=wayland-openui OUI_BACKEND=software OUI_SMOKE_EXIT=1 timeout 120 target/debug/tasks
+          env -u DISPLAY WAYLAND_DISPLAY=wayland-openui OUI_BACKEND=software OUI_SMOKE_EXIT=1 timeout 120 target/debug/fetch \
+            | grep -F 'fetch: 200'
           env -u DISPLAY WAYLAND_DISPLAY=wayland-openui \
             python3 ../../tools/ffi/verify_native_window.py --protocol wayland \
               --backend software --report "$RUNNER_TEMP/native-wayland-software.json"
