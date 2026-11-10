@@ -43,6 +43,7 @@ would reject or rewrite are not covered by this change.
 | Font tests on Linux with the pinned census FreeType, before (`main` `b8dcfaf8`) | WSL, CI `SKIA_GN_ARGS`, `LD_LIBRARY_PATH=tools/accountability/data/fonts/sp16_linux_x86_64 cargo test --locked -p openui-text --lib font::collection` | 11 passed, 3 failed; `pinned_wpt_font_containers_report_identical_owned_metadata` fails with "Certification WOFF2 registration failed: MalformedFont" |
 | Same, after (`86aaa5d4`) | same | 13 passed, 2 failed; the WOFF2 registration passes |
 | Windows | `cargo test -p openui-text --lib font::collection` | 16 passed |
+| CSS Grid coverage | `run_renderer_matrix.py --suite coverage --ids-file tools/coverage/css_grid/manifest.json --jobs 16`, compared per test with the baseline | 2,218 to 2,218 exact; 0 of 4,204 measured Open UI images changed |
 | `cargo fmt --all --check` | in `bindings/rust` | pass |
 
 The two tests that fail with the pinned FreeType before and after,
@@ -60,6 +61,13 @@ has changed no renderer code since. The head is `86aaa5d4`, this change.
 Both are built with the CI `SKIA_GN_ARGS` and share one Chromium cache.
 Chromium is identical in all 23,728 comparisons, and Open UI's output is
 identical in all 23,728: 22,517 exact before and after.
+
+The CSS Grid coverage suite has no change either
+([delta](evidence/woff2-decode-coverage-v1.json)). The base is `04d1eeab`,
+the recorded coverage baseline, and the head is `b911ec6f`. In all 4,204
+measured comparisons the status and the Open UI image are unchanged: 2,218
+exact before and after. The two references that the baseline lists as
+unmeasured, whose renderer memory is unbounded, are left out of both runs.
 
 The components track checked this end to end on their branch
 `components/static-basics` at `0d3e81c3`, with this PR's `openui-text`
