@@ -17,7 +17,7 @@ The order and verification of each PR are in
 | 4 | Async runtime integrated with the UI thread and signals | Merged (#98) |
 | 5 | Clipboard service | Merged (#99) |
 | 6 | File dialogs | Merged (#100) |
-| 7 | App menu | Part 1 in review (model, shortcuts, roles, Windows menu bar); Linux menu bar next |
+| 7 | App menu | Part 1 merged (#101); part 2 (drawn menu bar) in review |
 | 8 | HTTP client | Not started |
 | 9 | `default` template and test utilities | Not started |
 
