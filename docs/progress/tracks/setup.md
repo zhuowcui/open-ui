@@ -1,5 +1,30 @@
 # Setup track progress
 
+## Plan update: RFC corrections and status 10 November 2026
+
+`docs/alpha/plan.md` records the following:
+
+- D5 (name) is deferred. Open UI stays the project name; branding will be
+  decided later and does not block alpha work.
+- Correction from RFC 0001 (PR #89): `pointerenter` and `pointerleave`
+  already exist. The remaining A1 pointer work is `pointerleave` on window
+  exit and `:active` on the pressed element's ancestors (see
+  [engine](engine.md)).
+- RFC 0001 (PR #89) and RFC 0002 (PR #90) are merged. The components harness
+  and the separator landed in PR #91 with 8 of 16 comparisons exact; dark is
+  one level off from a paint color clamp (see [components](components.md)).
+- The CLI skeleton (`new`, `dev`, `build`, `doctor`) landed in PR #93, so
+  the gaps list no longer says there is no CLI.
+- `oklch()`, `oklab()` and `color-mix()` landed in PR #95 (A2), and the app
+  services in PRs #96, #98, #99, #100, #101, #103 and #105 (B1); the gaps list
+  drops them. The C4 assets (#94) and the first static components (#102)
+  are recorded, with the WOFF2 font failure that the open engine PR #97
+  addresses (see [components](components.md) and [framework](framework.md)).
+
+The change is documentation only. Verification:
+`python tools/accountability/audit.py --repository-only` and
+`git diff --check`.
+
 ## Week-0 setup 9 November 2026
 
 The alpha plan is committed at `docs/alpha/plan.md`. `AGENTS.md` and
@@ -7,6 +32,12 @@ The alpha plan is committed at `docs/alpha/plan.md`. `AGENTS.md` and
 and one focused PR at a time per track, each merged to `main` on green CI
 after rebasing; track ownership; one-page RFCs under `docs/alpha/rfcs/`; and
 progress files in this directory.
+
+Merged in PR #92 (`61e5e229`) on 10 November 2026. CI passed on the head
+`c502eb89`, rebased on `ee46e350`. PR #105 merged during that run and
+changed only other lines of `.github/workflows/ci.yml`, so the merge onto
+`a9de940d` was checked locally (census lock tests, the repository audit,
+`git diff --check`), not by another CI run.
 
 ### Census lock
 

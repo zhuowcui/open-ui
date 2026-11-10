@@ -1,8 +1,8 @@
 # Alpha plan: parallel workstreams (draft for review)
 
 Status: draft, 9 November 2026, revised after the feasibility review below.
-Nothing here is started. D1–D4 are decided; D5 (name) and D6 (version line)
-are open.
+Week 0 is under way. D1–D4 are decided; D5 (name) is deferred and D6
+(version line) is open.
 
 ## Goal
 
@@ -19,13 +19,18 @@ before we have to.
 
 | Asset | State |
 | --- | --- |
-| Rendering engine (style, layout, paint, text, Skia) | 94.9% pixel-exact across 23,728 comparisons in 10 CSS areas. Grid measured once at 52.8% (unmerged PR #88). Text, tables, transforms and others are unmeasured. |
+| Rendering engine (style, layout, paint, text, Skia) | 94.9% pixel-exact across 23,728 comparisons in 10 CSS areas. Grid measured once at 52.8% in a separate coverage suite (PR #88). Text, tables, transforms and others are unmeasured. |
 | Chromium comparison harness | Ports WPT tests, captures pinned Chromium 147, compares pixel for pixel at four scales. This is our strongest asset: we can *prove* fidelity. |
 | App authoring model | `view!` macro (JSX-like), `#[component]`, fine-grained signals and effects, `For`/`Show`, typed events (`on:click`). Inline `style:` properties only. |
 | Native element API | `Document`/`Element`: tree mutation, attributes, classes (for lookup), focus, scrolling, form controls, animations and transitions. |
 | Platforms | Linux: window, input, accessibility (AT-SPI), X11 and Wayland. Windows: builds and passes tests, DirectWrite text, experimental Win32 window. macOS: none. |
 | C ABI | 131 exports, C and C++ consumers pass. |
 | Examples | counter, todo, dashboard, accessibility, hello. |
+| Alpha RFCs | RFC 0001, typed style rules (PR #89), and RFC 0002, CLI and app layout (PR #90), are merged under `docs/alpha/rfcs/`. |
+| CLI | `openui-cli` (binary `openui`) landed in PR #93: `new` writes a minimal app, `dev` rebuilds and restarts it on change, `build` packages a release into `dist/` and `doctor` checks the toolchain. A `cli-template` CI job on Linux and Windows builds the template with `openui build` and with plain `cargo build` and requires identical first frames. |
+| Colors (A2) | `oklch()`, `oklab()` and `color-mix()` parse and convert as Chromium 147 does, and paint no longer clamps color channels before Skia (PR #95): 54 of 54 swatches exact against pinned Chromium on Linux and Windows. |
+| App services (B1) | Several windows on one event loop (PR #96), an async runtime on the UI thread and in the background (#98), clipboard text (#99), native open, save and folder dialogs (#100), and an app menu with accelerators and a native Windows bar (#101), drawn in the window where the platform has no menu bar (#103), and an HTTP client over rustls and the system roots (#105). |
+| Components | The shadcn/ui reference harness and the separator landed in PR #91: 8 of 16 comparisons exact. All light comparisons are exact; every dark one was off by one color level from the paint clamp that PR #95 removed, and has not been remeasured since. Geist, Inter and the Lucide icons are bundled (C4, #94), and button, badge, card and label landed in #102. Every fixture with text is still an error, because the bundled WOFF2 fonts do not load on Linux with the census FreeType (engine PR #97, open). |
 
 ### Gaps that block porting shadcn/Tailwind
 
@@ -37,16 +42,21 @@ before we have to.
   variants).
 - No top layer: dialogs, popovers, dropdowns, tooltips, toasts, and no
   anchor positioning.
-- No style invalidation on state change. The engine tracks hover
-  (`is_hovered`), focus-visible and IME composition, but nothing restyles an
-  element when that state changes, and there are no pointer enter or leave
-  events.
-- No `oklch()` or `color-mix()`. Tailwind v4 and the current shadcn themes
-  define every color token with `oklch()`.
-- No app services beyond the window: menus, tray, file dialogs,
-  notifications, global shortcuts. No async runtime or HTTP client
-  dependency in the workspace.
-- No CLI, hot reload, devtools or project templates.
+- No style invalidation on state change. The engine tracks hover,
+  focus-visible and IME composition, but nothing restyles an element when
+  that state changes.
+- Two pointer-state bugs (RFC 0001). `pointerenter` and `pointerleave`
+  already exist (target only, as in the DOM), but when the pointer leaves the
+  window the hovered path loses hover without receiving `pointerleave`.
+  `:active` matches only the pressed element, while Chromium's also covers
+  its ancestors.
+- Real fonts. WOFF2 fonts do not load on Linux with the census FreeType
+  (PR #97, open). In the components track's previews, which are not
+  measured evidence, a column flex item with text is as tall as one word per
+  line, and glyphs sit at a different height from Chromium's.
+- App services: no tray, notifications or global shortcuts.
+- No hot reload (the CLI's `dev` rebuilds and restarts the app), no devtools,
+  and one minimal project template.
 
 ## Feasibility review (9 November 2026)
 
@@ -61,7 +71,7 @@ use the narrower alpha.1 this review recommends.
 | Claim | Evidence |
 | --- | --- |
 | Typed styles with CSS syntax (D1) | `view!` already validates every inline property and value at compile time (`openui-macros/src/view.rs`, through `StyleProperty::from_css_name` and `openui_style::parse_literal`). The emitted code still re-parses the literal at runtime, which typed values would remove. |
-| Interaction state for variants | `openui-engine/src/interaction.rs` tracks hover, focus-visible and IME composition. |
+| Interaction state for variants | `openui-engine/src/interaction.rs` tracks hover, focus-visible and IME composition, and `Document` dispatches `pointerenter` and `pointerleave`. |
 | Windows at alpha.1 (D3) | The Win32 runtime (WGL or softbuffer, Unicode clipboard, UI Automation adapter) and DirectWrite text checked against Windows Chrome-for-Testing 147 landed on 21 October 2026. IME, drag and drop, UIA behavior and packaging are unverified. |
 | Overlays can build on existing layout | `position: fixed` exists. |
 | Disk | E: has 916 GB free. One `bindings/rust/target` is 50 GB. |
@@ -76,12 +86,13 @@ use the narrower alpha.1 this review recommends.
    Geist or Inter at 14px. A new unit, A6, measures and repairs this, and the
    alpha claims *measured* fidelity per component instead of identity.
 2. **Typed rules are a runtime feature as well as a macro.** State variants
-   need style invalidation, pointer enter and leave events, and cascade order
+   need style invalidation, `pointerleave` when the pointer leaves the
+   window, `:active` on the pressed element's ancestors, and cascade order
    and specificity reproduced exactly. A1 is the largest unit and gates every
    interactive component.
 3. **Tailwind v4 colors.** `oklch()` and `color-mix()` must be parsed and
    converted exactly as Chromium does (including gamut mapping), or no themed
-   component can be exact. Added to A2.
+   component can be exact. Added to A2, and landed in PR #95.
 4. **Overlays.** There is no top layer or anchor positioning. alpha.1 keeps
    one overlay (dialog); menus, select, tooltip and toast move to alpha.2.
 5. **Hot reload.** Rust has no cheap code reload. alpha.1 `dev` is a fast
@@ -138,7 +149,7 @@ libraries translate easily.
   setters.
 - **Runtime:** state changes (hover, focus, active, `data-state`, media)
   invalidate and restyle only the affected elements. This needs a new
-  invalidation path and pointer enter and leave events.
+  invalidation path and the two pointer-state fixes above.
 - **Fidelity:** computed results are still checked against Chromium, so
   typed rules must reproduce CSS cascade order and specificity exactly.
 
@@ -163,12 +174,12 @@ release gates (zero tolerance, hardware lab, signed reproducible builds)
 become a later stability milestone and stop blocking releases. Each alpha
 publishes honest conformance numbers per CSS area.
 
-**D5. Name.** The branding track proposes a shortlist after availability
-checks: crates.io, GitHub org, `.dev` and `.com` domains, trademark search,
-and collisions with Rust projects. Starting ideas, none checked yet:
-*Glaze*, a finish over a native body; *Lacquer*; *Tessera*; *Cast*, a
-pixel-exact casting of a mold; *Kiln*. Names already taken in Rust or UI and
-best avoided: Facet, Patina, Parity, Mica, Ember, Loom.
+**D5. Name. Deferred.** Open UI stays the project name for now. Branding
+will be decided in a later conversation and does not block alpha work.
+Starting ideas for that conversation, none checked yet: *Glaze*, a finish
+over a native body; *Lacquer*; *Tessera*; *Cast*, a pixel-exact casting of a
+mold; *Kiln*. Names already taken in Rust or UI and best avoided: Facet,
+Patina, Parity, Mica, Ember, Loom.
 
 **D6. Version line.** Recommendation: publish under the new name as
 `0.1.0-alpha.N`, with `0.x` minor bumps allowed to break the API. Keep "v0.2
@@ -212,10 +223,10 @@ Owns `openui-style`, `openui-layout`, `openui-paint`, `openui-text`,
 
 | Unit | Deliverable | Parallel? |
 | --- | --- | --- |
-| A1 Typed style rules (D1) | `css!`/`style!` macros with compile-time validation and conflict detection; `stylesheet!` compiling selectors and variants to typed conditions; typed values emitted without runtime re-parsing; style invalidation on state change; pointer enter and leave events; cascade order and specificity checked against Chromium | One owner; critical path and the largest unit |
+| A1 Typed style rules (D1) | `css!`/`style!` macros with compile-time validation and conflict detection; `stylesheet!` compiling selectors and variants to typed conditions; typed values emitted without runtime re-parsing; style invalidation on state change; `pointerleave` when the pointer leaves the window and `:active` on ancestors; cascade order and specificity checked against Chromium | One owner; critical path and the largest unit |
 | A2 Tokens, colors and media | Typed theme tokens for `var()`; `oklch()` and `color-mix()` converted exactly as Chromium does; typed media conditions (width, `prefers-color-scheme`, `prefers-reduced-motion`) | Colors start now; tokens and media after A1's data model |
 | A3 Top layer and dialog | Top layer, modal dialog, focus trap, dismissal and z-order for alpha.1. Popover and anchor positioning for menus and tooltips in alpha.2 | Parallel with A1 |
-| A4 Conformance by area | For alpha.1, only the areas the 10 components use. Other coverage suites (grid in open PR #88, tables, transforms) after alpha.1. Merges are serialized where areas share `block.rs` | Low priority until alpha.1 |
+| A4 Conformance by area | For alpha.1, only the areas the 10 components use. Other coverage suites (grid, merged in PR #88; tables, transforms) after alpha.1. Merges are serialized where areas share `block.rs` | Low priority until alpha.1 |
 | A5 Performance and resources | Benchmark harness against Electron and Tauri (startup, idle RSS, frame time). Prove or add offscreen culling. List virtualization primitive. Results gate any published benchmark | Parallel; measure in week 0 |
 | A6 Real-font text | Baseline Geist and Inter at shadcn's sizes and weights on Linux and Windows against Chromium; repair the installed-font advance and the largest real-font differences | Parallel; on the critical path for component exactness |
 
@@ -292,8 +303,8 @@ F CI and cadence.
 
 Phases:
 
-1. **Week 0: decisions, setup and baselines.** D5–D6 answered; AGENTS.md
-   updated; track branches and worktrees created; a shared prebuilt Skia for
+1. **Week 0: decisions, setup and baselines.** D6 answered (D5, the name, is
+   deferred); AGENTS.md updated; track branches and worktrees created; a shared prebuilt Skia for
    all worktrees; one-page RFCs for the cascade and invalidation data model
    and the CLI layout. Two measurements before building: A5's startup,
    memory and frame-time baseline, and A6's Geist and Inter baseline at
