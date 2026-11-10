@@ -1405,11 +1405,12 @@ fn validate_axis(
     Ok(())
 }
 
-/// Bytes the platform font manager can load. FreeType reads WOFF and WOFF2
-/// itself; DirectWrite cannot, so Windows decodes them to sfnt first, as
-/// Chromium's OpenType Sanitizer does before handing web fonts to DirectWrite.
+/// Bytes the platform font manager can load. Chromium decodes every web font
+/// with the OpenType Sanitizer before the platform scaler sees it, so WOFF and
+/// WOFF2 are decoded to sfnt here on every platform. FreeType is not asked to
+/// read them: a FreeType built without Brotli (such as the pinned census
+/// library) rejects WOFF2, and DirectWrite reads neither container.
 /// Registration keeps the caller's original bytes for identity and scenes.
-#[cfg(windows)]
 fn platform_font_data(
     bytes: &[u8],
     format: FontContainerFormat,
@@ -1422,14 +1423,6 @@ fn platform_font_data(
     decoded
         .map(std::borrow::Cow::Owned)
         .map_err(|_| FontCollectionError::MalformedFont)
-}
-
-#[cfg(not(windows))]
-fn platform_font_data(
-    bytes: &[u8],
-    _format: FontContainerFormat,
-) -> Result<std::borrow::Cow<'_, [u8]>, FontCollectionError> {
-    Ok(std::borrow::Cow::Borrowed(bytes))
 }
 
 fn detect_format(bytes: &[u8]) -> Result<FontContainerFormat, FontCollectionError> {
@@ -1813,6 +1806,31 @@ mod tests {
                 Err(FontCollectionError::UnknownFace)
             );
         }
+    }
+
+    #[test]
+    fn web_font_containers_reach_the_scaler_as_sfnt_on_every_platform() {
+        // A FreeType without Brotli cannot read WOFF2, so the scaler must never
+        // see a web font container, whatever library is loaded at run time.
+        for (bytes, format) in [
+            (
+                include_bytes!("../../fonts/certification/fixture.woff").as_slice(),
+                FontContainerFormat::Woff,
+            ),
+            (
+                include_bytes!("../../fonts/certification/fixture.woff2").as_slice(),
+                FontContainerFormat::Woff2,
+            ),
+        ] {
+            let loadable = platform_font_data(bytes, format).unwrap();
+            assert!(matches!(loadable, std::borrow::Cow::Owned(_)));
+            assert!(matches!(&loadable[..4], [0, 1, 0, 0] | b"OTTO" | b"true"));
+        }
+        let ttf = include_bytes!("../../fonts/Ahem.ttf").as_slice();
+        assert!(matches!(
+            platform_font_data(ttf, FontContainerFormat::Ttf).unwrap(),
+            std::borrow::Cow::Borrowed(_)
+        ));
     }
 
     #[test]
