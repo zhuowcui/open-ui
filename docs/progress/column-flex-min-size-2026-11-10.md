@@ -55,6 +55,15 @@ failed that test.
 
 CENSUS
 
+The components track also previewed this change. That preview is not
+evidence: it used the system FreeType so that WOFF2 text loads, and its base
+was the components branch, not `main`. It applied only
+`openui-layout/src/flex/algorithm.rs` from `96a9fb47`. Element border boxes
+within 1/128 px of Chromium's `getBoundingClientRect` went from 152 to 184
+of 192, and `card-basic` is 190px tall as in Chromium (274px before). Forty
+images changed, all closer to Chromium, and the other 152 were
+byte-identical. The 8 cases left are the grid `auto` column described below.
+
 ## Not done here
 
 - Right-to-left and vertical items keep the min-content measurement; no
