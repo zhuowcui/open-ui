@@ -19,7 +19,7 @@ The order and verification of each PR are in
 | 6 | File dialogs | Merged (#100) |
 | 7 | App menu | Merged (#101, #103) |
 | 8 | HTTP client | Merged (#105) |
-| 9 | `default` template and test utilities | In review |
+| 9 | `default` template and test utilities | Merged (#106) |
 
 ## Log
 
