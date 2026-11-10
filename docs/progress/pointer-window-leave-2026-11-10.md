@@ -52,8 +52,25 @@ still compiles; the leave is a separate method.
 | Touched crates | `cargo test -p openui-engine -p openui --features openui/windows` (Windows) | 771 passed, 0 failed, 11 ignored. The engine test above was then rewritten to destructure its result, and passes again |
 | Generators | `generate_properties.py --check`; `generate_v02_contract.py --check`; `generate_renderer_contract.py --check` | no drift |
 | `cargo fmt --all --check` | in `bindings/rust` | pass |
+| Paired expanded census (WSL) | `wsl-branch-census-a8.sh`, base `9d7bccf6` | 22,517 of 23,728 exact before and after; 0 changed |
+| CSS Grid coverage (WSL) | coverage matrix, base `04d1eeab` | 2,218 of 4,204 exact before and after; 0 changed |
 
-CENSUS
+The paired expanded census in WSL has no change. The base is `9d7bccf6`,
+the recorded census base; the head is `146160a5`, this change. Both are
+built with the CI `SKIA_GN_ARGS` and share one Chromium cache. Chromium
+and Open UI are each identical in all 23,728 comparisons: 22,517 exact
+before and after, with nothing gained or lost. The census renders static
+documents and sends no pointer events, so this checks that rendering is
+unchanged. The delta is in the
+[census evidence](evidence/pointer-window-leave-census-v1.json).
+
+The CSS Grid coverage suite has no change either
+([coverage evidence](evidence/pointer-window-leave-coverage-v1.json)). The
+base is `04d1eeab`, the recorded coverage baseline; the head is `146160a5`.
+In all 4,204 measured comparisons the status and the Open UI image are
+unchanged: 2,218 exact before and after. The two references that the
+baseline lists as unmeasured, whose renderer memory is unbounded, are left
+out of both runs.
 
 ## Not done here
 
