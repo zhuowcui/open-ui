@@ -22,6 +22,8 @@ use openui_engine::EngineOptions;
 pub struct AppSpec {
     id: String,
     name: Option<String>,
+    #[cfg(feature = "menu")]
+    menu: Option<std::rc::Rc<dyn Fn() -> crate::menu::Menu>>,
     windows: Vec<(WindowSpec, ViewFn)>,
     exit_on_last_window_closed: bool,
     backend: BackendPreference,
@@ -36,6 +38,8 @@ impl App {
         AppSpec {
             id: id.into(),
             name: None,
+            #[cfg(feature = "menu")]
+            menu: None,
             windows: Vec::new(),
             exit_on_last_window_closed: true,
             backend: BackendPreference::Auto,
@@ -67,6 +71,15 @@ impl AppSpec {
     }
 
     /// Whether closing the last window exits the app (the default).
+    /// Give every window the menu bar `menu` builds. It is built once per
+    /// window and rebuilt when the signals it reads change; items' enabled
+    /// and checked closures are read reactively too.
+    #[cfg(feature = "menu")]
+    pub fn menu(mut self, menu: impl Fn() -> crate::menu::Menu + 'static) -> Self {
+        self.menu = Some(std::rc::Rc::new(menu));
+        self
+    }
+
     pub fn exit_on_last_window_closed(mut self, exit: bool) -> Self {
         self.exit_on_last_window_closed = exit;
         self
@@ -92,6 +105,8 @@ impl AppSpec {
             title: self.name.clone().unwrap_or_else(|| self.id.clone()),
             backend: self.backend,
             engine_options: self.engine_options,
+            #[cfg(feature = "menu")]
+            menu: self.menu,
         };
         if let Some(path) = std::env::var_os(RENDER_PNG_ENV) {
             let (spec, view) = self
@@ -118,6 +133,8 @@ pub(crate) struct Defaults {
     pub(crate) title: String,
     pub(crate) backend: BackendPreference,
     pub(crate) engine_options: EngineOptions,
+    #[cfg(feature = "menu")]
+    pub(crate) menu: Option<std::rc::Rc<dyn Fn() -> crate::menu::Menu>>,
 }
 
 impl Defaults {
@@ -148,6 +165,8 @@ pub(crate) fn run_windows(
         // native theme does.
         let accent = openui_platform::system_accent_color()
             .map(|[r, g, b]| openui_style::Color::from_rgba8(r, g, b, 255));
+        #[cfg(feature = "menu")]
+        desktop::set_app_name(defaults.title.clone());
         openui_platform::run_windows(desktop::Controller {
             defaults,
             exit_on_last_window_closed,
@@ -188,6 +207,8 @@ mod desktop {
         ActionRequest, CursorIcon, KeyboardInput, PlatformApplication, PlatformEvent,
         SoftwareFrame, TreeUpdate, WindowCommand, WindowController, WindowId,
     };
+    #[cfg(feature = "menu")]
+    use std::rc::Rc;
 
     pub(crate) struct Controller {
         pub(crate) defaults: Defaults,
@@ -196,21 +217,44 @@ mod desktop {
     }
 
     impl Controller {
+        /// Wrap `view` so the window's root scope keeps its menu resolved,
+        /// and return the shared resolved menu.
+        #[cfg(feature = "menu")]
+        fn with_menu(&self, id: u64, view: window::ViewFn) -> (window::ViewFn, Option<SharedMenu>) {
+            let Some(build) = self.defaults.menu.clone() else {
+                return (view, None);
+            };
+            let shared: SharedMenu = Rc::default();
+            let name = self.defaults.title.clone();
+            let resolved = shared.clone();
+            let view: window::ViewFn = Box::new(move || {
+                crate::create_effect(move || {
+                    let menu = crate::menu::Resolved::of(&build(), &name);
+                    if openui_platform::NATIVE_MENU_BAR {
+                        window::request_menu(id, menu.entries.clone());
+                    }
+                    *resolved.borrow_mut() = menu;
+                });
+                view()
+            });
+            (view, Some(shared))
+        }
+
         fn open(
             &self,
             id: u64,
-            key: WindowKey,
             spec: Option<&WindowSpec>,
-            app: App,
+            app: WindowApp,
         ) -> Result<WindowCommand, String> {
             let accent = self.accent;
-            app.document()
+            let options = app.app.options().clone();
+            app.app
+                .document()
                 .with_engine_mut(|engine| {
                     engine.set_platform_accent_color(accent);
                     Ok(())
                 })
                 .map_err(|error| error.to_string())?;
-            let options = app.options();
             let mut native = openui_platform::WindowOptions {
                 title: options.title.clone(),
                 width: options.size.width,
@@ -227,7 +271,7 @@ mod desktop {
             Ok(WindowCommand::Open {
                 id: WindowId(id),
                 options: native,
-                application: Box::new(WindowApp { key, app }),
+                application: Box::new(app),
             })
         }
     }
@@ -256,21 +300,35 @@ mod desktop {
                         let Some(key) = window::key_of(id) else {
                             continue;
                         };
+                        #[cfg(feature = "menu")]
+                        let (view, menu) = self.with_menu(id, view);
                         let app = self
                             .defaults
                             .build(&key, &spec, view)
                             .map_err(|error| error.to_string())?;
-                        self.open(id, key, Some(&spec), app)?
+                        #[cfg(feature = "menu")]
+                        let app = WindowApp { key, app, menu };
+                        #[cfg(not(feature = "menu"))]
+                        let app = WindowApp { key, app };
+                        self.open(id, Some(&spec), app)?
                     }
                     Request::Adopt { id, app } => {
                         let Some(key) = window::key_of(id) else {
                             continue;
                         };
-                        self.open(id, key, None, *app)?
+                        let app = WindowApp {
+                            key,
+                            app: *app,
+                            #[cfg(feature = "menu")]
+                            menu: None,
+                        };
+                        self.open(id, None, app)?
                     }
                     Request::Close(id) => WindowCommand::Close(WindowId(id)),
                     Request::Focus(id) => WindowCommand::Focus(WindowId(id)),
                     Request::SetTitle(id, title) => WindowCommand::SetTitle(WindowId(id), title),
+                    #[cfg(feature = "menu")]
+                    Request::SetMenu(id, entries) => WindowCommand::SetMenu(WindowId(id), entries),
                 });
             }
             Ok(commands)
@@ -300,9 +358,14 @@ mod desktop {
 
     /// A window's [`App`], with [`window::current`] naming it while its
     /// callbacks run.
+    #[cfg(feature = "menu")]
+    type SharedMenu = Rc<std::cell::RefCell<crate::menu::Resolved>>;
+
     struct WindowApp {
         key: WindowKey,
         app: App,
+        #[cfg(feature = "menu")]
+        menu: Option<SharedMenu>,
     }
 
     impl WindowApp {
@@ -310,6 +373,70 @@ mod desktop {
             let app = &mut self.app;
             window::with_current(&self.key, || operation(app))
         }
+
+        /// Run a menu item's action as if this window's event caused it.
+        #[cfg(feature = "menu")]
+        fn run_menu_action(&mut self, action: crate::menu::Action) -> Result<(), String> {
+            use crate::menu::{Action, Role};
+            use crate::EditCommand;
+            let key = self.key.clone();
+            self.with(|app| {
+                let document = app.document();
+                let result = match action {
+                    Action::Nothing => Ok(()),
+                    Action::Run(run) => {
+                        run();
+                        Ok(())
+                    }
+                    Action::Role(Role::Quit) => {
+                        crate::app::exit();
+                        Ok(())
+                    }
+                    Action::Role(Role::CloseWindow) => {
+                        window::request_close(&key);
+                        Ok(())
+                    }
+                    Action::Role(Role::About) => {
+                        about_window();
+                        Ok(())
+                    }
+                    Action::Role(Role::Undo) => document.edit_focused(EditCommand::Undo),
+                    Action::Role(Role::Redo) => document.edit_focused(EditCommand::Redo),
+                    Action::Role(Role::SelectAll) => document.edit_focused(EditCommand::SelectAll),
+                    Action::Role(Role::Cut) => document.copy_selection(true),
+                    Action::Role(Role::Copy) => document.copy_selection(false),
+                    Action::Role(Role::Paste) => document.paste_clipboard(),
+                };
+                result.map_err(|error| error.to_string())
+            })
+        }
+    }
+
+    /// The window [`Role::About`](crate::menu::Role::About) opens: the app's
+    /// name, once.
+    #[cfg(feature = "menu")]
+    fn about_window() {
+        let name = ABOUT_NAME
+            .with(|name| name.borrow().clone())
+            .unwrap_or_default();
+        window::open(
+            WindowSpec::new("openui.about")
+                .title(format!("About {name}"))
+                .size(320.0, 120.0)
+                .resizable(false),
+            move || name,
+        );
+    }
+
+    #[cfg(feature = "menu")]
+    pub(super) fn set_app_name(name: String) {
+        ABOUT_NAME.with(|about| *about.borrow_mut() = Some(name));
+    }
+
+    #[cfg(feature = "menu")]
+    thread_local! {
+        /// The running app's name, for its About window.
+        static ABOUT_NAME: std::cell::RefCell<Option<String>> = const { std::cell::RefCell::new(None) };
     }
 
     impl PlatformApplication for WindowApp {
@@ -325,7 +452,29 @@ mod desktop {
             PlatformApplication::exit_requested(&self.app)
         }
 
+        #[cfg(feature = "menu")]
+        fn menu_selected(&mut self, id: u32) -> Result<(), String> {
+            let action = self.menu.as_ref().and_then(|menu| menu.borrow().action(id));
+            match action {
+                Some(action) => self.run_menu_action(action),
+                None => Ok(()),
+            }
+        }
+
         fn key_input(&mut self, input: KeyboardInput) -> Result<(), String> {
+            #[cfg(feature = "menu")]
+            if input.phase == openui_platform::KeyPhase::Down {
+                let action = self.menu.as_ref().and_then(|menu| {
+                    menu.borrow().accelerator_action(
+                        input.modifiers,
+                        input.key_code,
+                        input.key_text.as_deref(),
+                    )
+                });
+                if let Some(action) = action {
+                    return self.run_menu_action(action);
+                }
+            }
             self.with(|app| app.key_input(input))
         }
 

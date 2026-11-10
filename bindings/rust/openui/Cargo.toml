@@ -20,6 +20,8 @@ windows = ["dep:openui-platform", "openui-platform/windows"]
 desktop = ["linux", "windows", "async"]
 # UI and background tasks (`task`), `Signal::sender` and `create_resource`.
 async = ["dep:async-executor", "dep:async-io", "dep:async-task", "dep:blocking", "dep:futures-lite"]
+# App menus (`menu`): native on Windows; accelerators and roles everywhere.
+menu = ["desktop", "openui-platform/menu"]
 # Native open, save and folder dialogs (`dialog`).
 dialog = ["desktop", "openui-platform/dialog"]
 ffi-integration = []

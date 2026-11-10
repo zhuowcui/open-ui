@@ -2458,7 +2458,7 @@ impl Document {
         Ok(())
     }
 
-    fn edit_focused(&self, command: EditCommand) -> Result<(), Error> {
+    pub(crate) fn edit_focused(&self, command: EditCommand) -> Result<(), Error> {
         self.edit_focused_with_type(command, Self::edit_input_type(command))
     }
 
@@ -2565,7 +2565,7 @@ impl Document {
         }
     }
 
-    fn copy_selection(&self, cut: bool) -> Result<(), Error> {
+    pub(crate) fn copy_selection(&self, cut: bool) -> Result<(), Error> {
         let Some(target) = self.with_engine(|engine| engine.focused())? else {
             return Ok(());
         };
@@ -2593,7 +2593,7 @@ impl Document {
         Ok(())
     }
 
-    fn paste_clipboard(&self) -> Result<(), Error> {
+    pub(crate) fn paste_clipboard(&self) -> Result<(), Error> {
         let text = self.clipboard_text()?;
         self.dispatch_text_input_with_type(&text, InputType::InsertFromPaste, Some(&text))
     }

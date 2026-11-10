@@ -249,6 +249,14 @@ global menu over `com.canonical.dbusmenu`, using the zbus 5 already locked, is
 a later option. If the engine's accessibility mapping lacks menu roles, the
 menu PR asks for them through an RFC.
 
+The menu arrives in two PRs. The first adds the typed model, declared with
+`AppSpec::menu(build)` and rebuilt reactively per window, the
+accelerators and roles on every platform, and the native Windows menu bar.
+The second draws the Linux menu bar. Function keys are
+`Key::Function(n)`, so that `Key::F` stays the letter. The engine already
+accepts AccessKit's menu roles (`Element::set_accessibility_role`), so no
+engine RFC is needed.
+
 ### Services
 
 Each service is a module of `openui` behind its own feature. The default

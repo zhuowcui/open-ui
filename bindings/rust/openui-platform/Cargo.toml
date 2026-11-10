@@ -38,6 +38,7 @@ windows = [
 # Native open, save and folder dialogs (`dialog`): the common item dialog on
 # Windows; the XDG desktop portal, or zenity, on Linux.
 dialog = ["dep:windows", "dep:zbus"]
+menu = ["dep:muda"]
 
 [dependencies]
 openui-geometry = { version = "=0.2.0", path = "../openui-geometry" }
@@ -68,6 +69,7 @@ glutin-winit = { version = "=0.5.0", default-features = false, features = ["wgl"
 raw-window-handle = { version = "=0.6.2", optional = true }
 softbuffer = { version = "=0.4.8", default-features = false, optional = true }
 winit = { version = "=0.30.13", default-features = false, features = ["rwh_06"], optional = true }
+muda = { version = "=0.19.3", default-features = false, optional = true }
 windows = { version = "=0.62.2", features = ["Win32_Foundation", "Win32_System_Com", "Win32_UI_Shell", "Win32_UI_Shell_Common"], optional = true }
 windows-sys = { version = "=0.61.2", features = ["Win32_Foundation", "Win32_System_DataExchange", "Win32_System_Memory", "Win32_System_Ole", "Win32_System_Registry"], optional = true }
 
@@ -101,3 +103,9 @@ required-features = ["dialog"]
 name = "dialog_portal"
 harness = false
 required-features = ["dialog"]
+
+# Reads a native menu bar through Win32 and chooses its items.
+[[test]]
+name = "menu"
+harness = false
+required-features = ["menu"]

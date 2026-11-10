@@ -247,6 +247,8 @@ impl App {
                 title: self.options.title.clone(),
                 backend: self.options.backend,
                 engine_options: EngineOptions::default(),
+                #[cfg(feature = "menu")]
+                menu: None,
             };
             crate::window::adopt(self);
             crate::app_spec::run_windows(defaults, true)

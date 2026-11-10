@@ -1,0 +1,13 @@
+[package]
+name = "menus"
+version = "0.2.0"
+edition = "2024"
+publish = false
+
+[features]
+default = []
+linux = ["openui/linux", "openui/menu"]
+windows = ["openui/windows", "openui/menu"]
+
+[dependencies]
+openui = { version = "=0.2.0", path = "../../openui" }
