@@ -9,7 +9,7 @@ Results here are from this branch's tests unless marked otherwise.
 | Unit | State |
 | --- | --- |
 | RFC 0001 typed style rules | Merged, PR #89 (`b8dcfaf8`) |
-| A1 typed style rules | In progress. Step 1, `view!` emits typed constructors: [record](../typed-style-constructors-2026-11-09.md). Step 2, `style!`: [record](../style-macro-2026-11-10.md). Next: `css!` and `stylesheet!` |
+| A1 typed style rules | In progress. Step 1, `view!` emits typed constructors: [record](../typed-style-constructors-2026-11-09.md). Step 2, `style!`: [record](../style-macro-2026-11-10.md). Step 3, selectors and Blink specificity: [record](../selector-specificity-2026-11-10.md). Next: matching, then `stylesheet!` and `css!` |
 | A2 colors (`oklch()`, `color-mix()`) | Merged, PR #95 (`ee46e350`); 54/54 Chromium swatches exact; [record](../color-functions-2026-11-09.md) |
 | A2 tokens and media | Not started; needs RFC 0002 |
 | A3 top layer and dialog | Not started |
@@ -65,3 +65,7 @@ on branch `components/c4-assets` and the shared findings note.
   [Record](../typed-style-constructors-2026-11-09.md).
 - 10 November 2026: `style!` compiles a CSS declaration block to typed
   styles at compile time, the second A1 step. [Record](../style-macro-2026-11-10.md).
+- 10 November 2026: a typed selector model and a macro-time selector
+  parser, with specificity checked against 93 selectors measured in pinned
+  Chromium (and 18 it drops), the third A1 step.
+  [Record](../selector-specificity-2026-11-10.md).

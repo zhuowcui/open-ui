@@ -1,0 +1,1373 @@
+{
+ "chromium": "147.0.7727.50",
+ "platform": "windows",
+ "accepted": [
+  {
+   "parents": [],
+   "selector": "*",
+   "chromium_text": [
+    "*"
+   ],
+   "specificity": [
+    [
+     0,
+     0,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": "div",
+   "chromium_text": [
+    "div"
+   ],
+   "specificity": [
+    [
+     0,
+     0,
+     1
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": "DIV",
+   "chromium_text": [
+    "DIV"
+   ],
+   "specificity": [
+    [
+     0,
+     0,
+     1
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ".a",
+   "chromium_text": [
+    ".a"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": "#x",
+   "chromium_text": [
+    "#x"
+   ],
+   "specificity": [
+    [
+     1,
+     0,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ".a.a",
+   "chromium_text": [
+    ".a.a"
+   ],
+   "specificity": [
+    [
+     0,
+     2,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ":hover",
+   "chromium_text": [
+    ":hover"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ":hover:hover",
+   "chromium_text": [
+    ":hover:hover"
+   ],
+   "specificity": [
+    [
+     0,
+     2,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": "div.a#x",
+   "chromium_text": [
+    "div.a#x"
+   ],
+   "specificity": [
+    [
+     1,
+     1,
+     1
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": "a b",
+   "chromium_text": [
+    "a b"
+   ],
+   "specificity": [
+    [
+     0,
+     0,
+     2
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": "a > b",
+   "chromium_text": [
+    "a > b"
+   ],
+   "specificity": [
+    [
+     0,
+     0,
+     2
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": "a + b",
+   "chromium_text": [
+    "a + b"
+   ],
+   "specificity": [
+    [
+     0,
+     0,
+     2
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": "a ~ b",
+   "chromium_text": [
+    "a ~ b"
+   ],
+   "specificity": [
+    [
+     0,
+     0,
+     2
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": "a > b ~ c + d",
+   "chromium_text": [
+    "a > b ~ c + d"
+   ],
+   "specificity": [
+    [
+     0,
+     0,
+     4
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": "#x .b:hover",
+   "chromium_text": [
+    "#x .b:hover"
+   ],
+   "specificity": [
+    [
+     1,
+     2,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ".a .b .c .d",
+   "chromium_text": [
+    ".a .b .c .d"
+   ],
+   "specificity": [
+    [
+     0,
+     4,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": "[data-state]",
+   "chromium_text": [
+    "[data-state]"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": "[data-state=open]",
+   "chromium_text": [
+    "[data-state=open]"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": "[data-state='open' i]",
+   "chromium_text": [
+    "[data-state='open' i]"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": "[aria-x~=b]",
+   "chromium_text": [
+    "[aria-x~=b]"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": "[lang|=en]",
+   "chromium_text": [
+    "[lang|=en]"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": "[href^=x]",
+   "chromium_text": [
+    "[href^=x]"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": "[href$=x]",
+   "chromium_text": [
+    "[href$=x]"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": "[href*=x]",
+   "chromium_text": [
+    "[href*=x]"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ":is(.a, #b) div",
+   "chromium_text": [
+    ":is(.a, #b) div"
+   ],
+   "specificity": [
+    [
+     1,
+     0,
+     1
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ":where(#a) .b",
+   "chromium_text": [
+    ":where(#a) .b"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ":where(.a):is(.b)",
+   "chromium_text": [
+    ":where(.a):is(.b)"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ":not(.x)",
+   "chromium_text": [
+    ":not(.x)"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ":not(#a, .b, c)",
+   "chromium_text": [
+    ":not(#a, .b, c)"
+   ],
+   "specificity": [
+    [
+     1,
+     0,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ":not(:is(#a))",
+   "chromium_text": [
+    ":not(:is(#a))"
+   ],
+   "specificity": [
+    [
+     1,
+     0,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ":has(> .q #r)",
+   "chromium_text": [
+    ":has(> .q #r)"
+   ],
+   "specificity": [
+    [
+     1,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ":has(.a, + #b)",
+   "chromium_text": [
+    ":has(.a, + #b)"
+   ],
+   "specificity": [
+    [
+     1,
+     0,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ":has(~ c)",
+   "chromium_text": [
+    ":has(~ c)"
+   ],
+   "specificity": [
+    [
+     0,
+     0,
+     1
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": "div:has(> img)",
+   "chromium_text": [
+    "div:has(> img)"
+   ],
+   "specificity": [
+    [
+     0,
+     0,
+     2
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ":nth-child(odd)",
+   "chromium_text": [
+    ":nth-child(odd)"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ":nth-child(2n+1)",
+   "chromium_text": [
+    ":nth-child(2n+1)"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ":nth-child(2n + 1 of .y)",
+   "chromium_text": [
+    ":nth-child(2n + 1 of .y)"
+   ],
+   "specificity": [
+    [
+     0,
+     2,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": "span:not(.x):nth-child(2n+1 of .y, #z)",
+   "chromium_text": [
+    "span:not(.x):nth-child(2n+1 of .y, #z)"
+   ],
+   "specificity": [
+    [
+     1,
+     2,
+     1
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ":nth-child(-n+3 of :is(#a, b))",
+   "chromium_text": [
+    ":nth-child(-n+3 of :is(#a, b))"
+   ],
+   "specificity": [
+    [
+     1,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ":first-child",
+   "chromium_text": [
+    ":first-child"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ":last-child",
+   "chromium_text": [
+    ":last-child"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ":only-child",
+   "chromium_text": [
+    ":only-child"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ":empty",
+   "chromium_text": [
+    ":empty"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ":root",
+   "chromium_text": [
+    ":root"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ":focus",
+   "chromium_text": [
+    ":focus"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ":focus-visible",
+   "chromium_text": [
+    ":focus-visible"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ":focus-within",
+   "chromium_text": [
+    ":focus-within"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ":active",
+   "chromium_text": [
+    ":active"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ":disabled",
+   "chromium_text": [
+    ":disabled"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ":enabled",
+   "chromium_text": [
+    ":enabled"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ":checked",
+   "chromium_text": [
+    ":checked"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ":indeterminate",
+   "chromium_text": [
+    ":indeterminate"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ":placeholder-shown",
+   "chromium_text": [
+    ":placeholder-shown"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ":read-only",
+   "chromium_text": [
+    ":read-only"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ":read-write",
+   "chromium_text": [
+    ":read-write"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ":required",
+   "chromium_text": [
+    ":required"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ":invalid",
+   "chromium_text": [
+    ":invalid"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ":open",
+   "chromium_text": [
+    ":open"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ":modal",
+   "chromium_text": [
+    ":modal"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ":HOVER",
+   "chromium_text": [
+    ":HOVER"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ".hover\\:bg-muted:hover",
+   "chromium_text": [
+    ".hover\\:bg-muted:hover"
+   ],
+   "specificity": [
+    [
+     0,
+     2,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ".data-\\[state\\=open\\]\\:p-2[data-state=open]",
+   "chromium_text": [
+    ".data-\\[state\\=open\\]\\:p-2[data-state=open]"
+   ],
+   "specificity": [
+    [
+     0,
+     2,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ".group:hover .group-hover\\:opacity-100",
+   "chromium_text": [
+    ".group:hover .group-hover\\:opacity-100"
+   ],
+   "specificity": [
+    [
+     0,
+     3,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ".peer:checked ~ .peer-checked\\:block",
+   "chromium_text": [
+    ".peer:checked ~ .peer-checked\\:block"
+   ],
+   "specificity": [
+    [
+     0,
+     3,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ".\\32xl\\:p-4",
+   "chromium_text": [
+    ".\\32xl\\:p-4"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ".w-1\\/2",
+   "chromium_text": [
+    ".w-1\\/2"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ":where(.space-y-2 > :not(:last-child))",
+   "chromium_text": [
+    ":where(.space-y-2 > :not(:last-child))"
+   ],
+   "specificity": [
+    [
+     0,
+     0,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ".dark .dark\\:text-white",
+   "chromium_text": [
+    ".dark .dark\\:text-white"
+   ],
+   "specificity": [
+    [
+     0,
+     2,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ".has-\\[\\>svg\\]\\:px-3:has(>svg)",
+   "chromium_text": [
+    ".has-\\[\\>svg\\]\\:px-3:has(>svg)"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     1
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": "[dir=rtl] .rtl\\:mr-2",
+   "chromium_text": [
+    "[dir=rtl] .rtl\\:mr-2"
+   ],
+   "specificity": [
+    [
+     0,
+     2,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": "a /* comment */ > b",
+   "chromium_text": [
+    "a  > b"
+   ],
+   "specificity": [
+    [
+     0,
+     0,
+     2
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ".c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c",
+   "chromium_text": [
+    ".c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c"
+   ],
+   "specificity": [
+    [
+     0,
+     255,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": "#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i",
+   "chromium_text": [
+    "#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i#i"
+   ],
+   "specificity": [
+    [
+     255,
+     0,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": "a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a",
+   "chromium_text": [
+    "a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a"
+   ],
+   "specificity": [
+    [
+     0,
+     0,
+     255
+    ]
+   ]
+  },
+  {
+   "parents": [],
+   "selector": ".c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c :is(.d e)",
+   "chromium_text": [
+    ".c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c :is(.d e)"
+   ],
+   "specificity": [
+    [
+     0,
+     255,
+     1
+    ]
+   ]
+  },
+  {
+   "parents": [
+    ".a, #b"
+   ],
+   "selector": ".c",
+   "chromium_text": [
+    ".c"
+   ],
+   "specificity": [
+    [
+     1,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [
+    ".a, #b"
+   ],
+   "selector": "&:hover",
+   "chromium_text": [
+    "&:hover"
+   ],
+   "specificity": [
+    [
+     1,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [
+    ".a, #b"
+   ],
+   "selector": "> .c",
+   "chromium_text": [
+    "> .c"
+   ],
+   "specificity": [
+    [
+     1,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [
+    ".a, #b"
+   ],
+   "selector": "+ .c",
+   "chromium_text": [
+    "+ .c"
+   ],
+   "specificity": [
+    [
+     1,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [
+    ".a, #b"
+   ],
+   "selector": "~ .c",
+   "chromium_text": [
+    "~ .c"
+   ],
+   "specificity": [
+    [
+     1,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [
+    ".a, #b"
+   ],
+   "selector": ".c &",
+   "chromium_text": [
+    ".c &"
+   ],
+   "specificity": [
+    [
+     1,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [
+    ".a, #b"
+   ],
+   "selector": ":is(&) .c",
+   "chromium_text": [
+    ":is(&) .c"
+   ],
+   "specificity": [
+    [
+     1,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [
+    ".a, #b"
+   ],
+   "selector": ":where(&) .c",
+   "chromium_text": [
+    ":where(&) .c"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [
+    ".a, #b"
+   ],
+   "selector": ":not(&)",
+   "chromium_text": [
+    ":not(&)"
+   ],
+   "specificity": [
+    [
+     1,
+     0,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [
+    ".a, #b"
+   ],
+   "selector": "&",
+   "chromium_text": [
+    "&"
+   ],
+   "specificity": [
+    [
+     1,
+     0,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [
+    ".a, #b"
+   ],
+   "selector": "& &",
+   "chromium_text": [
+    "& &"
+   ],
+   "specificity": [
+    [
+     2,
+     0,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [
+    ".a, #b"
+   ],
+   "selector": ".c, #d",
+   "chromium_text": [
+    ".c",
+    "#d"
+   ],
+   "specificity": [
+    [
+     1,
+     1,
+     0
+    ],
+    [
+     2,
+     0,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [
+    "div"
+   ],
+   "selector": "&.x",
+   "chromium_text": [
+    "&.x"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     1
+    ]
+   ]
+  },
+  {
+   "parents": [
+    "div"
+   ],
+   "selector": ":hover",
+   "chromium_text": [
+    ":hover"
+   ],
+   "specificity": [
+    [
+     0,
+     1,
+     1
+    ]
+   ]
+  },
+  {
+   "parents": [
+    ".a"
+   ],
+   "selector": ".b:nth-child(2 of &)",
+   "chromium_text": [
+    ".b:nth-child(2 of &)"
+   ],
+   "specificity": [
+    [
+     0,
+     3,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [
+    ".a",
+    ".b"
+   ],
+   "selector": ".c",
+   "chromium_text": [
+    ".c"
+   ],
+   "specificity": [
+    [
+     0,
+     3,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [
+    ".a",
+    "&:hover"
+   ],
+   "selector": "> .c",
+   "chromium_text": [
+    "> .c"
+   ],
+   "specificity": [
+    [
+     0,
+     3,
+     0
+    ]
+   ]
+  },
+  {
+   "parents": [
+    ".a, #b",
+    ".c &"
+   ],
+   "selector": "&:focus",
+   "chromium_text": [
+    "&:focus"
+   ],
+   "specificity": [
+    [
+     1,
+     2,
+     0
+    ]
+   ]
+  }
+ ],
+ "rejected": [
+  "a,",
+  ",a",
+  "a > > b",
+  ".1a",
+  "#1a",
+  "[x=]",
+  "[x y]",
+  "[x=y z]",
+  "[data-state=\"open\" s]",
+  ":nth-child(2 n)",
+  ":nth-child(n+)",
+  ":nth-child(2n+-1)",
+  ":has(:has(a))",
+  "a::before b",
+  ":hover(",
+  "a|b",
+  ":not-a-pseudo-class",
+  "div div.x div:"
+ ]
+}
