@@ -5,15 +5,24 @@ Status: proposed, 10 November 2026. Owner: components track
 framework track (`openui`, events and context) and the engine track (A1 data
 attributes, A3 top layer).
 
-shadcn/ui builds its interactive components on Radix UI: Radix owns state,
-keyboard, focus, ARIA and dismissal, and shadcn adds only classes. This RFC
-fixes how the same behaviors are written for Open UI, so the components that
-need them (tabs, dialog, checkbox and switch in alpha.1) can be built and
-compared with shadcn in Chromium. It covers alpha.1: roving focus, tabs,
-dismissable layer, focus scope, dialog, checkbox and switch. Popover, menu,
-select, tooltip and collapsible follow in alpha.2 on the same pieces.
+## Problem
 
-## Principles
+shadcn/ui builds its interactive components on Radix UI: Radix owns state,
+keyboard, focus, ARIA and dismissal, and shadcn adds only classes. Open UI
+has elements, events, focus and signals in its public crate, but no layer of
+these behaviors, and a few pieces Radix relies on are missing (see Affected
+tracks). The components that need them (tabs, dialog, checkbox and switch in
+alpha.1) cannot be built and compared with shadcn in Chromium until both
+exist.
+
+## Proposal
+
+This RFC fixes how Radix's behaviors are written for Open UI. It covers
+alpha.1: roving focus, tabs, dismissable layer, focus scope, dialog, checkbox
+and switch. Popover, menu, select, tooltip and collapsible follow in alpha.2
+on the same pieces.
+
+### Principles
 
 1. **Headless.** A primitive renders elements, sets attributes and handles
    input. It sets no visual style; C3 components style it, today inline and
@@ -37,10 +46,10 @@ select, tooltip and collapsible follow in alpha.2 on the same pieces.
    (a default) or by the caller (a signal and a change callback), as Radix's
    `useControllableState`.
 5. **Public crate only.** Primitives use `openui`'s public API. What they
-   cannot do with it is listed under requests, each with the interim used
-   until it lands.
+   cannot do with it is listed under Affected tracks, each with the interim
+   used until it lands.
 
-## Crate and module layout
+### Crate and module layout
 
 A new crate `openui-primitives` (working name) in the `components/`
 workspace, so an app can use the behaviors without shadcn's look, as with
@@ -51,7 +60,7 @@ components/openui-primitives/src/
   lib.rs            re-exports
   controllable.rs   Controllable<T>: default value or Signal<T> + on_change
   id.rs             unique ids for aria-controls / aria-labelledby
-  keys.rs           key names from keyboard events (see requests)
+  keys.rs           key names from keyboard events (request 2)
   collection.rs     ordered items of a group, in tree order
   roving_focus.rs   RovingFocusGroup, RovingFocusItem
   tabs.rs           Tabs, TabsList, TabsTrigger, TabsContent
@@ -63,7 +72,7 @@ components/openui-primitives/src/
   switch.rs         Switch, SwitchThumb
 ```
 
-## Shared pieces
+### Shared pieces
 
 **State.** `Controllable<T>` holds either an internal `Signal<T>` seeded
 from a default, or the caller's signal; setting it calls `on_change` in both
@@ -103,7 +112,7 @@ content, dialog content) and unmounts it after. `Show` does the same.
 Exit animations (`data-[state=closed]:animate-out`) need animation events
 from typed rules and wait for C1.
 
-## Primitives
+### Primitives
 
 **RovingFocusGroup.** One item has `tabindex="0"` and the rest `-1`, so Tab
 enters the group once. Arrow keys move focus by orientation and direction
@@ -138,15 +147,15 @@ the scope uses it and adds Radix's choice of first element. The engine
 holds one modal root, so nested dialogs need a stack (request 4).
 
 **Dialog.** Root: `open`, `default_open`, `modal`. Trigger:
-`aria-haspopup="dialog"`, `aria-expanded`, `aria-controls`, `data-state`. Portal: the content and
-overlay leave the normal tree for the top layer (A3); until then they are
-appended at the end of `<body>` with `position: fixed`. Overlay:
-`data-state`. Content: `role="dialog"`, `aria-labelledby` (Title),
-`aria-describedby` (Description), `data-state`, a trapped focus scope and a
-dismissable layer when modal; scrolling of the page is locked while open
-(`overflow: hidden` on `<body>`), and everything outside is hidden from
-assistive technology. Closing returns focus to the trigger. Close: a button
-that closes.
+`aria-haspopup="dialog"`, `aria-expanded`, `aria-controls`, `data-state`.
+Portal: the content and overlay leave the normal tree for the top layer
+(A3); until then they are appended at the end of `<body>` with
+`position: fixed`. Overlay: `data-state`. Content: `role="dialog"`,
+`aria-labelledby` (Title), `aria-describedby` (Description), `data-state`, a
+trapped focus scope and a dismissable layer when modal; scrolling of the
+page is locked while open (`overflow: hidden` on `<body>`), and everything
+outside is hidden from assistive technology. Closing returns focus to the
+trigger. Close: a button that closes.
 
 **Checkbox and switch.** A `button` with `role="checkbox"` (or `"switch"`),
 `aria-checked` (`true`, `false`, or `mixed` for an indeterminate checkbox)
@@ -155,7 +164,13 @@ it; for a checkbox, Enter is ignored, as in Radix. The indicator and the
 thumb carry the same `data-state`. Radix's hidden form input is out of scope
 until forms (B2).
 
-## Requests to other tracks
+## Affected tracks
+
+The components track builds the primitives (C2) and the shadcn components on
+them (C3); C1 maps their `data-*` attributes to typed-rule conditions. The
+framework and engine tracks are asked for the following. Each owning track
+designs its API; the names here only state the need. Until a request lands,
+the primitives use the interim shown.
 
 | # | Need | Track | Interim |
 | --- | --- | --- | --- |
@@ -172,6 +187,17 @@ Already present and used as is: `tabindex` in sequential focus order
 related element, `Document::focused_element`, `Document::advance_focus`,
 `Document::set_modal_root`, capture-phase listeners (`Element::on_capture`)
 and `Show`.
+
+## Migration
+
+1. This RFC merges first. It changes no code.
+2. The components track adds `openui-primitives` to the `components/`
+   workspace, one PR per group: roving focus and tabs; checkbox and switch;
+   dismissable layer, focus scope and dialog. Each uses the interims above
+   and brings its trace fixtures. `components/` is its own workspace on the
+   public crate only, so `main` stays green between these PRs.
+3. As each request lands in its owning track, a components PR replaces the
+   interim. Its trace and pixel results must not get worse.
 
 ## Verification
 
