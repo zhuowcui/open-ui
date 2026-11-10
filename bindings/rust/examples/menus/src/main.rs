@@ -3,7 +3,7 @@
 //! File opens and closes windows, Edit uses the standard roles on the text
 //! field, and View has a check item and an item enabled only while it is
 //! checked. Shortcuts work whether or not a menu is open. On Windows the
-//! menu bar is native; elsewhere only the shortcuts and roles work for now.
+//! menu bar is native; on Linux the framework draws it in the window.
 //!
 //! Set `OUI_SMOKE_EXIT=1` to open, choose "New Window" through its shortcut
 //! path, print the result and exit, as CI does.

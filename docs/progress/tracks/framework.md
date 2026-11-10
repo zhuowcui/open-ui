@@ -23,6 +23,48 @@ The order and verification of each PR are in
 
 ## Log
 
+### 10 November 2026: app menu, part 2 (drawn menu bar)
+
+Change: where the platform has no native menu bar (Linux), each window
+draws the app menu at its top (`openui/src/menu_bar.rs`). The bar is a
+`position: fixed` strip with a spacer before the app's root, so the page
+lays out below it and scrolls under it. A click, F10, or Alt with a menu's
+mnemonic opens a menu; the arrow keys move between items (skipping
+separators and disabled items) and menus, Enter or Space chooses, Escape
+closes one level, and an item's mnemonic chooses it. While a menu is open
+it takes every key, as native menus do; a full-window layer under the
+menus closes them on an outside click. Items show check marks, accelerator
+text and submenu arrows, and nested submenus open as flyouts. The bar uses
+the `MenuBar`, `Menu`, `MenuItem` and `MenuItemCheckBox` accessibility
+roles. A chosen item runs after the event's dispatch, with the window
+current, through the same path as native menu commands. Elements of an
+earlier drawing are detached during dispatch and destroyed afterwards,
+because the engine rejects an event whose target was destroyed by its own
+listener (`StaleHandle`).
+
+Remaining gaps, owned by this track unless noted:
+
+- Checked and disabled states reach assistive tools only as an
+  accessibility description ("checked", "unavailable"): the engine has no
+  toggled or disabled state for authored elements. This needs an engine
+  RFC (Workstream A).
+- The keyboard highlight does not move accessibility focus, so a screen
+  reader does not announce items as the arrows move.
+- Mnemonic underlines appear only after F10 or Alt, and Alt alone does not
+  open the bar.
+- The bar has one light appearance; it does not follow a dark theme.
+
+Verification:
+
+- `cargo test -p openui --features "windows menu" --lib menu_bar` (Windows)
+  and `--features "linux menu"` (WSL): a headless document with the drawn
+  bar is clicked through real hit testing (a top item opens its menu below
+  the bar, an item click chooses and closes, an outside click closes
+  without choosing, the closed bar renders the same pixels as before
+  opening) and driven by keys (F10, arrows, Escape, Alt+mnemonic, item
+  mnemonics, disabled items skipped).
+- `menus` smoke passes on WSLg with software and OpenGL presentation.
+
 ### 10 November 2026: app menu, part 1
 
 Change: `openui::menu` (`menu` feature) declares a typed menu bar:

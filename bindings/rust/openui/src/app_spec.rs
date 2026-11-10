@@ -218,7 +218,7 @@ mod desktop {
 
     impl Controller {
         /// Wrap `view` so the window's root scope keeps its menu resolved,
-        /// and return the shared resolved menu.
+        /// and, without a native menu bar, draws the bar above the view.
         #[cfg(feature = "menu")]
         fn with_menu(&self, id: u64, view: window::ViewFn) -> (window::ViewFn, Option<SharedMenu>) {
             let Some(build) = self.defaults.menu.clone() else {
@@ -226,16 +226,21 @@ mod desktop {
             };
             let shared: SharedMenu = Rc::default();
             let name = self.defaults.title.clone();
-            let resolved = shared.clone();
+            let menu = shared.clone();
             let view: window::ViewFn = Box::new(move || {
+                let resolved = menu.clone();
                 crate::create_effect(move || {
-                    let menu = crate::menu::Resolved::of(&build(), &name);
+                    let entries = crate::menu::Resolved::of(&build(), &name);
                     if openui_platform::NATIVE_MENU_BAR {
-                        window::request_menu(id, menu.entries.clone());
+                        window::request_menu(id, entries.entries.clone());
                     }
-                    *resolved.borrow_mut() = menu;
+                    resolved.set_resolved(entries);
                 });
-                view()
+                if openui_platform::NATIVE_MENU_BAR {
+                    view()
+                } else {
+                    crate::ViewNode::Fragment(vec![menu.view(), view()])
+                }
             });
             (view, Some(shared))
         }
@@ -359,7 +364,7 @@ mod desktop {
     /// A window's [`App`], with [`window::current`] naming it while its
     /// callbacks run.
     #[cfg(feature = "menu")]
-    type SharedMenu = Rc<std::cell::RefCell<crate::menu::Resolved>>;
+    type SharedMenu = Rc<crate::menu_bar::WindowMenu>;
 
     struct WindowApp {
         key: WindowKey,
@@ -410,6 +415,15 @@ mod desktop {
                 result.map_err(|error| error.to_string())
             })
         }
+
+        /// Run the item the drawn menu bar chose during the last event.
+        #[cfg(feature = "menu")]
+        fn run_chosen(&mut self) -> Result<(), String> {
+            match self.menu.as_ref().and_then(|menu| menu.take_chosen()) {
+                Some(action) => self.run_menu_action(action),
+                None => Ok(()),
+            }
+        }
     }
 
     /// The window [`Role::About`](crate::menu::Role::About) opens: the app's
@@ -441,7 +455,10 @@ mod desktop {
 
     impl PlatformApplication for WindowApp {
         fn event(&mut self, event: PlatformEvent) -> Result<(), String> {
-            self.with(|app| app.event(event))
+            self.with(|app| app.event(event))?;
+            #[cfg(feature = "menu")]
+            self.run_chosen()?;
+            Ok(())
         }
 
         fn render(&mut self, time_ms: f64) -> Result<SoftwareFrame, String> {
@@ -454,7 +471,10 @@ mod desktop {
 
         #[cfg(feature = "menu")]
         fn menu_selected(&mut self, id: u32) -> Result<(), String> {
-            let action = self.menu.as_ref().and_then(|menu| menu.borrow().action(id));
+            let action = self
+                .menu
+                .as_ref()
+                .and_then(|menu| menu.resolved().action(id));
             match action {
                 Some(action) => self.run_menu_action(action),
                 None => Ok(()),
@@ -463,9 +483,15 @@ mod desktop {
 
         fn key_input(&mut self, input: KeyboardInput) -> Result<(), String> {
             #[cfg(feature = "menu")]
+            if let Some(menu) = self.menu.clone() {
+                if menu.key_input(&input) {
+                    return self.run_chosen();
+                }
+            }
+            #[cfg(feature = "menu")]
             if input.phase == openui_platform::KeyPhase::Down {
                 let action = self.menu.as_ref().and_then(|menu| {
-                    menu.borrow().accelerator_action(
+                    menu.resolved().accelerator_action(
                         input.modifiers,
                         input.key_code,
                         input.key_text.as_deref(),
@@ -479,7 +505,10 @@ mod desktop {
         }
 
         fn dispatch_pending_events(&mut self) -> Result<bool, String> {
-            self.with(|app| app.dispatch_pending_events())
+            let dispatched = self.with(|app| app.dispatch_pending_events())?;
+            #[cfg(feature = "menu")]
+            self.run_chosen()?;
+            Ok(dispatched)
         }
 
         fn clipboard_text(&self) -> Result<String, String> {

@@ -100,6 +100,8 @@ pub mod clipboard;
 pub mod dialog;
 #[cfg(feature = "menu")]
 pub mod menu;
+#[cfg(feature = "menu")]
+mod menu_bar;
 #[cfg(feature = "async")]
 mod resource;
 #[cfg(feature = "async")]

@@ -238,7 +238,7 @@ Platform implementation:
 | Platform | Menu bar |
 | --- | --- |
 | Windows | Native `HMENU` attached to each winit window by muda; accelerators through winit's message hook |
-| Linux | Drawn by the framework inside the window from the same declaration: a menu bar row above the app's root, dropdowns as `position: fixed` elements, keyboard navigation (Alt, F10, arrows, mnemonics) and menu roles in the accessibility tree |
+| Linux | Drawn by the framework inside the window from the same declaration: a `position: fixed` bar with a spacer before the app's root, so the page lays out below it and scrolls under it; dropdowns positioned under their top item; a full-window layer under them that closes them on an outside click; keyboard navigation (F10, Alt with a mnemonic, arrows, Enter, Space, Escape, item mnemonics) and menu roles in the accessibility tree |
 | macOS (alpha.2) | Native app menu from the same declaration |
 
 Linux has no native menu bar that works with a winit window: muda's Linux

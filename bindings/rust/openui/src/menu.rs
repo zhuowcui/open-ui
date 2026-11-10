@@ -6,8 +6,9 @@
 //! whether or not the menu is open, and is matched before the focused
 //! document sees the key.
 //!
-//! On Windows the menu bar is native. Elsewhere it is not shown yet, but
-//! accelerators and roles still work.
+//! On Windows the menu bar is native. Elsewhere the framework draws it at
+//! the top of each window: a click, F10 or Alt with a menu's mnemonic opens
+//! it, and the arrow keys, Enter, Escape and item mnemonics drive it.
 //!
 //! ```no_run
 //! use openui::menu::{Accelerator, Key, Menu, MenuItem, Modifiers, Role};
