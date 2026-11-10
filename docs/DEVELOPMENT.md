@@ -200,6 +200,51 @@ unconditional or malformed markers; `--write` regenerates the ledger. Remove ent
 from the ledger as Windows-native references qualify them; never add a test
 whose expected value is platform-independent.
 
+## Shared prebuilt Skia (Windows)
+
+Each target directory otherwise compiles Skia itself, once per Skia feature
+set. `tools/skia_prebuilt.py` compiles it once and lets every worktree
+install that build through rust-skia's binary cache
+(`FORCE_SKIA_BINARIES_DOWNLOAD` with a `file://` `SKIA_BINARIES_URL`). The
+archive is a byte copy of the libraries, `icudtl.dat` and `bindings.rs` of a
+normal from-source build with the same inputs, so pixels do not change. (Two
+from-source builds already differ, but only in object timestamps and the
+debug-info path of their output directory.) The
+[setup track record](progress/tracks/setup.md) has the proof.
+
+```powershell
+. E:\open-ui\out\win-env-a8.ps1        # the CI Skia variables above
+python tools\skia_prebuilt.py build    # once per set of build inputs
+$env:CARGO_TARGET_DIR = "E:\open-ui\out\cargo-<track>"
+python tools\skia_prebuilt.py env | Out-String | Invoke-Expression
+cd bindings\rust
+cargo test --locked -p openui-paint
+```
+
+Archives live in `<main checkout>\out\skia-prebuilt\<rev>-<hash>\`. rust-skia's
+key names only the rust-skia commit, target and Skia features, so the
+directory also hashes `SKIA_GN_ARGS`, `SKIA_DEBUG`, the compiler variables and
+the `clang` version: a changed input finds no archive instead of a stale
+one. Rerun `env` after changing any of them in a shell. With the forced
+download, a missing archive fails the build ("Downloading of binaries was
+forced but failed") rather than compiling a different Skia; then run
+`build` with the cargo arguments that failed, for example
+`python tools\skia_prebuilt.py build check --locked -p pixel-compare --features ganesh-gl`.
+The default, `check --locked --workspace --all-targets`, covers the
+workspace's own feature set, which `cargo test -p openui-paint` and
+`cargo build -p pixel-compare` also request.
+
+The script is Windows-only. On Linux rust-skia also passes Cargo's
+`OPT_LEVEL` to the Skia compiler as `-O<level>` and leaves it out of the key,
+so one archive could reach both dev and release builds with different code.
+Linux and WSL keep compiling Skia from source.
+
+The archive saves the Skia compile only (about 3 minutes on 24 cores, and
+about 140 MB per feature set). Most of a target directory is Rust: the
+shared `out\cargo-win-a8` holds about 35 GB in `debug\deps`. Each worktree
+still needs its own target directory, because concurrent builds in one
+directory wait for each other's lock and rebuild each other's crates.
+
 ## Fuzzing and sanitizers
 
 The isolated `bindings/rust/fuzz` workspace has targets for FFI values, tree

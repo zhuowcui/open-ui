@@ -216,6 +216,7 @@ jobs:
             tools.wpt.test_sp20_closure \
             tools.wpt.test_port_coverage_area \
             tools.qualification.test_build_renderer \
+            tools.qualification.test_census_lock \
             tools.qualification.test_renderer_matrix \
             tools.qualification.test_summarize_renderer_census \
             tools.qualification.test_windows_chrome \
@@ -401,6 +402,7 @@ jobs:
             tools.wpt.test_sp20_closure \
             tools.wpt.test_port_coverage_area \
             tools.qualification.test_build_renderer \
+            tools.qualification.test_census_lock \
             tools.qualification.test_renderer_matrix \
             tools.qualification.test_summarize_renderer_census \
             tools.qualification.test_windows_chrome \
