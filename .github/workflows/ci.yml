@@ -261,17 +261,20 @@ jobs:
 
       - name: Build and smoke the Win32 desktop runtime
         run: |
-          features="openui-platform/windows openui/windows openui-ffi/windows hello/windows multi-window/windows tasks/windows clipboard/windows"
+          features="openui-platform/windows openui/windows openui-ffi/windows hello/windows multi-window/windows tasks/windows clipboard/windows dialogs/windows"
           cargo build --manifest-path bindings/rust/Cargo.toml --locked \
-            --package openui-ffi --package hello --package multi-window --package tasks --package clipboard --features "$features"
+            --package openui-ffi --package hello --package multi-window --package tasks --package clipboard \
+            --package dialogs --features "$features"
+          # Includes the dialog test, which answers real common item dialogs.
           cargo test --manifest-path bindings/rust/Cargo.toml --locked --no-fail-fast \
             --package openui-platform --package openui --package openui-ffi \
-            --features "openui-platform/windows openui/windows openui/async openui-ffi/windows"
+            --features "openui-platform/windows openui-platform/dialog openui/windows openui/async openui/dialog openui-ffi/windows"
           OUI_BACKEND=software OUI_SMOKE_EXIT=1 "$CARGO_TARGET_DIR/debug/hello.exe"
           OUI_BACKEND=software OUI_SMOKE_EXIT=1 "$CARGO_TARGET_DIR/debug/multi-window.exe"
           # Exits only once background work and timers have woken the loop.
           OUI_BACKEND=software OUI_SMOKE_EXIT=1 timeout 120 "$CARGO_TARGET_DIR/debug/tasks.exe"
           OUI_BACKEND=software OUI_SMOKE_EXIT=1 "$CARGO_TARGET_DIR/debug/clipboard.exe" | grep -F 'Ok("Open UI clipboard example")'
+          OUI_BACKEND=software OUI_SMOKE_EXIT=1 "$CARGO_TARGET_DIR/debug/dialogs.exe"
           python tools/ffi/verify_native_window.py \
             --library "$CARGO_TARGET_DIR/debug/openui_ffi.dll" \
             --protocol win32 --backend software

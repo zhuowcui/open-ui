@@ -170,6 +170,8 @@ pub(crate) fn run_windows(
         all(feature = "windows", target_os = "windows")
     ))]
     crate::clipboard::set_native(None);
+    #[cfg(all(feature = "dialog", any(target_os = "linux", target_os = "windows")))]
+    crate::dialog::reset();
     window::reset();
     result
 }
@@ -278,7 +280,14 @@ mod desktop {
             Ok(window::close_requested(id.0))
         }
 
+        #[cfg(all(feature = "dialog", any(target_os = "linux", target_os = "windows")))]
+        fn window_opened(&mut self, id: WindowId, native: openui_platform::NativeWindow) {
+            crate::dialog::window_opened(id.0, native);
+        }
+
         fn window_closed(&mut self, id: WindowId) -> Result<(), String> {
+            #[cfg(all(feature = "dialog", any(target_os = "linux", target_os = "windows")))]
+            crate::dialog::window_closed(id.0);
             window::forget(id.0);
             Ok(())
         }

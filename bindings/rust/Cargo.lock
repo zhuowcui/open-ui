@@ -799,6 +799,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "dialogs"
+version = "0.2.0"
+dependencies = [
+ "openui",
+]
+
+[[package]]
 name = "dispatch"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1941,9 +1948,11 @@ dependencies = [
  "raw-window-handle",
  "smithay-clipboard",
  "softbuffer",
+ "windows",
  "windows-sys 0.61.2",
  "winit",
  "x11-clipboard",
+ "zbus",
 ]
 
 [[package]]

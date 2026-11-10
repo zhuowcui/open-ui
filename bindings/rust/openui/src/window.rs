@@ -356,6 +356,12 @@ pub(crate) fn take_requests() -> Vec<Request> {
     with_registry(|registry| std::mem::take(&mut registry.queue))
 }
 
+/// The runtime id of the window with `key`, if it is open or opening.
+#[cfg_attr(not(feature = "dialog"), allow(dead_code))]
+pub(crate) fn id_of(key: &WindowKey) -> Option<u64> {
+    with_registry(|registry| registry.windows.get(key).map(|entry| entry.id))
+}
+
 pub(crate) fn key_of(id: u64) -> Option<WindowKey> {
     with_registry(|registry| {
         registry

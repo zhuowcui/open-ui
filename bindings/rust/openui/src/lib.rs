@@ -96,6 +96,8 @@ mod generated_style_setters;
 pub mod app;
 mod app_spec;
 pub mod clipboard;
+#[cfg(all(feature = "dialog", any(target_os = "linux", target_os = "windows")))]
+pub mod dialog;
 #[cfg(feature = "async")]
 mod resource;
 #[cfg(feature = "async")]

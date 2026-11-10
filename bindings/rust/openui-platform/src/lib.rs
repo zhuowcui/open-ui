@@ -9,6 +9,9 @@ mod desktop;
 #[cfg(all(feature = "windows", target_os = "windows"))]
 mod windows_clipboard;
 
+#[cfg(all(feature = "dialog", any(target_os = "linux", target_os = "windows")))]
+pub mod dialog;
+
 #[cfg(any(
     all(feature = "linux", target_os = "linux"),
     all(feature = "windows", target_os = "windows")
@@ -124,6 +127,57 @@ impl std::fmt::Debug for LoopWaker {
     }
 }
 
+/// A native window's handle, which dialogs use as their owner. It can be
+/// sent to other threads; it does not keep the window open.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct NativeWindow(NativeHandle);
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[allow(dead_code)]
+enum NativeHandle {
+    Win32(isize),
+    X11(u64),
+    Other,
+}
+
+#[cfg_attr(not(feature = "dialog"), allow(dead_code))]
+impl NativeWindow {
+    #[cfg(any(
+        all(feature = "linux", target_os = "linux"),
+        all(feature = "windows", target_os = "windows")
+    ))]
+    pub(crate) fn from_raw(handle: raw_window_handle::RawWindowHandle) -> Self {
+        use raw_window_handle::RawWindowHandle;
+        Self(match handle {
+            RawWindowHandle::Win32(handle) => NativeHandle::Win32(handle.hwnd.get()),
+            RawWindowHandle::Xlib(handle) => NativeHandle::X11(handle.window as u64),
+            RawWindowHandle::Xcb(handle) => NativeHandle::X11(u64::from(handle.window.get())),
+            _ => NativeHandle::Other,
+        })
+    }
+
+    #[cfg(target_os = "windows")]
+    pub(crate) fn win32(self) -> Option<isize> {
+        match self.0 {
+            NativeHandle::Win32(hwnd) => Some(hwnd),
+            _ => None,
+        }
+    }
+
+    #[cfg(target_os = "linux")]
+    pub(crate) fn x11(self) -> Option<u64> {
+        match self.0 {
+            NativeHandle::X11(window) => Some(window),
+            _ => None,
+        }
+    }
+
+    #[cfg(all(test, target_os = "linux"))]
+    pub(crate) fn x11_for_test(window: u64) -> Self {
+        Self(NativeHandle::X11(window))
+    }
+}
+
 /// The system clipboard's text while a native runtime runs. Use it on the
 /// event-loop thread; it is not `Send`.
 #[derive(Clone)]
@@ -180,6 +234,9 @@ pub trait WindowController: 'static {
 
     /// Called once, before any window opens, with the system clipboard.
     fn clipboard(&mut self, _clipboard: Clipboard) {}
+
+    /// `id` opened; `native` is its handle for parenting native dialogs.
+    fn window_opened(&mut self, _id: WindowId, _native: NativeWindow) {}
 
     /// Run queued UI tasks for one bounded turn and return whether more are
     /// queued. Called after a [`LoopWaker::wake`] and before the loop waits.
@@ -379,6 +436,7 @@ pub enum PlatformError {
     Window(String),
     Presentation(String),
     Application(String),
+    Dialog(String),
 }
 
 impl std::fmt::Display for PlatformError {
@@ -395,6 +453,7 @@ impl std::fmt::Display for PlatformError {
             Self::Application(message) => {
                 write!(formatter, "application callback failed: {message}")
             }
+            Self::Dialog(message) => write!(formatter, "file dialog failed: {message}"),
         }
     }
 }

@@ -1158,6 +1158,10 @@ impl<C: WindowController> Runtime<C> {
                     application,
                 ) {
                     Ok((state, status)) => {
+                        if let Ok(handle) = state.window.window_handle() {
+                            self.controller
+                                .window_opened(id, crate::NativeWindow::from_raw(handle.as_raw()));
+                        }
                         self.windows.push(state);
                         let result = self.windows.last_mut().expect("just pushed").start(status);
                         self.check(event_loop, result);
