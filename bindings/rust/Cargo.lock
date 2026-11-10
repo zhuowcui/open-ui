@@ -1926,6 +1926,7 @@ dependencies = [
  "openui-paint",
  "openui-style",
  "openui-text",
+ "serde_json",
  "unicode-segmentation",
 ]
 

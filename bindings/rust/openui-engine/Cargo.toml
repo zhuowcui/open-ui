@@ -20,3 +20,7 @@ openui-paint = { version = "=0.2.0", path = "../openui-paint" }
 openui-style = { version = "=0.2.0", path = "../openui-style" }
 openui-text = { version = "=0.2.0", path = "../openui-text" }
 unicode-segmentation = "1.10"
+
+[dev-dependencies]
+openui-style = { version = "=0.2.0", path = "../openui-style", features = ["constructor-tokens"] }
+serde_json = "1.0"

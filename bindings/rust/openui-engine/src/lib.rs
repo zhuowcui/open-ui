@@ -15,6 +15,7 @@ mod scroll_button;
 mod scroll_into_view;
 mod scroll_notifications;
 mod scroll_overflow;
+mod selector_match;
 mod table_spans;
 
 pub use scroll_button::{
@@ -22,6 +23,7 @@ pub use scroll_button::{
 };
 
 pub use scroll_into_view::{ScrollAlignment, ScrollIntoViewContainer, ScrollIntoViewOptions};
+pub use selector_match::SelectorMatchError;
 
 pub use accessibility::{
     AccessibilityAction, AccessibilityActionData, AccessibilityActionRequest, AccessibilityLive,

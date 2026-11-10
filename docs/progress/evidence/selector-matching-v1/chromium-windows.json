@@ -1,0 +1,692 @@
+{
+ "chromium": "147.0.7727.50",
+ "platform": "windows",
+ "fixture": [
+  {
+   "tag": "div",
+   "attributes": {
+    "id": "a",
+    "class": "box card",
+    "data-state": "open",
+    "lang": "en-US"
+   },
+   "children": [
+    {
+     "tag": "span",
+     "attributes": {
+      "id": "a1",
+      "class": "title"
+     },
+     "children": [
+      {
+       "text": "Hello"
+      }
+     ]
+    },
+    {
+     "tag": "span",
+     "attributes": {
+      "id": "a2",
+      "class": "desc muted"
+     },
+     "children": [
+      {
+       "text": ""
+      }
+     ]
+    },
+    {
+     "tag": "div",
+     "attributes": {
+      "id": "a3",
+      "class": "actions",
+      "dir": "RTL"
+     },
+     "children": [
+      {
+       "tag": "button",
+       "attributes": {
+        "id": "a3b",
+        "class": "btn",
+        "type": "SUBMIT"
+       },
+       "children": []
+      },
+      {
+       "tag": "img",
+       "attributes": {
+        "id": "a3i"
+       },
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "tag": "div",
+   "attributes": {
+    "id": "b",
+    "class": "box",
+    "data-state": "closed"
+   },
+   "children": [
+    {
+     "tag": "div",
+     "attributes": {
+      "id": "b1",
+      "class": "item"
+     },
+     "children": [
+      {
+       "text": " "
+      }
+     ]
+    },
+    {
+     "tag": "div",
+     "attributes": {
+      "id": "b2",
+      "class": "item active"
+     },
+     "children": []
+    },
+    {
+     "tag": "div",
+     "attributes": {
+      "id": "b3",
+      "class": "item"
+     },
+     "children": []
+    },
+    {
+     "tag": "div",
+     "attributes": {
+      "id": "b4",
+      "class": "item"
+     },
+     "children": []
+    },
+    {
+     "tag": "div",
+     "attributes": {
+      "id": "b5",
+      "class": "item active"
+     },
+     "children": []
+    }
+   ]
+  },
+  {
+   "tag": "table",
+   "attributes": {
+    "id": "t"
+   },
+   "children": [
+    {
+     "tag": "tbody",
+     "attributes": {
+      "id": "tb"
+     },
+     "children": [
+      {
+       "tag": "tr",
+       "attributes": {
+        "id": "tr1"
+       },
+       "children": [
+        {
+         "tag": "td",
+         "attributes": {
+          "id": "td1"
+         },
+         "children": []
+        },
+        {
+         "tag": "td",
+         "attributes": {
+          "id": "td2"
+         },
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "tag": "div",
+   "attributes": {
+    "id": "c",
+    "class": "  spaced\tclasses  ",
+    "data-x": "a-b c"
+   },
+   "children": [
+    {
+     "tag": "div",
+     "attributes": {
+      "id": "c1"
+     },
+     "children": []
+    },
+    {
+     "text": "tail"
+    }
+   ]
+  }
+ ],
+ "cases": [
+  {
+   "selector": "div",
+   "matches": [
+    "a",
+    "a3",
+    "b",
+    "b1",
+    "b2",
+    "b3",
+    "b4",
+    "b5",
+    "c",
+    "c1"
+   ]
+  },
+  {
+   "selector": "span",
+   "matches": [
+    "a1",
+    "a2"
+   ]
+  },
+  {
+   "selector": "*",
+   "matches": [
+    "html",
+    "body",
+    "a",
+    "a1",
+    "a2",
+    "a3",
+    "a3b",
+    "a3i",
+    "b",
+    "b1",
+    "b2",
+    "b3",
+    "b4",
+    "b5",
+    "t",
+    "tb",
+    "tr1",
+    "td1",
+    "td2",
+    "c",
+    "c1"
+   ]
+  },
+  {
+   "selector": "#a1",
+   "matches": [
+    "a1"
+   ]
+  },
+  {
+   "selector": ".box",
+   "matches": [
+    "a",
+    "b"
+   ]
+  },
+  {
+   "selector": ".item.active",
+   "matches": [
+    "b2",
+    "b5"
+   ]
+  },
+  {
+   "selector": ".spaced.classes",
+   "matches": [
+    "c"
+   ]
+  },
+  {
+   "selector": "div.box > span",
+   "matches": [
+    "a1",
+    "a2"
+   ]
+  },
+  {
+   "selector": "#a span",
+   "matches": [
+    "a1",
+    "a2"
+   ]
+  },
+  {
+   "selector": "#a > span",
+   "matches": [
+    "a1",
+    "a2"
+   ]
+  },
+  {
+   "selector": "span + span",
+   "matches": [
+    "a2"
+   ]
+  },
+  {
+   "selector": "span ~ div",
+   "matches": [
+    "a3"
+   ]
+  },
+  {
+   "selector": "#b1 ~ .active",
+   "matches": [
+    "b2",
+    "b5"
+   ]
+  },
+  {
+   "selector": ".title + *",
+   "matches": [
+    "a2"
+   ]
+  },
+  {
+   "selector": "[data-state]",
+   "matches": [
+    "a",
+    "b"
+   ]
+  },
+  {
+   "selector": "[data-state=open]",
+   "matches": [
+    "a"
+   ]
+  },
+  {
+   "selector": "[data-state=OPEN]",
+   "matches": []
+  },
+  {
+   "selector": "[data-state=OPEN i]",
+   "matches": [
+    "a"
+   ]
+  },
+  {
+   "selector": "[dir=rtl]",
+   "matches": [
+    "a3"
+   ]
+  },
+  {
+   "selector": "[type=submit]",
+   "matches": [
+    "a3b"
+   ]
+  },
+  {
+   "selector": "[lang|=en]",
+   "matches": [
+    "a"
+   ]
+  },
+  {
+   "selector": "[lang|=EN]",
+   "matches": [
+    "a"
+   ]
+  },
+  {
+   "selector": "[data-x|=a]",
+   "matches": [
+    "c"
+   ]
+  },
+  {
+   "selector": "[data-x~=c]",
+   "matches": [
+    "c"
+   ]
+  },
+  {
+   "selector": "[data-x~='a-b c']",
+   "matches": []
+  },
+  {
+   "selector": "[class~=muted]",
+   "matches": [
+    "a2"
+   ]
+  },
+  {
+   "selector": "[class^=box]",
+   "matches": [
+    "a",
+    "b"
+   ]
+  },
+  {
+   "selector": "[class$=card]",
+   "matches": [
+    "a"
+   ]
+  },
+  {
+   "selector": "[class*=ca]",
+   "matches": [
+    "a"
+   ]
+  },
+  {
+   "selector": "[class*='']",
+   "matches": []
+  },
+  {
+   "selector": "[class^='']",
+   "matches": []
+  },
+  {
+   "selector": ":is(#a1, .desc)",
+   "matches": [
+    "a1",
+    "a2"
+   ]
+  },
+  {
+   "selector": ":where(.box) > .title",
+   "matches": [
+    "a1"
+   ]
+  },
+  {
+   "selector": ":not(.item)",
+   "matches": [
+    "html",
+    "body",
+    "a",
+    "a1",
+    "a2",
+    "a3",
+    "a3b",
+    "a3i",
+    "b",
+    "t",
+    "tb",
+    "tr1",
+    "td1",
+    "td2",
+    "c",
+    "c1"
+   ]
+  },
+  {
+   "selector": "div:not(.item, .box)",
+   "matches": [
+    "a3",
+    "c",
+    "c1"
+   ]
+  },
+  {
+   "selector": ".box:has(> .title)",
+   "matches": [
+    "a"
+   ]
+  },
+  {
+   "selector": ".box:has(.btn)",
+   "matches": [
+    "a"
+   ]
+  },
+  {
+   "selector": ":has(+ .box)",
+   "matches": [
+    "a"
+   ]
+  },
+  {
+   "selector": ":has(~ table)",
+   "matches": [
+    "a",
+    "b"
+   ]
+  },
+  {
+   "selector": "div:has(> span + span)",
+   "matches": [
+    "a"
+   ]
+  },
+  {
+   "selector": ":has(.active ~ .item)",
+   "matches": [
+    "html",
+    "body",
+    "b"
+   ]
+  },
+  {
+   "selector": "div:has(> .active + .item)",
+   "matches": [
+    "b"
+   ]
+  },
+  {
+   "selector": ".item:first-child",
+   "matches": [
+    "b1"
+   ]
+  },
+  {
+   "selector": ".item:last-child",
+   "matches": [
+    "b5"
+   ]
+  },
+  {
+   "selector": ":only-child",
+   "matches": [
+    "html",
+    "body",
+    "tb",
+    "tr1",
+    "c1"
+   ]
+  },
+  {
+   "selector": ":nth-child(2)",
+   "matches": [
+    "a2",
+    "a3i",
+    "b",
+    "b2",
+    "td2"
+   ]
+  },
+  {
+   "selector": ":nth-child(odd)",
+   "matches": [
+    "html",
+    "body",
+    "a",
+    "a1",
+    "a3",
+    "a3b",
+    "b1",
+    "b3",
+    "b5",
+    "t",
+    "tb",
+    "tr1",
+    "td1",
+    "c1"
+   ]
+  },
+  {
+   "selector": ":nth-child(-n+2)",
+   "matches": [
+    "html",
+    "body",
+    "a",
+    "a1",
+    "a2",
+    "a3b",
+    "a3i",
+    "b",
+    "b1",
+    "b2",
+    "tb",
+    "tr1",
+    "td1",
+    "td2",
+    "c1"
+   ]
+  },
+  {
+   "selector": ":nth-child(2 of .active)",
+   "matches": [
+    "b5"
+   ]
+  },
+  {
+   "selector": ".item:nth-child(even of .item)",
+   "matches": [
+    "b2",
+    "b4"
+   ]
+  },
+  {
+   "selector": ":empty",
+   "matches": [
+    "a2",
+    "a3b",
+    "a3i",
+    "b2",
+    "b3",
+    "b4",
+    "b5",
+    "td1",
+    "td2",
+    "c1"
+   ]
+  },
+  {
+   "selector": "span:empty",
+   "matches": [
+    "a2"
+   ]
+  },
+  {
+   "selector": ":root",
+   "matches": [
+    "html"
+   ]
+  },
+  {
+   "selector": ":root > body",
+   "matches": [
+    "body"
+   ]
+  },
+  {
+   "selector": "html > body > div",
+   "matches": [
+    "a",
+    "b",
+    "c"
+   ]
+  },
+  {
+   "selector": "* > * > * > span",
+   "matches": [
+    "a1",
+    "a2"
+   ]
+  },
+  {
+   "selector": "body *",
+   "matches": [
+    "a",
+    "a1",
+    "a2",
+    "a3",
+    "a3b",
+    "a3i",
+    "b",
+    "b1",
+    "b2",
+    "b3",
+    "b4",
+    "b5",
+    "t",
+    "tb",
+    "tr1",
+    "td1",
+    "td2",
+    "c",
+    "c1"
+   ]
+  },
+  {
+   "selector": "td:last-child",
+   "matches": [
+    "td2"
+   ]
+  },
+  {
+   "selector": "tr > td + td",
+   "matches": [
+    "td2"
+   ]
+  },
+  {
+   "selector": "div div div button",
+   "matches": []
+  },
+  {
+   "selector": ":is(.box .desc)",
+   "matches": [
+    "a2"
+   ]
+  },
+  {
+   "selector": ":not(:has(*))",
+   "matches": [
+    "a1",
+    "a2",
+    "a3b",
+    "a3i",
+    "b1",
+    "b2",
+    "b3",
+    "b4",
+    "b5",
+    "td1",
+    "td2",
+    "c1"
+   ]
+  },
+  {
+   "selector": "#a3 > :first-child:not(img)",
+   "matches": [
+    "a3b"
+   ]
+  },
+  {
+   "selector": "body > :nth-child(3) td",
+   "matches": [
+    "td1",
+    "td2"
+   ]
+  }
+ ]
+}
