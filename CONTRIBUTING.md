@@ -8,7 +8,8 @@ do not add new product features to them.
 
 1. Fork and clone the repository.
 2. Install the prerequisites in [the development guide](docs/DEVELOPMENT.md).
-3. Create a focused branch from the latest `main` in the existing checkout.
+3. Create a focused branch from the latest `main`; alpha tracks work in their
+   own worktree, as described in [workspace instructions](AGENTS.md).
 4. Build and test the locked Rust workspace.
 
 ```bash
@@ -77,12 +78,13 @@ scenarios are release blockers.
 ## Pull requests and commits
 
 - Keep `main` as the authoritative experimental implementation. Integrate
-  and verify useful experiment changes in the current checkout; do not leave
+  and verify useful experiment changes in your track's checkout; do not leave
   implementation work in side checkouts for the reviewer to merge. See [workspace
   instructions](AGENTS.md) and the [17 October checkpoint](docs/progress/branch-checkpoint-2026-10-17.md).
 - Keep each change logically scoped and include tests for behavior changes.
-- Use one PR at a time, targeting `main`. Merge it before starting the next
-  task; do not create PR stacks. Record failing checks honestly, including
+- Use one PR at a time per track, targeting `main`. Rebase it on the latest
+  `main` and merge it on green CI before starting the track's next task; do
+  not create PR stacks. Record failing checks honestly, including
   any failures explicitly accepted for an experimental integration. Such an
   integration does not waive renderer or release qualification.
 - Update API, migration, and unsupported-feature documentation together.
