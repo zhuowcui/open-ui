@@ -113,9 +113,7 @@ fn framework_workspace(path: &Path) -> Result<PathBuf> {
                 path.display()
             )
         })?;
-    workspace
-        .canonicalize()
-        .map_err(|error| format!("cannot resolve {}: {error}", workspace.display()))
+    cargo::canonical(workspace)
 }
 
 fn write(path: &Path, contents: &str) -> Result<()> {
@@ -155,7 +153,7 @@ mod tests {
     fn framework_path_accepts_the_checkout_root_or_its_workspace() {
         let workspace = Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap();
         let root = workspace.parent().unwrap().parent().unwrap();
-        let expected = workspace.canonicalize().unwrap();
+        let expected = cargo::canonical(workspace).unwrap();
         assert_eq!(framework_workspace(root).unwrap(), expected);
         assert_eq!(framework_workspace(workspace).unwrap(), expected);
         assert!(framework_workspace(&workspace.join("openui-cli")).is_err());

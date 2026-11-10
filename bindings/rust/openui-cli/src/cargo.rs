@@ -10,6 +10,20 @@ use serde_json::Value;
 
 use crate::Result;
 
+/// An absolute path with symlinks resolved, without the `\\?\` prefix
+/// Windows adds, so it reads normally in messages and Cargo arguments.
+pub fn canonical(path: &Path) -> Result<PathBuf> {
+    let resolved = path
+        .canonicalize()
+        .map_err(|error| format!("cannot resolve {}: {error}", path.display()))?;
+    let text = resolved.to_string_lossy();
+    Ok(match text.strip_prefix(r"\\?\") {
+        // Only drive paths; UNC paths keep the prefix they need.
+        Some(rest) if rest.as_bytes().get(1) == Some(&b':') => PathBuf::from(rest),
+        _ => resolved,
+    })
+}
+
 /// `cargo`, honoring `CARGO` when the CLI itself runs under Cargo.
 pub fn command() -> Command {
     Command::new(std::env::var_os("CARGO").unwrap_or_else(|| OsString::from("cargo")))
@@ -17,9 +31,7 @@ pub fn command() -> Command {
 
 /// Resolve dependencies and settle `Cargo.lock` without building.
 pub fn resolve(manifest: &Path) -> Result<()> {
-    let manifest = manifest
-        .canonicalize()
-        .map_err(|error| format!("cannot resolve {}: {error}", manifest.display()))?;
+    let manifest = canonical(manifest)?;
     let status = command()
         .args(["metadata", "--format-version", "1", "--manifest-path"])
         .arg(&manifest)
@@ -107,9 +119,7 @@ pub fn app(manifest: Option<&Path>) -> Result<App> {
     }
     let metadata: Value = serde_json::from_slice(&output.stdout)
         .map_err(|error| format!("cannot parse cargo metadata: {error}"))?;
-    let manifest = manifest
-        .canonicalize()
-        .map_err(|error| format!("cannot resolve {}: {error}", manifest.display()))?;
+    let manifest = canonical(&manifest)?;
     parse_app(&metadata, &manifest)
 }
 
@@ -122,7 +132,7 @@ fn parse_app(metadata: &Value, manifest: &Path) -> Result<App> {
         .find(|package| {
             package["manifest_path"]
                 .as_str()
-                .and_then(|path| Path::new(path).canonicalize().ok())
+                .and_then(|path| canonical(Path::new(path)).ok())
                 .is_some_and(|path| path == manifest)
         })
         .ok_or_else(|| {
@@ -226,9 +236,7 @@ fn artifact_executable(line: &str, manifest: &Path, bin: &str) -> Option<PathBuf
     if message["reason"] != "compiler-artifact" || message["target"]["name"] != bin {
         return None;
     }
-    let artifact_manifest = Path::new(message["manifest_path"].as_str()?)
-        .canonicalize()
-        .ok()?;
+    let artifact_manifest = canonical(Path::new(message["manifest_path"].as_str()?)).ok()?;
     if artifact_manifest != manifest {
         return None;
     }
@@ -240,10 +248,14 @@ mod tests {
     use super::*;
 
     fn manifest() -> PathBuf {
-        Path::new(env!("CARGO_MANIFEST_DIR"))
-            .join("Cargo.toml")
-            .canonicalize()
-            .unwrap()
+        canonical(&Path::new(env!("CARGO_MANIFEST_DIR")).join("Cargo.toml")).unwrap()
+    }
+
+    #[test]
+    fn canonical_paths_have_no_verbatim_prefix() {
+        let path = manifest();
+        assert!(path.is_absolute() && path.is_file());
+        assert!(!path.to_string_lossy().starts_with(r"\\?\"));
     }
 
     #[test]
