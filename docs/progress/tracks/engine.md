@@ -8,13 +8,13 @@ Results here are from this branch's tests unless marked otherwise.
 
 | Unit | State |
 | --- | --- |
-| RFC 0001 typed style rules | Written: `docs/alpha/rfcs/0001-typed-style-rules.md` |
+| RFC 0001 typed style rules | Merged, PR #89 (`b8dcfaf8`) |
 | A1 typed style rules | Not started |
-| A2 colors (`oklch()`, `color-mix()`) | Not started |
+| A2 colors (`oklch()`, `color-mix()`) | Implemented; 54/54 Chromium swatches exact; see [the record](../color-functions-2026-11-09.md) |
 | A2 tokens and media | Not started; needs RFC 0002 |
 | A3 top layer and dialog | Not started |
 | A5 performance baseline | Not measured |
-| A6 real-font baseline | Not measured |
+| A6 real-font baseline | Not measured; fonts are the components track's C4 files (PR #94). Blocked on WOFF2 on Linux, below |
 
 ## Findings while writing RFC 0001
 
@@ -29,3 +29,30 @@ Results here are from this branch's tests unless marked otherwise.
   hovered path loses hover without receiving `pointerleave`. Owned by A1.
 - `Engine::is_active` matches only the pressed element; Chromium's `:active`
   also covers its ancestors. Owned by A1.
+
+## Reported by the components track (9 November 2026)
+
+Not yet reproduced by the engine track; from `docs/progress/tracks/components.md`
+on branch `components/c4-assets` and the shared findings note.
+
+- WOFF2 faces fail to register on Linux with `MalformedFont`:
+  `platform_font_data` in `bindings/rust/openui-text/src/font/collection.rs`
+  passes WOFF2 bytes to FreeType undecoded under `#[cfg(not(windows))]`; the
+  census FreeType has no Brotli. Windows decodes with `wuff` first, and
+  Chromium always decodes. Owner: `openui-text`. Next engine PR.
+- In a column flexbox, a text item with an installed real font lays out one
+  word per line (7 words: 140px tall instead of 20px). Owner: layout or text
+  intrinsic sizing. Unmeasured here.
+- Real-font glyphs sit at a different height from Chromium's, with the same
+  horizontal extents. Owner: `openui-text` metrics. Unmeasured here.
+
+## Log
+
+- 9 November 2026, PR #89: RFC 0001 typed style rules merged. Docs only;
+  CI green.
+- 9 November 2026: `oklch()`, `oklab()` and `color-mix()` parse and
+  convert as Chromium 147 does, and paint no longer clamps color channels
+  before Skia. Oracle: 54 swatches from pinned Chromium on Linux and
+  Windows, identical; `cargo test -p openui --test native_color_functions`
+  passes 54 of 54 on Windows. Unsupported forms are rejected; remaining
+  limits are in the record.

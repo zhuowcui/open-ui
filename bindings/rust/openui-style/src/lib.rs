@@ -9,6 +9,7 @@ mod animation;
 mod animation_value;
 mod authored_style;
 mod color;
+mod color_function;
 mod computed;
 mod enums;
 mod font_types;

@@ -57,11 +57,14 @@ fn set_paint_css_color_with_alpha(paint: &mut Paint, color: &Color, alpha_multip
     // Blink carries CSS colors through PaintFlags as SkColor4f. Converting to
     // packed SkColor first changes premultiplication rounding at antialiased
     // edges, even when the authored channels came from 8-bit CSS syntax.
+    // `SkPaint::setColor` pins only alpha. Channels outside [0, 1] (from
+    // `oklch()` or `color-mix()`) stay unclamped, so Skia picks the same
+    // float raster pipeline for them that Chromium's raster does.
     paint.set_color4f(
         Color4f::new(
-            color.r.clamp(0.0, 1.0),
-            color.g.clamp(0.0, 1.0),
-            color.b.clamp(0.0, 1.0),
+            color.r,
+            color.g,
+            color.b,
             (color.a * alpha_multiplier).clamp(0.0, 1.0),
         ),
         None::<&ColorSpace>,
