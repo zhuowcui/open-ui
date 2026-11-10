@@ -63,7 +63,7 @@ min-content and the max-content contribution.
 | --- | --- | --- |
 | `1fr auto` with wrappable text; two `auto` columns | `cargo test -p openui-layout --test grid_auto_track_max_tests` (Windows) | 2 passed. With the old path restored, both fail: the `auto` column is 26.69px (min-content), not 58.92px (max-content), and the narrow `auto` column is 146px, not 113.77px |
 | Maximize arithmetic: smallest potential first, then stretch; free space limit | `cargo test -p openui-layout --lib grid::tests` (Windows) | 4 passed |
-| Layout crate | `cargo test -p openui-layout --no-fail-fast` (Windows) | 5,955 passed, 0 failed |
+| Layout crate | `cargo test -p openui-layout --no-fail-fast` (Windows) | 5,956 passed, 0 failed |
 | Generators | `generate_properties.py --check`; `generate_v02_contract.py --check`; `generate_renderer_contract.py --check` | no drift |
 | `cargo fmt --all --check` | in `bindings/rust` | pass |
 
