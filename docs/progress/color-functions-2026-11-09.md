@@ -82,6 +82,14 @@ census test uses these functions, and every existing color stays inside
 [0, 1], so the paint change cannot alter them. The delta is in the
 [census evidence](evidence/color-functions-census-v1.json).
 
+The CSS Grid coverage suite has no change either. The base is the
+[coverage baseline](grid-coverage-2026-11-09.md) at `04d1eeab`; the head
+is `0695e911`, this change before its last rebase onto `main`. Over the
+4,204 comparisons the baseline measures, no Open UI image changed: 2,218
+exact before and after, with nothing gained or lost. The run also included
+the two references the baseline leaves out for unbounded renderer memory;
+both failed to render, as the baseline records, and are not counted.
+
 ### Remaining failures and limits
 
 - Not supported, and rejected rather than approximated: `color-mix()` with
@@ -109,5 +117,6 @@ census test uses these functions, and every existing color stays inside
 | Native swatches, Windows | `cargo test -p openui --test native_color_functions`, with the `windows-msvc` CI environment | 54 of 54 exact |
 | Style unit tests | `cargo test -p openui-style` | 105 passed |
 | Paired expanded census | `build_renderer.py`; `run_renderer_matrix.py --suite expanded --jobs 16`, with the CI `SKIA_GN_ARGS` | 22,517 to 22,517 exact; 0 of 23,728 Open UI images changed |
+| CSS Grid coverage | `run_renderer_matrix.py --suite coverage --ids-file tools/coverage/css_grid/manifest.json --jobs 16`, compared per test with the baseline | 2,218 to 2,218 exact; 0 of 4,204 measured Open UI images changed |
 | Renderer contract | `generate_renderer_contract.py --check` | passes |
 | Format | `cargo fmt --all --check` | passes |
