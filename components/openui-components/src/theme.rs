@@ -76,6 +76,9 @@ pub struct Theme {
     pub sidebar_border: Color,
     /// `--sidebar-ring`
     pub sidebar_ring: Color,
+    /// Whether Tailwind's `dark:` variants apply: the page root has the
+    /// `.dark` class.
+    pub dark: bool,
     /// `--radius`, in CSS pixels (`0.625rem` at the 16px root font size).
     pub radius: f32,
 }
@@ -149,6 +152,7 @@ impl Theme {
         sidebar_border: srgb(0.898044, 0.898209, 0.898224, 1.0),
         // oklch(0.708 0 0)
         sidebar_ring: srgb(0.630079, 0.630198, 0.630209, 1.0),
+        dark: false,
         radius: 10.0,
     };
 
@@ -216,6 +220,7 @@ impl Theme {
         sidebar_border: srgb(0.999871, 1.00005, 1.00007, 0.1),
         // oklch(0.556 0 0)
         sidebar_ring: srgb(0.451457, 0.451545, 0.451553, 1.0),
+        dark: true,
         radius: 10.0,
     };
 }

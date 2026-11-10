@@ -563,6 +563,133 @@ def command_compare(args: argparse.Namespace) -> int:
     return 0
 
 
+# ── Geometry ────────────────────────────────────────────────────────────
+
+# The border box of `<main>` and of every element inside it, depth first,
+# after the web fonts load: the same walk as the renderer's `geometry`.
+GEOMETRY_SCRIPT = r"""
+new Promise(resolve => {
+  const collect = () => {
+    const boxes = [];
+    const walk = (element, depth) => {
+      const r = element.getBoundingClientRect();
+      boxes.push({depth, slot: element.getAttribute('data-slot'),
+                  rect: [r.x, r.y, r.width, r.height]});
+      for (const child of element.children) walk(child, depth + 1);
+    };
+    walk(document.querySelector('main'), 0);
+    resolve(boxes);
+  };
+  const done = () => document.fonts.ready.then(collect);
+  if (document.readyState === 'complete') done();
+  else addEventListener('load', done, {once: true});
+})
+"""
+
+# Chromium lays out in LayoutUnits of 1/64 px; a box is different when an
+# edge or size moves by more than half of one.
+GEOMETRY_TOLERANCE = 1 / 128
+
+
+def chromium_geometry(client, page: Path, profile: Profile) -> list[dict[str, object]]:
+    client.command("Emulation.setDeviceMetricsOverride", {
+        "width": profile.logical_width, "height": profile.logical_height,
+        "deviceScaleFactor": profile.device_scale, "mobile": False,
+    })
+    client.command("Page.navigate", {"url": "file:" + urllib.request.pathname2url(str(page))})
+    boxes = client.command(
+        "Runtime.evaluate",
+        {"expression": GEOMETRY_SCRIPT, "awaitPromise": True, "returnByValue": True},
+    ).get("result", {}).get("value")
+    if not isinstance(boxes, list) or not boxes:
+        raise RuntimeError(f"geometry extraction failed for {page.name}: {boxes!r}")
+    return boxes
+
+
+def openui_geometry(renderer: Path, fixture: str, profile: Profile) -> list[dict[str, object]]:
+    completed = subprocess.run(
+        [
+            str(renderer), "geometry", fixture,
+            "--viewport", f"{profile.logical_width}x{profile.logical_height}",
+            "--scale", f"{profile.device_scale:g}",
+        ],
+        env=pixel_runner.openui_environment(use_real_font=True),
+        capture_output=True,
+        text=True,
+        timeout=120,
+    )
+    if completed.returncode != 0:
+        raise RuntimeError(completed.stderr.strip() or f"exit {completed.returncode}")
+    return json.loads(completed.stdout)["boxes"]
+
+
+def geometry_differences(
+    chromium: list[dict[str, object]], openui: list[dict[str, object]]
+) -> list[dict[str, object]]:
+    """Each box whose rectangle differs, or one row if the trees differ."""
+    shape = [(b["depth"], b["slot"]) for b in chromium]
+    if shape != [(b["depth"], b["slot"]) for b in openui]:
+        return [{"structure": {"chromium": shape,
+                               "openui": [(b["depth"], b["slot"]) for b in openui]}}]
+    differences = []
+    for index, (expected, actual) in enumerate(zip(chromium, openui)):
+        if actual["rect"] is None:
+            differences.append({"index": index, "slot": expected["slot"],
+                                "chromium": expected["rect"], "openui": None})
+            continue
+        delta = max(abs(a - e) for a, e in zip(actual["rect"], expected["rect"]))
+        if delta > GEOMETRY_TOLERANCE:
+            differences.append({"index": index, "depth": expected["depth"],
+                                "slot": expected["slot"], "chromium": expected["rect"],
+                                "openui": actual["rect"], "max_delta": delta})
+    return differences
+
+
+def command_geometry(args: argparse.Namespace) -> int:
+    manifest = load_manifest()
+    version = chromium_version(args.chrome)
+    if version != EXPECTED_CHROMIUM:
+        raise SystemExit(f"Chromium {version} is not the pinned {EXPECTED_CHROMIUM}")
+    implemented = set(renderer_fixtures(args.renderer))
+    fixtures = [f for f in manifest["fixtures"] if f["id"] in implemented]
+    if args.fixture:
+        fixtures = [f for f in fixtures if f["id"] in set(args.fixture)]
+    profiles = census_profiles()
+    if args.profile:
+        by_name = {profile.name: profile for profile in profiles}
+        profiles = [by_name[name] for name in args.profile]
+    rows = []
+    with chromium_page(args.chrome) as client:
+        for profile in profiles:
+            for fixture in fixtures:
+                row = {"fixture": fixture["id"], "profile": profile.name}
+                try:
+                    chromium = chromium_geometry(client, PAGES / fixture["page"], profile)
+                    openui = openui_geometry(args.renderer, fixture["id"], profile)
+                except RuntimeError as error:
+                    rows.append({**row, "status": "error", "error": str(error)})
+                    continue
+                differences = geometry_differences(chromium, openui)
+                rows.append({**row, "status": "different" if differences else "same",
+                             "differences": differences})
+    if args.output:
+        write_json(args.output, {
+            "schema": "openui-components-geometry-v1",
+            "chromium": {"version": version},
+            "renderer_sha256": sha256_file(args.renderer),
+            "tolerance_css_px": GEOMETRY_TOLERANCE,
+            "rows": rows,
+        })
+    same = sum(1 for row in rows if row["status"] == "same")
+    print(f"{same}/{len(rows)} fixture layouts match")
+    for row in rows:
+        if row["status"] == "error":
+            print(f"  error: {row['fixture']} {row['profile']}: {row['error']}")
+        for difference in row.get("differences", []):
+            print(f"  {row['fixture']} {row['profile']}: {difference}")
+    return 0
+
+
 def write_json(path: Path, value: object) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(value, indent=2, sort_keys=False) + "\n", encoding="utf-8")
@@ -594,6 +721,15 @@ def main(argv: list[str] | None = None) -> int:
     compare.add_argument("--repository-commit",
                          help="the checked-out commit, when git cannot read the checkout")
     compare.set_defaults(func=command_compare)
+
+    geometry = sub.add_parser(
+        "geometry", help="compare each fixture element's box with Chromium's (a diagnostic)")
+    geometry.add_argument("--chrome", type=Path, default=DEFAULT_CHROME)
+    geometry.add_argument("--renderer", type=Path, required=True)
+    geometry.add_argument("--output", type=Path)
+    geometry.add_argument("--fixture", action="append", default=[])
+    geometry.add_argument("--profile", action="append", default=[])
+    geometry.set_defaults(func=command_geometry)
 
     args = parser.parse_args(argv)
     return args.func(args)

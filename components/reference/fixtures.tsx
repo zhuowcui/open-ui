@@ -7,9 +7,25 @@
 // A fixture's markup sits inside the page's `<main data-fixture>` element,
 // which has `p-4` (16px padding). Text uses the bundled fonts: Geist is the
 // page's sans-serif face (`--font-sans`), as on the shadcn/ui site.
+//
+// Inline-level components (button, badge) sit in a `flex` row, as on the
+// shadcn/ui site's examples, so each is a flex item rather than an inline
+// box on a line of text.
 
 import * as React from "react"
 
+import { Badge } from "./shadcn/ui/badge"
+import { Button } from "./shadcn/ui/button"
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "./shadcn/ui/card"
+import { Label } from "./shadcn/ui/label"
 import { Separator } from "./shadcn/ui/separator"
 
 export type Fixture = {
@@ -30,6 +46,133 @@ function FontSpecimen({ className }: { className: string }) {
     </div>
   )
 }
+
+type ButtonVariant =
+  | "default"
+  | "destructive"
+  | "outline"
+  | "secondary"
+  | "ghost"
+  | "link"
+
+// Every variant at the default size. The icon sizes need a Lucide icon,
+// which Open UI cannot draw yet, so they are not fixtures.
+const buttonVariants: [ButtonVariant, string][] = [
+  ["default", "Button"],
+  ["destructive", "Destructive"],
+  ["outline", "Outline"],
+  ["secondary", "Secondary"],
+  ["ghost", "Ghost"],
+  ["link", "Link"],
+]
+
+const buttonSizes: ["xs" | "sm" | "lg", string][] = [
+  ["xs", "Extra small"],
+  ["sm", "Small"],
+  ["lg", "Large"],
+]
+
+const badgeVariants: [ButtonVariant, string][] = [
+  ["default", "Badge"],
+  ["secondary", "Secondary"],
+  ["destructive", "Destructive"],
+  ["outline", "Outline"],
+  ["ghost", "Ghost"],
+  ["link", "Link"],
+]
+
+function Row({ children }: { children: React.ReactNode }) {
+  return <div className="flex">{children}</div>
+}
+
+const buttonFixtures: Fixture[] = [
+  ...buttonVariants.map(([variant, text]) => ({
+    id: `button-${variant}`,
+    component: "button",
+    description: `Button, ${variant} variant, default size`,
+    render: () => (
+      <Row>
+        <Button variant={variant}>{text}</Button>
+      </Row>
+    ),
+  })),
+  ...buttonSizes.map(([size, text]) => ({
+    id: `button-size-${size}`,
+    component: "button",
+    description: `Button, default variant, size ${size}`,
+    render: () => (
+      <Row>
+        <Button size={size}>{text}</Button>
+      </Row>
+    ),
+  })),
+  {
+    id: "button-disabled",
+    component: "button",
+    description: "Disabled button, default variant (opacity 50%)",
+    render: () => (
+      <Row>
+        <Button disabled>Disabled</Button>
+      </Row>
+    ),
+  },
+]
+
+const badgeFixtures: Fixture[] = badgeVariants.map(([variant, text]) => ({
+  id: `badge-${variant}`,
+  component: "badge",
+  description: `Badge, ${variant} variant`,
+  render: () => (
+    <Row>
+      <Badge variant={variant}>{text}</Badge>
+    </Row>
+  ),
+}))
+
+// The card from the shadcn/ui docs' usage example, without and with an
+// action in the header, at `w-full max-w-sm` (384px, or the 343px column of
+// the 375px profile).
+function ExampleCard({ action }: { action: boolean }) {
+  return (
+    <Card className="w-full max-w-sm">
+      <CardHeader>
+        <CardTitle>Card Title</CardTitle>
+        <CardDescription>Card Description</CardDescription>
+        {action ? <CardAction>Card Action</CardAction> : null}
+      </CardHeader>
+      <CardContent>
+        <p>Card Content</p>
+      </CardContent>
+      <CardFooter>
+        <p>Card Footer</p>
+      </CardFooter>
+    </Card>
+  )
+}
+
+const cardFixtures: Fixture[] = [
+  {
+    id: "card-basic",
+    component: "card",
+    description: "Card with header (title, description), content and footer",
+    render: () => <ExampleCard action={false} />,
+  },
+  {
+    id: "card-action",
+    component: "card",
+    description: "Card whose header also has an action (two-column grid)",
+    render: () => <ExampleCard action={true} />,
+  },
+]
+
+const labelFixtures: Fixture[] = [
+  {
+    id: "label-basic",
+    component: "label",
+    description: "Label on its own",
+    render: () => <Label>Accept terms and conditions</Label>,
+  },
+]
 
 export const fixtures: Fixture[] = [
   {
@@ -70,4 +213,8 @@ export const fixtures: Fixture[] = [
       </div>
     ),
   },
+  ...buttonFixtures,
+  ...badgeFixtures,
+  ...cardFixtures,
+  ...labelFixtures,
 ]

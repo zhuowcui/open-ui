@@ -96,6 +96,38 @@ class AssetTests(unittest.TestCase):
         self.assertEqual(icons, {f"icons/lucide/{n}.svg" for n in manifest["lucide_icons"]})
 
 
+class GeometryTests(unittest.TestCase):
+    @staticmethod
+    def box(depth: int, slot: str | None, rect: list[float] | None) -> dict:
+        return {"depth": depth, "slot": slot, "rect": rect}
+
+    def test_boxes_within_half_a_layout_unit_are_the_same(self) -> None:
+        chromium = [self.box(0, None, [0, 0, 800, 68]), self.box(1, "button", [16, 16, 80, 36])]
+        openui = [self.box(0, None, [0, 0, 800, 68]),
+                  self.box(1, "button", [16, 16, 80.005, 36])]
+        self.assertEqual(harness.geometry_differences(chromium, openui), [])
+
+    def test_reports_each_moved_box_with_its_largest_delta(self) -> None:
+        chromium = [self.box(0, None, [0, 0, 800, 68]), self.box(1, "badge", [16, 16, 83.28125, 22])]
+        openui = [self.box(0, None, [0, 0, 800, 68]), self.box(1, "badge", [16, 16, 83.265625, 22])]
+        [difference] = harness.geometry_differences(chromium, openui)
+        self.assertEqual(difference["index"], 1)
+        self.assertEqual(difference["slot"], "badge")
+        self.assertEqual(difference["max_delta"], 0.015625)
+
+    def test_different_trees_are_one_structure_row(self) -> None:
+        chromium = [self.box(0, None, [0, 0, 1, 1]), self.box(1, "card", [0, 0, 1, 1])]
+        openui = [self.box(0, None, [0, 0, 1, 1])]
+        [difference] = harness.geometry_differences(chromium, openui)
+        self.assertIn("structure", difference)
+
+    def test_a_box_without_layout_is_reported(self) -> None:
+        chromium = [self.box(0, None, [0, 0, 1, 1])]
+        openui = [self.box(0, None, None)]
+        [difference] = harness.geometry_differences(chromium, openui)
+        self.assertIsNone(difference["openui"])
+
+
 class ComparisonTests(unittest.TestCase):
     def setUp(self) -> None:
         self.directory = tempfile.TemporaryDirectory()
