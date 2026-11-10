@@ -124,6 +124,49 @@ impl std::fmt::Debug for LoopWaker {
     }
 }
 
+/// The system clipboard's text while a native runtime runs. Use it on the
+/// event-loop thread; it is not `Send`.
+#[derive(Clone)]
+pub struct Clipboard(std::rc::Weak<dyn ClipboardBackend>);
+
+pub(crate) trait ClipboardBackend {
+    fn load(&self) -> Result<String, PlatformError>;
+    fn store(&self, text: String);
+}
+
+impl Clipboard {
+    #[cfg_attr(
+        not(any(
+            all(feature = "linux", target_os = "linux"),
+            all(feature = "windows", target_os = "windows")
+        )),
+        allow(dead_code)
+    )]
+    pub(crate) fn new(backend: std::rc::Weak<dyn ClipboardBackend>) -> Self {
+        Self(backend)
+    }
+
+    /// The clipboard's text. Fails if it holds no text, another program is
+    /// using it, or the runtime has ended.
+    pub fn read_text(&self) -> Result<String, PlatformError> {
+        self.0.upgrade().ok_or(PlatformError::Unavailable)?.load()
+    }
+
+    /// Replace the clipboard's contents with `text`. Does nothing once the
+    /// runtime has ended.
+    pub fn write_text(&self, text: impl Into<String>) {
+        if let Some(backend) = self.0.upgrade() {
+            backend.store(text.into());
+        }
+    }
+}
+
+impl std::fmt::Debug for Clipboard {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter.write_str("Clipboard")
+    }
+}
+
 /// Owns the set of windows in [`run_windows`]. Every method runs on the
 /// event-loop thread between window events, never inside one.
 pub trait WindowController: 'static {
@@ -134,6 +177,9 @@ pub trait WindowController: 'static {
 
     /// Called once, before any window opens, with a waker for this loop.
     fn started(&mut self, _waker: LoopWaker) {}
+
+    /// Called once, before any window opens, with the system clipboard.
+    fn clipboard(&mut self, _clipboard: Clipboard) {}
 
     /// Run queued UI tasks for one bounded turn and return whether more are
     /// queued. Called after a [`LoopWaker::wake`] and before the loop waits.

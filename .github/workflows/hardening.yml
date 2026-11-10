@@ -103,14 +103,16 @@ jobs:
       - name: Run several windows and wake the loop from tasks on X11
         working-directory: bindings/rust
         run: |
-          cargo build --locked --package multi-window --package tasks --features linux
+          cargo build --locked --package multi-window --package tasks --package clipboard --features linux
           for backend in software opengl; do
-            for test in multi_window wake; do
+            for test in multi_window wake clipboard; do
               xvfb-run --auto-servernum env OPENUI_REQUIRE_DISPLAY=1 OUI_BACKEND="$backend" \
                 cargo test --locked --package openui-platform --features linux --test "$test"
             done
             xvfb-run --auto-servernum env OUI_BACKEND="$backend" OUI_SMOKE_EXIT=1 target/debug/multi-window
             xvfb-run --auto-servernum env OUI_BACKEND="$backend" OUI_SMOKE_EXIT=1 timeout 120 target/debug/tasks
+            xvfb-run --auto-servernum env OUI_BACKEND="$backend" OUI_SMOKE_EXIT=1 target/debug/clipboard \
+              | grep -F 'Ok("Open UI clipboard example")'
           done
       - name: Smoke-test pure Wayland software presentation
         working-directory: bindings/rust
@@ -126,7 +128,7 @@ jobs:
             sleep 0.1
           done
           env -u DISPLAY WAYLAND_DISPLAY=wayland-openui OUI_BACKEND=software OUI_SMOKE_EXIT=1 target/debug/hello
-          for test in multi_window wake; do
+          for test in multi_window wake clipboard; do
             env -u DISPLAY WAYLAND_DISPLAY=wayland-openui OPENUI_REQUIRE_DISPLAY=1 OUI_BACKEND=software \
               cargo test --locked --package openui-platform --features linux --test "$test"
           done
