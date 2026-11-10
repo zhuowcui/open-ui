@@ -46,6 +46,8 @@ pub enum Error {
     Io(std::io::Error),
     PlatformUnavailable,
     Platform(String),
+    /// UI tasks were still running when a headless wait gave up.
+    TasksStillRunning(usize),
 }
 
 impl std::fmt::Display for Error {
@@ -64,6 +66,9 @@ impl std::fmt::Display for Error {
                 f.write_str("the native platform runtime is not enabled in this build")
             }
             Self::Platform(message) => write!(f, "platform runtime failed: {message}"),
+            Self::TasksStillRunning(count) => {
+                write!(f, "{count} UI task(s) were still running")
+            }
         }
     }
 }

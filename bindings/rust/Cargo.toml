@@ -21,6 +21,7 @@ members = [
     "examples/dashboard",
     "examples/framework-test",
     "examples/multi-window",
+    "examples/tasks",
     "pixel-compare",
 ]
 exclude = ["fuzz", "vendor/zbus_xml-v5_1"]

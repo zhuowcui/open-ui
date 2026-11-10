@@ -1,7 +1,7 @@
 use crate::{
-    BackendPreference, BackendStatus, CursorIcon, KeyPhase, Modifiers, PlatformApplication,
-    PlatformError, PlatformEvent, PointerButton, PointerPhase, SoftwareFrame, WindowCommand,
-    WindowController, WindowOptions,
+    BackendPreference, BackendStatus, CursorIcon, KeyPhase, LoopWaker, Modifiers,
+    PlatformApplication, PlatformError, PlatformEvent, PointerButton, PointerPhase, SoftwareFrame,
+    WindowCommand, WindowController, WindowOptions,
 };
 use accesskit_winit::{Adapter as AccessibilityAdapter, WindowEvent as AccessibilityEvent};
 use glutin::config::{ConfigTemplateBuilder, GlConfig};
@@ -16,6 +16,7 @@ use raw_window_handle::{HasDisplayHandle, RawDisplayHandle};
 use softbuffer::{Context as SoftContext, Surface as SoftSurface};
 use std::ffi::CString;
 use std::num::NonZeroU32;
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 #[cfg(target_os = "linux")]
 use std::time::Duration;
@@ -35,6 +36,8 @@ enum UserEvent {
     /// The `openui dev` parent closed the app's stdin: exit as if the window
     /// were closed, so the app shuts down through its normal path.
     DevExit,
+    /// A [`LoopWaker`] was woken: run the controller's queued UI tasks.
+    Wake,
 }
 
 /// Set by `openui dev` for the apps it runs.
@@ -1059,6 +1062,8 @@ struct Runtime<C: WindowController> {
     /// window draws would starve the others.
     frame_round: u64,
     frame_round_started: Instant,
+    /// Set by [`LoopWaker::wake`] until the loop handles the wake event.
+    wake_pending: Arc<AtomicBool>,
 }
 
 /// A round ends early if a window has not drawn by then, so one window that
@@ -1190,6 +1195,17 @@ impl<C: WindowController> Runtime<C> {
         }
     }
 
+    /// Run one turn of queued UI tasks; true if more are queued.
+    fn run_tasks(&mut self, event_loop: &ActiveEventLoop) -> bool {
+        match self.controller.run_tasks() {
+            Ok(more) => more,
+            Err(error) => {
+                self.fail(event_loop, PlatformError::Application(error));
+                false
+            }
+        }
+    }
+
     fn exit_if_requested(&mut self, event_loop: &ActiveEventLoop) -> bool {
         let requested = self.resumed
             && (self.controller.exit_requested(self.windows.len())
@@ -1225,6 +1241,16 @@ impl<C: WindowController> ApplicationHandler<UserEvent> for Runtime<C> {
                     self.apply_commands(event_loop);
                     self.exit_if_requested(event_loop);
                 }
+            }
+            UserEvent::Wake => {
+                // Clear first, so a wake from a task that runs now posts
+                // another event.
+                self.wake_pending.store(false, Ordering::Release);
+                if self.run_tasks(event_loop) {
+                    event_loop.set_control_flow(ControlFlow::Poll);
+                }
+                self.apply_commands(event_loop);
+                self.exit_if_requested(event_loop);
             }
             UserEvent::DevExit => {
                 for state in &mut self.windows {
@@ -1293,7 +1319,10 @@ impl<C: WindowController> ApplicationHandler<UserEvent> for Runtime<C> {
         }
         // The preceding platform/default-action borrows have ended. Rust and
         // C applications use this same adapter and retained Document queue.
-        let mut pending = false;
+        let mut pending = self.run_tasks(event_loop);
+        if event_loop.exiting() {
+            return;
+        }
         for index in 0..self.windows.len() {
             match self.windows[index].application.dispatch_pending_events() {
                 Ok(more) => pending |= more,
@@ -1336,7 +1365,7 @@ pub fn run<A: PlatformApplication>(
 
 /// Run the native event loop with the windows `controller` opens, until it
 /// asks to exit, by default after its last window closes.
-pub fn run_windows<C: WindowController>(controller: C) -> Result<(), PlatformError> {
+pub fn run_windows<C: WindowController>(mut controller: C) -> Result<(), PlatformError> {
     let event_loop = EventLoop::<UserEvent>::with_user_event()
         .build()
         .map_err(|error| PlatformError::Initialization(error.to_string()))?;
@@ -1347,6 +1376,18 @@ pub fn run_windows<C: WindowController>(controller: C) -> Result<(), PlatformErr
     if std::env::var_os(DEV_ENV).is_some() {
         watch_dev_stdin(proxy.clone())?;
     }
+    let wake_pending = Arc::new(AtomicBool::new(false));
+    controller.started({
+        let proxy = proxy.clone();
+        let pending = wake_pending.clone();
+        LoopWaker::new(move || {
+            if !pending.swap(true, Ordering::AcqRel) {
+                // Fails only once the loop has exited, when there is
+                // nothing left to wake.
+                let _ = proxy.send_event(UserEvent::Wake);
+            }
+        })
+    });
     let mut runtime = Runtime {
         windows: Vec::new(),
         controller,
@@ -1358,6 +1399,7 @@ pub fn run_windows<C: WindowController>(controller: C) -> Result<(), PlatformErr
         error: None,
         frame_round: 1,
         frame_round_started: Instant::now(),
+        wake_pending,
     };
     event_loop
         .run_app(&mut runtime)

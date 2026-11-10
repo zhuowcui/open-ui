@@ -9,9 +9,13 @@ use crate::runtime::{flush_pending, SignalId, RUNTIME};
 /// `Signal<T>` is [`Copy`] — it is just a generational index into the
 /// thread-local runtime arena. Reading inside an effect automatically
 /// subscribes to future changes.
+///
+/// Signals belong to the UI thread that created them, so they are neither
+/// `Send` nor `Sync`; [`Signal::sender`] gives other threads a way to set
+/// one.
 pub struct Signal<T: 'static> {
     pub(crate) id: SignalId,
-    _marker: PhantomData<T>,
+    _marker: PhantomData<(T, *const ())>,
 }
 
 impl<T: 'static> Copy for Signal<T> {}
@@ -77,6 +81,21 @@ impl<T: 'static> Signal<T> {
         flush_pending();
     }
 
+    /// A `Send` handle that sets this signal from any thread. The value is
+    /// applied on the UI thread when it next runs queued tasks; a value sent
+    /// after the signal was disposed is dropped.
+    #[cfg(feature = "async")]
+    pub fn sender(&self) -> SignalSender<T>
+    where
+        T: Send,
+    {
+        SignalSender {
+            id: self.id,
+            queue: crate::task::ui_queue(),
+            _marker: PhantomData,
+        }
+    }
+
     /// Get the underlying [`SignalId`] for advanced use.
     pub fn id(&self) -> SignalId {
         self.id
@@ -100,6 +119,50 @@ pub fn create_signal<T: 'static>(initial: T) -> Signal<T> {
     Signal {
         id,
         _marker: PhantomData,
+    }
+}
+
+/// Sets a [`Signal`] from any thread. See [`Signal::sender`].
+#[cfg(feature = "async")]
+pub struct SignalSender<T: Send + 'static> {
+    id: SignalId,
+    queue: std::sync::Arc<crate::task::UiQueue>,
+    _marker: PhantomData<fn(T)>,
+}
+
+#[cfg(feature = "async")]
+impl<T: Send + 'static> Clone for SignalSender<T> {
+    fn clone(&self) -> Self {
+        Self {
+            id: self.id,
+            queue: self.queue.clone(),
+            _marker: PhantomData,
+        }
+    }
+}
+
+#[cfg(feature = "async")]
+impl<T: Send + 'static> SignalSender<T> {
+    pub fn send(&self, value: T) {
+        let id = self.id;
+        self.queue.push_job(Box::new(move || {
+            if crate::runtime::signal_exists(id) {
+                Signal::<T> {
+                    id,
+                    _marker: PhantomData,
+                }
+                .set(value);
+            }
+        }));
+    }
+}
+
+#[cfg(feature = "async")]
+impl<T: Send + 'static> std::fmt::Debug for SignalSender<T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("SignalSender")
+            .field("id", &self.id)
+            .finish()
     }
 }
 

@@ -14,7 +14,7 @@ The order and verification of each PR are in
 | 1 | RFC 0002: CLI, app layout and async model | Merged (#90) |
 | 2 | `openui-cli` skeleton: `new`, `dev`, `build`, `doctor` | Merged (#93) |
 | 3 | Multi-window runtime | In review |
-| 4 | Async runtime integrated with the UI thread and signals | Not started |
+| 4 | Async runtime integrated with the UI thread and signals | In review |
 | 5 | Clipboard service | Not started |
 | 6 | File dialogs | Not started |
 | 7 | App menu | Not started |
@@ -22,6 +22,45 @@ The order and verification of each PR are in
 | 9 | `default` template and test utilities | Not started |
 
 ## Log
+
+### 9 November 2026: async runtime
+
+Change: a new `async` feature of `openui` (enabled by `desktop`; headless
+builds gain nothing without it) adds `openui::task` with `spawn_local`,
+`spawn`, `spawn_blocking`, `Task<T>` (dropping cancels, `detach`) and
+`task::time::{sleep, interval}`, plus `Signal::sender()` and
+`create_resource(source, fetch)` with `get`, `loading` and `refetch`. It uses
+async-task, async-executor, async-io, blocking and futures-lite, all already in
+the lockfile (no new crates). UI tasks run on the UI thread in bounded turns
+of 8 ms; their wakers post one coalesced wake through a new
+`openui-platform::LoopWaker` and `WindowController::{started, run_tasks}`.
+`Signal` and `Memo` are now `!Send`, so a signal moved into `spawn` is a
+compile error (a `compile_fail` doctest checks it). `HeadlessApp` gains
+`run_until_idle` (fails with `Error::TasksStillRunning` after 30 s) and
+`run_ready_tasks`.
+
+Differences from the RFC: a UI task cancelled with its scope never completes
+when awaited (its awaiter normally shares the scope); background tasks are
+cancelled by dropping their `Task`, not by scope; the optional `tokio` feature
+is left for a later PR.
+
+Verification on Windows (working branch):
+
+- `cargo test -p openui --features async --test tasks`: 5 passed (UI task
+  awaiting background work, a timer and blocking work; intervals; scope
+  disposal and `Task` drop cancel and drop the futures; senders from another
+  thread, including to a disposed signal; resources keep only the latest
+  result and refetch).
+- `cargo test -p openui --features async --doc task`: 2 passed, including
+  the `compile_fail` signal-in-`spawn` check.
+- `cargo test -p openui-platform --features windows --test wake`: a wake
+  from another thread reaches an idle loop (5 wakes sent, coalesced).
+- `cargo check --workspace --tests`: passed with `!Send` signals.
+- The `tasks` example with `OUI_SMOKE_EXIT=1` (software, auto) exits 0 after
+  its background computation and resource fetch finish.
+- Linux (WSL2, WSLg Wayland): `wake` and `multi_window` passed with software
+  and OpenGL. CI now runs the async tests in `rust-parity` and
+  `windows-msvc`, and the `wake` test and `tasks` smoke on X11 and Wayland.
 
 ### 9 November 2026: multi-window runtime
 

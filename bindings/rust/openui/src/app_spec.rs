@@ -163,6 +163,8 @@ pub(crate) fn run_windows(
         let _ = (defaults, exit_on_last_window_closed);
         Err(Error::PlatformUnavailable)
     };
+    #[cfg(feature = "async")]
+    crate::task::set_loop_waker(None);
     window::reset();
     result
 }
@@ -224,6 +226,16 @@ mod desktop {
     }
 
     impl WindowController for Controller {
+        #[cfg(feature = "async")]
+        fn started(&mut self, waker: openui_platform::LoopWaker) {
+            crate::task::set_loop_waker(Some(std::sync::Arc::new(move || waker.wake())));
+        }
+
+        #[cfg(feature = "async")]
+        fn run_tasks(&mut self) -> Result<bool, String> {
+            Ok(crate::task::run_turn())
+        }
+
         fn take_commands(&mut self) -> Result<Vec<WindowCommand>, String> {
             let mut commands = Vec::new();
             for request in window::take_requests() {
