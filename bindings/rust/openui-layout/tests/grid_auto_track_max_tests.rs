@@ -6,7 +6,8 @@ use openui_geometry::{LayoutUnit, Length, PhysicalOffset};
 use openui_layout::intrinsic_sizing::compute_child_intrinsic_contribution;
 use openui_layout::{block_layout, ConstraintSpace, Fragment};
 use openui_style::{
-    Display, GridTrackBreadth, GridTrackComponent, GridTrackList, GridTrackSize, LineHeight,
+    ContentAlignment, ContentPosition, Display, GridTrackBreadth, GridTrackComponent,
+    GridTrackList, GridTrackSize, LineHeight, WritingMode,
 };
 
 fn lu(value: i32) -> LayoutUnit {
@@ -126,4 +127,33 @@ fn auto_columns_grow_to_max_content_before_stretching_equally() {
     let wide_width = fragment_for(&fragment, wide).size.width;
     assert_eq!(narrow_width, narrow_max + leftover / 2);
     assert_eq!(narrow_width + wide_width, lu(292));
+}
+
+/// An item in a vertical writing mode is orthogonal to a horizontal grid's
+/// columns. Blink's `ContributionSizeForGridItem` gives such an item one
+/// contribution, its laid-out block size, for both the intrinsic and the
+/// max-content maximum steps, so the maximize step does not widen its
+/// `auto` column past the base size its min-content contribution gave it.
+/// The Chromium oracle is WPT `css-grid/subgrid/orthogonal-writing-mode-004-ref`
+/// in the coverage run; this test checks only that the column is not widened.
+#[test]
+fn an_orthogonal_item_does_not_widen_its_auto_column_past_its_block_size() {
+    let mut doc = Document::new();
+    let grid = grid(
+        &mut doc,
+        vec![track(GridTrackBreadth::Auto), track(GridTrackBreadth::Auto)],
+    );
+    doc.update_resolved_style(grid, |style| {
+        style.justify_content = ContentAlignment::new(ContentPosition::Start);
+    });
+    let item = text_item(&mut doc, grid, "XX XX XX");
+    doc.update_resolved_style(item, |style| style.writing_mode = WritingMode::VerticalLr);
+    let text = doc.node(item).first_child;
+    doc.update_resolved_style(text, |style| style.writing_mode = WritingMode::VerticalLr);
+
+    let intrinsic = compute_child_intrinsic_contribution(&doc, item);
+    let fragment = layout(&doc, grid);
+    let width = fragment_for(&fragment, item).size.width;
+    assert!(intrinsic.min_content_inline_size < intrinsic.max_content_inline_size);
+    assert_eq!(width, intrinsic.min_content_inline_size);
 }

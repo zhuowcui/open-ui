@@ -52,6 +52,7 @@ is on the same branch as the pinned 147.0.7727.50.
 | `intrinsic_growth_limits` resolves a growth limit for each column, following the two maximum steps above, from the base sizes `size_intrinsic_tracks` already resolved. | `openui-layout` | `bindings/rust/openui-layout/src/grid.rs` |
 | `maximize_tracks` is Blink's `MaximizeTracks`, using the same share arithmetic as `DistributeExtraSpaceToSets` (truncated layout units, smallest potential first, the last growable track takes the remainder). | `openui-layout` | same |
 | With a definite container inline size, columns use these two steps in place of `maximize_fixed_max_tracks`. With an indefinite inline size, and for rows, nothing changes. | `openui-layout` | same |
+| An item whose writing mode is orthogonal to the grid's gives both maximum steps the same contribution, as Blink's `ContributionSizeForGridItem`, which uses `BlockContributionSize()` for `kForIntrinsicMaximums` and `kForMaxContentMaximums` alike when the item is not parallel with the track direction. | `openui-layout` | same |
 
 Rows are not changed: `size_row_tracks_from_layout` already gives a row the
 laid-out block size of its items, which for block contributions is both the
@@ -61,9 +62,9 @@ min-content and the max-content contribution.
 
 | Check | Command | Result |
 | --- | --- | --- |
-| `1fr auto` with wrappable text; two `auto` columns | `cargo test -p openui-layout --test grid_auto_track_max_tests` (Windows) | 2 passed. With the old path restored, both fail: the `auto` column is 26.69px (min-content), not 58.92px (max-content), and the narrow `auto` column is 146px, not 113.77px |
+| `1fr auto` with wrappable text; two `auto` columns; a `vertical-lr` item in an `auto` column | `cargo test -p openui-layout --test grid_auto_track_max_tests` (Windows) | 3 passed. With the old path restored, the first two fail: the `auto` column is 26.69px (min-content), not 58.92px (max-content), and the narrow `auto` column is 146px, not 113.77px. With the orthogonal guard removed, the third fails: the column grows from 26.69px to the item's horizontal max-content, 91.16px. The third test checks only that the column is not widened; its Chromium oracle is the coverage run's `subgrid/orthogonal-writing-mode-004-ref` |
 | Maximize arithmetic: smallest potential first, then stretch; free space limit | `cargo test -p openui-layout --lib grid::tests` (Windows) | 4 passed |
-| Layout crate | `cargo test -p openui-layout --no-fail-fast` (Windows) | 5,956 passed, 0 failed |
+| Layout crate | `cargo test -p openui-layout --no-fail-fast` (Windows) | 5,957 passed, 0 failed, 5 ignored |
 | Generators | `generate_properties.py --check`; `generate_v02_contract.py --check`; `generate_renderer_contract.py --check` | no drift |
 | `cargo fmt --all --check` | in `bindings/rust` | pass |
 

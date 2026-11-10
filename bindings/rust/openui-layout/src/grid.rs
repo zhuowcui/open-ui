@@ -1096,6 +1096,7 @@ fn intrinsic_growth_limits(
     items: &[GridItem],
     tracks: &[Track],
     columns: bool,
+    horizontal: bool,
     gap: LayoutUnit,
     percentage_base: LayoutUnit,
     cache: &mut HashMap<NodeId, IntrinsicSizes>,
@@ -1134,7 +1135,20 @@ fn intrinsic_growth_limits(
             .or_insert_with(|| compute_child_intrinsic_contribution_with_layout(doc, item.node_id));
         let cyclic = cyclic_ratio_contribution(doc, item.node_id, columns);
         let min = cyclic.unwrap_or_else(|| axis_contribution(intrinsic, columns, false));
-        let max = cyclic.unwrap_or_else(|| axis_contribution(intrinsic, columns, true));
+        // An item whose writing mode is orthogonal to the grid's contributes
+        // its laid-out block size to both maximum steps, as Blink's
+        // `BlockContributionSize`: it has no separate max-content size here.
+        let item_style = &doc.node(item.node_id).style;
+        let orthogonal = item_style
+            .direction
+            .writing_direction(item_style.writing_mode)
+            .is_horizontal()
+            != horizontal;
+        let max = if orthogonal {
+            min
+        } else {
+            cyclic.unwrap_or_else(|| axis_contribution(intrinsic, columns, true))
+        };
         contributions.push((span, start, end, min, max));
     }
     contributions.sort_by_key(|contribution| contribution.0);
@@ -2390,6 +2404,7 @@ pub(crate) fn grid_layout_contents(
             &items,
             &columns.tracks,
             true,
+            writing_direction.is_horizontal(),
             column_gap,
             content_inline,
             &mut intrinsic_cache,
