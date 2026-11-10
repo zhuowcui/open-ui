@@ -1129,6 +1129,36 @@ impl Document {
         Ok(())
     }
 
+    /// The pointer left the window, which the desktop adapter reports as
+    /// `PointerPhase::Leave`. Every node on the pointer's hover path receives
+    /// `pointerleave` (`mouseleave` without `pointer_names`), from the former
+    /// target toward the root, and loses `:hover`, as Chromium does when the
+    /// mouse leaves the page. No other event is dispatched. Unlike a cancel,
+    /// the press survives, so a pointer-up after the pointer comes back still
+    /// clicks.
+    pub fn dispatch_pointer_leave(
+        &self,
+        pointer_id: u64,
+        x: f32,
+        y: f32,
+        button: MouseButton,
+        modifiers: Modifiers,
+        pointer_names: bool,
+    ) -> Result<(), Error> {
+        let update = self.with_engine_mut(|engine| Ok(engine.pointer_leave(pointer_id)))?;
+        let name = if pointer_names {
+            "pointerleave"
+        } else {
+            "mouseleave"
+        };
+        for node in update.left {
+            let event = Event::pointer(name, pointer_id, x, y, button, modifiers);
+            event.set_phase(EventPhase::Target);
+            self.invoke(node, node, &event, None)?;
+        }
+        Ok(())
+    }
+
     pub fn dispatch_key_event(
         &self,
         event_type: KeyEventType,

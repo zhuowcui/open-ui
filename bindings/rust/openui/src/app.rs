@@ -296,6 +296,21 @@ impl openui_platform::PlatformApplication for App {
             PlatformEvent::Resized(viewport) => self.document.set_viewport(*viewport),
             PlatformEvent::Pointer {
                 pointer_id,
+                phase: PointerPhase::Leave,
+                x,
+                y,
+                button: pointer,
+                modifiers: keys,
+            } => self.document.dispatch_pointer_leave(
+                *pointer_id,
+                *x,
+                *y,
+                button(*pointer),
+                platform_modifiers(*keys),
+                *pointer_id != 0,
+            ),
+            PlatformEvent::Pointer {
+                pointer_id,
                 phase,
                 x,
                 y,
@@ -307,6 +322,7 @@ impl openui_platform::PlatformApplication for App {
                     PointerPhase::Move => PointerEventKind::Move,
                     PointerPhase::Down => PointerEventKind::Down,
                     PointerPhase::Up => PointerEventKind::Up,
+                    // `Leave` is dispatched by the arm above.
                     PointerPhase::Cancel | PointerPhase::Leave => PointerEventKind::Cancel,
                 },
                 *x,
@@ -819,6 +835,64 @@ mod tests {
         items.set(vec![3, 1, 4]);
         let after = app.render_at(0.0).unwrap();
         assert_ne!(before.pixels(), after.pixels());
+    }
+
+    #[cfg(any(
+        all(feature = "linux", target_os = "linux"),
+        all(feature = "windows", target_os = "windows")
+    ))]
+    #[test]
+    fn leaving_the_window_dispatches_pointerleave_not_pointercancel() {
+        use crate::prelude::{LengthValue, StyleProperty};
+        use openui_platform::{
+            Modifiers as PlatformModifiers, PlatformApplication, PlatformEvent, PointerButton,
+            PointerPhase,
+        };
+        use std::cell::RefCell;
+        use std::rc::Rc;
+
+        let mut app = App::builder()
+            .size(LogicalSize::new(100.0, 50.0))
+            .build()
+            .unwrap();
+        let document = app.document().clone();
+        let outer = crate::Element::create(&document, "div").unwrap();
+        let inner = crate::Element::create(&document, "div").unwrap();
+        for element in [&outer, &inner] {
+            element
+                .set_property(StyleProperty::Height, LengthValue::px(40.0).into())
+                .unwrap();
+        }
+        outer.append_child(&inner).unwrap();
+        document.body().append_child(&outer).unwrap();
+        document.update_all().unwrap();
+        let log = Rc::new(RefCell::new(Vec::new()));
+        for (name, element) in [("outer", &outer), ("inner", &inner)] {
+            for event in ["pointerleave", "pointercancel"] {
+                let log = log.clone();
+                element
+                    .on(event, move |_| {
+                        log.borrow_mut().push(format!("{event} {name}"))
+                    })
+                    .unwrap();
+            }
+        }
+        // The desktop adapter reports both with the last cursor position,
+        // which is still over `inner`.
+        let pointer = |phase| PlatformEvent::Pointer {
+            pointer_id: 1,
+            phase,
+            x: 10.0,
+            y: 10.0,
+            button: PointerButton::Other(0),
+            modifiers: PlatformModifiers::default(),
+        };
+        PlatformApplication::event(&mut app, pointer(PointerPhase::Move)).unwrap();
+        assert!(inner.is_hovered().unwrap());
+        PlatformApplication::event(&mut app, pointer(PointerPhase::Leave)).unwrap();
+        assert_eq!(*log.borrow(), ["pointerleave inner", "pointerleave outer"]);
+        assert!(!inner.is_hovered().unwrap());
+        assert!(!outer.is_hovered().unwrap());
     }
 
     #[cfg(any(

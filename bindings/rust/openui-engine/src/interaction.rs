@@ -492,6 +492,23 @@ impl Engine {
         })
     }
 
+    /// The pointer left the window. As in Blink's
+    /// `EventHandler::HandleMouseLeaveEvent`, nothing is hit-tested: the
+    /// pointer's whole hover path is left, from the former target toward the
+    /// root, and loses `:hover`. There is no target, so no pointer event
+    /// other than the boundary events is dispatched. The pressed target and
+    /// pointer capture are kept: a leave is not a cancel, and a later
+    /// pointer-up still ends the press.
+    pub fn pointer_leave(&mut self, pointer_id: u64) -> PointerUpdate {
+        PointerUpdate {
+            target: None,
+            left: self.hover_paths.remove(&pointer_id).unwrap_or_default(),
+            entered: Vec::new(),
+            activation: None,
+            range_value: None,
+        }
+    }
+
     /// Validate whether native focus can be requested without changing state.
     pub fn can_focus(&self, handle: NodeHandle) -> Result<bool, EngineError> {
         self.resolve(handle)?;
@@ -1905,6 +1922,54 @@ mod tests {
         assert_eq!(
             engine
                 .pointer_event(7, PointerEventKind::Up, 10.0, 10.0)
+                .unwrap()
+                .activation,
+            Some(button)
+        );
+    }
+
+    #[test]
+    fn leaving_the_window_leaves_the_whole_hover_path_and_keeps_the_press() {
+        let mut engine =
+            Engine::new(crate::ViewportMetrics::from_logical_size(100.0, 100.0, 1.0).unwrap())
+                .unwrap();
+        let button = sized_control(&mut engine, ElementTag::Button);
+        let entered = engine
+            .pointer_event(1, PointerEventKind::Move, 10.0, 10.0)
+            .unwrap()
+            .entered;
+        engine
+            .pointer_event(1, PointerEventKind::Down, 10.0, 10.0)
+            .unwrap();
+        let mut expected = entered.clone();
+        expected.reverse();
+        assert_eq!(expected.first(), Some(&button));
+
+        // Destructured: the renderer contract counts a field access named like a
+        // style field as a reader of that style field.
+        let PointerUpdate {
+            target,
+            left,
+            entered: entered_on_leave,
+            ..
+        } = engine.pointer_leave(1);
+        assert_eq!(left, expected);
+        assert_eq!(target, None);
+        assert!(entered_on_leave.is_empty());
+        assert!(!engine.is_hovered(button).unwrap());
+        assert!(engine.is_active(button).unwrap());
+        // A second leave has nothing left to leave.
+        let PointerUpdate { left, .. } = engine.pointer_leave(1);
+        assert!(left.is_empty());
+
+        // Coming back in enters the path again and the press still clicks.
+        let back = engine
+            .pointer_event(1, PointerEventKind::Move, 10.0, 10.0)
+            .unwrap();
+        assert_eq!(back.entered, entered);
+        assert_eq!(
+            engine
+                .pointer_event(1, PointerEventKind::Up, 10.0, 10.0)
                 .unwrap()
                 .activation,
             Some(button)
