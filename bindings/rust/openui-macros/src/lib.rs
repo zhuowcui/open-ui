@@ -3,6 +3,7 @@
 use proc_macro::TokenStream;
 
 mod component;
+mod style_macro;
 mod typed_style_cases;
 mod view;
 
@@ -43,6 +44,28 @@ mod view;
 #[proc_macro]
 pub fn view(input: TokenStream) -> TokenStream {
     view::view_macro(input.into()).into()
+}
+
+/// A CSS declaration block compiled to a typed `openui::Style`.
+///
+/// Each value is parsed at compile time with the same grammar as `view!`'s
+/// `style:` attributes and emitted as the constructor of its typed value, so
+/// nothing is parsed at run time. An unknown property or an invalid value is
+/// a compile error.
+///
+/// ```ignore
+/// let card = style! { display: flex; justify-content: space-between; padding: 8px 16px };
+/// element.apply_style(&card)?;
+/// ```
+///
+/// CSS that Rust cannot split into tokens, such as `#3e3` or a single-quoted
+/// string, goes in a string literal: `style!("color: #3e3")`. The braced form
+/// reads the macro call's source text, so inside another macro use the
+/// string form as well.
+#[proc_macro]
+pub fn style(input: TokenStream) -> TokenStream {
+    let source = proc_macro::Span::call_site().source_text();
+    style_macro::expand(input.into(), source).into()
 }
 
 /// Component attribute macro.

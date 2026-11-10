@@ -14,6 +14,9 @@ mod computed;
 #[cfg(feature = "constructor-tokens")]
 #[doc(hidden)]
 pub mod constructor_tokens;
+#[cfg(feature = "constructor-tokens")]
+#[doc(hidden)]
+pub mod declaration_block;
 mod enums;
 mod font_types;
 mod layout_systems;
