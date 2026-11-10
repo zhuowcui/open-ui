@@ -11,11 +11,114 @@ renderer.
 
 | Component | Fixtures | Exact | Evidence | Measured at |
 | --- | --- | --- | --- | --- |
-| font | Geist, Geist Mono, Inter; light, dark | 0 of 24 (24 errors: fonts do not load) | [`reference-v1.json`](../../../components/evidence/reference-v1.json) | `c98950ef`, 9 November 2026 |
-| separator | horizontal, vertical; light, dark | 8 of 16 | [`reference-v1.json`](../../../components/evidence/reference-v1.json) | `c98950ef`, 9 November 2026 (unchanged since `7fc2c227`) |
+| badge | 6 variants; light, dark | 0 of 48 (48 errors: fonts do not load) | [`reference-v1.json`](../../../components/evidence/reference-v1.json) | `183f3d1b`, 10 November 2026 |
+| button | 6 variants, sizes xs, sm and lg, disabled; light, dark | 0 of 80 (80 errors: fonts do not load) | [`reference-v1.json`](../../../components/evidence/reference-v1.json) | `183f3d1b`, 10 November 2026 |
+| card | basic, with action; light, dark | 0 of 16 (16 errors: fonts do not load) | [`reference-v1.json`](../../../components/evidence/reference-v1.json) | `183f3d1b`, 10 November 2026 |
+| font | Geist, Geist Mono, Inter; light, dark | 0 of 24 (24 errors: fonts do not load) | [`reference-v1.json`](../../../components/evidence/reference-v1.json) | `183f3d1b`, 10 November 2026 (unchanged since `c98950ef`) |
+| label | basic; light, dark | 0 of 8 (8 errors: fonts do not load) | [`reference-v1.json`](../../../components/evidence/reference-v1.json) | `183f3d1b`, 10 November 2026 |
+| separator | horizontal, vertical; light, dark | 8 of 16 | [`reference-v1.json`](../../../components/evidence/reference-v1.json) | `183f3d1b`, 10 November 2026 (unchanged since `7fc2c227`) |
 
 Each fixture is compared at the four census profiles (`legacy-800x600@1`,
 `mobile-375x667@2`, `desktop-1280x720@1.25`, `desktop-1920x1080@1.5`).
+
+## 9 November 2026: button, badge, card and label
+
+### Change
+
+| Change | Owner | Source |
+| --- | --- | --- |
+| Button (variants `default`, `destructive`, `outline`, `secondary`, `ghost`, `link`; sizes `default`, `xs`, `sm`, `lg`; disabled), badge (the same six variants), card (`Card`, `CardHeader`, `CardTitle`, `CardDescription`, `CardAction`, `CardContent`, `CardFooter`) and label, over the public `openui` crate. The icon sizes are left out until Open UI can draw Lucide icons; hover, focus and `aria-invalid` styles wait for the interactive work. | components | `components/openui-components/src/{button,badge,card,label}.rs` |
+| Styles are the computed values of Tailwind's compiled classes, set declaration by declaration after preflight's reset. Where Open UI's literals cannot express a value the typed value is set (`box-shadow`, `width: fit-content`, `container-type`, `container-name`, grid placement), `border` is set as longhands, and `line-height` lengths stand for Tailwind's `calc()` ratios. `Theme::dark` stands in for the `.dark` class, and `css::with_opacity` for `color-mix(in oklab, X N%, transparent)`. | components | `components/openui-components/src/css.rs`, `src/theme.rs` |
+| 19 fixtures (38 pages): each button variant at the default size, the three text sizes, disabled, each badge variant, the docs example card without and with an action, and a label. Buttons and badges sit in a `flex` row. | components | `components/reference/fixtures.tsx`, `components/reference-render/src/main.rs` |
+| Geometry diagnostic: the renderer's `geometry` prints each fixture element's border box, and `reference_harness.py geometry` compares it with Chromium's `getBoundingClientRect` (same within 1/128 px), to tell layout from paint differences. It writes no evidence. | components | `components/reference-render/src/main.rs`, `components/harness/reference_harness.py` |
+
+### Measurement
+
+In the census real-font environment, every new fixture is an error: each
+draws text, and the bundled WOFF2 fonts do not load there (the C4
+failure below). The complete run is 8 of 192 comparisons exact (the light
+separators), 8 different (the dark separators, unchanged) and 176 errors
+(`Engine(Font(MalformedFont))`) ([`reference-v1.json`](../../../components/evidence/reference-v1.json)).
+It was measured again at `183f3d1b`, after the rebase onto main
+(`806356cb`); every row is the same as at `df1c5b5d`, the commit before the
+rebase, which has the same `components/` tree. The previews below ran at
+`df1c5b5d`.
+
+### Preview findings
+
+These are **not part of the evidence**: Open UI was run with the system
+FreeType (which reads WOFF2) instead of the census one, so the text loads.
+They locate the failures that the font error hides, for the engine track.
+
+- **Layout matches for every button, badge, label and separator fixture.**
+  The geometry diagnostic finds each element's border box within 1/128 px
+  of Chromium's at all four profiles (152 of 192 fixture layouts; the other
+  40 are the font and card fixtures below).
+- **Plain rounded rectangles paint exactly; text does not.** For each
+  `default`, `secondary`, `ghost` and `link` button and every size, all
+  differing pixels at 800x600 are inside the button, away from its edges:
+  the glyphs (the C4 vertical placement finding).
+- **Three edge differences** remain at 800x600 (pixels within 3px of the
+  component's edge):
+  - Filled badges (a background, a transparent 1px border,
+    `overflow: hidden`, a radius of half the height): 29 to 78 pixels on
+    the rounded ends. An exact 11px radius gives the same pixels as the
+    `9999px` stand-in for `calc(infinity * 1px)`, so the stand-in is not
+    the cause; the outline badge, with a border and no background, has
+    exact edges. Owner: engine track, paint.
+  - Translucent dark borders: the dark outline button (`--input`, 15%) has
+    228 differing edge pixels and the dark outline badge (`--border`, 10%)
+    183. Both are drawn in the translucent, slightly out-of-gamut white
+    tokens whose clamp the dark separator measures, so they are expected to
+    change with the A2 color fix; not yet confirmed. Owner: engine track,
+    A2 colors.
+  - The disabled button (`opacity: 0.5`): 17 and 35 pixels on its rounded
+    corners, which are exact on the same button without the opacity.
+    Owner: engine track, paint (opacity layers).
+- **Column flex items are as tall as their min-content layout.** A
+  `display: flex; flex-direction: column` box 382px wide holding one `div`
+  with the words "Card Content" lays the `div` out 48px tall (two lines);
+  Chromium gives 24px. Every card section is a column flex item, so the
+  card is 274px tall (290px with an action) where Chromium's is 190px.
+  This is the column flex finding from C4. Owner: engine track, layout
+  (flex).
+- **A grid `auto` column beside a `1fr` column is sized at min-content.**
+  Outside any flex container, `CardHeader` with an action
+  (`grid-template-columns: 1fr auto`, the action at `grid-column: 2;
+  grid-row: 1 / span 2`) makes the `auto` column 46.73px wide, so "Card
+  Action" wraps onto two lines, and the grid 76px tall; Chromium's column
+  is the max-content width, 85.61px, and the grid 44px. Owner: engine
+  track, layout (grid).
+
+### Framework notes
+
+Open UI's style literals (`view!` `style:` and `typed_style::parse_literal`)
+cannot express several values the components need. Each is set another way
+and none changes the computed value:
+
+- No `box-shadow` literal: the shadow is built as `Vec<BoxShadow>`.
+- `border` needs a width, a style and a color, and rejects
+  `currentcolor`; `border-*-width` takes a bare integer, not `1px`.
+- No intrinsic lengths (`fit-content`), `container-type` and
+  `container-name`, grid placement (`grid-column: 2`) or CSS-wide
+  keywords (`inherit`) as literals; no `user-select` property.
+- A button must opt out of native appearance
+  (`Element::set_native_appearance(false)`); Chromium drops it once a page
+  styles the button's background or border.
+
+Owner: engine track (style parsing, RFC 0001) and framework track.
+
+### Verification
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Reference pages and assets are current | `node build.mjs --check` in `components/reference`, after `npm ci` | current, 51 pages and 27 assets |
+| Harness unit tests | `python3 -m unittest components/harness/test_reference_harness.py` | 18 passed |
+| Comparison | `reference_harness.py compare --renderer <release openui-components-reference> --repository-commit 183f3d1b… --evidence components/evidence/reference-v1.json` in WSL, renderer built with the CI `SKIA_GN_ARGS` | 8 of 192 exact, 8 different, 176 errors; complete |
+| Renderer reproduces | `cargo clean --release -p openui-components-reference -p openui-components`, rebuild at `183f3d1b`, `sha256sum` | `d82152c3…`, the SHA-256 in the evidence |
+| Geometry (preview) | `reference_harness.py geometry --renderer <wrapper running the release renderer with the system FreeType>` in WSL | 152 of 192 fixture layouts the same; differences only in the card and font fixtures |
+| Workspace tests (Windows) | `cargo test --locked` in `components/`, at `183f3d1b` | 10 passed |
+| Formatting | `cargo fmt --all --check` in `components/`, in WSL (on Windows the file list exceeds the command-line limit, os error 206) | clean |
 
 ## 9 November 2026: bundled fonts and icons (C4)
 
@@ -92,6 +195,9 @@ measured once WOFF2 loads.
 | Workspace tests (Windows) | `cargo test --locked` in `components/` | 8 passed |
 | Formatting | `cargo fmt --all --check` in `components/` | clean |
 
+`c98950ef` is `2cc95b7a` before its rebases onto main; the two have the same
+`components/` tree.
+
 ## 9 November 2026: reference harness and separator
 
 ### Change
@@ -157,10 +263,8 @@ These are API requests for the framework track, not blockers.
 
 ## Next
 
-1. Static components with inline styles: button (all variants and sizes),
-   card, badge and label, measured the same way. Their text cannot match
-   until the WOFF2 loading failure is fixed; the fixtures are still built and
-   measured so the results update when it is.
+1. Remeasure once engine A2 (colors) and the WOFF2 fix merge, and replace
+   the stand-ins with real `oklch()` and `color-mix()` values.
 2. The Radix-like primitives design (C2) in
    `docs/alpha/rfcs/0003-component-primitives.md`, while waiting for typed
    style rules for the interactive components.

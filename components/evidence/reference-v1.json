@@ -1,9 +1,9 @@
 {
   "schema": "openui-components-reference-results-v1",
-  "measured_on": "2026-11-09",
+  "measured_on": "2026-11-10",
   "complete": true,
   "repository": {
-    "commit": "c98950efec2b3e0506e0b57ea57b235a456176f6",
+    "commit": "183f3d1b03693c2bc0a428958511090151638eba",
     "dirty_paths": "unknown: git unavailable to the harness"
   },
   "chromium": {
@@ -12,11 +12,11 @@
     "font_profile": "registered-real-font"
   },
   "reference": {
-    "manifest_sha256": "4a587bfae5d220dae42fe14d3b995a3840a84aa01e938f8935cd6332d9df7e72",
+    "manifest_sha256": "daf13353a64ce12fefcac771270df1c8ee56f480c11826641278373d0b16586b",
     "package_lock_sha256": "93d1a093da22d87d8db2de61a7bf5e049600097974ce23d157a567c5c02a906f"
   },
   "openui": {
-    "renderer_sha256": "8d1c1cf4a6a1d42e6b0ad31c079fa0e81bb6d75aa708809d038e742f5aa818d4",
+    "renderer_sha256": "d82152c3f76b757c9de2d63302b72d166032fc6647f186855e2a3e1261648f50",
     "raster_configuration": "chromium-linux-lcd"
   },
   "profiles": [
@@ -71,15 +71,35 @@
   ],
   "unimplemented_fixtures": [],
   "summary": {
-    "comparisons": 40,
+    "comparisons": 192,
     "exact": 8,
     "different": 8,
-    "error": 24,
+    "error": 176,
     "by_component": {
+      "badge": {
+        "exact": 0,
+        "different": 0,
+        "error": 48
+      },
+      "button": {
+        "exact": 0,
+        "different": 0,
+        "error": 80
+      },
+      "card": {
+        "exact": 0,
+        "different": 0,
+        "error": 16
+      },
       "font": {
         "exact": 0,
         "different": 0,
         "error": 24
+      },
+      "label": {
+        "exact": 0,
+        "different": 0,
+        "error": 8
       },
       "separator": {
         "exact": 8,
@@ -91,39 +111,1191 @@
       "desktop-1280x720@1.25": {
         "exact": 2,
         "different": 2,
-        "error": 6
+        "error": 44
       },
       "desktop-1920x1080@1.5": {
         "exact": 2,
         "different": 2,
-        "error": 6
+        "error": 44
       },
       "legacy-800x600@1": {
         "exact": 2,
         "different": 2,
-        "error": 6
+        "error": 44
       },
       "mobile-375x667@2": {
         "exact": 2,
         "different": 2,
-        "error": 6
+        "error": 44
       }
     },
     "by_theme": {
       "dark": {
         "exact": 0,
         "different": 8,
-        "error": 12
+        "error": 88
       },
       "light": {
         "exact": 8,
         "different": 0,
-        "error": 12
+        "error": 88
       }
     }
   },
   "results": [
     {
+      "fixture": "badge-default-dark",
+      "component": "badge",
+      "theme": "dark",
+      "profile": "desktop-1280x720@1.25",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-default-dark",
+      "component": "badge",
+      "theme": "dark",
+      "profile": "desktop-1920x1080@1.5",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-default-dark",
+      "component": "badge",
+      "theme": "dark",
+      "profile": "legacy-800x600@1",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-default-dark",
+      "component": "badge",
+      "theme": "dark",
+      "profile": "mobile-375x667@2",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-default-light",
+      "component": "badge",
+      "theme": "light",
+      "profile": "desktop-1280x720@1.25",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-default-light",
+      "component": "badge",
+      "theme": "light",
+      "profile": "desktop-1920x1080@1.5",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-default-light",
+      "component": "badge",
+      "theme": "light",
+      "profile": "legacy-800x600@1",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-default-light",
+      "component": "badge",
+      "theme": "light",
+      "profile": "mobile-375x667@2",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-destructive-dark",
+      "component": "badge",
+      "theme": "dark",
+      "profile": "desktop-1280x720@1.25",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-destructive-dark",
+      "component": "badge",
+      "theme": "dark",
+      "profile": "desktop-1920x1080@1.5",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-destructive-dark",
+      "component": "badge",
+      "theme": "dark",
+      "profile": "legacy-800x600@1",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-destructive-dark",
+      "component": "badge",
+      "theme": "dark",
+      "profile": "mobile-375x667@2",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-destructive-light",
+      "component": "badge",
+      "theme": "light",
+      "profile": "desktop-1280x720@1.25",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-destructive-light",
+      "component": "badge",
+      "theme": "light",
+      "profile": "desktop-1920x1080@1.5",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-destructive-light",
+      "component": "badge",
+      "theme": "light",
+      "profile": "legacy-800x600@1",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-destructive-light",
+      "component": "badge",
+      "theme": "light",
+      "profile": "mobile-375x667@2",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-ghost-dark",
+      "component": "badge",
+      "theme": "dark",
+      "profile": "desktop-1280x720@1.25",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-ghost-dark",
+      "component": "badge",
+      "theme": "dark",
+      "profile": "desktop-1920x1080@1.5",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-ghost-dark",
+      "component": "badge",
+      "theme": "dark",
+      "profile": "legacy-800x600@1",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-ghost-dark",
+      "component": "badge",
+      "theme": "dark",
+      "profile": "mobile-375x667@2",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-ghost-light",
+      "component": "badge",
+      "theme": "light",
+      "profile": "desktop-1280x720@1.25",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-ghost-light",
+      "component": "badge",
+      "theme": "light",
+      "profile": "desktop-1920x1080@1.5",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-ghost-light",
+      "component": "badge",
+      "theme": "light",
+      "profile": "legacy-800x600@1",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-ghost-light",
+      "component": "badge",
+      "theme": "light",
+      "profile": "mobile-375x667@2",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-link-dark",
+      "component": "badge",
+      "theme": "dark",
+      "profile": "desktop-1280x720@1.25",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-link-dark",
+      "component": "badge",
+      "theme": "dark",
+      "profile": "desktop-1920x1080@1.5",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-link-dark",
+      "component": "badge",
+      "theme": "dark",
+      "profile": "legacy-800x600@1",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-link-dark",
+      "component": "badge",
+      "theme": "dark",
+      "profile": "mobile-375x667@2",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-link-light",
+      "component": "badge",
+      "theme": "light",
+      "profile": "desktop-1280x720@1.25",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-link-light",
+      "component": "badge",
+      "theme": "light",
+      "profile": "desktop-1920x1080@1.5",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-link-light",
+      "component": "badge",
+      "theme": "light",
+      "profile": "legacy-800x600@1",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-link-light",
+      "component": "badge",
+      "theme": "light",
+      "profile": "mobile-375x667@2",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-outline-dark",
+      "component": "badge",
+      "theme": "dark",
+      "profile": "desktop-1280x720@1.25",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-outline-dark",
+      "component": "badge",
+      "theme": "dark",
+      "profile": "desktop-1920x1080@1.5",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-outline-dark",
+      "component": "badge",
+      "theme": "dark",
+      "profile": "legacy-800x600@1",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-outline-dark",
+      "component": "badge",
+      "theme": "dark",
+      "profile": "mobile-375x667@2",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-outline-light",
+      "component": "badge",
+      "theme": "light",
+      "profile": "desktop-1280x720@1.25",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-outline-light",
+      "component": "badge",
+      "theme": "light",
+      "profile": "desktop-1920x1080@1.5",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-outline-light",
+      "component": "badge",
+      "theme": "light",
+      "profile": "legacy-800x600@1",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-outline-light",
+      "component": "badge",
+      "theme": "light",
+      "profile": "mobile-375x667@2",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-secondary-dark",
+      "component": "badge",
+      "theme": "dark",
+      "profile": "desktop-1280x720@1.25",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-secondary-dark",
+      "component": "badge",
+      "theme": "dark",
+      "profile": "desktop-1920x1080@1.5",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-secondary-dark",
+      "component": "badge",
+      "theme": "dark",
+      "profile": "legacy-800x600@1",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-secondary-dark",
+      "component": "badge",
+      "theme": "dark",
+      "profile": "mobile-375x667@2",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-secondary-light",
+      "component": "badge",
+      "theme": "light",
+      "profile": "desktop-1280x720@1.25",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-secondary-light",
+      "component": "badge",
+      "theme": "light",
+      "profile": "desktop-1920x1080@1.5",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-secondary-light",
+      "component": "badge",
+      "theme": "light",
+      "profile": "legacy-800x600@1",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "badge-secondary-light",
+      "component": "badge",
+      "theme": "light",
+      "profile": "mobile-375x667@2",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-default-dark",
+      "component": "button",
+      "theme": "dark",
+      "profile": "desktop-1280x720@1.25",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-default-dark",
+      "component": "button",
+      "theme": "dark",
+      "profile": "desktop-1920x1080@1.5",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-default-dark",
+      "component": "button",
+      "theme": "dark",
+      "profile": "legacy-800x600@1",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-default-dark",
+      "component": "button",
+      "theme": "dark",
+      "profile": "mobile-375x667@2",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-default-light",
+      "component": "button",
+      "theme": "light",
+      "profile": "desktop-1280x720@1.25",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-default-light",
+      "component": "button",
+      "theme": "light",
+      "profile": "desktop-1920x1080@1.5",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-default-light",
+      "component": "button",
+      "theme": "light",
+      "profile": "legacy-800x600@1",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-default-light",
+      "component": "button",
+      "theme": "light",
+      "profile": "mobile-375x667@2",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-destructive-dark",
+      "component": "button",
+      "theme": "dark",
+      "profile": "desktop-1280x720@1.25",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-destructive-dark",
+      "component": "button",
+      "theme": "dark",
+      "profile": "desktop-1920x1080@1.5",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-destructive-dark",
+      "component": "button",
+      "theme": "dark",
+      "profile": "legacy-800x600@1",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-destructive-dark",
+      "component": "button",
+      "theme": "dark",
+      "profile": "mobile-375x667@2",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-destructive-light",
+      "component": "button",
+      "theme": "light",
+      "profile": "desktop-1280x720@1.25",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-destructive-light",
+      "component": "button",
+      "theme": "light",
+      "profile": "desktop-1920x1080@1.5",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-destructive-light",
+      "component": "button",
+      "theme": "light",
+      "profile": "legacy-800x600@1",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-destructive-light",
+      "component": "button",
+      "theme": "light",
+      "profile": "mobile-375x667@2",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-disabled-dark",
+      "component": "button",
+      "theme": "dark",
+      "profile": "desktop-1280x720@1.25",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-disabled-dark",
+      "component": "button",
+      "theme": "dark",
+      "profile": "desktop-1920x1080@1.5",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-disabled-dark",
+      "component": "button",
+      "theme": "dark",
+      "profile": "legacy-800x600@1",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-disabled-dark",
+      "component": "button",
+      "theme": "dark",
+      "profile": "mobile-375x667@2",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-disabled-light",
+      "component": "button",
+      "theme": "light",
+      "profile": "desktop-1280x720@1.25",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-disabled-light",
+      "component": "button",
+      "theme": "light",
+      "profile": "desktop-1920x1080@1.5",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-disabled-light",
+      "component": "button",
+      "theme": "light",
+      "profile": "legacy-800x600@1",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-disabled-light",
+      "component": "button",
+      "theme": "light",
+      "profile": "mobile-375x667@2",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-ghost-dark",
+      "component": "button",
+      "theme": "dark",
+      "profile": "desktop-1280x720@1.25",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-ghost-dark",
+      "component": "button",
+      "theme": "dark",
+      "profile": "desktop-1920x1080@1.5",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-ghost-dark",
+      "component": "button",
+      "theme": "dark",
+      "profile": "legacy-800x600@1",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-ghost-dark",
+      "component": "button",
+      "theme": "dark",
+      "profile": "mobile-375x667@2",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-ghost-light",
+      "component": "button",
+      "theme": "light",
+      "profile": "desktop-1280x720@1.25",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-ghost-light",
+      "component": "button",
+      "theme": "light",
+      "profile": "desktop-1920x1080@1.5",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-ghost-light",
+      "component": "button",
+      "theme": "light",
+      "profile": "legacy-800x600@1",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-ghost-light",
+      "component": "button",
+      "theme": "light",
+      "profile": "mobile-375x667@2",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-link-dark",
+      "component": "button",
+      "theme": "dark",
+      "profile": "desktop-1280x720@1.25",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-link-dark",
+      "component": "button",
+      "theme": "dark",
+      "profile": "desktop-1920x1080@1.5",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-link-dark",
+      "component": "button",
+      "theme": "dark",
+      "profile": "legacy-800x600@1",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-link-dark",
+      "component": "button",
+      "theme": "dark",
+      "profile": "mobile-375x667@2",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-link-light",
+      "component": "button",
+      "theme": "light",
+      "profile": "desktop-1280x720@1.25",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-link-light",
+      "component": "button",
+      "theme": "light",
+      "profile": "desktop-1920x1080@1.5",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-link-light",
+      "component": "button",
+      "theme": "light",
+      "profile": "legacy-800x600@1",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-link-light",
+      "component": "button",
+      "theme": "light",
+      "profile": "mobile-375x667@2",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-outline-dark",
+      "component": "button",
+      "theme": "dark",
+      "profile": "desktop-1280x720@1.25",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-outline-dark",
+      "component": "button",
+      "theme": "dark",
+      "profile": "desktop-1920x1080@1.5",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-outline-dark",
+      "component": "button",
+      "theme": "dark",
+      "profile": "legacy-800x600@1",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-outline-dark",
+      "component": "button",
+      "theme": "dark",
+      "profile": "mobile-375x667@2",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-outline-light",
+      "component": "button",
+      "theme": "light",
+      "profile": "desktop-1280x720@1.25",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-outline-light",
+      "component": "button",
+      "theme": "light",
+      "profile": "desktop-1920x1080@1.5",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-outline-light",
+      "component": "button",
+      "theme": "light",
+      "profile": "legacy-800x600@1",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-outline-light",
+      "component": "button",
+      "theme": "light",
+      "profile": "mobile-375x667@2",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-secondary-dark",
+      "component": "button",
+      "theme": "dark",
+      "profile": "desktop-1280x720@1.25",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-secondary-dark",
+      "component": "button",
+      "theme": "dark",
+      "profile": "desktop-1920x1080@1.5",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-secondary-dark",
+      "component": "button",
+      "theme": "dark",
+      "profile": "legacy-800x600@1",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-secondary-dark",
+      "component": "button",
+      "theme": "dark",
+      "profile": "mobile-375x667@2",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-secondary-light",
+      "component": "button",
+      "theme": "light",
+      "profile": "desktop-1280x720@1.25",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-secondary-light",
+      "component": "button",
+      "theme": "light",
+      "profile": "desktop-1920x1080@1.5",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-secondary-light",
+      "component": "button",
+      "theme": "light",
+      "profile": "legacy-800x600@1",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-secondary-light",
+      "component": "button",
+      "theme": "light",
+      "profile": "mobile-375x667@2",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-size-lg-dark",
+      "component": "button",
+      "theme": "dark",
+      "profile": "desktop-1280x720@1.25",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-size-lg-dark",
+      "component": "button",
+      "theme": "dark",
+      "profile": "desktop-1920x1080@1.5",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-size-lg-dark",
+      "component": "button",
+      "theme": "dark",
+      "profile": "legacy-800x600@1",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-size-lg-dark",
+      "component": "button",
+      "theme": "dark",
+      "profile": "mobile-375x667@2",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-size-lg-light",
+      "component": "button",
+      "theme": "light",
+      "profile": "desktop-1280x720@1.25",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-size-lg-light",
+      "component": "button",
+      "theme": "light",
+      "profile": "desktop-1920x1080@1.5",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-size-lg-light",
+      "component": "button",
+      "theme": "light",
+      "profile": "legacy-800x600@1",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-size-lg-light",
+      "component": "button",
+      "theme": "light",
+      "profile": "mobile-375x667@2",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-size-sm-dark",
+      "component": "button",
+      "theme": "dark",
+      "profile": "desktop-1280x720@1.25",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-size-sm-dark",
+      "component": "button",
+      "theme": "dark",
+      "profile": "desktop-1920x1080@1.5",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-size-sm-dark",
+      "component": "button",
+      "theme": "dark",
+      "profile": "legacy-800x600@1",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-size-sm-dark",
+      "component": "button",
+      "theme": "dark",
+      "profile": "mobile-375x667@2",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-size-sm-light",
+      "component": "button",
+      "theme": "light",
+      "profile": "desktop-1280x720@1.25",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-size-sm-light",
+      "component": "button",
+      "theme": "light",
+      "profile": "desktop-1920x1080@1.5",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-size-sm-light",
+      "component": "button",
+      "theme": "light",
+      "profile": "legacy-800x600@1",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-size-sm-light",
+      "component": "button",
+      "theme": "light",
+      "profile": "mobile-375x667@2",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-size-xs-dark",
+      "component": "button",
+      "theme": "dark",
+      "profile": "desktop-1280x720@1.25",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-size-xs-dark",
+      "component": "button",
+      "theme": "dark",
+      "profile": "desktop-1920x1080@1.5",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-size-xs-dark",
+      "component": "button",
+      "theme": "dark",
+      "profile": "legacy-800x600@1",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-size-xs-dark",
+      "component": "button",
+      "theme": "dark",
+      "profile": "mobile-375x667@2",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-size-xs-light",
+      "component": "button",
+      "theme": "light",
+      "profile": "desktop-1280x720@1.25",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-size-xs-light",
+      "component": "button",
+      "theme": "light",
+      "profile": "desktop-1920x1080@1.5",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-size-xs-light",
+      "component": "button",
+      "theme": "light",
+      "profile": "legacy-800x600@1",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "button-size-xs-light",
+      "component": "button",
+      "theme": "light",
+      "profile": "mobile-375x667@2",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "card-action-dark",
+      "component": "card",
+      "theme": "dark",
+      "profile": "desktop-1280x720@1.25",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "card-action-dark",
+      "component": "card",
+      "theme": "dark",
+      "profile": "desktop-1920x1080@1.5",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "card-action-dark",
+      "component": "card",
+      "theme": "dark",
+      "profile": "legacy-800x600@1",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "card-action-dark",
+      "component": "card",
+      "theme": "dark",
+      "profile": "mobile-375x667@2",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "card-action-light",
+      "component": "card",
+      "theme": "light",
+      "profile": "desktop-1280x720@1.25",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "card-action-light",
+      "component": "card",
+      "theme": "light",
+      "profile": "desktop-1920x1080@1.5",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "card-action-light",
+      "component": "card",
+      "theme": "light",
+      "profile": "legacy-800x600@1",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "card-action-light",
+      "component": "card",
+      "theme": "light",
+      "profile": "mobile-375x667@2",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "card-basic-dark",
+      "component": "card",
+      "theme": "dark",
+      "profile": "desktop-1280x720@1.25",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "card-basic-dark",
+      "component": "card",
+      "theme": "dark",
+      "profile": "desktop-1920x1080@1.5",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "card-basic-dark",
+      "component": "card",
+      "theme": "dark",
+      "profile": "legacy-800x600@1",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "card-basic-dark",
+      "component": "card",
+      "theme": "dark",
+      "profile": "mobile-375x667@2",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "card-basic-light",
+      "component": "card",
+      "theme": "light",
+      "profile": "desktop-1280x720@1.25",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "card-basic-light",
+      "component": "card",
+      "theme": "light",
+      "profile": "desktop-1920x1080@1.5",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "card-basic-light",
+      "component": "card",
+      "theme": "light",
+      "profile": "legacy-800x600@1",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "card-basic-light",
+      "component": "card",
+      "theme": "light",
+      "profile": "mobile-375x667@2",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
       "fixture": "font-geist-dark",
       "component": "font",
       "theme": "dark",
@@ -310,6 +1482,70 @@
     {
       "fixture": "font-inter-light",
       "component": "font",
+      "theme": "light",
+      "profile": "mobile-375x667@2",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "label-basic-dark",
+      "component": "label",
+      "theme": "dark",
+      "profile": "desktop-1280x720@1.25",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "label-basic-dark",
+      "component": "label",
+      "theme": "dark",
+      "profile": "desktop-1920x1080@1.5",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "label-basic-dark",
+      "component": "label",
+      "theme": "dark",
+      "profile": "legacy-800x600@1",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "label-basic-dark",
+      "component": "label",
+      "theme": "dark",
+      "profile": "mobile-375x667@2",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "label-basic-light",
+      "component": "label",
+      "theme": "light",
+      "profile": "desktop-1280x720@1.25",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "label-basic-light",
+      "component": "label",
+      "theme": "light",
+      "profile": "desktop-1920x1080@1.5",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "label-basic-light",
+      "component": "label",
+      "theme": "light",
+      "profile": "legacy-800x600@1",
+      "status": "error",
+      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+    },
+    {
+      "fixture": "label-basic-light",
+      "component": "label",
       "theme": "light",
       "profile": "mobile-375x667@2",
       "status": "error",

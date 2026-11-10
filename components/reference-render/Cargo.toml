@@ -15,6 +15,4 @@ path = "src/main.rs"
 [dependencies]
 openui.workspace = true
 openui-components.workspace = true
-
-[dev-dependencies]
 serde_json.workspace = true

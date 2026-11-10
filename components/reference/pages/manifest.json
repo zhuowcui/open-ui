@@ -40,6 +40,258 @@
   ],
   "fixtures": [
     {
+      "id": "badge-default-dark",
+      "component": "badge",
+      "theme": "dark",
+      "description": "Badge, default variant",
+      "page": "badge-default-dark.html"
+    },
+    {
+      "id": "badge-default-light",
+      "component": "badge",
+      "theme": "light",
+      "description": "Badge, default variant",
+      "page": "badge-default-light.html"
+    },
+    {
+      "id": "badge-destructive-dark",
+      "component": "badge",
+      "theme": "dark",
+      "description": "Badge, destructive variant",
+      "page": "badge-destructive-dark.html"
+    },
+    {
+      "id": "badge-destructive-light",
+      "component": "badge",
+      "theme": "light",
+      "description": "Badge, destructive variant",
+      "page": "badge-destructive-light.html"
+    },
+    {
+      "id": "badge-ghost-dark",
+      "component": "badge",
+      "theme": "dark",
+      "description": "Badge, ghost variant",
+      "page": "badge-ghost-dark.html"
+    },
+    {
+      "id": "badge-ghost-light",
+      "component": "badge",
+      "theme": "light",
+      "description": "Badge, ghost variant",
+      "page": "badge-ghost-light.html"
+    },
+    {
+      "id": "badge-link-dark",
+      "component": "badge",
+      "theme": "dark",
+      "description": "Badge, link variant",
+      "page": "badge-link-dark.html"
+    },
+    {
+      "id": "badge-link-light",
+      "component": "badge",
+      "theme": "light",
+      "description": "Badge, link variant",
+      "page": "badge-link-light.html"
+    },
+    {
+      "id": "badge-outline-dark",
+      "component": "badge",
+      "theme": "dark",
+      "description": "Badge, outline variant",
+      "page": "badge-outline-dark.html"
+    },
+    {
+      "id": "badge-outline-light",
+      "component": "badge",
+      "theme": "light",
+      "description": "Badge, outline variant",
+      "page": "badge-outline-light.html"
+    },
+    {
+      "id": "badge-secondary-dark",
+      "component": "badge",
+      "theme": "dark",
+      "description": "Badge, secondary variant",
+      "page": "badge-secondary-dark.html"
+    },
+    {
+      "id": "badge-secondary-light",
+      "component": "badge",
+      "theme": "light",
+      "description": "Badge, secondary variant",
+      "page": "badge-secondary-light.html"
+    },
+    {
+      "id": "button-default-dark",
+      "component": "button",
+      "theme": "dark",
+      "description": "Button, default variant, default size",
+      "page": "button-default-dark.html"
+    },
+    {
+      "id": "button-default-light",
+      "component": "button",
+      "theme": "light",
+      "description": "Button, default variant, default size",
+      "page": "button-default-light.html"
+    },
+    {
+      "id": "button-destructive-dark",
+      "component": "button",
+      "theme": "dark",
+      "description": "Button, destructive variant, default size",
+      "page": "button-destructive-dark.html"
+    },
+    {
+      "id": "button-destructive-light",
+      "component": "button",
+      "theme": "light",
+      "description": "Button, destructive variant, default size",
+      "page": "button-destructive-light.html"
+    },
+    {
+      "id": "button-disabled-dark",
+      "component": "button",
+      "theme": "dark",
+      "description": "Disabled button, default variant (opacity 50%)",
+      "page": "button-disabled-dark.html"
+    },
+    {
+      "id": "button-disabled-light",
+      "component": "button",
+      "theme": "light",
+      "description": "Disabled button, default variant (opacity 50%)",
+      "page": "button-disabled-light.html"
+    },
+    {
+      "id": "button-ghost-dark",
+      "component": "button",
+      "theme": "dark",
+      "description": "Button, ghost variant, default size",
+      "page": "button-ghost-dark.html"
+    },
+    {
+      "id": "button-ghost-light",
+      "component": "button",
+      "theme": "light",
+      "description": "Button, ghost variant, default size",
+      "page": "button-ghost-light.html"
+    },
+    {
+      "id": "button-link-dark",
+      "component": "button",
+      "theme": "dark",
+      "description": "Button, link variant, default size",
+      "page": "button-link-dark.html"
+    },
+    {
+      "id": "button-link-light",
+      "component": "button",
+      "theme": "light",
+      "description": "Button, link variant, default size",
+      "page": "button-link-light.html"
+    },
+    {
+      "id": "button-outline-dark",
+      "component": "button",
+      "theme": "dark",
+      "description": "Button, outline variant, default size",
+      "page": "button-outline-dark.html"
+    },
+    {
+      "id": "button-outline-light",
+      "component": "button",
+      "theme": "light",
+      "description": "Button, outline variant, default size",
+      "page": "button-outline-light.html"
+    },
+    {
+      "id": "button-secondary-dark",
+      "component": "button",
+      "theme": "dark",
+      "description": "Button, secondary variant, default size",
+      "page": "button-secondary-dark.html"
+    },
+    {
+      "id": "button-secondary-light",
+      "component": "button",
+      "theme": "light",
+      "description": "Button, secondary variant, default size",
+      "page": "button-secondary-light.html"
+    },
+    {
+      "id": "button-size-lg-dark",
+      "component": "button",
+      "theme": "dark",
+      "description": "Button, default variant, size lg",
+      "page": "button-size-lg-dark.html"
+    },
+    {
+      "id": "button-size-lg-light",
+      "component": "button",
+      "theme": "light",
+      "description": "Button, default variant, size lg",
+      "page": "button-size-lg-light.html"
+    },
+    {
+      "id": "button-size-sm-dark",
+      "component": "button",
+      "theme": "dark",
+      "description": "Button, default variant, size sm",
+      "page": "button-size-sm-dark.html"
+    },
+    {
+      "id": "button-size-sm-light",
+      "component": "button",
+      "theme": "light",
+      "description": "Button, default variant, size sm",
+      "page": "button-size-sm-light.html"
+    },
+    {
+      "id": "button-size-xs-dark",
+      "component": "button",
+      "theme": "dark",
+      "description": "Button, default variant, size xs",
+      "page": "button-size-xs-dark.html"
+    },
+    {
+      "id": "button-size-xs-light",
+      "component": "button",
+      "theme": "light",
+      "description": "Button, default variant, size xs",
+      "page": "button-size-xs-light.html"
+    },
+    {
+      "id": "card-action-dark",
+      "component": "card",
+      "theme": "dark",
+      "description": "Card whose header also has an action (two-column grid)",
+      "page": "card-action-dark.html"
+    },
+    {
+      "id": "card-action-light",
+      "component": "card",
+      "theme": "light",
+      "description": "Card whose header also has an action (two-column grid)",
+      "page": "card-action-light.html"
+    },
+    {
+      "id": "card-basic-dark",
+      "component": "card",
+      "theme": "dark",
+      "description": "Card with header (title, description), content and footer",
+      "page": "card-basic-dark.html"
+    },
+    {
+      "id": "card-basic-light",
+      "component": "card",
+      "theme": "light",
+      "description": "Card with header (title, description), content and footer",
+      "page": "card-basic-light.html"
+    },
+    {
       "id": "font-geist-dark",
       "component": "font",
       "theme": "dark",
@@ -82,6 +334,20 @@
       "page": "font-inter-light.html"
     },
     {
+      "id": "label-basic-dark",
+      "component": "label",
+      "theme": "dark",
+      "description": "Label on its own",
+      "page": "label-basic-dark.html"
+    },
+    {
+      "id": "label-basic-light",
+      "component": "label",
+      "theme": "light",
+      "description": "Label on its own",
+      "page": "label-basic-light.html"
+    },
+    {
       "id": "separator-horizontal-dark",
       "component": "separator",
       "theme": "dark",
@@ -111,13 +377,51 @@
     }
   ],
   "files": {
+    "badge-default-dark.html": "9c21440656d4050bd67ef6363318d19f7e7b028424f00d13faa57631cf4eaf14",
+    "badge-default-light.html": "5251fb2dd2d9a1a41d71602380d7d68622540c832210e2a050ea794fdf890584",
+    "badge-destructive-dark.html": "a9684f0234c6e9ecea4e5583065a97ca345de1b7843a1732f75fb5ea3afb1b98",
+    "badge-destructive-light.html": "880d569a4f6c7f6dbd050b436a6a12368bad64c91c9035f0e7a5a0e4463f5e54",
+    "badge-ghost-dark.html": "8d75cfb4c2317fce5bf430d3fb57ac3855eb21aa4ced472231a2da973034325e",
+    "badge-ghost-light.html": "16b0b8df75a7651554f86e77a10fcb75c9eace569c4c44e00dbf805bd6fe4b5c",
+    "badge-link-dark.html": "5b630be824316a82a2691e444dcd0c5c24dc4f002d88f9784229f2cc341a9151",
+    "badge-link-light.html": "ac6f80a8309e72cf0f96f9bdd7283f1ea70fcc52f3e22b7e2a29c214d0274e3f",
+    "badge-outline-dark.html": "c37470079567647ae8b844e2543eebf1d6bffa3f7e8292f68602aad769d042c4",
+    "badge-outline-light.html": "7380c4292f6a21118bd547bfe68290ddfa974247d95975eb5e2a5e99d57777ec",
+    "badge-secondary-dark.html": "17c7f9abda001bf9643e383c3d54c29f4f07ae2c516c43f6541f3c8cdf63434e",
+    "badge-secondary-light.html": "28aa62a4b50ae3a1aa7d4fa17a04690d15d9948c0a2df3928723053464ce5c2f",
+    "button-default-dark.html": "b502dc68c85108508319428daae3c3cc2d4fc6573fcb12d95ca6a892d4cd759e",
+    "button-default-light.html": "9d1a299c2ac344390732324c083f9cfeb986c6934a2200018abe4797f2e66916",
+    "button-destructive-dark.html": "5de126f3adedaf6efc05f772e14bf2ed4b81d4364c664afb2acffa169f9fb0ad",
+    "button-destructive-light.html": "8f5ef06c738e9de6d795a4ab2f6f23633547c3608cda754fbb7cd31eebf0c73b",
+    "button-disabled-dark.html": "956482b04a20ace7a6526eb1bd1f057b64f47c9619fbc3f0d37c3aaad0c49db8",
+    "button-disabled-light.html": "89e0d4ffe42258e9d6d70b77c369520f0b9cb76df091028cd78cdda530fd9155",
+    "button-ghost-dark.html": "63022bb67c57c21fc7b208cc20f01fce19d2f57c50cf4fed17f2e49e08d22122",
+    "button-ghost-light.html": "303c26e17ccbce210bd52c33b5fb2ffa62a655f4e289718086f35330743b2f7a",
+    "button-link-dark.html": "14d8d88ead592beb271d601261970df9a5481d9017fb0e49b620de749d3919db",
+    "button-link-light.html": "861267f3194199561c4a51c59d8022869bf653a581680af12828064769750624",
+    "button-outline-dark.html": "1eb1e51fdd8b9800f17abae85cd0e35741fd654157a96e10c044bb9b67283e75",
+    "button-outline-light.html": "77cf995851606da85481974fa3eef914f80f62b7a639f20bbbc16015d45e0469",
+    "button-secondary-dark.html": "1ad02e7531896f0cb3bb551325d05fd4c9dbd0882f693ff602c2a9516bd7e1fd",
+    "button-secondary-light.html": "c449f5f6a4b16a0a02fc2090f4f94522ced0806bcbf81e60b1ed42a436dbf711",
+    "button-size-lg-dark.html": "8ae5be4e207b8cd987d04ba3004a8cb898677d5009869359587ebcc1d3b89603",
+    "button-size-lg-light.html": "14c09c282fd6bc480a4047fbd647d2282fd2d9f19ad64a299ed3612a93847db3",
+    "button-size-sm-dark.html": "e74ebb1f5a12a3fc8677904b773093a69ce20b2310d4c63d689eaebc5f0001b6",
+    "button-size-sm-light.html": "d7ef2bea62f27c05e7a9ce771c3a6e7628424892fb027212b2542bb04bdb2c5f",
+    "button-size-xs-dark.html": "29db48e3ec7572f0201cecab170c3b6f5baf2fe65282b2e0e6679cca46f1ec5b",
+    "button-size-xs-light.html": "ab8e09e936438bda6be678d19493564fce2884856271a61ebf839d6f7603701c",
+    "card-action-dark.html": "85da1394a699e5c9d3223230479ddc31f6cb04c04852b774d5d7083820adac8b",
+    "card-action-light.html": "c3a8fa9036bc2674ecccc6902c8ad4ab8d3045ca0ca256713c7ceaf1d9eafce3",
+    "card-basic-dark.html": "e67cd4f56476239b0b4d891fdb12c8a5fdd49b80bf445b4d13d74135e7c75ec9",
+    "card-basic-light.html": "24e75ce40abf379203397e107a9d09379212b57dc3ed6958de646423673757bc",
     "font-geist-dark.html": "7e407b617c9db706f8934b42b9551613256c76adad5882b4ee6abfb3b6d7f61e",
     "font-geist-light.html": "343ffae438160934786d9371f0bf0e00c3046284996a45c2998a4f1d8aa987b6",
     "font-geist-mono-dark.html": "99ce00d0959494d6a02dfae8783eff22103dbbb6e05365e8339c9b8e0379f018",
     "font-geist-mono-light.html": "b9e4118ad2650ce5b3ddc395d83d2bbd9fd826d08ad152d54a7e63e3e4a99cba",
     "font-inter-dark.html": "2e72817dddd6a3a56de8f9c435a66b6c820f2f69494f3403f17e71016a69a845",
     "font-inter-light.html": "b38198e53ea22302ea4e9544a07890abfe2cff9dd3744fc55e2e86afd857a9e6",
-    "reference.css": "bf8a1517ff11dea1e9abf6beeff0f212243cd01710eac1165d051912d7242d8d",
+    "label-basic-dark.html": "78bc395f795fbb8e49b8e6e9fa1962ba5027ed702da63c93ec53817b73bb458e",
+    "label-basic-light.html": "e8e584dce798e4482b8b1b54040f20b86fff45a811a89d46ce00ce54a7ec4c79",
+    "reference.css": "32f312339e3b96e081a4015237ceb84a0b2b7a6b33fee9c40144ce51ce9ee1b1",
     "separator-horizontal-dark.html": "95bb49a8da4d9903a341e96b4890c17ab2d98ff0622a3b2d457ed0c81b86e2f1",
     "separator-horizontal-light.html": "ec9863927c8c7769f6a2c9797d5686f91cd230c6250d4002d05f0cce324d05d4",
     "separator-vertical-dark.html": "b979361064bbe3019425876d3fad7bf1a160e84011cf80a6bf49862946f35f7f",

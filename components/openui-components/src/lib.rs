@@ -6,11 +6,24 @@
 //! with shadcn/ui rendered by Chromium; see `components/README.md` for the
 //! harness and `docs/progress/tracks/components.md` for measured results.
 
+mod badge;
+mod button;
+mod card;
+mod css;
 pub mod fonts;
+mod label;
 mod separator;
 mod theme;
 
+pub use badge::{Badge, BadgeProps, BadgeVariant};
+pub use button::{Button, ButtonProps, ButtonSize, ButtonVariant};
+pub use card::{
+    Card, CardAction, CardActionProps, CardContent, CardContentProps, CardDescription,
+    CardDescriptionProps, CardFooter, CardFooterProps, CardHeader, CardHeaderProps, CardProps,
+    CardTitle, CardTitleProps,
+};
 pub use fonts::register_fonts;
+pub use label::{Label, LabelProps};
 pub use separator::{Orientation, Separator, SeparatorProps};
 pub use theme::Theme;
 

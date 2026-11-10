@@ -2,6 +2,12 @@
 //!
 //!     openui-components-reference list
 //!     openui-components-reference render <fixture-id> <out.png> [--viewport WxH] [--scale S]
+//!     openui-components-reference geometry <fixture-id> [--viewport WxH] [--scale S]
+//!
+//! `geometry` prints, as JSON, the border box of the fixture's root (the
+//! page's `<main>`) and of every element inside it, depth first, in CSS
+//! pixels. The harness compares it with Chromium's `getBoundingClientRect`
+//! to tell layout differences from paint differences.
 //!
 //! Each fixture ID matches a page built by `components/reference/build.mjs`
 //! from the pinned shadcn/ui sources. A page is `<body>` with shadcn's
@@ -11,7 +17,11 @@
 
 use openui::prelude::*;
 use openui_components::{
-    register_fonts, with_theme, Orientation, Separator, SeparatorProps, Theme,
+    register_fonts, with_theme, Badge, BadgeProps, BadgeVariant, Button, ButtonProps, ButtonSize,
+    ButtonVariant, Card, CardAction, CardActionProps, CardContent, CardContentProps,
+    CardDescription, CardDescriptionProps, CardFooter, CardFooterProps, CardHeader,
+    CardHeaderProps, CardProps, CardTitle, CardTitleProps, Label, LabelProps, Orientation,
+    Separator, SeparatorProps, Theme,
 };
 
 type Fixture = fn() -> ViewNode;
@@ -27,6 +37,25 @@ const FIXTURES: &[(&str, Fixture, bool)] = &[
     ("font-inter", font_inter, true),
     ("separator-horizontal", separator_horizontal, false),
     ("separator-vertical", separator_vertical, false),
+    ("button-default", button_default, true),
+    ("button-destructive", button_destructive, true),
+    ("button-outline", button_outline, true),
+    ("button-secondary", button_secondary, true),
+    ("button-ghost", button_ghost, true),
+    ("button-link", button_link, true),
+    ("button-size-xs", button_size_xs, true),
+    ("button-size-sm", button_size_sm, true),
+    ("button-size-lg", button_size_lg, true),
+    ("button-disabled", button_disabled, true),
+    ("badge-default", badge_default, true),
+    ("badge-secondary", badge_secondary, true),
+    ("badge-destructive", badge_destructive, true),
+    ("badge-outline", badge_outline, true),
+    ("badge-ghost", badge_ghost, true),
+    ("badge-link", badge_link, true),
+    ("card-basic", card_basic, true),
+    ("card-action", card_action, true),
+    ("label-basic", label_basic, true),
 ];
 
 // `FontSpecimen` in fixtures.tsx: `flex flex-col gap-1 text-sm` and a font
@@ -102,6 +131,106 @@ fn separator_vertical() -> ViewNode {
     }
 }
 
+// Buttons and badges sit in a `flex` row (`Row` in fixtures.tsx).
+
+macro_rules! button_fixture {
+    ($name:ident, $variant:ident, $size:ident, $disabled:expr, $text:literal) => {
+        fn $name() -> ViewNode {
+            view! {
+                <div style:display="flex">
+                    <Button
+                        variant={ButtonVariant::$variant}
+                        size={ButtonSize::$size}
+                        disabled={$disabled}
+                    >
+                        $text
+                    </Button>
+                </div>
+            }
+        }
+    };
+}
+
+button_fixture!(button_default, Default, Default, false, "Button");
+button_fixture!(
+    button_destructive,
+    Destructive,
+    Default,
+    false,
+    "Destructive"
+);
+button_fixture!(button_outline, Outline, Default, false, "Outline");
+button_fixture!(button_secondary, Secondary, Default, false, "Secondary");
+button_fixture!(button_ghost, Ghost, Default, false, "Ghost");
+button_fixture!(button_link, Link, Default, false, "Link");
+button_fixture!(button_size_xs, Default, Xs, false, "Extra small");
+button_fixture!(button_size_sm, Default, Sm, false, "Small");
+button_fixture!(button_size_lg, Default, Lg, false, "Large");
+button_fixture!(button_disabled, Default, Default, true, "Disabled");
+
+macro_rules! badge_fixture {
+    ($name:ident, $variant:ident, $text:literal) => {
+        fn $name() -> ViewNode {
+            view! {
+                <div style:display="flex">
+                    <Badge variant={BadgeVariant::$variant}>$text</Badge>
+                </div>
+            }
+        }
+    };
+}
+
+badge_fixture!(badge_default, Default, "Badge");
+badge_fixture!(badge_secondary, Secondary, "Secondary");
+badge_fixture!(badge_destructive, Destructive, "Destructive");
+badge_fixture!(badge_outline, Outline, "Outline");
+badge_fixture!(badge_ghost, Ghost, "Ghost");
+badge_fixture!(badge_link, Link, "Link");
+
+/// `className="w-full max-w-sm"` on the example card.
+const EXAMPLE_CARD: &[(&str, &str)] = &[("width", "100%"), ("max-width", "384px")];
+
+fn card_basic() -> ViewNode {
+    view! {
+        <Card css={EXAMPLE_CARD}>
+            <CardHeader>
+                <CardTitle>"Card Title"</CardTitle>
+                <CardDescription>"Card Description"</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <p>"Card Content"</p>
+            </CardContent>
+            <CardFooter>
+                <p>"Card Footer"</p>
+            </CardFooter>
+        </Card>
+    }
+}
+
+fn card_action() -> ViewNode {
+    view! {
+        <Card css={EXAMPLE_CARD}>
+            <CardHeader>
+                <CardTitle>"Card Title"</CardTitle>
+                <CardDescription>"Card Description"</CardDescription>
+                <CardAction>"Card Action"</CardAction>
+            </CardHeader>
+            <CardContent>
+                <p>"Card Content"</p>
+            </CardContent>
+            <CardFooter>
+                <p>"Card Footer"</p>
+            </CardFooter>
+        </Card>
+    }
+}
+
+fn label_basic() -> ViewNode {
+    view! {
+        <Label>"Accept terms and conditions"</Label>
+    }
+}
+
 /// Mounts a fixture's view; `view!` embeds child views through components.
 #[allow(non_snake_case)]
 #[component]
@@ -131,6 +260,51 @@ fn render(
     height: f64,
     scale: f64,
 ) -> Result<(), Box<dyn std::error::Error>> {
+    let app = mount_fixture(id, width, height, scale)?;
+    app.render_png_to(0.0, output)?;
+    Ok(())
+}
+
+/// The border boxes of the fixture root and its descendant elements.
+fn geometry(
+    id: &str,
+    width: f64,
+    height: f64,
+    scale: f64,
+) -> Result<serde_json::Value, Box<dyn std::error::Error>> {
+    let app = mount_fixture(id, width, height, scale)?;
+    app.document().update_all()?;
+    let root = app
+        .document()
+        .body()
+        .first_child()?
+        .ok_or("the fixture root is missing")?;
+    let mut boxes = Vec::new();
+    let mut stack = vec![(root, 0usize)];
+    while let Some((element, depth)) = stack.pop() {
+        let rect = element.bounding_rect()?;
+        boxes.push(serde_json::json!({
+            "depth": depth,
+            "slot": element.get_attribute("data-slot")?,
+            "rect": rect.map(|r| [r.x, r.y, r.width, r.height]),
+        }));
+        let mut children = Vec::new();
+        let mut child = element.first_child()?;
+        while let Some(next) = child {
+            child = next.next_sibling()?;
+            children.push((next, depth + 1));
+        }
+        stack.extend(children.into_iter().rev());
+    }
+    Ok(serde_json::json!({ "fixture": id, "boxes": boxes }))
+}
+
+fn mount_fixture(
+    id: &str,
+    width: f64,
+    height: f64,
+    scale: f64,
+) -> Result<HeadlessApp, Box<dyn std::error::Error>> {
     let (fixture, text, theme) = find_fixture(id).ok_or_else(|| format!("unknown fixture {id}"))?;
     let mut app = HeadlessApp::with_options(
         ViewportMetrics::from_logical_size(width, height, scale)?,
@@ -164,8 +338,22 @@ fn render(
             }
         })
     })?;
-    app.render_png_to(0.0, output)?;
-    Ok(())
+    Ok(app)
+}
+
+/// `[--viewport WxH] [--scale S]`, defaulting to the 800x600 profile at 1x.
+fn parse_surface(args: &[String]) -> Result<(f64, f64, f64), Box<dyn std::error::Error>> {
+    let (mut width, mut height, mut scale) = (800.0, 600.0, 1.0);
+    let mut rest = args.iter();
+    while let Some(flag) = rest.next() {
+        let value = rest.next().ok_or_else(|| format!("{flag} needs a value"))?;
+        match flag.as_str() {
+            "--viewport" => (width, height) = parse_viewport(value)?,
+            "--scale" => scale = value.parse()?,
+            other => return Err(format!("unknown option {other}").into()),
+        }
+    }
+    Ok((width, height, scale))
 }
 
 fn parse_viewport(value: &str) -> Result<(f64, f64), Box<dyn std::error::Error>> {
@@ -187,21 +375,18 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         Some("render") => {
             let id = args.get(1).ok_or("missing fixture id")?;
             let output = args.get(2).ok_or("missing output path")?;
-            let (mut width, mut height, mut scale) = (800.0, 600.0, 1.0);
-            let mut rest = args[3..].iter();
-            while let Some(flag) = rest.next() {
-                let value = rest.next().ok_or_else(|| format!("{flag} needs a value"))?;
-                match flag.as_str() {
-                    "--viewport" => (width, height) = parse_viewport(value)?,
-                    "--scale" => scale = value.parse()?,
-                    other => return Err(format!("unknown option {other}").into()),
-                }
-            }
+            let (width, height, scale) = parse_surface(&args[3..])?;
             render(id, output, width, height, scale)
+        }
+        Some("geometry") => {
+            let id = args.get(1).ok_or("missing fixture id")?;
+            let (width, height, scale) = parse_surface(&args[2..])?;
+            println!("{}", geometry(id, width, height, scale)?);
+            Ok(())
         }
         _ => Err(
             "usage: openui-components-reference list | render <id> <out.png> \
-                  [--viewport WxH] [--scale S]"
+                  [--viewport WxH] [--scale S] | geometry <id> [--viewport WxH] [--scale S]"
                 .into(),
         ),
     }
@@ -242,6 +427,59 @@ mod tests {
         reference.sort();
         ours.sort();
         assert_eq!(ours, reference);
+    }
+
+    #[test]
+    fn geometry_lists_the_fixture_tree_depth_first() {
+        let value = geometry("card-action-light", 800.0, 600.0, 1.0).unwrap();
+        let slots: Vec<(u64, Option<&str>)> = value["boxes"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|b| (b["depth"].as_u64().unwrap(), b["slot"].as_str()))
+            .collect();
+        assert_eq!(
+            slots,
+            [
+                (0, None),
+                (1, Some("card")),
+                (2, Some("card-header")),
+                (3, Some("card-title")),
+                (3, Some("card-description")),
+                (3, Some("card-action")),
+                (2, Some("card-content")),
+                (3, None),
+                (2, Some("card-footer")),
+                (3, None),
+            ]
+        );
+    }
+
+    /// Preflight gives buttons `font: inherit` and `letter-spacing: inherit`;
+    /// Open UI has no `inherit` literal, so its button must already inherit.
+    #[test]
+    fn buttons_inherit_the_page_font() {
+        let app = mount_fixture("button-outline-dark", 800.0, 600.0, 1.0).unwrap();
+        let row = app.document().body().first_child().unwrap().unwrap();
+        let row = row.first_child().unwrap().unwrap();
+        let button = row.first_child().unwrap().unwrap();
+        assert_eq!(
+            button.get_attribute("data-slot").unwrap().as_deref(),
+            Some("button")
+        );
+        let (row, button) = (
+            row.computed_style().unwrap(),
+            button.computed_style().unwrap(),
+        );
+        assert_eq!(
+            format!("{:?}", button.font_family()),
+            format!("{:?}", row.font_family())
+        );
+        assert_eq!(button.letter_spacing(), row.letter_spacing());
+        assert_eq!(
+            format!("{:?}", button.font_style()),
+            format!("{:?}", row.font_style())
+        );
     }
 
     #[test]
