@@ -42,6 +42,13 @@ so the corpus cannot shrink silently.
 With the `f32` encoding deliberately off by one bit, the first and third
 tests fail; restored, they pass.
 
+After rebasing onto `main` with PR #95, which adds `oklch()`, `oklab()`
+and `color-mix()`, the corpus gained five lines in those forms, including
+`oklch(1 0 0 / 10%)`, whose red, green and blue are above 1 and stay
+unclamped. They rebuild exactly, and the touched crates pass again on
+Windows (425 passed, 0 failed, 11 ignored). The census and coverage rows
+below were measured before the rebase.
+
 | Check | Command | Result |
 | --- | --- | --- |
 | Constructor round trip, coverage, `view!` | `cargo test -p openui --test typed_style_constructors` (Windows) | 3 passed |
