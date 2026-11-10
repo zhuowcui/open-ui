@@ -269,11 +269,13 @@ impl Default for Runtime {
 /// Flush all pending effects. Each effect is run outside any `RefCell` borrow
 /// so its closure can freely read/write signals.
 /// The reactive scope new effects and cleanups belong to, if any.
+#[cfg(feature = "async")]
 pub(crate) fn current_scope() -> Option<ScopeId> {
     RUNTIME.with(|rt| rt.borrow().current_scope)
 }
 
 /// Whether `id` still names a live signal.
+#[cfg(feature = "async")]
 pub(crate) fn signal_exists(id: SignalId) -> bool {
     RUNTIME.with(|rt| {
         rt.borrow()
