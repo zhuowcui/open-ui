@@ -12,7 +12,7 @@ The order and verification of each PR are in
 | # | PR | State |
 | --- | --- | --- |
 | 1 | RFC 0002: CLI, app layout and async model | Merged (#90) |
-| 2 | `openui-cli` skeleton: `new`, `dev`, `build`, `doctor` | In review |
+| 2 | `openui-cli` skeleton: `new`, `dev`, `build`, `doctor` | Merged (#93) |
 | 3 | Multi-window runtime | In review |
 | 4 | Async runtime integrated with the UI thread and signals | Not started |
 | 5 | Clipboard service | Not started |
