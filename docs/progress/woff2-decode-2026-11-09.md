@@ -61,8 +61,17 @@ Both are built with the CI `SKIA_GN_ARGS` and share one Chromium cache.
 Chromium is identical in all 23,728 comparisons, and Open UI's output is
 identical in all 23,728: 22,517 exact before and after.
 
-The end-to-end check is the components track's 24 Geist and Inter font
-fixtures, which need their bundled WOFF2 files (PR #94, not merged when
-this was written). This PR does not claim those fixtures match Chromium:
-it removes the registration error, and their glyph placement is measured
-separately.
+The components track checked this end to end on their branch
+`components/static-basics` at `0d3e81c3`, with this PR's `openui-text`
+change at `d6389428` applied, built in the census environment (pinned
+FreeType) and compared with pinned Chromium 147 by
+`components/harness/reference_harness.py`. Before the change: 8 exact,
+8 different and 176 `MalformedFont` errors out of 192 comparisons. After:
+8 exact, 184 different, 0 errors. 188 of the 192 Open UI images are
+byte-identical to their earlier preview, which loaded the WOFF2 files
+through a system FreeType built with Brotli, so decoding first gives the
+scaler the same font. The remaining differences (text, badge edges,
+translucent borders, an opacity layer, column-flex item height, grid auto
+column width) are not caused by font loading and are tracked separately.
+This is the components track's measurement, not a test of this branch's
+CI.
