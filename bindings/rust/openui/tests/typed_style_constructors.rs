@@ -56,11 +56,49 @@ fn every_property_with_a_literal_grammar_has_a_constructor_case() {
         "found {} renderer literal arms",
         renderer.len()
     );
+    // Some renderer properties have hand-written parsers instead of an arm;
+    // any property that accepts one of these probes needs a case as well.
+    const PROBES: &[&str] = &[
+        "auto",
+        "none",
+        "normal",
+        "0",
+        "1",
+        "0.5",
+        "10px",
+        "50%",
+        "red",
+        "solid",
+        "hidden",
+        "visible",
+        "collapse",
+        "center",
+        "start",
+        "both",
+        "left",
+        "x",
+        "border-box",
+        "stable",
+        "thin",
+        "1fr 2fr",
+        "10px 20px",
+        "1px solid red",
+        "span 2",
+        "\"a\"",
+        "a",
+        "en",
+        "--a",
+        "fill",
+        "inset(10px)",
+    ];
     let missing: Vec<&str> = PROPERTY_METADATA
         .iter()
         .filter(|metadata| {
             metadata.initial != "renderer-initial"
                 || renderer.contains(&format!("{:?}", metadata.property))
+                || PROBES
+                    .iter()
+                    .any(|probe| parse_literal(metadata.property, probe).is_ok())
         })
         .filter(|metadata| !covered.contains(&metadata.property))
         .map(|metadata| metadata.css_name)
