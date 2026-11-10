@@ -64,7 +64,7 @@ jobs:
             build-essential clang libclang-18-dev libfontconfig1-dev \
             libfreetype-dev libgl1-mesa-dev libwayland-dev libx11-dev \
             libx11-xcb-dev libxcb1-dev libxkbcommon-dev mesa-utils \
-            ninja-build pkg-config python3 weston xvfb libxkbcommon-x11-0
+            ninja-build pkg-config python3 weston xvfb libxkbcommon-x11-0 dbus-daemon
           rustup toolchain install 1.94.1 --profile minimal --component rustfmt
           rustup default 1.94.1
       - uses: actions/cache@v5
@@ -103,7 +103,8 @@ jobs:
       - name: Run several windows and wake the loop from tasks on X11
         working-directory: bindings/rust
         run: |
-          cargo build --locked --package multi-window --package tasks --package clipboard --features linux
+          cargo build --locked --package multi-window --package tasks --package clipboard --package dialogs \
+            --features linux
           for backend in software opengl; do
             for test in multi_window wake clipboard; do
               xvfb-run --auto-servernum env OPENUI_REQUIRE_DISPLAY=1 OUI_BACKEND="$backend" \
@@ -113,7 +114,14 @@ jobs:
             xvfb-run --auto-servernum env OUI_BACKEND="$backend" OUI_SMOKE_EXIT=1 timeout 120 target/debug/tasks
             xvfb-run --auto-servernum env OUI_BACKEND="$backend" OUI_SMOKE_EXIT=1 target/debug/clipboard \
               | grep -F 'Ok("Open UI clipboard example")'
+            xvfb-run --auto-servernum env OUI_BACKEND="$backend" OUI_SMOKE_EXIT=1 target/debug/dialogs
           done
+      - name: Speak the desktop portal's file chooser protocol, with a zenity fallback
+        working-directory: bindings/rust
+        run: |
+          cargo test --locked --package openui-platform --features "linux dialog" --lib dialog
+          OPENUI_REQUIRE_SESSION_BUS=1 dbus-run-session -- \
+            cargo test --locked --package openui-platform --features "linux dialog" --test dialog_portal
       - name: Smoke-test pure Wayland software presentation
         working-directory: bindings/rust
         run: |

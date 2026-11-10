@@ -15,13 +15,43 @@ The order and verification of each PR are in
 | 2 | `openui-cli` skeleton: `new`, `dev`, `build`, `doctor` | Merged (#93) |
 | 3 | Multi-window runtime | Merged (#96) |
 | 4 | Async runtime integrated with the UI thread and signals | Merged (#98) |
-| 5 | Clipboard service | In review |
-| 6 | File dialogs | Not started |
+| 5 | Clipboard service | Merged (#99) |
+| 6 | File dialogs | In review |
 | 7 | App menu | Not started |
 | 8 | HTTP client | Not started |
 | 9 | `default` template and test utilities | Not started |
 
 ## Log
+
+### 9 November 2026: file dialogs
+
+Change: `openui::dialog::{open_file, save_file, pick_folder}` build native
+dialogs; `pick` and `pick_many` show one on a background thread, owned by
+the window that was current when it was built. `openui-platform::dialog`
+shows the Windows common item dialog (`IFileDialog`) and, on Linux, the XDG
+desktop portal's file chooser over D-Bus, falling back to `zenity` when no
+portal answers. The runtime now gives controllers each window's native
+handle (`WindowController::window_opened`).
+
+Design change from RFC 0002: rfd 0.16.1 would add about 50 crates,
+including ICU 2.4 (Rust 1.88, above the 1.85 MSRV). The dialogs use the
+`windows` 0.62.2 and zbus 5.13 crates already locked through AccessKit, so
+the lockfile gains no packages. The RFC row is updated.
+
+Verification:
+
+- Windows: `cargo test -p openui-platform --features "windows dialog" --test
+  dialog` shows real dialogs and answers them: save returns the suggested
+  non-ASCII name in the given folder, open returns the named file, the
+  folder picker returns its folder, and cancel returns nothing.
+- Windows, end to end: UI Automation clicks the `dialogs` example's "Save
+  as..." button; the dialog is owned by the app window and disables it
+  while open, and saving to a typed path writes the note.
+- Linux (WSL2): unit tests cover portal options, URI decoding and zenity
+  arguments; `dialog_portal` runs a stand-in portal on the session bus and
+  checks open, save, folder, cancel, failure responses and the zenity
+  fallback. CI runs it under `dbus-run-session`.
+- No headless test can show a dialog; `openui::testing` will add stand-ins.
 
 ### 9 November 2026: clipboard service
 

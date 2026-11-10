@@ -35,6 +35,9 @@ windows = [
     "dep:winit",
     "dep:windows-sys",
 ]
+# Native open, save and folder dialogs (`dialog`): the common item dialog on
+# Windows; the XDG desktop portal, or zenity, on Linux.
+dialog = ["dep:windows", "dep:zbus"]
 
 [dependencies]
 openui-geometry = { version = "=0.2.0", path = "../openui-geometry" }
@@ -50,6 +53,7 @@ glutin = { version = "=0.32.3", default-features = false, features = ["egl", "gl
 glutin-winit = { version = "=0.5.0", default-features = false, features = ["egl", "glx", "wayland", "x11"], optional = true }
 raw-window-handle = { version = "=0.6.2", optional = true }
 smithay-clipboard = { version = "=0.7.3", optional = true }
+zbus = { version = "=5.13.0", default-features = false, features = ["async-io", "blocking-api"], optional = true }
 softbuffer = { version = "=0.4.8", default-features = false, features = ["x11", "x11-dlopen", "wayland", "wayland-dlopen"], optional = true }
 winit = { version = "=0.30.13", default-features = false, features = ["rwh_06", "x11", "wayland", "wayland-dlopen"], optional = true }
 x11-clipboard = { version = "=0.9.3", optional = true }
@@ -64,10 +68,14 @@ glutin-winit = { version = "=0.5.0", default-features = false, features = ["wgl"
 raw-window-handle = { version = "=0.6.2", optional = true }
 softbuffer = { version = "=0.4.8", default-features = false, optional = true }
 winit = { version = "=0.30.13", default-features = false, features = ["rwh_06"], optional = true }
+windows = { version = "=0.62.2", features = ["Win32_Foundation", "Win32_System_Com", "Win32_UI_Shell", "Win32_UI_Shell_Common"], optional = true }
 windows-sys = { version = "=0.61.2", features = ["Win32_Foundation", "Win32_System_DataExchange", "Win32_System_Memory", "Win32_System_Ole", "Win32_System_Registry"], optional = true }
 
 [dev-dependencies]
 accesskit = "=0.25.0"
+
+[target.'cfg(target_os = "windows")'.dev-dependencies]
+windows-sys = { version = "=0.61.2", features = ["Win32_Foundation", "Win32_System_Threading", "Win32_UI_WindowsAndMessaging"] }
 
 # winit runs only on the main thread, so this test has its own `main`.
 [[test]]
@@ -81,3 +89,15 @@ harness = false
 [[test]]
 name = "clipboard"
 harness = false
+
+# Shows real dialogs, so one at a time from its own `main`.
+[[test]]
+name = "dialog"
+harness = false
+required-features = ["dialog"]
+
+# Serves a stand-in desktop portal; run it under dbus-run-session.
+[[test]]
+name = "dialog_portal"
+harness = false
+required-features = ["dialog"]
