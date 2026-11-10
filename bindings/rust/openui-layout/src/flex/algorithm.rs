@@ -3324,40 +3324,44 @@ fn resolve_main_axis_min_max(
                         && !axis_mapping.child_writing_direction.is_rtl()
                         && !has_definite_inline_constraint
                         && !has_semantic_break_in_inline_flow(doc, child_id);
-                let mut cs = if is_column && unconstrained_inline_flow {
-                    // A column item's content size suggestion is its block
-                    // size laid out in the flex basis space, at its stretched
-                    // or fit-content cross size, as Blink's
-                    // `BlockSizeFunc(SizeType::kContent)` in
-                    // `FlexLayoutAlgorithm::ConstructAndAppendFlexItems`.
-                    // A min-content-width layout would wrap text the item
-                    // does not wrap. Blink takes the layout's
-                    // `IntrinsicBlockSize()`, which ignores the item's own
-                    // block size, so the measurement replaces it with `auto`.
-                    resolve_content_based_size(
-                        doc,
-                        child_id,
-                        child_style,
-                        is_column,
-                        is_main_axis_horizontal,
-                        main_axis_border_padding,
-                        pct_inline,
-                        pct_block,
-                        true,
-                        resolved_alignment,
-                    )
-                } else {
-                    let intrinsic =
-                        crate::intrinsic_sizing::compute_intrinsic_block_sizes_with_layout(
-                            doc, child_id,
-                        );
-                    let intrinsic_block = if unconstrained_inline_flow {
-                        intrinsic.min_content_block_size
+                // An item with an aspect ratio keeps the min-content
+                // measurement: `resolve_content_based_size` would return its
+                // ratio-derived size, not its content's block size.
+                let mut cs =
+                    if is_column && unconstrained_inline_flow && effective_aspect_ratio.is_none() {
+                        // A column item's content size suggestion is its block
+                        // size laid out in the flex basis space, at its stretched
+                        // or fit-content cross size, as Blink's
+                        // `BlockSizeFunc(SizeType::kContent)` in
+                        // `FlexLayoutAlgorithm::ConstructAndAppendFlexItems`.
+                        // A min-content-width layout would wrap text the item
+                        // does not wrap. Blink takes the layout's
+                        // `IntrinsicBlockSize()`, which ignores the item's own
+                        // block size, so the measurement replaces it with `auto`.
+                        resolve_content_based_size(
+                            doc,
+                            child_id,
+                            child_style,
+                            is_column,
+                            is_main_axis_horizontal,
+                            main_axis_border_padding,
+                            pct_inline,
+                            pct_block,
+                            true,
+                            resolved_alignment,
+                        )
                     } else {
-                        intrinsic.max_content_block_size
+                        let intrinsic =
+                            crate::intrinsic_sizing::compute_intrinsic_block_sizes_with_layout(
+                                doc, child_id,
+                            );
+                        let intrinsic_block = if unconstrained_inline_flow {
+                            intrinsic.min_content_block_size
+                        } else {
+                            intrinsic.max_content_block_size
+                        };
+                        (intrinsic_block - main_axis_border_padding).clamp_negative_to_zero()
                     };
-                    (intrinsic_block - main_axis_border_padding).clamp_negative_to_zero()
-                };
                 // Same AR transfer for row flex (cross = block)
                 if !is_basis_from_content || doc.node(child_id).replaced.is_some() {
                     if let Some(ref ar) = effective_aspect_ratio {

@@ -33,7 +33,7 @@ is on the same branch as the pinned 147.0.7727.50.
 | Change | Owner | Source |
 | --- | --- | --- |
 | In a column container, an item whose inline flow is horizontal, left to right and unconstrained (no definite inline size and no semantic break) takes its content size suggestion from `resolve_content_based_size`: a layout at the used cross size with the item's main size treated as `auto`. | `openui-layout` | `bindings/rust/openui-layout/src/flex/algorithm.rs` |
-| Row containers with orthogonal items, and items with a definite inline constraint, a semantic break or a right-to-left direction, keep the previous measurement. | `openui-layout` | same |
+| Row containers with orthogonal items, and items with a definite inline constraint, a semantic break, a right-to-left direction or an aspect ratio, keep the previous measurement. | `openui-layout` | same |
 | `resolve_content_based_size` loses its unused constraint space parameter. | `openui-layout` | same |
 
 Treating the main size as `auto` matches `IntrinsicBlockSize()`, which
@@ -44,12 +44,23 @@ must shrink to fit, because its content suggestion is 0. An earlier draft of
 this change measured at the item's height, made the suggestion 150px, and
 failed that test.
 
+Items with an aspect ratio keep the previous measurement because
+`resolve_content_based_size` returns the size the ratio gives when the
+cross size is definite, not the content's block size. The first census of
+this change, at `f5118c44`, found this: WPT
+`css/css-sizing/aspect-ratio/flex-aspect-ratio-050.html` and `-052.html`
+went from exact to different at all four profiles. Each is a column item
+with `aspect-ratio: 2/1`, 100px wide, holding 100px of content in a 0px
+tall container. Its automatic minimum must be the 100px content height, and
+the new path gave the 50px from the ratio.
+
 ## Verification
 
 | Check | Command | Result |
 | --- | --- | --- |
 | Text item in a 300px column container, `flex-basis: auto` and `0`, with `flex-grow` | `cargo test -p openui-layout --test sp17_auto_height_flex_basis_tests column_auto_minimum` (Windows) | 2 passed. Each expects a 20px item; before the change each was 60px |
-| Layout crate | `cargo test -p openui-layout --no-fail-fast` (Windows) | 5,954 passed, 0 failed |
+| The aspect-ratio WPT cases, `width: auto` and `100%` | `cargo test -p openui-layout --test sp17_auto_height_flex_basis_tests column_aspect_ratio` (Windows) | 1 passed, expecting a 100px item. Without the aspect-ratio exclusion it fails with 50px |
+| Layout crate | `cargo test -p openui-layout --no-fail-fast` (Windows) | 5,955 passed, 0 failed, 5 ignored |
 | Generators | `generate_properties.py --check`; `generate_v02_contract.py --check`; `generate_renderer_contract.py --check` | no drift |
 | `cargo fmt --all --check` | in `bindings/rust` | pass |
 
