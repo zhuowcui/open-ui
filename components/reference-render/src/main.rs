@@ -10,7 +10,9 @@
 //! crate and renders it with Chromium's Linux LCD raster configuration.
 
 use openui::prelude::*;
-use openui_components::{with_theme, Orientation, Separator, SeparatorProps, Theme};
+use openui_components::{
+    register_fonts, with_theme, Orientation, Separator, SeparatorProps, Theme,
+};
 
 type Fixture = fn() -> ViewNode;
 
@@ -18,9 +20,69 @@ const THEMES: [(&str, Theme); 2] = [("light", Theme::LIGHT), ("dark", Theme::DAR
 
 /// Fixtures in the order of `components/reference/fixtures.tsx`.
 const FIXTURES: &[(&str, Fixture)] = &[
+    ("font-geist", font_geist),
+    ("font-geist-mono", font_geist_mono),
+    ("font-inter", font_inter),
     ("separator-horizontal", separator_horizontal),
     ("separator-vertical", separator_vertical),
 ];
+
+// `FontSpecimen` in fixtures.tsx: `flex flex-col gap-1 text-sm` and a font
+// family, holding three lines at weights 400, 500 (`font-medium`) and 600
+// (`font-semibold`). Tailwind's `text-sm` is 0.875rem with line-height
+// calc(1.25 / 0.875), written as the number 1.4285714 because `line-height`
+// does not accept `calc()` in Open UI yet.
+
+fn font_geist() -> ViewNode {
+    view! {
+        <div
+            style:display="flex"
+            style:flex-direction="column"
+            style:gap="4px"
+            style:font-size="14px"
+            style:line-height="1.4285714"
+            style:font-family="Geist"
+        >
+            <p>"Sphinx of black quartz, judge my vow."</p>
+            <p style:font-weight="500">"Pack my box with five dozen jugs."</p>
+            <p style:font-weight="600">"0123456789 +-=*/ &@#%?!"</p>
+        </div>
+    }
+}
+
+fn font_geist_mono() -> ViewNode {
+    view! {
+        <div
+            style:display="flex"
+            style:flex-direction="column"
+            style:gap="4px"
+            style:font-size="14px"
+            style:line-height="1.4285714"
+            style:font-family="\"Geist Mono\""
+        >
+            <p>"Sphinx of black quartz, judge my vow."</p>
+            <p style:font-weight="500">"Pack my box with five dozen jugs."</p>
+            <p style:font-weight="600">"0123456789 +-=*/ &@#%?!"</p>
+        </div>
+    }
+}
+
+fn font_inter() -> ViewNode {
+    view! {
+        <div
+            style:display="flex"
+            style:flex-direction="column"
+            style:gap="4px"
+            style:font-size="14px"
+            style:line-height="1.4285714"
+            style:font-family="Inter"
+        >
+            <p>"Sphinx of black quartz, judge my vow."</p>
+            <p style:font-weight="500">"Pack my box with five dozen jugs."</p>
+            <p style:font-weight="600">"0123456789 +-=*/ &@#%?!"</p>
+        </div>
+    }
+}
 
 fn separator_horizontal() -> ViewNode {
     view! {
@@ -74,16 +136,25 @@ fn render(
             raster_configuration: RasterConfiguration::chromium_linux_lcd(),
         },
     )?;
+    register_fonts(app.document())?;
     // `body { @apply bg-background text-foreground }` from shadcn's base layer;
     // Tailwind's preflight removes the body margin.
     let body = app.document().body();
     body.set_background_color(theme.background)?;
     body.set_color(theme.foreground)?;
     let fixture_id = id.to_owned();
+    // Preflight gives `html` the `--font-sans` family (Geist) and
+    // `line-height: 1.5`; the page has no text outside `<main>`, so setting
+    // them on `<main>` instead inherits the same values.
     app.mount(move || {
         with_theme(theme, || {
             view! {
-                <div data-fixture={fixture_id} style:padding="16px">
+                <div
+                    data-fixture={fixture_id}
+                    style:padding="16px"
+                    style:font-family="Geist"
+                    style:line-height="1.5"
+                >
                     <FixtureView build=fixture />
                 </div>
             }
