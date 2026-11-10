@@ -95,6 +95,7 @@ mod generated_style_setters;
 
 pub mod app;
 mod app_spec;
+pub mod clipboard;
 #[cfg(feature = "async")]
 mod resource;
 #[cfg(feature = "async")]

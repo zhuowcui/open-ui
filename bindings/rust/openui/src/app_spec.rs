@@ -165,6 +165,11 @@ pub(crate) fn run_windows(
     };
     #[cfg(feature = "async")]
     crate::task::set_loop_waker(None);
+    #[cfg(any(
+        all(feature = "linux", target_os = "linux"),
+        all(feature = "windows", target_os = "windows")
+    ))]
+    crate::clipboard::set_native(None);
     window::reset();
     result
 }
@@ -226,6 +231,10 @@ mod desktop {
     }
 
     impl WindowController for Controller {
+        fn clipboard(&mut self, clipboard: openui_platform::Clipboard) {
+            crate::clipboard::set_native(Some(clipboard));
+        }
+
         #[cfg(feature = "async")]
         fn started(&mut self, waker: openui_platform::LoopWaker) {
             crate::task::set_loop_waker(Some(std::sync::Arc::new(move || waker.wake())));

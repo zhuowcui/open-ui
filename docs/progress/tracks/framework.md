@@ -15,13 +15,42 @@ The order and verification of each PR are in
 | 2 | `openui-cli` skeleton: `new`, `dev`, `build`, `doctor` | Merged (#93) |
 | 3 | Multi-window runtime | Merged (#96) |
 | 4 | Async runtime integrated with the UI thread and signals | In review |
-| 5 | Clipboard service | Not started |
+| 5 | Clipboard service | In review |
 | 6 | File dialogs | Not started |
 | 7 | App menu | Not started |
 | 8 | HTTP client | Not started |
 | 9 | `default` template and test utilities | Not started |
 
 ## Log
+
+### 9 November 2026: clipboard service
+
+Change: `openui::clipboard::{read_text, write_text}` use the runtime's
+existing Win32, X11 and Wayland text clipboard, which `openui-platform` now
+hands to controllers as a `Clipboard` (`WindowController::clipboard`).
+Without a native runtime they use a clipboard private to the UI thread, so
+headless code and tests behave the same. No new dependencies.
+
+Also fixed: with no windows open, an exit request waited for the next
+Windows message; the runtime now posts itself a wake when it exits.
+Controllers hold only a weak handle, so the runtime drops the clipboard
+before the display connection it came from. Before that, every Wayland app
+crashed on exit (`SIGSEGV`) when openui released its handle after the
+connection closed; the WSL example smokes caught it.
+
+Verification:
+
+- Windows: `cargo test -p openui-platform --features windows --test
+  clipboard` round-trips non-ASCII text and restores the previous clipboard
+  (checked against `Get-Clipboard` before and after); `wake` and
+  `multi_window` still pass; the `clipboard` example's smoke reads back what
+  it wrote (software and auto) and restores the clipboard.
+- `cargo test -p openui --lib clipboard`: the private clipboard round-trips
+  and is per thread.
+- Linux (WSL2, WSLg Wayland): the compositor refuses clipboard access
+  without input ("no events received on any seat"), which the test reports
+  rather than fails; `wake` and `multi_window` pass. CI runs the round trip
+  and the example smoke on X11 (xvfb) and the test on headless Weston.
 
 ### 9 November 2026: async runtime
 

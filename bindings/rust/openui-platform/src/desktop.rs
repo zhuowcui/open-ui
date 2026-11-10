@@ -1,7 +1,7 @@
 use crate::{
-    BackendPreference, BackendStatus, CursorIcon, KeyPhase, LoopWaker, Modifiers,
-    PlatformApplication, PlatformError, PlatformEvent, PointerButton, PointerPhase, SoftwareFrame,
-    WindowCommand, WindowController, WindowOptions,
+    BackendPreference, BackendStatus, Clipboard, ClipboardBackend, CursorIcon, KeyPhase, LoopWaker,
+    Modifiers, PlatformApplication, PlatformError, PlatformEvent, PointerButton, PointerPhase,
+    SoftwareFrame, WindowCommand, WindowController, WindowOptions,
 };
 use accesskit_winit::{Adapter as AccessibilityAdapter, WindowEvent as AccessibilityEvent};
 use glutin::config::{ConfigTemplateBuilder, GlConfig};
@@ -16,6 +16,7 @@ use raw_window_handle::{HasDisplayHandle, RawDisplayHandle};
 use softbuffer::{Context as SoftContext, Surface as SoftSurface};
 use std::ffi::CString;
 use std::num::NonZeroU32;
+use std::rc::Rc;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 #[cfg(target_os = "linux")]
@@ -565,6 +566,16 @@ fn initialize_presenter(
     ))
 }
 
+impl ClipboardBackend for NativeClipboard {
+    fn load(&self) -> Result<String, PlatformError> {
+        NativeClipboard::load(self)
+    }
+
+    fn store(&self, text: String) {
+        NativeClipboard::store(self, text);
+    }
+}
+
 impl NativeClipboard {
     #[cfg(target_os = "windows")]
     fn new(_display: &OwnedDisplayHandle) -> Result<Self, PlatformError> {
@@ -1051,7 +1062,7 @@ impl WindowState {
 struct Runtime<C: WindowController> {
     windows: Vec<WindowState>,
     controller: C,
-    clipboard: NativeClipboard,
+    clipboard: Rc<NativeClipboard>,
     display: OwnedDisplayHandle,
     proxy: EventLoopProxy<UserEvent>,
     started: Instant,
@@ -1071,11 +1082,20 @@ struct Runtime<C: WindowController> {
 const FRAME_ROUND_LIMIT: std::time::Duration = std::time::Duration::from_millis(250);
 
 impl<C: WindowController> Runtime<C> {
+    /// End the loop. Post a wake as well: with no windows open, Windows
+    /// otherwise waits for a message before it sees the request.
+    fn exit(&self, event_loop: &ActiveEventLoop) {
+        if !event_loop.exiting() {
+            event_loop.exit();
+            let _ = self.proxy.send_event(UserEvent::Wake);
+        }
+    }
+
     fn fail(&mut self, event_loop: &ActiveEventLoop, error: PlatformError) {
         if self.error.is_none() {
             self.error = Some(error);
         }
-        event_loop.exit();
+        self.exit(event_loop);
     }
 
     fn check(&mut self, event_loop: &ActiveEventLoop, result: Result<(), PlatformError>) -> bool {
@@ -1214,7 +1234,7 @@ impl<C: WindowController> Runtime<C> {
                     .iter()
                     .any(|state| state.application.exit_requested()));
         if requested {
-            event_loop.exit();
+            self.exit(event_loop);
         }
         requested || event_loop.exiting()
     }
@@ -1242,6 +1262,7 @@ impl<C: WindowController> ApplicationHandler<UserEvent> for Runtime<C> {
                     self.exit_if_requested(event_loop);
                 }
             }
+            UserEvent::Wake if event_loop.exiting() => {}
             UserEvent::Wake => {
                 // Clear first, so a wake from a task that runs now posts
                 // another event.
@@ -1256,7 +1277,7 @@ impl<C: WindowController> ApplicationHandler<UserEvent> for Runtime<C> {
                 for state in &mut self.windows {
                     let _ = state.send(PlatformEvent::CloseRequested);
                 }
-                event_loop.exit();
+                self.exit(event_loop);
             }
         }
     }
@@ -1371,7 +1392,7 @@ pub fn run_windows<C: WindowController>(mut controller: C) -> Result<(), Platfor
         .map_err(|error| PlatformError::Initialization(error.to_string()))?;
     event_loop.set_control_flow(ControlFlow::Wait);
     let display = event_loop.owned_display_handle();
-    let clipboard = NativeClipboard::new(&display)?;
+    let clipboard = Rc::new(NativeClipboard::new(&display)?);
     let proxy = event_loop.create_proxy();
     if std::env::var_os(DEV_ENV).is_some() {
         watch_dev_stdin(proxy.clone())?;
@@ -1388,6 +1409,10 @@ pub fn run_windows<C: WindowController>(mut controller: C) -> Result<(), Platfor
             }
         })
     });
+    // Controllers get a weak handle: the clipboard must drop with the runtime,
+    // before the display connection it was created from closes.
+    let weak: std::rc::Weak<NativeClipboard> = Rc::downgrade(&clipboard);
+    controller.clipboard(Clipboard::new(weak));
     let mut runtime = Runtime {
         windows: Vec::new(),
         controller,
