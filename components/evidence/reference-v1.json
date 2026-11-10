@@ -3,7 +3,7 @@
   "measured_on": "2026-11-09",
   "complete": true,
   "repository": {
-    "commit": "d92e8fc69525d3cdf7dc14fdeb0e8efe82d53118",
+    "commit": "c98950efec2b3e0506e0b57ea57b235a456176f6",
     "dirty_paths": "unknown: git unavailable to the harness"
   },
   "chromium": {
@@ -16,7 +16,7 @@
     "package_lock_sha256": "93d1a093da22d87d8db2de61a7bf5e049600097974ce23d157a567c5c02a906f"
   },
   "openui": {
-    "renderer_sha256": "e6d87288ed44cc2fe3f766157b4d6bdb6dfc1bf093a43e9f8e20450ff9f1800f",
+    "renderer_sha256": "8d1c1cf4a6a1d42e6b0ad31c079fa0e81bb6d75aa708809d038e742f5aa818d4",
     "raster_configuration": "chromium-linux-lcd"
   },
   "profiles": [
@@ -72,9 +72,9 @@
   "unimplemented_fixtures": [],
   "summary": {
     "comparisons": 40,
-    "exact": 0,
-    "different": 0,
-    "error": 40,
+    "exact": 8,
+    "different": 8,
+    "error": 24,
     "by_component": {
       "font": {
         "exact": 0,
@@ -82,43 +82,43 @@
         "error": 24
       },
       "separator": {
-        "exact": 0,
-        "different": 0,
-        "error": 16
+        "exact": 8,
+        "different": 8,
+        "error": 0
       }
     },
     "by_profile": {
       "desktop-1280x720@1.25": {
-        "exact": 0,
-        "different": 0,
-        "error": 10
+        "exact": 2,
+        "different": 2,
+        "error": 6
       },
       "desktop-1920x1080@1.5": {
-        "exact": 0,
-        "different": 0,
-        "error": 10
+        "exact": 2,
+        "different": 2,
+        "error": 6
       },
       "legacy-800x600@1": {
-        "exact": 0,
-        "different": 0,
-        "error": 10
+        "exact": 2,
+        "different": 2,
+        "error": 6
       },
       "mobile-375x667@2": {
-        "exact": 0,
-        "different": 0,
-        "error": 10
+        "exact": 2,
+        "different": 2,
+        "error": 6
       }
     },
     "by_theme": {
       "dark": {
         "exact": 0,
-        "different": 0,
-        "error": 20
+        "different": 8,
+        "error": 12
       },
       "light": {
-        "exact": 0,
+        "exact": 8,
         "different": 0,
-        "error": 20
+        "error": 12
       }
     }
   },
@@ -320,128 +320,216 @@
       "component": "separator",
       "theme": "dark",
       "profile": "desktop-1280x720@1.25",
-      "status": "error",
-      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+      "chromium_rgba_sha256": "1f3152529a6f533f36061ba51bfce5e67292db3f7d84639aba1743db35de7a87",
+      "openui_rgba_sha256": "add37141761fd7ca12826b447c064d8e98e3f6ebf4867189ca7a941b4d1f7d6a",
+      "mismatched_pixels": 640,
+      "status": "different",
+      "diff_bbox": [
+        20,
+        20,
+        340,
+        22
+      ],
+      "max_channel_delta": 1
     },
     {
       "fixture": "separator-horizontal-dark",
       "component": "separator",
       "theme": "dark",
       "profile": "desktop-1920x1080@1.5",
-      "status": "error",
-      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+      "chromium_rgba_sha256": "204adbf25abc3bb8d39786e1fa1cd563133316dbc077fcc4f15b3f87109789c9",
+      "openui_rgba_sha256": "05645b29378787b8c4131bdc21b8fe513417bd6266ddc9079e038210cc7b15b5",
+      "mismatched_pixels": 384,
+      "status": "different",
+      "diff_bbox": [
+        24,
+        24,
+        408,
+        25
+      ],
+      "max_channel_delta": 1
     },
     {
       "fixture": "separator-horizontal-dark",
       "component": "separator",
       "theme": "dark",
       "profile": "legacy-800x600@1",
-      "status": "error",
-      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+      "chromium_rgba_sha256": "c448abc41a45cfdc10cf56183c842427fea764b3c3e8c0c3233d558a740c9c3a",
+      "openui_rgba_sha256": "5af17a91ea33081a4ef6acdc680d03c14593a75e63fabf67bb43a0803b9a946d",
+      "mismatched_pixels": 256,
+      "status": "different",
+      "diff_bbox": [
+        16,
+        16,
+        272,
+        17
+      ],
+      "max_channel_delta": 1
     },
     {
       "fixture": "separator-horizontal-dark",
       "component": "separator",
       "theme": "dark",
       "profile": "mobile-375x667@2",
-      "status": "error",
-      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+      "chromium_rgba_sha256": "286897e03a46a009a6526a315d48b45d373f61a45397a6375a1b84686c7e4e50",
+      "openui_rgba_sha256": "62d62012867889ad54db6b72627036e145cb8a945a501b42f7fe14451f0e3dc1",
+      "mismatched_pixels": 1024,
+      "status": "different",
+      "diff_bbox": [
+        32,
+        32,
+        544,
+        34
+      ],
+      "max_channel_delta": 1
     },
     {
       "fixture": "separator-horizontal-light",
       "component": "separator",
       "theme": "light",
       "profile": "desktop-1280x720@1.25",
-      "status": "error",
-      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+      "chromium_rgba_sha256": "697a0281edc2a118f9b4b574a7d2604d04007c407f55d4e9b522b5f913c50dff",
+      "openui_rgba_sha256": "697a0281edc2a118f9b4b574a7d2604d04007c407f55d4e9b522b5f913c50dff",
+      "mismatched_pixels": 0,
+      "status": "exact"
     },
     {
       "fixture": "separator-horizontal-light",
       "component": "separator",
       "theme": "light",
       "profile": "desktop-1920x1080@1.5",
-      "status": "error",
-      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+      "chromium_rgba_sha256": "039c6f3f33d945ed078ec94b160952bfaafe436d9fa18688a427296fc3adbb02",
+      "openui_rgba_sha256": "039c6f3f33d945ed078ec94b160952bfaafe436d9fa18688a427296fc3adbb02",
+      "mismatched_pixels": 0,
+      "status": "exact"
     },
     {
       "fixture": "separator-horizontal-light",
       "component": "separator",
       "theme": "light",
       "profile": "legacy-800x600@1",
-      "status": "error",
-      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+      "chromium_rgba_sha256": "dba6d4979f2b2a6e62450a66f60c00cc903b41311f243344957fadfa38a03882",
+      "openui_rgba_sha256": "dba6d4979f2b2a6e62450a66f60c00cc903b41311f243344957fadfa38a03882",
+      "mismatched_pixels": 0,
+      "status": "exact"
     },
     {
       "fixture": "separator-horizontal-light",
       "component": "separator",
       "theme": "light",
       "profile": "mobile-375x667@2",
-      "status": "error",
-      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+      "chromium_rgba_sha256": "9c423055ea9ee672fb7fe209f54623ab47d954909d203fe8d89162248dd5d286",
+      "openui_rgba_sha256": "9c423055ea9ee672fb7fe209f54623ab47d954909d203fe8d89162248dd5d286",
+      "mismatched_pixels": 0,
+      "status": "exact"
     },
     {
       "fixture": "separator-vertical-dark",
       "component": "separator",
       "theme": "dark",
       "profile": "desktop-1280x720@1.25",
-      "status": "error",
-      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+      "chromium_rgba_sha256": "4cdbf53403f9b30f17fcd391cef06e9c5740b3c3ab5a9c6861b6cb6f0abe2070",
+      "openui_rgba_sha256": "5bbcc041305d8d6b7308c4361d10a2b903ad4b279bc6f9f1250aa81db9112a2e",
+      "mismatched_pixels": 80,
+      "status": "different",
+      "diff_bbox": [
+        20,
+        20,
+        22,
+        60
+      ],
+      "max_channel_delta": 1
     },
     {
       "fixture": "separator-vertical-dark",
       "component": "separator",
       "theme": "dark",
       "profile": "desktop-1920x1080@1.5",
-      "status": "error",
-      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+      "chromium_rgba_sha256": "88bcc9f48cddb3d899735d0eece63e5b3bf0deeb39ad64f6c498f67c43cc0388",
+      "openui_rgba_sha256": "613b45c1539b801a612fde3696f1ab5931d1bc6b6195f6c609cbf1dc3f0013cd",
+      "mismatched_pixels": 48,
+      "status": "different",
+      "diff_bbox": [
+        24,
+        24,
+        25,
+        72
+      ],
+      "max_channel_delta": 1
     },
     {
       "fixture": "separator-vertical-dark",
       "component": "separator",
       "theme": "dark",
       "profile": "legacy-800x600@1",
-      "status": "error",
-      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+      "chromium_rgba_sha256": "97eb330d99df4d0bdf9f102e32677a4a7c3b55b97bd002bed0fc519aa7474d53",
+      "openui_rgba_sha256": "3448f49a8650cc63cd3fa5ba1d743d1559848052ca8f8b5bfd7b95765d084b7f",
+      "mismatched_pixels": 32,
+      "status": "different",
+      "diff_bbox": [
+        16,
+        16,
+        17,
+        48
+      ],
+      "max_channel_delta": 1
     },
     {
       "fixture": "separator-vertical-dark",
       "component": "separator",
       "theme": "dark",
       "profile": "mobile-375x667@2",
-      "status": "error",
-      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+      "chromium_rgba_sha256": "3c785e5a91b485757b8458203edcf4c399966aa1f22ffea6c6f3a4397e3b6b2c",
+      "openui_rgba_sha256": "01e36ec3e0a5a631b549b6a5e6a1cdbd7629d3549c3d83d15336d601cef15312",
+      "mismatched_pixels": 128,
+      "status": "different",
+      "diff_bbox": [
+        32,
+        32,
+        34,
+        96
+      ],
+      "max_channel_delta": 1
     },
     {
       "fixture": "separator-vertical-light",
       "component": "separator",
       "theme": "light",
       "profile": "desktop-1280x720@1.25",
-      "status": "error",
-      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+      "chromium_rgba_sha256": "944e81f171c0a31b5776e2c99a61a2414778a8d906483d56303c644369c839bd",
+      "openui_rgba_sha256": "944e81f171c0a31b5776e2c99a61a2414778a8d906483d56303c644369c839bd",
+      "mismatched_pixels": 0,
+      "status": "exact"
     },
     {
       "fixture": "separator-vertical-light",
       "component": "separator",
       "theme": "light",
       "profile": "desktop-1920x1080@1.5",
-      "status": "error",
-      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+      "chromium_rgba_sha256": "af87579ab4661acfd92ae9e47dccc16e3a0a38590a7a1a73892f74994c55e8ab",
+      "openui_rgba_sha256": "af87579ab4661acfd92ae9e47dccc16e3a0a38590a7a1a73892f74994c55e8ab",
+      "mismatched_pixels": 0,
+      "status": "exact"
     },
     {
       "fixture": "separator-vertical-light",
       "component": "separator",
       "theme": "light",
       "profile": "legacy-800x600@1",
-      "status": "error",
-      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+      "chromium_rgba_sha256": "762d9369f8be6fb236efc72dd711839467f950ba81725a0205910e8a27913c74",
+      "openui_rgba_sha256": "762d9369f8be6fb236efc72dd711839467f950ba81725a0205910e8a27913c74",
+      "mismatched_pixels": 0,
+      "status": "exact"
     },
     {
       "fixture": "separator-vertical-light",
       "component": "separator",
       "theme": "light",
       "profile": "mobile-375x667@2",
-      "status": "error",
-      "error": "Open UI render failed: Error: Engine(Font(MalformedFont))"
+      "chromium_rgba_sha256": "0f6312b99ba30a8d3162eb1270e530e543ab2aa4758f4613a822b712e7bfc707",
+      "openui_rgba_sha256": "0f6312b99ba30a8d3162eb1270e530e543ab2aa4758f4613a822b712e7bfc707",
+      "mismatched_pixels": 0,
+      "status": "exact"
     }
   ]
 }
