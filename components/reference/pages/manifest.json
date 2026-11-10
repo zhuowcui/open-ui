@@ -1,0 +1,79 @@
+{
+  "schema": "openui-components-reference-v1",
+  "package_lock_sha256": "c5c47a703f23f238faa6cf66f1b61cbb2786a16789ed6cd624588bc40bf9fc29",
+  "themes": [
+    "light",
+    "dark"
+  ],
+  "tokens": [
+    "background",
+    "foreground",
+    "card",
+    "card-foreground",
+    "popover",
+    "popover-foreground",
+    "primary",
+    "primary-foreground",
+    "secondary",
+    "secondary-foreground",
+    "muted",
+    "muted-foreground",
+    "accent",
+    "accent-foreground",
+    "destructive",
+    "border",
+    "input",
+    "ring",
+    "chart-1",
+    "chart-2",
+    "chart-3",
+    "chart-4",
+    "chart-5",
+    "sidebar",
+    "sidebar-foreground",
+    "sidebar-primary",
+    "sidebar-primary-foreground",
+    "sidebar-accent",
+    "sidebar-accent-foreground",
+    "sidebar-border",
+    "sidebar-ring"
+  ],
+  "fixtures": [
+    {
+      "id": "separator-horizontal-dark",
+      "component": "separator",
+      "theme": "dark",
+      "description": "Horizontal separator in a 256px wide column",
+      "page": "separator-horizontal-dark.html"
+    },
+    {
+      "id": "separator-horizontal-light",
+      "component": "separator",
+      "theme": "light",
+      "description": "Horizontal separator in a 256px wide column",
+      "page": "separator-horizontal-light.html"
+    },
+    {
+      "id": "separator-vertical-dark",
+      "component": "separator",
+      "theme": "dark",
+      "description": "Vertical separator in a 32px tall flex row",
+      "page": "separator-vertical-dark.html"
+    },
+    {
+      "id": "separator-vertical-light",
+      "component": "separator",
+      "theme": "light",
+      "description": "Vertical separator in a 32px tall flex row",
+      "page": "separator-vertical-light.html"
+    }
+  ],
+  "files": {
+    "reference.css": "baeae54a5e3dde02b7f0302f71fe60cbdc3b88939b2ba0ca11591deb08784e9b",
+    "separator-horizontal-dark.html": "95bb49a8da4d9903a341e96b4890c17ab2d98ff0622a3b2d457ed0c81b86e2f1",
+    "separator-horizontal-light.html": "ec9863927c8c7769f6a2c9797d5686f91cd230c6250d4002d05f0cce324d05d4",
+    "separator-vertical-dark.html": "b979361064bbe3019425876d3fad7bf1a160e84011cf80a6bf49862946f35f7f",
+    "separator-vertical-light.html": "e6b61b66142e50f93bc26af0699673f08ea54b9c0e73dcef271457beac953c9f",
+    "theme-tokens.html": "2dece6b13c6c1ab79ffeaf814e91e1ff30c23ea62c3b911d80678662fe2e82ef"
+  }
+}

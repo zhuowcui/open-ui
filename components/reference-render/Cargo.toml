@@ -1,0 +1,20 @@
+[package]
+name = "openui-components-reference"
+description = "Renders the shadcn/ui reference fixtures with Open UI"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+publish.workspace = true
+
+[[bin]]
+name = "openui-components-reference"
+path = "src/main.rs"
+
+[dependencies]
+openui.workspace = true
+openui-components.workspace = true
+
+[dev-dependencies]
+serde_json.workspace = true
