@@ -18,13 +18,15 @@ type Fixture = fn() -> ViewNode;
 
 const THEMES: [(&str, Theme); 2] = [("light", Theme::LIGHT), ("dark", Theme::DARK)];
 
-/// Fixtures in the order of `components/reference/fixtures.tsx`.
-const FIXTURES: &[(&str, Fixture)] = &[
-    ("font-geist", font_geist),
-    ("font-geist-mono", font_geist_mono),
-    ("font-inter", font_inter),
-    ("separator-horizontal", separator_horizontal),
-    ("separator-vertical", separator_vertical),
+/// Fixtures in the order of `components/reference/fixtures.tsx`, with
+/// whether each draws text. Fixtures without text skip registering the
+/// bundled fonts, so a font-loading failure cannot hide their results.
+const FIXTURES: &[(&str, Fixture, bool)] = &[
+    ("font-geist", font_geist, true),
+    ("font-geist-mono", font_geist_mono, true),
+    ("font-inter", font_inter, true),
+    ("separator-horizontal", separator_horizontal, false),
+    ("separator-vertical", separator_vertical, false),
 ];
 
 // `FontSpecimen` in fixtures.tsx: `flex flex-col gap-1 text-sm` and a font
@@ -110,14 +112,14 @@ fn FixtureView(build: Fixture) -> ViewNode {
 fn fixture_ids() -> Vec<String> {
     FIXTURES
         .iter()
-        .flat_map(|(id, _)| THEMES.iter().map(move |(theme, _)| format!("{id}-{theme}")))
+        .flat_map(|(id, _, _)| THEMES.iter().map(move |(theme, _)| format!("{id}-{theme}")))
         .collect()
 }
 
-fn find_fixture(id: &str) -> Option<(Fixture, Theme)> {
-    FIXTURES.iter().find_map(|(base, fixture)| {
+fn find_fixture(id: &str) -> Option<(Fixture, bool, Theme)> {
+    FIXTURES.iter().find_map(|(base, fixture, text)| {
         THEMES.iter().find_map(|(name, theme)| {
-            (id.strip_prefix(base)? == format!("-{name}")).then_some((*fixture, *theme))
+            (id.strip_prefix(base)? == format!("-{name}")).then_some((*fixture, *text, *theme))
         })
     })
 }
@@ -129,14 +131,16 @@ fn render(
     height: f64,
     scale: f64,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    let (fixture, theme) = find_fixture(id).ok_or_else(|| format!("unknown fixture {id}"))?;
+    let (fixture, text, theme) = find_fixture(id).ok_or_else(|| format!("unknown fixture {id}"))?;
     let mut app = HeadlessApp::with_options(
         ViewportMetrics::from_logical_size(width, height, scale)?,
         EngineOptions {
             raster_configuration: RasterConfiguration::chromium_linux_lcd(),
         },
     )?;
-    register_fonts(app.document())?;
+    if text {
+        register_fonts(app.document())?;
+    }
     // `body { @apply bg-background text-foreground }` from shadcn's base layer;
     // Tailwind's preflight removes the body margin.
     let body = app.document().body();
@@ -212,7 +216,7 @@ mod tests {
         let ids = fixture_ids();
         assert_eq!(ids.len(), FIXTURES.len() * THEMES.len());
         for id in &ids {
-            let (_, theme) = find_fixture(id).expect(id);
+            let (_, _, theme) = find_fixture(id).expect(id);
             let expected = if id.ends_with("-dark") {
                 Theme::DARK
             } else {
