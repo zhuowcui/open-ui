@@ -1,0 +1,34 @@
+//! The root view. Edit it while `openui dev` runs: the app rebuilds and
+//! restarts on save.
+
+use crate::State;
+use openui::prelude::*;
+
+pub fn root(state: State) -> ViewNode {
+    let count = state.count;
+    view! {
+        <div
+            style:display="flex"
+            style:flex-direction="column"
+            style:align-items="center"
+            style:justify-content="center"
+            style:gap="16px"
+            style:min-height="100vh"
+            style:font-family="sans-serif"
+        >
+            <h1 style:font-size="24px">"{{name}}"</h1>
+            <button
+                style:padding="8px 20px"
+                style:font-size="16px"
+                on:click={move |_| count.set(count.get() + 1)}
+            >
+                "Count"
+            </button>
+            <p>{match count.get() {
+                1 => "Clicked 1 time".to_owned(),
+                clicks => format!("Clicked {clicks} times"),
+            }}</p>
+            <p style:color="#555555">{state.status.get()}</p>
+        </div>
+    }
+}

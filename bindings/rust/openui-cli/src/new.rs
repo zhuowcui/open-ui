@@ -28,12 +28,16 @@ pub fn run(options: &NewOptions) -> Result<()> {
         None => FrameworkSource::Git,
     };
     let crate_name = options.name.replace('-', "_");
+    let app_id = format!("com.example.{crate_name}");
     let dependency = source.dependency();
+    let framework_source = source.source();
     let patch_table = source.patch_table()?;
     let values = [
         ("name", options.name.as_str()),
         ("crate_name", crate_name.as_str()),
+        ("app_id", app_id.as_str()),
         ("framework_dependency", dependency.as_str()),
+        ("framework_source", framework_source.as_str()),
         ("patch_table", patch_table.as_str()),
     ];
 
@@ -66,6 +70,9 @@ pub fn run(options: &NewOptions) -> Result<()> {
          `openui doctor` checks the tools it needs.",
         directory.display()
     );
+    if !template.next_steps.is_empty() {
+        println!("\n{}", template.next_steps);
+    }
     Ok(())
 }
 
@@ -130,7 +137,9 @@ pub fn sample_values() -> Vec<(&'static str, &'static str)> {
     vec![
         ("name", "sample-app"),
         ("crate_name", "sample_app"),
+        ("app_id", "com.example.sample_app"),
         ("framework_dependency", "openui = { path = 'x' }"),
+        ("framework_source", "path = 'x'"),
         ("patch_table", "[patch.crates-io]"),
     ]
 }

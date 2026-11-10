@@ -1,0 +1,33 @@
+//! Headless UI tests: no window opens, so they run anywhere `cargo test`
+//! does.
+//!
+//! The snapshot test compares the rendered frame, pixel for pixel, with
+//! `tests/snapshots/<name>.<os>.png`. A new project has none yet: record
+//! them with `OPENUI_UPDATE_SNAPSHOTS=1 cargo test`, look at the images and
+//! commit them. Afterwards a change in the frame fails the test and writes
+//! the new frame as `<name>.<os>.actual.png` beside the snapshot.
+
+use openui::prelude::*;
+use openui::testing::TestApp;
+use {{crate_name}}::{app, State};
+
+fn ui(state: State) -> TestApp {
+    TestApp::new(LogicalSize::new(720.0, 480.0)).mount(move || app::root(state))
+}
+
+#[test]
+fn counting_updates_the_label() {
+    let state = State::new();
+    let mut ui = ui(state);
+    let button = ui.by_text("Count");
+    ui.click(&button);
+    ui.click(&button);
+    assert_eq!(state.count.get(), 2);
+    assert!(ui.find_text("Clicked 2 times").is_some());
+}
+
+#[test]
+fn the_first_screen_matches_its_snapshot() {
+    let ui = ui(State::new());
+    openui::assert_snapshot!(ui, "first-screen");
+}

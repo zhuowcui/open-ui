@@ -24,6 +24,8 @@ async = ["dep:async-executor", "dep:async-io", "dep:async-task", "dep:blocking",
 menu = ["desktop", "openui-platform/menu"]
 # Native open, save and folder dialogs (`dialog`).
 dialog = ["desktop", "openui-platform/dialog"]
+# Headless UI tests and snapshots (`testing`), for dev-dependencies.
+testing = ["async", "dep:png"]
 # An HTTP client (`http`) over ureq and rustls with the system's roots.
 http = ["async", "dep:rustls", "dep:serde", "dep:serde_json", "dep:ureq"]
 ffi-integration = []
@@ -41,6 +43,7 @@ openui-macros = { version = "=0.2.0", path = "../openui-macros" }
 openui-platform = { version = "=0.2.0", path = "../openui-platform", optional = true }
 openui-style = { version = "=0.2.0", path = "../openui-style" }
 openui-text = { version = "=0.2.0", path = "../openui-text" }
+png = { version = "=0.18.1", optional = true }
 # TLS uses ring, not aws-lc (which needs NASM on Windows), and the platform
 # verifier, not webpki-roots.
 rustls = { version = "=0.23.46", optional = true, default-features = false, features = ["ring", "std", "tls12"] }

@@ -1,0 +1,77 @@
+//! The menu bar every window shows: native on Windows, drawn by the
+//! framework on Linux.
+
+use crate::State;
+use openui::menu::{Accelerator, Key, Menu, MenuItem, Modifiers, Role};
+use openui::task::spawn_local;
+use openui::{dialog, http};
+
+pub fn app_menu(state: State) -> Menu {
+    Menu::new()
+        .submenu("&File", |menu| {
+            menu.item(
+                MenuItem::new("&Open...")
+                    .accelerator(Accelerator::new(Modifiers::PRIMARY, Key::O))
+                    .on_select(move || open_file(state)),
+            )
+            .separator()
+            .role(Role::CloseWindow)
+            .role(Role::Quit)
+        })
+        .submenu("&Edit", |menu| {
+            menu.role(Role::Undo)
+                .role(Role::Redo)
+                .separator()
+                .role(Role::Cut)
+                .role(Role::Copy)
+                .role(Role::Paste)
+                .role(Role::SelectAll)
+        })
+        .submenu("&View", |menu| {
+            menu.item(
+                MenuItem::new("&Reset Count")
+                    .enabled(move || state.count.get() > 0)
+                    .on_select(move || state.count.set(0)),
+            )
+        })
+        .submenu("&Help", |menu| {
+            menu.item(
+                MenuItem::new("Check &Connection").on_select(move || check_connection(state)),
+            )
+            .separator()
+            .role(Role::About)
+        })
+}
+
+/// Ask for a text file and report its size. The dialog and the read run off
+/// the UI thread.
+fn open_file(state: State) {
+    spawn_local(async move {
+        let picked = dialog::open_file()
+            .filter("Text", &["txt", "md"])
+            .pick()
+            .await;
+        let status = match picked {
+            Ok(Some(path)) => match std::fs::metadata(&path) {
+                Ok(metadata) => format!("{} has {} bytes", path.display(), metadata.len()),
+                Err(error) => format!("Could not read {}: {error}", path.display()),
+            },
+            Ok(None) => "No file chosen".to_owned(),
+            Err(error) => format!("The dialog failed: {error}"),
+        };
+        state.status.set(status);
+    })
+    .detach();
+}
+
+fn check_connection(state: State) {
+    state.status.set("Checking...".to_owned());
+    spawn_local(async move {
+        let status = match http::get("https://example.com/").send().await {
+            Ok(response) => format!("example.com answered {}", response.status()),
+            Err(error) => format!("No connection: {error}"),
+        };
+        state.status.set(status);
+    })
+    .detach();
+}

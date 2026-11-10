@@ -108,6 +108,8 @@ mod menu_bar;
 mod resource;
 #[cfg(feature = "async")]
 pub mod task;
+#[cfg(feature = "testing")]
+pub mod testing;
 pub mod window;
 
 /// Convenience prelude for common imports.

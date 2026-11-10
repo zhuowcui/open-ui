@@ -1,0 +1,31 @@
+//! {{name}}'s views, menu and state, shared by `main.rs` and the tests in
+//! `tests/`.
+
+pub mod app;
+pub mod menu;
+
+use openui::prelude::*;
+
+/// State shared by the views and the menu. Signals are cheap handles, so
+/// the struct is `Copy`.
+#[derive(Clone, Copy)]
+pub struct State {
+    pub count: Signal<u32>,
+    /// What the last action reported, shown under the counter.
+    pub status: Signal<String>,
+}
+
+impl State {
+    pub fn new() -> Self {
+        Self {
+            count: create_signal(0),
+            status: create_signal(String::new()),
+        }
+    }
+}
+
+impl Default for State {
+    fn default() -> Self {
+        Self::new()
+    }
+}
