@@ -119,8 +119,8 @@ platforms and records it; no target is promised before that measurement.
 
 ### `build`
 
-`cargo build --release` (with `--locked` when a lockfile exists), then copy the
-executable and `assets/` to `dist/<package>-<version>-<os>-<arch>/`. Templates
+`cargo build --release` (with `--locked` when `--locked` is passed; `openui new`
+seeds the lockfile but apps may update it), then copy the executable and `assets/` to `dist/<package>-<version>-<os>-<arch>/`. Templates
 add `#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]` so
 release builds open no console on Windows. Cross-compilation, icons, version
 resources, installers and signing are not in alpha.1.
