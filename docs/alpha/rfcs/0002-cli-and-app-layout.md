@@ -105,7 +105,8 @@ final name it installs with
 In dev mode the runtime saves each window's size, position (where the platform
 allows it; Wayland does not) and maximized state to the state file on exit, and
 restores it by window key on start, so a restart lands where the developer
-left it.
+left it. (Not in the multi-window PR; it follows as its own
+small PR.)
 
 Build speed comes from keeping the app crate at `opt-level = 0` for fast
 incremental builds while the framework crates run optimized
@@ -186,7 +187,7 @@ fn main() -> openui::Result<()> {
   singleton windows such as settings; `WindowKey::unique()` makes a fresh key
   for document windows. `WindowHandle` has `close`, `focus`, `set_title` and
   `is_open`; `window::current()` returns the window whose event is being
-  handled.
+  handled, and `window::all()` lists the open windows.
 - Every window has its own `Document` and root reactive scope, disposed when
   the window closes. All windows share the UI thread's reactive runtime, so a
   signal created in `main` or in one window drives views in any window with no
