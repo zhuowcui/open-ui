@@ -73,3 +73,7 @@ accesskit = "=0.25.0"
 [[test]]
 name = "multi_window"
 harness = false
+
+[[test]]
+name = "wake"
+harness = false

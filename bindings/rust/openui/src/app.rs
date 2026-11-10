@@ -608,6 +608,25 @@ impl HeadlessApp {
         self.app.document()
     }
 
+    /// Run UI tasks ([`task::spawn_local`](crate::task::spawn_local)) until
+    /// none is queued or alive, waiting for the timers and background tasks
+    /// they await. Fails if tasks are still running after 30 s, for example
+    /// one that waits for input.
+    /// Run the UI tasks that are ready now, without waiting for timers or
+    /// background work.
+    #[cfg(feature = "async")]
+    pub fn run_ready_tasks(&mut self) -> Result<(), Error> {
+        while crate::task::run_turn() {}
+        self.app.document.update_all()
+    }
+
+    #[cfg(feature = "async")]
+    pub fn run_until_idle(&mut self) -> Result<(), Error> {
+        crate::task::run_until_idle(std::time::Duration::from_secs(30))
+            .map_err(Error::TasksStillRunning)?;
+        self.app.document.update_all()
+    }
+
     pub fn render(&self, options: RenderOptions) -> Result<Bitmap, Error> {
         self.app.document.begin_frame(options.time_ms)?;
         self.app.document.render_to_bitmap()

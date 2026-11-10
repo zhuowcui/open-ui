@@ -102,12 +102,44 @@ impl std::fmt::Debug for WindowCommand {
     }
 }
 
+/// Wakes the event loop from any thread so it runs queued UI tasks
+/// ([`WindowController::run_tasks`]). Wakes coalesce until the loop handles
+/// one.
+#[derive(Clone)]
+pub struct LoopWaker(std::sync::Arc<dyn Fn() + Send + Sync>);
+
+impl LoopWaker {
+    pub fn new(wake: impl Fn() + Send + Sync + 'static) -> Self {
+        Self(std::sync::Arc::new(wake))
+    }
+
+    pub fn wake(&self) {
+        (self.0)();
+    }
+}
+
+impl std::fmt::Debug for LoopWaker {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter.write_str("LoopWaker")
+    }
+}
+
 /// Owns the set of windows in [`run_windows`]. Every method runs on the
 /// event-loop thread between window events, never inside one.
 pub trait WindowController: 'static {
     /// Commands queued since the last call, applied in order. Called when
-    /// the loop starts, after every event and before the loop waits.
+    /// the loop starts, after every event and before the loop waits, and
+    /// again until it returns none, so return each command only once.
     fn take_commands(&mut self) -> Result<Vec<WindowCommand>, String>;
+
+    /// Called once, before any window opens, with a waker for this loop.
+    fn started(&mut self, _waker: LoopWaker) {}
+
+    /// Run queued UI tasks for one bounded turn and return whether more are
+    /// queued. Called after a [`LoopWaker::wake`] and before the loop waits.
+    fn run_tasks(&mut self) -> Result<bool, String> {
+        Ok(false)
+    }
 
     /// The user asked to close `id`; its application has already received
     /// [`PlatformEvent::CloseRequested`]. Return false to keep it open.

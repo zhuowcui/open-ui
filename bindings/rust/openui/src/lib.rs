@@ -95,6 +95,10 @@ mod generated_style_setters;
 
 pub mod app;
 mod app_spec;
+#[cfg(feature = "async")]
+mod resource;
+#[cfg(feature = "async")]
+pub mod task;
 pub mod window;
 
 /// Convenience prelude for common imports.
@@ -103,8 +107,12 @@ pub mod prelude;
 // ─── Re-exports: reactive primitives ────────────────────────
 
 pub use effect::{batch, create_effect};
+#[cfg(feature = "async")]
+pub use resource::{create_resource, Resource};
 pub use runtime::{EffectId, ScopeId, SignalId};
 pub use scope::{create_scope, dispose_scope, on_cleanup};
+#[cfg(feature = "async")]
+pub use signal::SignalSender;
 pub use signal::{create_memo, create_signal, Memo, Signal};
 
 // ─── Re-exports: DOM wrappers ───────────────────────────────

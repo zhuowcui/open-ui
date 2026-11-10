@@ -1807,6 +1807,11 @@ checksum = "d6790f58c7ff633d8771f42965289203411a5e5c68388703c06e14f24770b41e"
 name = "openui"
 version = "0.2.0"
 dependencies = [
+ "async-executor",
+ "async-io",
+ "async-task",
+ "blocking",
+ "futures-lite",
  "openui-compositor",
  "openui-dom",
  "openui-engine",
@@ -2658,6 +2663,13 @@ dependencies = [
  "filetime",
  "libc",
  "xattr",
+]
+
+[[package]]
+name = "tasks"
+version = "0.2.0"
+dependencies = [
+ "openui",
 ]
 
 [[package]]

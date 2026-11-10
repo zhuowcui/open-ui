@@ -1,0 +1,13 @@
+[package]
+name = "tasks"
+version = "0.2.0"
+edition = "2024"
+publish = false
+
+[features]
+default = []
+linux = ["openui/linux", "openui/async"]
+windows = ["openui/windows", "openui/async"]
+
+[dependencies]
+openui = { version = "=0.2.0", path = "../../openui", features = ["async"] }

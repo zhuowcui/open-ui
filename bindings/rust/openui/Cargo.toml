@@ -17,10 +17,17 @@ windows = ["dep:openui-platform", "openui-platform/windows"]
 # The native runtime of the host: Win32 on Windows, X11 and Wayland on Linux.
 # Platform code is gated on both the feature and the target, so enabling
 # both platform features selects the host one.
-desktop = ["linux", "windows"]
+desktop = ["linux", "windows", "async"]
+# UI and background tasks (`task`), `Signal::sender` and `create_resource`.
+async = ["dep:async-executor", "dep:async-io", "dep:async-task", "dep:blocking", "dep:futures-lite"]
 ffi-integration = []
 
 [dependencies]
+async-executor = { version = "=1.14.1", optional = true }
+async-io = { version = "=2.6.0", optional = true }
+async-task = { version = "=4.7.1", optional = true }
+blocking = { version = "=1.7.0", optional = true }
+futures-lite = { version = "=2.6.1", optional = true }
 openui-compositor = { version = "=0.2.0", path = "../openui-compositor" }
 openui-dom = { version = "=0.2.0", path = "../openui-dom" }
 openui-engine = { version = "=0.2.0", path = "../openui-engine" }

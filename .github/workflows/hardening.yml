@@ -100,14 +100,17 @@ jobs:
       - name: Smoke-test X11 with Mesa OpenGL
         working-directory: bindings/rust
         run: xvfb-run --auto-servernum env OUI_BACKEND=opengl OUI_SMOKE_EXIT=1 target/debug/hello
-      - name: Open and close two windows on X11 with software and Mesa OpenGL
+      - name: Run several windows and wake the loop from tasks on X11
         working-directory: bindings/rust
         run: |
-          cargo build --locked --package multi-window --features linux
+          cargo build --locked --package multi-window --package tasks --features linux
           for backend in software opengl; do
-            xvfb-run --auto-servernum env OPENUI_REQUIRE_DISPLAY=1 OUI_BACKEND="$backend" \
-              cargo test --locked --package openui-platform --features linux --test multi_window
+            for test in multi_window wake; do
+              xvfb-run --auto-servernum env OPENUI_REQUIRE_DISPLAY=1 OUI_BACKEND="$backend" \
+                cargo test --locked --package openui-platform --features linux --test "$test"
+            done
             xvfb-run --auto-servernum env OUI_BACKEND="$backend" OUI_SMOKE_EXIT=1 target/debug/multi-window
+            xvfb-run --auto-servernum env OUI_BACKEND="$backend" OUI_SMOKE_EXIT=1 timeout 120 target/debug/tasks
           done
       - name: Smoke-test pure Wayland software presentation
         working-directory: bindings/rust
@@ -123,9 +126,12 @@ jobs:
             sleep 0.1
           done
           env -u DISPLAY WAYLAND_DISPLAY=wayland-openui OUI_BACKEND=software OUI_SMOKE_EXIT=1 target/debug/hello
-          env -u DISPLAY WAYLAND_DISPLAY=wayland-openui OPENUI_REQUIRE_DISPLAY=1 OUI_BACKEND=software \
-            cargo test --locked --package openui-platform --features linux --test multi_window
+          for test in multi_window wake; do
+            env -u DISPLAY WAYLAND_DISPLAY=wayland-openui OPENUI_REQUIRE_DISPLAY=1 OUI_BACKEND=software \
+              cargo test --locked --package openui-platform --features linux --test "$test"
+          done
           env -u DISPLAY WAYLAND_DISPLAY=wayland-openui OUI_BACKEND=software OUI_SMOKE_EXIT=1 target/debug/multi-window
+          env -u DISPLAY WAYLAND_DISPLAY=wayland-openui OUI_BACKEND=software OUI_SMOKE_EXIT=1 timeout 120 target/debug/tasks
           env -u DISPLAY WAYLAND_DISPLAY=wayland-openui \
             python3 ../../tools/ffi/verify_native_window.py --protocol wayland \
               --backend software --report "$RUNNER_TEMP/native-wayland-software.json"
