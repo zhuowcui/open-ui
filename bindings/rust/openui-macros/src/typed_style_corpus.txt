@@ -35,6 +35,11 @@ color: rgb(1 2 3)
 color: rgba(1, 2, 3, 0.5)
 color: transparent
 color: currentcolor
+color: oklch(0.7 0.1 200)
+color: oklch(1 0 0 / 10%)
+color: oklab(0.5 0.1 -0.1)
+color: color-mix(in oklab, red 40%, transparent)
+background-color: color-mix(in srgb, #1e293b, white)
 background-color: #eef2f7
 border-top-color: currentcolor
 border-bottom-color: red
