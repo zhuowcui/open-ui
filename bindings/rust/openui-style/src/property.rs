@@ -789,6 +789,12 @@ fn content_alignment_literal(input: &str) -> Option<ContentAlignment> {
 }
 
 fn color(input: &str) -> Option<Color> {
+    legacy_srgb_color(input).or_else(|| crate::color_function::color_function(input))
+}
+
+/// Hex, `rgb()`/`rgba()` and named colors: Blink's legacy sRGB space, whose
+/// channels are stored as 8-bit values.
+pub(crate) fn legacy_srgb_color(input: &str) -> Option<Color> {
     let input = input.trim();
     if let Some(hex) = input.strip_prefix('#') {
         if !hex.bytes().all(|byte| byte.is_ascii_hexdigit()) {
