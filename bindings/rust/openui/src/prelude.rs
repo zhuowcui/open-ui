@@ -8,6 +8,7 @@ pub use crate::app::{
     App, AppBuilder, AppExitHandle, BackendPreference, HeadlessApp, LogicalSize, RenderOptions,
     WindowOptions,
 };
+pub use crate::app_spec::AppSpec;
 pub use crate::context::{current_document, with_document};
 pub use crate::document::Document;
 pub use crate::element::{Element, WeakElement};
@@ -21,6 +22,7 @@ pub use crate::style::*;
 pub use crate::text_node::{TextNode, WeakTextNode};
 pub use crate::typed_style::*;
 pub use crate::view_node::{mount_view, IntoView, ViewNode};
+pub use crate::window::{Close, WindowHandle, WindowKey, WindowSpec};
 pub use crate::ElementTag;
 pub use crate::{
     AccessibilityAction, AccessibilityLive, AccessibilityRelation, AccessibilityRole, EditCommand,

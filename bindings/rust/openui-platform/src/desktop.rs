@@ -1,12 +1,13 @@
 use crate::{
     BackendPreference, BackendStatus, CursorIcon, KeyPhase, Modifiers, PlatformApplication,
-    PlatformError, PlatformEvent, PointerButton, PointerPhase, SoftwareFrame, WindowOptions,
+    PlatformError, PlatformEvent, PointerButton, PointerPhase, SoftwareFrame, WindowCommand,
+    WindowController, WindowOptions,
 };
 use accesskit_winit::{Adapter as AccessibilityAdapter, WindowEvent as AccessibilityEvent};
 use glutin::config::{ConfigTemplateBuilder, GlConfig};
 use glutin::context::{ContextApi, ContextAttributesBuilder, GlContext, PossiblyCurrentContext};
 use glutin::display::{GetGlDisplay, GlDisplay};
-use glutin::prelude::{GlSurface, NotCurrentGlContext};
+use glutin::prelude::{GlSurface, NotCurrentGlContext, PossiblyCurrentGlContext};
 use glutin::surface::{Surface as GlutinSurface, SwapInterval, WindowSurface};
 use glutin_winit::{DisplayBuilder, GlWindow};
 use raw_window_handle::HasWindowHandle;
@@ -75,8 +76,13 @@ struct OpenGlPresenter {
 
 impl Drop for OpenGlPresenter {
     fn drop(&mut self) {
-        // SAFETY: this presenter owns these names and its glutin context is
-        // current on the event-loop thread for its entire lifetime.
+        // Another window's context may be current; these names belong to
+        // this one. If it cannot be made current, leak the names rather than
+        // delete another context's objects.
+        if self.context.make_current(&self.surface).is_err() {
+            return;
+        }
+        // SAFETY: this presenter owns these names and its context is current.
         unsafe {
             gl::DeleteBuffers(1, &self.vertex_buffer);
             gl::DeleteVertexArrays(1, &self.vertex_array);
@@ -237,6 +243,11 @@ impl OpenGlPresenter {
         if physical.width == 0 || physical.height == 0 {
             return Ok(());
         }
+        // Each window has its own context; make this one current before
+        // touching GL state.
+        self.context
+            .make_current(&self.surface)
+            .map_err(|error| PlatformError::Presentation(error.to_string()))?;
         self.window.resize_surface(&self.surface, &self.context);
         validate_frame(frame)?;
         if (frame.width, frame.height) != (physical.width, physical.height) {
@@ -493,7 +504,17 @@ fn initialize_presenter(
     let attributes = WindowAttributes::default()
         .with_title(options.title.clone())
         .with_inner_size(LogicalSize::new(options.width, options.height))
+        .with_resizable(options.resizable)
+        .with_decorations(options.decorations)
         .with_visible(false);
+    let attributes = match options.min_size {
+        Some((width, height)) => attributes.with_min_inner_size(LogicalSize::new(width, height)),
+        None => attributes,
+    };
+    let attributes = match options.max_size {
+        Some((width, height)) => attributes.with_max_inner_size(LogicalSize::new(width, height)),
+        None => attributes,
+    };
     if options.backend != BackendPreference::Software {
         match OpenGlPresenter::new(event_loop, attributes.clone()) {
             Ok((window, presenter)) => {
@@ -666,74 +687,121 @@ impl ImeState {
     }
 }
 
-struct Runtime<A: PlatformApplication> {
-    application: A,
+/// One native window and the application object that draws it.
+///
+/// Fields drop in declaration order: the application first, then the window
+/// and its presenter, then the accessibility adapter, as the single-window
+/// runtime did.
+struct WindowState {
+    id: crate::WindowId,
+    application: Box<dyn PlatformApplication>,
     options: WindowOptions,
-    display: OwnedDisplayHandle,
-    clipboard: NativeClipboard,
-    proxy: EventLoopProxy<UserEvent>,
-    window: Option<Arc<Window>>,
+    window: Arc<Window>,
     presenter: Option<Presenter>,
-    accessibility: Option<AccessibilityAdapter>,
+    accessibility: AccessibilityAdapter,
     cursor: LogicalPosition<f64>,
     scale_factor: f64,
     modifiers: Modifiers,
     ime: ImeState,
-    started: Instant,
-    error: Option<PlatformError>,
     presented_frames: u64,
+    /// The last frame round this window drew in.
+    drawn_round: u64,
 }
 
-impl<A: PlatformApplication> Runtime<A> {
-    fn fail(&mut self, event_loop: &ActiveEventLoop, error: PlatformError) {
-        if self.error.is_none() {
-            self.error = Some(error);
-        }
-        event_loop.exit();
+impl WindowState {
+    fn open(
+        event_loop: &ActiveEventLoop,
+        display: &OwnedDisplayHandle,
+        proxy: &EventLoopProxy<UserEvent>,
+        id: crate::WindowId,
+        options: WindowOptions,
+        application: Box<dyn PlatformApplication>,
+    ) -> Result<(Self, BackendStatus), PlatformError> {
+        let (window, presenter, status) = initialize_presenter(event_loop, display, &options)?;
+        // AccessKit requires its adapter before the window is first shown.
+        let accessibility =
+            AccessibilityAdapter::with_event_loop_proxy(event_loop, &window, proxy.clone());
+        window.set_ime_allowed(true);
+        window.set_visible(true);
+        Ok((
+            Self {
+                id,
+                application,
+                options,
+                scale_factor: window.scale_factor(),
+                window,
+                presenter: Some(presenter),
+                accessibility,
+                cursor: LogicalPosition::new(0.0, 0.0),
+                modifiers: Modifiers::default(),
+                ime: ImeState::default(),
+                presented_frames: 0,
+                drawn_round: 0,
+            },
+            status,
+        ))
     }
 
-    fn send(&mut self, event_loop: &ActiveEventLoop, event: PlatformEvent) -> bool {
-        match self.application.event(event) {
-            Ok(()) => true,
-            Err(error) => {
-                self.fail(event_loop, PlatformError::Application(error));
-                false
-            }
-        }
+    /// Tell a newly opened window's application its backend and size.
+    fn start(&mut self, status: BackendStatus) -> Result<(), PlatformError> {
+        self.send(PlatformEvent::BackendChanged(status))?;
+        let physical = self.window.inner_size();
+        self.send(self.resized(physical.width, physical.height))?;
+        self.request_redraw();
+        Ok(())
+    }
+
+    fn send(&mut self, event: PlatformEvent) -> Result<(), PlatformError> {
+        self.application
+            .event(event)
+            .map_err(PlatformError::Application)
+    }
+
+    fn resized(&self, width: u32, height: u32) -> PlatformEvent {
+        PlatformEvent::Resized(
+            openui_geometry::ViewportMetrics::from_physical_size(width, height, self.scale_factor)
+                .expect("winit returned validated window metrics"),
+        )
     }
 
     fn request_redraw(&self) {
-        if let Some(window) = &self.window {
-            window.request_redraw();
-        }
+        self.window.request_redraw();
     }
 
-    fn update_accessibility(&mut self, event_loop: &ActiveEventLoop) {
-        let Some(adapter) = self.accessibility.as_mut() else {
-            return;
-        };
+    fn wants_frame(&self) -> bool {
+        self.application.is_animating() || self.application.needs_redraw()
+    }
+
+    /// Whether this window takes part in frame rounds. A minimized window
+    /// may never be asked to paint, so it would stall the others.
+    fn in_frame_round(&self) -> bool {
+        self.wants_frame() && self.window.is_minimized() != Some(true)
+    }
+
+    fn update_accessibility(&mut self) -> Result<(), PlatformError> {
         let mut error = None;
-        adapter.update_if_active(|| match self.application.accessibility_update() {
-            Ok(update) => update,
-            Err(message) => {
-                error = Some(PlatformError::Application(message));
-                empty_tree_update()
-            }
-        });
-        if let Some(error) = error {
-            self.fail(event_loop, error);
-        }
+        let application = &mut self.application;
+        self.accessibility
+            .update_if_active(|| match application.accessibility_update() {
+                Ok(update) => update,
+                Err(message) => {
+                    error = Some(PlatformError::Application(message));
+                    empty_tree_update()
+                }
+            });
+        error.map_or(Ok(()), Err)
     }
 
-    fn redraw(&mut self, event_loop: &ActiveEventLoop) {
-        let Some(window) = self.window.clone() else {
-            return;
-        };
-        let physical = window.inner_size();
+    fn redraw(
+        &mut self,
+        display: &OwnedDisplayHandle,
+        started: Instant,
+    ) -> Result<(), PlatformError> {
+        let physical = self.window.inner_size();
         if physical.width == 0 || physical.height == 0 {
-            return;
+            return Ok(());
         }
-        let elapsed_ms = self.started.elapsed().as_secs_f64() * 1000.0;
+        let elapsed_ms = started.elapsed().as_secs_f64() * 1000.0;
         let result = match self.presenter.as_mut() {
             Some(Presenter::OpenGl(presenter)) => self
                 .application
@@ -768,268 +836,136 @@ impl<A: PlatformApplication> Runtime<A> {
                 && matches!(self.presenter, Some(Presenter::OpenGl(_)))
             {
                 self.presenter.take();
-                match software_presenter(&self.display, window) {
-                    Ok(presenter) => {
-                        self.presenter = Some(presenter);
-                        let status = BackendStatus {
-                            active: BackendPreference::Software,
-                            fallback_reason: Some(error.to_string()),
-                        };
-                        if self.send(event_loop, PlatformEvent::BackendChanged(status)) {
-                            self.request_redraw();
-                        }
-                    }
-                    Err(fallback_error) => self.fail(event_loop, fallback_error),
-                }
-                return;
+                self.presenter = Some(software_presenter(display, self.window.clone())?);
+                let status = BackendStatus {
+                    active: BackendPreference::Software,
+                    fallback_reason: Some(error.to_string()),
+                };
+                self.send(PlatformEvent::BackendChanged(status))?;
+                self.request_redraw();
+                return Ok(());
             }
-            self.fail(event_loop, error);
-            return;
+            return Err(error);
         }
         self.presented_frames = self.presented_frames.saturating_add(1);
-        if !self.send(
-            event_loop,
-            PlatformEvent::Presented {
-                frame_number: self.presented_frames,
-                time_ms: elapsed_ms,
-            },
-        ) {
-            return;
-        }
-        self.update_accessibility(event_loop);
-        if self.application.is_animating() || self.application.needs_redraw() {
-            self.request_redraw();
-        }
+        self.send(PlatformEvent::Presented {
+            frame_number: self.presented_frames,
+            time_ms: elapsed_ms,
+        })?;
+        // The runtime requests the next frame, fairly across windows.
+        self.update_accessibility()
     }
 
-    fn handle_key(&mut self, event_loop: &ActiveEventLoop, event: winit::event::KeyEvent) {
+    fn handle_key(
+        &mut self,
+        clipboard: &NativeClipboard,
+        event: winit::event::KeyEvent,
+    ) -> Result<(), PlatformError> {
         let pressed = event.state == ElementState::Pressed;
         let key_text = logical_key_text(&event.logical_key);
         let shortcut = key_text.as_deref().map(str::to_ascii_lowercase);
         let command_modifier = self.modifiers.control || self.modifiers.meta;
         if pressed && command_modifier && shortcut.as_deref() == Some("v") {
-            if let Ok(text) = self.clipboard.load() {
-                if let Err(error) = self.application.set_clipboard_text(text) {
-                    self.fail(event_loop, PlatformError::Application(error));
-                    return;
-                }
+            if let Ok(text) = clipboard.load() {
+                self.application
+                    .set_clipboard_text(text)
+                    .map_err(PlatformError::Application)?;
             }
         }
-        if let Err(error) = self.application.key_input(crate::KeyboardInput {
-            phase: if pressed {
-                KeyPhase::Down
-            } else {
-                KeyPhase::Up
-            },
-            key_code: key_code(&event.logical_key),
-            key_text,
-            text: event.text.as_ref().map(ToString::to_string),
-            modifiers: self.modifiers,
-            repeat: event.repeat,
-        }) {
-            self.fail(event_loop, PlatformError::Application(error));
-            return;
-        }
+        self.application
+            .key_input(crate::KeyboardInput {
+                phase: if pressed {
+                    KeyPhase::Down
+                } else {
+                    KeyPhase::Up
+                },
+                key_code: key_code(&event.logical_key),
+                key_text,
+                text: event.text.as_ref().map(ToString::to_string),
+                modifiers: self.modifiers,
+                repeat: event.repeat,
+            })
+            .map_err(PlatformError::Application)?;
         if pressed && command_modifier && matches!(shortcut.as_deref(), Some("c") | Some("x")) {
             if let Ok(text) = self.application.clipboard_text() {
-                self.clipboard.store(text);
+                clipboard.store(text);
             }
         }
         self.request_redraw();
+        Ok(())
     }
 
     fn handle_accessibility_event(
         &mut self,
-        event_loop: &ActiveEventLoop,
-        event: accesskit_winit::Event,
-    ) {
-        if self.window.as_ref().map(|window| window.id()) != Some(event.window_id) {
-            return;
-        }
-        match event.window_event {
-            AccessibilityEvent::InitialTreeRequested => self.update_accessibility(event_loop),
+        event: AccessibilityEvent,
+    ) -> Result<(), PlatformError> {
+        match event {
+            AccessibilityEvent::InitialTreeRequested => self.update_accessibility(),
             AccessibilityEvent::ActionRequested(request) => {
-                if let Err(error) = self.application.accessibility_action(request) {
-                    self.fail(event_loop, PlatformError::Application(error));
-                    return;
-                }
+                self.application
+                    .accessibility_action(request)
+                    .map_err(PlatformError::Application)?;
                 self.request_redraw();
+                Ok(())
             }
-            AccessibilityEvent::AccessibilityDeactivated => {}
-        }
-    }
-}
-
-impl<A: PlatformApplication> ApplicationHandler<UserEvent> for Runtime<A> {
-    fn resumed(&mut self, event_loop: &ActiveEventLoop) {
-        if self.window.is_some() {
-            return;
-        }
-        let (window, presenter, status) =
-            match initialize_presenter(event_loop, &self.display, &self.options) {
-                Ok(initialized) => initialized,
-                Err(error) => {
-                    self.fail(event_loop, error);
-                    return;
-                }
-            };
-        self.scale_factor = window.scale_factor();
-        let physical = window.inner_size();
-        let accessibility =
-            AccessibilityAdapter::with_event_loop_proxy(event_loop, &window, self.proxy.clone());
-        window.set_ime_allowed(true);
-        window.set_visible(true);
-        self.presenter = Some(presenter);
-        self.accessibility = Some(accessibility);
-        self.window = Some(window);
-        if !self.send(event_loop, PlatformEvent::BackendChanged(status)) {
-            return;
-        }
-        if self.send(
-            event_loop,
-            PlatformEvent::Resized(
-                openui_geometry::ViewportMetrics::from_physical_size(
-                    physical.width,
-                    physical.height,
-                    self.scale_factor,
-                )
-                .expect("winit returned validated window metrics"),
-            ),
-        ) {
-            self.request_redraw();
+            AccessibilityEvent::AccessibilityDeactivated => Ok(()),
         }
     }
 
-    fn user_event(&mut self, event_loop: &ActiveEventLoop, event: UserEvent) {
-        match event {
-            UserEvent::Accessibility(event) => self.handle_accessibility_event(event_loop, event),
-            UserEvent::DevExit => {
-                let _ = self.send(event_loop, PlatformEvent::CloseRequested);
-                event_loop.exit();
-            }
-        }
+    fn pointer(&mut self, phase: PointerPhase, button: PointerButton) -> Result<(), PlatformError> {
+        self.send(PlatformEvent::Pointer {
+            pointer_id: 0,
+            phase,
+            x: self.cursor.x as f32,
+            y: self.cursor.y as f32,
+            button,
+            modifiers: self.modifiers,
+        })
     }
 
-    fn window_event(
+    /// Every window event except closing, which the runtime handles.
+    fn handle_event(
         &mut self,
-        event_loop: &ActiveEventLoop,
-        window_id: WindowId,
         event: WindowEvent,
-    ) {
-        let Some(window) = self.window.clone() else {
-            return;
-        };
-        if window.id() != window_id {
-            return;
-        }
-        if let Some(adapter) = self.accessibility.as_mut() {
-            adapter.process_event(&window, &event);
-        }
+        clipboard: &NativeClipboard,
+        display: &OwnedDisplayHandle,
+        started: Instant,
+    ) -> Result<(), PlatformError> {
         match event {
-            WindowEvent::CloseRequested | WindowEvent::Destroyed => {
-                let _ = self.send(event_loop, PlatformEvent::CloseRequested);
-                event_loop.exit();
-            }
             WindowEvent::Resized(physical) => {
-                if physical.width > 0
-                    && physical.height > 0
-                    && self.send(
-                        event_loop,
-                        PlatformEvent::Resized(
-                            openui_geometry::ViewportMetrics::from_physical_size(
-                                physical.width,
-                                physical.height,
-                                self.scale_factor,
-                            )
-                            .expect("winit returned validated window metrics"),
-                        ),
-                    )
-                {
+                if physical.width > 0 && physical.height > 0 {
+                    self.send(self.resized(physical.width, physical.height))?;
                     self.request_redraw();
                 }
             }
             WindowEvent::ScaleFactorChanged { scale_factor, .. } => {
                 self.scale_factor = scale_factor;
-                let physical = window.inner_size();
-                if self.send(
-                    event_loop,
-                    PlatformEvent::Resized(
-                        openui_geometry::ViewportMetrics::from_physical_size(
-                            physical.width,
-                            physical.height,
-                            scale_factor,
-                        )
-                        .expect("winit returned validated window metrics"),
-                    ),
-                ) {
-                    self.request_redraw();
-                }
+                let physical = self.window.inner_size();
+                self.send(self.resized(physical.width, physical.height))?;
+                self.request_redraw();
             }
             WindowEvent::CursorMoved { position, .. } => {
                 self.cursor = position.to_logical(self.scale_factor);
-                let cursor = self.cursor;
-                let modifiers = self.modifiers;
-                if self.send(
-                    event_loop,
-                    PlatformEvent::Pointer {
-                        pointer_id: 0,
-                        phase: PointerPhase::Move,
-                        x: cursor.x as f32,
-                        y: cursor.y as f32,
-                        button: PointerButton::Other(0),
-                        modifiers,
-                    },
-                ) {
-                    match self
-                        .application
-                        .cursor_icon(cursor.x as f32, cursor.y as f32)
-                    {
-                        Ok(icon) => window.set_cursor(winit_cursor(icon)),
-                        Err(error) => {
-                            self.fail(event_loop, PlatformError::Application(error));
-                            return;
-                        }
-                    }
-                    self.request_redraw();
-                }
+                self.pointer(PointerPhase::Move, PointerButton::Other(0))?;
+                let icon = self
+                    .application
+                    .cursor_icon(self.cursor.x as f32, self.cursor.y as f32)
+                    .map_err(PlatformError::Application)?;
+                self.window.set_cursor(winit_cursor(icon));
+                self.request_redraw();
             }
             WindowEvent::CursorLeft { .. } => {
-                let cursor = self.cursor;
-                let modifiers = self.modifiers;
-                if self.send(
-                    event_loop,
-                    PlatformEvent::Pointer {
-                        pointer_id: 0,
-                        phase: PointerPhase::Leave,
-                        x: cursor.x as f32,
-                        y: cursor.y as f32,
-                        button: PointerButton::Other(0),
-                        modifiers,
-                    },
-                ) {
-                    self.request_redraw();
-                }
+                self.pointer(PointerPhase::Leave, PointerButton::Other(0))?;
+                self.request_redraw();
             }
             WindowEvent::MouseInput { state, button, .. } => {
-                let cursor = self.cursor;
-                let modifiers = self.modifiers;
-                if self.send(
-                    event_loop,
-                    PlatformEvent::Pointer {
-                        pointer_id: 0,
-                        phase: if state == ElementState::Pressed {
-                            PointerPhase::Down
-                        } else {
-                            PointerPhase::Up
-                        },
-                        x: cursor.x as f32,
-                        y: cursor.y as f32,
-                        button: pointer_button(button),
-                        modifiers,
-                    },
-                ) {
-                    self.request_redraw();
-                }
+                let phase = if state == ElementState::Pressed {
+                    PointerPhase::Down
+                } else {
+                    PointerPhase::Up
+                };
+                self.pointer(phase, pointer_button(button))?;
+                self.request_redraw();
             }
             WindowEvent::MouseWheel { delta, .. } => {
                 let (delta_x, delta_y) = match delta {
@@ -1039,20 +975,14 @@ impl<A: PlatformApplication> ApplicationHandler<UserEvent> for Runtime<A> {
                         (position.y / self.scale_factor) as f32,
                     ),
                 };
-                let cursor = self.cursor;
-                let modifiers = self.modifiers;
-                if self.send(
-                    event_loop,
-                    PlatformEvent::Wheel {
-                        x: cursor.x as f32,
-                        y: cursor.y as f32,
-                        delta_x,
-                        delta_y,
-                        modifiers,
-                    },
-                ) {
-                    self.request_redraw();
-                }
+                self.send(PlatformEvent::Wheel {
+                    x: self.cursor.x as f32,
+                    y: self.cursor.y as f32,
+                    delta_x,
+                    delta_y,
+                    modifiers: self.modifiers,
+                })?;
+                self.request_redraw();
             }
             WindowEvent::Touch(touch) => {
                 let logical = touch.location.to_logical::<f64>(self.scale_factor);
@@ -1062,22 +992,17 @@ impl<A: PlatformApplication> ApplicationHandler<UserEvent> for Runtime<A> {
                     TouchPhase::Ended => PointerPhase::Up,
                     TouchPhase::Cancelled => PointerPhase::Cancel,
                 };
-                let modifiers = self.modifiers;
-                if self.send(
-                    event_loop,
-                    PlatformEvent::Pointer {
-                        pointer_id: touch.id.saturating_add(1),
-                        phase,
-                        x: logical.x as f32,
-                        y: logical.y as f32,
-                        button: PointerButton::Left,
-                        modifiers,
-                    },
-                ) {
-                    self.request_redraw();
-                }
+                self.send(PlatformEvent::Pointer {
+                    pointer_id: touch.id.saturating_add(1),
+                    phase,
+                    x: logical.x as f32,
+                    y: logical.y as f32,
+                    button: PointerButton::Left,
+                    modifiers: self.modifiers,
+                })?;
+                self.request_redraw();
             }
-            WindowEvent::KeyboardInput { event, .. } => self.handle_key(event_loop, event),
+            WindowEvent::KeyboardInput { event, .. } => self.handle_key(clipboard, event)?,
             WindowEvent::ModifiersChanged(modifiers) => {
                 let state = modifiers.state();
                 self.modifiers = Modifiers {
@@ -1089,60 +1014,297 @@ impl<A: PlatformApplication> ApplicationHandler<UserEvent> for Runtime<A> {
             }
             WindowEvent::Ime(ime) => {
                 for event in self.ime.events(ime) {
-                    if !self.send(event_loop, event) {
-                        break;
-                    }
+                    self.send(event)?;
                     self.request_redraw();
                 }
             }
             WindowEvent::Focused(focused) => {
                 if let Some(event) = self.ime.focus_changed(focused) {
-                    if !self.send(event_loop, event) {
-                        return;
-                    }
+                    self.send(event)?;
                 }
-                if self.send(event_loop, PlatformEvent::Focused(focused)) {
-                    self.request_redraw();
-                }
+                self.send(PlatformEvent::Focused(focused))?;
+                self.request_redraw();
             }
             WindowEvent::DroppedFile(path) => {
-                let _ = self.send(event_loop, PlatformEvent::DroppedFile(path));
+                // Like the other file notifications, a failing handler does
+                // not end the app.
+                let _ = self.send(PlatformEvent::DroppedFile(path));
             }
             WindowEvent::HoveredFile(path) => {
-                let _ = self.send(event_loop, PlatformEvent::HoveredFile(path));
+                let _ = self.send(PlatformEvent::HoveredFile(path));
             }
             WindowEvent::HoveredFileCancelled => {
-                let _ = self.send(event_loop, PlatformEvent::HoveredFileCancelled);
+                let _ = self.send(PlatformEvent::HoveredFileCancelled);
             }
-            WindowEvent::RedrawRequested => self.redraw(event_loop),
+            WindowEvent::RedrawRequested => self.redraw(display, started)?,
             _ => {}
         }
-        if self.application.exit_requested() {
-            event_loop.exit();
+        Ok(())
+    }
+}
+
+/// The event loop and every open window. Windows drop before the clipboard,
+/// and the clipboard before the display handle it was created from.
+struct Runtime<C: WindowController> {
+    windows: Vec<WindowState>,
+    controller: C,
+    clipboard: NativeClipboard,
+    display: OwnedDisplayHandle,
+    proxy: EventLoopProxy<UserEvent>,
+    started: Instant,
+    resumed: bool,
+    error: Option<PlatformError>,
+    /// Windows that want frames draw once per round. Windows delivers paint
+    /// requests to one window first, so re-requesting a frame as soon as a
+    /// window draws would starve the others.
+    frame_round: u64,
+    frame_round_started: Instant,
+}
+
+/// A round ends early if a window has not drawn by then, so one window that
+/// is never asked to paint cannot stop the others.
+const FRAME_ROUND_LIMIT: std::time::Duration = std::time::Duration::from_millis(250);
+
+impl<C: WindowController> Runtime<C> {
+    fn fail(&mut self, event_loop: &ActiveEventLoop, error: PlatformError) {
+        if self.error.is_none() {
+            self.error = Some(error);
+        }
+        event_loop.exit();
+    }
+
+    fn check(&mut self, event_loop: &ActiveEventLoop, result: Result<(), PlatformError>) -> bool {
+        match result {
+            Ok(()) => true,
+            Err(error) => {
+                self.fail(event_loop, error);
+                false
+            }
         }
     }
 
-    fn about_to_wait(&mut self, event_loop: &ActiveEventLoop) {
-        if self.application.exit_requested() {
+    fn index_of(&self, window: WindowId) -> Option<usize> {
+        self.windows
+            .iter()
+            .position(|state| state.window.id() == window)
+    }
+
+    fn index_of_id(&self, id: crate::WindowId) -> Option<usize> {
+        self.windows.iter().position(|state| state.id == id)
+    }
+
+    /// Apply the controller's queued window commands until it has none. A
+    /// new window's first events may queue more.
+    fn apply_commands(&mut self, event_loop: &ActiveEventLoop) {
+        while self.resumed && !event_loop.exiting() {
+            let commands = match self.controller.take_commands() {
+                Ok(commands) => commands,
+                Err(error) => return self.fail(event_loop, PlatformError::Application(error)),
+            };
+            if commands.is_empty() {
+                return;
+            }
+            for command in commands {
+                self.apply(event_loop, command);
+                if event_loop.exiting() {
+                    return;
+                }
+            }
+        }
+    }
+
+    fn apply(&mut self, event_loop: &ActiveEventLoop, command: WindowCommand) {
+        match command {
+            WindowCommand::Open {
+                id,
+                options,
+                application,
+            } => {
+                if let Some(index) = self.index_of_id(id) {
+                    self.windows[index].window.focus_window();
+                    return;
+                }
+                match WindowState::open(
+                    event_loop,
+                    &self.display,
+                    &self.proxy,
+                    id,
+                    options,
+                    application,
+                ) {
+                    Ok((state, status)) => {
+                        self.windows.push(state);
+                        let result = self.windows.last_mut().expect("just pushed").start(status);
+                        self.check(event_loop, result);
+                    }
+                    Err(error) => self.fail(event_loop, error),
+                }
+            }
+            WindowCommand::Close(id) => {
+                if let Some(index) = self.index_of_id(id) {
+                    self.close(event_loop, index);
+                }
+            }
+            WindowCommand::Focus(id) => {
+                if let Some(index) = self.index_of_id(id) {
+                    self.windows[index].window.focus_window();
+                }
+            }
+            WindowCommand::SetTitle(id, title) => {
+                if let Some(index) = self.index_of_id(id) {
+                    self.windows[index].window.set_title(&title);
+                    self.windows[index].options.title = title;
+                }
+            }
+        }
+    }
+
+    /// Destroy a window, then tell the controller.
+    fn close(&mut self, event_loop: &ActiveEventLoop, index: usize) {
+        let id = self.windows[index].id;
+        drop(self.windows.remove(index));
+        let result = self
+            .controller
+            .window_closed(id)
+            .map_err(PlatformError::Application);
+        self.check(event_loop, result);
+    }
+
+    /// Request a frame from each window that wants one and has not drawn in
+    /// this round, starting a new round once all have.
+    fn request_frames(&mut self) {
+        let now = Instant::now();
+        let round = self.frame_round;
+        let waiting = self
+            .windows
+            .iter()
+            .any(|state| state.in_frame_round() && state.drawn_round < round);
+        if !waiting || now.duration_since(self.frame_round_started) > FRAME_ROUND_LIMIT {
+            self.frame_round += 1;
+            self.frame_round_started = now;
+        }
+        for state in &self.windows {
+            if state.in_frame_round() && state.drawn_round < self.frame_round {
+                state.request_redraw();
+            }
+        }
+    }
+
+    fn exit_if_requested(&mut self, event_loop: &ActiveEventLoop) -> bool {
+        let requested = self.resumed
+            && (self.controller.exit_requested(self.windows.len())
+                || self
+                    .windows
+                    .iter()
+                    .any(|state| state.application.exit_requested()));
+        if requested {
             event_loop.exit();
+        }
+        requested || event_loop.exiting()
+    }
+}
+
+impl<C: WindowController> ApplicationHandler<UserEvent> for Runtime<C> {
+    fn resumed(&mut self, event_loop: &ActiveEventLoop) {
+        if self.resumed {
+            return;
+        }
+        self.resumed = true;
+        self.apply_commands(event_loop);
+        self.exit_if_requested(event_loop);
+    }
+
+    fn user_event(&mut self, event_loop: &ActiveEventLoop, event: UserEvent) {
+        match event {
+            UserEvent::Accessibility(event) => {
+                let Some(index) = self.index_of(event.window_id) else {
+                    return;
+                };
+                let result = self.windows[index].handle_accessibility_event(event.window_event);
+                if self.check(event_loop, result) {
+                    self.apply_commands(event_loop);
+                    self.exit_if_requested(event_loop);
+                }
+            }
+            UserEvent::DevExit => {
+                for state in &mut self.windows {
+                    let _ = state.send(PlatformEvent::CloseRequested);
+                }
+                event_loop.exit();
+            }
+        }
+    }
+
+    fn window_event(
+        &mut self,
+        event_loop: &ActiveEventLoop,
+        window_id: WindowId,
+        event: WindowEvent,
+    ) {
+        let Some(index) = self.index_of(window_id) else {
+            return;
+        };
+        {
+            let state = &mut self.windows[index];
+            state.accessibility.process_event(&state.window, &event);
+        }
+        match event {
+            WindowEvent::CloseRequested => {
+                let id = self.windows[index].id;
+                // As before, a failing close handler does not keep the window.
+                let _ = self.windows[index].send(PlatformEvent::CloseRequested);
+                match self.controller.close_requested(id) {
+                    Ok(true) => self.close(event_loop, index),
+                    Ok(false) => {}
+                    Err(error) => return self.fail(event_loop, PlatformError::Application(error)),
+                }
+            }
+            WindowEvent::Destroyed => {
+                let _ = self.windows[index].send(PlatformEvent::CloseRequested);
+                self.close(event_loop, index);
+            }
+            event => {
+                let redraw = matches!(event, WindowEvent::RedrawRequested);
+                let state = &mut self.windows[index];
+                let result =
+                    state.handle_event(event, &self.clipboard, &self.display, self.started);
+                if redraw {
+                    state.drawn_round = self.frame_round;
+                }
+                if !self.check(event_loop, result) {
+                    return;
+                }
+                if redraw {
+                    // Request the next frame now, as the single-window
+                    // runtime did, so animation continues where the loop
+                    // does not reach `about_to_wait`, such as a modal resize.
+                    self.request_frames();
+                }
+            }
+        }
+        self.apply_commands(event_loop);
+        self.exit_if_requested(event_loop);
+    }
+
+    fn about_to_wait(&mut self, event_loop: &ActiveEventLoop) {
+        self.apply_commands(event_loop);
+        if self.exit_if_requested(event_loop) {
             return;
         }
         // The preceding platform/default-action borrows have ended. Rust and
         // C applications use this same adapter and retained Document queue.
-        let pending = match self.application.dispatch_pending_events() {
-            Ok(pending) => pending,
-            Err(error) => {
-                self.fail(event_loop, PlatformError::Application(error));
-                return;
+        let mut pending = false;
+        for index in 0..self.windows.len() {
+            match self.windows[index].application.dispatch_pending_events() {
+                Ok(more) => pending |= more,
+                Err(error) => return self.fail(event_loop, PlatformError::Application(error)),
             }
-        };
-        if self.application.exit_requested() {
-            event_loop.exit();
+        }
+        self.apply_commands(event_loop);
+        if self.exit_if_requested(event_loop) {
             return;
         }
-        if self.application.is_animating() || self.application.needs_redraw() {
-            self.request_redraw();
-        }
+        self.request_frames();
         event_loop.set_control_flow(if pending {
             ControlFlow::Poll
         } else {
@@ -1151,10 +1313,30 @@ impl<A: PlatformApplication> ApplicationHandler<UserEvent> for Runtime<A> {
     }
 }
 
+/// Opens one window for `application` and runs until it closes.
+struct SingleWindow(Option<WindowCommand>);
+
+impl WindowController for SingleWindow {
+    fn take_commands(&mut self) -> Result<Vec<WindowCommand>, String> {
+        Ok(self.0.take().into_iter().collect())
+    }
+}
+
+/// Run one window until it closes or the application requests exit.
 pub fn run<A: PlatformApplication>(
     application: A,
     options: WindowOptions,
 ) -> Result<(), PlatformError> {
+    run_windows(SingleWindow(Some(WindowCommand::Open {
+        id: crate::WindowId(0),
+        options,
+        application: Box::new(application),
+    })))
+}
+
+/// Run the native event loop with the windows `controller` opens, until it
+/// asks to exit, by default after its last window closes.
+pub fn run_windows<C: WindowController>(controller: C) -> Result<(), PlatformError> {
     let event_loop = EventLoop::<UserEvent>::with_user_event()
         .build()
         .map_err(|error| PlatformError::Initialization(error.to_string()))?;
@@ -1166,21 +1348,16 @@ pub fn run<A: PlatformApplication>(
         watch_dev_stdin(proxy.clone())?;
     }
     let mut runtime = Runtime {
-        application,
-        options,
-        display,
+        windows: Vec::new(),
+        controller,
         clipboard,
+        display,
         proxy,
-        window: None,
-        presenter: None,
-        accessibility: None,
-        cursor: LogicalPosition::new(0.0, 0.0),
-        scale_factor: 1.0,
-        modifiers: Modifiers::default(),
-        ime: ImeState::default(),
         started: Instant::now(),
+        resumed: false,
         error: None,
-        presented_frames: 0,
+        frame_round: 1,
+        frame_round_started: Instant::now(),
     };
     event_loop
         .run_app(&mut runtime)

@@ -94,6 +94,8 @@ mod generated_style_setters;
 // ─── Application shell ─────────────────────────────────────
 
 pub mod app;
+mod app_spec;
+pub mod window;
 
 /// Convenience prelude for common imports.
 pub mod prelude;
@@ -151,6 +153,7 @@ pub use app::{
     App, AppBuilder, AppExitHandle, BackendPreference, HeadlessApp, LogicalSize, RenderOptions,
     WindowOptions,
 };
+pub use app_spec::AppSpec;
 pub use openui_engine::{
     AccessibilityAction, AccessibilityLive, AccessibilityNode, AccessibilityNodeId,
     AccessibilityPlatformAction, AccessibilityRelation, AccessibilityRole,

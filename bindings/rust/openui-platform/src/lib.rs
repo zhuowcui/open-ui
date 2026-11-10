@@ -13,7 +13,7 @@ mod windows_clipboard;
     all(feature = "linux", target_os = "linux"),
     all(feature = "windows", target_os = "windows")
 ))]
-pub use desktop::run;
+pub use desktop::{run, run_windows};
 
 #[cfg(any(feature = "linux", feature = "windows"))]
 pub use accesskit::{ActionRequest, TreeUpdate};
@@ -38,9 +38,93 @@ pub struct BackendStatus {
 #[derive(Debug, Clone, PartialEq)]
 pub struct WindowOptions {
     pub title: String,
+    /// Initial inner size in logical pixels.
     pub width: f64,
     pub height: f64,
     pub backend: BackendPreference,
+    /// Smallest and largest inner size in logical pixels.
+    pub min_size: Option<(f64, f64)>,
+    pub max_size: Option<(f64, f64)>,
+    pub resizable: bool,
+    pub decorations: bool,
+}
+
+impl Default for WindowOptions {
+    fn default() -> Self {
+        Self {
+            title: String::new(),
+            width: 800.0,
+            height: 600.0,
+            backend: BackendPreference::Auto,
+            min_size: None,
+            max_size: None,
+            resizable: true,
+            decorations: true,
+        }
+    }
+}
+
+/// Names a window for the life of the process. The controller chooses it.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub struct WindowId(pub u64);
+
+/// A change to the set of open windows, queued by a [`WindowController`].
+pub enum WindowCommand {
+    /// Open a window drawn by `application`. If `id` is already open, focus
+    /// that window and drop `application`.
+    Open {
+        id: WindowId,
+        options: WindowOptions,
+        application: Box<dyn PlatformApplication>,
+    },
+    /// Close a window without asking its controller.
+    Close(WindowId),
+    Focus(WindowId),
+    SetTitle(WindowId, String),
+}
+
+impl std::fmt::Debug for WindowCommand {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Open { id, options, .. } => formatter
+                .debug_struct("Open")
+                .field("id", id)
+                .field("options", options)
+                .finish_non_exhaustive(),
+            Self::Close(id) => formatter.debug_tuple("Close").field(id).finish(),
+            Self::Focus(id) => formatter.debug_tuple("Focus").field(id).finish(),
+            Self::SetTitle(id, title) => formatter
+                .debug_tuple("SetTitle")
+                .field(id)
+                .field(title)
+                .finish(),
+        }
+    }
+}
+
+/// Owns the set of windows in [`run_windows`]. Every method runs on the
+/// event-loop thread between window events, never inside one.
+pub trait WindowController: 'static {
+    /// Commands queued since the last call, applied in order. Called when
+    /// the loop starts, after every event and before the loop waits.
+    fn take_commands(&mut self) -> Result<Vec<WindowCommand>, String>;
+
+    /// The user asked to close `id`; its application has already received
+    /// [`PlatformEvent::CloseRequested`]. Return false to keep it open.
+    fn close_requested(&mut self, _id: WindowId) -> Result<bool, String> {
+        Ok(true)
+    }
+
+    /// `id` was destroyed and its application dropped.
+    fn window_closed(&mut self, _id: WindowId) -> Result<(), String> {
+        Ok(())
+    }
+
+    /// Whether to end the loop with `open_windows` windows open. Any
+    /// window's [`PlatformApplication::exit_requested`] also ends it.
+    fn exit_requested(&self, open_windows: usize) -> bool {
+        open_windows == 0
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

@@ -12,8 +12,8 @@ The order and verification of each PR are in
 | # | PR | State |
 | --- | --- | --- |
 | 1 | RFC 0002: CLI, app layout and async model | Merged (#90) |
-| 2 | `openui-cli` skeleton: `new`, `dev`, `build`, `doctor` | In review |
-| 3 | Multi-window runtime | Not started |
+| 2 | `openui-cli` skeleton: `new`, `dev`, `build`, `doctor` | Merged (#93) |
+| 3 | Multi-window runtime | In review |
 | 4 | Async runtime integrated with the UI thread and signals | Not started |
 | 5 | Clipboard service | Not started |
 | 6 | File dialogs | Not started |
@@ -22,6 +22,52 @@ The order and verification of each PR are in
 | 9 | `default` template and test utilities | Not started |
 
 ## Log
+
+### 9 November 2026: multi-window runtime
+
+Change: `openui-platform` runs any number of windows on one winit event loop
+(`run_windows` with a `WindowController` that queues `WindowCommand`s); each
+window keeps its own presenter, AccessKit adapter, IME and input state.
+`openui` adds `App::new(id).name(..).window(WindowSpec, view).run()` and the
+`window` module (`open`, `current`, `all`, `WindowKey::unique`,
+`WindowHandle::{close, focus, set_title, is_open}`,
+`WindowSpec::on_close_requested` returning `Close::Allow`/`Prevent`) and
+`app::exit()`. The existing `App::builder()...run(view)` and the C ABI's
+`run_document` now adopt their `App` as one window of the same runtime, so
+`window::open` works from them too; `platform::run(app, options)` remains as a
+single-window controller.
+
+Findings:
+
+- With two animating windows on Windows, the OS delivers paint requests to the
+  top window first; re-requesting a frame as soon as a window drew starved the
+  other completely (window 2 presented 41,590 frames and window 1 none in
+  60 s). Frames are now requested in rounds: each window that wants a frame
+  draws once per round; minimized windows are left out and a round ends after
+  250 ms, so a window that is never asked to paint cannot stop the others.
+- The OpenGL presenter assumed its context stayed current. With one context
+  per window it now makes its context current before presenting and before
+  deleting its GL objects.
+- `window::all()` was added to the RFC's API. Dev-mode window geometry restore
+  (RFC section 1) moves to its own small PR.
+
+Verification on Windows (working branch):
+
+- `cargo test -p openui-platform --features windows --test multi_window` with
+  `OUI_BACKEND` = auto, software and opengl: passed. Two windows open, both
+  present, opening an open id focuses it and drops the new app, retitling
+  works, closing one keeps the other presenting, and the loop exits after the
+  last.
+- `cargo test -p openui --features windows --lib window`: 5 passed (key
+  dedupe, close, close veto with `window::current()`, exit flag reset).
+- `OUI_SMOKE_EXIT=1` smokes of `hello` (software, auto) and the new
+  `multi-window` example (software, auto, opengl): exit 0.
+- `tools/platform/verify_windows_uia.ps1` against `accessibility.exe`,
+  software and auto: passed, including closing the window.
+- Linux (WSL2 Ubuntu, WSLg Wayland): the `multi_window` test passed with
+  software and OpenGL. X11 could not run there (no `libxkbcommon-x11`); CI's
+  hardening job now runs the test and the example smoke on X11 (software,
+  Mesa OpenGL) and Wayland (software), and `windows-msvc` smokes the example.
 
 ### 9 November 2026: `openui-cli` skeleton
 

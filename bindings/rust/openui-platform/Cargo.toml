@@ -68,3 +68,8 @@ windows-sys = { version = "=0.61.2", features = ["Win32_Foundation", "Win32_Syst
 
 [dev-dependencies]
 accesskit = "=0.25.0"
+
+# winit runs only on the main thread, so this test has its own `main`.
+[[test]]
+name = "multi_window"
+harness = false

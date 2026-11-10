@@ -260,13 +260,14 @@ jobs:
 
       - name: Build and smoke the Win32 desktop runtime
         run: |
-          features="openui-platform/windows openui/windows openui-ffi/windows hello/windows"
+          features="openui-platform/windows openui/windows openui-ffi/windows hello/windows multi-window/windows"
           cargo build --manifest-path bindings/rust/Cargo.toml --locked \
-            --package openui-ffi --package hello --features "$features"
+            --package openui-ffi --package hello --package multi-window --features "$features"
           cargo test --manifest-path bindings/rust/Cargo.toml --locked --no-fail-fast \
             --package openui-platform --package openui --package openui-ffi \
             --features "openui-platform/windows openui/windows openui-ffi/windows"
           OUI_BACKEND=software OUI_SMOKE_EXIT=1 "$CARGO_TARGET_DIR/debug/hello.exe"
+          OUI_BACKEND=software OUI_SMOKE_EXIT=1 "$CARGO_TARGET_DIR/debug/multi-window.exe"
           python tools/ffi/verify_native_window.py \
             --library "$CARGO_TARGET_DIR/debug/openui_ffi.dll" \
             --protocol win32 --backend software

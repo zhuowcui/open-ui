@@ -239,25 +239,17 @@ impl App {
             all(feature = "windows", target_os = "windows")
         ))]
         {
-            // Follow the operating system's form-control accent, as
-            // Chromium's native theme does.
-            let accent = openui_platform::system_accent_color()
-                .map(|[r, g, b]| openui_style::Color::from_rgba8(r, g, b, 255));
-            self.document.with_engine_mut(|engine| {
-                engine.set_platform_accent_color(accent);
-                Ok(())
-            })?;
-            let options = openui_platform::WindowOptions {
+            // The single window runs on the same runtime as `App::new`, so
+            // `window::open` works here too. The runtime applies the
+            // operating system's form-control accent, as Chromium's native
+            // theme does.
+            let defaults = crate::app_spec::Defaults {
                 title: self.options.title.clone(),
-                width: self.options.size.width,
-                height: self.options.size.height,
-                backend: match self.options.backend {
-                    BackendPreference::Auto => openui_platform::BackendPreference::Auto,
-                    BackendPreference::OpenGl => openui_platform::BackendPreference::OpenGl,
-                    BackendPreference::Software => openui_platform::BackendPreference::Software,
-                },
+                backend: self.options.backend,
+                engine_options: EngineOptions::default(),
             };
-            openui_platform::run(self, options).map_err(|error| Error::Platform(error.to_string()))
+            crate::window::adopt(self);
+            crate::app_spec::run_windows(defaults, true)
         }
         #[cfg(not(any(
             all(feature = "linux", target_os = "linux"),
@@ -266,7 +258,10 @@ impl App {
         Err(Error::PlatformUnavailable)
     }
 
-    fn render_first_frame_to(&self, path: impl AsRef<std::path::Path>) -> Result<(), Error> {
+    pub(crate) fn render_first_frame_to(
+        &self,
+        path: impl AsRef<std::path::Path>,
+    ) -> Result<(), Error> {
         self.document.begin_frame(0.0)?;
         self.document.render_to_png(path)
     }
@@ -491,6 +486,23 @@ impl openui_platform::PlatformApplication for App {
         self.document
             .perform_accessibility_action(target, action)
             .map_err(|error| error.to_string())
+    }
+}
+
+/// Exit the app from anywhere on the UI thread, after the current event.
+pub fn exit() {
+    crate::window::request_exit();
+}
+
+#[cfg(any(
+    all(feature = "linux", target_os = "linux"),
+    all(feature = "windows", target_os = "windows")
+))]
+pub(crate) fn platform_backend(backend: BackendPreference) -> openui_platform::BackendPreference {
+    match backend {
+        BackendPreference::Auto => openui_platform::BackendPreference::Auto,
+        BackendPreference::OpenGl => openui_platform::BackendPreference::OpenGl,
+        BackendPreference::Software => openui_platform::BackendPreference::Software,
     }
 }
 
