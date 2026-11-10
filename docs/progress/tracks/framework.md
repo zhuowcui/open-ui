@@ -18,10 +18,52 @@ The order and verification of each PR are in
 | 5 | Clipboard service | Merged (#99) |
 | 6 | File dialogs | Merged (#100) |
 | 7 | App menu | Merged (#101, #103) |
-| 8 | HTTP client | In review |
-| 9 | `default` template and test utilities | Not started |
+| 8 | HTTP client | Merged (#105) |
+| 9 | `default` template and test utilities | In review |
 
 ## Log
+
+### 10 November 2026: `default` template and test utilities
+
+Change: `openui::testing` (`testing` feature, for dev-dependencies) wraps
+`HeadlessApp` as `TestApp`: `mount`, lookups (`by_id`, `by_text`,
+`find_text`), input (`click` presses and releases the primary button at an
+element's centre through hit testing; `type_text`, `press`, `press_with`)
+and `run_until_idle`, which every helper runs after its input. Helpers
+panic with what was missing. `assert_snapshot!(app, "name")` compares exact
+RGBA, decoded with `png` 0.18.1 (already locked), with
+`tests/snapshots/name.<os>.png` in the calling crate. A missing or
+different snapshot fails unless `OPENUI_UPDATE_SNAPSHOTS=1`; a mismatch
+writes `name.<os>.actual.png` beside it.
+
+`openui new` gains the `default` template, now the template used when none
+is named: an `App` with a shared `State`, a menu bar (Open... with a file
+dialog, Close Window, Quit, the Edit roles, Reset Count enabled reactively,
+Check Connection over HTTP, About), a root view and `tests/ui.rs` with a
+click test and a snapshot test. A small `src/lib.rs` holds the state and
+modules so the tests can import the views. Templates choose their own
+`openui` features through a new `{{framework_source}}` placeholder; `new`
+also fills `{{app_id}}` and prints template-specific next steps (recording
+the first snapshots). `tools/framework/check_cli_template.py` now checks
+both templates, and for `default` requires that `cargo test` fails on the
+missing snapshot, records it with `OPENUI_UPDATE_SNAPSHOTS=1`, then passes
+against it.
+
+Also fixed: `HeadlessApp::run_ready_tasks` carried `run_until_idle`'s
+documentation.
+
+Verification (Windows, MSVC, this branch): `cargo test -p openui-cli`
+passes 26 tests; `cargo test -p openui --features testing --lib testing`
+passes 2. An app generated with `openui new demo --framework-path .`
+(template `default`) builds; its first `cargo test` passes the click test
+and fails the snapshot test with "there is no accepted snapshot" and writes
+`first-screen.windows.actual.png`; `OPENUI_UPDATE_SNAPSHOTS=1 cargo test`
+passes and records `first-screen.windows.png` (5,277 bytes); a plain
+`cargo test` then passes 2 of 2, and the dev executable renders its first
+frame with `OPENUI_RENDER_PNG`.
+
+Not done: dialog stand-ins for headless tests, promised in the file dialog
+entry, are not in this PR.
 
 ### 10 November 2026: HTTP client
 

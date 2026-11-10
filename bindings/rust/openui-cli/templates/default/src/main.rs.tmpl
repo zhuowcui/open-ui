@@ -1,0 +1,20 @@
+// Release builds open no console window on Windows.
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+
+use openui::prelude::*;
+use openui::window::WindowSpec;
+use {{crate_name}}::{app, menu, State};
+
+fn main() -> Result<(), Error> {
+    // App state lives for the whole run and is shared by every window.
+    let state = State::new();
+    // Replace the id with your own reverse-DNS name.
+    App::new("{{app_id}}")
+        .name("{{name}}")
+        .menu(move || menu::app_menu(state))
+        .window(
+            WindowSpec::new("main").title("{{name}}").size(720.0, 480.0),
+            move || app::root(state),
+        )
+        .run()
+}

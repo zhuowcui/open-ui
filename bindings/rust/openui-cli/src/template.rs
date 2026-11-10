@@ -13,6 +13,8 @@ pub struct TemplateFile {
 pub struct Template {
     pub name: &'static str,
     pub description: &'static str,
+    /// Extra lines for the steps `new` prints after creating the project.
+    pub next_steps: &'static str,
     pub files: &'static [TemplateFile],
 }
 
@@ -25,15 +27,34 @@ macro_rules! template_file {
     };
 }
 
-pub const TEMPLATES: &[Template] = &[Template {
-    name: "minimal",
-    description: "One window with a reactive counter",
-    files: &[
-        template_file!("minimal", "Cargo.toml", "Cargo.toml.tmpl"),
-        template_file!("minimal", ".gitignore", "gitignore.tmpl"),
-        template_file!("minimal", "src/main.rs", "src/main.rs.tmpl"),
-    ],
-}];
+pub const TEMPLATES: &[Template] = &[
+    Template {
+        name: "minimal",
+        description: "One window with a reactive counter",
+        next_steps: "",
+        files: &[
+            template_file!("minimal", "Cargo.toml", "Cargo.toml.tmpl"),
+            template_file!("minimal", ".gitignore", "gitignore.tmpl"),
+            template_file!("minimal", "src/main.rs", "src/main.rs.tmpl"),
+        ],
+    },
+    Template {
+        name: "default",
+        description: "A menu bar, file dialog, HTTP request and headless UI tests",
+        next_steps: "Record the UI test's first snapshots, look at them and commit them:\n  \
+                     OPENUI_UPDATE_SNAPSHOTS=1 cargo test",
+        files: &[
+            template_file!("default", "Cargo.toml", "Cargo.toml.tmpl"),
+            template_file!("default", ".gitignore", "gitignore.tmpl"),
+            template_file!("default", "assets/README.md", "assets/README.md"),
+            template_file!("default", "src/main.rs", "src/main.rs.tmpl"),
+            template_file!("default", "src/lib.rs", "src/lib.rs.tmpl"),
+            template_file!("default", "src/app.rs", "src/app.rs.tmpl"),
+            template_file!("default", "src/menu.rs", "src/menu.rs.tmpl"),
+            template_file!("default", "tests/ui.rs", "tests/ui.rs.tmpl"),
+        ],
+    },
+];
 
 pub fn find(name: &str) -> Result<&'static Template, String> {
     TEMPLATES
@@ -100,10 +121,13 @@ impl FrameworkSource<'_> {
 
     /// The app's dependency line on the public crate.
     pub fn dependency(&self) -> String {
-        format!(
-            "openui = {{ {}, features = [\"desktop\"] }}",
-            self.locate("openui")
-        )
+        format!("openui = {{ {}, features = [\"desktop\"] }}", self.source())
+    }
+
+    /// Where the public crate is, as the start of a TOML inline table, for
+    /// templates that choose their own features.
+    pub fn source(&self) -> String {
+        self.locate("openui")
     }
 
     /// The app's `[patch.crates-io]` table. Cargo applies a workspace's
@@ -189,6 +213,7 @@ mod tests {
             }
         }
         assert!(find("minimal").is_ok());
+        assert!(find("default").is_ok());
         assert!(find("nope").err().unwrap().contains("minimal"));
     }
 

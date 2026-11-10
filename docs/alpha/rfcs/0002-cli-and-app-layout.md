@@ -51,7 +51,7 @@ final name it installs with
 
 | Command | Does | alpha.1 scope |
 | --- | --- | --- |
-| `openui new <name> [--template minimal\|default] [--framework-path <dir>]` | Writes a new Cargo project from an embedded template | `minimal` in the skeleton PR, `default` later; `shadcn` is added by the components track |
+| `openui new <name> [--template minimal\|default] [--framework-path <dir>]` | Writes a new Cargo project from an embedded template | `minimal` in the skeleton PR; `default`, which `new` uses when no template is named, in the template PR; `shadcn` is added by the components track |
 | `openui dev [--release] [--bin <name>] [-- <app args>]` | Builds, runs, watches, rebuilds and restarts on save | Restart only; live reload is alpha.2 |
 | `openui build [--debug] [--out <dir>]` | Release build plus a `dist/` folder | Host target only (Windows x64, Linux x64) |
 | `openui doctor` | Checks the toolchain Skia needs (clang/LLVM, ninja, Python, MSVC on Windows) and prints fixes | Same PR as the skeleton |
@@ -148,6 +148,7 @@ my-app/
   .cargo/config.toml  # Skia build profile
   .gitignore
   src/main.rs         # App declaration: windows, menus
+  src/lib.rs          # app state; lets tests import the views (default template)
   src/app.rs          # root component            (default template)
   src/menu.rs         # menu declaration          (default template)
   assets/             # fonts, images             (default template)
@@ -327,14 +328,18 @@ UI state never leaves the UI thread; work that does not touch UI state may.
 `openui::testing` (feature `testing`, normally a dev-dependency feature)
 wraps `HeadlessApp`:
 
-- `TestApp::new(size).mount(view)`, lookups (`by_id`, `by_text`), input
-  helpers (`click(&element)`, `type_text`, `press(key)`) built on the existing
-  `Document` dispatch methods, and `run_until_idle()`.
+- `TestApp::new(size).mount(view)`, lookups (`by_id`, `by_text`,
+  `find_text`), input helpers (`click(&element)`, `type_text`, `press(key)`,
+  `press_with(modifiers, key)`) built on the existing `Document` dispatch
+  methods, and `run_until_idle()`. Helpers panic with what was missing, as
+  assertions do. The `testing` feature enables `async` and adds the `png`
+  0.18.1 decoder, already locked.
 - `assert_snapshot!(app, "name")` renders to PNG and compares exact RGBA with
   `tests/snapshots/name.<os>.png`. Snapshots are per platform because system
   fonts differ. `OPENUI_UPDATE_SNAPSHOTS=1` writes or replaces them; a missing
   snapshot fails unless that variable is set, so CI never accepts a new image
-  silently.
+  silently. A mismatch leaves the new frame beside the snapshot as
+  `name.<os>.actual.png`, which the template's `.gitignore` excludes.
 
 ## 6. Delivery
 

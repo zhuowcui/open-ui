@@ -1938,6 +1938,7 @@ dependencies = [
  "openui-platform",
  "openui-style",
  "openui-text",
+ "png 0.18.1",
  "rustls",
  "serde",
  "serde_json",

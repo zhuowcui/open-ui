@@ -9,7 +9,7 @@ Usage: openui <command> [options]
 
 Commands:
   new <name>   Create a new app in ./<name>
-      --template <name>        Template to use (default: minimal)
+      --template <name>        default (menu, dialog, HTTP, UI tests) or minimal
       --framework-path <dir>   Use a local Open UI checkout instead of git
       --path <dir>             Directory to create (default: ./<name>)
   dev          Build and run the app, then rebuild and restart it on save
@@ -105,7 +105,7 @@ fn parse_new(mut args: impl Iterator<Item = OsString>) -> Result<Command, String
     let name = name.ok_or("new needs an app name: openui new <name>")?;
     Ok(Command::New(NewOptions {
         name,
-        template: template.unwrap_or_else(|| "minimal".to_owned()),
+        template: template.unwrap_or_else(|| "default".to_owned()),
         framework_path,
         path,
     }))
@@ -197,6 +197,10 @@ mod tests {
                 path: None,
             }))
         );
+        assert!(matches!(
+            parse_str(&["new", "notes"]),
+            Ok(Command::New(NewOptions { template, .. })) if template == "default"
+        ));
         assert!(parse_str(&["new"])
             .unwrap_err()
             .contains("needs an app name"));

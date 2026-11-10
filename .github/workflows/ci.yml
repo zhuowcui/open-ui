@@ -122,7 +122,7 @@ jobs:
           --package openui
           --package openui-ffi
           --package openui-cli
-          --features "openui/async openui/http"
+          --features "openui/async openui/http openui/testing"
 
   windows-msvc:
     name: windows-msvc
@@ -269,7 +269,7 @@ jobs:
           # and the menu test, which reads and chooses a native menu bar.
           cargo test --manifest-path bindings/rust/Cargo.toml --locked --no-fail-fast \
             --package openui-platform --package openui --package openui-ffi \
-            --features "openui-platform/windows openui-platform/dialog openui-platform/menu openui/windows openui/async openui/dialog openui/menu openui/http openui-ffi/windows"
+            --features "openui-platform/windows openui-platform/dialog openui-platform/menu openui/windows openui/async openui/dialog openui/menu openui/http openui/testing openui-ffi/windows"
           OUI_BACKEND=software OUI_SMOKE_EXIT=1 "$CARGO_TARGET_DIR/debug/hello.exe"
           OUI_BACKEND=software OUI_SMOKE_EXIT=1 "$CARGO_TARGET_DIR/debug/multi-window.exe"
           # Exits only once background work and timers have woken the loop.
@@ -476,7 +476,7 @@ jobs:
           rustup toolchain install 1.94.1 --profile minimal
           rustup default 1.94.1
 
-      - name: Create, build and render the minimal template
+      - name: Create, build, render and test the minimal and default templates
         run: >-
           python tools/framework/check_cli_template.py
           --work "$RUNNER_TEMP/cli-template"
