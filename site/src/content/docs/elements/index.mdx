@@ -21,11 +21,13 @@ Div from the code shown.
 
 ## Five things to know first
 
-1. **No default styles.** Div has no user-agent stylesheet. Every
-   element starts from CSS's initial values: no margins, no padding, no
-   borders, 16px `sans-serif`, black text. An `<h1>` is not large, a
-   `<strong>` is not bold, and a `<button>` is just its text until you
-   style it.
+1. **Unstyled by default.** Every element starts from a clean slate,
+   CSS's initial values, with no margins, padding or borders and 16px
+   black `sans-serif` text, so nothing shows up that you didn't write.
+   Style elements yourself, or start from the
+   [component library](/components/). Because there is no browser
+   stylesheet underneath, an `<h1>` is the size of body text and a
+   `<strong>` its weight until you give them a style.
 2. **Many tags are one element.** `h1`, `p`, `section` and `nav` are all
    the same block element; `strong`, `em` and `a` are the same inline
    element. The tag picks the element kind and its default `display`, and

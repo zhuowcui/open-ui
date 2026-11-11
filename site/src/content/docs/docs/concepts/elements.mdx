@@ -23,10 +23,12 @@ page covers what they share.
 - **Tags are kinds.** `h1`, `p`, `section` and `nav` all create the same
   block element, and `strong`, `em` and `a` the same inline element. The
   tag picks the kind and its default `display`; the name is not kept.
-- **No default styles.** There is no user-agent stylesheet. Every element
-  starts from CSS's initial values: no margin or padding, no border, 16px
-  `sans-serif`, black text. Headings are not large and links are not blue
-  until you style them.
+- **Unstyled by default.** Every element starts from a clean slate,
+  CSS's initial values, with no margin, padding or border and 16px black
+  `sans-serif` text, so nothing shows up that you didn't write. Style
+  elements yourself, or start from the [component library](/components/).
+  With no browser stylesheet underneath, headings are the size of body
+  text and links look like the text around them until you style them.
 - **No selectors.** Styles are set on each element, with `style:` in
   `view!` or with setters from code. `class` and `id` are stored for
   lookup only.
