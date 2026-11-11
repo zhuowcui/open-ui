@@ -63,8 +63,25 @@ the new path gave the 50px from the ratio.
 | Layout crate | `cargo test -p openui-layout --no-fail-fast` (Windows) | 5,955 passed, 0 failed, 5 ignored |
 | Generators | `generate_properties.py --check`; `generate_v02_contract.py --check`; `generate_renderer_contract.py --check` | no drift |
 | `cargo fmt --all --check` | in `bindings/rust` | pass |
+| Paired expanded census (WSL) | `wsl-branch-census-a8.sh`, base `9d7bccf6` | 22,517 of 23,728 exact before and after; 0 changed |
+| CSS Grid coverage (WSL) | coverage matrix, base `04d1eeab` | 2,218 of 4,204 exact before and after; 0 changed |
 
-CENSUS
+The paired expanded census in WSL has no change. The base is `9d7bccf6`,
+the recorded census base; the head is `0fba067e`, this change. Both are
+built with the CI `SKIA_GN_ARGS` and share one Chromium cache. Chromium
+and Open UI are each identical in all 23,728 comparisons: 22,517 exact
+before and after, with nothing gained or lost. No Open UI image changed,
+so the two aspect-ratio tests that the first census lost are exact again.
+The delta is in the
+[census evidence](evidence/column-flex-min-size-census-v1.json).
+
+The CSS Grid coverage suite has no change either
+([coverage evidence](evidence/column-flex-min-size-coverage-v1.json)). The
+base is `04d1eeab`, the recorded coverage baseline; the head is `0fba067e`.
+In all 4,204 measured comparisons the status and the Open UI image are
+unchanged: 2,218 exact before and after. The two references that the
+baseline lists as unmeasured, whose renderer memory is unbounded, are left
+out of both runs.
 
 The components track also previewed this change. That preview is not
 evidence: it used the system FreeType so that WOFF2 text loads, and its base
