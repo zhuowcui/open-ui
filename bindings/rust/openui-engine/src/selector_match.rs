@@ -8,8 +8,9 @@
 //! viewport do not.
 //!
 //! `:hover`, `:active`, `:focus`, `:focus-visible` and `:focus-within` read
-//! the engine's interaction state. Pseudo-classes that depend on form or
-//! dialog state are not matched yet; they return
+//! the engine's interaction state, and the form pseudo-classes read control
+//! state as Blink's `SelectorChecker` does. `:invalid`, `:open` and `:modal`
+//! are not matched yet; they return
 //! [`SelectorMatchError::UnsupportedPseudoClass`] rather than a silent
 //! non-match.
 
@@ -19,7 +20,7 @@ use openui_style::selector::{
     Selector, SimpleSelector,
 };
 
-use crate::{Engine, EngineError, NodeHandle};
+use crate::{ControlState, Engine, EngineError, NodeHandle};
 
 /// Why a selector could not be matched.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -235,14 +236,20 @@ impl Engine {
                 Some(focused) => self.path_to_root(focused)?.contains(&element),
                 None => false,
             },
-            PseudoClass::Disabled => return unsupported("disabled"),
-            PseudoClass::Enabled => return unsupported("enabled"),
-            PseudoClass::Checked => return unsupported("checked"),
-            PseudoClass::Indeterminate => return unsupported("indeterminate"),
-            PseudoClass::PlaceholderShown => return unsupported("placeholder-shown"),
-            PseudoClass::ReadOnly => return unsupported("read-only"),
-            PseudoClass::ReadWrite => return unsupported("read-write"),
-            PseudoClass::Required => return unsupported("required"),
+            PseudoClass::Disabled => {
+                can_be_disabled(self.element_tag(element)?)
+                    && self.is_effectively_disabled(element)?
+            }
+            PseudoClass::Enabled => {
+                can_be_disabled(self.element_tag(element)?)
+                    && !self.is_effectively_disabled(element)?
+            }
+            PseudoClass::Checked => self.is_checked(element)?,
+            PseudoClass::Indeterminate => self.is_indeterminate(element)?,
+            PseudoClass::PlaceholderShown => self.is_placeholder_shown(element)?,
+            PseudoClass::ReadOnly => !self.is_read_write(element)?,
+            PseudoClass::ReadWrite => self.is_read_write(element)?,
+            PseudoClass::Required => self.is_required(element)?,
             PseudoClass::Invalid => return unsupported("invalid"),
             PseudoClass::Open => return unsupported("open"),
             PseudoClass::Modal => return unsupported("modal"),
@@ -433,6 +440,229 @@ impl Engine {
         }
         Ok(true)
     }
+}
+
+/// Form control state, as Blink's `SelectorChecker` reads it from
+/// `HTMLInputElement`, `HTMLTextAreaElement`, `HTMLSelectElement`,
+/// `HTMLOptionElement` and `HTMLProgressElement`.
+impl Engine {
+    /// The input's type in lowercase; a missing or unknown type is `text`.
+    fn input_type(&self, element: NodeHandle) -> Result<Option<&'static str>, EngineError> {
+        if self.element_tag(element)? != ElementTag::Input {
+            return Ok(None);
+        }
+        let kind = self.attribute(element, "type")?.unwrap_or_default();
+        Ok(Some(
+            INPUT_TYPES
+                .iter()
+                .find(|known| kind.eq_ignore_ascii_case(known))
+                .copied()
+                .unwrap_or("text"),
+        ))
+    }
+
+    fn has_attribute(&self, element: NodeHandle, name: &str) -> Result<bool, EngineError> {
+        Ok(self.attribute(element, name)?.is_some())
+    }
+
+    fn control(&self, element: NodeHandle) -> Option<&ControlState> {
+        self.controls.get(&element.index)
+    }
+
+    /// `ShouldAppearChecked`: a checked checkbox or radio, or an option's
+    /// selectedness.
+    fn is_checked(&self, element: NodeHandle) -> Result<bool, EngineError> {
+        if matches!(self.input_type(element)?, Some("checkbox" | "radio")) {
+            return Ok(self.control(element).is_some_and(|control| control.checked));
+        }
+        if self.element_tag(element)? == ElementTag::Option {
+            return self.option_selectedness(element);
+        }
+        Ok(false)
+    }
+
+    /// `ShouldAppearIndeterminate`: a checkbox with its indeterminate flag, a
+    /// radio whose group has no checked radio, or a progress element without
+    /// a `value` attribute.
+    fn is_indeterminate(&self, element: NodeHandle) -> Result<bool, EngineError> {
+        match self.input_type(element)? {
+            Some("checkbox") => {
+                return Ok(self
+                    .control(element)
+                    .is_some_and(|control| control.indeterminate))
+            }
+            Some("radio") => {
+                for member in self.radio_group_members(element)? {
+                    if self.control(member).is_some_and(|control| control.checked) {
+                        return Ok(false);
+                    }
+                }
+                return Ok(true);
+            }
+            _ => {}
+        }
+        Ok(self.element_tag(element)? == ElementTag::Progress
+            && !self.has_attribute(element, "value")?)
+    }
+
+    /// `IsPlaceholderVisible`: a text field or textarea with a `placeholder`
+    /// attribute, even an empty one, and an empty value.
+    fn is_placeholder_shown(&self, element: NodeHandle) -> Result<bool, EngineError> {
+        let supports = match self.input_type(element)? {
+            Some(kind) => TEXT_FIELD_TYPES.contains(&kind),
+            None => self.element_tag(element)? == ElementTag::TextArea,
+        };
+        Ok(supports
+            && self.has_attribute(element, "placeholder")?
+            && self
+                .control(element)
+                .is_some_and(|control| control.value.is_empty()))
+    }
+
+    /// `MatchesReadWritePseudoClass`: a textarea, or an input whose type
+    /// supports `readonly` (the text fields and the date and time types),
+    /// that is neither read-only nor disabled.
+    fn is_read_write(&self, element: NodeHandle) -> Result<bool, EngineError> {
+        let supports = match self.input_type(element)? {
+            Some(kind) => TEXT_FIELD_TYPES.contains(&kind) || TEMPORAL_TYPES.contains(&kind),
+            None => self.element_tag(element)? == ElementTag::TextArea,
+        };
+        Ok(supports
+            && !self.has_attribute(element, "readonly")?
+            && !self.is_effectively_disabled(element)?)
+    }
+
+    /// `IsRequiredFormControl`: a select, textarea or input with `required`,
+    /// except the input types that do not support it.
+    fn is_required(&self, element: NodeHandle) -> Result<bool, EngineError> {
+        let supports = match self.input_type(element)? {
+            Some(kind) => !matches!(
+                kind,
+                "hidden" | "range" | "color" | "button" | "submit" | "reset" | "image"
+            ),
+            None => matches!(
+                self.element_tag(element)?,
+                ElementTag::Select | ElementTag::TextArea
+            ),
+        };
+        Ok(supports && self.has_attribute(element, "required")?)
+    }
+
+    /// The option's selectedness for a tree built from attributes, as HTML's
+    /// selectedness setting algorithm leaves it: in a single select the last
+    /// option with `selected` wins, and with none, a select whose display
+    /// size is 1 selects its first option that is not disabled.
+    fn option_selectedness(&self, option: NodeHandle) -> Result<bool, EngineError> {
+        let flagged = |node: NodeHandle| self.control(node).is_some_and(|control| control.selected);
+        let Some(select) = self.option_select(option)? else {
+            return Ok(flagged(option));
+        };
+        if self.has_attribute(select, "multiple")? {
+            return Ok(flagged(option));
+        }
+        let options = self.list_of_options(select)?;
+        if let Some(last) = options.iter().rev().find(|node| flagged(**node)) {
+            return Ok(*last == option);
+        }
+        let size = self
+            .attribute(select, "size")?
+            .and_then(|size| size.trim().parse::<u32>().ok())
+            .filter(|size| *size > 0)
+            .unwrap_or(1);
+        if size != 1 {
+            return Ok(false);
+        }
+        for node in options {
+            if !self.is_effectively_disabled(node)? {
+                return Ok(node == option);
+            }
+        }
+        Ok(false)
+    }
+
+    /// The select whose list of options holds `option`: its parent, or its
+    /// optgroup parent's parent.
+    fn option_select(&self, option: NodeHandle) -> Result<Option<NodeHandle>, EngineError> {
+        let Some(parent) = self.parent(option)? else {
+            return Ok(None);
+        };
+        match self.element_tag(parent)? {
+            ElementTag::Select => Ok(Some(parent)),
+            ElementTag::OptGroup => match self.parent(parent)? {
+                Some(select) if self.element_tag(select)? == ElementTag::Select => Ok(Some(select)),
+                _ => Ok(None),
+            },
+            _ => Ok(None),
+        }
+    }
+
+    /// HTML's list of options: option children, and the option children of
+    /// optgroup children, in tree order.
+    fn list_of_options(&self, select: NodeHandle) -> Result<Vec<NodeHandle>, EngineError> {
+        let mut options = Vec::new();
+        for child in self.children(select)? {
+            match self.element_tag(child)? {
+                ElementTag::Option => options.push(child),
+                ElementTag::OptGroup => {
+                    for grandchild in self.children(child)? {
+                        if self.element_tag(grandchild)? == ElementTag::Option {
+                            options.push(grandchild);
+                        }
+                    }
+                }
+                _ => {}
+            }
+        }
+        Ok(options)
+    }
+}
+
+/// The input types Blink knows; any other value is `text`.
+const INPUT_TYPES: &[&str] = &[
+    "text",
+    "search",
+    "email",
+    "password",
+    "tel",
+    "url",
+    "number",
+    "date",
+    "datetime-local",
+    "month",
+    "time",
+    "week",
+    "hidden",
+    "checkbox",
+    "radio",
+    "range",
+    "color",
+    "file",
+    "button",
+    "submit",
+    "reset",
+    "image",
+];
+
+/// Blink's `TextFieldInputType` subclasses.
+const TEXT_FIELD_TYPES: &[&str] = &[
+    "text", "search", "email", "password", "tel", "url", "number",
+];
+
+/// Blink's `BaseTemporalInputType` subclasses.
+const TEMPORAL_TYPES: &[&str] = &["date", "datetime-local", "month", "time", "week"];
+
+/// The elements that `:disabled` and `:enabled` apply to.
+fn can_be_disabled(tag: ElementTag) -> bool {
+    matches!(
+        tag,
+        ElementTag::Button
+            | ElementTag::Input
+            | ElementTag::Select
+            | ElementTag::TextArea
+            | ElementTag::OptGroup
+            | ElementTag::Option
+            | ElementTag::Fieldset
+    )
 }
 
 fn unsupported(name: &'static str) -> MatchResult {

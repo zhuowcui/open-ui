@@ -1,0 +1,3026 @@
+{
+ "chromium": "147.0.7727.50",
+ "platform": "windows",
+ "fixture": [
+  {
+   "tag": "div",
+   "attributes": {
+    "id": "plain"
+   },
+   "children": []
+  },
+  {
+   "tag": "button",
+   "attributes": {
+    "id": "b1"
+   },
+   "children": []
+  },
+  {
+   "tag": "button",
+   "attributes": {
+    "id": "b2",
+    "disabled": ""
+   },
+   "children": []
+  },
+  {
+   "tag": "input",
+   "attributes": {
+    "id": "t1"
+   },
+   "children": []
+  },
+  {
+   "tag": "input",
+   "attributes": {
+    "id": "t2",
+    "type": "text",
+    "readonly": ""
+   },
+   "children": []
+  },
+  {
+   "tag": "input",
+   "attributes": {
+    "id": "t3",
+    "disabled": ""
+   },
+   "children": []
+  },
+  {
+   "tag": "input",
+   "attributes": {
+    "id": "t4",
+    "placeholder": "P"
+   },
+   "children": []
+  },
+  {
+   "tag": "input",
+   "attributes": {
+    "id": "t5",
+    "placeholder": "P",
+    "value": "v"
+   },
+   "children": []
+  },
+  {
+   "tag": "input",
+   "attributes": {
+    "id": "t6",
+    "placeholder": ""
+   },
+   "children": []
+  },
+  {
+   "tag": "input",
+   "attributes": {
+    "id": "t7",
+    "required": ""
+   },
+   "children": []
+  },
+  {
+   "tag": "input",
+   "attributes": {
+    "id": "t8",
+    "type": "number",
+    "required": ""
+   },
+   "children": []
+  },
+  {
+   "tag": "input",
+   "attributes": {
+    "id": "t9",
+    "type": "hidden",
+    "required": ""
+   },
+   "children": []
+  },
+  {
+   "tag": "input",
+   "attributes": {
+    "id": "t10",
+    "type": "range",
+    "required": ""
+   },
+   "children": []
+  },
+  {
+   "tag": "input",
+   "attributes": {
+    "id": "t11",
+    "type": "color",
+    "required": ""
+   },
+   "children": []
+  },
+  {
+   "tag": "input",
+   "attributes": {
+    "id": "t12",
+    "type": "date",
+    "required": "",
+    "placeholder": "P"
+   },
+   "children": []
+  },
+  {
+   "tag": "input",
+   "attributes": {
+    "id": "t13",
+    "type": "button",
+    "required": ""
+   },
+   "children": []
+  },
+  {
+   "tag": "input",
+   "attributes": {
+    "id": "t14",
+    "type": "file",
+    "required": ""
+   },
+   "children": []
+  },
+  {
+   "tag": "input",
+   "attributes": {
+    "id": "t15",
+    "type": "email",
+    "placeholder": "P",
+    "readonly": ""
+   },
+   "children": []
+  },
+  {
+   "tag": "input",
+   "attributes": {
+    "id": "t16",
+    "type": "password",
+    "placeholder": "P",
+    "disabled": ""
+   },
+   "children": []
+  },
+  {
+   "tag": "input",
+   "attributes": {
+    "id": "t17",
+    "type": "image",
+    "required": "",
+    "placeholder": "P"
+   },
+   "children": []
+  },
+  {
+   "tag": "input",
+   "attributes": {
+    "id": "t18",
+    "type": "time",
+    "placeholder": "P"
+   },
+   "children": []
+  },
+  {
+   "tag": "input",
+   "attributes": {
+    "id": "t19",
+    "type": "SEARCH",
+    "placeholder": "P"
+   },
+   "children": []
+  },
+  {
+   "tag": "input",
+   "attributes": {
+    "id": "c1",
+    "type": "checkbox"
+   },
+   "children": []
+  },
+  {
+   "tag": "input",
+   "attributes": {
+    "id": "c2",
+    "type": "checkbox",
+    "checked": ""
+   },
+   "children": []
+  },
+  {
+   "tag": "input",
+   "attributes": {
+    "id": "c3",
+    "type": "checkbox"
+   },
+   "children": []
+  },
+  {
+   "tag": "input",
+   "attributes": {
+    "id": "c4",
+    "type": "checkbox",
+    "required": "",
+    "disabled": ""
+   },
+   "children": []
+  },
+  {
+   "tag": "input",
+   "attributes": {
+    "id": "r1",
+    "type": "radio",
+    "name": "g1"
+   },
+   "children": []
+  },
+  {
+   "tag": "input",
+   "attributes": {
+    "id": "r2",
+    "type": "radio",
+    "name": "g1"
+   },
+   "children": []
+  },
+  {
+   "tag": "input",
+   "attributes": {
+    "id": "r3",
+    "type": "radio",
+    "name": "g2",
+    "checked": ""
+   },
+   "children": []
+  },
+  {
+   "tag": "input",
+   "attributes": {
+    "id": "r4",
+    "type": "radio",
+    "name": "g2",
+    "required": ""
+   },
+   "children": []
+  },
+  {
+   "tag": "input",
+   "attributes": {
+    "id": "r5",
+    "type": "radio"
+   },
+   "children": []
+  },
+  {
+   "tag": "textarea",
+   "attributes": {
+    "id": "ta1"
+   },
+   "children": []
+  },
+  {
+   "tag": "textarea",
+   "attributes": {
+    "id": "ta2",
+    "readonly": ""
+   },
+   "children": []
+  },
+  {
+   "tag": "textarea",
+   "attributes": {
+    "id": "ta3",
+    "placeholder": "P"
+   },
+   "children": []
+  },
+  {
+   "tag": "textarea",
+   "attributes": {
+    "id": "ta4",
+    "required": "",
+    "disabled": ""
+   },
+   "children": []
+  },
+  {
+   "tag": "select",
+   "attributes": {
+    "id": "s1"
+   },
+   "children": [
+    {
+     "tag": "option",
+     "attributes": {
+      "id": "o1"
+     },
+     "children": []
+    },
+    {
+     "tag": "option",
+     "attributes": {
+      "id": "o2",
+      "selected": ""
+     },
+     "children": []
+    }
+   ]
+  },
+  {
+   "tag": "select",
+   "attributes": {
+    "id": "s2",
+    "disabled": ""
+   },
+   "children": [
+    {
+     "tag": "optgroup",
+     "attributes": {
+      "id": "og1"
+     },
+     "children": [
+      {
+       "tag": "option",
+       "attributes": {
+        "id": "o3"
+       },
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "tag": "select",
+   "attributes": {
+    "id": "s3",
+    "required": ""
+   },
+   "children": [
+    {
+     "tag": "option",
+     "attributes": {
+      "id": "o4",
+      "value": ""
+     },
+     "children": []
+    }
+   ]
+  },
+  {
+   "tag": "select",
+   "attributes": {
+    "id": "s4"
+   },
+   "children": [
+    {
+     "tag": "optgroup",
+     "attributes": {
+      "id": "og2",
+      "disabled": ""
+     },
+     "children": [
+      {
+       "tag": "option",
+       "attributes": {
+        "id": "o5"
+       },
+       "children": []
+      }
+     ]
+    },
+    {
+     "tag": "option",
+     "attributes": {
+      "id": "o6",
+      "disabled": ""
+     },
+     "children": []
+    }
+   ]
+  },
+  {
+   "tag": "select",
+   "attributes": {
+    "id": "s5",
+    "multiple": ""
+   },
+   "children": [
+    {
+     "tag": "option",
+     "attributes": {
+      "id": "o7"
+     },
+     "children": []
+    }
+   ]
+  },
+  {
+   "tag": "select",
+   "attributes": {
+    "id": "s6",
+    "size": "3"
+   },
+   "children": [
+    {
+     "tag": "option",
+     "attributes": {
+      "id": "o8"
+     },
+     "children": []
+    }
+   ]
+  },
+  {
+   "tag": "select",
+   "attributes": {
+    "id": "s7"
+   },
+   "children": [
+    {
+     "tag": "option",
+     "attributes": {
+      "id": "o9",
+      "selected": ""
+     },
+     "children": []
+    },
+    {
+     "tag": "option",
+     "attributes": {
+      "id": "o10",
+      "selected": ""
+     },
+     "children": []
+    },
+    {
+     "tag": "option",
+     "attributes": {
+      "id": "o11"
+     },
+     "children": []
+    }
+   ]
+  },
+  {
+   "tag": "fieldset",
+   "attributes": {
+    "id": "f1",
+    "disabled": ""
+   },
+   "children": [
+    {
+     "tag": "legend",
+     "attributes": {
+      "id": "l1"
+     },
+     "children": [
+      {
+       "tag": "input",
+       "attributes": {
+        "id": "fl1"
+       },
+       "children": []
+      }
+     ]
+    },
+    {
+     "tag": "input",
+     "attributes": {
+      "id": "fi1"
+     },
+     "children": []
+    },
+    {
+     "tag": "fieldset",
+     "attributes": {
+      "id": "f2"
+     },
+     "children": [
+      {
+       "tag": "button",
+       "attributes": {
+        "id": "fb1"
+       },
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "tag": "fieldset",
+   "attributes": {
+    "id": "f3"
+   },
+   "children": [
+    {
+     "tag": "legend",
+     "attributes": {
+      "id": "l2"
+     },
+     "children": []
+    },
+    {
+     "tag": "input",
+     "attributes": {
+      "id": "fi2"
+     },
+     "children": []
+    }
+   ]
+  },
+  {
+   "tag": "progress",
+   "attributes": {
+    "id": "p1"
+   },
+   "children": []
+  },
+  {
+   "tag": "progress",
+   "attributes": {
+    "id": "p2",
+    "value": "0.5"
+   },
+   "children": []
+  },
+  {
+   "tag": "progress",
+   "attributes": {
+    "id": "p3",
+    "value": "x"
+   },
+   "children": []
+  },
+  {
+   "tag": "meter",
+   "attributes": {
+    "id": "m1"
+   },
+   "children": []
+  },
+  {
+   "tag": "form",
+   "attributes": {
+    "id": "form1"
+   },
+   "children": [
+    {
+     "tag": "input",
+     "attributes": {
+      "id": "fo1"
+     },
+     "children": []
+    }
+   ]
+  },
+  {
+   "tag": "div",
+   "attributes": {
+    "id": "d1",
+    "disabled": "",
+    "readonly": "",
+    "required": ""
+   },
+   "children": []
+  }
+ ],
+ "selectors": [
+  ":disabled",
+  ":enabled",
+  ":checked",
+  ":indeterminate",
+  ":placeholder-shown",
+  ":read-only",
+  ":read-write",
+  ":required",
+  "input:not(:enabled)",
+  "fieldset:disabled input",
+  ":checked + input",
+  "select:has(:checked)",
+  "input:read-write:not(:placeholder-shown)"
+ ],
+ "steps": [
+  {
+   "step": "initial",
+   "changes": [],
+   "matches": {
+    ":disabled": [
+     "b2",
+     "t3",
+     "t16",
+     "c4",
+     "ta4",
+     "s2",
+     "og2",
+     "o5",
+     "o6",
+     "f1",
+     "fi1",
+     "f2",
+     "fb1"
+    ],
+    ":enabled": [
+     "b1",
+     "t1",
+     "t2",
+     "t4",
+     "t5",
+     "t6",
+     "t7",
+     "t8",
+     "t9",
+     "t10",
+     "t11",
+     "t12",
+     "t13",
+     "t14",
+     "t15",
+     "t17",
+     "t18",
+     "t19",
+     "c1",
+     "c2",
+     "c3",
+     "r1",
+     "r2",
+     "r3",
+     "r4",
+     "r5",
+     "ta1",
+     "ta2",
+     "ta3",
+     "s1",
+     "o1",
+     "o2",
+     "og1",
+     "o3",
+     "s3",
+     "o4",
+     "s4",
+     "s5",
+     "o7",
+     "s6",
+     "o8",
+     "s7",
+     "o9",
+     "o10",
+     "o11",
+     "fl1",
+     "f3",
+     "fi2",
+     "fo1"
+    ],
+    ":checked": [
+     "c2",
+     "r3",
+     "o2",
+     "o3",
+     "o4",
+     "o10"
+    ],
+    ":indeterminate": [
+     "r1",
+     "r2",
+     "r5",
+     "p1"
+    ],
+    ":placeholder-shown": [
+     "t4",
+     "t6",
+     "t15",
+     "t16",
+     "t19",
+     "ta3"
+    ],
+    ":read-only": [
+     "html",
+     "body",
+     "plain",
+     "b1",
+     "b2",
+     "t2",
+     "t3",
+     "t9",
+     "t10",
+     "t11",
+     "t13",
+     "t14",
+     "t15",
+     "t16",
+     "t17",
+     "c1",
+     "c2",
+     "c3",
+     "c4",
+     "r1",
+     "r2",
+     "r3",
+     "r4",
+     "r5",
+     "ta2",
+     "ta4",
+     "s1",
+     "o1",
+     "o2",
+     "s2",
+     "og1",
+     "o3",
+     "s3",
+     "o4",
+     "s4",
+     "og2",
+     "o5",
+     "o6",
+     "s5",
+     "o7",
+     "s6",
+     "o8",
+     "s7",
+     "o9",
+     "o10",
+     "o11",
+     "f1",
+     "l1",
+     "fi1",
+     "f2",
+     "fb1",
+     "f3",
+     "l2",
+     "p1",
+     "p2",
+     "p3",
+     "m1",
+     "form1",
+     "d1"
+    ],
+    ":read-write": [
+     "t1",
+     "t4",
+     "t5",
+     "t6",
+     "t7",
+     "t8",
+     "t12",
+     "t18",
+     "t19",
+     "ta1",
+     "ta3",
+     "fl1",
+     "fi2",
+     "fo1"
+    ],
+    ":required": [
+     "t7",
+     "t8",
+     "t12",
+     "t14",
+     "c4",
+     "r4",
+     "ta4",
+     "s3"
+    ],
+    "input:not(:enabled)": [
+     "t3",
+     "t16",
+     "c4",
+     "fi1"
+    ],
+    "fieldset:disabled input": [
+     "fl1",
+     "fi1"
+    ],
+    ":checked + input": [
+     "c3",
+     "r4"
+    ],
+    "select:has(:checked)": [
+     "s1",
+     "s2",
+     "s3",
+     "s7"
+    ],
+    "input:read-write:not(:placeholder-shown)": [
+     "t1",
+     "t5",
+     "t7",
+     "t8",
+     "t12",
+     "t18",
+     "fl1",
+     "fi2",
+     "fo1"
+    ]
+   }
+  },
+  {
+   "step": "check c1, set c3 indeterminate",
+   "changes": [
+    [
+     "property",
+     "c1",
+     "checked",
+     true
+    ],
+    [
+     "property",
+     "c3",
+     "indeterminate",
+     true
+    ]
+   ],
+   "matches": {
+    ":disabled": [
+     "b2",
+     "t3",
+     "t16",
+     "c4",
+     "ta4",
+     "s2",
+     "og2",
+     "o5",
+     "o6",
+     "f1",
+     "fi1",
+     "f2",
+     "fb1"
+    ],
+    ":enabled": [
+     "b1",
+     "t1",
+     "t2",
+     "t4",
+     "t5",
+     "t6",
+     "t7",
+     "t8",
+     "t9",
+     "t10",
+     "t11",
+     "t12",
+     "t13",
+     "t14",
+     "t15",
+     "t17",
+     "t18",
+     "t19",
+     "c1",
+     "c2",
+     "c3",
+     "r1",
+     "r2",
+     "r3",
+     "r4",
+     "r5",
+     "ta1",
+     "ta2",
+     "ta3",
+     "s1",
+     "o1",
+     "o2",
+     "og1",
+     "o3",
+     "s3",
+     "o4",
+     "s4",
+     "s5",
+     "o7",
+     "s6",
+     "o8",
+     "s7",
+     "o9",
+     "o10",
+     "o11",
+     "fl1",
+     "f3",
+     "fi2",
+     "fo1"
+    ],
+    ":checked": [
+     "c1",
+     "c2",
+     "r3",
+     "o2",
+     "o3",
+     "o4",
+     "o10"
+    ],
+    ":indeterminate": [
+     "c3",
+     "r1",
+     "r2",
+     "r5",
+     "p1"
+    ],
+    ":placeholder-shown": [
+     "t4",
+     "t6",
+     "t15",
+     "t16",
+     "t19",
+     "ta3"
+    ],
+    ":read-only": [
+     "html",
+     "body",
+     "plain",
+     "b1",
+     "b2",
+     "t2",
+     "t3",
+     "t9",
+     "t10",
+     "t11",
+     "t13",
+     "t14",
+     "t15",
+     "t16",
+     "t17",
+     "c1",
+     "c2",
+     "c3",
+     "c4",
+     "r1",
+     "r2",
+     "r3",
+     "r4",
+     "r5",
+     "ta2",
+     "ta4",
+     "s1",
+     "o1",
+     "o2",
+     "s2",
+     "og1",
+     "o3",
+     "s3",
+     "o4",
+     "s4",
+     "og2",
+     "o5",
+     "o6",
+     "s5",
+     "o7",
+     "s6",
+     "o8",
+     "s7",
+     "o9",
+     "o10",
+     "o11",
+     "f1",
+     "l1",
+     "fi1",
+     "f2",
+     "fb1",
+     "f3",
+     "l2",
+     "p1",
+     "p2",
+     "p3",
+     "m1",
+     "form1",
+     "d1"
+    ],
+    ":read-write": [
+     "t1",
+     "t4",
+     "t5",
+     "t6",
+     "t7",
+     "t8",
+     "t12",
+     "t18",
+     "t19",
+     "ta1",
+     "ta3",
+     "fl1",
+     "fi2",
+     "fo1"
+    ],
+    ":required": [
+     "t7",
+     "t8",
+     "t12",
+     "t14",
+     "c4",
+     "r4",
+     "ta4",
+     "s3"
+    ],
+    "input:not(:enabled)": [
+     "t3",
+     "t16",
+     "c4",
+     "fi1"
+    ],
+    "fieldset:disabled input": [
+     "fl1",
+     "fi1"
+    ],
+    ":checked + input": [
+     "c2",
+     "c3",
+     "r4"
+    ],
+    "select:has(:checked)": [
+     "s1",
+     "s2",
+     "s3",
+     "s7"
+    ],
+    "input:read-write:not(:placeholder-shown)": [
+     "t1",
+     "t5",
+     "t7",
+     "t8",
+     "t12",
+     "t18",
+     "fl1",
+     "fi2",
+     "fo1"
+    ]
+   }
+  },
+  {
+   "step": "uncheck c2",
+   "changes": [
+    [
+     "property",
+     "c2",
+     "checked",
+     false
+    ]
+   ],
+   "matches": {
+    ":disabled": [
+     "b2",
+     "t3",
+     "t16",
+     "c4",
+     "ta4",
+     "s2",
+     "og2",
+     "o5",
+     "o6",
+     "f1",
+     "fi1",
+     "f2",
+     "fb1"
+    ],
+    ":enabled": [
+     "b1",
+     "t1",
+     "t2",
+     "t4",
+     "t5",
+     "t6",
+     "t7",
+     "t8",
+     "t9",
+     "t10",
+     "t11",
+     "t12",
+     "t13",
+     "t14",
+     "t15",
+     "t17",
+     "t18",
+     "t19",
+     "c1",
+     "c2",
+     "c3",
+     "r1",
+     "r2",
+     "r3",
+     "r4",
+     "r5",
+     "ta1",
+     "ta2",
+     "ta3",
+     "s1",
+     "o1",
+     "o2",
+     "og1",
+     "o3",
+     "s3",
+     "o4",
+     "s4",
+     "s5",
+     "o7",
+     "s6",
+     "o8",
+     "s7",
+     "o9",
+     "o10",
+     "o11",
+     "fl1",
+     "f3",
+     "fi2",
+     "fo1"
+    ],
+    ":checked": [
+     "c1",
+     "r3",
+     "o2",
+     "o3",
+     "o4",
+     "o10"
+    ],
+    ":indeterminate": [
+     "c3",
+     "r1",
+     "r2",
+     "r5",
+     "p1"
+    ],
+    ":placeholder-shown": [
+     "t4",
+     "t6",
+     "t15",
+     "t16",
+     "t19",
+     "ta3"
+    ],
+    ":read-only": [
+     "html",
+     "body",
+     "plain",
+     "b1",
+     "b2",
+     "t2",
+     "t3",
+     "t9",
+     "t10",
+     "t11",
+     "t13",
+     "t14",
+     "t15",
+     "t16",
+     "t17",
+     "c1",
+     "c2",
+     "c3",
+     "c4",
+     "r1",
+     "r2",
+     "r3",
+     "r4",
+     "r5",
+     "ta2",
+     "ta4",
+     "s1",
+     "o1",
+     "o2",
+     "s2",
+     "og1",
+     "o3",
+     "s3",
+     "o4",
+     "s4",
+     "og2",
+     "o5",
+     "o6",
+     "s5",
+     "o7",
+     "s6",
+     "o8",
+     "s7",
+     "o9",
+     "o10",
+     "o11",
+     "f1",
+     "l1",
+     "fi1",
+     "f2",
+     "fb1",
+     "f3",
+     "l2",
+     "p1",
+     "p2",
+     "p3",
+     "m1",
+     "form1",
+     "d1"
+    ],
+    ":read-write": [
+     "t1",
+     "t4",
+     "t5",
+     "t6",
+     "t7",
+     "t8",
+     "t12",
+     "t18",
+     "t19",
+     "ta1",
+     "ta3",
+     "fl1",
+     "fi2",
+     "fo1"
+    ],
+    ":required": [
+     "t7",
+     "t8",
+     "t12",
+     "t14",
+     "c4",
+     "r4",
+     "ta4",
+     "s3"
+    ],
+    "input:not(:enabled)": [
+     "t3",
+     "t16",
+     "c4",
+     "fi1"
+    ],
+    "fieldset:disabled input": [
+     "fl1",
+     "fi1"
+    ],
+    ":checked + input": [
+     "c2",
+     "r4"
+    ],
+    "select:has(:checked)": [
+     "s1",
+     "s2",
+     "s3",
+     "s7"
+    ],
+    "input:read-write:not(:placeholder-shown)": [
+     "t1",
+     "t5",
+     "t7",
+     "t8",
+     "t12",
+     "t18",
+     "fl1",
+     "fi2",
+     "fo1"
+    ]
+   }
+  },
+  {
+   "step": "check r1",
+   "changes": [
+    [
+     "property",
+     "r1",
+     "checked",
+     true
+    ]
+   ],
+   "matches": {
+    ":disabled": [
+     "b2",
+     "t3",
+     "t16",
+     "c4",
+     "ta4",
+     "s2",
+     "og2",
+     "o5",
+     "o6",
+     "f1",
+     "fi1",
+     "f2",
+     "fb1"
+    ],
+    ":enabled": [
+     "b1",
+     "t1",
+     "t2",
+     "t4",
+     "t5",
+     "t6",
+     "t7",
+     "t8",
+     "t9",
+     "t10",
+     "t11",
+     "t12",
+     "t13",
+     "t14",
+     "t15",
+     "t17",
+     "t18",
+     "t19",
+     "c1",
+     "c2",
+     "c3",
+     "r1",
+     "r2",
+     "r3",
+     "r4",
+     "r5",
+     "ta1",
+     "ta2",
+     "ta3",
+     "s1",
+     "o1",
+     "o2",
+     "og1",
+     "o3",
+     "s3",
+     "o4",
+     "s4",
+     "s5",
+     "o7",
+     "s6",
+     "o8",
+     "s7",
+     "o9",
+     "o10",
+     "o11",
+     "fl1",
+     "f3",
+     "fi2",
+     "fo1"
+    ],
+    ":checked": [
+     "c1",
+     "r1",
+     "r3",
+     "o2",
+     "o3",
+     "o4",
+     "o10"
+    ],
+    ":indeterminate": [
+     "c3",
+     "r5",
+     "p1"
+    ],
+    ":placeholder-shown": [
+     "t4",
+     "t6",
+     "t15",
+     "t16",
+     "t19",
+     "ta3"
+    ],
+    ":read-only": [
+     "html",
+     "body",
+     "plain",
+     "b1",
+     "b2",
+     "t2",
+     "t3",
+     "t9",
+     "t10",
+     "t11",
+     "t13",
+     "t14",
+     "t15",
+     "t16",
+     "t17",
+     "c1",
+     "c2",
+     "c3",
+     "c4",
+     "r1",
+     "r2",
+     "r3",
+     "r4",
+     "r5",
+     "ta2",
+     "ta4",
+     "s1",
+     "o1",
+     "o2",
+     "s2",
+     "og1",
+     "o3",
+     "s3",
+     "o4",
+     "s4",
+     "og2",
+     "o5",
+     "o6",
+     "s5",
+     "o7",
+     "s6",
+     "o8",
+     "s7",
+     "o9",
+     "o10",
+     "o11",
+     "f1",
+     "l1",
+     "fi1",
+     "f2",
+     "fb1",
+     "f3",
+     "l2",
+     "p1",
+     "p2",
+     "p3",
+     "m1",
+     "form1",
+     "d1"
+    ],
+    ":read-write": [
+     "t1",
+     "t4",
+     "t5",
+     "t6",
+     "t7",
+     "t8",
+     "t12",
+     "t18",
+     "t19",
+     "ta1",
+     "ta3",
+     "fl1",
+     "fi2",
+     "fo1"
+    ],
+    ":required": [
+     "t7",
+     "t8",
+     "t12",
+     "t14",
+     "c4",
+     "r4",
+     "ta4",
+     "s3"
+    ],
+    "input:not(:enabled)": [
+     "t3",
+     "t16",
+     "c4",
+     "fi1"
+    ],
+    "fieldset:disabled input": [
+     "fl1",
+     "fi1"
+    ],
+    ":checked + input": [
+     "c2",
+     "r2",
+     "r4"
+    ],
+    "select:has(:checked)": [
+     "s1",
+     "s2",
+     "s3",
+     "s7"
+    ],
+    "input:read-write:not(:placeholder-shown)": [
+     "t1",
+     "t5",
+     "t7",
+     "t8",
+     "t12",
+     "t18",
+     "fl1",
+     "fi2",
+     "fo1"
+    ]
+   }
+  },
+  {
+   "step": "type into t4 and ta3",
+   "changes": [
+    [
+     "property",
+     "t4",
+     "value",
+     "x"
+    ],
+    [
+     "property",
+     "ta3",
+     "value",
+     "y"
+    ]
+   ],
+   "matches": {
+    ":disabled": [
+     "b2",
+     "t3",
+     "t16",
+     "c4",
+     "ta4",
+     "s2",
+     "og2",
+     "o5",
+     "o6",
+     "f1",
+     "fi1",
+     "f2",
+     "fb1"
+    ],
+    ":enabled": [
+     "b1",
+     "t1",
+     "t2",
+     "t4",
+     "t5",
+     "t6",
+     "t7",
+     "t8",
+     "t9",
+     "t10",
+     "t11",
+     "t12",
+     "t13",
+     "t14",
+     "t15",
+     "t17",
+     "t18",
+     "t19",
+     "c1",
+     "c2",
+     "c3",
+     "r1",
+     "r2",
+     "r3",
+     "r4",
+     "r5",
+     "ta1",
+     "ta2",
+     "ta3",
+     "s1",
+     "o1",
+     "o2",
+     "og1",
+     "o3",
+     "s3",
+     "o4",
+     "s4",
+     "s5",
+     "o7",
+     "s6",
+     "o8",
+     "s7",
+     "o9",
+     "o10",
+     "o11",
+     "fl1",
+     "f3",
+     "fi2",
+     "fo1"
+    ],
+    ":checked": [
+     "c1",
+     "r1",
+     "r3",
+     "o2",
+     "o3",
+     "o4",
+     "o10"
+    ],
+    ":indeterminate": [
+     "c3",
+     "r5",
+     "p1"
+    ],
+    ":placeholder-shown": [
+     "t6",
+     "t15",
+     "t16",
+     "t19"
+    ],
+    ":read-only": [
+     "html",
+     "body",
+     "plain",
+     "b1",
+     "b2",
+     "t2",
+     "t3",
+     "t9",
+     "t10",
+     "t11",
+     "t13",
+     "t14",
+     "t15",
+     "t16",
+     "t17",
+     "c1",
+     "c2",
+     "c3",
+     "c4",
+     "r1",
+     "r2",
+     "r3",
+     "r4",
+     "r5",
+     "ta2",
+     "ta4",
+     "s1",
+     "o1",
+     "o2",
+     "s2",
+     "og1",
+     "o3",
+     "s3",
+     "o4",
+     "s4",
+     "og2",
+     "o5",
+     "o6",
+     "s5",
+     "o7",
+     "s6",
+     "o8",
+     "s7",
+     "o9",
+     "o10",
+     "o11",
+     "f1",
+     "l1",
+     "fi1",
+     "f2",
+     "fb1",
+     "f3",
+     "l2",
+     "p1",
+     "p2",
+     "p3",
+     "m1",
+     "form1",
+     "d1"
+    ],
+    ":read-write": [
+     "t1",
+     "t4",
+     "t5",
+     "t6",
+     "t7",
+     "t8",
+     "t12",
+     "t18",
+     "t19",
+     "ta1",
+     "ta3",
+     "fl1",
+     "fi2",
+     "fo1"
+    ],
+    ":required": [
+     "t7",
+     "t8",
+     "t12",
+     "t14",
+     "c4",
+     "r4",
+     "ta4",
+     "s3"
+    ],
+    "input:not(:enabled)": [
+     "t3",
+     "t16",
+     "c4",
+     "fi1"
+    ],
+    "fieldset:disabled input": [
+     "fl1",
+     "fi1"
+    ],
+    ":checked + input": [
+     "c2",
+     "r2",
+     "r4"
+    ],
+    "select:has(:checked)": [
+     "s1",
+     "s2",
+     "s3",
+     "s7"
+    ],
+    "input:read-write:not(:placeholder-shown)": [
+     "t1",
+     "t4",
+     "t5",
+     "t7",
+     "t8",
+     "t12",
+     "t18",
+     "fl1",
+     "fi2",
+     "fo1"
+    ]
+   }
+  },
+  {
+   "step": "clear t5",
+   "changes": [
+    [
+     "property",
+     "t5",
+     "value",
+     ""
+    ]
+   ],
+   "matches": {
+    ":disabled": [
+     "b2",
+     "t3",
+     "t16",
+     "c4",
+     "ta4",
+     "s2",
+     "og2",
+     "o5",
+     "o6",
+     "f1",
+     "fi1",
+     "f2",
+     "fb1"
+    ],
+    ":enabled": [
+     "b1",
+     "t1",
+     "t2",
+     "t4",
+     "t5",
+     "t6",
+     "t7",
+     "t8",
+     "t9",
+     "t10",
+     "t11",
+     "t12",
+     "t13",
+     "t14",
+     "t15",
+     "t17",
+     "t18",
+     "t19",
+     "c1",
+     "c2",
+     "c3",
+     "r1",
+     "r2",
+     "r3",
+     "r4",
+     "r5",
+     "ta1",
+     "ta2",
+     "ta3",
+     "s1",
+     "o1",
+     "o2",
+     "og1",
+     "o3",
+     "s3",
+     "o4",
+     "s4",
+     "s5",
+     "o7",
+     "s6",
+     "o8",
+     "s7",
+     "o9",
+     "o10",
+     "o11",
+     "fl1",
+     "f3",
+     "fi2",
+     "fo1"
+    ],
+    ":checked": [
+     "c1",
+     "r1",
+     "r3",
+     "o2",
+     "o3",
+     "o4",
+     "o10"
+    ],
+    ":indeterminate": [
+     "c3",
+     "r5",
+     "p1"
+    ],
+    ":placeholder-shown": [
+     "t5",
+     "t6",
+     "t15",
+     "t16",
+     "t19"
+    ],
+    ":read-only": [
+     "html",
+     "body",
+     "plain",
+     "b1",
+     "b2",
+     "t2",
+     "t3",
+     "t9",
+     "t10",
+     "t11",
+     "t13",
+     "t14",
+     "t15",
+     "t16",
+     "t17",
+     "c1",
+     "c2",
+     "c3",
+     "c4",
+     "r1",
+     "r2",
+     "r3",
+     "r4",
+     "r5",
+     "ta2",
+     "ta4",
+     "s1",
+     "o1",
+     "o2",
+     "s2",
+     "og1",
+     "o3",
+     "s3",
+     "o4",
+     "s4",
+     "og2",
+     "o5",
+     "o6",
+     "s5",
+     "o7",
+     "s6",
+     "o8",
+     "s7",
+     "o9",
+     "o10",
+     "o11",
+     "f1",
+     "l1",
+     "fi1",
+     "f2",
+     "fb1",
+     "f3",
+     "l2",
+     "p1",
+     "p2",
+     "p3",
+     "m1",
+     "form1",
+     "d1"
+    ],
+    ":read-write": [
+     "t1",
+     "t4",
+     "t5",
+     "t6",
+     "t7",
+     "t8",
+     "t12",
+     "t18",
+     "t19",
+     "ta1",
+     "ta3",
+     "fl1",
+     "fi2",
+     "fo1"
+    ],
+    ":required": [
+     "t7",
+     "t8",
+     "t12",
+     "t14",
+     "c4",
+     "r4",
+     "ta4",
+     "s3"
+    ],
+    "input:not(:enabled)": [
+     "t3",
+     "t16",
+     "c4",
+     "fi1"
+    ],
+    "fieldset:disabled input": [
+     "fl1",
+     "fi1"
+    ],
+    ":checked + input": [
+     "c2",
+     "r2",
+     "r4"
+    ],
+    "select:has(:checked)": [
+     "s1",
+     "s2",
+     "s3",
+     "s7"
+    ],
+    "input:read-write:not(:placeholder-shown)": [
+     "t1",
+     "t4",
+     "t7",
+     "t8",
+     "t12",
+     "t18",
+     "fl1",
+     "fi2",
+     "fo1"
+    ]
+   }
+  },
+  {
+   "step": "enable f1",
+   "changes": [
+    [
+     "remove",
+     "f1",
+     "disabled"
+    ]
+   ],
+   "matches": {
+    ":disabled": [
+     "b2",
+     "t3",
+     "t16",
+     "c4",
+     "ta4",
+     "s2",
+     "og2",
+     "o5",
+     "o6"
+    ],
+    ":enabled": [
+     "b1",
+     "t1",
+     "t2",
+     "t4",
+     "t5",
+     "t6",
+     "t7",
+     "t8",
+     "t9",
+     "t10",
+     "t11",
+     "t12",
+     "t13",
+     "t14",
+     "t15",
+     "t17",
+     "t18",
+     "t19",
+     "c1",
+     "c2",
+     "c3",
+     "r1",
+     "r2",
+     "r3",
+     "r4",
+     "r5",
+     "ta1",
+     "ta2",
+     "ta3",
+     "s1",
+     "o1",
+     "o2",
+     "og1",
+     "o3",
+     "s3",
+     "o4",
+     "s4",
+     "s5",
+     "o7",
+     "s6",
+     "o8",
+     "s7",
+     "o9",
+     "o10",
+     "o11",
+     "f1",
+     "fl1",
+     "fi1",
+     "f2",
+     "fb1",
+     "f3",
+     "fi2",
+     "fo1"
+    ],
+    ":checked": [
+     "c1",
+     "r1",
+     "r3",
+     "o2",
+     "o3",
+     "o4",
+     "o10"
+    ],
+    ":indeterminate": [
+     "c3",
+     "r5",
+     "p1"
+    ],
+    ":placeholder-shown": [
+     "t5",
+     "t6",
+     "t15",
+     "t16",
+     "t19"
+    ],
+    ":read-only": [
+     "html",
+     "body",
+     "plain",
+     "b1",
+     "b2",
+     "t2",
+     "t3",
+     "t9",
+     "t10",
+     "t11",
+     "t13",
+     "t14",
+     "t15",
+     "t16",
+     "t17",
+     "c1",
+     "c2",
+     "c3",
+     "c4",
+     "r1",
+     "r2",
+     "r3",
+     "r4",
+     "r5",
+     "ta2",
+     "ta4",
+     "s1",
+     "o1",
+     "o2",
+     "s2",
+     "og1",
+     "o3",
+     "s3",
+     "o4",
+     "s4",
+     "og2",
+     "o5",
+     "o6",
+     "s5",
+     "o7",
+     "s6",
+     "o8",
+     "s7",
+     "o9",
+     "o10",
+     "o11",
+     "f1",
+     "l1",
+     "f2",
+     "fb1",
+     "f3",
+     "l2",
+     "p1",
+     "p2",
+     "p3",
+     "m1",
+     "form1",
+     "d1"
+    ],
+    ":read-write": [
+     "t1",
+     "t4",
+     "t5",
+     "t6",
+     "t7",
+     "t8",
+     "t12",
+     "t18",
+     "t19",
+     "ta1",
+     "ta3",
+     "fl1",
+     "fi1",
+     "fi2",
+     "fo1"
+    ],
+    ":required": [
+     "t7",
+     "t8",
+     "t12",
+     "t14",
+     "c4",
+     "r4",
+     "ta4",
+     "s3"
+    ],
+    "input:not(:enabled)": [
+     "t3",
+     "t16",
+     "c4"
+    ],
+    "fieldset:disabled input": [],
+    ":checked + input": [
+     "c2",
+     "r2",
+     "r4"
+    ],
+    "select:has(:checked)": [
+     "s1",
+     "s2",
+     "s3",
+     "s7"
+    ],
+    "input:read-write:not(:placeholder-shown)": [
+     "t1",
+     "t4",
+     "t7",
+     "t8",
+     "t12",
+     "t18",
+     "fl1",
+     "fi1",
+     "fi2",
+     "fo1"
+    ]
+   }
+  },
+  {
+   "step": "disable f3",
+   "changes": [
+    [
+     "attribute",
+     "f3",
+     "disabled",
+     ""
+    ]
+   ],
+   "matches": {
+    ":disabled": [
+     "b2",
+     "t3",
+     "t16",
+     "c4",
+     "ta4",
+     "s2",
+     "og2",
+     "o5",
+     "o6",
+     "f3",
+     "fi2"
+    ],
+    ":enabled": [
+     "b1",
+     "t1",
+     "t2",
+     "t4",
+     "t5",
+     "t6",
+     "t7",
+     "t8",
+     "t9",
+     "t10",
+     "t11",
+     "t12",
+     "t13",
+     "t14",
+     "t15",
+     "t17",
+     "t18",
+     "t19",
+     "c1",
+     "c2",
+     "c3",
+     "r1",
+     "r2",
+     "r3",
+     "r4",
+     "r5",
+     "ta1",
+     "ta2",
+     "ta3",
+     "s1",
+     "o1",
+     "o2",
+     "og1",
+     "o3",
+     "s3",
+     "o4",
+     "s4",
+     "s5",
+     "o7",
+     "s6",
+     "o8",
+     "s7",
+     "o9",
+     "o10",
+     "o11",
+     "f1",
+     "fl1",
+     "fi1",
+     "f2",
+     "fb1",
+     "fo1"
+    ],
+    ":checked": [
+     "c1",
+     "r1",
+     "r3",
+     "o2",
+     "o3",
+     "o4",
+     "o10"
+    ],
+    ":indeterminate": [
+     "c3",
+     "r5",
+     "p1"
+    ],
+    ":placeholder-shown": [
+     "t5",
+     "t6",
+     "t15",
+     "t16",
+     "t19"
+    ],
+    ":read-only": [
+     "html",
+     "body",
+     "plain",
+     "b1",
+     "b2",
+     "t2",
+     "t3",
+     "t9",
+     "t10",
+     "t11",
+     "t13",
+     "t14",
+     "t15",
+     "t16",
+     "t17",
+     "c1",
+     "c2",
+     "c3",
+     "c4",
+     "r1",
+     "r2",
+     "r3",
+     "r4",
+     "r5",
+     "ta2",
+     "ta4",
+     "s1",
+     "o1",
+     "o2",
+     "s2",
+     "og1",
+     "o3",
+     "s3",
+     "o4",
+     "s4",
+     "og2",
+     "o5",
+     "o6",
+     "s5",
+     "o7",
+     "s6",
+     "o8",
+     "s7",
+     "o9",
+     "o10",
+     "o11",
+     "f1",
+     "l1",
+     "f2",
+     "fb1",
+     "f3",
+     "l2",
+     "fi2",
+     "p1",
+     "p2",
+     "p3",
+     "m1",
+     "form1",
+     "d1"
+    ],
+    ":read-write": [
+     "t1",
+     "t4",
+     "t5",
+     "t6",
+     "t7",
+     "t8",
+     "t12",
+     "t18",
+     "t19",
+     "ta1",
+     "ta3",
+     "fl1",
+     "fi1",
+     "fo1"
+    ],
+    ":required": [
+     "t7",
+     "t8",
+     "t12",
+     "t14",
+     "c4",
+     "r4",
+     "ta4",
+     "s3"
+    ],
+    "input:not(:enabled)": [
+     "t3",
+     "t16",
+     "c4",
+     "fi2"
+    ],
+    "fieldset:disabled input": [
+     "fi2"
+    ],
+    ":checked + input": [
+     "c2",
+     "r2",
+     "r4"
+    ],
+    "select:has(:checked)": [
+     "s1",
+     "s2",
+     "s3",
+     "s7"
+    ],
+    "input:read-write:not(:placeholder-shown)": [
+     "t1",
+     "t4",
+     "t7",
+     "t8",
+     "t12",
+     "t18",
+     "fl1",
+     "fi1",
+     "fo1"
+    ]
+   }
+  },
+  {
+   "step": "make t2 writable, t1 read-only",
+   "changes": [
+    [
+     "remove",
+     "t2",
+     "readonly"
+    ],
+    [
+     "attribute",
+     "t1",
+     "readonly",
+     ""
+    ]
+   ],
+   "matches": {
+    ":disabled": [
+     "b2",
+     "t3",
+     "t16",
+     "c4",
+     "ta4",
+     "s2",
+     "og2",
+     "o5",
+     "o6",
+     "f3",
+     "fi2"
+    ],
+    ":enabled": [
+     "b1",
+     "t1",
+     "t2",
+     "t4",
+     "t5",
+     "t6",
+     "t7",
+     "t8",
+     "t9",
+     "t10",
+     "t11",
+     "t12",
+     "t13",
+     "t14",
+     "t15",
+     "t17",
+     "t18",
+     "t19",
+     "c1",
+     "c2",
+     "c3",
+     "r1",
+     "r2",
+     "r3",
+     "r4",
+     "r5",
+     "ta1",
+     "ta2",
+     "ta3",
+     "s1",
+     "o1",
+     "o2",
+     "og1",
+     "o3",
+     "s3",
+     "o4",
+     "s4",
+     "s5",
+     "o7",
+     "s6",
+     "o8",
+     "s7",
+     "o9",
+     "o10",
+     "o11",
+     "f1",
+     "fl1",
+     "fi1",
+     "f2",
+     "fb1",
+     "fo1"
+    ],
+    ":checked": [
+     "c1",
+     "r1",
+     "r3",
+     "o2",
+     "o3",
+     "o4",
+     "o10"
+    ],
+    ":indeterminate": [
+     "c3",
+     "r5",
+     "p1"
+    ],
+    ":placeholder-shown": [
+     "t5",
+     "t6",
+     "t15",
+     "t16",
+     "t19"
+    ],
+    ":read-only": [
+     "html",
+     "body",
+     "plain",
+     "b1",
+     "b2",
+     "t1",
+     "t3",
+     "t9",
+     "t10",
+     "t11",
+     "t13",
+     "t14",
+     "t15",
+     "t16",
+     "t17",
+     "c1",
+     "c2",
+     "c3",
+     "c4",
+     "r1",
+     "r2",
+     "r3",
+     "r4",
+     "r5",
+     "ta2",
+     "ta4",
+     "s1",
+     "o1",
+     "o2",
+     "s2",
+     "og1",
+     "o3",
+     "s3",
+     "o4",
+     "s4",
+     "og2",
+     "o5",
+     "o6",
+     "s5",
+     "o7",
+     "s6",
+     "o8",
+     "s7",
+     "o9",
+     "o10",
+     "o11",
+     "f1",
+     "l1",
+     "f2",
+     "fb1",
+     "f3",
+     "l2",
+     "fi2",
+     "p1",
+     "p2",
+     "p3",
+     "m1",
+     "form1",
+     "d1"
+    ],
+    ":read-write": [
+     "t2",
+     "t4",
+     "t5",
+     "t6",
+     "t7",
+     "t8",
+     "t12",
+     "t18",
+     "t19",
+     "ta1",
+     "ta3",
+     "fl1",
+     "fi1",
+     "fo1"
+    ],
+    ":required": [
+     "t7",
+     "t8",
+     "t12",
+     "t14",
+     "c4",
+     "r4",
+     "ta4",
+     "s3"
+    ],
+    "input:not(:enabled)": [
+     "t3",
+     "t16",
+     "c4",
+     "fi2"
+    ],
+    "fieldset:disabled input": [
+     "fi2"
+    ],
+    ":checked + input": [
+     "c2",
+     "r2",
+     "r4"
+    ],
+    "select:has(:checked)": [
+     "s1",
+     "s2",
+     "s3",
+     "s7"
+    ],
+    "input:read-write:not(:placeholder-shown)": [
+     "t2",
+     "t4",
+     "t7",
+     "t8",
+     "t12",
+     "t18",
+     "fl1",
+     "fi1",
+     "fo1"
+    ]
+   }
+  },
+  {
+   "step": "remove p2 value",
+   "changes": [
+    [
+     "remove",
+     "p2",
+     "value"
+    ]
+   ],
+   "matches": {
+    ":disabled": [
+     "b2",
+     "t3",
+     "t16",
+     "c4",
+     "ta4",
+     "s2",
+     "og2",
+     "o5",
+     "o6",
+     "f3",
+     "fi2"
+    ],
+    ":enabled": [
+     "b1",
+     "t1",
+     "t2",
+     "t4",
+     "t5",
+     "t6",
+     "t7",
+     "t8",
+     "t9",
+     "t10",
+     "t11",
+     "t12",
+     "t13",
+     "t14",
+     "t15",
+     "t17",
+     "t18",
+     "t19",
+     "c1",
+     "c2",
+     "c3",
+     "r1",
+     "r2",
+     "r3",
+     "r4",
+     "r5",
+     "ta1",
+     "ta2",
+     "ta3",
+     "s1",
+     "o1",
+     "o2",
+     "og1",
+     "o3",
+     "s3",
+     "o4",
+     "s4",
+     "s5",
+     "o7",
+     "s6",
+     "o8",
+     "s7",
+     "o9",
+     "o10",
+     "o11",
+     "f1",
+     "fl1",
+     "fi1",
+     "f2",
+     "fb1",
+     "fo1"
+    ],
+    ":checked": [
+     "c1",
+     "r1",
+     "r3",
+     "o2",
+     "o3",
+     "o4",
+     "o10"
+    ],
+    ":indeterminate": [
+     "c3",
+     "r5",
+     "p1",
+     "p2"
+    ],
+    ":placeholder-shown": [
+     "t5",
+     "t6",
+     "t15",
+     "t16",
+     "t19"
+    ],
+    ":read-only": [
+     "html",
+     "body",
+     "plain",
+     "b1",
+     "b2",
+     "t1",
+     "t3",
+     "t9",
+     "t10",
+     "t11",
+     "t13",
+     "t14",
+     "t15",
+     "t16",
+     "t17",
+     "c1",
+     "c2",
+     "c3",
+     "c4",
+     "r1",
+     "r2",
+     "r3",
+     "r4",
+     "r5",
+     "ta2",
+     "ta4",
+     "s1",
+     "o1",
+     "o2",
+     "s2",
+     "og1",
+     "o3",
+     "s3",
+     "o4",
+     "s4",
+     "og2",
+     "o5",
+     "o6",
+     "s5",
+     "o7",
+     "s6",
+     "o8",
+     "s7",
+     "o9",
+     "o10",
+     "o11",
+     "f1",
+     "l1",
+     "f2",
+     "fb1",
+     "f3",
+     "l2",
+     "fi2",
+     "p1",
+     "p2",
+     "p3",
+     "m1",
+     "form1",
+     "d1"
+    ],
+    ":read-write": [
+     "t2",
+     "t4",
+     "t5",
+     "t6",
+     "t7",
+     "t8",
+     "t12",
+     "t18",
+     "t19",
+     "ta1",
+     "ta3",
+     "fl1",
+     "fi1",
+     "fo1"
+    ],
+    ":required": [
+     "t7",
+     "t8",
+     "t12",
+     "t14",
+     "c4",
+     "r4",
+     "ta4",
+     "s3"
+    ],
+    "input:not(:enabled)": [
+     "t3",
+     "t16",
+     "c4",
+     "fi2"
+    ],
+    "fieldset:disabled input": [
+     "fi2"
+    ],
+    ":checked + input": [
+     "c2",
+     "r2",
+     "r4"
+    ],
+    "select:has(:checked)": [
+     "s1",
+     "s2",
+     "s3",
+     "s7"
+    ],
+    "input:read-write:not(:placeholder-shown)": [
+     "t2",
+     "t4",
+     "t7",
+     "t8",
+     "t12",
+     "t18",
+     "fl1",
+     "fi1",
+     "fo1"
+    ]
+   }
+  },
+  {
+   "step": "make c1 a radio",
+   "changes": [
+    [
+     "attribute",
+     "c1",
+     "type",
+     "radio"
+    ]
+   ],
+   "matches": {
+    ":disabled": [
+     "b2",
+     "t3",
+     "t16",
+     "c4",
+     "ta4",
+     "s2",
+     "og2",
+     "o5",
+     "o6",
+     "f3",
+     "fi2"
+    ],
+    ":enabled": [
+     "b1",
+     "t1",
+     "t2",
+     "t4",
+     "t5",
+     "t6",
+     "t7",
+     "t8",
+     "t9",
+     "t10",
+     "t11",
+     "t12",
+     "t13",
+     "t14",
+     "t15",
+     "t17",
+     "t18",
+     "t19",
+     "c1",
+     "c2",
+     "c3",
+     "r1",
+     "r2",
+     "r3",
+     "r4",
+     "r5",
+     "ta1",
+     "ta2",
+     "ta3",
+     "s1",
+     "o1",
+     "o2",
+     "og1",
+     "o3",
+     "s3",
+     "o4",
+     "s4",
+     "s5",
+     "o7",
+     "s6",
+     "o8",
+     "s7",
+     "o9",
+     "o10",
+     "o11",
+     "f1",
+     "fl1",
+     "fi1",
+     "f2",
+     "fb1",
+     "fo1"
+    ],
+    ":checked": [
+     "c1",
+     "r1",
+     "r3",
+     "o2",
+     "o3",
+     "o4",
+     "o10"
+    ],
+    ":indeterminate": [
+     "c3",
+     "r5",
+     "p1",
+     "p2"
+    ],
+    ":placeholder-shown": [
+     "t5",
+     "t6",
+     "t15",
+     "t16",
+     "t19"
+    ],
+    ":read-only": [
+     "html",
+     "body",
+     "plain",
+     "b1",
+     "b2",
+     "t1",
+     "t3",
+     "t9",
+     "t10",
+     "t11",
+     "t13",
+     "t14",
+     "t15",
+     "t16",
+     "t17",
+     "c1",
+     "c2",
+     "c3",
+     "c4",
+     "r1",
+     "r2",
+     "r3",
+     "r4",
+     "r5",
+     "ta2",
+     "ta4",
+     "s1",
+     "o1",
+     "o2",
+     "s2",
+     "og1",
+     "o3",
+     "s3",
+     "o4",
+     "s4",
+     "og2",
+     "o5",
+     "o6",
+     "s5",
+     "o7",
+     "s6",
+     "o8",
+     "s7",
+     "o9",
+     "o10",
+     "o11",
+     "f1",
+     "l1",
+     "f2",
+     "fb1",
+     "f3",
+     "l2",
+     "fi2",
+     "p1",
+     "p2",
+     "p3",
+     "m1",
+     "form1",
+     "d1"
+    ],
+    ":read-write": [
+     "t2",
+     "t4",
+     "t5",
+     "t6",
+     "t7",
+     "t8",
+     "t12",
+     "t18",
+     "t19",
+     "ta1",
+     "ta3",
+     "fl1",
+     "fi1",
+     "fo1"
+    ],
+    ":required": [
+     "t7",
+     "t8",
+     "t12",
+     "t14",
+     "c4",
+     "r4",
+     "ta4",
+     "s3"
+    ],
+    "input:not(:enabled)": [
+     "t3",
+     "t16",
+     "c4",
+     "fi2"
+    ],
+    "fieldset:disabled input": [
+     "fi2"
+    ],
+    ":checked + input": [
+     "c2",
+     "r2",
+     "r4"
+    ],
+    "select:has(:checked)": [
+     "s1",
+     "s2",
+     "s3",
+     "s7"
+    ],
+    "input:read-write:not(:placeholder-shown)": [
+     "t2",
+     "t4",
+     "t7",
+     "t8",
+     "t12",
+     "t18",
+     "fl1",
+     "fi1",
+     "fo1"
+    ]
+   }
+  }
+ ]
+}
