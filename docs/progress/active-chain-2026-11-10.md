@@ -54,7 +54,7 @@ each step ([oracle](evidence/active-chain-v1/chromium-windows.json)):
 | --- | --- | --- |
 | Chromium oracle | `python tools/qualification/capture_active_chain_oracle.py --chrome E:\open-ui\out\chrome-win\win-147.0.7727.50\chrome-win64\chrome.exe` | 7 steps, table above |
 | Open UI against the oracle; a disabled button is active but not clicked | `cargo test -p openui --test active_chain` (Windows) | 2 passed. With the engine change reverted, both fail: after "press inner" only `inner` is active, expected `body`, `outer`, `middle`, `inner`; the disabled button is not active |
-| Touched crates | `cargo test -p openui-engine -p openui -p openui-ffi --features openui/windows --no-fail-fast` (Windows) | 921 passed, 0 failed, 11 ignored |
+| Touched crates | `cargo test -p openui-engine -p openui -p openui-ffi --features openui/windows --no-fail-fast` (Windows) | 921 passed, 0 failed, 11 ignored. After rebasing onto `main` at `c4b2e42e`: 922 passed, 0 failed, 11 ignored |
 | Generators | `generate_properties.py --check`; `generate_v02_contract.py --check`; `generate_renderer_contract.py --check` | no drift |
 | `cargo fmt --all --check` | in `bindings/rust` | pass |
 | Paired expanded census (WSL) | `wsl-branch-census-a8.sh`, base `9d7bccf6` | 22,517 of 23,728 exact before and after; 0 changed |
