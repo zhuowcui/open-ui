@@ -916,55 +916,76 @@ fn size_intrinsic_tracks(
         let intrinsic = *cache
             .entry(item.node_id)
             .or_insert_with(|| compute_child_intrinsic_contribution_with_layout(doc, item.node_id));
-        let min = grid_item_min_contribution(doc, item.node_id, intrinsic, columns);
-        let max = cyclic_ratio_contribution(doc, item.node_id, columns)
-            .unwrap_or_else(|| axis_contribution(intrinsic, columns, true));
-        let slice = &tracks[start..(start + span).min(tracks.len())];
-        let fixed_max_cap = slice
-            .iter()
-            .map(|track| match track.sizing {
-                GridTrackSize::MinMax {
-                    max: GridTrackBreadth::Length(length),
+        let contribution = base_size_contribution(
+            doc,
+            item.node_id,
+            intrinsic,
+            &tracks[start..(start + span).min(tracks.len())],
+            columns,
+            gap,
+            percentage_base,
+        );
+        grow_spanning_tracks(tracks, start, span, contribution, gap, percentage_base);
+    }
+}
+
+/// The contribution with which `size_intrinsic_tracks` grows the base sizes
+/// of the tracks `slice` that an item spans.
+fn base_size_contribution(
+    doc: &dyn LayoutDocument,
+    node_id: NodeId,
+    intrinsic: IntrinsicSizes,
+    slice: &[Track],
+    columns: bool,
+    gap: LayoutUnit,
+    percentage_base: LayoutUnit,
+) -> LayoutUnit {
+    let min = grid_item_min_contribution(doc, node_id, intrinsic, columns);
+    let max = cyclic_ratio_contribution(doc, node_id, columns)
+        .unwrap_or_else(|| axis_contribution(intrinsic, columns, true));
+    let fixed_max_cap = slice
+        .iter()
+        .map(|track| match track.sizing {
+            GridTrackSize::MinMax {
+                max: GridTrackBreadth::Length(length),
+                ..
+            } => fixed_track_length(length, percentage_base),
+            _ => None,
+        })
+        .collect::<Option<Vec<_>>>()
+        .map(|limits| {
+            limits
+                .into_iter()
+                .fold(LayoutUnit::zero(), |sum, value| sum + value)
+                + gap * slice.len().saturating_sub(1) as i32
+        });
+    if let Some(cap) = fixed_max_cap {
+        // Under a max-content constraint a fixed max track grows through
+        // its growth limit, while an intrinsic minimum may still raise
+        // that limit.  This is the maximize-tracks step for
+        // `minmax(min-content|auto, <length>)`.
+        min.max_of(max.min_of(cap))
+    } else if slice.iter().any(|track| {
+        matches!(
+            track.sizing,
+            GridTrackSize::Breadth(GridTrackBreadth::MaxContent)
+                | GridTrackSize::MinMax {
+                    max: GridTrackBreadth::MaxContent,
                     ..
-                } => fixed_track_length(length, percentage_base),
-                _ => None,
-            })
-            .collect::<Option<Vec<_>>>()
-            .map(|limits| {
-                limits
-                    .into_iter()
-                    .fold(LayoutUnit::zero(), |sum, value| sum + value)
-                    + gap * slice.len().saturating_sub(1) as i32
-            });
-        let contribution = if let Some(cap) = fixed_max_cap {
-            // Under a max-content constraint a fixed max track grows through
-            // its growth limit, while an intrinsic minimum may still raise
-            // that limit.  This is the maximize-tracks step for
-            // `minmax(min-content|auto, <length>)`.
-            min.max_of(max.min_of(cap))
-        } else if slice.iter().any(|track| {
-            matches!(
+                }
+        ) || (percentage_base.is_indefinite()
+            && matches!(
                 track.sizing,
-                GridTrackSize::Breadth(GridTrackBreadth::MaxContent)
+                GridTrackSize::Breadth(GridTrackBreadth::Auto)
                     | GridTrackSize::MinMax {
-                        max: GridTrackBreadth::MaxContent,
+                        max: GridTrackBreadth::Auto,
                         ..
                     }
-            ) || (percentage_base.is_indefinite()
-                && matches!(
-                    track.sizing,
-                    GridTrackSize::Breadth(GridTrackBreadth::Auto)
-                        | GridTrackSize::MinMax {
-                            max: GridTrackBreadth::Auto,
-                            ..
-                        }
-                ))
-        }) {
-            max
-        } else {
-            min
-        };
-        grow_spanning_tracks(tracks, start, span, contribution, gap, percentage_base);
+            ))
+    }) {
+        max
+    } else {
+        min
     }
 }
 
@@ -1133,21 +1154,35 @@ fn intrinsic_growth_limits(
         let intrinsic = *cache
             .entry(item.node_id)
             .or_insert_with(|| compute_child_intrinsic_contribution_with_layout(doc, item.node_id));
-        let cyclic = cyclic_ratio_contribution(doc, item.node_id, columns);
-        let min = cyclic.unwrap_or_else(|| axis_contribution(intrinsic, columns, false));
-        // An item whose writing mode is orthogonal to the grid's contributes
-        // its laid-out block size to both maximum steps, as Blink's
-        // `BlockContributionSize`: it has no separate max-content size here.
+        // Blink gives an item whose writing mode is orthogonal to the grid's
+        // one contribution to both maximum steps, its `BlockContributionSize`:
+        // its block size laid out at the size of the tracks it spans in the
+        // other axis. The intrinsic sizes here are not measured that way, so
+        // such an item contributes the size it gave the base sizes, and does
+        // not grow its tracks past them.
         let item_style = &doc.node(item.node_id).style;
         let orthogonal = item_style
             .direction
             .writing_direction(item_style.writing_mode)
             .is_horizontal()
             != horizontal;
-        let max = if orthogonal {
-            min
+        let (min, max) = if orthogonal {
+            let base = base_size_contribution(
+                doc,
+                item.node_id,
+                intrinsic,
+                &tracks[start..end],
+                columns,
+                gap,
+                percentage_base,
+            );
+            (base, base)
         } else {
-            cyclic.unwrap_or_else(|| axis_contribution(intrinsic, columns, true))
+            let cyclic = cyclic_ratio_contribution(doc, item.node_id, columns);
+            (
+                cyclic.unwrap_or_else(|| axis_contribution(intrinsic, columns, false)),
+                cyclic.unwrap_or_else(|| axis_contribution(intrinsic, columns, true)),
+            )
         };
         contributions.push((span, start, end, min, max));
     }

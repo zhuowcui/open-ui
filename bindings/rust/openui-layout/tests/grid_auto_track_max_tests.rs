@@ -6,8 +6,8 @@ use openui_geometry::{LayoutUnit, Length, PhysicalOffset};
 use openui_layout::intrinsic_sizing::compute_child_intrinsic_contribution;
 use openui_layout::{block_layout, ConstraintSpace, Fragment};
 use openui_style::{
-    ContentAlignment, ContentPosition, Display, GridTrackBreadth, GridTrackComponent,
-    GridTrackList, GridTrackSize, LineHeight, WritingMode,
+    ContentAlignment, ContentPosition, Display, GridLine, GridPlacement, GridTrackBreadth,
+    GridTrackComponent, GridTrackList, GridTrackSize, LineHeight, WritingMode,
 };
 
 fn lu(value: i32) -> LayoutUnit {
@@ -156,4 +156,51 @@ fn an_orthogonal_item_does_not_widen_its_auto_column_past_its_block_size() {
     let width = fragment_for(&fragment, item).size.width;
     assert!(intrinsic.min_content_inline_size < intrinsic.max_content_inline_size);
     assert_eq!(width, intrinsic.min_content_inline_size);
+}
+
+/// An orthogonal item with `min-width: 10px` spanning three `auto` columns
+/// gives their base sizes 10px. Blink would raise their growth limits by the
+/// item's `BlockContributionSize`, its block size laid out at the size of
+/// its rows; this engine does not measure that, so the item contributes the
+/// same 10px to the growth limits and the maximize step leaves the columns
+/// as they were. Contributing the min-content size measured another way
+/// widened the vertical items of WPT
+/// `css-grid/subgrid/orthogonal-writing-mode-004-ref` past Chromium's.
+#[test]
+fn an_orthogonal_spanning_item_contributes_its_base_size_to_the_growth_limits() {
+    let mut doc = Document::new();
+    let grid = grid(
+        &mut doc,
+        vec![
+            track(GridTrackBreadth::Auto),
+            track(GridTrackBreadth::Auto),
+            track(GridTrackBreadth::Auto),
+        ],
+    );
+    doc.update_resolved_style(grid, |style| {
+        style.column_gap = Some(Length::px(0.0));
+        style.justify_content = ContentAlignment::new(ContentPosition::Start);
+    });
+    let item = text_item(&mut doc, grid, "XX XX XX");
+    doc.update_resolved_style(item, |style| {
+        style.writing_mode = WritingMode::VerticalLr;
+        style.min_width = Length::px(10.0);
+        style.grid_column = GridPlacement {
+            start: GridLine::Line {
+                index: 1,
+                name: None,
+            },
+            end: GridLine::Span {
+                count: 3,
+                name: None,
+            },
+        };
+    });
+    let text = doc.node(item).first_child;
+    doc.update_resolved_style(text, |style| style.writing_mode = WritingMode::VerticalLr);
+
+    let intrinsic = compute_child_intrinsic_contribution(&doc, item);
+    assert!(intrinsic.min_content_inline_size > lu(10));
+    let fragment = layout(&doc, grid);
+    assert_eq!(fragment_for(&fragment, item).size.width, lu(10));
 }
