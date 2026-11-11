@@ -1,0 +1,488 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import { Code } from '@astrojs/starlight/components';
+import CompareSlider from '../components/CompareSlider.astro';
+
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const repo = 'https://github.com/zhuowcui/open-ui';
+const blob = `${repo}/blob/main/`;
+const pr = (n: number) => `${repo}/pull/${n}`;
+
+// From bindings/rust/openui-cli/templates/default/src/app.rs.tmpl on main.
+const example = `use crate::State;
+use openui::prelude::*;
+
+pub fn root(state: State) -> ViewNode {
+    let count = state.count;
+    view! {
+        <div
+            style:display="flex"
+            style:flex-direction="column"
+            style:align-items="center"
+            style:gap="16px"
+            style:min-height="100vh"
+        >
+            <h1 style:font-size="24px">"my-app"</h1>
+            <button
+                style:padding="8px 20px"
+                style:font-size="16px"
+                on:click={move |_| count.set(count.get() + 1)}
+            >
+                "Count"
+            </button>
+            <p>{match count.get() {
+                1 => "Clicked 1 time".to_owned(),
+                clicks => format!("Clicked {clicks} times"),
+            }}</p>
+        </div>
+    }
+}`;
+
+const batteries = [
+  { name: 'CLI', text: '`openui new`, `dev` (rebuild and restart on save), `build` and `doctor`.', pr: 93 },
+  { name: 'Windows', text: 'Several windows on one event loop.', pr: 96 },
+  { name: 'Async', text: 'Tasks on the UI thread and in the background, wired to signals.', pr: 98 },
+  { name: 'Clipboard', text: 'Text on Win32, X11 and Wayland.', pr: 99 },
+  { name: 'Dialogs', text: 'Native open, save and folder pickers.', pr: 100 },
+  { name: 'Menus', text: 'App menu with accelerators: native on Windows, drawn on Linux.', pr: 101 },
+  { name: 'HTTP', text: 'A client over rustls and the system roots.', pr: 105 },
+  { name: 'Headless tests', text: 'Click, type and find text without a window; exact PNG snapshots.', pr: 106 },
+];
+
+const md = (s: string) => s.replace(/`([^`]+)`/g, '<code>$1</code>');
+---
+
+<StarlightPage
+  frontmatter={{
+    title: 'The look of the web, without a browser',
+    description:
+      'Open UI is an experimental native Rust UI framework that lays out and paints CSS with Skia and measures its output against Chromium, pixel by pixel.',
+    template: 'splash',
+    hero: {
+      title: 'The look of the web, without&nbsp;a&nbsp;browser.',
+      tagline:
+        'Open UI is a native Rust UI framework. It lays out and paints CSS with Skia, with no HTML, no JavaScript and no webview, and compares its pixels with Chromium 147.',
+      actions: [
+        { text: 'Get started', link: `${base}getting-started/`, icon: 'right-arrow' },
+        { text: 'How we measure', link: `${base}fidelity/`, variant: 'minimal' },
+        { text: 'GitHub', link: repo, variant: 'minimal', icon: 'external' },
+      ],
+    },
+  }}
+>
+  <div class="not-content landing">
+    <p class="alpha" role="note">
+      <span class="alpha-tag">Experimental alpha</span>
+      Not released yet. The API changes without notice, and alpha.1 targets Windows and Linux.
+    </p>
+
+    <section aria-labelledby="measured">
+      <h2 id="measured">Measured against Chromium</h2>
+      <p class="lede">
+        Every comparison renders the same page in pinned Chrome for Testing 147.0.7727.50 and in Open UI, at the same
+        size and device scale, and compares the RGBA bytes. Drag the line, or focus it and use the arrow keys.
+      </p>
+      <CompareSlider />
+    </section>
+
+    <section aria-labelledby="numbers">
+      <h2 id="numbers">Current numbers</h2>
+      <dl class="stats">
+        <div>
+          <dt>Census, 10 CSS areas</dt>
+          <dd><span class="big">22,517</span> of 23,728 comparisons exact (94.9%)</dd>
+          <dd class="cite">
+            Linux, four profiles, WPT-derived tests that mostly use the Ahem test font.{' '}
+            <a href={blob + 'docs/progress/woff2-decode-2026-11-09.md'}>Source</a>, 9&nbsp;Nov&nbsp;2026.
+          </dd>
+        </div>
+        <div>
+          <dt>CSS Grid coverage</dt>
+          <dd><span class="big">2,218</span> of 4,204 exact (52.8%)</dd>
+          <dd class="cite">
+            A separate suite, measured once; 39 tests panic.{' '}
+            <a href={blob + 'docs/progress/grid-coverage-2026-11-09.md'}>Source</a>, 9&nbsp;Nov&nbsp;2026.
+          </dd>
+        </div>
+        <div>
+          <dt><code>oklch()</code>, <code>oklab()</code>, <code>color-mix()</code></dt>
+          <dd><span class="big">54</span> of 54 swatches exact</dd>
+          <dd class="cite">
+            Linux and Windows captures.{' '}
+            <a href={blob + 'docs/progress/color-functions-2026-11-09.md'}>Source</a>, 9&nbsp;Nov&nbsp;2026.
+          </dd>
+        </div>
+      </dl>
+      <p class="fine">
+        Not measured yet: real-font text at scale, tables, transforms and most other areas, and performance. shadcn/ui
+        components with text are not exact yet. Nothing here is a release qualification.{' '}
+        <a href={`${base}fidelity/`}>What is and isn't measured</a>.
+      </p>
+    </section>
+
+    <section aria-labelledby="code">
+      <h2 id="code">Familiar markup, compiled</h2>
+      <p class="lede">
+        Views are written with the <code>view!</code> macro. Styles are CSS properties in CSS syntax, checked when the
+        app compiles: an unknown property or a bad value is a build error, not a blank screen.
+      </p>
+      <Code code={example} lang="rust" title="src/app.rs" />
+      <p class="fine">
+        From the <a href={blob + 'bindings/rust/openui-cli/templates/default/src/app.rs.tmpl'}>default template</a>, with
+        two style lines and the status line left out.
+        Typed <code>style!</code>, <code>css!</code> and <code>stylesheet!</code>, class names, <code>:hover</code> and
+        theme tokens are designed in <a href={blob + 'docs/alpha/rfcs/0001-typed-style-rules.md'}>RFC 0001</a> and not
+        merged yet.
+      </p>
+    </section>
+
+    <section aria-labelledby="pillars">
+      <h2 id="pillars" class="sr-only">Principles</h2>
+      <div class="pillars">
+        <article>
+          <h3>Familiar styling</h3>
+          <p>
+            Flexbox, grid, borders, gradients and colors, written as CSS properties, so web designs and component libraries
+            such as shadcn/ui can be ported rather than redrawn.
+          </p>
+        </article>
+        <article>
+          <h3>Native binary</h3>
+          <p>
+            One Rust executable with a CPU Skia rasterizer. No webview, no bundled browser, and no JavaScript, now or
+            later.
+          </p>
+        </article>
+        <article>
+          <h3>Measured fidelity</h3>
+          <p>
+            A change to the engine lands only if the census shows no regression. Results are published per area,
+            differences included.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section aria-labelledby="batteries">
+      <h2 id="batteries">Batteries included</h2>
+      <p class="lede">On <code>main</code> today, each in its own merged pull request:</p>
+      <ul class="batteries">
+        {
+          batteries.map((b) => (
+            <li>
+              <strong>{b.name}</strong>
+              <span set:html={md(b.text)} />
+              <a href={pr(b.pr)} aria-label={`${b.name}: pull request ${b.pr}`}>
+                #{b.pr}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section aria-labelledby="platforms">
+      <h2 id="platforms">Platforms</h2>
+      <table class="platforms">
+        <thead>
+          <tr>
+            <th scope="col">Platform</th>
+            <th scope="col">Target</th>
+            <th scope="col">State</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Linux</th>
+            <td>alpha.1</td>
+            <td>Windowing on X11 and Wayland, input, AT-SPI accessibility. The census runs here.</td>
+          </tr>
+          <tr>
+            <th scope="row">Windows</th>
+            <td>alpha.1</td>
+            <td>Builds and passes tests in CI, DirectWrite text, an experimental Win32 window. IME, drag and drop and packaging are unverified.</td>
+          </tr>
+          <tr>
+            <th scope="row">macOS</th>
+            <td>alpha.2</td>
+            <td>Not started: it needs Mac hardware and a macOS Chromium oracle.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section aria-labelledby="fine-print" class="notes">
+      <h2 id="fine-print">Fine print</h2>
+      <ul>
+        <li>
+          <strong>Working name.</strong> "Open UI" is a placeholder until the project picks its own name. This project is
+          not affiliated with the W3C <a href="https://open-ui.org/">Open UI Community Group</a> at open-ui.org.
+        </li>
+        <li>
+          <strong>This site is HTML.</strong> Open UI does not output HTML, so this site is built with Astro and
+          Starlight and rendered by your browser.
+        </li>
+        <li>
+          <strong>Sources.</strong> Every number links to the committed record it comes from. Older private or
+          historical measurements are labeled as such.
+        </li>
+      </ul>
+    </section>
+  </div>
+</StarlightPage>
+
+<style>
+  .landing {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4rem;
+    margin-top: 1rem;
+  }
+
+  .landing h2 {
+    font-size: 1.5rem;
+    line-height: 2rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--sl-color-white);
+    margin: 0 0 0.5rem;
+  }
+
+  .landing h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--sl-color-white);
+    margin: 0 0 0.375rem;
+  }
+
+  .landing p {
+    margin: 0;
+  }
+
+  .landing a {
+    color: var(--sl-color-white);
+    text-underline-offset: 0.2em;
+  }
+
+  .landing code {
+    font-family: var(--__sl-font-mono);
+    font-size: 0.875em;
+    background: var(--sl-color-gray-6);
+    padding: 0.0625rem 0.25rem;
+    border-radius: 0.25rem;
+  }
+
+  .lede {
+    color: var(--sl-color-gray-2);
+    max-width: 44rem;
+    margin-bottom: 1.25rem !important;
+  }
+
+  .fine {
+    font-size: 0.875rem;
+    color: var(--ou-muted);
+    margin-top: 1rem !important;
+    max-width: 48rem;
+  }
+
+  .alpha {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--ou-border);
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--sl-color-gray-2);
+  }
+
+  .alpha-tag {
+    font-family: var(--__sl-font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0.125rem 0.5rem;
+    border-radius: 0.25rem;
+    border: 1px solid var(--sl-color-gray-4);
+    color: var(--sl-color-white);
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    gap: 1px;
+    margin: 0;
+    border: 1px solid var(--ou-border);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    background: var(--ou-border);
+  }
+
+  .stats > div {
+    padding: 1.25rem;
+    background: var(--sl-color-black);
+  }
+
+  .stats dt {
+    font-size: 0.8125rem;
+    color: var(--ou-muted);
+  }
+
+  .stats dd {
+    margin: 0.25rem 0 0;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .big {
+    display: block;
+    font-size: 2rem;
+    line-height: 2.5rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--ou-exact);
+  }
+
+  .stats .cite {
+    font-size: 0.8125rem;
+    color: var(--ou-muted);
+    margin-top: 0.5rem;
+  }
+
+  .stats .cite a {
+    color: var(--ou-muted);
+  }
+
+  .pillars {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: 1rem;
+  }
+
+  .pillars article {
+    padding: 1.25rem;
+    border: 1px solid var(--ou-border);
+    border-radius: 0.5rem;
+    background-image:
+      linear-gradient(var(--ou-grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--ou-grid) 1px, transparent 1px);
+    background-size: 8px 8px;
+  }
+
+  .pillars p {
+    font-size: 0.9375rem;
+    color: var(--sl-color-gray-2);
+  }
+
+  .batteries {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    border-top: 1px solid var(--ou-border);
+  }
+
+  .batteries li {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.125rem 0.75rem;
+    padding: 0.875rem 0.25rem;
+    border-bottom: 1px solid var(--ou-border);
+    font-size: 0.9375rem;
+  }
+
+  .batteries strong {
+    color: var(--sl-color-white);
+    font-weight: 600;
+  }
+
+  .batteries span {
+    grid-column: 1;
+    color: var(--sl-color-gray-2);
+  }
+
+  .batteries a {
+    grid-column: 2;
+    grid-row: 1;
+    font-family: var(--__sl-font-mono);
+    font-size: 0.8125rem;
+    color: var(--ou-muted);
+  }
+
+  .platforms {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+  }
+
+  .platforms th,
+  .platforms td {
+    text-align: left;
+    vertical-align: top;
+    padding: 0.625rem 0.75rem 0.625rem 0;
+    border-bottom: 1px solid var(--ou-border);
+  }
+
+  .platforms thead th {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--ou-muted);
+  }
+
+  .platforms tbody th {
+    color: var(--sl-color-white);
+    font-weight: 600;
+  }
+
+  .platforms td {
+    color: var(--sl-color-gray-2);
+  }
+
+  .platforms td:nth-child(2) {
+    font-family: var(--__sl-font-mono);
+    font-size: 0.8125rem;
+    white-space: nowrap;
+  }
+
+  .notes ul {
+    margin: 0;
+    padding-left: 1.25rem;
+    display: grid;
+    gap: 0.5rem;
+    color: var(--sl-color-gray-2);
+    font-size: 0.9375rem;
+  }
+
+  .notes strong {
+    color: var(--sl-color-white);
+  }
+
+  @media (max-width: 40rem) {
+    .landing {
+      gap: 3rem;
+    }
+
+    .platforms thead {
+      display: none;
+    }
+
+    .platforms tr {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.25rem 0.75rem;
+      padding: 0.625rem 0;
+      border-bottom: 1px solid var(--ou-border);
+    }
+
+    .platforms th,
+    .platforms td {
+      border: 0;
+      padding: 0;
+    }
+
+    .platforms td:last-child {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

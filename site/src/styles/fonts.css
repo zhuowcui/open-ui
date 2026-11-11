@@ -1,0 +1,20 @@
+/*
+ * Geist and Geist Mono (SIL OFL 1.1), self-hosted. scripts/sync-assets.mjs
+ * copies the unmodified files from components/assets/fonts/geist/ and
+ * checks their SHA-256 against scripts/assets.json.
+ */
+@font-face {
+  font-family: 'Geist';
+  src: url('../assets/generated/fonts/Geist-Variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Geist Mono';
+  src: url('../assets/generated/fonts/GeistMono-Variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}

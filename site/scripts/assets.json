@@ -1,0 +1,100 @@
+{
+  "$comment": "Files the site copies from this repository, unmodified. scripts/sync-assets.mjs checks each SHA-256 before copying and fails on any mismatch. Paths are relative to the repository root.",
+  "fonts": [
+    {
+      "source": "components/assets/fonts/geist/Geist-Variable.woff2",
+      "dest": "src/assets/generated/fonts/Geist-Variable.woff2",
+      "sha256": "3626eba547294501c8a4d662c7d9ea3b49734409a4c5a1ccf12fa86429b1687e",
+      "license": "SIL OFL 1.1, components/assets/fonts/geist/OFL.txt (geist 1.9.2, see components/THIRD_PARTY.md)"
+    },
+    {
+      "source": "components/assets/fonts/geist/GeistMono-Variable.woff2",
+      "dest": "src/assets/generated/fonts/GeistMono-Variable.woff2",
+      "sha256": "5d93ee62680bbec1abc5405c2658311f9396f6f9a821ef8551ec463887e600d4",
+      "license": "SIL OFL 1.1, components/assets/fonts/geist/OFL.txt (geist 1.9.2, see components/THIRD_PARTY.md)"
+    },
+    {
+      "source": "components/assets/fonts/geist/OFL.txt",
+      "dest": "public/fonts/Geist-OFL.txt",
+      "sha256": "930853ee1daa68554d9e35c8a9175affb74f699fad9a5da6ee5ebe76379d9137",
+      "license": "The license itself, published next to the fonts."
+    }
+  ],
+  "comparisons": {
+    "$comment": "Each comparison pairs a committed Chromium capture with a committed Open UI render of the same page at the same size and device scale. The sync script decodes both and counts differing RGBA pixels itself; the counts must match the record's.",
+    "test": {
+      "description": "Fieldsets with legends fragmented across multicolumn containers, with translucent blue fills, in a 1280x720 CSS px viewport at device scale 1.25. Text uses Ahem.",
+      "html": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1.25__test.html.gz",
+      "chromium": "147.0.7727.50 (Chrome for Testing, Linux), per docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__receipt.json.gz",
+      "record": "docs/renderer/fragment-decoration-clip-investigation.md",
+      "tolerance": "0: every RGBA byte must match"
+    },
+    "crop": {
+      "$comment": "The page fills only the top-left of the 1600x900 capture. The site shows this region with CSS; the files stay whole. focus is where the zoomed view centers: the row of the open difference, at the fieldsets' left border.",
+      "x": 0,
+      "y": 0,
+      "width": 750,
+      "height": 540,
+      "focus": {
+        "x": 40,
+        "y": 262
+      }
+    },
+    "cases": [
+      {
+        "id": "exact",
+        "label": "Exact",
+        "summary": "The repaired paint path, run by the public native Rust consumer.",
+        "measured": "dc8a540e, 10 October 2026",
+        "evidence": "docs/renderer/generated/native-fragmented-fieldset-public-v1.json",
+        "expectedDiffPixels": 0,
+        "chromium": {
+          "source": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1.25__chromium-1-capture-1.png",
+          "dest": "public/compare/fieldset-baseline-1.25-chromium.png",
+          "sha256": "1cbeebf432727d7c319da3de9f3bac3c4cf50e4cf0c24cf00371f6bd31534727"
+        },
+        "openui": {
+          "source": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-1__native-1__openui.png",
+          "dest": "public/compare/fieldset-baseline-1.25-openui.png",
+          "sha256": "f28a63a9122c418e5c3f42e4fe367c12b33c3f9849d2d86b40720cbb5760424e"
+        }
+      },
+      {
+        "id": "open",
+        "label": "Open difference",
+        "summary": "A neighboring case (opaque fill, phase 0) from the same run that is still different: one row of 322 pixels at a fragment edge. Its cause is open.",
+        "measured": "dc8a540e, 10 October 2026",
+        "evidence": "docs/renderer/generated/native-fragmented-fieldset-public-v1.json",
+        "expectedDiffPixels": 322,
+        "chromium": {
+          "source": "docs/renderer/evidence/native-fragmented-fieldset-v1/neighbors__scale-1.25-phase-0-alpha-1__chromium-1-capture-1.png",
+          "dest": "public/compare/fieldset-neighbors-1.25-alpha-1-chromium.png",
+          "sha256": "f7efebbfb70c456f538026d9601c3997dff8a6d353a1e07f50a36bc0bba71c7d"
+        },
+        "openui": {
+          "source": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-6__native-1__openui.png",
+          "dest": "public/compare/fieldset-neighbors-1.25-alpha-1-openui.png",
+          "sha256": "277712b7ec53c43947b64a01d01c02f1de6d13fb4a27ed2d2718e6dc8ff59c33"
+        }
+      },
+      {
+        "id": "before",
+        "label": "Before the repair",
+        "summary": "Historical: the same page before the paint repair, which painted fractional border coverage twice and filled sliced backgrounds from the unsliced box.",
+        "measured": "the unrepaired source in October 2026, in a diagnostic run (historical)",
+        "evidence": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__receipt.json.gz",
+        "expectedDiffPixels": 2336,
+        "chromium": {
+          "source": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1.25__chromium-1-capture-1.png",
+          "dest": "public/compare/fieldset-baseline-1.25-chromium.png",
+          "sha256": "1cbeebf432727d7c319da3de9f3bac3c4cf50e4cf0c24cf00371f6bd31534727"
+        },
+        "openui": {
+          "source": "docs/renderer/evidence/native-fragmented-fieldset-v1/baseline__scale-1.25__native-1__openui.png",
+          "dest": "public/compare/fieldset-baseline-1.25-openui-before.png",
+          "sha256": "606af21fca4fe6b150c1b162486a49cdc303edf761d0ef348d7e3ffdfa24cb93"
+        }
+      }
+    ]
+  }
+}

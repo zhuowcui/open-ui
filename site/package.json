@@ -1,0 +1,19 @@
+{
+  "name": "openui-site",
+  "private": true,
+  "type": "module",
+  "version": "0.0.0",
+  "scripts": {
+    "sync": "node scripts/sync-assets.mjs",
+    "check-assets": "node scripts/sync-assets.mjs --check",
+    "predev": "node scripts/sync-assets.mjs",
+    "dev": "astro dev",
+    "prebuild": "node scripts/sync-assets.mjs",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "0.42.8",
+    "astro": "7.3.8"
+  }
+}
