@@ -49,7 +49,7 @@ still compiles; the leave is a separate method.
 | Engine: the whole path is left, the press is kept, re-entry and click still work | `cargo test -p openui-engine --lib leaving_the_window` (Windows) | 1 passed |
 | Document: leave order innermost first, a second leave dispatches nothing, a press survives leaving and coming back | `cargo test -p openui --test pointer_window_leave` (Windows) | 2 passed |
 | Platform event path: `PointerPhase::Leave` through `App` | `cargo test -p openui --features windows --lib leaving_the_window` | 1 passed. With the new `App` arm disabled it fails: the log is `["pointercancel inner", "pointercancel outer"]`, expected `["pointerleave inner", "pointerleave outer"]` |
-| Touched crates | `cargo test -p openui-engine -p openui --features openui/windows` (Windows) | 771 passed, 0 failed, 11 ignored. The engine test above was then rewritten to destructure its result, and passes again. After rebasing onto `main` at `c4b2e42e`: 772 passed, 0 failed, 11 ignored |
+| Touched crates | `cargo test -p openui-engine -p openui --features openui/windows` (Windows) | 771 passed, 0 failed, 11 ignored. The engine test above was then rewritten to destructure its result, and passes again. After rebasing onto `main` at `c4b2e42e`: 772 passed, 0 failed, 11 ignored. After rebasing onto the `style!` macro (PR #111), whose `openui` tests are added: 781 passed, 0 failed, 11 ignored |
 | Generators | `generate_properties.py --check`; `generate_v02_contract.py --check`; `generate_renderer_contract.py --check` | no drift |
 | `cargo fmt --all --check` | in `bindings/rust` | pass |
 | Paired expanded census (WSL) | `wsl-branch-census-a8.sh`, base `9d7bccf6` | 22,517 of 23,728 exact before and after; 0 changed |
