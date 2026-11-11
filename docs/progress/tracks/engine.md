@@ -26,7 +26,8 @@ Results here are from this branch's tests unless marked otherwise.
 - Window exit loses events: `PointerPhase::Leave` maps to
   `PointerEventKind::Cancel` (`bindings/rust/openui/src/app.rs`), and
   `Engine::pointer_event` still hit-tests the last position for `Cancel`, so the
-  hovered path loses hover without receiving `pointerleave`. Owned by A1.
+  hovered path loses hover without receiving `pointerleave`. Owned by A1;
+  fixed on 10 November ([record](../pointer-window-leave-2026-11-10.md)).
 - `Engine::is_active` matches only the pressed element; Chromium's `:active`
   also covers its ancestors. Owned by A1.
 
@@ -70,3 +71,8 @@ on branch `components/c4-assets` and the shared findings note.
   styles at compile time, the second A1 step. [Record](../style-macro-2026-11-10.md).
 - 11 November 2026, PR #116 merged (`e80a0bc2`): `rustix` 1.1.6 fixes
   RUSTSEC-2026-0486, which failed `dependency-security` on every PR.
+- 11 November 2026, PR #111 merged (`c48c2e38`).
+- 11 November 2026: a pointer leaving the window dispatches `pointerleave`
+  to its whole hover path and clears `:hover`, as Chromium does, instead of
+  a `pointercancel`. Census and CSS Grid coverage are unchanged.
+  [Record](../pointer-window-leave-2026-11-10.md).
