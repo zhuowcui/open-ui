@@ -1,0 +1,85 @@
+---
+title: div and block elements
+description: div, main, nav, header, footer, section, article, aside, p, h1 to h6 and hr are one plain block element.
+---
+
+import ElementTable from '../../../components/ElementTable.astro';
+import Example from '../../../components/Example.astro';
+
+`<div>` is a plain block box: it starts on a new line, fills the width of
+its container, and holds other elements and text. It is the element you use
+most, for every container, row, column and card.
+
+Fifteen other tags create **the same element**: `main`, `nav`, `header`,
+`footer`, `section`, `article`, `aside`, `p`, `h1` to `h6` and `hr`. Pick
+the one that makes your markup easy to read; Open UI treats them all as a
+`div`. A heading is not larger or bold, a paragraph has no margins, and an
+`<hr>` draws nothing until you give it a border.
+
+<Example name="el_div" alt="A card with the heading Notifications, a gray description, two lines of settings and a light gray footer reading Saved automatically" />
+
+<ElementTable tags={['div', 'main', 'nav', 'header', 'footer', 'section', 'article', 'aside', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr']} links={false} />
+
+## Attributes
+
+Only the attributes every element takes: `id`, `class` (lookup only),
+`lang`, `tabindex`, `aria-label`, `aria-description`, `aria-hidden` and your
+own `data-*`. See [all elements](/open-ui/elements/#attributes-every-element-takes).
+
+## Events
+
+A block receives the pointer events for the area it covers: `mousedown`,
+`mouseup`, `mousemove`, `mouseenter`, `mouseleave`, `click` and `wheel`.
+Events bubble from the element under the pointer to its ancestors, so a
+handler on a container also sees clicks on its children. It is not
+focusable, so it gets no keyboard events, unless you give it a `tabindex`.
+
+## Styling
+
+Every layout and paint property applies. The ones you will set most:
+
+- **Box:** `width`, `height`, `min-*`, `max-*`, `padding`, `margin`,
+  `box-sizing`. The default `box-sizing` is `content-box`, as in CSS.
+- **Look:** `background-color`, `border`, `border-radius`, `color`,
+  `opacity`.
+- **Layout of children:** `display="flex"` or `display="grid"` with `gap`,
+  `align-items`, `justify-content` and the grid templates; see
+  [Layout](/open-ui/docs/concepts/layout/).
+- **Text:** `font-size`, `font-weight`, `line-height`; these inherit into
+  the text inside.
+
+For a heading, set the size and weight yourself:
+
+```rust
+<h1 style:font-size="28px" style:font-weight="700" style:margin="0 0 8px">"Settings"</h1>
+```
+
+For a rule, give `<hr>` a border:
+
+```rust
+<hr style:border-top="1px solid #e4e4e7" style:margin="16px 0" />
+```
+
+## Accessibility
+
+The role is `GenericContainer` for every one of these tags: Open UI does
+not know that an `<h2>` is a heading or a `<nav>` is navigation. Set the
+role on the element when it matters, as the example does for its heading:
+
+```rust
+if let ViewNode::Element(h2) = &title {
+    h2.set_accessibility_role(AccessibilityRole::Heading).unwrap();
+}
+```
+
+`set_accessibility_label` and `aria-label` name a container that has no
+text of its own.
+
+## Differences from HTML
+
+| HTML | Open UI |
+| --- | --- |
+| Headings are large and bold; `p` has margins; `hr` draws a line | No default styles: all of them are a plain block |
+| Each tag has a semantic role (heading, navigation, main…) | All are `GenericContainer`; set the role yourself |
+| The tag name is kept (`tagName`) | Only the kind is kept: `kind()` returns `Div` |
+| `<p>` closes itself before a block | Elements nest exactly as written |

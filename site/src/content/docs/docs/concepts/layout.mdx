@@ -1,0 +1,84 @@
+---
+title: Layout
+description: Block and inline flow, flexbox, grid and positioning, laid out the way a browser lays them out.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import Example from '../../../../components/Example.astro';
+
+Open UI lays elements out with CSS's layout modes: block and inline flow,
+flexbox, grid, tables, multi-column and positioning. The layout code
+follows Chromium's and is tested against it (see
+[Rendering](/open-ui/docs/rendering/)), so a layout you know from the web
+should behave the same way here, with the exceptions listed at the end of
+this page.
+
+## Flow
+
+Every element starts as `display: inline`, except the kinds that default
+to block (`div` and its aliases such as `p` and `section`, `form`,
+`fieldset`, `details`), `li` (a list item), the table family, and the
+replaced elements and controls (`inline-block`). Each element's page
+lists its default. Blocks stack top to bottom; inline content wraps into
+lines.
+
+Remember that nothing has a default margin: paragraphs and headings sit
+flush against each other until you give them space.
+
+## Flexbox
+
+`display="flex"` lays out children in a row (or a column), with
+`gap`, `justify-content`, `align-items`, `flex-wrap` and the per-item
+`flex-grow`, `flex-shrink`, `flex-basis` and `align-self`:
+
+<Example name="cc_flex" alt="A bordered toolbar: Inbox, 3 unread taking the free space, then a Filter chip and a dark Compose chip" />
+
+There is no `flex` shorthand yet. Write `flex: 1` as
+`style:flex-grow="1" style:flex-basis="0px"`.
+
+## Grid
+
+`display="grid"` with `grid-template-columns` and `grid-template-rows`
+takes track lists of `px`, `%`, `fr`, `auto`, `min-content`,
+`max-content`, `minmax()` and `fit-content()`:
+
+<Example name="cc_grid" alt="Three equal stat cards in a row: Revenue $45,231, Customers 2,350, Uptime 99.9%" />
+
+- `repeat()` is not supported: write the tracks out, as in `1fr 1fr 1fr`.
+- Named lines, `subgrid` and `grid-template-areas` in `view!` are not
+  supported.
+- `grid-column` and `grid-row` have no literal form. Place an item from
+  code with `Element::set_grid_column` and `set_grid_row`.
+
+## Positioning
+
+`position` takes `static`, `relative`, `absolute`, `fixed` and `sticky`,
+with `top`, `right`, `bottom`, `left` and `z-index` (an integer). There is
+no `inset` shorthand.
+
+## Sizing
+
+`width`, `height` and their `min-` and `max-` forms take lengths and
+percentages. `box-sizing="border-box"` works, but only as a literal: it
+cannot be set from a `{expr}`. `aspect-ratio`, `overflow` and the scroll
+properties are supported; see the [properties reference](/open-ui/reference/properties/).
+
+## Known differences
+
+<Aside type="caution">
+These are the places where Open UI's layout is known to differ from a
+browser on `main`:
+
+- **Column flexbox.** In a `flex-direction: column` container, text items
+  can be sized narrower than a browser sizes them, so they wrap onto more
+  lines and the container comes out taller. For a simple vertical stack,
+  block layout with margins is reliable.
+- **Grid.** Many grid layouts match a browser exactly, but not all yet; a
+  grid that mixes `auto` and `fr` tracks is the most likely to differ.
+- **Text.** Glyphs can sit a pixel higher or lower than in a browser,
+  which can move a line box by a pixel.
+</Aside>
+
+Report a layout that differs at the
+[issue tracker](https://github.com/zhuowcui/open-ui/issues), with the
+`view!` code and a screenshot of the browser's result.

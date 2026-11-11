@@ -1,0 +1,54 @@
+---
+title: select and option
+description: select, option and optgroup exist, but there is no popup yet. Use radio buttons for choices today.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import ElementTable from '../../../components/ElementTable.astro';
+import Example from '../../../components/Example.astro';
+
+<Aside type="caution" title="Not ready for apps">
+`<select>` is only partly built. It has keyboard behavior and the right
+accessibility roles, but no dropdown: its options are laid out inside the
+select as blocks, and the select draws the first option's text over them.
+For a choice in an app today, use [radio buttons](/open-ui/elements/input/#checkbox-radio-and-range)
+or your own list of buttons.
+</Aside>
+
+This is what a styled `<select>` with three options draws on `main`:
+
+<Example name="el_select" alt="A select box with an arrow, with the option texts Light and Dark drawn overlapping inside it" />
+
+<ElementTable tags={['select', 'option', 'optgroup']} links={false} />
+
+## What works
+
+- **Keyboard.** With the select focused, the arrows, Page Up, Page Down,
+  Home and End move the selected option and set the value, firing `input`
+  and `change`.
+- **Value.** The select's value is the chosen option's `value` attribute
+  (an option without one gives an empty string; its text is not used).
+  Read it with `control_value()`. The value starts empty: a `selected`
+  option does not set it.
+- **Disabling.** `disabled` on the select or on an option; on an
+  `<optgroup>`, it disables the options directly inside it.
+- **Accessibility.** The select is a `ComboBox`, options are
+  `ListBoxOption`s and an optgroup is a `Group`.
+
+## What does not
+
+- Clicking the select only toggles an `open` attribute and fires `input`
+  and `change`; no list appears.
+- The select always draws the first option's text, whatever is selected.
+- `multiple` changes only the drawing (a list box without an arrow); there
+  is no multiple selection. `size` on a select and `label` on an option are
+  not read.
+
+## Differences from HTML
+
+| HTML | Open UI |
+| --- | --- |
+| A dropdown or list box | No popup; options drawn inline |
+| Value from the option's `value`, or its text | `value` attribute only |
+| `selected` sets the initial value | Not yet |
+| `multiple` and `size` | Drawing only |

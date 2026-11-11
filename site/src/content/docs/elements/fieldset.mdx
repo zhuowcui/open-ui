@@ -1,0 +1,44 @@
+---
+title: fieldset and legend
+description: Group controls under a caption drawn in the group's border, and disable them together.
+---
+
+import ElementTable from '../../../components/ElementTable.astro';
+import Example from '../../../components/Example.astro';
+
+`<fieldset>` groups related controls, and its first `<legend>` is the
+group's caption, drawn in the fieldset's top border as in a browser.
+Disabling a fieldset disables every control inside it.
+
+<Example name="el_fieldset" alt="Two bordered groups. Theme, with Light selected and Dark; and a grayed Sync (off) group with a disabled checked checkbox" />
+
+<ElementTable tags={['fieldset', 'legend']} links={false} />
+
+## Attributes
+
+| Attribute | On | Effect |
+| --- | --- | --- |
+| `disabled` | `fieldset` | Disables every button, input, select and textarea inside, except those inside its first `<legend>`. Present means disabled. Text color is yours to change, as in the example. |
+| `name`, `form` | `fieldset` | Stored. |
+
+`Element::is_effectively_disabled()` tells whether a control is disabled by
+itself or by a fieldset.
+
+## Styling
+
+Both are blocks with **no default border or padding**, so the legend has
+no border to sit in until you give the fieldset one. Give the legend some
+horizontal `padding` to clear the line around its text.
+
+## Events and accessibility
+
+Events are those of any block. Both have the `GenericContainer` role, not
+group and legend; give the fieldset `AccessibilityRole::Group` and an
+`aria-label` if the grouping should be announced.
+
+## Differences from HTML
+
+| HTML | Open UI |
+| --- | --- |
+| A default groove border, padding and margin | None |
+| Group role, named by the legend | `GenericContainer` |

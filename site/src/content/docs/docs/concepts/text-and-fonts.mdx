@@ -1,0 +1,80 @@
+---
+title: Text and fonts
+description: System fonts, bundling your own font files, and the text properties Open UI supports.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import Example from '../../../../components/Example.astro';
+
+Open UI shapes and draws text itself, through Skia, with font fallback,
+bidirectional text and line breaking that follow the browser's rules.
+Text you write in `view!`, as a `"literal"` or a `{expr}`, becomes text
+nodes inside the element.
+
+## Fonts
+
+**System fonts.** The generic families (`sans-serif`, `serif`,
+`monospace`, `system-ui` and the others) and installed family names resolve
+to the fonts installed on the machine. The initial font is 16px
+`sans-serif`, so on its own an app looks different on Windows and Linux.
+
+**Your own fonts.** To look the same everywhere, bundle the font files with
+the app and register them on the document before you use them:
+
+<Example name="cc_fonts" alt="A large bold Release 0.2 heading, a gray line of regular text, and a gray box with a monospaced cargo install command" />
+
+`register_font_face(bytes, descriptor)` takes the font file's bytes and a
+`FontFaceDescriptor`, which plays the role of an `@font-face` rule:
+
+| Field | Default | Meaning |
+| --- | --- | --- |
+| `family` | (required) | The name you use in `font-family`. |
+| `weight` | `400` | The weight, or a range such as `FontAxisRange::new(100.0, 900.0)` for a variable font. |
+| `style` | normal | Normal, italic or oblique. |
+| `stretch` | `100%` | The width, or a range. |
+| `unicode_ranges` | all | The characters this face covers. |
+| `face_index` | `0` | The face to use in a font collection. |
+
+TrueType, OpenType, WOFF and WOFF2 files are accepted. Register each face
+you use: a family with a separate bold file needs two registrations with
+different `weight`s.
+
+<Aside type="tip">
+Register fonts once, before the view that uses them is built. In an
+`App`, the window's view function is a good place.
+</Aside>
+
+## Text properties
+
+| To | Use |
+| --- | --- |
+| Pick the font | `font-family` (a comma list), `font-size`, `font-weight` (a number from 1 to 1000, `normal` or `bold`), `font-style`, or the `font` shorthand |
+| Space lines and letters | `line-height`, `letter-spacing`, `word-spacing` |
+| Align | `text-align`, `vertical-align`, `text-indent` |
+| Wrap or not | `white-space` (`nowrap`, `pre`, `pre-wrap`), `overflow-wrap`, `word-break` |
+| Cut off long text | `text-overflow="ellipsis"` with `overflow="hidden"` and `white-space="nowrap"` |
+| Change case | `text-transform` |
+| Use OpenType features | `font-feature-settings` (`"tnum"`), `font-variant-numeric` (`tabular-nums`), `font-variation-settings` (`"wght" 600`) |
+| Set the language | `lang` on an element, which picks language-specific shaping, and hyphenation with `hyphens` |
+
+All of them inherit, so set them on a container. The full list, with the
+values each accepts, is in the [properties reference](/open-ui/reference/properties/#typography).
+
+<Aside type="caution" title="Not yet">
+`text-decoration` and `text-decoration-line` compile but draw no line on
+inline elements such as `<span>` and `<a>` on `main`, so links and
+underlined text need another treatment for now.
+</Aside>
+
+## Text that changes
+
+`{expr}` in `view!` is a text node that updates when the signals in it
+change. It must implement `Display`, so format numbers and other values
+yourself:
+
+```rust
+<p>{format!("{} of {} done", done.get(), total.get())}</p>
+```
+
+To set an element's whole text from code, use `Element::set_text`; to read
+it, `text_content`.

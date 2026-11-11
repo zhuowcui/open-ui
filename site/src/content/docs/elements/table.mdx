@@ -1,0 +1,65 @@
+---
+title: table
+description: Tables with real CSS table layout, from table, thead, tbody, tfoot, tr, th, td, caption, col and colgroup.
+---
+
+import ElementTable from '../../../components/ElementTable.astro';
+import Example from '../../../components/Example.astro';
+
+Open UI implements CSS table layout: columns size to their content, cells
+in a row share a height, and cells can span rows and columns. The table
+tags are the same as HTML's, and each one gets its table `display`.
+
+<Example name="el_table" alt="An invoice table with Invoice, Status and Amount columns, two rows, and a bold Total row whose label spans two columns" />
+
+<ElementTable tags={['table', 'caption', 'colgroup', 'col', 'thead', 'tbody', 'tfoot', 'tr', 'td', 'th']} links={false} />
+
+## Structure
+
+`<table>` holds an optional `<caption>`, optional `<colgroup>`/`<col>`,
+then `<thead>`, `<tbody>` and `<tfoot>` row groups of `<tr>` rows, each of
+`<th>` or `<td>` cells. Write the row groups: Open UI does not insert a
+`<tbody>` for you as an HTML parser does.
+
+## Attributes
+
+| Attribute | On | Effect |
+| --- | --- | --- |
+| `colspan` | `td`, `th` | Columns the cell spans, 1 to 1000. |
+| `rowspan` | `td`, `th` | Rows the cell spans, 0 to 65534; `0` spans to the end of the row group. |
+| `span` | `col`, `colgroup` | Columns the element stands for, 1 to 1000. |
+
+They are read like HTML's, so `"2"` and `"2px"` both mean 2. From code,
+`Element::set_table_column_span(n)` and `set_row_span(n)` set them, and
+`column_span()` and `row_span()` read them. (`set_column_span` is a
+different thing: the CSS `column-span` of multi-column layout.)
+
+## Styling
+
+There are no default borders, spacing or padding, and `<th>` is neither
+bold nor centered, so style the cells:
+
+- `border-collapse="collapse"` on the table, with borders on rows or cells,
+  for ruled tables; `border-spacing` for separated ones.
+- `padding` and `text-align` on cells. `vertical-align` applies to cells.
+- `table-layout` and `caption-side` are typed styles (`set_table_layout`,
+  `set_caption_side`).
+
+## Events
+
+Cells and rows receive pointer events like blocks; a handler on the
+`<table>` sees clicks on every cell, and `event.target()` says which.
+
+## Accessibility
+
+The roles follow the structure: `Table`, `Caption`, `RowGroup` for the row
+groups, `Row`, `Cell` and `ColumnHeader` for `<th>`. `col` and `colgroup`
+are `GenericContainer`.
+
+## Differences from HTML
+
+| HTML | Open UI |
+| --- | --- |
+| Default `border-spacing`, cell padding, bold centered `th` | None |
+| The parser adds a missing `tbody` | Elements nest exactly as written |
+| `th` can be a row header (`scope`) | Always `ColumnHeader` |

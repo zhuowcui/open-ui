@@ -11,13 +11,13 @@ import { base, nav, repo, install } from '../lib/site';
 
 const title = 'Open UI: native desktop apps in Rust, styled with CSS';
 const description =
-  'Build native desktop apps in Rust with markup and the CSS you already know. No webview, no JavaScript, one binary. Windows and Linux, macOS next.';
+  'Build native desktop apps in Rust with markup and the CSS you already know. No webview, no JavaScript, one binary. An alpha for Windows and Linux.';
 
 const features = [
   {
     icon: 'palette',
     title: 'Styled with CSS',
-    body: 'Real CSS properties and values, checked when you compile. Flexbox, grid, borders and web fonts behave as they do on the web.',
+    body: "CSS properties and values, checked when you compile. Flexbox, grid, borders and web fonts follow the browser's rules and are tested against Chromium.",
   },
   {
     icon: 'app-window',
@@ -42,17 +42,19 @@ const features = [
   {
     icon: 'monitor',
     title: 'Windows and Linux',
-    body: 'Both are supported in the first alpha. macOS is next.',
+    body: 'Both are supported on main, for the first alpha now in progress. macOS is planned.',
   },
 ];
 
+// `library` tiles show components from openui-components; `example` tiles
+// are small apps built from elements plus those components.
 const tiles = [
-  { name: 'notifications', alt: 'A notifications panel with two messages and a Mark all as read button' },
-  { name: 'buttons', alt: 'Buttons in the default, secondary, outline, ghost, destructive and link styles' },
-  { name: 'team', alt: 'A team list with avatars, names, roles and an Invite people button' },
-  { name: 'badges', alt: 'Badges in the default, secondary, outline, destructive, ghost and link styles' },
-  { name: 'stat', alt: 'A monthly revenue figure with a progress bar' },
-  { name: 'settings', alt: 'A label and description above horizontal and vertical separators' },
+  { name: 'notifications', kind: 'example', caption: 'Example: elements and Button', alt: 'An example built from elements: a notifications panel with two messages and a Mark all as read button' },
+  { name: 'buttons', kind: 'library', caption: 'Library: Button', alt: 'The Button component in the default, secondary, outline, ghost, destructive and link styles' },
+  { name: 'team', kind: 'example', caption: 'Example: elements and Button', alt: 'An example built from elements: a team list with initials, names, roles and an Invite people button' },
+  { name: 'badges', kind: 'library', caption: 'Library: Badge', alt: 'The Badge component in the default, secondary, outline, destructive, ghost and link styles' },
+  { name: 'stat', kind: 'example', caption: 'Example: elements only', alt: 'An example built from elements: a monthly revenue figure with a bar' },
+  { name: 'settings', kind: 'library', caption: 'Library: Label and Separator', alt: 'The Label and Separator components: a label and description above horizontal and vertical separators' },
 ];
 ---
 
@@ -110,13 +112,13 @@ const tiles = [
         <div class="container hero-copy">
           <a class="pill" href={`${base}docs/roadmap/`}>
             <span class="pill-dot" aria-hidden="true"></span>
-            alpha.1 · Windows and Linux · macOS next
+            alpha.1 in progress · Windows and Linux
             <Icon name="arrow-right" size={14} />
           </a>
           <h1>Native desktop apps in Rust, styled like the web.</h1>
           <p class="lede">
             Write your interface with markup and the CSS you already know. Open UI lays it out and paints
-            it the way a browser would, then ships it as one native binary. No webview, no JavaScript.
+            it by the browser's rules, then ships it as one native binary. No webview, no JavaScript.
           </p>
           <div class="actions">
             <a class="button primary" href={`${base}docs/getting-started/`}>Get started</a>
@@ -132,11 +134,14 @@ const tiles = [
             </div>
             <Shot
               name="app"
-              alt="A dashboard app with a sidebar, three stat cards, a list of recent deployments with status badges, and a team list"
+              alt="An example dashboard app built from elements: a sidebar, three stat cards, a list of recent deployments with status badges, and a team list"
               loading="eager"
             />
           </figure>
-          <p class="shot-note">Rendered by Open UI. Every app image on this site is a real render.</p>
+          <p class="shot-note">
+            An example app built from Open UI's elements, with Button and Badge from the component library.
+            Rendered by Open UI, like every app image on this site.
+          </p>
         </div>
       </section>
 
@@ -146,8 +151,8 @@ const tiles = [
           <p class="eyebrow">Write it</p>
           <h2>Markup and CSS, compiled to a native app</h2>
           <p class="section-lede">
-            Views are Rust functions. Styles are CSS, checked when you build. Components from shadcn/ui
-            come rebuilt in Rust.
+            Views are Rust functions that build Open UI's native elements: <code>div</code>, <code>span</code>,
+            <code>button</code>, <code>input</code> and the rest. Styles are CSS, checked when you build.
           </p>
           <div class="split">
             <div class="code-pane">
@@ -162,6 +167,7 @@ const tiles = [
               <p class="pane-note">Drawn by Open UI from the code on the left.</p>
             </div>
           </div>
+          <a class="more" href={`${base}elements/`}>Browse the elements <Icon name="arrow-right" size={16} /></a>
         </div>
       </section>
 
@@ -190,17 +196,19 @@ const tiles = [
       <section class="section">
         <div class="container">
           <p class="eyebrow">Components</p>
-          <h2>shadcn/ui, rebuilt in Rust</h2>
+          <h2>A component library, in progress</h2>
           <p class="section-lede">
-            The buttons, badges, labels and separators you know from shadcn/ui, with the same sizes,
-            colors and variants, in light and dark.
+            A library based on shadcn/ui designs, built on the elements: button, badge, card, label and
+            separator so far. The tiles marked Example are small apps made from elements and those
+            components.
           </p>
           <div class="gallery">
             {
               tiles.map((tile) => (
-                <div class="tile">
+                <figure class="tile">
                   <Shot name={tile.name} alt={tile.alt} />
-                </div>
+                  <figcaption class={`tile-tag ${tile.kind}`}>{tile.caption}</figcaption>
+                </figure>
               ))
             }
           </div>
@@ -743,12 +751,24 @@ const tiles = [
     gap: 16px;
   }
   .tile {
+    margin: 0;
     border: 1px solid var(--ou-border);
     border-radius: 16px;
     overflow: hidden;
   }
   .tile :global(img) {
     width: 100%;
+    display: block;
+  }
+  .tile-tag {
+    padding: 8px 14px;
+    border-top: 1px solid var(--ou-border);
+    font-size: 13px;
+    color: var(--ou-muted);
+  }
+  .tile-tag.library {
+    color: var(--ou-text);
+    font-weight: 500;
   }
   .more {
     margin-top: 28px;

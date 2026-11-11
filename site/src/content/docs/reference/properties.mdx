@@ -1,0 +1,122 @@
+---
+title: Properties
+description: Every style property Open UI supports on main, the literal values view! accepts for it, and its Rust type.
+tableOfContents:
+  maxHeadingLevel: 2
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import PropertyTable from '../../../components/PropertyTable.astro';
+
+Open UI supports **258** CSS properties. **207** of them can be written as
+a literal in `view!` (`style:prop="…"`); the other 51 take structured
+values, such as shadows, gradients and grid placements, and are set from
+code with their setter.
+
+These tables are generated from Open UI's own code: a small program
+(`site/tools/style-table`) runs the style parser on `main` over a fixed
+set of test values for every property, so each table says what the parser
+accepts, not what CSS allows.
+
+## Reading the tables
+
+| Column | Meaning |
+| --- | --- |
+| Property | The CSS name you write after `style:`, its initial value, and whether children inherit it, as in CSS. |
+| `style:prop="…"` accepts | The literal values the parser takes, checked when you compile. |
+| `style:prop={…}` type | The Rust type of a dynamic value, and the `Element` setter. "no" means `view!` cannot take a dynamic value: use the setter from code. |
+
+Two abbreviations keep the tables short:
+
+- **L** is a length: `0`, `auto`, `none`, or a number followed by `px`, `%`,
+  `em`, `rem`, `vw`, `vh`, `vmin`, `vmax`, `ch`, `ex` or `lh`. A bare
+  number other than `0` is not a length. "**L** except …" lists the forms
+  that property rejects.
+- **C** is a color: hex, `rgb()` and `rgba()`, a named color (including
+  `transparent`), `currentcolor`, `oklab()`, `oklch()` or `color-mix()`.
+  See [values and units](/open-ui/reference/values/#colors).
+
+<Aside type="note">
+A property that is listed here is parsed, computed and stored. Whether it
+also changes layout or paint in every case is a separate question: the
+[Rendering](/open-ui/docs/rendering/) page explains how that is tested,
+and element pages note the gaps that matter for apps.
+</Aside>
+
+## Layout and box model
+
+<PropertyTable group="Layout and box model" />
+
+## Flexbox
+
+<PropertyTable group="Flexbox" />
+
+## Box alignment
+
+These apply to both flex and grid containers.
+
+<PropertyTable group="Box alignment (flex and grid)" />
+
+## Grid
+
+<PropertyTable group="Grid" />
+
+## Positioning
+
+<PropertyTable group="Positioning" />
+
+## Tables
+
+<PropertyTable group="Tables" />
+
+## Multi-column and fragmentation
+
+<PropertyTable group="Multi-column and fragmentation" />
+
+## Typography
+
+<PropertyTable group="Typography" />
+
+## Color and background
+
+<PropertyTable group="Color and background" />
+
+## Borders, outline and radius
+
+<PropertyTable group="Borders, outline and radius" />
+
+## Effects
+
+Opacity, shadows, filters, transforms and clipping.
+
+<PropertyTable group="Effects (opacity, shadow, filter, transform, clip)" />
+
+## Overflow and scrolling
+
+<PropertyTable group="Overflow and scrolling" />
+
+## Lists and generated content
+
+<PropertyTable group="Lists and generated content" />
+
+## Interaction
+
+<PropertyTable group="Interaction" />
+
+## Shapes
+
+<PropertyTable group="Shapes" />
+
+## Other
+
+<PropertyTable group="Other" />
+
+## Regenerating
+
+```bash
+cargo build --release --locked --manifest-path site/tools/style-table/Cargo.toml
+python3 site/tools/style-table/generate.py
+```
+
+This writes `site/src/data/properties.json`. Run it when `openui-style`
+changes, and commit the result.

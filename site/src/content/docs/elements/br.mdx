@@ -1,0 +1,34 @@
+---
+title: br and wbr
+description: A forced line break, and a place where a long word may wrap.
+---
+
+import ElementTable from '../../../components/ElementTable.astro';
+import Example from '../../../components/Example.astro';
+
+`<br />` ends the current line, as in HTML. `<wbr />` marks a place where
+the line may break if the text does not fit, which helps long words such as
+paths and URLs wrap at sensible points. Both take no children; write them
+self-closing.
+
+<Example name="el_br" alt="An address on three lines, and a long file name wrapping inside a narrow dashed box after its slashes and hyphens" />
+
+<ElementTable tags={['br', 'wbr']} links={false} />
+
+## Attributes, events and styling
+
+Neither reads an attribute or receives events of its own. They have no box
+to style: `<br />` takes the `line-height` of the text it breaks.
+
+Outside text, use layout instead of `<br />`: stack blocks, or use `gap` in
+a flex column. Inside text, CSS also wraps long words with
+`overflow-wrap: anywhere` or `word-break`, without markup.
+
+## Accessibility
+
+`<br>` has the `LineBreak` role. `<wbr>` is `GenericContainer` and is not
+announced.
+
+## Differences from HTML
+
+None in behavior.

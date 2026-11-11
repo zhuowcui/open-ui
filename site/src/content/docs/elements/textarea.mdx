@@ -1,0 +1,63 @@
+---
+title: textarea
+description: A multi-line text field, sized by rows and cols.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import ElementTable from '../../../components/ElementTable.astro';
+import Example from '../../../components/Example.astro';
+
+`<textarea>` is a multi-line text field. It edits like a text
+[input](/open-ui/elements/input/#text), and Enter inserts a new line. When
+the text is longer than the box, it scrolls.
+
+<Example name="el_textarea" alt="A Release notes label above a bordered four-line text area containing one line of text" />
+
+<ElementTable tags={['textarea']} links={false} />
+
+## Attributes
+
+| Attribute | Effect |
+| --- | --- |
+| `rows`, `cols` | The size when no CSS size is set: 2 rows and 20 columns by default, plus room for a scrollbar. |
+| `value` | The text, and its live value as the user edits. |
+| `placeholder` | Shown while it is empty (see the caution below). |
+| `readonly`, `disabled` | As for [input](/open-ui/elements/input/#attributes). |
+
+Text written between the tags is drawn, but it does not become the value:
+`control_value()` starts empty. Set the text with `value`.
+
+<Aside type="caution" title="Padding and the placeholder">
+On `main`, the text area draws its text at the top-left of its border, so
+`padding` does not move the text, and the placeholder is drawn in the text
+color rather than gray. Keep the padding at zero and prefer a label over a
+placeholder for now.
+</Aside>
+
+## Events
+
+The same as a text input: `beforeinput`, `input`, `change` when it loses
+focus after an edit, `keydown`, `keyup`, `select`, `selectionchange`, the
+composition events and the focus events. Enter inserts `"\n"` and fires
+`input`; it does not fire `change`. Read the text with
+`event.target()` and `control_value()`.
+
+## Styling
+
+Box and text styles apply. `resize` is `none` by default (a browser
+allows resizing); there is no drag handle to resize it either way.
+`overflow` defaults to scrolling when the text overflows.
+
+## Accessibility
+
+The role is `MultilineTextInput`, with its value. Name it with
+`aria-label`.
+
+## Differences from HTML
+
+| HTML | Open UI |
+| --- | --- |
+| Default border, padding and monospace font | None; inherits the font |
+| Text between the tags is the initial value | Use `value` |
+| Resizable by default | `resize: none` |
+| Padding insets the text | Not yet |

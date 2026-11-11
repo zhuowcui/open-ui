@@ -1,0 +1,91 @@
+---
+title: Styling
+description: Set CSS properties on each element, as checked literals or as typed values that follow your state.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import Example from '../../../../components/Example.astro';
+
+Open UI styles elements with CSS properties and CSS values, computed the
+way Chromium computes them. What it does not have is the stylesheet: there
+are no selectors, no classes that style, no cascade between rules and no
+default styles. Each element carries its own declarations, which you set
+in `view!` or from code.
+
+<Example name="cc_styling" alt="A bordered row reading Build #418, Failed in red, and a Retry button" />
+
+## Three ways to set a style
+
+**A literal in `view!`.** `style:prop="value"` takes the CSS text you would
+write in a stylesheet. The macro parses it **when you compile**, so an
+unknown property or an unsupported value is a compile error, not a silent
+no-op:
+
+```rust
+<div style:padding="12px 16px" style:border="1px solid #e4e4e7" />
+```
+
+**A typed value in `view!`.** `style:prop={expr}` takes a Rust value of the
+property's type, and updates whenever the signals in `expr` change. In the
+example above, `style:color={tone()}` turns red or green as `failed`
+changes:
+
+```rust
+let tone = move || if failed.get() { Color::from_hex(0xb91c1c, false) } else { Color::from_hex(0x15803d, false) };
+<span style:color={tone()}>…</span>
+```
+
+The type must match exactly: `Color` for `color`, `LengthValue` for
+`width`, `f32` for `opacity`, `Display` for `display`. The
+[properties reference](/open-ui/reference/properties/) lists each type.
+
+**A setter from code.** Every property has a typed setter on `Element`,
+such as `set_width(LengthValue::px(200.0))` or
+`set_background_color(Color::WHITE)`. Use setters for properties that
+have no literal form, such as `box-shadow` and `grid-column`, and when you
+style elements you hold as handles.
+
+## What is supported
+
+- 258 properties, 207 of them with a literal form. Each is listed, with the
+  values it accepts, in the [properties reference](/open-ui/reference/properties/).
+- Lengths in `px`, `%`, `em`, `rem`, `vw`, `vh`, `vmin`, `vmax`, `ch`,
+  `ex` and `lh`.
+- Colors as hex, `rgb()`, named colors, `oklch()`, `oklab()` and
+  `color-mix()`. See [values and units](/open-ui/reference/values/).
+- Shorthands for `margin`, `padding`, `border`, `border-radius`, `font`,
+  `white-space`, `text-decoration` and others.
+
+<Aside type="caution" title="Not yet">
+- `calc()`, `var()` and custom properties.
+- `hsl()`, `hwb()`, `lab()` and `lch()` colors.
+- The `flex`, `background`, `outline` and `inset` shorthands: use the
+  longhands, such as `flex-grow` and `flex-basis`.
+- Selectors and pseudo-classes such as `:hover` and `:focus`. Style state
+  changes from event handlers; see [selectors and state](/open-ui/reference/selectors/).
+</Aside>
+
+## Inheritance
+
+Inherited properties such as `color`, `font-family`, `font-size` and
+`line-height` pass from parent to child as in CSS, so set them once on a
+container. The properties reference marks which properties inherit.
+
+## Styling state
+
+Without `:hover` or `:focus`, state styles come from your own state: keep
+a signal, set it in `on:mouseenter`, `on:mouseleave`, `on:focus` or
+`on:blur`, and use it in a dynamic `style:`:
+
+```rust
+let hovered = create_signal(false);
+view! {
+    <button
+        style:background-color={if hovered.get() { Color::from_hex(0xf4f4f5, false) } else { Color::WHITE }}
+        on:mouseenter={move |_| hovered.set(true)}
+        on:mouseleave={move |_| hovered.set(false)}
+    >
+        "Hover me"
+    </button>
+}
+```

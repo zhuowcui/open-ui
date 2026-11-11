@@ -1,0 +1,64 @@
+---
+title: details and summary
+description: A disclosure, whose summary is always shown and the rest only while it is open.
+---
+
+import ElementTable from '../../../components/ElementTable.astro';
+import Example from '../../../components/Example.astro';
+
+`<details>` hides its content behind a `<summary>`. While it is closed,
+only its first `<summary>` is shown; clicking the summary opens it and
+shows the rest. It suits FAQs, advanced settings and anything else that
+should stay out of the way until asked for.
+
+<Example name="el_details" alt="Two questions with rules between them. The first is open, with its answer below; the second is closed" />
+
+<ElementTable tags={['details', 'summary']} links={false} />
+
+## Attributes and methods
+
+| | Effect |
+| --- | --- |
+| `open` | Present means open; the default is closed. |
+| `Element::set_open(bool)`, `is_open()` | Open, close or read it from code (on the `<details>`). Fires no event. |
+
+## Events
+
+A click on the summary toggles `open`, then fires `input` and `change` **on
+the `<details>`** (there is no `toggle` event). Listen there:
+
+```rust
+<details on:change={move |event: &Event| {
+    let details = event.target().expect("details");
+    expanded.set(details.is_open().unwrap_or(false));
+}}>
+```
+
+The summary is focusable, but Enter and Space do not toggle it yet; a click
+does, and so does the accessibility Expand or Collapse action.
+
+## Styling
+
+Both are blocks with no default style. There is no disclosure triangle:
+write your own as text at the start of the summary, such as
+`{if expanded.get() { "▾ " } else { "▸ " }}`, with `expanded` kept by the
+`change` handler above.
+
+Keep the summary's content as text. A click that lands on an element
+inside the summary, such as a `<span>`, targets that element, and from
+the code on `main` it looks like that click does not toggle the
+`<details>`.
+
+## Accessibility
+
+`<details>` has the `Details` role with its expanded state, and
+`<summary>` the `DisclosureTriangle` role with a Click action. Expand and
+Collapse work from assistive technology.
+
+## Differences from HTML
+
+| HTML | Open UI |
+| --- | --- |
+| A triangle marker before the summary | None |
+| Enter and Space toggle it | Click only |
+| A `toggle` event | `input` and `change` on the `<details>` |

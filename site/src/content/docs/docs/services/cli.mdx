@@ -1,0 +1,87 @@
+---
+title: CLI
+description: The openui command creates, runs, rebuilds and packages Open UI apps.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+The `openui` command line tool is installed from the repository (it is not
+on crates.io yet):
+
+```bash
+cargo install --locked --git https://github.com/zhuowcui/open-ui openui-cli
+```
+
+## openui doctor
+
+Checks the tools a build needs: Rust 1.85 or later, Git, Python, Ninja,
+clang and libclang, and on Windows the Visual Studio C++ tools. It says
+which are missing and fails if any is.
+
+## openui new
+
+```bash
+openui new my-app
+```
+
+Creates `./my-app` from a template. The name must start with a letter and
+use only letters, digits, `-` and `_`; the directory must be empty or not
+exist.
+
+| Option | Effect |
+| --- | --- |
+| `--template default` | The default: a menu bar, a file dialog, an HTTP request and headless UI tests. |
+| `--template minimal` | One window with a counter. |
+| `--path <dir>` | Create it somewhere other than `./<name>`. |
+| `--framework-path <dir>` | Depend on a local Open UI checkout instead of the Git repository. |
+
+The app depends on Open UI's `main` branch from GitHub, and gets the
+framework's `Cargo.lock` and a `.cargo/config.toml` with the settings the
+Skia build needs. The first build compiles Skia from source and takes
+several minutes.
+
+## openui dev
+
+```bash
+openui dev
+```
+
+Builds and runs the app, then watches `src`, `build.rs`, `Cargo.toml` and
+the assets folder. When you save, it rebuilds; if the build succeeds, it
+closes the running app and starts the new one, and if the build fails, the
+old app keeps running.
+
+| Option | Effect |
+| --- | --- |
+| `--release` | Build with optimizations. |
+| `--bin <name>` | Pick the binary in a package with several. |
+| `--manifest-path <file>` | Use another `Cargo.toml`. |
+| `-- <args>…` | Pass arguments to the app. |
+
+## openui build
+
+```bash
+openui build
+```
+
+Builds a release binary and copies it, with the assets folder, into
+`dist/<name>-<version>-<os>-<arch>/`, then prints the path. Options:
+`--debug`, `--locked`, `--out <dir>`, `--bin` and `--manifest-path`.
+
+<Aside type="note">
+`dev` and `build` pass no `--features`, so the app's `Cargo.toml` must
+enable a desktop runtime by default. Both templates do.
+</Aside>
+
+## App settings
+
+In the app's `Cargo.toml`:
+
+```toml
+[package.metadata.openui]
+assets = "assets"          # the folder shipped next to the binary (the default)
+watch = ["shaders"]        # more paths for openui dev to watch
+```
+
+There is no installer, code signing or app bundle yet: `build` produces a
+folder you can zip.

@@ -1,0 +1,79 @@
+---
+// The style properties, from src/data/properties.json, which
+// site/tools/style-table/generate.py writes by running Open UI's own
+// literal parser over every property.
+import data from '../data/properties.json';
+import { inline } from '../lib/inline';
+
+interface Props {
+  group: string;
+}
+const { group } = Astro.props;
+const rows = data.properties.filter((row) => row.group === group);
+if (!rows.length) throw new Error(`no properties in group ${group}`);
+const expr = (text: string) => (text.startsWith('yes') ? inline(text.replace(/^yes, /, '')) : inline(text));
+---
+
+<div class="ou-props">
+  <table>
+    <thead>
+      <tr>
+        <th>Property</th>
+        <th><code>style:prop="…"</code> accepts</th>
+        <th><code>style:prop={'{…}'}</code> type</th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        rows.map((row) => (
+          <tr id={`prop-${row.property}`}>
+            <td>
+              <code>{row.property}</code>
+              {row.initial && (
+                <div class="ou-initial">
+                  initial <code>{row.initial}</code>
+                </div>
+              )}
+              {row.inherited && <div class="ou-initial">inherited</div>}
+            </td>
+            <td set:html={row.literal ? inline(row.literal) : '<em>no literal: use the setter</em>'} />
+            <td>
+              <span set:html={expr(row.expr)} />
+              {row.setter && (
+                <div class="ou-initial">
+                  setter <code>{row.setter}</code>
+                </div>
+              )}
+            </td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .ou-props table {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+    font-size: var(--sl-text-sm);
+  }
+  .ou-props th:nth-child(1) {
+    width: 28%;
+  }
+  .ou-props th:nth-child(3) {
+    width: 30%;
+  }
+  .ou-props :global(code) {
+    overflow-wrap: anywhere;
+  }
+  .ou-props td {
+    vertical-align: top;
+  }
+  .ou-initial {
+    color: var(--sl-color-gray-3);
+    font-size: var(--sl-text-xs);
+    margin-top: 0.25rem;
+  }
+</style>

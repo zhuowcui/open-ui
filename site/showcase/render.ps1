@@ -3,9 +3,11 @@
 #   powershell -File site\showcase\render.ps1 [scene...]
 #
 # Builds openui-site-showcase in release mode with the CI Skia flags and the
-# shared prebuilt Skia (docs/DEVELOPMENT.md), then writes every scene, light
-# and dark, to site/src/assets/showcase/. Commit the PNGs it changes. The
-# site's own build never runs this: it only reads the committed images.
+# shared prebuilt Skia (docs/DEVELOPMENT.md), compiles its snippets and tests,
+# then writes every scene, light and dark, and every docs example
+# (`docs-<name>`, or `docs` for all of them) to site/src/assets/showcase/.
+# Commit the PNGs it changes. The site's own build never runs this: it only
+# reads the committed images.
 $Scenes = $args
 $ErrorActionPreference = 'Stop'
 $root = (Resolve-Path "$PSScriptRoot\..\..").Path
@@ -21,7 +23,11 @@ $env:RUST_MIN_STACK = '4194304'
 if (-not $env:CARGO_TARGET_DIR) { $env:CARGO_TARGET_DIR = Join-Path $main 'out\cargo-site' }
 python (Join-Path $root 'tools\skia_prebuilt.py') env | Out-String | Invoke-Expression
 
-cargo build --release --locked --manifest-path (Join-Path $PSScriptRoot 'Cargo.toml')
+$manifest = Join-Path $PSScriptRoot 'Cargo.toml'
+cargo build --release --locked --manifest-path $manifest
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+# Also compile the test snippets (src/snippets/testing.rs) without running them.
+cargo test --release --locked --no-run --manifest-path $manifest
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 $out = Join-Path $root 'site\src\assets\showcase'
 & (Join-Path $env:CARGO_TARGET_DIR 'release\openui-site-showcase.exe') $out @Scenes

@@ -1,0 +1,70 @@
+---
+// A docs example: the Rust source of site/showcase/src/docs/<name>.rs and
+// the image Open UI rendered from it (site/showcase, scene `docs-<name>`).
+// The source shown is the whole file the renderer compiles.
+import { Code } from '@astrojs/starlight/components';
+import Shot from './Shot.astro';
+
+interface Props {
+  name: string;
+  alt: string;
+  /** Lines of the file to leave out, such as the `use` lines. */
+  skipImports?: boolean;
+}
+const { name, alt, skipImports = false } = Astro.props;
+const sources = import.meta.glob<string>('../../showcase/src/docs/*.rs', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+});
+const raw = sources[`../../showcase/src/docs/${name}.rs`];
+if (raw === undefined) throw new Error(`no docs example ${name}.rs`);
+const code = (skipImports ? raw.replace(/^(use [^\n]*\n)+\n?/, '') : raw).trimEnd();
+---
+
+<figure class="ou-example not-content">
+  <div class="ou-example-code">
+    <Code code={code} lang="rust" />
+  </div>
+  <div class="ou-example-result">
+    <span class="ou-example-label">Rendered by Open UI</span>
+    <Shot name={`docs-${name}`} alt={alt} />
+  </div>
+</figure>
+
+<style>
+  .ou-example {
+    margin: 1.5rem 0;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.75rem;
+    overflow: hidden;
+  }
+  .ou-example-code :global(pre) {
+    margin: 0;
+    border: 0 !important;
+    border-radius: 0;
+  }
+  .ou-example-code :global(.expressive-code) {
+    margin: 0;
+  }
+  .ou-example-result {
+    position: relative;
+    border-top: 1px solid var(--sl-color-gray-5);
+    background: #ffffff;
+    padding: 1.75rem 1rem 1rem;
+    display: flex;
+    justify-content: center;
+  }
+  .ou-example-result :global(img) {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+  .ou-example-label {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.75rem;
+    font-size: 0.75rem;
+    color: #71717a;
+  }
+</style>

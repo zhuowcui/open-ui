@@ -1,0 +1,68 @@
+---
+title: Selectors and state
+description: Open UI has no selectors or pseudo-classes on main. How to style pseudo-elements and interaction state today, and what is planned.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+<Aside type="caution" title="No selectors on main">
+Open UI has no stylesheets, so there are no selectors, no pseudo-classes
+such as `:hover`, `:focus` or `:checked`, and no class-based styling. Every
+style is set on its element. `class` attributes are stored, and
+`Document::elements_with_class` can find elements by class, but a class
+does not apply any style.
+</Aside>
+
+## Pseudo-elements
+
+Four pseudo-elements can be styled, from code, with
+`Element::set_pseudo_style` and a `Style` declaration list:
+
+| Target | Styles |
+| --- | --- |
+| `PseudoStyleTarget::FirstLine` | The first line of the element's text, as `::first-line` |
+| `PseudoStyleTarget::FirstLetter` | Its first letter, as `::first-letter` |
+| `PseudoStyleTarget::Marker` | A list item's bullet, as `::marker` |
+| `PseudoStyleTarget::Placeholder` | A text field's placeholder, as `::placeholder` |
+
+```rust
+let style = Style::default().color(Color::from_hex(0x71717a, false));
+input.set_pseudo_style(PseudoStyleTarget::Placeholder, &style).unwrap();
+```
+
+`Style` has a builder method for each property, named like its setter
+without `set_`. Calling `set_pseudo_style` again replaces the whole list.
+`::before` and `::after` with `content` are not supported.
+
+## Interaction state
+
+Elements track their state, and you can read it:
+
+| State | Read with | Change it with events |
+| --- | --- | --- |
+| Hovered | `Element::is_hovered()` | `mouseenter`, `mouseleave` |
+| Pressed | `Element::is_active()` | `mousedown`, `mouseup` |
+| Focused | `Element::has_focus()` | `focus`, `blur` |
+| Checked | `Element::is_checked()` | `change` |
+| Open | `Element::is_open()` | `change` on a `<details>` |
+| Disabled | `Element::is_effectively_disabled()` | You set it |
+
+To style a state, keep it in a signal, set the signal from those events,
+and read it in a dynamic `style:`. [Styling](/open-ui/docs/concepts/styling/#styling-state)
+has an example for hover.
+
+## Planned
+
+Typed style rules are the next styling work, described in RFC 0001 in the
+repository. The plan is:
+
+- `css!` and `style!` macros for declaration lists, checked at compile
+  time;
+- `stylesheet!`, which compiles class names, selectors and state variants
+  (hover, focus-visible, active, disabled) into typed rules that the
+  engine re-applies when state changes, with no string matching at run
+  time; an unknown class name is a compile error;
+- later, a compile-time mapping from Tailwind utility classes to those
+  rules.
+
+None of this is on `main` yet, and the details may change.

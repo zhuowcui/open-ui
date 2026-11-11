@@ -1,0 +1,26 @@
+---
+title: Clipboard
+description: Read and write text on the system clipboard.
+---
+
+import Snippet from '../../../../components/Snippet.astro';
+
+`openui::clipboard` reads and writes text. It needs no feature.
+
+<Snippet name="clipboard" title="src/share.rs" />
+
+| Function | Does |
+| --- | --- |
+| `clipboard::write_text(text)` | Puts text on the clipboard. It reports no error. |
+| `clipboard::read_text()` | `Result<String>`: fails when the clipboard holds no text or is in use. |
+
+Text fields already cut, copy and paste with the usual shortcuts; you need
+these functions only for your own commands, such as a Copy link button.
+
+With a native runtime, these use the system clipboard (Win32 on Windows,
+X11 or Wayland on Linux). Without one, in a headless app or a test, they
+use a clipboard private to the UI thread, so tests do not touch yours.
+
+Only text is supported: no images, files or rich text yet. On WSLg's
+Wayland, the system refuses clipboard access that does not follow user
+input.

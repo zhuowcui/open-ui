@@ -1,0 +1,71 @@
+---
+title: span and inline elements
+description: span, a, label, strong, em and small are one plain inline element.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import ElementTable from '../../../components/ElementTable.astro';
+import Example from '../../../components/Example.astro';
+
+`<span>` is a plain inline box: it flows with the text around it and wraps
+across lines. Use it to style part of a sentence, or to hold a short label
+inside a row.
+
+Five other tags create **the same element**: `a`, `label`, `strong`, `em`
+and `small`. None has a style or behavior of its own: `<strong>` is not
+bold, `<em>` is not italic, `<a>` does not navigate, and `<label>` is not
+tied to a control.
+
+<Example name="el_span" alt="A paragraph with a bold phrase, an italic word, a smaller word and a blue phrase reading This link" />
+
+<ElementTable tags={['span', 'a', 'label', 'strong', 'em', 'small']} links={false} />
+
+## Attributes
+
+Only the attributes every element takes (`id`, `class`, `lang`,
+`tabindex`, `aria-*`, `data-*`). In particular:
+
+- **`href` on `<a>` does nothing.** There are no URLs to navigate to. Put
+  what the link does in an `on:click` handler, as the example does.
+- **`for` on `<label>` does nothing.** Clicking a label does not focus or
+  toggle a control. Wrap the control and its text in one row instead, or
+  handle the click.
+
+## Events
+
+Inline elements receive the same pointer events as blocks (`mousedown`,
+`mouseup`, `mousemove`, `mouseenter`, `mouseleave`, `click`, `wheel`), for
+the area of their line boxes. An `<a>` is not focusable; add `tabindex="0"`
+if a keyboard user must reach it, and handle `keydown` for Enter.
+
+## Styling
+
+Text properties apply and inherit into the text: `color`, `font-size`,
+`font-weight`, `font-style`, `letter-spacing`, `font-family`. Inline boxes
+also take `padding`, `border`, `background-color` and `border-radius`,
+which wrap around each line the text occupies.
+
+`width`, `height` and vertical margins do not apply to an inline box, as in
+CSS; set `display="inline-block"` or `display="block"` to size it.
+
+<Aside type="caution" title="Underlines">
+`text-decoration` and `text-decoration-line="underline"` are accepted on a
+`<span>` or `<a>`, but no underline is drawn on an inline element on `main`
+yet. For now, mark links with color and `cursor="pointer"`, as in the
+example above.
+</Aside>
+
+## Accessibility
+
+The role is `GenericContainer`, so a link is not announced as a link. Give
+an interactive `<a>` the `Link` role with `set_accessibility_role`, and a
+name with `aria-label` when its text is not enough.
+
+## Differences from HTML
+
+| HTML | Open UI |
+| --- | --- |
+| `<strong>` is bold, `<em>` italic, `<small>` smaller | No default styles |
+| `<a href>` navigates, is focusable and has the link role | No navigation, not focusable, `GenericContainer` |
+| `<label for>` forwards clicks to its control | No association |
+| Many more inline tags (`b`, `i`, `code`, `kbd`, `mark`, `sub`, `sup`…) | Not supported; style a `<span>` instead |

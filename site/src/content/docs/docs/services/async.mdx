@@ -1,0 +1,62 @@
+---
+title: Async tasks
+description: Run futures on the UI thread, move work to background threads, and use timers.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import Snippet from '../../../../components/Snippet.astro';
+
+`openui::task` runs async work. It comes with the `desktop` feature (or
+`async` on its own). The rule is simple: code that touches signals and
+elements runs on the UI thread, in `spawn_local`; slow work goes to a
+background thread, and its result comes back to the UI thread to be
+shown.
+
+<Snippet name="async_tasks" title="src/work.rs" />
+
+## Spawning
+
+| Function | Runs | Can hold signals and elements |
+| --- | --- | --- |
+| `spawn_local(future)` | On the UI thread, between input and frames | Yes |
+| `spawn(future)` | On a pool of 1 to 4 background threads | No |
+| `spawn_blocking(f)` | A blocking function on a separate pool, for disk and other blocking calls | No |
+
+Each returns a `Task<T>`, which is a future of the result. **Dropping a
+`Task` cancels it**, so either keep it, `.await` it, or call `.detach()`
+to let it run on its own.
+
+To get a result from a background thread to the screen, `.await` the
+background task inside `spawn_local` and set a signal, as the example
+does. A background thread can also hold a `signal.sender()` and call
+`send(value)`; the value is applied on the UI thread.
+
+## Timers
+
+`task::time::sleep(duration).await` waits. `task::time::interval(period)`
+gives an `Interval` whose `tick().await` returns once per period, the first
+one period from now.
+
+## Scopes and cancellation
+
+A `spawn_local` task started while a view is being built belongs to that
+view's scope: when the scope is disposed, for example when its window
+closes or a `Show` switches branch, the task is cancelled. Tasks started
+in event handlers have no scope; keep their `Task` if you need to stop
+them.
+
+## Resources
+
+`create_resource(source, fetch)` (import it from `openui`) runs an async
+fetch when it is created and again whenever `source` changes, cancelling
+the previous fetch. `resource.get()` is `None` until the first result,
+then `Some(Result<T, E>)`; `loading()` tells whether a fetch is running,
+and `refetch()` runs it again.
+
+<Aside type="note">
+UI tasks run in turns of at most 8 ms between input and frames, so a
+`spawn_local` future that never awaits blocks the window. Put
+CPU-heavy loops in `spawn`.
+</Aside>
+
+There is no Tokio integration yet.

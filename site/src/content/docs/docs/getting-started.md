@@ -108,8 +108,11 @@ browser runtime and no bundled webview.
 
 ## Next
 
-- [Views and styles](/open-ui/docs/views-and-styles/) explains markup,
-  components and CSS.
-- [Testing](/open-ui/docs/testing/) covers the test in `tests/ui.rs`.
-- [Components](/open-ui/components/) shows the shadcn/ui components you can
-  use.
+- [Views and `view!`](/open-ui/docs/concepts/views/) explains markup and
+  components, and [Elements](/open-ui/docs/concepts/elements/) the elements
+  every view is made of.
+- The [Elements reference](/open-ui/elements/) covers each element, such as
+  the [button](/open-ui/elements/button/) and [input](/open-ui/elements/input/)
+  in this app.
+- [Testing](/open-ui/docs/services/testing/) covers the tests in
+  `tests/ui.rs`.

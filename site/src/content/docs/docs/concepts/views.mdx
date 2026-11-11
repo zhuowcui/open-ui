@@ -1,0 +1,127 @@
+---
+title: Views and view!
+description: How the view! macro turns markup into elements, what can go in it, and how components work.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import Example from '../../../../components/Example.astro';
+
+A view is a function that builds a tree of [elements](/open-ui/docs/concepts/elements/)
+and returns it as a `ViewNode`. You write the tree with the `view!` macro,
+which reads like HTML but compiles to Rust calls that create elements,
+set their attributes and styles, and attach event handlers.
+
+<Example name="cc_views" alt="Two bordered stat cards, Uptime 99.98% and Visits 1,284, and a Like (0) button" />
+
+## What goes in `view!`
+
+| You write | It becomes |
+| --- | --- |
+| `<div …>children</div>` or `<input … />` | An element. The tag must be one of the [base elements](/open-ui/elements/). |
+| `"text"` | A static text node. Bare words without quotes are a compile error. |
+| `{expr}` | A text node showing `expr.to_string()`, updated whenever a signal it reads changes. |
+| `name="value"` | An attribute, set once. |
+| `name={expr}` | An attribute set once from `expr.to_string()`. Not reactive. |
+| `name` alone | A boolean attribute, set to `""`. |
+| `style:prop="value"` | A typed style, checked when you compile. See [Styling](/open-ui/docs/concepts/styling/). |
+| `style:prop={expr}` | A typed style that updates when its signals change. |
+| `on:event={handler}` | An event listener, `Fn(&Event)`. See [Events and state](/open-ui/docs/concepts/events-and-state/). |
+| `<Name …/>` (capital first letter) | A component call. |
+
+Several roots in one `view!` make a `ViewNode::Fragment`, and an empty
+`view! {}` makes `ViewNode::Empty`.
+
+<Aside type="caution" title="Things that compile but go wrong">
+- An unknown tag such as `<b>`, `<code>` or `<dialog>` compiles but panics
+  when the view is built. The [element list](/open-ui/elements/) is closed.
+- `{expr}` needs a value that implements `Display`: write
+  `{count.get()}`, not `{count}`.
+- A boolean attribute is on whatever its value: `disabled={false}` still
+  disables. Leave it out, or remove it from code with
+  `remove_attribute`.
+- `class` is stored but styles nothing; there are no stylesheets.
+</Aside>
+
+## Reactivity is per text node and per style
+
+`view!` builds the tree once. It does not re-run when state changes.
+Instead, each `{expr}` and each `style:prop={expr}` is its own small effect
+that updates one text node or one style property when the signals it reads
+change. In the example, clicking Like updates the button's text and
+nothing else.
+
+Plain attributes (`name={expr}`) are set once. To change one later, keep
+the element and call `set_attribute` from an effect or a handler.
+
+## Components
+
+A component is a function marked `#[component]`. Its parameters become the
+fields of a generated props struct, and a capitalized tag in `view!` calls
+it:
+
+```rust
+#[component]
+fn Stat(label: String, value: String) -> ViewNode {
+    view! {
+        <div style:padding="12px 16px" style:border="1px solid #e4e4e7">
+            <div style:color="#71717a">{label}</div>
+            <div style:font-size="24px">{value}</div>
+        </div>
+    }
+}
+
+// In a view:
+<Stat label={"Uptime".to_string()} value={"99.98%".to_string()} />
+// Or as a plain call:
+Stat(StatProps { label: "Uptime".into(), value: "99.98%".into() })
+```
+
+Rules for component tags:
+
+- `name="literal"` passes a `String`, so it works only for `String` props.
+  Pass anything else with `name={expr}`.
+- **Every prop must be passed**, including those marked
+  `#[prop(optional)]`. An optional prop has type `Option<T>`, so write
+  `subtitle={None}` or `subtitle={Some(…)}`.
+- Children go to a parameter declared `#[prop(children)] children: Vec<ViewNode>`.
+- `on:`, `style:` and boolean attributes on a component tag are ignored.
+  Put them on an element inside the component, or pass them as props.
+- Rust warns about the capitalized function name; add
+  `#[allow(non_snake_case)]` to the module or the function.
+
+## Lists and conditions
+
+`For`, `Show` and `DynChild` build views that change shape with state. They
+return a `ViewNode`, so they cannot be written inside `view!`. Mount them
+into an element with `mount_view`, or put them next to other views in a
+`ViewNode::Fragment`:
+
+```rust
+let list = view! { <ul></ul> };
+if let ViewNode::Element(ul) = &list {
+    mount_view(ul, For(
+        move || todos.get(),        // the items
+        |todo| todo.clone(),        // a key per item
+        |todo| view! { <li>{todo}</li> },
+    ));
+}
+```
+
+| Function | Arguments | Re-renders |
+| --- | --- | --- |
+| `For` | items, key, row view | Only rows whose key appeared, disappeared or moved |
+| `Show` | `when`, `fallback`, `children`, in that order | When `when` changes |
+| `DynChild` | a closure returning a view | The whole subtree, when its signals change |
+
+Each wraps its content in a `display: contents` box, so it does not affect
+layout. For text that depends on a condition, an `if` or `match` inside
+`{…}` is simpler: `{if done.get() { "Done" } else { "Pending" }}`.
+
+[Events and state](/open-ui/docs/concepts/events-and-state/) has a full
+list example.
+
+<Aside type="note">
+`view!` needs the document that is being built, which is available while a
+view function runs. Building a view inside an event handler panics; build
+the view up front and show or hide it with `Show`.
+</Aside>

@@ -1,0 +1,91 @@
+---
+title: Elements
+description: The 60 tags Open UI's view! accepts, what each one is, and how it differs from the HTML element of the same name.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import ElementTable from '../../../components/ElementTable.astro';
+import Example from '../../../components/Example.astro';
+
+Open UI is not a browser. There is no HTML parser and no JavaScript: you
+build the interface in Rust with `view!`, and every tag in it becomes a
+native element that Open UI lays out and paints itself. The tags borrow
+HTML's names, so `<div>`, `<button>` and `<input>` mean roughly what you
+expect, but the set is closed and the behavior is Open UI's own.
+
+This reference has one page per element, or per group of tags that are the
+same element under different names. Each page covers what the element is,
+the attributes it reads, the events it receives, the styles that matter,
+its accessibility, and how it differs from HTML, with examples rendered by
+Open UI from the code shown.
+
+## Five things to know first
+
+1. **No default styles.** Open UI has no user-agent stylesheet. Every
+   element starts from CSS's initial values: no margins, no padding, no
+   borders, 16px `sans-serif`, black text. An `<h1>` is not large, a
+   `<strong>` is not bold, and a `<button>` is just its text until you
+   style it.
+2. **Many tags are one element.** `h1`, `p`, `section` and `nav` are all
+   the same block element; `strong`, `em` and `a` are the same inline
+   element. The tag picks the element kind and its default `display`, and
+   nothing else. Open UI does not keep the tag name.
+3. **Unknown tags compile, then panic.** `view!` turns any lowercase tag
+   into a call that creates the element at run time. A tag that is not in
+   the table below, such as `<b>`, `<code>`, `<pre>` or `<dialog>`, fails
+   there, with `UnknownTag`.
+4. **Attributes are strings, set once.** `name="value"` and
+   `name={expr}` both call `Element::set_attribute`, once, when the view is
+   built; a boolean attribute is set whatever its value, so
+   `disabled={false}` still disables. Styles (`style:`) and text
+   (`{expr}`) are the parts of `view!` that update when signals change.
+5. **`class` does not style.** There are no stylesheets or selectors yet.
+   `class` and `id` are stored and can be looked up, but styles are set per
+   element with `style:`.
+
+<Example name="el_no_defaults" alt="Unstyled elements: the heading, paragraph, list item and button all render as plain 16px text, with a bullet for the list item" />
+
+## All elements
+
+These are all the tags `view!` and `Element::create` accept. The table is
+generated from the source on `main` (`tag_definition` in
+`openui/src/element.rs`, the engine's constructor and its accessibility
+roles), so it lists exactly what exists.
+
+<ElementTable />
+
+The kinds come from `openui::ElementTag`. Form controls take their role
+from their control type, and `<input>` from its `type` attribute; see
+[input](/open-ui/elements/input/).
+
+<Aside type="note" title="What is not here">
+Anything else, including `b`, `i`, `u`, `code`, `pre`, `blockquote`, `dl`,
+`dt`, `dd`, `figure`, `sup`, `sub`, `mark`, `time`, `dialog`, `template`,
+`slot` and SVG shapes such as `path` and `rect`. Use the elements above and
+style them: a `<span>` with `font-family="Geist Mono"` for code, for
+example.
+</Aside>
+
+## Attributes every element takes
+
+| Attribute | Effect |
+| --- | --- |
+| `id` | Stored. `Document::element_by_id` finds it, and radio buttons and `form="…"` use it. |
+| `class` | Stored as tokens for `has_class`, `add_class`, `remove_class` and `Document::elements_with_class`. **No styling effect.** |
+| `lang` | Sets the element's language (its `locale` style), which its text inherits. |
+| `tabindex` | Makes any element focusable. Negative keeps it out of the Tab order; positive values come first. |
+| `aria-label`, `aria-description`, `aria-hidden="true"` | Read into the accessibility tree. No other `aria-*` attribute is read. |
+| `data-*`, anything else | Stored for your own use with `get_attribute`. |
+
+Every element also takes `style:` attributes (see
+[Styling](/open-ui/docs/concepts/styling/)) and `on:` event handlers (see
+[Events and state](/open-ui/docs/concepts/events-and-state/)).
+
+## The element in code
+
+`view!` returns a `ViewNode`; for a single element it is
+`ViewNode::Element(element)`, and the `Element` handle has the full API:
+attributes, typed style setters, text, geometry, scrolling, focus, form
+control values and accessibility overrides. The [Elements concept
+page](/open-ui/docs/concepts/elements/) shows how to get the handle and what
+it can do.

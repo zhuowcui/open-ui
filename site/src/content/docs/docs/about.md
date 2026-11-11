@@ -19,7 +19,8 @@ and shown as rendered. The browser side of the comparison on the home page
 is the same card as HTML, drawn by Chromium.
 
 **Fonts.** Geist and Geist Mono, under the SIL Open Font License 1.1
-([license](/open-ui/fonts/Geist-OFL.txt)). Icons are
-[Lucide](https://lucide.dev/) (ISC).
+([license](/open-ui/fonts/Geist-OFL.txt)). The icons on this site are
+[Lucide](https://lucide.dev/) (ISC), drawn by your browser; Open UI does
+not draw Lucide icons yet.
 
 **License.** Open UI is Apache-2.0.

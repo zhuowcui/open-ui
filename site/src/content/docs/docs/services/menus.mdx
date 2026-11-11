@@ -1,0 +1,67 @@
+---
+title: Menus
+description: An app-wide menu bar with items, shortcuts, check marks and standard roles.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import Snippet from '../../../../components/Snippet.astro';
+
+A menu bar is declared once, for the whole app, with `AppSpec::menu`. It
+needs the `menu` feature.
+
+<Snippet name="menus" title="src/main.rs" />
+
+The function you pass builds the menu. Open UI calls it for each window,
+and again whenever a signal it reads changes, so check marks and enabled
+states follow your state.
+
+## Building a menu
+
+| | |
+| --- | --- |
+| `Menu::new()` | An empty menu bar. |
+| `.submenu(label, \|menu\| …)` | A top-level menu or a submenu. `&` marks the mnemonic letter; `&&` is a literal `&`. |
+| `.item(MenuItem)` | An item. |
+| `.role(Role)` | A standard item (below). |
+| `.separator()` | A line between groups. |
+
+A `MenuItem::new(label)` takes:
+
+| Method | Effect |
+| --- | --- |
+| `.on_select(f)` | What it does. It runs on the UI thread with `window::current()` set to the window whose menu was used. |
+| `.accelerator(Accelerator::new(Modifiers::PRIMARY, Key::N))` | A keyboard shortcut. It works whether or not the menu is open, before the focused element sees the key. `Modifiers::PRIMARY` is Ctrl. |
+| `.enabled(bool or closure)` | Disabled items are grayed and their shortcuts do nothing. |
+| `.checked(bool or closure)` | Makes it a check item. |
+
+A closure such as `move || large.get()` is read reactively.
+
+## Roles
+
+`Role` items have the platform's label and shortcut and do the standard
+thing:
+
+| Role | Does | Shortcut |
+| --- | --- | --- |
+| `Quit` | Exits the app | Ctrl+Q (none on Windows, where its label is Exit) |
+| `CloseWindow` | Closes the window, asking its close handler | Ctrl+W |
+| `Undo`, `Redo` | Edit the focused text | Ctrl+Z; Ctrl+Y on Windows, Ctrl+Shift+Z elsewhere |
+| `Cut`, `Copy`, `Paste`, `SelectAll` | Edit the focused text | Ctrl+X, C, V, A |
+| `About` | Opens a small About window | none |
+
+## Platforms
+
+On **Windows** the menu bar is the native Win32 menu bar. On **Linux**
+Open UI draws it at the top of the window. There, a click, F10 or Alt with
+a mnemonic opens it, and the arrow keys, Enter, Space and Escape move
+through it.
+
+<Aside type="caution" title="Not yet">
+- Menus are app-wide: every window gets the same bar. There is no
+  per-window menu.
+- No context (right-click) menus, popup menus or tray menus.
+- On Linux, the drawn bar has no dark theme, and its checked and disabled
+  states reach assistive technology only as a description.
+- Apps started with the older `App::builder()` have no menu bar; use
+  `App::new`.
+</Aside>

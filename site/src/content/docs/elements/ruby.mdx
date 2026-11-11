@@ -1,0 +1,47 @@
+---
+title: ruby and rt
+description: Ruby annotations, such as furigana, above the base text.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import ElementTable from '../../../components/ElementTable.astro';
+import Example from '../../../components/Example.astro';
+
+`<ruby>` pairs base text with a small annotation, `<rt>`, drawn above it:
+the reading of East Asian characters, for example. Open UI lays the base
+and its annotation out as one unit, so they never split across lines.
+
+<Example name="el_ruby" alt="The characters for Tokyo with their hiragana readings above them, followed by the word Tokyo" />
+
+<ElementTable tags={['ruby', 'rt']} links={false} />
+
+## Writing ruby
+
+Put the base text first and its `<rt>` after it, inside one `<ruby>`. Use
+one `<ruby>` per base, as in the example. `<rp>` and `<rb>` are not
+supported tags.
+
+<Aside type="caution" title="Leave room for the annotation">
+The annotation is drawn above the line without making the line taller. Give
+the text a `line-height` large enough for it (the example uses `2`), or the
+annotation overlaps the line above.
+</Aside>
+
+## Styling
+
+`<rt>` takes text styles; a smaller `font-size` is usual, since it has none
+by default. Ruby layout has three typed styles: `set_ruby_position`,
+`set_ruby_align` and `set_ruby_overhang`.
+
+## Attributes, events and accessibility
+
+No attributes of their own; events as for [span](/open-ui/elements/span/).
+The roles are `Ruby` and `RubyAnnotation`.
+
+## Differences from HTML
+
+| HTML | Open UI |
+| --- | --- |
+| `rt` is half size by default | No default size |
+| The line grows to fit annotations | Leave room with `line-height` |
+| `rp`, `rb`, `rtc` | Not supported |

@@ -1,0 +1,44 @@
+---
+title: form
+description: A block that scopes radio groups and form ownership. It does not submit.
+---
+
+import ElementTable from '../../../components/ElementTable.astro';
+import Example from '../../../components/Example.astro';
+
+In a browser, a form collects its controls' values and sends them
+somewhere. Open UI apps have no server to post to, so `<form>` does less:
+it is a block that **owns** the controls inside it, which scopes radio
+groups, and gives each control an `associated_form()`.
+
+<Example name="el_form" alt="Two forms side by side, Shipping with Standard selected and Returns with Express selected, both using radio buttons named speed" />
+
+<ElementTable tags={['form']} links={false} />
+
+## Radio groups
+
+Radio buttons with the same `name` form one group only within the same
+form. In the example both groups are named `speed`, but each form keeps its
+own choice. Outside any form, radios with the same `name` in the document
+are one group.
+
+A control outside the form joins it with `form="<id of the form>"`.
+
+## Submitting
+
+There is no submission: a `submit` button fires only `click`, and Enter in
+a text input fires only `change`. Gather the values yourself, from signals
+you set in `input` handlers or with `control_value()` on each control, and
+act on them in the button's `on:click`.
+
+## Accessibility
+
+The role is `Form`.
+
+## Differences from HTML
+
+| HTML | Open UI |
+| --- | --- |
+| `submit` and `reset` events, navigation | None |
+| `action`, `method`, `FormData` | None: read the controls yourself |
+| Validation before submit | None |

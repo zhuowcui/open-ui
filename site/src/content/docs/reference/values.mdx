@@ -1,0 +1,101 @@
+---
+title: Values and units
+description: The lengths, numbers, colors and other values Open UI's style parser accepts, and what it does not accept yet.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+A literal in `style:prop="…"` is parsed by Open UI when you compile, with a
+grammar that follows CSS but is narrower. This page describes the shared
+value types; the [properties reference](/open-ui/reference/properties/)
+gives the exact values for each property.
+
+## Lengths
+
+| Unit | Meaning |
+| --- | --- |
+| `px` | CSS pixels: logical pixels, scaled by the display's scale factor |
+| `%` | A percentage of the property's reference, as in CSS |
+| `em`, `rem` | The element's font size; the root's font size (16px unless you change it) |
+| `vw`, `vh`, `vmin`, `vmax` | A percentage of the window's width, height, smaller or larger side |
+| `ch`, `ex`, `lh` | The width of `0`, the x-height, the line height, of the element's font |
+
+`0` is a length without a unit, and `auto` and `none` are accepted where
+the property allows them. Any other number needs a unit.
+
+In Rust, lengths are `LengthValue`: `LengthValue::px(12.0)`,
+`LengthValue::percent(50.0)`, `LengthValue::Em(1.5)`, `LengthValue::auto()`.
+
+## Numbers and integers
+
+Some properties take a bare number: `opacity="0.5"` (not `50%`),
+`flex-grow="1"`, `line-height="1.5"`. A few take a bare integer:
+`z-index="10"`, and the separate border and outline widths, which are in
+pixels without the unit: `border-top-width="2"`, not `2px`. The `border`
+shorthand does take `px`: `border="2px solid #e4e4e7"`.
+
+## Colors
+
+| Form | Example |
+| --- | --- |
+| Hex, 3, 4, 6 or 8 digits | `#fff`, `#fff8`, `#3b82f6`, `#3b82f680` |
+| `rgb()` and `rgba()`, comma or space syntax | `rgb(59, 130, 246)`, `rgba(0, 0, 0, 0.5)`, `rgb(59 130 246 / 0.5)` |
+| Named colors | `rebeccapurple`, `transparent` (the CSS named colors) |
+| `oklch()` | `oklch(0.623 0.214 259.815)`, `oklch(1 0 0 / 10%)` |
+| `oklab()` | `oklab(0.7 0.1 -0.1)` |
+| `color-mix()` in `srgb`, `oklab` or `oklch` | `color-mix(in oklch, #3b82f6 40%, white)` |
+| `currentcolor` | The element's `color`, where the property accepts it |
+
+The three channels of `rgb()` must all be numbers or all be percentages,
+and its alpha is a number from 0 to 1. `oklch()` and `oklab()` take
+numbers or percentages, angles in `deg` for the hue, `none`, and an alpha
+after `/`. In `color-mix()`, `in <space>` may be left out (it defaults to
+`oklab`), each color may have a percentage, and `oklch` takes a hue method
+(`shorter`, `longer`, `increasing`, `decreasing`). Open UI resolves these
+colors with the same math, step by step, as the Chromium version it is
+compared with.
+
+<Aside type="caution">
+In a shorthand such as `border`, the color must be one token with no
+spaces inside it: write `border="1px solid #e4e4e7"` or
+`border="1px solid rgb(0,0,0)"`, not `rgb(0 0 0)`.
+</Aside>
+
+In Rust, colors are `Color`: `Color::from_hex(0x3b82f6, false)`,
+`Color::from_rgba8(59, 130, 246, 255)`, `Color::WHITE`. Properties that
+accept `currentcolor` take a `StyleColor`.
+
+## Keywords
+
+Keyword values are the CSS keywords, written in lowercase. The properties
+reference lists the keywords each property accepts; some properties
+accept only part of CSS's set, for example `list-style` takes `none` and
+`disc`, and `cursor` takes `auto`, `default`, `pointer`, `text`, `move`
+and `not-allowed`.
+
+## Functions
+
+- **Transforms:** `translate()`, `translateX()`, `translateY()`,
+  `scale()`, `scaleX()`, `scaleY()`, `rotate()` (in `deg`, `rad` or
+  `turn`) and `matrix()`, separated by spaces, with commas between
+  arguments. No skew or 3D transforms.
+- **Grid tracks:** `minmax()` and `fit-content()`, with `fr`, `auto`,
+  `min-content` and `max-content`. No `repeat()`.
+
+## Not supported yet
+
+- `calc()`, `min()`, `max()`, `clamp()` and other math functions.
+- `var()` and custom properties.
+- `hsl()`, `hwb()`, `lab()`, `lch()` and `color()`.
+- Global keywords such as `inherit`, `initial` and `unset` in literals. To
+  return a property to its default, call `Element::remove_property`.
+- The `flex`, `background`, `outline` and `inset` shorthands.
+
+## Names that are Open UI's own
+
+A few structured values that CSS writes inside one property are separate
+properties in Open UI, set from code: `filter-blur` and
+`filter-grayscale` for `filter`, `background-linear-gradient` and
+`background-layers` for backgrounds, `clip-path-inset` for `clip-path`,
+and the `-x` and `-y` radius axes. Each is in the properties reference
+with its setter.

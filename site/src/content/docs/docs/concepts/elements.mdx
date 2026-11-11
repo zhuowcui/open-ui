@@ -1,0 +1,116 @@
+---
+title: Elements
+description: What an Open UI element is, how it differs from an HTML element, and how to work with one from Rust.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Every tag in a `view!` creates an **element**: a native node that Open UI
+styles, lays out, paints, hit-tests and exposes to assistive technology
+itself. There is no HTML document behind it and no browser. The tags borrow
+HTML's names because they are familiar, and the layout and paint follow
+CSS closely, but the set of elements, their attributes and their behavior
+are Open UI's own.
+
+The [Elements reference](/open-ui/elements/) lists every element with its
+attributes, events, styling, accessibility and differences from HTML. This
+page covers what they share.
+
+## How elements differ from HTML
+
+- **The set is closed.** There are 60 tags. Anything else, such as `<b>`,
+  `<code>` or `<dialog>`, compiles and then panics when the view is built.
+- **Tags are kinds.** `h1`, `p`, `section` and `nav` all create the same
+  block element, and `strong`, `em` and `a` the same inline element. The
+  tag picks the kind and its default `display`; the name is not kept.
+- **No default styles.** There is no user-agent stylesheet. Every element
+  starts from CSS's initial values: no margin or padding, no border, 16px
+  `sans-serif`, black text. Headings are not large and links are not blue
+  until you style them.
+- **No selectors.** Styles are set on each element, with `style:` in
+  `view!` or with setters from code. `class` and `id` are stored for
+  lookup only.
+- **Behavior is built in, not scripted.** Text fields edit, checkboxes
+  toggle and `<details>` opens on its own; your code listens to events and
+  reads values. Some HTML behaviors are not there yet, and each element's
+  page says which.
+
+## Getting hold of an element
+
+`view!` returns a `ViewNode`. When its root is an element, match it to get
+the `Element` handle, then keep or use the handle:
+
+```rust
+let field = view! { <input placeholder="Search" /> };
+if let ViewNode::Element(input) = &field {
+    input.set_accessibility_label("Search").unwrap();
+}
+```
+
+`Element` is a cheap, clonable handle; clone it into closures that need it
+later. Inside an event handler, `event.target()` and
+`event.current_target()` return the element.
+
+To put a view you built this way inside another `view!`, pass it through a
+component prop. A one-line component does it:
+
+```rust
+#[component]
+fn Slot(child: ViewNode) -> ViewNode {
+    child
+}
+
+view! { <div><Slot child={field} /></div> }
+```
+
+A `Document` can also look elements up, with `element_by_id`,
+`elements_with_class` and `elements_of_kind`. While a view function runs,
+`current_document()` returns the document it builds into.
+
+## The Element API
+
+Every method returns `Result<_, openui::Error>`. The main groups:
+
+| Area | Methods |
+| --- | --- |
+| Attributes | `set_attribute`, `get_attribute`, `remove_attribute`, `set_id`, `set_class`, `add_class`, `remove_class`, `has_class` |
+| Text | `set_text`, `text_content`, `append_text_node`, `create_text_child` |
+| Tree | `append_child`, `insert_before`, `remove_child`, `remove`, `detach`, `clone_subtree`, `parent`, `first_child`, `next_sibling`, `remove_all_children` |
+| Style | `set_<property>` for each of the 258 properties (for example `set_width`, `set_color`), `set_property`, `remove_property`, `apply_style`, `computed_style`, `set_pseudo_style` |
+| Geometry | `bounding_rect`, `client_rects`, `width`, `height`, `client_width`, `scroll_width`, `scroll_metrics` |
+| Scrolling | `scroll_to`, `scroll_by`, `scroll_left`, `scroll_top`, `scroll_into_view`, `smooth_scroll_to` |
+| Controls | `control_value`, `set_control_value`, `is_checked`, `set_checked`, `set_indeterminate`, `is_open`, `set_open`, `is_selected`, `selection`, `set_selection_range`, `edit_text` |
+| State | `focus`, `blur`, `has_focus`, `is_hovered`, `is_active`, `is_own_disabled`, `is_effectively_disabled`, `is_connected` |
+| Events | `on`, `on_capture`, `remove_event`, `click`, `dispatch_click_event`, `set_pointer_capture` |
+| Accessibility | `set_accessibility_role`, `set_accessibility_label`, `set_accessibility_description`, `set_accessibility_value`, `set_accessibility_live`, `set_accessibility_hidden`, `set_accessibility_relation`, `perform_accessibility_action` |
+| Images | `set_image_resource` |
+| Animation | `animate`, `transition`, `animate_on_scroll`, `animate_on_view` |
+
+<Aside type="note" title="Setting values from code fires no events">
+`set_control_value`, `set_checked` and `set_open` change the element
+without firing `input` or `change`. Update your own state at the same time.
+</Aside>
+
+## Attributes
+
+Attributes are strings. In `view!`, `name="value"` and `name={expr}` set an
+attribute once, when the view is built. A boolean attribute such as
+`disabled` or `checked` counts as present whatever its value, so
+`disabled={false}` still disables; to switch one, call `set_attribute` or
+`remove_attribute`. Which attributes do something is listed on each
+element's page, and the [attributes every element takes](/open-ui/elements/#attributes-every-element-takes)
+are on the index.
+
+## Accessibility
+
+Open UI builds an accessibility tree from the elements and exposes it
+through UI Automation on Windows and AT-SPI on Linux. Controls get their
+roles and states from what they are. Tags do not carry meaning, so a
+`<h2>` or `<nav>` is a generic container until you set a role:
+
+```rust
+heading.set_accessibility_role(AccessibilityRole::Heading).unwrap();
+```
+
+In markup, `aria-label`, `aria-description` and `aria-hidden="true"` are
+read; other `aria-*` attributes are not.

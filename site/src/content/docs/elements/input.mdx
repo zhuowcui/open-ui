@@ -1,0 +1,152 @@
+---
+title: input
+description: Text, password, checkbox, radio and range inputs, and what the other types do today.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import ElementTable from '../../../components/ElementTable.astro';
+import Example from '../../../components/Example.astro';
+import data from '../../../data/elements.json';
+
+`<input>` is a native control whose behavior depends on its `type`: a
+single-line text field by default, or a checkbox, radio button or slider.
+Open UI edits text itself (selection, undo, clipboard and IME), and paints
+the checkable and range controls in Chromium's style.
+
+<ElementTable tags={['input']} links={false} />
+
+## Types
+
+The `type` attribute picks the control. This table comes from the source on
+`main`:
+
+<table>
+  <thead><tr><th><code>type</code></th><th>Accessibility role</th><th>Status</th></tr></thead>
+  <tbody>
+    {data.inputTypes.map((row) => {
+      const status = {
+        checkbox: 'Works: toggles on click and Space.',
+        radio: 'Works: one per name in a form; arrow keys move the choice.',
+        range: 'Works: drag, arrows, Page Up, Page Down, Home and End.',
+        color: 'Drawn as a swatch; no color picker opens.',
+        date: 'Drawn as a date field; no calendar opens.',
+        file: 'Drawn as a file chooser; no dialog opens. Use the dialog service.',
+        button: 'A button: fires click.',
+        submit: 'A button: fires click; does not submit.',
+        reset: 'A button: fires click; does not reset.',
+      }[row.type] ?? 'Works: single-line text. text, email, number, search, tel, url and hidden all land here, with no validation or per-type behavior.';
+      return (<tr><td><code>{row.type}</code></td><td><code>{row.role}</code></td><td>{status}</td></tr>);
+    })}
+  </tbody>
+</table>
+
+`type="password"` is a text input that shows one `•` per character.
+
+## Text
+
+<Example name="el_input_text" alt="A Name field containing Ada, the text Hello, Ada! below it, and a Password field showing dots" />
+
+### Attributes
+
+| Attribute | Effect |
+| --- | --- |
+| `value` | The text. It is the live value: user edits rewrite it, so `get_attribute("value")` returns what is in the field. |
+| `placeholder` | Shown in gray while the field is empty. Style it with `set_pseudo_style(PseudoStyleTarget::Placeholder, …)`. |
+| `size` | The width in average characters when no CSS width is set; 20 by default. |
+| `readonly` | The text can be selected but not edited. |
+| `disabled` | Not focusable or editable. Present means disabled, whatever its value. |
+| `maxlength`, `pattern`, `required`, `min`, `max`, `autofocus` | No effect (`required` is only announced). |
+
+### Reading and setting the value
+
+The event has no value of its own: read it from the target in `input` or
+`change`, as the example does:
+
+```rust
+on:input={move |event: &Event| {
+    let input = event.target().expect("input target");
+    if let Ok(Some(value)) = input.control_value() {
+        name.set(value);
+    }
+}}
+```
+
+`Element::set_control_value(text)` sets it from code and fires no event.
+There is no two-way binding: a signal does not update the field. The
+selection is in `selection()`, `set_selection_range()` and
+`replace_control_range()`, in UTF-8 byte offsets.
+
+### Events
+
+| Event | When |
+| --- | --- |
+| `beforeinput` | Before each edit; `prevent_default()` cancels it. `event.input_info()` says what kind of edit. |
+| `input` | After each edit: typing, paste, cut, delete, undo or redo. |
+| `change` | When the field loses focus after an edit, or on Enter. |
+| `keydown`, `keyup` | While focused, before the field handles the key. |
+| `select`, `selectionchange` | When the selection changes. |
+| `compositionstart`, `compositionupdate`, `compositionend` | During IME composition. |
+| `focus`, `blur`, `focusin`, `focusout` | Focus changes. |
+
+The field handles arrows, Home and End (with Shift to select, Ctrl for
+words), Backspace, Delete, Ctrl+A, Ctrl+Z, Ctrl+Y, Ctrl+C, Ctrl+X and
+Ctrl+V. Call `prevent_default()` in `keydown` to take a key over.
+
+## Checkbox, radio and range
+
+<Example name="el_input_choice" alt="A checked checkbox labeled Email me about new releases, two radio buttons Monthly (selected) and Yearly, and a Volume slider at 7 of 10" />
+
+<Aside type="caution" title="Give them a size">
+These controls have no default size: unsized, they are 0 by 0 and draw
+nothing. Set `width` and `height`, as in the example (16 by 16 for a
+checkbox or radio).
+</Aside>
+
+| Attribute | Type | Effect |
+| --- | --- | --- |
+| `checked` | checkbox, radio | Checked at first. After the user or code changes it, the attribute no longer applies. |
+| `name` | radio | Radios with the same `name` in the same `<form>` (or outside any form) are one group. |
+| `min`, `max`, `step` | range | 0, 100 and 1 by default. The value starts in the middle. |
+| `value` | range | The current value, as a number. |
+| `disabled` | all | Not focusable or changeable; drawn grayed. |
+
+`Element::is_checked()`, `set_checked(bool)` and
+`set_indeterminate(bool)` read and set the state; setting it from code fires
+no event. A click fires `click`, then `input` and `change`. A range fires
+`input` while dragged and `change` when released, and both on each key.
+
+## Color, date and file
+
+<Example name="el_input_other" alt="A black color swatch, a date field reading mm/dd/yyyy with a calendar icon, and a Choose File button with No file chosen" />
+
+These are drawn, but open nothing: there is no color picker or calendar,
+and the file input opens no dialog. For files, use the [file
+dialogs](/open-ui/docs/services/dialogs/) service from a button.
+
+## Styling
+
+Text inputs take any box and text style; set `box-sizing="border-box"` and
+`width="100%"` to fill a container, as in the examples. Text inputs inherit
+`font-size` and `font-family`. The checkbox, radio and range are painted
+natively, in the system accent color in a running app;
+`Element::set_native_appearance(false)` turns that painting off so you can
+draw the control with styles.
+
+## Accessibility
+
+Roles by type are in the table above. Text inputs expose their value and
+placeholder; checkboxes and radios their checked state; ranges their value,
+minimum and maximum, with actions to change it. Name inputs with
+`aria-label` or `set_accessibility_label`: a nearby `<label>` is not
+associated.
+
+## Differences from HTML
+
+| HTML | Open UI |
+| --- | --- |
+| Controls have a default size and border | Text inputs are 20 characters wide with no border; checkable and range inputs are 0×0 |
+| `value` attribute is the default value | `value` is the live value |
+| Validation, `maxlength`, `pattern`, `required` | Not implemented |
+| `email`, `number`, `search` behave differently | All are plain text |
+| Color, date and file pickers | Drawn only |
+| `type="hidden"` is invisible | Drawn as a text field: leave it out |

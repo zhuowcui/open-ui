@@ -1,0 +1,71 @@
+---
+title: Testing
+description: Test views headless, click and type like a user, and compare pixels with snapshots.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import Snippet from '../../../../components/Snippet.astro';
+
+Open UI apps can be tested without opening a window. A test mounts a view,
+finds elements by their text, clicks and types through real hit testing,
+and compares the rendered frame with an accepted snapshot.
+
+Enable the `testing` feature for tests only:
+
+```toml
+[dev-dependencies]
+openui = { git = "https://github.com/zhuowcui/open-ui", branch = "main", features = ["testing"] }
+```
+
+<Snippet name="testing" title="tests/ui.rs" />
+
+## TestApp
+
+`TestApp::new(LogicalSize::new(w, h))` makes a headless page of that size,
+and `.mount(view)` builds the view and runs its tasks until they settle.
+
+| Method | Does |
+| --- | --- |
+| `by_text(text)` | The innermost element whose trimmed text is `text`; panics if there is none. |
+| `find_text(text)` | The same, as an `Option`. |
+| `by_id(id)` | The element with that `id`. |
+| `click(&element)` | Moves the mouse to the element's center, presses and releases. |
+| `type_text(text)` | Types into the focused element, one key per character. |
+| `press(Key::Enter)`, `press_with(modifiers, key)` | A key, optionally with modifiers. |
+| `run_until_idle()` | Runs async tasks until none is ready; panics after 30 s. |
+| `render_png()` | The current frame as PNG bytes. |
+| `document()`, `headless()` | The document and the underlying `HeadlessApp`. |
+
+Every input helper waits for the app to settle before it returns, so the
+next line sees the result.
+
+## Snapshots
+
+`openui::assert_snapshot!(app, "name")` compares the frame, pixel for
+pixel, with `tests/snapshots/<name>.<os>.png`. The first time, record it:
+
+```bash
+OPENUI_UPDATE_SNAPSHOTS=1 cargo test
+```
+
+Look at the image, commit it, and from then on `cargo test` fails on any
+change and writes the new frame next to the snapshot as
+`<name>.<os>.actual.png`, so you can see what moved. Snapshots are kept per
+operating system because system fonts differ; bundle your fonts (see
+[Text and fonts](/open-ui/docs/concepts/text-and-fonts/)) to make frames
+more stable.
+
+Apps made with `openui new` already have tests like these in `tests/ui.rs`.
+
+## Rendering without a test
+
+`HeadlessApp` renders a view to an image, for previews or documentation.
+The pictures on this site are made this way:
+
+<Snippet name="headless" title="src/preview.rs" />
+
+<Aside type="caution" title="Not yet">
+- File dialogs cannot be shown or faked in a test.
+- Windows opened with `window::open` do not open headless.
+- `testing::Key` has no Page Up or Page Down.
+</Aside>

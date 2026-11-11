@@ -1,0 +1,29 @@
+---
+title: Media placeholders
+description: canvas, svg, video, audio, iframe, object and embed lay out as boxes, but nothing draws, plays or loads in them yet.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import ElementTable from '../../../components/ElementTable.astro';
+import Example from '../../../components/Example.astro';
+
+These tags are accepted so that layouts with them work, and each takes up
+space like its browser counterpart, but none of them does its job yet.
+
+<Example name="el_embedded" alt="A dark video placeholder with a play button, a time and a progress line, and an empty canvas with a dashed border" />
+
+<ElementTable tags={['canvas', 'svg', 'video', 'audio', 'iframe', 'object', 'embed']} links={false} />
+
+| Tag | What it does today |
+| --- | --- |
+| `canvas` | A transparent box. There is no drawing API. |
+| `svg` | A container for `foreignObject` children that host normal elements (`Element::create_svg_foreign_object`). SVG shapes such as `path` and `rect` are not tags. To show SVG artwork, register it as an `image/svg+xml` image on an [`<img>`](/open-ui/elements/img/), within that format's limits. |
+| `video` | With a `controls` attribute, a dark panel with video controls drawn on it; without, nothing. Nothing plays. |
+| `audio` | Draws nothing; nothing plays. |
+| `iframe`, `object`, `embed` | Empty boxes. Nothing can be loaded into them. |
+
+<Aside type="note">
+All of them are `inline-block` and take box styles, and `canvas`, `video`,
+`iframe` and `embed` clip their content to their box. They have the
+accessibility roles listed above.
+</Aside>

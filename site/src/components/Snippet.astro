@@ -1,0 +1,21 @@
+---
+// Code that cannot be drawn headless (windows, menus, dialogs, network): the
+// whole of site/showcase/src/snippets/<name>.rs, which the showcase build
+// compiles against the checked-out openui (render.ps1 also compiles its tests).
+import { Code } from '@astrojs/starlight/components';
+
+interface Props {
+  name: string;
+  title?: string;
+}
+const { name, title } = Astro.props;
+const sources = import.meta.glob<string>('../../showcase/src/snippets/*.rs', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+});
+const raw = sources[`../../showcase/src/snippets/${name}.rs`];
+if (raw === undefined) throw new Error(`no snippet ${name}.rs`);
+---
+
+<Code code={raw.trimEnd()} lang="rust" title={title} />

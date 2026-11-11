@@ -4,8 +4,9 @@ description: How Open UI draws your views, and how it is checked against a brows
 ---
 
 Open UI has its own layout and paint engine, written in Rust and drawing
-with Skia. It follows the same CSS rules a browser does, so a view styled
-with CSS looks the way it would on the web, without shipping a browser.
+with Skia. It follows the same CSS rules a browser does, so that a view
+styled with CSS looks the way it would on the web, without shipping a
+browser. Where it does not yet, the differences are listed below.
 
 ## How it is checked
 

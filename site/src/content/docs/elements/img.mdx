@@ -1,0 +1,69 @@
+---
+title: img
+description: Images from bytes you register. src loads nothing.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import ElementTable from '../../../components/ElementTable.astro';
+import Example from '../../../components/Example.astro';
+
+`<img>` shows an image. Open UI has no network loader and no file paths, so
+an image comes from bytes: register them with the document, then point the
+`<img>` at the registered image.
+
+<Example name="el_img" alt="A 240 by 150 picture of green hills and a yellow sun with rounded corners, captioned landscape.png" />
+
+<ElementTable tags={['img']} links={false} />
+
+## Showing an image
+
+1. Register the bytes:
+   `Document::register_image_resource(source, mime_type, sha256, bytes)`
+   returns an `ImageResourceId`. Inside a view, `current_document()` is the
+   document being built.
+2. Point the element at it: `Element::set_image_resource(id, Some((width,
+   height)))`, with the image's natural size in CSS pixels.
+
+`include_bytes!` puts the image in your binary, as in the example. The
+`sha256` string is the cache key for the decoded image: pass the file's
+real digest, because Open UI does not check it, and two images with the
+same key share one decode. `source` is a name for the image; it is not
+loaded.
+
+PNG, JPEG and GIF decode, and so does `image/svg+xml`, with limits: static
+shapes only, and no curves.
+
+<Aside type="caution" title="src does nothing">
+`src="photo.png"` loads nothing. An `<img>` with a `src` (or an `alt`) and
+no registered image draws the broken-image icon, as Chrome does for an
+image that failed to load.
+</Aside>
+
+## Size
+
+Always pass the image's size to `set_image_resource`: without one, the
+image lays out at 300 by 150, whatever the file's size. `object-fit` and
+`object-position` are typed styles (`set_object_fit`, `set_object_position`).
+The image is clipped to its box, so `border-radius` rounds it.
+
+## Attributes and events
+
+| Attribute | Effect |
+| --- | --- |
+| `alt` | The accessible name. |
+| `src` | Nothing, except the broken-image fallback above. |
+
+Images receive pointer events like any box.
+
+## Accessibility
+
+The role is `Image`, named by `alt`. Give decorative images
+`aria-hidden="true"`.
+
+## Differences from HTML
+
+| HTML | Open UI |
+| --- | --- |
+| `src`, `srcset` and `<picture>` load from URLs | Register bytes and call `set_image_resource` |
+| Natural size comes from the file | Pass the size; 300×150 otherwise |
+| `loading`, `decoding`, `onload` | None |

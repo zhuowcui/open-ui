@@ -1,0 +1,69 @@
+---
+title: HTTP
+description: Make HTTP requests off the UI thread, with timeouts, headers, query strings and JSON.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import Snippet from '../../../../components/Snippet.astro';
+
+`openui::http` is an HTTP client with TLS. It needs the `http` feature.
+Requests are built on the UI thread and sent with `send().await`, which
+runs the request on a background thread.
+
+<Snippet name="http" title="src/release.rs" />
+
+## Requests
+
+`http::get`, `post`, `put`, `patch` and `delete` start a request on a
+shared client. Nothing is sent until `send`.
+
+| Method | Effect |
+| --- | --- |
+| `header(name, value)` | Adds a header. |
+| `query(name, value)` | Adds a query parameter, percent-encoded. |
+| `timeout(Duration)` | Limits the whole request. |
+| `body(bytes)`, `text(string)` | Sets the body. |
+| `json(&value)` | Sends a value as JSON (any `serde::Serialize`). |
+| `send().await` | `Result<Response, http::Error>`. |
+
+## Responses
+
+**Every status code is a `Response`**, including 404 and 500. Call
+`error_for_status()` to turn 4xx and 5xx into an `Error::Status`.
+
+| Method | Returns |
+| --- | --- |
+| `status()`, `is_success()` | The status code; whether it is 2xx. |
+| `header(name)`, `headers()` | One header (case-insensitive), or all of them. |
+| `text()` | The body as UTF-8. |
+| `json::<T>()` | The body decoded into any `serde::Deserialize` type. |
+| `bytes()`, `into_bytes()`, `url()` | The raw body; the final URL after redirects. |
+
+Errors are `InvalidUrl`, `HostNotFound`, `Connect`, `Timeout`, `Tls`,
+`Protocol`, `BodyTooLarge`, `Status`, `Decode` and `Io`.
+
+## Clients
+
+For shared settings, build a `Client` and make requests from it. Clones
+share connections.
+
+| `Client::builder()` method | Default |
+| --- | --- |
+| `timeout(Duration)` | No limit |
+| `connect_timeout(Duration)` | 30 s |
+| `header(name, value)`, `user_agent(text)` | none |
+| `max_redirects(n)` | Follows redirects; `0` returns them as responses |
+| `max_body(bytes)` | 10 MiB |
+
+TLS uses rustls and the system's certificates: the Windows certificate
+store, or the Linux system bundle.
+
+<Aside type="caution" title="Not yet">
+- The whole body is read into memory: no streaming, so set `max_body`
+  for large downloads.
+- No cookies.
+- Dropping the task stops waiting for the response; there is no other
+  cancellation.
+- `send_blocking()` exists for background threads; never call it on the
+  UI thread.
+</Aside>

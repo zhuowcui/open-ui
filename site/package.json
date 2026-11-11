@@ -6,6 +6,8 @@
   "scripts": {
     "sync": "node scripts/sync-assets.mjs",
     "check-assets": "node scripts/sync-assets.mjs --check",
+    "reference": "node scripts/gen-reference.mjs",
+    "check-reference": "node scripts/gen-reference.mjs --check",
     "predev": "node scripts/sync-assets.mjs",
     "dev": "astro dev",
     "prebuild": "node scripts/sync-assets.mjs",

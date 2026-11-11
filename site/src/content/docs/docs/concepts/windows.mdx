@@ -1,0 +1,75 @@
+---
+title: Apps and windows
+description: An App declares its windows; each window shows a view in its own document.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import Snippet from '../../../../components/Snippet.astro';
+
+An Open UI program is an `App`: a native process that opens one or more
+windows and runs an event loop until the last window closes. Each window
+shows one view.
+
+<Snippet name="app_minimal" title="src/main.rs" />
+
+- `App::new(id)` starts the app. The id is a reverse-DNS name such as
+  `com.example.counter`; today it is used as the fallback window title.
+- `.name(…)` is the app's display name, and the title of any window that
+  sets none.
+- `.window(spec, view)` declares a window: a `WindowSpec` with a key and
+  options, and the function that builds its view. Declare as many as the
+  app opens at start.
+- `.run()` opens the windows and blocks until the app exits. It needs a
+  native runtime: enable the `desktop` feature (see below), or it returns
+  `Error::PlatformUnavailable`.
+
+## Each window is its own document
+
+A window has its own document, the tree of elements its view built, and
+its own reactive scope, which is disposed when the window closes. All
+windows share one reactive runtime, so a signal created in one window's
+view can drive another window.
+
+Open more windows while the app runs with `window::open`, and close, focus
+or retitle them through a `WindowHandle`. Both are described in
+[Windows](/open-ui/docs/services/windows/).
+
+## The event loop
+
+Open UI runs everything that touches the interface on one UI thread:
+building views, event handlers, effects, menu actions and `spawn_local`
+tasks. Handlers should return quickly; move long work to a
+[background task](/open-ui/docs/services/async/) and set a signal when it
+finishes.
+
+The app exits when its last window closes (turn this off with
+`.exit_on_last_window_closed(false)`), or when you call
+`openui::app::exit()`.
+
+## Cargo features
+
+| Feature | Adds |
+| --- | --- |
+| (none) | Headless rendering only: views, signals and `HeadlessApp`, no windows |
+| `desktop` | The native runtime for Windows and Linux, plus async tasks |
+| `menu` | Menu bars ([Menus](/open-ui/docs/services/menus/)) |
+| `dialog` | File dialogs ([Dialogs](/open-ui/docs/services/dialogs/)) |
+| `http` | An HTTP client ([HTTP](/open-ui/docs/services/http/)) |
+| `testing` | `TestApp` and snapshots, for dev-dependencies ([Testing](/open-ui/docs/services/testing/)) |
+
+```toml
+[dependencies]
+openui = { git = "https://github.com/zhuowcui/open-ui", branch = "main", features = ["desktop"] }
+```
+
+<Aside type="note">
+`windows` and `linux` are also features, but on their own they do not
+include async tasks. Use `desktop`, which selects the right platform when
+you build.
+</Aside>
+
+## Platforms
+
+Windows and Linux (X11 and Wayland) are supported on `main`. macOS is not
+yet. On Linux the menu bar is drawn by Open UI inside the window; on
+Windows it is the native menu bar.

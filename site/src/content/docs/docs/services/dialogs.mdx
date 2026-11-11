@@ -1,0 +1,48 @@
+---
+title: Dialogs
+description: Native file dialogs to open files, save a file and pick a folder, without blocking the app.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import Snippet from '../../../../components/Snippet.astro';
+
+`openui::dialog` shows the system's file dialogs. It needs the `dialog`
+feature. Each dialog is a builder that you finish with `pick()`, which
+returns a future: the dialog runs off the UI thread, so the app keeps
+drawing while it is open.
+
+<Snippet name="dialogs" title="src/open.rs" />
+
+## Builders
+
+| Function | Shows |
+| --- | --- |
+| `dialog::open_file()` | Choose one or more existing files. |
+| `dialog::save_file()` | Choose where to save; asks before replacing a file. |
+| `dialog::pick_folder()` | Choose a folder. |
+
+| Method | Effect |
+| --- | --- |
+| `title(text)` | The dialog's title. |
+| `directory(path)` | The folder it starts in. |
+| `file_name(name)` | The suggested file name, when saving. |
+| `filter(name, &["txt", "md"])` | A file type choice. The first is selected first; when saving, its first extension is added to a bare name. An empty list means all files. Folder dialogs ignore filters. |
+| `parent(&WindowHandle)` | The window that owns it. Without one, the window current when the builder was made. |
+| `pick()` | `Result<Option<PathBuf>>`: `None` when cancelled. |
+| `pick_many()` | `Result<Vec<PathBuf>>`: empty when cancelled. |
+
+Await the result inside `spawn_local`, as above, and read the file with
+`spawn_blocking` so the UI thread does not wait on the disk. See
+[Async tasks](/open-ui/docs/services/async/).
+
+## Platforms
+
+On **Windows**, the system's common file dialog. On **Linux**, the desktop
+portal's file chooser, or `zenity` when no portal answers; on Wayland the
+chooser opens without a parent window.
+
+<Aside type="caution" title="Not yet">
+- There are no message, alert or confirm dialogs. Build one as a window
+  with `window::open`.
+- Tests cannot show or fake a file dialog.
+</Aside>

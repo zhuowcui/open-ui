@@ -1,0 +1,2344 @@
+{
+  "groups": [
+    "Layout and box model",
+    "Flexbox",
+    "Box alignment (flex and grid)",
+    "Grid",
+    "Positioning",
+    "Tables",
+    "Multi-column and fragmentation",
+    "Typography",
+    "Color and background",
+    "Borders, outline and radius",
+    "Effects (opacity, shadow, filter, transform, clip)",
+    "Overflow and scrolling",
+    "Lists and generated content",
+    "Interaction",
+    "Shapes",
+    "Other"
+  ],
+  "properties": [
+    {
+      "property": "display",
+      "group": "Layout and box model",
+      "setter": "set_display(Display)",
+      "literal": "`none`, `inline`, `block`, `flex`, `grid`, `inline-block`, `inline-flex`, `inline-grid`, `flow-root`, `table`, `list-item`, `contents`, `inline-table`, `table-row-group`, `table-header-group`, `table-footer-group`, \u2026 (+5)",
+      "expr": "yes, `Display`",
+      "inherited": false,
+      "initial": "inline"
+    },
+    {
+      "property": "width",
+      "group": "Layout and box model",
+      "setter": "set_width(LengthValue)",
+      "literal": "**L**",
+      "expr": "yes, `LengthValue`",
+      "inherited": false,
+      "initial": "auto"
+    },
+    {
+      "property": "height",
+      "group": "Layout and box model",
+      "setter": "set_height(LengthValue)",
+      "literal": "**L**",
+      "expr": "yes, `LengthValue`",
+      "inherited": false,
+      "initial": "auto"
+    },
+    {
+      "property": "min-width",
+      "group": "Layout and box model",
+      "setter": "set_min_width(LengthValue)",
+      "literal": "**L**",
+      "expr": "yes, `LengthValue`",
+      "inherited": false,
+      "initial": "auto"
+    },
+    {
+      "property": "min-height",
+      "group": "Layout and box model",
+      "setter": "set_min_height(LengthValue)",
+      "literal": "**L**",
+      "expr": "yes, `LengthValue`",
+      "inherited": false,
+      "initial": "auto"
+    },
+    {
+      "property": "max-width",
+      "group": "Layout and box model",
+      "setter": "set_max_width(LengthValue)",
+      "literal": "**L**",
+      "expr": "yes, `LengthValue`",
+      "inherited": false,
+      "initial": "none"
+    },
+    {
+      "property": "max-height",
+      "group": "Layout and box model",
+      "setter": "set_max_height(LengthValue)",
+      "literal": "**L**",
+      "expr": "yes, `LengthValue`",
+      "inherited": false,
+      "initial": "none"
+    },
+    {
+      "property": "margin",
+      "group": "Layout and box model",
+      "setter": "set_margin(Edges<LengthValue>)",
+      "literal": "**L**; `10px 20px`, `1px 2px 3px 4px`, `10px 10px`, `0 0`, `50% 50%`",
+      "expr": "yes, `Edges<LengthValue>`",
+      "inherited": false,
+      "initial": "0px"
+    },
+    {
+      "property": "margin-top",
+      "group": "Layout and box model",
+      "setter": "set_margin_top(LengthValue)",
+      "literal": "**L**",
+      "expr": "yes, `LengthValue`",
+      "inherited": false,
+      "initial": "0px"
+    },
+    {
+      "property": "margin-right",
+      "group": "Layout and box model",
+      "setter": "set_margin_right(LengthValue)",
+      "literal": "**L**",
+      "expr": "yes, `LengthValue`",
+      "inherited": false,
+      "initial": "0px"
+    },
+    {
+      "property": "margin-bottom",
+      "group": "Layout and box model",
+      "setter": "set_margin_bottom(LengthValue)",
+      "literal": "**L**",
+      "expr": "yes, `LengthValue`",
+      "inherited": false,
+      "initial": "0px"
+    },
+    {
+      "property": "margin-left",
+      "group": "Layout and box model",
+      "setter": "set_margin_left(LengthValue)",
+      "literal": "**L**",
+      "expr": "yes, `LengthValue`",
+      "inherited": false,
+      "initial": "0px"
+    },
+    {
+      "property": "padding",
+      "group": "Layout and box model",
+      "setter": "set_padding(Edges<LengthValue>)",
+      "literal": "**L**; `10px 20px`, `1px 2px 3px 4px`, `10px 10px`, `0 0`, `50% 50%`",
+      "expr": "yes, `Edges<LengthValue>`",
+      "inherited": false,
+      "initial": "0px"
+    },
+    {
+      "property": "padding-top",
+      "group": "Layout and box model",
+      "setter": "set_padding_top(LengthValue)",
+      "literal": "**L**",
+      "expr": "yes, `LengthValue`",
+      "inherited": false,
+      "initial": "0px"
+    },
+    {
+      "property": "padding-right",
+      "group": "Layout and box model",
+      "setter": "set_padding_right(LengthValue)",
+      "literal": "**L**",
+      "expr": "yes, `LengthValue`",
+      "inherited": false,
+      "initial": "0px"
+    },
+    {
+      "property": "padding-bottom",
+      "group": "Layout and box model",
+      "setter": "set_padding_bottom(LengthValue)",
+      "literal": "**L**",
+      "expr": "yes, `LengthValue`",
+      "inherited": false,
+      "initial": "0px"
+    },
+    {
+      "property": "padding-left",
+      "group": "Layout and box model",
+      "setter": "set_padding_left(LengthValue)",
+      "literal": "**L**",
+      "expr": "yes, `LengthValue`",
+      "inherited": false,
+      "initial": "0px"
+    },
+    {
+      "property": "vertical-align",
+      "group": "Layout and box model",
+      "setter": "set_vertical_align(VerticalAlign)",
+      "literal": "**L** except `1.5em`, `2rem`, `10vw`, `10vh`, `10vmin`, `2ch`, `1ex`, `1lh`; `baseline`, `sub`, `super`, `text-top`, `text-bottom`, `middle`, `top`, `bottom`",
+      "expr": "yes, `VerticalAlign`",
+      "inherited": false,
+      "initial": "baseline"
+    },
+    {
+      "property": "aspect-ratio",
+      "group": "Layout and box model",
+      "setter": "set_aspect_ratio(Option<AspectRatio>)",
+      "literal": null,
+      "expr": "no: `view!` cannot name `Option<AspectRatio>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "box-decoration-break",
+      "group": "Layout and box model",
+      "setter": "set_box_decoration_break(BoxDecorationBreak)",
+      "literal": "`slice`, `clone`",
+      "expr": "no: `BoxDecorationBreak` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "box-sizing",
+      "group": "Layout and box model",
+      "setter": "set_box_sizing(BoxSizing)",
+      "literal": "`border-box`, `content-box`",
+      "expr": "no: `BoxSizing` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "clear",
+      "group": "Layout and box model",
+      "setter": "set_clear(Clear)",
+      "literal": null,
+      "expr": "no: `Clear` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "contain",
+      "group": "Layout and box model",
+      "setter": "set_contain(Containment)",
+      "literal": null,
+      "expr": "no: `Containment` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "contain-intrinsic-height",
+      "group": "Layout and box model",
+      "setter": "set_contain_intrinsic_height(ContainIntrinsicLength)",
+      "literal": null,
+      "expr": "no: `ContainIntrinsicLength` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "contain-intrinsic-width",
+      "group": "Layout and box model",
+      "setter": "set_contain_intrinsic_width(ContainIntrinsicLength)",
+      "literal": null,
+      "expr": "no: `ContainIntrinsicLength` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "container-type",
+      "group": "Layout and box model",
+      "setter": "set_container_type(ContainerType)",
+      "literal": null,
+      "expr": "no: `ContainerType` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "float",
+      "group": "Layout and box model",
+      "setter": "set_float(Float)",
+      "literal": null,
+      "expr": "no: `Float` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "margin-trim",
+      "group": "Layout and box model",
+      "setter": "set_margin_trim(MarginTrim)",
+      "literal": null,
+      "expr": "no: `MarginTrim` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "object-fit",
+      "group": "Layout and box model",
+      "setter": "set_object_fit(ObjectFit)",
+      "literal": null,
+      "expr": "no: `ObjectFit` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "object-position",
+      "group": "Layout and box model",
+      "setter": "set_object_position(ObjectPosition)",
+      "literal": null,
+      "expr": "no: `ObjectPosition` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "visibility",
+      "group": "Layout and box model",
+      "setter": "set_visibility(Visibility)",
+      "literal": "`hidden`, `visible`, `collapse`",
+      "expr": "no: `Visibility` has no `Into<StyleValue>`",
+      "inherited": true,
+      "initial": null
+    },
+    {
+      "property": "container-name",
+      "group": "Layout and box model",
+      "setter": "set_container_name(Vec<String>)",
+      "literal": null,
+      "expr": "no: `view!` cannot name `Vec<String>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "content-visibility",
+      "group": "Layout and box model",
+      "setter": "set_content_visibility(ContentVisibility)",
+      "literal": null,
+      "expr": "no: `ContentVisibility` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "flex-direction",
+      "group": "Flexbox",
+      "setter": "set_flex_direction(FlexDirection)",
+      "literal": "`row`, `row-reverse`, `column`, `column-reverse`",
+      "expr": "yes, `FlexDirection`",
+      "inherited": false,
+      "initial": "row"
+    },
+    {
+      "property": "flex-wrap",
+      "group": "Flexbox",
+      "setter": "set_flex_wrap(FlexWrap)",
+      "literal": "`nowrap`, `wrap`, `wrap-reverse`",
+      "expr": "yes, `FlexWrap`",
+      "inherited": false,
+      "initial": "nowrap"
+    },
+    {
+      "property": "flex-grow",
+      "group": "Flexbox",
+      "setter": "set_flex_grow(f32)",
+      "literal": "a bare number",
+      "expr": "yes, `f32`",
+      "inherited": false,
+      "initial": "0"
+    },
+    {
+      "property": "flex-shrink",
+      "group": "Flexbox",
+      "setter": "set_flex_shrink(f32)",
+      "literal": "a bare number",
+      "expr": "yes, `f32`",
+      "inherited": false,
+      "initial": "1"
+    },
+    {
+      "property": "flex-basis",
+      "group": "Flexbox",
+      "setter": "set_flex_basis(LengthValue)",
+      "literal": "**L**",
+      "expr": "yes, `LengthValue`",
+      "inherited": false,
+      "initial": "auto"
+    },
+    {
+      "property": "order",
+      "group": "Flexbox",
+      "setter": "set_order(i32)",
+      "literal": "an integer",
+      "expr": "yes, `i32`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "align-items",
+      "group": "Box alignment (flex and grid)",
+      "setter": "set_align_items(ItemAlignment)",
+      "literal": "`auto`, `normal`, `center`, `start`, `safe center`, `unsafe end`, `first baseline`, `last baseline`, `stretch`, `baseline`, `end`, `self-start`, `self-end`, `flex-start`, `flex-end`, `left`, \u2026 (+2)",
+      "expr": "yes, `ItemAlignment`",
+      "inherited": false,
+      "initial": "normal"
+    },
+    {
+      "property": "justify-content",
+      "group": "Box alignment (flex and grid)",
+      "setter": "set_justify_content(ContentAlignment)",
+      "literal": "`normal`, `center`, `start`, `space-between`, `safe center`, `unsafe end`, `first baseline`, `last baseline`, `end`, `flex-start`, `flex-end`, `left`, `right`, `baseline`, `space-around`, `space-evenly`, \u2026 (+1)",
+      "expr": "yes, `ContentAlignment`",
+      "inherited": false,
+      "initial": "normal"
+    },
+    {
+      "property": "gap",
+      "group": "Box alignment (flex and grid)",
+      "setter": "set_gap(Gap)",
+      "literal": "**L**; `10px 20px`, `10px 10px`, `0 0`, `50% 50%`",
+      "expr": "yes, `Gap`",
+      "inherited": false,
+      "initial": "normal"
+    },
+    {
+      "property": "row-gap",
+      "group": "Box alignment (flex and grid)",
+      "setter": "set_row_gap(LengthValue)",
+      "literal": "**L**",
+      "expr": "yes, `LengthValue`",
+      "inherited": false,
+      "initial": "normal"
+    },
+    {
+      "property": "column-gap",
+      "group": "Box alignment (flex and grid)",
+      "setter": "set_column_gap(LengthValue)",
+      "literal": "**L**",
+      "expr": "yes, `LengthValue`",
+      "inherited": false,
+      "initial": "normal"
+    },
+    {
+      "property": "align-content",
+      "group": "Box alignment (flex and grid)",
+      "setter": "set_align_content(ContentAlignment)",
+      "literal": "`normal`, `center`, `start`, `space-between`, `safe center`, `unsafe end`, `first baseline`, `last baseline`, `end`, `flex-start`, `flex-end`, `left`, `right`, `baseline`, `space-around`, `space-evenly`, \u2026 (+1)",
+      "expr": "yes, `ContentAlignment`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "align-self",
+      "group": "Box alignment (flex and grid)",
+      "setter": "set_align_self(ItemAlignment)",
+      "literal": "`auto`, `normal`, `center`, `start`, `safe center`, `unsafe end`, `first baseline`, `last baseline`, `stretch`, `baseline`, `end`, `self-start`, `self-end`, `flex-start`, `flex-end`, `left`, \u2026 (+2)",
+      "expr": "yes, `ItemAlignment`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "justify-items",
+      "group": "Box alignment (flex and grid)",
+      "setter": "set_justify_items(ItemAlignment)",
+      "literal": "`auto`, `normal`, `center`, `start`, `safe center`, `unsafe end`, `first baseline`, `last baseline`, `stretch`, `baseline`, `end`, `self-start`, `self-end`, `flex-start`, `flex-end`, `left`, \u2026 (+2)",
+      "expr": "yes, `ItemAlignment`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "justify-self",
+      "group": "Box alignment (flex and grid)",
+      "setter": "set_justify_self(ItemAlignment)",
+      "literal": "`auto`, `normal`, `center`, `start`, `safe center`, `unsafe end`, `first baseline`, `last baseline`, `stretch`, `baseline`, `end`, `self-start`, `self-end`, `flex-start`, `flex-end`, `left`, \u2026 (+2)",
+      "expr": "yes, `ItemAlignment`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "grid-auto-columns",
+      "group": "Grid",
+      "setter": "set_grid_auto_columns(Vec<GridTrackSize>)",
+      "literal": "space-separated tracks: px, %, `<n>fr`, `auto`, `min-content`, `max-content`, `minmax(a, b)`, `fit-content(...)`; no `repeat()`, named lines or `subgrid`",
+      "expr": "no: `view!` cannot name `Vec<GridTrackSize>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "grid-auto-flow",
+      "group": "Grid",
+      "setter": "set_grid_auto_flow(GridAutoFlow)",
+      "literal": null,
+      "expr": "no: `GridAutoFlow` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "grid-auto-rows",
+      "group": "Grid",
+      "setter": "set_grid_auto_rows(Vec<GridTrackSize>)",
+      "literal": "space-separated tracks: px, %, `<n>fr`, `auto`, `min-content`, `max-content`, `minmax(a, b)`, `fit-content(...)`; no `repeat()`, named lines or `subgrid`",
+      "expr": "no: `view!` cannot name `Vec<GridTrackSize>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "grid-column",
+      "group": "Grid",
+      "setter": "set_grid_column(GridPlacement)",
+      "literal": null,
+      "expr": "no: `GridPlacement` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "grid-row",
+      "group": "Grid",
+      "setter": "set_grid_row(GridPlacement)",
+      "literal": null,
+      "expr": "no: `GridPlacement` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "grid-template-areas",
+      "group": "Grid",
+      "setter": "set_grid_template_areas(GridTemplateAreas)",
+      "literal": null,
+      "expr": "no: `GridTemplateAreas` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "grid-template-columns",
+      "group": "Grid",
+      "setter": "set_grid_template_columns(GridTrackList)",
+      "literal": "space-separated tracks: px, %, `<n>fr`, `auto`, `min-content`, `max-content`, `minmax(a, b)`, `fit-content(...)`, or `none`; no `repeat()`, named lines or `subgrid`",
+      "expr": "no: `GridTrackList` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "grid-template-rows",
+      "group": "Grid",
+      "setter": "set_grid_template_rows(GridTrackList)",
+      "literal": "space-separated tracks: px, %, `<n>fr`, `auto`, `min-content`, `max-content`, `minmax(a, b)`, `fit-content(...)`, or `none`; no `repeat()`, named lines or `subgrid`",
+      "expr": "no: `GridTrackList` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "position",
+      "group": "Positioning",
+      "setter": "set_position(Position)",
+      "literal": "`static`, `relative`, `absolute`, `fixed`, `sticky`",
+      "expr": "yes, `Position`",
+      "inherited": false,
+      "initial": "static"
+    },
+    {
+      "property": "z-index",
+      "group": "Positioning",
+      "setter": "set_z_index(i32)",
+      "literal": "an integer (`auto` not accepted)",
+      "expr": "yes, `i32`",
+      "inherited": false,
+      "initial": "auto"
+    },
+    {
+      "property": "bottom",
+      "group": "Positioning",
+      "setter": "set_bottom(Length)",
+      "literal": "**L**",
+      "expr": "no: `Length` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "left",
+      "group": "Positioning",
+      "setter": "set_left(Length)",
+      "literal": "**L**",
+      "expr": "no: `Length` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "position-anchor",
+      "group": "Positioning",
+      "setter": "set_position_anchor(Option<String>)",
+      "literal": null,
+      "expr": "no: `view!` cannot name `Option<String>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "position-area",
+      "group": "Positioning",
+      "setter": "set_position_area(PositionArea)",
+      "literal": null,
+      "expr": "no: `PositionArea` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "right",
+      "group": "Positioning",
+      "setter": "set_right(Length)",
+      "literal": "**L**",
+      "expr": "no: `Length` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "top",
+      "group": "Positioning",
+      "setter": "set_top(Length)",
+      "literal": "**L**",
+      "expr": "no: `Length` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "anchor-name",
+      "group": "Positioning",
+      "setter": "set_anchor_name(Option<String>)",
+      "literal": null,
+      "expr": "no: `view!` cannot name `Option<String>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "border-collapse",
+      "group": "Tables",
+      "setter": "set_border_collapse(BorderCollapse)",
+      "literal": "`separate`, `collapse`",
+      "expr": "no: `BorderCollapse` has no `Into<StyleValue>`",
+      "inherited": true,
+      "initial": null
+    },
+    {
+      "property": "border-spacing",
+      "group": "Tables",
+      "setter": "set_border_spacing((Length, Length))",
+      "literal": "one or two non-negative px lengths",
+      "expr": "no: `view!` cannot name `(Length, Length)`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "caption-side",
+      "group": "Tables",
+      "setter": "set_caption_side(CaptionSide)",
+      "literal": null,
+      "expr": "no: `CaptionSide` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "table-layout",
+      "group": "Tables",
+      "setter": "set_table_layout(TableLayout)",
+      "literal": null,
+      "expr": "no: `TableLayout` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "empty-cells",
+      "group": "Tables",
+      "setter": "set_empty_cells(EmptyCells)",
+      "literal": null,
+      "expr": "no: `EmptyCells` has no `Into<StyleValue>`",
+      "inherited": true,
+      "initial": null
+    },
+    {
+      "property": "break-after",
+      "group": "Multi-column and fragmentation",
+      "setter": "set_break_after(BreakValue)",
+      "literal": "`auto`, `avoid`, `avoid-page`, `avoid-column`, `page`, `column`, `left`, `right`, `always`",
+      "expr": "no: `BreakValue` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "break-before",
+      "group": "Multi-column and fragmentation",
+      "setter": "set_break_before(BreakValue)",
+      "literal": "`auto`, `avoid`, `avoid-page`, `avoid-column`, `page`, `column`, `left`, `right`, `always`",
+      "expr": "no: `BreakValue` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "break-inside",
+      "group": "Multi-column and fragmentation",
+      "setter": "set_break_inside(BreakInside)",
+      "literal": "`auto`, `avoid`, `avoid-page`, `avoid-column`",
+      "expr": "no: `BreakInside` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "column-count",
+      "group": "Multi-column and fragmentation",
+      "setter": "set_column_count(Option<u32>)",
+      "literal": "`auto` or a positive integer",
+      "expr": "no: `view!` cannot name `Option<u32>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "column-fill",
+      "group": "Multi-column and fragmentation",
+      "setter": "set_column_fill(ColumnFill)",
+      "literal": "`auto`, `balance`, `balance-all`",
+      "expr": "no: `ColumnFill` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "column-height",
+      "group": "Multi-column and fragmentation",
+      "setter": "set_column_height(Option<Length>)",
+      "literal": "**L**",
+      "expr": "no: `view!` cannot name `Option<Length>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "column-rule-color",
+      "group": "Multi-column and fragmentation",
+      "setter": "set_column_rule_color(StyleColor)",
+      "literal": "**C**",
+      "expr": "yes, `StyleColor`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "column-rule-style",
+      "group": "Multi-column and fragmentation",
+      "setter": "set_column_rule_style(BorderStyle)",
+      "literal": "`none`, `hidden`, `solid`, `dotted`, `dashed`, `double`, `groove`, `ridge`, `inset`, `outset`",
+      "expr": "no: `BorderStyle` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "column-rule-width",
+      "group": "Multi-column and fragmentation",
+      "setter": "set_column_rule_width(i32)",
+      "literal": "a bare integer in px (`2`, not `2px`)",
+      "expr": "yes, `i32`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "column-span",
+      "group": "Multi-column and fragmentation",
+      "setter": "set_column_span(ColumnSpan)",
+      "literal": "`none`, `all`",
+      "expr": "no: `ColumnSpan` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "column-width",
+      "group": "Multi-column and fragmentation",
+      "setter": "set_column_width(Option<Length>)",
+      "literal": "**L**",
+      "expr": "no: `view!` cannot name `Option<Length>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "column-wrap",
+      "group": "Multi-column and fragmentation",
+      "setter": "set_column_wrap(ColumnWrap)",
+      "literal": "`auto`, `wrap`, `nowrap`",
+      "expr": "no: `ColumnWrap` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "orphans",
+      "group": "Multi-column and fragmentation",
+      "setter": "set_orphans(u32)",
+      "literal": "a non-negative integer",
+      "expr": "no: `u32` has no `Into<StyleValue>`",
+      "inherited": true,
+      "initial": null
+    },
+    {
+      "property": "widows",
+      "group": "Multi-column and fragmentation",
+      "setter": "set_widows(u32)",
+      "literal": "a non-negative integer",
+      "expr": "no: `u32` has no `Into<StyleValue>`",
+      "inherited": true,
+      "initial": null
+    },
+    {
+      "property": "color",
+      "group": "Typography",
+      "setter": "set_color(Color)",
+      "literal": "**C**",
+      "expr": "yes, `Color`",
+      "inherited": true,
+      "initial": "black"
+    },
+    {
+      "property": "font-family",
+      "group": "Typography",
+      "setter": "set_font_family(FontFamilyList)",
+      "literal": "comma list; generic keywords (`serif`, `sans-serif`, `monospace`, `cursive`, `fantasy`, `system-ui`, `math`, `emoji`, `fangsong`, `ui-serif`, `ui-sans-serif`, `ui-monospace`, `ui-rounded`); any other item is a family name (quotes stripped, not otherwise validated)",
+      "expr": "yes, `FontFamilyList`",
+      "inherited": true,
+      "initial": "sans-serif"
+    },
+    {
+      "property": "font-size",
+      "group": "Typography",
+      "setter": "set_font_size(LengthValue)",
+      "literal": "**L**",
+      "expr": "yes, `LengthValue`",
+      "inherited": true,
+      "initial": "16px"
+    },
+    {
+      "property": "font-weight",
+      "group": "Typography",
+      "setter": "set_font_weight(FontWeight)",
+      "literal": "`normal`, `bold` or a number 1\u20131000 (no `bolder`/`lighter`)",
+      "expr": "yes, `FontWeight`",
+      "inherited": true,
+      "initial": "400"
+    },
+    {
+      "property": "direction",
+      "group": "Typography",
+      "setter": "set_direction(Direction)",
+      "literal": "`ltr`, `rtl`",
+      "expr": "yes, `Direction`",
+      "inherited": true,
+      "initial": "ltr"
+    },
+    {
+      "property": "font-kerning",
+      "group": "Typography",
+      "setter": "set_font_kerning(FontKerning)",
+      "literal": "`auto`, `none`, `normal`",
+      "expr": "yes, `FontKerning`",
+      "inherited": true,
+      "initial": "auto"
+    },
+    {
+      "property": "font-optical-sizing",
+      "group": "Typography",
+      "setter": "set_font_optical_sizing(FontOpticalSizing)",
+      "literal": "`auto`, `none`",
+      "expr": "yes, `FontOpticalSizing`",
+      "inherited": true,
+      "initial": "auto"
+    },
+    {
+      "property": "font-palette",
+      "group": "Typography",
+      "setter": "set_font_palette(FontPalette)",
+      "literal": "`normal`, `light`, `dark` or a `--name` registered with `Document::register_font_palette_values`",
+      "expr": "yes, `FontPalette`",
+      "inherited": true,
+      "initial": "normal"
+    },
+    {
+      "property": "font-size-adjust",
+      "group": "Typography",
+      "setter": "set_font_size_adjust(FontSizeAdjust)",
+      "literal": "`none`, `from-font`, `<number>` or `<ex-height\\|cap-height\\|ch-width\\|ic-width\\|ic-height> <number>`",
+      "expr": "yes, `FontSizeAdjust`",
+      "inherited": true,
+      "initial": "none"
+    },
+    {
+      "property": "font-stretch",
+      "group": "Typography",
+      "setter": "set_font_stretch(FontStretch)",
+      "literal": "keyword (`ultra-condensed` \u2026 `ultra-expanded`) or `<percent>`",
+      "expr": "yes, `FontStretch`",
+      "inherited": true,
+      "initial": "100%"
+    },
+    {
+      "property": "font-style",
+      "group": "Typography",
+      "setter": "set_font_style(FontStyleEnum)",
+      "literal": "`normal`, `italic`, `oblique`, `oblique <n>deg`",
+      "expr": "yes, `FontStyleEnum`",
+      "inherited": true,
+      "initial": "normal"
+    },
+    {
+      "property": "font-variant-ligatures",
+      "group": "Typography",
+      "setter": "set_font_variant_ligatures(FontVariantLigatures)",
+      "literal": "`none`, `normal`, `common-ligatures`, `no-common-ligatures`, `discretionary-ligatures`, `no-discretionary-ligatures`, `historical-ligatures`, `no-historical-ligatures`, `contextual`, `no-contextual`",
+      "expr": "yes, `FontVariantLigatures`",
+      "inherited": true,
+      "initial": "normal"
+    },
+    {
+      "property": "font-variant-caps",
+      "group": "Typography",
+      "setter": "set_font_variant_caps(FontVariantCaps)",
+      "literal": "`normal`, `small-caps`, `all-small-caps`, `petite-caps`, `all-petite-caps`, `unicase`, `titling-caps`",
+      "expr": "yes, `FontVariantCaps`",
+      "inherited": true,
+      "initial": "normal"
+    },
+    {
+      "property": "font-variant-east-asian",
+      "group": "Typography",
+      "setter": "set_font_variant_east_asian(FontVariantEastAsian)",
+      "literal": "`normal`, `jis78`, `jis83`, `jis90`, `jis04`, `simplified`, `traditional`, `full-width`, `proportional-width`, `ruby`",
+      "expr": "yes, `FontVariantEastAsian`",
+      "inherited": true,
+      "initial": "normal"
+    },
+    {
+      "property": "font-variant-numeric",
+      "group": "Typography",
+      "setter": "set_font_variant_numeric(FontVariantNumeric)",
+      "literal": "`normal`, `lining-nums`, `oldstyle-nums`, `proportional-nums`, `tabular-nums`, `diagonal-fractions`, `stacked-fractions`, `ordinal`, `slashed-zero`",
+      "expr": "yes, `FontVariantNumeric`",
+      "inherited": true,
+      "initial": "normal"
+    },
+    {
+      "property": "font-variant-alternates",
+      "group": "Typography",
+      "setter": "set_font_variant_alternates(FontVariantAlternates)",
+      "literal": "`normal`, `historical-forms`",
+      "expr": "yes, `FontVariantAlternates`",
+      "inherited": true,
+      "initial": "normal"
+    },
+    {
+      "property": "font-variant-position",
+      "group": "Typography",
+      "setter": "set_font_variant_position(FontVariantPosition)",
+      "literal": "`normal`, `sub`, `super`",
+      "expr": "yes, `FontVariantPosition`",
+      "inherited": true,
+      "initial": "normal"
+    },
+    {
+      "property": "font-variant-emoji",
+      "group": "Typography",
+      "setter": "set_font_variant_emoji(FontVariantEmoji)",
+      "literal": "`normal`, `text`, `emoji`, `unicode`",
+      "expr": "yes, `FontVariantEmoji`",
+      "inherited": true,
+      "initial": "normal"
+    },
+    {
+      "property": "font-synthesis-weight",
+      "group": "Typography",
+      "setter": "set_font_synthesis_weight(FontSynthesis)",
+      "literal": "`auto`, `none`",
+      "expr": "yes, `FontSynthesis`",
+      "inherited": true,
+      "initial": "auto"
+    },
+    {
+      "property": "font-synthesis-style",
+      "group": "Typography",
+      "setter": "set_font_synthesis_style(FontSynthesis)",
+      "literal": "`auto`, `none`",
+      "expr": "yes, `FontSynthesis`",
+      "inherited": true,
+      "initial": "auto"
+    },
+    {
+      "property": "font-synthesis-small-caps",
+      "group": "Typography",
+      "setter": "set_font_synthesis_small_caps(FontSynthesis)",
+      "literal": "`auto`, `none`",
+      "expr": "yes, `FontSynthesis`",
+      "inherited": true,
+      "initial": "auto"
+    },
+    {
+      "property": "font-synthesis-position",
+      "group": "Typography",
+      "setter": "set_font_synthesis_position(FontSynthesis)",
+      "literal": "`auto`, `none`",
+      "expr": "yes, `FontSynthesis`",
+      "inherited": true,
+      "initial": "auto"
+    },
+    {
+      "property": "font-feature-settings",
+      "group": "Typography",
+      "setter": "set_font_feature_settings(OpenTypeFeatureList)",
+      "literal": "`normal` or comma list of `<4-char tag> [on\\|off\\|<integer>]`, e.g. `\"tnum\"`, `\"liga\" 0`; any 4 printable ASCII characters count as a tag",
+      "expr": "yes, `OpenTypeFeatureList`",
+      "inherited": true,
+      "initial": "normal"
+    },
+    {
+      "property": "font-variation-settings",
+      "group": "Typography",
+      "setter": "set_font_variation_settings(FontVariationList)",
+      "literal": "`normal` or comma list of `<4-char tag> <number>`, e.g. `\"wght\" 600`",
+      "expr": "yes, `FontVariationList`",
+      "inherited": true,
+      "initial": "normal"
+    },
+    {
+      "property": "font-language-override",
+      "group": "Typography",
+      "setter": "set_font_language_override(FontLanguageOverride)",
+      "literal": "`normal` or a 4-character tag",
+      "expr": "yes, `FontLanguageOverride`",
+      "inherited": true,
+      "initial": "normal"
+    },
+    {
+      "property": "line-height",
+      "group": "Typography",
+      "setter": "set_line_height(LineHeight)",
+      "literal": "`normal`, a number, px, %, or em/rem/vw/vh/ch/ex/lh",
+      "expr": "yes, `LineHeight`",
+      "inherited": true,
+      "initial": "normal"
+    },
+    {
+      "property": "letter-spacing",
+      "group": "Typography",
+      "setter": "set_letter_spacing(f32)",
+      "literal": "`normal` or a px length",
+      "expr": "yes, `f32`",
+      "inherited": true,
+      "initial": "normal"
+    },
+    {
+      "property": "word-spacing",
+      "group": "Typography",
+      "setter": "set_word_spacing(f32)",
+      "literal": "`normal` or a px length",
+      "expr": "yes, `f32`",
+      "inherited": true,
+      "initial": "normal"
+    },
+    {
+      "property": "text-indent",
+      "group": "Typography",
+      "setter": "set_text_indent(LengthValue)",
+      "literal": "**L**",
+      "expr": "yes, `LengthValue`",
+      "inherited": true,
+      "initial": "0px"
+    },
+    {
+      "property": "text-align",
+      "group": "Typography",
+      "setter": "set_text_align(TextAlign)",
+      "literal": "`center`, `start`, `left`, `right`, `justify`, `match-parent`, `end`",
+      "expr": "yes, `TextAlign`",
+      "inherited": true,
+      "initial": "start"
+    },
+    {
+      "property": "text-align-last",
+      "group": "Typography",
+      "setter": "set_text_align_last(TextAlignLast)",
+      "literal": "`auto`, `center`, `start`, `match-parent`, `end`, `left`, `right`, `justify`",
+      "expr": "yes, `TextAlignLast`",
+      "inherited": true,
+      "initial": "auto"
+    },
+    {
+      "property": "text-justify",
+      "group": "Typography",
+      "setter": "set_text_justify(TextJustify)",
+      "literal": "`auto`, `none`, `inter-word`, `inter-character`",
+      "expr": "yes, `TextJustify`",
+      "inherited": true,
+      "initial": "auto"
+    },
+    {
+      "property": "word-break",
+      "group": "Typography",
+      "setter": "set_word_break(WordBreak)",
+      "literal": "`normal`, `break-all`, `keep-all`, `break-word`, `auto-phrase`",
+      "expr": "yes, `WordBreak`",
+      "inherited": true,
+      "initial": "normal"
+    },
+    {
+      "property": "overflow-wrap",
+      "group": "Typography",
+      "setter": "set_overflow_wrap(OverflowWrap)",
+      "literal": "`normal`, `break-word`, `anywhere`",
+      "expr": "yes, `OverflowWrap`",
+      "inherited": true,
+      "initial": "normal"
+    },
+    {
+      "property": "word-wrap",
+      "group": "Typography",
+      "setter": "set_word_wrap(OverflowWrap)",
+      "literal": "`normal`, `break-word`, `anywhere`",
+      "expr": "yes, `OverflowWrap`",
+      "inherited": true,
+      "initial": "normal"
+    },
+    {
+      "property": "line-break",
+      "group": "Typography",
+      "setter": "set_line_break(LineBreak)",
+      "literal": "`auto`, `normal`, `loose`, `strict`, `anywhere`, `after-white-space`",
+      "expr": "yes, `LineBreak`",
+      "inherited": true,
+      "initial": "auto"
+    },
+    {
+      "property": "hyphens",
+      "group": "Typography",
+      "setter": "set_hyphens(Hyphens)",
+      "literal": "`auto`, `none`, `manual`",
+      "expr": "yes, `Hyphens`",
+      "inherited": true,
+      "initial": "manual"
+    },
+    {
+      "property": "hyphenate-limit-chars",
+      "group": "Typography",
+      "setter": "set_hyphenate_limit_chars(HyphenationLimits)",
+      "literal": "`auto` or 1\u20133 integers/`auto`",
+      "expr": "yes, `HyphenationLimits`",
+      "inherited": true,
+      "initial": "auto"
+    },
+    {
+      "property": "hyphenate-character",
+      "group": "Typography",
+      "setter": "set_hyphenate_character(HyphenateCharacter)",
+      "literal": "`auto` or a string (quotes stripped)",
+      "expr": "yes, `HyphenateCharacter`",
+      "inherited": true,
+      "initial": "auto"
+    },
+    {
+      "property": "white-space-collapse",
+      "group": "Typography",
+      "setter": "set_white_space_collapse(WhiteSpaceCollapse)",
+      "literal": "`collapse`, `preserve`, `preserve-breaks`, `break-spaces`",
+      "expr": "yes, `WhiteSpaceCollapse`",
+      "inherited": true,
+      "initial": "collapse"
+    },
+    {
+      "property": "text-wrap-mode",
+      "group": "Typography",
+      "setter": "set_text_wrap_mode(TextWrapMode)",
+      "literal": "`wrap`, `nowrap`",
+      "expr": "yes, `TextWrapMode`",
+      "inherited": true,
+      "initial": "wrap"
+    },
+    {
+      "property": "text-wrap-style",
+      "group": "Typography",
+      "setter": "set_text_wrap_style(TextWrapStyle)",
+      "literal": "`auto`, `balance`, `pretty`, `stable`",
+      "expr": "yes, `TextWrapStyle`",
+      "inherited": true,
+      "initial": "auto"
+    },
+    {
+      "property": "text-autospace",
+      "group": "Typography",
+      "setter": "set_text_autospace(TextAutospace)",
+      "literal": "`normal`, `no-autospace`",
+      "expr": "yes, `TextAutospace`",
+      "inherited": true,
+      "initial": "normal"
+    },
+    {
+      "property": "text-spacing-trim",
+      "group": "Typography",
+      "setter": "set_text_spacing_trim(TextSpacingTrim)",
+      "literal": "`normal`, `space-all`, `space-first`, `trim-start`",
+      "expr": "yes, `TextSpacingTrim`",
+      "inherited": true,
+      "initial": "normal"
+    },
+    {
+      "property": "tab-size",
+      "group": "Typography",
+      "setter": "set_tab_size(TabSize)",
+      "literal": "integer (spaces) or px length",
+      "expr": "yes, `TabSize`",
+      "inherited": true,
+      "initial": "8"
+    },
+    {
+      "property": "text-transform",
+      "group": "Typography",
+      "setter": "set_text_transform(TextTransform)",
+      "literal": "`none`, `capitalize`, `uppercase`, `lowercase`, `full-width`, `full-size-kana`, `math-auto`",
+      "expr": "yes, `TextTransform`",
+      "inherited": true,
+      "initial": "none"
+    },
+    {
+      "property": "text-decoration-line",
+      "group": "Typography",
+      "setter": "set_text_decoration_line(TextDecorationLine)",
+      "literal": "`none`, `underline`, `underline overline`, `overline`, `line-through`, `blink`, `spelling-error`, `grammar-error`",
+      "expr": "yes, `TextDecorationLine`",
+      "inherited": false,
+      "initial": "none"
+    },
+    {
+      "property": "text-decoration-style",
+      "group": "Typography",
+      "setter": "set_text_decoration_style(TextDecorationStyle)",
+      "literal": "`solid`, `double`, `dotted`, `dashed`, `wavy`",
+      "expr": "yes, `TextDecorationStyle`",
+      "inherited": false,
+      "initial": "solid"
+    },
+    {
+      "property": "text-decoration-color",
+      "group": "Typography",
+      "setter": "set_text_decoration_color(StyleColor)",
+      "literal": "**C**",
+      "expr": "yes, `StyleColor`",
+      "inherited": false,
+      "initial": "currentColor"
+    },
+    {
+      "property": "text-decoration-thickness",
+      "group": "Typography",
+      "setter": "set_text_decoration_thickness(TextDecorationThickness)",
+      "literal": "**L** except `1.5em`, `2rem`, `10vw`, `10vh`, `10vmin`, `2ch`, `1ex`, `1lh`; `from-font`",
+      "expr": "yes, `TextDecorationThickness`",
+      "inherited": false,
+      "initial": "auto"
+    },
+    {
+      "property": "text-decoration-skip-ink",
+      "group": "Typography",
+      "setter": "set_text_decoration_skip_ink(TextDecorationSkipInk)",
+      "literal": "`auto`, `none`, `all`",
+      "expr": "yes, `TextDecorationSkipInk`",
+      "inherited": true,
+      "initial": "auto"
+    },
+    {
+      "property": "text-underline-offset",
+      "group": "Typography",
+      "setter": "set_text_underline_offset(LengthValue)",
+      "literal": "**L**",
+      "expr": "yes, `LengthValue`",
+      "inherited": false,
+      "initial": "auto"
+    },
+    {
+      "property": "text-underline-position",
+      "group": "Typography",
+      "setter": "set_text_underline_position(TextUnderlinePosition)",
+      "literal": "`auto`, `from-font`, `under`, `left`, `right`",
+      "expr": "yes, `TextUnderlinePosition`",
+      "inherited": true,
+      "initial": "auto"
+    },
+    {
+      "property": "text-emphasis-style",
+      "group": "Typography",
+      "setter": "set_text_emphasis_style(TextEmphasisStyle)",
+      "literal": "`none` or `[filled\\|open] [dot\\|circle\\|double-circle\\|triangle\\|sesame\\|<one character>]`",
+      "expr": "yes, `TextEmphasisStyle`",
+      "inherited": true,
+      "initial": "none"
+    },
+    {
+      "property": "text-emphasis-position",
+      "group": "Typography",
+      "setter": "set_text_emphasis_position(TextEmphasisPosition)",
+      "literal": "`over`, `under`, `right`, `left`",
+      "expr": "yes, `TextEmphasisPosition`",
+      "inherited": true,
+      "initial": "over right"
+    },
+    {
+      "property": "text-emphasis-color",
+      "group": "Typography",
+      "setter": "set_text_emphasis_color(StyleColor)",
+      "literal": "**C**",
+      "expr": "yes, `StyleColor`",
+      "inherited": true,
+      "initial": "currentColor"
+    },
+    {
+      "property": "text-shadow",
+      "group": "Typography",
+      "setter": "set_text_shadow(TextShadowList)",
+      "literal": "`none` or comma list of `<x> <y> [<blur>]` (px) plus an optional one-token color",
+      "expr": "yes, `TextShadowList`",
+      "inherited": true,
+      "initial": "none"
+    },
+    {
+      "property": "text-overflow",
+      "group": "Typography",
+      "setter": "set_text_overflow(TextOverflow)",
+      "literal": "`clip`, `ellipsis`",
+      "expr": "yes, `TextOverflow`",
+      "inherited": false,
+      "initial": "clip"
+    },
+    {
+      "property": "text-size-adjust",
+      "group": "Typography",
+      "setter": "set_text_size_adjust(TextSizeAdjust)",
+      "literal": "`50%`, `auto`, `none`",
+      "expr": "yes, `TextSizeAdjust`",
+      "inherited": true,
+      "initial": "auto"
+    },
+    {
+      "property": "text-combine-upright",
+      "group": "Typography",
+      "setter": "set_text_combine_upright(TextCombineUpright)",
+      "literal": "`none`, `all`",
+      "expr": "yes, `TextCombineUpright`",
+      "inherited": false,
+      "initial": "none"
+    },
+    {
+      "property": "writing-mode",
+      "group": "Typography",
+      "setter": "set_writing_mode(WritingMode)",
+      "literal": "`horizontal-tb`, `vertical-rl`, `vertical-lr`, `sideways-rl`, `sideways-lr`",
+      "expr": "yes, `WritingMode`",
+      "inherited": true,
+      "initial": "horizontal-tb"
+    },
+    {
+      "property": "text-orientation",
+      "group": "Typography",
+      "setter": "set_text_orientation(TextOrientation)",
+      "literal": "`mixed`, `upright`, `sideways`",
+      "expr": "yes, `TextOrientation`",
+      "inherited": true,
+      "initial": "mixed"
+    },
+    {
+      "property": "unicode-bidi",
+      "group": "Typography",
+      "setter": "set_unicode_bidi(UnicodeBidi)",
+      "literal": "`normal`, `embed`, `bidi-override`, `isolate`, `isolate-override`, `plaintext`",
+      "expr": "yes, `UnicodeBidi`",
+      "inherited": false,
+      "initial": "normal"
+    },
+    {
+      "property": "ruby-align",
+      "group": "Typography",
+      "setter": "set_ruby_align(RubyAlign)",
+      "literal": "`center`, `start`, `space-between`, `space-around`",
+      "expr": "yes, `RubyAlign`",
+      "inherited": true,
+      "initial": "space-around"
+    },
+    {
+      "property": "ruby-position",
+      "group": "Typography",
+      "setter": "set_ruby_position(RubyPosition)",
+      "literal": "`over`, `under`",
+      "expr": "yes, `RubyPosition`",
+      "inherited": true,
+      "initial": "over"
+    },
+    {
+      "property": "ruby-overhang",
+      "group": "Typography",
+      "setter": "set_ruby_overhang(RubyOverhang)",
+      "literal": "`auto`, `none`",
+      "expr": "yes, `RubyOverhang`",
+      "inherited": true,
+      "initial": "auto"
+    },
+    {
+      "property": "hanging-punctuation",
+      "group": "Typography",
+      "setter": "set_hanging_punctuation(HangingPunctuation)",
+      "literal": "`none`, `first`, `last`, `force-end`, `allow-end`",
+      "expr": "yes, `HangingPunctuation`",
+      "inherited": true,
+      "initial": "none"
+    },
+    {
+      "property": "initial-letter",
+      "group": "Typography",
+      "setter": "set_initial_letter(InitialLetterValue)",
+      "literal": "`normal` or `<size> [<sink>]`",
+      "expr": "yes, `InitialLetterValue`",
+      "inherited": false,
+      "initial": "normal"
+    },
+    {
+      "property": "text-rendering",
+      "group": "Typography",
+      "setter": "set_text_rendering(TextRendering)",
+      "literal": "`auto`, `optimizespeed`, `optimizelegibility`, `geometricprecision`",
+      "expr": "yes, `TextRendering`",
+      "inherited": true,
+      "initial": "auto"
+    },
+    {
+      "property": "-webkit-font-smoothing",
+      "group": "Typography",
+      "setter": "set_webkit_font_smoothing(FontSmoothing)",
+      "literal": "`auto`, `none`, `antialiased`, `subpixel-antialiased`",
+      "expr": "yes, `FontSmoothing`",
+      "inherited": true,
+      "initial": "auto"
+    },
+    {
+      "property": "line-clamp",
+      "group": "Typography",
+      "setter": "set_line_clamp(LineClamp)",
+      "literal": "`none`, `auto` or an integer",
+      "expr": "yes, `LineClamp`",
+      "inherited": false,
+      "initial": "none"
+    },
+    {
+      "property": "block-ellipsis",
+      "group": "Typography",
+      "setter": "set_block_ellipsis(BlockEllipsis)",
+      "literal": "`auto`, `no-ellipsis` or any string",
+      "expr": "yes, `BlockEllipsis`",
+      "inherited": false,
+      "initial": "auto"
+    },
+    {
+      "property": "text-box-edge",
+      "group": "Typography",
+      "setter": "set_text_box_edge(TextBoxEdge)",
+      "literal": "`auto`, `text`, `cap`, `ex`, `ideographic`, `ideographic-ink`, `alphabetic`",
+      "expr": "yes, `TextBoxEdge`",
+      "inherited": false,
+      "initial": "auto"
+    },
+    {
+      "property": "text-box-trim",
+      "group": "Typography",
+      "setter": "set_text_box_trim(TextBoxTrim)",
+      "literal": "`none`, `trim-start`, `trim-end`, `trim-both`",
+      "expr": "yes, `TextBoxTrim`",
+      "inherited": false,
+      "initial": "none"
+    },
+    {
+      "property": "font",
+      "group": "Typography",
+      "setter": "set_font(FontShorthand)",
+      "literal": "`[normal\\|italic\\|oblique\\|small-caps\\|<weight>\\|<stretch>]* <px size>[/<line-height>] <family list>`, e.g. `bold 16px Inter`, `16px/1.5 sans-serif`",
+      "expr": "yes, `FontShorthand`",
+      "inherited": true,
+      "initial": "medium sans-serif"
+    },
+    {
+      "property": "font-variant",
+      "group": "Typography",
+      "setter": "set_font_variant(FontVariantShorthand)",
+      "literal": "`none`, `normal`, `common-ligatures tabular-nums`, `small-caps`, `all-small-caps`, `petite-caps`, `all-petite-caps`, `unicase`, `titling-caps`, `sub`, `super`, `historical-forms`, `text`, `emoji`, `unicode`, `jis78`, \u2026 (+24)",
+      "expr": "yes, `FontVariantShorthand`",
+      "inherited": true,
+      "initial": "normal"
+    },
+    {
+      "property": "font-synthesis",
+      "group": "Typography",
+      "setter": "set_font_synthesis(FontSynthesisShorthand)",
+      "literal": "`auto`, `none`, `weight`, `style`, `small-caps`, `position`",
+      "expr": "yes, `FontSynthesisShorthand`",
+      "inherited": true,
+      "initial": "auto"
+    },
+    {
+      "property": "white-space",
+      "group": "Typography",
+      "setter": "set_white_space(WhiteSpaceShorthand)",
+      "literal": "`normal`, `pre`, `pre-wrap`, `pre-line`, `nowrap`, `break-spaces`",
+      "expr": "yes, `WhiteSpaceShorthand`",
+      "inherited": true,
+      "initial": "normal"
+    },
+    {
+      "property": "text-wrap",
+      "group": "Typography",
+      "setter": "set_text_wrap(TextWrapShorthand)",
+      "literal": "`wrap`, `nowrap`, `balance`, `pretty`, `stable`",
+      "expr": "yes, `TextWrapShorthand`",
+      "inherited": true,
+      "initial": "wrap"
+    },
+    {
+      "property": "text-decoration",
+      "group": "Typography",
+      "setter": "set_text_decoration(TextDecorationShorthand)",
+      "literal": "space-separated line keywords, style keyword, thickness and a one-token color",
+      "expr": "yes, `TextDecorationShorthand`",
+      "inherited": false,
+      "initial": "none"
+    },
+    {
+      "property": "text-emphasis",
+      "group": "Typography",
+      "setter": "set_text_emphasis(TextEmphasisShorthand)",
+      "literal": "**C** except `rgb(255 0 0)`, `rgb(255, 0, 0)`, `rgba(0, 0, 0, 0.5)`, `rgb(255 0 0 / 0.5)`, `oklab(0.7 0.1 -0.1)`, `oklch(0.7 0.1 200)`, `color-mix(in srgb, red 50%, blue)`; `0`, `1`, `2`, `none`, `1 / 3`, `4 / 3`, `0 0`, ` `, `filled`, `open`, `dot`, `circle`, `double-circle`, `triangle`, `sesame`",
+      "expr": "yes, `TextEmphasisShorthand`",
+      "inherited": true,
+      "initial": "none"
+    },
+    {
+      "property": "text-box",
+      "group": "Typography",
+      "setter": "set_text_box(TextBoxShorthand)",
+      "literal": "`normal`",
+      "expr": "yes, `TextBoxShorthand`",
+      "inherited": false,
+      "initial": "normal"
+    },
+    {
+      "property": "locale",
+      "group": "Typography",
+      "setter": "set_locale(Option<String>)",
+      "literal": null,
+      "expr": "no: `view!` cannot name `Option<String>`",
+      "inherited": true,
+      "initial": null
+    },
+    {
+      "property": "text-emphasis-mark",
+      "group": "Typography",
+      "setter": "set_text_emphasis_mark(TextEmphasisMark)",
+      "literal": null,
+      "expr": "no: `TextEmphasisMark` has no `Into<StyleValue>`",
+      "inherited": true,
+      "initial": null
+    },
+    {
+      "property": "text-emphasis-fill",
+      "group": "Typography",
+      "setter": "set_text_emphasis_fill(TextEmphasisFill)",
+      "literal": null,
+      "expr": "no: `TextEmphasisFill` has no `Into<StyleValue>`",
+      "inherited": true,
+      "initial": null
+    },
+    {
+      "property": "quotes",
+      "group": "Typography",
+      "setter": "set_quotes(Vec<QuotePair>)",
+      "literal": null,
+      "expr": "no: `view!` cannot name `Vec<QuotePair>`",
+      "inherited": true,
+      "initial": null
+    },
+    {
+      "property": "-webkit-text-fill-color",
+      "group": "Typography",
+      "setter": "set_webkit_text_fill_color(StyleColor)",
+      "literal": "**C**",
+      "expr": "yes, `StyleColor`",
+      "inherited": true,
+      "initial": "currentColor"
+    },
+    {
+      "property": "background-color",
+      "group": "Color and background",
+      "setter": "set_background_color(Color)",
+      "literal": "**C**",
+      "expr": "yes, `Color`",
+      "inherited": false,
+      "initial": "transparent"
+    },
+    {
+      "property": "background-attachment",
+      "group": "Color and background",
+      "setter": "set_background_attachment(BackgroundAttachment)",
+      "literal": null,
+      "expr": "no: `BackgroundAttachment` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "background-clip",
+      "group": "Color and background",
+      "setter": "set_background_clip(BackgroundClip)",
+      "literal": null,
+      "expr": "no: `BackgroundClip` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "background-layers",
+      "group": "Color and background",
+      "setter": "set_background_layers(Vec<BackgroundLayer>)",
+      "literal": null,
+      "expr": "no: `view!` cannot name `Vec<BackgroundLayer>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "background-linear-gradient",
+      "group": "Color and background",
+      "setter": "set_background_linear_gradient(Option<LinearGradient>)",
+      "literal": null,
+      "expr": "no: `view!` cannot name `Option<LinearGradient>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "mask-layers",
+      "group": "Color and background",
+      "setter": "set_mask_layers(Vec<BackgroundLayer>)",
+      "literal": null,
+      "expr": "no: `view!` cannot name `Vec<BackgroundLayer>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "border",
+      "group": "Borders, outline and radius",
+      "setter": "set_border(Border)",
+      "literal": "`none` or exactly `<px width> <style> <color>`; the color must be one token (no spaces inside `rgb()`)",
+      "expr": "yes, `Border`",
+      "inherited": false,
+      "initial": "medium none currentColor"
+    },
+    {
+      "property": "border-top",
+      "group": "Borders, outline and radius",
+      "setter": "set_border_top(Border)",
+      "literal": "`none` or exactly `<px width> <style> <color>`; the color must be one token (no spaces inside `rgb()`)",
+      "expr": "yes, `Border`",
+      "inherited": false,
+      "initial": "medium none currentColor"
+    },
+    {
+      "property": "border-right",
+      "group": "Borders, outline and radius",
+      "setter": "set_border_right(Border)",
+      "literal": "`none` or exactly `<px width> <style> <color>`; the color must be one token (no spaces inside `rgb()`)",
+      "expr": "yes, `Border`",
+      "inherited": false,
+      "initial": "medium none currentColor"
+    },
+    {
+      "property": "border-bottom",
+      "group": "Borders, outline and radius",
+      "setter": "set_border_bottom(Border)",
+      "literal": "`none` or exactly `<px width> <style> <color>`; the color must be one token (no spaces inside `rgb()`)",
+      "expr": "yes, `Border`",
+      "inherited": false,
+      "initial": "medium none currentColor"
+    },
+    {
+      "property": "border-left",
+      "group": "Borders, outline and radius",
+      "setter": "set_border_left(Border)",
+      "literal": "`none` or exactly `<px width> <style> <color>`; the color must be one token (no spaces inside `rgb()`)",
+      "expr": "yes, `Border`",
+      "inherited": false,
+      "initial": "medium none currentColor"
+    },
+    {
+      "property": "border-radius",
+      "group": "Borders, outline and radius",
+      "setter": "set_border_radius(CornerRadii)",
+      "literal": "**L**; `10px 20px`, `1px 2px 3px 4px`, `10px 10px`, `0 0`, `50% 50%`",
+      "expr": "yes, `CornerRadii`",
+      "inherited": false,
+      "initial": "0px"
+    },
+    {
+      "property": "border-bottom-color",
+      "group": "Borders, outline and radius",
+      "setter": "set_border_bottom_color(StyleColor)",
+      "literal": "**C**",
+      "expr": "yes, `StyleColor`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "border-bottom-left-radius",
+      "group": "Borders, outline and radius",
+      "setter": "set_border_bottom_left_radius((f32, f32))",
+      "literal": null,
+      "expr": "no: `view!` cannot name `(f32, f32)`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "border-bottom-right-radius",
+      "group": "Borders, outline and radius",
+      "setter": "set_border_bottom_right_radius((f32, f32))",
+      "literal": null,
+      "expr": "no: `view!` cannot name `(f32, f32)`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "border-bottom-style",
+      "group": "Borders, outline and radius",
+      "setter": "set_border_bottom_style(BorderStyle)",
+      "literal": "`none`, `hidden`, `solid`, `dotted`, `dashed`, `double`, `groove`, `ridge`, `inset`, `outset`",
+      "expr": "no: `BorderStyle` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "border-bottom-width",
+      "group": "Borders, outline and radius",
+      "setter": "set_border_bottom_width(i32)",
+      "literal": "a bare integer in px (`2`, not `2px`)",
+      "expr": "yes, `i32`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "border-image",
+      "group": "Borders, outline and radius",
+      "setter": "set_border_image(Option<BorderImage>)",
+      "literal": null,
+      "expr": "no: `view!` cannot name `Option<BorderImage>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "border-left-color",
+      "group": "Borders, outline and radius",
+      "setter": "set_border_left_color(StyleColor)",
+      "literal": "**C**",
+      "expr": "yes, `StyleColor`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "border-left-style",
+      "group": "Borders, outline and radius",
+      "setter": "set_border_left_style(BorderStyle)",
+      "literal": "`none`, `hidden`, `solid`, `dotted`, `dashed`, `double`, `groove`, `ridge`, `inset`, `outset`",
+      "expr": "no: `BorderStyle` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "border-left-width",
+      "group": "Borders, outline and radius",
+      "setter": "set_border_left_width(i32)",
+      "literal": "a bare integer in px (`2`, not `2px`)",
+      "expr": "yes, `i32`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "border-radius-percent",
+      "group": "Borders, outline and radius",
+      "setter": "set_border_radius_percent([(bool, bool); 4])",
+      "literal": null,
+      "expr": "no: `view!` cannot name `[(bool, bool); 4]`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "border-right-color",
+      "group": "Borders, outline and radius",
+      "setter": "set_border_right_color(StyleColor)",
+      "literal": "**C**",
+      "expr": "yes, `StyleColor`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "border-right-style",
+      "group": "Borders, outline and radius",
+      "setter": "set_border_right_style(BorderStyle)",
+      "literal": "`none`, `hidden`, `solid`, `dotted`, `dashed`, `double`, `groove`, `ridge`, `inset`, `outset`",
+      "expr": "no: `BorderStyle` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "border-right-width",
+      "group": "Borders, outline and radius",
+      "setter": "set_border_right_width(i32)",
+      "literal": "a bare integer in px (`2`, not `2px`)",
+      "expr": "yes, `i32`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "border-top-color",
+      "group": "Borders, outline and radius",
+      "setter": "set_border_top_color(StyleColor)",
+      "literal": "**C**",
+      "expr": "yes, `StyleColor`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "border-top-left-radius",
+      "group": "Borders, outline and radius",
+      "setter": "set_border_top_left_radius((f32, f32))",
+      "literal": null,
+      "expr": "no: `view!` cannot name `(f32, f32)`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "border-top-right-radius",
+      "group": "Borders, outline and radius",
+      "setter": "set_border_top_right_radius((f32, f32))",
+      "literal": null,
+      "expr": "no: `view!` cannot name `(f32, f32)`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "border-top-style",
+      "group": "Borders, outline and radius",
+      "setter": "set_border_top_style(BorderStyle)",
+      "literal": "`none`, `hidden`, `solid`, `dotted`, `dashed`, `double`, `groove`, `ridge`, `inset`, `outset`",
+      "expr": "no: `BorderStyle` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "border-top-width",
+      "group": "Borders, outline and radius",
+      "setter": "set_border_top_width(i32)",
+      "literal": "a bare integer in px (`2`, not `2px`)",
+      "expr": "yes, `i32`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "outline-color",
+      "group": "Borders, outline and radius",
+      "setter": "set_outline_color(StyleColor)",
+      "literal": "**C**",
+      "expr": "yes, `StyleColor`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "outline-offset",
+      "group": "Borders, outline and radius",
+      "setter": "set_outline_offset(i32)",
+      "literal": "a bare integer in px (`2`, not `2px`)",
+      "expr": "yes, `i32`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "outline-style",
+      "group": "Borders, outline and radius",
+      "setter": "set_outline_style(BorderStyle)",
+      "literal": "`none`, `hidden`, `solid`, `dotted`, `dashed`, `double`, `groove`, `ridge`, `inset`, `outset`",
+      "expr": "no: `BorderStyle` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "outline-width",
+      "group": "Borders, outline and radius",
+      "setter": "set_outline_width(i32)",
+      "literal": "a bare integer in px (`2`, not `2px`)",
+      "expr": "yes, `i32`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "border-top-left-radius-x",
+      "group": "Borders, outline and radius",
+      "setter": "set_border_top_left_radius_x(LengthValue)",
+      "literal": "**L** except `auto`, `none`",
+      "expr": "yes, `LengthValue`",
+      "inherited": false,
+      "initial": "0px"
+    },
+    {
+      "property": "border-top-left-radius-y",
+      "group": "Borders, outline and radius",
+      "setter": "set_border_top_left_radius_y(LengthValue)",
+      "literal": "**L** except `auto`, `none`",
+      "expr": "yes, `LengthValue`",
+      "inherited": false,
+      "initial": "0px"
+    },
+    {
+      "property": "border-top-right-radius-x",
+      "group": "Borders, outline and radius",
+      "setter": "set_border_top_right_radius_x(LengthValue)",
+      "literal": "**L** except `auto`, `none`",
+      "expr": "yes, `LengthValue`",
+      "inherited": false,
+      "initial": "0px"
+    },
+    {
+      "property": "border-top-right-radius-y",
+      "group": "Borders, outline and radius",
+      "setter": "set_border_top_right_radius_y(LengthValue)",
+      "literal": "**L** except `auto`, `none`",
+      "expr": "yes, `LengthValue`",
+      "inherited": false,
+      "initial": "0px"
+    },
+    {
+      "property": "border-bottom-right-radius-x",
+      "group": "Borders, outline and radius",
+      "setter": "set_border_bottom_right_radius_x(LengthValue)",
+      "literal": "**L** except `auto`, `none`",
+      "expr": "yes, `LengthValue`",
+      "inherited": false,
+      "initial": "0px"
+    },
+    {
+      "property": "border-bottom-right-radius-y",
+      "group": "Borders, outline and radius",
+      "setter": "set_border_bottom_right_radius_y(LengthValue)",
+      "literal": "**L** except `auto`, `none`",
+      "expr": "yes, `LengthValue`",
+      "inherited": false,
+      "initial": "0px"
+    },
+    {
+      "property": "border-bottom-left-radius-x",
+      "group": "Borders, outline and radius",
+      "setter": "set_border_bottom_left_radius_x(LengthValue)",
+      "literal": "**L** except `auto`, `none`",
+      "expr": "yes, `LengthValue`",
+      "inherited": false,
+      "initial": "0px"
+    },
+    {
+      "property": "border-bottom-left-radius-y",
+      "group": "Borders, outline and radius",
+      "setter": "set_border_bottom_left_radius_y(LengthValue)",
+      "literal": "**L** except `auto`, `none`",
+      "expr": "yes, `LengthValue`",
+      "inherited": false,
+      "initial": "0px"
+    },
+    {
+      "property": "opacity",
+      "group": "Effects (opacity, shadow, filter, transform, clip)",
+      "setter": "set_opacity(f32)",
+      "literal": "a bare number (`%` not accepted)",
+      "expr": "yes, `f32`",
+      "inherited": false,
+      "initial": "1"
+    },
+    {
+      "property": "transform",
+      "group": "Effects (opacity, shadow, filter, transform, clip)",
+      "setter": "set_transform(TransformList)",
+      "literal": "`none` or space-separated `translate()`, `translateX()`, `translateY()`, `scale()`, `scaleX()`, `scaleY()`, `rotate()`, `matrix()` with comma-separated arguments; no skew, 3D or math functions",
+      "expr": "yes, `TransformList`",
+      "inherited": false,
+      "initial": "none"
+    },
+    {
+      "property": "box-shadow",
+      "group": "Effects (opacity, shadow, filter, transform, clip)",
+      "setter": "set_box_shadow(Vec<BoxShadow>)",
+      "literal": null,
+      "expr": "no: `view!` cannot name `Vec<BoxShadow>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "clip-path-inset",
+      "group": "Effects (opacity, shadow, filter, transform, clip)",
+      "setter": "set_clip_path_inset(Option<[Length; 4]>)",
+      "literal": null,
+      "expr": "no: `view!` cannot name `Option<[Length; 4]>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "filter-blur",
+      "group": "Effects (opacity, shadow, filter, transform, clip)",
+      "setter": "set_filter_blur(f32)",
+      "literal": "a bare number (blur radius, px)",
+      "expr": "yes, `f32`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "filter-grayscale",
+      "group": "Effects (opacity, shadow, filter, transform, clip)",
+      "setter": "set_filter_grayscale(f32)",
+      "literal": "a bare number (amount)",
+      "expr": "yes, `f32`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "transform-origin",
+      "group": "Effects (opacity, shadow, filter, transform, clip)",
+      "setter": "set_transform_origin((Length, Length))",
+      "literal": null,
+      "expr": "no: `view!` cannot name `(Length, Length)`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "overflow",
+      "group": "Overflow and scrolling",
+      "setter": "set_overflow(Overflow)",
+      "literal": "`auto`, `hidden`, `visible`, `scroll`, `clip`",
+      "expr": "yes, `Overflow`",
+      "inherited": false,
+      "initial": "visible"
+    },
+    {
+      "property": "overflow-clip-box",
+      "group": "Overflow and scrolling",
+      "setter": "set_overflow_clip_box(OverflowClipBox)",
+      "literal": null,
+      "expr": "no: `OverflowClipBox` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "overflow-clip-margin",
+      "group": "Overflow and scrolling",
+      "setter": "set_overflow_clip_margin(f32)",
+      "literal": "a bare number (px)",
+      "expr": "yes, `f32`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "overflow-x",
+      "group": "Overflow and scrolling",
+      "setter": "set_overflow_x(Overflow)",
+      "literal": "`auto`, `hidden`, `visible`, `scroll`, `clip`",
+      "expr": "yes, `Overflow`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "overflow-y",
+      "group": "Overflow and scrolling",
+      "setter": "set_overflow_y(Overflow)",
+      "literal": "`auto`, `hidden`, `visible`, `scroll`, `clip`",
+      "expr": "yes, `Overflow`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "scroll-marker-group",
+      "group": "Overflow and scrolling",
+      "setter": "set_scroll_marker_group(ScrollMarkerGroup)",
+      "literal": null,
+      "expr": "no: `ScrollMarkerGroup` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "scroll-snap-align",
+      "group": "Overflow and scrolling",
+      "setter": "set_scroll_snap_align(ScrollSnapAlign)",
+      "literal": "`none`, `center`, `start`, `start center`, `end`",
+      "expr": "no: `ScrollSnapAlign` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "scroll-snap-axis",
+      "group": "Overflow and scrolling",
+      "setter": "set_scroll_snap_axis(ScrollSnapAxis)",
+      "literal": "`none`, `x`, `y`, `both`, `inline`, `block`",
+      "expr": "no: `ScrollSnapAxis` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "scrollbar-gutter",
+      "group": "Overflow and scrolling",
+      "setter": "set_scrollbar_gutter(ScrollbarGutter)",
+      "literal": "`auto`, `stable both-edges`, `stable`",
+      "expr": "no: `ScrollbarGutter` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "scrollbar-track-color",
+      "group": "Overflow and scrolling",
+      "setter": "set_scrollbar_track_color(Option<Color>)",
+      "literal": "**C** except `currentcolor`; `auto`",
+      "expr": "no: `view!` cannot name `Option<Color>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "scrollbar-width",
+      "group": "Overflow and scrolling",
+      "setter": "set_scrollbar_width(ScrollbarWidth)",
+      "literal": "`auto`, `none`, `thin`",
+      "expr": "no: `ScrollbarWidth` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "scroll-target-group",
+      "group": "Overflow and scrolling",
+      "setter": "set_scroll_target_group(ScrollTargetGroup)",
+      "literal": null,
+      "expr": "no: `ScrollTargetGroup` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "scrollbar-thumb-color",
+      "group": "Overflow and scrolling",
+      "setter": "set_scrollbar_thumb_color(Option<Color>)",
+      "literal": "**C** except `currentcolor`; `auto`",
+      "expr": "no: `view!` cannot name `Option<Color>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "scroll-padding-top",
+      "group": "Overflow and scrolling",
+      "setter": "set_scroll_padding_top(LengthValue)",
+      "literal": "**L** except `none`; parsed but rejected on apply: `none`",
+      "expr": "yes, `LengthValue`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "scroll-padding-right",
+      "group": "Overflow and scrolling",
+      "setter": "set_scroll_padding_right(LengthValue)",
+      "literal": "**L** except `none`; parsed but rejected on apply: `none`",
+      "expr": "yes, `LengthValue`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "scroll-padding-bottom",
+      "group": "Overflow and scrolling",
+      "setter": "set_scroll_padding_bottom(LengthValue)",
+      "literal": "**L** except `none`; parsed but rejected on apply: `none`",
+      "expr": "yes, `LengthValue`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "scroll-padding-left",
+      "group": "Overflow and scrolling",
+      "setter": "set_scroll_padding_left(LengthValue)",
+      "literal": "**L** except `none`; parsed but rejected on apply: `none`",
+      "expr": "yes, `LengthValue`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "scroll-margin-top",
+      "group": "Overflow and scrolling",
+      "setter": "set_scroll_margin_top(LengthValue)",
+      "literal": "**L** except `50%`, `auto`, `none`; parsed but rejected on apply: `50%`, `auto`, `none`",
+      "expr": "yes, `LengthValue`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "scroll-margin-right",
+      "group": "Overflow and scrolling",
+      "setter": "set_scroll_margin_right(LengthValue)",
+      "literal": "**L** except `50%`, `auto`, `none`; parsed but rejected on apply: `50%`, `auto`, `none`",
+      "expr": "yes, `LengthValue`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "scroll-margin-bottom",
+      "group": "Overflow and scrolling",
+      "setter": "set_scroll_margin_bottom(LengthValue)",
+      "literal": "**L** except `50%`, `auto`, `none`; parsed but rejected on apply: `50%`, `auto`, `none`",
+      "expr": "yes, `LengthValue`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "scroll-margin-left",
+      "group": "Overflow and scrolling",
+      "setter": "set_scroll_margin_left(LengthValue)",
+      "literal": "**L** except `50%`, `auto`, `none`; parsed but rejected on apply: `50%`, `auto`, `none`",
+      "expr": "yes, `LengthValue`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "scroll-snap-strictness",
+      "group": "Overflow and scrolling",
+      "setter": "set_scroll_snap_strictness(ScrollSnapStrictness)",
+      "literal": "`mandatory`, `proximity`",
+      "expr": "no: `ScrollSnapStrictness` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "scroll-snap-stop",
+      "group": "Overflow and scrolling",
+      "setter": "set_scroll_snap_stop(ScrollSnapStop)",
+      "literal": "`normal`, `always`",
+      "expr": "no: `ScrollSnapStop` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "scroll-snap-align-block",
+      "group": "Overflow and scrolling",
+      "setter": "set_scroll_snap_align_block(Option<ScrollSnapAlign>)",
+      "literal": "`auto`, `none`, `center`, `start`, `end`",
+      "expr": "no: `view!` cannot name `Option<ScrollSnapAlign>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "scroll-snap-align-inline",
+      "group": "Overflow and scrolling",
+      "setter": "set_scroll_snap_align_inline(Option<ScrollSnapAlign>)",
+      "literal": "`auto`, `none`, `center`, `start`, `end`",
+      "expr": "no: `view!` cannot name `Option<ScrollSnapAlign>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "list-style",
+      "group": "Lists and generated content",
+      "setter": "set_list_style(ListStyleType)",
+      "literal": "`none`, `disc`",
+      "expr": "yes, `ListStyleType`",
+      "inherited": true,
+      "initial": "disc"
+    },
+    {
+      "property": "content",
+      "group": "Lists and generated content",
+      "setter": "set_content(Option<Vec<GeneratedContentItem>>)",
+      "literal": null,
+      "expr": "no: `view!` cannot name `Option<Vec<GeneratedContentItem>>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "list-style-position",
+      "group": "Lists and generated content",
+      "setter": "set_list_style_position(ListStylePosition)",
+      "literal": null,
+      "expr": "no: `ListStylePosition` has no `Into<StyleValue>`",
+      "inherited": true,
+      "initial": null
+    },
+    {
+      "property": "counter-increment",
+      "group": "Lists and generated content",
+      "setter": "set_counter_increment(Vec<CounterOperation>)",
+      "literal": null,
+      "expr": "no: `view!` cannot name `Vec<CounterOperation>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "counter-reset",
+      "group": "Lists and generated content",
+      "setter": "set_counter_reset(Vec<CounterOperation>)",
+      "literal": null,
+      "expr": "no: `view!` cannot name `Vec<CounterOperation>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "counter-set",
+      "group": "Lists and generated content",
+      "setter": "set_counter_set(Vec<CounterOperation>)",
+      "literal": null,
+      "expr": "no: `view!` cannot name `Vec<CounterOperation>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "cursor",
+      "group": "Interaction",
+      "setter": "set_cursor(Cursor)",
+      "literal": "`auto`, `default`, `pointer`, `text`, `move`, `not-allowed`",
+      "expr": "yes, `Cursor`",
+      "inherited": true,
+      "initial": "auto"
+    },
+    {
+      "property": "pointer-events",
+      "group": "Interaction",
+      "setter": "set_pointer_events(PointerEvents)",
+      "literal": "`auto`, `none`",
+      "expr": "yes, `PointerEvents`",
+      "inherited": true,
+      "initial": "auto"
+    },
+    {
+      "property": "resize",
+      "group": "Interaction",
+      "setter": "set_resize(Resize)",
+      "literal": null,
+      "expr": "no: `Resize` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "shape-image-threshold",
+      "group": "Shapes",
+      "setter": "set_shape_image_threshold(f32)",
+      "literal": "a bare number",
+      "expr": "yes, `f32`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "shape-margin",
+      "group": "Shapes",
+      "setter": "set_shape_margin(Length)",
+      "literal": "**L**",
+      "expr": "no: `Length` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "shape-outside",
+      "group": "Shapes",
+      "setter": "set_shape_outside(ShapeOutside)",
+      "literal": null,
+      "expr": "no: `ShapeOutside` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    },
+    {
+      "property": "webkit-box-orient",
+      "group": "Other",
+      "setter": "set_webkit_box_orient(WebkitBoxOrient)",
+      "literal": null,
+      "expr": "no: `WebkitBoxOrient` has no `Into<StyleValue>`",
+      "inherited": false,
+      "initial": null
+    }
+  ]
+}

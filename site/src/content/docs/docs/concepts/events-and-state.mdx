@@ -1,0 +1,108 @@
+---
+title: Events and state
+description: Signals hold state, views read them, and event handlers change them.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import Example from '../../../../components/Example.astro';
+
+State in Open UI lives in **signals**. A view reads signals in its `{…}`
+text and its dynamic `style:` values; an event handler changes them; and
+exactly the text and styles that read a changed signal update. Nothing
+re-renders as a whole.
+
+<Example name="cc_events" alt="A text field with the placeholder Add a task and an Add button, a bulleted list of two tasks, and the line 2 tasks" />
+
+## Signals
+
+```rust
+let count = create_signal(0);   // Signal<i32>, a Copy handle
+count.get();                    // read (and subscribe, when inside a view or effect)
+count.set(5);                   // replace
+count.update(|n| *n += 1);      // change in place
+```
+
+- `Signal<T>` is `Copy`, so closures can capture it with `move` freely.
+- `get()` clones the value, so `T` must be `Clone`. Keep large values in
+  an `Rc` or read them in an `update`.
+- `set` and `update` always notify, even when the value did not change.
+- Signals belong to the UI thread. To set one from another thread, use
+  `signal.sender()` (with the `async` feature) and call `send(value)`.
+
+**Derived values.** `create_memo(|| …)` computes a value from other
+signals and notifies only when the result changes. A plain closure, such as
+`let total = move || items.get().len();`, also works and recomputes on
+each read.
+
+**Side effects.** `create_effect(|| …)` runs once now and again whenever a
+signal it read changes. Use it to push state into something outside the
+view, such as an element attribute:
+
+```rust
+create_effect(move || {
+    meter.set_attribute("value", &format!("{:.2}", progress.get())).unwrap();
+});
+```
+
+`batch(|| …)` groups several changes so effects run once at the end.
+
+## Events
+
+`on:name={handler}` adds a listener. The handler takes `&Event`:
+
+```rust
+<input on:input={move |event: &Event| {
+    let input = event.target().expect("input");
+    draft.set(input.control_value().ok().flatten().unwrap_or_default());
+}} />
+```
+
+Events go through capture, target and bubble phases as on the web, so a
+listener on a container hears clicks on its children.
+`event.stop_propagation()` and `event.prevent_default()` work as you
+expect.
+
+| Events | When |
+| --- | --- |
+| `click` | A mouse button released on the element, a touch tap, Enter on a button, Space on a button, checkbox or radio, or `Element::click()` |
+| `mousedown`, `mouseup`, `mousemove` | Mouse input |
+| `mouseenter`, `mouseleave` | The mouse enters or leaves the element (they do not bubble) |
+| `pointerdown`, `pointermove`, `pointerup`, … | **Touch input only**: the mouse does not send pointer events |
+| `keydown`, `keyup` | A key, sent to the focused element, or the root when nothing has focus |
+| `beforeinput`, `input` | Text is typed, pasted or deleted in a text field (`beforeinput` can be prevented) |
+| `input`, `change` | A checkbox, radio, range or select changes; a `<details>` opens or closes |
+| `change` | A text field loses focus after an edit, or Enter in a single-line field |
+| `focus`, `blur`, `focusin`, `focusout` | Focus moves |
+| `wheel`, `scroll` | The wheel turns; a scroll position changes |
+| `compositionstart`, `compositionupdate`, `compositionend` | IME composition |
+| `select`, `selectionchange` | The text selection changes in a field |
+
+The `Event` has `event_type`, `mouse_x`, `mouse_y`, `mouse_button` (0
+left, 1 middle, 2 right), `key_text` (such as `"Enter"` or `"a"`),
+`key_code`, `modifiers`, `delta_x` and `delta_y`, and methods `target()`,
+`current_target()`, `related_target()` and `input_info()`.
+
+<Aside type="caution" title="Differences from the web">
+- `click` fires for **any** mouse button. Check `event.mouse_button == 0`
+  for a left click.
+- `dblclick`, `contextmenu`, `mouseover`, `mouseout`, `keypress`,
+  `toggle`, `submit` and `resize` are never sent. Listeners for them
+  register but do not fire.
+- A control's value is read from the element, `event.target()`, with
+  `control_value()`, which returns `Result<Option<String>>`.
+- Setting values from code (`set_control_value`, `set_checked`,
+  `set_open`) fires no events.
+- There is no two-way binding: keep a signal in step with an `input`
+  handler, as above.
+</Aside>
+
+## Lists and conditions
+
+`For` renders one row per item and keeps rows by key; `Show` swaps between
+two views. They cannot go inside `view!`; mount them into an element, as
+the example does with its `<ul>`. See [Views and view!](/open-ui/docs/concepts/views/#lists-and-conditions).
+
+## Async work
+
+Long work, file dialogs and HTTP run off the UI thread and report back by
+setting a signal. See [Async tasks](/open-ui/docs/services/async/).

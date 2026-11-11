@@ -1,0 +1,59 @@
+---
+title: meter and progress
+description: Native gauges for a measured value and for task progress.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import ElementTable from '../../../components/ElementTable.astro';
+import Example from '../../../components/Example.astro';
+
+`<meter>` shows a measurement within a range, such as disk use.
+`<progress>` shows how far a task has come. Both are drawn natively as a
+track with a filled bar.
+
+<Example name="el_meter_progress" alt="A green Disk meter filled to 62 percent and a blue Upload progress bar filled to 30 percent, each with a label and value above it" />
+
+<ElementTable tags={['meter', 'progress']} links={false} />
+
+<Aside type="caution" title="Give them a size">
+Neither has a default size: unsized, they draw nothing. Set `width` and
+`height`, as in the example.
+</Aside>
+
+## Attributes
+
+| Attribute | On | Effect |
+| --- | --- | --- |
+| `value` | both | The value. |
+| `min`, `max` | `meter` | The range; 0 and 1 by default. |
+| `max` | `progress` | **Ignored**: the value is a fraction from 0 to 1, so write `value="0.3"` for 30%. |
+| `low`, `high`, `optimum` | `meter` | Ignored: the bar is always drawn in one color. |
+
+With no `value`, a `<progress>` is drawn empty; there is no indeterminate
+animation.
+
+## Updating
+
+Attributes in `view!` are set once, so to move the bar as work progresses,
+set the attribute from code when your signal changes:
+
+```rust
+element.set_attribute("value", &format!("{:.2}", fraction))?;
+```
+
+## Events and accessibility
+
+Both are focusable, which a browser's are not, and receive the usual
+pointer and focus events. The roles are `Meter` and `ProgressIndicator`; a
+meter's value is not yet exposed to assistive technology, so give it an
+`aria-label` that includes the value.
+
+## Differences from HTML
+
+| HTML | Open UI |
+| --- | --- |
+| A default size | None |
+| `progress` uses `max` | `value` is 0 to 1 |
+| `meter` colors by `low`, `high`, `optimum` | One color |
+| Indeterminate progress animation | None |
+| Not focusable | Focusable |

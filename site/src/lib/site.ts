@@ -4,6 +4,7 @@ export const repo = 'https://github.com/zhuowcui/open-ui';
 
 export const nav = [
   { label: 'Docs', href: `${base}docs/` },
+  { label: 'Elements', href: `${base}elements/` },
   { label: 'Components', href: `${base}components/` },
   { label: 'Blog', href: `${base}blog/` },
 ];

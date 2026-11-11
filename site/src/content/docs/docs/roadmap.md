@@ -13,7 +13,8 @@ change.
 - The `openui` CLI: `new`, `dev` (rebuild and restart on save) and `build`.
 - Windows, menus, file dialogs, clipboard, async tasks and an HTTP client.
 - Headless UI tests with pixel snapshots.
-- shadcn/ui's button, badge, card, label and separator.
+- A component library based on shadcn/ui designs, started: button, badge,
+  card, label and separator.
 - Modern CSS colors: `oklch()`, `oklab()` and `color-mix()`.
 
 **In progress**

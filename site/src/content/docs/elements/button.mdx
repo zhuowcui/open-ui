@@ -1,0 +1,78 @@
+---
+title: button
+description: A focusable control that fires click from the mouse, Enter or Space. It has no default look.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import ElementTable from '../../../components/ElementTable.astro';
+import Example from '../../../components/Example.astro';
+
+`<button>` is the element for actions. It is focusable, it fires `click`
+when pressed with the mouse, with Enter, or with Space, and assistive
+technology announces it as a button. Its children are its content, so it
+can hold text, icons or any other elements.
+
+<Example name="el_button" alt="A dark Add one button, a white Reset button with a gray border, and the text Count: 0" />
+
+<ElementTable tags={['button']} links={false} />
+
+<Aside type="caution" title="Style every button">
+A `<button>` has no default border, padding or background: unstyled, it is
+just its text. Set at least `padding`, `border` and `border-radius`, as in
+the example. The [component library](/open-ui/components/) has a styled
+`Button` built on this element.
+</Aside>
+
+## Attributes
+
+| Attribute | Effect |
+| --- | --- |
+| `disabled` | The button cannot be focused or clicked, and is announced as disabled. **Present means disabled**, whatever the value: `disabled={false}` disables too. Nothing changes visually, so style the disabled state yourself. A disabled `<fieldset>` also disables the buttons inside it. |
+| `type` | Ignored: there is no form submission. |
+| `value`, `name` | Stored; no effect. |
+
+## Events
+
+| Event | When |
+| --- | --- |
+| `click` | Mouse button released over it; Enter pressed (on keydown) or Space released (on keyup) while it has focus; `Element::click()`; the accessibility Click action. Not fired while disabled. |
+| `focus`, `blur`, `focusin`, `focusout` | It gains or loses focus, by a click or by Tab. |
+| `keydown`, `keyup` | While focused. |
+| `mousedown`, `mouseup`, `mousemove`, `mouseenter`, `mouseleave`, `wheel` | As for any element. |
+
+Handle `click` with `on:click`:
+
+```rust
+<button on:click={move |_| count.set(count.get() + 1)}>"Add one"</button>
+```
+
+A `click` currently fires for any mouse button, right-click included, and
+also when the press started on another element. Check `event.mouse_button`
+(0 is the primary button) if that matters.
+
+## Styling
+
+Any box and text style. A button is `inline-block`, so it sizes to its
+content; give it a `width` or put it in a flex row to size it otherwise. It
+inherits `font-size`, `font-family` and `color` from its parent, unlike a
+browser's button, which resets them.
+
+There are no `:hover`, `:active` or `:focus` styles yet. For a hover look,
+change a signal in `mouseenter` and `mouseleave` handlers and use it in a
+dynamic `style:`. `Element::is_hovered()`, `is_active()` and `has_focus()`
+report the state.
+
+## Accessibility
+
+The role is `Button`, named by its text, or by `aria-label` when it has
+none (an icon button). It supports the Click and Focus actions, and Windows
+UI Automation can invoke it.
+
+## Differences from HTML
+
+| HTML | Open UI |
+| --- | --- |
+| A platform look, padding and a reset font | No default style; inherits font and color |
+| `type="submit"` submits its form | No form submission |
+| `disabled` dims the button | Disabled, but you style the look |
+| `:hover`, `:active`, `:focus-visible` | Not yet; use events and signals |

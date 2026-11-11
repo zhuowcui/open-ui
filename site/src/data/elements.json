@@ -1,0 +1,466 @@
+{
+  "elements": [
+    {
+      "tag": "div",
+      "kind": "Div",
+      "display": "block",
+      "control": false,
+      "role": "GenericContainer"
+    },
+    {
+      "tag": "main",
+      "kind": "Div",
+      "display": "block",
+      "control": false,
+      "role": "GenericContainer"
+    },
+    {
+      "tag": "nav",
+      "kind": "Div",
+      "display": "block",
+      "control": false,
+      "role": "GenericContainer"
+    },
+    {
+      "tag": "header",
+      "kind": "Div",
+      "display": "block",
+      "control": false,
+      "role": "GenericContainer"
+    },
+    {
+      "tag": "footer",
+      "kind": "Div",
+      "display": "block",
+      "control": false,
+      "role": "GenericContainer"
+    },
+    {
+      "tag": "section",
+      "kind": "Div",
+      "display": "block",
+      "control": false,
+      "role": "GenericContainer"
+    },
+    {
+      "tag": "article",
+      "kind": "Div",
+      "display": "block",
+      "control": false,
+      "role": "GenericContainer"
+    },
+    {
+      "tag": "aside",
+      "kind": "Div",
+      "display": "block",
+      "control": false,
+      "role": "GenericContainer"
+    },
+    {
+      "tag": "p",
+      "kind": "Div",
+      "display": "block",
+      "control": false,
+      "role": "GenericContainer"
+    },
+    {
+      "tag": "h1",
+      "kind": "Div",
+      "display": "block",
+      "control": false,
+      "role": "GenericContainer"
+    },
+    {
+      "tag": "h2",
+      "kind": "Div",
+      "display": "block",
+      "control": false,
+      "role": "GenericContainer"
+    },
+    {
+      "tag": "h3",
+      "kind": "Div",
+      "display": "block",
+      "control": false,
+      "role": "GenericContainer"
+    },
+    {
+      "tag": "h4",
+      "kind": "Div",
+      "display": "block",
+      "control": false,
+      "role": "GenericContainer"
+    },
+    {
+      "tag": "h5",
+      "kind": "Div",
+      "display": "block",
+      "control": false,
+      "role": "GenericContainer"
+    },
+    {
+      "tag": "h6",
+      "kind": "Div",
+      "display": "block",
+      "control": false,
+      "role": "GenericContainer"
+    },
+    {
+      "tag": "ul",
+      "kind": "Div",
+      "display": "block",
+      "control": false,
+      "role": "GenericContainer"
+    },
+    {
+      "tag": "ol",
+      "kind": "Div",
+      "display": "block",
+      "control": false,
+      "role": "GenericContainer"
+    },
+    {
+      "tag": "hr",
+      "kind": "Div",
+      "display": "block",
+      "control": false,
+      "role": "GenericContainer"
+    },
+    {
+      "tag": "li",
+      "kind": "Div",
+      "display": "list-item",
+      "control": false,
+      "role": "GenericContainer"
+    },
+    {
+      "tag": "span",
+      "kind": "Span",
+      "display": "inline",
+      "control": false,
+      "role": "GenericContainer"
+    },
+    {
+      "tag": "a",
+      "kind": "Span",
+      "display": "inline",
+      "control": false,
+      "role": "GenericContainer"
+    },
+    {
+      "tag": "label",
+      "kind": "Span",
+      "display": "inline",
+      "control": false,
+      "role": "GenericContainer"
+    },
+    {
+      "tag": "strong",
+      "kind": "Span",
+      "display": "inline",
+      "control": false,
+      "role": "GenericContainer"
+    },
+    {
+      "tag": "em",
+      "kind": "Span",
+      "display": "inline",
+      "control": false,
+      "role": "GenericContainer"
+    },
+    {
+      "tag": "small",
+      "kind": "Span",
+      "display": "inline",
+      "control": false,
+      "role": "GenericContainer"
+    },
+    {
+      "tag": "br",
+      "kind": "Break",
+      "display": "inline",
+      "control": false,
+      "role": "LineBreak"
+    },
+    {
+      "tag": "wbr",
+      "kind": "WordBreak",
+      "display": "inline",
+      "control": false,
+      "role": "GenericContainer"
+    },
+    {
+      "tag": "ruby",
+      "kind": "Ruby",
+      "display": "inline",
+      "control": false,
+      "role": "Ruby"
+    },
+    {
+      "tag": "rt",
+      "kind": "RubyText",
+      "display": "inline",
+      "control": false,
+      "role": "RubyAnnotation"
+    },
+    {
+      "tag": "table",
+      "kind": "Table",
+      "display": "table",
+      "control": false,
+      "role": "Table"
+    },
+    {
+      "tag": "caption",
+      "kind": "TableCaption",
+      "display": "table-caption",
+      "control": false,
+      "role": "Caption"
+    },
+    {
+      "tag": "colgroup",
+      "kind": "TableColumnGroup",
+      "display": "table-column-group",
+      "control": false,
+      "role": "GenericContainer"
+    },
+    {
+      "tag": "col",
+      "kind": "TableColumn",
+      "display": "table-column",
+      "control": false,
+      "role": "GenericContainer"
+    },
+    {
+      "tag": "thead",
+      "kind": "TableHead",
+      "display": "table-header-group",
+      "control": false,
+      "role": "RowGroup"
+    },
+    {
+      "tag": "tbody",
+      "kind": "TableBody",
+      "display": "table-row-group",
+      "control": false,
+      "role": "RowGroup"
+    },
+    {
+      "tag": "tfoot",
+      "kind": "TableFoot",
+      "display": "table-footer-group",
+      "control": false,
+      "role": "RowGroup"
+    },
+    {
+      "tag": "tr",
+      "kind": "TableRow",
+      "display": "table-row",
+      "control": false,
+      "role": "Row"
+    },
+    {
+      "tag": "td",
+      "kind": "TableCell",
+      "display": "table-cell",
+      "control": false,
+      "role": "Cell"
+    },
+    {
+      "tag": "th",
+      "kind": "TableHeaderCell",
+      "display": "table-cell",
+      "control": false,
+      "role": "ColumnHeader"
+    },
+    {
+      "tag": "img",
+      "kind": "Image",
+      "display": "inline-block",
+      "control": false,
+      "role": "Image"
+    },
+    {
+      "tag": "canvas",
+      "kind": "Canvas",
+      "display": "inline-block",
+      "control": false,
+      "role": "Canvas"
+    },
+    {
+      "tag": "svg",
+      "kind": "Svg",
+      "display": "inline-block",
+      "control": false,
+      "role": "SvgRoot"
+    },
+    {
+      "tag": "iframe",
+      "kind": "IFrame",
+      "display": "inline-block",
+      "control": false,
+      "role": "Iframe"
+    },
+    {
+      "tag": "object",
+      "kind": "Object",
+      "display": "inline-block",
+      "control": false,
+      "role": "EmbeddedObject"
+    },
+    {
+      "tag": "audio",
+      "kind": "Audio",
+      "display": "inline-block",
+      "control": false,
+      "role": "Audio"
+    },
+    {
+      "tag": "video",
+      "kind": "Video",
+      "display": "inline-block",
+      "control": false,
+      "role": "Video"
+    },
+    {
+      "tag": "input",
+      "kind": "Input",
+      "display": "inline-block",
+      "control": true,
+      "role": "TextInput"
+    },
+    {
+      "tag": "button",
+      "kind": "Button",
+      "display": "inline-block",
+      "control": true,
+      "role": "Button"
+    },
+    {
+      "tag": "meter",
+      "kind": "Meter",
+      "display": "inline-block",
+      "control": true,
+      "role": "Meter"
+    },
+    {
+      "tag": "progress",
+      "kind": "Progress",
+      "display": "inline-block",
+      "control": true,
+      "role": "ProgressIndicator"
+    },
+    {
+      "tag": "fieldset",
+      "kind": "Fieldset",
+      "display": "block",
+      "control": false,
+      "role": "GenericContainer"
+    },
+    {
+      "tag": "legend",
+      "kind": "Legend",
+      "display": "block",
+      "control": false,
+      "role": "GenericContainer"
+    },
+    {
+      "tag": "details",
+      "kind": "Details",
+      "display": "block",
+      "control": false,
+      "role": "Details"
+    },
+    {
+      "tag": "summary",
+      "kind": "Summary",
+      "display": "block",
+      "control": false,
+      "role": "DisclosureTriangle"
+    },
+    {
+      "tag": "textarea",
+      "kind": "TextArea",
+      "display": "inline-block",
+      "control": true,
+      "role": "MultilineTextInput"
+    },
+    {
+      "tag": "select",
+      "kind": "Select",
+      "display": "inline-block",
+      "control": true,
+      "role": "ComboBox"
+    },
+    {
+      "tag": "option",
+      "kind": "Option",
+      "display": "block",
+      "control": true,
+      "role": "ListBoxOption"
+    },
+    {
+      "tag": "optgroup",
+      "kind": "OptGroup",
+      "display": "block",
+      "control": true,
+      "role": "Group"
+    },
+    {
+      "tag": "form",
+      "kind": "Form",
+      "display": "block",
+      "control": false,
+      "role": "Form"
+    },
+    {
+      "tag": "embed",
+      "kind": "Embed",
+      "display": "inline-block",
+      "control": false,
+      "role": "EmbeddedObject"
+    }
+  ],
+  "inputTypes": [
+    {
+      "type": "checkbox",
+      "role": "CheckBox"
+    },
+    {
+      "type": "radio",
+      "role": "RadioButton"
+    },
+    {
+      "type": "range",
+      "role": "Slider"
+    },
+    {
+      "type": "color",
+      "role": "ColorWell"
+    },
+    {
+      "type": "date",
+      "role": "DateInput"
+    },
+    {
+      "type": "file",
+      "role": "Button"
+    },
+    {
+      "type": "button",
+      "role": "Button"
+    },
+    {
+      "type": "submit",
+      "role": "Button"
+    },
+    {
+      "type": "reset",
+      "role": "Button"
+    },
+    {
+      "type": "(any other, or none)",
+      "role": "TextInput"
+    }
+  ]
+}

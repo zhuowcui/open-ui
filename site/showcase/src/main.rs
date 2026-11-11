@@ -14,9 +14,12 @@
 
 #![allow(unused_variables)] // `#[component]` functions without props.
 
+mod docs;
 mod example;
+mod snippets;
 
 use openui::prelude::*;
+use openui_components::fonts::GEIST;
 use openui_components::{
     register_fonts, with_theme, Badge, BadgeProps, BadgeVariant, Button, ButtonProps, ButtonSize,
     ButtonVariant, Label, LabelProps, Orientation, Separator, SeparatorProps, Theme,
@@ -739,5 +742,53 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             render(scene, theme_name, &out)?;
         }
     }
+    for example in docs::EXAMPLES {
+        let name = format!("docs-{}", example.name);
+        if only.is_empty() || only.iter().any(|scene| *scene == name || scene == "docs") {
+            render_doc(example, &name, &out)?;
+        }
+    }
+    Ok(())
+}
+
+/// A docs example: a white page with 20px of padding and Geist, cropped to
+/// the example's height (measured in a first layout).
+fn render_doc(
+    example: &docs::DocExample,
+    name: &str,
+    out: &std::path::Path,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let draw = |height: f64| -> Result<(HeadlessApp, f64), Box<dyn std::error::Error>> {
+        let mut app = HeadlessApp::with_options(
+            ViewportMetrics::from_logical_size(example.width, height, SCALE)?,
+            EngineOptions {
+                raster_configuration: raster(),
+            },
+        )?;
+        // Geist only: an example that wants another face registers it.
+        app.document()
+            .register_font_face(GEIST.bytes, GEIST.descriptor())?;
+        app.document().body().set_background_color(Color::WHITE)?;
+        let build = example.build;
+        app.mount(move || {
+            view! {
+                <div style:font-family="Geist" style:padding="20px">
+                    <Slot child={build()} />
+                </div>
+            }
+        })?;
+        let page = app
+            .document()
+            .body()
+            .first_child()?
+            .ok_or("example mounted nothing")?;
+        let content = f64::from(page.height()?);
+        Ok((app, content))
+    };
+    let (_, content) = draw(4000.0)?;
+    let (app, _) = draw(content.ceil().max(1.0))?;
+    let path = out.join(format!("{name}-light.png"));
+    app.render_png_to(0.0, path.to_str().ok_or("non-UTF-8 path")?)?;
+    println!("{}", path.display());
     Ok(())
 }

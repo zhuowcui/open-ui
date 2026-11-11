@@ -1,0 +1,72 @@
+---
+title: Windows
+description: Declare windows, open more at run time, and control them with a WindowHandle.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import Snippet from '../../../../components/Snippet.astro';
+
+[Apps and windows](/open-ui/docs/concepts/windows/) explains how an app
+and its windows fit together. This page is the window API: declaring a
+window, opening another, and keeping one open until its work is saved.
+
+<Snippet name="windows" title="src/main.rs" />
+
+## WindowSpec
+
+A `WindowSpec` describes a window. `WindowSpec::new(key)` gives a
+resizable, decorated 800×600 window; chain options onto it:
+
+| Method | Effect |
+| --- | --- |
+| `title(text)` | The title. Without one, the app's `name`. |
+| `size(width, height)` | The inner size, in logical pixels. |
+| `min_size(w, h)`, `max_size(w, h)` | Limits on resizing. |
+| `resizable(bool)` | Whether the user can resize it. |
+| `decorations(bool)` | Whether it has the system title bar and border. |
+| `on_close_requested(f)` | Called when the user asks to close it; return `Close::Allow` or `Close::Prevent`. |
+
+The **key** names the window. Opening a window whose key is already open
+focuses that window instead of opening a second one, which is what you
+want for a settings window. For windows that can open many times, such as
+documents, use `WindowKey::unique()`.
+
+## Opening and finding windows
+
+| Function | Returns |
+| --- | --- |
+| `window::open(spec, view)` | A `WindowHandle`. The window appears when the current event finishes. |
+| `window::current()` | The window whose event handler, view or close handler is running. |
+| `window::all()` | Every open window, in the order they opened. |
+
+## WindowHandle
+
+A `WindowHandle` stays valid after its window closes.
+
+| Method | Effect |
+| --- | --- |
+| `key()` | The window's key. |
+| `is_open()` | Whether it is still open. |
+| `focus()` | Bring it to the front. |
+| `set_title(text)` | Change the title. |
+| `close()` | Close it. |
+
+<Aside type="caution" title="close() does not ask">
+`WindowHandle::close()` closes the window without calling its
+`on_close_requested` handler. Only the window's close button and the
+menu's Close Window item ask the handler.
+</Aside>
+
+There are no methods yet to move, resize, minimize or maximize a window
+from code, and no fullscreen.
+
+## Exiting
+
+The app exits when its last window closes, unless you build it with
+`.exit_on_last_window_closed(false)`. `openui::app::exit()` exits from
+anywhere on the UI thread, after the current event.
+
+<Aside type="note">
+Headless apps and tests (`HeadlessApp`, `TestApp`) have one document and no
+windows: `window::open` there is recorded but nothing opens.
+</Aside>
